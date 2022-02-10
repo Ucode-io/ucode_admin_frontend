@@ -1,0 +1,23 @@
+export const staticPermissions = [
+  "dashboard",
+  "new_offers",
+  "entity_type",
+  "settings_permission_diagram",
+  "profile",
+  "catalog",
+  "personal",
+  "clients",
+  "settings",
+  "menu",
+  "orders",
+  "news",
+  "company_category",
+  "banner",
+  "courier",
+  "operator",
+  "courier_type",
+  "fares",
+  "geofence",
+  "branch_users",
+  "settlements"
+]

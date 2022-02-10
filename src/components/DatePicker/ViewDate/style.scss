@@ -1,0 +1,31 @@
+.view-date {
+
+  .date-text {
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: 0em;
+    text-align: left;
+  }
+
+  .time-content {
+    margin-left: 8px;
+    padding: 0 17px;
+    box-sizing: border-box;
+    background-color: rgba(56, 217, 185, 0.15);
+    color: #1AC19D;
+    border-radius: 6px;
+
+    .time-text {
+      font-family: Inter;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px;
+      letter-spacing: 0px;
+      text-align: justify;
+    }
+  }
+}

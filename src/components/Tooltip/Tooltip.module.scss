@@ -1,0 +1,49 @@
+.customTooltip {
+  padding: 10px 16px;
+  background: rgba(8, 17, 35, 0.75);
+  border-radius: 8px;
+  min-width: 300px;
+  backdrop-filter: blur(20px);
+  .title {
+    box-shadow: inset 0px -1px 0px rgba(255, 255, 255, 0.16);
+    font-size: 14px !important;
+    line-height: 20px;
+    color: #fff;
+    padding: 10px 0 !important;
+    font-weight: 500 !important;
+  }
+
+  .content {
+    display: flex;
+    margin-top: 12px;
+    justify-content: space-between;
+    &:last-child {
+      padding-bottom: 12px;
+    }
+    .value {
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 20px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .itemTooltip {
+      display: flex;
+      p {
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 20px;
+        color: rgba(255, 255, 255, 0.85);
+      }
+      span {
+        min-width: 20px;
+        width: 20px;
+        min-height: 20px;
+        height: 20px;
+        display: block;
+        border-radius: 50%;
+        margin-right: 12px;
+        box-shadow: inset 0px 2px 0px rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+}

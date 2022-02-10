@@ -1,0 +1,46 @@
+.Profile {
+
+  .profile-block {
+
+    .profile-photo {
+      width: 150px;
+      height: 150px;
+      background-color: rgba(64, 148, 247, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 70px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .line {
+      height: 150px;
+      width: 2px;
+      background-color: rgba(192, 192, 192, 0.226);
+      margin: 0 30px;
+    }
+
+    .info-block {
+      flex: 1;
+
+
+      .label {
+        width: 130px;
+      }
+
+      .field {
+        width: 300px;
+        margin-left: 20px;
+      }
+
+    }
+    
+    
+
+  }
+
+
+  
+}

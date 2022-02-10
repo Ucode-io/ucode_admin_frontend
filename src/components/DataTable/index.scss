@@ -1,0 +1,51 @@
+#table-react tr:hover {background-color: #ddd;}
+.stick-head {
+    position: sticky;
+    left: 0; 
+    background: white;
+}
+#table-react {
+    border-radius: 6px;
+    border-collapse: collapse;
+    overflow: scroll;
+    width: 100%;
+    
+    th {
+        border-radius: 6px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: center;
+        background-color: #ffffff;
+        color: rgb(31, 31, 31);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+
+    }
+    thead {
+        tr {
+            border: 1px solid #ddd;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+        th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+
+        }
+        th {
+            width: 200px;
+        }
+    }
+    td {
+        border: 1px solid #ddd;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+  }
+
+  .MuiTableCell-stickyHeader {
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  }

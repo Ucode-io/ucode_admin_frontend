@@ -1,0 +1,8 @@
+.Settlements {
+  .table_body .MuiTableRow-root:first-child .MuiTableCell-body:first-child {
+    width: 100px;
+  }
+  .table_body .MuiTableRow-root .MuiTableCell-body:last-child {
+    width: auto;
+  }
+}

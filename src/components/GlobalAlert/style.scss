@@ -1,0 +1,10 @@
+
+.GlobalAlert {
+  width: 100%;
+  z-index: 1000;
+
+  .alert {
+    width: 100%;
+    padding: 20px 40px;
+  }
+}

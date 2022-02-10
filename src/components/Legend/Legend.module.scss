@@ -1,0 +1,39 @@
+.customLegend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .legendItem {
+    padding-top: 24px;
+    .title {
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      display: block;
+      padding: 0 24px 12px;
+    }
+    .legends {
+      display: flex;
+      align-items: center;
+      .item {
+        display: flex;
+        align-items: center;
+        margin-right: 24px;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 24px;
+        color: rgba($color: #000000, $alpha: 0.8);
+        &:last-child {
+          border-right: none;
+          margin-right: 0;
+        }
+        .circle {
+          width: 12px;
+          height: 12px;
+          margin-right: 8px;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,123 @@
+.rc-switch {
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  width: 44px;
+  height: 22px;
+  line-height: 20px;
+  padding: 0;
+  vertical-align: middle;
+  border-radius: 20px 20px;
+  border: 1px solid #ccc;
+  background-color: #ccc;
+  cursor: pointer;
+}
+.rc-switch-inner {
+  color: #fff;
+  font-size: 12px;
+  position: absolute;
+  left: 24px;
+  top: 0;
+}
+.rc-switch:after {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 2px;
+  top: 1px;
+  border-radius: 50% 50%;
+  background-color: #fff;
+  content: " ";
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
+  transform: scale(1);
+  transition: left 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+  animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);
+  animation-duration: 0.3s;
+  animation-name: rcSwitchOff;
+}
+.rc-switch-checked {
+  border: 1px solid #4094F7;
+  background-color: #4094F7;
+}
+.rc-switch-checked .rc-switch-inner {
+  left: 6px;
+}
+
+.rc-switch-checked:after {
+  left: 22px;
+}
+
+@keyframes rcSwitchOn {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes rcSwitchOff {
+  0% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.checkbox {
+  position: relative;
+  top: -0.09em;
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+  outline: none;
+  cursor: pointer;
+}
+
+.checkbox-inner {
+  position: relative;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: "red";
+  border: 2px solid "red";
+  border-radius: 2px;
+  border-collapse: separate;
+  transition: all 0.3s;
+}
+.checkbox-inner::after {
+  position: absolute;
+  top: 50%;
+  left: 21%;
+  display: table;
+  width: 20px;
+  height: 20px;
+  border: 2px solid "red";
+  border-top: 0;
+  border-left: 0;
+  transform: rotate(45deg) scale(0) translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.1s ease-in-out, opacity 0.1s;
+  content: " ";
+}
+
+.checkbox-input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  opacity: 0;
+}

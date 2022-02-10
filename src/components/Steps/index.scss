@@ -1,0 +1,122 @@
+.steps {
+  display: flex;
+
+  .step {
+    min-width: 130px;
+
+    &__indicator {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+
+      &__icon {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #dde2e4;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &.large {
+          &.finished {
+            border-color: rgba(64, 148, 247, 1);
+          }
+
+          &.error {
+            border-color: #f76659;
+          }
+        }
+
+        &.small {
+          width: 16px;
+          height: 16px;
+          border: none;
+
+          .small-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #dde2e4;
+
+            &.finished {
+              background-color: rgba(64, 148, 247, 1);
+            }
+          }
+        }
+      }
+
+      &__line {
+        flex: 1;
+        height: 2px;
+        background-color: #dde2e4;
+        position: relative;
+        overflow: hidden;
+
+        &.hidden {
+          display: none;
+        }
+
+        .passed-status {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(64, 148, 247, 1);
+          transform: translateX(-100%);
+          transition-duration: 0.4s;
+
+          &.passed {
+            transform: translateX(0);
+          }
+        }
+      }
+    }
+
+    &__description {
+      padding-right: 5px;
+      line-height: 1.3;
+      margin-bottom: 15px;
+
+      &__title {
+        font-weight: bold;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+
+      &__text {
+        font-size: 14px;
+      }
+    }
+
+    &:last-of-type {
+      width: auto;
+
+
+      .step__indicator__line {
+        display: none;
+      }
+    }
+  }
+
+  &.vertical {
+    flex-direction: column;
+
+    .step {
+      min-width: 300px;  
+      display: flex;
+      min-height: 110px;
+
+      &__indicator {
+        flex-direction: column;
+        margin-right: 20px;
+        margin-bottom: 0;
+
+        &__line {
+          width: 2px;
+        }
+      }
+    }
+  }
+}

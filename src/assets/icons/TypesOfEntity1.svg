@@ -1,0 +1,26 @@
+<svg
+    width='56'
+    height='56'
+    viewBox='0 0 56 56'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    <rect width='56' height='56' rx='12' fill='#FF830B' fill-opacity='0.15' />
+    <path
+      d='M22.1667 25.6667H18.6667V33.8334H22.1667V25.6667Z'
+      fill='#FF830B'
+    />
+    <path d='M29.75 25.6667H26.25V33.8334H29.75V25.6667Z' fill='#FF830B' />
+    <path
+      d='M39.6667 36.1667H16.3333V39.6667H39.6667V36.1667Z'
+      fill='#FF830B'
+    />
+    <path
+      d='M37.3333 25.6667H33.8333V33.8334H37.3333V25.6667Z'
+      fill='#FF830B'
+    />
+    <path
+      d='M28 15.1667L16.3333 21.0001V23.3334H39.6667V21.0001L28 15.1667Z'
+      fill='#FF830B'
+    />
+</svg> 

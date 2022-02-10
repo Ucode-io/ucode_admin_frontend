@@ -1,0 +1,36 @@
+.sidebar {
+  -webkit-transition: -webkit-transform 0.5s;
+  transition: transform 0.5s;
+}
+.is-active .sidebarItem {
+  background: var(--color-primary) !important;
+  color: var(--color-white) !important;
+  font-weight: 500;
+}
+.is-active-sidebar {
+  width: 100%;
+}
+.is-active-sidebar svg path {
+  fill: #fff;
+}
+
+.is-active-sidebar .active-sidebar {
+  background-color: var(--color-primary);
+  border-radius: 6px;
+  svg {
+    font-size: 20px;
+  }
+}
+
+.is-active-profile {
+  background-color: rgb(255, 255, 255);
+}
+
+.is-active-profile path {
+  fill: rgba(64, 148, 247, 1);
+  padding: 11px;
+}
+
+.sidebar-nav-menu {
+  // background-color: red !important;
+}

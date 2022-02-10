@@ -1,0 +1,59 @@
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes alert-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(247, 102, 89, 0.4);
+  }
+  70% {
+      box-shadow: 0 0 0 10px rgba(247, 102, 89, 0);
+  }
+  100% {
+      box-shadow: 0 0 0 0 rgba(247, 102, 89, 0);
+  }
+}
+
+.alerts {
+  z-index: 3000;
+
+  .link{
+    background-color: rgba(247, 102, 89, 1);
+    border-radius: 5px;
+    color: #fff;
+    padding: 3px 10px;
+    transition-duration: 0.4s;
+
+    &:hover {
+      transform: translateY(-3px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+  }
+}
+
+.shake-animation {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.alert-pulse-animation {
+  box-shadow: 0 0 0 rgba(247, 102, 89, 0.4);
+  animation: alert-pulse 2s infinite;
+}

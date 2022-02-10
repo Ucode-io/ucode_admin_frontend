@@ -1,0 +1,12 @@
+
+
+.DashboardLayout {
+  display: flex;
+  height: 100vh;
+
+  .content-wrapper {
+    flex: 1;
+    position: relative;
+    overflow-y: auto;
+  }
+}

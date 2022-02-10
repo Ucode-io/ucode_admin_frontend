@@ -1,0 +1,22 @@
+.Upload {
+
+
+  .func-btn {
+    width: 32px;
+    height: 32px;
+    outline: none;
+  
+    &.edit {
+      background-color: #EBFEF1;
+      color: #47D16C;
+    }
+
+    &.delete {
+      background-color: #FEEFEB;
+      color: #F76659;
+    }
+  }
+
+  
+
+}

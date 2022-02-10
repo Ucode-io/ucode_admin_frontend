@@ -1,0 +1,16 @@
+.modal-component {
+  background-color: #fff;
+  outline: none;
+  overflow: hidden;
+  .modal-title {
+    font-family: Inter;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 24px;
+    color: #252c32;
+    letter-spacing: 0em;
+    text-align: left;
+
+    width: 80%;
+  }
+}

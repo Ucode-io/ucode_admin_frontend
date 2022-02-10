@@ -1,0 +1,31 @@
+.ActionHistory {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  // padding: 24px;
+
+  .action-history__card {
+    overflow-y: auto;
+    max-height: calc(100vh - 180px);
+
+    .DateBlock {
+      display: flex;
+      flex-direction: column;
+
+      .tag {
+        margin-bottom: 10px;
+        background-color: #f4f4f4;
+        color: rgba($color: #000000, $alpha: 0.6);
+        padding: 6px 14px;
+        border-radius: 8px;
+        min-width: auto;
+
+        .icon {
+          font-size: 13px;
+          margin-right: 6px;
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}

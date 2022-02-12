@@ -1,9 +1,9 @@
 import moment from "moment";
 
-export default function orderTimer(created_at, finished_at) {
-  let start = moment(created_at);
-  let end = moment(finished_at || undefined);
-  let diff = end.diff(start);
+export default function orderTimer(createdAt, finishedAt) {
+  var start = moment(createdAt);
+  var end = moment(finishedAt || undefined);
+  var diff = end.diff(start);
 
-  return moment.utc(diff).format("HH:mm");
+  return moment.utc(diff).format("HH:mm:ss");
 }

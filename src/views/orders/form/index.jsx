@@ -14,35 +14,29 @@ import {
   getBranches,
   getNearestBranch,
   getComputeDeliveryPrice,
-} from "../../../services";
-import {
   getDeliveryPrice,
   getCustomers,
   changeOrderStatus,
   postCustomer,
-} from "../../../services";
-
-//components
+} from "services";
 import MainContent from "./MainContent";
 import ProductContent from "./ProductsContent";
-import Button from "../../../components/Button";
-import Header from "../../../components/Header";
-
-//styles
+import Button from "components/Button";
+import Header from "components/Header";
 import "./style.scss";
-import CustomSkeleton from "../../../components/Skeleton";
-import { StyledTab, StyledTabs } from "../../../components/StyledTabs";
+import CustomSkeleton from "components/Skeleton";
+import { StyledTab, StyledTabs } from "components/StyledTabs";
 import SaveIcon from "@material-ui/icons/Save";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import CancelIcon from "@material-ui/icons/Cancel";
-import Filter from "../../../components/Filters";
+import Filter from "components/Filters";
 import PrintIcon from "@material-ui/icons/Print";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import TagBtn from "../../../components/Tag/TimeTag";
+import TagBtn from "components/Tag/TimeTag";
 import orderTimer from "helpers/orderTimer";
-import { showAlert } from "../../../redux/reducers/alertReducer";
+import { showAlert } from "redux/reducers/alertReducer";
 import moment from "moment";
-import { getAddressListYandex } from "../../../services/yandex";
+import { getAddressListYandex } from "services/yandex";
 
 export default function CreateClient() {
   const { t } = useTranslation();
@@ -63,6 +57,7 @@ export default function CreateClient() {
   const [mapChange, setMapChange] = useState(false);
   const [tabValue, setTabValue] = useState("Основное");
   const [searchAddress, setSearchAddress] = useState("");
+  const [distance, setDistance] = useState();
 
   const tabLabel = (text) => {
     return <span className="px-1">{text}</span>;
@@ -88,7 +83,7 @@ export default function CreateClient() {
       to_address: "",
       branch: null,
     }),
-    []
+    [],
   );
 
   const validationSchema = useMemo(() => {
@@ -115,13 +110,19 @@ export default function CreateClient() {
             label: `${elm.phone} (${elm.name})`,
             value: elm.id,
             elm,
-          }))
+          })),
         )
         .catch((err) => console.log(err));
 
       const _deliveryPrice = await getDeliveryPrice()
         .then((res) => res.price)
         .catch((err) => console.log(err));
+
+      //   const computeDeliveryPrice = await getComputeDeliveryPrice({branch_id: "string",
+      //   lat: 0,
+      //   long: 0,
+      // }).then((res) => res).catch((err) => console.log(err))
+      //   setDistance(computedDeliveryPrice)
 
       setShippers(_shippers);
 
@@ -154,7 +155,7 @@ export default function CreateClient() {
 
     const data = {
       ..._values,
-      region_id: regionId || region_id,
+      // region_id: regionId || region_id,
       client_id: values.client.value,
       co_delivery_price: deliveryPrice,
       to_location: { lat: placemarkGeometry[0], long: placemarkGeometry[1] },
@@ -166,7 +167,7 @@ export default function CreateClient() {
             delete item.optionPrice;
             delete item.optionChildPrice;
             delete item.ingredientsPrice;
-            delete item.option.is_default;
+            delete item?.option?.is_default;
             item?.option?.child_options?.forEach((val) => {
               if (val) delete val.is_default;
             });
@@ -192,7 +193,7 @@ export default function CreateClient() {
             status_id: "ccb62ffb-f0e1-472e-bf32-d130bea90617",
             description: "new order updated",
           },
-          values.shipper.value
+          values.shipper.value,
         );
 
         history.push("/home/orders");
@@ -232,7 +233,7 @@ export default function CreateClient() {
         const elm = res.branches[0];
         formik.setFieldValue(
           "branch",
-          elm ? { label: elm.name, value: elm.id, elm } : null
+          elm ? { label: elm.name, value: elm.id, elm } : null,
         );
       });
     }
@@ -252,7 +253,7 @@ export default function CreateClient() {
               id: item.properties.CompanyMetaData.id,
               description: item.properties.description,
               ...item,
-            }))
+            })),
           );
         }
       });
@@ -267,7 +268,7 @@ export default function CreateClient() {
         setMapLoading((prev) => !prev);
         getComputeDeliveryPrice({
           branch_id: formik.values.branch.value,
-          date_time: moment().format("YYYY-MM-DD hh:mm:ss"),
+          // date_time: moment().format("YYYY-MM-DD hh:mm:ss"),
           lat: placemarkGeometry[0],
           long: placemarkGeometry[1],
         })
@@ -441,6 +442,7 @@ export default function CreateClient() {
           className="p-4 w-full box-border font-body flex flex-col gap-4"
           style={{ fontSize: "14px", lineHeight: "24px" }}
         >
+          {console.log(distance)}
           <MainContent
             formik={formik}
             shippers={shippers}

@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -211,7 +209,7 @@ const OrderTable = ({
         {
           description: msg,
           status_id: "b5d1aa93-bccd-40bb-ae29-ea5a85a2b1d1",
-        }
+        },
       )
       .then((res) => {
         setDeleteModal(null);
@@ -233,13 +231,11 @@ const OrderTable = ({
     {
       title: t("order_id"),
       key: "order_id",
-      sorter: true,
       render: (record) => <div>{record.external_order_id}</div>,
     },
     {
       title: t("timer"),
       key: "timer",
-      sorter: true,
       render: (record) => {
         return (
           <div className="flex justify-center">
@@ -262,7 +258,10 @@ const OrderTable = ({
     {
       title: t("client.name"),
       key: "name",
-      // filterOptions: [],
+      filterOptions: [
+        { label: t("delivery"), value: "delivery" },
+        { label: t("self-pickup"), value: "self-pickup" },
+      ],
       // sorter: true,
       // onSort: val => console.log(val),
       // onFilter: val => console.log(val),
@@ -326,6 +325,16 @@ const OrderTable = ({
     {
       title: t("branch"),
       key: "branch",
+      filterOptions: [
+        { label: t("delivery"), value: "delivery" },
+        { label: t("self-pickup"), value: "self-pickup" },
+      ],
+      onFilter: (ids) => {
+        setFilters((old) => ({
+          ...old,
+          courier_id: ids.length ? ids.join(",") : undefined,
+        }));
+      },
       render: (record) => (
         <div>
           {record.steps[0].branch_name}
@@ -356,13 +365,13 @@ const OrderTable = ({
           {t(
             record.delivery_type === "delivery"
               ? "type-delivery"
-              : "type-self-pickup"
+              : "type-self-pickup",
           )}
         </Tag>
       ),
     },
     {
-      title: t("price"),
+      title: t("order.price"),
       key: "price",
       sorter: true,
       render: (record) => (

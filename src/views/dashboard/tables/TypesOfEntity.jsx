@@ -1,59 +1,58 @@
-/* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import axios from "../../../utils/axios"
-import Card from "../../../components/Card"
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import axios from "../../../utils/axios";
+import Card from "../../../components/Card";
 // import Button from "../../../components/Button"
-import TypesOfEntity1 from "../../../assets/icons/TypesOfEntity1"
-import TypesOfEntity2 from "../../../assets/icons/TypesOfEntity2"
-import TypesOfEntity3 from "../../../assets/icons/TypesOfEntity3"
-import TypesOfEntity4 from "../../../assets/icons/TypesOfEntity4"
-import { useHistory } from "react-router"
+import TypesOfEntity1 from "../../../assets/icons/TypesOfEntity1";
+import TypesOfEntity2 from "../../../assets/icons/TypesOfEntity2";
+import TypesOfEntity3 from "../../../assets/icons/TypesOfEntity3";
+import TypesOfEntity4 from "../../../assets/icons/TypesOfEntity4";
+import { useHistory } from "react-router";
 
-let timeout
+let timeout;
 
 const TypesOfEntity = () => {
-  const { t } = useTranslation()
-  const [items, setItems] = useState({})
-  const [loader, setLoader] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
+  const { t } = useTranslation();
+  const [items, setItems] = useState({});
+  const [loader, setLoader] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   // const [selectedCityId, setSelectedCityId] = useState(null)
   // const [selectedRegionId, setSelectedRegionId] = useState(null)
   // const [selectedStatusId, setSelectedStatusId] = useState(null)
-  const [searchText, setSearchText] = useState(null)
-  const history = useHistory()
+  const [searchText, setSearchText] = useState(null);
+  const history = useHistory();
 
   useEffect(() => {
-    getItems(currentPage, true)
-  }, [currentPage])
+    getItems(currentPage, true);
+  }, [currentPage]);
 
   useEffect(() => {
     return () => {
-      clearTimeout(timeout)
-    }
-  }, [])
+      clearTimeout(timeout);
+    };
+  }, []);
 
   const clearItems = () => {
-    setItems((prev) => ({ count: prev.count }))
-  }
+    setItems((prev) => ({ count: prev.count }));
+  };
 
   const getItems = (page, loader) => {
-    clearTimeout(timeout)
+    clearTimeout(timeout);
     if (loader) {
-      setLoader(true)
-      clearItems()
+      setLoader(true);
+      clearItems();
     }
 
     axios
       .get("/entity-draft-expired")
       .then((res) => {
         timeout = setTimeout(() => {
-          getItems(currentPage, false)
-        }, 5000)
-        setItems(res)
+          getItems(currentPage, false);
+        }, 5000);
+        setItems(res);
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const data = [
     {
@@ -80,7 +79,7 @@ const TypesOfEntity = () => {
       number: "325",
       link: "/home/application/create/1",
     },
-  ]
+  ];
 
   return (
     <Card style={{ marginBottom: "20px" }} title="Yer uchastkalari turlari">
@@ -156,7 +155,7 @@ const TypesOfEntity = () => {
         ))}
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default TypesOfEntity
+export default TypesOfEntity;

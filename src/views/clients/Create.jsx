@@ -1,80 +1,76 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react"
-import { useHistory, useParams } from "react-router-dom"
-import * as yup from "yup"
-import { useFormik } from "formik"
-import { useTranslation } from "react-i18next"
-
-//components
-import Header from "../../components/Header"
-import Breadcrumb from "../../components/Breadcrumb"
-import Button from "../../components/Button"
-import Client from "./form"
-
-import "./style.scss"
-import { getOneCustomer, postCustomer, updateCustomer } from "../../services"
-import CustomSkeleton from "../../components/Skeleton"
-import CancelIcon from "@material-ui/icons/Cancel"
-import SaveIcon from "@material-ui/icons/Save"
-import { StyledTab, StyledTabs } from "../../components/StyledTabs"
-import Filters from "../../components/Filters"
-import { getCustomerType } from "../../services/customerType"
-import OrderClient from "./form/clientOrders"
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import * as yup from "yup";
+import { useFormik } from "formik";
+import { useTranslation } from "react-i18next";
+import Header from "../../components/Header";
+import Breadcrumb from "../../components/Breadcrumb";
+import Button from "../../components/Button";
+import Client from "./form";
+import "./style.scss";
+import { getOneCustomer, postCustomer, updateCustomer } from "../../services";
+import CustomSkeleton from "../../components/Skeleton";
+import CancelIcon from "@material-ui/icons/Cancel";
+import SaveIcon from "@material-ui/icons/Save";
+import { StyledTab, StyledTabs } from "../../components/StyledTabs";
+import Filters from "../../components/Filters";
+import { getCustomerType } from "../../services/customerType";
+import OrderClient from "./form/clientOrders";
 
 export default function CreateClient() {
-  const { t } = useTranslation()
-  const { id } = useParams()
-  const history = useHistory()
+  const { t } = useTranslation();
+  const { id } = useParams();
+  const history = useHistory();
 
-  console.log("customer_id", id)
+  console.log("customer_id", id);
 
-  const [loader, setLoader] = useState(true)
-  const [buttonLoader, setButtonLoader] = useState(false)
-  const [customerTypeOption, setCustomerTypeOption] = useState([])
-  const [selectedTab, setSelectedTab] = useState("about.client")
+  const [loader, setLoader] = useState(true);
+  const [buttonLoader, setButtonLoader] = useState(false);
+  const [customerTypeOption, setCustomerTypeOption] = useState([]);
+  const [selectedTab, setSelectedTab] = useState("about.client");
 
   const tabLabel = (text, isActive = false) => {
-    return <span className="px-1">{text}</span>
-  }
+    return <span className="px-1">{text}</span>;
+  };
 
   const TabBody = useCallback(
     ({ tab, children }) => {
-      if (tab === selectedTab) return children
-      return <></>
+      if (tab === selectedTab) return children;
+      return <></>;
     },
-    [selectedTab]
-  )
+    [selectedTab],
+  );
 
   const fetchItems = async () => {
     try {
-      const { customer_types } = await getCustomerType({ limit: 1000 })
+      const { customer_types } = await getCustomerType({ limit: 1000 });
       setCustomerTypeOption(
         customer_types
           ? customer_types.map((elm) => ({ label: elm.name, value: elm.id }))
-          : []
-      )
+          : [],
+      );
     } catch (e) {
-      console.log(e)
+      console.log(e);
     } finally {
-      setLoader(false)
+      setLoader(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchData()
-    fetchItems()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    fetchData();
+    fetchItems();
+  }, []);
 
   const initialValues = useMemo(
     () => ({
       name: "",
       phone: null,
     }),
-    []
-  )
+    [],
+  );
 
   const validationSchema = useMemo(() => {
-    const defaultSchema = yup.mixed().required(t("required.field.error"))
+    const defaultSchema = yup.mixed().required(t("required.field.error"));
 
     return yup.object().shape({
       name: defaultSchema,
@@ -85,45 +81,45 @@ export default function CreateClient() {
         .positive("A phone number can't start with a minus")
         .integer("A phone number can't include a decimal point")
         .required(t("required.field.error")),
-    })
-  }, [])
+    });
+  }, []);
 
   const fetchData = () => {
-    if (!id) return setLoader(false)
+    if (!id) return setLoader(false);
     getOneCustomer(id)
       .then((res) => {
         formik.setValues({
           name: res.name,
           phone: res.phone?.substring(4),
           is_aggregate: res.is_aggregate,
-        })
+        });
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const saveChanges = (data) => {
-    setButtonLoader(true)
-    const selectedAction = id ? updateCustomer(id, data) : postCustomer(data)
+    setButtonLoader(true);
+    const selectedAction = id ? updateCustomer(id, data) : postCustomer(data);
 
     selectedAction
       .then((res) => history.push("/home/personal/clients"))
-      .finally(() => setButtonLoader(false))
-  }
+      .finally(() => setButtonLoader(false));
+  };
 
   const onSubmit = (values) => {
     const data = {
       ...values,
       phone: "+998" + values.phone,
       is_aggregate: formik?.values.is_aggregate ?? false,
-    }
-    saveChanges(data)
-  }
+    };
+    saveChanges(data);
+  };
 
   const formik = useFormik({
     initialValues,
     onSubmit,
     validationSchema,
-  })
+  });
 
   const routes = [
     {
@@ -134,11 +130,11 @@ export default function CreateClient() {
     {
       title: id ? formik?.values.name : t("create"),
     },
-  ]
+  ];
 
-  if (loader) return <CustomSkeleton />
+  if (loader) return <CustomSkeleton />;
 
-  const { handleSubmit } = formik
+  const { handleSubmit } = formik;
 
   return (
     <div className="w-full">
@@ -193,5 +189,5 @@ export default function CreateClient() {
         </TabBody>
       </form>
     </div>
-  )
+  );
 }

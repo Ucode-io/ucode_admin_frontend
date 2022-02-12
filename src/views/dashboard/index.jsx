@@ -1,23 +1,22 @@
-import Header from "../../components/Header"
-import { useTranslation } from "react-i18next"
+import Header from "../../components/Header";
+import { useTranslation } from "react-i18next";
 // import Widgets from "../../components/Widgets"
-import HomeIcon from "@material-ui/icons/Home"
-import DiscussIcon from "@material-ui/icons/Textsms"
-import GavelIcon from "@material-ui/icons/Gavel"
-import CheckCircleIcon from "@material-ui/icons/CheckCircle"
-import { useEffect, useMemo, useState } from "react"
-import axios from "../../utils/axios"
-import FullScreenLoader from "../../components/FullScreenLoader"
+import HomeIcon from "@material-ui/icons/Home";
+import DiscussIcon from "@material-ui/icons/Textsms";
+import GavelIcon from "@material-ui/icons/Gavel";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import { useEffect, useMemo, useState } from "react";
+import axios from "../../utils/axios";
+import FullScreenLoader from "../../components/FullScreenLoader";
 // import AdminDashboard from "./AdminDashboard"
 // import LimitedDashboard from "./LimitedDashboard"
 
 const Dashboard = () => {
-  const { t } = useTranslation()
-  const [widgetData, setWidgetData] = useState({})
-  const [userData, setUserData] = useState({})
-  const [loading, setLoader] = useState(true)
+  const { t } = useTranslation();
+  const [widgetData, setWidgetData] = useState({});
+  const [userData, setUserData] = useState({});
+  const [loading, setLoader] = useState(true);
 
-  // eslint-disable-next-line no-unused-vars
   const computedWidgetsData = useMemo(() => {
     return [
       {
@@ -40,27 +39,27 @@ const Dashboard = () => {
         icon: CheckCircleIcon,
         number: widgetData?.sold_count,
       },
-    ]
-  }, [widgetData])
+    ];
+  }, [widgetData]);
 
   const fetchWidgetData = () => {
-    axios.get("/entity-count").then((res) => setWidgetData(res))
-  }
+    axios.get("/entity-count").then((res) => setWidgetData(res));
+  };
 
   const fetchUserData = () => {
     axios
       .get("/staff-by-token")
       .then((res) => {
-        res.status = res.role.status
-        setUserData(res)
+        res.status = res.role.status;
+        setUserData(res);
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   useEffect(() => {
-    fetchWidgetData()
-    fetchUserData()
-  }, [])
+    fetchWidgetData();
+    fetchUserData();
+  }, []);
 
   return (
     <div>
@@ -80,7 +79,7 @@ const Dashboard = () => {
         {/* {userData?.role?.code === 3 ? <LimitedDashboard /> : <AdminDashboard />} */}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

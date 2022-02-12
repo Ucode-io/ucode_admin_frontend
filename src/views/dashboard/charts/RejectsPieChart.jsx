@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
-import moment from "moment"
-import { useState } from "react"
-import { useTranslation } from "react-i18next"
+import moment from "moment";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ResponsiveContainer,
   PieChart,
@@ -9,14 +8,14 @@ import {
   Cell,
   Label,
   Tooltip,
-} from "recharts"
-import Card from "../../../components/Card"
-import RangePicker from "../../../components/DatePicker/RangePicker"
-import AutoComplate from "../../../components/Select/AutoComplate"
-import { gradients } from "../../../constants/gradients"
-import PieChartLabel from "./PieChartLabel"
-import { hundredsDivider } from "../../../helpers/hundredsDivider"
-import PieChartTooltip from "../../../components/Tooltip/PieChartTooltip"
+} from "recharts";
+import Card from "../../../components/Card";
+import RangePicker from "../../../components/DatePicker/RangePicker";
+import AutoComplate from "../../../components/Select/AutoComplate";
+import { gradients } from "../../../constants/gradients";
+import PieChartLabel from "./PieChartLabel";
+import { hundredsDivider } from "../../../helpers/hundredsDivider";
+import PieChartTooltip from "../../../components/Tooltip/PieChartTooltip";
 
 const data = [
   {
@@ -44,16 +43,16 @@ const data = [
     percent: 28,
     name: "Boshqalar",
   },
-]
+];
 
 const RejectsPieChart = () => {
-  const { t } = useTranslation()
-  const [loader, setLoader] = useState(false)
-  const [selectedCityId, setSelectedCityId] = useState(null)
-  const [selectedRegionId, setSelectedRegionId] = useState(null)
-  const [selectedDates, setSelectedDates] = useState([null, null])
+  const { t } = useTranslation();
+  const [loader, setLoader] = useState(false);
+  const [selectedCityId, setSelectedCityId] = useState(null);
+  const [selectedRegionId, setSelectedRegionId] = useState(null);
+  const [selectedDates, setSelectedDates] = useState([null, null]);
 
-  const totalSum = data.reduce((total, item) => (total += item.value), 0)
+  const totalSum = data.reduce((total, item) => (total += item.value), 0);
 
   return (
     <Card
@@ -80,8 +79,8 @@ const RejectsPieChart = () => {
             placeholder="Sanani tanlang"
             onChange={(val) => {
               setSelectedDates(
-                val.map((e) => (e ? moment(e).format("YYYY-MM-DD") : e))
-              )
+                val.map((e) => (e ? moment(e).format("YYYY-MM-DD") : e)),
+              );
             }}
           />
         </div>
@@ -157,7 +156,7 @@ const RejectsPieChart = () => {
         ))}
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default RejectsPieChart
+export default RejectsPieChart;

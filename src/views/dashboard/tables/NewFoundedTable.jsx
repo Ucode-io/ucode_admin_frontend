@@ -5,51 +5,55 @@ import {
   TableCell,
   TableBody,
   Table,
-} from "@material-ui/core"
-import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import TableLoader from "../../../components/TableLoader"
-import axios from "../../../utils/axios"
-import StatusTag from "../../../components/Tag/StatusTag"
-import moment from "moment"
-import TableMessage from "../../../components/TableMessage"
-import Card from "../../../components/Card"
-import ContentCopy from "../../../assets/icons/ContentCopy.svg"
-import ArrowForward from "../../../assets/icons/ArrowForward.svg"
-import { Link } from "react-router-dom"
-import Input from "../../../components/Input"
-import AutoComplate from "../../../components/Select/AutoComplate"
-import RangePicker from "../../../components/DatePicker/RangePicker"
-import Button from "../../../components/Button"
-import DownloadIcon from "@material-ui/icons/GetApp"
-import "../index.scss"
-import { useHistory } from "react-router"
+} from "@material-ui/core";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import TableLoader from "../../../components/TableLoader";
+import axios from "../../../utils/axios";
+import StatusTag from "../../../components/Tag/StatusTag";
+import moment from "moment";
+import TableMessage from "../../../components/TableMessage";
+import Card from "../../../components/Card";
+import ContentCopy from "../../../assets/icons/ContentCopy.svg";
+import ArrowForward from "../../../assets/icons/ArrowForward.svg";
+import { Link } from "react-router-dom";
+import Input from "../../../components/Input";
+import AutoComplate from "../../../components/Select/AutoComplate";
+import RangePicker from "../../../components/DatePicker/RangePicker";
+import Button from "../../../components/Button";
+import DownloadIcon from "@material-ui/icons/GetApp";
+import "../index.scss";
+import { useHistory } from "react-router";
 
 const NewFoundedTable = () => {
-  const { t } = useTranslation()
-  const [items, setItems] = useState({})
-  const [loader, setLoader] = useState(false)
-  // eslint-disable-next-line no-unused-vars
-  const [currentPage, setCurrentPage] = useState(1)
-  const [selectedCityId, setSelectedCityId] = useState(null)
-  const [selectedRegionId, setSelectedRegionId] = useState(null)
-  const [selectedDates, setSelectedDates] = useState([null, null])
-  const [searchText, setSearchText] = useState(null)
-  const history = useHistory()
+  const { t } = useTranslation();
+  const [items, setItems] = useState({});
+  const [loader, setLoader] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCityId, setSelectedCityId] = useState(null);
+  const [selectedRegionId, setSelectedRegionId] = useState(null);
+  const [selectedDates, setSelectedDates] = useState([null, null]);
+  const [searchText, setSearchText] = useState(null);
+  const history = useHistory();
 
   useEffect(() => {
-    getItems(currentPage, true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, selectedCityId, selectedRegionId, selectedDates, searchText])
+    getItems(currentPage, true);
+  }, [
+    currentPage,
+    selectedCityId,
+    selectedRegionId,
+    selectedDates,
+    searchText,
+  ]);
 
   const clearItems = () => {
-    setItems((prev) => ({ count: prev.count }))
-  }
+    setItems((prev) => ({ count: prev.count }));
+  };
 
   const getItems = (page, loader) => {
     if (loader) {
-      setLoader(true)
-      clearItems()
+      setLoader(true);
+      clearItems();
     }
 
     axios
@@ -66,15 +70,15 @@ const NewFoundedTable = () => {
         },
       })
       .then((res) => setItems(res))
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const calculateAddedTime = (datetime) => {
-    const currentDate = moment()
-    const one_day = 1000 * 60 * 60 * 24
-    const addedTime = currentDate - datetime
-    return Math.round(addedTime / one_day)
-  }
+    const currentDate = moment();
+    const one_day = 1000 * 60 * 60 * 24;
+    const addedTime = currentDate - datetime;
+    return Math.round(addedTime / one_day);
+  };
 
   return (
     <Card
@@ -115,8 +119,8 @@ const NewFoundedTable = () => {
             placeholder="Sanani tanlang"
             onChange={(val) => {
               setSelectedDates(
-                val.map((e) => (e ? moment(e).format("YYYY-MM-DD") : e))
-              )
+                val.map((e) => (e ? moment(e).format("YYYY-MM-DD") : e)),
+              );
             }}
           />
         </div>
@@ -149,13 +153,13 @@ const NewFoundedTable = () => {
               items.entities.map(
                 (
                   { id, status, created_at, entity_number, city, region },
-                  index
+                  index,
                 ) => (
                   <TableRow
                     key={id}
                     onClick={(e) => {
                       if (e.target.tagName === "DIV") {
-                        history.push(`/home/application/edit/${id}/1`)
+                        history.push(`/home/application/edit/${id}/1`);
                       }
                     }}
                   >
@@ -166,7 +170,7 @@ const NewFoundedTable = () => {
                         <button
                           onClick={(e) => {
                             if (e.target.tagName === "svg") {
-                              navigator.clipboard.writeText(entity_number)
+                              navigator.clipboard.writeText(entity_number);
                             }
                           }}
                           className="integration_checklist__copy_button"
@@ -197,7 +201,7 @@ const NewFoundedTable = () => {
                     <TableCell>{city.name}</TableCell>
                     <TableCell>{region.name}</TableCell>
                   </TableRow>
-                )
+                ),
               )
             ) : (
               <></>
@@ -213,7 +217,7 @@ const NewFoundedTable = () => {
         text="Yangi topilgan yerlar mavjud emas"
       />
     </Card>
-  )
-}
+  );
+};
 
-export default NewFoundedTable
+export default NewFoundedTable;

@@ -1,67 +1,66 @@
-import React, { useEffect, useMemo, useState } from "react"
-import { useSelector } from "react-redux"
-import { useFormik } from "formik"
-import * as yup from "yup"
-import { useTranslation } from "react-i18next"
-import { useHistory, useParams } from "react-router-dom"
-import { Input } from "alisa-ui"
+import React, { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { useTranslation } from "react-i18next";
+import { useHistory, useParams } from "react-router-dom";
+import { Input } from "alisa-ui";
 
 //components and functions
 import {
   getOneCompanyCategory,
   postCompanyCategory,
   updateCompanyCategory,
-} from "../../../../services/company_category"
-import { getShippers } from "../../../../services"
+} from "../../../../services/company_category";
+import { getShippers } from "../../../../services";
 
-import Form from "../../../../components/Form/Index"
-import Breadcrumb from "../../../../components/Breadcrumb"
-import Header from "../../../../components/Header"
-import Card from "../../../../components/Card"
-import Button from "../../../../components/Button"
-import Select from "../../../../components/Select"
-import Gallery from "../../../../components/Gallery"
-import CustomSkeleton from "../../../../components/Skeleton"
-import CancelIcon from "@material-ui/icons/Cancel"
-import SaveIcon from "@material-ui/icons/Save"
+import Form from "../../../../components/Form/Index";
+import Breadcrumb from "../../../../components/Breadcrumb";
+import Header from "../../../../components/Header";
+import Card from "../../../../components/Card";
+import Button from "../../../../components/Button";
+import Select from "../../../../components/Select";
+import Gallery from "../../../../components/Gallery";
+import CustomSkeleton from "../../../../components/Skeleton";
+import CancelIcon from "@material-ui/icons/Cancel";
+import SaveIcon from "@material-ui/icons/Save";
 
 export default function CreateCompanyCategory() {
-  const history = useHistory()
-  const { id } = useParams()
-  const { t } = useTranslation()
-  const [saveLoading, setSaveLoading] = useState(false)
-  const [shipper, setShipper] = useState([])
-  const [loader, setLoader] = useState(true)
-  const lang = useSelector((state) => state.lang.current)
+  const history = useHistory();
+  const { id } = useParams();
+  const { t } = useTranslation();
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [shipper, setShipper] = useState([]);
+  const [loader, setLoader] = useState(true);
+  const lang = useSelector((state) => state.lang.current);
 
   const getShippersFunction = () => {
-    setLoader(true)
+    setLoader(true);
     getShippers({ limit: 1000 })
       .then((res) => {
-        setShipper(res?.shippers)
+        setShipper(res?.shippers);
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const getItem = () => {
-    if (!id) return setLoader(false)
-    setLoader(true)
+    if (!id) return setLoader(false);
+    setLoader(true);
     getOneCompanyCategory(id)
       .then((res) => {
         formik.setValues({
           name: res.name,
           shipper_ids: res.shippers.map(({ id }, _) => id),
           image: res.image.replace("https://cdn.rasta.app/rasta/", ""),
-        })
+        });
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   useEffect(() => {
-    getShippersFunction()
-    getItem()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    getShippersFunction();
+    getItem();
+  }, []);
 
   const initialValues = useMemo(
     () => ({
@@ -69,11 +68,11 @@ export default function CreateCompanyCategory() {
       name: { en: "", ru: "", uz: "" },
       shipper_ids: [],
     }),
-    []
-  )
+    [],
+  );
 
   const validationSchema = useMemo(() => {
-    const defaultSchema = yup.mixed().required(t("required.field.error"))
+    const defaultSchema = yup.mixed().required(t("required.field.error"));
     return yup.object().shape({
       name: yup.object({
         en: defaultSchema,
@@ -81,26 +80,25 @@ export default function CreateCompanyCategory() {
         uz: defaultSchema,
       }),
       shipper_ids: yup.array().min(1, t("required.field.error")),
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    });
+  }, []);
 
   const shippers =
     shipper &&
     shipper.length &&
-    shipper.map(({ id, name }, _) => ({ label: name, value: id }))
+    shipper.map(({ id, name }, _) => ({ label: name, value: id }));
 
   const saveChanges = (data) => {
-    setSaveLoading(true)
+    setSaveLoading(true);
     const selectedAction = id
       ? updateCompanyCategory(id, data)
-      : postCompanyCategory(data)
+      : postCompanyCategory(data);
     selectedAction
       .then((res) => {
-        history.goBack()
+        history.goBack();
       })
-      .finally(() => setSaveLoading(false))
-  }
+      .finally(() => setSaveLoading(false));
+  };
 
   const onSubmit = (values) => {
     saveChanges({
@@ -108,16 +106,16 @@ export default function CreateCompanyCategory() {
       discount_type: "something",
       discount_value: 0,
       image: `${process.env.REACT_APP_MINIO_URL}/` + values.image,
-    })
-  }
+    });
+  };
 
   const formik = useFormik({
     initialValues,
     onSubmit,
     validationSchema,
-  })
+  });
 
-  if (loader) return <CustomSkeleton />
+  if (loader) return <CustomSkeleton />;
 
   const routes = [
     // {
@@ -133,9 +131,9 @@ export default function CreateCompanyCategory() {
     {
       title: id ? formik.values?.name[lang] : t("create"),
     },
-  ]
+  ];
 
-  const { values, handleChange, setFieldValue } = formik
+  const { values, handleChange, setFieldValue } = formik;
 
   return (
     <div className="w-full">
@@ -172,7 +170,7 @@ export default function CreateCompanyCategory() {
                   aspectRatio="1"
                   gallery={values.image ? [values.image] : []}
                   setGallery={(elm) => {
-                    setFieldValue("image", elm[0])
+                    setFieldValue("image", elm[0]);
                   }}
                   multiple={false}
                 />
@@ -238,7 +236,7 @@ export default function CreateCompanyCategory() {
                         value={
                           shippers && shippers.length
                             ? shippers.filter((item) =>
-                                values.shipper_ids.includes(item.value)
+                                values.shipper_ids.includes(item.value),
                               )
                             : []
                         }
@@ -247,8 +245,8 @@ export default function CreateCompanyCategory() {
                             "shipper_ids",
                             val && val.length
                               ? val.map((item) => item.value)
-                              : []
-                          )
+                              : [],
+                          );
                         }}
                         options={shippers}
                       />
@@ -261,5 +259,5 @@ export default function CreateCompanyCategory() {
         </div>
       </form>
     </div>
-  )
+  );
 }

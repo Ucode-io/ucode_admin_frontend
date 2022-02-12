@@ -1,20 +1,22 @@
 import { useState, useEffect } from "react";
 import Select from ".";
-import axios from "../../utils/axios"
-import "./style.scss"
+import axios from "../../utils/axios";
+import "./style.scss";
 
 const handleFormatOptions = (list) => {
-  return list && list.length ? list.map(elm => ({label: elm.name, value: elm.id})) : []
-}
+  return list && list.length
+    ? list.map((elm) => ({ label: elm.name, value: elm.id }))
+    : [];
+};
 
 // const generateParams = (arr) => {
 //   return arr && arr.length ? arr.map(el => '/' + el) : ''
 // }
 
-export default function AutoComplate ({
-  url = '/city',
+export default function AutoComplate({
+  url = "/city",
   params = "",
-  queryName = 'name',
+  queryName = "name",
   onFetched = (res) => res.cities,
   formatOptions = handleFormatOptions,
   onChange,
@@ -27,29 +29,31 @@ export default function AutoComplate ({
   isClearable,
   ...props
 }) {
-  const [options, setOptions] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if(params?.includes("undefined") || params?.includes("null")) return null
-    getOptions()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params, queryParams])
+    if (params?.includes("undefined") || params?.includes("null")) return null;
+    getOptions();
+  }, [params, queryParams]);
 
-  const getOptions = (search = '') => {
-    setLoading(true)
-    axios.get(url + (params ? `/${params}` : ""), {params: {
-      [queryName]: search,
-      ...queryParams
-    }})
-      .then(res => setOptions(formatOptions(onFetched(res))))
-      .finally(() => setLoading(false))
-  }
+  const getOptions = (search = "") => {
+    setLoading(true);
+    axios
+      .get(url + (params ? `/${params}` : ""), {
+        params: {
+          [queryName]: search,
+          ...queryParams,
+        },
+      })
+      .then((res) => setOptions(formatOptions(onFetched(res))))
+      .finally(() => setLoading(false));
+  };
 
   const onInputChange = (input) => {
-    getOptions(input)
-    onSearch(input)
-  }
+    getOptions(input);
+    onSearch(input);
+  };
 
   return (
     <Select
@@ -66,5 +70,5 @@ export default function AutoComplate ({
     >
       {children}
     </Select>
-  )
+  );
 }

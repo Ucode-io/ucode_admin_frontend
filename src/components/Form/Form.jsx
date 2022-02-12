@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react"
-import { Formik } from "formik"
-import * as Yup from "yup"
+import { useState, useEffect } from "react";
+import { Formik } from "formik";
+import * as Yup from "yup";
 
 export default function Form({
   initialValues = {},
@@ -10,22 +10,21 @@ export default function Form({
   initialSchema = {},
 }) {
   let schema = initialSchema,
-    values = {}
+    values = {};
 
   // **** USE-HOOKS ****
   const [validationSchema, setValidationSchema] = useState(
-    Yup.object().shape({})
-  )
-  const [_initialValues, setInitialValues] = useState({})
-  const [isReadyData, setIsReadyData] = useState(false)
+    Yup.object().shape({}),
+  );
+  const [_initialValues, setInitialValues] = useState({});
+  const [isReadyData, setIsReadyData] = useState(false);
   // const [_children, setChildren] = useState([])
 
   useEffect(() => {
     // fixDataForForm()
     // console.log(children)
-    defineChildrenType(children)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    defineChildrenType(children);
+  }, []);
 
   // **** FUNCTIONS ****
   // function fixDataForForm () {
@@ -54,49 +53,49 @@ export default function Form({
     if (Array.isArray(children)) {
       for (let el of children) {
         if (Array.isArray(el)) {
-          defineChildrenType(el)
+          defineChildrenType(el);
         } else {
-          makeInitialValuesAndSchema(el)
+          makeInitialValuesAndSchema(el);
         }
       }
     } else if (typeof children === "object") {
-      makeInitialValuesAndSchema(children)
+      makeInitialValuesAndSchema(children);
     }
     // console.log(schema, values)
-    setInitialValues({ ...values, ...initialValues }) // {...values, ...initialValues}
-    setValidationSchema(Yup.object().shape(schema))
-    setIsReadyData(true)
+    setInitialValues({ ...values, ...initialValues }); // {...values, ...initialValues}
+    setValidationSchema(Yup.object().shape(schema));
+    setIsReadyData(true);
   }
 
   function makeInitialValuesAndSchema(el) {
     if (el.type.name === "FormItem") {
-      values = { ...values, [el.props.name]: null }
+      values = { ...values, [el.props.name]: null };
       if (el.props.rule?.required) {
         schema = {
           ...schema,
           [el.props.name]: Yup.mixed().required(
-            el.props.rule?.message ?? "Required filed"
+            el.props.rule?.message ?? "Required filed",
           ),
-        }
+        };
       }
     } else {
-      defineChildrenType(el.props.children)
+      defineChildrenType(el.props.children);
     }
   }
 
   function setFormikToChildren(children, formik) {
     // debugger
-    if (!children) return undefined
+    if (!children) return undefined;
     if (Array.isArray(children)) {
       return children.map((el) =>
         Array.isArray(el)
           ? setFormikToChildren(el, formik)
-          : setPropsToChild(el, formik)
-      )
+          : setPropsToChild(el, formik),
+      );
     } else if (typeof children === "object") {
-      return setPropsToChild(children, formik)
+      return setPropsToChild(children, formik);
     }
-    return children
+    return children;
   }
 
   function setPropsToChild(el, formik) {
@@ -108,7 +107,7 @@ export default function Form({
       return {
         ...el,
         props: { ...el.props, formik },
-      }
+      };
     } else {
       return {
         ...el,
@@ -116,7 +115,7 @@ export default function Form({
           ...el.props,
           children: setFormikToChildren(el.props.children, formik),
         },
-      }
+      };
     }
   }
 
@@ -145,5 +144,5 @@ export default function Form({
         <></>
       )}
     </>
-  )
+  );
 }

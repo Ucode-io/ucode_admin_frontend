@@ -1,28 +1,26 @@
-import { useState, useMemo, useEffect } from "react";
-import Card from "../../../components/Card";
+import React, { useState, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
-import Form from "../../../components/Form/Index";
+import Card from "components/Card";
+import Form from "components/Form/Index";
 import { useTranslation } from "react-i18next";
 import { Input } from "alisa-ui";
 import { Close, Add } from "@material-ui/icons";
-import IconButton from "../../../components/Button/IconButton";
-import Modal from "../../../components/Modal";
+import IconButton from "components/Button/IconButton";
+import Modal from "components/Modal";
 import { useFormik } from "formik";
-import * as yup from "yup";
-import Select from "../../../components/Select";
-import TextArea from "../../../components/Textarea";
-import Button from "../../../components/Button";
-import { getProducts, getOneProduct } from "../../../services";
-import { RadioGroup, Radio } from "../../../components/Radio";
+// import * as yup from "yup";
+import Select from "components/Select";
+import TextArea from "components/Textarea";
+import Button from "components/Button";
+import { getProducts, getOneProduct } from "services";
+import { RadioGroup, Radio } from "components/Radio";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import DriveEtaIcon from "@material-ui/icons/DriveEta";
 import FunctionsIcon from "@material-ui/icons/Functions";
-
-//images
-import cash_icon from "../../../assets/icons/cash.png";
-import payme_icon from "../../../assets/icons/image 4.png";
-import click_icon from "../../../assets/icons/image 5.png";
-import bank_icon from "../../../assets/icons/image 7.png";
+import cashIcon from "../../../assets/icons/cash.png";
+import paymeIcon from "../../../assets/icons/image 4.png";
+import clickIcon from "../../../assets/icons/image 5.png";
+import bankIcon from "../../../assets/icons/image 7.png";
 import numberToPrice from "../../../helpers/numberToPrice";
 
 export default function ProductContent({
@@ -68,8 +66,8 @@ export default function ProductContent({
                   label: elm.name[lang],
                   value: elm,
                 }))
-              : []
-          )
+              : [],
+          ),
         )
         .catch((err) => console.log(err));
     }
@@ -114,8 +112,6 @@ export default function ProductContent({
     }
   }, [values.product]);
 
-  console.log(ingredients);
-
   const totalPrice = useMemo(() => {
     const productPrice = values.product?.value?.price ?? 0;
     const optionPrice = values.option?.value?.price ?? 0;
@@ -147,7 +143,7 @@ export default function ProductContent({
           (cur.optionChildPrice || 0) +
           (cur.ingredientsPrice || 0)) *
           cur.quantity,
-      0
+      0,
     );
   }, [selectedProducts]);
 
@@ -195,15 +191,13 @@ export default function ProductContent({
     }
   }
 
-  console.log(values);
-
   const handleRemoveProduct = (index) => {
     setSelectedProducts((prev) => prev.filter((elm, i) => index !== i));
   };
 
   const handleChangeQuantity = (index, val) => {
     setSelectedProducts((prev) =>
-      prev.map((elm, i) => (index === i ? { ...elm, quantity: val } : elm))
+      prev.map((elm, i) => (index === i ? { ...elm, quantity: val } : elm)),
     );
   };
 
@@ -218,16 +212,16 @@ export default function ProductContent({
             <Form.Item formik={formik} name="name">
               <div className="flex gap-2">
                 <div className="w-3/12 h-10 border bg-blue-200 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={cash_icon} alt="click image" className="h-6" />
+                  <img src={cashIcon} alt="click image" className="h-6" />
                 </div>
                 <div className="w-3/12 h-10 border bg-gray-50 hover:bg-blue-50 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={payme_icon} alt="click image" className="h-6" />
+                  <img src={paymeIcon} alt="click image" className="h-6" />
                 </div>
                 <div className="w-3/12 h-10 border bg-gray-50 hover:bg-blue-50 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={click_icon} alt="click image" className="h-5" />
+                  <img src={clickIcon} alt="click image" className="h-5" />
                 </div>
                 <div className="w-3/12 h-10 border bg-gray-50 hover:bg-blue-50 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={bank_icon} alt="click image" className="h-6" />
+                  <img src={bankIcon} alt="click image" className="h-6" />
                 </div>
               </div>
             </Form.Item>
@@ -286,10 +280,10 @@ export default function ProductContent({
               <Input value={elm?.name[lang]} disabled />
             </div>
 
-            {elm.option.name ? (
+            {elm.option?.name ? (
               <div>
                 <span className="input-label mb-1">{t("option")}</span>
-                <Input value={elm.option.name?.[lang]} disabled />
+                <Input value={elm.option?.name?.[lang]} disabled />
               </div>
             ) : (
               <></>
@@ -301,7 +295,7 @@ export default function ProductContent({
                   {t("additional.option")}
                 </span>
                 <Input
-                  value={elm.option.child_options[0]?.name?.[lang]}
+                  value={elm.option?.child_options[0]?.name?.[lang]}
                   disabled
                 />
               </div>
@@ -333,6 +327,7 @@ export default function ProductContent({
               <span className="input-label mb-1">{t("amount")}</span>
               <Input
                 type="number"
+                min={"1"}
                 value={elm.quantity}
                 width={182}
                 onChange={(e) =>
@@ -358,6 +353,10 @@ export default function ProductContent({
                 width={182}
                 disabled
               />
+            </div>
+            <div>
+              <span className="input-label mb-1">{t("description")}</span>
+              <Input type="text" placeholder={t("description")} width={182} />
             </div>
             <IconButton
               icon={<Close />}
@@ -441,7 +440,8 @@ export default function ProductContent({
                 options={ingredients
                   .filter(
                     (item) =>
-                      values.option && item.parent_id === values.option.value.id
+                      values.option &&
+                      item.parent_id === values.option.value.id,
                   )
                   .map((elm) => ({
                     label: `${elm.name[lang]} (${elm.price})`,

@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react"
-import Picker from "rc-calendar/lib/Picker"
-import RangeCalendar from "rc-calendar/lib/RangeCalendar"
-import { ruRU } from "rc-calendar/lib/locale/ru_RU"
-import TimePickerPanel from "rc-time-picker/lib/Panel"
+import { useState, useEffect } from "react";
+import Picker from "rc-calendar/lib/Picker";
+import RangeCalendar from "rc-calendar/lib/RangeCalendar";
+import { ruRU } from "rc-calendar/lib/locale/ru_RU";
+import TimePickerPanel from "rc-time-picker/lib/Panel";
 import {
   Close as CloseIcon,
   CalendarToday as CalendarIcon,
-} from "@material-ui/icons"
-import "rc-calendar/assets/index.css"
-import "rc-time-picker/assets/index.css"
-import "./index.scss"
+} from "@material-ui/icons";
+import "rc-calendar/assets/index.css";
+import "rc-time-picker/assets/index.css";
+import "./index.scss";
 
-import moment from "moment"
+import moment from "moment";
 
-import "moment/locale/ru"
+import "moment/locale/ru";
 
 const timePickerElement = (
   <TimePickerPanel
@@ -22,64 +22,64 @@ const timePickerElement = (
       moment("23:59:59", "HH:mm:ss"),
     ]}
   />
-)
+);
 
 function newArray(start, end) {
-  const result = []
+  const result = [];
   for (let i = start; i < end; i++) {
-    result.push(i)
+    result.push(i);
   }
-  return result
+  return result;
 }
 
 function disabledTime(time, type) {
   if (type === "start") {
     return {
       disabledHours() {
-        const hours = newArray(0, 60)
-        hours.splice(20, 4)
-        return hours
+        const hours = newArray(0, 60);
+        hours.splice(20, 4);
+        return hours;
       },
       disabledMinutes(h) {
         if (h === 20) {
-          return newArray(0, 31)
+          return newArray(0, 31);
         } else if (h === 23) {
-          return newArray(30, 60)
+          return newArray(30, 60);
         }
-        return []
+        return [];
       },
       disabledSeconds() {
-        return [55, 56]
+        return [55, 56];
       },
-    }
+    };
   }
   return {
     disabledHours() {
-      const hours = newArray(0, 60)
-      hours.splice(2, 6)
-      return hours
+      const hours = newArray(0, 60);
+      hours.splice(2, 6);
+      return hours;
     },
     disabledMinutes(h) {
       if (h === 20) {
-        return newArray(0, 31)
+        return newArray(0, 31);
       } else if (h === 23) {
-        return newArray(30, 60)
+        return newArray(30, 60);
       }
-      return []
+      return [];
     },
     disabledSeconds() {
-      return [55, 56]
+      return [55, 56];
     },
-  }
+  };
 }
 
-const formatStr = "YYYY-MM-DD"
+const formatStr = "YYYY-MM-DD";
 function format(v) {
-  return v ? v.locale("ru").format(formatStr) : ""
+  return v ? v.locale("ru").format(formatStr) : "";
 }
 
 function isValidRange(v) {
-  return v && v[0] && v[1]
+  return v && v[0] && v[1];
 }
 
 export default function RangePicker({
@@ -92,32 +92,31 @@ export default function RangePicker({
   onChange = () => {},
   ...rest
 }) {
-  const [value, setValue] = useState([])
-  const [hoverValue, setHoverValue] = useState([])
+  const [value, setValue] = useState([]);
+  const [hoverValue, setHoverValue] = useState([]);
 
-  const [isEmpty, setIsEmpty] = useState(false)
+  const [isEmpty, setIsEmpty] = useState(false);
 
   useEffect(() => {
-    setValue(defaultValue ?? undefined)
-    setIsEmpty(defaultValue && true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    setValue(defaultValue ?? undefined);
+    setIsEmpty(defaultValue && true);
+  }, []);
 
   const handleClick = (value) => {
-    setValue(value)
-    onChange(value)
-    setIsEmpty(false)
-  }
+    setValue(value);
+    onChange(value);
+    setIsEmpty(false);
+  };
 
   const onHoverChange = (hoverValue) => {
-    setHoverValue(hoverValue)
-  }
+    setHoverValue(hoverValue);
+  };
 
   const clearInput = () => {
-    setValue([])
-    onChange([null, null])
-    setIsEmpty(true)
-  }
+    setValue([]);
+    onChange([null, null]);
+    setIsEmpty(true);
+  };
   // const state = this.state;
   const calendar = (
     <RangeCalendar
@@ -131,7 +130,7 @@ export default function RangePicker({
       timePicker={!hideTimePicker ? timePickerElement : null}
       style={{ marginTop: "3rem", width: "100%" }}
     />
-  )
+  );
 
   return (
     <Picker
@@ -177,8 +176,8 @@ export default function RangePicker({
               <CloseIcon
                 className="date-input__icons__icon"
                 onClick={(e) => {
-                  e.stopPropagation()
-                  !disabled && clearInput()
+                  e.stopPropagation();
+                  !disabled && clearInput();
                 }}
                 style={{
                   fontSize: "19px",
@@ -191,8 +190,8 @@ export default function RangePicker({
               style={{ fontSize: "18px", color: "var(--color-primary)" }}
             />
           </div>
-        )
+        );
       }}
     </Picker>
-  )
+  );
 }

@@ -1,10 +1,10 @@
 import {
   Close as CloseIcon,
   CalendarToday as CalendarIcon,
-} from "@material-ui/icons"
-import moment from "moment"
-import { useEffect, useRef } from "react"
-import { useState } from "react"
+} from "@material-ui/icons";
+import moment from "moment";
+import { useEffect, useRef } from "react";
+import { useState } from "react";
 
 const DateInput = ({
   setCalendarVisible,
@@ -17,39 +17,38 @@ const DateInput = ({
   onChange,
   hideTimeBlock,
 }) => {
-  const [inputValue, setInputValue] = useState("")
-  const [focus, setFocus] = useState(false)
-  const inputRef = useRef()
+  const [inputValue, setInputValue] = useState("");
+  const [focus, setFocus] = useState(false);
+  const inputRef = useRef();
 
   useEffect(() => {
     setInputValue(
       selectedDate?.format(
-        hideTimeBlock ? "DD-MM-YYYY" : "DD-MM-YYYY HH:mm:ss"
-      ) ?? ""
-    )
-  }, [selectedDate, hideTimeBlock])
+        hideTimeBlock ? "DD-MM-YYYY" : "DD-MM-YYYY HH:mm:ss",
+      ) ?? "",
+    );
+  }, [selectedDate, hideTimeBlock]);
 
   const clearInput = () => {
-    setSelectedDate(null)
-    onChange(null)
-    setCalendarVisible(false)
-  }
+    setSelectedDate(null);
+    onChange(null);
+    setCalendarVisible(false);
+  };
 
-  const onInputFocus = () => setFocus(true)
+  const onInputFocus = () => setFocus(true);
 
-  const onInputBlur = () => setFocus(false)
+  const onInputBlur = () => setFocus(false);
 
-  const calendarIconClick = () => inputRef.current.focus()
+  const calendarIconClick = () => inputRef.current.focus();
 
   useEffect(() => {
-    if (focus) return setCalendarVisible(true)
+    if (focus) return setCalendarVisible(true);
 
-    const inputValueMoment = moment(inputValue, "DD-MM-YYYY HH:mm:ss")
+    const inputValueMoment = moment(inputValue, "DD-MM-YYYY HH:mm:ss");
 
-    if (inputValueMoment.isValid()) setSelectedDate(inputValueMoment)
-    else setInputValue(selectedDate?.format("DD-MM-YYYY HH:mm:ss") ?? "")
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focus])
+    if (inputValueMoment.isValid()) setSelectedDate(inputValueMoment);
+    else setInputValue(selectedDate?.format("DD-MM-YYYY HH:mm:ss") ?? "");
+  }, [focus]);
 
   return (
     <div
@@ -99,7 +98,7 @@ const DateInput = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DateInput
+export default DateInput;

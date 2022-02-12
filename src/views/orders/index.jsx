@@ -92,14 +92,14 @@ export default function Orders() {
             icon={AddIcon}
             onClick={() => history.push(`/home/orders/create`)}
           >
-            {t("add")}
+            {t("create.order")}
           </Button>,
         ]}
       />
       <Filter
         extra={
           <div className="flex gap-4">
-            <Button
+            {/* <Button
               icon={PlacemarkIcon}
               iconClassName="text-blue-600"
               color="zinc"
@@ -108,7 +108,7 @@ export default function Orders() {
               onClick={() => console.log("upload")}
             >
               {t("map")}
-            </Button>
+            </Button> */}
             <Button
               icon={DownloadIcon}
               iconClassName="text-blue-600"

@@ -1,4 +1,4 @@
-const Dotenv = require("dotenv-webpack")
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   style: {
@@ -9,4 +9,4 @@ module.exports = {
   webpack: {
     plugins: [new Dotenv({ path: "./.env.production" })],
   },
-}
+};

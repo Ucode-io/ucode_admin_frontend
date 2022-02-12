@@ -5,14 +5,14 @@ import {
   TableCell,
   TableBody,
   Table,
-} from "@material-ui/core"
-import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import TableLoader from "../../../components/TableLoader"
+} from "@material-ui/core";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import TableLoader from "../../../components/TableLoader";
 // import TableMessage from "../../../components/TableMessage"
-import Card from "../../../components/Card"
-import IncomeIcon from "../../../assets/icons/Income.svg"
-import axios from "../../../utils/axios"
+import Card from "../../../components/Card";
+import IncomeIcon from "../../../assets/icons/Income.svg";
+import axios from "../../../utils/axios";
 
 // const data = [
 //   {
@@ -98,24 +98,22 @@ import axios from "../../../utils/axios"
 // ]
 
 const IncomesTable = () => {
-  // eslint-disable-next-line no-unused-vars
-  const [currentPage, setCurrentPage] = useState(1)
-  const { t } = useTranslation()
-  const [items, setItems] = useState({})
-  const [loader, setLoader] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1);
+  const { t } = useTranslation();
+  const [items, setItems] = useState({});
+  const [loader, setLoader] = useState(false);
 
   const clearItems = () => {
-    setItems((prev) => ({ count: prev.count }))
-  }
+    setItems((prev) => ({ count: prev.count }));
+  };
   useEffect(() => {
-    getItems(currentPage, true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage])
+    getItems(currentPage, true);
+  }, [currentPage]);
 
   const getItems = (page, loader) => {
     if (loader) {
-      setLoader(true)
-      clearItems()
+      setLoader(true);
+      clearItems();
     }
 
     axios
@@ -132,10 +130,10 @@ const IncomesTable = () => {
         },
       })
       .then((res) => setItems(res))
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
-  console.log("items 1234", items)
+  console.log("items 1234", items);
 
   return (
     <Card title="Hududlar bo`yicha tushumlar" boldTitle>
@@ -169,7 +167,7 @@ const IncomesTable = () => {
                     in_auction,
                     in_discussion,
                   },
-                  index
+                  index,
                 ) => (
                   <TableRow key={index}>
                     <TableCell>{city_name}</TableCell>
@@ -179,7 +177,7 @@ const IncomesTable = () => {
                     <TableCell>{in_discussion}</TableCell>
                     <TableCell>{in_auction}</TableCell>
                   </TableRow>
-                )
+                ),
               )
             ) : (
               <></>
@@ -195,7 +193,7 @@ const IncomesTable = () => {
         text="Takliflar mavjud emas"
       /> */}
     </Card>
-  )
-}
+  );
+};
 
-export default IncomesTable
+export default IncomesTable;

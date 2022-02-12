@@ -17,6 +17,7 @@
     "alisa-ui": "^0.0.17",
     "axios": "^0.21.1",
     "dotenv-webpack": "^7.0.3",
+    "eslint-plugin-jest": "^24.7.0",
     "formik": "^2.2.9",
     "i18next": "^20.3.2",
     "moment": "^2.29.1",
@@ -59,12 +60,6 @@
     "eject": "react-scripts eject",
     "preinstall": "npx npm-force-resolutions"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -83,6 +78,7 @@
     "css-loader": "^5.2.6",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-import-resolver-webpack": "^0.13.2",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",

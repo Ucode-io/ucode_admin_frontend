@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react"
-import CSelect from "../Select"
-import ArrowBackIcon from "@material-ui/icons/ArrowBack"
-import ArrowForward from "@material-ui/icons/ArrowForward"
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft"
-import ChevronRightIcon from "@material-ui/icons/ChevronRight"
-import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile"
-import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown"
-import { Popover } from "@material-ui/core"
+import React, { useState, useEffect } from "react";
+import CSelect from "../Select";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowForward from "@material-ui/icons/ArrowForward";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import { Popover } from "@material-ui/core";
 
 function Pagination({
   children,
@@ -24,14 +24,13 @@ function Pagination({
   limit = 10,
   ...rest
 }) {
-  const [isActivePage, setIsActivePage] = useState(currentPage)
-  const [upperPageBound, setUpperPageBound] = useState(pageBound)
-  const [lowerPageBound, setLowerPageBound] = useState(0)
+  const [isActivePage, setIsActivePage] = useState(currentPage);
+  const [upperPageBound, setUpperPageBound] = useState(pageBound);
+  const [lowerPageBound, setLowerPageBound] = useState(0);
 
   useEffect(() => {
-    onChange(isActivePage)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActivePage])
+    onChange(isActivePage);
+  }, [isActivePage]);
 
   const getSize = (theme) => {
     switch (theme) {
@@ -41,42 +40,42 @@ function Pagination({
           width: "88px",
           height: "32px",
           // padding: "py-1 px-3",
-        }
+        };
       case "small":
         return {
           size: "text-xs",
           width: "72px",
           height: "24px",
           // padding: "px-2",
-        }
+        };
       default:
     }
-  }
+  };
 
   // get the number of pages
-  const pages = Math.ceil(count / pageCount)
+  const pages = Math.ceil(count / pageCount);
   // const gaps = Math.ceil(pages / (pageBound * 2))
 
   const btnIncrementClick = () => {
-    setUpperPageBound(upperPageBound + pageBound)
-    setLowerPageBound(lowerPageBound + pageBound)
-    let listId = upperPageBound + 1
-    setIsActivePage(listId)
-  }
+    setUpperPageBound(upperPageBound + pageBound);
+    setLowerPageBound(lowerPageBound + pageBound);
+    let listId = upperPageBound + 1;
+    setIsActivePage(listId);
+  };
 
   const btnDecrementClick = () => {
-    setUpperPageBound(upperPageBound - pageBound)
-    setLowerPageBound(lowerPageBound - pageBound)
-    let listId = upperPageBound - pageBound
-    setIsActivePage(listId)
-  }
+    setUpperPageBound(upperPageBound - pageBound);
+    setLowerPageBound(lowerPageBound - pageBound);
+    let listId = upperPageBound - pageBound;
+    setIsActivePage(listId);
+  };
 
-  const listedItems = []
+  const listedItems = [];
   for (let i = 1; i <= pages; i++) {
-    listedItems.push(i)
+    listedItems.push(i);
   }
-  let pageIncrementBtn = null
-  let pageDecrementBtn = null
+  let pageIncrementBtn = null;
+  let pageDecrementBtn = null;
 
   // DOTS before
   if (lowerPageBound >= 1) {
@@ -87,7 +86,7 @@ function Pagination({
       >
         &hellip;
       </span>
-    )
+    );
   }
 
   // DOTS after
@@ -99,27 +98,27 @@ function Pagination({
       >
         &hellip;
       </span>
-    )
+    );
   }
 
   const handleClick = (event) => {
-    let listId = Number(event.target.id)
-    setIsActivePage(listId)
-  }
+    let listId = Number(event.target.id);
+    setIsActivePage(listId);
+  };
 
   const handleLastItemClick = () => {
-    setUpperPageBound(pages + 1)
-    setLowerPageBound(pages - pageBound)
+    setUpperPageBound(pages + 1);
+    setLowerPageBound(pages - pageBound);
 
-    setIsActivePage(pages)
-  }
+    setIsActivePage(pages);
+  };
 
   const handleFirstItemClick = () => {
-    setUpperPageBound(pageBound)
-    setLowerPageBound(0)
+    setUpperPageBound(pageBound);
+    setLowerPageBound(0);
 
-    setIsActivePage(listedItems[0])
-  }
+    setIsActivePage(listedItems[0]);
+  };
 
   const renderPageNumbers = listedItems.map((number) => {
     if (number === 1 && isActivePage === 1) {
@@ -133,7 +132,7 @@ function Pagination({
         >
           {number}
         </span>
-      )
+      );
     } else if (number < upperPageBound + 1 && number > lowerPageBound) {
       return (
         <span
@@ -146,47 +145,47 @@ function Pagination({
         >
           {number}
         </span>
-      )
+      );
     }
-    return <span key={number + Math.random()}></span>
-  })
+    return <span key={number + Math.random()}></span>;
+  });
 
   // go to previous page
   const goToPrevPage = () => {
     if (isActivePage !== 1) {
       if ((isActivePage - 1) % pageBound === 0) {
-        setUpperPageBound((prev) => prev - pageBound)
-        setLowerPageBound((prev) => prev - pageBound)
+        setUpperPageBound((prev) => prev - pageBound);
+        setLowerPageBound((prev) => prev - pageBound);
       }
-      let listId = isActivePage - 1
-      setIsActivePage(listId)
+      let listId = isActivePage - 1;
+      setIsActivePage(listId);
     }
-  }
+  };
 
   // go to next page
   const goToNextPage = () => {
     if (isActivePage !== pages) {
       if (isActivePage + 1 > upperPageBound) {
-        setUpperPageBound((prev) => prev + pageBound)
-        setLowerPageBound((prev) => prev + pageBound)
+        setUpperPageBound((prev) => prev + pageBound);
+        setLowerPageBound((prev) => prev + pageBound);
       }
-      let listId = isActivePage + 1
-      setIsActivePage(listId)
+      let listId = isActivePage + 1;
+      setIsActivePage(listId);
     }
-  }
+  };
 
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClickPopup = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleClose = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
-  const open = Boolean(anchorEl)
-  const id = open ? "simple-popover" : undefined
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   return (
     <div
@@ -315,8 +314,8 @@ function Pagination({
         <div
           className="w-40 px-3 py-2 hover:bg-gray-50 cursor-pointer text-base font-medium"
           onClick={() => {
-            onChangeLimit(10)
-            handleClose()
+            onChangeLimit(10);
+            handleClose();
           }}
         >
           10
@@ -324,8 +323,8 @@ function Pagination({
         <div
           className="w-40 px-3 py-2 hover:bg-gray-50 cursor-pointer text-base font-medium"
           onClick={() => {
-            onChangeLimit(30)
-            handleClose()
+            onChangeLimit(30);
+            handleClose();
           }}
         >
           30
@@ -333,15 +332,15 @@ function Pagination({
         <div
           className="w-40 px-3 py-2 hover:bg-gray-50 cursor-pointer text-base font-medium"
           onClick={() => {
-            onChangeLimit(50)
-            handleClose()
+            onChangeLimit(50);
+            handleClose();
           }}
         >
           50
         </div>
       </Popover>
     </div>
-  )
+  );
 }
 
-export default Pagination
+export default Pagination;

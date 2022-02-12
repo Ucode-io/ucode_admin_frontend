@@ -5,71 +5,67 @@ import {
   TableCell,
   TableBody,
   Table,
-} from "@material-ui/core"
-import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import TableLoader from "../../../components/TableLoader"
-import axios from "../../../utils/axios"
-import StatusTag from "../../../components/Tag/StatusTag"
-import moment from "moment"
-import TableMessage from "../../../components/TableMessage"
-import Card from "../../../components/Card"
-import { Link } from "react-router-dom"
-import ContentCopy from "../../../assets/icons/ContentCopy.svg"
-import ArrowForward from "../../../assets/icons/ArrowForward.svg"
-import AutoComplate from "../../../components/Select/AutoComplate"
-import Input from "../../../components/Input"
-import Button from "../../../components/Button"
-import DownloadIcon from "@material-ui/icons/GetApp"
-import "../index.scss"
+} from "@material-ui/core";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import TableLoader from "../../../components/TableLoader";
+import axios from "../../../utils/axios";
+import StatusTag from "../../../components/Tag/StatusTag";
+import moment from "moment";
+import TableMessage from "../../../components/TableMessage";
+import Card from "../../../components/Card";
+import { Link } from "react-router-dom";
+import ContentCopy from "../../../assets/icons/ContentCopy.svg";
+import ArrowForward from "../../../assets/icons/ArrowForward.svg";
+import AutoComplate from "../../../components/Select/AutoComplate";
+import Input from "../../../components/Input";
+import Button from "../../../components/Button";
+import DownloadIcon from "@material-ui/icons/GetApp";
+import "../index.scss";
 
-let timeout
+let timeout;
 
 const NewOffersTable = () => {
-  const { t } = useTranslation()
-  const [items, setItems] = useState({})
-  const [loader, setLoader] = useState(false)
-  // eslint-disable-next-line no-unused-vars
-  const [currentPage, setCurrentPage] = useState(1)
-  const [selectedCityId, setSelectedCityId] = useState(null)
-  // eslint-disable-next-line no-unused-vars
-  const [selectedRegionId, setSelectedRegionId] = useState(null)
-  // eslint-disable-next-line no-unused-vars
-  const [selectedStatusId, setSelectedStatusId] = useState(null)
-  const [searchText, setSearchText] = useState(null)
+  const { t } = useTranslation();
+  const [items, setItems] = useState({});
+  const [loader, setLoader] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCityId, setSelectedCityId] = useState(null);
+  const [selectedRegionId, setSelectedRegionId] = useState(null);
+  const [selectedStatusId, setSelectedStatusId] = useState(null);
+  const [searchText, setSearchText] = useState(null);
 
   useEffect(() => {
-    getItems(currentPage, true)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage])
+    getItems(currentPage, true);
+  }, [currentPage]);
 
   useEffect(() => {
     return () => {
-      clearTimeout(timeout)
-    }
-  }, [])
+      clearTimeout(timeout);
+    };
+  }, []);
 
   const clearItems = () => {
-    setItems((prev) => ({ count: prev.count }))
-  }
+    setItems((prev) => ({ count: prev.count }));
+  };
 
   const getItems = (page, loader) => {
-    clearTimeout(timeout)
+    clearTimeout(timeout);
     if (loader) {
-      setLoader(true)
-      clearItems()
+      setLoader(true);
+      clearItems();
     }
 
     axios
       .get("/entity-draft-expired")
       .then((res) => {
         timeout = setTimeout(() => {
-          getItems(currentPage, false)
-        }, 5000)
-        setItems(res)
+          getItems(currentPage, false);
+        }, 5000);
+        setItems(res);
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   return (
     <Card
@@ -157,7 +153,7 @@ const NewOffersTable = () => {
                     region,
                     district,
                   },
-                  index
+                  index,
                 ) => (
                   <TableRow key={id}>
                     <TableCell>{index + 1}</TableCell>
@@ -166,8 +162,8 @@ const NewOffersTable = () => {
                         {entity_draft_number}{" "}
                         <button
                           onClick={() => {
-                            navigator.clipboard.writeText(entity_draft_number)
-                            console.log("click")
+                            navigator.clipboard.writeText(entity_draft_number);
+                            console.log("click");
                           }}
                           className="integration_checklist__copy_button"
                         >
@@ -196,7 +192,7 @@ const NewOffersTable = () => {
                     <TableCell>{region.name}</TableCell>
                     <TableCell>{district.name}</TableCell>
                   </TableRow>
-                )
+                ),
               )
             ) : (
               <></>
@@ -212,7 +208,7 @@ const NewOffersTable = () => {
         text="Takliflar mavjud emas"
       />
     </Card>
-  )
-}
+  );
+};
 
-export default NewOffersTable
+export default NewOffersTable;

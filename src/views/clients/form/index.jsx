@@ -1,16 +1,16 @@
-import Card from "../../../components/Card";
-import Form from "../../../components/Form/Index";
+import Card from "components/Card";
+import Form from "components/Form/Index";
 import { Input } from "alisa-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import numberToPrice from "../../../helpers/numberToPrice";
-import ClientCreateCard from "../../../components/ClientCard/Create";
+import numberToPrice from "helpers/numberToPrice";
+import ClientCreateCard from "components/ClientCard/Create";
 import AttachMoneyOutlinedIcon from "@material-ui/icons/AttachMoneyOutlined";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import MoneyOffIcon from "@material-ui/icons/MoneyOff";
 import FunctionsIcon from "@material-ui/icons/Functions";
-import Gallery from "../../../components/Gallery";
-import Select from "../../../components/Select";
+import Gallery from "components/Gallery";
+import Select from "components/Select";
 
 export default function Client({ formik, customerTypeOption }) {
   const { t } = useTranslation();
@@ -28,7 +28,7 @@ export default function Client({ formik, customerTypeOption }) {
           {
             icon: <AttachMoneyOutlinedIcon fontSize="large" />,
             count: numberToPrice(27500, "сум"),
-            title: t("clients"),
+            title: t("average.check"),
           },
           {
             icon: <ShoppingCartIcon fontSize="large" />,

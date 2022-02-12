@@ -1,39 +1,39 @@
-import { ClickAwayListener } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import { ClickAwayListener } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import {
   StatusMenuContainer,
   SelectArrow,
   StatusMenuList,
   StatusMenuOptionContainer,
-} from './styles'
-import CheckBox from '../Checkbox/CheckBox'
-import { useTranslation } from 'react-i18next'
-import { LocationOn } from '@material-ui/icons'
-import axios from '../../utils/axios'
+} from "./styles";
+import CheckBox from "../Checkbox/CheckBox";
+import { useTranslation } from "react-i18next";
+import { LocationOn } from "@material-ui/icons";
+import axios from "../../utils/axios";
 
 const Arrow = () => (
   <svg
-    height='20'
-    width='20'
-    viewBox='0 0 20 20'
-    aria-hidden='true'
-    focusable='false'
-    className='css-tj5bde-Svg'
+    height="20"
+    width="20"
+    viewBox="0 0 20 20"
+    aria-hidden="true"
+    focusable="false"
+    className="css-tj5bde-Svg"
   >
-    <path d='M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z' />
+    <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z" />
   </svg>
-)
+);
 export function StatusMenuOption({ data, onChange, values }) {
   const handleChange = (e) => {
     if (e.target.checked) {
-      onChange([...values, data])
+      onChange([...values, data]);
     } else {
       const filteredValues = values.filter(
-        (el) => el.value.id !== data?.value?.id
-      )
-      onChange(filteredValues)
+        (el) => el.value.id !== data?.value?.id,
+      );
+      onChange(filteredValues);
     }
-  }
+  };
 
   return (
     <StatusMenuOptionContainer>
@@ -43,18 +43,18 @@ export function StatusMenuOption({ data, onChange, values }) {
         label={data?.label}
       />
     </StatusMenuOptionContainer>
-  )
+  );
 }
 const handleFormatOptions = (list) => {
   return list && list.length
     ? list.map((elm) => ({ label: elm.name, value: elm }))
-    : []
-}
+    : [];
+};
 function MultiSelect({
   value: values,
-  url = '/city',
-  params = '',
-  queryName = 'name',
+  url = "/city",
+  params = "",
+  queryName = "name",
   onFetched = (res) => res.cities,
   formatOptions = handleFormatOptions,
   onChange,
@@ -67,31 +67,30 @@ function MultiSelect({
   placeholder,
   ...props
 }) {
-  const { t } = useTranslation()
-  const [openMenu, setOpenMenu] = useState(false)
-  const [options, setOptions] = useState([])
+  const { t } = useTranslation();
+  const [openMenu, setOpenMenu] = useState(false);
+  const [options, setOptions] = useState([]);
   // eslint-disable-next-line no-unused-vars
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const resetValues = () => {
     if (options?.length) {
-      onChange(options)
+      onChange(options);
     }
-  }
+  };
 
   useEffect(() => {
-    if (params?.includes('undefined') || params?.includes('null')) return null
-    getOptions()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params, queryParams])
+    if (params?.includes("undefined") || params?.includes("null")) return null;
+    getOptions();
+  }, [params, queryParams]);
 
   const getOptions = () => {
-    setLoading(true)
+    setLoading(true);
     axios
-      .get(url + (params ? `/${params}` : ''))
+      .get(url + (params ? `/${params}` : ""))
       .then((res) => setOptions(formatOptions(onFetched(res))))
-      .finally(() => setLoading(false))
-  }
+      .finally(() => setLoading(false));
+  };
 
   return (
     <StatusMenuContainer
@@ -108,8 +107,8 @@ function MultiSelect({
         <ClickAwayListener onClickAway={() => setOpenMenu(false)}>
           <StatusMenuList noOptions={!options?.length}>
             <div>
-              <button type='button' onClick={resetValues}>
-                {options?.length ? 'Hammasi' : 'Topilmadi'}
+              <button type="button" onClick={resetValues}>
+                {options?.length ? "Hammasi" : "Topilmadi"}
               </button>
               {options?.map((item) => (
                 <StatusMenuOption
@@ -123,10 +122,10 @@ function MultiSelect({
           </StatusMenuList>
         </ClickAwayListener>
       ) : (
-        ''
+        ""
       )}
     </StatusMenuContainer>
-  )
+  );
 }
 
-export default MultiSelect
+export default MultiSelect;

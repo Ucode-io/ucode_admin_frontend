@@ -30,11 +30,9 @@ const EntityDraftTable = () => {
   const { t } = useTranslation();
   const [items, setItems] = useState({});
   const [loader, setLoader] = useState(false);
-  // eslint-disable-next-line no-unused-vars
   const [currentPage, setCurrentPage] = useState(1);
   // const [selectedCityId, setSelectedCityId] = useState(null)
   // const [selectedRegionId, setSelectedRegionId] = useState(null)
-  // eslint-disable-next-line no-unused-vars
   const [selectedStatusId, setSelectedStatusId] = useState(null);
   const [searchText, setSearchText] = useState(null);
 

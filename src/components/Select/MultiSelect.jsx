@@ -70,7 +70,6 @@ function MultiSelect({
   const { t } = useTranslation();
   const [openMenu, setOpenMenu] = useState(false);
   const [options, setOptions] = useState([]);
-  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
 
   const resetValues = () => {

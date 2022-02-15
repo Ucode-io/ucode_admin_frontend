@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -11,28 +11,25 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import axios from "utils/axios";
 import { Input } from "alisa-ui";
-import Pagination from "../../components/Pagination";
-import LoaderComponent from "../../components/Loader";
-import Card from "../../components/Card";
-import ActionMenu from "../../components/ActionMenu";
-import ClientCard from "../../components/ClientCard";
-import Button from "../../components/Button";
-import Filters from "../../components/Filters";
+import Pagination from "components/Pagination";
+import LoaderComponent from "components/Loader";
+import Card from "components/Card";
+import ActionMenu from "components/ActionMenu";
+import Button from "components/Button";
+import Filters from "components/Filters";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import GroupIcon from "@material-ui/icons/Group";
 import SearchIcon from "@material-ui/icons/Search";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import DirectionsCarIcon from "@material-ui/icons/DirectionsCar";
-import Modal from "../../components/Modal";
-import { deleteCustomer } from "../../services";
-import StatusTag from "../../components/Tag/StatusTag";
-import TextFilter from "../../components/Filters/TextFilter";
+import Modal from "components/Modal";
+import { deleteCustomer } from "services";
+import StatusTag from "components/Tag/StatusTag";
+import TextFilter from "components/Filters/TextFilter";
 import TableChartIcon from "@material-ui/icons/TableChart";
-import { DownloadIcon, ExportIcon } from "../../constants/icons";
+import { DownloadIcon, ExportIcon } from "constants/icons";
 import Widgets from "components/Widgets";
 
-const ApplicationTable = () => {
+export default function ApplicationTable() {
   const { t } = useTranslation();
   const [items, setItems] = useState({});
   const [loader, setLoader] = useState(true);
@@ -43,21 +40,6 @@ const ApplicationTable = () => {
   const [search, setSearch] = useState("");
 
   let debounce = setTimeout(() => {}, 0);
-
-  const handleDeleteItem = () => {
-    setDeleteLoading(true);
-    deleteCustomer(deleteModal.id)
-      .then((res) => {
-        getItems(currentPage);
-        setDeleteLoading(false);
-        setDeleteModal(null);
-      })
-      .finally(() => setDeleteLoading(false));
-  };
-
-  useEffect(() => {
-    getItems(currentPage);
-  }, [currentPage, search]);
 
   const clearItems = () => {
     setItems((prev) => ({ count: prev.count }));
@@ -83,6 +65,21 @@ const ApplicationTable = () => {
       setSearch(e.target.value);
     }, 300);
   };
+
+  const handleDeleteItem = () => {
+    setDeleteLoading(true);
+    deleteCustomer(deleteModal.id)
+      .then(() => {
+        getItems(currentPage);
+        setDeleteLoading(false);
+        setDeleteModal(null);
+      })
+      .finally(() => setDeleteLoading(false));
+  };
+
+  useEffect(() => {
+    getItems(currentPage);
+  }, [currentPage, search]);
 
   const extraFilter = (
     <div className="flex gap-4">
@@ -112,8 +109,8 @@ const ApplicationTable = () => {
     </div>
   );
 
-  const computedWidgetsData = useMemo(() => {
-    return [
+  const computedWidgetsData = useMemo(
+    () => [
       {
         icon: GroupIcon,
         number: +items.count || 0,
@@ -138,8 +135,9 @@ const ApplicationTable = () => {
         title: t("today.registered"),
         key: "today.registered",
       },
-    ];
-  }, [items.count]);
+    ],
+    [items.count],
+  );
 
   return (
     <div>
@@ -264,64 +262,59 @@ const ApplicationTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.customers && items.customers.length ? (
-                items.customers.map(
-                  ({ id, name, orders_amount, phone, is_blocked }, index) => (
-                    <TableRow
-                      className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-                      key={id}
-                      onClick={() =>
-                        history.push(`/home/personal/clients/${id}`)
-                      }
-                    >
-                      <TableCell>
-                        <p>{(currentPage - 1) * 10 + index + 1}</p>
-                      </TableCell>
-                      <TableCell>{name}</TableCell>
-                      <TableCell>{orders_amount}</TableCell>
-                      <TableCell>
-                        <div>{phone}</div>
-                      </TableCell>
-                      <TableCell className="px-5">
-                        {/*<CheckStatus*/}
-                        {/*  status={!is_blocked}*/}
-                        {/*/>*/}
-                        <div className="w-10/12">
-                          <StatusTag
-                            status={!is_blocked}
-                            color={is_blocked ? "#F2271C" : "#0E73F6"}
+              {items.customers && items.customers.length
+                ? items.customers.map(
+                    ({ id, name, orders_amount, phone, is_blocked }, index) => (
+                      <TableRow
+                        className={index % 2 === 0 ? "bg-lightgray-5" : ""}
+                        key={id}
+                        onClick={() =>
+                          history.push(`/home/personal/clients/${id}`)
+                        }
+                      >
+                        <TableCell>
+                          <p>{(currentPage - 1) * 10 + index + 1}</p>
+                        </TableCell>
+                        <TableCell>{name}</TableCell>
+                        <TableCell>{orders_amount}</TableCell>
+                        <TableCell>
+                          <div>{phone}</div>
+                        </TableCell>
+                        <TableCell className="px-5">
+                          <div className="w-10/12">
+                            <StatusTag
+                              status={!is_blocked}
+                              color={is_blocked ? "#F2271C" : "#0E73F6"}
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell align="right">
+                          <ActionMenu
+                            id={id}
+                            actions={[
+                              {
+                                icon: <EditIcon />,
+                                color: "blue",
+                                title: t("change"),
+                                action: () => {
+                                  history.push(`/home/personal/clients/${id}`);
+                                },
+                              },
+                              {
+                                icon: <DeleteIcon />,
+                                color: "red",
+                                title: t("delete"),
+                                action: () => {
+                                  setDeleteModal({ id });
+                                },
+                              },
+                            ]}
                           />
-                        </div>
-                      </TableCell>
-                      <TableCell align="right">
-                        <ActionMenu
-                          id={id}
-                          actions={[
-                            {
-                              icon: <EditIcon />,
-                              color: "blue",
-                              title: t("change"),
-                              action: () => {
-                                history.push(`/home/personal/clients/${id}`);
-                              },
-                            },
-                            {
-                              icon: <DeleteIcon />,
-                              color: "red",
-                              title: t("delete"),
-                              action: () => {
-                                setDeleteModal({ id: id });
-                              },
-                            },
-                          ]}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ),
-                )
-              ) : (
-                <></>
-              )}
+                        </TableCell>
+                      </TableRow>
+                    ),
+                  )
+                : null}
             </TableBody>
           </Table>
         </TableContainer>
@@ -338,6 +331,4 @@ const ApplicationTable = () => {
       </Card>
     </div>
   );
-};
-
-export default ApplicationTable;
+}

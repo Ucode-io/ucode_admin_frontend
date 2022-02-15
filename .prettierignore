@@ -1,6 +1,9 @@
 # Ignore artifacts
+node_modules
 build
 dist
-coverage
-node_modules
-public
+DS_Store
+/.next/
+/out/
+cypress
+**/*.test.js

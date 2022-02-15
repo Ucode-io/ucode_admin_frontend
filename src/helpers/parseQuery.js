@@ -1,6 +1,6 @@
 export default function parseQuery(_query) {
   const url = new URL(
-    window.location.origin + window.location.hash.substring(1)
+    window.location.origin + window.location.hash.substring(1),
   );
   let query = _query || url.search;
   if (!query) return {};
@@ -11,6 +11,6 @@ export default function parseQuery(_query) {
         .replace(/"/g, '\\"')
         .replace(/&/g, '","')
         .replace(/=/g, '":"') +
-      '"}'
+      '"}',
   );
 }

@@ -26,6 +26,7 @@ export default function MainContent({
   setAddressList,
   setSearchAddress,
   addressList,
+  distance,
   ...props
 }) {
   const { t } = useTranslation();
@@ -54,12 +55,28 @@ export default function MainContent({
     getClients(inputValue);
   };
 
+  const onSearchClientType = (inputValue, actionMeta) => {
+    getClientTypes(inputValue);
+  };
+
   const onClientSelect = (newValue, actionMeta) => {
     setFieldValue("client", { ...newValue, action: actionMeta.action });
     if (actionMeta.action === "create-option") {
-      setFieldValue("client_name", "");
+      setFieldValue("client_first_name", "");
+      setFieldValue("client_last_name", "");
     } else {
-      setFieldValue("client_name", newValue?.elm?.name);
+      setFieldValue("client_first_name", newValue?.elm?.first_name);
+      setFieldValue("client_last_name", newValue?.elm?.last_name);
+    }
+  };
+
+  const onClientTypeSelect = (newValue, actionMeta) => {
+    setFieldValue("client", { ...newValue, action: actionMeta.action });
+    if (actionMeta.action === "create-option") {
+      setFieldValue("client_first_name", "");
+    } else {
+      setFieldValue("client_first_name", newValue?.elm?.first_name);
+      setFieldValue("client_first_name", newValue?.elm?.last_name);
     }
   };
 
@@ -95,17 +112,17 @@ export default function MainContent({
                 <span>{t("client.type")}</span>
               </div>
               <div className="w-2/3">
-                <Form.Item formik={formik} name="client">
+                <Form.Item formik={formik} name="client_type">
                   <CreatableSelect
-                    options={customers}
-                    value={values.client}
+                    options={[{ label: "", value: "" }]}
+                    value={values.client_type}
                     formatCreateLabel={(inputText) =>
                       `${t("create")} "${inputText}"`
                     }
                     styles={customStyles({})}
-                    onChange={onClientSelect}
-                    onInputChange={onSearchCustomer}
-                    placeholder={t("phone.number")}
+                    onChange={onClientTypeSelect}
+                    onInputChange={onSearchClientType}
+                    placeholder={t("client.type")}
                     className="react-select-input"
                   />
                 </Form.Item>
@@ -117,11 +134,11 @@ export default function MainContent({
                 <span>{t("first.name")}</span>
               </div>
               <div className="w-2/3">
-                <Form.Item formik={formik} name="client_name">
+                <Form.Item formik={formik} name="client_first_name">
                   <Input
-                    id="client_name"
+                    id="client_first_name"
                     placeholder={t("first.name") + "..."}
-                    value={values.client_name}
+                    value={values.client_first_name}
                     onChange={handleChange}
                   />
                 </Form.Item>
@@ -133,11 +150,11 @@ export default function MainContent({
                 <span>{t("last.name")}</span>
               </div>
               <div className="w-2/3">
-                <Form.Item formik={formik} name="client_name">
+                <Form.Item formik={formik} name="client_last_name">
                   <Input
-                    id="client_name"
-                    placeholder={t("first.name") + "..."}
-                    value={values.client_name}
+                    id="client_last_name"
+                    placeholder={t("last.name") + "..."}
+                    value={values.client_last_name}
                     onChange={handleChange}
                   />
                 </Form.Item>
@@ -172,7 +189,7 @@ export default function MainContent({
                   <TextArea
                     size={5}
                     id="order_description"
-                    value={values.description}
+                    value={values.order_description}
                     onChange={handleChange}
                     placeholder={t("order.description") + "..."}
                   />
@@ -186,12 +203,14 @@ export default function MainContent({
           title={
             <div className="flex justify-between">
               <span>{t("type-delivery")}</span>
-              <span className="font-normal text-sm">
-                {t("distance")}:{" "}
-                <span className="font-bold">
-                  {"10.4"} {t("km")}
+              {distance && (
+                <span className="font-normal text-sm">
+                  {t("distance")}:{" "}
+                  <span className="font-bold">
+                    {distance} {t("km")}
+                  </span>
                 </span>
-              </span>
+              )}
             </div>
           }
           className="w-3/5"
@@ -309,7 +328,7 @@ export default function MainContent({
                 <Form.Item formik={formik} name="apartment_block">
                   <Input
                     id="apartment_block"
-                    value={values.building}
+                    value={values.apartment_block}
                     onChange={handleChange}
                     placeholder={t("apartment_block") + "..."}
                   />
@@ -354,7 +373,7 @@ export default function MainContent({
                 <span>{t("intercom")}</span>
               </div>
               <div className="w-2/3">
-                <Form.Item formik={formik} name="branch.elm.intercom">
+                <Form.Item formik={formik} name="intercom">
                   <Input
                     disabled
                     value={values.branch?.elm?.intercom ?? ""}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -8,8 +8,8 @@ import {
   TableRow,
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import axios from "../../utils/axios";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
+import axios from "utils/axios";
 import { Input } from "alisa-ui";
 import Pagination from "../../components/Pagination";
 import LoaderComponent from "../../components/Loader";
@@ -30,6 +30,7 @@ import StatusTag from "../../components/Tag/StatusTag";
 import TextFilter from "../../components/Filters/TextFilter";
 import TableChartIcon from "@material-ui/icons/TableChart";
 import { DownloadIcon, ExportIcon } from "../../constants/icons";
+import Widgets from "components/Widgets";
 
 const ApplicationTable = () => {
   const { t } = useTranslation();
@@ -111,6 +112,35 @@ const ApplicationTable = () => {
     </div>
   );
 
+  const computedWidgetsData = useMemo(() => {
+    return [
+      {
+        icon: GroupIcon,
+        number: +items.count || 0,
+        title: t("clients"),
+        key: "clients",
+      },
+      {
+        icon: GroupIcon,
+        number: +items.count || 0,
+        title: t("active.clients"),
+        key: "active.clients",
+      },
+      {
+        icon: GroupIcon,
+        number: +items.count || 0,
+        title: t("today.ordered"),
+        key: "today.ordered",
+      },
+      {
+        icon: GroupIcon,
+        number: +items.count || 0,
+        title: t("today.registered"),
+        key: "today.registered",
+      },
+    ];
+  }, [items.count]);
+
   return (
     <div>
       <Filters extra={extraFilter}>
@@ -122,7 +152,7 @@ const ApplicationTable = () => {
           addonBefore={<SearchIcon style={{ color: "var(--color-primary)" }} />}
         />
       </Filters>
-      <div className="w-full grid grid-cols-4">
+      {/* <div className="w-full grid grid-cols-4">
         <ClientCard
           classNameCard="justify-between"
           classNameIcon="mr-8"
@@ -175,6 +205,9 @@ const ApplicationTable = () => {
           inversely={false}
           columnNumber={1}
         />
+      </div> */}
+      <div className="p-4 pt-4">
+        <Widgets data={computedWidgetsData} />
       </div>
 
       <Card
@@ -230,7 +263,6 @@ const ApplicationTable = () => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            {console.log(items?.customers)}
             <TableBody>
               {items.customers && items.customers.length ? (
                 items.customers.map(

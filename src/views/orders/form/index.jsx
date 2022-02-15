@@ -68,20 +68,31 @@ export default function CreateClient() {
   const initialValues = useMemo(
     () => ({
       shipper: null,
+
       client: null,
+      client_type: null,
+      client_first_name: null,
+      client_last_name: null,
+
       is_courier_call: false,
-      client_name: null,
-      description: "",
-      apartment: "",
-      building: "",
-      floor: "",
+
+      client_description: null,
+      order_description: null,
+
       delivery_type: null,
+
       is_reissued: false,
       paid: false,
       payment_type: "cash",
       source: "admin_panel",
+
       to_address: "",
+      restaurant: null,
+      apartment_block: null,
+      apartment: null,
       branch: null,
+      floor: null,
+      intercom: null,
     }),
     [],
   );
@@ -91,7 +102,8 @@ export default function CreateClient() {
     return yup.object().shape({
       client: defaultSchema,
       shipper: defaultSchema,
-      client_name: defaultSchema,
+      client_first_name: defaultSchema,
+      client_last_name: defaultSchema,
       delivery_type: defaultSchema,
       to_address: defaultSchema,
       branch: defaultSchema,
@@ -117,12 +129,6 @@ export default function CreateClient() {
       const _deliveryPrice = await getDeliveryPrice()
         .then((res) => res.price)
         .catch((err) => console.log(err));
-
-      //   const computeDeliveryPrice = await getComputeDeliveryPrice({branch_id: "string",
-      //   lat: 0,
-      //   long: 0,
-      // }).then((res) => res).catch((err) => console.log(err))
-      //   setDistance(computedDeliveryPrice)
 
       setShippers(_shippers);
 
@@ -156,6 +162,7 @@ export default function CreateClient() {
     const data = {
       ..._values,
       // region_id: regionId || region_id,
+      client_type: values.client_type.value,
       client_id: values.client.value,
       co_delivery_price: deliveryPrice,
       to_location: { lat: placemarkGeometry[0], long: placemarkGeometry[1] },
@@ -274,6 +281,7 @@ export default function CreateClient() {
         })
           .then((res) => {
             setDeliveryPrice(res.price);
+            setDistance(res.distance);
           })
           .finally(() => {
             setMapLoading((prev) => !prev);
@@ -350,7 +358,7 @@ export default function CreateClient() {
         color="zink"
         size="medium"
         shape="outlined"
-        onClick={() => console.log("clicked")}
+        onClick={() => {}}
         borderColor="bordercolor"
       >
         {t("print")}
@@ -442,7 +450,6 @@ export default function CreateClient() {
           className="p-4 w-full box-border font-body flex flex-col gap-4"
           style={{ fontSize: "14px", lineHeight: "24px" }}
         >
-          {console.log(distance)}
           <MainContent
             formik={formik}
             shippers={shippers}
@@ -456,6 +463,7 @@ export default function CreateClient() {
             setAddressList={setAddressList}
             addressList={addressList}
             setSearchAddress={setSearchAddress}
+            distance={distance}
           />
           <ProductContent
             formik={formik}

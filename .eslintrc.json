@@ -9,7 +9,7 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": "latest", // 2015
+    "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "plugins": ["react", "jest"],

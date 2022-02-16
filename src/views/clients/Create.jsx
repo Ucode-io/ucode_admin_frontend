@@ -127,7 +127,7 @@ export default function CreateClient() {
 
   const onSubmit = (values) => {
     const data = {
-      name: values.first_name + " " + values.last_name,
+      name: values.first_name + " " + values.last_name ?? "",
       phone: "+998" + values.phone,
       image: values.image
         ? process.env.REACT_APP_MINIO_URL + "/" + values.image

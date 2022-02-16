@@ -137,7 +137,7 @@ export default function MainContent({
                 <Form.Item formik={formik} name="client_first_name">
                   <Input
                     id="client_first_name"
-                    placeholder={t("first.name") + "..."}
+                    placeholder={t("first.name")}
                     value={values.client_first_name}
                     onChange={handleChange}
                   />
@@ -153,7 +153,7 @@ export default function MainContent({
                 <Form.Item formik={formik} name="client_last_name">
                   <Input
                     id="client_last_name"
-                    placeholder={t("last.name") + "..."}
+                    placeholder={t("last.name")}
                     value={values.client_last_name}
                     onChange={handleChange}
                   />
@@ -174,7 +174,7 @@ export default function MainContent({
                     id="client_description"
                     value={values.client_description}
                     onChange={handleChange}
-                    placeholder={t("client.description") + "..."}
+                    placeholder={t("client.description")}
                   />
                 </Form.Item>
               </div>
@@ -191,7 +191,7 @@ export default function MainContent({
                     id="order_description"
                     value={values.order_description}
                     onChange={handleChange}
-                    placeholder={t("order.description") + "..."}
+                    placeholder={t("order.description")}
                   />
                 </Form.Item>
               </div>
@@ -242,9 +242,8 @@ export default function MainContent({
               <div className="w-2/3">
                 <Form.Item formik={formik} name="co_delivery_price">
                   <Input
-                    disabled
                     id="co_delivery_price"
-                    placeholder={t("fares") + "..."}
+                    placeholder={t("fares")}
                     value={deliveryPrice}
                     onChange={handleChange}
                   />
@@ -261,7 +260,7 @@ export default function MainContent({
               <Form.Item formik={formik} name="to_address">
                 <Input
                   id="to_address"
-                  placeholder={t("address") + "..."}
+                  placeholder={t("address")}
                   value={values.to_address}
                   onChange={(e) => {
                     handleChange(e);
@@ -297,7 +296,7 @@ export default function MainContent({
                     id="restaurant"
                     value={values.restaurant}
                     onChange={handleChange}
-                    placeholder={t("restaurant") + "..."}
+                    placeholder={t("restaurant")}
                   />
                 </Form.Item>
               </div>
@@ -311,7 +310,7 @@ export default function MainContent({
                 <Form.Item formik={formik} name="branch">
                   <Select
                     id="branch"
-                    value={values.branch} // { label. ....}
+                    value={values.branch}
                     options={branches}
                     placeholder={t("branch")}
                     onChange={(val) => setFieldValue("branch", val)}
@@ -330,7 +329,7 @@ export default function MainContent({
                     id="apartment_block"
                     value={values.apartment_block}
                     onChange={handleChange}
-                    placeholder={t("apartment_block") + "..."}
+                    placeholder={t("apartment_block")}
                   />
                 </Form.Item>
               </div>
@@ -346,7 +345,7 @@ export default function MainContent({
                     id="apartment"
                     value={values.apartment}
                     onChange={handleChange}
-                    placeholder={t("apartment") + "..."}
+                    placeholder={t("apartment")}
                   />
                 </Form.Item>
               </div>
@@ -362,7 +361,7 @@ export default function MainContent({
                     id="floor"
                     value={values.floor}
                     onChange={handleChange}
-                    placeholder={t("floor") + "..."}
+                    placeholder={t("floor")}
                   />
                 </Form.Item>
               </div>
@@ -375,7 +374,6 @@ export default function MainContent({
               <div className="w-2/3">
                 <Form.Item formik={formik} name="intercom">
                   <Input
-                    disabled
                     value={values.branch?.elm?.intercom ?? ""}
                     addonBefore={
                       <Phone className="text-primary" fontSize="small" />

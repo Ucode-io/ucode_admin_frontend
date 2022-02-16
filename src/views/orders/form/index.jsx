@@ -71,8 +71,8 @@ export default function CreateClient() {
 
       client: null,
       client_type: null,
-      client_first_name: null,
-      client_last_name: null,
+      name: null,
+      last_name: null,
 
       is_courier_call: false,
 
@@ -102,8 +102,8 @@ export default function CreateClient() {
     return yup.object().shape({
       client: defaultSchema,
       shipper: defaultSchema,
-      client_first_name: defaultSchema,
-      client_last_name: defaultSchema,
+      name: defaultSchema,
+      last_name: defaultSchema,
       delivery_type: defaultSchema,
       to_address: defaultSchema,
       branch: defaultSchema,

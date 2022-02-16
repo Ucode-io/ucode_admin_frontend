@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { useHistory } from "react-router-dom"
-
-import Card from "../../../components/Card"
-import Modal from "../../../components/Modal"
-import EmptyData from "../../../components/EmptyData"
-import ActionMenu from "../../../components/ActionMenu"
-import Pagination from "../../../components/Pagination"
-import LoaderComponent from "../../../components/Loader"
-import {} from "../../../services"
-import StatusTag from "../../../components/Tag/StatusTag"
-
-// Material-ui
-import EditIcon from "@material-ui/icons/Edit"
-import DeleteIcon from "@material-ui/icons/Delete"
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
+import Card from "components/Card";
+import Modal from "components/Modal";
+import EmptyData from "components/EmptyData";
+import ActionMenu from "components/ActionMenu";
+import Pagination from "components/Pagination";
+import LoaderComponent from "components/Loader";
+import {} from "services";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
 import {
   Table,
   TableBody,
@@ -21,37 +17,36 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from "@material-ui/core"
-
-import { getData } from "./mockData"
-import FiveStar from "../../../components/FiveStar"
+} from "@material-ui/core";
+import { getData } from "./mockData";
+import FiveStar from "components/FiveStar";
 
 export default function RestaurantTable() {
-  const [loader, setLoader] = useState(true)
-  const { t } = useTranslation()
-  const history = useHistory()
-  const [items, setItems] = useState({})
-  const [currentPage, setCurrentPage] = useState(1)
-  const [deleteLoading, setDeleteLoading] = useState(false)
-  const [deleteModal, setDeleteModal] = useState(null)
+  const [loader, setLoader] = useState(true);
+  const { t } = useTranslation();
+  const history = useHistory();
+  const [items, setItems] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(null);
 
-  useEffect(() => {}, [])
+  useEffect(() => {}, []);
 
   useEffect(() => {
-    getItems(currentPage)
-  }, [currentPage])
+    getItems(currentPage);
+  }, [currentPage]);
 
   const getItems = (page) => {
-    setLoader(true)
+    setLoader(true);
     getData({ limit: 10, page })
       .then((res) => {
         setItems({
           count: res.count,
           data: res.data,
-        })
+        });
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const handleDeleteItem = () => {
     // setDeleteLoading(true)
@@ -62,7 +57,7 @@ export default function RestaurantTable() {
     //     setDeleteModal(null)
     //   })
     //   .finally(() => setDeleteLoading(false))
-  }
+  };
 
   const columns = [
     {
@@ -121,7 +116,7 @@ export default function RestaurantTable() {
         />
       ),
     },
-  ]
+  ];
 
   return (
     <Card
@@ -134,19 +129,18 @@ export default function RestaurantTable() {
         />
       }
     >
-      {!loader && (
-        <TableContainer className="rounded-lg border border-lightgray-1">
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                {columns.map((elm) => (
-                  <TableCell key={elm.key}>{elm.title}</TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {items.data && items.data.length ? (
-                items.data.map((item, index) => (
+      <TableContainer className="rounded-lg border border-lightgray-1">
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              {columns.map((elm) => (
+                <TableCell key={elm.key}>{elm.title}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {items.data && items.data.length
+              ? items.data.map((item, index) => (
                   <TableRow
                     key={item.id}
                     className={index % 2 === 0 ? "bg-lightgray-5" : ""}
@@ -160,17 +154,10 @@ export default function RestaurantTable() {
                     ))}
                   </TableRow>
                 ))
-              ) : (
-                <TableRow>
-                  <TableCell>
-                    <EmptyData loading={loader} />
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+              : null}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <LoaderComponent isLoader={loader} />
       <Modal
@@ -180,5 +167,5 @@ export default function RestaurantTable() {
         loading={deleteLoading}
       />
     </Card>
-  )
+  );
 }

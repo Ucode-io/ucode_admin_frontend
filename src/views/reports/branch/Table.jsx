@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Card from "../../../components/Card";
-import Pagination from "../../../components/Pagination";
-import LoaderComponent from "../../../components/Loader";
+import Card from "components/Card";
+import Pagination from "components/Pagination";
+import LoaderComponent from "components/Loader";
 import {
   Table,
   TableBody,
@@ -11,8 +11,8 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { getBranchReports } from "../../../services/reports";
-import numberToPrice from "../../../helpers/numberToPrice";
+import { getBranchReports } from "services/reports";
+import numberToPrice from "helpers/numberToPrice";
 
 function convertMinsToHrsMins(minutes) {
   var h = Math.floor(minutes / 60);
@@ -111,37 +111,35 @@ export default function RestaurantTable({ filters }) {
         />
       }
     >
-      {!loader && (
-        <TableContainer className="rounded-lg border border-lightgray-1">
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                {columns.map((elm) => (
-                  <TableCell key={elm.key}>{elm.title}</TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {items.data &&
-                items.data.length &&
-                items.data.map((item, index) => (
-                  <TableRow
-                    key={item.id}
-                    className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-                  >
-                    {columns.map((col) => (
-                      <TableCell key={col.key}>
-                        {col.render
-                          ? col.render(item, index)
-                          : item[col.dataIndex]}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+      <TableContainer className="rounded-lg border border-lightgray-1">
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              {columns.map((elm) => (
+                <TableCell key={elm.key}>{elm.title}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {items.data &&
+              items.data.length &&
+              items.data.map((item, index) => (
+                <TableRow
+                  key={item.id}
+                  className={index % 2 === 0 ? "bg-lightgray-5" : ""}
+                >
+                  {columns.map((col) => (
+                    <TableCell key={col.key}>
+                      {col.render
+                        ? col.render(item, index)
+                        : item[col.dataIndex]}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <LoaderComponent isLoader={loader} />
     </Card>

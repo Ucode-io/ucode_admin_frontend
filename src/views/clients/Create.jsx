@@ -67,7 +67,7 @@ export default function CreateClient() {
       first_name: "",
       last_name: "",
       phone: null,
-      logo: null,
+      image: "",
       client_type: null,
     }),
     [],
@@ -93,9 +93,10 @@ export default function CreateClient() {
     getOneCustomer(id)
       .then((res) => {
         formik.setValues({
-          first_name: res.name,
+          first_name: res.name.split(" ")[0],
+          last_name: res.name.split(" ")[1],
           phone: res.phone?.substring(4),
-          // is_aggregate: res.is_aggregate,
+          image: res.image.split("/")[4],
         });
       })
       .finally(() => setLoader(false));
@@ -128,9 +129,8 @@ export default function CreateClient() {
     const data = {
       name: values.first_name + " " + values.last_name,
       phone: "+998" + values.phone,
-      // is_aggregate: formik?.values.is_aggregate ?? false,
-      logo: values.logo
-        ? process.env.REACT_APP_MINIO_URL + "/" + values.logo
+      image: values.image
+        ? process.env.REACT_APP_MINIO_URL + "/" + values.image
         : undefined,
       client_type: values.client_type?.value,
     };

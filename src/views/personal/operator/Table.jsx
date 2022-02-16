@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { useHistory } from "react-router-dom"
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -8,43 +8,37 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from "@material-ui/core"
-
-//components
-import Pagination from "../../../components/Pagination"
-import Modal from "../../../components/Modal"
-import { deleteOperator, getOperators } from "../../../services/operator"
-import Filters from "../../../components/Filters"
-import Button from "../../../components/Button"
-import Card from "../../../components/Card"
-import ActionMenu from "../../../components/ActionMenu"
-import LoaderComponent from "../../../components/Loader"
-import SwitchColumns from "../../../components/Filters/SwitchColumns"
-import { Input } from "alisa-ui"
-
-//icons
-import SearchIcon from "@material-ui/icons/Search"
-import EditIcon from "@material-ui/icons/Edit"
-import DeleteIcon from "@material-ui/icons/Delete"
-import PublishIcon from "@material-ui/icons/Publish"
-import GetAppIcon from "@material-ui/icons/GetApp"
-import { DownloadIcon, ExportIcon } from "../../../constants/icons"
+} from "@material-ui/core";
+import Pagination from "components/Pagination";
+import Modal from "components/Modal";
+import { deleteOperator, getOperators } from "services/operator";
+import Filters from "components/Filters";
+import Button from "components/Button";
+import Card from "components/Card";
+import ActionMenu from "components/ActionMenu";
+import LoaderComponent from "components/Loader";
+import SwitchColumns from "components/Filters/SwitchColumns";
+import { Input } from "alisa-ui";
+import SearchIcon from "@material-ui/icons/Search";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { DownloadIcon, ExportIcon } from "constants/icons";
 
 export default function TableOperator() {
-  const [loader, setLoader] = useState(true)
-  const { t } = useTranslation()
-  const history = useHistory()
-  const [items, setItems] = useState({})
-  const [currentPage, setCurrentPage] = useState(1)
-  const [deleteLoading, setDeleteLoading] = useState(false)
-  const [deleteModal, setDeleteModal] = useState(null)
-  const [search, setSearch] = useState("")
-  const [columns, setColumns] = useState([])
-  let debounce = setTimeout(() => {}, 0)
+  const [loader, setLoader] = useState(true);
+  const { t } = useTranslation();
+  const history = useHistory();
+  const [items, setItems] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(null);
+  const [search, setSearch] = useState("");
+  const [columns, setColumns] = useState([]);
+  let debounce = setTimeout(() => {}, 0);
 
   useEffect(() => {
-    getItems(currentPage)
-  }, [currentPage, search])
+    getItems(currentPage);
+  }, [currentPage, search]);
 
   useEffect(() => {
     const _columns = [
@@ -68,7 +62,7 @@ export default function TableOperator() {
                 color: "blue",
                 title: t("change"),
                 action: () => {
-                  history.push(`/home/operator/${record.id}`)
+                  history.push(`/home/operator/${record.id}`);
                 },
               },
               {
@@ -76,34 +70,34 @@ export default function TableOperator() {
                 color: "red",
                 title: t("delete"),
                 action: () => {
-                  setDeleteModal({ id: record.id })
+                  setDeleteModal({ id: record.id });
                 },
               },
             ]}
           />
         ),
       },
-    ]
-    setColumns(_columns)
-  }, [])
+    ];
+    setColumns(_columns);
+  }, []);
 
   const onSearch = (e) => {
-    clearTimeout(debounce)
+    clearTimeout(debounce);
     debounce = setTimeout(() => {
-      setSearch(e.target.value)
-    }, 300)
-  }
+      setSearch(e.target.value);
+    }, 300);
+  };
 
   const handleDeleteItem = () => {
-    setDeleteLoading(true)
+    setDeleteLoading(true);
     deleteOperator(deleteModal.id)
       .then((res) => {
-        getItems(currentPage)
-        setDeleteLoading(false)
-        setDeleteModal(null)
+        getItems(currentPage);
+        setDeleteLoading(false);
+        setDeleteModal(null);
       })
-      .finally(() => setDeleteLoading(false))
-  }
+      .finally(() => setDeleteLoading(false));
+  };
 
   const initialColumns = [
     {
@@ -123,19 +117,19 @@ export default function TableOperator() {
       key: "phone",
       render: (record) => <div>{record.phone}</div>,
     },
-  ]
+  ];
 
   const getItems = (page) => {
-    setLoader(true)
+    setLoader(true);
     getOperators({ limit: 10, page, search })
       .then((res) => {
         setItems({
           count: res.count,
           data: res.shipper_users,
-        })
+        });
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const extraFilter = (
     <div className="flex gap-4">
@@ -146,7 +140,7 @@ export default function TableOperator() {
         shape="outlined"
         size="medium"
         onClick={() => {
-          console.log("clicked")
+          console.log("clicked");
         }}
       >
         {t("import")}
@@ -163,7 +157,7 @@ export default function TableOperator() {
         {t("download")}
       </Button>
     </div>
-  )
+  );
 
   const pagination = (
     <Pagination
@@ -171,10 +165,10 @@ export default function TableOperator() {
       count={items?.count}
       onChange={(pageNumber) => setCurrentPage(pageNumber)}
     />
-  )
+  );
 
   return (
-    <div>
+    <>
       <Filters extra={extraFilter}>
         <Input
           onChange={onSearch}
@@ -196,7 +190,8 @@ export default function TableOperator() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.data && items.data.length ? (
+              {items.data &&
+                items.data.length &&
                 items.data.map((item, index) => (
                   <TableRow
                     key={item.id}
@@ -209,14 +204,13 @@ export default function TableOperator() {
                       </TableCell>
                     ))}
                   </TableRow>
-                ))
-              ) : (
-                <></>
-              )}
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
+
         <LoaderComponent isLoader={loader} />
+
         <Modal
           open={deleteModal}
           onClose={() => setDeleteModal(null)}
@@ -224,6 +218,6 @@ export default function TableOperator() {
           loading={deleteLoading}
         />
       </Card>
-    </div>
-  )
+    </>
+  );
 }

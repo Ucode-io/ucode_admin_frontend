@@ -16,6 +16,7 @@ export default function Client({ formik, customerTypeOption }) {
   const { t } = useTranslation();
   const { values, handleChange, setFieldValue } = formik;
   const params = useParams();
+  console.log(values);
 
   return (
     <>
@@ -49,20 +50,20 @@ export default function Client({ formik, customerTypeOption }) {
       <Card className="m-4" title={t("client")}>
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-3">
-            <Form.Item formik={formik} name="logo">
+            <Form.Item formik={formik} name="image">
               <div className="w-full h-full flex mt-6 items-center flex-col">
                 <Gallery
                   rounded
                   width={120}
                   height={120}
-                  gallery={values.logo ? [values.logo] : []}
-                  setGallery={(elm) => setFieldValue("logo", elm[0])}
+                  gallery={values.image ? [values.image] : []}
+                  setGallery={(elm) => setFieldValue("image", elm[0])}
                   multiple={false}
                 />
                 {console.log(values)}
                 {
                   <span className="mt-2 text-primary text-base">
-                    {values.logo ? t("change.photo") : t("add.photo")}
+                    {values.image ? t("change.photo") : t("add.photo")}
                   </span>
                 }
               </div>

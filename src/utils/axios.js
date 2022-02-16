@@ -12,19 +12,15 @@ var request = axios.create({
 
 // var waitingTime = 8000;
 
-request.interceptors.request.use(
-  (config) => {
-    var token = store.getState().auth.accessToken;
-    // config.headers["client-id"] = process.env.CLIENT_ID
-    // config.headers["platform-id"] = "7d4a4c38-dd84-4902-b744-0488b80a4c01"
-    if (token) {
-      config.headers.Authorization = token; // `Bearer ${token}`
-    }
-    return config;
-  },
-  errorHandler
-  // (error) => errorHandler(error)
-);
+request.interceptors.request.use((config) => {
+  var token = store.getState().auth.accessToken;
+  // config.headers["client-id"] = process.env.CLIENT_ID
+  // config.headers["platform-id"] = "7d4a4c38-dd84-4902-b744-0488b80a4c01"
+  if (token) {
+    config.headers.Authorization = token; // `Bearer ${token}`
+  }
+  return config;
+}, errorHandler);
 
 request.interceptors.response.use((response) => response.data, errorHandler);
 

@@ -248,5 +248,9 @@
   "not.fixed": "Not fixed",
   "base.distance": "Base distance",
   "price.per.km": "Price per km",
-  "logout": "Logout"
+  "logout": "Logout",
+  "change": "Change",
+  "change.photo": "Rasmni o'zgartirish",
+  "add.photo": "Upload a photo",
+  "invalid phone number": "Invalid phone number"
 }

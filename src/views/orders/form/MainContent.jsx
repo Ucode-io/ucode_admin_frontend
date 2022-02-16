@@ -56,7 +56,7 @@ export default function MainContent({
   };
 
   const onSearchClientType = (inputValue, actionMeta) => {
-    getClientTypes(inputValue);
+    // getClientTypes(inputValue);
   };
 
   const onClientSelect = (newValue, actionMeta) => {

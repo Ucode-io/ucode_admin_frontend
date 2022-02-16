@@ -209,7 +209,11 @@
   "operator.declined": "Operator bekor qildi",
   "finished": "Bajarildi",
   "server.declined": "Server bekor qildi",
-
+  "change": "O'zgartirish",
+  "change.photo": "Rasmni o'zgartirish",
+  "add.photo": "Rasm yuklash",
+  "invalid phone number": "Telefon raqami noto'g'ri",
+  "Phone already exists": "Telefon allaqachon mavjud",
   "cash": "Naqd pul",
   "work.process": "Ish jarayoni",
   "all.orders": "Barcha buyurtmalar",

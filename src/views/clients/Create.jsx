@@ -16,13 +16,14 @@ import { StyledTab, StyledTabs } from "../../components/StyledTabs";
 import Filters from "../../components/Filters";
 import { getCustomerType } from "../../services/customerType";
 import OrderClient from "./form/clientOrders";
+import { useDispatch } from "react-redux";
+import { showAlert } from "redux/reducers/alertReducer";
 
 export default function CreateClient() {
   const { t } = useTranslation();
-  const { id } = useParams();
+  const dispatch = useDispatch();
   const history = useHistory();
-
-  console.log("customer_id", id);
+  const { id } = useParams();
 
   const [loader, setLoader] = useState(true);
   const [buttonLoader, setButtonLoader] = useState(false);
@@ -63,8 +64,11 @@ export default function CreateClient() {
 
   const initialValues = useMemo(
     () => ({
-      name: "",
+      first_name: "",
+      last_name: "",
       phone: null,
+      logo: null,
+      client_type: null,
     }),
     [],
   );
@@ -73,7 +77,7 @@ export default function CreateClient() {
     const defaultSchema = yup.mixed().required(t("required.field.error"));
 
     return yup.object().shape({
-      name: defaultSchema,
+      first_name: defaultSchema,
 
       phone: yup
         .number()
@@ -89,9 +93,9 @@ export default function CreateClient() {
     getOneCustomer(id)
       .then((res) => {
         formik.setValues({
-          name: res.name,
+          first_name: res.name,
           phone: res.phone?.substring(4),
-          is_aggregate: res.is_aggregate,
+          // is_aggregate: res.is_aggregate,
         });
       })
       .finally(() => setLoader(false));
@@ -99,18 +103,36 @@ export default function CreateClient() {
 
   const saveChanges = (data) => {
     setButtonLoader(true);
-    const selectedAction = id ? updateCustomer(id, data) : postCustomer(data);
-
-    selectedAction
-      .then((res) => history.push("/home/personal/clients"))
-      .finally(() => setButtonLoader(false));
+    if (id) {
+      updateCustomer(id, data)
+        .then(() => history.push("/home/personal/clients"))
+        .catch((err) =>
+          console.log(
+            dispatch(showAlert(t(err.data.Error?.Message ?? err.data.Error))),
+          ),
+        )
+        .finally(() => setButtonLoader(false));
+    } else {
+      postCustomer(data)
+        .then(() => history.push("/home/personal/clients"))
+        .catch((err) =>
+          console.log(
+            dispatch(showAlert(t(err.data.Error?.Message ?? err.data.Error))),
+          ),
+        )
+        .finally(() => setButtonLoader(false));
+    }
   };
 
   const onSubmit = (values) => {
     const data = {
-      ...values,
+      name: values.first_name + " " + values.last_name,
       phone: "+998" + values.phone,
-      is_aggregate: formik?.values.is_aggregate ?? false,
+      // is_aggregate: formik?.values.is_aggregate ?? false,
+      logo: values.logo
+        ? process.env.REACT_APP_MINIO_URL + "/" + values.logo
+        : undefined,
+      client_type: values.client_type?.value,
     };
     saveChanges(data);
   };
@@ -128,7 +150,7 @@ export default function CreateClient() {
       route: "/home/personal/clients",
     },
     {
-      title: id ? formik?.values.name : t("create"),
+      title: id ? formik?.values.first_name : t("create"),
     },
   ];
 

@@ -1,20 +1,20 @@
-import { Component, useState, useEffect } from "react"
-import { Formik, ErrorMessage } from "formik"
-import * as Yup from "yup"
-import Input from "../Input/index"
-import RequiredStar from "../RequiredStar"
+import { Component, useState, useEffect } from "react";
+import { Formik, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import Input from "../Input/index";
+import RequiredStar from "../RequiredStar";
 
 export default class CustomForm extends Component {
   static Input(props) {
-    return <FormInput {...props} />
+    return <FormInput {...props} />;
   }
 
   static Item(props) {
-    return <FormItem {...props} />
+    return <FormItem {...props} />;
   }
 
   render() {
-    return <FromWrapper {...this.props} />
+    return <FromWrapper {...this.props} />;
   }
 }
 
@@ -25,16 +25,16 @@ const FromWrapper = ({
   children,
   rules,
 }) => {
-  const [formRules, setFormRules] = useState(null)
+  const [formRules, setFormRules] = useState(null);
 
   useEffect(() => {
-    let obj = {}
+    let obj = {};
     for (let key in rules) {
-      obj[key] = rules[key](Yup)
+      obj[key] = rules[key](Yup);
     }
 
-    setFormRules(obj)
-  }, [rules])
+    setFormRules(obj);
+  }, [rules]);
 
   // const a = {
 
@@ -64,8 +64,8 @@ const FromWrapper = ({
         {children}
       </Form> */}
     </Formik>
-  )
-}
+  );
+};
 
 const FormInput = ({ type = "text", name = "", label = "", ...args }) => {
   return (
@@ -74,8 +74,8 @@ const FormInput = ({ type = "text", name = "", label = "", ...args }) => {
       <Input name={name} type={type} {...args} />
       <ErrorMessage name={name} />
     </div>
-  )
-}
+  );
+};
 
 const FormItem = ({
   name = "",
@@ -106,5 +106,5 @@ const FormItem = ({
         <div style={{fontSize: '14px', lineHeight: 1.5715, color: '#ff4d4f'}}>{formik.errors[name]}</div>
       ) : <div className="h-6 w-full" />} */}
     </>
-  )
-}
+  );
+};

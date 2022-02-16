@@ -119,19 +119,19 @@ export default function ApplicationTable() {
       },
       {
         icon: GroupIcon,
-        number: +items.count || 0,
+        number: +items.active_count || 0,
         title: t("active.clients"),
         key: "active.clients",
       },
       {
         icon: GroupIcon,
-        number: +items.count || 0,
+        number: +items.today_ordered_count || 0,
         title: t("today.ordered"),
         key: "today.ordered",
       },
       {
         icon: GroupIcon,
-        number: +items.count || 0,
+        number: +items.today_registered_count || 0,
         title: t("today.registered"),
         key: "today.registered",
       },

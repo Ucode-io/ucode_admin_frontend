@@ -60,7 +60,6 @@ export default function Client({ formik, customerTypeOption }) {
                   setGallery={(elm) => setFieldValue("image", elm[0])}
                   multiple={false}
                 />
-                {console.log(values)}
                 {
                   <span className="mt-2 text-primary text-base">
                     {values.image ? t("change.photo") : t("add.photo")}

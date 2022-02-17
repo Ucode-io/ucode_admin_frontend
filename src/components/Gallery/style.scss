@@ -16,7 +16,6 @@
     position: relative;
     transition-duration: 0.4s;
 
-
     &:hover {
       transform: translateY(-5px);
     }
@@ -24,12 +23,10 @@
     &:active {
       transform: translateY(0);
     }
-    
 
     &:hover > .close-btn {
       opacity: 1;
-      transform: translate(0, 0);
-      
+      transform: translate(-10px, 10px);
     }
 
     .close-btn {
@@ -41,27 +38,20 @@
       color: rgba($color: #000000, $alpha: 0.4);
       transform: translate(15px, -15px);
       outline: none;
-    } 
-    
-
+    }
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-
   }
 
   .add-block {
-
-
     .add-icon {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
   }
-
-
 }

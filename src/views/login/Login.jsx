@@ -11,7 +11,7 @@ import axios from "utils/axios";
 import { useDispatch } from "react-redux";
 import { SET_AUTH_TOKENS } from "redux/constants";
 import AlertComponent from "components/Alert";
-import { showAlert } from "redux/reducers/alertReducer";
+import { showAlert } from "redux/actions/alertActions";
 import defaultSettings from "config/defaultSettings";
 import { staticPermissions } from "./permissions";
 

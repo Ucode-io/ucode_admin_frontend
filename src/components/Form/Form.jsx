@@ -42,7 +42,6 @@ export default function Form({
   //     schema = {[children.props.name]: Yup.mixed().required(children.props.rule?.message ?? 'Required filed')}
   //     values = {[children.props.name]: null}
   //   }
-  //   console.log(values)
   //   setInitialValues({...values, ...initialValues}) // {...values, ...initialValues}
   //   setValidationSchema(Yup.object().shape(schema))
   //   setIsReadyData(true)

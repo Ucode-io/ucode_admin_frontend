@@ -16,7 +16,6 @@ export default function Client({ formik, customerTypeOption }) {
   const { t } = useTranslation();
   const { values, handleChange, setFieldValue } = formik;
   const params = useParams();
-  console.log(values);
 
   return (
     <>

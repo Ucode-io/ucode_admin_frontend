@@ -1,42 +1,38 @@
-import { useCallback, useState } from "react"
-import { useDropzone } from "react-dropzone"
-import "../UploadWithComment/styles.scss"
-import MoveToInboxIcon from "@material-ui/icons/MoveToInbox"
-import axios from "../../../utils/axios"
-// import Button from "../../Button"
-// import EditIcon from "@material-ui/icons/Edit"
-// import DeleteIcon from "@material-ui/icons/Delete"
-// import DescriptionIcon from "@material-ui/icons/Description"
-import "../style.scss"
-import { CircularProgress } from "@material-ui/core"
-import { useRef } from "react"
-import { useDispatch } from "react-redux"
-import { showAlert } from "../../../redux/reducers/alertReducer"
+import { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import "../UploadWithComment/styles.scss";
+import MoveToInboxIcon from "@material-ui/icons/MoveToInbox";
+import axios from "utils/axios";
+import "../style.scss";
+import { CircularProgress } from "@material-ui/core";
+import { useRef } from "react";
+import { useDispatch } from "react-redux";
+import { showAlert } from "redux/actions/alertActions";
 
 const UploadWithDrag = ({ setFile, file, geoJSON }) => {
-  const dispatch = useDispatch()
-  const [loader, setLoader] = useState(false)
-  const [fileName, setFileName] = useState("")
-  const inputRef = useRef(null)
+  const dispatch = useDispatch();
+  const [loader, setLoader] = useState(false);
+  const [fileName, setFileName] = useState("");
+  const inputRef = useRef(null);
 
   // useEffect(() => {
   //   setFile(uploadedFile)
   // }, [uploadedFile])
 
   const onDrop = useCallback((files) => {
-    const file = files[0]
+    const file = files[0];
     if (
       !(
         file.type === "application/zip" ||
         file.type === "application/x-zip-compressed"
       )
     )
-      return dispatch(showAlert("Fayllar faqat .zip formatida bo'lishi lozim"))
-    setFileName(file.name)
-    setLoader(true)
-    const data = new FormData()
-    data.append("file", file)
-    data.append("comment", "")
+      return dispatch(showAlert("Fayllar faqat .zip formatida bo'lishi lozim"));
+    setFileName(file.name);
+    setLoader(true);
+    const data = new FormData();
+    data.append("file", file);
+    data.append("comment", "");
 
     axios
       .post("/file-upload", data, {
@@ -45,12 +41,12 @@ const UploadWithDrag = ({ setFile, file, geoJSON }) => {
         },
       })
       .then((res) => {
-        setFile(res.file_path)
+        setFile(res.file_path);
       })
-      .catch(() => setLoader(false))
-  }, [])
+      .catch(() => setLoader(false));
+  }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop })
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   // const clearFile = () => {
   //   setFile(null)
@@ -101,7 +97,7 @@ const UploadWithDrag = ({ setFile, file, geoJSON }) => {
           </button> */}
       {/* </div> */}
     </div>
-  )
-}
+  );
+};
 
-export default UploadWithDrag
+export default UploadWithDrag;

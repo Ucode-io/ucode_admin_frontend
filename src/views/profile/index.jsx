@@ -1,103 +1,101 @@
-import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import Form from "../../components/Form/Form"
-import FormItem from "../../components/Form/FormItem"
-import FullScreenLoader from "../../components/FullScreenLoader"
-import Header from "../../components/Header"
-import CustomButton from "../../components/Buttons"
-import Card from "../../components/Card"
-import Button from "../../components/Button"
-
-import "./style.scss"
-import { useSelector } from "react-redux"
-import Input from "../../components/Input"
-import axios from "../../utils/axios"
-import { useHistory } from "react-router"
-import ChangePasswordAlert from "../../components/Alert/ChangePasswordAlert"
-import { useDispatch } from "react-redux"
-import { setUserVerified } from "../../redux/actions/authActions"
-import moment from "moment"
-import { showAlert } from "../../redux/reducers/alertReducer"
-import RequiredStar from "../../components/RequiredStar"
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import Form from "components/Form/Form";
+import FormItem from "components/Form/FormItem";
+import FullScreenLoader from "components/FullScreenLoader";
+import Header from "components/Header";
+import CustomButton from "components/Buttons";
+import Card from "components/Card";
+import Button from "components/Button";
+import "./style.scss";
+import { useSelector } from "react-redux";
+import Input from "components/Input";
+import axios from "utils/axios";
+import { useHistory } from "react-router";
+import { useDispatch } from "react-redux";
+import { setUserVerified } from "redux/actions/authActions";
+import moment from "moment";
+import { showAlert } from "redux/actions/alertActions";
+import RequiredStar from "components/RequiredStar";
 
 const Profile = () => {
-  const { t } = useTranslation()
-  const history = useHistory()
-  const dispatch = useDispatch()
+  const { t } = useTranslation();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
-  const username = useSelector((state) => state.auth.username)
+  const username = useSelector((state) => state.auth.username);
 
-  const [loader, setLoader] = useState(true)
-  const [buttonLoader, setButtonLoader] = useState(false)
-  const [passwordFieldDisabled, setPasswordFieldDisabled] = useState(true)
-  const [userData, setUserData] = useState({})
-  const [oldPassword, setOldPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [passwordError, setPasswordError] = useState(false)
+  const [loader, setLoader] = useState(true);
+  const [buttonLoader, setButtonLoader] = useState(false);
+  const [passwordFieldDisabled, setPasswordFieldDisabled] = useState(true);
+  const [userData, setUserData] = useState({});
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
 
   const rule = {
     required: true,
     message: t("required.field.error"),
-  }
+  };
 
   useEffect(() => {
-    fetchUserData()
-  }, [])
+    fetchUserData();
+  }, []);
 
   const fetchUserData = () => {
     axios
       .get("/staff-by-token")
       .then((res) => {
-        res.status = res.role.status
+        res.status = res.role.status;
         res.passport_issue_date = moment(res.passport_issue_date).format(
-          "YYYY-MM-DD"
-        )
-        setUserData(res)
+          "YYYY-MM-DD",
+        );
+        setUserData(res);
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const onSubmit = (data) => {
-    setButtonLoader(true)
-    data.password = ""
-    data.role_id = data.role.id
-    data.organization_id = data.organization.id
-    delete data.undefined
-    saveChanges(data)
-  }
+    setButtonLoader(true);
+    data.password = "";
+    data.role_id = data.role.id;
+    data.organization_id = data.organization.id;
+    delete data.undefined;
+    saveChanges(data);
+  };
 
   const changePassword = (data) => {
-    if (!oldPassword || !newPassword) return setPasswordError(true)
+    if (!oldPassword || !newPassword) return setPasswordError(true);
 
-    setButtonLoader(true)
+    setButtonLoader(true);
     axios
       .post("/update-password", {
         old_password: oldPassword,
         new_password: newPassword,
       })
       .then((res) => {
-        dispatch(setUserVerified(true))
-        setPasswordFieldDisabled(true)
-        setOldPassword("")
-        setNewPassword("")
+        dispatch(setUserVerified(true));
+        setPasswordFieldDisabled(true);
+        setOldPassword("");
+        setNewPassword("");
       })
       .catch((err) => {
         if (err?.status === 409)
-          dispatch(showAlert("Avvalgi parol noto'g'ri kiritilgan"))
+          dispatch(showAlert("Avvalgi parol noto'g'ri kiritilgan"));
       })
-      .finally(() => setButtonLoader(false))
-  }
+      .finally(() => setButtonLoader(false));
+  };
 
   const saveChanges = (data) => {
     axios
       .put(`/staff/${data.id}`, data)
       .then((res) => {
-        history.push("/home/dashboard")
+        history.push("/home/dashboard");
       })
-      .finally(() => setButtonLoader(false))
-  }
+      .finally(() => setButtonLoader(false));
+  };
 
-  if (loader) return <FullScreenLoader />
+  if (loader) return <FullScreenLoader />;
 
   return (
     <div className="Profile">
@@ -417,7 +415,7 @@ const Profile = () => {
         </div>
       </Form>
     </div>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

@@ -31,7 +31,6 @@ export default function OptionsContent({
   }, [options]);
 
   const onModalSubmit = (values) => {
-    // console.log(values)
     if (optionModal.initialValues) {
       handleUpdateOption(values);
     } else {
@@ -79,8 +78,8 @@ export default function OptionsContent({
                     },
                   ],
                 }
-              : elm
-          )
+              : elm,
+          ),
         );
       } else {
         setOptions((old) => [
@@ -110,19 +109,19 @@ export default function OptionsContent({
                   child_options: elm.child_options.map((el, j) =>
                     j === optionModal?.index || j === ingredientModal?.index
                       ? { name, price, is_required: optionModal ? true : false }
-                      : el
+                      : el,
                   ),
                 }
-              : elm
-          )
+              : elm,
+          ),
         );
       } else {
         setOptions((prev) =>
           prev.map((elm, i) =>
             i === optionModal?.index || i === ingredientModal?.index
               ? { ...elm, name, price }
-              : elm
-          )
+              : elm,
+          ),
         );
       }
     }
@@ -140,8 +139,8 @@ export default function OptionsContent({
               ...elm,
               child_options: elm.child_options.filter((el, j) => j !== index),
             }
-          : elm
-      )
+          : elm,
+      ),
     );
   };
 
@@ -155,11 +154,11 @@ export default function OptionsContent({
                 child_options: elm.child_options.map((el, j) =>
                   j === index
                     ? { ...el, is_default: true }
-                    : { ...el, is_default: false }
+                    : { ...el, is_default: false },
                 ),
               }
-            : elm
-        )
+            : elm,
+        ),
       );
     } else {
       setOptions((prev) =>
@@ -180,8 +179,8 @@ export default function OptionsContent({
                   ...el,
                   is_default: false,
                 })),
-              }
-        )
+              },
+        ),
       );
     }
   };
@@ -251,7 +250,7 @@ export default function OptionsContent({
               />
             ) : (
               ""
-            )
+            ),
           )}
 
           <IconButton
@@ -290,7 +289,7 @@ export default function OptionsContent({
               />
             ) : (
               ""
-            )
+            ),
           )}
 
           <IconButton

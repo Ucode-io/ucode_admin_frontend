@@ -11,7 +11,7 @@ import Header from "components/Header";
 import Filter from "components/Filters";
 import RangePicker from "components/DatePicker/RangePicker";
 import Button from "components/Button";
-import { DownloadIcon, PlacemarkIcon } from "constants/icons";
+import { DownloadIcon } from "constants/icons";
 import "./style.scss";
 
 export default function Orders() {
@@ -99,16 +99,6 @@ export default function Orders() {
       <Filter
         extra={
           <div className="flex gap-4">
-            {/* <Button
-              icon={PlacemarkIcon}
-              iconClassName="text-blue-600"
-              color="zinc"
-              shape="outlined"
-              size="medium"
-              onClick={() => console.log("upload")}
-            >
-              {t("map")}
-            </Button> */}
             <Button
               icon={DownloadIcon}
               iconClassName="text-blue-600"

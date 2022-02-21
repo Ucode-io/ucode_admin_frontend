@@ -6,7 +6,7 @@ import axios from "utils/axios";
 import { CircularProgress } from "@material-ui/core";
 import CancelIcon from "@material-ui/icons/Cancel";
 import { useDispatch } from "react-redux";
-import { showAlert } from "redux/reducers/alertReducer";
+import { showAlert } from "redux/actions/alertActions";
 import { useTranslation } from "react-i18next";
 
 const Gallery = ({

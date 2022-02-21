@@ -1,16 +1,5 @@
-// import { makeStyles } from "@material-ui/core/styles";
-// import LinearProgress from "@material-ui/core/LinearProgress";
-import "./index.scss"
-import { CircularProgress } from "@material-ui/core"
-
-// const useStyles = makeStyles((theme) => ({
-//   root: {
-//     width: "100%",
-//     "& > * + *": {
-//       marginTop: theme.spacing(2),
-//     },
-//   },
-// }));
+import "./index.scss";
+import { CircularProgress } from "@material-ui/core";
 
 export default function Button({
   className = "",
@@ -30,15 +19,15 @@ export default function Button({
   classNameParent = "",
   ...rest
 }) {
-  const textColors = (key) => `text-${key}-600`
+  const textColors = (key) => `text-${key}-600`;
 
-  const bgColors = (key) => `bg-${key}-600`
+  const bgColors = (key) => `bg-${key}-600`;
 
   const borderColors = {
     bordercolor: "border-bordercolor",
     blue: "border-blue-600",
     red: "border-red-600",
-  }
+  };
 
   const getSize = (key) => {
     switch (key) {
@@ -47,68 +36,64 @@ export default function Button({
           size: "h-8 px-3 py-2",
           fontSize: "text-xs",
           radius: "rounded-md",
-        }
+        };
       case "medium":
         return {
           size: "h-9 px-3 py-1 min:w-7",
           fontSize: "text-sm",
           radius: "rounded-md",
-        }
+        };
       case "large":
         return {
           size: "h-10 px-5 py-1.5",
           fontSize: "text-sm",
           radius: "rounded-md",
-        }
+        };
 
       default:
-        break
+        break;
     }
-  }
+  };
 
   const getShape = (key) => {
-    // console.log(key);
     switch (key) {
       case "filled":
         return {
           color: `${bgColors(
-            color
+            color,
           )} text-white iconColor-filled hover:opacity-90 border ${
             borderColors[borderColor ?? color]
           }`,
           background: "",
-        }
+        };
       case "outlined":
         return {
           color: `bg-transparent ${textColors(color)} border ${
             borderColors[borderColor ?? color]
           } hover:bg-background_2`,
-        }
-      // return {
-      //   color: `bg-transparent text-red-600 border border-red-600 hover:bg-background_2`,
-      // }
+        };
       case "text":
         return {
           color: `bg-transparent ${textColors(
-            color
+            color,
           )} hover:opacity-90 border border-transparent`,
-        }
+        };
 
       default:
         return {
           color: `${bgColors(
-            color
+            color,
           )} text-white iconColor-filled hover:opacity-90 border ${
             borderColors[borderColor ?? color]
           }`,
           background: "",
-        }
+        };
     }
-  }
+  };
 
   const iconClasses = `fill-current flex flex-column justify-center ${
-    iconClassName ?? `text-${color}-600`
-  }`
+    iconClassName ?? "text-" + color + "-600"
+  }`;
 
   return (
     <div className={classNameParent}>
@@ -151,5 +136,5 @@ export default function Button({
         </div>
       </button>
     </div>
-  )
+  );
 }

@@ -4,7 +4,7 @@ import "./style.scss";
 import { useCallback } from "react";
 import { useResizeDetector } from "react-resize-detector";
 import { useDispatch } from "react-redux";
-import { setGlobalAlertHeight } from "../../redux/reducers/alertReducer";
+import { setGlobalAlertHeight } from "redux/actions/alertActions";
 
 const GlobalAlert = () => {
   const alert = useSelector((state) => state.alert.globalAlert);

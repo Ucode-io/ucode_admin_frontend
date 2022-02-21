@@ -34,8 +34,7 @@ import PrintIcon from "@material-ui/icons/Print";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import TagBtn from "components/Tag/TimeTag";
 import orderTimer from "helpers/orderTimer";
-import { showAlert } from "redux/reducers/alertReducer";
-import moment from "moment";
+import { showAlert } from "redux/actions/alertActions";
 import { getAddressListYandex } from "services/yandex";
 
 export default function CreateClient() {

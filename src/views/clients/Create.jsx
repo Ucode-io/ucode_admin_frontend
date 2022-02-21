@@ -17,7 +17,7 @@ import Filters from "components/Filters";
 import { getCustomerType } from "services/customerType";
 import OrderClient from "./form/clientOrders";
 import { useDispatch } from "react-redux";
-import { showAlert } from "redux/reducers/alertReducer";
+import { showAlert } from "redux/actions/alertActions";
 
 export default function CreateClient() {
   const { t } = useTranslation();

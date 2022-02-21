@@ -1,14 +1,4 @@
-// import "./style.scss"
-// import { useState } from 'react';
-// import VisibilityIcon from '@material-ui/icons/Visibility';
-
-const IconButton = ({
-  icon,
-  color = "blue",
-  className,
-  ...props
-  // size = 16
-}) => {
+const IconButton = ({ icon, color = "blue", className, ...props }) => {
   return (
     <div className={`inline-block  ${className}`}>
       <div
@@ -22,7 +12,6 @@ const IconButton = ({
           bg-${color}-100`}
         {...props}
       >
-        {/* <VisibilityIcon style={{ fontSize: 16, color: 'red' }} /> */}
         <div className={`flex fill-current text-${color}-600`}>
           {{
             ...icon,
@@ -34,7 +23,7 @@ const IconButton = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default IconButton
+export default IconButton;

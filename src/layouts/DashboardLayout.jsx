@@ -6,7 +6,7 @@ import AlertComponent from "../components/Alert/index.jsx";
 import GlobalAlert from "../components/GlobalAlert/index.jsx";
 // import Layout from "../components/Layout/index.jsx"
 import Sidebar from "../components/Sidebar/index.jsx";
-// import { fetchAnnouncement } from "../redux/reducers/alertReducer.js"
+// import { fetchAnnouncement } from "../redux/actions/alertActions"
 // import Sidebar from "../components/Sidebar2/index.jsx"
 import "./style.scss";
 

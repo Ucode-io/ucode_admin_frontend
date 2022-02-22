@@ -1,9 +1,9 @@
-import { useState, useMemo, useEffect } from "react"
-import { StyledTab, StyledTabs } from "."
-import { useTranslation } from "react-i18next"
-import RusFlag from "../../assets/icons/Ellipse 8.png"
-import EngFlag from "../../assets/icons/Ellipse 9.png"
-import FlagUz from "../../assets/icons/Ellipse 7.png"
+import { useState, useMemo } from "react";
+import { StyledTab, StyledTabs } from ".";
+import { useTranslation } from "react-i18next";
+import RusFlag from "assets/icons/Ellipse 8.png";
+import EngFlag from "assets/icons/Ellipse 9.png";
+import FlagUz from "assets/icons/Ellipse 7.png";
 
 const defaultOptions = [
   {
@@ -21,7 +21,7 @@ const defaultOptions = [
     value: "uz",
     image: FlagUz,
   },
-]
+];
 
 export default function TabsWithFlags({
   options = defaultOptions,
@@ -29,14 +29,14 @@ export default function TabsWithFlags({
   defaultValue = "ru",
   value,
 }) {
-  const { t } = useTranslation()
-  const [selectedTab, setSelectedTab] = useState(value ?? defaultValue)
+  const { t } = useTranslation();
+  const [selectedTab, setSelectedTab] = useState(value ?? defaultValue);
 
   const tabLabel = (text, isActive = false) => {
-    return <span className="px-1">{text}</span>
-  }
+    return <span className="px-1">{text}</span>;
+  };
 
-  const tabValue = useMemo(() => value ?? selectedTab, [selectedTab])
+  const tabValue = useMemo(() => value ?? selectedTab, [selectedTab]);
 
   return (
     <div
@@ -77,5 +77,5 @@ export default function TabsWithFlags({
         ))}
       </StyledTabs>
     </div>
-  )
+  );
 }

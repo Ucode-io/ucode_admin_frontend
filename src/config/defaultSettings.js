@@ -1,5 +1,5 @@
-import logo from "../assets/icons/logo_blue.png"
-import BrandLogo from "../assets/icons/BrandLogo.svg"
+import logo from "assets/icons/logo_blue.png";
+import BrandLogo from "assets/icons/BrandLogo.svg";
 
 const defaultSettings = {
   baseURL: process.env.REACT_APP_URL, // base url for whole project
@@ -28,11 +28,11 @@ const defaultSettings = {
   },
   elementsPerPage: 10,
   supportPhonenumber: "+998 (99) 823-99-13",
-}
+};
 
-document.title = defaultSettings.project.title
+document.title = defaultSettings.project.title;
 
-export default defaultSettings
+export default defaultSettings;
 
 export const inputTypes = [
   { value: "radio", label: "one.of.the.list" },
@@ -44,7 +44,7 @@ export const inputTypes = [
   { value: "date", label: "date" },
   { value: "file", label: "file" },
   { value: "map", label: "map" },
-]
+];
 
 export const actionTypes = {
   ACCEPT: { color: "green" },
@@ -55,16 +55,16 @@ export const actionTypes = {
   REVERT: { color: "red" },
   SET_AS_READY: { color: "#4094f7" },
   SEND_TO_AUCTION: { color: "#4094f7" },
-}
+};
 
 export const createValidatorByType = (type, yup, validation) => {
   if (type === "boolean") {
-    return yup.bool(validation)
+    return yup.bool(validation);
   } else if (type === "checkbox" || type === "map") {
-    return yup.object(validation)
+    return yup.object(validation);
   }
-  return yup.string(validation)
-}
+  return yup.string(validation);
+};
 
 export const getObjectInputTypes = (t) => {
   return {
@@ -77,18 +77,18 @@ export const getObjectInputTypes = (t) => {
     date: t("date"),
     file: t("file"),
     map: t("map"),
-  }
-}
+  };
+};
 
 export const getInputTypes = (t) => {
-  return inputTypes.map((val) => ({ ...val, label: t(val.label) }))
-}
+  return inputTypes.map((val) => ({ ...val, label: t(val.label) }));
+};
 
-export const newEntityStatusId = "6103bb05dd7aa74db9a779a6"
-export const newEntityStatusId2 = "614c2596b074b551d49290dd"
-export const mapPropertyId = "6113589b73bf6fe15aaef566"
-export const mapTypePropertyId = "6113590973bf6fe15aaef567"
-export const rejectPropertyIdFile = "612dcae08eb3597edfbded32"
-export const rejectPropertyIdDescription = "612dcb378eb3597edfbded33"
+export const newEntityStatusId = "6103bb05dd7aa74db9a779a6";
+export const newEntityStatusId2 = "614c2596b074b551d49290dd";
+export const mapPropertyId = "6113589b73bf6fe15aaef566";
+export const mapTypePropertyId = "6113590973bf6fe15aaef567";
+export const rejectPropertyIdFile = "612dcae08eb3597edfbded32";
+export const rejectPropertyIdDescription = "612dcb378eb3597edfbded33";
 export const mapboxToken =
-  "pk.eyJ1IjoiYWxnb3NkZXYiLCJhIjoiY2tydmtndnZhMDdodDJ3cnY2d2xyM25iayJ9.MQntLXZai3HeMrHo7I-hAA"
+  "pk.eyJ1IjoiYWxnb3NkZXYiLCJhIjoiY2tydmtndnZhMDdodDJ3cnY2d2xyM25iayJ9.MQntLXZai3HeMrHo7I-hAA";

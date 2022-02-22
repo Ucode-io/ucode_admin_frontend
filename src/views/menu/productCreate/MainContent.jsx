@@ -1,31 +1,31 @@
-import Form from "../../../components/Form/Index"
-import Card from "../../../components/Card"
-import Select from "../../../components/Select"
-import Gallery from "../../../components/Gallery"
-import TextArea from "../../../components/Textarea"
-import { Input } from "alisa-ui"
-import { useTranslation } from "react-i18next"
-import React, { useState } from "react"
-import Filters from "../../../components/Filters"
-import { StyledTab, StyledTabs } from "../../../components/StyledTabs"
-import RusFlag from "../../../assets/icons/Ellipse 8.png"
-import EngFlag from "../../../assets/icons/Ellipse 9.png"
-import FlagUz from "../../../assets/icons/Ellipse 7.png"
+import Form from "components/Form/Index";
+import Card from "components/Card";
+import Select from "components/Select";
+import Gallery from "components/Gallery";
+import TextArea from "components/Textarea";
+import { Input } from "alisa-ui";
+import { useTranslation } from "react-i18next";
+import React, { useState } from "react";
+import Filters from "components/Filters";
+import { StyledTab, StyledTabs } from "components/StyledTabs";
+import RusFlag from "assets/icons/Ellipse 8.png";
+import EngFlag from "assets/icons/Ellipse 9.png";
+import FlagUz from "assets/icons/Ellipse 7.png";
 
 export default function MainContent({ formik, categories }) {
-  const { t } = useTranslation()
-  const { values, handleChange, setFieldValue } = formik
+  const { t } = useTranslation();
+  const { values, handleChange, setFieldValue } = formik;
 
-  const [selectedTab, setSelectedTab] = useState("ru")
+  const [selectedTab, setSelectedTab] = useState("ru");
 
   const tabLabel = (text, isActive = false) => {
-    return <span className="px-1">{text}</span>
-  }
+    return <span className="px-1">{text}</span>;
+  };
 
-  console.log("formik==>", formik)
+  console.log("formik==>", formik);
   const onFieldChange = (name, e) => {
-    setFieldValue(`${name}.${selectedTab}`, e.target.value)
-  }
+    setFieldValue(`${name}.${selectedTab}`, e.target.value);
+  };
 
   return (
     <div className="w-full">
@@ -43,8 +43,8 @@ export default function MainContent({ formik, categories }) {
             <StyledTabs
               value={selectedTab}
               onChange={(_, value) => {
-                setSelectedTab(value)
-                console.log(value)
+                setSelectedTab(value);
+                console.log(value);
               }}
               indicatorColor="primary"
               textColor="primary"
@@ -178,5 +178,5 @@ export default function MainContent({ formik, categories }) {
         </div>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,5 +1,5 @@
-import { ReactComponent as InfoIcon } from "../../assets/icons/infoIcon.svg";
-import { ReactComponent as CancelIcon } from "../../assets/icons/cancelIcon.svg";
+import { ReactComponent as InfoIcon } from "assets/icons/infoIcon.svg";
+import { ReactComponent as CancelIcon } from "assets/icons/cancelIcon.svg";
 
 function Popup(props) {
   const {

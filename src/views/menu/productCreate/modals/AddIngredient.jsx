@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react"
-import Form from "../../../../components/Form/Index"
-import Modal from "../../../../components/Modal"
-import Button from "../../../../components/Button"
-import AddIcon from "@material-ui/icons/Add"
-import * as yup from "yup"
-import EditIcon from "@material-ui/icons/Edit"
-import { Input } from "alisa-ui"
-import { useTranslation } from "react-i18next"
-import { FieldArray, useFormik } from "formik"
-import { StyledTab, StyledTabs } from "../../../../components/StyledTabs"
-import RusFlag from "../../../../assets/icons/Ellipse 8.png"
-import EngFlag from "../../../../assets/icons/Ellipse 9.png"
-import FlagUz from "../../../../assets/icons/Ellipse 7.png"
-import Filters from "../../../../components/Filters"
-import CloseIcon from "@material-ui/icons/Close"
-import IconButton from "../../../../components/Button/IconButton"
-import DeleteIcon from "@material-ui/icons/Delete"
-import Select from "../../../../components/Select"
+import React, { useEffect, useState } from "react";
+import Form from "components/Form/Index";
+import Modal from "components/Modal";
+import Button from "components/Button";
+import AddIcon from "@material-ui/icons/Add";
+import * as yup from "yup";
+import EditIcon from "@material-ui/icons/Edit";
+import { Input } from "alisa-ui";
+import { useTranslation } from "react-i18next";
+import { FieldArray, useFormik } from "formik";
+import { StyledTab, StyledTabs } from "components/StyledTabs";
+import RusFlag from "assets/icons/Ellipse 8.png";
+import EngFlag from "assets/icons/Ellipse 9.png";
+import FlagUz from "assets/icons/Ellipse 7.png";
+import Filters from "components/Filters";
+import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "components/Button/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Select from "components/Select";
 
 export default function AddIngredientModal({
   open,
@@ -26,23 +26,23 @@ export default function AddIngredientModal({
   ingredients,
   ...props
 }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const [selectedTab, setSelectedTab] = useState("ru")
+  const [selectedTab, setSelectedTab] = useState("ru");
 
   const tabLabel = (text) => {
-    return <span className="px-1">{text}</span>
-  }
+    return <span className="px-1">{text}</span>;
+  };
 
   const onFieldChange = (name, e) => {
-    setFieldValue(`${name}.${selectedTab}`, e.target.value)
-  }
+    setFieldValue(`${name}.${selectedTab}`, e.target.value);
+  };
 
   useEffect(() => {
     if (initialValues) {
-      formik.setValues(initialValues)
+      formik.setValues(initialValues);
     }
-  }, [initialValues])
+  }, [initialValues]);
 
   const formik = useFormik({
     initialValues: {
@@ -57,17 +57,17 @@ export default function AddIngredientModal({
     //   }),
     // }),
     onSubmit: (values) => {
-      onSubmit(values)
-      handleClose()
+      onSubmit(values);
+      handleClose();
     },
-  })
+  });
 
   const handleClose = () => {
-    onClose()
-    formik.resetForm()
-  }
+    onClose();
+    formik.resetForm();
+  };
 
-  const { values, handleChange, setFieldValue, errors, touched } = formik
+  const { values, handleChange, setFieldValue, errors, touched } = formik;
 
   // const { values, handleChange } = formikChange}
 
@@ -93,8 +93,8 @@ export default function AddIngredientModal({
           <StyledTabs
             value={selectedTab}
             onChange={(_, value) => {
-              setSelectedTab(value)
-              console.log(value)
+              setSelectedTab(value);
+              console.log(value);
             }}
             indicatorColor="primary"
             textColor="primary"
@@ -184,9 +184,9 @@ export default function AddIngredientModal({
                               onClick={() => {
                                 const newArrays =
                                   formik.values.ingredients.filter(
-                                    (_, number) => number !== index
-                                  )
-                                formik.setFieldValue("ingredients", newArrays)
+                                    (_, number) => number !== index,
+                                  );
+                                formik.setFieldValue("ingredients", newArrays);
                               }}
                             />
                           </div>
@@ -215,7 +215,7 @@ export default function AddIngredientModal({
                     label: "",
                     value: "",
                   },
-                ])
+                ]);
               }}
               color="blue"
               style={{
@@ -249,5 +249,5 @@ export default function AddIngredientModal({
         </div>
       </form>
     </Modal>
-  )
+  );
 }

@@ -1,5 +1,4 @@
 import Card from "../Card/index";
-// import { Home } from "@material-ui/icons"
 import CountUp from "react-countup";
 
 const Widget = ({ Icon, number, title }) => {

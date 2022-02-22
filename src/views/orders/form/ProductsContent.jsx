@@ -17,11 +17,11 @@ import { RadioGroup, Radio } from "components/Radio";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import DriveEtaIcon from "@material-ui/icons/DriveEta";
 import FunctionsIcon from "@material-ui/icons/Functions";
-import cashIcon from "../../../assets/icons/cash.png";
-import paymeIcon from "../../../assets/icons/image 4.png";
-import clickIcon from "../../../assets/icons/image 5.png";
-import bankIcon from "../../../assets/icons/image 7.png";
-import numberToPrice from "../../../helpers/numberToPrice";
+import cashIcon from "assets/icons/cash.png";
+import paymeIcon from "assets/icons/image 4.png";
+import clickIcon from "assets/icons/image 5.png";
+import bankIcon from "assets/icons/image 7.png";
+import numberToPrice from "helpers/numberToPrice";
 
 export default function ProductContent({
   formik,

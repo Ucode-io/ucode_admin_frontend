@@ -1,15 +1,14 @@
-import Header from "../../components/Header";
+import Header from "components/Header";
 import { useTranslation } from "react-i18next";
-// import Widgets from "../../components/Widgets"
+import Widgets from "components/Widgets";
 import HomeIcon from "@material-ui/icons/Home";
 import DiscussIcon from "@material-ui/icons/Textsms";
 import GavelIcon from "@material-ui/icons/Gavel";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { useEffect, useMemo, useState } from "react";
-import axios from "../../utils/axios";
-import FullScreenLoader from "../../components/FullScreenLoader";
-// import AdminDashboard from "./AdminDashboard"
-// import LimitedDashboard from "./LimitedDashboard"
+import axios from "utils/axios";
+import FullScreenLoader from "components/FullScreenLoader";
+import AdminDashboard from "./AdminDashboard";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -23,21 +22,25 @@ const Dashboard = () => {
         title: "Bo'sh yer uchastkalari",
         icon: HomeIcon,
         number: widgetData?.free_count,
+        id: "home",
       },
       {
         title: "Muhokamadagi",
         icon: DiscussIcon,
         number: widgetData?.discussion_count,
+        id: "discussion",
       },
       {
         title: "Auksiondagi",
         icon: GavelIcon,
         number: widgetData?.auction_count,
+        id: "auction",
       },
       {
         title: "Sotilganlar",
         icon: CheckCircleIcon,
         number: widgetData?.sold_count,
+        id: "sold",
       },
     ];
   }, [widgetData]);
@@ -62,7 +65,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div>
+    <>
       {loading ? <FullScreenLoader /> : ""}
 
       <Header
@@ -74,11 +77,11 @@ const Dashboard = () => {
       />
 
       <div className="p-6">
-        {/* <Widgets data={computedWidgetsData} /> */}
+        <Widgets data={computedWidgetsData} />
 
-        {/* {userData?.role?.code === 3 ? <LimitedDashboard /> : <AdminDashboard />} */}
+        <AdminDashboard />
       </div>
-    </div>
+    </>
   );
 };
 

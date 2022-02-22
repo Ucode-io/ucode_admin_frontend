@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react"
-import Form from "../../../../components/Form/Index"
-import Modal from "../../../../components/Modal"
-import Button from "../../../../components/Button"
-import AddIcon from "@material-ui/icons/Add"
-import * as yup from "yup"
-import EditIcon from "@material-ui/icons/Edit"
-import { Input } from "alisa-ui"
-import { useTranslation } from "react-i18next"
-import { useFormik } from "formik"
-import { StyledTab, StyledTabs } from "../../../../components/StyledTabs"
-import RusFlag from "../../../../assets/icons/Ellipse 8.png"
-import EngFlag from "../../../../assets/icons/Ellipse 9.png"
-import FlagUz from "../../../../assets/icons/Ellipse 7.png"
-import Filters from "../../../../components/Filters"
-import CloseIcon from "@material-ui/icons/Close"
+import React, { useEffect, useState } from "react";
+import Form from "components/Form/Index";
+import Modal from "components/Modal";
+import Button from "components/Button";
+import AddIcon from "@material-ui/icons/Add";
+import * as yup from "yup";
+import EditIcon from "@material-ui/icons/Edit";
+import { Input } from "alisa-ui";
+import { useTranslation } from "react-i18next";
+import { useFormik } from "formik";
+import { StyledTab, StyledTabs } from "components/StyledTabs";
+import RusFlag from "assets/icons/Ellipse 8.png";
+import EngFlag from "assets/icons/Ellipse 9.png";
+import FlagUz from "assets/icons/Ellipse 7.png";
+import Filters from "components/Filters";
+import CloseIcon from "@material-ui/icons/Close";
 
 export default function AddOptionModal({
   open,
@@ -22,23 +22,23 @@ export default function AddOptionModal({
   initialValues,
   ...props
 }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const [selectedTab, setSelectedTab] = useState("ru")
+  const [selectedTab, setSelectedTab] = useState("ru");
 
   const tabLabel = (text) => {
-    return <span className="px-1">{text}</span>
-  }
+    return <span className="px-1">{text}</span>;
+  };
 
   const onFieldChange = (name, e) => {
-    setFieldValue(`${name}.${selectedTab}`, e.target.value)
-  }
+    setFieldValue(`${name}.${selectedTab}`, e.target.value);
+  };
 
   useEffect(() => {
     if (initialValues) {
-      formik.setValues(initialValues)
+      formik.setValues(initialValues);
     }
-  }, [initialValues])
+  }, [initialValues]);
 
   const formik = useFormik({
     initialValues: {
@@ -54,16 +54,16 @@ export default function AddOptionModal({
       }),
     }),
     onSubmit: (values) => {
-      onSubmit(values)
-      handleClose()
+      onSubmit(values);
+      handleClose();
     },
-  })
+  });
 
   const handleClose = () => {
-    onClose()
-    formik.resetForm()
-  }
-  const { values, handleChange, setFieldValue } = formik
+    onClose();
+    formik.resetForm();
+  };
+  const { values, handleChange, setFieldValue } = formik;
 
   // const { values, handleChange } = formik
 
@@ -89,8 +89,8 @@ export default function AddOptionModal({
           <StyledTabs
             value={selectedTab}
             onChange={(_, value) => {
-              setSelectedTab(value)
-              console.log(value)
+              setSelectedTab(value);
+              console.log(value);
             }}
             indicatorColor="primary"
             textColor="primary"
@@ -168,5 +168,5 @@ export default function AddOptionModal({
         </div>
       </form>
     </Modal>
-  )
+  );
 }

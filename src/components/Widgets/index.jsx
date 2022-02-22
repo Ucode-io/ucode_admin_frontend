@@ -6,17 +6,12 @@ const Widgets = ({ data }) => {
     <div className="w-full flex mb-5 gap-4 Widgets">
       {data.map((widget, index) => (
         <Widget
-          key={widget.key}
+          key={widget.id}
           Icon={widget.icon}
           title={widget.title}
           number={widget.number}
         />
       ))}
-
-      {/* <Widget />
-      <Widget />
-      <Widget />
-      <Widget /> */}
     </div>
   );
 };

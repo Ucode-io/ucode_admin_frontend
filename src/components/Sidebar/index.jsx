@@ -1,16 +1,16 @@
-import { useState, useEffect, useMemo } from "react"
-import { useHistory, NavLink } from "react-router-dom"
-import Tooltip from "@material-ui/core/Tooltip"
-import { makeStyles } from "@material-ui/core/styles"
-import Avatar from "../Avatar/Index"
-import "./index.scss"
-import { menu, settings } from "./menu"
-import { useTranslation } from "react-i18next"
-import { useDispatch } from "react-redux"
-import { CLEAR_ON_SIGNOUT } from "../../redux/constants"
-import LogoutModal from "./Modal"
-import BrandLogo from "../../assets/icons/logo.svg"
-import logoutIcon from "../../assets/icons/logout.svg"
+import { useState, useEffect, useMemo } from "react";
+import { useHistory, NavLink } from "react-router-dom";
+import Tooltip from "@material-ui/core/Tooltip";
+import { makeStyles } from "@material-ui/core/styles";
+import Avatar from "../Avatar/Index";
+import "./index.scss";
+import { menu, settings } from "./menu";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { CLEAR_ON_SIGNOUT } from "redux/constants";
+import LogoutModal from "./Modal";
+import BrandLogo from "assets/icons/logo.svg";
+import logoutIcon from "assets/icons/logout.svg";
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -20,60 +20,60 @@ const useStylesBootstrap = makeStyles((theme) => ({
     backgroundColor: theme.palette.common.black,
     fontSize: 12,
   },
-}))
+}));
 
 function BootstrapTooltip(props) {
-  const classes = useStylesBootstrap()
-  return <Tooltip placement="right" arrow classes={classes} {...props} />
+  const classes = useStylesBootstrap();
+  return <Tooltip placement="right" arrow classes={classes} {...props} />;
 }
 
 export default function App() {
-  const history = useHistory()
-  const { t } = useTranslation()
-  const dispatch = useDispatch()
-  const allMenus = useMemo(() => menu.concat(settings), [])
-  const [visible, setVisible] = useState(false)
-  const [selectedList, setSelectedList] = useState([])
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const toggleSidebar = () => setVisible((prev) => !prev)
-  const [title, setTitle] = useState("")
+  const history = useHistory();
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const allMenus = useMemo(() => menu.concat(settings), []);
+  const [visible, setVisible] = useState(false);
+  const [selectedList, setSelectedList] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const toggleSidebar = () => setVisible((prev) => !prev);
+  const [title, setTitle] = useState("");
   const logoutHandler = () => {
-    setIsModalOpen(true)
-  }
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
     if (menu.length) {
       allMenus.forEach((el) => {
-        const fatherPathname = el.path.split("/")[2]
+        const fatherPathname = el.path.split("/")[2];
         if (history.location.pathname.includes(fatherPathname)) {
           if (el.children && el.children.length) {
-            setSelectedList(el.children)
-            setTitle(el.title)
-            setVisible(true)
+            setSelectedList(el.children);
+            setTitle(el.title);
+            setVisible(true);
           }
         }
-      })
+      });
     }
-  }, [history, allMenus])
+  }, [history, allMenus]);
 
   const linkTo = (item) => {
     if (!item.isChild) {
-      setTitle(item.title)
+      setTitle(item.title);
     }
 
     if (item.children && item.children.length) {
-      setVisible(true)
-      setSelectedList(item.children)
+      setVisible(true);
+      setSelectedList(item.children);
       setTimeout(() => {
-        if (item.redirect) history.push(item.redirect)
-      }, 0)
-      return
+        if (item.redirect) history.push(item.redirect);
+      }, 0);
+      return;
     } else {
-      setSelectedList([])
+      setSelectedList([]);
     }
 
-    setVisible(false)
-  }
+    setVisible(false);
+  };
 
   const RenderSidebarItems = ({ items }) => {
     return (
@@ -88,8 +88,8 @@ export default function App() {
           </li>
         ))}
       </ul>
-    )
-  }
+    );
+  };
 
   const RenderMenuElements = ({ items }) =>
     items.map((el) => (
@@ -112,7 +112,7 @@ export default function App() {
           </BootstrapTooltip>
         </NavLink>
       </li>
-    ))
+    ));
 
   return (
     <div className="flex h-screen h-full">
@@ -207,5 +207,5 @@ export default function App() {
         <RenderSidebarItems items={selectedList} />
       </div>
     </div>
-  )
+  );
 }

@@ -1,55 +1,55 @@
-import React, { useEffect, useMemo, useState } from "react"
-import { useFormik } from "formik"
-import * as yup from "yup"
-import { useTranslation } from "react-i18next"
-import { useHistory, useParams } from "react-router-dom"
-import { Input } from "alisa-ui"
-import "./styles.scss"
+import React, { useEffect, useMemo, useState } from "react";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { useTranslation } from "react-i18next";
+import { useHistory, useParams } from "react-router-dom";
+import { Input } from "alisa-ui";
+import "./styles.scss";
 
 //components and functions
-import Form from "../../../../components/Form/Index"
-import Breadcrumb from "../../../../components/Breadcrumb"
-import Header from "../../../../components/Header"
-import Card from "../../../../components/Card"
-import Button from "../../../../components/Button"
-import { updateCourierType } from "../../../../services/courierType"
-import CancelIcon from "@material-ui/icons/Cancel"
-import SaveIcon from "@material-ui/icons/Save"
-import { StyledTab, StyledTabs } from "../../../../components/StyledTabs"
-import RusFlag from "../../../../assets/icons/Ellipse 8.png"
-import EngFlag from "../../../../assets/icons/Ellipse 9.png"
-import FlagUz from "../../../../assets/icons/Ellipse 7.png"
-import Filters from "../../../../components/Filters"
-import CustomSkeleton from "../../../../components/Skeleton"
-import Select from "../../../../components/Select"
-import IconButton from "../../../../components/Button/IconButton"
-import ClearIcon from "@material-ui/icons/Clear"
-import { getMenus } from "../../../../services"
+import Form from "components/Form/Index";
+import Breadcrumb from "components/Breadcrumb";
+import Header from "components/Header";
+import Card from "components/Card";
+import Button from "components/Button";
+import { updateCourierType } from "services/courierType";
+import CancelIcon from "@material-ui/icons/Cancel";
+import SaveIcon from "@material-ui/icons/Save";
+import { StyledTab, StyledTabs } from "components/StyledTabs";
+import RusFlag from "assets/icons/Ellipse 8.png";
+import EngFlag from "assets/icons/Ellipse 9.png";
+import FlagUz from "assets/icons/Ellipse 7.png";
+import Filters from "components/Filters";
+import CustomSkeleton from "components/Skeleton";
+import Select from "components/Select";
+import IconButton from "components/Button/IconButton";
+import ClearIcon from "@material-ui/icons/Clear";
+import { getMenus } from "services";
 import {
   getCategories,
   getCompanyCategories,
   getOneCompanyCategory,
-} from "../../../../services/company_category"
-import { getOnePromotion, savePromotion } from "../../../../services/promotion"
-import ProductModal from "./ProductModal"
+} from "services/company_category";
+import { getOnePromotion, savePromotion } from "services/promotion";
+import ProductModal from "./ProductModal";
 
 export default function CreateCourierType() {
-  const history = useHistory()
-  const { id } = useParams()
-  const { t } = useTranslation()
-  const [saveLoading, setSaveLoading] = useState(false)
-  const [loader, setLoader] = useState(false)
-  const [checkedProducts, setCheckedProducts] = useState([])
-  const [products, setProducts] = useState([])
-  const [menuIds, setMenuIds] = useState([])
-  const [shippers, setShippers] = useState([])
-  const [open, setOpen] = useState(false)
-  const [menus, setMenus] = useState([])
-  const [companyCategories, setCompanyCategories] = useState([])
-  const [selectedTab, setSelectedTab] = useState("ru")
-  const [productsSwitch, setProductsSwitch] = useState([])
-  const [categories, setCategories] = useState([])
-  const [categoryId, setCategoryId] = useState(null)
+  const history = useHistory();
+  const { id } = useParams();
+  const { t } = useTranslation();
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [loader, setLoader] = useState(false);
+  const [checkedProducts, setCheckedProducts] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [menuIds, setMenuIds] = useState([]);
+  const [shippers, setShippers] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [menus, setMenus] = useState([]);
+  const [companyCategories, setCompanyCategories] = useState([]);
+  const [selectedTab, setSelectedTab] = useState("ru");
+  const [productsSwitch, setProductsSwitch] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [categoryId, setCategoryId] = useState(null);
   const [weekArray, setWeekArray] = useState([
     {
       id: 1,
@@ -114,7 +114,7 @@ export default function CreateCourierType() {
         endDate: "",
       },
     },
-  ])
+  ]);
 
   const changeWeekArray = (e) => {
     setWeekArray((prev) =>
@@ -124,34 +124,34 @@ export default function CreateCourierType() {
               ...item,
               isChecked: !item.isChecked,
             }
-          : item
-      )
-    )
-  }
+          : item,
+      ),
+    );
+  };
 
   const getItem = () => {
-    if (!id) return setLoader(false)
-    setLoader(true)
+    if (!id) return setLoader(false);
+    setLoader(true);
     getOnePromotion(id)
       .then((res) => {
-        console.log(res)
+        console.log(res);
         // formik.setValues({
         //   name: res.name,
         // })
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const tabLabel = (text, _) => {
-    return <span className="px-1">{text}</span>
-  }
+    return <span className="px-1">{text}</span>;
+  };
 
   useEffect(() => {
-    getItem()
+    getItem();
     getCompanyCategories({ limit: 1000 }).then((res) => {
-      setCompanyCategories(res?.company_categories)
-    })
-  }, [])
+      setCompanyCategories(res?.company_categories);
+    });
+  }, []);
 
   const initialValues = useMemo(
     () => ({
@@ -165,27 +165,27 @@ export default function CreateCourierType() {
       start_date: "",
       end_date: "",
     }),
-    []
-  )
+    [],
+  );
 
   const validationSchema = useMemo(() => {
-    const defaultSchema = yup.mixed().required(t("required.field.error"))
+    const defaultSchema = yup.mixed().required(t("required.field.error"));
     return yup.object().shape({
       name: defaultSchema,
-    })
-  }, [])
+    });
+  }, []);
 
   const saveChanges = (data) => {
-    delete data.company_category
-    const daily_start_times = weekArray.map((item) => item.value.startDate)
-    const daily_end_times = weekArray.map((item) => item.value.endDate)
+    delete data.company_category;
+    const daily_start_times = weekArray.map((item) => item.value.startDate);
+    const daily_end_times = weekArray.map((item) => item.value.endDate);
     const start_date = `${data.start_date.split("-")[1]}-${
       data.start_date.split("-")[2]
-    }-${data.start_date.split("-")[0]}`
+    }-${data.start_date.split("-")[0]}`;
     const end_date = `${data.end_date.split("-")[1]}-${
       data.end_date.split("-")[2]
-    }-${data.end_date.split("-")[0]}`
-    setSaveLoading(true)
+    }-${data.end_date.split("-")[0]}`;
+    setSaveLoading(true);
     const selectedAction = id
       ? updateCourierType(id, data)
       : savePromotion({
@@ -200,29 +200,29 @@ export default function CreateCourierType() {
           start_date,
           end_date,
           is_active: true,
-        })
+        });
     selectedAction
       .then(() => {
-        history.goBack()
+        history.goBack();
       })
-      .finally(() => setSaveLoading(false))
-  }
+      .finally(() => setSaveLoading(false));
+  };
 
   const onSubmit = (values) => {
-    saveChanges(values)
-  }
+    saveChanges(values);
+  };
 
   const onFieldChange = (name, e) => {
-    setFieldValue(`${name}.${selectedTab}`, e.target.value)
-  }
+    setFieldValue(`${name}.${selectedTab}`, e.target.value);
+  };
 
   const formik = useFormik({
     initialValues,
     onSubmit,
     validationSchema,
-  })
+  });
 
-  const { values, setFieldValue, handleChange, handleSubmit } = formik
+  const { values, setFieldValue, handleChange, handleSubmit } = formik;
 
   useEffect(() => {
     if (values.company_category) {
@@ -230,23 +230,23 @@ export default function CreateCourierType() {
         const result = res?.shippers?.map((item) => ({
           label: item.name,
           value: item.id,
-        }))
-        setShippers(result)
-        setFieldValue("shipper_ids", result)
-      })
+        }));
+        setShippers(result);
+        setFieldValue("shipper_ids", result);
+      });
     }
-  }, [values.company_category])
+  }, [values.company_category]);
 
   useEffect(() => {
     if (values.shipper_ids) {
-      setMenus([])
+      setMenus([]);
       values.shipper_ids.map((item) => {
         getMenus({ shipper_id: item.value, limit: 1000 }).then((res) => {
-          setMenus((prev) => [...prev, ...res.menus])
-        })
-      })
+          setMenus((prev) => [...prev, ...res.menus]);
+        });
+      });
     }
-  }, [values.shipper_ids])
+  }, [values.shipper_ids]);
 
   const handleChangeTimes = (event, id, action) => {
     setWeekArray((prev) =>
@@ -259,12 +259,12 @@ export default function CreateCourierType() {
                 [action]: event.target.value,
               },
             }
-          : item
-      )
-    )
-  }
+          : item,
+      ),
+    );
+  };
 
-  if (loader) return <CustomSkeleton />
+  if (loader) return <CustomSkeleton />;
 
   const routes = [
     {
@@ -275,35 +275,35 @@ export default function CreateCourierType() {
     {
       title: id ? formik.values?.name.ru : t("create"),
     },
-  ]
+  ];
 
   const openPopup = (data) => {
-    let mySet = new Set([...menuIds, data.value])
-    setMenuIds(Array.from(mySet))
+    let mySet = new Set([...menuIds, data.value]);
+    setMenuIds(Array.from(mySet));
     getCategories({
       menu_id: data.value,
       with_product: true,
     }).then((res) => {
-      setOpen(true)
-      setCategories(res.categories || [])
+      setOpen(true);
+      setCategories(res.categories || []);
       res.categories?.forEach((item) => {
-        setCategoryId(null)
+        setCategoryId(null);
         if (item.products) {
           if (!menuIds.includes(data.value)) {
             item.products.forEach((el) => {
-              setCheckedProducts((prev) => [...prev, el.id])
-            })
+              setCheckedProducts((prev) => [...prev, el.id]);
+            });
           }
-          setProducts((prev) => [...prev, ...item.products])
+          setProducts((prev) => [...prev, ...item.products]);
         }
-      })
-    })
-  }
+      });
+    });
+  };
   const switchCategory = (id) => {
-    const newProducts = categories.find((item) => item.id === id)
-    setCategoryId(id)
-    setProducts(newProducts.products || [])
-  }
+    const newProducts = categories.find((item) => item.id === id);
+    setCategoryId(id);
+    setProducts(newProducts.products || []);
+  };
 
   return (
     <div className="w-full Stocks">
@@ -344,7 +344,7 @@ export default function CreateCourierType() {
                   <StyledTabs
                     value={selectedTab}
                     onChange={(_, value) => {
-                      setSelectedTab(value)
+                      setSelectedTab(value);
                     }}
                     indicatorColor="primary"
                     textColor="primary"
@@ -646,8 +646,8 @@ export default function CreateCourierType() {
       <ProductModal
         open={open}
         onClose={() => {
-          setOpen(false)
-          setProducts([])
+          setOpen(false);
+          setProducts([]);
         }}
         categories={categories}
         products={products}
@@ -659,5 +659,5 @@ export default function CreateCourierType() {
         productsSwitch={productsSwitch}
       />
     </div>
-  )
+  );
 }

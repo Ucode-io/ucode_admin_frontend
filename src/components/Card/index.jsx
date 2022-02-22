@@ -1,5 +1,3 @@
-import React from "react"
-
 export default function CardContent({
   title,
   children,
@@ -19,7 +17,7 @@ export default function CardContent({
 }) {
   return (
     <div className={`${className} rounded-lg bg-white`} style={style} {...args}>
-      {title || extra ? (
+      {(title || extra) && (
         <div
           style={headerStyle}
           className={`px-4 py-2 border-b flex justify-between items-center rounded-t-lg ${headerClass}`}
@@ -33,18 +31,14 @@ export default function CardContent({
           </div>
           <div>{extra}</div>
         </div>
-      ) : (
-        <></>
       )}
-      {filters ? (
+      {filters && (
         <div
-          style={(headerStyle, filterStyle)}
+          style={{ ...headerStyle, ...filterStyle }}
           className={`px-4 py-3 border-b flex justify-between items-center rounded-t-lg ${headerClass}`}
         >
           {filters}
         </div>
-      ) : (
-        ""
       )}
       <div className="p-4" style={bodyStyle}>
         {children}
@@ -55,5 +49,5 @@ export default function CardContent({
         </div>
       )}
     </div>
-  )
+  );
 }

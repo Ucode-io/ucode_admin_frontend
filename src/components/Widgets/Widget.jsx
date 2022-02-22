@@ -1,6 +1,6 @@
 import Card from "../Card/index";
 // import { Home } from "@material-ui/icons"
-import AnimatedNumber from "react-animated-number";
+import CountUp from "react-countup";
 
 const Widget = ({ Icon, number, title }) => {
   return (
@@ -8,16 +8,7 @@ const Widget = ({ Icon, number, title }) => {
       <div className="w-full flex items-center justify-between gap-1">
         <div className="info-block">
           <h3 className="number">
-            <AnimatedNumber
-              value={number}
-              style={{
-                transition: "linear",
-                fontSize: 24,
-                transitionProperty: "background-color, color, opacity",
-              }}
-              duration={500}
-              formatValue={(n) => new Intl.NumberFormat().format(n)}
-            />
+            <CountUp end={number} duration={1} separator="," />
           </h3>
           <p className="subtitle">{title ?? "---"}</p>
         </div>

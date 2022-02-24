@@ -8,8 +8,9 @@ import {
   DirectionsCar,
   LocalGroceryStore,
   GpsFixedOutlined,
-} from "@material-ui/icons"
-import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile"
+} from "@material-ui/icons";
+import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
+
 export const menu = [
   {
     id: "dashboard",
@@ -17,7 +18,7 @@ export const menu = [
     path: "/home/dashboard",
     isActive: false,
     icon: Dashboard,
-    permission: "dashboard"
+    permission: "dashboard",
   },
   {
     id: "orders",
@@ -32,7 +33,6 @@ export const menu = [
     title: "Клиенты",
     path: "/home/personal/clients",
     isActive: true,
-
     icon: People,
   },
   {
@@ -244,11 +244,70 @@ export const menu = [
         isChild: true,
       },
       {
-        id: "geofence",
-        title: "regions",
-        path: "/home/settings/geofence",
+        id: "integrations",
+        title: "integrations",
+        path: "/home/settings/integrations",
         isActive: false,
-        permission: "geofence",
+        permission: "integrations",
+        isChild: true,
+        redirect: "/home/settings/integrations/payme",
+        children: [
+          {
+            id: "payme",
+            title: "payme",
+            path: "/home/settings/integrations/payme",
+            isActive: false,
+            permission: "payme",
+            isChild: true,
+          },
+          {
+            id: "liko",
+            title: "liko",
+            path: "/home/settings/integrations/liko",
+            isActive: false,
+            permission: "liko",
+            isChild: true,
+          },
+          {
+            id: "jowi",
+            title: "jowi",
+            path: "/home/settings/integrations/jowi",
+            isActive: false,
+            permission: "jowi",
+            isChild: true,
+          },
+          {
+            id: "click",
+            title: "click",
+            path: "/home/settings/integrations/click",
+            isActive: false,
+            permission: "click",
+            isChild: true,
+          },
+        ],
+      },
+      {
+        id: "aggregator",
+        title: "aggregator",
+        path: "/home/settings/aggregator",
+        isActive: false,
+        permission: "aggregator",
+        isChild: true,
+      },
+      {
+        id: "role-access",
+        title: "role-access",
+        path: "/home/settings/role-access",
+        isActive: false,
+        permission: "role-access",
+        isChild: true,
+      },
+      {
+        id: "company",
+        title: "company",
+        path: "/home/settings/company",
+        isActive: false,
+        permission: "company",
         isChild: true,
       },
     ],
@@ -285,8 +344,8 @@ export const menu = [
   //     },
   //   ],
   // },
-]
+];
 
-export const settings = []
+export const settings = [];
 
 // export default menu

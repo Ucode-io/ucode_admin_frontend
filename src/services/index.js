@@ -8,3 +8,4 @@ export * from "./deliveryPrice";
 export * from "./courier";
 export * from "./fares";
 export * from "./dashboard";
+export * from "./aggregator";

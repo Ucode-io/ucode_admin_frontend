@@ -1,194 +1,197 @@
-import FullScreenLoader from "../components/Skeleton"
-import Loadable from "react-loadable"
+import FullScreenLoader from "../components/Skeleton";
+import Loadable from "react-loadable";
 
 const Dashboard = Loadable({
   loader: () => import("../views/dashboard/index"),
   loading: FullScreenLoader,
-})
+});
 const Clients = Loadable({
   loader: () => import("../views/clients"),
   loading: FullScreenLoader,
-})
+});
 const ClientsCreate = Loadable({
   loader: () => import("../views/clients/Create"),
   loading: FullScreenLoader,
-})
+});
 const Profile = Loadable({
   loader: () => import("../views/profile"),
   loading: FullScreenLoader,
-})
+});
 const Orders = Loadable({
   loader: () => import("../views/orders"),
   loading: FullScreenLoader,
-})
+});
 const OrderForm = Loadable({
   loader: () => import("../views/orders/form"),
   loading: FullScreenLoader,
-})
+});
 
 const ShipperSettings = Loadable({
   loader: () => import("../views/settings/ShipperSettings"),
   loading: FullScreenLoader,
-})
+});
 
 const ShipperBranches = Loadable({
   loader: () => import("../views/settings/branches/index"),
   loading: FullScreenLoader,
-})
+});
 const ShipperBranchesForm = Loadable({
   loader: () => import("../views/settings/branches/form/index.jsx"),
   loading: FullScreenLoader,
-})
+});
 const ShipperSettingsCreate = Loadable({
   loader: () => import("../views/settings/ShipperSettings/Create"),
   loading: FullScreenLoader,
-})
+});
 const Stocks = Loadable({
   loader: () => import("../views/marketing/stocks"),
   loading: FullScreenLoader,
-})
+});
 
 const StockCreate = Loadable({
   loader: () => import("../views/marketing/stocks/form"),
   loading: FullScreenLoader,
-})
+});
 
 const Banners = Loadable({
   loader: () => import("../views/marketing/banners"),
   loading: FullScreenLoader,
-})
+});
 const BannerFrom = Loadable({
   loader: () => import("../views/marketing/banners/form"),
   loading: FullScreenLoader,
-})
+});
 const Reviews = Loadable({
   loader: () => import("../views/marketing/reviews"),
   loading: FullScreenLoader,
-})
+});
 const Newsletter = Loadable({
   loader: () => import("../views/marketing/newsletter"),
   loading: FullScreenLoader,
-})
+});
 const NewsletterCreate = Loadable({
   loader: () => import("../views/marketing/newsletter/form"),
   loading: FullScreenLoader,
-})
+});
 const Menu = Loadable({
   loader: () => import("../views/menu"),
   loading: FullScreenLoader,
-})
+});
 const MenuItems = Loadable({
   loader: () => import("../views/menu/menuItems"),
   loading: FullScreenLoader,
-})
+});
 const ProductCreate = Loadable({
   loader: () => import("../views/menu/productCreate"),
   loading: FullScreenLoader,
-})
+});
 const CategoryCreate = Loadable({
   loader: () => import("../views/menu/categoryCreate/index"),
   loading: FullScreenLoader,
-})
+});
 const News = Loadable({
   loader: () => import("../views/catalog/news"),
   loading: FullScreenLoader,
-})
+});
 const NewsCreate = Loadable({
   loader: () => import("../views/catalog/news/form"),
   loading: FullScreenLoader,
-})
+});
 const CompanyCategory = Loadable({
   loader: () => import("../views/catalog/company_category"),
   loading: FullScreenLoader,
-})
+});
 const CompanyCategoryCreate = Loadable({
   loader: () => import("../views/catalog/company_category/form"),
   loading: FullScreenLoader,
-})
+});
 const Banner = Loadable({
   loader: () => import("../views/catalog/banner"),
   loading: FullScreenLoader,
-})
+});
 const BannerCreate = Loadable({
   loader: () => import("../views/catalog/banner/form"),
   loading: FullScreenLoader,
-})
+});
 const Courier = Loadable({
   loader: () => import("../views/personal/courier"),
   loading: FullScreenLoader,
-})
+});
 const CourierCreate = Loadable({
   loader: () => import("../views/personal/courier/form"),
   loading: FullScreenLoader,
-})
+});
 const Operator = Loadable({
   loader: () => import("../views/personal/operator"),
   loading: FullScreenLoader,
-})
+});
 const OperatorCreate = Loadable({
   loader: () => import("../views/personal/operator/form"),
   loading: FullScreenLoader,
-})
+});
 const ReportsCourier = Loadable({
   loader: () => import("../views/reports/courier/index"),
   loading: FullScreenLoader,
-})
+});
 
 const ReportsBranch = Loadable({
   loader: () => import("../views/reports/branch/index"),
   loading: FullScreenLoader,
-})
+});
 
 const ReportsUser = Loadable({
   loader: () => import("../views/reports/users/index"),
   loading: FullScreenLoader,
-})
+});
 
 const CourierType = Loadable({
   loader: () => import("../views/personal/courierType"),
   loading: FullScreenLoader,
-})
+});
 const CourierTypeCreate = Loadable({
   loader: () => import("../views/personal/courierType/form"),
   loading: FullScreenLoader,
-})
+});
 const Fares = Loadable({
   loader: () => import("../views/settings/rates"),
   loading: FullScreenLoader,
-})
+});
 const TariffCreate = Loadable({
   loader: () => import("../views/settings/rates/form"),
   loading: FullScreenLoader,
-})
-const GeoFence = Loadable({
-  loader: () => import("../views/settings/geofence"),
-  loading: FullScreenLoader,
-})
-const GeoFenceCreate = Loadable({
-  loader: () => import("../views/settings/geofence/form"),
-  loading: FullScreenLoader,
-})
+});
+
 const BranchUser = Loadable({
   loader: () => import("../views/shipperCompany/branchUsers"),
   loading: FullScreenLoader,
-})
+});
 const BranchUserCreate = Loadable({
   loader: () => import("../views/shipperCompany/branchUsers/form"),
   loading: FullScreenLoader,
-})
+});
 const Settlement = Loadable({
   loader: () => import("../views/shipperCompany/settlements"),
   loading: FullScreenLoader,
-})
+});
 const SettlementCreate = Loadable({
   loader: () => import("../views/shipperCompany/settlements/form"),
   loading: FullScreenLoader,
-})
+});
 
 const ShipperBranchesUsersForm = Loadable({
   loader: () => import("../views/settings/branches/form/users/form"),
   loading: FullScreenLoader,
-})
+});
+
+const Aggregator = Loadable({
+  loader: () => import("../views/settings/aggregator"),
+  loading: FullScreenLoader,
+});
+
+const AggregatorCreate = Loadable({
+  loader: () => import("../views/settings/aggregator/Form"),
+  loading: FullScreenLoader,
+});
 
 export default [
   {
@@ -616,25 +619,25 @@ export default [
     permission: "fares",
   },
   {
-    component: GeoFence,
-    path: "/settings/geofence",
+    component: Aggregator,
+    path: "/settings/aggregator",
     exact: true,
-    title: "Geofence",
-    permission: "geofence",
+    title: "Aggregator",
+    permission: "fares",
   },
   {
-    component: GeoFenceCreate,
-    path: "/settings/geofence/create",
+    component: AggregatorCreate,
+    path: "/settings/aggregator/create",
     exact: true,
-    title: "GeofenceCreate",
-    permission: "geofence",
+    title: "Aggregator.Create",
+    permission: "fares",
   },
   {
-    component: GeoFenceCreate,
-    path: "/settings/geofence/:geozone_id/:region_id",
+    component: AggregatorCreate,
+    path: "/settings/aggregator/:id",
     exact: true,
-    title: "GeofenceUpdate",
-    permission: "geofence",
+    title: "Aggregator.Edit",
+    permission: "fares",
   },
   {
     component: BranchUser,
@@ -675,4 +678,4 @@ export default [
   ...route,
   path: `/home${route.path}`,
   id: Math.random() + new Date().getTime(),
-}))
+}));

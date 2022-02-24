@@ -97,7 +97,6 @@
   "application.processing.diagram": "Диаграмма обработки заявок",
   "end.process": "Завершить процесс",
   "select.action": "Выберите действие",
-
   "organization": "Организация",
   "inn": "ИНН",
   "branches": "Филиалы",
@@ -112,19 +111,16 @@
   "permission": "Разрешение",
   "application.status.control": "Управление статусов заявок",
   "stage.description": "Описание этапа",
-
   "select.location": "Выберите место",
   "add.action": "Добавить действие",
   "add.user": "Добавить ползователья",
-
   "city": "Город",
   "male": "Мужской",
   "female": "Женский",
-
   "general.information": "Общие сведения",
   "fair": "Доставка",
   "company.settings": "Настройки компании",
-  "company": "Компании",
+  "company": "Компания",
   "add": "Добавить",
   "list.of.companies": "Список компаний",
   "list.of.options": "Список опций",
@@ -210,7 +206,6 @@
   "operator.declined": "Оператор отменил",
   "finished": "Завершен",
   "server.declined": "Сервер отменил",
-
   "cash": "Наличные",
   "work.process": "Заготовка",
   "all.orders": "Все заказы",
@@ -367,5 +362,8 @@
   "one-time": "Разовый",
   "period (date)": "Период (дата)",
   "period (Time)": "Период (Время)",
-  "logout": "Выйти"
+  "logout": "Выйти",
+  "integrations": "Интеграции",
+  "aggregator": "Агрегатор",
+  "role-access": "Роль и доступ"
 }

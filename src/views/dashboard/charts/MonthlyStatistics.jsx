@@ -9,46 +9,9 @@ import {
   Tooltip,
 } from "recharts";
 import Card from "components/Card";
+import { chartColors } from "config/defaultSettings";
 
-var data = [
-  {
-    name: "Page A",
-    uv: 4000,
-    pv: 2400,
-  },
-  {
-    name: "Page B",
-    uv: 3000,
-    pv: 1398,
-  },
-  {
-    name: "Page C",
-    uv: 2000,
-    pv: 9800,
-  },
-  {
-    name: "Page D",
-    uv: 2780,
-    pv: 3908,
-  },
-  {
-    name: "Page E",
-    uv: 1890,
-    pv: 4800,
-  },
-  {
-    name: "Page F",
-    uv: 2390,
-    pv: 3800,
-  },
-  {
-    name: "Page G",
-    uv: 3490,
-    pv: 4300,
-  },
-];
-
-const MonthlyStatistics = () => {
+const MonthlyStatistics = ({ data }) => {
   return (
     <Card title="Ежемесячная статистика">
       <ResponsiveContainer width="100%" height={310}>
@@ -58,8 +21,11 @@ const MonthlyStatistics = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="pv" fill="#8884d8" />
-          <Bar dataKey="uv" fill="#82ca9d" />
+          <Bar dataKey="Доставка" fill={chartColors.blue} />
+          <Bar dataKey="Самовызов" fill={chartColors.green} />
+          <Bar dataKey="Отмененны" fill={chartColors.red} />
+          <Bar dataKey="Повторно оформленные" fill={chartColors.aquamarine} />
+          <Bar dataKey="Итого" fill={chartColors.yellow} />
         </BarChart>
       </ResponsiveContainer>
     </Card>

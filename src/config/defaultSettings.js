@@ -92,3 +92,12 @@ export const rejectPropertyIdFile = "612dcae08eb3597edfbded32";
 export const rejectPropertyIdDescription = "612dcb378eb3597edfbded33";
 export const mapboxToken =
   "pk.eyJ1IjoiYWxnb3NkZXYiLCJhIjoiY2tydmtndnZhMDdodDJ3cnY2d2xyM25iayJ9.MQntLXZai3HeMrHo7I-hAA";
+
+export const chartColors = {
+  blue: "#6B94D2",
+  green: "#80CE7F",
+  red: "#FF0000",
+  aquamarine: "#33FFBD",
+  yellow: "#FFFF00",
+  stopColor: "#E5E5E5",
+};

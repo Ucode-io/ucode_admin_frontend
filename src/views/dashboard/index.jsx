@@ -6,67 +6,78 @@ import DiscussIcon from "@material-ui/icons/Textsms";
 import GavelIcon from "@material-ui/icons/Gavel";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { useEffect, useMemo, useState } from "react";
-import axios from "utils/axios";
 import FullScreenLoader from "components/FullScreenLoader";
 import AdminDashboard from "./AdminDashboard";
+import * as requests from "services/dashboard";
+import moment from "moment";
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const [widgetData, setWidgetData] = useState({});
   const [userData, setUserData] = useState({});
-  const [loading, setLoader] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [branchesCount, setBranchesCount] = useState(0);
+  const [couriersCount, setCouriersCount] = useState(0);
+  const [customersCount, setCustomersCount] = useState(0);
+  const [orderLocations, setOrderLocations] = useState(0);
+  const [statistics, setStatistics] = useState({});
 
   const computedWidgetsData = useMemo(() => {
     return [
       {
-        title: "Bo'sh yer uchastkalari",
+        title: "Количество филиалов",
         icon: HomeIcon,
-        number: widgetData?.free_count,
+        number: branchesCount,
         id: "home",
       },
       {
-        title: "Muhokamadagi",
+        title: "Количество клиентов",
         icon: DiscussIcon,
-        number: widgetData?.discussion_count,
+        number: customersCount,
         id: "discussion",
       },
       {
-        title: "Auksiondagi",
+        title: "Количество курьеров",
         icon: GavelIcon,
-        number: widgetData?.auction_count,
+        number: couriersCount,
         id: "auction",
       },
-      {
-        title: "Sotilganlar",
-        icon: CheckCircleIcon,
-        number: widgetData?.sold_count,
-        id: "sold",
-      },
     ];
-  }, [widgetData]);
+  }, [branchesCount, customersCount, couriersCount]);
 
-  const fetchWidgetData = () => {
-    axios.get("/entity-count").then((res) => setWidgetData(res));
-  };
-
-  const fetchUserData = () => {
-    axios
-      .get("/staff-by-token")
-      .then((res) => {
-        res.status = res.role.status;
-        setUserData(res);
-      })
-      .finally(() => setLoader(false));
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      let [branches, couriers, statistics, locations] = await Promise.all([
+        requests.getBranchesCount({ page: 1, limit: 1000 }),
+        // requests.getCustomersCount({ page: 1, limit: 10 }),
+        requests.getCouriersCount({ page: 1, limit: 10 }),
+        requests.getStatistics({ month: 2, year: 2022 }),
+        requests.getOrderLocations({
+          page: 1,
+          limit: 10000,
+          start_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+          end_date: moment().add(2, "days").format("YYYY-MM-DD HH:mm:ss"),
+        }),
+      ]);
+      setBranchesCount(branches.count);
+      // setCustomersCount(customers.count);
+      setCouriersCount(couriers.count);
+      setStatistics(statistics);
+      setOrderLocations(locations.orders);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchWidgetData();
-    fetchUserData();
+    fetchData();
   }, []);
 
   return (
     <>
-      {loading ? <FullScreenLoader /> : ""}
+      {isLoading ? <FullScreenLoader /> : ""}
 
       <Header
         title={
@@ -79,7 +90,7 @@ const Dashboard = () => {
       <div className="p-6">
         <Widgets data={computedWidgetsData} />
 
-        <AdminDashboard />
+        <AdminDashboard statistics={statistics} />
       </div>
     </>
   );

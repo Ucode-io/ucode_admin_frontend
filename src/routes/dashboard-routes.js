@@ -193,6 +193,16 @@ const AggregatorCreate = Loadable({
   loading: FullScreenLoader,
 });
 
+const UserRoles = Loadable({
+  loader: () => import("../views/settings/user-roles"),
+  loading: FullScreenLoader,
+});
+
+const UserRolesCreate = Loadable({
+  loader: () => import("../views/settings/user-roles/Form"),
+  loading: FullScreenLoader,
+});
+
 export default [
   {
     component: Dashboard,
@@ -637,6 +647,27 @@ export default [
     path: "/settings/aggregator/:id",
     exact: true,
     title: "Aggregator.Edit",
+    permission: "fares",
+  },
+  {
+    component: UserRoles,
+    path: "/settings/user-roles",
+    exact: true,
+    title: "RoleAccess",
+    permission: "fares",
+  },
+  {
+    component: UserRolesCreate,
+    path: "/settings/user-roles/create",
+    exact: true,
+    title: "RoleAccess.Create",
+    permission: "fares",
+  },
+  {
+    component: UserRolesCreate,
+    path: "/settings/user-roles/:id",
+    exact: true,
+    title: "RoleAccess.Edit",
     permission: "fares",
   },
   {

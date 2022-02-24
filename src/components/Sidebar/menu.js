@@ -261,11 +261,11 @@ export const menu = [
             isChild: true,
           },
           {
-            id: "liko",
-            title: "liko",
-            path: "/home/settings/integrations/liko",
+            id: "Iiko",
+            title: "Iiko",
+            path: "/home/settings/integrations/Iiko",
             isActive: false,
-            permission: "liko",
+            permission: "Iiko",
             isChild: true,
           },
           {
@@ -295,11 +295,11 @@ export const menu = [
         isChild: true,
       },
       {
-        id: "role-access",
-        title: "role-access",
-        path: "/home/settings/role-access",
+        id: "user-roles",
+        title: "user-roles",
+        path: "/home/settings/user-roles",
         isActive: false,
-        permission: "role-access",
+        permission: "user-roles",
         isChild: true,
       },
       {

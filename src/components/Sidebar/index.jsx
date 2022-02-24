@@ -78,7 +78,7 @@ export default function App() {
   const RenderSidebarItems = ({ items }) => {
     return (
       <ul className="space-y-2 text-sm mt-5 dashboard_list font-body">
-        {items.map((el) => (
+        {items.map((el, i) => (
           <li key={el.id}>
             <NavLink exact={false} activeClassName="is-active" to={el.path}>
               <span className="sidebarItem flex items-center transition ease-in delay-100 space-x-3 text-gray-700 px-4 py-2  leading-6 hover:text-black rounded-md font-medium hover:bg-background_2 focus:shadow-outline">

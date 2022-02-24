@@ -193,6 +193,16 @@ const AggregatorCreate = Loadable({
   loading: FullScreenLoader,
 });
 
+const Integrations = Loadable({
+  loader: () => import("../views/settings/integrations"),
+  loading: FullScreenLoader,
+});
+
+const IntegrationsCreate = Loadable({
+  loader: () => import("../views/settings/integrations/Form"),
+  loading: FullScreenLoader,
+});
+
 const UserRoles = Loadable({
   loader: () => import("../views/settings/user-roles"),
   loading: FullScreenLoader,
@@ -647,6 +657,27 @@ export default [
     path: "/settings/aggregator/:id",
     exact: true,
     title: "Aggregator.Edit",
+    permission: "fares",
+  },
+  {
+    component: Integrations,
+    path: "/settings/integrations",
+    exact: true,
+    title: "Integrations",
+    permission: "fares",
+  },
+  {
+    component: IntegrationsCreate,
+    path: "/settings/integrations/create",
+    exact: true,
+    title: "Integrations.Create",
+    permission: "fares",
+  },
+  {
+    component: IntegrationsCreate,
+    path: "/settings/integrations/:id",
+    exact: true,
+    title: "Integrations.Edit",
     permission: "fares",
   },
   {

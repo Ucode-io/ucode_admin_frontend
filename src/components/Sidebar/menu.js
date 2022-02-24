@@ -250,7 +250,6 @@ export const menu = [
         isActive: false,
         permission: "integrations",
         isChild: true,
-        redirect: "/home/settings/integrations/payme",
         children: [
           {
             id: "payme",

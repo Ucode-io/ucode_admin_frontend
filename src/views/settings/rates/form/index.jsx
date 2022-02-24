@@ -30,8 +30,28 @@ import { useDispatch } from "react-redux";
 import { tariffTimers } from "helpers/tariffHelpers";
 import { isNumber } from "helpers/inputHelpers";
 import Rainbow from "rainbowvis.js";
+import MuiButton from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    "& > *": {
+      width: "100%",
+      fontSize: "1.5rem",
+      padding: "0",
+      borderColor: "#ecf4fe",
+      backgroundColor: "#ecf4fe",
+      color: "#4094f7",
+    },
+    "& > *:hover": {
+      borderColor: "#ecf4fe",
+      backgroundColor: "#ecf4fe",
+    },
+  },
+}));
 
 export default function TariffCreate() {
+  const classes = useStyles();
   const { t } = useTranslation();
   const history = useHistory();
   const params = useParams();
@@ -47,6 +67,7 @@ export default function TariffCreate() {
   var rainbow = new Rainbow();
   rainbow.setSpectrum("#EBFFF1", "#E4FCFC", "#FFFCC2", "#FED6CD");
   rainbow.setNumberRange(min, max);
+
   useEffect(() => {
     getRegions({ limit: 1000 }).then((res) => {
       setRegions(
@@ -184,6 +205,10 @@ export default function TariffCreate() {
       label: `${t("not.fixed")}`,
       value: "not-fixed",
     },
+    {
+      label: `${t("alternative")}`,
+      value: "alternative",
+    },
   ];
 
   const columns = [
@@ -284,7 +309,7 @@ export default function TariffCreate() {
               <div className="input-label">{t("country")}</div>
               <div className="col-span-2">
                 <Form.Item formik={formik} name="name">
-                  <Input size="large" />
+                  <Input size="large" disabled />
                 </Form.Item>
               </div>
               <div className="input-label">{t("city")}</div>
@@ -299,6 +324,7 @@ export default function TariffCreate() {
                       value={values.region_ids}
                       onChange={(value) => setFieldValue("region_ids", value)}
                       options={regions}
+                      disabled
                     />
                   </Form.Item>
                 </Form.Item>
@@ -306,7 +332,7 @@ export default function TariffCreate() {
               <div className="input-label">{t("transport")}</div>
               <div className="col-span-2">
                 <Form.Item formik={formik} name="name">
-                  <Input size="large" />
+                  <Input size="large" disabled />
                 </Form.Item>
               </div>
             </div>
@@ -384,79 +410,142 @@ export default function TariffCreate() {
                 <></>
               )}
             </div>
-          </Card>
-          <Card
-            className="col-span-2"
-            extra={
-              <div className="flex items-center gap-3">
-                <span className="text-base text-black-1">{t("timetable")}</span>
-                <Switch onChange={changeIsShedule} checked={isSchedule} />
-                <InfoOutlinedIcon className="fill-current text-secondary" />
-              </div>
-            }
-          >
-            {isSchedule && (
-              <TableContainer className="rounded-md border border-bordercolor">
-                <Table aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      {columns.map((elm) => (
-                        <TableCell key={elm.key}>
-                          <TextFilter title={elm.title} />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {timer.length &&
-                      timer.map((elm, index) => (
-                        <TableRow
-                          // className={colors[index]}
-                          key={"timer" + `-${index}`}
-                        >
-                          {elm.map((col, i) => (
-                            <TableCell
-                              key={`element-${i}`}
-                              style={{
-                                background:
-                                  min === 1 && max === 100
-                                    ? "bg-blue-100"
-                                    : typeof col === "string"
-                                    ? ""
-                                    : !isNaN(col)
-                                    ? `#${rainbow.colourAt(col)}`
-                                    : "",
-                              }}
-                            >
-                              {i === 0 ? (
-                                col
-                              ) : (
-                                <div
-                                  className="flex"
-                                  key={`element-timer-${i}`}
-                                >
-                                  <input
-                                    type="number"
-                                    className="w-30"
-                                    name={`input-timer-${i}`}
-                                    value={col}
-                                    onChange={(e) =>
-                                      changeShedulePrice(e, index, i)
-                                    }
-                                    onKeyPress={isNumber}
-                                  />
-                                  сум
-                                </div>
-                              )}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+            {values?.type?.value === "alternative" && (
+              <>
+                <div className="grid grid-cols-4 items-baseline">
+                  <div className="input-label">{t("from_order_amount")}</div>
+                  <div className="col-span-1">
+                    <Form.Item formik={formik} name="from_order_amount">
+                      <Input
+                        type="number"
+                        id="from_order_amount"
+                        size="large"
+                        name="from_order_amount"
+                        min="1"
+                        onKeyPress={isNumber}
+                        value={values.from_order_amount}
+                        onChange={handleChange}
+                      />
+                    </Form.Item>
+                  </div>
+
+                  <div className="input-label">{t("to_order_amount")}</div>
+                  <div className="col-span-1">
+                    <Form.Item formik={formik} name="to_order_amount">
+                      <Input
+                        type="number"
+                        id="to_order_amount"
+                        size="large"
+                        name="to_order_amount"
+                        min="1"
+                        onKeyPress={isNumber}
+                        value={values.to_order_amount}
+                        onChange={handleChange}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 items-baseline">
+                  <div className="input-label">{t("delivery_price")}</div>
+                  <div className="col-span-2">
+                    <Form.Item formik={formik} name="delivery_price">
+                      <Input
+                        type="number"
+                        id="delivery_price"
+                        size="large"
+                        name="delivery_price"
+                        min="1"
+                        onKeyPress={isNumber}
+                        value={values.delivery_price}
+                        onChange={handleChange}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                <div className={classes.root}>
+                  <MuiButton variant="outlined">+</MuiButton>
+                </div>
+              </>
             )}
           </Card>
+
+          {values?.type?.value === "not-fixed" && (
+            <Card
+              className="col-span-2"
+              extra={
+                <div className="flex items-center gap-3">
+                  <span className="text-base text-black-1">
+                    {t("timetable")}
+                  </span>
+                  <Switch onChange={changeIsShedule} checked={isSchedule} />
+                  <InfoOutlinedIcon className="fill-current text-secondary" />
+                </div>
+              }
+            >
+              {isSchedule && (
+                <TableContainer className="rounded-md border border-bordercolor">
+                  <Table aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        {columns.map((elm) => (
+                          <TableCell key={elm.key}>
+                            <TextFilter title={elm.title} />
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {timer.length &&
+                        timer.map((elm, index) => (
+                          <TableRow
+                            // className={colors[index]}
+                            key={"timer" + `-${index}`}
+                          >
+                            {elm.map((col, i) => (
+                              <TableCell
+                                key={`element-${i}`}
+                                style={{
+                                  background:
+                                    min === 1 && max === 100
+                                      ? "bg-blue-100"
+                                      : typeof col === "string"
+                                      ? ""
+                                      : !isNaN(col)
+                                      ? `#${rainbow.colourAt(col)}`
+                                      : "",
+                                }}
+                              >
+                                {i === 0 ? (
+                                  col
+                                ) : (
+                                  <div
+                                    className="flex"
+                                    key={`element-timer-${i}`}
+                                  >
+                                    <input
+                                      type="number"
+                                      className="w-30"
+                                      name={`input-timer-${i}`}
+                                      value={col}
+                                      onChange={(e) =>
+                                        changeShedulePrice(e, index, i)
+                                      }
+                                      onKeyPress={isNumber}
+                                    />
+                                    сум
+                                  </div>
+                                )}
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </Card>
+          )}
         </div>
       </div>
     </form>

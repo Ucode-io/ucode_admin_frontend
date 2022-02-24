@@ -365,5 +365,9 @@
   "logout": "Выйти",
   "integrations": "Интеграции",
   "aggregator": "Агрегатор",
-  "user-roles": "Роль и доступ"
+  "user-roles": "Роль и доступ",
+  "from_order_amount": "От суммы заказа",
+  "to_order_amount": "До суммы заказа",
+  "delivery_price": "Доставка суммы",
+  "alternative": "Альтернативный"
 }

@@ -17,7 +17,6 @@ import {
   postFare,
   updateFare,
 } from "../../../services/fares";
-import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "../../../components/Loader";
 import Select from "../../../components/Select";
@@ -127,7 +126,7 @@ export default function FaresTable({ createModal, setCreateModal }) {
       render: (record, index) => (currentPage - 1) * 10 + index + 1,
     },
     {
-      title: t("price"),
+      title: t("name"),
       key: "name",
       render: (record) => record.name,
     },

@@ -11,7 +11,6 @@ import Card from "components/Card";
 import { chartColors } from "config/defaultSettings";
 
 const YearlyStatistics = ({ data }) => {
-  console.log(data);
   return (
     <Card title="Статистика за год">
       <ResponsiveContainer width="100%" height={310}>

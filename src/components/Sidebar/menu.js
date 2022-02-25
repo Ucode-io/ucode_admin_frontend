@@ -248,7 +248,7 @@ export const menu = [
         title: "integrations",
         path: "/home/settings/integrations",
         isActive: false,
-        permission: "integrations",
+        permission: "fares",
         isChild: true,
         children: [
           {
@@ -256,7 +256,7 @@ export const menu = [
             title: "payme",
             path: "/home/settings/integrations/payme",
             isActive: false,
-            permission: "payme",
+            permission: "fares",
             isChild: true,
           },
           {
@@ -264,7 +264,7 @@ export const menu = [
             title: "Iiko",
             path: "/home/settings/integrations/Iiko",
             isActive: false,
-            permission: "Iiko",
+            permission: "fares",
             isChild: true,
           },
           {
@@ -272,7 +272,7 @@ export const menu = [
             title: "jowi",
             path: "/home/settings/integrations/jowi",
             isActive: false,
-            permission: "jowi",
+            permission: "fares",
             isChild: true,
           },
           {
@@ -280,7 +280,7 @@ export const menu = [
             title: "click",
             path: "/home/settings/integrations/click",
             isActive: false,
-            permission: "click",
+            permission: "fares",
             isChild: true,
           },
         ],
@@ -290,7 +290,7 @@ export const menu = [
         title: "aggregator",
         path: "/home/settings/aggregator",
         isActive: false,
-        permission: "aggregator",
+        permission: "fares",
         isChild: true,
       },
       {
@@ -298,7 +298,7 @@ export const menu = [
         title: "user-roles",
         path: "/home/settings/user-roles",
         isActive: false,
-        permission: "user-roles",
+        permission: "fares",
         isChild: true,
       },
       {
@@ -306,7 +306,7 @@ export const menu = [
         title: "company",
         path: "/home/settings/company",
         isActive: false,
-        permission: "company",
+        permission: "fares",
         isChild: true,
       },
     ],

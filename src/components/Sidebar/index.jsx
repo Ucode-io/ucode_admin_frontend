@@ -6,11 +6,12 @@ import Avatar from "../Avatar/Index";
 import "./index.scss";
 import { menu, settings } from "./menu";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CLEAR_ON_SIGNOUT } from "redux/constants";
 import LogoutModal from "./Modal";
 import BrandLogo from "assets/icons/logo.svg";
 import logoutIcon from "assets/icons/logout.svg";
+import Menu from "components/Menu";
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -31,15 +32,26 @@ export default function App() {
   const history = useHistory();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const permissions = useSelector((state) => state.auth.permissions);
   const allMenus = useMemo(() => menu.concat(settings), []);
   const [visible, setVisible] = useState(false);
   const [selectedList, setSelectedList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const toggleSidebar = () => setVisible((prev) => !prev);
   const [title, setTitle] = useState("");
+
   const logoutHandler = () => {
     setIsModalOpen(true);
   };
+
+  const toggleSidebar = () => {
+    if (selectedList.length) {
+      setVisible((prev) => !prev);
+    }
+  };
+
+  const [expand, setExpand] = useState(
+    Array(menu[menu.length - 1].children.length).fill(false),
+  );
 
   useEffect(() => {
     if (menu.length) {
@@ -75,21 +87,80 @@ export default function App() {
     setVisible(false);
   };
 
+  const updateMenus = (index) => {
+    setExpand((prev) => prev.map((item, i) => (index === i ? !item : item)));
+  };
+
   const RenderSidebarItems = ({ items }) => {
     return (
       <ul className="space-y-2 text-sm mt-5 dashboard_list font-body">
         {items.map((el, i) => (
           <li key={el.id}>
-            <NavLink exact={false} activeClassName="is-active" to={el.path}>
-              <span className="sidebarItem flex items-center transition ease-in delay-100 space-x-3 text-gray-700 px-4 py-2  leading-6 hover:text-black rounded-md font-medium hover:bg-background_2 focus:shadow-outline">
-                <span>{t(el.title)}</span>
+            {el.children && permissions.includes(el.permission) ? (
+              <span
+                className={`
+                spanITem flex items-center 
+                space-x-3 text-gray-700 
+                rounded-md focus:shadow-outline
+                ${expand[i] && `bg-background`}
+                `}
+              >
+                <Menu
+                  title={t(el.title)}
+                  onChange={() => {
+                    updateMenus(i);
+                    history.push(el.path);
+                  }}
+                  isExpanded={expand[i]}
+                >
+                  {el.children.map((item, index) =>
+                    permissions.includes(item.permission) ? (
+                      <li key={index}>
+                        <NavLink
+                          exact={false}
+                          activeClassName="is-active"
+                          to={item.path}
+                        >
+                          <span className="sidebarItem flex items-center transition ease-in delay-100 space-x-3 text-gray-700 px-4 py-2  leading-6 hover:text-black rounded-md font-medium hover:bg-background_2 focus:shadow-outline">
+                            <span>{t(item.title)}</span>
+                          </span>
+                        </NavLink>
+                      </li>
+                    ) : (
+                      ""
+                    ),
+                  )}
+                </Menu>
               </span>
-            </NavLink>
+            ) : permissions.includes(el.permission) ? (
+              <NavLink
+                activeClassName="is-active"
+                onClick={() => {
+                  // linkTo(el);
+                  setExpand(
+                    Array(menu[menu.length - 1].children.length).fill(false),
+                  );
+                }}
+                to={el.path}
+              >
+                <span className="sidebarItem flex items-center transition ease-in delay-100 space-x-3 text-gray-700 px-4 py-2  leading-6 hover:text-black rounded-md font-medium hover:bg-background_2 focus:shadow-outline">
+                  <span>{t(el.title)}</span>
+                </span>
+              </NavLink>
+            ) : (
+              ""
+            )}
           </li>
         ))}
       </ul>
     );
   };
+
+  // <NavLink exact={false} activeClassName="is-active" to={el.path}>
+  //   <span className="sidebarItem flex items-center transition ease-in delay-100 space-x-3 text-gray-700 px-4 py-2  leading-6 hover:text-black rounded-md font-medium hover:bg-background_2 focus:shadow-outline">
+  //     <span>{t(el.title)}</span>
+  //   </span>
+  // </NavLink>
 
   const RenderMenuElements = ({ items }) =>
     items.map((el) => (
@@ -143,20 +214,6 @@ export default function App() {
             className="space-y-2 items-end dashboard_list transition ease-in-out transform"
           >
             <RenderMenuElements items={settings} />
-
-            {/* <div
-              className="flex justify-center"
-              onClick={(e) => setAnchorEl((prev) => !prev)}
-            >
-              <Link to="/home/profile">
-                <Avatar
-                  aria-controls="simple-menu"
-                  size={40}
-                  alt=""
-                  src={defaultAvatar}
-                />
-              </Link>
-            </div> */}
             <div
               onClick={logoutHandler}
               className="flex justify-center cursor-pointer py-4"

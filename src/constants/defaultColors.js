@@ -2,6 +2,7 @@ const defaultColors = {
   background: "rgba(220, 233, 249, 1)",
   secondary: "#6E8BB7",
   background_2: "#F4F6FA",
+  background_3: "#c4ddfe",
   dark: "rgba(48, 57, 64, 1)",
   primary: "#0d72f6",
   success: "#22c347",
@@ -112,6 +113,6 @@ const defaultColors = {
     100: "#D7EDFF",
     50: "rgba(64, 148, 247, 0.1)",
   },
-}
+};
 
-module.exports = defaultColors
+module.exports = defaultColors;

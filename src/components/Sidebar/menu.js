@@ -262,7 +262,7 @@ export const menu = [
           {
             id: "Iiko",
             title: "Iiko",
-            path: "/home/settings/integrations/Iiko",
+            path: "/home/settings/integrations/iiko",
             isActive: false,
             permission: "fares",
             isChild: true,

@@ -198,6 +198,11 @@ const Integrations = Loadable({
   loading: FullScreenLoader,
 });
 
+const IikoEdit = Loadable({
+  loader: () => import("../views/settings/integrations/iiko"),
+  loading: FullScreenLoader,
+});
+
 const IntegrationsCreate = Loadable({
   loader: () => import("../views/settings/integrations/Form"),
   loading: FullScreenLoader,
@@ -671,6 +676,13 @@ export default [
     path: "/settings/integrations/create",
     exact: true,
     title: "Integrations.Create",
+    permission: "fares",
+  },
+  {
+    component: IikoEdit,
+    path: "/settings/integrations/iiko",
+    exact: true,
+    title: "Iiko.Edit",
     permission: "fares",
   },
   {

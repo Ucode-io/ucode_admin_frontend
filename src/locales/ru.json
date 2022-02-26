@@ -369,5 +369,13 @@
   "from_order_amount": "От суммы заказа",
   "to_order_amount": "До суммы заказа",
   "delivery_price": "Доставка суммы",
-  "alternative": "Альтернативный"
+  "alternative": "Альтернативный",
+  "powers": "Полномочия",
+  "terminal": "Терминал",
+  "api_login": "Апи логин",
+  "dispatcher_id": "Диспатчер ИД",
+  "navigation": "Ориентир",
+  "available": "Доступен",
+  "unavailable": "Не доступен",
+  "meal_name": "Название блюда"
 }

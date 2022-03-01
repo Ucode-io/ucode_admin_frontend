@@ -44,6 +44,7 @@ export default function App() {
             permissions: staticPermissions,
             is_blocked: res.is_blocked,
             region_id: res.region_id,
+            shipper_id: res.user_role.shipper_id,
           },
         });
         history.push("/home/dashboard");

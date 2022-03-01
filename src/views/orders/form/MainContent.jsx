@@ -1,20 +1,16 @@
 import "./style.scss";
 import { useState, useEffect } from "react";
-import Card from "../../../components/Card";
-import Form from "../../../components/Form/Index";
-import Select, { customStyles } from "../../../components/Select";
-import Switch from "../../../components/Switch";
-import TextArea from "../../../components/Textarea";
+import Card from "components/Card";
+import Form from "components/Form/Index";
+import Select, { customStyles } from "components/Select";
+import TextArea from "components/Textarea";
 import { Input } from "alisa-ui";
 import MapContent from "./MapContent";
-import RequiredStar from "../../../components/RequiredStar";
-import AutoComplate from "../../../components/Select/AutoComplate";
 import CreatableSelect from "react-select/creatable";
-import { getCustomers } from "../../../services";
+import { getCustomers } from "services";
 import { useTranslation } from "react-i18next";
-import { LocationOn, Phone, PlaceIcon } from "@material-ui/icons";
-import { Radio, RadioGroup } from "../../../components/Radio";
-import AddressDropdown from "../../../components/Filters/AddressDropdown";
+import { Phone } from "@material-ui/icons";
+import AddressDropdown from "components/Filters/AddressDropdown";
 import OutsideClickHandler from "react-outside-click-handler";
 
 export default function MainContent({
@@ -32,7 +28,7 @@ export default function MainContent({
   const { t } = useTranslation();
   const { values, handleChange, setFieldValue } = formik;
   const [customers, setCustomers] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
+
   useEffect(() => {
     getClients();
   }, []);

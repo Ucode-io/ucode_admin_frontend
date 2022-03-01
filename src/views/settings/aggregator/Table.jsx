@@ -8,7 +8,6 @@ import EditIcon from "@material-ui/icons/Edit";
 import { Input } from "alisa-ui";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
-import numberToPrice from "helpers/numberToPrice";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import {

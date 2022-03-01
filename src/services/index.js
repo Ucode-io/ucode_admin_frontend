@@ -10,3 +10,4 @@ export * from "./fares";
 export * from "./dashboard";
 export * from "./aggregator";
 export * from "./userRoles";
+export * from "./branchUsers";

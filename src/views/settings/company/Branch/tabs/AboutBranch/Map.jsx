@@ -7,7 +7,6 @@ export default function MapContent({
   placemarkGeometry,
   setPlacemarkGeometry,
   formik,
-  branches,
   setMapChange,
   params,
   mapLoading,
@@ -51,22 +50,6 @@ export default function MapContent({
         >
           {placemarkGeometry.length ? (
             <Placemark geometry={placemarkGeometry} />
-          ) : (
-            <></>
-          )}
-          {branches && branches.length ? (
-            branches?.map(({ elm, label }, id) => (
-              <Placemark
-                key={id}
-                properties={{
-                  iconContent: `${label}`,
-                }}
-                options={{
-                  preset: "islands#redStretchyIcon",
-                }}
-                geometry={[elm?.location.lat, elm?.location.long]}
-              />
-            ))
           ) : (
             <></>
           )}

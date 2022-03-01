@@ -1,15 +1,14 @@
-import "./style.scss"
-import Table from "./Table"
-import Header from "../../components/Header"
-import { useHistory } from "react-router-dom"
-import { useTranslation } from "react-i18next"
-import AddIcon from "@material-ui/icons/Add"
-import Button from "../../components/Button"
-import React from "react"
+import "./style.scss";
+import Table from "./Table";
+import Header from "../../components/Header";
+import { useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import AddIcon from "@material-ui/icons/Add";
+import Button from "../../components/Button";
 
 export default function Clients() {
-  const { t } = useTranslation()
-  const history = useHistory()
+  const { t } = useTranslation();
+  const history = useHistory();
 
   return (
     <div>
@@ -27,5 +26,5 @@ export default function Clients() {
       />
       <Table />
     </div>
-  )
+  );
 }

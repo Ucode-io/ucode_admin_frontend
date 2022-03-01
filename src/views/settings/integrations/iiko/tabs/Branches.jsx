@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@material-ui/core";
 import { getBranches, deleteBranch } from "services";
-import StatusTag from "components/Tag/StatusTag";
+import Tag from "components/Tag";
 import SwitchColumns from "components/Filters/SwitchColumns";
 import ActionMenu from "components/ActionMenu";
 import EditIcon from "@material-ui/icons/Edit";
@@ -161,16 +161,11 @@ export default function Branches({ filters }) {
                       {col.render
                         ? col.render(item, index)
                         : item[col.dataIndex] ?? (
-                            <StatusTag
-                              status={item[col.dataIndex]}
-                              style={{ width: "160px", margin: "auto" }}
-                              innerText={
-                                item[col.dataIndex]
-                                  ? t("available")
-                                  : t("unavailable")
-                              }
-                              color="#d29404"
-                            />
+                            <Tag className="p-1" color="yellow">
+                              {item[col.dataIndex]
+                                ? t("available")
+                                : t("unavailable")}
+                            </Tag>
                           )}
                     </TableCell>
                   ))}

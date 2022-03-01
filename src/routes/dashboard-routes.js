@@ -218,6 +218,27 @@ const UserRolesCreate = Loadable({
   loading: FullScreenLoader,
 });
 
+const Company = Loadable({
+  loader: () => import("../views/settings/company"),
+  loading: FullScreenLoader,
+});
+
+const CompanyBranch = Loadable({
+  loader: () => import("../views/settings/company/Branch"),
+  loading: FullScreenLoader,
+});
+
+const CompanyBranchCashiers = Loadable({
+  loader: () =>
+    import("../views/settings/company/Branch/tabs/Personnel/Cashiers"),
+  loading: FullScreenLoader,
+});
+
+// const CompanyBranchCouriers = Loadable({
+//   loader: () => import("../views/settings/company/Branch/couriers"),
+//   loading: FullScreenLoader,
+// });
+
 export default [
   {
     component: Dashboard,
@@ -713,6 +734,34 @@ export default [
     title: "RoleAccess.Edit",
     permission: "fares",
   },
+  {
+    component: Company,
+    path: "/settings/company",
+    exact: true,
+    title: "Company",
+    permission: "fares",
+  },
+  {
+    component: CompanyBranch,
+    path: "/settings/company/branches/:id",
+    exact: true,
+    title: "Company.Branches",
+    permission: "fares",
+  },
+  {
+    component: CompanyBranchCashiers,
+    path: "/settings/company/branches/:id/cashiers/:cashier_id",
+    exact: true,
+    title: "Branches.Cashiers",
+    permission: "fares",
+  },
+  // {
+  //   component: CompanyBranchCouriers,
+  //   path: "/settings/company/branch/couriers",
+  //   exact: true,
+  //   title: "Company.Branch.Couriers",
+  //   permission: "fares",
+  // },
   {
     component: BranchUser,
     path: "/company/users",

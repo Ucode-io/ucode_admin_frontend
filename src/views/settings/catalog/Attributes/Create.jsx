@@ -11,7 +11,7 @@ import Button from "components/Button";
 import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
-import { getV2Property, postV2Property, updateProperty } from "services";
+import { getV2Property, postV2Property, updateV2Property } from "services";
 import Select from "components/Select";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { makeStyles } from "@material-ui/core/styles";
@@ -125,7 +125,7 @@ export default function AttributesCreate() {
 
     setSaveLoading(true);
     const selectedAction = params.id
-      ? updateProperty(params.id, data)
+      ? updateV2Property(params.id, data)
       : postV2Property(data);
     selectedAction
       .then((res) => {
@@ -205,6 +205,7 @@ export default function AttributesCreate() {
                     options={[
                       { label: "Radio", value: "radio" },
                       { label: "Checkbox", value: "checkbox" },
+                      { label: "Select", value: "select" },
                     ]}
                     value={values.attribute_type}
                     onChange={(val) => {

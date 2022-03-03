@@ -7,7 +7,7 @@ var headers = {
 };
 
 export const getV2Properties = async (params) => {
-  await axios.request({
+  return await axios.request({
     method: "get",
     headers,
     url: `${process.env.REACT_APP_URL2}/property-group`,

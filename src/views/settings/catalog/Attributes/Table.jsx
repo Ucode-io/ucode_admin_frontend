@@ -20,7 +20,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { useHistory } from "react-router-dom";
 import Modal from "components/Modal";
 
-export default function AttributesTable({ filters }) {
+export default function AttributesTable() {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -34,15 +34,15 @@ export default function AttributesTable({ filters }) {
 
   useEffect(() => {
     getItems(currentPage);
-  }, [currentPage, filters, limit]);
+  }, []);
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Properties({ limit, page, ...filters })
+    getV2Properties({ limit, page })
       .then((res) => {
         setItems({
-          count: res.count,
-          data: res.property_groups,
+          count: res.data?.count,
+          data: res.data?.property_groups,
         });
       })
       .finally(() => setLoader(false));
@@ -67,19 +67,19 @@ export default function AttributesTable({ filters }) {
     },
     {
       title: t("name"),
-      key: "name",
-      dataIndex: "name",
+      key: "title",
+      dataIndex: "title",
     },
     {
       title: t("attribute.type"),
-      key: "attribute_rtpe",
-      dataIndex: "attribute_rtpe",
-      render: (record) => <>{record.attribute_rtpe}</>,
+      key: "attribute_type",
+      dataIndex: "attribute_type",
+      render: (record) => <>{record.attribute_type}</>,
     },
     {
       title: t("status"),
-      key: "status",
-      dataIndex: "status",
+      key: "is_active",
+      dataIndex: "is_active",
     },
   ];
 
@@ -123,7 +123,7 @@ export default function AttributesTable({ filters }) {
     ];
     setColumns(_columns);
   }, []);
-
+  console.log(items);
   return (
     <Card
       className="m-4"
@@ -160,11 +160,11 @@ export default function AttributesTable({ filters }) {
                     <TableCell key={col.key}>
                       {col.render
                         ? col.render(item, index)
-                        : item[col.dataIndex] ?? (
+                        : item[col.dataIndex].ru ?? (
                             <Tag className="p-1" color="yellow">
                               {item[col.dataIndex]
-                                ? t("available")
-                                : t("unavailable")}
+                                ? t("active")
+                                : t("inactive")}
                             </Tag>
                           )}
                     </TableCell>

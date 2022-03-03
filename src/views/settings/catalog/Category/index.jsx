@@ -9,7 +9,7 @@ import { Input } from "alisa-ui";
 import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from "@material-ui/icons/Add";
 
-export default function Rates() {
+export default function Category() {
   const { t } = useTranslation();
   const history = useHistory();
   const [createModal, setCreateModal] = useState(null);
@@ -17,13 +17,13 @@ export default function Rates() {
   return (
     <>
       <Header
-        title={t("fares")}
+        title={t("Sales")}
         endAdornment={[
           <Button
             icon={AddIcon}
             size="medium"
             onClick={() => {
-              history.push("/home/settings/fares/create");
+              history.push("/home/catalog/category/create");
               // setCreateModal(true)
             }}
           >

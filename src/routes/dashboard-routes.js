@@ -1,243 +1,266 @@
-import FullScreenLoader from "../components/Skeleton";
+import FullScreenLoader from "components/Skeleton";
 import Loadable from "react-loadable";
 
 const Dashboard = Loadable({
-  loader: () => import("../views/dashboard/index"),
+  loader: () => import("views/dashboard/index"),
   loading: FullScreenLoader,
 });
 const Clients = Loadable({
-  loader: () => import("../views/clients"),
+  loader: () => import("views/clients"),
   loading: FullScreenLoader,
 });
 const ClientsCreate = Loadable({
-  loader: () => import("../views/clients/Create"),
+  loader: () => import("views/clients/Create"),
   loading: FullScreenLoader,
 });
 const Profile = Loadable({
-  loader: () => import("../views/profile"),
+  loader: () => import("views/profile"),
   loading: FullScreenLoader,
 });
 const Orders = Loadable({
-  loader: () => import("../views/orders"),
+  loader: () => import("views/orders"),
   loading: FullScreenLoader,
 });
 const OrderForm = Loadable({
-  loader: () => import("../views/orders/form"),
+  loader: () => import("views/orders/form"),
   loading: FullScreenLoader,
 });
 
 const ShipperSettings = Loadable({
-  loader: () => import("../views/settings/ShipperSettings"),
+  loader: () => import("views/settings/ShipperSettings"),
   loading: FullScreenLoader,
 });
 
 const ShipperBranches = Loadable({
-  loader: () => import("../views/settings/branches/index"),
+  loader: () => import("views/settings/branches/index"),
   loading: FullScreenLoader,
 });
 const ShipperBranchesForm = Loadable({
-  loader: () => import("../views/settings/branches/form/index.jsx"),
+  loader: () => import("views/settings/branches/form/index.jsx"),
   loading: FullScreenLoader,
 });
 const ShipperSettingsCreate = Loadable({
-  loader: () => import("../views/settings/ShipperSettings/Create"),
+  loader: () => import("views/settings/ShipperSettings/Create"),
   loading: FullScreenLoader,
 });
 const Stocks = Loadable({
-  loader: () => import("../views/marketing/stocks"),
+  loader: () => import("views/marketing/stocks"),
   loading: FullScreenLoader,
 });
 
 const StockCreate = Loadable({
-  loader: () => import("../views/marketing/stocks/form"),
+  loader: () => import("views/marketing/stocks/form"),
   loading: FullScreenLoader,
 });
 
 const Banners = Loadable({
-  loader: () => import("../views/marketing/banners"),
+  loader: () => import("views/marketing/banners"),
   loading: FullScreenLoader,
 });
 const BannerFrom = Loadable({
-  loader: () => import("../views/marketing/banners/form"),
+  loader: () => import("views/marketing/banners/form"),
   loading: FullScreenLoader,
 });
 const Reviews = Loadable({
-  loader: () => import("../views/marketing/reviews"),
+  loader: () => import("views/marketing/reviews"),
   loading: FullScreenLoader,
 });
 const Newsletter = Loadable({
-  loader: () => import("../views/marketing/newsletter"),
+  loader: () => import("views/marketing/newsletter"),
   loading: FullScreenLoader,
 });
 const NewsletterCreate = Loadable({
-  loader: () => import("../views/marketing/newsletter/form"),
+  loader: () => import("views/marketing/newsletter/form"),
   loading: FullScreenLoader,
 });
 const Menu = Loadable({
-  loader: () => import("../views/menu"),
+  loader: () => import("views/menu"),
   loading: FullScreenLoader,
 });
 const MenuItems = Loadable({
-  loader: () => import("../views/menu/menuItems"),
+  loader: () => import("views/menu/menuItems"),
   loading: FullScreenLoader,
 });
 const ProductCreate = Loadable({
-  loader: () => import("../views/menu/productCreate"),
+  loader: () => import("views/menu/productCreate"),
   loading: FullScreenLoader,
 });
 const CategoryCreate = Loadable({
-  loader: () => import("../views/menu/categoryCreate/index"),
+  loader: () => import("views/menu/categoryCreate/index"),
   loading: FullScreenLoader,
 });
 const News = Loadable({
-  loader: () => import("../views/catalog/news"),
+  loader: () => import("views/catalog/news"),
   loading: FullScreenLoader,
 });
 const NewsCreate = Loadable({
-  loader: () => import("../views/catalog/news/form"),
+  loader: () => import("views/catalog/news/form"),
   loading: FullScreenLoader,
 });
 const CompanyCategory = Loadable({
-  loader: () => import("../views/catalog/company_category"),
+  loader: () => import("views/catalog/company_category"),
   loading: FullScreenLoader,
 });
 const CompanyCategoryCreate = Loadable({
-  loader: () => import("../views/catalog/company_category/form"),
+  loader: () => import("views/catalog/company_category/form"),
   loading: FullScreenLoader,
 });
 const Banner = Loadable({
-  loader: () => import("../views/catalog/banner"),
+  loader: () => import("views/catalog/banner"),
   loading: FullScreenLoader,
 });
 const BannerCreate = Loadable({
-  loader: () => import("../views/catalog/banner/form"),
+  loader: () => import("views/catalog/banner/form"),
   loading: FullScreenLoader,
 });
 const Courier = Loadable({
-  loader: () => import("../views/personal/courier"),
+  loader: () => import("views/personal/courier"),
   loading: FullScreenLoader,
 });
 const CourierCreate = Loadable({
-  loader: () => import("../views/personal/courier/form"),
+  loader: () => import("views/personal/courier/form"),
   loading: FullScreenLoader,
 });
 const Operator = Loadable({
-  loader: () => import("../views/personal/operator"),
+  loader: () => import("views/personal/operator"),
   loading: FullScreenLoader,
 });
 const OperatorCreate = Loadable({
-  loader: () => import("../views/personal/operator/form"),
+  loader: () => import("views/personal/operator/form"),
   loading: FullScreenLoader,
 });
 const ReportsCourier = Loadable({
-  loader: () => import("../views/reports/courier/index"),
+  loader: () => import("views/reports/courier/index"),
   loading: FullScreenLoader,
 });
 
 const ReportsBranch = Loadable({
-  loader: () => import("../views/reports/branch/index"),
+  loader: () => import("views/reports/branch/index"),
   loading: FullScreenLoader,
 });
 
 const ReportsUser = Loadable({
-  loader: () => import("../views/reports/users/index"),
+  loader: () => import("views/reports/users/index"),
   loading: FullScreenLoader,
 });
 
 const CourierType = Loadable({
-  loader: () => import("../views/personal/courierType"),
+  loader: () => import("views/personal/courierType"),
   loading: FullScreenLoader,
 });
 const CourierTypeCreate = Loadable({
-  loader: () => import("../views/personal/courierType/form"),
+  loader: () => import("views/personal/courierType/form"),
   loading: FullScreenLoader,
 });
 const Fares = Loadable({
-  loader: () => import("../views/settings/rates"),
+  loader: () => import("views/settings/rates"),
   loading: FullScreenLoader,
 });
 const TariffCreate = Loadable({
-  loader: () => import("../views/settings/rates/form"),
+  loader: () => import("views/settings/rates/form"),
   loading: FullScreenLoader,
 });
-
 const BranchUser = Loadable({
-  loader: () => import("../views/shipperCompany/branchUsers"),
+  loader: () => import("views/shipperCompany/branchUsers"),
   loading: FullScreenLoader,
 });
 const BranchUserCreate = Loadable({
-  loader: () => import("../views/shipperCompany/branchUsers/form"),
+  loader: () => import("views/shipperCompany/branchUsers/form"),
   loading: FullScreenLoader,
 });
 const Settlement = Loadable({
-  loader: () => import("../views/shipperCompany/settlements"),
+  loader: () => import("views/shipperCompany/settlements"),
   loading: FullScreenLoader,
 });
 const SettlementCreate = Loadable({
-  loader: () => import("../views/shipperCompany/settlements/form"),
+  loader: () => import("views/shipperCompany/settlements/form"),
   loading: FullScreenLoader,
 });
 
 const ShipperBranchesUsersForm = Loadable({
-  loader: () => import("../views/settings/branches/form/users/form"),
+  loader: () => import("views/settings/branches/form/users/form"),
   loading: FullScreenLoader,
 });
 
 const Aggregator = Loadable({
-  loader: () => import("../views/settings/aggregator"),
+  loader: () => import("views/settings/aggregator"),
   loading: FullScreenLoader,
 });
 
 const AggregatorCreate = Loadable({
-  loader: () => import("../views/settings/aggregator/Form"),
+  loader: () => import("views/settings/aggregator/Form"),
   loading: FullScreenLoader,
 });
 
 const Integrations = Loadable({
-  loader: () => import("../views/settings/integrations"),
+  loader: () => import("views/settings/integrations"),
   loading: FullScreenLoader,
 });
 
 const IikoEdit = Loadable({
-  loader: () => import("../views/settings/integrations/iiko"),
+  loader: () => import("views/settings/integrations/iiko"),
   loading: FullScreenLoader,
 });
 
 const IntegrationsCreate = Loadable({
-  loader: () => import("../views/settings/integrations/Form"),
+  loader: () => import("views/settings/integrations/Form"),
   loading: FullScreenLoader,
 });
 
 const UserRoles = Loadable({
-  loader: () => import("../views/settings/user-roles"),
+  loader: () => import("views/settings/user-roles"),
   loading: FullScreenLoader,
 });
 
 const UserRolesCreate = Loadable({
-  loader: () => import("../views/settings/user-roles/Form"),
+  loader: () => import("views/settings/user-roles/Form"),
   loading: FullScreenLoader,
 });
 
 const Company = Loadable({
-  loader: () => import("../views/settings/company"),
+  loader: () => import("views/settings/company"),
   loading: FullScreenLoader,
 });
 
 const CompanyBranch = Loadable({
-  loader: () => import("../views/settings/company/Branch"),
+  loader: () => import("views/settings/company/Branch"),
   loading: FullScreenLoader,
 });
 
 const CompanyBranchCashiers = Loadable({
-  loader: () =>
-    import("../views/settings/company/Branch/tabs/Personnel/Cashiers"),
+  loader: () => import("views/settings/company/Branch/tabs/Personnel/Cashiers"),
   loading: FullScreenLoader,
 });
 
 // const CompanyBranchCouriers = Loadable({
-//   loader: () => import("../views/settings/company/Branch/couriers"),
+//   loader: () => import("views/settings/company/Branch/couriers"),
 //   loading: FullScreenLoader,
 // });
+
+const SettingsCatalogGoods = Loadable({
+  loader: () => import("views/settings/catalog/Goods"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogCategory = Loadable({
+  loader: () => import("views/settings/catalog/Category"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogCategoryProduct = Loadable({
+  loader: () => import("views/settings/catalog/Category/CategoryCreate"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogAttributes = Loadable({
+  loader: () => import("views/settings/catalog/Attributes"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogAttributesCreate = Loadable({
+  loader: () => import("views/settings/catalog/Attributes/Create"),
+  loading: FullScreenLoader,
+});
 
 export default [
   {
@@ -762,6 +785,55 @@ export default [
   //   title: "Company.Branch.Couriers",
   //   permission: "fares",
   // },
+  {
+    component: SettingsCatalogGoods,
+    path: "/catalog/goods",
+    exact: true,
+    title: "Settings.Catalog.Goods",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogCategory,
+    path: "/catalog/category",
+    exact: true,
+    title: "Settings.Catalog.Category",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogCategoryProduct,
+    path: "/catalog/category/create",
+    exact: true,
+    title: "Settings.Catalog.Category.Product.Create",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogCategoryProduct,
+    path: "/catalog/category/:id",
+    exact: true,
+    title: "Settings.Catalog.Category.Product.Edit",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogAttributes,
+    path: "/catalog/attributes",
+    exact: true,
+    title: "Settings.Catalog.Category.Attributes",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogAttributesCreate,
+    path: "/catalog/attributes/create",
+    exact: true,
+    title: "Settings.Catalog.Category.Attribute.Create",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogAttributesCreate,
+    path: "/catalog/attributes/:id",
+    exact: true,
+    title: "Settings.Catalog.Category.Attribute.Edit",
+    permission: "fares",
+  },
   {
     component: BranchUser,
     path: "/company/users",

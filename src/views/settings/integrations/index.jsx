@@ -15,7 +15,7 @@ import keeper from "assets/icons/keeper.png";
 import jowi from "assets/icons/jowi.png";
 import payme from "assets/icons/payme.png";
 import click from "assets/icons/click.png";
-import delever from "assets/icons/delever.png";
+import delever from "assets/icons/delever_logo.png";
 import arrowRight from "assets/icons/keyboard_arrow_right.svg";
 
 const useStyles = makeStyles({

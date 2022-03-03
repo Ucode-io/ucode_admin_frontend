@@ -11,3 +11,7 @@ export * from "./dashboard";
 export * from "./aggregator";
 export * from "./userRoles";
 export * from "./branchUsers";
+export * from "./company_category";
+export * from "./v2Category";
+export * from "./v2Product";
+export * from "./v2Property";

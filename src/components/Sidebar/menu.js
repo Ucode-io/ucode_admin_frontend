@@ -52,21 +52,55 @@ export const menu = [
     //   },
     // ],
   },
+  // {
+  //   id: "company",
+  //   title: "Список ресторанов",
+  //   path: "/home/company/shipper-company",
+  //   // redirect: '/home/settings/shipper-settings',
+  //   isActive: true,
+  //   icon: Restaurant,
+  //   children: [
+  //     // {
+  //     //   id: 'company.settings',
+  //     //   title: 'company.settings',
+  //     //   path: '/home/settings/shipper-settings',
+  //     //   isChild: true,
+  //     //   permission: 'settings'
+  //     // },
+  //   ],
+  // },
   {
-    id: "company",
-    title: "Список ресторанов",
-    path: "/home/company/shipper-company",
-    // redirect: '/home/settings/shipper-settings',
+    id: "catalog",
+    title: "Каталог",
+    path: "/home/catalog",
+    redirect: "/home/catalog/goods",
     isActive: true,
     icon: Restaurant,
     children: [
-      // {
-      //   id: 'company.settings',
-      //   title: 'company.settings',
-      //   path: '/home/settings/shipper-settings',
-      //   isChild: true,
-      //   permission: 'settings'
-      // },
+      {
+        id: "goods.settings",
+        title: "goods",
+        path: "/home/catalog/goods",
+        isChild: true,
+        isActive: false,
+        permission: "settings",
+      },
+      {
+        id: "category.settings",
+        title: "category",
+        path: "/home/catalog/category",
+        isChild: true,
+        isActive: false,
+        permission: "settings",
+      },
+      {
+        id: "attributes.settings",
+        title: "attributes",
+        path: "/home/catalog/attributes",
+        isChild: true,
+        isActive: false,
+        permission: "settings",
+      },
     ],
   },
   {

@@ -13,6 +13,10 @@ export default class CustomForm extends Component {
     return <FormItem {...props} />;
   }
 
+  static FieldArrayItem(props) {
+    return <FieldArrayItem {...props} />;
+  }
+
   render() {
     return <FromWrapper {...this.props} />;
   }
@@ -105,6 +109,33 @@ const FormItem = ({
       {/* {formik.errors[name] && formik.touched[name] ? (
         <div style={{fontSize: '14px', lineHeight: 1.5715, color: '#ff4d4f'}}>{formik.errors[name]}</div>
       ) : <div className="h-6 w-full" />} */}
+    </>
+  );
+};
+
+const FieldArrayItem = ({
+  name = "",
+  label = "",
+  children,
+  formik,
+  index,
+  ...args
+}) => {
+  return (
+    <>
+      <label htmlFor={name}>{label}</label>
+      {children}
+      <div
+        className="min-h-6 w-full"
+        style={{ fontSize: "14px", lineHeight: 1.5715, color: "#ff4d4f" }}
+      >
+        {formik.errors[name] &&
+        formik.errors[name][index] &&
+        formik.touched[name] &&
+        formik.touched[name][index]
+          ? formik.errors[name][index]
+          : ""}
+      </div>
     </>
   );
 };

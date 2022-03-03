@@ -120,6 +120,7 @@
   "general.information": "Общие сведения",
   "fair": "Доставка",
   "company.settings": "Настройки компании",
+  "catalog.settings": "Настройки каталога",
   "company": "Компания",
   "add": "Добавить",
   "list.of.companies": "Список компаний",
@@ -131,6 +132,7 @@
   "integration": "Интеграция",
   "menu.image": "Изображение меню",
   "image": "Изображение",
+  "product.image": "Изображение товара",
   "start.of.working.hours": "Начало рабочего времени",
   "end.of.working.hours": "Конец рабочего времени",
   "courier.working.hours": "Рабочее время курьера",
@@ -155,6 +157,7 @@
   "add.option": "Добавить вариант",
   "discount.value": "Значение скидки",
   "discount.type": "Тип скидки",
+  "attribute.type": "Тип аттрибута",
   "discount": "Скидка",
   "fixed": "Фиксированный",
   "name.in.uz": "Название на узбекском",
@@ -403,5 +406,13 @@
   "cashiers": "Кассиры",
   "full_name": "Полное имя",
   "work_hour_start": "Начало рабочего дня",
-  "work_hour_end": "Конец рабочего дня"
+  "work_hour_end": "Конец рабочего дня",
+  "Sales": "Продажи",
+  "general.category": "Главная категория",
+  "attributes": "Атрибуты товаров",
+  "description.long": "Описание (Полное название атрибута)",
+  "parameters": "Параметры",
+  "preview": "Предварительный просмотр",
+  "name.option": "Название опции",
+  "code_value": "Код (значение)"
 }

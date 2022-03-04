@@ -381,6 +381,7 @@
   "available": "Доступен",
   "unavailable": "Не доступен",
   "meal_name": "Название блюда",
+  "brand_name": "Название бренда",
   "about.company": "О компании",
   "company.branches": "Филиалы компаний",
   "personnel": "Персонал",
@@ -414,5 +415,6 @@
   "parameters": "Параметры",
   "preview": "Предварительный просмотр",
   "name.option": "Название опции",
-  "code_value": "Код (значение)"
+  "code_value": "Код (значение)",
+  "brands": "Бренды"
 }

@@ -101,6 +101,14 @@ export const menu = [
         isActive: false,
         permission: "settings",
       },
+      {
+        id: "brands.settings",
+        title: "brands",
+        path: "/home/catalog/brands",
+        isChild: true,
+        isActive: false,
+        permission: "settings",
+      },
     ],
   },
   {

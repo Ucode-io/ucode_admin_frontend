@@ -1,19 +1,18 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import Table from "./Table";
 import Header from "components/Header";
-import Button from "components/Button";
 import Filters from "components/Filters";
+import Button from "components/Button";
+import { DownloadIcon } from "constants/icons";
+import { FIlterIcon } from "constants/icons";
+import Table from "./Table";
 import { Input } from "alisa-ui";
 import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from "@material-ui/icons/Add";
-import { DownloadIcon, FIlterIcon } from "constants/icons";
+import { useHistory } from "react-router-dom";
 
-export default function Goods() {
+export default function Brands() {
   const { t } = useTranslation();
   const history = useHistory();
-  const [createModal, setCreateModal] = useState(null);
 
   const extraFilter = (
     <div className="flex gap-4">
@@ -46,13 +45,13 @@ export default function Goods() {
   return (
     <>
       <Header
-        title={t("Sales")}
+        title={t("brands")}
         endAdornment={[
           <Button
             icon={AddIcon}
             size="medium"
             onClick={() => {
-              history.push("/home/catalog/goods/create");
+              history.push("/home/catalog/brands/create");
               // setCreateModal(true)
             }}
           >
@@ -62,14 +61,12 @@ export default function Goods() {
       />
       <Filters extra={extraFilter}>
         <Input
-          // width={410}
           placeholder={t("search")}
           size="middle"
           addonBefore={<SearchIcon />}
-          // onChange={onSearch}
         />
       </Filters>
-      <Table createModal={createModal} setCreateModal={setCreateModal} />
+      <Table />
     </>
   );
 }

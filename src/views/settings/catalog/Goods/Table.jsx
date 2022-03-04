@@ -10,12 +10,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
-import {
-  getV2Products,
-  deleteV2Product,
-  postV2Product,
-  updateV2Product,
-} from "services";
+import { getV2Goods, deleteV2Good, postV2Good, updateV2Good } from "services";
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "components/Loader";
 import Card from "components/Card";
@@ -45,12 +40,12 @@ export default function MainTable({ createModal, setCreateModal }) {
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Products({ limit: 10, page })
+    getV2Goods({ limit: 10, page })
       .then((res) => {
         console.log(res);
         setItems({
-          count: res?.count,
-          data: res?.products,
+          count: res.data?.count,
+          data: res.data?.products,
         });
       })
       .catch((err) => console.log(err))
@@ -59,7 +54,7 @@ export default function MainTable({ createModal, setCreateModal }) {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteV2Product(deleteModal.id)
+    deleteV2Good(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -71,15 +66,12 @@ export default function MainTable({ createModal, setCreateModal }) {
   const onSubmit = (values) => {
     const data = {
       ...values,
-      type: values?.type?.value,
     };
-    data?.type === "fixed" && delete data.base_distance;
-    data?.type === "fixed" && delete data.price_per_km;
 
     setSaveLoading(true);
     const selectedAction = createModal.id
-      ? updateV2Product(createModal.id, data)
-      : postV2Product(data);
+      ? updateV2Good(createModal.id, data)
+      : postV2Good(data);
     selectedAction
       .then((res) => {
         getItems(currentPage);
@@ -224,11 +216,7 @@ export default function MainTable({ createModal, setCreateModal }) {
             </div>
           </div>
 
-          <div
-            className={`${
-              values?.type?.value === "fixed" ? "hidden" : " "
-            } grid grid-cols-1 sm:grid-cols-2 gap-x-3 py-8`}
-          >
+          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-x-3 py-8`}>
             <div>
               <Form.Item
                 formik={formik}

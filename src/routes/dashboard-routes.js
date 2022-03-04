@@ -262,6 +262,16 @@ const SettingsCatalogAttributesCreate = Loadable({
   loading: FullScreenLoader,
 });
 
+const SettingsCatalogBrands = Loadable({
+  loader: () => import("views/settings/catalog/Brands"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogBrandsCreate = Loadable({
+  loader: () => import("views/settings/catalog/Brands/Create"),
+  loading: FullScreenLoader,
+});
+
 export default [
   {
     component: Dashboard,
@@ -832,6 +842,27 @@ export default [
     path: "/catalog/attributes/:id",
     exact: true,
     title: "Settings.Catalog.Category.Attribute.Edit",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogBrands,
+    path: "/catalog/brands",
+    exact: true,
+    title: "Settings.Catalog.Category.Brands",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogBrandsCreate,
+    path: "/catalog/brands/create",
+    exact: true,
+    title: "Settings.Catalog.Category.Brand.Create",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogBrandsCreate,
+    path: "/catalog/brands/:id",
+    exact: true,
+    title: "Settings.Catalog.Category.Brand.Edit",
     permission: "fares",
   },
   {

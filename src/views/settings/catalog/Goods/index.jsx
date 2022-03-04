@@ -46,7 +46,7 @@ export default function Goods() {
   return (
     <>
       <Header
-        title={t("Sales")}
+        title={t("goods")}
         endAdornment={[
           <Button
             icon={AddIcon}

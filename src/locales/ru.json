@@ -352,6 +352,7 @@
   "general.settings": "Общие настройки",
   "start.time": "Период (дата и время)",
   "goods": "Товары",
+  "good": "Товар",
   "type.variable": "Тип переменной",
   "value": "Значение",
   "budget": "Бюджет",
@@ -416,5 +417,10 @@
   "preview": "Предварительный просмотр",
   "name.option": "Название опции",
   "code_value": "Код (значение)",
-  "brands": "Бренды"
+  "brands": "Бренды",
+  "connected_goods": "Связанные товары",
+  "vendor_code": "Артикул",
+  "dimension": "Измерение",
+  "prices": "Цены",
+  "characteristics": "Характеристики"
 }

@@ -66,20 +66,15 @@ export default function BrandsTable() {
       render: (_, index) => <>{(currentPage - 1) * 10 + index + 1}</>,
     },
     {
+      title: t("logo"),
+      key: "image",
+      dataIndex: "image",
+      render: (record) => <>{record.image}</>,
+    },
+    {
       title: t("name"),
       key: "title",
       dataIndex: "title",
-    },
-    {
-      title: t("attribute.type"),
-      key: "attribute_type",
-      dataIndex: "attribute_type",
-      render: (record) => <>{record.attribute_type}</>,
-    },
-    {
-      title: t("status"),
-      key: "is_active",
-      dataIndex: "is_active",
     },
   ];
 
@@ -160,13 +155,7 @@ export default function BrandsTable() {
                     <TableCell key={col.key}>
                       {col.render
                         ? col.render(item, index)
-                        : item[col.dataIndex].ru ?? (
-                            <Tag className="p-1" color="yellow">
-                              {item[col.dataIndex]
-                                ? t("active")
-                                : t("inactive")}
-                            </Tag>
-                          )}
+                        : item[col.dataIndex].ru}
                     </TableCell>
                   ))}
                 </TableRow>

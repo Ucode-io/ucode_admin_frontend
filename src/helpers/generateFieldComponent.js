@@ -1,8 +1,8 @@
-import Input from "../components/Input"
-import Select from "../components/Select"
-import Switch from "../components/Switch"
-import TextArea from "../components/Textarea"
-import Upload from "../components/Upload"
+import Input from "components/Input";
+import Select from "components/Select";
+import Switch from "components/Switch";
+import TextArea from "components/Textarea";
+import Upload from "components/Upload";
 
 const GenerateFieldComponent = ({
   id,
@@ -13,23 +13,24 @@ const GenerateFieldComponent = ({
 }) => {
   switch (type) {
     case "string":
-      if(id === "611359b073bf6fe15aaef568") return <Input endAdornment="ga / sotih" {...props} />
-      return <Input disabled={disabled} {...props} />
+      if (id === "611359b073bf6fe15aaef568")
+        return <Input endAdornment="ga / sotih" {...props} />;
+      return <Input disabled={disabled} {...props} />;
 
     case "number":
-      return <Input type="number" disabled={disabled} {...props} />
+      return <Input type="number" disabled={disabled} {...props} />;
 
     case "textarea":
-      return <TextArea disabled={disabled} {...props} />
+      return <TextArea disabled={disabled} {...props} />;
 
     case "boolean":
-      return <Switch disabled={disabled} {...props} />
+      return <Switch disabled={disabled} {...props} />;
 
     case "date":
-      return <Input type="date" disabled={disabled} {...props} />
+      return <Input type="date" disabled={disabled} {...props} />;
 
     case "file":
-      return <Upload disabled={disabled} {...props} />
+      return <Upload disabled={disabled} {...props} />;
 
     case "radio":
       return (
@@ -41,7 +42,7 @@ const GenerateFieldComponent = ({
           disabled={disabled}
           {...props}
         />
-      )
+      );
 
     case "checkbox":
       return (
@@ -53,12 +54,12 @@ const GenerateFieldComponent = ({
           }))}
           disabled={disabled}
           {...props}
-        /> 
-      )
+        />
+      );
 
     default:
-      return <Input disabled={disabled} {...props} />
+      return <Input disabled={disabled} {...props} />;
   }
-}
+};
 
-export default GenerateFieldComponent
+export default GenerateFieldComponent;

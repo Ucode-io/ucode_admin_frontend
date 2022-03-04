@@ -106,9 +106,24 @@ export default function MainTable({ createModal, setCreateModal }) {
       render: (record, index) => (currentPage - 1) * 10 + index + 1,
     },
     {
-      title: t("name"),
-      key: "name",
-      render: (record) => record.name,
+      title: t("good"),
+      key: "title",
+      render: (record) => record.title,
+    },
+    {
+      title: t("vendor_code"),
+      key: "vendor_code",
+      render: (record) => <>{record.bar_code}</>,
+    },
+    {
+      title: t("amount"),
+      key: "amount",
+      render: (record) => <>{record.quantity}</>,
+    },
+    {
+      title: t("price"),
+      key: "price",
+      render: (record) => <>{record.price}</>,
     },
     {
       title: t("created.date"),

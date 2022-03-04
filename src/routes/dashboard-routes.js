@@ -242,6 +242,11 @@ const SettingsCatalogGoods = Loadable({
   loading: FullScreenLoader,
 });
 
+const SettingsCatalogGoodsCreate = Loadable({
+  loader: () => import("views/settings/catalog/Goods/Create"),
+  loading: FullScreenLoader,
+});
+
 const SettingsCatalogCategory = Loadable({
   loader: () => import("views/settings/catalog/Category"),
   loading: FullScreenLoader,
@@ -800,6 +805,20 @@ export default [
     path: "/catalog/goods",
     exact: true,
     title: "Settings.Catalog.Goods",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogGoodsCreate,
+    path: "/catalog/goods/create",
+    exact: true,
+    title: "Settings.Catalog.Goods.Create",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogGoodsCreate,
+    path: "/catalog/goods/:id",
+    exact: true,
+    title: "Settings.Catalog.Goods.Edit",
     permission: "fares",
   },
   {

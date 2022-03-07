@@ -85,7 +85,7 @@ const Gallery = ({
     <div className="Gallery">
       {imageLinks?.map((link, index) => (
         <div
-          className="block"
+          className="block mr-2"
           style={
             aspectRatio
               ? { width, aspectRatio, borderRadius: rounded ? "50%" : 8 }

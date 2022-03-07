@@ -1,6 +1,6 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useFormik } from "formik";
+import { Formik } from "formik";
 import {
   getV2Category,
   getV2Categories,
@@ -17,7 +17,7 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { showAlert } from "redux/actions/alertActions";
 import FullScreenLoader from "components/FullScreenLoader";
-import * as yup from "yup";
+import * as Yup from "yup";
 import Filters from "components/Filters";
 import { StyledTabs, StyledTab } from "components/StyledTabs";
 import SwipeableViews from "react-swipeable-views";
@@ -34,6 +34,18 @@ export default function GoodsCreate() {
   const history = useHistory();
   const theme = useTheme();
 
+  const [initialValues, setInitialValues] = useState({
+    name: "",
+    description_ru: null,
+    description_uz: null,
+    description_en: null,
+    image: null,
+    order_no: null,
+    title_ru: null,
+    title_uz: null,
+    title_en: null,
+    parent_id: null,
+  });
   const [buttonLoader, setButtonLoader] = useState(false);
   const [loader, setLoader] = useState(true);
 
@@ -46,7 +58,8 @@ export default function GoodsCreate() {
     getV2Category(id, {})
       .then((res) => {
         console.log(res);
-        formik.setValues({
+        setInitialValues({
+          name: "",
           description_ru: res.description_v2.ru,
           description_uz: res.description_v2.uz,
           description_en: res.description_v2.en,
@@ -103,38 +116,12 @@ export default function GoodsCreate() {
     fetchData();
   }, []);
 
-  const initialValues = useMemo(
-    () => ({
-      description_ru: null,
-      description_uz: null,
-      description_en: null,
-      image: null,
-      order_no: null,
-      title_ru: null,
-      title_uz: null,
-      title_en: null,
-      parent_id: null,
-    }),
-    [],
-  );
-
-  const validationSchema = useMemo(() => {
-    const defaultSchema = yup.mixed().required(t("required.field.error"));
-
-    return yup.object().shape({
-      title_ru: defaultSchema,
-      title_uz: defaultSchema,
-      title_en: defaultSchema,
-    });
-  }, []);
-
-  const formik = useFormik({
-    initialValues,
-    onSubmit,
-    validationSchema,
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .trim(t("spaces.error"))
+      .strict(true)
+      .required(t("required.field.error")),
   });
-
-  const { values, handleChange, handleSubmit, setFieldValue } = formik;
 
   const routes = [
     {
@@ -143,7 +130,7 @@ export default function GoodsCreate() {
       route: `/home/catalog/goods`,
     },
     {
-      title: id ? formik?.values.first_name : t("create"),
+      title: id ? initialValues.first_name : t("create"),
     },
   ];
 
@@ -169,69 +156,77 @@ export default function GoodsCreate() {
         <FullScreenLoader />
       ) : (
         <>
-          <form onSubmit={handleSubmit}>
-            <Header
-              startAdornment={[<Breadcrumb routes={routes} />]}
-              endAdornment={[
-                <Button
-                  icon={CancelIcon}
-                  size="large"
-                  shape="outlined"
-                  color="red"
-                  iconClassName="red"
-                  borderColor="bordercolor"
-                  onClick={() => history.goBack()}
+          <Formik
+            initialValues={initialValues}
+            onSubmit={onSubmit}
+            validationSchema={validationSchema}
+          >
+            {(formik) => (
+              <form onSubmit={formik.handleSubmit}>
+                <Header
+                  startAdornment={[<Breadcrumb routes={routes} />]}
+                  endAdornment={[
+                    <Button
+                      icon={CancelIcon}
+                      size="large"
+                      shape="outlined"
+                      color="red"
+                      iconClassName="red"
+                      borderColor="bordercolor"
+                      onClick={() => history.goBack()}
+                    >
+                      {t("cancel")}
+                    </Button>,
+                    <Button
+                      icon={SaveIcon}
+                      size="large"
+                      type="submit"
+                      loading={buttonLoader}
+                    >
+                      {t(id ? "save" : "create")}
+                    </Button>,
+                  ]}
+                />
+                <Filters>
+                  <StyledTabs
+                    value={value}
+                    onChange={handleTabChange}
+                    centered={false}
+                    aria-label="full width tabs example"
+                    TabIndicatorProps={{ children: <span className="w-2" /> }}
+                  >
+                    <StyledTab
+                      label={tabLabel(t("good"))}
+                      {...a11yProps(0)}
+                      style={{ width: "75px" }}
+                    />
+                    <StyledTab
+                      label={tabLabel(t("connected_goods"))}
+                      {...a11yProps(1)}
+                      style={{ width: "175px" }}
+                    />
+                  </StyledTabs>
+                </Filters>
+                <SwipeableViews
+                  axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+                  index={value}
+                  onChangeIndex={handleChangeIndex}
                 >
-                  {t("cancel")}
-                </Button>,
-                <Button
-                  icon={SaveIcon}
-                  size="large"
-                  type="submit"
-                  loading={buttonLoader}
-                >
-                  {t(id ? "save" : "create")}
-                </Button>,
-              ]}
-            />
-            <Filters>
-              <StyledTabs
-                value={value}
-                onChange={handleTabChange}
-                centered={false}
-                aria-label="full width tabs example"
-                TabIndicatorProps={{ children: <span className="w-2" /> }}
-              >
-                <StyledTab
-                  label={tabLabel(t("good"))}
-                  {...a11yProps(0)}
-                  style={{ width: "75px" }}
-                />
-                <StyledTab
-                  label={tabLabel(t("connected_goods"))}
-                  {...a11yProps(1)}
-                  style={{ width: "175px" }}
-                />
-              </StyledTabs>
-            </Filters>
-            <SwipeableViews
-              axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-              index={value}
-              onChangeIndex={handleChangeIndex}
-            >
-              <TabPanel value={value} index={0} dir={theme.direction}>
-                <Good
-                  formik={formik}
-                  handleChange={handleChange}
-                  values={values}
-                  setFieldValue={setFieldValue}
-                />
-              </TabPanel>
-              <TabPanel value={value} index={1} dir={theme.direction}>
-                <ConnectedGoods />
-              </TabPanel>
-            </SwipeableViews>
-          </form>
+                  <TabPanel value={value} index={0} dir={theme.direction}>
+                    <Good
+                      formik={formik}
+                      handleChange={formik.handleChange}
+                      values={formik.values}
+                      setFieldValue={formik.setFieldValue}
+                    />
+                  </TabPanel>
+                  <TabPanel value={value} index={1} dir={theme.direction}>
+                    <ConnectedGoods />
+                  </TabPanel>
+                </SwipeableViews>
+              </form>
+            )}
+          </Formik>
         </>
       )}
     </>

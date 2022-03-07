@@ -23,6 +23,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
+import moment from "moment";
 
 export default function MainTable({ createModal, setCreateModal }) {
   const { t } = useTranslation();
@@ -128,7 +129,7 @@ export default function MainTable({ createModal, setCreateModal }) {
     {
       title: t("created.date"),
       key: "created.date",
-      render: (record) => <>{record.created_at}</>,
+      render: (record) => <>{moment(record.created_at).format("DD-MM-YYYY")}</>,
     },
     {
       title: "",

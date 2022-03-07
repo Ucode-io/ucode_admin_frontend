@@ -18,6 +18,7 @@ import {
   TableRow,
 } from "@material-ui/core";
 import { useSelector } from "react-redux";
+import moment from "moment";
 
 export default function CompanyBranches() {
   const { t } = useTranslation();
@@ -72,7 +73,7 @@ export default function CompanyBranches() {
     {
       title: t("date_founded"),
       key: "created_at",
-      render: (record) => <>{record.created_at.split(" ")[0]}</>,
+      render: (record) => <>{moment(record.created_at).format("DD-MM-YYYY")}</>,
     },
     {
       title: "",

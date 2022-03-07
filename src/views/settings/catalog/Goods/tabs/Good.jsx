@@ -124,11 +124,11 @@ export default function Good({
                   </div>
                   <div className="">
                     <div>
-                      <Form.Item formik={formik} name="title_ru">
+                      <Form.Item formik={formik} name="name">
                         <Input
                           size="large"
-                          id="title_ru"
-                          value={values.title_ru}
+                          id="name"
+                          value={values.name}
                           onChange={handleChange}
                         />
                       </Form.Item>
@@ -341,9 +341,9 @@ export default function Good({
             bodyStyle={{ padding: "0 1rem" }}
           >
             <div className="grid grid-cols-12 gap-8 mb-14">
-              <div className="col-span-3">
+              <div className="col-span-12">
                 <Form.Item formik={formik} name="image">
-                  <div className="w-full h-full flex mt-6 items-center flex-col">
+                  <div className="w-full h-full flex items-center">
                     <Gallery
                       width={120}
                       height={120}

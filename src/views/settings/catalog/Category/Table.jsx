@@ -28,6 +28,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
+import moment from "moment";
 
 export default function MainTable({ createModal, setCreateModal }) {
   const { t } = useTranslation();
@@ -49,8 +50,8 @@ export default function MainTable({ createModal, setCreateModal }) {
       .then((res) => {
         console.log(res);
         setItems({
-          count: res?.count,
-          data: res?.categories,
+          count: res?.data?.count,
+          data: res?.data?.categories,
         });
       })
       .catch((err) => console.log(err))
@@ -113,12 +114,12 @@ export default function MainTable({ createModal, setCreateModal }) {
     {
       title: t("name"),
       key: "name",
-      render: (record) => record.name,
+      render: (record) => record.title.ru,
     },
     {
       title: t("created.date"),
       key: "created.date",
-      render: (record) => <>{record.created_at}</>,
+      render: (record) => <>{moment(record.created_at).format("DD-MM-YYYY")}</>,
     },
     {
       title: "",
@@ -170,11 +171,13 @@ export default function MainTable({ createModal, setCreateModal }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items?.data && items?.data?.length ? (
+            {!loader && items?.data && items?.data?.length ? (
               items?.data?.map((elm, index) => (
                 <TableRow
                   key={elm.id}
-                  onClick={() => history.push(`/home/settings/fares/${elm.id}`)}
+                  onClick={() =>
+                    history.push(`/home/catalog/category/${elm.id}`)
+                  }
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
                   {columns.map((col) => (

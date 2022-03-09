@@ -12,7 +12,7 @@ import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
 import {
-  getMeasurements,
+  getV2Measurement,
   postV2Measurement,
   updateV2Measurement,
 } from "services";
@@ -22,23 +22,32 @@ import {
   accuracies,
   mappedReductions as reductions,
 } from "constants/units";
+import genSelectOption from "helpers/genSelectOption";
+import CustomSkeleton from "components/Skeleton";
 
 export default function UnitsCreate() {
   const { t } = useTranslation();
   const history = useHistory();
   const params = useParams();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
 
   useEffect(() => {
     if (params.id) {
-      getMeasurements(params.id).then((res) => {
-        setValues({
-          unit: res?.data?.name,
-          reduction: res?.data?.short_name,
-          accuracy: res?.data?.accuracy,
+      getV2Measurement(params.id)
+        .then((res) => {
+          setValues({
+            unit: genSelectOption(res?.data?.title, t),
+            reduction: res?.data?.short_name,
+            accuracy: genSelectOption(res?.data?.accuracy, t),
+          });
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
-      });
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
@@ -116,7 +125,9 @@ export default function UnitsCreate() {
     </Button>,
   ];
 
-  return (
+  console.log(values);
+
+  return !isLoading ? (
     <form onSubmit={handleSubmit}>
       <Header
         startAdornment={[<Breadcrumb routes={routes} />]}
@@ -133,8 +144,8 @@ export default function UnitsCreate() {
                   <Select
                     height={40}
                     placeholder={t("enter.unit")}
-                    options={units}
-                    // value={values.region}
+                    options={genSelectOption(units, t)}
+                    value={values.unit}
                     onChange={(val) => {
                       setFieldValue("unit", val);
                       setFieldValue("reduction", reductions.get(val.label));
@@ -162,8 +173,8 @@ export default function UnitsCreate() {
                   <Select
                     height={40}
                     placeholder={t("enter.accuracy")}
-                    options={accuracies}
-                    // value={values.region}
+                    options={genSelectOption(accuracies, t)}
+                    value={values.accuracy}
                     onChange={(val) => {
                       setFieldValue("accuracy", val);
                     }}
@@ -175,5 +186,7 @@ export default function UnitsCreate() {
         </div>
       </div>
     </form>
+  ) : (
+    <CustomSkeleton />
   );
 }

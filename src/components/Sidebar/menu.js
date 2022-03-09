@@ -117,6 +117,14 @@ export const menu = [
         isActive: false,
         permission: "settings",
       },
+      {
+        id: "tags.settings",
+        title: "tags",
+        path: "/home/catalog/tags",
+        isChild: true,
+        isActive: false,
+        permission: "settings",
+      },
     ],
   },
   {

@@ -287,6 +287,16 @@ const SettingsCatalogUnitsCreate = Loadable({
   loading: FullScreenLoader,
 });
 
+const SettingsCatalogTags = Loadable({
+  loader: () => import("views/settings/catalog/Tags"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogTagsCreate = Loadable({
+  loader: () => import("views/settings/catalog/Tags/Create"),
+  loading: FullScreenLoader,
+});
+
 export default [
   {
     component: Dashboard,
@@ -913,6 +923,27 @@ export default [
     path: "/catalog/units/:id",
     exact: true,
     title: "Settings.Catalog.Unit.Edit",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogTags,
+    path: "/catalog/tags",
+    exact: true,
+    title: "Settings.Catalog.Tags",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogTagsCreate,
+    path: "/catalog/tags/create",
+    exact: true,
+    title: "Settings.Catalog.Tag.Create",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogTagsCreate,
+    path: "/catalog/tags/:id",
+    exact: true,
+    title: "Settings.Catalog.Tag.Edit",
     permission: "fares",
   },
   {

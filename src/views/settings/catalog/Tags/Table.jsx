@@ -10,12 +10,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
-import {
-  getV2Measurements,
-  deleteV2Measurement,
-  postV2Measurement,
-  updateV2Measurement,
-} from "services";
+import { getV2Tags, deleteV2Tag, postV2Tag, updateV2Tag } from "services";
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "components/Loader";
 import Card from "components/Card";
@@ -45,12 +40,12 @@ export default function MainTable({ createModal, setCreateModal }) {
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Measurements({ limit: 10, page })
+    getV2Tags({ limit: 10, page })
       .then((res) => {
         console.log(res);
         setItems({
           count: res.data?.count,
-          data: res.data?.measurements,
+          data: res.data?.tags,
         });
       })
       .catch((err) => console.log(err))
@@ -59,7 +54,7 @@ export default function MainTable({ createModal, setCreateModal }) {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteV2Measurement(deleteModal.id)
+    deleteV2Tag(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -75,8 +70,8 @@ export default function MainTable({ createModal, setCreateModal }) {
 
     setSaveLoading(true);
     const selectedAction = createModal.id
-      ? updateV2Measurement(createModal.id, data)
-      : postV2Measurement(data);
+      ? updateV2Tag(createModal.id, data)
+      : postV2Tag(data);
     selectedAction
       .then((res) => {
         getItems(currentPage);
@@ -111,19 +106,14 @@ export default function MainTable({ createModal, setCreateModal }) {
       render: (record, index) => (currentPage - 1) * 10 + index + 1,
     },
     {
-      title: t("unit"),
-      key: "unit",
-      render: (record) => record.title,
+      title: t("name"),
+      key: "name",
+      render: (record) => record.title.ru,
     },
     {
-      title: t("reduction"),
-      key: "reduction",
-      render: (record) => <>{record.short_name}</>,
-    },
-    {
-      title: t("accuracy"),
-      key: "accuracy",
-      render: (record) => <>{record.accuracy}</>,
+      title: t("color"),
+      key: "color",
+      render: (record) => t(record.color),
     },
     {
       title: "",
@@ -137,7 +127,7 @@ export default function MainTable({ createModal, setCreateModal }) {
                 title: t("edit"),
                 color: "blue",
                 icon: <EditIcon />,
-                action: () => history.push(`/home/catalog/units/${record.id}`),
+                action: () => history.push(`/home/catalog/tags/${record.id}`),
               },
               {
                 title: t("delete"),
@@ -179,7 +169,7 @@ export default function MainTable({ createModal, setCreateModal }) {
               items?.data?.map((elm, index) => (
                 <TableRow
                   key={elm.id}
-                  onClick={() => history.push(`/home/catalog/units/${elm.id}`)}
+                  onClick={() => history.push(`/home/catalog/tags/${elm.id}`)}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
                   {columns.map((col) => (

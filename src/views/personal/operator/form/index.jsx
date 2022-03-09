@@ -1,42 +1,36 @@
-import React, { useEffect, useMemo, useState } from "react"
-import { useFormik } from "formik"
-import * as yup from "yup"
-import { useTranslation } from "react-i18next"
-import { useHistory, useParams } from "react-router-dom"
-import { Input } from "alisa-ui"
-
-//components and functions
-import Form from "../../../../components/Form/Index"
-import Breadcrumb from "../../../../components/Breadcrumb"
-import Header from "../../../../components/Header"
-import Card from "../../../../components/Card"
-import Button from "../../../../components/Button"
-import Select from "../../../../components/Select"
-import { getUserRoles } from "../../../../services/userRoles"
-import {
-  getOperator,
-  postOperator,
-  updateOperator,
-} from "../../../../services/operator"
-import { getRegions } from "../../../../services/region"
-import CancelIcon from "@material-ui/icons/Cancel"
-import SaveIcon from "@material-ui/icons/Save"
-import CustomSkeleton from "../../../../components/Skeleton"
-import VisibilityIcon from "@material-ui/icons/Visibility"
+import React, { useEffect, useMemo, useState } from "react";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { useTranslation } from "react-i18next";
+import { useHistory, useParams } from "react-router-dom";
+import { Input } from "alisa-ui";
+import Form from "components/Form/Index";
+import Breadcrumb from "components/Breadcrumb";
+import Header from "components/Header";
+import Card from "components/Card";
+import Button from "components/Button";
+import Select from "components/Select";
+import { getUserRoles } from "services/userRoles";
+import { getOperator, postOperator, updateOperator } from "services/operator";
+import { getRegions } from "services/region";
+import CancelIcon from "@material-ui/icons/Cancel";
+import SaveIcon from "@material-ui/icons/Save";
+import CustomSkeleton from "components/Skeleton";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 
 export default function CreateOperator() {
-  const history = useHistory()
-  const { id } = useParams()
-  const { t } = useTranslation()
-  const [saveLoading, setSaveLoading] = useState(false)
-  const [loader, setLoader] = useState(true)
-  const [userRoles, setUserRoles] = useState([])
-  const [regions, setRegions] = useState([])
-  const [visible, setVisible] = useState(false)
+  const history = useHistory();
+  const { id } = useParams();
+  const { t } = useTranslation();
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [loader, setLoader] = useState(true);
+  const [userRoles, setUserRoles] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [visible, setVisible] = useState(false);
 
   const getItem = () => {
-    if (!id) return setLoader(false)
-    setLoader(true)
+    if (!id) return setLoader(false);
+    setLoader(true);
     getOperator(id)
       .then((res) => {
         formik.setValues({
@@ -49,38 +43,38 @@ export default function CreateOperator() {
             value: res.user_role_id,
           },
           password: "no_password",
-        })
+        });
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const fetchData = async () => {
-    setLoader(true)
+    setLoader(true);
     try {
-      const { user_roles } = await getUserRoles({ limit: 1000 })
+      const { user_roles } = await getUserRoles({ limit: 1000 });
       setUserRoles(
         user_roles
           ? user_roles.map((elm) => ({ label: elm.name, value: elm.id }))
-          : []
-      )
+          : [],
+      );
 
-      const { regions } = await getRegions({ limit: 1000 })
+      const { regions } = await getRegions({ limit: 1000 });
       setRegions(
         regions
           ? regions.map((elm) => ({ label: elm.name, value: elm.id }))
-          : []
-      )
+          : [],
+      );
     } catch (e) {
-      console.log(e)
+      console.log(e);
     } finally {
-      setLoader(false)
+      setLoader(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchData()
-    getItem()
-  }, [])
+    fetchData();
+    getItem();
+  }, []);
 
   const initialValues = useMemo(
     () => ({
@@ -92,11 +86,11 @@ export default function CreateOperator() {
       region_ids: [],
       lastname: "",
     }),
-    []
-  )
+    [],
+  );
 
   const validationSchema = useMemo(() => {
-    const defaultSchema = yup.mixed().required(t("required.field.error"))
+    const defaultSchema = yup.mixed().required(t("required.field.error"));
     return yup.object().shape({
       name: defaultSchema,
       user_roles: defaultSchema,
@@ -119,41 +113,41 @@ export default function CreateOperator() {
             .min(8, "Пароль слишком короткий — минимум 8 символов")
             .matches(
               /[a-zA-Z]/,
-              "Пароль должен содержать только латинские буквы"
+              "Пароль должен содержать только латинские буквы",
             )
             .matches(/[0-9]/, "Пароль должен содержать одну цифру"),
-    })
-  }, [])
+    });
+  }, []);
 
   const saveChanges = (data) => {
-    setSaveLoading(true)
-    const selectedAction = id ? updateOperator(id, data) : postOperator(data)
+    setSaveLoading(true);
+    const selectedAction = id ? updateOperator(id, data) : postOperator(data);
     selectedAction
       .then(() => {
-        history.goBack()
+        history.goBack();
       })
-      .finally(() => setSaveLoading(false))
-  }
+      .finally(() => setSaveLoading(false));
+  };
 
   const onSubmit = (values) => {
     const data = {
       ...values,
       user_role_id: values.user_roles.value,
       phone: "+998" + values.phone, // this is just to prevent validation of password
-    }
-    delete data.user_roles
-    delete data.region
-    delete data.lastname
-    saveChanges(data)
-  }
+    };
+    delete data.user_roles;
+    delete data.region;
+    delete data.lastname;
+    saveChanges(data);
+  };
 
   const formik = useFormik({
     initialValues,
     onSubmit,
     validationSchema,
-  })
+  });
 
-  if (loader) return <CustomSkeleton />
+  if (loader) return <CustomSkeleton />;
 
   const routes = [
     {
@@ -164,9 +158,9 @@ export default function CreateOperator() {
     {
       title: id ? formik.values?.user_roles?.label : t("create"),
     },
-  ]
+  ];
 
-  const { values, handleChange, setFieldValue, handleSubmit } = formik
+  const { values, handleChange, setFieldValue, handleSubmit } = formik;
 
   return (
     <div className="w-full">
@@ -305,7 +299,7 @@ export default function CreateOperator() {
                         value={
                           regions && regions.length
                             ? regions.filter((item) =>
-                                values.region_ids.includes(item.value)
+                                values.region_ids.includes(item.value),
                               )
                             : []
                         }
@@ -314,8 +308,8 @@ export default function CreateOperator() {
                             "region_ids",
                             val && val.length
                               ? val.map((item) => item.value)
-                              : []
-                          )
+                              : [],
+                          );
                         }}
                         options={regions}
                       />
@@ -328,5 +322,5 @@ export default function CreateOperator() {
         </div>
       </form>
     </div>
-  )
+  );
 }

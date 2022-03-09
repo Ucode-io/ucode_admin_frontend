@@ -1,6 +1,6 @@
 // import { BorderLeft } from "@material-ui/icons";
-import { useEffect } from "react"
-import RcSelect, { components } from "react-select"
+import { useEffect } from "react";
+import RcSelect, { components } from "react-select";
 
 export const customStyles = ({
   error = false,
@@ -35,7 +35,7 @@ export const customStyles = ({
         boxShadow:
           "var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)",
       },
-    }
+    };
   },
   valueContainer: (provided, state) => ({
     ...provided,
@@ -59,14 +59,14 @@ export const customStyles = ({
     return {
       ...defaultStyles,
       color: "#999",
-    }
+    };
   },
   option: (styles) => {
     return {
       ...styles,
-    }
+    };
   },
-})
+});
 
 function Select({
   children,
@@ -101,8 +101,8 @@ function Select({
       <div className="cursor-pointer" onClick={() => onClickOption(props.data)}>
         <components.MultiValueLabel {...props} />
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div
@@ -128,7 +128,7 @@ function Select({
         {...rest}
       />
     </div>
-  )
+  );
 }
 
-export default Select
+export default Select;

@@ -16,7 +16,6 @@ import SaveIcon from "@material-ui/icons/Save";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { showAlert } from "redux/actions/alertActions";
-import FullScreenLoader from "components/FullScreenLoader";
 import * as yup from "yup";
 import Filters from "components/Filters";
 import { StyledTabs, StyledTab } from "components/StyledTabs";
@@ -24,6 +23,7 @@ import SwipeableViews from "react-swipeable-views";
 import { TabPanel } from "components/Tab/TabBody";
 import { useTheme } from "@material-ui/core/styles";
 import GeneralInformation from "./tabs/GeneralInformation";
+import CustomSkeleton from "components/Skeleton";
 // import SEO from "./tabs/SEO";
 
 export default function CategoryCreate() {
@@ -166,7 +166,7 @@ export default function CategoryCreate() {
   return (
     <>
       {loader ? (
-        <FullScreenLoader />
+        <CustomSkeleton />
       ) : (
         <>
           <form onSubmit={handleSubmit}>

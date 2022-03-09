@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 import FullScreenLoader from "components/FullScreenLoader";
 import Map from "./Map";
 
-export default function AboutCompany() {
+export default function AboutBranch() {
   const { t } = useTranslation();
   const params = useParams();
 

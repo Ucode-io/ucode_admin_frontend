@@ -277,6 +277,16 @@ const SettingsCatalogBrandsCreate = Loadable({
   loading: FullScreenLoader,
 });
 
+const SettingsCatalogUnits = Loadable({
+  loader: () => import("views/settings/catalog/Units"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogUnitsCreate = Loadable({
+  loader: () => import("views/settings/catalog/Units/Create"),
+  loading: FullScreenLoader,
+});
+
 export default [
   {
     component: Dashboard,
@@ -832,56 +842,77 @@ export default [
     component: SettingsCatalogCategoryProduct,
     path: "/catalog/category/create",
     exact: true,
-    title: "Settings.Catalog.Category.Product.Create",
+    title: "Settings.Catalog.Product.Create",
     permission: "fares",
   },
   {
     component: SettingsCatalogCategoryProduct,
     path: "/catalog/category/:id",
     exact: true,
-    title: "Settings.Catalog.Category.Product.Edit",
+    title: "Settings.Catalog.Product.Edit",
     permission: "fares",
   },
   {
     component: SettingsCatalogAttributes,
     path: "/catalog/attributes",
     exact: true,
-    title: "Settings.Catalog.Category.Attributes",
+    title: "Settings.Catalog.Attributes",
     permission: "fares",
   },
   {
     component: SettingsCatalogAttributesCreate,
     path: "/catalog/attributes/create",
     exact: true,
-    title: "Settings.Catalog.Category.Attribute.Create",
+    title: "Settings.Catalog.Attribute.Create",
     permission: "fares",
   },
   {
     component: SettingsCatalogAttributesCreate,
     path: "/catalog/attributes/:id",
     exact: true,
-    title: "Settings.Catalog.Category.Attribute.Edit",
+    title: "Settings.Catalog.Attribute.Edit",
     permission: "fares",
   },
   {
     component: SettingsCatalogBrands,
     path: "/catalog/brands",
     exact: true,
-    title: "Settings.Catalog.Category.Brands",
+    title: "Settings.Catalog.Brands",
     permission: "fares",
   },
   {
     component: SettingsCatalogBrandsCreate,
     path: "/catalog/brands/create",
     exact: true,
-    title: "Settings.Catalog.Category.Brand.Create",
+    title: "Settings.Catalog.Brand.Create",
     permission: "fares",
   },
   {
     component: SettingsCatalogBrandsCreate,
     path: "/catalog/brands/:id",
     exact: true,
-    title: "Settings.Catalog.Category.Brand.Edit",
+    title: "Settings.Catalog.Brand.Edit",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogUnits,
+    path: "/catalog/units",
+    exact: true,
+    title: "Settings.Catalog.Unit",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogUnitsCreate,
+    path: "/catalog/units/create",
+    exact: true,
+    title: "Settings.Catalog.Unit.Create",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogUnitsCreate,
+    path: "/catalog/units/:id",
+    exact: true,
+    title: "Settings.Catalog.Unit.Edit",
     permission: "fares",
   },
   {

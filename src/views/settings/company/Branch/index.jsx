@@ -13,17 +13,35 @@ import Button from "components/Button";
 import { DownloadIcon } from "constants/icons";
 import { FIlterIcon } from "constants/icons";
 import AddIcon from "@material-ui/icons/Add";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
+import Breadcrumb from "components/Breadcrumb";
 
 export default function Company() {
   const { t } = useTranslation();
   const history = useHistory();
+  const params = useParams();
   const theme = useTheme();
 
   const [saveLoading, setSaveLoading] = useState(false);
   const [value, setValue] = useState(0);
+
+  const routes = [
+    {
+      title: t(`company.settings`),
+      link: true,
+      route: `/home/settings/company`,
+    },
+    {
+      title: t(`company.branches`),
+      link: true,
+      route: `/home/settings/company/branches/${params.id}`,
+    },
+    {
+      title: t("create"),
+    },
+  ];
 
   const extraFilter = (
     <div className="flex gap-4">
@@ -72,7 +90,8 @@ export default function Company() {
   return (
     <>
       <Header
-        title={t("company.settings")}
+        title={!params.id ? t("company.settings") : ""}
+        startAdornment={[<Breadcrumb routes={routes} />]}
         endAdornment={
           value == 0
             ? [

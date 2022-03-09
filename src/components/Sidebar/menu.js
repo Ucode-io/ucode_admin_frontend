@@ -109,6 +109,14 @@ export const menu = [
         isActive: false,
         permission: "settings",
       },
+      {
+        id: "units.settings",
+        title: "unit",
+        path: "/home/catalog/units",
+        isChild: true,
+        isActive: false,
+        permission: "settings",
+      },
     ],
   },
   {

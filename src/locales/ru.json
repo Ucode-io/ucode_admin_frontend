@@ -422,5 +422,10 @@
   "vendor_code": "Артикул",
   "dimension": "Измерение",
   "prices": "Цены",
-  "characteristics": "Характеристики"
+  "characteristics": "Характеристики",
+  "unit": "Единица измерения",
+  "reduction": "Сокращение",
+  "accuracy": "Точность",
+  "enter.accuracy": "Введите точность",
+  "enter.unit": "Выберите единицу измерения"
 }

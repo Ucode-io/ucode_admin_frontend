@@ -16,3 +16,4 @@ export * from "./v2Category";
 export * from "./v2Product";
 export * from "./v2Property";
 export * from "./v2Brands";
+export * from "./v2Measurements";

@@ -16,6 +16,8 @@ import MuiButton from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import { makeStyles } from "@material-ui/core/styles";
 import Gallery from "components/Gallery";
+import { divisibility, currencies } from "../api";
+import genSelectOption from "helpers/genSelectOption";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,6 +43,9 @@ export default function Good({
   handleChange,
   setFieldValue,
   categories,
+  tags,
+  units,
+  brands,
 }) {
   const { t } = useTranslation();
   const classes = useStyles();
@@ -124,11 +129,11 @@ export default function Good({
                   </div>
                   <div className="">
                     <div>
-                      <Form.Item formik={formik} name="name">
+                      <Form.Item formik={formik} name="title_ru">
                         <Input
                           size="large"
-                          id="name"
-                          value={values.name}
+                          id="title_ru"
+                          value={values.title_ru}
                           onChange={handleChange}
                         />
                       </Form.Item>
@@ -136,7 +141,7 @@ export default function Good({
                   </div>
 
                   <div className="input-label">
-                    <span>{t("order.number")}</span>
+                    <span>{t("vendor_code")}</span>
                   </div>
                   <div className="">
                     <div>
@@ -170,18 +175,19 @@ export default function Good({
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <div className="input-label">
-                          <span>{t("general.category")}</span>
+                          <span>{t("categories")}</span>
                         </div>
                         <div className="">
                           <div>
-                            <Form.Item formik={formik} name="parent_id">
+                            <Form.Item formik={formik} name="categories">
                               <Select
+                                isMulti
                                 height={40}
-                                id="parent_id"
+                                id="categories"
                                 options={categories}
-                                value={values.parent_id}
+                                value={values.categories}
                                 onChange={(val) => {
-                                  setFieldValue("parent_id", val);
+                                  setFieldValue("categories", val);
                                 }}
                               />
                             </Form.Item>
@@ -191,18 +197,18 @@ export default function Good({
 
                       <div>
                         <div className="input-label">
-                          <span>{t("general.category")}</span>
+                          <span>{t("brand")}</span>
                         </div>
                         <div className="">
                           <div>
-                            <Form.Item formik={formik} name="parent_id">
+                            <Form.Item formik={formik} name="brands">
                               <Select
                                 height={40}
-                                id="parent_id"
-                                options={categories}
-                                value={values.parent_id}
+                                id="brands"
+                                options={brands}
+                                value={values.brand}
                                 onChange={(val) => {
-                                  setFieldValue("parent_id", val);
+                                  setFieldValue("brands", val);
                                 }}
                               />
                             </Form.Item>
@@ -212,36 +218,23 @@ export default function Good({
 
                       <div>
                         <div className="input-label">
-                          <span>{t("order.number")}</span>
+                          <span>{t("divisible.indivisible")}</span>
                         </div>
                         <div className="">
                           <div>
-                            <Form.Item formik={formik} name="order_no">
-                              <Input
-                                size="large"
-                                id="order_no"
-                                value={values.order_no}
-                                onChange={handleChange}
-                              />
-                            </Form.Item>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="input-label">
-                          <span>{t("general.category")}</span>
-                        </div>
-                        <div className="">
-                          <div>
-                            <Form.Item formik={formik} name="parent_id">
+                            <Form.Item formik={formik} name="is_divisible">
                               <Select
                                 height={40}
-                                id="parent_id"
-                                options={categories}
-                                value={values.parent_id}
+                                id="is_divisible"
+                                options={genSelectOption(divisibility)}
+                                value={values.is_divisible}
                                 onChange={(val) => {
-                                  setFieldValue("parent_id", val);
+                                  var bool =
+                                    val.value == "divisible" ? true : false;
+                                  setFieldValue("is_divisible", {
+                                    label: val.label,
+                                    value: bool,
+                                  });
                                 }}
                               />
                             </Form.Item>
@@ -251,18 +244,51 @@ export default function Good({
 
                       <div>
                         <div className="input-label">
-                          <span>{t("general.category")}</span>
+                          <span>{t("tag")}</span>
                         </div>
                         <div className="">
                           <div>
-                            <Form.Item formik={formik} name="parent_id">
+                            <Form.Item formik={formik} name="tags">
+                              <Select
+                                isMulti
+                                height={40}
+                                id="tags"
+                                options={tags}
+                                value={values.tags}
+                                onChange={(val) => {
+                                  setFieldValue("tags", val);
+                                }}
+                              />
+                            </Form.Item>
+                          </div>
+                        </div>
+                      </div>
+                      {console.log(values)}
+                      <div>
+                        <div className="input-label">
+                          <span>{t("unit")}</span>
+                        </div>
+                        <div className="">
+                          <div>
+                            <Form.Item formik={formik} name="unit">
                               <Select
                                 height={40}
-                                id="parent_id"
-                                options={categories}
-                                value={values.parent_id}
+                                id="unit"
+                                options={units.map((unit) => ({
+                                  label: unit.title,
+                                  value: unit.id,
+                                }))}
+                                value={values.unit}
                                 onChange={(val) => {
-                                  setFieldValue("parent_id", val);
+                                  var unit = units.find(
+                                    (el) => el.id == val.value,
+                                  );
+                                  setFieldValue("unit", val);
+                                  setFieldValue("unit_short", {
+                                    label: unit.short_name,
+                                    value: "",
+                                  });
+                                  setFieldValue("accuracy", unit.accuracy);
                                 }}
                               />
                             </Form.Item>
@@ -271,18 +297,16 @@ export default function Good({
                       </div>
 
                       <div>
-                        <span className="input-label">
-                          {t("general.category")}
-                        </span>
+                        <span className="input-label">{t("currency")}</span>
                         <div>
-                          <Form.Item formik={formik} name="parent_id">
+                          <Form.Item formik={formik} name="currency">
                             <Select
                               height={40}
-                              id="parent_id"
-                              options={categories}
-                              value={values.parent_id}
+                              id="currency"
+                              options={genSelectOption(currencies)}
+                              value={values.currency}
                               onChange={(val) => {
-                                setFieldValue("parent_id", val);
+                                setFieldValue("currency", val);
                               }}
                             />
                           </Form.Item>
@@ -291,15 +315,16 @@ export default function Good({
 
                       <div>
                         <div className="input-label">
-                          <span>{t("order.number")}</span>
+                          <span>{t("income.price")}</span>
                         </div>
                         <div className="">
                           <div>
-                            <Form.Item formik={formik} name="order_no">
+                            <Form.Item formik={formik} name="in_price">
                               <Input
+                                type="number"
                                 size="large"
-                                id="order_no"
-                                value={values.order_no}
+                                id="in_price"
+                                value={values.in_price}
                                 onChange={handleChange}
                               />
                             </Form.Item>
@@ -309,15 +334,16 @@ export default function Good({
 
                       <div>
                         <div className="input-label">
-                          <span>{t("order.number")}</span>
+                          <span>{t("sales.price")}</span>
                         </div>
                         <div className="">
                           <div>
-                            <Form.Item formik={formik} name="order_no">
+                            <Form.Item formik={formik} name="out_price">
                               <Input
+                                type="number"
                                 size="large"
-                                id="order_no"
-                                value={values.order_no}
+                                id="out_price"
+                                value={values.out_price}
                                 onChange={handleChange}
                               />
                             </Form.Item>
@@ -348,7 +374,9 @@ export default function Good({
                       width={120}
                       height={120}
                       gallery={values.image ? [values.image] : []}
-                      setGallery={(elm) => setFieldValue("image", elm[0])}
+                      setGallery={(elm) => {
+                        setFieldValue("image", elm[0]);
+                      }}
                       multiple={true}
                     />
                   </div>
@@ -364,18 +392,19 @@ export default function Good({
             <div className="flex items-center w-full mt-4">
               <div className="w-6/12 mr-4">
                 <div className="input-label">
-                  <span>{t("Gibberish")}</span>
+                  <span>{t("dimension.type")}</span>
                 </div>
                 <div className="">
                   <div>
-                    <Form.Item formik={formik} name="parent_id">
+                    <Form.Item formik={formik} name="unit_short">
                       <Select
+                        disabled
                         height={40}
-                        id="parent_id"
-                        options={categories}
-                        value={values.parent_id}
+                        id="unit_short"
+                        options={genSelectOption("")}
+                        value={values.unit_short}
                         onChange={(val) => {
-                          setFieldValue("parent_id", val);
+                          setFieldValue("unit_short", val);
                         }}
                       />
                     </Form.Item>
@@ -384,92 +413,16 @@ export default function Good({
               </div>
               <div className="w-6/12">
                 <div className="input-label">
-                  <span>{t("name")}</span>
+                  <span>{t("number")}</span>
                 </div>
                 <div className="">
                   <div>
-                    <Form.Item formik={formik} name="title_ru">
+                    <Form.Item formik={formik} name="accuracy">
                       <Input
+                        disabled
                         size="large"
-                        id="title_ru"
-                        value={values.title_ru}
-                        onChange={handleChange}
-                      />
-                    </Form.Item>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="w-full">
-              <div className="input-label">
-                <span>{t("Gibberish")}</span>
-              </div>
-              <div className="">
-                <div>
-                  <Form.Item formik={formik} name="parent_id">
-                    <Select
-                      height={40}
-                      id="parent_id"
-                      options={categories}
-                      value={values.parent_id}
-                      onChange={(val) => {
-                        setFieldValue("parent_id", val);
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-            </div>
-
-            <div className="w-full flex">
-              <div className="w-4/12 mr-4">
-                <div className="input-label">
-                  <span>{t("name")}</span>
-                </div>
-                <div className="">
-                  <div>
-                    <Form.Item formik={formik} name="title_ru">
-                      <Input
-                        size="large"
-                        id="title_ru"
-                        value={values.title_ru}
-                        onChange={handleChange}
-                      />
-                    </Form.Item>
-                  </div>
-                </div>
-              </div>
-
-              <div className="w-4/12 mr-4">
-                <div className="input-label">
-                  <span>{t("name")}</span>
-                </div>
-                <div className="">
-                  <div>
-                    <Form.Item formik={formik} name="title_ru">
-                      <Input
-                        size="large"
-                        id="title_ru"
-                        value={values.title_ru}
-                        onChange={handleChange}
-                      />
-                    </Form.Item>
-                  </div>
-                </div>
-              </div>
-
-              <div className="w-4/12">
-                <div className="input-label">
-                  <span>{t("name")}</span>
-                </div>
-                <div className="">
-                  <div>
-                    <Form.Item formik={formik} name="title_ru">
-                      <Input
-                        size="large"
-                        id="title_ru"
-                        value={values.title_ru}
+                        id="accuracy"
+                        value={values.accuracy}
                         onChange={handleChange}
                       />
                     </Form.Item>
@@ -480,119 +433,6 @@ export default function Good({
           </Card>
         </div>
       </div>
-      <Card
-        title={t("prices")}
-        className="m-4 mr-2"
-        bodyStyle={{ padding: "0 1rem" }}
-      >
-        <div className="flex items-center w-full mt-4">
-          <div className="w-2/12 mr-4">
-            <div className="input-label">
-              <span>{t("name")}</span>
-            </div>
-            <div className="">
-              <div>
-                <Form.Item formik={formik} name="title_ru">
-                  <Input
-                    size="large"
-                    id="title_ru"
-                    value={values.title_ru}
-                    onChange={handleChange}
-                  />
-                </Form.Item>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-1/12 mr-4">
-            <div className="input-label">
-              <span>{t("Gibberish")}</span>
-            </div>
-            <div className="">
-              <div>
-                <Form.Item formik={formik} name="parent_id">
-                  <Select
-                    height={40}
-                    id="parent_id"
-                    options={categories}
-                    value={values.parent_id}
-                    onChange={(val) => {
-                      setFieldValue("parent_id", val);
-                    }}
-                  />
-                </Form.Item>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-1/12 mr-4">
-            <div className="input-label">
-              <span>{t("Gibberish")}</span>
-            </div>
-            <div className="">
-              <div>
-                <Form.Item formik={formik} name="parent_id">
-                  <Select
-                    height={40}
-                    id="parent_id"
-                    options={categories}
-                    value={values.parent_id}
-                    onChange={(val) => {
-                      setFieldValue("parent_id", val);
-                    }}
-                  />
-                </Form.Item>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-4/12 mr-4">
-            <div className="input-label">
-              <span>{t("name")}</span>
-            </div>
-            <div className="">
-              <div>
-                <Form.Item formik={formik} name="title_ru">
-                  <Input
-                    size="large"
-                    id="title_ru"
-                    value={values.title_ru}
-                    onChange={handleChange}
-                  />
-                </Form.Item>
-              </div>
-            </div>
-          </div>
-
-          <div className="w-4/12">
-            <div className="input-label">
-              <span>{t("name")}</span>
-            </div>
-            <div className="">
-              <div>
-                <Form.Item formik={formik} name="title_ru">
-                  <Input
-                    size="large"
-                    id="title_ru"
-                    value={values.title_ru}
-                    onChange={handleChange}
-                  />
-                </Form.Item>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className={classes.root}>
-          <MuiButton
-            variant="outlined"
-            startIcon={<AddIcon className={classes.icon} />}
-            onClick={() => {}}
-          >
-            {t("add")}
-          </MuiButton>
-        </div>
-      </Card>
       <Card
         title={t("characteristics")}
         className="m-4 mr-2"

@@ -17,11 +17,7 @@ import {
   updateV2Measurement,
 } from "services";
 import Select from "components/Select";
-import {
-  units,
-  accuracies,
-  mappedReductions as reductions,
-} from "constants/units";
+import { units, accuracies, mappedReductions as reductions } from "./units";
 import genSelectOption from "helpers/genSelectOption";
 import CustomSkeleton from "components/Skeleton";
 
@@ -38,9 +34,9 @@ export default function UnitsCreate() {
       getV2Measurement(params.id)
         .then((res) => {
           setValues({
-            unit: genSelectOption(res?.data?.title, t),
+            unit: genSelectOption(res?.data?.title),
             reduction: res?.data?.short_name,
-            accuracy: genSelectOption(res?.data?.accuracy, t),
+            accuracy: genSelectOption(res?.data?.accuracy),
           });
         })
         .finally(() => {
@@ -144,7 +140,7 @@ export default function UnitsCreate() {
                   <Select
                     height={40}
                     placeholder={t("enter.unit")}
-                    options={genSelectOption(units, t)}
+                    options={genSelectOption(units)}
                     value={values.unit}
                     onChange={(val) => {
                       setFieldValue("unit", val);
@@ -173,7 +169,7 @@ export default function UnitsCreate() {
                   <Select
                     height={40}
                     placeholder={t("enter.accuracy")}
-                    options={genSelectOption(accuracies, t)}
+                    options={genSelectOption(accuracies)}
                     value={values.accuracy}
                     onChange={(val) => {
                       setFieldValue("accuracy", val);

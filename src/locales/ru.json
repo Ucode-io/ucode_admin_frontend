@@ -415,6 +415,7 @@
   "name.option": "Название опции",
   "code_value": "Код (значение)",
   "brands": "Бренды",
+  "brand": "Бренд",
   "connected_goods": "Связанные товары",
   "vendor_code": "Артикул",
   "dimension": "Измерение",
@@ -426,9 +427,18 @@
   "enter.accuracy": "Введите точность",
   "enter.unit": "Выберите единицу измерения",
   "tags": "Тегы",
+  "tag": "Тег",
   "yellow": "Желтый",
   "red": "Красный",
   "green": "Зеленый",
   "blue": "Синый",
-  "black": "Черный"
+  "black": "Черный",
+  "dimension.type": "Тип измерение",
+  "number": "Цифра",
+  "currency": "Валюта",
+  "income.price": "Цена приход",
+  "sales.price": "Цена продажа",
+  "divisible.indivisible": "Делимый / Не делимый",
+  "divisible": "Делимый",
+  "nondivisible": "Не делимый"
 }

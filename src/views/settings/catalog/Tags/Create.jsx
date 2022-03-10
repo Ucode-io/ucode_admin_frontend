@@ -13,7 +13,7 @@ import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
 import { getV2Tag, postV2Tag, updateV2Tag } from "services";
 import Select from "components/Select";
-import { colors } from "constants/tags";
+import { colors } from "./tags";
 import SwipeableViews from "react-swipeable-views";
 import Filters from "components/Filters";
 import { StyledTabs, StyledTab } from "components/StyledTabs";
@@ -43,7 +43,7 @@ export default function TagsCreate() {
             title_ru: res?.data?.title.ru,
             title_uz: res?.data?.title.uz,
             title_en: res?.data?.title.en,
-            color: genSelectOption(res?.data?.color, t),
+            color: genSelectOption(res?.data?.color),
           });
         })
         .finally(() => {
@@ -225,7 +225,7 @@ export default function TagsCreate() {
                     <Form.Item formik={formik} name="color">
                       <Select
                         height={40}
-                        options={genSelectOption(colors, t)}
+                        options={genSelectOption(colors)}
                         value={values.color}
                         onChange={(val) => {
                           setFieldValue("color", val);
@@ -260,7 +260,7 @@ export default function TagsCreate() {
                     <Form.Item formik={formik} name="color">
                       <Select
                         height={40}
-                        options={genSelectOption(colors, t)}
+                        options={genSelectOption(colors)}
                         value={values.color}
                         onChange={(val) => {
                           setFieldValue("color", val);
@@ -295,7 +295,7 @@ export default function TagsCreate() {
                     <Form.Item formik={formik} name="color">
                       <Select
                         height={40}
-                        options={genSelectOption(colors, t)}
+                        options={genSelectOption(colors)}
                         value={values.color}
                         onChange={(val) => {
                           setFieldValue("color", val);

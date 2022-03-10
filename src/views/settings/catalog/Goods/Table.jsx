@@ -158,7 +158,7 @@ export default function MainTable({ createModal, setCreateModal }) {
     },
   ];
 
-  const { values, handleChange, setFieldValue, handleSubmit } = formik;
+  const { values, handleChange, handleSubmit } = formik;
 
   return (
     <Card

@@ -1,11 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import {
-  getV2Category,
+  getV2Good,
+  postV2Good,
+  updateV2Good,
+  getV2Brands,
+  getV2Tags,
+  getV2Measurements,
   getV2Categories,
-  postV2Category,
-  updateV2Category,
 } from "services";
 import { useParams } from "react-router-dom";
 import Header from "components/Header";
@@ -25,71 +28,94 @@ import { TabPanel } from "components/Tab/TabBody";
 import { useTheme } from "@material-ui/core/styles";
 import Good from "./tabs/Good";
 import ConnectedGoods from "./tabs/ConnectedGoods";
+import formFields from "./api.js";
+import validate from "helpers/validateField";
 
 export default function GoodsCreate() {
-  const { id } = useParams();
-  const [value, setValue] = useState(0);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
+  const { id } = useParams();
   const theme = useTheme();
 
-  const [initialValues, setInitialValues] = useState({
-    name: "",
-    description_ru: null,
-    description_uz: null,
-    description_en: null,
-    image: null,
-    order_no: null,
-    title_ru: null,
-    title_uz: null,
-    title_en: null,
-    parent_id: null,
-  });
-  const [buttonLoader, setButtonLoader] = useState(false);
-  const [loader, setLoader] = useState(true);
+  const [tags, setTags] = useState();
+  const [brands, setBrands] = useState();
+  const [units, setUnits] = useState();
+  const [categories, setCategories] = useState();
+  const [initialValues, setInitialValues] = useState(formFields);
+  const [btnDisabled, setBtnDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [value, setValue] = useState(0);
 
-  const fetchData = () => {
-    setLoader(true);
-    getV2Categories({ page: 1, limit: 10 }).then((res) => {
-      console.log(res);
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      var [tags, measurements, categories, brands] = await Promise.all([
+        getV2Tags({ page: 1, limit: 10 }),
+        getV2Measurements({ page: 1, limit: 10 }),
+        getV2Categories({ page: 1, limit: 10 }),
+        getV2Brands({ page: 1, limit: 10 }),
+      ]);
+      tags = tags.data.tags.map((tag) => ({
+        label: tag.title.ru,
+        value: tag.id,
+      }));
+      categories = categories.data.categories.map((category) => ({
+        label: category.title.ru,
+        value: category.id,
+      }));
+      measurements = measurements.data.measurements;
+      brands = brands.data.brands?.map((brand) => ({
+        label: brand.title.ru,
+        value: brand.id,
+      }));
+      setTags(tags);
+      setBrands(brands);
+      setUnits(measurements);
+      setCategories(categories);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const fetchProductData = useCallback(async () => {
+    let res = await getV2Good(id, {});
+    setInitialValues({
+      description_ru: res.description.ru,
+      description_uz: res.description.uz,
+      description_en: res.description.en,
+      in_price: res.in_price,
+      out_price: res.out_price,
+      is_divisible: res.is_divisible,
+      title_ru: res.title.ru,
+      title_uz: res.title.uz,
+      title_en: res.title.en,
+      brand: brands.find((el) => el.id == res.brand_id),
+      unit: units.find((el) => el.id == res.measurement_id),
+      tags: tags.filter((el) => res.tag_ids.includes(el.id)),
+      categories: categories.filter((el) => res.category_ids.includes(el.id)),
+      images: [res.image, ...res.gallery],
     });
-    if (!id) return setLoader(false);
-    getV2Category(id, {})
-      .then((res) => {
-        console.log(res);
-        setInitialValues({
-          name: "",
-          description_ru: res.description_v2.ru,
-          description_uz: res.description_v2.uz,
-          description_en: res.description_v2.en,
-          image: res.image,
-          order_no: res.order_no,
-          title_ru: res.title.ru,
-          title_uz: res.title.uz,
-          title_en: res.title.en,
-          parent_id: res.parent_id,
-        });
-      })
-      .finally(() => setLoader(false));
-  };
+  }, [id]);
 
   const saveChanges = (data) => {
-    setButtonLoader(true);
+    setBtnDisabled(true);
     if (id) {
-      updateV2Category(id, data)
+      updateV2Good(id, data)
         .catch((err) =>
           dispatch(showAlert(t(err?.data?.Error?.Message ?? err?.data?.Error))),
         )
         .then(() => history.push("/home/catalog/goods"))
-        .finally(() => setButtonLoader(false));
+        .finally(() => setBtnDisabled(false));
     } else {
-      postV2Category(data)
+      postV2Good(data)
         .catch((err) =>
           dispatch(showAlert(t(err.data?.Error?.Message ?? err?.data?.Error))),
         )
         .then(() => history.push("/home/catalog/goods"))
-        .finally(() => setButtonLoader(false));
+        .finally(() => setBtnDisabled(false));
     }
   };
 
@@ -100,27 +126,49 @@ export default function GoodsCreate() {
         uz: values.description_uz,
         en: values.description_en,
       },
-      image: values.image,
-      order_no: values.order_no,
+      image: values.images[0],
+      gallery: values.images.slice(1, values.images.length),
+      in_price: values.in_price,
+      out_price: values.out_price,
+      is_divisible: values.is_divisible.value,
       title: {
         ru: values.title_ru,
         uz: values.title_uz,
         en: values.title_en,
       },
-      parent_id: values?.parent_id?.value || null,
     };
     saveChanges(data);
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    async function fetchAll() {
+      await fetchData();
+      if (id) {
+        await fetchProductData();
+      }
+    }
+    setIsLoading(true);
+    fetchAll().finally(() => {
+      setIsLoading(false);
+    });
+  }, [fetchData, fetchProductData, id]);
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string()
-      .trim(t("spaces.error"))
-      .strict(true)
-      .required(t("required.field.error")),
+    description_ru: validate(),
+    description_uz: validate(),
+    description_en: validate(),
+    in_price: validate(),
+    out_price: validate(),
+    is_divisible: validate("mixed"),
+    title_ru: validate(),
+    title_uz: validate(),
+    title_en: validate(),
+    brand: validate("selectItem"),
+    unit: validate("selectItem"),
+    currency: validate("selectItem"),
+    tags: validate("array"),
+    categories: validate("array"),
+    images: validate("array"),
   });
 
   const routes = [
@@ -152,7 +200,7 @@ export default function GoodsCreate() {
 
   return (
     <>
-      {loader ? (
+      {isLoading ? (
         <FullScreenLoader />
       ) : (
         <>
@@ -181,7 +229,7 @@ export default function GoodsCreate() {
                       icon={SaveIcon}
                       size="large"
                       type="submit"
-                      loading={buttonLoader}
+                      loading={btnDisabled}
                     >
                       {t(id ? "save" : "create")}
                     </Button>,
@@ -218,6 +266,10 @@ export default function GoodsCreate() {
                       handleChange={formik.handleChange}
                       values={formik.values}
                       setFieldValue={formik.setFieldValue}
+                      tags={tags}
+                      categories={categories}
+                      units={units}
+                      brands={brands}
                     />
                   </TabPanel>
                   <TabPanel value={value} index={1} dir={theme.direction}>

@@ -123,7 +123,7 @@ export default function AttributesTable() {
     ];
     setColumns(_columns);
   }, []);
-  console.log(items);
+
   return (
     <Card
       className="m-4"

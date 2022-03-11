@@ -38,14 +38,16 @@ var formFields = {
   title_ru: "",
   title_uz: "",
   title_en: "",
-  brand: { label: "", value: "" },
-  unit: { label: "", value: "" },
-  currency: { label: "", value: "" },
-  tags: [],
-  categories: [],
+  brand: null,
+  unit: null,
+  currency: null,
+  tags: null,
+  categories: null,
   images: [],
-  unit_short: { label: "", value: "" },
+  unit_short: null,
   accuracy: "",
+  property: null,
+  property_option: null,
 };
 
 export var divisibility = ["divisible", "nondivisible"];

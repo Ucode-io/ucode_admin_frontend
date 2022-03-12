@@ -50,6 +50,7 @@ const Gallery = ({
     setLoading(true);
     var input = e.target;
     const file = input.files[0];
+    if (!file) return setLoading(false);
 
     if (file.size > 4194304) {
       dispatch(showAlert(t("File size must be less than 4MB"), "warning"));

@@ -1,49 +1,17 @@
-import axios from "axios";
-import { store } from "redux/store";
-
-var token = store.getState().auth.accessToken;
-var headers = {
-  Authorization: token,
-};
+import request from "utils/axios_v2";
 
 export const getV2Tags = async (params) => {
-  return await axios.request({
-    method: "get",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/tag`,
-    params,
-  });
+  return await request.request({ method: "get", url: `/tag`, params });
 };
 export const getV2Tag = async (id, params) => {
-  return await axios.request({
-    method: "get",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/tag/${id}`,
-    params,
-  });
+  return await request({ method: "get", url: `/tag/${id}`, params });
 };
 export const deleteV2Tag = async (id) => {
-  return await axios.request({
-    method: "delete",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/tag/${id}`,
-  });
+  return await request({ method: "delete", url: `/tag/${id}` });
 };
 export const postV2Tag = async (data, params) => {
-  return await axios.request({
-    method: "post",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/tag`,
-    data,
-    params,
-  });
+  return await request({ method: "post", url: `/tag`, data, params });
 };
 export const updateV2Tag = async (id, data, params) => {
-  return await axios.request({
-    method: "put",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/tag/${id}`,
-    data,
-    params,
-  });
+  return await request({ method: "put", url: `/tag/${id}`, data, params });
 };

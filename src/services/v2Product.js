@@ -1,48 +1,37 @@
-import axios from "axios";
-import { store } from "redux/store";
-
-var token = store.getState().auth.accessToken;
-var headers = {
-  Authorization: token,
-};
+import request from "utils/axios_v2";
 
 export const getV2Goods = async (params) => {
-  return await axios.request({
+  return await request({
     method: "get",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/product`,
+    url: `/product`,
     params,
   });
 };
 export const getV2Good = async (id, params) => {
-  return await axios.request({
+  return await request({
     method: "get",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/product/${id}`,
+    url: `/product/${id}`,
     params,
   });
 };
 export const deleteV2Good = async (id) => {
-  return await axios.request({
+  return await request({
     method: "delete",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/product/${id}`,
+    url: `/product/${id}`,
   });
 };
 export const postV2Good = async (data, params) => {
-  return await axios.request({
+  return await request({
     method: "post",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/product`,
+    url: `/product`,
     data,
     params,
   });
 };
 export const updateV2Good = async (id, data, params) => {
-  return await axios.request({
+  return await request({
     method: "put",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/product/${id}`,
+    url: `/product/${id}`,
     data,
     params,
   });

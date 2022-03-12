@@ -3,6 +3,7 @@ import BrandLogo from "assets/icons/BrandLogo.svg";
 
 const defaultSettings = {
   baseURL: process.env.REACT_APP_URL, // base url for whole project
+  baseURL2: process.env.REACT_APP_URL2, // base url for whole project
   mode: "default", // mode => default | light | semi-dark
   avatar: "",
   fixedHeader: true, // sticky header

@@ -21,7 +21,19 @@ var Fields = {
     .required(t("required.field.error")),
   numberOptional: Yup.number().strict(false).max(100000000, t("range.max")),
   mixed: Yup.mixed().strict(true).required(t("required.field.error")),
-  array: Yup.array().of(Yup.string()),
+  array: Yup.array()
+    .of(
+      Yup.object().shape({
+        label: Yup.string(),
+        value: Yup.string(),
+      }),
+    )
+    .nullable(true)
+    .required(t("required.field.error")),
+  arrayStr: Yup.array()
+    .of(Yup.string())
+    .required(t("required.field.error"))
+    .min(1, t("at.least.one")),
   multiple_select: Yup.array()
     .of(
       Yup.object().shape({
@@ -30,10 +42,14 @@ var Fields = {
       }),
     )
     .required(t("required.field.error")),
-  selectItem: Yup.object().shape({
-    label: Yup.string(),
-    value: Yup.string(),
-  }),
+  selectItem: Yup.object()
+    .shape({
+      label: Yup.string(),
+      value: Yup.string(),
+    })
+    .nullable(true)
+    .strict(true)
+    .required(t("required.field.error")),
   first_name: Yup.string()
     .trim(t("spaces.error"))
     .strict(true)

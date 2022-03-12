@@ -9,6 +9,7 @@ import {
   getV2Tags,
   getV2Measurements,
   getV2Categories,
+  getV2Properties,
 } from "services";
 import { useParams } from "react-router-dom";
 import Header from "components/Header";
@@ -38,10 +39,12 @@ export default function GoodsCreate() {
   const { id } = useParams();
   const theme = useTheme();
 
-  const [tags, setTags] = useState();
-  const [brands, setBrands] = useState();
-  const [units, setUnits] = useState();
-  const [categories, setCategories] = useState();
+  const [tags, setTags] = useState([]);
+  const [units, setUnits] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [propertyOptions, setPropertyOptions] = useState([]);
   const [initialValues, setInitialValues] = useState(formFields);
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -50,29 +53,46 @@ export default function GoodsCreate() {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      var [tags, measurements, categories, brands] = await Promise.all([
-        getV2Tags({ page: 1, limit: 10 }),
-        getV2Measurements({ page: 1, limit: 10 }),
-        getV2Categories({ page: 1, limit: 10 }),
-        getV2Brands({ page: 1, limit: 10 }),
-      ]);
-      tags = tags.data.tags.map((tag) => ({
+      var [tags, measurements, categories, brands, properties] =
+        await Promise.all([
+          getV2Tags({ page: 1, limit: 10 }),
+          getV2Measurements({ page: 1, limit: 10 }),
+          getV2Categories({ page: 1, limit: 10 }),
+          getV2Brands({ page: 1, limit: 10 }),
+          getV2Properties({ page: 1, limit: 10 }),
+        ]);
+      console.log(properties);
+      tags = tags.tags.map((tag) => ({
         label: tag.title.ru,
         value: tag.id,
       }));
-      categories = categories.data.categories.map((category) => ({
+      categories = categories.categories.map((category) => ({
         label: category.title.ru,
         value: category.id,
       }));
-      measurements = measurements.data.measurements;
-      brands = brands.data.brands?.map((brand) => ({
+      measurements = measurements.measurements;
+      brands = brands.brands?.map((brand) => ({
         label: brand.title.ru,
         value: brand.id,
       }));
+      var _properties = properties.property_groups.map((group) => ({
+        label: group.title.ru,
+        value: group.id,
+      }));
+      var _propertyOptions = properties.property_groups.reduce((obj, group) => {
+        var options = group.options.map((option) => ({
+          label: option.title.ru,
+          value: option.code,
+        }));
+        obj[group.id] = options;
+        return obj;
+      }, {});
       setTags(tags);
       setBrands(brands);
       setUnits(measurements);
+      setProperties(_properties);
       setCategories(categories);
+      setPropertyOptions(_propertyOptions);
     } catch (e) {
       console.log(e);
     } finally {
@@ -136,6 +156,18 @@ export default function GoodsCreate() {
         uz: values.title_uz,
         en: values.title_en,
       },
+      brand_id: values.brand.value,
+      category_ids: values.categories.map((category) => category.value),
+      combo_ids: [],
+      count: "0",
+      favorite_ids: [],
+      measurement_id: values.unit.value,
+      order_no: "0",
+      price_changer_ids: [],
+      property_group_ids: [],
+      rate_id: "",
+      tag_ids: values.tags.map((tag) => tag.value),
+      variant_ids: [],
     };
     saveChanges(data);
   };
@@ -157,8 +189,8 @@ export default function GoodsCreate() {
     description_ru: validate(),
     description_uz: validate(),
     description_en: validate(),
-    in_price: validate(),
-    out_price: validate(),
+    in_price: validate("number"),
+    out_price: validate("number"),
     is_divisible: validate("mixed"),
     title_ru: validate(),
     title_uz: validate(),
@@ -168,7 +200,9 @@ export default function GoodsCreate() {
     currency: validate("selectItem"),
     tags: validate("array"),
     categories: validate("array"),
-    images: validate("array"),
+    images: validate("arrayStr"),
+    property: validate("selectItem"),
+    property_option: validate("selectItem"),
   });
 
   const routes = [
@@ -270,6 +304,8 @@ export default function GoodsCreate() {
                       categories={categories}
                       units={units}
                       brands={brands}
+                      properties={properties}
+                      propertyOptions={propertyOptions}
                     />
                   </TabPanel>
                   <TabPanel value={value} index={1} dir={theme.direction}>

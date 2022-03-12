@@ -440,5 +440,6 @@
   "sales.price": "Цена продажа",
   "divisible.indivisible": "Делимый / Не делимый",
   "divisible": "Делимый",
-  "nondivisible": "Не делимый"
+  "nondivisible": "Не делимый",
+  "at.least.one": "Необходимо выбрать хотя бы одно изображение"
 }

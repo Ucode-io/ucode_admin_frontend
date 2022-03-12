@@ -40,10 +40,10 @@ export default function TagsCreate() {
       getV2Tag(params.id)
         .then((res) => {
           setValues({
-            title_ru: res?.data?.title.ru,
-            title_uz: res?.data?.title.uz,
-            title_en: res?.data?.title.en,
-            color: genSelectOption(res?.data?.color),
+            title_ru: res?.title.ru,
+            title_uz: res?.title.uz,
+            title_en: res?.title.en,
+            color: genSelectOption(res?.color),
           });
         })
         .finally(() => {

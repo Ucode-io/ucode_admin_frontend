@@ -41,8 +41,8 @@ export default function AttributesTable() {
     getV2Properties({ limit, page })
       .then((res) => {
         setItems({
-          count: res.data?.count,
-          data: res.data?.property_groups,
+          count: res.count,
+          data: res.property_groups,
         });
       })
       .finally(() => setLoader(false));
@@ -155,6 +155,9 @@ export default function AttributesTable() {
                 <TableRow
                   key={item.id}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
+                  onClick={() =>
+                    history.push(`/home/catalog/attributes/${item.id}`)
+                  }
                 >
                   {columns.map((col) => (
                     <TableCell key={col.key}>

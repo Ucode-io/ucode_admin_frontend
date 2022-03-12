@@ -1,48 +1,37 @@
-import axios from "axios";
-import { store } from "redux/store";
-
-var token = store.getState().auth.accessToken;
-var headers = {
-  Authorization: token,
-};
+import request from "utils/axios_v2";
 
 export const getV2Categories = async (params) => {
-  return await axios.request({
+  return await request({
     method: "get",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/category`,
+    url: `/category`,
     params,
   });
 };
 export const getV2Category = async (id, params) => {
-  return await axios.request({
+  return await request({
     method: "get",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/category/${id}`,
+    url: `/category/${id}`,
     params,
   });
 };
 export const deleteV2Category = async (id) => {
-  return await axios.request({
+  return await request({
     method: "delete",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/category/${id}`,
+    url: `/category/${id}`,
   });
 };
 export const postV2Category = async (data, params) => {
-  return await axios.request({
+  return await request({
     method: "post",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/category`,
+    url: `/category`,
     data,
     params,
   });
 };
 export const updateV2Category = async (id, data, params) => {
-  return await axios.request({
+  return await request({
     method: "put",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/category/${id}`,
+    url: `/category/${id}`,
     data,
     params,
   });

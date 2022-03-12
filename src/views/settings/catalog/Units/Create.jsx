@@ -34,9 +34,9 @@ export default function UnitsCreate() {
       getV2Measurement(params.id)
         .then((res) => {
           setValues({
-            unit: genSelectOption(res?.data?.title),
-            reduction: res?.data?.short_name,
-            accuracy: genSelectOption(res?.data?.accuracy),
+            unit: genSelectOption(res?.title),
+            reduction: res?.short_name,
+            accuracy: genSelectOption(res?.accuracy),
           });
         })
         .finally(() => {

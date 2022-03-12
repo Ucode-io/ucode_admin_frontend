@@ -32,8 +32,8 @@ var Fields = {
     .required(t("required.field.error")),
   arrayStr: Yup.array()
     .of(Yup.string())
-    .nullable(true)
-    .required(t("required.field.error")),
+    .required(t("required.field.error"))
+    .min(1, t("at.least.one")),
   multiple_select: Yup.array()
     .of(
       Yup.object().shape({

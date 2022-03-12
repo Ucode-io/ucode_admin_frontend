@@ -44,8 +44,8 @@ export default function MainTable({ createModal, setCreateModal }) {
       .then((res) => {
         console.log(res);
         setItems({
-          count: res.data?.count,
-          data: res.data?.tags,
+          count: res.count,
+          data: res.tags,
         });
       })
       .catch((err) => console.log(err))

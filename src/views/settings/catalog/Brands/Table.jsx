@@ -41,8 +41,8 @@ export default function BrandsTable() {
     getV2Brands({ limit, page })
       .then((res) => {
         setItems({
-          count: res.data?.count,
-          data: res.data?.brands,
+          count: res.count,
+          data: res.brands,
         });
       })
       .finally(() => setLoader(false));
@@ -150,6 +150,9 @@ export default function BrandsTable() {
                 <TableRow
                   key={item.id}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
+                  onClick={() =>
+                    history.push(`/home/catalog/brands/${item.id}`)
+                  }
                 >
                   {columns.map((col) => (
                     <TableCell key={col.key}>

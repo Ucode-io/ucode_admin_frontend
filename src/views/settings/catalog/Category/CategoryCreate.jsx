@@ -47,15 +47,15 @@ export default function CategoryCreate() {
       .then((res) => {
         console.log(res);
         formik.setValues({
-          description_ru: res?.data?.description.ru,
-          description_uz: res?.data?.description.uz,
-          description_en: res?.data?.description.en,
-          image: res?.data?.image,
-          order_no: res?.data?.order_no,
-          title_ru: res?.data?.title.ru,
-          title_uz: res?.data?.title.uz,
-          title_en: res?.data?.title.en,
-          parent_id: res?.data?.parent_id,
+          description_ru: res?.description.ru,
+          description_uz: res?.description.uz,
+          description_en: res?.description.en,
+          image: res?.image,
+          order_no: res?.order_no,
+          title_ru: res?.title.ru,
+          title_uz: res?.title.uz,
+          title_en: res?.title.en,
+          parent_id: res?.parent_id,
         });
       })
       .finally(() => setLoader(false));
@@ -66,14 +66,14 @@ export default function CategoryCreate() {
     if (id) {
       updateV2Category(id, data)
         .catch((err) =>
-          dispatch(showAlert(t(err?.data?.Error?.Message ?? err?.data?.Error))),
+          dispatch(showAlert(t(err?.Error?.Message ?? err?.Error))),
         )
         .then(() => history.push("/home/catalog/category"))
         .finally(() => setButtonLoader(false));
     } else {
       postV2Category(data)
         .catch((err) =>
-          dispatch(showAlert(t(err.data?.Error?.Message ?? err?.data?.Error))),
+          dispatch(showAlert(t(err?.Error?.Message ?? err?.Error))),
         )
         .then(() => history.push("/home/catalog/category"))
         .finally(() => setButtonLoader(false));

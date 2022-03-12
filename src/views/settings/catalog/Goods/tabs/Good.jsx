@@ -19,6 +19,7 @@ import genSelectOption from "helpers/genSelectOption";
 import Uz from "./Uz";
 import En from "./En";
 import Ru from "./Ru";
+import { FieldArray } from "formik";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -176,7 +177,7 @@ export default function Good({
                     <Gallery
                       width={120}
                       height={120}
-                      gallery={values.images.length ? [...values.images] : []}
+                      gallery={values.images?.length ? [...values.images] : []}
                       setGallery={(elm) => {
                         console.log(elm);
                         setFieldValue("images", [

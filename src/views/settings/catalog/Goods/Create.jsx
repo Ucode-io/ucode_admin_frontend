@@ -62,34 +62,31 @@ export default function GoodsCreate() {
           getV2Properties({ page: 1, limit: 10 }),
         ]);
       console.log(properties);
-      tags = tags.data.tags.map((tag) => ({
+      tags = tags.tags.map((tag) => ({
         label: tag.title.ru,
         value: tag.id,
       }));
-      categories = categories.data.categories.map((category) => ({
+      categories = categories.categories.map((category) => ({
         label: category.title.ru,
         value: category.id,
       }));
-      measurements = measurements.data.measurements;
-      brands = brands.data.brands?.map((brand) => ({
+      measurements = measurements.measurements;
+      brands = brands.brands?.map((brand) => ({
         label: brand.title.ru,
         value: brand.id,
       }));
-      var _properties = properties.data.property_groups.map((group) => ({
+      var _properties = properties.property_groups.map((group) => ({
         label: group.title.ru,
         value: group.id,
       }));
-      var _propertyOptions = properties.data.property_groups.reduce(
-        (obj, group) => {
-          var options = group.options.map((option) => ({
-            label: option.title.ru,
-            value: option.code,
-          }));
-          obj[group.id] = options;
-          return obj;
-        },
-        {},
-      );
+      var _propertyOptions = properties.property_groups.reduce((obj, group) => {
+        var options = group.options.map((option) => ({
+          label: option.title.ru,
+          value: option.code,
+        }));
+        obj[group.id] = options;
+        return obj;
+      }, {});
       setTags(tags);
       setBrands(brands);
       setUnits(measurements);

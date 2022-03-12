@@ -1,48 +1,37 @@
-import axios from "axios";
-import { store } from "redux/store";
-
-var token = store.getState().auth.accessToken;
-var headers = {
-  Authorization: token,
-};
+import request from "utils/axios_v2";
 
 export const getV2Measurements = async (params) => {
-  return await axios.request({
+  return await request({
     method: "get",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/measurement`,
+    url: `/measurement`,
     params,
   });
 };
 export const getV2Measurement = async (id, params) => {
-  return await axios.request({
+  return await request({
     method: "get",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/measurement/${id}`,
+    url: `/measurement/${id}`,
     params,
   });
 };
 export const deleteV2Measurement = async (id) => {
-  return await axios.request({
+  return await request({
     method: "delete",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/measurement/${id}`,
+    url: `/measurement/${id}`,
   });
 };
 export const postV2Measurement = async (data, params) => {
-  return await axios.request({
+  return await request({
     method: "post",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/measurement`,
+    url: `/measurement`,
     data,
     params,
   });
 };
 export const updateV2Measurement = async (id, data, params) => {
-  return await axios.request({
+  return await request({
     method: "put",
-    headers,
-    url: `${process.env.REACT_APP_URL2}/measurement/${id}`,
+    url: `/measurement/${id}`,
     data,
     params,
   });

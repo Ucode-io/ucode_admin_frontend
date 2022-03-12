@@ -493,7 +493,7 @@ export default [
   },
   {
     component: StockCreate,
-    path: "/marketing/stocks/create/:id",
+    path: "/marketing/stocks/:id",
     exact: true,
     title: "StockUpdate",
     permission: "settings",

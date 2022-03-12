@@ -19,5 +19,6 @@ export const staticPermissions = [
   "fares",
   "geofence",
   "branch_users",
-  "settlements"
+  "settlements",
+  "marketing"
 ]

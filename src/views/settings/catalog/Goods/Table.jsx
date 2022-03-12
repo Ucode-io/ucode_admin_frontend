@@ -109,7 +109,7 @@ export default function MainTable({ createModal, setCreateModal }) {
     {
       title: t("good"),
       key: "title",
-      render: (record) => record.title,
+      render: (record) => record.title.ru,
     },
     {
       title: t("vendor_code"),
@@ -119,12 +119,12 @@ export default function MainTable({ createModal, setCreateModal }) {
     {
       title: t("amount"),
       key: "amount",
-      render: (record) => <>{record.quantity}</>,
+      render: (record) => <>{record.count}</>,
     },
     {
       title: t("price"),
       key: "price",
-      render: (record) => <>{record.price}</>,
+      render: (record) => <>{record.in_price}</>,
     },
     {
       title: t("created.date"),
@@ -181,7 +181,7 @@ export default function MainTable({ createModal, setCreateModal }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items?.data && items?.data?.length ? (
+            {!loader && items?.data && items?.data?.length ? (
               items?.data?.map((elm, index) => (
                 <TableRow
                   key={elm.id}

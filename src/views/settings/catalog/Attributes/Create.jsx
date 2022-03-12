@@ -17,6 +17,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { makeStyles } from "@material-ui/core/styles";
 import MuiButton from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
+import genSelectOption from "helpers/genSelectOption";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,6 +66,7 @@ export default function AttributesCreate() {
     optionsReducer,
     initialState,
   );
+
   const [saveLoading, setSaveLoading] = useState(false);
 
   useEffect(() => {
@@ -75,18 +77,30 @@ export default function AttributesCreate() {
           description_ru: res.description.ru,
           options: res.options,
           order: res.order,
-          attribute_type: res.attribute_type,
+          type:
+            res.type == "string"
+              ? genSelectOption("text")
+              : genSelectOption(res.type),
+          value: res.value,
         });
       });
     }
   }, []);
 
+  var optionsPreview = useMemo(() => {
+    return optionsState.map((option) => ({
+      label: option.title,
+      value: option.code,
+    }));
+  }, [optionsState]);
+
   const initialValues = useMemo(
     () => ({
-      title_ru: null,
-      description_ru: null,
+      title_ru: "",
+      description_ru: "",
       options: [{ title: "", code: "" }],
-      attribute_type: { label: "Radio", value: "radio" },
+      type: null,
+      value: "",
     }),
     [],
   );
@@ -97,6 +111,7 @@ export default function AttributesCreate() {
       title_ru: defaultSchema,
       description_ru: defaultSchema,
       options: defaultSchema,
+      type: defaultSchema,
     });
   }, []);
 
@@ -105,7 +120,10 @@ export default function AttributesCreate() {
 
     optionsState.forEach(({ code, title }) => {
       if (code && title) {
-        options.push({ code, title: { en: title, ru: title, uz: title } });
+        options.push({
+          code: +code,
+          title: { en: title, ru: title, uz: title },
+        });
       }
     });
 
@@ -121,6 +139,7 @@ export default function AttributesCreate() {
         en: values.description_ru,
       },
       options,
+      type: values.type.value == "text" ? "string" : values.type.value,
     };
 
     setSaveLoading(true);
@@ -197,19 +216,15 @@ export default function AttributesCreate() {
 
               <div className="input-label">{t("attribute.type")}</div>
               <div className="col-span-2">
-                <Form.Item formik={formik} name="attribute_type">
+                <Form.Item formik={formik} name="type">
                   <Select
-                    disabled
                     height={40}
-                    id="attribute_type"
-                    options={[
-                      { label: "Radio", value: "radio" },
-                      { label: "Checkbox", value: "checkbox" },
-                      { label: "Select", value: "select" },
-                    ]}
-                    value={values.attribute_type}
+                    id="type"
+                    options={genSelectOption(["number", "text", "select"])}
+                    value={values.type}
                     onChange={(val) => {
-                      setFieldValue("attribute_type", val);
+                      setFieldValue("type", val);
+                      setFieldValue("value", "");
                     }}
                   />
                 </Form.Item>
@@ -228,76 +243,106 @@ export default function AttributesCreate() {
               </div>
             </div>
           </Card>
-          <Card title={t("preview")}></Card>
+          {values.type?.value && (
+            <Card title={t("preview")}>
+              {values.type?.value == "select" ? (
+                <Form.Item formik={formik} name="value">
+                  <Select
+                    height={40}
+                    id="value"
+                    options={optionsPreview}
+                    value={values.value}
+                    onChange={(val) => {
+                      setFieldValue("value", val);
+                    }}
+                  />
+                </Form.Item>
+              ) : (
+                <Form.Item formik={formik} name="value">
+                  <Input
+                    type={values.type?.value == "text" ? "text" : "number"}
+                    size="large"
+                    value={values.value}
+                    onChange={handleChange}
+                    name="value"
+                  />
+                </Form.Item>
+              )}
+            </Card>
+          )}
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-5">
-          <Card title={t("parameters")}>
-            <div className="grid grid-cols-12 gap-4 items-center">
-              {optionsState.map((option, index) => (
-                <>
-                  <div className="col-span-5">
-                    <div className="input-label">{t("name.option")}</div>
-                    <div className="col-span-2">
-                      <Form.Item formik={formik} name="title">
-                        <Input
-                          size="large"
-                          value={optionsState[index].title}
-                          onChange={(e) =>
-                            dispatchOptions({
-                              type: "update",
-                              value: { title: e.target.value },
-                              index,
-                            })
-                          }
-                          name="title"
-                        />
-                      </Form.Item>
+        {values.type?.value == "select" && (
+          <div className="mt-4 grid grid-cols-2 gap-5">
+            <Card title={t("parameters")}>
+              <div className="grid grid-cols-12 gap-4 items-center">
+                {optionsState.map((option, index) => (
+                  <>
+                    <div className="col-span-5">
+                      <div className="input-label">{t("name.option")}</div>
+                      <div className="col-span-2">
+                        <Form.Item formik={formik} name="title">
+                          <Input
+                            size="large"
+                            value={optionsState[index].title}
+                            onChange={(e) =>
+                              dispatchOptions({
+                                type: "update",
+                                value: { title: e.target.value },
+                                index,
+                              })
+                            }
+                            name="title"
+                          />
+                        </Form.Item>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="col-span-5">
-                    <div className="input-label">{t("code_value")}</div>
-                    <div className="col-span-2">
-                      <Form.Item formik={formik} name="code">
-                        <Input
-                          size="large"
-                          value={optionsState[index].code}
-                          onChange={(e) =>
-                            dispatchOptions({
-                              type: "update",
-                              value: { code: e.target.value },
-                              index,
-                            })
-                          }
-                          name="code"
-                        />
-                      </Form.Item>
+                    <div className="col-span-5">
+                      <div className="input-label">{t("code_value")}</div>
+                      <div className="col-span-2">
+                        <Form.Item formik={formik} name="code">
+                          <Input
+                            size="large"
+                            value={optionsState[index].code}
+                            onChange={(e) =>
+                              dispatchOptions({
+                                type: "update",
+                                value: { code: e.target.value },
+                                index,
+                              })
+                            }
+                            name="code"
+                          />
+                        </Form.Item>
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-span-2">
-                    <div className="input-label"></div>
-                    <span
-                      className="cursor-pointer d-block border rounded-md p-2"
-                      onClick={() => dispatchOptions({ type: "delete", index })}
-                    >
-                      <DeleteIcon color="error" />
-                    </span>
-                  </div>
-                </>
-              ))}
-            </div>
+                    <div className="col-span-2">
+                      <div className="input-label"></div>
+                      <span
+                        className="cursor-pointer d-block border rounded-md p-2"
+                        onClick={() =>
+                          dispatchOptions({ type: "delete", index })
+                        }
+                      >
+                        <DeleteIcon color="error" />
+                      </span>
+                    </div>
+                  </>
+                ))}
+              </div>
 
-            <div className={classes.root}>
-              <MuiButton
-                variant="outlined"
-                startIcon={<AddIcon className={classes.icon} />}
-                onClick={() => dispatchOptions({ type: "add" })}
-              >
-                {t("add")}
-              </MuiButton>
-            </div>
-          </Card>
-        </div>
+              <div className={classes.root}>
+                <MuiButton
+                  variant="outlined"
+                  startIcon={<AddIcon className={classes.icon} />}
+                  onClick={() => dispatchOptions({ type: "add" })}
+                >
+                  {t("add")}
+                </MuiButton>
+              </div>
+            </Card>
+          </div>
+        )}
       </div>
     </form>
   );

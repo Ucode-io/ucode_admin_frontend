@@ -20,6 +20,7 @@ import Uz from "./Uz";
 import En from "./En";
 import Ru from "./Ru";
 import { FieldArray } from "formik";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -179,7 +180,6 @@ export default function Good({
                       height={120}
                       gallery={values.images?.length ? [...values.images] : []}
                       setGallery={(elm) => {
-                        console.log(elm);
                         setFieldValue("images", [
                           ...values.images,
                           elm[elm.length - 1],
@@ -246,47 +246,88 @@ export default function Good({
         className="m-4 mr-2"
         bodyStyle={{ padding: "0 1rem" }}
       >
-        <div className="flex items-center w-full mt-4">
-          <div className="w-4/12 mr-4">
-            <Form.Item formik={formik} name="property">
-              <Select
-                height={40}
-                id="property"
-                options={properties}
-                value={values.property}
-                onChange={(val) => {
-                  setFieldValue("property", val);
-                }}
-              />
-            </Form.Item>
-          </div>
-          <div className="w-8/12">
-            <Form.Item formik={formik} name="property_option">
-              <Select
-                disabled={!values.property?.value}
-                height={40}
-                id="property_option"
-                options={
-                  values.property && propertyOptions[values.property.value]
-                }
-                value={values.property_option}
-                onChange={(val) => {
-                  setFieldValue("property_option", val);
-                }}
-              />
-            </Form.Item>
-          </div>
-        </div>
+        <FieldArray name="property_groups">
+          {({ push, remove }) => (
+            <>
+              {values.property_groups.map((group, index) => (
+                <div className="flex items-baseline w-full mt-4">
+                  <>
+                    <div className="w-4/12 mr-4">
+                      <Form.FieldArrayItem
+                        formik={formik}
+                        name="property_groups"
+                        index={index}
+                      >
+                        <Select
+                          height={40}
+                          id={`property_groups.${index}.property`}
+                          options={properties}
+                          value={values.property_groups[index].property}
+                          onChange={(val) => {
+                            setFieldValue(
+                              `property_groups.${index}.property`,
+                              val,
+                            );
+                          }}
+                        />
+                      </Form.FieldArrayItem>
+                    </div>
 
-        <div className={classes.root}>
-          <MuiButton
-            variant="outlined"
-            startIcon={<AddIcon className={classes.icon} />}
-            onClick={() => {}}
-          >
-            {t("add")}
-          </MuiButton>
-        </div>
+                    <div className="w-7/12">
+                      <Form.FieldArrayItem
+                        formik={formik}
+                        name="property_groups"
+                        index={index}
+                      >
+                        <Select
+                          disabled={
+                            !values.property_groups[index].property?.value
+                          }
+                          height={40}
+                          id={`property_groups.${index}.property_option`}
+                          options={
+                            values.property_groups[index].property &&
+                            propertyOptions[
+                              values.property_groups[index].property.value
+                            ]
+                          }
+                          value={values.property_groups[index].property_option}
+                          onChange={(val) => {
+                            setFieldValue(
+                              `property_groups.${index}.property_option`,
+                              val,
+                            );
+                          }}
+                        />
+                      </Form.FieldArrayItem>
+                    </div>
+
+                    <div className="ml-4">
+                      <span
+                        className="cursor-pointer d-block border rounded-md p-2"
+                        onClick={() => remove(index)}
+                      >
+                        <DeleteIcon color="error" />
+                      </span>
+                    </div>
+                  </>
+                </div>
+              ))}
+
+              <div className={classes.root}>
+                <MuiButton
+                  variant="outlined"
+                  startIcon={<AddIcon className={classes.icon} />}
+                  onClick={() =>
+                    push({ property: null, property_option: null })
+                  }
+                >
+                  {t("add")}
+                </MuiButton>
+              </div>
+            </>
+          )}
+        </FieldArray>
       </Card>
     </>
   );

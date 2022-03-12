@@ -74,7 +74,7 @@ export default function AttributesTable() {
       title: t("attribute.type"),
       key: "attribute_type",
       dataIndex: "attribute_type",
-      render: (record) => <>{record.attribute_type}</>,
+      render: (record) => <>{record.type}</>,
     },
     {
       title: t("status"),

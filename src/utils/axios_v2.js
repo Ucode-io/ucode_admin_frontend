@@ -30,9 +30,7 @@ export function errorHandler(error, hooks) {
       // store.dispatch(showAlert(error.response.data.message))
     }
 
-    if (error.response.status === 401) {
-    }
-    if (error.response.status === 403) {
+    if (error.response.status === 403 || error.response.status === 401) {
       var refresh_token = store.getState().auth.refreshToken;
       var access_token = store.getState().auth.accessToken;
 

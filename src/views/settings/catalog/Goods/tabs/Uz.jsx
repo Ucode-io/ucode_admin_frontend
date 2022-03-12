@@ -159,7 +159,6 @@ export default function Uz({
                 </div>
               </div>
             </div>
-            {console.log(values)}
             <div>
               <div className="input-label">
                 <span>{t("unit")}</span>

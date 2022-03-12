@@ -61,7 +61,6 @@ export default function GoodsCreate() {
           getV2Brands({ page: 1, limit: 10 }),
           getV2Properties({ page: 1, limit: 10 }),
         ]);
-      console.log(properties);
       tags = tags.tags.map((tag) => ({
         label: tag.title.ru,
         value: tag.id,
@@ -80,7 +79,7 @@ export default function GoodsCreate() {
         value: group.id,
       }));
       var _propertyOptions = properties.property_groups.reduce((obj, group) => {
-        var options = group.options.map((option) => ({
+        var options = group.options?.map((option) => ({
           label: option.title.ru,
           value: option.code,
         }));
@@ -140,6 +139,12 @@ export default function GoodsCreate() {
   };
 
   const onSubmit = (values) => {
+    var property_groups = values.property_groups.map((group) => ({
+      options: null,
+      ...properties.filter(
+        (property) => property.value == group.property.value,
+      ),
+    }));
     const data = {
       description: {
         ru: values.description_ru,
@@ -159,15 +164,12 @@ export default function GoodsCreate() {
       brand_id: values.brand.value,
       category_ids: values.categories.map((category) => category.value),
       combo_ids: [],
-      count: "0",
       favorite_ids: [],
       measurement_id: values.unit.value,
-      order_no: "0",
-      price_changer_ids: [],
-      property_group_ids: [],
       rate_id: "",
       tag_ids: values.tags.map((tag) => tag.value),
       variant_ids: [],
+      property_groups,
     };
     saveChanges(data);
   };
@@ -201,8 +203,7 @@ export default function GoodsCreate() {
     tags: validate("array"),
     categories: validate("array"),
     images: validate("arrayStr"),
-    property: validate("selectItem"),
-    property_option: validate("selectItem"),
+    property_groups: validate("multiple_select"),
   });
 
   const routes = [

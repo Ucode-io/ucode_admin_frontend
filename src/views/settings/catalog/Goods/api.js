@@ -16,8 +16,6 @@ var api = {
   measurement_id: "",
   order_no: "0",
   out_price: "0",
-  price_changer_ids: [],
-  property_group_ids: [],
   rate_id: "",
   tag_ids: [],
   title: {
@@ -46,8 +44,7 @@ var formFields = {
   images: [],
   unit_short: null,
   accuracy: "",
-  property: null,
-  property_option: null,
+  property_groups: [{ property: null, property_option: null }],
 };
 
 export var divisibility = ["divisible", "nondivisible"];

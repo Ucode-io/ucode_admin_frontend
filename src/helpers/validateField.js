@@ -41,6 +41,7 @@ var Fields = {
         value: Yup.string(),
       }),
     )
+    .min(1, t("required.field.error"))
     .required(t("required.field.error")),
   selectItem: Yup.object()
     .shape({

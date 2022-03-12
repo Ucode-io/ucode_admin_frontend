@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Card from "components/Card";
 import Pagination from "components/Pagination";
@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@material-ui/core";
 import { getV2Brands, deleteV2Brand } from "services";
-import Tag from "components/Tag";
 import SwitchColumns from "components/Filters/SwitchColumns";
 import ActionMenu from "components/ActionMenu";
 import EditIcon from "@material-ui/icons/Edit";
@@ -69,7 +68,16 @@ export default function BrandsTable() {
       title: t("logo"),
       key: "image",
       dataIndex: "image",
-      render: (record) => <>{record.image}</>,
+      render: (record) => (
+        <>
+          <img
+            src={`${process.env.REACT_APP_MINIO_URL}/${record.image}`}
+            alt="brand logo"
+            width={"50"}
+            height={"50"}
+          />
+        </>
+      ),
     },
     {
       title: t("name"),
@@ -118,7 +126,7 @@ export default function BrandsTable() {
     ];
     setColumns(_columns);
   }, []);
-  console.log(items);
+
   return (
     <Card
       className="m-4"
@@ -154,7 +162,7 @@ export default function BrandsTable() {
                     history.push(`/home/catalog/brands/${item.id}`)
                   }
                 >
-                  {columns.map((col) => (
+                  {columns.map((col, i) => (
                     <TableCell key={col.key}>
                       {col.render
                         ? col.render(item, index)

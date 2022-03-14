@@ -1,21 +1,22 @@
-var delta = 500;
 var lastKeypressTime = 0;
+var delta = 500;
 var lastPressed;
 
-function keyHandler(event, cb) {
-  if (event.key == "t") {
-    lastPressed = "t";
-    var thisKeypressTime = new Date();
-    if (thisKeypressTime - lastKeypressTime <= delta) {
-      // cb();
-      // optional - if we'd rather not detect a triple-press
-      // as a second double-press, reset the timestamp
-      thisKeypressTime = 0;
-    }
-    lastKeypressTime = thisKeypressTime;
-  } else if (event.key == "Alt") {
-    lastPressed == "t" && cb();
+function isValid(key) {
+  if (!(lastPressed == "t" && key == "Alt")) return false;
+  var now = new Date();
+  if (now - lastKeypressTime <= delta) {
+    lastKeypressTime = now;
+    return false;
   }
+  return true;
+}
+
+function keyHandler(event, cb) {
+  if (isValid(event.key)) {
+    cb();
+  }
+  lastPressed = event.key;
 }
 
 var count = 0;

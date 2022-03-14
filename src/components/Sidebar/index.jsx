@@ -12,6 +12,7 @@ import LogoutModal from "./Modal";
 import BrandLogo from "assets/icons/logo.svg";
 import logoutIcon from "assets/icons/logout.svg";
 import Menu from "components/Menu";
+import useToggle from "utils/toggleSidebar";
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -52,6 +53,10 @@ export default function App() {
   const [expand, setExpand] = useState(
     Array(menu[menu.length - 1].children.length).fill(false),
   );
+
+  useToggle(function () {
+    setVisible((prev) => !prev);
+  });
 
   useEffect(() => {
     if (menu.length) {

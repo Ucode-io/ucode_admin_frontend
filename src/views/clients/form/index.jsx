@@ -11,11 +11,13 @@ import FunctionsIcon from "@material-ui/icons/Functions";
 import Gallery from "components/Gallery";
 import Select from "components/Select";
 import { useParams } from "react-router-dom";
+import { useRef } from "react";
 
 export default function Client({ formik, customerTypeOption }) {
   const { t } = useTranslation();
   const { values, handleChange, setFieldValue } = formik;
   const params = useParams();
+  const inputRef = useRef(null);
 
   return (
     <>
@@ -59,11 +61,6 @@ export default function Client({ formik, customerTypeOption }) {
                   setGallery={(elm) => setFieldValue("image", elm[0])}
                   multiple={false}
                 />
-                {
-                  <span className="mt-2 text-primary text-base">
-                    {values.image ? t("change.photo") : t("add.photo")}
-                  </span>
-                }
               </div>
             </Form.Item>
           </div>
@@ -117,7 +114,11 @@ export default function Client({ formik, customerTypeOption }) {
                       id="phone"
                       value={values.phone}
                       onChange={handleChange}
-                      type="number"
+                      onKeyPress={(event) => {
+                        if (!/[0-9]/.test(event.key)) {
+                          event.preventDefault();
+                        }
+                      }}
                       min="1"
                     />
                   </Form.Item>

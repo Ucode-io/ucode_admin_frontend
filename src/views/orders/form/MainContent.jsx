@@ -28,6 +28,7 @@ export default function MainContent({
   const { t } = useTranslation();
   const { values, handleChange, setFieldValue } = formik;
   const [customers, setCustomers] = useState([]);
+  console.log("branches", branches);
 
   useEffect(() => {
     getClients();
@@ -370,7 +371,7 @@ export default function MainContent({
               <div className="w-2/3">
                 <Form.Item formik={formik} name="intercom">
                   <Input
-                    value={values.branch?.elm?.intercom ?? ""}
+                    defaultValue={values.branch?.elm?.intercom ?? ""}
                     addonBefore={
                       <Phone className="text-primary" fontSize="small" />
                     }

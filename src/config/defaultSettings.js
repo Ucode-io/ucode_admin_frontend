@@ -98,7 +98,8 @@ export const chartColors = {
   blue: "#6B94D2",
   green: "#80CE7F",
   red: "#FF0000",
-  aquamarine: "#33FFBD",
+  orange: "#FF7F50",
   yellow: "#FFFF00",
   stopColor: "#E5E5E5",
+  purple: "#800080"
 };

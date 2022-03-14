@@ -149,10 +149,11 @@ export default function ProductContent({
 
   function onSubmit(values) {
     try {
-      const { name, description, id } = values.product.value;
-      const { child_options, ...options } = values.option?.value ?? {};
+      const { name, description, id } = values?.product?.value;
+      const { child_options, ...options } = values?.option?.value ?? {};
       const optionValue =
-        child_options?.find((item) => item.id === values.child_option.id) ?? {};
+        child_options?.find((item) => item.id === values?.child_option?.id) ??
+        {};
 
       setSelectedProducts((prev) => [
         ...prev,
@@ -212,16 +213,16 @@ export default function ProductContent({
             <Form.Item formik={formik} name="name">
               <div className="flex gap-2">
                 <div className="w-3/12 h-10 border bg-blue-200 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={cashIcon} alt="click image" className="h-6" />
+                  <img src={cashIcon} alt="click" className="h-6" />
                 </div>
                 <div className="w-3/12 h-10 border bg-gray-50 hover:bg-blue-50 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={paymeIcon} alt="click image" className="h-6" />
+                  <img src={paymeIcon} alt="click" className="h-6" />
                 </div>
                 <div className="w-3/12 h-10 border bg-gray-50 hover:bg-blue-50 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={clickIcon} alt="click image" className="h-5" />
+                  <img src={clickIcon} alt="click" className="h-5" />
                 </div>
                 <div className="w-3/12 h-10 border bg-gray-50 hover:bg-blue-50 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={bankIcon} alt="click image" className="h-6" />
+                  <img src={bankIcon} alt="click" className="h-6" />
                 </div>
               </div>
             </Form.Item>
@@ -333,6 +334,11 @@ export default function ProductContent({
                 onChange={(e) =>
                   e.target.value >= 0 && handleChangeQuantity(i, e.target.value)
                 }
+                onKeyPress={(event) => {
+                  if (!/[0-9]/.test(event.key)) {
+                    event.preventDefault();
+                  }
+                }}
               />
             </div>
             <div>

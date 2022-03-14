@@ -34,6 +34,7 @@ const Gallery = ({
       (image) => `${process.env.REACT_APP_MINIO_URL}/${image}`,
     );
   }, [gallery]);
+  console.log("imageLinks", imageLinks);
 
   const [loading, setLoading] = useState(false);
 
@@ -146,6 +147,13 @@ const Gallery = ({
           zIndex={2}
         />
       )}
+      <span
+        className="mt-2 text-primary text-base"
+        onClick={() => inputRef.current.click()}
+        style={{ cursor: "pointer" }}
+      >
+        {imageLinks.length ? t("change.photo") : t("add.photo")}
+      </span>
     </div>
   );
 };

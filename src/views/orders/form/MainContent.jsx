@@ -61,7 +61,7 @@ export default function MainContent({
       setFieldValue("client_first_name", "");
       setFieldValue("client_last_name", "");
     } else {
-      setFieldValue("client_first_name", newValue?.elm?.first_name);
+      setFieldValue("client_first_name", newValue?.elm?.name);
       setFieldValue("client_last_name", newValue?.elm?.last_name);
     }
   };

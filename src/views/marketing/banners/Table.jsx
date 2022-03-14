@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { useHistory } from "react-router-dom"
-
-import Card from "../../../components/Card"
-import Modal from "../../../components/Modal"
-import EmptyData from "../../../components/EmptyData"
-import ActionMenu from "../../../components/ActionMenu"
-import Pagination from "../../../components/Pagination"
-import LoaderComponent from "../../../components/Loader"
-import {} from "../../../services"
-import StatusTag from "../../../components/Tag/StatusTag"
-
-// Material-ui
-import EditIcon from "@material-ui/icons/Edit"
-import DeleteIcon from "@material-ui/icons/Delete"
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
+import Card from "components/Card";
+import Modal from "components/Modal";
+import EmptyData from "components/EmptyData";
+import ActionMenu from "components/ActionMenu";
+import Pagination from "components/Pagination";
+import LoaderComponent from "components/Loader";
+import {} from "services";
+import StatusTag from "components/Tag/StatusTag";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
 import {
   Table,
   TableBody,
@@ -21,36 +18,35 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from "@material-ui/core"
-
-import { getData } from "./mockData"
+} from "@material-ui/core";
+import { getData } from "./mockData";
 
 export default function BannersTable() {
-  const [loader, setLoader] = useState(true)
-  const { t } = useTranslation()
-  const history = useHistory()
-  const [items, setItems] = useState({})
-  const [currentPage, setCurrentPage] = useState(1)
-  const [deleteLoading, setDeleteLoading] = useState(false)
-  const [deleteModal, setDeleteModal] = useState(null)
+  const [loader, setLoader] = useState(true);
+  const { t } = useTranslation();
+  const history = useHistory();
+  const [items, setItems] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(null);
 
-  useEffect(() => {}, [])
+  useEffect(() => {}, []);
 
   useEffect(() => {
-    getItems(currentPage)
-  }, [currentPage])
+    getItems(currentPage);
+  }, [currentPage]);
 
   const getItems = (page) => {
-    setLoader(true)
+    setLoader(true);
     getData({ limit: 10, page })
       .then((res) => {
         setItems({
           count: res.count,
           data: res.data,
-        })
+        });
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const handleDeleteItem = () => {
     // setDeleteLoading(true)
@@ -61,7 +57,7 @@ export default function BannersTable() {
     //     setDeleteModal(null)
     //   })
     //   .finally(() => setDeleteLoading(false))
-  }
+  };
 
   const ImageContainer = ({ url, alt = "banner image" }) => (
     <div className="w-20 h-20 rounded-md overflow-hidden relative">
@@ -71,7 +67,7 @@ export default function BannersTable() {
         alt={alt}
       />
     </div>
-  )
+  );
 
   const columns = [
     {
@@ -130,7 +126,7 @@ export default function BannersTable() {
         />
       ),
     },
-  ]
+  ];
 
   return (
     <Card
@@ -189,5 +185,5 @@ export default function BannersTable() {
         loading={deleteLoading}
       />
     </Card>
-  )
+  );
 }

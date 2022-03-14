@@ -122,9 +122,14 @@ export default function MainTable({ createModal, setCreateModal }) {
       render: (record) => <>{record.count}</>,
     },
     {
-      title: t("price"),
+      title: t("income.price"),
       key: "price",
       render: (record) => <>{record.in_price}</>,
+    },
+    {
+      title: t("sales.price"),
+      key: "price",
+      render: (record) => <>{record.out_price}</>,
     },
     {
       title: t("created.date"),

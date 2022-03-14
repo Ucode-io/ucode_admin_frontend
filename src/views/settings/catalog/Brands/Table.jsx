@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Card from "components/Card";
 import Pagination from "components/Pagination";
@@ -127,6 +127,14 @@ export default function BrandsTable() {
     setColumns(_columns);
   }, []);
 
+  // (
+  //   <TableRow>
+  //     <TableCell>
+  //       <EmptyData loading={loader} />
+  //     </TableCell>
+  //   </TableRow>
+  // )
+
   return (
     <Card
       className="m-4"
@@ -146,7 +154,12 @@ export default function BrandsTable() {
           <TableHead>
             <TableRow>
               {columns.map((elm) => (
-                <TableCell key={elm.key}>{elm.title}</TableCell>
+                <TableCell
+                  key={elm.key}
+                  align={`${columns.length == 1 ? "right" : "left"}`}
+                >
+                  {elm.title}
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -163,7 +176,10 @@ export default function BrandsTable() {
                   }
                 >
                   {columns.map((col, i) => (
-                    <TableCell key={col.key}>
+                    <TableCell
+                      key={col.key}
+                      align={`${columns.length == 1 ? "right" : "left"}`}
+                    >
                       {col.render
                         ? col.render(item, index)
                         : item[col.dataIndex].ru}

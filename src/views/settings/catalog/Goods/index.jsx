@@ -17,7 +17,7 @@ export default function Goods() {
 
   const extraFilter = (
     <div className="flex gap-4">
-      <Button
+      {/* <Button
         icon={FIlterIcon}
         iconClassName="text-blue-600"
         color="zinc"
@@ -39,7 +39,7 @@ export default function Goods() {
         onClick={() => console.log("clicked")}
       >
         {t("download")}
-      </Button>
+      </Button> */}
     </div>
   );
 

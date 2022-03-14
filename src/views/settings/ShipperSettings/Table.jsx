@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -6,42 +6,42 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from "@material-ui/core"
-import { useHistory } from "react-router"
-import { useTranslation } from "react-i18next"
+} from "@material-ui/core";
+import { useHistory } from "react-router";
+import { useTranslation } from "react-i18next";
 
 //components and functions
-import Modal from "../../../components/Modal"
-import Pagination from "../../../components/Pagination"
-import Card from "../../../components/Card"
-import LoaderComponent from "../../../components/Loader"
-import Button from "../../../components/Button"
-import TextFilter from "../../../components/Filters/TextFilter"
-import ActionMenu from "../../../components/ActionMenu"
+import Modal from "../../../components/Modal";
+import Pagination from "../../../components/Pagination";
+import Card from "../../../components/Card";
+import LoaderComponent from "../../../components/Loader";
+import Button from "../../../components/Button";
+import TextFilter from "../../../components/Filters/TextFilter";
+import ActionMenu from "../../../components/ActionMenu";
 
-import axios from "../../../utils/axios"
+import axios from "../../../utils/axios";
 
 //icons
-import DeleteIcon from "@material-ui/icons/Delete"
-import Filters from "../../../components/Filters"
-import { Input } from "alisa-ui"
-import SearchIcon from "@material-ui/icons/Search"
-import PublishIcon from "@material-ui/icons/Publish"
-import GetAppIcon from "@material-ui/icons/GetApp"
-import EditIcon from "@material-ui/icons/Edit"
-import SwitchColumns from "../../../components/Filters/SwitchColumns"
-import { DownloadIcon, ExportIcon } from "../../../constants/icons"
+import DeleteIcon from "@material-ui/icons/Delete";
+import Filters from "../../../components/Filters";
+import { Input } from "alisa-ui";
+import SearchIcon from "@material-ui/icons/Search";
+import PublishIcon from "@material-ui/icons/Publish";
+import GetAppIcon from "@material-ui/icons/GetApp";
+import EditIcon from "@material-ui/icons/Edit";
+import SwitchColumns from "../../../components/Filters/SwitchColumns";
+import { DownloadIcon, ExportIcon } from "../../../constants/icons";
 
 const ApplicationTable = () => {
-  const { t } = useTranslation()
-  const [items, setItems] = useState({})
-  const [loader, setLoader] = useState(true)
-  const [deleteModal, setDeleteModal] = useState(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [deleteLoading, setDeleteLoading] = useState(false)
-  const [search, setSearch] = useState("")
-  const history = useHistory()
-  const [columns, setColumns] = useState([])
+  const { t } = useTranslation();
+  const [items, setItems] = useState({});
+  const [loader, setLoader] = useState(true);
+  const [deleteModal, setDeleteModal] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const history = useHistory();
+  const [columns, setColumns] = useState([]);
 
   useEffect(() => {
     const _columns = [
@@ -65,7 +65,7 @@ const ApplicationTable = () => {
                 color: "blue",
                 title: t("change"),
                 action: () => {
-                  editRow(record.id)
+                  editRow(record.id);
                 },
               },
               {
@@ -73,65 +73,65 @@ const ApplicationTable = () => {
                 color: "red",
                 title: t("delete"),
                 action: () => {
-                  setDeleteModal({ id: record.id })
+                  setDeleteModal({ id: record.id });
                 },
               },
             ]}
           />
         ),
       },
-    ]
-    setColumns(_columns)
-  }, [])
+    ];
+    setColumns(_columns);
+  }, []);
 
-  let debounce = setTimeout(() => {}, 0)
+  let debounce = setTimeout(() => {}, 0);
 
   const onSearch = (e) => {
-    clearTimeout(debounce)
+    clearTimeout(debounce);
     debounce = setTimeout(() => {
-      setSearch(e.target.value)
-    }, 300)
-  }
+      setSearch(e.target.value);
+    }, 300);
+  };
 
   useEffect(() => {
-    getItems(currentPage)
-  }, [currentPage, search])
+    getItems(currentPage);
+  }, [currentPage, search]);
 
   const clearItems = () => {
-    setItems((prev) => ({ count: prev.count }))
-  }
+    setItems((prev) => ({ count: prev.count }));
+  };
 
   const getItems = (page) => {
-    setLoader(true)
-    clearItems()
+    setLoader(true);
+    clearItems();
     axios
       .get("/shippers", { params: { limit: 10, page, search } })
       .then((res) => {
-        setItems(res)
+        setItems(res);
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const editRow = (id) => {
-    history.push(`/home/company/shipper-company/${id}`)
-  }
+    history.push(`/home/company/shipper-company/${id}`);
+  };
 
   const handleDelete = () => {
-    setDeleteLoading(true)
+    setDeleteLoading(true);
     axios
       .delete("/shippers/" + deleteModal.id)
       .then((res) => {
-        setDeleteModal(false)
-        getItems(currentPage)
+        setDeleteModal(false);
+        getItems(currentPage);
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
       })
-      .finally(() => setDeleteLoading(false))
-  }
+      .finally(() => setDeleteLoading(false));
+  };
 
   const initialColumns = [
     {
@@ -167,11 +167,11 @@ const ApplicationTable = () => {
       key: "company.type",
       render: (record) => <div>Fast food</div>,
     },
-  ]
+  ];
 
   const extraFilter = (
     <div className="flex gap-4">
-      <Button
+      {/* <Button
         icon={ExportIcon}
         iconClassName="text-blue-600"
         color="zinc"
@@ -193,9 +193,9 @@ const ApplicationTable = () => {
         onClick={() => console.log("clicked")}
       >
         {t("download")}
-      </Button>
+      </Button> */}
     </div>
-  )
+  );
 
   const pagination = (
     <Pagination
@@ -203,7 +203,7 @@ const ApplicationTable = () => {
       count={items?.count}
       onChange={(pageNumber) => setCurrentPage(pageNumber)}
     />
-  )
+  );
 
   return (
     <div>
@@ -256,7 +256,7 @@ const ApplicationTable = () => {
         </Card>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ApplicationTable
+export default ApplicationTable;

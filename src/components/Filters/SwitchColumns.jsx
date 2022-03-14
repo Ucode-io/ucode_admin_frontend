@@ -1,13 +1,13 @@
-import { useState, useEffect, useMemo } from "react"
-import { useTranslation } from "react-i18next"
-import Card from "../Card"
-import Button from "../Button"
-import Switch from "../Switch"
+import { useState, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import Card from "../Card";
+import Button from "../Button";
+import Switch from "../Switch";
 
 //material
-import Menu from "@material-ui/core/Menu"
-import { withStyles } from "@material-ui/core"
-import TableChartIcon from "@material-ui/icons/TableChart"
+import Menu from "@material-ui/core/Menu";
+import { withStyles } from "@material-ui/core";
+import TableChartIcon from "@material-ui/icons/TableChart";
 
 const StyledMenu = withStyles({
   paper: {
@@ -34,7 +34,7 @@ const StyledMenu = withStyles({
     }}
     {...props}
   />
-))
+));
 
 const swtichTypes = {
   checked: (
@@ -68,40 +68,40 @@ const swtichTypes = {
       {/* <span style={{ height: 2, width: 12, backgroundColor: '#fff', borderRadius: 1 }}></span> */}
     </div>
   ),
-}
+};
 
 export default function SwitchColumns({ columns = [], onChange = () => {} }) {
-  const { t } = useTranslation()
-  const [data, setData] = useState(columns)
-  const [anchorEl, setAnchorEl] = useState(null)
-  const [all, setAll] = useState(true)
+  const { t } = useTranslation();
+  const [data, setData] = useState(columns);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [all, setAll] = useState(true);
   // const [switchesType, setSwitchesType] = useState(defineSwitchType(data))
 
   const switchType = useMemo(() => {
-    if (data.every((elm) => !elm.hide)) return "allChecked"
-    else if (data.some((elm) => !elm.hide)) return "checked"
-    else return "unChecked"
-  }, [data])
+    if (data.every((elm) => !elm.hide)) return "allChecked";
+    else if (data.some((elm) => !elm.hide)) return "checked";
+    else return "unChecked";
+  }, [data]);
 
   useEffect(() => {
-    onChange(data.filter((elm) => !elm.hide))
-  }, [data])
+    onChange(data.filter((elm) => !elm.hide));
+  }, [data]);
 
   const onSwitchChange = (val, key) => {
     setData((prev) =>
-      prev.map((elm) => (elm.key === key ? { ...elm, hide: !val } : elm))
-    )
-  }
+      prev.map((elm) => (elm.key === key ? { ...elm, hide: !val } : elm)),
+    );
+  };
 
   const onAllClick = () => {
-    setAll((prev) => !prev)
+    setAll((prev) => !prev);
     if (switchType === "checked" || switchType === "unChecked") {
-      setData((prev) => prev.map((elm) => ({ ...elm, hide: false })))
+      setData((prev) => prev.map((elm) => ({ ...elm, hide: false })));
     } else {
-      setData((prev) => prev.map((elm) => ({ ...elm, hide: true })))
+      setData((prev) => prev.map((elm) => ({ ...elm, hide: true })));
     }
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   const title = (
     <div className="flex justify-between items-center">
@@ -110,7 +110,7 @@ export default function SwitchColumns({ columns = [], onChange = () => {} }) {
         <Switch checked={all} onChange={onAllClick} />
       </div>
     </div>
-  )
+  );
 
   const ItemContainer = ({ element }) => (
     <div
@@ -124,12 +124,12 @@ export default function SwitchColumns({ columns = [], onChange = () => {} }) {
         onChange={(val) => onSwitchChange(val, element.key)}
       />
     </div>
-  )
+  );
 
   return (
     <div className="cursor-pointer transition-all duration-100">
       <div
-        className="fill-current text-primary cursor-pointer"
+        className="fill-current text-primary cursor-pointer flex justify-end mr-1"
         onClick={(e) => setAnchorEl(e.currentTarget)}
       >
         <TableChartIcon />
@@ -160,5 +160,5 @@ export default function SwitchColumns({ columns = [], onChange = () => {} }) {
         </Card>
       </StyledMenu>
     </div>
-  )
+  );
 }

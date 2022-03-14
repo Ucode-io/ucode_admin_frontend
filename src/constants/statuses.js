@@ -57,10 +57,6 @@ export const statusList = [
 
 export const statusTabList = [
   {
-    label: "courier.onTheWay",
-    id: "84be5a2f-3a92-4469-8283-220ca34a0de4",
-  },
-  {
     label: "new",
     id: "986a0d09-7b4d-4ca9-8567-aa1c6d770505",
   },
@@ -75,6 +71,10 @@ export const statusTabList = [
   {
     label: "work.process",
     id: "1b6dc9a3-64aa-4f68-b54f-71ffe8164cd3,b0cb7c69-5e3d-47c7-9813-b0a7cc3d81fd,8781af8e-f74d-4fb6-ae23-fd997f4a2ee0",
+  },
+  {
+    label: "courier.onTheWay",
+    id: "84be5a2f-3a92-4469-8283-220ca34a0de4",
   },
   {
     label: "finished",

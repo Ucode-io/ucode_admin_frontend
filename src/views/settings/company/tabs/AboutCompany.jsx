@@ -363,7 +363,6 @@ export default function AboutCompany() {
                     <Form.Item formik={formik} name="courier_action_radius">
                       <Input
                         size="large"
-                        prefix="+998"
                         id="courier_action_radius"
                         value={values.courier_action_radius}
                         onChange={handleChange}

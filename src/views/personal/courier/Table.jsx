@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { useHistory } from "react-router-dom"
-import { useSelector } from "react-redux"
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   Table,
   TableBody,
@@ -9,37 +9,37 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from "@material-ui/core"
-import EditIcon from "@material-ui/icons/Edit"
-import DeleteIcon from "@material-ui/icons/Delete"
+} from "@material-ui/core";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
 
-import Pagination from "../../../components/Pagination"
-import Modal from "../../../components/Modal"
-import { deleteCourier, getCouriers } from "../../../services/courier"
-import LoaderComponent from "../../../components/Loader"
-import SwitchColumns from "../../../components/Filters/SwitchColumns"
-import ActionMenu from "../../../components/ActionMenu"
-import Card from "../../../components/Card"
-import Filters from "../../../components/Filters"
-import { Input } from "alisa-ui"
-import SearchIcon from "@material-ui/icons/Search"
-import Button from "../../../components/Button"
-import PublishIcon from "@material-ui/icons/Publish"
-import GetAppIcon from "@material-ui/icons/GetApp"
-import { DownloadIcon, ExportIcon } from "../../../constants/icons"
-import StatusTag from "../../../components/Tag/StatusTag"
+import Pagination from "../../../components/Pagination";
+import Modal from "../../../components/Modal";
+import { deleteCourier, getCouriers } from "../../../services/courier";
+import LoaderComponent from "../../../components/Loader";
+import SwitchColumns from "../../../components/Filters/SwitchColumns";
+import ActionMenu from "../../../components/ActionMenu";
+import Card from "../../../components/Card";
+import Filters from "../../../components/Filters";
+import { Input } from "alisa-ui";
+import SearchIcon from "@material-ui/icons/Search";
+import Button from "../../../components/Button";
+import PublishIcon from "@material-ui/icons/Publish";
+import GetAppIcon from "@material-ui/icons/GetApp";
+import { DownloadIcon, ExportIcon } from "../../../constants/icons";
+import StatusTag from "../../../components/Tag/StatusTag";
 
 export default function TableCourier() {
-  const [loader, setLoader] = useState(true)
-  const { t } = useTranslation()
-  const history = useHistory()
-  const lang = useSelector((state) => state.lang.current)
-  const [items, setItems] = useState({})
-  const [currentPage, setCurrentPage] = useState(1)
-  const [deleteLoading, setDeleteLoading] = useState(false)
-  const [deleteModal, setDeleteModal] = useState(null)
-  const [search, setSearch] = useState("")
-  const [columns, setColumns] = useState([])
+  const [loader, setLoader] = useState(true);
+  const { t } = useTranslation();
+  const history = useHistory();
+  const lang = useSelector((state) => state.lang.current);
+  const [items, setItems] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(null);
+  const [search, setSearch] = useState("");
+  const [columns, setColumns] = useState([]);
 
   useEffect(() => {
     const _columns = [
@@ -63,7 +63,7 @@ export default function TableCourier() {
                 color: "blue",
                 title: t("change"),
                 action: () => {
-                  history.push(`/home/courier/list/${record.id}`)
+                  history.push(`/home/courier/list/${record.id}`);
                 },
               },
               {
@@ -71,31 +71,31 @@ export default function TableCourier() {
                 color: "red",
                 title: t("delete"),
                 action: () => {
-                  setDeleteModal({ id: record.id })
+                  setDeleteModal({ id: record.id });
                 },
               },
             ]}
           />
         ),
       },
-    ]
-    setColumns(_columns)
-  }, [])
+    ];
+    setColumns(_columns);
+  }, []);
 
   useEffect(() => {
-    getItems(currentPage)
-  }, [currentPage])
+    getItems(currentPage);
+  }, [currentPage]);
 
   const handleDeleteItem = () => {
-    setDeleteLoading(true)
+    setDeleteLoading(true);
     deleteCourier(deleteModal.id)
       .then((res) => {
-        getItems(currentPage)
-        setDeleteLoading(false)
-        setDeleteModal(null)
+        getItems(currentPage);
+        setDeleteLoading(false);
+        setDeleteModal(null);
       })
-      .finally(() => setDeleteLoading(false))
-  }
+      .finally(() => setDeleteLoading(false));
+  };
 
   const initialColumns = [
     {
@@ -129,19 +129,19 @@ export default function TableCourier() {
         </div>
       ),
     },
-  ]
+  ];
 
   const getItems = (page) => {
-    setLoader(true)
+    setLoader(true);
     getCouriers({ limit: 10, page })
       .then((res) => {
         setItems({
           count: res.count,
           data: res.couriers,
-        })
+        });
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const pagination = (
     <Pagination
@@ -149,20 +149,20 @@ export default function TableCourier() {
       count={items?.count}
       onChange={(pageNumber) => setCurrentPage(pageNumber)}
     />
-  )
+  );
 
-  let debounce = setTimeout(() => {}, 0)
+  let debounce = setTimeout(() => {}, 0);
 
   const onSearch = (e) => {
-    clearTimeout(debounce)
+    clearTimeout(debounce);
     debounce = setTimeout(() => {
-      setSearch(e.target.value)
-    }, 300)
-  }
+      setSearch(e.target.value);
+    }, 300);
+  };
 
   const extraFilter = (
     <div className="flex gap-4">
-      <Button
+      {/* <Button
         icon={ExportIcon}
         color="zinc"
         iconClassName="text-blue-600"
@@ -184,9 +184,9 @@ export default function TableCourier() {
         onClick={() => console.log("clicked")}
       >
         {t("download")}
-      </Button>
+      </Button> */}
     </div>
-  )
+  );
 
   return (
     <div>
@@ -236,5 +236,5 @@ export default function TableCourier() {
         />
       </Card>
     </div>
-  )
+  );
 }

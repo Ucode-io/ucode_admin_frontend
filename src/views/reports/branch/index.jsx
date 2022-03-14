@@ -54,18 +54,18 @@ export default function ReportsBranch() {
       <Header title={t("Отчеты по ресторанам")} />
       <Filters
         className="mb-0"
-        extra={
-          <Button
-            icon={DownloadIcon}
-            iconClassName="text-blue-600"
-            color="zinc"
-            shape="outlined"
-            size="medium"
-            onClick={() => console.log("clicked")}
-          >
-            {t("download")}
-          </Button>
-        }
+        // extra={
+        //   <Button
+        //     icon={DownloadIcon}
+        //     iconClassName="text-blue-600"
+        //     color="zinc"
+        //     shape="outlined"
+        //     size="medium"
+        //     onClick={() => console.log("clicked")}
+        //   >
+        //     {t("download")}
+        //   </Button>
+        // }
       >
         <div className="flex gap-4 items-center">
           <Input

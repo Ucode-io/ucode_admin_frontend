@@ -133,7 +133,7 @@ export default function TableOperator() {
 
   const extraFilter = (
     <div className="flex gap-4">
-      <Button
+      {/* <Button
         icon={ExportIcon}
         iconClassName="text-blue-600"
         color="zinc"
@@ -155,7 +155,7 @@ export default function TableOperator() {
         onClick={() => console.log("clicked")}
       >
         {t("download")}
-      </Button>
+      </Button> */}
     </div>
   );
 

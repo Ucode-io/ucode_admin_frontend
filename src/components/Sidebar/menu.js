@@ -131,7 +131,7 @@ export const menu = [
     id: "marketing",
     title: "marketing",
     path: "/home/marketing/stocks",
-    redirect: "/home/marketing",
+    redirect: "/home/marketing/stocks",
     isActive: true,
     icon: GpsFixedOutlined,
     children: [

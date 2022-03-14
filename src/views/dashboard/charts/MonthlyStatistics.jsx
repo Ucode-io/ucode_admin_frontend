@@ -24,8 +24,8 @@ const MonthlyStatistics = ({ data }) => {
           <Bar dataKey="Доставка" fill={chartColors.blue} />
           <Bar dataKey="Самовызов" fill={chartColors.green} />
           <Bar dataKey="Отмененны" fill={chartColors.red} />
-          <Bar dataKey="Повторно оформленные" fill={chartColors.aquamarine} />
-          <Bar dataKey="Итого" fill={chartColors.yellow} />
+          <Bar dataKey="Повторно оформленные" fill={chartColors.orange} />
+          <Bar dataKey="Итого" fill={chartColors.purple} />
         </BarChart>
       </ResponsiveContainer>
     </Card>

@@ -23,9 +23,9 @@ export default function Orders() {
     customer_id: undefined,
     branch_ids: undefined,
     courier_id: undefined,
-    external_order_id: undefined,
     start_date: moment().format("YYYY-MM-DD"),
     end_date: moment().add(1, "d").format("YYYY-MM-DD"),
+    external_order_id: undefined,
     payment_type: undefined,
   });
 
@@ -120,6 +120,12 @@ export default function Orders() {
             addonBefore={
               <SearchIcon style={{ fill: "var(--color-primary)" }} />
             }
+            onChange={(e) => {
+              setFilters((old) => ({
+                ...old,
+                external_order_id: e.target.value,
+              }));
+            }}
           />
           <RangePicker
             hideTimePicker

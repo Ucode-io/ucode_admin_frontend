@@ -30,14 +30,13 @@ const StatusBar = ({ filters, columns, setColumns }) => {
         statusTabList
           .map((elm) => elm.id.split(","))
           .reduce((acc, curr) => [...acc, ...curr], [])
-          .map((el) => el.trim())
-      )
+          .map((el) => el.trim()),
+      ),
     );
     getCountOrder({
       status_ids: formatStatusList.join(","),
       start_date: filters.start_date,
       end_date: filters.end_date,
-      region_id,
     })
       .then((res) => {
         setOrdersCount(res.orders_count);

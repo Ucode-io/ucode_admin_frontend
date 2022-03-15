@@ -67,6 +67,7 @@ export default function Client({ formik, customerTypeOption }) {
           <div className="col-span-9">
             <div className="w-full flex items-baseline">
               <div className="w-1/4 input-label">
+                <span style={{ color: "red" }}>*</span>{" "}
                 <span>{t("first.name")}</span>
               </div>
               <div className="w-3/4">
@@ -85,6 +86,7 @@ export default function Client({ formik, customerTypeOption }) {
 
             <div className="w-full flex items-baseline">
               <div className="w-1/4 input-label">
+                <span style={{ color: "red" }}>*</span>{" "}
                 <span>{t("last.name")}</span>
               </div>
               <div className="w-3/4">
@@ -103,6 +105,7 @@ export default function Client({ formik, customerTypeOption }) {
 
             <div className="w-full flex items-baseline">
               <div className="w-1/4 input-label">
+                <span style={{ color: "red" }}>*</span>{" "}
                 <span>{t("phone.number")}</span>
               </div>
               <div className="w-3/4 flex">
@@ -129,16 +132,17 @@ export default function Client({ formik, customerTypeOption }) {
 
             <div className="flex w-full items-baseline">
               <div className="w-1/4 input-label">
+                <span style={{ color: "red" }}>*</span>{" "}
                 <label>{t("client.type")}</label>
               </div>
               <div className="w-3/4">
-                <Form.Item formik={formik} name="client_type">
+                <Form.Item formik={formik} name="customer_type_id">
                   <Select
                     height={40}
                     options={customerTypeOption}
-                    // value={values.region}
+                    value={values.customer_type_id}
                     onChange={(val) => {
-                      setFieldValue("client_type", val);
+                      setFieldValue("customer_type_id", val);
                       console.log(val);
                     }}
                   />

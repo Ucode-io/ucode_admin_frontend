@@ -334,6 +334,7 @@ export default function ProductContent({
                 onChange={(e) =>
                   e.target.value >= 0 && handleChangeQuantity(i, e.target.value)
                 }
+                mask="999999999"
                 onKeyPress={(event) => {
                   if (!/[0-9]/.test(event.key)) {
                     event.preventDefault();

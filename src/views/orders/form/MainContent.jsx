@@ -28,7 +28,10 @@ export default function MainContent({
   const { t } = useTranslation();
   const { values, handleChange, setFieldValue } = formik;
   const [customers, setCustomers] = useState([]);
-  console.log("branches", branches);
+  const [branch, setBranch] = useState(null);
+  const branchItem = branch?.branches?.map((elm) => elm?.name);
+  console.log("branches", branchItem);
+  console.log("values", values);
 
   useEffect(() => {
     getClients();
@@ -280,7 +283,12 @@ export default function MainContent({
             </div>
           </div>
 
-          <MapContent branches={branches} formik={formik} {...props} />
+          <MapContent
+            branches={branches}
+            formik={formik}
+            {...props}
+            setBranch={setBranch}
+          />
 
           <div className="w-full mt-4 grid grid-cols-2 gap-6">
             <div className="flex items-baseline">
@@ -308,7 +316,7 @@ export default function MainContent({
                   <Select
                     id="branch"
                     value={values.branch}
-                    options={branches}
+                    options={branchItem}
                     placeholder={t("branch")}
                     onChange={(val) => setFieldValue("branch", val)}
                   />

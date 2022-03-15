@@ -140,25 +140,29 @@ export default function MainTable({ createModal, setCreateModal, search }) {
           />
         ),
         key: t("actions"),
-        render: (record, _) => (
-          <div className="flex gap-2">
+        render: (record, _, disable) => (
+          <div className="flex gap-2 justify-end">
             <ActionMenu
               id={record.id}
-              actions={[
-                {
-                  title: t("edit"),
-                  color: "blue",
-                  icon: <EditIcon />,
-                  action: () =>
-                    history.push(`/home/settings/fares/${record.id}`),
-                },
-                {
-                  title: t("delete"),
-                  color: "red",
-                  icon: <DeleteIcon />,
-                  action: () => setDeleteModal({ id: record.id }),
-                },
-              ]}
+              actions={
+                disable
+                  ? []
+                  : [
+                      {
+                        title: t("edit"),
+                        color: "blue",
+                        icon: <EditIcon />,
+                        action: () =>
+                          history.push(`/home/settings/fares/${record.id}`),
+                      },
+                      {
+                        title: t("delete"),
+                        color: "red",
+                        icon: <DeleteIcon />,
+                        action: () => setDeleteModal({ id: record.id }),
+                      },
+                    ]
+              }
             />
           </div>
         ),
@@ -197,14 +201,17 @@ export default function MainTable({ createModal, setCreateModal, search }) {
               items?.data?.map((elm, index) => (
                 <TableRow
                   key={elm.id}
-                  onClick={() =>
-                    history.push(`/home/catalog/category/${elm.id}`)
-                  }
+                  onClick={() => {
+                    if (columns.length == 1) return;
+                    history.push(`/home/catalog/category/${elm.id}`);
+                  }}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
                   {columns.map((col) => (
                     <TableCell key={col.key}>
-                      {col.render ? col.render(elm, index) : "----"}
+                      {col.render
+                        ? col.render(elm, index, columns.length == 1)
+                        : "----"}
                     </TableCell>
                   ))}
                 </TableRow>

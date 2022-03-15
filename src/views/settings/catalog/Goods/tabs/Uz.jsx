@@ -42,11 +42,11 @@ export default function Uz({
         </div>
         <div className="">
           <div>
-            <Form.Item formik={formik} name="order_no">
+            <Form.Item formik={formik} name="code">
               <Input
                 size="large"
-                id="order_no"
-                value={values.order_no}
+                id="code"
+                value={values.code}
                 onChange={handleChange}
               />
             </Form.Item>
@@ -126,7 +126,7 @@ export default function Uz({
                       options={genSelectOption(divisibility)}
                       value={values.is_divisible}
                       onChange={(val) => {
-                        var bool = val.value == "divisible" ? true : false;
+                        var bool = val.value == "divisible";
                         setFieldValue("is_divisible", {
                           label: val.label,
                           value: bool,

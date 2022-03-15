@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "components/Card";
 import Form from "components/Form/Index";
 import { Input } from "alisa-ui";
@@ -34,6 +34,9 @@ const useStyles = makeStyles((theme) => ({
       border: "1px solid #0e73f6",
       background: "#fff",
     },
+    "&:first-child:last-child": {
+      marginTop: "1rem",
+    },
     icon: {
       color: "#0e73f6",
     },
@@ -51,12 +54,17 @@ export default function Good({
   brands,
   properties,
   propertyOptions,
+  initialValues,
 }) {
   const { t } = useTranslation();
   const classes = useStyles();
   const theme = useTheme();
 
   const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    formik.setValues(initialValues);
+  }, [initialValues]);
 
   // Tabs
   const a11yProps = (index) => {
@@ -249,7 +257,7 @@ export default function Good({
         <FieldArray name="property_groups">
           {({ push, remove }) => (
             <>
-              {values.property_groups.map((group, index) => (
+              {values.property_groups?.map((group, index) => (
                 <div className="flex items-baseline w-full mt-4">
                   <>
                     <div className="w-4/12 mr-4">
@@ -273,7 +281,7 @@ export default function Good({
                       </Form.FieldArrayItem>
                     </div>
 
-                    <div className="w-7/12">
+                    <div className="w-8/12">
                       <Form.FieldArrayItem
                         formik={formik}
                         name="property_groups"

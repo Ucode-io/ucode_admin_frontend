@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import {
@@ -29,8 +29,20 @@ import { TabPanel } from "components/Tab/TabBody";
 import { useTheme } from "@material-ui/core/styles";
 import Good from "./tabs/Good";
 import ConnectedGoods from "./tabs/ConnectedGoods";
-import formFields from "./api.js";
+import formFields, { divisibility } from "./api.js";
 import validate from "helpers/validateField";
+import genSelectOption from "helpers/genSelectOption";
+
+// var selectsReducer = function (state, { type, payload }) {
+//   switch (type) {
+//     case "Update":
+//       return { ...state, ...payload };
+//     default:
+//       return { ...state };
+//   }
+// };
+
+// var initialState = {};
 
 export default function GoodsCreate() {
   const { t } = useTranslation();
@@ -39,16 +51,18 @@ export default function GoodsCreate() {
   const { id } = useParams();
   const theme = useTheme();
 
+  // const [selects, dispatchSelects] = useReducer(selectsReducer, initialState);
   const [tags, setTags] = useState([]);
   const [units, setUnits] = useState([]);
   const [brands, setBrands] = useState([]);
   const [properties, setProperties] = useState([]);
   const [categories, setCategories] = useState([]);
   const [propertyOptions, setPropertyOptions] = useState([]);
-  const [initialValues, setInitialValues] = useState(formFields);
+  const [initialValues, setInitialValues] = useState(id ? {} : formFields);
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState(0);
+  const [propertyGroups, setPropertyGroups] = useState();
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -69,11 +83,16 @@ export default function GoodsCreate() {
         label: category.title.ru,
         value: category.id,
       }));
-      measurements = measurements.measurements;
+      measurements = measurements.measurements.map((measurement) => ({
+        ...measurement,
+        label: measurement.title,
+        value: measurement.id,
+      }));
       brands = brands.brands?.map((brand) => ({
         label: brand.title.ru,
         value: brand.id,
       }));
+      setPropertyGroups(properties.property_groups);
       var _properties = properties.property_groups.map((group) => ({
         label: group.title.ru,
         value: group.id,
@@ -86,6 +105,17 @@ export default function GoodsCreate() {
         obj[group.id] = options;
         return obj;
       }, {});
+      // dispatchSelects({
+      //   type: "Update",
+      //   payload: {
+      //     tags,
+      //     brands,
+      //     measurements,
+      //     _properties,
+      //     categories,
+      //     _propertyOptions,
+      //   },
+      // });
       setTags(tags);
       setBrands(brands);
       setUnits(measurements);
@@ -101,23 +131,34 @@ export default function GoodsCreate() {
 
   const fetchProductData = useCallback(async () => {
     let res = await getV2Good(id, {});
-    setInitialValues({
+    var divOptions = genSelectOption(divisibility);
+    return {
       description_ru: res.description.ru,
       description_uz: res.description.uz,
       description_en: res.description.en,
       in_price: res.in_price,
       out_price: res.out_price,
-      is_divisible: res.is_divisible,
+      is_divisible: divOptions.find((option) =>
+        option.value == res.is_divisible ? "divisible" : "nondivisible",
+      ),
       title_ru: res.title.ru,
       title_uz: res.title.uz,
       title_en: res.title.en,
-      brand: brands.find((el) => el.id == res.brand_id),
-      unit: units.find((el) => el.id == res.measurement_id),
-      tags: tags.filter((el) => res.tag_ids.includes(el.id)),
-      categories: categories.filter((el) => res.category_ids.includes(el.id)),
+      brand: brands.find((brand) => brand.value == res.brand_id.id),
+      unit: units.find((unit) => unit.value == res.measurement_id.id),
+      tags: tags.filter((tag) =>
+        res.tag_ids.filter((tag_id) => tag_id.id == tag.value),
+      ),
+      categories: categories.filter((category) =>
+        res.category_ids.filter(
+          (category_id) => category_id.id == category.value,
+        ),
+      ),
       images: [res.image, ...res.gallery],
-    });
-  }, [id]);
+      code: res.code,
+      currency: genSelectOption(res.currency),
+    };
+  }, [id, brands, units, tags, categories]);
 
   const saveChanges = (data) => {
     setBtnDisabled(true);
@@ -139,10 +180,18 @@ export default function GoodsCreate() {
   };
 
   const onSubmit = (values) => {
-    var property_groups = values.property_groups.map((group) => ({
-      options: null,
-      ...properties.filter(
-        (property) => property.value == group.property.value,
+    console.log(propertyGroups, values.property_groups);
+    var ids = values.property_groups.map((group) => group.property.value);
+    var options = values.property_groups.map(
+      (group) => group.property_option.value,
+    );
+    var property_groups = propertyGroups.filter((group) =>
+      ids.includes(group.id),
+    );
+    property_groups = property_groups.map((group, i) => ({
+      ...group,
+      options: property_groups[i].options.filter((option) =>
+        options.includes(option),
       ),
     }));
     const data = {
@@ -170,22 +219,29 @@ export default function GoodsCreate() {
       tag_ids: values.tags.map((tag) => tag.value),
       variant_ids: [],
       property_groups,
+      currency: values.currency.value,
+      code: values.code,
     };
     saveChanges(data);
   };
 
   useEffect(() => {
-    async function fetchAll() {
-      await fetchData();
-      if (id) {
-        await fetchProductData();
-      }
-    }
     setIsLoading(true);
-    fetchAll().finally(() => {
+    fetchData().finally(() => {
       setIsLoading(false);
     });
-  }, [fetchData, fetchProductData, id]);
+  }, [fetchData]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (id) {
+      fetchProductData()
+        .then((data) => setInitialValues(data))
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [fetchProductData, id]);
 
   const validationSchema = Yup.object().shape({
     description_ru: validate(),
@@ -204,6 +260,7 @@ export default function GoodsCreate() {
     categories: validate("array"),
     images: validate("arrayStr"),
     property_groups: validate("multiple_select"),
+    code: validate("default"),
   });
 
   const routes = [
@@ -213,7 +270,7 @@ export default function GoodsCreate() {
       route: `/home/catalog/goods`,
     },
     {
-      title: id ? initialValues.first_name : t("create"),
+      title: id ? initialValues?.title?.ru : t("create"),
     },
   ];
 
@@ -307,6 +364,7 @@ export default function GoodsCreate() {
                       brands={brands}
                       properties={properties}
                       propertyOptions={propertyOptions}
+                      initialValues={initialValues}
                     />
                   </TabPanel>
                   <TabPanel value={value} index={1} dir={theme.direction}>

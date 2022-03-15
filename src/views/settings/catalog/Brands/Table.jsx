@@ -74,7 +74,7 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
     {
       title: "№",
       key: "order-number",
-      render: (_, index) => <>{(currentPage - 1) * 10 + index + 1}</>,
+      render: (_, index) => <>{(currentPage - 1) * limit + index + 1}</>,
     },
     {
       title: t("logo"),
@@ -111,28 +111,34 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
           />
         ),
         key: t("actions"),
-        render: (record, _) => (
-          <ActionMenu
-            id={record.id}
-            actions={[
-              {
-                icon: <EditIcon />,
-                color: "blue",
-                title: t("change"),
-                action: () => {
-                  history.push(`/home/catalog/brands/${record.id}`);
-                },
-              },
-              {
-                icon: <DeleteIcon />,
-                color: "red",
-                title: t("delete"),
-                action: () => {
-                  setDeleteModal({ id: record.id });
-                },
-              },
-            ]}
-          />
+        render: (record, _, disable) => (
+          <div className="flex gap-2 justify-end">
+            <ActionMenu
+              id={record.id}
+              actions={
+                disable
+                  ? []
+                  : [
+                      {
+                        icon: <EditIcon />,
+                        color: "blue",
+                        title: t("change"),
+                        action: () => {
+                          history.push(`/home/catalog/brands/${record.id}`);
+                        },
+                      },
+                      {
+                        icon: <DeleteIcon />,
+                        color: "red",
+                        title: t("delete"),
+                        action: () => {
+                          setDeleteModal({ id: record.id });
+                        },
+                      },
+                    ]
+              }
+            />
+          </div>
         ),
       },
     ];
@@ -213,9 +219,10 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
                 <TableRow
                   key={item.id}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-                  onClick={() =>
-                    history.push(`/home/catalog/brands/${item.id}`)
-                  }
+                  onClick={() => {
+                    if (columns.length == 1) return;
+                    history.push(`/home/catalog/brands/${item.id}`);
+                  }}
                 >
                   {columns.map((col, i) => (
                     <TableCell
@@ -223,7 +230,7 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
                       align={`${columns.length == 1 ? "right" : "left"}`}
                     >
                       {col.render
-                        ? col.render(item, index)
+                        ? col.render(item, index, columns.length == 1)
                         : item[col.dataIndex].ru}
                     </TableCell>
                   ))}

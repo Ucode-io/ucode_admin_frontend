@@ -34,7 +34,6 @@ const Gallery = ({
       (image) => `${process.env.REACT_APP_MINIO_URL}/${image}`,
     );
   }, [gallery]);
-  console.log("imageLinks", imageLinks);
 
   const [loading, setLoading] = useState(false);
 

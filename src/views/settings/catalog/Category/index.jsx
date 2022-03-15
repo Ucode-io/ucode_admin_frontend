@@ -12,7 +12,18 @@ import AddIcon from "@material-ui/icons/Add";
 export default function Category() {
   const { t } = useTranslation();
   const history = useHistory();
+
+  const [search, setSearch] = useState("");
   const [createModal, setCreateModal] = useState(null);
+
+  let debounce = setTimeout(() => {}, 0);
+
+  const onSearch = (e) => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+      setSearch(e.target.value);
+    }, 300);
+  };
 
   return (
     <>
@@ -37,10 +48,14 @@ export default function Category() {
           placeholder={t("search")}
           size="middle"
           addonBefore={<SearchIcon />}
-          // onChange={onSearch}
+          onChange={onSearch}
         />
       </Filters>
-      <Table createModal={createModal} setCreateModal={setCreateModal} />
+      <Table
+        createModal={createModal}
+        setCreateModal={setCreateModal}
+        search={search}
+      />
     </>
   );
 }

@@ -11,7 +11,12 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { getV2Properties, deleteV2Property } from "services";
+import {
+  getV2Properties,
+  deleteV2Property,
+  postV2Property,
+  updateV2Property,
+} from "services";
 import Tag from "components/Tag";
 import SwitchColumns from "components/Filters/SwitchColumns";
 import ActionMenu from "components/ActionMenu";
@@ -19,8 +24,18 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { useHistory } from "react-router-dom";
 import Modal from "components/Modal";
+import * as yup from "yup";
+import { useFormik } from "formik";
+import Button from "components/Button";
+import Form from "components/Form/Index";
+import { Input } from "alisa-ui";
+import AddIcon from "@material-ui/icons/Add";
 
-export default function AttributesTable() {
+export default function AttributesTable({
+  createModal,
+  setCreateModal,
+  search,
+}) {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -31,14 +46,15 @@ export default function AttributesTable() {
   const [columns, setColumns] = useState([]);
   const [deleteModal, setDeleteModal] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(null);
 
   useEffect(() => {
     getItems(currentPage);
-  }, []);
+  }, [currentPage, search, limit]);
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Properties({ limit, page })
+    getV2Properties({ limit, page, search })
       .then((res) => {
         setItems({
           count: res.count,
@@ -124,6 +140,44 @@ export default function AttributesTable() {
     setColumns(_columns);
   }, []);
 
+  const onSubmit = (values) => {
+    const data = {
+      ...values,
+    };
+
+    setSaveLoading(true);
+    const selectedAction = createModal.id
+      ? updateV2Property(createModal.id, data)
+      : postV2Property(data);
+    selectedAction
+      .then((res) => {
+        getItems(currentPage);
+      })
+      .finally(() => {
+        setSaveLoading(false);
+        closeModal();
+      });
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      name: null,
+      created_at: null,
+    },
+    validationSchema: yup.object().shape({
+      name: yup.mixed().required(t("required.field.error")),
+      created_at: yup.mixed().required(t("required.field.error")),
+    }),
+    onSubmit,
+  });
+
+  const { values, handleChange, setFieldValue, handleSubmit } = formik;
+
+  const closeModal = () => {
+    setCreateModal(null);
+    formik.resetForm();
+  };
+
   return (
     <Card
       className="m-4"
@@ -184,6 +238,74 @@ export default function AttributesTable() {
         onConfirm={handleDeleteItem}
         loading={deleteLoading}
       />
+
+      <Modal
+        open={createModal}
+        title={t(createModal?.id ? "update" : "create")}
+        footer={null}
+        onClose={closeModal}
+      >
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 py-8">
+            <div>
+              <Form.Item formik={formik} name="base_price" label={t("price")}>
+                <Input
+                  type="number"
+                  id="base_price"
+                  value={values.base_price}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+            </div>
+          </div>
+
+          <div
+            className={`${
+              values?.type?.value === "fixed" ? "hidden" : " "
+            } grid grid-cols-1 sm:grid-cols-2 gap-x-3 py-8`}
+          >
+            <div>
+              <Form.Item
+                formik={formik}
+                name="base_distance"
+                label={t("base.distance")}
+              >
+                <Input
+                  type="number"
+                  id="base_distance"
+                  value={values.base_distance}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+            </div>
+            <div>
+              <Form.Item
+                formik={formik}
+                name="price_per_km"
+                label={t("price.per.km")}
+              >
+                <Input
+                  type="number"
+                  id="price_per_km"
+                  value={values.price_per_km}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              size="large"
+              loading={saveLoading}
+              icon={createModal?.id ? EditIcon : AddIcon}
+            >
+              {t(createModal?.id ? "update" : "add")}
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </Card>
   );
 }

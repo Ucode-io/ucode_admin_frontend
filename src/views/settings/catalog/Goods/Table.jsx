@@ -24,10 +24,14 @@ import {
   TableRow,
 } from "@material-ui/core";
 import moment from "moment";
+import SwitchColumns from "components/Filters/SwitchColumns";
 
-export default function MainTable({ createModal, setCreateModal }) {
+export default function MainTable({ createModal, setCreateModal, search }) {
   const { t } = useTranslation();
   const history = useHistory();
+
+  const [columns, setColumns] = useState([]);
+  const [limit, setLimit] = useState(10);
   const [items, setItems] = useState({});
   const [loader, setLoader] = useState(true);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -37,11 +41,11 @@ export default function MainTable({ createModal, setCreateModal }) {
 
   useEffect(() => {
     getItems(currentPage);
-  }, [currentPage]);
+  }, [currentPage, search, limit]);
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Goods({ limit: 10, page })
+    getV2Goods({ limit, page, search })
       .then((res) => {
         console.log(res);
         setItems({
@@ -100,11 +104,11 @@ export default function MainTable({ createModal, setCreateModal }) {
     formik.resetForm();
   };
 
-  const columns = [
+  const initialColumns = [
     {
       title: "№",
       key: "order-number",
-      render: (record, index) => (currentPage - 1) * 10 + index + 1,
+      render: (record, index) => (currentPage - 1) * limit + index + 1,
     },
     {
       title: t("good"),
@@ -123,12 +127,12 @@ export default function MainTable({ createModal, setCreateModal }) {
     },
     {
       title: t("income.price"),
-      key: "price",
+      key: "income.price",
       render: (record) => <>{record.in_price}</>,
     },
     {
       title: t("sales.price"),
-      key: "price",
+      key: "sales.price",
       render: (record) => <>{record.out_price}</>,
     },
     {
@@ -136,32 +140,47 @@ export default function MainTable({ createModal, setCreateModal }) {
       key: "created.date",
       render: (record) => <>{moment(record.created_at).format("DD-MM-YYYY")}</>,
     },
-    {
-      title: "",
-      key: "actions",
-      render: (record, _) => (
-        <div className="flex gap-2">
-          <ActionMenu
-            id={record.id}
-            actions={[
-              {
-                title: t("edit"),
-                color: "blue",
-                icon: <EditIcon />,
-                action: () => history.push(`/home/catalog/goods/${record.id}`),
-              },
-              {
-                title: t("delete"),
-                color: "red",
-                icon: <DeleteIcon />,
-                action: () => setDeleteModal({ id: record.id }),
-              },
-            ]}
-          />
-        </div>
-      ),
-    },
   ];
+
+  useEffect(() => {
+    var _columns = [
+      ...initialColumns,
+      {
+        title: (
+          <SwitchColumns
+            columns={initialColumns}
+            onChange={(val) =>
+              setColumns((prev) => [...val, prev[prev.length - 1]])
+            }
+          />
+        ),
+        key: t("actions"),
+        render: (record, _) => (
+          <div className="flex gap-2">
+            <ActionMenu
+              id={record.id}
+              actions={[
+                {
+                  title: t("edit"),
+                  color: "blue",
+                  icon: <EditIcon />,
+                  action: () =>
+                    history.push(`/home/settings/fares/${record.id}`),
+                },
+                {
+                  title: t("delete"),
+                  color: "red",
+                  icon: <DeleteIcon />,
+                  action: () => setDeleteModal({ id: record.id }),
+                },
+              ]}
+            />
+          </div>
+        ),
+      },
+    ];
+    setColumns(_columns);
+  }, []);
 
   const { values, handleChange, handleSubmit } = formik;
 
@@ -173,6 +192,9 @@ export default function MainTable({ createModal, setCreateModal }) {
           title={t("general.count")}
           count={items?.count}
           onChange={(pageNumber) => setCurrentPage(pageNumber)}
+          pageCount={limit}
+          onChangeLimit={(limitNumber) => setLimit(limitNumber)}
+          limit={limit}
         />
       }
     >

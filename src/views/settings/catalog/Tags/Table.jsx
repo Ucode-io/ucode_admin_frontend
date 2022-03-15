@@ -23,8 +23,9 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
+import SwitchColumns from "components/Filters/SwitchColumns";
 
-export default function MainTable({ createModal, setCreateModal }) {
+export default function MainTable({ createModal, setCreateModal, search }) {
   const { t } = useTranslation();
   const history = useHistory();
   const [items, setItems] = useState({});
@@ -33,14 +34,16 @@ export default function MainTable({ createModal, setCreateModal }) {
   const [deleteModal, setDeleteModal] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [saveLoading, setSaveLoading] = useState(null);
+  const [limit, setLimit] = useState(10);
+  const [columns, setColumns] = useState([]);
 
   useEffect(() => {
     getItems(currentPage);
-  }, [currentPage]);
+  }, [currentPage, limit, search]);
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Tags({ limit: 10, page })
+    getV2Tags({ limit, page, search })
       .then((res) => {
         console.log(res);
         setItems({
@@ -99,11 +102,11 @@ export default function MainTable({ createModal, setCreateModal }) {
     formik.resetForm();
   };
 
-  const columns = [
+  const initialColumns = [
     {
       title: "№",
       key: "order-number",
-      render: (record, index) => (currentPage - 1) * 10 + index + 1,
+      render: (record, index) => (currentPage - 1) * limit + index + 1,
     },
     {
       title: t("name"),
@@ -115,32 +118,48 @@ export default function MainTable({ createModal, setCreateModal }) {
       key: "color",
       render: (record) => t(record.color),
     },
-    {
-      title: "",
-      key: "actions",
-      render: (record, _) => (
-        <div className="flex gap-2">
+  ];
+
+  useEffect(() => {
+    const _columns = [
+      ...initialColumns,
+      {
+        title: (
+          <SwitchColumns
+            columns={initialColumns}
+            onChange={(val) =>
+              setColumns((prev) => [...val, prev[prev.length - 1]])
+            }
+          />
+        ),
+        key: t("actions"),
+        render: (record, _) => (
           <ActionMenu
             id={record.id}
             actions={[
               {
-                title: t("edit"),
-                color: "blue",
                 icon: <EditIcon />,
-                action: () => history.push(`/home/catalog/tags/${record.id}`),
+                color: "blue",
+                title: t("change"),
+                action: () => {
+                  history.push(`/home/catalog/brands/${record.id}`);
+                },
               },
               {
-                title: t("delete"),
-                color: "red",
                 icon: <DeleteIcon />,
-                action: () => setDeleteModal({ id: record.id }),
+                color: "red",
+                title: t("delete"),
+                action: () => {
+                  setDeleteModal({ id: record.id });
+                },
               },
             ]}
           />
-        </div>
-      ),
-    },
-  ];
+        ),
+      },
+    ];
+    setColumns(_columns);
+  }, []);
 
   const { values, handleChange, setFieldValue, handleSubmit } = formik;
 
@@ -152,6 +171,9 @@ export default function MainTable({ createModal, setCreateModal }) {
           title={t("general.count")}
           count={items?.count}
           onChange={(pageNumber) => setCurrentPage(pageNumber)}
+          pageCount={limit}
+          limit={limit}
+          onChangeLimit={(limitNumber) => setLimit(limitNumber)}
         />
       }
     >

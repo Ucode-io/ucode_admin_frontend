@@ -13,7 +13,18 @@ import { DownloadIcon, FIlterIcon } from "constants/icons";
 export default function Units() {
   const { t } = useTranslation();
   const history = useHistory();
+
+  const [search, setSearch] = useState("");
   const [createModal, setCreateModal] = useState(null);
+
+  let debounce = setTimeout(() => {}, 0);
+
+  const onSearch = (e) => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+      setSearch(e.target.value);
+    }, 300);
+  };
 
   const extraFilter = (
     <div className="flex gap-4">
@@ -66,10 +77,14 @@ export default function Units() {
           placeholder={t("search")}
           size="middle"
           addonBefore={<SearchIcon />}
-          // onChange={onSearch}
+          onChange={onSearch}
         />
       </Filters>
-      <Table createModal={createModal} setCreateModal={setCreateModal} />
+      <Table
+        createModal={createModal}
+        setCreateModal={setCreateModal}
+        search={search}
+      />
     </>
   );
 }

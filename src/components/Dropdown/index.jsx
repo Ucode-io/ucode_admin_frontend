@@ -1,12 +1,12 @@
-import React from "react"
-import { withStyles } from "@material-ui/core/styles"
-import Menu from "@material-ui/core/Menu"
-import Button from "../Buttons/index"
-import { searchIcon } from "../Header/index.jsx"
+import React from "react";
+import { withStyles } from "@material-ui/core/styles";
+import Menu from "@material-ui/core/Menu";
+import Button from "../Buttons/index";
+import { searchIcon } from "../Header/index.jsx";
 // import List from '@material-ui/core/List';
 // import ListItem from '@material-ui/core/ListItem';
-import Input from "../Input/index"
-import { Popover } from "@material-ui/core"
+import Input from "../Input/index";
+import { Popover } from "@material-ui/core";
 // import ListItemText from '@material-ui/core/ListItemText';
 
 const plusIcon = (
@@ -22,7 +22,7 @@ const plusIcon = (
       fill="white"
     />
   </svg>
-)
+);
 
 const ArrowIcon = (
   <svg
@@ -37,7 +37,7 @@ const ArrowIcon = (
       fill="#4094F7"
     />
   </svg>
-)
+);
 
 const StyledMenu = withStyles({
   paper: {
@@ -69,7 +69,7 @@ const StyledMenu = withStyles({
     }}
     {...props}
   />
-))
+));
 
 const StyledPropMenu = withStyles({
   paper: {
@@ -103,16 +103,16 @@ const StyledPropMenu = withStyles({
     }}
     {...props}
   />
-))
+));
 
 export default function CustomizedMenus(props) {
-  const [anchorEl, setAnchorEl] = React.useState(null)
-  const [dropList, setDropList] = React.useState(null)
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [dropList, setDropList] = React.useState(null);
   //   const classes = useStyles();
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const listRender = [
     {
@@ -139,7 +139,7 @@ export default function CustomizedMenus(props) {
     {
       title: "Цена заказа",
     },
-  ]
+  ];
 
   return (
     <div>
@@ -190,5 +190,5 @@ export default function CustomizedMenus(props) {
         </div>
       </StyledMenu>
     </div>
-  )
+  );
 }

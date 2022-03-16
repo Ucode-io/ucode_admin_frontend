@@ -68,7 +68,7 @@ export default function CreateClient() {
       last_name: "",
       phone: null,
       image: "",
-      client_type: null,
+      customer_type_id: null,
     }),
     [],
   );
@@ -78,7 +78,8 @@ export default function CreateClient() {
 
     return yup.object().shape({
       first_name: defaultSchema,
-
+      last_name: defaultSchema,
+      customer_type_id: defaultSchema,
       phone: yup
         .number()
         .typeError(t("required.field.error"))
@@ -97,6 +98,7 @@ export default function CreateClient() {
           last_name: res.name.split(" ")[1],
           phone: res.phone?.substring(4),
           image: res.image.split("/")[4],
+          customer_type_id: res.customer_type_id.split(" ")[2],
         });
       })
       .finally(() => setLoader(false));
@@ -132,7 +134,7 @@ export default function CreateClient() {
       image: values.image
         ? process.env.REACT_APP_MINIO_URL + "/" + values.image
         : undefined,
-      client_type: values.client_type?.value,
+      customer_type_id: values.customer_type_id?.value,
     };
     saveChanges(data);
   };

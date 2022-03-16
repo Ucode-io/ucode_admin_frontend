@@ -57,6 +57,10 @@ export const statusList = [
 
 export const statusTabList = [
   {
+    label: "Предзаказ",
+    id: "bf9cc968-367d-4391-93fa-f77eda2a7a99",
+  },
+  {
     label: "new",
     id: "986a0d09-7b4d-4ca9-8567-aa1c6d770505",
   },

@@ -1,7 +1,9 @@
 import { CircularProgress } from "@material-ui/core";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { YMaps, Map, Placemark } from "react-yandex-maps";
 import { mapDefaults, apikey } from "constants/mapDefaults";
+import { getNearestBranch } from "services";
+import axios from "../../../utils/axios";
 
 export default function MapContent({
   placemarkGeometry,
@@ -11,6 +13,7 @@ export default function MapContent({
   setMapChange,
   params,
   mapLoading,
+  setBranch,
 }) {
   const yandexMap = useRef(null);
 
@@ -27,6 +30,18 @@ export default function MapContent({
     }
     setPlacemarkGeometry(e.get("coords"));
     getAddress(yandexMap.current.ymaps, e);
+    getBranch(e);
+  };
+  const getBranch = (e) => {
+    console.log("first", e);
+    axios
+      .get(`${process.env.REACT_APP_AUTH_URL}/nearest-branch`, {
+        lat: e.get("coords")[0],
+        long: e.get("coords")[1],
+      })
+      .then((res) => {
+        setBranch(res);
+      });
   };
 
   return (

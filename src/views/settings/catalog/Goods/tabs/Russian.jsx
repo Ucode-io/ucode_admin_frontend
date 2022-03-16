@@ -6,7 +6,7 @@ import { divisibility, currencies } from "../api";
 import genSelectOption from "helpers/genSelectOption";
 import { useTranslation } from "react-i18next";
 
-export default function Uz({
+export default function Ru({
   formik,
   values,
   handleChange,
@@ -26,11 +26,11 @@ export default function Uz({
         </div>
         <div className="">
           <div>
-            <Form.Item formik={formik} name="title_uz">
+            <Form.Item formik={formik} name="title_ru">
               <Input
                 size="large"
-                id="title_uz"
-                value={values.title_uz}
+                id="title_ru"
+                value={values.title_ru}
                 onChange={handleChange}
               />
             </Form.Item>
@@ -58,10 +58,10 @@ export default function Uz({
         </div>
         <div className="">
           <div>
-            <Form.Item formik={formik} name="description_uz">
+            <Form.Item formik={formik} name="description_ru">
               <TextArea
-                id="description_uz"
-                {...formik.getFieldProps("description_uz")}
+                id="description_ru"
+                {...formik.getFieldProps("description_ru")}
               />
             </Form.Item>
           </div>
@@ -169,7 +169,7 @@ export default function Uz({
                     <Select
                       height={40}
                       id="unit"
-                      options={units.map((unit) => ({
+                      options={units?.map((unit) => ({
                         label: unit.title,
                         value: unit.id,
                       }))}

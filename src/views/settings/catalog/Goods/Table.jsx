@@ -140,7 +140,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
       render: (record) => <>{moment(record.created_at).format("DD-MM-YYYY")}</>,
     },
   ];
-  console.log(columns);
+
   useEffect(() => {
     var _columns = [
       ...initialColumns,

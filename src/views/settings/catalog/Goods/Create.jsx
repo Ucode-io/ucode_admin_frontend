@@ -75,15 +75,15 @@ export default function GoodsCreate() {
           getV2Brands({ page: 1, limit: 10 }),
           getV2Properties({ page: 1, limit: 10 }),
         ]);
-      tags = tags.tags.map((tag) => ({
+      tags = tags.tags?.map((tag) => ({
         label: tag.title.ru,
         value: tag.id,
       }));
-      categories = categories.categories.map((category) => ({
+      categories = categories.categories?.map((category) => ({
         label: category.title.ru,
         value: category.id,
       }));
-      measurements = measurements.measurements.map((measurement) => ({
+      measurements = measurements.measurements?.map((measurement) => ({
         ...measurement,
         label: measurement.title,
         value: measurement.id,
@@ -93,18 +93,21 @@ export default function GoodsCreate() {
         value: brand.id,
       }));
       setPropertyGroups(properties.property_groups);
-      var _properties = properties.property_groups.map((group) => ({
+      var _properties = properties.property_groups?.map((group) => ({
         label: group.title.ru,
         value: group.id,
       }));
-      var _propertyOptions = properties.property_groups.reduce((obj, group) => {
-        var options = group.options?.map((option) => ({
-          label: option.title.ru,
-          value: option.code,
-        }));
-        obj[group.id] = options;
-        return obj;
-      }, {});
+      var _propertyOptions = properties.property_groups?.reduce(
+        (obj, group) => {
+          var options = group.options?.map((option) => ({
+            label: option.title.ru,
+            value: option.code,
+          }));
+          obj[group.id] = options;
+          return obj;
+        },
+        {},
+      );
       // dispatchSelects({
       //   type: "Update",
       //   payload: {
@@ -368,7 +371,10 @@ export default function GoodsCreate() {
                     />
                   </TabPanel>
                   <TabPanel value={value} index={1} dir={theme.direction}>
-                    <ConnectedGoods />
+                    <ConnectedGoods
+                      formik={formik}
+                      initialValues={initialValues}
+                    />
                   </TabPanel>
                 </SwipeableViews>
               </form>

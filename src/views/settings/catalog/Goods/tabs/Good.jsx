@@ -16,9 +16,9 @@ import AddIcon from "@material-ui/icons/Add";
 import { makeStyles } from "@material-ui/core/styles";
 import Gallery from "components/Gallery";
 import genSelectOption from "helpers/genSelectOption";
-import Uz from "./Uz";
-import En from "./En";
-import Ru from "./Ru";
+import Uzbek from "./Uzbek";
+import English from "./English";
+import Russian from "./Russian";
 import { FieldArray } from "formik";
 import DeleteIcon from "@material-ui/icons/Delete";
 
@@ -135,7 +135,7 @@ export default function Good({
             onChangeIndex={handleChangeIndex}
           >
             <TabPanel value={value} index={0} dir={theme.direction}>
-              <Ru
+              <Russian
                 formik={formik}
                 values={values}
                 handleChange={handleChange}
@@ -147,7 +147,7 @@ export default function Good({
               />
             </TabPanel>
             <TabPanel value={value} index={1} dir={theme.direction}>
-              <En
+              <English
                 formik={formik}
                 values={values}
                 handleChange={handleChange}
@@ -159,7 +159,7 @@ export default function Good({
               />
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
-              <Uz
+              <Uzbek
                 formik={formik}
                 values={values}
                 handleChange={handleChange}

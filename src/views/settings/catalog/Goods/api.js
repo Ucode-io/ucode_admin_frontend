@@ -18,6 +18,9 @@ var formFields = {
   accuracy: "",
   property_groups: [{ property: null, property_option: null }],
   code: "", // artikul
+  favorite_ids: "",
+  combo_ids: "",
+  variant_ids: [],
 };
 
 export var divisibility = ["divisible", "nondivisible"];

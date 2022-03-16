@@ -1,18 +1,19 @@
-import "./style.scss"
-import { Modal } from "@material-ui/core"
-import { makeStyles } from "@material-ui/core/styles"
-import Backdrop from "@material-ui/core/Backdrop"
-import Fade from "@material-ui/core/Fade"
-import Button from "../../components/Button"
-import { useTranslation } from "react-i18next"
-import WarningRoundedIcon from "@material-ui/icons/WarningRounded"
+import "./style.scss";
+import { Modal } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import Backdrop from "@material-ui/core/Backdrop";
+import Fade from "@material-ui/core/Fade";
+import Button from "../../components/Button";
+import { useTranslation } from "react-i18next";
+import WarningRoundedIcon from "@material-ui/icons/WarningRounded";
+
 const useStyles = makeStyles((theme) => ({
   modal: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
-}))
+}));
 
 const CModal = ({
   open = false,
@@ -32,8 +33,8 @@ const CModal = ({
   header = <div></div>,
   ...props
 }) => {
-  const classes = useStyles()
-  const { t } = useTranslation()
+  const classes = useStyles();
+  const { t } = useTranslation();
 
   const buttons = [
     <Button
@@ -60,7 +61,7 @@ const CModal = ({
     >
       {confirm || "Да"}
     </Button>,
-  ]
+  ];
 
   return (
     <Modal
@@ -105,7 +106,7 @@ const CModal = ({
         </div>
       </Fade>
     </Modal>
-  )
-}
+  );
+};
 
-export default CModal
+export default CModal;

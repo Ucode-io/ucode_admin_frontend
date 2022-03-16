@@ -169,7 +169,7 @@ export default function En({
                     <Select
                       height={40}
                       id="unit"
-                      options={units.map((unit) => ({
+                      options={units?.map((unit) => ({
                         label: unit.title,
                         value: unit.id,
                       }))}

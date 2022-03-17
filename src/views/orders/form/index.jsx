@@ -141,6 +141,7 @@ export default function CreateClient() {
   const dispatch = useDispatch();
 
   const onSubmit = async (values) => {
+    console.log("values", values)
     setSaveLoading(true);
 
     const _values = { ...values };
@@ -210,6 +211,7 @@ export default function CreateClient() {
         setSaveLoading(false);
       }
     } else {
+      console.log("order", data)
       postOrder(data)
         .then((res) => history.push("/home/orders"))
         .finally(() => setSaveLoading(false));
@@ -423,6 +425,7 @@ export default function CreateClient() {
               icon={SaveIcon}
               type="submit"
               loading={saveLoading}
+              onClick={() => {console.log(formik.values)}}
             >
               {t("save")}
             </Button>,

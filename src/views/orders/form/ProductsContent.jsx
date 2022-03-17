@@ -42,8 +42,6 @@ export default function ProductContent({
   const [type, setType] = useState('cash')
   const [ingredients, setIngredients] = useState([]);
   let debounce = setTimeout(() => {}, 0)
-  console.log("formik", formik.values)
-
 
   const modalFormik = useFormik({
     initialValues: {
@@ -61,7 +59,6 @@ export default function ProductContent({
 
 
   const { values, handleChange, setFieldValue } = modalFormik;
-  console.log("modalFormik", modalFormik.values)
 
   useEffect(() => {
     fetchCouriers()

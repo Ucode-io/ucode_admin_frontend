@@ -61,6 +61,7 @@ export default function ProductContent({
 
 
   const { values, handleChange, setFieldValue } = modalFormik;
+  console.log("modalFormik", modalFormik.values)
 
   useEffect(() => {
     fetchCouriers()
@@ -72,7 +73,7 @@ export default function ProductContent({
           setProducts(
             res.products
               ? res.products.map((elm) => ({
-                  label: elm.name[lang],
+                  label: elm.name,
                   value: elm,
                 }))
               : [],
@@ -250,14 +251,10 @@ export default function ProductContent({
     },
   ]
 
-  const checkType = ( ) => {
-
-  }
-
   const cardFooter = (
     <div className="grid grid-cols-2 my-3">
       <div style={{ paddingRight: 26 }}>
-        <div className="w-full flex items-start">
+        <div className="w-full flex items-start my-8">
           <div className="w-3/12 input-label">
             <span>{t("payment.types")}</span>
           </div>
@@ -336,7 +333,7 @@ export default function ProductContent({
           <div className="flex gap-4">
             <div>
               <span className="input-label mb-1">{t("name")}</span>
-              <Input value={elm?.name[lang]} disabled />
+              <Input value={elm?.name} disabled />
             </div>
 
             {elm.option?.name ? (
@@ -458,7 +455,10 @@ export default function ProductContent({
             <Select
               options={products}
               value={values.product}
-              onChange={(val) => setFieldValue("product", val)}
+              onChange={(val) => {
+                setFieldValue("product", val)
+                console.log("product", val)
+              }}
             />
           </Form.Item>
 

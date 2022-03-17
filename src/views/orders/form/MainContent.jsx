@@ -95,6 +95,7 @@ export default function MainContent({
   };
 
   const onClientTypeSelect = (newValue, actionMeta) => {
+    console.log('newValue', newValue)
     setFieldValue("client_type", { ...newValue, action: actionMeta.action });
   };
 
@@ -318,6 +319,7 @@ export default function MainContent({
               <div className="w-2/3">
                 <Form.Item formik={formik} name="restaurant">
                   <Input
+                    disabled
                     id="restaurant"
                     value={values.restaurant}
                     onChange={handleChange}

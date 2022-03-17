@@ -143,7 +143,7 @@ export default function CategoryCreate() {
       route: `/home/catalog/category`,
     },
     {
-      title: id ? formik?.values.first_name : t("create"),
+      title: id ? t("edit") : t("create"),
     },
   ];
 

@@ -3,7 +3,8 @@ var delta = 500;
 var lastPressed;
 
 function isValid(key) {
-  if (!(lastPressed == "t" && key == "Alt")) return false;
+  if (key !== "Alt" || key !== "t" || lastPressed !== "Alt" || key !== "t")
+    return false;
   var now = new Date();
   if (now - lastKeypressTime <= delta) {
     lastKeypressTime = now;
@@ -12,11 +13,12 @@ function isValid(key) {
   return true;
 }
 
-function keyHandler(event, cb) {
-  if (isValid(event.key)) {
+function keyHandler(e, cb) {
+  console.log(e.key);
+  if (isValid(e.key)) {
     cb();
   }
-  lastPressed = event.key;
+  lastPressed = e.key === "t" || e.key === "Alt" ? e.key : null;
 }
 
 var count = 0;

@@ -114,7 +114,7 @@ export default function TagsCreate() {
       route: `/home/catalog/tags`,
     },
     {
-      title: t("create"),
+      title: params.id ? t("edit") : t("create"),
     },
   ];
 

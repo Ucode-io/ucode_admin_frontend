@@ -121,7 +121,7 @@ export default function AttributesCreate() {
     optionsState.forEach(({ code, title }) => {
       if (code && title) {
         options.push({
-          code: +code,
+          code,
           title: { en: title, ru: title, uz: title },
         });
       }
@@ -171,7 +171,7 @@ export default function AttributesCreate() {
       route: `/home/catalog/attributes`,
     },
     {
-      title: t("create"),
+      title: params.id ? t("edit") : t("create"),
     },
   ];
 

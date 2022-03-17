@@ -2,11 +2,15 @@ var lastKeypressTime = 0;
 var delta = 500;
 var lastPressed;
 
+var map = new Map([
+  ["Alt", "t"],
+  ["t", "Alt"],
+]);
+
 function isValid(key) {
-  if (key !== "Alt" || key !== "t" || lastPressed !== "Alt" || key !== "t")
-    return false;
   var now = new Date();
-  if (now - lastKeypressTime <= delta) {
+  if (map.get(lastPressed) !== key) return false;
+  if (now - lastKeypressTime >= delta) {
     lastKeypressTime = now;
     return false;
   }
@@ -14,7 +18,6 @@ function isValid(key) {
 }
 
 function keyHandler(e, cb) {
-  console.log(e.key);
   if (isValid(e.key)) {
     cb();
   }

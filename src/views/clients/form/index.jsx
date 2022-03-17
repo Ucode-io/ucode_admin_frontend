@@ -1,6 +1,6 @@
 import Card from "components/Card";
 import Form from "components/Form/Index";
-import { Input } from "alisa-ui";
+import { Input, Select } from "alisa-ui";
 import { useTranslation } from "react-i18next";
 import numberToPrice from "helpers/numberToPrice";
 import ClientCreateCard from "components/ClientCard/Create";
@@ -9,15 +9,12 @@ import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import MoneyOffIcon from "@material-ui/icons/MoneyOff";
 import FunctionsIcon from "@material-ui/icons/Functions";
 import Gallery from "components/Gallery";
-import Select from "components/Select";
 import { useParams } from "react-router-dom";
-import { useRef } from "react";
 
 export default function Client({ formik, customerTypeOption }) {
   const { t } = useTranslation();
   const { values, handleChange, setFieldValue } = formik;
   const params = useParams();
-  const inputRef = useRef(null);
 
   return (
     <>
@@ -126,7 +123,6 @@ export default function Client({ formik, customerTypeOption }) {
                     />
                   </Form.Item>
                 </div>
-                {/* <IconButton icon={<AddIcon />} /> */}
               </div>
             </div>
 
@@ -138,12 +134,12 @@ export default function Client({ formik, customerTypeOption }) {
               <div className="w-3/4">
                 <Form.Item formik={formik} name="customer_type_id">
                   <Select
+                    id="customer_type_id"
                     height={40}
                     options={customerTypeOption}
                     value={values.customer_type_id}
                     onChange={(val) => {
-                      setFieldValue("customer_type_id", val);
-                      console.log(val);
+                      setFieldValue("customer_type_id", val.value);
                     }}
                   />
                 </Form.Item>

@@ -104,6 +104,8 @@ function Select({
     );
   };
 
+  console.log("asdas");
+
   return (
     <div
       style={style}

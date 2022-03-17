@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import Card from "../Card";
 import Button from "../Button";
@@ -6,7 +6,7 @@ import Switch from "../Switch";
 
 //material
 import Menu from "@material-ui/core/Menu";
-import { withStyles } from "@material-ui/core";
+import { Popover, withStyles } from "@material-ui/core";
 import TableChartIcon from "@material-ui/icons/TableChart";
 
 const StyledMenu = withStyles({
@@ -20,55 +20,26 @@ const StyledMenu = withStyles({
   list: {
     padding: 0,
   },
-})((props) => (
-  <Menu
-    elevation={0}
-    getContentAnchorEl={null}
-    anchorOrigin={{
-      vertical: "bottom",
-      horizontal: "center",
-    }}
-    transformOrigin={{
-      vertical: "top",
-      horizontal: "center",
-    }}
-    {...props}
-  />
-));
-
-const swtichTypes = {
-  checked: (
-    <div
-      className="w-9 h-5 bg-midgray-5 flex items-center justify-center"
-      style={{ borderRadius: 10 }}
-    >
-      <span
-        style={{
-          height: 2,
-          width: 12,
-          backgroundColor: "#fff",
-          borderRadius: 1,
+})(
+  forwardRef((props, ref) => {
+    return (
+      <Menu
+        elevation={0}
+        getContentAnchorEl={null}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
         }}
-      ></span>
-    </div>
-  ),
-  allChecked: (
-    <div
-      className="w-9 h-5 bg-blue-500 flex items-center justify-center"
-      style={{ borderRadius: 10 }}
-    >
-      {/* <span style={{ height: 2, width: 12, backgroundColor: '#fff', borderRadius: 1 }}></span> */}
-    </div>
-  ),
-  unChecked: (
-    <div
-      className="w-9 h-5 bg-midgray-5 flex items-center justify-center"
-      style={{ borderRadius: 10 }}
-    >
-      {/* <span style={{ height: 2, width: 12, backgroundColor: '#fff', borderRadius: 1 }}></span> */}
-    </div>
-  ),
-};
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        {...props}
+        ref={ref}
+      />
+    );
+  }),
+);
 
 export default function SwitchColumns({ columns = [], onChange = () => {} }) {
   const { t } = useTranslation();
@@ -119,7 +90,6 @@ export default function SwitchColumns({ columns = [], onChange = () => {} }) {
     >
       <div>{element.title}</div>
       <Switch
-        // disabled
         checked={!element.hide}
         onChange={(val) => onSwitchChange(val, element.key)}
       />
@@ -129,7 +99,7 @@ export default function SwitchColumns({ columns = [], onChange = () => {} }) {
   return (
     <div className="cursor-pointer transition-all duration-100">
       <div
-        className="fill-current text-primary cursor-pointer flex justify-end mr-1"
+        className="fill-current text-primary cursor-pointer"
         onClick={(e) => setAnchorEl(e.currentTarget)}
       >
         <TableChartIcon />
@@ -153,7 +123,7 @@ export default function SwitchColumns({ columns = [], onChange = () => {} }) {
           title={title}
         >
           {data.map((elm) => (
-            <div key={elm.value}>
+            <div key={elm.key + "-col"}>
               <ItemContainer element={elm} />
             </div>
           ))}

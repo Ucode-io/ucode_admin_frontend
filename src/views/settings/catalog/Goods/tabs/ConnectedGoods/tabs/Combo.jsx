@@ -25,7 +25,7 @@ import {
   arrayMove,
 } from "react-sortable-hoc";
 import Select from "components/Select";
-import genSelectOption from "helpers/genSelectOption";
+import numberToPrice from "helpers/numberToPrice";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -107,8 +107,6 @@ export default function Recommended({ formik, initialValues }) {
     );
   });
 
-  console.log(formik.values);
-
   const getItems = useCallback(
     (page) => {
       setIsLoading(true);
@@ -132,7 +130,14 @@ export default function Recommended({ formik, initialValues }) {
   const handleDeleteItem = (e, i) => {
     setDeleteLoading(true);
     deleteProduct(deleteModal.id);
-    getItems(currentPage);
+    setItems((items) => ({
+      count: items.count - 1,
+      data: items.data.filter((item) => item.id !== deleteModal.id),
+    }));
+    formik.setFieldValue(
+      "variant_ids",
+      formik.values.variant_ids.filter((id) => id !== deleteModal.id),
+    );
     setDeleteModal(null);
     setDeleteLoading(false);
   };
@@ -140,7 +145,14 @@ export default function Recommended({ formik, initialValues }) {
   const handleAddItem = (e, i) => {
     setLoading(true);
     addProduct(selectedGoods);
-    getItems(currentPage);
+    setItems((items) => ({
+      count: items.count + selectedGoods.length,
+      data: [...items.data, ...selectedGoods],
+    }));
+    formik.setFieldValue(
+      "variant_ids",
+      formik.values.variant_ids.concat(selectedGoods),
+    );
     setAddModal(null);
     setLoading(false);
   };
@@ -159,19 +171,19 @@ export default function Recommended({ formik, initialValues }) {
         render: () => <DragIndicatorIcon />,
       },
       {
+        title: t("product.image"),
+        key: "product-image",
+        render: (record) => record.image,
+      },
+      {
         title: t("product.name"),
         key: "product_name",
         render: (record) => record.name,
       },
       {
-        title: t("vendor_code"),
-        key: "vendor_code",
-        render: (record) => record.vendor_code,
-      },
-      {
         title: t("price"),
         key: "price",
-        render: (record) => record.price,
+        render: (record) => numberToPrice(record.price),
       },
     ];
   }, [t]);
@@ -183,7 +195,7 @@ export default function Recommended({ formik, initialValues }) {
         title: t("action"),
         key: t("actions"),
         render: (record, _, disable) => (
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-center">
             <span
               className="cursor-pointer d-block border rounded-md p-2"
               onClick={() => setDeleteModal({ id: record.id })}
@@ -200,6 +212,14 @@ export default function Recommended({ formik, initialValues }) {
   useEffect(() => {
     getItems(currentPage);
   }, [currentPage, limit, getItems]);
+
+  useEffect(() => {
+    var rest = selectedGoods.map((good) => good.id);
+    formik.setFieldValue("variant_ids", [
+      ...formik.values.variant_ids,
+      ...rest,
+    ]);
+  }, [selectedGoods]);
 
   return (
     <Card
@@ -246,7 +266,7 @@ export default function Recommended({ formik, initialValues }) {
         open={addModal}
         onConfirm={handleAddItem}
         onClose={closeModal}
-        loading={deleteLoading}
+        loading={addLoading}
         width={700}
         title={t("title")}
         isWarning={false}
@@ -264,7 +284,6 @@ export default function Recommended({ formik, initialValues }) {
           }))}
           value={selectedGoods}
           onChange={(val) => {
-            // formik.setFieldValue("variant_ids", val);
             setSelectedGoods(val);
           }}
         />

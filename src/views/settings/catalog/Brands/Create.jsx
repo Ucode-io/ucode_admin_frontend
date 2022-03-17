@@ -91,7 +91,7 @@ export default function BrandsCreate() {
       route: `/home/catalog/brands`,
     },
     {
-      title: t("create"),
+      title: params.id ? t("edit") : t("create"),
     },
   ];
 

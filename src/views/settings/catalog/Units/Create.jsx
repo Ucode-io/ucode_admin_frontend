@@ -101,7 +101,7 @@ export default function UnitsCreate() {
       route: `/home/catalog/units`,
     },
     {
-      title: t("create"),
+      title: params.id ? t("edit") : t("create"),
     },
   ];
 

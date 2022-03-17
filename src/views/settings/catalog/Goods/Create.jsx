@@ -273,7 +273,7 @@ export default function GoodsCreate() {
       route: `/home/catalog/goods`,
     },
     {
-      title: id ? initialValues?.title?.ru : t("create"),
+      title: id ? t("edit") : t("create"),
     },
   ];
 

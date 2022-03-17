@@ -1,12 +1,12 @@
-import React, { useState } from "react"
-import Menu from "@material-ui/core/Menu"
-import ButtonMaterial from "@material-ui/core/Button"
-import MoreHorizIcon from "@material-ui/icons/MoreHoriz"
-import MenuItem from "@material-ui/core/MenuItem"
-import IconButton from "../Button/IconButton"
-import { withStyles, makeStyles, createStyles } from "@material-ui/core"
+import React, { useState } from "react";
+import Menu from "@material-ui/core/Menu";
+import ButtonMaterial from "@material-ui/core/Button";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import MenuItem from "@material-ui/core/MenuItem";
+import IconButton from "../Button/IconButton";
+import { withStyles, makeStyles, createStyles } from "@material-ui/core";
 
-import "./style.scss"
+import "./style.scss";
 
 const StyledMenu = withStyles((theme) => ({
   root: {
@@ -14,32 +14,31 @@ const StyledMenu = withStyles((theme) => ({
       padding: 0,
     },
   },
-}))(Menu)
+}))(Menu);
 
 const useStyles = makeStyles(() =>
   createStyles({
     list: {
       padding: "0",
     },
-  })
-)
+  }),
+);
 
 export default function ActionMenu({ actions = [], id }) {
-  const [anchorEl, setAnchorEl] = useState(null)
-  const classes = useStyles()
-
+  const [anchorEl, setAnchorEl] = useState(null);
+  const classes = useStyles();
   const handleClick = (event, id) => {
-    event.stopPropagation()
+    event.stopPropagation();
     setAnchorEl({
       element: event.currentTarget,
       id,
-    })
-  }
+    });
+  };
 
   const handleClose = (e) => {
-    e.stopPropagation()
-    setAnchorEl(null)
-  }
+    e.stopPropagation();
+    setAnchorEl(null);
+  };
 
   return (
     <div className="ActionMenu">
@@ -67,9 +66,9 @@ export default function ActionMenu({ actions = [], id }) {
               padding: "8px 16px 8px 8px",
             }}
             onClick={(e) => {
-              e.stopPropagation()
-              elm.action(id, e)
-              handleClose(e)
+              e.stopPropagation();
+              elm.action(id, e);
+              handleClose(e);
             }}
           >
             <IconButton color={elm.color} icon={elm.icon} />
@@ -78,5 +77,5 @@ export default function ActionMenu({ actions = [], id }) {
         ))}
       </Menu>
     </div>
-  )
+  );
 }

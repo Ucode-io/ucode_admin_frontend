@@ -106,11 +106,11 @@ const CompanyCategoryCreate = Loadable({
   loading: FullScreenLoader,
 });
 const Banner = Loadable({
-  loader: () => import("views/catalog/banner"),
+  loader: () => import("views/marketing/banners"),
   loading: FullScreenLoader,
 });
 const BannerCreate = Loadable({
-  loader: () => import("views/catalog/banner/form"),
+  loader: () => import("views/marketing/banners/form"),
   loading: FullScreenLoader,
 });
 const Courier = Loadable({

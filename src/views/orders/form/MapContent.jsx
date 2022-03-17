@@ -33,13 +33,14 @@ export default function MapContent({
     getBranch(e);
   };
   const getBranch = (e) => {
-    console.log("first", e);
+    console.log("first",  e.get("coords")[0]);
     axios
       .get(`${process.env.REACT_APP_AUTH_URL}/nearest-branch`, {
         lat: e.get("coords")[0],
         long: e.get("coords")[1],
       })
       .then((res) => {
+        console.log("branches", res)
         setBranch(res);
       });
   };

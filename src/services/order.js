@@ -12,8 +12,8 @@ export const postOrder = (data, params) =>
     method: "post",
     url: "/ondemand-order",
     data,
-    params,
-    headers: { shipper_id: "a3361f16-3076-4d50-83bd-38cc9dede994" },
+    params
+    // headers: { shipper_id: "a3361f16-3076-4d50-83bd-38cc9dede994" },
   });
 export const updateOrder = (order_id, data, params) =>
   request({ method: "put", url: `/order/${order_id}`, data, params });

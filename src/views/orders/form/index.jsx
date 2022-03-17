@@ -48,6 +48,7 @@ export default function CreateClient() {
   const [saveLoading, setSaveLoading] = useState(false);
   const [shippers, setShippers] = useState([]);
   const [branches, setBranches] = useState([]);
+  const [customers, setCustomers] = useState([])
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [placemarkGeometry, setPlacemarkGeometry] = useState([]);
   const [deliveryPrice, setDeliveryPrice] = useState(0);
@@ -124,6 +125,7 @@ export default function CreateClient() {
           })),
         )
         .catch((err) => console.log(err));
+      setCustomers(_customers)
 
       const _deliveryPrice = await getDeliveryPrice()
         .then((res) => res.price)
@@ -201,7 +203,6 @@ export default function CreateClient() {
           },
           values.shipper.value,
         );
-
         history.push("/home/orders");
       } catch (e) {
         console.log(e);

@@ -9,10 +9,10 @@ import IconButton from "components/Button/IconButton";
 import Modal from "components/Modal";
 import { useFormik } from "formik";
 // import * as yup from "yup";
-import Select from "components/Select";
+import Select, {customStyles} from "components/Select";
 import TextArea from "components/Textarea";
 import Button from "components/Button";
-import { getProducts, getOneProduct } from "services";
+import {getProducts, getOneProduct, getCouriers} from "services";
 import { RadioGroup, Radio } from "components/Radio";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import DriveEtaIcon from "@material-ui/icons/DriveEta";
@@ -22,6 +22,7 @@ import paymeIcon from "assets/icons/image 4.png";
 import clickIcon from "assets/icons/image 5.png";
 import bankIcon from "assets/icons/image 7.png";
 import numberToPrice from "helpers/numberToPrice";
+import CreatableSelect from "react-select/creatable";
 
 export default function ProductContent({
   formik,
@@ -36,8 +37,13 @@ export default function ProductContent({
 
   const [modal, setModal] = useState(null);
   const [products, setProducts] = useState([]);
+  const [couriers, setCouriers] = useState([]);
   const [options, setOptions] = useState([]);
+  const [type, setType] = useState('cash')
   const [ingredients, setIngredients] = useState([]);
+  let debounce = setTimeout(() => {}, 0)
+  console.log("formik", formik.values)
+
 
   const modalFormik = useFormik({
     initialValues: {
@@ -53,12 +59,15 @@ export default function ProductContent({
     onSubmit,
   });
 
+
   const { values, handleChange, setFieldValue } = modalFormik;
 
   useEffect(() => {
-    const menu_id = formik?.values?.branch?.elm?.menu_id;
-    if (menu_id) {
-      getProducts({ limit: 1000, menu_id })
+    fetchCouriers()
+  }, [])
+
+  useEffect(() => {
+      getProducts({ limit: 1000 })
         .then((res) =>
           setProducts(
             res.products
@@ -70,8 +79,7 @@ export default function ProductContent({
           ),
         )
         .catch((err) => console.log(err));
-    }
-  }, [formik?.values?.branch?.elm?.menu_id]);
+  }, [formik?.values?.branch?.elm]);
 
   useEffect(() => {
     if (shipperId && values.product?.value?.id) {
@@ -192,6 +200,27 @@ export default function ProductContent({
     }
   }
 
+  const fetchCouriers = (search) => {
+    getCouriers({limit: 10, search}).then(res => {
+      const _couriers = res.couriers?.map((elm) => ({
+        label: elm.first_name + elm.last_name,
+        value: elm.id,
+      }));
+      setCouriers(_couriers)
+    })
+        .catch(err => console.log(err))
+  }
+  const onSearchCourier = (inputValue, actionMeta) => {
+    clearTimeout(debounce)
+    debounce = setTimeout(() => {
+      fetchCouriers(inputValue);
+    },300)
+  };
+
+  const onCourierSelect = (newValue, actionMeta) => {
+    formik.setFieldValue("courier", { ...newValue, action: actionMeta.action });
+  };
+
   const handleRemoveProduct = (index) => {
     setSelectedProducts((prev) => prev.filter((elm, i) => index !== i));
   };
@@ -202,6 +231,29 @@ export default function ProductContent({
     );
   };
 
+  const payments = [
+    {
+      type: "cash",
+      img: cashIcon,
+    },
+    {
+      type: "payme",
+      img: paymeIcon,
+    },
+    {
+      type: "click",
+      img: clickIcon,
+    },
+    {
+      type: "transfer",
+      img: bankIcon,
+    },
+  ]
+
+  const checkType = ( ) => {
+
+  }
+
   const cardFooter = (
     <div className="grid grid-cols-2 my-3">
       <div style={{ paddingRight: 26 }}>
@@ -210,22 +262,16 @@ export default function ProductContent({
             <span>{t("payment.types")}</span>
           </div>
           <div className="w-9/12">
-            <Form.Item formik={formik} name="name">
               <div className="flex gap-2">
-                <div className="w-3/12 h-10 border bg-blue-200 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={cashIcon} alt="click" className="h-6" />
-                </div>
-                <div className="w-3/12 h-10 border bg-gray-50 hover:bg-blue-50 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={paymeIcon} alt="click" className="h-6" />
-                </div>
-                <div className="w-3/12 h-10 border bg-gray-50 hover:bg-blue-50 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={clickIcon} alt="click" className="h-5" />
-                </div>
-                <div className="w-3/12 h-10 border bg-gray-50 hover:bg-blue-50 cursor-pointer border-bordercolor rounded-md py-2 flex justify-center">
-                  <img src={bankIcon} alt="click" className="h-6" />
-                </div>
+                {
+                  payments.map((item, id) => <div
+                          onClick={() => setType(item.type)}
+                          className={`w-3/12 h-10 border bg-gray-50  ${item.type === type ? "bg-blue-200" : ''} cursor-pointer border-bordercolor rounded-md py-2 flex justify-center`}>
+                        <img src={item.img} alt="click" className="h-6"/>
+                      </div>
+                  )
+                }
               </div>
-            </Form.Item>
           </div>
         </div>
         <div className="flex">
@@ -233,8 +279,20 @@ export default function ProductContent({
             <span>Курьер</span>
           </div>
           <div className="w-2/3">
-            <Form.Item formik={formik}>
-              <Select id="courier" placeholder="Курьер" />
+            <Form.Item formik={formik} name="courier">
+              <CreatableSelect
+                  isClearable
+                  options={couriers}
+                  value={formik.values.courier}
+                  formatCreateLabel={(inputText) =>
+                      `${t("create")} "${inputText}"`
+                  }
+                  styles={customStyles({})}
+                  onChange={onCourierSelect}
+                  onInputChange={onSearchCourier}
+                  placeholder={t("courier")}
+                  className="react-select-input"
+              />
             </Form.Item>
           </div>
         </div>

@@ -181,7 +181,7 @@ export default function CreateClient() {
 
     if (params.id) {
       try {
-        data.shipper_id = values.shipper.value;
+        data.shipper_id = values?.shipper?.value;
         await updateOrder(params.id, data);
         await changeOrderStatus(
           params.id,
@@ -189,9 +189,9 @@ export default function CreateClient() {
             status_id: "ccb62ffb-f0e1-472e-bf32-d130bea90617",
             description: "new order updated",
           },
-          values.shipper.value,
+          values?.shipper?.value,
         );
-        history.push("/home/orders?tab=2");
+        history.push("/home/orders");
       } catch (e) {
         console.log(e);
       } finally {
@@ -278,18 +278,20 @@ export default function CreateClient() {
     }
     getOneOrder(params.id)
       .then((res) => {
-        const client = _customers.find((elm) => elm.value === res.client_id);
         setCreatedTime(res.created_at);
         setRegionId(res.region_id);
+        console.log("res", res);
         formik.setValues({
-          shipper: {
-            label: res.shipper_name,
-            value: res.shipper_id,
-          },
-          client: client,
-          client_name: client?.elm?.name ?? "",
+          // client: res.client_name ?? "",
           is_courier_call: res.is_courier_call,
           description: res.description,
+          client: res.client_phone_number
+            ? {
+                label: res.client_phone_number + ` (${res.client_name})`,
+                value: res.client_id,
+              }
+            : null,
+          client_name: res.client_name,
           apartment: res.apartment,
           building: res.building,
           floor: res.floor,
@@ -312,7 +314,6 @@ export default function CreateClient() {
             value: res.steps[0].id,
           },
         });
-        formik.setFieldValue("client", client);
         setPlacemarkGeometry([res.to_location.lat, res.to_location.long]);
         setSelectedProducts(res.steps[0].products);
         setDeliveryPrice(res.delivery_price);

@@ -366,13 +366,6 @@ export default function ProductContent({
               <></>
             )}
           </div>
-          {console.log(
-            "val",
-            elm.price,
-            elm.optionPrice,
-            elm.optionChildPrice,
-            elm.ingredientsPrice,
-          )}
           <div className="flex gap-4">
             <div>
               <span className="input-label mb-1">{t("price")}</span>

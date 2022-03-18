@@ -26,6 +26,7 @@ import {
 } from "react-sortable-hoc";
 import numberToPrice from "helpers/numberToPrice";
 import Async from "components/Select/Async";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -52,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Recommended({ formik }) {
   const { t } = useTranslation();
   const classes = useStyles();
+  const params = useParams();
 
   const { setFieldValue, values } = formik;
 
@@ -121,16 +123,16 @@ export default function Recommended({ formik }) {
     (input, cb) => {
       getV2Goods({ limit, page: currentPage, search: input })
         .then((res) => {
-          cb(
-            res.products?.map((product) => ({
-              label: product.title?.ru,
-              value: product.id,
-            })),
-          );
+          var products = res.products?.map((product) => ({
+            label: product.title?.ru,
+            value: product.id,
+          }));
+          products = products.filter((product) => product.value !== params.id);
+          cb(products);
         })
         .catch((err) => console.log(err));
     },
-    [currentPage, limit],
+    [currentPage, limit, params.id],
   );
 
   const getItems = useCallback(
@@ -247,8 +249,8 @@ export default function Recommended({ formik }) {
   var products = useMemo(() => {
     var ids = [];
     for (let i = 0; i < values?.favorite_ids.length; i++) {
-      for (let j = 0; j < items?.data.length; j++) {
-        if (items?.data[j]?.id === values?.favorite_ids[i]) {
+      for (let j = 0; j < items?.data?.length; j++) {
+        if (items?.data[j]?.id === values?.favorite_ids[i].id) {
           ids.push(items?.data[j]);
         }
       }

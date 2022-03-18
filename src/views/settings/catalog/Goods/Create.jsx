@@ -140,8 +140,9 @@ export default function GoodsCreate() {
       tags.length &&
       categories.length
     ) {
-      let res = await getV2Good(id, {});
+      var res = await getV2Good(id, {});
       var divOptions = genSelectOption(divisibility);
+      var unit = units.find((unit) => unit.id === res.measurement_id.id);
 
       return {
         ...res,
@@ -158,7 +159,9 @@ export default function GoodsCreate() {
         title_uz: res.title.uz,
         title_en: res.title.en,
         brand: brands.find((brand) => brand.value === res.brand_id.id),
-        unit: units.find((unit) => unit.id === res.measurement_id.id),
+        unit,
+        unit_short: { label: unit.short_name, value: unit.short_name },
+        accuracy: unit.accuracy,
         tags: tags.filter((tag) =>
           res.tag_ids.filter((tag_id) => tag_id.id === tag.value),
         ),
@@ -167,13 +170,17 @@ export default function GoodsCreate() {
             (category_id) => category_id.id === category.value,
           ),
         ),
+        category_ids: res.category_ids.map((category_id) => ({
+          label: category_id.title.ru,
+          value: category_id.id,
+        })),
         images: [res.image, ...res.gallery],
         code: res.code,
       };
     }
-    return formFields;
+    return null;
   }, [id, brands, units, tags, categories]);
-  console.log(units);
+
   const saveChanges = useCallback(
     (data) => {
       setBtnDisabled(true);
@@ -207,21 +214,22 @@ export default function GoodsCreate() {
       var options = values.property_groups.map(
         (group) => group.property_option?.value,
       );
-      var property_groups = propertyGroups.filter((group) =>
+      var property_groups = propertyGroups?.filter((group) =>
         ids.includes(group.id),
       );
-      property_groups = property_groups.map((group, i) => ({
+      property_groups = property_groups?.map((group, i) => ({
         ...group,
         options: property_groups[i]?.options?.filter((option) =>
           options?.includes(option),
         ),
       }));
-      property_groups.forEach((group) => delete group.is_active);
-      property_groups = property_groups.map((group) => ({
+      property_groups?.forEach((group) => delete group.is_active);
+      property_groups = property_groups?.map((group) => ({
         ...group,
         order: +group.order,
       }));
       const data = {
+        // ...values,
         description: {
           ru: values.description_ru,
           uz: values.description_uz,
@@ -231,16 +239,15 @@ export default function GoodsCreate() {
         gallery: values.images.slice(1, values.images.length),
         in_price: values.in_price,
         out_price: values.out_price,
-        is_divisible: values.is_divisible.value,
+        is_divisible: values.is_divisible.value === "divisible",
         title: {
           ru: values.title_ru,
           uz: values.title_uz,
           en: values.title_en,
         },
         brand_id: values.brand.value,
-        category_ids: values.categories.map((category) => category.value),
+        category_ids: values.category_ids.map((category) => category.value),
         combo_ids: [],
-        favorite_ids: [],
         measurement_id: values.unit.value,
         rate_id: "",
         tag_ids: values.tags.map((tag) => tag.value),
@@ -248,6 +255,7 @@ export default function GoodsCreate() {
         property_groups,
         currency: "UZS", // values.currency.value,
         code: values.code,
+        favorite_ids: values?.favorite_ids,
       };
       saveChanges(data);
     },
@@ -265,7 +273,7 @@ export default function GoodsCreate() {
     setIsLoading(true);
     fetchProductData()
       .then((data) => {
-        setInitialValues(data);
+        data && setInitialValues(data);
       })
       .finally(() => {
         setIsLoading(false);
@@ -287,7 +295,7 @@ export default function GoodsCreate() {
       unit: validate("selectItem"),
       currency: validate("selectItem"),
       tags: validate("array"),
-      categories: validate("array"),
+      category_ids: validate("array"),
       images: validate("arrayStr"),
       property_groups: validate("multiple_select"),
       code: validate("default"),

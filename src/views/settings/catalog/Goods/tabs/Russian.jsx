@@ -68,15 +68,15 @@ export default function Russian({ formik, categories, brands, tags, units }) {
               </div>
               <div className="">
                 <div>
-                  <Form.Item formik={formik} name="categories">
+                  <Form.Item formik={formik} name="category_ids">
                     <Select
                       isMulti
                       height={40}
-                      id="categories"
+                      id="category_ids"
                       options={categories}
-                      value={values.categories}
+                      value={values.category_ids}
                       onChange={(val) => {
-                        setFieldValue("categories", val);
+                        setFieldValue("category_ids", val);
                       }}
                     />
                   </Form.Item>

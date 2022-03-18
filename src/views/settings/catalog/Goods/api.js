@@ -12,7 +12,7 @@ var formFields = {
   unit: null,
   currency: null,
   tags: null,
-  categories: null,
+  category_ids: null,
   images: [],
   unit_short: null,
   accuracy: "",

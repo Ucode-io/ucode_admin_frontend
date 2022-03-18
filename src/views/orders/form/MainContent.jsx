@@ -12,11 +12,10 @@ import { useTranslation } from "react-i18next";
 import { Phone } from "@material-ui/icons";
 import AddressDropdown from "components/Filters/AddressDropdown";
 import OutsideClickHandler from "react-outside-click-handler";
-import {getCustomerType} from "../../../services/customerType";
+import { getCustomerType } from "../../../services/customerType";
 
 export default function MainContent({
   formik,
-  shippers,
   branches,
   deliveryPrice,
   fares,
@@ -24,6 +23,7 @@ export default function MainContent({
   setSearchAddress,
   addressList,
   distance,
+  setItem,
   ...props
 }) {
   const { t } = useTranslation();
@@ -31,17 +31,19 @@ export default function MainContent({
   const [customers, setCustomers] = useState([]);
   const [customerTypes, setCustomerTypes] = useState([]);
   const [branch, setBranch] = useState(null);
-  const branchOption = branch && branch?.branches?.map((elm) => ({ label: elm.name, value: elm.id , elm}));
+  const branchOption =
+    branch &&
+    branch?.branches?.map((elm) => ({ label: elm.name, value: elm.id, elm }));
 
-  let debounce = setTimeout(() => {}, 0)
+  let debounce = setTimeout(() => {}, 0);
 
   useEffect(() => {
     getClients();
   }, []);
 
   useEffect(() => {
-    typeCustomers()
-  },[])
+    typeCustomers();
+  }, []);
 
   const getClients = (search) => {
     getCustomers({ limit: 10, search })
@@ -59,43 +61,44 @@ export default function MainContent({
 
   const typeCustomers = (search) => {
     getCustomerType({ limit: 10, search })
-        .then((res) => {
-              setCustomerTypes(
-                  res.customer_types?.map((elm) => ({label: elm.name, value: elm.id, elm}))
-              )
-            }
-        )
-        .catch((err) => console.log(err));
-  }
+      .then((res) => {
+        setCustomerTypes(
+          res.customer_types?.map((elm) => ({
+            label: elm.name,
+            value: elm.id,
+            elm,
+          })),
+        );
+      })
+      .catch((err) => console.log(err));
+  };
 
   const onSearchCustomer = (inputValue, actionMeta) => {
-    clearTimeout(debounce)
+    clearTimeout(debounce);
     debounce = setTimeout(() => {
       getClients(inputValue);
-    },300)
+    }, 300);
   };
 
   const onSearchClientType = (inputValue, actionMeta) => {
-    clearTimeout(debounce)
+    clearTimeout(debounce);
     debounce = setTimeout(() => {
-      typeCustomers(inputValue)
-    },200)
+      typeCustomers(inputValue);
+    }, 200);
   };
 
   const onClientSelect = (newValue, actionMeta) => {
-    console.log('actionMeta', actionMeta)
     setFieldValue("client", { ...newValue, action: actionMeta.action });
     if (actionMeta.action === "create-option") {
-      setFieldValue("client_first_name", "");
-      setFieldValue("client_last_name", "");
+      // setFieldValue("client_first_name", "");
+      // setFieldValue("client_last_name", "");
     } else {
-      setFieldValue("client_first_name", newValue?.elm?.name);
-      setFieldValue("client_last_name", newValue?.elm?.last_name);
+      // setFieldValue("client_first_name", newValue?.elm?.name);
+      // setFieldValue("client_last_name", newValue?.elm?.last_name);
     }
   };
 
   const onClientTypeSelect = (newValue, actionMeta) => {
-    console.log('newValue', newValue)
     setFieldValue("client_type", { ...newValue, action: actionMeta.action });
   };
 
@@ -111,7 +114,7 @@ export default function MainContent({
               <div className="w-2/3">
                 <Form.Item formik={formik} name="client">
                   <CreatableSelect
-                      isClearable
+                    isClearable
                     options={customers}
                     value={values.client}
                     formatCreateLabel={(inputText) =>
@@ -309,6 +312,7 @@ export default function MainContent({
             formik={formik}
             {...props}
             setBranch={setBranch}
+            setItem={setItem}
           />
 
           <div className="w-full mt-4 grid grid-cols-2 gap-6">

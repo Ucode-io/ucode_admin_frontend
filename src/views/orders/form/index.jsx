@@ -10,7 +10,6 @@ import {
   postOrder,
   updateOrder,
   getOneOrder,
-  getShippers,
   getBranches,
   getNearestBranch,
   getComputeDeliveryPrice,
@@ -46,9 +45,8 @@ export default function CreateClient() {
   const [addressList, setAddressList] = useState([]);
   const [loader, setLoader] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
-  const [shippers, setShippers] = useState([]);
-  const [branches, setBranches] = useState([]);
-  const [customers, setCustomers] = useState([])
+  const [branches, setBranches] = useState(null);
+  const [customers, setCustomers] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [placemarkGeometry, setPlacemarkGeometry] = useState([]);
   const [deliveryPrice, setDeliveryPrice] = useState(0);
@@ -58,41 +56,40 @@ export default function CreateClient() {
   const [tabValue, setTabValue] = useState("Основное");
   const [searchAddress, setSearchAddress] = useState("");
   const [distance, setDistance] = useState();
+  const [item, setItem] = useState(null);
 
   const tabLabel = (text) => {
     return <span className="px-1">{text}</span>;
   };
 
   const productRef = useRef();
+  const branchOption =
+    item &&
+    item?.branches?.map((elm) => ({ label: elm.name, value: elm.id, elm }));
 
   const initialValues = useMemo(
     () => ({
-      shipper: null,
-
+      aggregator_id: null,
+      building: null,
+      extra_phone_number: null,
       client: null,
-      client_type: null,
-      name: null,
-      last_name: null,
-
+      // client_type: null,
       is_courier_call: false,
-
-      client_description: null,
-      order_description: null,
-
+      co_delivery_price: null,
+      delivery_time: null,
+      description: null,
       delivery_type: null,
-
       is_reissued: false,
       paid: false,
       payment_type: "cash",
       source: "admin_panel",
-
       to_address: "",
-      restaurant: null,
-      apartment_block: null,
+      // restaurant: null,
       apartment: null,
-      branch: null,
+      branch: branchOption ? branchOption && branchOption[0].value : null,
+      future_time: null,
       floor: null,
-      intercom: null,
+      // intercom: null,
     }),
     [],
   );
@@ -101,9 +98,6 @@ export default function CreateClient() {
     const defaultSchema = yup.mixed().required(t("required.field.error"));
     return yup.object().shape({
       client: defaultSchema,
-      shipper: defaultSchema,
-      name: defaultSchema,
-      last_name: defaultSchema,
       delivery_type: defaultSchema,
       to_address: defaultSchema,
       branch: defaultSchema,
@@ -112,10 +106,6 @@ export default function CreateClient() {
 
   useEffect(() => {
     (async () => {
-      const _shippers = await getShippers({ limit: 1000, region_id })
-        .then((res) => formatLikeOptions(res.shippers))
-        .catch((err) => console.log(err));
-
       const _customers = await getCustomers({ limit: 1000 })
         .then((res) =>
           res.customers?.map((elm) => ({
@@ -125,23 +115,27 @@ export default function CreateClient() {
           })),
         )
         .catch((err) => console.log(err));
-      setCustomers(_customers)
+      setCustomers(_customers);
+
+      getBranches({
+        limit: 1000,
+        page: 1,
+      }).then((res) => {
+        setBranches(res);
+      });
 
       const _deliveryPrice = await getDeliveryPrice()
         .then((res) => res.price)
         .catch((err) => console.log(err));
 
-      setShippers(_shippers);
-
       if (!params.id) setDeliveryPrice(_deliveryPrice);
 
-      fetchData({ _shippers, _customers, _deliveryPrice });
+      fetchData({ _customers, _deliveryPrice });
     })();
   }, []);
   const dispatch = useDispatch();
 
   const onSubmit = async (values) => {
-    console.log("values", values)
     setSaveLoading(true);
 
     const _values = { ...values };
@@ -164,11 +158,12 @@ export default function CreateClient() {
     const data = {
       ..._values,
       // region_id: regionId || region_id,
-      client_type: values.client_type.value,
+      // client_type: values.client_type.value,
       client_id: values.client.value,
       co_delivery_price: deliveryPrice,
       to_location: { lat: placemarkGeometry[0], long: placemarkGeometry[1] },
       delivery_type: values.delivery_type.value,
+      courier_id: values.courier.value,
       steps: [
         {
           branch_id: values.branch?.value,
@@ -191,6 +186,8 @@ export default function CreateClient() {
     delete data.client;
     delete data.client_name;
     delete data.shipper;
+    delete data.courier;
+    delete data.client_type;
 
     if (params.id) {
       try {
@@ -211,7 +208,6 @@ export default function CreateClient() {
         setSaveLoading(false);
       }
     } else {
-      console.log("order", data)
       postOrder(data)
         .then((res) => history.push("/home/orders"))
         .finally(() => setSaveLoading(false));
@@ -225,17 +221,8 @@ export default function CreateClient() {
   });
 
   useEffect(() => {
-    if (formik.values.shipper) {
-      getBranches({ limit: 100, region_id }, formik.values.shipper.value)
-        .then((res) => setBranches(formatLikeOptions(res.branches)))
-        .catch((err) => console.log(err));
-    }
-  }, [formik.values.shipper]);
-
-  useEffect(() => {
-    if (placemarkGeometry && formik.values.shipper) {
+    if (placemarkGeometry.length > 0) {
       getNearestBranch({
-        shipper_id: formik.values.shipper.value,
         lat: placemarkGeometry[0],
         long: placemarkGeometry[1],
       }).then((res) => {
@@ -246,7 +233,7 @@ export default function CreateClient() {
         );
       });
     }
-  }, [placemarkGeometry, formik.values.shipper]);
+  }, [placemarkGeometry]);
 
   useEffect(() => {
     if (searchAddress) {
@@ -308,7 +295,6 @@ export default function CreateClient() {
             label: res.shipper_name,
             value: res.shipper_id,
           },
-
           client: client,
           client_name: client?.elm?.name ?? "",
           is_courier_call: res.is_courier_call,
@@ -425,7 +411,9 @@ export default function CreateClient() {
               icon={SaveIcon}
               type="submit"
               loading={saveLoading}
-              onClick={() => {console.log(formik.values)}}
+              onClick={() => {
+                console.log(formik.values);
+              }}
             >
               {t("save")}
             </Button>,
@@ -455,7 +443,6 @@ export default function CreateClient() {
         >
           <MainContent
             formik={formik}
-            shippers={shippers}
             branches={branches}
             deliveryPrice={deliveryPrice}
             placemarkGeometry={placemarkGeometry}
@@ -467,6 +454,7 @@ export default function CreateClient() {
             addressList={addressList}
             setSearchAddress={setSearchAddress}
             distance={distance}
+            setItem={setItem}
           />
           <ProductContent
             formik={formik}

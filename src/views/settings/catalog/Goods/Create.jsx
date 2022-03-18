@@ -17,9 +17,7 @@ import Breadcrumb from "components/Breadcrumb";
 import Button from "components/Button";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
-import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { showAlert } from "redux/actions/alertActions";
 import FullScreenLoader from "components/FullScreenLoader";
 import * as Yup from "yup";
 import Filters from "components/Filters";
@@ -46,7 +44,6 @@ import genSelectOption from "helpers/genSelectOption";
 
 export default function GoodsCreate() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
   const theme = useTheme();
@@ -186,25 +183,15 @@ export default function GoodsCreate() {
       setBtnDisabled(true);
       if (id) {
         updateV2Good(id, data)
-          .catch((err) =>
-            dispatch(
-              showAlert(t(err?.data?.Error?.Message ?? err?.data?.Error)),
-            ),
-          )
           .then(() => history.push("/home/catalog/goods"))
           .finally(() => setBtnDisabled(false));
       } else {
         postV2Good(data)
           .then(() => history.push("/home/catalog/goods"))
-          .catch((err) =>
-            dispatch(
-              showAlert(t(err.data?.Error?.Message ?? err?.data?.Error)),
-            ),
-          )
           .finally(() => setBtnDisabled(false));
       }
     },
-    [dispatch, history, id, t],
+    [history, id],
   );
 
   const onSubmit = useCallback(
@@ -255,7 +242,7 @@ export default function GoodsCreate() {
         property_groups,
         currency: "UZS", // values.currency.value,
         code: values.code,
-        favorite_ids: values?.favorite_ids,
+        favorite_ids: values?.favorite_ids.map((favorite_id) => favorite_id.id),
       };
       saveChanges(data);
     },

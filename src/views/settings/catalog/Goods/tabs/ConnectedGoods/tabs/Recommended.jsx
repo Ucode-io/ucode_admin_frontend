@@ -157,7 +157,7 @@ export default function Recommended({ formik }) {
       setFieldValue(
         "favorite_ids",
         values.favorite_ids.filter(
-          (favorite_id) => favorite_id !== deleteModal.id,
+          (favorite_id) => favorite_id.id !== deleteModal.id,
         ),
       );
       setDeleteModal(null);
@@ -169,17 +169,19 @@ export default function Recommended({ formik }) {
   const handleAddItem = useCallback(
     (e) => {
       setLoading(true);
+      var favorite_ids = selectedGoods.map((good) => good.value);
+      var filteredItems = items.data.filter((item) =>
+        favorite_ids.includes(item.id),
+      );
       setFieldValue(
         "favorite_ids",
-        values?.favorite_ids?.concat(
-          ...selectedGoods.map((good) => good.value),
-        ),
+        values?.favorite_ids?.concat(filteredItems),
       );
       setSelectedGoods([]);
       setAddModal(null);
       setLoading(false);
     },
-    [selectedGoods, values, setFieldValue],
+    [selectedGoods, values, setFieldValue, items],
   );
 
   const closeModal = () => {

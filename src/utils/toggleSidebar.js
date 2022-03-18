@@ -3,17 +3,17 @@ var delta = 500;
 var lastPressed;
 
 var map = new Map([
-  ["Alt", "t"],
-  ["t", "Alt"],
+  ["Control", "b"],
+  ["b", "Control"],
 ]);
 
 function isValid(key) {
   var now = new Date();
-  if (map.get(lastPressed) !== key) return false;
   if (now - lastKeypressTime >= delta) {
     lastKeypressTime = now;
     return false;
   }
+  if (map.get(lastPressed) !== key) return false;
   return true;
 }
 
@@ -21,7 +21,7 @@ function keyHandler(e, cb) {
   if (isValid(e.key)) {
     cb();
   }
-  lastPressed = e.key === "t" || e.key === "Alt" ? e.key : null;
+  lastPressed = e.key === "b" || e.key === "Control" ? e.key : null;
 }
 
 var count = 0;

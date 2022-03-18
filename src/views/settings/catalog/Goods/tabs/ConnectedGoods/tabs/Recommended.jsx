@@ -3,8 +3,8 @@ import Modal from "components/Modal";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
 import { useTranslation } from "react-i18next";
-// import { getV2Goods } from "services";
-import getV2Goods, { addProduct, deleteProduct } from "./mock";
+import { getV2Good, getV2Goods } from "services";
+import { addProduct, deleteProduct } from "./mock";
 import LoaderComponent from "components/Loader";
 import Card from "components/Card";
 import {
@@ -23,6 +23,7 @@ import {
   SortableContainer,
   SortableElement,
   arrayMove,
+  SortableHandle,
 } from "react-sortable-hoc";
 import Select from "components/Select";
 import numberToPrice from "helpers/numberToPrice";
@@ -39,19 +40,21 @@ const useStyles = makeStyles((theme) => ({
       border: "1px solid #0e73f6",
       background: "#fff",
     },
-    icon: {
-      color: "#0e73f6",
-    },
+  },
+  icon: {
+    color: "#0e73f6",
+  },
+  dragIcon: {
+    color: "#6e8bb7",
+    cursor: "n-resize",
   },
 }));
-
-// 6e8bb7
 
 export default function Recommended({ formik, initialValues }) {
   const { t } = useTranslation();
   const classes = useStyles();
 
-  const [selectedGoods, setSelectedGoods] = useState([]);
+  const [selectedGoods, setSelectedGoods] = useState();
   const [columns, setColumns] = useState([]);
   const [limit, setLimit] = useState(10);
   const [items, setItems] = useState({});
@@ -67,6 +70,10 @@ export default function Recommended({ formik, initialValues }) {
       return { count, data: arrayMove(data, oldIndex, newIndex) };
     });
   }, []);
+
+  const DragHandle = SortableHandle(() => (
+    <DragIndicatorIcon className={classes.dragIcon} />
+  ));
 
   const SortableItem = SortableElement(({ value, index, key }) => (
     <TableRow
@@ -116,10 +123,10 @@ export default function Recommended({ formik, initialValues }) {
             count: res.count,
             data: res.products,
           });
-          formik.setFieldValue(
-            "favorite_ids",
-            res.products.map((product) => product.id),
-          );
+          // formik.setFieldValue(
+          //   "favorite_ids",
+          //   res.products.map((product) => product.id),
+          // );
         })
         .catch((err) => console.log(err))
         .finally(() => setIsLoading(false));
@@ -149,12 +156,21 @@ export default function Recommended({ formik, initialValues }) {
       count: items.count + selectedGoods.length,
       data: [...items.data, ...selectedGoods],
     }));
-    formik.setFieldValue(
-      "favorite_ids",
-      formik.values.favorite_ids.concat(selectedGoods),
-    );
+    // formik.setFieldValue(
+    //   "favorite_ids",
+    //   formik?.values?.favorite_ids?.concat(
+    //     ...selectedGoods.map((good) => good.id),
+    //   ),
+    // );
+    setSelectedGoods([]);
     setAddModal(null);
     setLoading(false);
+
+    // var rest = selectedGoods.map((good) => good.id);
+    // formik.setFieldValue("favorite_ids", [
+    //   ...formik.values.favorite_ids,
+    //   ...rest,
+    // ]);
   };
 
   const closeModal = () => {
@@ -168,22 +184,31 @@ export default function Recommended({ formik, initialValues }) {
       {
         title: "",
         key: "drag-area",
-        render: () => <DragIndicatorIcon />,
+        render: () => <DragHandle />,
       },
       {
         title: t("product.image"),
         key: "product-image",
-        render: (record) => record.image,
+        render: (record) => (
+          <>
+            <img
+              src={`${process.env.REACT_APP_MINIO_URL}/${record.image}`}
+              alt="brand logo"
+              width={"50"}
+              height={"50"}
+            />
+          </>
+        ),
       },
       {
         title: t("product.name"),
         key: "product_name",
-        render: (record) => record.name,
+        render: (record) => record.title.ru,
       },
       {
         title: t("price"),
         key: "price",
-        render: (record) => numberToPrice(record.price),
+        render: (record) => numberToPrice(record.out_price),
       },
     ];
   }, [t]);
@@ -213,15 +238,14 @@ export default function Recommended({ formik, initialValues }) {
     getItems(currentPage);
   }, [currentPage, limit, getItems]);
 
-  useEffect(() => {
-    var rest = selectedGoods.map((good) => good.id);
-    formik.setFieldValue("favorite_ids", [
-      ...formik.values.favorite_ids,
-      ...rest,
-    ]);
-  }, [selectedGoods]);
+  var products = useMemo(() => {
+    return items?.data?.filter((item) =>
+      formik?.values?.favorite_ids?.includes(item.id),
+    );
+  }, [formik?.values?.favorite_ids, items?.data]);
 
-  console.log(formik.values.favorite_ids, formik.values.variant_ids);
+  console.log(formik.values);
+  console.log(products, items);
 
   return (
     <Card
@@ -240,7 +264,12 @@ export default function Recommended({ formik, initialValues }) {
       bodyStyle={{ paddingRight: "0", paddingLeft: "0" }}
     >
       {!isLoading && items?.data?.length ? (
-        <SortableList items={items?.data} onSortEnd={onSortEnd} distance={50} />
+        <SortableList
+          items={products}
+          onSortEnd={onSortEnd}
+          useDragHandle
+          useWindowAsScrollContainer
+        />
       ) : null}
 
       <LoaderComponent isLoader={isLoading} />
@@ -269,8 +298,8 @@ export default function Recommended({ formik, initialValues }) {
         onConfirm={handleAddItem}
         onClose={closeModal}
         loading={addLoading}
-        width={700}
-        title={t("title")}
+        width={500}
+        title={t("add.products")}
         isWarning={false}
       >
         <Select
@@ -280,7 +309,7 @@ export default function Recommended({ formik, initialValues }) {
           height={40}
           id="categories"
           options={items?.data?.map((product) => ({
-            label: product.name,
+            label: product.title.ru,
             value: product.id,
             ...product,
           }))}

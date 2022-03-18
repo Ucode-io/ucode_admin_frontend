@@ -23,6 +23,7 @@ import {
   SortableContainer,
   SortableElement,
   arrayMove,
+  SortableHandle,
 } from "react-sortable-hoc";
 import Select from "components/Select";
 import numberToPrice from "helpers/numberToPrice";
@@ -39,13 +40,15 @@ const useStyles = makeStyles((theme) => ({
       border: "1px solid #0e73f6",
       background: "#fff",
     },
-    icon: {
-      color: "#0e73f6",
-    },
+  },
+  icon: {
+    color: "#0e73f6",
+  },
+  dragIcon: {
+    color: "#6e8bb7",
+    cursor: "n-resize",
   },
 }));
-
-// 6e8bb7
 
 export default function Recommended({ formik, initialValues }) {
   const { t } = useTranslation();
@@ -67,6 +70,10 @@ export default function Recommended({ formik, initialValues }) {
       return { count, data: arrayMove(data, oldIndex, newIndex) };
     });
   }, []);
+
+  const DragHandle = SortableHandle(() => (
+    <DragIndicatorIcon className={classes.dragIcon} />
+  ));
 
   const SortableItem = SortableElement(({ value, index, key }) => (
     <TableRow
@@ -155,6 +162,12 @@ export default function Recommended({ formik, initialValues }) {
     );
     setAddModal(null);
     setLoading(false);
+
+    //   var rest = selectedGoods.map((good) => good.id);
+    //   formik.setFieldValue("variant_ids", [
+    //     ...formik.values.variant_ids,
+    //     ...rest,
+    //   ]);
   };
 
   const closeModal = () => {
@@ -168,7 +181,7 @@ export default function Recommended({ formik, initialValues }) {
       {
         title: "",
         key: "drag-area",
-        render: () => <DragIndicatorIcon />,
+        render: () => <DragHandle />,
       },
       {
         title: t("product.image"),
@@ -213,14 +226,6 @@ export default function Recommended({ formik, initialValues }) {
     getItems(currentPage);
   }, [currentPage, limit, getItems]);
 
-  useEffect(() => {
-    var rest = selectedGoods.map((good) => good.id);
-    formik.setFieldValue("variant_ids", [
-      ...formik.values.variant_ids,
-      ...rest,
-    ]);
-  }, [selectedGoods]);
-
   return (
     <Card
       className=""
@@ -238,7 +243,12 @@ export default function Recommended({ formik, initialValues }) {
       bodyStyle={{ paddingRight: "0", paddingLeft: "0" }}
     >
       {!isLoading && items?.data?.length ? (
-        <SortableList items={items?.data} onSortEnd={onSortEnd} distance={50} />
+        <SortableList
+          items={items?.data}
+          onSortEnd={onSortEnd}
+          useDragHandle
+          useWindowAsScrollContainer
+        />
       ) : null}
 
       <LoaderComponent isLoader={isLoading} />
@@ -267,8 +277,8 @@ export default function Recommended({ formik, initialValues }) {
         onConfirm={handleAddItem}
         onClose={closeModal}
         loading={addLoading}
-        width={700}
-        title={t("title")}
+        width={500}
+        title={t("add.products")}
         isWarning={false}
       >
         <Select

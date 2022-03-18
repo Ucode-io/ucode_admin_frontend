@@ -55,6 +55,7 @@ export default function Good({
   properties,
   propertyOptions,
   initialValues,
+  propertyGroups,
 }) {
   const { t } = useTranslation();
   const classes = useStyles();
@@ -287,26 +288,58 @@ export default function Good({
                         name="property_groups"
                         index={index}
                       >
-                        <Select
-                          disabled={
-                            !values.property_groups[index].property?.value
-                          }
-                          height={40}
-                          id={`property_groups.${index}.property_option`}
-                          options={
-                            values.property_groups[index].property &&
-                            propertyOptions[
-                              values.property_groups[index].property.value
-                            ]
-                          }
-                          value={values.property_groups[index].property_option}
-                          onChange={(val) => {
-                            setFieldValue(
-                              `property_groups.${index}.property_option`,
-                              val,
-                            );
-                          }}
-                        />
+                        {propertyGroups?.find(
+                          (group) =>
+                            group?.id ===
+                            values?.property_groups[index]?.property?.value,
+                        )?.type === "select" ? (
+                          <Select
+                            disabled={
+                              !values.property_groups[index].property?.value
+                            }
+                            height={40}
+                            id={`property_groups.${index}.property_option`}
+                            options={
+                              values.property_groups[index].property &&
+                              propertyOptions[
+                                values.property_groups[index].property.value
+                              ]
+                            }
+                            value={
+                              values.property_groups[index].property_option
+                            }
+                            onChange={(val) => {
+                              setFieldValue(
+                                `property_groups.${index}.property_option`,
+                                val,
+                              );
+                            }}
+                          />
+                        ) : (
+                          <Input
+                            type={
+                              propertyGroups?.find(
+                                (group) =>
+                                  group?.id ===
+                                  values?.property_groups[index]?.property
+                                    ?.value,
+                              )?.type === "string"
+                                ? "text"
+                                : "number"
+                            }
+                            size="large"
+                            value={
+                              propertyGroups?.find(
+                                (group) =>
+                                  group?.id ===
+                                  values?.property_groups[index]?.property
+                                    ?.value,
+                              )?.value
+                            }
+                            onChange={handleChange}
+                            disabled
+                          />
+                        )}
                       </Form.FieldArrayItem>
                     </div>
 

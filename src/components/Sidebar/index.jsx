@@ -29,13 +29,15 @@ function BootstrapTooltip(props) {
   return <Tooltip placement="right" arrow classes={classes} {...props} />;
 }
 
+var sidebar = JSON.parse(localStorage.getItem("sidebar"));
+
 export default function App() {
   const history = useHistory();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const permissions = useSelector((state) => state.auth.permissions);
   const allMenus = useMemo(() => menu.concat(settings), []);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(sidebar?.isOpen ?? false);
   const [selectedList, setSelectedList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -59,6 +61,10 @@ export default function App() {
   });
 
   useEffect(() => {
+    localStorage.setItem("sidebar", JSON.stringify({ isOpen: visible }));
+  }, [visible]);
+
+  useEffect(() => {
     if (menu.length) {
       allMenus.forEach((el) => {
         const fatherPathname = el.path.split("/")[2];
@@ -66,7 +72,7 @@ export default function App() {
           if (el.children && el.children.length) {
             setSelectedList(el.children);
             setTitle(el.title);
-            setVisible(true);
+            // setVisible(true);
           }
         }
       });

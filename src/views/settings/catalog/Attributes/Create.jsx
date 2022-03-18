@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-var optionsReducer = function (state, { type, index, value }) {
+var optionsReducer = function (state, { type, index, value, newItems }) {
   var [...items] = state;
 
   switch (type) {
@@ -46,8 +46,11 @@ var optionsReducer = function (state, { type, index, value }) {
     case "update":
       items[index] = { ...items[index], ...value };
       return items;
-    case "add":
+    case "addEmpty":
       items.push({ code: "", title: "" });
+      return items;
+    case "replace":
+      items = newItems;
       return items;
     default:
       return state;
@@ -73,19 +76,25 @@ export default function AttributesCreate() {
     if (params.id) {
       getV2Property(params.id).then((res) => {
         setValues({
-          title_ru: res.title.ru,
-          description_ru: res.description.ru,
-          options: res.options,
+          title_ru: res?.title?.ru,
+          description_ru: res?.description?.ru,
           order: res.order,
           type:
-            res.type == "string"
+            res.type === "string"
               ? genSelectOption("text")
               : genSelectOption(res.type),
           value: res.value,
         });
+        dispatchOptions({
+          type: "replace",
+          newItems: res?.options?.map((option) => ({
+            code: option?.code,
+            title: option?.title?.ru,
+          })),
+        });
       });
     }
-  }, []);
+  }, [params.id]);
 
   var optionsPreview = useMemo(() => {
     return optionsState.map((option) => ({
@@ -98,7 +107,6 @@ export default function AttributesCreate() {
     () => ({
       title_ru: "",
       description_ru: "",
-      options: [{ title: "", code: "" }],
       type: null,
       value: "",
     }),
@@ -110,7 +118,6 @@ export default function AttributesCreate() {
     return yup.object().shape({
       title_ru: defaultSchema,
       description_ru: defaultSchema,
-      options: defaultSchema,
       type: defaultSchema,
     });
   }, []);
@@ -139,7 +146,8 @@ export default function AttributesCreate() {
         en: values.description_ru,
       },
       options,
-      type: values.type.value == "text" ? "string" : values.type.value,
+      type: values.type.value === "text" ? "string" : values.type.value,
+      value: typeof values.value !== "object" ? values.value.toString() : null,
     };
 
     setSaveLoading(true);
@@ -335,7 +343,7 @@ export default function AttributesCreate() {
                 <MuiButton
                   variant="outlined"
                   startIcon={<AddIcon className={classes.icon} />}
-                  onClick={() => dispatchOptions({ type: "add" })}
+                  onClick={() => dispatchOptions({ type: "addEmpty" })}
                 >
                   {t("add")}
                 </MuiButton>

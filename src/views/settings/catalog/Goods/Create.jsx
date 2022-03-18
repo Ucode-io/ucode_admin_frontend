@@ -174,9 +174,9 @@ export default function GoodsCreate() {
         .finally(() => setBtnDisabled(false));
     } else {
       postV2Good(data)
-        .catch((err) =>
-          dispatch(showAlert(t(err.data?.Error?.Message ?? err?.data?.Error))),
-        )
+        // .catch((err) =>
+        //   dispatch(showAlert(t(err.data?.Error?.Message ?? err?.data?.Error))),
+        // )
         .then(() => history.push("/home/catalog/goods"))
         .finally(() => setBtnDisabled(false));
     }
@@ -186,16 +186,21 @@ export default function GoodsCreate() {
     console.log(propertyGroups, values.property_groups);
     var ids = values.property_groups.map((group) => group.property.value);
     var options = values.property_groups.map(
-      (group) => group.property_option.value,
+      (group) => group.property_option?.value,
     );
     var property_groups = propertyGroups.filter((group) =>
       ids.includes(group.id),
     );
     property_groups = property_groups.map((group, i) => ({
       ...group,
-      options: property_groups[i].options.filter((option) =>
-        options.includes(option),
+      options: property_groups[i]?.options?.filter((option) =>
+        options?.includes(option),
       ),
+    }));
+    property_groups.forEach((group) => delete group.is_active);
+    property_groups = property_groups.map((group) => ({
+      ...group,
+      order: +group.order,
     }));
     const data = {
       description: {
@@ -222,7 +227,7 @@ export default function GoodsCreate() {
       tag_ids: values.tags.map((tag) => tag.value),
       variant_ids: [],
       property_groups,
-      currency: values.currency.value,
+      currency: "UZS", // values.currency.value,
       code: values.code,
     };
     saveChanges(data);
@@ -368,6 +373,7 @@ export default function GoodsCreate() {
                       properties={properties}
                       propertyOptions={propertyOptions}
                       initialValues={initialValues}
+                      propertyGroups={propertyGroups}
                     />
                   </TabPanel>
                   <TabPanel value={value} index={1} dir={theme.direction}>

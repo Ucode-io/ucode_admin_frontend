@@ -532,7 +532,6 @@ export default function ProductContent({
           <Form.Item name="count" formik={modalFormik} label={t("amount")}>
             <Input
               id="count"
-              value={values.count}
               onChange={handleChange}
               type="number"
               min={"1"}

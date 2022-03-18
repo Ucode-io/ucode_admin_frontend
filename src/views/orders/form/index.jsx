@@ -79,7 +79,7 @@ export default function CreateClient() {
       co_delivery_price: null,
       delivery_time: null,
       description: null,
-      delivery_type: null,
+      delivery_type: { label: "Доставка", value: "delivery" },
       is_reissued: false,
       paid: false,
       payment_type: "cash",
@@ -107,17 +107,6 @@ export default function CreateClient() {
 
   useEffect(() => {
     (async () => {
-      const _customers = await getCustomers({ limit: 1000 })
-        .then((res) =>
-          res.customers?.map((elm) => ({
-            label: `${elm.phone} (${elm.name})`,
-            value: elm.id,
-            elm,
-          })),
-        )
-        .catch((err) => console.log(err));
-      setCustomers(_customers);
-
       getBranches({
         limit: 1000,
         page: 1,
@@ -131,7 +120,7 @@ export default function CreateClient() {
 
       if (!params.id) setDeliveryPrice(_deliveryPrice);
 
-      fetchData({ _customers, _deliveryPrice });
+      fetchData({ _deliveryPrice });
     })();
   }, []);
   const dispatch = useDispatch();

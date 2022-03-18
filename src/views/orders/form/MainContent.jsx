@@ -35,8 +35,6 @@ export default function MainContent({
     branch &&
     branch?.branches?.map((elm) => ({ label: elm?.name, value: elm?.id, elm }));
 
-  console.log("branch", branch);
-
   let debounce = setTimeout(() => {}, 0);
 
   useEffect(() => {
@@ -166,6 +164,7 @@ export default function MainContent({
                     placeholder={t("first.name")}
                     value={values.client_first_name}
                     onChange={handleChange}
+                    defaultValue={formik?.values?.client?.elm?.name}
                   />
                 </Form.Item>
               </div>

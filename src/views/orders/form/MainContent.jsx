@@ -158,9 +158,8 @@ export default function MainContent({
                 <span>{t("first.name")}</span>
               </div>
               <div className="w-2/3">
-                <Form.Item formik={formik} name="client_first_name">
+                <Form.Item formik={formik}>
                   <Input
-                    id="client_first_name"
                     placeholder={t("first.name")}
                     value={values.client_first_name}
                     onChange={handleChange}
@@ -175,9 +174,8 @@ export default function MainContent({
                 <span>{t("last.name")}</span>
               </div>
               <div className="w-2/3">
-                <Form.Item formik={formik} name="client_last_name">
+                <Form.Item formik={formik}>
                   <Input
-                    id="client_last_name"
                     placeholder={t("last.name")}
                     value={values.client_last_name}
                     onChange={handleChange}
@@ -193,10 +191,9 @@ export default function MainContent({
                 <span>{t("client.description")}</span>
               </div>
               <div className="w-2/3">
-                <Form.Item formik={formik} name="client_description">
+                <Form.Item formik={formik}>
                   <TextArea
                     size={5}
-                    id="client_description"
                     value={values.client_description}
                     onChange={handleChange}
                     placeholder={t("client.description")}
@@ -210,11 +207,11 @@ export default function MainContent({
                 <span>{t("order.description")}</span>
               </div>
               <div className="w-2/3">
-                <Form.Item formik={formik} name="order_description">
+                <Form.Item formik={formik} name="description">
                   <TextArea
                     size={5}
-                    id="order_description"
-                    value={values.order_description}
+                    id="description"
+                    value={values.description}
                     onChange={handleChange}
                     placeholder={t("order.description")}
                   />
@@ -355,9 +352,8 @@ export default function MainContent({
                 <span>{t("apartment_block")}</span>
               </div>
               <div className="w-2/3">
-                <Form.Item formik={formik} name="apartment_block">
+                <Form.Item formik={formik}>
                   <Input
-                    id="apartment_block"
                     value={values.apartment_block}
                     onChange={handleChange}
                     placeholder={t("apartment_block")}

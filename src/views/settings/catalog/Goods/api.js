@@ -25,6 +25,6 @@ var formFields = {
 
 export var divisibility = ["divisible", "nondivisible"];
 
-export var currencies = ["сум"];
+export var currencies = ["UZS"];
 
 export default formFields;

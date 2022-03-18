@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useReducer } from "react";
+import { useState, useEffect, useCallback, useReducer, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import {
@@ -58,7 +58,7 @@ export default function GoodsCreate() {
   const [properties, setProperties] = useState([]);
   const [categories, setCategories] = useState([]);
   const [propertyOptions, setPropertyOptions] = useState([]);
-  const [initialValues, setInitialValues] = useState(id ? {} : formFields);
+  const [initialValues, setInitialValues] = useState(formFields);
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState(0);
@@ -133,105 +133,126 @@ export default function GoodsCreate() {
   }, []);
 
   const fetchProductData = useCallback(async () => {
-    let res = await getV2Good(id, {});
-    var divOptions = genSelectOption(divisibility);
-    return {
-      description_ru: res.description.ru,
-      description_uz: res.description.uz,
-      description_en: res.description.en,
-      in_price: res.in_price,
-      out_price: res.out_price,
-      is_divisible: divOptions.find((option) =>
-        option.value == res.is_divisible ? "divisible" : "nondivisible",
-      ),
-      title_ru: res.title.ru,
-      title_uz: res.title.uz,
-      title_en: res.title.en,
-      brand: brands.find((brand) => brand.value == res.brand_id.id),
-      unit: units.find((unit) => unit.value == res.measurement_id.id),
-      tags: tags.filter((tag) =>
-        res.tag_ids.filter((tag_id) => tag_id.id == tag.value),
-      ),
-      categories: categories.filter((category) =>
-        res.category_ids.filter(
-          (category_id) => category_id.id == category.value,
+    if (
+      id &&
+      brands.length &&
+      units.length &&
+      tags.length &&
+      categories.length
+    ) {
+      let res = await getV2Good(id, {});
+      var divOptions = genSelectOption(divisibility);
+
+      return {
+        ...res,
+        description_ru: res.description.ru,
+        description_uz: res.description.uz,
+        description_en: res.description.en,
+        in_price: res.in_price,
+        out_price: res.out_price,
+        is_divisible: divOptions.find((option) =>
+          option.value === res.is_divisible ? "divisible" : "nondivisible",
         ),
-      ),
-      images: [res.image, ...res.gallery],
-      code: res.code,
-      currency: genSelectOption(res.currency),
-    };
-  }, [id, brands, units, tags, categories]);
-
-  const saveChanges = (data) => {
-    setBtnDisabled(true);
-    if (id) {
-      updateV2Good(id, data)
-        .catch((err) =>
-          dispatch(showAlert(t(err?.data?.Error?.Message ?? err?.data?.Error))),
-        )
-        .then(() => history.push("/home/catalog/goods"))
-        .finally(() => setBtnDisabled(false));
-    } else {
-      postV2Good(data)
-        // .catch((err) =>
-        //   dispatch(showAlert(t(err.data?.Error?.Message ?? err?.data?.Error))),
-        // )
-        .then(() => history.push("/home/catalog/goods"))
-        .finally(() => setBtnDisabled(false));
+        currency: genSelectOption(res.currency),
+        title_ru: res.title.ru,
+        title_uz: res.title.uz,
+        title_en: res.title.en,
+        brand: brands.find((brand) => brand.value === res.brand_id.id),
+        unit: units.find((unit) => unit.id === res.measurement_id.id),
+        tags: tags.filter((tag) =>
+          res.tag_ids.filter((tag_id) => tag_id.id === tag.value),
+        ),
+        categories: categories.filter((category) =>
+          res.category_ids.filter(
+            (category_id) => category_id.id === category.value,
+          ),
+        ),
+        images: [res.image, ...res.gallery],
+        code: res.code,
+      };
     }
-  };
+    return formFields;
+  }, [id, brands, units, tags, categories]);
+  console.log(units);
+  const saveChanges = useCallback(
+    (data) => {
+      setBtnDisabled(true);
+      if (id) {
+        updateV2Good(id, data)
+          .catch((err) =>
+            dispatch(
+              showAlert(t(err?.data?.Error?.Message ?? err?.data?.Error)),
+            ),
+          )
+          .then(() => history.push("/home/catalog/goods"))
+          .finally(() => setBtnDisabled(false));
+      } else {
+        postV2Good(data)
+          .then(() => history.push("/home/catalog/goods"))
+          .catch((err) =>
+            dispatch(
+              showAlert(t(err.data?.Error?.Message ?? err?.data?.Error)),
+            ),
+          )
+          .finally(() => setBtnDisabled(false));
+      }
+    },
+    [dispatch, history, id, t],
+  );
 
-  const onSubmit = (values) => {
-    console.log(propertyGroups, values.property_groups);
-    var ids = values.property_groups.map((group) => group.property.value);
-    var options = values.property_groups.map(
-      (group) => group.property_option?.value,
-    );
-    var property_groups = propertyGroups.filter((group) =>
-      ids.includes(group.id),
-    );
-    property_groups = property_groups.map((group, i) => ({
-      ...group,
-      options: property_groups[i]?.options?.filter((option) =>
-        options?.includes(option),
-      ),
-    }));
-    property_groups.forEach((group) => delete group.is_active);
-    property_groups = property_groups.map((group) => ({
-      ...group,
-      order: +group.order,
-    }));
-    const data = {
-      description: {
-        ru: values.description_ru,
-        uz: values.description_uz,
-        en: values.description_en,
-      },
-      image: values.images[0],
-      gallery: values.images.slice(1, values.images.length),
-      in_price: values.in_price,
-      out_price: values.out_price,
-      is_divisible: values.is_divisible.value,
-      title: {
-        ru: values.title_ru,
-        uz: values.title_uz,
-        en: values.title_en,
-      },
-      brand_id: values.brand.value,
-      category_ids: values.categories.map((category) => category.value),
-      combo_ids: [],
-      favorite_ids: [],
-      measurement_id: values.unit.value,
-      rate_id: "",
-      tag_ids: values.tags.map((tag) => tag.value),
-      variant_ids: [],
-      property_groups,
-      currency: "UZS", // values.currency.value,
-      code: values.code,
-    };
-    saveChanges(data);
-  };
+  const onSubmit = useCallback(
+    (values) => {
+      console.log(propertyGroups, values?.property_groups);
+      var ids = values.property_groups.map((group) => group.property.value);
+      var options = values.property_groups.map(
+        (group) => group.property_option?.value,
+      );
+      var property_groups = propertyGroups.filter((group) =>
+        ids.includes(group.id),
+      );
+      property_groups = property_groups.map((group, i) => ({
+        ...group,
+        options: property_groups[i]?.options?.filter((option) =>
+          options?.includes(option),
+        ),
+      }));
+      property_groups.forEach((group) => delete group.is_active);
+      property_groups = property_groups.map((group) => ({
+        ...group,
+        order: +group.order,
+      }));
+      const data = {
+        description: {
+          ru: values.description_ru,
+          uz: values.description_uz,
+          en: values.description_en,
+        },
+        image: values.images[0],
+        gallery: values.images.slice(1, values.images.length),
+        in_price: values.in_price,
+        out_price: values.out_price,
+        is_divisible: values.is_divisible.value,
+        title: {
+          ru: values.title_ru,
+          uz: values.title_uz,
+          en: values.title_en,
+        },
+        brand_id: values.brand.value,
+        category_ids: values.categories.map((category) => category.value),
+        combo_ids: [],
+        favorite_ids: [],
+        measurement_id: values.unit.value,
+        rate_id: "",
+        tag_ids: values.tags.map((tag) => tag.value),
+        variant_ids: [],
+        property_groups,
+        currency: "UZS", // values.currency.value,
+        code: values.code,
+      };
+      saveChanges(data);
+    },
+    [saveChanges],
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -242,34 +263,36 @@ export default function GoodsCreate() {
 
   useEffect(() => {
     setIsLoading(true);
-    if (id) {
-      fetchProductData()
-        .then((data) => setInitialValues(data))
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  }, [fetchProductData, id]);
+    fetchProductData()
+      .then((data) => {
+        setInitialValues(data);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [fetchProductData]);
 
-  const validationSchema = Yup.object().shape({
-    description_ru: validate(),
-    description_uz: validate(),
-    description_en: validate(),
-    in_price: validate("number"),
-    out_price: validate("number"),
-    is_divisible: validate("mixed"),
-    title_ru: validate(),
-    title_uz: validate(),
-    title_en: validate(),
-    brand: validate("selectItem"),
-    unit: validate("selectItem"),
-    currency: validate("selectItem"),
-    tags: validate("array"),
-    categories: validate("array"),
-    images: validate("arrayStr"),
-    property_groups: validate("multiple_select"),
-    code: validate("default"),
-  });
+  const validationSchema = useMemo(() => {
+    return Yup.object().shape({
+      description_ru: validate(),
+      description_uz: validate(),
+      description_en: validate(),
+      in_price: validate("number"),
+      out_price: validate("number"),
+      is_divisible: validate("mixed"),
+      title_ru: validate(),
+      title_uz: validate(),
+      title_en: validate(),
+      brand: validate("selectItem"),
+      unit: validate("selectItem"),
+      currency: validate("selectItem"),
+      tags: validate("array"),
+      categories: validate("array"),
+      images: validate("arrayStr"),
+      property_groups: validate("multiple_select"),
+      code: validate("default"),
+    });
+  }, []);
 
   const routes = [
     {
@@ -363,9 +386,6 @@ export default function GoodsCreate() {
                   <TabPanel value={value} index={0} dir={theme.direction}>
                     <Good
                       formik={formik}
-                      handleChange={formik.handleChange}
-                      values={formik.values}
-                      setFieldValue={formik.setFieldValue}
                       tags={tags}
                       categories={categories}
                       units={units}
@@ -377,10 +397,7 @@ export default function GoodsCreate() {
                     />
                   </TabPanel>
                   <TabPanel value={value} index={1} dir={theme.direction}>
-                    <ConnectedGoods
-                      formik={formik}
-                      initialValues={initialValues}
-                    />
+                    <ConnectedGoods formik={formik} />
                   </TabPanel>
                 </SwipeableViews>
               </form>

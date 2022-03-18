@@ -9,7 +9,7 @@ import Combo from "./tabs/Combo";
 import { StyledTabs, StyledTab } from "components/StyledTabs";
 import Card from "components/Card";
 
-export default function ConnectedGoods({ formik, initialValues }) {
+export default function ConnectedGoods({ formik }) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -64,13 +64,13 @@ export default function ConnectedGoods({ formik, initialValues }) {
           onChangeIndex={handleChangeIndex}
         >
           <TabPanel value={value} index={0} dir={theme.direction}>
-            <Recommended formik={formik} initialValues={initialValues} />
+            <Recommended formik={formik} />
           </TabPanel>
           <TabPanel value={value} index={1} dir={theme.direction}>
-            <Variation formik={formik} initialValues={initialValues} />
+            <Variation formik={formik} />
           </TabPanel>
           <TabPanel value={value} index={2} dir={theme.direction}>
-            <Combo formik={formik} initialValues={initialValues} />
+            <Combo formik={formik} />
           </TabPanel>
         </SwipeableViews>
       </Card>

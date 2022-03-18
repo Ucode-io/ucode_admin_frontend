@@ -6,17 +6,9 @@ import { divisibility, currencies } from "../api";
 import genSelectOption from "helpers/genSelectOption";
 import { useTranslation } from "react-i18next";
 
-export default function En({
-  formik,
-  values,
-  handleChange,
-  categories,
-  setFieldValue,
-  brands,
-  tags,
-  units,
-}) {
+export default function English({ formik, categories, brands, tags, units }) {
   const { t } = useTranslation();
+  const { values, handleChange, setFieldValue } = formik;
 
   return (
     <div className="grid grid-cols-12 gap-8 mt-4">
@@ -126,7 +118,7 @@ export default function En({
                       options={genSelectOption(divisibility)}
                       value={values.is_divisible}
                       onChange={(val) => {
-                        var bool = val.value == "divisible";
+                        var bool = val.value === "divisible";
                         setFieldValue("is_divisible", {
                           label: val.label,
                           value: bool,
@@ -175,7 +167,7 @@ export default function En({
                       }))}
                       value={values.unit}
                       onChange={(val) => {
-                        var unit = units.find((el) => el.id == val.value);
+                        var unit = units.find((el) => el.id === val.value);
                         setFieldValue("unit", val);
                         setFieldValue("unit_short", {
                           label: unit.short_name,

@@ -45,9 +45,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Good({
   formik,
-  values,
-  handleChange,
-  setFieldValue,
   categories,
   tags,
   units,
@@ -60,12 +57,13 @@ export default function Good({
   const { t } = useTranslation();
   const classes = useStyles();
   const theme = useTheme();
+  const { setValues, values, handleChange, setFieldValue } = formik;
 
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    formik.setValues(initialValues);
-  }, [initialValues]);
+    setValues(initialValues);
+  }, [initialValues, setValues]);
 
   // Tabs
   const a11yProps = (index) => {
@@ -138,10 +136,7 @@ export default function Good({
             <TabPanel value={value} index={0} dir={theme.direction}>
               <Russian
                 formik={formik}
-                values={values}
-                handleChange={handleChange}
                 categories={categories}
-                setFieldValue={setFieldValue}
                 brands={brands}
                 tags={tags}
                 units={units}
@@ -150,10 +145,7 @@ export default function Good({
             <TabPanel value={value} index={1} dir={theme.direction}>
               <English
                 formik={formik}
-                values={values}
-                handleChange={handleChange}
                 categories={categories}
-                setFieldValue={setFieldValue}
                 brands={brands}
                 tags={tags}
                 units={units}
@@ -162,10 +154,7 @@ export default function Good({
             <TabPanel value={value} index={2} dir={theme.direction}>
               <Uzbek
                 formik={formik}
-                values={values}
-                handleChange={handleChange}
                 categories={categories}
-                setFieldValue={setFieldValue}
                 brands={brands}
                 tags={tags}
                 units={units}

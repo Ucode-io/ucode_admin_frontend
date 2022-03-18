@@ -27,6 +27,7 @@ import {
 } from "react-sortable-hoc";
 import Select from "components/Select";
 import numberToPrice from "helpers/numberToPrice";
+import Async from "components/Select/Async";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -318,6 +319,7 @@ export default function Recommended({ formik, initialValues }) {
             setSelectedGoods(val);
           }}
         />
+        <Async />
         <br />
         <br />
         <br />

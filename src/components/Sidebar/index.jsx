@@ -37,7 +37,7 @@ export default function App() {
   const dispatch = useDispatch();
   const permissions = useSelector((state) => state.auth.permissions);
   const allMenus = useMemo(() => menu.concat(settings), []);
-  const [visible, setVisible] = useState(sidebar.isOpen);
+  const [visible, setVisible] = useState(sidebar?.isOpen ?? false);
   const [selectedList, setSelectedList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [title, setTitle] = useState("");

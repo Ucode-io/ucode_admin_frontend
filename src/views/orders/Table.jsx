@@ -41,8 +41,6 @@ const OrderTable = ({
   filters: { start_date, end_date, external_order_id },
   tabValue,
   children,
-  __columns,
-  _setColumns,
 }) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -62,8 +60,6 @@ const OrderTable = ({
 
   async function fetchData() {
     try {
-      let { shippers } = await getShippers({ limit: 1000, page: 1 });
-      shippers = shippers?.map((elm) => ({ label: elm.name, value: elm.id }));
       let { customers } = await getCustomersCount({ limit: 1000, page: 1 });
       customers = customers?.map((elm) => ({
         label: elm.name,
@@ -78,16 +74,17 @@ const OrderTable = ({
         value: elm.id,
       }));
 
-      let _columns = makeColumns({ shippers, couriers, customers, branches });
+      let _columns = makeColumns({ couriers, customers, branches });
+      console.log("_columns", _columns);
       _columns = [
         ..._columns,
         {
           title: (
             <SwitchColumns
               columns={_columns}
-              onChange={(val) =>
-                setColumns((prev) => [...val, prev[prev.length - 1]])
-              }
+              onChange={(val) => {
+                setColumns((prev) => [...val, prev[prev.length - 1]]);
+              }}
             />
           ),
           key: "actions",
@@ -219,13 +216,35 @@ const OrderTable = ({
       });
   };
 
-  const makeColumns = ({ shippers, couriers, customers, branches }) => [
+  const makeColumns = ({ couriers, customers, branches }) => [
     {
       title: "№",
       key: "order-number",
       render: (_, index) => {
         return (currentPage - 1) * limit + index + 1;
       },
+    },
+    {
+      title: t("client.name"),
+      key: "name",
+      filterOptions: customers,
+      onFilter: (ids) => {
+        setFilters((old) => ({
+          ...old,
+          customer_id: ids.length ? ids.join(",") : undefined,
+        }));
+      },
+      render: (record) => (
+        <div className="cursor-pointer">
+          {record.client_name}
+          <a
+            href={`tel:${record.client_phone_number}`}
+            className="text-info cursor-pointer block"
+          >
+            {record.client_phone_number}
+          </a>
+        </div>
+      ),
     },
     {
       title: t("order_id"),
@@ -254,28 +273,7 @@ const OrderTable = ({
         );
       },
     },
-    {
-      title: t("client.name"),
-      key: "name",
-      filterOptions: customers,
-      onFilter: (ids) => {
-        setFilters((old) => ({
-          ...old,
-          customer_id: ids.length ? ids.join(",") : undefined,
-        }));
-      },
-      render: (record) => (
-        <div className="cursor-pointer">
-          {record.client_name}
-          <a
-            href={`tel:${record.client_phone_number}`}
-            className="text-info cursor-pointer block"
-          >
-            {record.client_phone_number}
-          </a>
-        </div>
-      ),
-    },
+
     {
       title: t("courier"),
       key: "courier",

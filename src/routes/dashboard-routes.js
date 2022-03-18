@@ -106,11 +106,11 @@ const CompanyCategoryCreate = Loadable({
   loading: FullScreenLoader,
 });
 const Banner = Loadable({
-  loader: () => import("views/catalog/banner"),
+  loader: () => import("views/marketing/banners"),
   loading: FullScreenLoader,
 });
 const BannerCreate = Loadable({
-  loader: () => import("views/catalog/banner/form"),
+  loader: () => import("views/marketing/banners/form"),
   loading: FullScreenLoader,
 });
 const Courier = Loadable({
@@ -199,6 +199,22 @@ const Integrations = Loadable({
 
 const IikoEdit = Loadable({
   loader: () => import("views/settings/integrations/iiko"),
+  loading: FullScreenLoader,
+});
+const Payme = Loadable({
+  loader: () => import("views/settings/integrations/payme"),
+  loading: FullScreenLoader,
+});
+const PaymeCreate = Loadable({
+  loader: () => import("views/settings/integrations/payme/PaymeCreate"),
+  loading: FullScreenLoader,
+});
+const Click = Loadable({
+  loader: () => import("views/settings/integrations/click"),
+  loading: FullScreenLoader,
+});
+const ClickCreate = Loadable({
+  loader: () => import("views/settings/integrations/click/ClickCreate"),
   loading: FullScreenLoader,
 });
 
@@ -762,6 +778,48 @@ export default [
     path: "/settings/integrations/iiko",
     exact: true,
     title: "Iiko.Edit",
+    permission: "fares",
+  },
+  {
+    component: Payme,
+    path: "/settings/integrations/payme",
+    exact: true,
+    title: "Payme",
+    permission: "fares",
+  },
+  {
+    component: PaymeCreate,
+    path: "/settings/integrations/payme/create",
+    exact: true,
+    title: "PaymeCreate",
+    permission: "fares",
+  },
+  {
+    component: PaymeCreate,
+    path: "/settings/integrations/payme/create/:id",
+    exact: true,
+    title: "PaymeCreate",
+    permission: "fares",
+  },
+  {
+    component: Click,
+    path: "/settings/integrations/click",
+    exact: true,
+    title: "Click",
+    permission: "fares",
+  },
+  {
+    component: ClickCreate,
+    path: "/settings/integrations/click/create",
+    exact: true,
+    title: "ClickCreate",
+    permission: "fares",
+  },
+  {
+    component: ClickCreate,
+    path: "/settings/integrations/click/create/:id",
+    exact: true,
+    title: "ClickCreate",
     permission: "fares",
   },
   {

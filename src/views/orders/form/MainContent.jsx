@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { Phone } from "@material-ui/icons";
 import AddressDropdown from "components/Filters/AddressDropdown";
 import OutsideClickHandler from "react-outside-click-handler";
+import {getCustomerType} from "../../../services/customerType";
 
 export default function MainContent({
   formik,
@@ -28,14 +29,19 @@ export default function MainContent({
   const { t } = useTranslation();
   const { values, handleChange, setFieldValue } = formik;
   const [customers, setCustomers] = useState([]);
+  const [customerTypes, setCustomerTypes] = useState([]);
   const [branch, setBranch] = useState(null);
-  const branchItem = branch?.branches?.map((elm) => elm?.name);
-  console.log("branches", branchItem);
-  console.log("values", values);
+  const branchOption = branch && branch?.branches?.map((elm) => ({ label: elm.name, value: elm.id , elm}));
+
+  let debounce = setTimeout(() => {}, 0)
 
   useEffect(() => {
     getClients();
   }, []);
+
+  useEffect(() => {
+    typeCustomers()
+  },[])
 
   const getClients = (search) => {
     getCustomers({ limit: 10, search })
@@ -51,15 +57,33 @@ export default function MainContent({
       .catch((err) => console.log(err));
   };
 
+  const typeCustomers = (search) => {
+    getCustomerType({ limit: 10, search })
+        .then((res) => {
+              setCustomerTypes(
+                  res.customer_types?.map((elm) => ({label: elm.name, value: elm.id, elm}))
+              )
+            }
+        )
+        .catch((err) => console.log(err));
+  }
+
   const onSearchCustomer = (inputValue, actionMeta) => {
-    getClients(inputValue);
+    clearTimeout(debounce)
+    debounce = setTimeout(() => {
+      getClients(inputValue);
+    },300)
   };
 
   const onSearchClientType = (inputValue, actionMeta) => {
-    // getClientTypes(inputValue);
+    clearTimeout(debounce)
+    debounce = setTimeout(() => {
+      typeCustomers(inputValue)
+    },200)
   };
 
   const onClientSelect = (newValue, actionMeta) => {
+    console.log('actionMeta', actionMeta)
     setFieldValue("client", { ...newValue, action: actionMeta.action });
     if (actionMeta.action === "create-option") {
       setFieldValue("client_first_name", "");
@@ -71,13 +95,8 @@ export default function MainContent({
   };
 
   const onClientTypeSelect = (newValue, actionMeta) => {
-    setFieldValue("client", { ...newValue, action: actionMeta.action });
-    if (actionMeta.action === "create-option") {
-      setFieldValue("client_first_name", "");
-    } else {
-      setFieldValue("client_first_name", newValue?.elm?.first_name);
-      setFieldValue("client_first_name", newValue?.elm?.last_name);
-    }
+    console.log('newValue', newValue)
+    setFieldValue("client_type", { ...newValue, action: actionMeta.action });
   };
 
   return (
@@ -92,6 +111,7 @@ export default function MainContent({
               <div className="w-2/3">
                 <Form.Item formik={formik} name="client">
                   <CreatableSelect
+                      isClearable
                     options={customers}
                     value={values.client}
                     formatCreateLabel={(inputText) =>
@@ -114,7 +134,8 @@ export default function MainContent({
               <div className="w-2/3">
                 <Form.Item formik={formik} name="client_type">
                   <CreatableSelect
-                    options={[{ label: "", value: "" }]}
+                    isClearable
+                    options={customerTypes}
                     value={values.client_type}
                     formatCreateLabel={(inputText) =>
                       `${t("create")} "${inputText}"`
@@ -298,6 +319,7 @@ export default function MainContent({
               <div className="w-2/3">
                 <Form.Item formik={formik} name="restaurant">
                   <Input
+                    disabled
                     id="restaurant"
                     value={values.restaurant}
                     onChange={handleChange}
@@ -316,7 +338,7 @@ export default function MainContent({
                   <Select
                     id="branch"
                     value={values.branch}
-                    options={branchItem}
+                    options={branchOption}
                     placeholder={t("branch")}
                     onChange={(val) => setFieldValue("branch", val)}
                   />

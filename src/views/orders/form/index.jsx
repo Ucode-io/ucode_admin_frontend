@@ -48,6 +48,7 @@ export default function CreateClient() {
   const [saveLoading, setSaveLoading] = useState(false);
   const [shippers, setShippers] = useState([]);
   const [branches, setBranches] = useState([]);
+  const [customers, setCustomers] = useState([])
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [placemarkGeometry, setPlacemarkGeometry] = useState([]);
   const [deliveryPrice, setDeliveryPrice] = useState(0);
@@ -124,6 +125,7 @@ export default function CreateClient() {
           })),
         )
         .catch((err) => console.log(err));
+      setCustomers(_customers)
 
       const _deliveryPrice = await getDeliveryPrice()
         .then((res) => res.price)
@@ -139,6 +141,7 @@ export default function CreateClient() {
   const dispatch = useDispatch();
 
   const onSubmit = async (values) => {
+    console.log("values", values)
     setSaveLoading(true);
 
     const _values = { ...values };
@@ -201,7 +204,6 @@ export default function CreateClient() {
           },
           values.shipper.value,
         );
-
         history.push("/home/orders");
       } catch (e) {
         console.log(e);
@@ -209,6 +211,7 @@ export default function CreateClient() {
         setSaveLoading(false);
       }
     } else {
+      console.log("order", data)
       postOrder(data)
         .then((res) => history.push("/home/orders"))
         .finally(() => setSaveLoading(false));
@@ -422,6 +425,7 @@ export default function CreateClient() {
               icon={SaveIcon}
               type="submit"
               loading={saveLoading}
+              onClick={() => {console.log(formik.values)}}
             >
               {t("save")}
             </Button>,

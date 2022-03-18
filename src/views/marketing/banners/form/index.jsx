@@ -1,86 +1,127 @@
-import React, { useEffect, useMemo, useState } from "react"
-import { useFormik } from "formik"
-import * as yup from "yup"
+import { useState, useMemo, useEffect } from "react"
 import { useTranslation } from "react-i18next"
-import { useHistory, useParams } from "react-router-dom"
-import { Input } from "alisa-ui"
-import Gallery from "../../../../components/Gallery"
-import Select from "../../../../components/Select"
-import Switch from "../../../../components/Switch"
+import { useFormik } from "formik"
+import { useParams } from "react-router-dom"
+import Header from "components/Header"
+import Breadcrumb from "components/Breadcrumb"
+import Button from "components/Button"
 import CancelIcon from "@material-ui/icons/Cancel"
 import SaveIcon from "@material-ui/icons/Save"
-//components and functions
-import Form from "../../../../components/Form/Index"
-import Breadcrumb from "../../../../components/Breadcrumb"
-import Header from "../../../../components/Header"
-import Card from "../../../../components/Card"
-import Button from "../../../../components/Button"
-import {
-  getCourierType,
-  postCourierType,
-  updateCourierType,
-} from "../../../../services/courierType"
-import LoaderComponent from "../../../../components/Loader"
-import TabsWithFlags from "../../../../components/StyledTabs/TabsWithFlags"
+import { useDispatch } from "react-redux"
+import { useHistory } from "react-router-dom"
+import { showAlert } from "redux/actions/alertActions"
+import * as yup from "yup"
+import SwipeableViews from "react-swipeable-views"
+import { TabPanel } from "components/Tab/TabBody"
+import { useTheme } from "@material-ui/core/styles"
+import GeneralInformation from "./GeneralInformation"
+import CustomSkeleton from "components/Skeleton"
+import {getPromo, postPromo, updatePromo} from "../../../../services/promotion";
 
-export default function BannerForm() {
-  const history = useHistory()
+export default function CategoryCreate() {
   const { id } = useParams()
+  const [value, setValue] = useState(0)
   const { t } = useTranslation()
-  const [saveLoading, setSaveLoading] = useState(false)
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const theme = useTheme()
+
+  const [buttonLoader, setButtonLoader] = useState(false)
   const [loader, setLoader] = useState(true)
 
-  const getItem = () => {
-    if (!id) return setLoader(false)
+  const fetchData = () => {
     setLoader(true)
-    getCourierType(id)
-      .then((res) => {
-        formik.setValues({
-          name: res.name,
-          distance_from: res.distance_from,
-          distance_to: res.distance_to,
+    if (!id) return setLoader(false)
+    getPromo(id)
+        .then((res) => {
+          console.log(res)
+          formik.setValues({
+            description_ru: res?.description.ru,
+            description_uz: res?.description.uz,
+            description_en: res?.description.en,
+            image: res?.image.replace("https://test.cdn.delever.uz/delever/", ""),
+            title_ru: res?.title.ru,
+            title_uz: res?.title.uz,
+            title_en: res?.title.en,
+            start_date: "",
+            end_date: "",
+          })
         })
-      })
-      .finally(() => setLoader(false))
+        .finally(() => setLoader(false))
+  }
+
+  const saveChanges = (data) => {
+    console.log("data", data)
+    setButtonLoader(true)
+    if (id) {
+      updatePromo(id, data)
+          .then(() => history.go(-1))
+          .catch((err) =>
+              dispatch(showAlert(t(err?.data?.Error?.Message ?? err?.data?.Error))),
+          )
+          .finally(() => setButtonLoader(false))
+    } else {
+      postPromo(data)
+          .then(() => history.go(-1))
+          .catch((err) =>
+              dispatch(showAlert(t(err.data?.Error?.Message ?? err?.data?.Error))),
+          )
+          .finally(() => setButtonLoader(false))
+    }
+  }
+
+  const onSubmit = (data) => {
+    // const start_time= data.start_date ? Math.round(`${data.start_date.split("-")[2]}-${
+    //     data.start_date.split("-")[1]
+    // }-${data.start_date.split("-")[0]}` / 1000) : ''
+    // const end_time = data.end_date ? Math.round(`${data.end_date.split("-")[2]}-${
+    //     data.end_date.split("-")[1]
+    // }-${data.end_date.split("-")[0]}` / 1000) : ''
+
+    const value = {
+      description: {
+        ru: values.description_ru,
+        uz: values.description_uz,
+        en: values.description_en,
+      },
+      image: values.image,
+      title: {
+        ru: values.title_ru,
+        uz: values.title_uz,
+        en: values.title_en,
+      },
+      start_time: data.start_date,
+      end_time: data.end_time,
+    }
+    saveChanges(value)
   }
 
   useEffect(() => {
-    getItem()
+    fetchData()
   }, [])
 
   const initialValues = useMemo(
-    () => ({
-      name: "",
-      distance_from: "",
-      distance_to: "",
-    }),
-    []
+      () => ({
+        description_ru: '',
+        description_uz: '',
+        description_en: '',
+        image: '',
+        title_ru: '',
+        title_uz: '',
+        title_en: '',
+      }),
+      [],
   )
 
   const validationSchema = useMemo(() => {
     const defaultSchema = yup.mixed().required(t("required.field.error"))
+
     return yup.object().shape({
-      name: defaultSchema,
-      distance_from: defaultSchema,
-      distance_to: defaultSchema,
+      title_ru: defaultSchema,
+      title_uz: defaultSchema,
+      title_en: defaultSchema,
     })
   }, [])
-
-  const saveChanges = (data) => {
-    setSaveLoading(true)
-    const selectedAction = id
-      ? updateCourierType(id, data)
-      : postCourierType(data)
-    selectedAction
-      .then(() => {
-        history.goBack()
-      })
-      .finally(() => setSaveLoading(false))
-  }
-
-  const onSubmit = (values) => {
-    saveChanges(values)
-  }
 
   const formik = useFormik({
     initialValues,
@@ -88,85 +129,71 @@ export default function BannerForm() {
     validationSchema,
   })
 
-  if (loader) return <LoaderComponent isLoader={loader} />
+  const { values, handleChange, handleSubmit, setFieldValue } = formik
 
   const routes = [
     {
-      title: t("list.of.banners"),
+      title: <div>{t("list.stocks")}</div>,
       link: true,
-      route: `/home/marketing/banners`,
+      route: `/home/marketing/stocks`,
     },
     {
-      title: id ? formik.values?.name : t("create"),
+      title: id ? formik?.values.title_ru : t("create"),
     },
   ]
 
-  const { values, handleChange, handleSubmit } = formik
+  // Tabs
 
-  const cardFooter = [
-    <Button
-      size="large"
-      shape="outlined"
-      color="red"
-      borderColor="bordercolor"
-      icon={CancelIcon}
-      onClick={() => history.goBack()}
-    >
-      {t("cancel")}
-    </Button>,
-    <Button size="large" type="submit" icon={SaveIcon} loading={saveLoading}>
-      {t(id ? "save" : "create")}
-    </Button>,
-  ]
+  const handleChangeIndex = (index) => setValue(index)
 
   return (
-    <div className="w-full">
-      <form onSubmit={handleSubmit}>
-        <Header
-          // title={null}
-          startAdornment={[<Breadcrumb routes={routes} />]}
-          endAdornment={cardFooter}
-        />
-        <div className="p-4 w-full flex flex-col gap-4 box-border font-body text-sm">
-          <Card title={t("general.information")}>
-            <TabsWithFlags />
-            <div className="flex gap-8">
-              <div>
-                <Gallery multiple={false} width={120} aspectRatio="1" />
-              </div>
-              <div className="grid grid-cols-4 items-baseline flex-1">
-                <div>{t("name")}</div>
-                <div className="col-span-3">
-                  <Form.Item formik={formik} name="name">
-                    <Input size="large" />
-                  </Form.Item>
-                </div>
-                <div>{t("description")}</div>
-                <div className="col-span-3">
-                  <Form.Item formik={formik} name="description">
-                    <Input size="large" />
-                  </Form.Item>
-                </div>
-                <div>{t("banner.type")}</div>
-                <div className="col-span-3">
-                  <Form.Item formik={formik} name="name">
-                    <Select height={36} />
-                  </Form.Item>
-                </div>
-                <div>{t("transport")}</div>
-                <div className="col-span-3">
-                  <Form.Item formik={formik} name="name">
-                    <div className="flex items-center gap-3">
-                      <Switch defaultChecked={true} />
-                      Активный
-                    </div>
-                  </Form.Item>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </form>
-    </div>
+      <>
+        {loader ? (
+            <CustomSkeleton />
+        ) : (
+            <>
+              <form onSubmit={handleSubmit}>
+                <Header
+                    startAdornment={[<Breadcrumb routes={routes} />]}
+                    endAdornment={[
+                      <Button
+                          icon={CancelIcon}
+                          size="large"
+                          shape="outlined"
+                          color="red"
+                          iconClassName="red"
+                          borderColor="bordercolor"
+                          onClick={() => history.goBack()}
+                      >
+                        {t("cancel")}
+                      </Button>,
+                      <Button
+                          icon={SaveIcon}
+                          size="large"
+                          type="submit"
+                          loading={buttonLoader}
+                      >
+                        {t(id ? "save" : "create")}
+                      </Button>,
+                    ]}
+                />
+                <SwipeableViews
+                    axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+                    index={value}
+                    onChangeIndex={handleChangeIndex}
+                >
+                  <TabPanel value={value} index={0} dir={theme.direction}>
+                    <GeneralInformation
+                        formik={formik}
+                        handleChange={handleChange}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                    />
+                  </TabPanel>
+                </SwipeableViews>
+              </form>
+            </>
+        )}
+      </>
   )
 }

@@ -26,7 +26,6 @@ export default function TableBanner() {
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [deleteModal, setDeleteModal] = useState(null)
 
-
   const handleDeleteItem = () => {
     setDeleteLoading(true)
     deleteBanner(deleteModal.id)

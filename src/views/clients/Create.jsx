@@ -98,7 +98,8 @@ export default function CreateClient() {
           last_name: res.name.split(" ")[1],
           phone: res.phone?.substring(4),
           image: res.image.split("/")[4],
-          customer_type_id: res.customer_type_id.split(" ")[2],
+          customer_type_id: res.customer_type_id,
+          customer_type: res.client_type,
         });
       })
       .finally(() => setLoader(false));

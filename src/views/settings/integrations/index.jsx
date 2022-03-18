@@ -35,6 +35,7 @@ const useStyles = makeStyles({
     alignItems: "center",
     justifyContent: "space-between",
     padding: ".5rem 1rem",
+    cursor: "pointer",
   },
   arrow: {
     color: "#4094f7",
@@ -112,8 +113,11 @@ export default function Integrations() {
         <Typography className={classes.header}>Платежный шлюз</Typography>
         <Card className={classes.root}>
           <img src={payme} alt="" className="p-4 m-auto" />
-          <CardActions className={classes.footer}>
-            <Typography>RKeeper</Typography>
+          <CardActions
+            className={classes.footer}
+            onClick={() => history.push("/home/settings/integrations/payme")}
+          >
+            <Typography>Payme</Typography>
             <Typography className={classes.arrow}>
               <img src={arrowRight} alt="arrow right" />
             </Typography>
@@ -122,8 +126,11 @@ export default function Integrations() {
 
         <Card className={classes.root}>
           <img src={click} alt="" className="p-4 m-auto" />
-          <CardActions className={classes.footer}>
-            <Typography>Jowi</Typography>
+          <CardActions
+            className={classes.footer}
+            onClick={() => history.push("/home/settings/integrations/click")}
+          >
+            <Typography>Click</Typography>
             <Typography className={classes.arrow}>
               <img src={arrowRight} alt="arrow right" />
             </Typography>

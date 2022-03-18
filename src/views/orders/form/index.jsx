@@ -278,18 +278,20 @@ export default function CreateClient() {
     }
     getOneOrder(params.id)
       .then((res) => {
-        const client = _customers.find((elm) => elm.value === res.client_id);
         setCreatedTime(res.created_at);
         setRegionId(res.region_id);
+        console.log("res", res);
         formik.setValues({
-          shipper: {
-            label: res.shipper_name,
-            value: res.shipper_id,
-          },
-          client: client,
-          client_name: client?.elm?.name ?? "",
+          // client: res.client_name ?? "",
           is_courier_call: res.is_courier_call,
           description: res.description,
+          client: res.client_phone_number
+            ? {
+                label: res.client_phone_number + ` (${res.client_name})`,
+                value: res.client_phone_number,
+              }
+            : null,
+          client_name: res.client_name,
           apartment: res.apartment,
           building: res.building,
           floor: res.floor,
@@ -312,13 +314,14 @@ export default function CreateClient() {
             value: res.steps[0].id,
           },
         });
-        formik.setFieldValue("client", client);
         setPlacemarkGeometry([res.to_location.lat, res.to_location.long]);
         setSelectedProducts(res.steps[0].products);
         setDeliveryPrice(res.delivery_price);
       })
       .finally(() => setLoader(false));
   };
+
+  console.log("form", formik.values);
 
   const formatLikeOptions = (arr) =>
     arr.map((elm) => ({ label: elm.name, value: elm.id, elm }));

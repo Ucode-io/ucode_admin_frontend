@@ -37,8 +37,6 @@ export default function MainContent({
 
   let debounce = setTimeout(() => {}, 0);
 
-  console.log("values", values);
-
   useEffect(() => {
     getClients();
   }, []);

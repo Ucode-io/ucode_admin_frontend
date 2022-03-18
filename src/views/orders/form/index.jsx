@@ -181,7 +181,7 @@ export default function CreateClient() {
 
     if (params.id) {
       try {
-        data.shipper_id = values.shipper.value;
+        data.shipper_id = values?.shipper?.value;
         await updateOrder(params.id, data);
         await changeOrderStatus(
           params.id,
@@ -189,9 +189,9 @@ export default function CreateClient() {
             status_id: "ccb62ffb-f0e1-472e-bf32-d130bea90617",
             description: "new order updated",
           },
-          values.shipper.value,
+          values?.shipper?.value,
         );
-        history.push("/home/orders?tab=2");
+        history.push("/home/orders");
       } catch (e) {
         console.log(e);
       } finally {
@@ -288,7 +288,7 @@ export default function CreateClient() {
           client: res.client_phone_number
             ? {
                 label: res.client_phone_number + ` (${res.client_name})`,
-                value: res.client_phone_number,
+                value: res.client_id,
               }
             : null,
           client_name: res.client_name,
@@ -320,8 +320,6 @@ export default function CreateClient() {
       })
       .finally(() => setLoader(false));
   };
-
-  console.log("form", formik.values);
 
   const formatLikeOptions = (arr) =>
     arr.map((elm) => ({ label: elm.name, value: elm.id, elm }));

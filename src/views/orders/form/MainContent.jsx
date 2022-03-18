@@ -17,6 +17,7 @@ import { getCustomerType } from "../../../services/customerType";
 export default function MainContent({
   formik,
   branches,
+  branch,
   deliveryPrice,
   fares,
   setAddressList,
@@ -30,10 +31,11 @@ export default function MainContent({
   const { values, handleChange, setFieldValue } = formik;
   const [customers, setCustomers] = useState([]);
   const [customerTypes, setCustomerTypes] = useState([]);
-  const [branch, setBranch] = useState(null);
   const branchOption =
     branch &&
-    branch?.branches?.map((elm) => ({ label: elm.name, value: elm.id, elm }));
+    branch?.branches?.map((elm) => ({ label: elm?.name, value: elm?.id, elm }));
+
+  console.log("branch", branch);
 
   let debounce = setTimeout(() => {}, 0);
 
@@ -308,10 +310,9 @@ export default function MainContent({
           </div>
 
           <MapContent
-            branches={branches}
+            branches={branch}
             formik={formik}
             {...props}
-            setBranch={setBranch}
             setItem={setItem}
           />
 

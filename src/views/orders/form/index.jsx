@@ -57,6 +57,7 @@ export default function CreateClient() {
   const [searchAddress, setSearchAddress] = useState("");
   const [distance, setDistance] = useState();
   const [item, setItem] = useState(null);
+  const [branch, setBranch] = useState(null);
 
   const tabLabel = (text) => {
     return <span className="px-1">{text}</span>;
@@ -231,6 +232,7 @@ export default function CreateClient() {
           "branch",
           elm ? { label: elm.name, value: elm.id, elm } : null,
         );
+        setBranch(res);
       });
     }
   }, [placemarkGeometry]);
@@ -444,6 +446,7 @@ export default function CreateClient() {
           <MainContent
             formik={formik}
             branches={branches}
+            branch={branch}
             deliveryPrice={deliveryPrice}
             placemarkGeometry={placemarkGeometry}
             setPlacemarkGeometry={setPlacemarkGeometry}

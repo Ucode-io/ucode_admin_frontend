@@ -98,6 +98,8 @@ export default function MainContent({
     }
   };
 
+  console.log("form", formik);
+
   const onClientTypeSelect = (newValue, actionMeta) => {
     setFieldValue("client_type", { ...newValue, action: actionMeta.action });
   };
@@ -161,9 +163,8 @@ export default function MainContent({
                 <Form.Item formik={formik}>
                   <Input
                     placeholder={t("first.name")}
-                    value={values.client_first_name}
                     onChange={handleChange}
-                    defaultValue={formik?.values?.client?.elm?.name}
+                    value={formik?.values?.client?.elm?.name}
                   />
                 </Form.Item>
               </div>

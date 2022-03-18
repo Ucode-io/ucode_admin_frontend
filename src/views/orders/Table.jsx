@@ -36,6 +36,7 @@ import ActionMenu from "components/ActionMenu";
 import SwitchColumns from "components/Filters/SwitchColumns";
 import orderTimer from "helpers/orderTimer";
 import numberToPrice from "helpers/numberToPrice";
+import parseQuery from "helpers/parseQuery";
 
 const OrderTable = ({
   filters: { start_date, end_date, external_order_id },
@@ -57,6 +58,7 @@ const OrderTable = ({
     courier_id: undefined,
     payment_type: undefined,
   });
+  const { tab } = parseQuery();
 
   async function fetchData() {
     try {

@@ -153,7 +153,7 @@ export default function CreateClient() {
       co_delivery_price: deliveryPrice,
       to_location: { lat: placemarkGeometry[0], long: placemarkGeometry[1] },
       delivery_type: values.delivery_type.value,
-      courier_id: values.courier.value,
+      courier_id: values?.courier?.value,
       steps: [
         {
           branch_id: values.branch?.value,
@@ -191,7 +191,7 @@ export default function CreateClient() {
           },
           values.shipper.value,
         );
-        history.push("/home/orders");
+        history.push("/home/orders?tab=2");
       } catch (e) {
         console.log(e);
       } finally {

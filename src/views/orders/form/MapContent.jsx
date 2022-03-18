@@ -2,7 +2,6 @@ import { CircularProgress } from "@material-ui/core";
 import { useEffect, useRef } from "react";
 import { YMaps, Map, Placemark } from "react-yandex-maps";
 import { mapDefaults, apikey } from "constants/mapDefaults";
-import { getNearestBranch } from "services";
 import axios from "../../../utils/axios";
 
 export default function MapContent({
@@ -14,6 +13,7 @@ export default function MapContent({
   params,
   mapLoading,
   setBranch,
+  setItem,
 }) {
   const yandexMap = useRef(null);
 
@@ -30,19 +30,6 @@ export default function MapContent({
     }
     setPlacemarkGeometry(e.get("coords"));
     getAddress(yandexMap.current.ymaps, e);
-    getBranch(e);
-  };
-  const getBranch = (e) => {
-    console.log("first",  e.get("coords")[0]);
-    axios
-      .get(`${process.env.REACT_APP_AUTH_URL}/nearest-branch`, {
-        lat: e.get("coords")[0],
-        long: e.get("coords")[1],
-      })
-      .then((res) => {
-        console.log("branches", res)
-        setBranch(res);
-      });
   };
 
   return (
@@ -70,12 +57,12 @@ export default function MapContent({
           ) : (
             <></>
           )}
-          {branches && branches.length ? (
-            branches?.map(({ elm, label }, id) => (
+          {branches?.branches && branches?.branches.length ? (
+            branches?.branches.map((elm) => (
               <Placemark
-                key={id}
+                key={elm.id}
                 properties={{
-                  iconContent: `${label}`,
+                  iconContent: `${elm.name}`,
                 }}
                 options={{
                   preset: "islands#redStretchyIcon",

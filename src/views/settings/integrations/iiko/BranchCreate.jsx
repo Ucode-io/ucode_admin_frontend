@@ -12,10 +12,10 @@ import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
 import { getBranchesCount } from "../../../../services";
-import { getOneClick, postClick, updateClick } from "services/promotion";
+import { getOnePayme, postPayme, updatePayme } from "services/promotion";
 import CustomSkeleton from "components/Skeleton";
 
-export default function ClickCreate() {
+export default function BranchCreate() {
   const { t } = useTranslation();
   const history = useHistory();
   const params = useParams();
@@ -31,11 +31,10 @@ export default function ClickCreate() {
     if (params.branch_id) {
       getBranchesCount.then((res) => {
         setValues({
+          login: res.login,
           key: res.key,
           branch_id: res.branch_id,
           merchant_id: res.merchant_id,
-          service_id: res.service_id,
-          merchant_user_id: res.merchant_user_id,
         });
       });
     }
@@ -43,14 +42,14 @@ export default function ClickCreate() {
 
   const fetchData = () => {
     if (params.id) {
-      getOneClick(params.id)
+      setLoader(true);
+      getOnePayme(params.id)
         .then((res) => {
           formik.setValues({
+            login: res.login,
             key: res.key,
             branch_id: res.branch_id,
             merchant_id: res.merchant_id,
-            service_id: res.service_id,
-            merchant_user_id: res.merchant_user_id,
           });
         })
         .finally(() => setLoader(false));
@@ -71,11 +70,10 @@ export default function ClickCreate() {
 
   const initialValues = useMemo(
     () => ({
+      login: "Paycom",
       key: null,
       branch_id: null,
       merchant_id: null,
-      service_id: null,
-      merchant_user_id: null,
     }),
     [],
   );
@@ -85,8 +83,7 @@ export default function ClickCreate() {
     return yup.object().shape({
       branch_id: defaultSchema,
       key: defaultSchema,
-      service_id: defaultSchema,
-      merchant_user_id: defaultSchema,
+      login: defaultSchema,
       merchant_id: defaultSchema,
     });
   }, []);
@@ -98,8 +95,8 @@ export default function ClickCreate() {
 
     setSaveLoading(true);
     const selectedAction = params.id
-      ? updateClick(data, params.id)
-      : postClick(data);
+      ? updatePayme(data, params.id)
+      : postPayme(data);
     selectedAction
       .then((res) => {
         history.goBack();
@@ -161,7 +158,7 @@ export default function ClickCreate() {
               <div className="col-span-2">
                 <Form.Item formik={formik} name="branch_id">
                   <div className="input-label">
-                    <span style={{ color: "red" }}>*</span> {t("name.branch")}
+                    <span style={{ color: "red" }}>*</span> {t("branch")}
                   </div>
                   <Select
                     height={40}
@@ -176,57 +173,13 @@ export default function ClickCreate() {
               <div className="col-span-2">
                 <Form.Item formik={formik} name="key">
                   <div className="input-label">
-                    <span style={{ color: "red" }}>*</span> {t("key")}
+                    <span style={{ color: "red" }}>*</span> {t("Iiko")}
                   </div>
                   <Input
                     size="large"
                     value={values.key}
                     onChange={handleChange}
                     name="key"
-                  />
-                </Form.Item>
-              </div>
-            </div>
-            <div className="grid grid-cols-4 gap-5 items-baseline">
-              <div className="col-span-2">
-                <Form.Item formik={formik} name="service_id">
-                  <div className="input-label">
-                    <span style={{ color: "red" }}>*</span> {t("id.sercice")}
-                  </div>
-                  <Input
-                    size="large"
-                    value={values.service_id}
-                    onChange={handleChange}
-                    name="service_id"
-                  />
-                </Form.Item>
-              </div>
-              <div className="col-span-2">
-                <Form.Item formik={formik} name="merchant_user_id">
-                  <div className="input-label">
-                    <span style={{ color: "red" }}>*</span> {t("login")}
-                  </div>
-                  <Input
-                    size="large"
-                    value={values.merchant_user_id}
-                    onChange={handleChange}
-                    name="merchant_user_id"
-                  />
-                </Form.Item>
-              </div>
-            </div>
-            <div className="grid grid-cols-4 gap-5 items-baseline">
-              <div className="col-span-2">
-                <Form.Item formik={formik} name="merchant_id">
-                  <div className="input-label">
-                    <span style={{ color: "red" }}>*</span>{" "}
-                    {t("id.merchant.user")}
-                  </div>
-                  <Input
-                    size="large"
-                    value={values.merchant_id}
-                    onChange={handleChange}
-                    name="merchant_id"
                   />
                 </Form.Item>
               </div>

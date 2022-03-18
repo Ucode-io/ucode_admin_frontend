@@ -217,6 +217,10 @@ const ClickCreate = Loadable({
   loader: () => import("views/settings/integrations/click/ClickCreate"),
   loading: FullScreenLoader,
 });
+const BranchCreate = Loadable({
+  loader: () => import("views/settings/integrations/iiko/BranchCreate"),
+  loading: FullScreenLoader,
+});
 
 const IntegrationsCreate = Loadable({
   loader: () => import("views/settings/integrations/Form"),
@@ -820,6 +824,20 @@ export default [
     path: "/settings/integrations/click/create/:id",
     exact: true,
     title: "ClickCreate",
+    permission: "fares",
+  },
+  {
+    component: BranchCreate,
+    path: "/settings/integrations/iiko/branch-create",
+    exact: true,
+    title: "BranchCreate",
+    permission: "fares",
+  },
+  {
+    component: BranchCreate,
+    path: "/settings/integrations/iiko/branch-create/:id",
+    exact: true,
+    title: "BranchCreate",
     permission: "fares",
   },
   {

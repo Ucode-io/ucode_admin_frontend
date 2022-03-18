@@ -142,8 +142,6 @@ export default function PaymeCreate() {
     </Button>,
   ];
 
-  console.log("values", values);
-
   if (loader) return <CustomSkeleton />;
 
   return (

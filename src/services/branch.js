@@ -30,7 +30,7 @@ const requests = {
     request({ method: "delete", url: `/branches/${branch_id}` }),
   getBranchCouriers: (branch_id, params) =>
     request({ method: "get", url: `/branches/${branch_id}/couriers`, params }),
-  getNearestBranch: (branch_id, params) =>
+  getNearestBranch: (params) =>
     request({ method: "get", url: `​/nearest-branch`, params }),
 };
 export default requests;

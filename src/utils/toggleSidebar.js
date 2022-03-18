@@ -14,7 +14,6 @@ function isValid(key) {
 }
 
 function keyHandler(e, cb) {
-  console.log(e.key);
   if (isValid(e.key)) {
     cb();
   }

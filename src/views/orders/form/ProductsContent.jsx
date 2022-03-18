@@ -9,10 +9,10 @@ import IconButton from "components/Button/IconButton";
 import Modal from "components/Modal";
 import { useFormik } from "formik";
 // import * as yup from "yup";
-import Select, {customStyles} from "components/Select";
+import Select, { customStyles } from "components/Select";
 import TextArea from "components/Textarea";
 import Button from "components/Button";
-import {getProducts, getOneProduct, getCouriers} from "services";
+import { getProducts, getOneProduct, getCouriers } from "services";
 import { RadioGroup, Radio } from "components/Radio";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import DriveEtaIcon from "@material-ui/icons/DriveEta";
@@ -39,9 +39,9 @@ export default function ProductContent({
   const [products, setProducts] = useState([]);
   const [couriers, setCouriers] = useState([]);
   const [options, setOptions] = useState([]);
-  const [type, setType] = useState('cash')
+  const [type, setType] = useState("cash");
   const [ingredients, setIngredients] = useState([]);
-  let debounce = setTimeout(() => {}, 0)
+  let debounce = setTimeout(() => {}, 0);
 
   const modalFormik = useFormik({
     initialValues: {
@@ -50,6 +50,7 @@ export default function ProductContent({
       ingredient: null,
       child_option: 0,
       count: 1,
+      payment_type: type,
     },
     // validationSchema: yup.object().shape({
     //   name: {}
@@ -57,26 +58,25 @@ export default function ProductContent({
     onSubmit,
   });
 
-
   const { values, handleChange, setFieldValue } = modalFormik;
 
   useEffect(() => {
-    fetchCouriers()
-  }, [])
+    fetchCouriers();
+  }, []);
 
   useEffect(() => {
-      getProducts({ limit: 1000 })
-        .then((res) =>
-          setProducts(
-            res.products
-              ? res.products.map((elm) => ({
-                  label: elm.name,
-                  value: elm,
-                }))
-              : [],
-          ),
-        )
-        .catch((err) => console.log(err));
+    getProducts({ limit: 1000 })
+      .then((res) =>
+        setProducts(
+          res.products
+            ? res.products.map((elm) => ({
+                label: elm.name,
+                value: elm,
+              }))
+            : [],
+        ),
+      )
+      .catch((err) => console.log(err));
   }, [formik?.values?.branch?.elm]);
 
   useEffect(() => {
@@ -129,8 +129,8 @@ export default function ProductContent({
       : 0;
 
     return (
-      (productPrice + optionPrice + optionChildPrice + ingredientsPrice) *
-      values.count
+      (+productPrice + +optionPrice + +optionChildPrice + +ingredientsPrice) *
+      +values.count
     );
   }, [
     values.product,
@@ -144,11 +144,11 @@ export default function ProductContent({
     return selectedProducts.reduce(
       (pre, cur) =>
         pre +
-        (cur.price +
-          (cur.optionPrice || 0) +
-          (cur.optionChildPrice || 0) +
-          (cur.ingredientsPrice || 0)) *
-          cur.quantity,
+        (+cur.price +
+          (+cur.optionPrice || 0) +
+          (+cur.optionChildPrice || 0) +
+          (+cur.ingredientsPrice || 0)) *
+          +cur.quantity,
       0,
     );
   }, [selectedProducts]);
@@ -179,17 +179,17 @@ export default function ProductContent({
               }, 0)
             : 0,
           optionChildPrice: values.child_option ? values.child_option.price : 0,
-          option: values.option?.value
-            ? {
-                ...options,
-                child_options: [
-                  optionValue,
-                  ...(values?.ingredient
-                    ? values?.ingredient?.map((elm) => elm.value)
-                    : []),
-                ],
-              }
-            : {},
+          // option: values.option?.value
+          //   ? {
+          //       ...options,
+          //       child_options: [
+          //         optionValue,
+          //         ...(values?.ingredient
+          //           ? values?.ingredient?.map((elm) => elm.value)
+          //           : []),
+          //       ],
+          //     }
+          //   : {},
         },
       ]);
       setModal(null);
@@ -199,24 +199,28 @@ export default function ProductContent({
   }
 
   const fetchCouriers = (search) => {
-    getCouriers({limit: 10, search}).then(res => {
-      const _couriers = res.couriers?.map((elm) => ({
-        label: elm.first_name + elm.last_name,
-        value: elm.id,
-      }));
-      setCouriers(_couriers)
-    })
-        .catch(err => console.log(err))
-  }
+    getCouriers({ limit: 10, search })
+      .then((res) => {
+        const _couriers = res.couriers?.map((elm) => ({
+          label: elm.first_name + elm.last_name,
+          value: elm.id,
+        }));
+        setCouriers(_couriers);
+      })
+      .catch((err) => console.log(err));
+  };
   const onSearchCourier = (inputValue, actionMeta) => {
-    clearTimeout(debounce)
+    clearTimeout(debounce);
     debounce = setTimeout(() => {
       fetchCouriers(inputValue);
-    },300)
+    }, 300);
   };
 
   const onCourierSelect = (newValue, actionMeta) => {
     formik.setFieldValue("courier", { ...newValue, action: actionMeta.action });
+  };
+  const onPaymentSelect = (params) => {
+    formik.setFieldValue("payment_type", params);
   };
 
   const handleRemoveProduct = (index) => {
@@ -246,7 +250,7 @@ export default function ProductContent({
       type: "transfer",
       img: bankIcon,
     },
-  ]
+  ];
 
   const cardFooter = (
     <div className="grid grid-cols-2 my-3">
@@ -256,16 +260,20 @@ export default function ProductContent({
             <span>{t("payment.types")}</span>
           </div>
           <div className="w-9/12">
-              <div className="flex gap-2">
-                {
-                  payments.map((item, id) => <div
-                          onClick={() => setType(item.type)}
-                          className={`w-3/12 h-10 border bg-gray-50  ${item.type === type ? "bg-blue-200" : ''} cursor-pointer border-bordercolor rounded-md py-2 flex justify-center`}>
-                        <img src={item.img} alt="click" className="h-6"/>
-                      </div>
-                  )
-                }
-              </div>
+            <div className="flex gap-2">
+              {payments.map((item, id) => (
+                <div
+                  onClick={() => onPaymentSelect(item.type)}
+                  className={`w-3/12 h-10 border bg-gray-50  ${
+                    item.type === formik.values.payment_type
+                      ? "bg-blue-400"
+                      : ""
+                  } cursor-pointer border-bordercolor rounded-md py-2 flex justify-center`}
+                >
+                  <img src={item.img} alt="click" className="h-6" />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <div className="flex">
@@ -275,17 +283,17 @@ export default function ProductContent({
           <div className="w-2/3">
             <Form.Item formik={formik} name="courier">
               <CreatableSelect
-                  isClearable
-                  options={couriers}
-                  value={formik.values.courier}
-                  formatCreateLabel={(inputText) =>
-                      `${t("create")} "${inputText}"`
-                  }
-                  styles={customStyles({})}
-                  onChange={onCourierSelect}
-                  onInputChange={onSearchCourier}
-                  placeholder={t("courier")}
-                  className="react-select-input"
+                isClearable
+                options={couriers}
+                value={formik.values.courier}
+                formatCreateLabel={(inputText) =>
+                  `${t("create")} "${inputText}"`
+                }
+                styles={customStyles({})}
+                onChange={onCourierSelect}
+                onInputChange={onSearchCourier}
+                placeholder={t("courier")}
+                className="react-select-input"
               />
             </Form.Item>
           </div>
@@ -306,7 +314,7 @@ export default function ProductContent({
             Сумма доставки
           </div>
           <div className="input-label font-medium">
-            {numberToPrice(deliveryPrice, "сум")}
+            {deliveryPrice ? numberToPrice(deliveryPrice) : `${"0 сум"}`}
           </div>
         </div>
         <div className="h-0.5 w-full bg-bordercolor my-3"></div>
@@ -316,7 +324,9 @@ export default function ProductContent({
             Итого
           </div>
           <div className="text-black font-medium">
-            {numberToPrice(generalPrice + deliveryPrice, "сум")}
+            {generalPrice && deliveryPrice
+              ? numberToPrice(generalPrice + deliveryPrice)
+              : `${"0 сум"}`}
           </div>
         </div>
       </div>
@@ -356,17 +366,23 @@ export default function ProductContent({
               <></>
             )}
           </div>
-
+          {console.log(
+            "val",
+            elm.price,
+            elm.optionPrice,
+            elm.optionChildPrice,
+            elm.ingredientsPrice,
+          )}
           <div className="flex gap-4">
             <div>
               <span className="input-label mb-1">{t("price")}</span>
               <Input
                 type="number"
                 value={
-                  elm.price +
-                  (elm.optionPrice || 0) +
-                  (elm.optionChildPrice || 0) +
-                  (elm.ingredientsPrice || 0)
+                  +elm.price +
+                  (+elm.optionPrice || 0) +
+                  (+elm.optionChildPrice || 0) +
+                  (+elm.ingredientsPrice || 0)
                 }
                 suffix="sum"
                 width={182}
@@ -402,10 +418,10 @@ export default function ProductContent({
               <Input
                 type="number"
                 value={
-                  (elm.price +
-                    (elm.optionPrice || 0) +
-                    (elm.optionChildPrice || 0) +
-                    (elm.ingredientsPrice || 0)) *
+                  (+elm.price +
+                    (+elm.optionPrice || 0) +
+                    (+elm.optionChildPrice || 0) +
+                    (+elm.ingredientsPrice || 0)) *
                   elm.quantity
                 }
                 suffix="sum"
@@ -451,10 +467,8 @@ export default function ProductContent({
           >
             <Select
               options={products}
-              value={values.product}
               onChange={(val) => {
-                setFieldValue("product", val)
-                console.log("product", val)
+                setFieldValue("product", val);
               }}
             />
           </Form.Item>
@@ -521,6 +535,12 @@ export default function ProductContent({
               value={values.count}
               onChange={handleChange}
               type="number"
+              min={"1"}
+              onKeyPress={(event) => {
+                if (!/[0-9]/.test(event.key)) {
+                  event.preventDefault();
+                }
+              }}
             />
           </Form.Item>
 
@@ -529,12 +549,7 @@ export default function ProductContent({
             formik={modalFormik}
             label={t("description")}
           >
-            <TextArea
-              id="description"
-              size={2}
-              value={values.description}
-              onChange={handleChange}
-            />
+            <TextArea id="description" size={2} onChange={handleChange} />
           </Form.Item>
           <Form.Item formik={modalFormik} label={t("total.cost")}>
             <Input type="number" disabled={true} value={totalPrice} />

@@ -31,24 +31,12 @@ import formFields, { divisibility } from "./api.js";
 import validate from "helpers/validateField";
 import genSelectOption from "helpers/genSelectOption";
 
-// var selectsReducer = function (state, { type, payload }) {
-//   switch (type) {
-//     case "Update":
-//       return { ...state, ...payload };
-//     default:
-//       return { ...state };
-//   }
-// };
-
-// var initialState = {};
-
 export default function GoodsCreate() {
   const { t } = useTranslation();
   const history = useHistory();
   const { id } = useParams();
   const theme = useTheme();
 
-  // const [selects, dispatchSelects] = useReducer(selectsReducer, initialState);
   const [tags, setTags] = useState([]);
   const [units, setUnits] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -105,17 +93,6 @@ export default function GoodsCreate() {
         },
         {},
       );
-      // dispatchSelects({
-      //   type: "Update",
-      //   payload: {
-      //     tags,
-      //     brands,
-      //     measurements,
-      //     _properties,
-      //     categories,
-      //     _propertyOptions,
-      //   },
-      // });
       setTags(tags);
       setBrands(brands);
       setUnits(measurements);
@@ -246,7 +223,7 @@ export default function GoodsCreate() {
       };
       saveChanges(data);
     },
-    [saveChanges],
+    [saveChanges, propertyGroups],
   );
 
   useEffect(() => {

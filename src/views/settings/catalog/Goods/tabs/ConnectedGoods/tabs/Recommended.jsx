@@ -135,21 +135,18 @@ export default function Recommended({ formik }) {
     [currentPage, limit, params.id],
   );
 
-  const getItems = useCallback(
-    (page) => {
-      setIsLoading(true);
-      getV2Goods({ limit, page })
-        .then((res) => {
-          setItems({
-            count: res.count,
-            data: res.products,
-          });
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setIsLoading(false));
-    },
-    [limit],
-  );
+  const getItems = useCallback(() => {
+    setIsLoading(true);
+    getV2Goods({ limit, page: currentPage })
+      .then((res) => {
+        setItems({
+          count: res.count,
+          data: res.products,
+        });
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
+  }, [limit, currentPage]);
 
   const handleDeleteItem = useCallback(
     (e) => {
@@ -245,8 +242,8 @@ export default function Recommended({ formik }) {
   }, [initialColumns, t]);
 
   useEffect(() => {
-    getItems(currentPage);
-  }, [currentPage, getItems]);
+    getItems();
+  }, [getItems]);
 
   var products = useMemo(() => {
     var ids = [];
@@ -259,8 +256,6 @@ export default function Recommended({ formik }) {
     }
     return ids;
   }, [values?.favorite_ids, items?.data]);
-
-  console.log(products, items, selectedGoods, values);
 
   return (
     <Card

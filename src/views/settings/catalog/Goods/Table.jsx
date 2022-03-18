@@ -167,7 +167,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
                         color: "blue",
                         icon: <EditIcon />,
                         action: () =>
-                          history.push(`/home/settings/fares/${record.id}`),
+                          history.push(`/home/catalog/goods/${record.id}`),
                       },
                       {
                         title: t("delete"),

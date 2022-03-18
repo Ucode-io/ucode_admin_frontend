@@ -244,6 +244,7 @@ export default function Good({
         className="m-4 mr-2"
         bodyStyle={{ padding: "0 1rem" }}
       >
+        {console.log(formik)}
         <FieldArray name="property_groups">
           {({ push, remove }) => (
             <>
@@ -260,7 +261,12 @@ export default function Good({
                           height={40}
                           id={`property_groups.${index}.property`}
                           options={properties}
-                          value={values.property_groups[index].property}
+                          value={
+                            values.property_groups[index].property || {
+                              label: values.property_groups?.title?.ru,
+                              value: values.property_groups?.id,
+                            }
+                          }
                           onChange={(val) => {
                             setFieldValue(
                               `property_groups.${index}.property`,

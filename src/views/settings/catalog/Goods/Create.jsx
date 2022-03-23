@@ -150,6 +150,19 @@ export default function GoodsCreate() {
         })),
         images: [res.image, ...res.gallery],
         code: res.code,
+        property_groups: res.property_groups.map((group) => ({
+          property: {
+            label: group.title?.ru,
+            value: group.id,
+          },
+          property_option:
+            group.type === "number" || group.type === "string"
+              ? group.value
+              : {
+                  label: group.options[0].title.ru,
+                  value: group.options[0].code,
+                },
+        })),
       };
     }
     return null;
@@ -174,26 +187,35 @@ export default function GoodsCreate() {
   const onSubmit = useCallback(
     (values) => {
       console.log(propertyGroups, values?.property_groups);
+
       var ids = values.property_groups.map((group) => group.property.value);
-      var options = values.property_groups.map(
-        (group) => group.property_option?.value,
-      );
       var property_groups = propertyGroups?.filter((group) =>
         ids.includes(group.id),
       );
-      property_groups = property_groups?.map((group, i) => ({
-        ...group,
-        options: property_groups[i]?.options?.filter((option) =>
-          options?.includes(option),
-        ),
-      }));
+
+      property_groups = property_groups.map((group) => {
+        var property_option = values.property_groups.find(
+          (property_group) => property_group.property.value === group.id,
+        ).property_option;
+        if (property_option.value) {
+          var option = group.options.find(
+            (option) => option.code === property_option.value,
+          );
+        }
+        return {
+          ...group,
+          options: group.type === "select" ? [option] : [],
+          value: group.type === "select" ? "" : property_option,
+        };
+      });
+
       property_groups?.forEach((group) => delete group.is_active);
       property_groups = property_groups?.map((group) => ({
         ...group,
         order: +group.order,
       }));
+
       const data = {
-        // ...values,
         description: {
           ru: values.description_ru,
           uz: values.description_uz,
@@ -247,14 +269,10 @@ export default function GoodsCreate() {
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
       description_ru: validate(),
-      description_uz: validate(),
-      description_en: validate(),
       in_price: validate("number"),
       out_price: validate("number"),
       is_divisible: validate("mixed"),
       title_ru: validate(),
-      title_uz: validate(),
-      title_en: validate(),
       brand: validate("selectItem"),
       unit: validate("selectItem"),
       currency: validate("selectItem"),

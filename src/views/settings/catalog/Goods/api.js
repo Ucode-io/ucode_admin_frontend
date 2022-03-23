@@ -16,7 +16,7 @@ var formFields = {
   images: [],
   unit_short: null,
   accuracy: "",
-  property_groups: [{ property: null, property_option: null }],
+  property_groups: [], // { property: null, property_option: null }
   code: "", // artikul
   favorite_ids: [],
   variant_ids: [],

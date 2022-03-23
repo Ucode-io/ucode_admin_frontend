@@ -151,6 +151,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
             onChange={(val) =>
               setColumns((prev) => [...val, prev[prev.length - 1]])
             }
+            iconClasses="flex justify-end mr-1"
           />
         ),
         key: t("actions"),
@@ -216,7 +217,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
                 <TableRow
                   key={elm.id}
                   onClick={() => {
-                    if (columns.length == 1) return;
+                    if (columns.length === 1) return;
                     history.push(`/home/catalog/goods/${elm.id}`);
                   }}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
@@ -224,7 +225,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
                   {columns.map((col) => (
                     <TableCell key={col.key}>
                       {col.render
-                        ? col.render(elm, index, columns.length == 1)
+                        ? col.render(elm, index, columns.length === 1)
                         : "----"}
                     </TableCell>
                   ))}

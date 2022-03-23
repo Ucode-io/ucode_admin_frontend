@@ -324,6 +324,7 @@ export default function Recommended({ formik }) {
           onChange={(val) => {
             setSelectedGoods(() => [...val]);
           }}
+          placeholder={t("select")}
         />
         <br />
         <br />

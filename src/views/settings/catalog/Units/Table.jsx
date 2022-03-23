@@ -135,6 +135,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
             onChange={(val) =>
               setColumns((prev) => [...val, prev[prev.length - 1]])
             }
+            iconClasses="flex justify-end mr-1"
           />
         ),
         key: t("actions"),

@@ -3,8 +3,7 @@ import Modal from "components/Modal";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
 import { useTranslation } from "react-i18next";
-// import { getV2Goods } from "services";
-import getV2Goods, { addProduct, deleteProduct } from "./mock";
+import { getV2Goods } from "services";
 import LoaderComponent from "components/Loader";
 import Card from "components/Card";
 import {
@@ -25,8 +24,10 @@ import {
   arrayMove,
   SortableHandle,
 } from "react-sortable-hoc";
-import Select from "components/Select";
 import numberToPrice from "helpers/numberToPrice";
+import Async from "components/Select/Async";
+import { useParams } from "react-router-dom";
+import Switch from "components/Switch";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,9 +51,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Recommended({ formik, initialValues }) {
+export default function Recommended({ formik }) {
   const { t } = useTranslation();
   const classes = useStyles();
+  const params = useParams();
+
+  const { setFieldValue, values } = formik;
 
   const [selectedGoods, setSelectedGoods] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -65,11 +69,13 @@ export default function Recommended({ formik, initialValues }) {
   const [addModal, setAddModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const onSortEnd = useCallback(({ oldIndex, newIndex }) => {
-    setItems(({ data, count }) => {
-      return { count, data: arrayMove(data, oldIndex, newIndex) };
-    });
-  }, []);
+  const onSortEnd = useCallback(
+    ({ oldIndex, newIndex }) => {
+      var sortedIds = arrayMove(values?.favorite_ids, oldIndex, newIndex);
+      setFieldValue("favorite_ids", sortedIds);
+    },
+    [setFieldValue, values?.favorite_ids],
+  );
 
   const DragHandle = SortableHandle(() => (
     <DragIndicatorIcon className={classes.dragIcon} />
@@ -103,7 +109,7 @@ export default function Recommended({ formik, initialValues }) {
           <TableBody>
             {items.map((item, index) => (
               <SortableItem
-                key={`item-${item.vendor_code}`}
+                key={`item-${item.code}`}
                 index={index}
                 value={item}
               />
@@ -114,66 +120,71 @@ export default function Recommended({ formik, initialValues }) {
     );
   });
 
-  const getItems = useCallback(
-    (page) => {
-      setIsLoading(true);
-      getV2Goods({ limit, page })
+  const loadGoods = useCallback(
+    (input, cb) => {
+      getV2Goods({ limit, page: currentPage, search: input })
         .then((res) => {
-          setItems({
-            count: res.count,
-            data: res.products,
-          });
-          formik.setFieldValue(
-            "variant_ids",
-            res.products.map((product) => product.id),
-          );
+          var products = res.products?.map((product) => ({
+            label: product.title?.ru,
+            value: product.id,
+          }));
+          products = products.filter((product) => product.value !== params.id);
+          cb(products);
         })
-        .catch((err) => console.log(err))
-        .finally(() => setIsLoading(false));
+        .catch((err) => console.log(err));
     },
-    [limit],
+    [currentPage, limit, params.id],
   );
 
-  const handleDeleteItem = (e, i) => {
-    setDeleteLoading(true);
-    deleteProduct(deleteModal.id);
-    setItems((items) => ({
-      count: items.count - 1,
-      data: items.data.filter((item) => item.id !== deleteModal.id),
-    }));
-    formik.setFieldValue(
-      "variant_ids",
-      formik.values.variant_ids.filter((id) => id !== deleteModal.id),
-    );
-    setDeleteModal(null);
-    setDeleteLoading(false);
-  };
+  const getItems = useCallback(() => {
+    setIsLoading(true);
+    getV2Goods({ limit, page: currentPage })
+      .then((res) => {
+        setItems({
+          count: res.count,
+          data: res.products,
+        });
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false));
+  }, [limit, currentPage]);
 
-  const handleAddItem = (e, i) => {
-    setLoading(true);
-    addProduct(selectedGoods);
-    setItems((items) => ({
-      count: items.count + selectedGoods.length,
-      data: [...items.data, ...selectedGoods],
-    }));
-    formik.setFieldValue(
-      "variant_ids",
-      formik.values.variant_ids.concat(selectedGoods),
-    );
-    setAddModal(null);
-    setLoading(false);
+  const handleDeleteItem = useCallback(
+    (e) => {
+      setDeleteLoading(true);
+      setFieldValue(
+        "favorite_ids",
+        values.favorite_ids.filter(
+          (favorite_id) => favorite_id.id !== deleteModal.id,
+        ),
+      );
+      setDeleteModal(null);
+      setDeleteLoading(false);
+    },
+    [deleteModal, values, setFieldValue],
+  );
 
-    // var rest = selectedGoods.map((good) => good.id);
-    // formik.setFieldValue("variant_ids", [
-    //   ...formik.values.variant_ids,
-    //   ...rest,
-    // ]);
-  };
+  const handleAddItem = useCallback(
+    (e) => {
+      setLoading(true);
+      var favorite_ids = selectedGoods.map((good) => good.value);
+      var filteredItems = items.data.filter((item) =>
+        favorite_ids.includes(item.id),
+      );
+      setFieldValue(
+        "favorite_ids",
+        values?.favorite_ids?.concat(filteredItems),
+      );
+      setSelectedGoods([]);
+      setAddModal(null);
+      setLoading(false);
+    },
+    [selectedGoods, values, setFieldValue, items],
+  );
 
   const closeModal = () => {
     setAddModal(null);
     setDeleteModal(null);
-    // formik.resetForm();
   };
 
   const initialColumns = useMemo(() => {
@@ -186,22 +197,36 @@ export default function Recommended({ formik, initialValues }) {
       {
         title: t("product.image"),
         key: "product-image",
-        render: (record) => record.image,
+        render: (record) => (
+          <>
+            <img
+              src={`${process.env.REACT_APP_MINIO_URL}/${record.image}`}
+              alt="brand logo"
+              width={"50"}
+              height={"50"}
+            />
+          </>
+        ),
       },
       {
         title: t("product.name"),
         key: "product_name",
-        render: (record) => record.name,
+        render: (record) => record.title.ru,
       },
       {
         title: t("vendor_code"),
         key: "vendor_code",
-        render: (record) => record.vendor_code,
+        render: (record) => record.code,
       },
       {
         title: t("price"),
         key: "price",
-        render: (record) => numberToPrice(record.price),
+        render: (record) => numberToPrice(record.out_price),
+      },
+      {
+        title: t("status"),
+        key: "status",
+        render: (record) => <Switch checked={record.is_active} />,
       },
     ];
   }, [t]);
@@ -228,8 +253,20 @@ export default function Recommended({ formik, initialValues }) {
   }, [initialColumns, t]);
 
   useEffect(() => {
-    getItems(currentPage);
-  }, [currentPage, limit, getItems]);
+    getItems();
+  }, [getItems]);
+
+  var products = useMemo(() => {
+    var ids = [];
+    for (let i = 0; i < values?.favorite_ids.length; i++) {
+      for (let j = 0; j < items?.data?.length; j++) {
+        if (items?.data[j]?.id === values?.favorite_ids[i].id) {
+          ids.push(items?.data[j]);
+        }
+      }
+    }
+    return ids;
+  }, [values?.favorite_ids, items?.data]);
 
   return (
     <Card
@@ -249,7 +286,7 @@ export default function Recommended({ formik, initialValues }) {
     >
       {!isLoading && items?.data?.length ? (
         <SortableList
-          items={items?.data}
+          items={products}
           onSortEnd={onSortEnd}
           useDragHandle
           useWindowAsScrollContainer
@@ -286,21 +323,19 @@ export default function Recommended({ formik, initialValues }) {
         title={t("add.products")}
         isWarning={false}
       >
-        <Select
+        <Async
           isMulti
           isSearchable
           isClearable
-          height={40}
-          id="categories"
-          options={items?.data?.map((product) => ({
-            label: product.name,
-            value: product.id,
-            ...product,
-          }))}
+          cacheOptions
+          id="products-select"
+          defaultOptions={true}
           value={selectedGoods}
+          loadOptions={loadGoods}
           onChange={(val) => {
-            setSelectedGoods(val);
+            setSelectedGoods(() => [...val]);
           }}
+          placeholder={t("select")}
         />
         <br />
         <br />

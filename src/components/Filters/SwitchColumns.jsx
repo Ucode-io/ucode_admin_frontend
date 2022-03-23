@@ -41,7 +41,11 @@ const StyledMenu = withStyles({
   }),
 );
 
-export default function SwitchColumns({ columns = [], onChange = () => {} }) {
+export default function SwitchColumns({
+  columns = [],
+  onChange = () => {},
+  iconClasses = "",
+}) {
   const { t } = useTranslation();
   const [data, setData] = useState(columns);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -99,7 +103,7 @@ export default function SwitchColumns({ columns = [], onChange = () => {} }) {
   return (
     <div className="cursor-pointer transition-all duration-100">
       <div
-        className="fill-current text-primary cursor-pointer"
+        className={`fill-current text-primary cursor-pointer ${iconClasses}`}
         onClick={(e) => setAnchorEl(e.currentTarget)}
       >
         <TableChartIcon />

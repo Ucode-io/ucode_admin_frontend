@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Card from "components/Card";
 import Form from "components/Form/Index";
 import { Input } from "alisa-ui";
@@ -21,6 +21,8 @@ import English from "./English";
 import Russian from "./Russian";
 import { FieldArray } from "formik";
 import DeleteIcon from "@material-ui/icons/Delete";
+import BaseFields from "../BaseFields";
+import { number } from "yup";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,6 +62,31 @@ export default function Good({
   const { setValues, values, handleChange, setFieldValue } = formik;
 
   const [value, setValue] = useState(0);
+
+  const getInputType = useCallback(
+    (index) => {
+      // console.log(values, values?.property_groups[index]?.property?.value);
+      return propertyGroups?.find(
+        (group) =>
+          group?.id === values?.property_groups[index]?.property?.value,
+      )?.type === "string"
+        ? "text"
+        : "number";
+    },
+    [propertyGroups, values?.property_groups],
+  );
+
+  const fieldIsSelect = useCallback(
+    (index) => {
+      return (
+        propertyGroups?.find(
+          (group) =>
+            group?.id === values?.property_groups[index]?.property?.value,
+        )?.type === "select"
+      );
+    },
+    [propertyGroups, values?.property_groups],
+  );
 
   useEffect(() => {
     setValues(initialValues);
@@ -134,30 +161,33 @@ export default function Good({
             onChangeIndex={handleChangeIndex}
           >
             <TabPanel value={value} index={0} dir={theme.direction}>
-              <Russian
+              <BaseFields
+                lang={<Russian />}
                 formik={formik}
                 categories={categories}
-                brands={brands}
                 tags={tags}
                 units={units}
+                brands={brands}
               />
             </TabPanel>
             <TabPanel value={value} index={1} dir={theme.direction}>
-              <English
+              <BaseFields
+                lang={<English />}
                 formik={formik}
                 categories={categories}
-                brands={brands}
                 tags={tags}
                 units={units}
+                brands={brands}
               />
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
-              <Uzbek
+              <BaseFields
+                lang={<Uzbek />}
                 formik={formik}
                 categories={categories}
-                brands={brands}
                 tags={tags}
                 units={units}
+                brands={brands}
               />
             </TabPanel>
           </SwipeableViews>
@@ -244,12 +274,14 @@ export default function Good({
         className="m-4 mr-2"
         bodyStyle={{ padding: "0 1rem" }}
       >
-        {console.log(formik)}
         <FieldArray name="property_groups">
           {({ push, remove }) => (
             <>
               {values.property_groups?.map((group, index) => (
-                <div className="flex items-baseline w-full mt-4">
+                <div
+                  className="flex items-baseline w-full mt-4"
+                  key={`group-${index}`}
+                >
                   <>
                     <div className="w-4/12 mr-4">
                       <Form.FieldArrayItem
@@ -261,16 +293,15 @@ export default function Good({
                           height={40}
                           id={`property_groups.${index}.property`}
                           options={properties}
-                          value={
-                            values.property_groups[index].property || {
-                              label: values.property_groups?.title?.ru,
-                              value: values.property_groups?.id,
-                            }
-                          }
+                          value={values.property_groups[index].property}
                           onChange={(val) => {
                             setFieldValue(
                               `property_groups.${index}.property`,
                               val,
+                            );
+                            setFieldValue(
+                              `property_groups.${index}.property_option`,
+                              "",
                             );
                           }}
                         />
@@ -283,15 +314,8 @@ export default function Good({
                         name="property_groups"
                         index={index}
                       >
-                        {propertyGroups?.find(
-                          (group) =>
-                            group?.id ===
-                            values?.property_groups[index]?.property?.value,
-                        )?.type === "select" ? (
+                        {fieldIsSelect(index) ? (
                           <Select
-                            disabled={
-                              !values.property_groups[index].property?.value
-                            }
                             height={40}
                             id={`property_groups.${index}.property_option`}
                             options={
@@ -312,27 +336,13 @@ export default function Good({
                           />
                         ) : (
                           <Input
-                            type={
-                              propertyGroups?.find(
-                                (group) =>
-                                  group?.id ===
-                                  values?.property_groups[index]?.property
-                                    ?.value,
-                              )?.type === "string"
-                                ? "text"
-                                : "number"
-                            }
+                            id={`property_groups.${index}.property_option`}
+                            type={getInputType(index)}
                             size="large"
                             value={
-                              propertyGroups?.find(
-                                (group) =>
-                                  group?.id ===
-                                  values?.property_groups[index]?.property
-                                    ?.value,
-                              )?.value
+                              values?.property_groups[index]?.property_option
                             }
                             onChange={handleChange}
-                            disabled
                           />
                         )}
                       </Form.FieldArrayItem>
@@ -354,9 +364,7 @@ export default function Good({
                 <MuiButton
                   variant="outlined"
                   startIcon={<AddIcon className={classes.icon} />}
-                  onClick={() =>
-                    push({ property: null, property_option: null })
-                  }
+                  onClick={() => push({ property: "", property_option: "" })}
                 >
                   {t("add")}
                 </MuiButton>

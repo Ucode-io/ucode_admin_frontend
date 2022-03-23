@@ -52,7 +52,6 @@ export default function MainTable({ createModal, setCreateModal, search }) {
     setLoader(true);
     getV2Categories({ limit, page, search })
       .then((res) => {
-        console.log(res);
         setItems({
           count: res?.count,
           data: res?.categories,
@@ -137,6 +136,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
             onChange={(val) =>
               setColumns((prev) => [...val, prev[prev.length - 1]])
             }
+            iconClasses="flex justify-end mr-1"
           />
         ),
         key: t("actions"),

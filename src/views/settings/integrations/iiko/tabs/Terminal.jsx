@@ -89,40 +89,40 @@ export default function Branches({ filters }) {
   useEffect(() => {
     const _columns = [
       ...initialColumns,
-      {
-        title: (
-          <SwitchColumns
-            columns={initialColumns}
-            onChange={(val) =>
-              setColumns((prev) => [...val, prev[prev.length - 1]])
-            }
-          />
-        ),
-        key: t("actions"),
-        render: (record, _) => (
-          <ActionMenu
-            id={record.id}
-            actions={[
-              {
-                icon: <EditIcon />,
-                color: "blue",
-                title: t("change"),
-                action: () => {
-                  history.push(`/home/operator/${record.id}`);
-                },
-              },
-              {
-                icon: <DeleteIcon />,
-                color: "red",
-                title: t("delete"),
-                action: () => {
-                  setDeleteModal({ id: record.id });
-                },
-              },
-            ]}
-          />
-        ),
-      },
+      // {
+      //   title: (
+      //     <SwitchColumns
+      //       columns={initialColumns}
+      //       onChange={(val) =>
+      //         setColumns((prev) => [...val, prev[prev.length - 1]])
+      //       }
+      //     />
+      //   ),
+      //   key: t("actions"),
+      //   render: (record, _) => (
+      //     <ActionMenu
+      //       id={record.id}
+      //       actions={[
+      //         {
+      //           icon: <EditIcon />,
+      //           color: "blue",
+      //           title: t("change"),
+      //           action: () => {
+      //             history.push(`/home/operator/${record.id}`);
+      //           },
+      //         },
+      //         {
+      //           icon: <DeleteIcon />,
+      //           color: "red",
+      //           title: t("delete"),
+      //           action: () => {
+      //             setDeleteModal({ id: record.id });
+      //           },
+      //         },
+      //       ]}
+      //     />
+      //   ),
+      // },
     ];
     setColumns(_columns);
   }, []);
@@ -173,7 +173,7 @@ export default function Branches({ filters }) {
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
                   {columns.map((col) => (
-                    <TableCell key={col.key}>
+                    <TableCell key={col.key} width="100">
                       {col.render
                         ? col.render(item, index)
                         : item[col.dataIndex] ?? (

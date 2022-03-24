@@ -173,7 +173,7 @@ export default function JowiProducts({ filters }) {
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
                   {columns.map((col) => (
-                    <TableCell key={col.key}>
+                    <TableCell key={col.key} width="100">
                       {col.render ? (
                         col.render(item, index)
                       ) : typeof item[col.dataIndex] == "boolean" ? (

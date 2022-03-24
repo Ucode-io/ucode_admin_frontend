@@ -201,6 +201,10 @@ const IikoEdit = Loadable({
   loader: () => import("views/settings/integrations/iiko"),
   loading: FullScreenLoader,
 });
+const JowiEdit = Loadable({
+  loader: () => import("views/settings/integrations/jowi"),
+  loading: FullScreenLoader,
+});
 const Payme = Loadable({
   loader: () => import("views/settings/integrations/payme"),
   loading: FullScreenLoader,
@@ -219,6 +223,14 @@ const ClickCreate = Loadable({
 });
 const BranchCreate = Loadable({
   loader: () => import("views/settings/integrations/iiko/BranchCreate"),
+  loading: FullScreenLoader,
+});
+const JowiBranchCreate = Loadable({
+  loader: () => import("views/settings/integrations/jowi/JowiBranchCreate"),
+  loading: FullScreenLoader,
+});
+const JowiAddProduct = Loadable({
+  loader: () => import("views/settings/integrations/jowi/JowiAddProduct"),
   loading: FullScreenLoader,
 });
 
@@ -785,6 +797,13 @@ export default [
     permission: "fares",
   },
   {
+    component: JowiEdit,
+    path: "/settings/integrations/jowi",
+    exact: true,
+    title: "Jowi.Edit",
+    permission: "fares",
+  },
+  {
     component: Payme,
     path: "/settings/integrations/payme",
     exact: true,
@@ -836,6 +855,34 @@ export default [
   {
     component: BranchCreate,
     path: "/settings/integrations/iiko/branch-create/:id",
+    exact: true,
+    title: "BranchCreate",
+    permission: "fares",
+  },
+  {
+    component: JowiBranchCreate,
+    path: "/settings/integrations/jowi/branch-create",
+    exact: true,
+    title: "BranchCreate",
+    permission: "fares",
+  },
+  {
+    component: JowiBranchCreate,
+    path: "/settings/integrations/jowi/branch-create/:id",
+    exact: true,
+    title: "BranchCreate",
+    permission: "fares",
+  },
+  {
+    component: JowiAddProduct,
+    path: "/settings/integrations/jowi/add-product",
+    exact: true,
+    title: "BranchCreate",
+    permission: "fares",
+  },
+  {
+    component: JowiAddProduct,
+    path: "/settings/integrations/jowi/add-product/:id",
     exact: true,
     title: "BranchCreate",
     permission: "fares",

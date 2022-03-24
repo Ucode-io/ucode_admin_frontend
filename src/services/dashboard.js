@@ -4,6 +4,8 @@ export const getStatistics = (params) =>
   request({ method: "get", url: "/reports/dashboard", params });
 export const getBranchesCount = (params) =>
   request({ method: "get", url: "/branches", params });
+export const getIikoBranches = (params) =>
+  request({ method: "get", url: "/iiko/branches", params });
 export const getCouriersCount = (params) =>
   request({ method: "get", url: "/couriers", params });
 export const getCustomersCount = (params) =>

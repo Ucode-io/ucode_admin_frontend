@@ -23,7 +23,7 @@ import Header from "components/Header";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "components/Button";
 
-export default function Products({ filters }) {
+export default function JowiProducts({ filters }) {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -89,40 +89,40 @@ export default function Products({ filters }) {
   useEffect(() => {
     const _columns = [
       ...initialColumns,
-      {
-        title: (
-          <SwitchColumns
-            columns={initialColumns}
-            onChange={(val) =>
-              setColumns((prev) => [...val, prev[prev.length - 1]])
-            }
-          />
-        ),
-        key: t("actions"),
-        render: (record, _) => (
-          <ActionMenu
-            id={record.id}
-            actions={[
-              {
-                icon: <EditIcon />,
-                color: "blue",
-                title: t("change"),
-                action: () => {
-                  history.push(`/home/operator/${record.id}`);
-                },
-              },
-              {
-                icon: <DeleteIcon />,
-                color: "red",
-                title: t("delete"),
-                action: () => {
-                  setDeleteModal({ id: record.id });
-                },
-              },
-            ]}
-          />
-        ),
-      },
+      // {
+      //   title: (
+      //     <SwitchColumns
+      //       columns={initialColumns}
+      //       onChange={(val) =>
+      //         setColumns((prev) => [...val, prev[prev.length - 1]])
+      //       }
+      //     />
+      //   ),
+      //   key: t("actions"),
+      //   render: (record, _) => (
+      //     <ActionMenu
+      //       id={record.id}
+      //       actions={[
+      //         {
+      //           icon: <EditIcon />,
+      //           color: "blue",
+      //           title: t("change"),
+      //           action: () => {
+      //             history.push(`/home/operator/${record.id}`);
+      //           },
+      //         },
+      //         {
+      //           icon: <DeleteIcon />,
+      //           color: "red",
+      //           title: t("delete"),
+      //           action: () => {
+      //             setDeleteModal({ id: record.id });
+      //           },
+      //         },
+      //       ]}
+      //     />
+      //   ),
+      // },
     ];
     setColumns(_columns);
   }, []);
@@ -147,7 +147,7 @@ export default function Products({ filters }) {
             icon={AddIcon}
             size="medium"
             onClick={() =>
-              history.push("/home/settings/integrations/iiko/branch-create")
+              history.push("/home/settings/integrations/jowi/add-product")
             }
           >
             {t("add")}

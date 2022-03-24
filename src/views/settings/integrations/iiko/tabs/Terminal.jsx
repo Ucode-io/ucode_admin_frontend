@@ -19,6 +19,9 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { useHistory } from "react-router-dom";
 import Modal from "components/Modal";
+import Header from "components/Header";
+import Button from "components/Button";
+import AddIcon from "@material-ui/icons/Add";
 
 export default function Branches({ filters }) {
   const { t } = useTranslation();
@@ -138,6 +141,19 @@ export default function Branches({ filters }) {
         />
       }
     >
+      <Header
+        endAdornment={[
+          <Button
+            icon={AddIcon}
+            size="medium"
+            onClick={() =>
+              history.push("/home/settings/integrations/iiko/branch-create")
+            }
+          >
+            {t("add")}
+          </Button>,
+        ]}
+      />
       <TableContainer className="rounded-lg border border-lightgray-1">
         <Table aria-label="simple table">
           <TableHead>

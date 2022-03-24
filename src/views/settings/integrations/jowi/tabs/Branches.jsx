@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Card from "components/Card";
 import Pagination from "components/Pagination";
+import AddIcon from "@material-ui/icons/Add";
 import LoaderComponent from "components/Loader";
 import {
   Table,
@@ -11,7 +12,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { getProducts, deleteProduct } from "services";
+import { getBranches, deleteBranch } from "services";
 import Tag from "components/Tag";
 import SwitchColumns from "components/Filters/SwitchColumns";
 import ActionMenu from "components/ActionMenu";
@@ -20,10 +21,9 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { useHistory } from "react-router-dom";
 import Modal from "components/Modal";
 import Header from "components/Header";
-import AddIcon from "@material-ui/icons/Add";
 import Button from "components/Button";
 
-export default function Products({ filters }) {
+export default function JowiBranches({ filters }) {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -41,11 +41,11 @@ export default function Products({ filters }) {
 
   const getItems = (page) => {
     setLoader(true);
-    getProducts({ limit, page, ...filters })
+    getBranches({ limit, page, ...filters })
       .then((res) => {
         setItems({
           count: res.count,
-          data: res.products,
+          data: res.branches,
         });
       })
       .finally(() => setLoader(false));
@@ -53,7 +53,7 @@ export default function Products({ filters }) {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteProduct(deleteModal.id)
+    deleteBranch(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -69,60 +69,60 @@ export default function Products({ filters }) {
       render: (_, index) => <>{(currentPage - 1) * 10 + index + 1}</>,
     },
     {
-      title: t("meal_name"),
+      title: t("name"),
       key: "name",
       dataIndex: "name",
     },
     {
-      title: t("description"),
-      key: "description",
-      dataIndex: "description",
-      render: (record) => <>{record.description}</>,
+      title: t("navigation"),
+      key: "address",
+      dataIndex: "address",
+      render: (record) => <>{record.address}</>,
     },
     {
       title: t("status"),
-      key: "is_active",
-      dataIndex: "is_active",
+      key: "iiko_id",
+      dataIndex: "iiko_id",
     },
   ];
 
   useEffect(() => {
     const _columns = [
       ...initialColumns,
-      {
-        title: (
-          <SwitchColumns
-            columns={initialColumns}
-            onChange={(val) =>
-              setColumns((prev) => [...val, prev[prev.length - 1]])
-            }
-          />
-        ),
-        key: t("actions"),
-        render: (record, _) => (
-          <ActionMenu
-            id={record.id}
-            actions={[
-              {
-                icon: <EditIcon />,
-                color: "blue",
-                title: t("change"),
-                action: () => {
-                  history.push(`/home/operator/${record.id}`);
-                },
-              },
-              {
-                icon: <DeleteIcon />,
-                color: "red",
-                title: t("delete"),
-                action: () => {
-                  setDeleteModal({ id: record.id });
-                },
-              },
-            ]}
-          />
-        ),
-      },
+      // {
+      //   title: (
+      //     <SwitchColumns
+      //       columns={initialColumns}
+      //       onChange={(val) =>
+      //         setColumns((prev) => [...val, prev[prev.length - 1]])
+      //       }
+      //     />
+      //   ),
+      //   key: t("actions"),
+      //   render: (record, _) => (
+      //     <ActionMenu
+      //       id={record.id}
+      //       actions={[
+      //         {
+      //           icon: <EditIcon />,
+      //           color: "blue",
+      //           title: t("change"),
+      //           action: () => {
+      //             history.push(`/home/operator/${record.id}`);
+      //           },
+      //         },
+      //         {
+      //           icon: <DeleteIcon />,
+      //           color: "red",
+      //           title: t("delete"),
+      //           action: () => {
+      //             setDeleteModal({ id: record.id });
+      //           },
+      //         },
+      //       ]}
+      //     />
+      //   ),
+      // },
     ];
     setColumns(_columns);
   }, []);
@@ -147,7 +147,7 @@ export default function Products({ filters }) {
             icon={AddIcon}
             size="medium"
             onClick={() =>
-              history.push("/home/settings/integrations/iiko/branch-create")
+              history.push("/home/settings/integrations/jowi/branch-create")
             }
           >
             {t("add")}
@@ -173,18 +173,16 @@ export default function Products({ filters }) {
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
                   {columns.map((col) => (
-                    <TableCell key={col.key}>
-                      {col.render ? (
-                        col.render(item, index)
-                      ) : typeof item[col.dataIndex] == "boolean" ? (
-                        <Tag className="p-1" color="yellow">
-                          {item[col.dataIndex]
-                            ? t("available")
-                            : t("unavailable")}
-                        </Tag>
-                      ) : (
-                        item[col.dataIndex]
-                      )}
+                    <TableCell key={col.key} width="100px">
+                      {col.render
+                        ? col.render(item, index)
+                        : item[col.dataIndex] ?? (
+                            <Tag className="p-1" color="yellow">
+                              {item[col.dataIndex]
+                                ? t("available")
+                                : t("unavailable")}
+                            </Tag>
+                          )}
                     </TableCell>
                   ))}
                 </TableRow>

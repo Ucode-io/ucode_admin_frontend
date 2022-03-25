@@ -54,13 +54,8 @@ export function errorHandler(error, hooks) {
               window.location.reload();
             }
           })
-          .catch(() => {
-            // this part should be reevaluated
-            var invalid = localStorage.getItem("invalid");
-            if (!invalid) {
-              localStorage.setItem("invalid", true);
-              window.location.reload();
-            }
+          .catch((err) => {
+            store.dispatch(logout());
           });
       } else if (window.location.pathname !== "/auth/login" && access_token) {
         store.dispatch(logout());

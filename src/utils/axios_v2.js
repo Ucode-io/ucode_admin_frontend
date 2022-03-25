@@ -34,10 +34,10 @@ export function errorHandler(error, hooks) {
     if (error.response.status === 403 || error.response.status === 401) {
       var refresh_token = store.getState().auth.refreshToken;
       var access_token = store.getState().auth.accessToken;
-
+      console.log("res", error.response);
       if (refresh_token) {
         request
-          .put("/shipper-users/refresh-token", {
+          .put(config.baseURL + "/shipper-users/refresh-token", {
             refresh_token,
           })
           .then((res) => {
@@ -54,13 +54,8 @@ export function errorHandler(error, hooks) {
               window.location.reload();
             }
           })
-          .catch(() => {
-            // this part should be reevaluated
-            var invalid = localStorage.getItem("invalid");
-            if (!invalid) {
-              localStorage.setItem("invalid", true);
-              window.location.reload();
-            }
+          .catch((err) => {
+            store.dispatch(logout());
           });
       } else if (window.location.pathname !== "/auth/login" && access_token) {
         store.dispatch(logout());

@@ -3,6 +3,8 @@ import Button from "components/Button";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import LockIcon from "@material-ui/icons/Lock";
 import PhoneIcon from "@material-ui/icons/Phone";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import DeleverLogo from "assets/icons/Delever.png";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,11 +20,13 @@ import { staticPermissions } from "./permissions";
 export default function App() {
   const { t } = useTranslation();
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  const [pwdType, setPwdType] = useState("password");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const [loader, setLoader] = useState(false);
-  const dispatch = useDispatch();
 
   const onFormSubmit = (e) => {
     e.preventDefault();
@@ -97,13 +101,27 @@ export default function App() {
                     <LockIcon style={{ color: "#6E8BB7" }} />
                   </span>
                   <input
-                    type="password"
+                    type={pwdType}
                     placeholder={t("enter.password")}
                     spellCheck="false"
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                  ></input>
+                  />
+                  <span
+                    className="cursor-pointer"
+                    onClick={(e) => {
+                      setPwdType((prev) => {
+                        return prev === "password" ? "text" : "password";
+                      });
+                    }}
+                  >
+                    {pwdType === "password" ? (
+                      <VisibilityIcon style={{ color: "#6E8BB7" }} />
+                    ) : (
+                      <VisibilityOffIcon style={{ color: "#6E8BB7" }} />
+                    )}
+                  </span>
                 </span>
               </div>
             </div>

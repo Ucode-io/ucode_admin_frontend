@@ -317,6 +317,16 @@ const SettingsCatalogTagsCreate = Loadable({
   loading: FullScreenLoader,
 });
 
+const SettingsCatalogProductVariants = Loadable({
+  loader: () => import("views/settings/catalog/ProductVariants"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogProductVariantsCreate = Loadable({
+  loader: () => import("views/settings/catalog/ProductVariants/Create"),
+  loading: FullScreenLoader,
+});
+
 export default [
   {
     component: Dashboard,
@@ -1020,6 +1030,27 @@ export default [
     path: "/catalog/tags/:id",
     exact: true,
     title: "Settings.Catalog.Tag.Edit",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogProductVariants,
+    path: "/catalog/product_variants",
+    exact: true,
+    title: "Settings.Catalog.Product.Variants",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogProductVariantsCreate,
+    path: "/catalog/product_variants/create",
+    exact: true,
+    title: "Settings.Catalog.Product.Variants.Create",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogProductVariantsCreate,
+    path: "/catalog/product_variants/:id",
+    exact: true,
+    title: "Settings.Catalog.Product.Variants.Edit",
     permission: "fares",
   },
   {

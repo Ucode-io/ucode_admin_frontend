@@ -96,6 +96,7 @@ const Gallery = ({
         >
           {!notEditable && (
             <button
+              type="button"
               className="close-btn"
               onClick={(e) => closeButtonHandler(e, link)}
             >

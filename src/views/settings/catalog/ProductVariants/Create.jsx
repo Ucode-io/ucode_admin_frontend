@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import {
-  getV2Good,
-  postV2Good,
-  updateV2Good,
+  getV2ProductVariant,
+  postV2ProductVariant,
+  updateV2ProductVariant,
   getV2Brands,
   getV2Tags,
   getV2Measurements,
@@ -20,22 +20,15 @@ import SaveIcon from "@material-ui/icons/Save";
 import { useHistory } from "react-router-dom";
 import FullScreenLoader from "components/FullScreenLoader";
 import * as Yup from "yup";
-import Filters from "components/Filters";
-import { StyledTabs, StyledTab } from "components/StyledTabs";
-import SwipeableViews from "react-swipeable-views";
-import { TabPanel } from "components/Tab/TabBody";
-import { useTheme } from "@material-ui/core/styles";
-import Good from "./tabs/Good";
-import ConnectedGoods from "./tabs/ConnectedGoods";
+import Context from "./Context";
 import formFields, { divisibility } from "./api.js";
 import validate from "helpers/validateField";
 import genSelectOption from "helpers/genSelectOption";
 
-export default function GoodsCreate() {
+export default function ProductVariantsCreate() {
   const { t } = useTranslation();
   const history = useHistory();
   const { id } = useParams();
-  const theme = useTheme();
 
   const [tags, setTags] = useState([]);
   const [units, setUnits] = useState([]);
@@ -46,7 +39,6 @@ export default function GoodsCreate() {
   const [initialValues, setInitialValues] = useState(formFields);
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [value, setValue] = useState(0);
   const [propertyGroups, setPropertyGroups] = useState();
 
   const fetchData = useCallback(async () => {
@@ -114,7 +106,7 @@ export default function GoodsCreate() {
       tags.length &&
       categories.length
     ) {
-      var res = await getV2Good(id, {});
+      var res = await getV2ProductVariant(id, {});
       var divOptions = genSelectOption(divisibility);
       var unit = units.find((unit) => unit.id === res.measurement_id.id);
 
@@ -128,7 +120,6 @@ export default function GoodsCreate() {
         is_divisible: divOptions.find((option) =>
           option.value === res.is_divisible ? "divisible" : "nondivisible",
         ),
-        currency: genSelectOption(res.currency),
         title_ru: res.title.ru,
         title_uz: res.title.uz,
         title_en: res.title.en,
@@ -172,12 +163,12 @@ export default function GoodsCreate() {
     (data) => {
       setBtnDisabled(true);
       if (id) {
-        updateV2Good(id, data)
-          .then(() => history.push("/home/catalog/goods"))
+        updateV2ProductVariant(id, data)
+          .then(() => history.push("/home/catalog/product_variants"))
           .finally(() => setBtnDisabled(false));
       } else {
-        postV2Good(data)
-          .then(() => history.push("/home/catalog/goods"))
+        postV2ProductVariant(data)
+          .then(() => history.push("/home/catalog/product_variants"))
           .finally(() => setBtnDisabled(false));
       }
     },
@@ -202,22 +193,24 @@ export default function GoodsCreate() {
         }
         return {
           ...group,
+          order: group.order.toString(),
           options: group.type === "select" ? [option] : [],
-          value: group.type === "select" ? "" : property_option,
+          value: group.type === "select" ? "" : property_option.toString(),
         };
       });
 
       property_groups?.forEach((group) => delete group.is_active);
       property_groups = property_groups?.map((group) => ({
         ...group,
-        order: +group.order,
+        order: group.order.toString(),
+        is_active: true, // hardcoded
       }));
 
       const data = {
         description: {
-          ru: values.description_ru || "",
-          uz: values.description_uz || "",
-          en: values.description_en || "",
+          ru: values.description_ru,
+          uz: values.description_uz,
+          en: values.description_en,
         },
         image: values.images[0],
         gallery: values.images.slice(1, values.images.length),
@@ -225,9 +218,9 @@ export default function GoodsCreate() {
         out_price: values.out_price,
         is_divisible: values.is_divisible.value === "divisible",
         title: {
-          ru: values.title_ru || "",
-          uz: values.title_uz || "",
-          en: values.title_en || "",
+          ru: values.title_ru,
+          uz: values.title_uz,
+          en: values.title_en,
         },
         brand_id: values.brand.value,
         category_ids: values.category_ids.map((category) => category.value),
@@ -235,11 +228,9 @@ export default function GoodsCreate() {
         measurement_id: values.unit.value,
         rate_id: "",
         tag_ids: values.tags.map((tag) => tag.value),
-        variant_ids: [],
         property_groups,
-        currency: "UZS", // values.currency.value,
         code: values.code,
-        favorite_ids: values?.favorite_ids.map((favorite_id) => favorite_id.id),
+        price_changer_ids: [],
       };
       saveChanges(data);
     },
@@ -277,7 +268,6 @@ export default function GoodsCreate() {
       title_uz: validate(),
       brand: validate("selectItem"),
       unit: validate("selectItem"),
-      currency: validate("selectItem"),
       tags: validate("array"),
       category_ids: validate("array"),
       images: validate("arrayStr"),
@@ -288,30 +278,14 @@ export default function GoodsCreate() {
 
   const routes = [
     {
-      title: <div>{t("goods")}</div>,
+      title: <div>{t("product_variants")}</div>,
       link: true,
-      route: `/home/catalog/goods`,
+      route: `/home/catalog/product_variants`,
     },
     {
       title: id ? t("edit") : t("create"),
     },
   ];
-
-  // Tabs
-  const a11yProps = (index) => {
-    return {
-      id: `full-width-tab-${index}`,
-      "aria-controls": `full-width-tabpanel-${index}`,
-    };
-  };
-
-  const handleTabChange = (event, newValue) => setValue(newValue);
-
-  const handleChangeIndex = (index) => setValue(index);
-
-  const tabLabel = (text, isActive = false) => (
-    <span className="px-1">{text}</span>
-  );
 
   return (
     <>
@@ -350,48 +324,18 @@ export default function GoodsCreate() {
                     </Button>,
                   ]}
                 />
-                <Filters>
-                  <StyledTabs
-                    value={value}
-                    onChange={handleTabChange}
-                    centered={false}
-                    aria-label="full width tabs example"
-                    TabIndicatorProps={{ children: <span className="w-2" /> }}
-                  >
-                    <StyledTab
-                      label={tabLabel(t("good"))}
-                      {...a11yProps(0)}
-                      style={{ width: "75px" }}
-                    />
-                    <StyledTab
-                      label={tabLabel(t("connected_goods"))}
-                      {...a11yProps(1)}
-                      style={{ width: "175px" }}
-                    />
-                  </StyledTabs>
-                </Filters>
-                <SwipeableViews
-                  axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-                  index={value}
-                  onChangeIndex={handleChangeIndex}
-                >
-                  <TabPanel value={value} index={0} dir={theme.direction}>
-                    <Good
-                      formik={formik}
-                      tags={tags}
-                      categories={categories}
-                      units={units}
-                      brands={brands}
-                      properties={properties}
-                      propertyOptions={propertyOptions}
-                      initialValues={initialValues}
-                      propertyGroups={propertyGroups}
-                    />
-                  </TabPanel>
-                  <TabPanel value={value} index={1} dir={theme.direction}>
-                    <ConnectedGoods formik={formik} />
-                  </TabPanel>
-                </SwipeableViews>
+
+                <Context
+                  formik={formik}
+                  tags={tags}
+                  categories={categories}
+                  units={units}
+                  brands={brands}
+                  properties={properties}
+                  propertyOptions={propertyOptions}
+                  initialValues={initialValues}
+                  propertyGroups={propertyGroups}
+                />
               </form>
             )}
           </Formik>

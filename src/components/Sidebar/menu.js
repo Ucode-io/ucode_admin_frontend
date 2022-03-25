@@ -125,6 +125,14 @@ export const menu = [
         isActive: false,
         permission: "settings",
       },
+      {
+        id: "product_variants.settings",
+        title: "product_variants",
+        path: "/home/catalog/product_variants",
+        isChild: true,
+        isActive: false,
+        permission: "settings",
+      },
     ],
   },
   {

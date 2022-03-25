@@ -21,7 +21,7 @@ import English from "./English";
 import Russian from "./Russian";
 import { FieldArray } from "formik";
 import DeleteIcon from "@material-ui/icons/Delete";
-import BaseFields from "../BaseFields";
+import BaseFields from "./BaseFields";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Good({
+export default function Context({
   formik,
   categories,
   tags,
@@ -112,7 +112,7 @@ export default function Good({
       <div className="grid grid-cols-2">
         <Card
           className="m-4 mr-2"
-          title={t("good")}
+          title={t("product_variant")}
           bodyStyle={{ padding: "0 1rem" }}
         >
           <StyledTabs

@@ -3,7 +3,7 @@ import Modal from "components/Modal";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
 import { useTranslation } from "react-i18next";
-import { getV2Goods } from "services";
+import { getV2ProductVariants, changeV2ProductVariantStatus } from "services";
 import LoaderComponent from "components/Loader";
 import Card from "components/Card";
 import {
@@ -28,6 +28,7 @@ import numberToPrice from "helpers/numberToPrice";
 import Async from "components/Select/Async";
 import { useParams } from "react-router-dom";
 import Switch from "components/Switch";
+import LoopIcon from "@material-ui/icons/Loop";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -122,14 +123,14 @@ export default function Recommended({ formik }) {
 
   const loadGoods = useCallback(
     (input, cb) => {
-      getV2Goods({ limit, page: currentPage, search: input })
+      getV2ProductVariants({ limit, page: currentPage, search: input })
         .then((res) => {
-          var products = res.products?.map((product) => ({
+          var variants = res.product_variants?.map((product) => ({
             label: product.title?.ru,
             value: product.id,
           }));
-          products = products.filter((product) => product.value !== params.id);
-          cb(products);
+          variants = variants.filter((product) => product.value !== params.id);
+          cb(variants);
         })
         .catch((err) => console.log(err));
     },
@@ -138,11 +139,11 @@ export default function Recommended({ formik }) {
 
   const getItems = useCallback(() => {
     setIsLoading(true);
-    getV2Goods({ limit, page: currentPage })
+    getV2ProductVariants({ limit, page: currentPage })
       .then((res) => {
         setItems({
           count: res.count,
-          data: res.products,
+          data: res.product_variants,
         });
       })
       .catch((err) => console.log(err))
@@ -226,7 +227,14 @@ export default function Recommended({ formik }) {
       {
         title: t("status"),
         key: "status",
-        render: (record) => <Switch checked={record.is_active} />,
+        render: (record) => (
+          <Switch
+            defaultChecked={record.active}
+            onChange={(status) => {
+              changeV2ProductVariantStatus(record.id, { status });
+            }}
+          />
+        ),
       },
     ];
   }, [t]);

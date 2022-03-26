@@ -231,7 +231,7 @@ export default function Recommended({ formik }) {
       ...initialColumns,
       {
         title: t("action"),
-        key: t("actions"),
+        key: "actions",
         render: (record, _, disable) => (
           <div className="flex gap-2 justify-center">
             <span
@@ -279,7 +279,7 @@ export default function Recommended({ formik }) {
       footerStyle={{ paddingRight: "0", paddingLeft: "0" }}
       bodyStyle={{ paddingRight: "0", paddingLeft: "0" }}
     >
-      {!isLoading && items?.data?.length ? (
+      {!isLoading ? (
         <SortableList
           items={products}
           onSortEnd={onSortEnd}

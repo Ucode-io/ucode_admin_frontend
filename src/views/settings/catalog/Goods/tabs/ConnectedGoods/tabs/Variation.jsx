@@ -298,7 +298,7 @@ export default function Recommended({ formik }) {
       footerStyle={{ paddingRight: "0", paddingLeft: "0" }}
       bodyStyle={{ paddingRight: "0", paddingLeft: "0" }}
     >
-      {!isLoading && items?.data?.length ? (
+      {!isLoading ? (
         <SortableList
           items={products}
           onSortEnd={onSortEnd}

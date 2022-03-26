@@ -1,15 +1,15 @@
 import AsyncSelect from "react-select/async";
 
 export default function Async({
-  loadOptions,
-  onChange,
-  onInputChange,
+  loadOptions = () => {},
+  onChange = () => {},
+  onInputChange = () => {},
   defaultOptions,
-  cacheOptions,
-  isClearable,
-  isMulti,
-  styles,
-  useZIndex,
+  cacheOptions = false,
+  isClearable = false,
+  isMulti = false,
+  styles = {},
+  useZIndex = false,
   ...rest
 }) {
   return (

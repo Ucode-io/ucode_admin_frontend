@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import Card from "components/Card";
 import Form from "components/Form/Index";
@@ -10,6 +10,7 @@ import Modal from "components/Modal";
 import { useFormik } from "formik";
 // import * as yup from "yup";
 import Select, { customStyles } from "components/Select";
+import AsyncSelect from "components/Select/Async";
 import TextArea from "components/Textarea";
 import Button from "components/Button";
 import { getProducts, getOneProduct, getCouriers } from "services";
@@ -36,7 +37,6 @@ export default function ProductContent({
   const lang = useSelector((state) => state.lang.current);
 
   const [modal, setModal] = useState(null);
-  const [products, setProducts] = useState([]);
   const [couriers, setCouriers] = useState([]);
   const [options, setOptions] = useState([]);
   const [type, setType] = useState("cash");
@@ -64,20 +64,17 @@ export default function ProductContent({
     fetchCouriers();
   }, []);
 
-  useEffect(() => {
-    getProducts({ limit: 1000 })
-      .then((res) =>
-        setProducts(
-          res.products
-            ? res.products.map((elm) => ({
-                label: elm.name,
-                value: elm,
-              }))
-            : [],
-        ),
-      )
+  const loadProducts = useCallback((input, cb) => {
+    getProducts({ limit: 10, page: 1, search: input })
+      .then((res) => {
+        var products = res.products?.map((product) => ({
+          label: product.name,
+          value: product,
+        }));
+        cb(products);
+      })
       .catch((err) => console.log(err));
-  }, [formik?.values?.branch?.elm]);
+  }, []);
 
   useEffect(() => {
     if (shipperId && values.product?.value?.id) {
@@ -458,11 +455,19 @@ export default function ProductContent({
             formik={modalFormik}
             label={t("product.name")}
           >
-            <Select
-              options={products}
+            <AsyncSelect
+              id="products-select"
+              defaultOptions
+              cacheOptions
+              isSearchable
+              isClearable
               onChange={(val) => {
                 setFieldValue("product", val);
+                console.log(val);
               }}
+              value={formik.values.product}
+              loadOptions={loadProducts}
+              placeholder={t("select.product")}
               useZIndex
             />
           </Form.Item>

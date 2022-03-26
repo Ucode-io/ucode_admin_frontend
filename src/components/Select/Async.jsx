@@ -9,6 +9,7 @@ export default function Async({
   isClearable,
   isMulti,
   styles,
+  useZIndex,
   ...rest
 }) {
   return (
@@ -21,7 +22,9 @@ export default function Async({
       onChange={onChange}
       onInputChange={onInputChange}
       styles={styles}
-      menuPortalTarget={document.getElementById("portal-root")}
+      menuPortalTarget={
+        !useZIndex ? document.getElementById("portal-root") : null
+      }
       {...rest}
     />
   );

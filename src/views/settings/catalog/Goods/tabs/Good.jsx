@@ -205,14 +205,11 @@ export default function Good({
                     <Gallery
                       width={120}
                       height={120}
-                      gallery={values.images?.length ? [...values.images] : []}
-                      setGallery={(elm) => {
-                        setFieldValue("images", [
-                          ...values.images,
-                          elm[elm.length - 1],
-                        ]);
+                      gallery={values.images?.length ? values.images : []}
+                      setGallery={(images) => {
+                        setFieldValue("images", [...images]);
                       }}
-                      multiple={true}
+                      // multiple={true}
                     />
                   </div>
                 </Form.Item>

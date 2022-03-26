@@ -5,7 +5,6 @@ import { TabPanel } from "components/Tab/TabBody";
 import { useTheme } from "@material-ui/core/styles";
 import Recommended from "./tabs/Recommended";
 import Variation from "./tabs/Variation";
-import Combo from "./tabs/Combo";
 import { StyledTabs, StyledTab } from "components/StyledTabs";
 import Card from "components/Card";
 
@@ -52,11 +51,6 @@ export default function ConnectedGoods({ formik }) {
             {...a11yProps(1)}
             style={{ width: "85px" }}
           />
-          <StyledTab
-            label={tabLabel(t("combo"))}
-            {...a11yProps(1)}
-            style={{ width: "50px" }}
-          />
         </StyledTabs>
         <SwipeableViews
           axis={theme.direction === "rtl" ? "x-reverse" : "x"}
@@ -68,9 +62,6 @@ export default function ConnectedGoods({ formik }) {
           </TabPanel>
           <TabPanel value={value} index={1} dir={theme.direction}>
             <Variation formik={formik} />
-          </TabPanel>
-          <TabPanel value={value} index={2} dir={theme.direction}>
-            <Combo formik={formik} />
           </TabPanel>
         </SwipeableViews>
       </Card>

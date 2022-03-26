@@ -203,7 +203,7 @@ export default function GoodsCreate() {
         return {
           ...group,
           options: group.type === "select" ? [option] : [],
-          value: group.type === "select" ? "" : property_option,
+          value: group.type === "select" ? "" : property_option.toString(),
         };
       });
 

@@ -48,6 +48,9 @@ const useStyles = makeStyles((theme) => ({
     color: "#6e8bb7",
     cursor: "n-resize",
   },
+  cell: {
+    width: "100vw",
+  },
 }));
 
 export default function Recommended({ formik }) {
@@ -81,13 +84,15 @@ export default function Recommended({ formik }) {
   ));
 
   const SortableItem = SortableElement(({ value, index, key }) => (
-    <TableRow
-      key={key}
-      onClick={() => {}}
-      className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-    >
+    <TableRow key={key} onClick={() => {}}>
       {columns.map((col) => (
-        <TableCell key={col.key}>
+        <TableCell
+          key={col.key}
+          className={classes.cell}
+          // padding="normal"
+          // variant="body"
+          // size="medium"
+        >
           {col.render ? col.render(value, index, columns.length === 1) : "----"}
         </TableCell>
       ))}
@@ -127,17 +132,16 @@ export default function Recommended({ formik }) {
             label: product.title?.ru,
             value: product.id,
           }));
-          products = products.filter((product) => product.value !== params.id);
           cb(products);
         })
         .catch((err) => console.log(err));
     },
-    [currentPage, limit, params.id],
+    [currentPage, limit],
   );
 
   const getItems = useCallback(() => {
     setIsLoading(true);
-    getV2Goods({ limit, page: currentPage })
+    getV2Goods()
       .then((res) => {
         setItems({
           count: res.count,
@@ -146,7 +150,7 @@ export default function Recommended({ formik }) {
       })
       .catch((err) => console.log(err))
       .finally(() => setIsLoading(false));
-  }, [limit, currentPage]);
+  }, []);
 
   const handleDeleteItem = useCallback(
     (e) => {
@@ -157,7 +161,7 @@ export default function Recommended({ formik }) {
           (favorite_id) => favorite_id.id !== deleteModal.id,
         ),
       );
-      setDeleteModal(null);
+      setDeleteModal(false);
       setDeleteLoading(false);
     },
     [deleteModal, values, setFieldValue],
@@ -165,25 +169,27 @@ export default function Recommended({ formik }) {
 
   const handleAddItem = useCallback(
     (e) => {
-      setLoading(true);
-      var favorite_ids = selectedGoods.map((good) => good.value);
-      var filteredItems = items.data.filter((item) =>
-        favorite_ids.includes(item.id),
-      );
-      setFieldValue(
-        "favorite_ids",
-        values?.favorite_ids?.concat(filteredItems),
-      );
-      setSelectedGoods([]);
-      setAddModal(null);
+      if (items.data?.length && selectedGoods.length) {
+        setLoading(true);
+        var favorite_ids = selectedGoods.map((good) => good.value);
+        var filteredItems = items.data.filter((item) =>
+          favorite_ids.includes(item.id),
+        );
+        setFieldValue(
+          "favorite_ids",
+          values?.favorite_ids?.concat(filteredItems),
+        );
+        setSelectedGoods([]);
+      }
+      setAddModal(false);
       setLoading(false);
     },
-    [selectedGoods, values, setFieldValue, items],
+    [items, selectedGoods, values, setFieldValue],
   );
 
   const closeModal = () => {
-    setAddModal(null);
-    setDeleteModal(null);
+    setAddModal(false);
+    setDeleteModal(false);
   };
 
   const initialColumns = useMemo(() => {
@@ -311,6 +317,7 @@ export default function Recommended({ formik }) {
         width={500}
         title={t("add.products")}
         isWarning={false}
+        disable={!selectedGoods.length}
       >
         <Async
           isMulti
@@ -325,6 +332,7 @@ export default function Recommended({ formik }) {
             setSelectedGoods(() => [...val]);
           }}
           placeholder={t("select")}
+          filterOption={(product, inputValue) => product.value !== params.id}
         />
         <br />
         <br />

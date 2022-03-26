@@ -463,6 +463,7 @@ export default function ProductContent({
               onChange={(val) => {
                 setFieldValue("product", val);
               }}
+              useZIndex
             />
           </Form.Item>
 

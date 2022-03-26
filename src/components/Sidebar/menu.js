@@ -133,6 +133,14 @@ export const menu = [
         isActive: false,
         permission: "settings",
       },
+      {
+        id: "combo.settings",
+        title: "combo",
+        path: "/home/catalog/combo",
+        isChild: true,
+        isActive: false,
+        permission: "settings",
+      },
     ],
   },
   {
@@ -209,6 +217,7 @@ export const menu = [
       },
     ],
   },
+  /* *** READY BUT MAY MALFUNCTION *** */
   // {
   //   id: "reports",
   //   title: "reports",

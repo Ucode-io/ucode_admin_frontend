@@ -26,7 +26,7 @@ const Gallery = ({
   const { t } = useTranslation();
 
   const isShow = useMemo(
-    () => (multiple ? true : !gallery.length),
+    () => multiple || !gallery.length,
     [gallery, multiple],
   );
   const imageLinks = useMemo(() => {
@@ -83,7 +83,7 @@ const Gallery = ({
   };
 
   return (
-    <div className="Gallery">
+    <div className={`Gallery`}>
       {imageLinks?.map((link, index) => (
         <div
           className="block mr-2"
@@ -93,6 +93,7 @@ const Gallery = ({
               : { width, height, borderRadius: rounded ? "50%" : 8 }
           }
           onClick={() => imageClickHandler(index)}
+          key={link}
         >
           {!notEditable && (
             <button
@@ -121,7 +122,7 @@ const Gallery = ({
             {!loading ? (
               <>
                 <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
-                <p className="text-sm">Max size: 4 MB</p>
+                <p className="text-sm text-center px-3">{t("max.size.4mb")}</p>
               </>
             ) : (
               <CircularProgress />
@@ -133,6 +134,7 @@ const Gallery = ({
             className="hidden"
             ref={inputRef}
             onChange={inputChangeHandler}
+            // multiple={multiple}
           />
         </div>
       )}

@@ -36,3 +36,10 @@ export const updateV2Good = async (id, data, params) => {
     params,
   });
 };
+export const changeStatus = async (id, data) => {
+  return await request({
+    method: "patch",
+    url: `/product-variant/${id}/change-status`,
+    data,
+  });
+};

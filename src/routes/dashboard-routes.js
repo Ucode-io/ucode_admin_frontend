@@ -339,6 +339,16 @@ const SettingsCatalogProductVariantsCreate = Loadable({
   loading: FullScreenLoader,
 });
 
+const SettingsCatalogCombo = Loadable({
+  loader: () => import("views/settings/catalog/Combo"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogComboCreate = Loadable({
+  loader: () => import("views/settings/catalog/Combo/Create"),
+  loading: FullScreenLoader,
+});
+
 export default [
   {
     component: Dashboard,
@@ -1098,6 +1108,28 @@ export default [
     path: "/catalog/product_variants/:id",
     exact: true,
     title: "Settings.Catalog.Product.Variants.Edit",
+    permission: "fares",
+  },
+
+  {
+    component: SettingsCatalogCombo,
+    path: "/catalog/combo",
+    exact: true,
+    title: "Settings.Catalog.Combo",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogComboCreate,
+    path: "/catalog/combo/create",
+    exact: true,
+    title: "Settings.Catalog.Combo.Create",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogComboCreate,
+    path: "/catalog/combo/:id",
+    exact: true,
+    title: "Settings.Catalog.Combo.Edit",
     permission: "fares",
   },
   {

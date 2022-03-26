@@ -19,3 +19,4 @@ export * from "./v2Brand";
 export * from "./v2Measurement";
 export * from "./v2Tag";
 export * from "./v2ProductVariants";
+export * from "./v2Combo";

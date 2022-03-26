@@ -50,6 +50,9 @@ const useStyles = makeStyles((theme) => ({
     color: "#6e8bb7",
     cursor: "n-resize",
   },
+  cell: {
+    width: "100vw",
+  },
 }));
 
 export default function Recommended({ formik }) {
@@ -72,10 +75,10 @@ export default function Recommended({ formik }) {
 
   const onSortEnd = useCallback(
     ({ oldIndex, newIndex }) => {
-      var sortedIds = arrayMove(values?.favorite_ids, oldIndex, newIndex);
-      setFieldValue("favorite_ids", sortedIds);
+      var sortedIds = arrayMove(values?.variant_ids, oldIndex, newIndex);
+      setFieldValue("variant_ids", sortedIds);
     },
-    [setFieldValue, values?.favorite_ids],
+    [setFieldValue, values?.variant_ids],
   );
 
   const DragHandle = SortableHandle(() => (
@@ -83,13 +86,15 @@ export default function Recommended({ formik }) {
   ));
 
   const SortableItem = SortableElement(({ value, index, key }) => (
-    <TableRow
-      key={key}
-      onClick={() => {}}
-      className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-    >
+    <TableRow key={key} onClick={() => {}}>
       {columns.map((col) => (
-        <TableCell key={col.key}>
+        <TableCell
+          key={col.key}
+          className={classes.cell}
+          // padding="normal"
+          // variant="body"
+          // size="medium"
+        >
           {col.render ? col.render(value, index, columns.length === 1) : "----"}
         </TableCell>
       ))}
@@ -129,17 +134,16 @@ export default function Recommended({ formik }) {
             label: product.title?.ru,
             value: product.id,
           }));
-          variants = variants.filter((product) => product.value !== params.id);
           cb(variants);
         })
         .catch((err) => console.log(err));
     },
-    [currentPage, limit, params.id],
+    [currentPage, limit],
   );
 
   const getItems = useCallback(() => {
     setIsLoading(true);
-    getV2ProductVariants({ limit, page: currentPage })
+    getV2ProductVariants()
       .then((res) => {
         setItems({
           count: res.count,
@@ -148,18 +152,18 @@ export default function Recommended({ formik }) {
       })
       .catch((err) => console.log(err))
       .finally(() => setIsLoading(false));
-  }, [limit, currentPage]);
+  }, []);
 
   const handleDeleteItem = useCallback(
     (e) => {
       setDeleteLoading(true);
       setFieldValue(
-        "favorite_ids",
-        values.favorite_ids.filter(
-          (favorite_id) => favorite_id.id !== deleteModal.id,
+        "variant_ids",
+        values.variant_ids.filter(
+          (variant_id) => variant_id.id !== deleteModal.id,
         ),
       );
-      setDeleteModal(null);
+      setDeleteModal(false);
       setDeleteLoading(false);
     },
     [deleteModal, values, setFieldValue],
@@ -167,26 +171,40 @@ export default function Recommended({ formik }) {
 
   const handleAddItem = useCallback(
     (e) => {
-      setLoading(true);
-      var favorite_ids = selectedGoods.map((good) => good.value);
-      var filteredItems = items.data.filter((item) =>
-        favorite_ids.includes(item.id),
-      );
-      setFieldValue(
-        "favorite_ids",
-        values?.favorite_ids?.concat(filteredItems),
-      );
-      setSelectedGoods([]);
-      setAddModal(null);
+      if (items.data?.length && selectedGoods.length) {
+        setLoading(true);
+        var favorite_ids = selectedGoods.map((good) => good.value);
+        var filteredItems = items.data.filter((item) =>
+          favorite_ids.includes(item.id),
+        );
+        setFieldValue(
+          "favorite_ids",
+          values?.favorite_ids?.concat(filteredItems),
+        );
+        setSelectedGoods([]);
+      }
+      setAddModal(false);
       setLoading(false);
     },
-    [selectedGoods, values, setFieldValue, items],
+    [items, selectedGoods, values, setFieldValue],
   );
 
   const closeModal = () => {
-    setAddModal(null);
-    setDeleteModal(null);
+    setAddModal(false);
+    setDeleteModal(false);
   };
+
+  var products = useMemo(() => {
+    var ids = [];
+    for (let i = 0; i < values?.variant_ids.length; i++) {
+      for (let j = 0; j < items?.data?.length; j++) {
+        if (items?.data[j]?.id === values?.variant_ids[i].id) {
+          ids.push(items?.data[j]);
+        }
+      }
+    }
+    return ids;
+  }, [values?.variant_ids, items?.data]);
 
   const initialColumns = useMemo(() => {
     return [
@@ -264,18 +282,6 @@ export default function Recommended({ formik }) {
     getItems();
   }, [getItems]);
 
-  var products = useMemo(() => {
-    var ids = [];
-    for (let i = 0; i < values?.favorite_ids.length; i++) {
-      for (let j = 0; j < items?.data?.length; j++) {
-        if (items?.data[j]?.id === values?.favorite_ids[i].id) {
-          ids.push(items?.data[j]);
-        }
-      }
-    }
-    return ids;
-  }, [values?.favorite_ids, items?.data]);
-
   return (
     <Card
       className=""
@@ -330,6 +336,7 @@ export default function Recommended({ formik }) {
         width={500}
         title={t("add.products")}
         isWarning={false}
+        disable={!selectedGoods.length}
       >
         <Async
           isMulti
@@ -344,6 +351,7 @@ export default function Recommended({ formik }) {
             setSelectedGoods(() => [...val]);
           }}
           placeholder={t("select")}
+          filterOption={(product, inputValue) => product.value !== params.id}
         />
         <br />
         <br />

@@ -92,6 +92,7 @@ function Select({
   onChange,
   onInputChange,
   onClickOption,
+  useZIndex,
   ...rest
 }) {
   const MultiValueLabel = (props) => {
@@ -123,7 +124,9 @@ function Select({
         styles={customStyles({ error, borderRight, borderLeft, width, height })}
         onChange={onChange}
         onInputChange={onInputChange}
-        menuPortalTarget={document.getElementById("portal-root")}
+        menuPortalTarget={
+          !useZIndex ? document.getElementById("portal-root") : null
+        }
         {...rest}
       />
     </div>

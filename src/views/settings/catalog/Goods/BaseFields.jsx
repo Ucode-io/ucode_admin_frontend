@@ -147,29 +147,27 @@ export default function BaseFields({
               <div className="input-label">
                 <span>{t("unit")}</span>
               </div>
-              <div className="">
-                <div>
-                  <Form.Item formik={formik} name="unit">
-                    <Select
-                      height={40}
-                      id="unit"
-                      options={units?.map((unit) => ({
-                        label: unit.title,
-                        value: unit.id,
-                      }))}
-                      value={values.unit}
-                      onChange={(val) => {
-                        var unit = units.find((el) => el.id === val.value);
-                        setFieldValue("unit", val);
-                        setFieldValue("unit_short", {
-                          label: unit.short_name,
-                          value: "",
-                        });
-                        setFieldValue("accuracy", unit.accuracy);
-                      }}
-                    />
-                  </Form.Item>
-                </div>
+              <div>
+                <Form.Item formik={formik} name="unit">
+                  <Select
+                    height={40}
+                    id="unit"
+                    options={units?.map((unit) => ({
+                      label: unit.title,
+                      value: unit.id,
+                    }))}
+                    value={values.unit}
+                    onChange={(val) => {
+                      var unit = units.find((el) => el.id === val.value);
+                      setFieldValue("unit", val);
+                      setFieldValue("unit_short", {
+                        label: unit.short_name,
+                        value: "",
+                      });
+                      setFieldValue("accuracy", unit.accuracy);
+                    }}
+                  />
+                </Form.Item>
               </div>
             </div>
 

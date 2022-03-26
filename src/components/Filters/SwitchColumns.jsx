@@ -1,12 +1,9 @@
 import { useState, useEffect, useMemo, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import Card from "../Card";
-import Button from "../Button";
 import Switch from "../Switch";
-
-//material
 import Menu from "@material-ui/core/Menu";
-import { Popover, withStyles } from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
 import TableChartIcon from "@material-ui/icons/TableChart";
 
 const StyledMenu = withStyles({
@@ -28,7 +25,7 @@ const StyledMenu = withStyles({
         getContentAnchorEl={null}
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "center",
+          horizontal: "right",
         }}
         transformOrigin={{
           vertical: "top",
@@ -50,7 +47,6 @@ export default function SwitchColumns({
   const [data, setData] = useState(columns);
   const [anchorEl, setAnchorEl] = useState(null);
   const [all, setAll] = useState(true);
-  // const [switchesType, setSwitchesType] = useState(defineSwitchType(data))
 
   const switchType = useMemo(() => {
     if (data.every((elm) => !elm.hide)) return "allChecked";
@@ -59,13 +55,19 @@ export default function SwitchColumns({
   }, [data]);
 
   useEffect(() => {
+    setAll((prev) => {
+      return data.every((elm) => !elm.hide);
+    });
     onChange(data.filter((elm) => !elm.hide));
-  }, [data]);
+  }, [data, onChange]);
 
   const onSwitchChange = (val, key) => {
     setData((prev) =>
       prev.map((elm) => (elm.key === key ? { ...elm, hide: !val } : elm)),
     );
+    setAll((prev) => {
+      return !val && prev && !prev;
+    });
   };
 
   const onAllClick = () => {

@@ -80,7 +80,10 @@ export default function Integrations() {
         <Typography className={classes.header}>Пос</Typography>
         <Card className={classes.root}>
           <img src={iiko} alt="" className="p-4 m-auto" />
-          <CardActions className={classes.footer}>
+          <CardActions
+            className={classes.footer}
+            onClick={() => history.push("/home/settings/integrations/iiko")}
+          >
             <Typography>iiko</Typography>
             <Typography className={classes.arrow}>
               <img src={arrowRight} alt="arrow right" />
@@ -100,7 +103,10 @@ export default function Integrations() {
 
         <Card className={classes.root}>
           <img src={jowi} alt="" className="p-4 m-auto" />
-          <CardActions className={classes.footer}>
+          <CardActions
+            className={classes.footer}
+            onClick={() => history.push("/home/settings/integrations/jowi")}
+          >
             <Typography>Jowi</Typography>
             <Typography className={classes.arrow}>
               <img src={arrowRight} alt="arrow right" />

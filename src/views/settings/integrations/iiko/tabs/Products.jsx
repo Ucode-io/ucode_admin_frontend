@@ -19,6 +19,9 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { useHistory } from "react-router-dom";
 import Modal from "components/Modal";
+import Header from "components/Header";
+import AddIcon from "@material-ui/icons/Add";
+import Button from "components/Button";
 
 export default function Products({ filters }) {
   const { t } = useTranslation();
@@ -86,40 +89,40 @@ export default function Products({ filters }) {
   useEffect(() => {
     const _columns = [
       ...initialColumns,
-      {
-        title: (
-          <SwitchColumns
-            columns={initialColumns}
-            onChange={(val) =>
-              setColumns((prev) => [...val, prev[prev.length - 1]])
-            }
-          />
-        ),
-        key: t("actions"),
-        render: (record, _) => (
-          <ActionMenu
-            id={record.id}
-            actions={[
-              {
-                icon: <EditIcon />,
-                color: "blue",
-                title: t("change"),
-                action: () => {
-                  history.push(`/home/operator/${record.id}`);
-                },
-              },
-              {
-                icon: <DeleteIcon />,
-                color: "red",
-                title: t("delete"),
-                action: () => {
-                  setDeleteModal({ id: record.id });
-                },
-              },
-            ]}
-          />
-        ),
-      },
+      // {
+      //   title: (
+      //     <SwitchColumns
+      //       columns={initialColumns}
+      //       onChange={(val) =>
+      //         setColumns((prev) => [...val, prev[prev.length - 1]])
+      //       }
+      //     />
+      //   ),
+      //   key: t("actions"),
+      //   render: (record, _) => (
+      //     <ActionMenu
+      //       id={record.id}
+      //       actions={[
+      //         {
+      //           icon: <EditIcon />,
+      //           color: "blue",
+      //           title: t("change"),
+      //           action: () => {
+      //             history.push(`/home/operator/${record.id}`);
+      //           },
+      //         },
+      //         {
+      //           icon: <DeleteIcon />,
+      //           color: "red",
+      //           title: t("delete"),
+      //           action: () => {
+      //             setDeleteModal({ id: record.id });
+      //           },
+      //         },
+      //       ]}
+      //     />
+      //   ),
+      // },
     ];
     setColumns(_columns);
   }, []);
@@ -138,6 +141,19 @@ export default function Products({ filters }) {
         />
       }
     >
+      <Header
+        endAdornment={[
+          <Button
+            icon={AddIcon}
+            size="medium"
+            onClick={() =>
+              history.push("/home/settings/integrations/iiko/branch-create")
+            }
+          >
+            {t("add")}
+          </Button>,
+        ]}
+      />
       <TableContainer className="rounded-lg border border-lightgray-1">
         <Table aria-label="simple table">
           <TableHead>
@@ -157,7 +173,7 @@ export default function Products({ filters }) {
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
                   {columns.map((col) => (
-                    <TableCell key={col.key}>
+                    <TableCell key={col.key} width="100">
                       {col.render ? (
                         col.render(item, index)
                       ) : typeof item[col.dataIndex] == "boolean" ? (

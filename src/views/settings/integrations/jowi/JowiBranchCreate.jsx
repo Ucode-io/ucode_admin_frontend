@@ -1,8 +1,7 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import Card from "components/Card";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
-import { Input, Select } from "alisa-ui";
 import Form from "components/Form/Index";
 import * as yup from "yup";
 import { useFormik } from "formik";
@@ -11,37 +10,23 @@ import Button from "components/Button";
 import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
-import { getBranchesCount, getIikoBranches } from "../../../../services";
-import { getOnePayme, postPayme, updatePayme } from "services/promotion";
+import { getBranches, putBranches } from "../../../../services";
+import { getOnePayme } from "services/promotion";
 import CustomSkeleton from "components/Skeleton";
+import Async from "components/Select/Async";
+import Input from "components/Input";
 
-export default function BranchCreate() {
+export default function JowiAddProduct() {
   const { t } = useTranslation();
   const history = useHistory();
   const params = useParams();
   const [saveLoading, setSaveLoading] = useState(false);
   const [items, setItems] = useState();
   const [loader, setLoader] = useState(true);
-  const [iikoBranch, setIikoBranch] = useState();
 
   useEffect(() => {
     getItems();
     fetchData();
-    getIikoBranch();
-  }, []);
-
-  console.log("iikoBranch", iikoBranch);
-  useEffect(() => {
-    if (params.branch_id) {
-      getBranchesCount.then((res) => {
-        setValues({
-          login: res.login,
-          key: res.key,
-          branch_id: res.branch_id,
-          merchant_id: res.merchant_id,
-        });
-      });
-    }
   }, []);
 
   const fetchData = () => {
@@ -53,7 +38,6 @@ export default function BranchCreate() {
             login: res.login,
             key: res.key,
             branch_id: res.branch_id,
-            merchant_id: res.merchant_id,
           });
         })
         .finally(() => setLoader(false));
@@ -62,14 +46,8 @@ export default function BranchCreate() {
     }
   };
 
-  const getIikoBranch = (page) => {
-    getIikoBranches({ limit: 10, page }).then((res) => {
-      setIikoBranch(res);
-    });
-  };
-
   const getItems = (page) => {
-    getBranchesCount({ limit: 10, page }).then((res) => {
+    getBranches({ limit: 10, page }).then((res) => {
       setItems(res.branches);
     });
   };
@@ -78,12 +56,26 @@ export default function BranchCreate() {
     value: elm?.id,
   }));
 
+  const loadBranch = useCallback(
+    (input, cb) => {
+      getBranches({ limit: 10, search: input })
+        .then((res) => {
+          var branches = res.branches?.map((elm) => ({
+            label: elm?.name,
+            value: elm?.id,
+            ...elm,
+          }));
+          branches = branches.filter((elm) => elm.value !== params.id);
+          cb(branches);
+        })
+        .catch((err) => console.log(err));
+    },
+    [params.id],
+  );
+
   const initialValues = useMemo(
     () => ({
-      login: "Paycom",
-      key: null,
-      branch_id: null,
-      merchant_id: null,
+      id: null,
     }),
     [],
   );
@@ -91,23 +83,24 @@ export default function BranchCreate() {
   const validationSchema = useMemo(() => {
     const defaultSchema = yup.mixed().required(t("required.field.error"));
     return yup.object().shape({
-      branch_id: defaultSchema,
-      key: defaultSchema,
-      login: defaultSchema,
-      merchant_id: defaultSchema,
+      branch: defaultSchema,
     });
   }, []);
 
   const onSubmit = (values) => {
+    delete values.branch.label;
+    // delete values.branch.value;
+    delete values.branch.id;
+    delete values.branch.jowi_id;
     const data = {
-      ...values,
+      ...values.branch,
+      value: undefined,
+      id: values.branch.value,
+      jowi_id: values.jowi_id,
     };
 
     setSaveLoading(true);
-    const selectedAction = params.id
-      ? updatePayme(data, params.id)
-      : postPayme(data);
-    selectedAction
+    putBranches(data.id, data)
       .then((res) => {
         history.goBack();
       })
@@ -136,6 +129,9 @@ export default function BranchCreate() {
     },
   ];
 
+  console.log("values", values);
+  console.log("formik", formik);
+
   const headerButtons = [
     <Button
       icon={CancelIcon}
@@ -162,34 +158,43 @@ export default function BranchCreate() {
       />
 
       <div className="m-4">
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5">
           <Card title={t("general.information")}>
             <div className="grid grid-cols-4 gap-5 items-baseline">
               <div className="col-span-2">
-                <Form.Item formik={formik} name="branch_id">
+                <Form.Item formik={formik} name="branch">
                   <div className="input-label">
-                    <span style={{ color: "red" }}>*</span> {t("branches")}
+                    <span style={{ color: "red" }}>*</span>{" "}
+                    {t("Пожалуйста, выберите филиал")}
                   </div>
-                  <Select
-                    height={40}
-                    name="branch_id"
+                  <Async
+                    isSearchable
+                    isClearable
+                    cacheOptions
+                    name="branch"
                     options={branches}
-                    value={values.branch_id}
-                    onChange={handleChange}
+                    loadOptions={loadBranch}
+                    defaultOptions={true}
+                    value={values.branch}
+                    onChange={(val) => {
+                      formik.setFieldValue("branch", val);
+                    }}
                   />
                 </Form.Item>
               </div>
 
               <div className="col-span-2">
-                <Form.Item formik={formik} name="key">
+                <Form.Item formik={formik} name="jowi_id">
                   <div className="input-label">
-                    <span style={{ color: "red" }}>*</span> {t("Iiko")}
+                    <span style={{ color: "red" }}>*</span>{" "}
+                    {t("Пожалуйста, добавьте соответствующий JOWI филиал")}
                   </div>
                   <Input
                     size="large"
-                    value={values.key}
+                    style={{ height: "40px" }}
+                    value={values.jowi_id}
                     onChange={handleChange}
-                    name="key"
+                    name="jowi_id"
                   />
                 </Form.Item>
               </div>

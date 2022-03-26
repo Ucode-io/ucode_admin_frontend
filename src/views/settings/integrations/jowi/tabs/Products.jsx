@@ -11,7 +11,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { getBranches, deleteBranch } from "services";
+import { getProducts, deleteProduct } from "services";
 import Tag from "components/Tag";
 import SwitchColumns from "components/Filters/SwitchColumns";
 import ActionMenu from "components/ActionMenu";
@@ -20,10 +20,10 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { useHistory } from "react-router-dom";
 import Modal from "components/Modal";
 import Header from "components/Header";
-import Button from "components/Button";
 import AddIcon from "@material-ui/icons/Add";
+import Button from "components/Button";
 
-export default function Branches({ filters }) {
+export default function JowiProducts({ filters }) {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -41,11 +41,11 @@ export default function Branches({ filters }) {
 
   const getItems = (page) => {
     setLoader(true);
-    getBranches({ limit, page, ...filters })
+    getProducts({ limit, page, ...filters })
       .then((res) => {
         setItems({
           count: res.count,
-          data: res.branches,
+          data: res.products,
         });
       })
       .finally(() => setLoader(false));
@@ -53,7 +53,7 @@ export default function Branches({ filters }) {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteBranch(deleteModal.id)
+    deleteProduct(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -69,20 +69,20 @@ export default function Branches({ filters }) {
       render: (_, index) => <>{(currentPage - 1) * 10 + index + 1}</>,
     },
     {
-      title: t("name"),
+      title: t("meal_name"),
       key: "name",
       dataIndex: "name",
     },
     {
-      title: t("navigation"),
-      key: "address",
-      dataIndex: "address",
-      render: (record) => <>{record.address}</>,
+      title: t("description"),
+      key: "description",
+      dataIndex: "description",
+      render: (record) => <>{record.description}</>,
     },
     {
       title: t("status"),
-      key: "iiko_terminal_id",
-      dataIndex: "iiko_terminal_id",
+      key: "is_active",
+      dataIndex: "is_active",
     },
   ];
 
@@ -147,7 +147,7 @@ export default function Branches({ filters }) {
             icon={AddIcon}
             size="medium"
             onClick={() =>
-              history.push("/home/settings/integrations/iiko/branch-create")
+              history.push("/home/settings/integrations/jowi/add-product")
             }
           >
             {t("add")}
@@ -174,15 +174,17 @@ export default function Branches({ filters }) {
                 >
                   {columns.map((col) => (
                     <TableCell key={col.key} width="100">
-                      {col.render
-                        ? col.render(item, index)
-                        : item[col.dataIndex] ?? (
-                            <Tag className="p-1" color="yellow">
-                              {item[col.dataIndex]
-                                ? t("available")
-                                : t("unavailable")}
-                            </Tag>
-                          )}
+                      {col.render ? (
+                        col.render(item, index)
+                      ) : typeof item[col.dataIndex] == "boolean" ? (
+                        <Tag className="p-1" color="yellow">
+                          {item[col.dataIndex]
+                            ? t("available")
+                            : t("unavailable")}
+                        </Tag>
+                      ) : (
+                        item[col.dataIndex]
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>

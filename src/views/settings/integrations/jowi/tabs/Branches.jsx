@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Card from "components/Card";
 import Pagination from "components/Pagination";
+import AddIcon from "@material-ui/icons/Add";
 import LoaderComponent from "components/Loader";
 import {
   Table,
@@ -21,9 +22,8 @@ import { useHistory } from "react-router-dom";
 import Modal from "components/Modal";
 import Header from "components/Header";
 import Button from "components/Button";
-import AddIcon from "@material-ui/icons/Add";
 
-export default function Branches({ filters }) {
+export default function JowiBranches({ filters }) {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -81,8 +81,8 @@ export default function Branches({ filters }) {
     },
     {
       title: t("status"),
-      key: "iiko_terminal_id",
-      dataIndex: "iiko_terminal_id",
+      key: "iiko_id",
+      dataIndex: "iiko_id",
     },
   ];
 
@@ -147,7 +147,7 @@ export default function Branches({ filters }) {
             icon={AddIcon}
             size="medium"
             onClick={() =>
-              history.push("/home/settings/integrations/iiko/branch-create")
+              history.push("/home/settings/integrations/jowi/branch-create")
             }
           >
             {t("add")}
@@ -173,7 +173,7 @@ export default function Branches({ filters }) {
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
                   {columns.map((col) => (
-                    <TableCell key={col.key} width="100">
+                    <TableCell key={col.key} width="100px">
                       {col.render
                         ? col.render(item, index)
                         : item[col.dataIndex] ?? (

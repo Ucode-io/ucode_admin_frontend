@@ -45,7 +45,6 @@ export default function MainTable({ createModal, setCreateModal, search }) {
     setLoader(true);
     getV2Tags({ limit, page, search })
       .then((res) => {
-        console.log(res);
         setItems({
           count: res.count,
           data: res.tags,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, forwardRef } from "react";
+import { useState, useEffect, useMemo, useRef, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import Card from "../Card";
 import Switch from "../Switch";
@@ -6,7 +6,7 @@ import Menu from "@material-ui/core/Menu";
 import { withStyles } from "@material-ui/core";
 import TableChartIcon from "@material-ui/icons/TableChart";
 
-const StyledMenu = withStyles({
+var menuStyles = {
   paper: {
     width: "320px",
     maxHeight: "336px",
@@ -17,26 +17,28 @@ const StyledMenu = withStyles({
   list: {
     padding: 0,
   },
-})(
-  forwardRef((props, ref) => {
-    return (
-      <Menu
-        elevation={0}
-        getContentAnchorEl={null}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        {...props}
-        ref={ref}
-      />
-    );
-  }),
-);
+};
+
+let StyledMenu = forwardRef((props, ref) => {
+  return (
+    <Menu
+      elevation={0}
+      getContentAnchorEl={null}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "right",
+      }}
+      transformOrigin={{
+        vertical: "top",
+        horizontal: "center",
+      }}
+      {...props}
+      ref={ref}
+    />
+  );
+});
+
+StyledMenu = withStyles(menuStyles)(StyledMenu);
 
 export default function SwitchColumns({
   columns = [],
@@ -47,6 +49,7 @@ export default function SwitchColumns({
   const [data, setData] = useState(columns);
   const [anchorEl, setAnchorEl] = useState(null);
   const [all, setAll] = useState(true);
+  const menuRef = useRef();
 
   const switchType = useMemo(() => {
     if (data.every((elm) => !elm.hide)) return "allChecked";
@@ -116,6 +119,7 @@ export default function SwitchColumns({
         keepMounted
         open={Boolean(anchorEl)}
         onClose={() => setAnchorEl(null)}
+        ref={menuRef}
       >
         <Card
           headerStyle={{ padding: "10px 12px" }}

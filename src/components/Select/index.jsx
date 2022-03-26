@@ -1,5 +1,3 @@
-// import { BorderLeft } from "@material-ui/icons";
-import { useEffect } from "react";
 import RcSelect, { components } from "react-select";
 
 export const customStyles = ({
@@ -125,6 +123,7 @@ function Select({
         styles={customStyles({ error, borderRight, borderLeft, width, height })}
         onChange={onChange}
         onInputChange={onInputChange}
+        menuPortalTarget={document.getElementById("portal-root")}
         {...rest}
       />
     </div>

@@ -21,6 +21,7 @@ export default function Async({
       onChange={onChange}
       onInputChange={onInputChange}
       styles={styles}
+      menuPortalTarget={document.getElementById("portal-root")}
       {...rest}
     />
   );

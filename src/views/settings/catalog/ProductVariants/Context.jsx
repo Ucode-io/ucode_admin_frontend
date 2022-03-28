@@ -14,7 +14,7 @@ import Select from "components/Select";
 import MuiButton from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import { makeStyles } from "@material-ui/core/styles";
-import Gallery from "components/Gallery";
+import Gallery from "components/Gallery/v2";
 import genSelectOption from "helpers/genSelectOption";
 import Uzbek from "./Uzbek";
 import English from "./English";
@@ -212,7 +212,8 @@ export default function Context({
                           elm[elm.length - 1],
                         ]);
                       }}
-                      multiple={true}
+                      style={{ flexDirection: "row" }}
+                      // multiple={true}
                     />
                   </div>
                 </Form.Item>

@@ -1110,7 +1110,6 @@ export default [
     title: "Settings.Catalog.Product.Variants.Edit",
     permission: "fares",
   },
-
   {
     component: SettingsCatalogCombo,
     path: "/catalog/combo",

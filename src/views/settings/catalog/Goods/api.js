@@ -20,7 +20,8 @@ var formFields = {
   code: "", // artikul
   favorite_ids: [],
   variant_ids: [],
-  combo_ids: [],
+  // why we need it
+  rate_id: "",
 };
 
 export var divisibility = ["divisible", "nondivisible"];

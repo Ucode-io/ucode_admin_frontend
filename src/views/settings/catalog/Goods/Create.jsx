@@ -139,6 +139,10 @@ export default function GoodsCreate() {
         tags: tags.filter((tag) =>
           res.tag_ids.filter((tag_id) => tag_id.id === tag.value),
         ),
+        tag_ids: res.tag_ids.map((tag_id) => ({
+          label: tag_id.title.ru,
+          value: tag_id.id,
+        })),
         categories: categories.filter((category) =>
           res.category_ids.filter(
             (category_id) => category_id.id === category.value,
@@ -230,12 +234,10 @@ export default function GoodsCreate() {
           en: values.title_en || "",
         },
         brand_id: values.brand.value,
+        tag_ids: values.tag_ids.map((tag_id) => tag_id.value),
         category_ids: values.category_ids.map((category) => category.value),
-        combo_ids: [],
         measurement_id: values.unit.value,
-        rate_id: "",
-        tag_ids: values.tags.map((tag) => tag.value),
-        variant_ids: [],
+        variant_ids: values?.variant_ids.map((variant_id) => variant_id.id),
         property_groups,
         currency: "UZS", // values.currency.value,
         code: values.code,
@@ -278,7 +280,7 @@ export default function GoodsCreate() {
       brand: validate("selectItem"),
       unit: validate("selectItem"),
       currency: validate("selectItem"),
-      tags: validate("array"),
+      tag_ids: validate("array"),
       category_ids: validate("array"),
       images: validate("arrayStr"),
       property_groups: validate("multiple_select"),

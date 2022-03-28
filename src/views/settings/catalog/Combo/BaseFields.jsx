@@ -2,19 +2,12 @@ import React from "react";
 import Form from "components/Form/Index";
 import { Input } from "alisa-ui";
 import Select from "components/Select";
-import { divisibility, currencies } from "./api";
+import { currencies } from "./api";
 import genSelectOption from "helpers/genSelectOption";
 import { useTranslation } from "react-i18next";
 import genArticul from "helpers/genArticul";
 
-export default function BaseFields({
-  formik,
-  categories,
-  brands,
-  tags,
-  lang,
-  units,
-}) {
+export default function BaseFields({ formik, tags, lang }) {
   const { t } = useTranslation();
   const { values, handleChange, setFieldValue } = formik;
 
@@ -56,74 +49,6 @@ export default function BaseFields({
           <div className="grid grid-cols-2 gap-2">
             <div>
               <div className="input-label">
-                <span>{t("categories")}</span>
-              </div>
-              <div className="">
-                <div>
-                  <Form.Item formik={formik} name="category_ids">
-                    <Select
-                      isMulti
-                      height={40}
-                      id="category_ids"
-                      options={categories}
-                      value={values.category_ids}
-                      onChange={(val) => {
-                        setFieldValue("category_ids", val);
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className="input-label">
-                <span>{t("brand")}</span>
-              </div>
-              <div className="">
-                <div>
-                  <Form.Item formik={formik} name="brand">
-                    <Select
-                      height={40}
-                      id="brand"
-                      options={brands}
-                      value={values.brand}
-                      onChange={(val) => {
-                        setFieldValue("brand", val);
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className="input-label">
-                <span>{t("divisible.indivisible")}</span>
-              </div>
-              <div className="">
-                <div>
-                  <Form.Item formik={formik} name="is_divisible">
-                    <Select
-                      height={40}
-                      id="is_divisible"
-                      options={genSelectOption(divisibility)}
-                      value={values.is_divisible}
-                      onChange={(val) => {
-                        var bool = val.value === "divisible";
-                        setFieldValue("is_divisible", {
-                          label: val.label,
-                          value: bool,
-                        });
-                      }}
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className="input-label">
                 <span>{t("tags")}</span>
               </div>
               <div className="">
@@ -141,33 +66,6 @@ export default function BaseFields({
                     />
                   </Form.Item>
                 </div>
-              </div>
-            </div>
-            <div>
-              <div className="input-label">
-                <span>{t("unit")}</span>
-              </div>
-              <div>
-                <Form.Item formik={formik} name="unit">
-                  <Select
-                    height={40}
-                    id="unit"
-                    options={units?.map((unit) => ({
-                      label: unit.title,
-                      value: unit.id,
-                    }))}
-                    value={values.unit}
-                    onChange={(val) => {
-                      var unit = units.find((el) => el.id === val.value);
-                      setFieldValue("unit", val);
-                      setFieldValue("unit_short", {
-                        label: unit.short_name,
-                        value: "",
-                      });
-                      setFieldValue("accuracy", unit.accuracy);
-                    }}
-                  />
-                </Form.Item>
               </div>
             </div>
 

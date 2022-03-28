@@ -4,27 +4,17 @@ var formFields = {
   description_en: "",
   in_price: "",
   out_price: "",
-  is_divisible: null,
   title_ru: "",
   title_uz: "",
   title_en: "",
-  brand: null,
-  unit: null,
   currency: null,
   tags: null,
-  category_ids: null,
   images: [],
-  unit_short: null,
-  accuracy: "",
-  property_groups: [],
   code: "", // artikul
+  favorite_ids: [],
   // why we need it
-  combo_ids: [],
-  price_changer_ids: [],
-  rate_id: "",
+  price_changer_id: "",
 };
-
-export var divisibility = ["divisible", "nondivisible"];
 
 export var currencies = ["UZS"];
 

@@ -28,7 +28,6 @@ import numberToPrice from "helpers/numberToPrice";
 import Async from "components/Select/Async";
 import { useParams } from "react-router-dom";
 import Switch from "components/Switch";
-import LoopIcon from "@material-ui/icons/Loop";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -173,13 +172,13 @@ export default function Recommended({ formik }) {
     (e) => {
       if (items.data?.length && selectedGoods.length) {
         setLoading(true);
-        var favorite_ids = selectedGoods.map((good) => good.value);
+        var variant_ids = selectedGoods.map((good) => good.value);
         var filteredItems = items.data.filter((item) =>
-          favorite_ids.includes(item.id),
+          variant_ids.includes(item.id),
         );
         setFieldValue(
-          "favorite_ids",
-          values?.favorite_ids?.concat(filteredItems),
+          "variant_ids",
+          values?.variant_ids?.concat(filteredItems),
         );
         setSelectedGoods([]);
       }
@@ -352,6 +351,7 @@ export default function Recommended({ formik }) {
           }}
           placeholder={t("select")}
           filterOption={(product, inputValue) => product.value !== params.id}
+          useZIndex
         />
         <br />
         <br />

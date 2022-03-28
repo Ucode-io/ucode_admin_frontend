@@ -117,7 +117,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
     {
       title: t("vendor_code"),
       key: "vendor_code",
-      render: (record) => <>{record.bar_code}</>,
+      render: (record) => <>{record.code}</>,
     },
     {
       title: t("amount"),

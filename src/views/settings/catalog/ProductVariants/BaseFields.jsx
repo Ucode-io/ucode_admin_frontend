@@ -124,19 +124,19 @@ export default function BaseFields({
 
             <div>
               <div className="input-label">
-                <span>{t("tag")}</span>
+                <span>{t("tags")}</span>
               </div>
               <div className="">
                 <div>
-                  <Form.Item formik={formik} name="tags">
+                  <Form.Item formik={formik} name="tag_ids">
                     <Select
                       isMulti
                       height={40}
-                      id="tags"
+                      id="tag_ids"
                       options={tags}
-                      value={values.tags}
+                      value={values.tag_ids}
                       onChange={(val) => {
-                        setFieldValue("tags", val);
+                        setFieldValue("tag_ids", val);
                       }}
                     />
                   </Form.Item>

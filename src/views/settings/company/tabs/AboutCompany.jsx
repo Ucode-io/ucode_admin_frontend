@@ -378,7 +378,7 @@ export default function AboutCompany() {
 
               <div className="col-span-4 flex w-full items-baseline">
                 <div className="w-1/4 input-label">
-                  <label>{t("shit")}</label>
+                  <label>{t("courier_work_hours")}</label>
                 </div>
                 <div className="w-3/4">
                   <Form.Item formik={formik} name="work_hour_start">

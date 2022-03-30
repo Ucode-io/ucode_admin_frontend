@@ -405,7 +405,7 @@
   "courier_period": "Срок получение заказа",
   "courier_accept_radius": "Радиус в котором курьер принимает заказ",
   "courier_action_radius": "Радиус в котором курьер завершает действие",
-  "shit": "Рабочее время курьера",
+  "courier_work_hours": "Рабочее время курьера",
   "min": "мин",
   "date_founded": "Год основания",
   "category_name": "Название категории",
@@ -461,5 +461,7 @@
   "max.size.4mb": "Макс размер 4 МБ",
   "select.product": "Выберите продукт",
   "products_and_variants": "Продукты и варианты",
-  "price_changer": "Сменщик цен"
+  "price_changers": "Сменщики цен",
+  "price_changer": "Сменщик цен",
+  "additional": "Дополнительный"
 }

@@ -142,9 +142,9 @@ export const menu = [
         permission: "settings",
       },
       {
-        id: "price_changer.settings",
-        title: "price_changer",
-        path: "/home/catalog/price_changer",
+        id: "price_changers.settings",
+        title: "price_changers",
+        path: "/home/catalog/price-changers",
         isChild: true,
         isActive: false,
         permission: "settings",

@@ -12,6 +12,7 @@ var formFields = {
   images: [],
   code: "", // artikul
   favorite_ids: [],
+  products_and_variants: [],
   // why we need it
   price_changer_id: "",
 };

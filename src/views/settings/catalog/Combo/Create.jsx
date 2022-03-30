@@ -1,7 +1,15 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
-import { getV2Combo, postV2Combo, updateV2Combo, getV2Tags } from "services";
+import {
+  getV2Combo,
+  postV2Combo,
+  updateV2Combo,
+  getV2Tags,
+  getV2Good,
+  getV2ProductVariant,
+  getV2Goods,
+} from "services";
 import { useParams } from "react-router-dom";
 import Header from "components/Header";
 import Breadcrumb from "components/Breadcrumb";
@@ -11,13 +19,7 @@ import SaveIcon from "@material-ui/icons/Save";
 import { useHistory } from "react-router-dom";
 import FullScreenLoader from "components/FullScreenLoader";
 import * as Yup from "yup";
-import Filters from "components/Filters";
-import { StyledTabs, StyledTab } from "components/StyledTabs";
-import SwipeableViews from "react-swipeable-views";
-import { TabPanel } from "components/Tab/TabBody";
-import { useTheme } from "@material-ui/core/styles";
-import Combo from "./tabs/Combo";
-import ConnectedGoods from "./tabs/ConnectedGoods";
+import Combo from "./Combo";
 import formFields from "./api.js";
 import validate from "helpers/validateField";
 import genSelectOption from "helpers/genSelectOption";
@@ -26,24 +28,30 @@ export default function ComboCreate() {
   const { t } = useTranslation();
   const history = useHistory();
   const { id } = useParams();
-  const theme = useTheme();
 
   const [tags, setTags] = useState([]);
+  const [products, setProducts] = useState([]);
   const [initialValues, setInitialValues] = useState(formFields);
   const [btnDisabled, setBtnDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [value, setValue] = useState(0);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      var [tags] = await Promise.all([getV2Tags({ page: 1, limit: 10 })]);
+      var [tags, products] = await Promise.all([getV2Tags(), getV2Goods()]);
+
       tags = tags.tags?.map((tag) => ({
         label: tag.title.ru,
         value: tag.id,
       }));
+      products = products.products?.map((product) => ({
+        label: product.title.ru,
+        value: product.id,
+        variant_ids: product.variant_ids,
+      }));
 
       setTags(tags);
+      setProducts(products);
     } catch (e) {
       console.log(e);
     } finally {
@@ -51,17 +59,38 @@ export default function ComboCreate() {
     }
   }, []);
 
-  const fetchProductData = useCallback(async () => {
-    if (id && tags.length) {
+  const fetchComboData = useCallback(async () => {
+    if (id && tags.length && products.length) {
       var res = await getV2Combo(id, {});
+
+      var products_and_variants = res.products_and_variants.map((pav) => {
+        var product = products.find((product) => product.value === pav.product);
+        if (product) {
+          var { variant_ids, label, value } = product;
+
+          var variants = variant_ids.filter(({ id }) => {
+            return pav.variants.includes(id);
+          });
+          variants = variants.map((variant) => ({
+            label: variant.title.ru,
+            value: variant.id,
+          }));
+
+          return {
+            product: { label, value },
+            variants,
+          };
+        }
+        return pav;
+      });
 
       return {
         ...res,
         description_ru: res.description.ru,
         description_uz: res.description.uz,
         description_en: res.description.en,
-        in_price: res.in_price,
-        out_price: res.out_price,
+        in_price: res.in_price, //
+        out_price: res.out_price, //
         currency: genSelectOption(res.currency),
         title_ru: res.title.ru,
         title_uz: res.title.uz,
@@ -74,11 +103,12 @@ export default function ComboCreate() {
           value: tag_id.id,
         })),
         images: [res.image, ...res.gallery],
-        code: res.code,
+        code: res.code, //
+        products_and_variants,
       };
     }
     return null;
-  }, [id, tags]);
+  }, [id, tags, products]);
 
   const saveChanges = useCallback(
     (data) => {
@@ -99,6 +129,9 @@ export default function ComboCreate() {
   const onSubmit = useCallback(
     (values) => {
       const data = {
+        // ...values,
+        shipper_id: values.shipper_id, //
+        id: values.id, //
         description: {
           ru: values.description_ru,
           uz: values.description_uz,
@@ -106,18 +139,24 @@ export default function ComboCreate() {
         },
         image: values.images[0],
         gallery: values.images.slice(1, values.images.length),
-        in_price: values.in_price,
-        out_price: values.out_price,
+        in_price: values.in_price, //
+        out_price: values.out_price, //
         title: {
           ru: values.title_ru,
           uz: values.title_uz,
           en: values.title_en,
         },
         tag_ids: values.tag_ids.map((tag_id) => tag_id.value),
-        variant_ids: values?.variant_ids.map((variant_id) => variant_id.id),
         currency: "UZS", // values.currency.value,
-        code: values.code,
-        favorite_ids: values?.favorite_ids.map((favorite_id) => favorite_id.id),
+        code: values.code, //
+        products_and_variants: values.products_and_variants.map(
+          ({ product, variants }) => {
+            return {
+              product: product.value,
+              variants: variants.map((variant) => variant.value),
+            };
+          },
+        ),
       };
       saveChanges(data);
     },
@@ -133,14 +172,14 @@ export default function ComboCreate() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetchProductData()
+    fetchComboData()
       .then((data) => {
         data && setInitialValues(data);
       })
       .finally(() => {
         setIsLoading(false);
       });
-  }, [fetchProductData]);
+  }, [fetchComboData]);
 
   const validationSchema = useMemo(() => {
     return Yup.object().shape({
@@ -169,22 +208,6 @@ export default function ComboCreate() {
       title: id ? t("edit") : t("create"),
     },
   ];
-
-  // Tabs
-  const a11yProps = (index) => {
-    return {
-      id: `full-width-tab-${index}`,
-      "aria-controls": `full-width-tabpanel-${index}`,
-    };
-  };
-
-  const handleTabChange = (event, newValue) => setValue(newValue);
-
-  const handleChangeIndex = (index) => setValue(index);
-
-  const tabLabel = (text, isActive = false) => (
-    <span className="px-1">{text}</span>
-  );
 
   return (
     <>
@@ -223,42 +246,11 @@ export default function ComboCreate() {
                     </Button>,
                   ]}
                 />
-                <Filters>
-                  <StyledTabs
-                    value={value}
-                    onChange={handleTabChange}
-                    centered={false}
-                    aria-label="full width tabs example"
-                    TabIndicatorProps={{ children: <span className="w-2" /> }}
-                  >
-                    <StyledTab
-                      label={tabLabel(t("combo"))}
-                      {...a11yProps(0)}
-                      style={{ width: "75px" }}
-                    />
-                    <StyledTab
-                      label={tabLabel(t("connected_goods"))}
-                      {...a11yProps(1)}
-                      style={{ width: "175px" }}
-                    />
-                  </StyledTabs>
-                </Filters>
-                <SwipeableViews
-                  axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-                  index={value}
-                  onChangeIndex={handleChangeIndex}
-                >
-                  <TabPanel value={value} index={0} dir={theme.direction}>
-                    <Combo
-                      formik={formik}
-                      tags={tags}
-                      initialValues={initialValues}
-                    />
-                  </TabPanel>
-                  <TabPanel value={value} index={1} dir={theme.direction}>
-                    <ConnectedGoods formik={formik} />
-                  </TabPanel>
-                </SwipeableViews>
+                <Combo
+                  formik={formik}
+                  tags={tags}
+                  initialValues={initialValues}
+                />
               </form>
             )}
           </Formik>

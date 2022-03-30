@@ -12,10 +12,10 @@ import {
   TableRow,
 } from "@material-ui/core";
 import {
-  getV2Properties,
-  deleteV2Property,
-  postV2Property,
-  updateV2Property,
+  getProperties,
+  deleteProperty,
+  postProperty,
+  updateProperty,
 } from "services";
 import Tag from "components/Tag";
 import SwitchColumns from "components/Filters/SwitchColumns";
@@ -54,7 +54,7 @@ export default function AttributesTable({
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Properties({ limit, page, search })
+    getProperties({ limit, page, search })
       .then((res) => {
         setItems({
           count: res.count,
@@ -66,7 +66,7 @@ export default function AttributesTable({
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteV2Property(deleteModal.id)
+    deleteProperty(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -154,8 +154,8 @@ export default function AttributesTable({
 
     setSaveLoading(true);
     const selectedAction = createModal.id
-      ? updateV2Property(createModal.id, data)
-      : postV2Property(data);
+      ? updateProperty(createModal.id, data)
+      : postProperty(data);
     selectedAction
       .then((res) => {
         getItems(currentPage);

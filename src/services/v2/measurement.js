@@ -1,26 +1,26 @@
 import request from "utils/axios_v2";
 
-export const getV2Measurements = async (params) => {
+export const getMeasurements = async (params) => {
   return await request({
     method: "get",
     url: `/measurement`,
     params,
   });
 };
-export const getV2Measurement = async (id, params) => {
+export const getMeasurement = async (id, params) => {
   return await request({
     method: "get",
     url: `/measurement/${id}`,
     params,
   });
 };
-export const deleteV2Measurement = async (id) => {
+export const deleteMeasurement = async (id) => {
   return await request({
     method: "delete",
     url: `/measurement/${id}`,
   });
 };
-export const postV2Measurement = async (data, params) => {
+export const postMeasurement = async (data, params) => {
   return await request({
     method: "post",
     url: `/measurement`,
@@ -28,7 +28,7 @@ export const postV2Measurement = async (data, params) => {
     params,
   });
 };
-export const updateV2Measurement = async (id, data, params) => {
+export const updateMeasurement = async (id, data, params) => {
   return await request({
     method: "put",
     url: `/measurement/${id}`,

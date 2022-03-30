@@ -1,26 +1,26 @@
 import request from "utils/axios_v2";
 
-export const getV2Goods = async (params) => {
+export const getGoods = async (params) => {
   return await request({
     method: "get",
     url: `/product`,
     params,
   });
 };
-export const getV2Good = async (id, params) => {
+export const getGood = async (id, params) => {
   return await request({
     method: "get",
     url: `/product/${id}`,
     params,
   });
 };
-export const deleteV2Good = async (id) => {
+export const deleteGood = async (id) => {
   return await request({
     method: "delete",
     url: `/product/${id}`,
   });
 };
-export const postV2Good = async (data, params) => {
+export const postGood = async (data, params) => {
   return await request({
     method: "post",
     url: `/product`,
@@ -28,7 +28,7 @@ export const postV2Good = async (data, params) => {
     params,
   });
 };
-export const updateV2Good = async (id, data, params) => {
+export const updateGood = async (id, data, params) => {
   return await request({
     method: "put",
     url: `/product/${id}`,

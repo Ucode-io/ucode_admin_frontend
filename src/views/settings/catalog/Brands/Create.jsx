@@ -11,7 +11,7 @@ import Button from "components/Button";
 import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
-import { getV2Brand, postV2Brand, updateV2Brand } from "services";
+import { getBrand, postBrand, updateBrand } from "services";
 import Gallery from "components/Gallery";
 
 export default function BrandsCreate() {
@@ -23,7 +23,7 @@ export default function BrandsCreate() {
 
   useEffect(() => {
     if (params.id) {
-      getV2Brand(params.id).then((res) => {
+      getBrand(params.id).then((res) => {
         setValues({
           image: res.image,
           title_ru: res.title.ru,
@@ -64,8 +64,8 @@ export default function BrandsCreate() {
 
     setSaveLoading(true);
     const selectedAction = params.id
-      ? updateV2Brand(params.id, data)
-      : postV2Brand(data);
+      ? updateBrand(params.id, data)
+      : postBrand(data);
     selectedAction
       .then((res) => {
         history.goBack();

@@ -1,26 +1,26 @@
 import request from "utils/axios_v2";
 
-export const getV2Combos = async (params) => {
+export const getCombos = async (params) => {
   return await request({
     method: "get",
     url: `/combo`,
     params,
   });
 };
-export const getV2Combo = async (id, params) => {
+export const getCombo = async (id, params) => {
   return await request({
     method: "get",
     url: `/combo/${id}`,
     params,
   });
 };
-export const deleteV2Combo = async (id) => {
+export const deleteCombo = async (id) => {
   return await request({
     method: "delete",
     url: `/combo/${id}`,
   });
 };
-export const postV2Combo = async (data, params) => {
+export const postCombo = async (data, params) => {
   return await request({
     method: "post",
     url: `/combo`,
@@ -28,7 +28,7 @@ export const postV2Combo = async (data, params) => {
     params,
   });
 };
-export const updateV2Combo = async (id, data, params) => {
+export const updateCombo = async (id, data, params) => {
   return await request({
     method: "put",
     url: `/combo/${id}`,

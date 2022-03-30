@@ -11,10 +11,10 @@ import Pagination from "components/Pagination";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import {
-  getV2Measurements,
-  deleteV2Measurement,
-  postV2Measurement,
-  updateV2Measurement,
+  getMeasurements,
+  deleteMeasurement,
+  postMeasurement,
+  updateMeasurement,
 } from "services";
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "components/Loader";
@@ -48,7 +48,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Measurements({ limit, page, search })
+    getMeasurements({ limit, page, search })
       .then((res) => {
         console.log(res);
         setItems({
@@ -62,7 +62,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteV2Measurement(deleteModal.id)
+    deleteMeasurement(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -78,8 +78,8 @@ export default function MainTable({ createModal, setCreateModal, search }) {
 
     setSaveLoading(true);
     const selectedAction = createModal.id
-      ? updateV2Measurement(createModal.id, data)
-      : postV2Measurement(data);
+      ? updateMeasurement(createModal.id, data)
+      : postMeasurement(data);
     selectedAction
       .then((res) => {
         getItems(currentPage);

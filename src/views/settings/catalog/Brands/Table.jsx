@@ -11,12 +11,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import {
-  getV2Brands,
-  deleteV2Brand,
-  updateV2Brand,
-  postV2Brand,
-} from "services";
+import { getBrands, deleteBrand, updateBrand, postBrand } from "services";
 import SwitchColumns from "components/Filters/SwitchColumns";
 import ActionMenu from "components/ActionMenu";
 import EditIcon from "@material-ui/icons/Edit";
@@ -49,7 +44,7 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Brands({ limit, page, search })
+    getBrands({ limit, page, search })
       .then((res) => {
         setItems({
           count: res.count,
@@ -61,7 +56,7 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteV2Brand(deleteModal.id)
+    deleteBrand(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -153,8 +148,8 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
 
     setSaveLoading(true);
     const selectedAction = createModal.id
-      ? updateV2Brand(createModal.id, data)
-      : postV2Brand(data);
+      ? updateBrand(createModal.id, data)
+      : postBrand(data);
     selectedAction
       .then((res) => {
         getItems(currentPage);

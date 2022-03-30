@@ -11,11 +11,7 @@ import Button from "components/Button";
 import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
-import {
-  getV2Measurement,
-  postV2Measurement,
-  updateV2Measurement,
-} from "services";
+import { getMeasurement, postMeasurement, updateMeasurement } from "services";
 import Select from "components/Select";
 import { units, accuracies, mappedReductions as reductions } from "./units";
 import genSelectOption from "helpers/genSelectOption";
@@ -31,7 +27,7 @@ export default function UnitsCreate() {
 
   useEffect(() => {
     if (params.id) {
-      getV2Measurement(params.id)
+      getMeasurement(params.id)
         .then((res) => {
           setValues({
             unit: genSelectOption(res?.title),
@@ -74,8 +70,8 @@ export default function UnitsCreate() {
 
     setSaveLoading(true);
     const selectedAction = params.id
-      ? updateV2Measurement(params.id, data)
-      : postV2Measurement(data);
+      ? updateMeasurement(params.id, data)
+      : postMeasurement(data);
     selectedAction
       .then((res) => {
         history.goBack();

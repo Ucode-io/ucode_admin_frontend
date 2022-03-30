@@ -3,7 +3,7 @@ import Modal from "components/Modal";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
 import { useTranslation } from "react-i18next";
-import { getV2ProductVariants, changeV2ProductVariantStatus } from "services";
+import { getProductVariants, changeProductVariantStatus } from "services";
 import LoaderComponent from "components/Loader";
 import Card from "components/Card";
 import {
@@ -127,7 +127,7 @@ export default function Recommended({ formik }) {
 
   const loadGoods = useCallback(
     (input, cb) => {
-      getV2ProductVariants({ limit, page: currentPage, search: input })
+      getProductVariants({ limit, page: currentPage, search: input })
         .then((res) => {
           var variants = res.product_variants?.map((product) => ({
             label: product.title?.ru,
@@ -142,7 +142,7 @@ export default function Recommended({ formik }) {
 
   const getItems = useCallback(() => {
     setIsLoading(true);
-    getV2ProductVariants()
+    getProductVariants()
       .then((res) => {
         setItems({
           count: res.count,
@@ -248,7 +248,7 @@ export default function Recommended({ formik }) {
           <Switch
             defaultChecked={record.active}
             onChange={(status) => {
-              changeV2ProductVariantStatus(record.id, { status });
+              changeProductVariantStatus(record.id, { status });
             }}
           />
         ),

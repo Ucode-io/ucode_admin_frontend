@@ -10,12 +10,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
-import {
-  getV2Combos,
-  deleteV2Combo,
-  postV2Combo,
-  updateV2Combo,
-} from "services";
+import { getCombos, deleteCombo, postCombo, updateCombo } from "services";
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "components/Loader";
 import Card from "components/Card";
@@ -47,7 +42,7 @@ export default function ComboTable({ createModal, setCreateModal, search }) {
   const getItems = useCallback(
     (page) => {
       setLoader(true);
-      getV2Combos({ limit, page, search })
+      getCombos({ limit, page, search })
         .then((res) => {
           setItems({
             count: res.count,
@@ -62,7 +57,7 @@ export default function ComboTable({ createModal, setCreateModal, search }) {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteV2Combo(deleteModal.id)
+    deleteCombo(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -78,8 +73,8 @@ export default function ComboTable({ createModal, setCreateModal, search }) {
 
     setSaveLoading(true);
     const selectedAction = createModal.id
-      ? updateV2Combo(createModal.id, data)
-      : postV2Combo(data);
+      ? updateCombo(createModal.id, data)
+      : postCombo(data);
     selectedAction
       .then((res) => {
         getItems(currentPage);

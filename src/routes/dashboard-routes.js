@@ -349,6 +349,16 @@ const SettingsCatalogComboCreate = Loadable({
   loading: FullScreenLoader,
 });
 
+const SettingsCatalogPriceChanger = Loadable({
+  loader: () => import("views/settings/catalog/PriceChanger"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogPriceChangerCreate = Loadable({
+  loader: () => import("views/settings/catalog/PriceChanger/Create"),
+  loading: FullScreenLoader,
+});
+
 export default [
   {
     component: Dashboard,
@@ -1129,6 +1139,27 @@ export default [
     path: "/catalog/combo/:id",
     exact: true,
     title: "Settings.Catalog.Combo.Edit",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogPriceChanger,
+    path: "/catalog/price_changer",
+    exact: true,
+    title: "Settings.Catalog.Price.Changer",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogPriceChangerCreate,
+    path: "/catalog/price_changer/create",
+    exact: true,
+    title: "Settings.Catalog.Price.Changer.Create",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogPriceChangerCreate,
+    path: "/catalog/price_changer/:id",
+    exact: true,
+    title: "Settings.Catalog.Price.Changer.Edit",
     permission: "fares",
   },
   {

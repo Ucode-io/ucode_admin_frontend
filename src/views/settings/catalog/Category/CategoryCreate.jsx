@@ -2,10 +2,10 @@ import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useFormik } from "formik";
 import {
-  getV2Category,
-  getV2Categories,
-  postV2Category,
-  updateV2Category,
+  getCategory,
+  getCategories,
+  postCategory,
+  updateCategory,
 } from "services";
 import { useParams } from "react-router-dom";
 import Header from "components/Header";
@@ -39,11 +39,11 @@ export default function CategoryCreate() {
 
   const fetchData = () => {
     setLoader(true);
-    getV2Categories({ page: 1, limit: 10 }).then((res) => {
+    getCategories({ page: 1, limit: 10 }).then((res) => {
       console.log(res);
     });
     if (!id) return setLoader(false);
-    getV2Category(id, {})
+    getCategory(id, {})
       .then((res) => {
         console.log(res);
         formik.setValues({
@@ -64,14 +64,14 @@ export default function CategoryCreate() {
   const saveChanges = (data) => {
     setButtonLoader(true);
     if (id) {
-      updateV2Category(id, data)
+      updateCategory(id, data)
         .catch((err) =>
           dispatch(showAlert(t(err?.Error?.Message ?? err?.Error))),
         )
         .then(() => history.push("/home/catalog/category"))
         .finally(() => setButtonLoader(false));
     } else {
-      postV2Category(data)
+      postCategory(data)
         .catch((err) =>
           dispatch(showAlert(t(err?.Error?.Message ?? err?.Error))),
         )

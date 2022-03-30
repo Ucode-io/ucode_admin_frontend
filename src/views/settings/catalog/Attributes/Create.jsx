@@ -11,7 +11,7 @@ import Button from "components/Button";
 import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
-import { getV2Property, postV2Property, updateV2Property } from "services";
+import { getProperty, postProperty, updateProperty } from "services";
 import Select from "components/Select";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { makeStyles } from "@material-ui/core/styles";
@@ -74,7 +74,7 @@ export default function AttributesCreate() {
 
   useEffect(() => {
     if (params.id) {
-      getV2Property(params.id).then((res) => {
+      getProperty(params.id).then((res) => {
         setValues({
           title_ru: res?.title?.ru,
           description_ru: res?.description?.ru,
@@ -152,8 +152,8 @@ export default function AttributesCreate() {
 
     setSaveLoading(true);
     const selectedAction = params.id
-      ? updateV2Property(params.id, data)
-      : postV2Property(data);
+      ? updateProperty(params.id, data)
+      : postProperty(data);
     selectedAction
       .then((res) => {
         history.goBack();

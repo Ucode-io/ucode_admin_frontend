@@ -11,10 +11,10 @@ import Pagination from "components/Pagination";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import {
-  getV2Categories,
-  deleteV2Category,
-  postV2Category,
-  updateV2Category,
+  getCategories,
+  deleteCategory,
+  postCategory,
+  updateCategory,
 } from "services";
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "components/Loader";
@@ -50,7 +50,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Categories({ limit, page, search })
+    getCategories({ limit, page, search })
       .then((res) => {
         setItems({
           count: res?.count,
@@ -63,7 +63,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteV2Category(deleteModal.id)
+    deleteCategory(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -79,8 +79,8 @@ export default function MainTable({ createModal, setCreateModal, search }) {
 
     setSaveLoading(true);
     const selectedAction = createModal.id
-      ? updateV2Category(createModal.id, data)
-      : postV2Category(data);
+      ? updateCategory(createModal.id, data)
+      : postCategory(data);
     selectedAction
       .then((res) => {
         getItems(currentPage);

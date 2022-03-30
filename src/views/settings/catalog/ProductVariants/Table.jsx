@@ -11,10 +11,10 @@ import Pagination from "components/Pagination";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import {
-  getV2ProductVariants,
-  deleteV2ProductVariant,
-  postV2ProductVariant,
-  updateV2ProductVariant,
+  getProductVariants,
+  deleteProductVariant,
+  postProductVariant,
+  updateProductVariant,
 } from "services";
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "components/Loader";
@@ -54,7 +54,7 @@ export default function ProductVariantTable({
 
   const getItems = (page) => {
     setLoader(true);
-    getV2ProductVariants({ limit, page, search })
+    getProductVariants({ limit, page, search })
       .then((res) => {
         setItems({
           count: res.count,
@@ -67,7 +67,7 @@ export default function ProductVariantTable({
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteV2ProductVariant(deleteModal.id)
+    deleteProductVariant(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -83,8 +83,8 @@ export default function ProductVariantTable({
 
     setSaveLoading(true);
     const selectedAction = createModal.id
-      ? updateV2ProductVariant(createModal.id, data)
-      : postV2ProductVariant(data);
+      ? updateProductVariant(createModal.id, data)
+      : postProductVariant(data);
     selectedAction
       .then((res) => {
         getItems(currentPage);

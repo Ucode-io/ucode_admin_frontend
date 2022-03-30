@@ -20,7 +20,7 @@ import MuiButton from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import { makeStyles } from "@material-ui/core/styles";
 import Async from "components/Select/Async";
-import { getV2Goods } from "services";
+import { getGoods } from "services";
 import Select from "components/Select";
 
 const useStyles = makeStyles((theme) => ({
@@ -55,7 +55,7 @@ export default function Combo({ formik, tags, initialValues }) {
   const { setValues, values, setFieldValue } = formik;
 
   const loadProducts = useCallback(async (input) => {
-    var res = await getV2Goods({ limit: 10, page: 1, search: input });
+    var res = await getGoods({ limit: 10, page: 1, search: input });
     setProducts(res.products);
     var products = res.products?.map((product) => ({
       label: product.title.ru,

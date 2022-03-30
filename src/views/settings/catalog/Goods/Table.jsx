@@ -10,7 +10,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
-import { getV2Goods, deleteV2Good, postV2Good, updateV2Good } from "services";
+import { getGoods, deleteGood, postGood, updateGood } from "services";
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "components/Loader";
 import Card from "components/Card";
@@ -45,7 +45,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
 
   const getItems = (page) => {
     setLoader(true);
-    getV2Goods({ limit, page, search })
+    getGoods({ limit, page, search })
       .then((res) => {
         setItems({
           count: res.count,
@@ -58,7 +58,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteV2Good(deleteModal.id)
+    deleteGood(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -74,8 +74,8 @@ export default function MainTable({ createModal, setCreateModal, search }) {
 
     setSaveLoading(true);
     const selectedAction = createModal.id
-      ? updateV2Good(createModal.id, data)
-      : postV2Good(data);
+      ? updateGood(createModal.id, data)
+      : postGood(data);
     selectedAction
       .then((res) => {
         getItems(currentPage);

@@ -11,7 +11,7 @@ import Button from "components/Button";
 import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
-import { getV2Tag, postV2Tag, updateV2Tag } from "services";
+import { getTag, postTag, updateTag } from "services";
 import Select from "components/Select";
 import { colors } from "./tags";
 import SwipeableViews from "react-swipeable-views";
@@ -37,7 +37,7 @@ export default function TagsCreate() {
 
   useEffect(() => {
     if (params.id) {
-      getV2Tag(params.id)
+      getTag(params.id)
         .then((res) => {
           setValues({
             title_ru: res?.title.ru,
@@ -87,8 +87,8 @@ export default function TagsCreate() {
 
     setSaveLoading(true);
     const selectedAction = params.id
-      ? updateV2Tag(params.id, data)
-      : postV2Tag(data);
+      ? updateTag(params.id, data)
+      : postTag(data);
     selectedAction
       .then((res) => {
         history.goBack();

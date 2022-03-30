@@ -3,7 +3,7 @@ import Modal from "components/Modal";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
 import { useTranslation } from "react-i18next";
-import { getV2Goods } from "services";
+import { getGoods } from "services";
 import LoaderComponent from "components/Loader";
 import Card from "components/Card";
 import {
@@ -126,7 +126,7 @@ export default function Recommended({ formik }) {
 
   const loadGoods = useCallback(
     (input, cb) => {
-      getV2Goods({ limit, page: currentPage, search: input })
+      getGoods({ limit, page: currentPage, search: input })
         .then((res) => {
           var products = res.products?.map((product) => ({
             label: product.title?.ru,
@@ -141,7 +141,7 @@ export default function Recommended({ formik }) {
 
   const getItems = useCallback(() => {
     setIsLoading(true);
-    getV2Goods()
+    getGoods()
       .then((res) => {
         setItems({
           count: res.count,

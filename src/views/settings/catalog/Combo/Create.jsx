@@ -2,13 +2,13 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import {
-  getV2Combo,
-  postV2Combo,
-  updateV2Combo,
-  getV2Tags,
-  getV2Good,
-  getV2ProductVariant,
-  getV2Goods,
+  getCombo,
+  postCombo,
+  updateCombo,
+  getTags,
+  getGood,
+  getProductVariant,
+  getGoods,
 } from "services";
 import { useParams } from "react-router-dom";
 import Header from "components/Header";
@@ -38,7 +38,7 @@ export default function ComboCreate() {
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      var [tags, products] = await Promise.all([getV2Tags(), getV2Goods()]);
+      var [tags, products] = await Promise.all([getTags(), getGoods()]);
 
       tags = tags.tags?.map((tag) => ({
         label: tag.title.ru,
@@ -61,7 +61,7 @@ export default function ComboCreate() {
 
   const fetchComboData = useCallback(async () => {
     if (id && tags.length && products.length) {
-      var res = await getV2Combo(id, {});
+      var res = await getCombo(id, {});
 
       var products_and_variants = res.products_and_variants.map((pav) => {
         var product = products.find((product) => product.value === pav.product);
@@ -114,11 +114,11 @@ export default function ComboCreate() {
     (data) => {
       setBtnDisabled(true);
       if (id) {
-        updateV2Combo(id, data)
+        updateCombo(id, data)
           .then(() => history.push("/home/catalog/combo"))
           .finally(() => setBtnDisabled(false));
       } else {
-        postV2Combo(data)
+        postCombo(data)
           .then(() => history.push("/home/catalog/combo"))
           .finally(() => setBtnDisabled(false));
       }

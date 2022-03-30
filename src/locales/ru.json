@@ -460,5 +460,6 @@
   "spaces.error": "Поле не может начинаться и заканчиваться пробелами",
   "max.size.4mb": "Макс размер 4 МБ",
   "select.product": "Выберите продукт",
-  "products_and_variants": "Продукты и варианты"
+  "products_and_variants": "Продукты и варианты",
+  "price_changer": "Сменщик цен"
 }

@@ -2,14 +2,14 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import {
-  getV2Good,
-  postV2Good,
-  updateV2Good,
-  getV2Brands,
-  getV2Tags,
-  getV2Measurements,
-  getV2Categories,
-  getV2Properties,
+  getGood,
+  postGood,
+  updateGood,
+  getBrands,
+  getTags,
+  getMeasurements,
+  getCategories,
+  getProperties,
 } from "services";
 import { useParams } from "react-router-dom";
 import Header from "components/Header";
@@ -54,11 +54,11 @@ export default function GoodsCreate() {
     try {
       var [tags, measurements, categories, brands, properties] =
         await Promise.all([
-          getV2Tags({ page: 1, limit: 10 }),
-          getV2Measurements({ page: 1, limit: 10 }),
-          getV2Categories({ page: 1, limit: 10 }),
-          getV2Brands({ page: 1, limit: 10 }),
-          getV2Properties({ page: 1, limit: 10 }),
+          getTags({ page: 1, limit: 10 }),
+          getMeasurements({ page: 1, limit: 10 }),
+          getCategories({ page: 1, limit: 10 }),
+          getBrands({ page: 1, limit: 10 }),
+          getProperties({ page: 1, limit: 10 }),
         ]);
       tags = tags.tags?.map((tag) => ({
         label: tag.title.ru,
@@ -114,7 +114,7 @@ export default function GoodsCreate() {
       tags.length &&
       categories.length
     ) {
-      var res = await getV2Good(id, {});
+      var res = await getGood(id, {});
       var divOptions = genSelectOption(divisibility);
       var unit = units.find((unit) => unit.id === res.measurement_id.id);
 
@@ -176,11 +176,11 @@ export default function GoodsCreate() {
     (data) => {
       setBtnDisabled(true);
       if (id) {
-        updateV2Good(id, data)
+        updateGood(id, data)
           .then(() => history.push("/home/catalog/goods"))
           .finally(() => setBtnDisabled(false));
       } else {
-        postV2Good(data)
+        postGood(data)
           .then(() => history.push("/home/catalog/goods"))
           .finally(() => setBtnDisabled(false));
       }

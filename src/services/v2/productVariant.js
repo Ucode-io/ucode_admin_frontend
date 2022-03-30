@@ -1,26 +1,26 @@
 import request from "utils/axios_v2";
 
-export const getV2ProductVariants = async (params) => {
+export const getProductVariants = async (params) => {
   return await request({
     method: "get",
     url: `/product-variant`,
     params,
   });
 };
-export const getV2ProductVariant = async (id, params) => {
+export const getProductVariant = async (id, params) => {
   return await request({
     method: "get",
     url: `/product-variant/${id}`,
     params,
   });
 };
-export const deleteV2ProductVariant = async (id) => {
+export const deleteProductVariant = async (id) => {
   return await request({
     method: "delete",
     url: `/product-variant/${id}`,
   });
 };
-export const postV2ProductVariant = async (data, params) => {
+export const postProductVariant = async (data, params) => {
   return await request({
     method: "post",
     url: `/product-variant`,
@@ -28,7 +28,7 @@ export const postV2ProductVariant = async (data, params) => {
     params,
   });
 };
-export const updateV2ProductVariant = async (id, data, params) => {
+export const updateProductVariant = async (id, data, params) => {
   return await request({
     method: "put",
     url: `/product-variant/${id}`,
@@ -36,7 +36,7 @@ export const updateV2ProductVariant = async (id, data, params) => {
     params,
   });
 };
-export const changeV2ProductVariantStatus = async (id, data, params) => {
+export const changeProductVariantStatus = async (id, data, params) => {
   return await request({
     method: "patch",
     url: `/product-variant/${id}/change-status`,

@@ -359,6 +359,16 @@ const SettingsCatalogPriceChangerCreate = Loadable({
   loading: FullScreenLoader,
 });
 
+const SettingsCatalogRates = Loadable({
+  loader: () => import("views/settings/catalog/Rates"),
+  loading: FullScreenLoader,
+});
+
+const SettingsCatalogRatesCreate = Loadable({
+  loader: () => import("views/settings/catalog/Rates/Create"),
+  loading: FullScreenLoader,
+});
+
 export default [
   {
     component: Dashboard,
@@ -1160,6 +1170,27 @@ export default [
     path: "/catalog/price-changers/:id",
     exact: true,
     title: "Settings.Catalog.Price.Changer.Edit",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogRates,
+    path: "/catalog/rates",
+    exact: true,
+    title: "Settings.Catalog.Rate",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogRatesCreate,
+    path: "/catalog/rates/create",
+    exact: true,
+    title: "Settings.Catalog.Rate.Create",
+    permission: "fares",
+  },
+  {
+    component: SettingsCatalogRatesCreate,
+    path: "/catalog/rates/:id",
+    exact: true,
+    title: "Settings.Catalog.Rate.Edit",
     permission: "fares",
   },
   {

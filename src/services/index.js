@@ -21,3 +21,4 @@ export * from "./v2/tag";
 export * from "./v2/productVariant";
 export * from "./v2/combo";
 export * from "./v2/priceChanger";
+export * from "./v2/rate";

@@ -13,6 +13,7 @@ import BrandLogo from "assets/icons/logo.svg";
 import logoutIcon from "assets/icons/logout.svg";
 import Menu from "components/Menu";
 import useToggle from "utils/toggleSidebar";
+import { useLocation } from "react-router-dom";
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -35,9 +36,13 @@ export default function App() {
   const history = useHistory();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const location = useLocation();
   const permissions = useSelector((state) => state.auth.permissions);
+
   const allMenus = useMemo(() => menu.concat(settings), []);
-  const [visible, setVisible] = useState(sidebar?.isOpen ?? false);
+  const [visible, setVisible] = useState(
+    sidebar?.isOpen && location.pathname !== "/home/dashboard" ? true : false,
+  );
   const [selectedList, setSelectedList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [title, setTitle] = useState("");

@@ -146,7 +146,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
                         color: "blue",
                         title: t("change"),
                         action: () => {
-                          history.push(`/home/catalog/brands/${record.id}`);
+                          history.push(`/home/catalog/tags/${record.id}`);
                         },
                       },
                       {
@@ -198,7 +198,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
                 <TableRow
                   key={elm.id}
                   onClick={() => {
-                    if (columns.length == 1) return;
+                    if (columns.length === 1) return;
                     history.push(`/home/catalog/tags/${elm.id}`);
                   }}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}

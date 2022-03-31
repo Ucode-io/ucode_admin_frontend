@@ -217,7 +217,7 @@ export default function AttributesTable({
                   key={item.id}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                   onClick={() => {
-                    if (columns.length == 1) return;
+                    if (columns.length === 1) return;
                     history.push(`/home/catalog/attributes/${item.id}`);
                   }}
                 >

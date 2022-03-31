@@ -1,8 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import Card from "components/Card";
+import { useEffect, useState } from "react";
+import Form from "components/Form/Index";
+import Modal from "components/Modal";
+import Button from "components/Button";
+import AddIcon from "@material-ui/icons/Add";
+import * as yup from "yup";
+import EditIcon from "@material-ui/icons/Edit";
+import { Input } from "alisa-ui";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
+import { useFormik } from "formik";
+import { useTranslation } from "react-i18next";
+import { getRates, deleteRate, postRate, updateRate } from "services";
+import { useHistory } from "react-router-dom";
 import LoaderComponent from "components/Loader";
+import Card from "components/Card";
+import ActionMenu from "components/ActionMenu";
 import {
   Table,
   TableBody,
@@ -11,52 +23,40 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { getBrands, deleteBrand, updateBrand, postBrand } from "services";
 import SwitchColumns from "components/Filters/SwitchColumns";
-import ActionMenu from "components/ActionMenu";
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
-import { useHistory } from "react-router-dom";
-import Modal from "components/Modal";
-import * as yup from "yup";
-import { useFormik } from "formik";
-import Button from "components/Button";
-import Form from "components/Form/Index";
-import { Input } from "alisa-ui";
-import AddIcon from "@material-ui/icons/Add";
 
-export default function BrandsTable({ createModal, setCreateModal, search }) {
+export default function MainTable({ createModal, setCreateModal, search }) {
   const { t } = useTranslation();
   const history = useHistory();
-
-  const [loader, setLoader] = useState(true);
   const [items, setItems] = useState({});
+  const [loader, setLoader] = useState(true);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [saveLoading, setSaveLoading] = useState(null);
   const [limit, setLimit] = useState(10);
   const [columns, setColumns] = useState([]);
-  const [deleteModal, setDeleteModal] = useState(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [saveLoading, setSaveLoading] = useState(null);
 
   useEffect(() => {
     getItems(currentPage);
-  }, [currentPage, search, limit]);
+  }, [currentPage, limit, search]);
 
   const getItems = (page) => {
     setLoader(true);
-    getBrands({ limit, page, search })
+    getRates({ limit, page, search })
       .then((res) => {
         setItems({
           count: res.count,
-          data: res.brands,
+          data: res.rates,
         });
       })
+      .catch((err) => console.log(err))
       .finally(() => setLoader(false));
   };
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteBrand(deleteModal.id)
+    deleteRate(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -65,31 +65,62 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
       .finally(() => setDeleteLoading(false));
   };
 
+  const onSubmit = (values) => {
+    const data = {
+      ...values,
+    };
+
+    setSaveLoading(true);
+    const selectedAction = createModal.id
+      ? updateRate(createModal.id, data)
+      : postRate(data);
+    selectedAction
+      .then((res) => {
+        getItems(currentPage);
+      })
+      .finally(() => {
+        setSaveLoading(false);
+        closeModal();
+      });
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      name: null,
+      created_at: null,
+    },
+    validationSchema: yup.object().shape({
+      name: yup.mixed().required(t("required.field.error")),
+      created_at: yup.mixed().required(t("required.field.error")),
+    }),
+    onSubmit,
+  });
+
+  const closeModal = () => {
+    setCreateModal(null);
+    formik.resetForm();
+  };
+
   const initialColumns = [
     {
       title: "№",
       key: "order-number",
-      render: (_, index) => <>{(currentPage - 1) * limit + index + 1}</>,
-    },
-    {
-      title: t("logo"),
-      key: "image",
-      dataIndex: "image",
-      render: (record) => (
-        <>
-          <img
-            src={`${process.env.REACT_APP_MINIO_URL}/${record.image}`}
-            alt="brand logo"
-            width={"50"}
-            height={"50"}
-          />
-        </>
-      ),
+      render: (record, index) => (currentPage - 1) * limit + index + 1,
     },
     {
       title: t("name"),
-      key: "title",
-      dataIndex: "title",
+      key: "name",
+      render: (record) => record.title,
+    },
+    {
+      title: t("evaluation"),
+      key: "evaluation",
+      render: (record) => t(record.rate_amount),
+    },
+    {
+      title: t("code"),
+      key: "code",
+      render: (record) => t(record.code),
     },
   ];
 
@@ -120,7 +151,7 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
                         color: "blue",
                         title: t("change"),
                         action: () => {
-                          history.push(`/home/catalog/brands/${record.id}`);
+                          history.push(`/home/catalog/rates/${record.id}`);
                         },
                       },
                       {
@@ -141,43 +172,7 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
     setColumns(_columns);
   }, []);
 
-  const onSubmit = (values) => {
-    const data = {
-      ...values,
-    };
-
-    setSaveLoading(true);
-    const selectedAction = createModal.id
-      ? updateBrand(createModal.id, data)
-      : postBrand(data);
-    selectedAction
-      .then((res) => {
-        getItems(currentPage);
-      })
-      .finally(() => {
-        setSaveLoading(false);
-        closeModal();
-      });
-  };
-
-  const formik = useFormik({
-    initialValues: {
-      name: null,
-      created_at: null,
-    },
-    validationSchema: yup.object().shape({
-      name: yup.mixed().required(t("required.field.error")),
-      created_at: yup.mixed().required(t("required.field.error")),
-    }),
-    onSubmit,
-  });
-
   const { values, handleChange, setFieldValue, handleSubmit } = formik;
-
-  const closeModal = () => {
-    setCreateModal(null);
-    formik.resetForm();
-  };
 
   return (
     <Card
@@ -193,55 +188,51 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
         />
       }
     >
-      <TableContainer className="rounded-lg border border-lightgray-1">
+      <TableContainer className="rounded-md border border-lightgray-1">
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
               {columns.map((elm) => (
-                <TableCell
-                  key={elm.key}
-                  align={`${columns.length == 1 ? "right" : "left"}`}
-                >
-                  {elm.title}
-                </TableCell>
+                <TableCell key={elm.key}>{elm.title}</TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {!loader &&
-              items.data &&
-              items.data.length &&
-              items.data.map((item, index) => (
+            {!loader && items?.data && items?.data?.length ? (
+              items?.data?.map((elm, index) => (
                 <TableRow
-                  key={item.id}
-                  className={index % 2 === 0 ? "bg-lightgray-5" : ""}
+                  key={elm.id}
                   onClick={() => {
                     if (columns.length === 1) return;
-                    history.push(`/home/catalog/brands/${item.id}`);
+                    history.push(`/home/catalog/rates/${elm.id}`);
                   }}
+                  className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
-                  {columns.map((col, i) => (
-                    <TableCell
-                      key={col.key}
-                      align={`${columns.length == 1 ? "right" : "left"}`}
-                    >
+                  {columns.map((col) => (
+                    <TableCell key={col.key}>
                       {col.render
-                        ? col.render(item, index, columns.length == 1)
-                        : item[col.dataIndex].ru}
+                        ? col.render(elm, index, columns.length == 1)
+                        : "----"}
                     </TableCell>
                   ))}
                 </TableRow>
-              ))}
+              ))
+            ) : (
+              <></>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
+
       <LoaderComponent isLoader={loader} />
+
       <Modal
         open={deleteModal}
         onClose={() => setDeleteModal(null)}
         onConfirm={handleDeleteItem}
         loading={deleteLoading}
       />
+
       <Modal
         open={createModal}
         title={t(createModal?.id ? "update" : "create")}
@@ -262,11 +253,7 @@ export default function BrandsTable({ createModal, setCreateModal, search }) {
             </div>
           </div>
 
-          <div
-            className={`${
-              values?.type?.value === "fixed" ? "hidden" : " "
-            } grid grid-cols-1 sm:grid-cols-2 gap-x-3 py-8`}
-          >
+          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-x-3 py-8`}>
             <div>
               <Form.Item
                 formik={formik}

@@ -463,5 +463,9 @@
   "products_and_variants": "Продукты и варианты",
   "price_changers": "Сменщики цен",
   "price_changer": "Сменщик цен",
-  "additional": "Дополнительный"
+  "additional": "Дополнительный",
+  "rates": "Рейтинги",
+  "rate": "Рейтинг",
+  "evaluation": "Оценка",
+  "range1to5": "Должно быть от 1 до 5"
 }

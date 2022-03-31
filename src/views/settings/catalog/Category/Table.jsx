@@ -153,7 +153,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
                         color: "blue",
                         icon: <EditIcon />,
                         action: () =>
-                          history.push(`/home/settings/fares/${record.id}`),
+                          history.push(`/home/settings/category/${record.id}`),
                       },
                       {
                         title: t("delete"),
@@ -202,7 +202,7 @@ export default function MainTable({ createModal, setCreateModal, search }) {
                 <TableRow
                   key={elm.id}
                   onClick={() => {
-                    if (columns.length == 1) return;
+                    if (columns.length === 1) return;
                     history.push(`/home/catalog/category/${elm.id}`);
                   }}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}

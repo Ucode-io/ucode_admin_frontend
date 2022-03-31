@@ -149,6 +149,14 @@ export const menu = [
         isActive: false,
         permission: "settings",
       },
+      {
+        id: "rates.settings",
+        title: "rates",
+        path: "/home/catalog/rates",
+        isChild: true,
+        isActive: false,
+        permission: "settings",
+      },
     ],
   },
   {

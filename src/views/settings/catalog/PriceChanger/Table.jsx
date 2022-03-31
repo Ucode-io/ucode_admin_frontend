@@ -161,7 +161,9 @@ export default function MainTable({ createModal, setCreateModal, search }) {
                         color: "blue",
                         title: t("change"),
                         action: () => {
-                          history.push(`/home/catalog/brands/${record.id}`);
+                          history.push(
+                            `/home/catalog/price-changers/${record.id}`,
+                          );
                         },
                       },
                       {

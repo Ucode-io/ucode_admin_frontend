@@ -249,20 +249,20 @@ const UserRolesCreate = Loadable({
   loading: FullScreenLoader,
 });
 
-const Services = Loadable({
-  loader: () => import("views/settings/services1"),
-  loading: FullScreenLoader,
-});
+// const Services = Loadable({
+//   loader: () => import("views/settings/services1"),
+//   loading: FullScreenLoader,
+// });
 
 // const CompanyBranch = Loadable({
 //   loader: () => import("views/settings/company/Branch"),
 //   loading: FullScreenLoader,
 // });
 
-const CompanyBranchCashiers = Loadable({
-  loader: () => import("views/settings/services1/Branch/tabs/Personnel/Cashiers"),
-  loading: FullScreenLoader,
-});
+// const CompanyBranchCashiers = Loadable({
+//   loader: () => import("views/settings/services1/Branch/tabs/Personnel/Cashiers"),
+//   loading: FullScreenLoader,
+// });
 
 // const CompanyBranchCouriers = Loadable({
 //   loader: () => import("views/settings/company/Branch/couriers"),
@@ -955,13 +955,13 @@ export default [
     title: "RoleAccess.Edit",
     permission: "fares",
   },
-  {
-    component: Services,
-    path: "/settings/services",
-    exact: true,
-    title: "Company",
-    permission: "fares",
-  },
+  // {
+  //   component: Services,
+  //   path: "/settings/services",
+  //   exact: true,
+  //   title: "Company",
+  //   permission: "fares",
+  // },
   // {
   //   component: CompanyBranch,
   //   path: "/settings/company/branches/:id",
@@ -969,13 +969,13 @@ export default [
   //   title: "Company.Branches",
   //   permission: "fares",
   // },
-  {
-    component: CompanyBranchCashiers,
-    path: "/settings/company/branches/:id/cashiers/:cashier_id",
-    exact: true,
-    title: "Branches.Cashiers",
-    permission: "fares",
-  },
+  // {
+  //   component: CompanyBranchCashiers,
+  //   path: "/settings/company/branches/:id/cashiers/:cashier_id",
+  //   exact: true,
+  //   title: "Branches.Cashiers",
+  //   permission: "fares",
+  // },
   // {
   //   component: CompanyBranchCouriers,
   //   path: "/settings/company/branch/couriers",

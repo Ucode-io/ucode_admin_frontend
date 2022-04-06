@@ -151,13 +151,13 @@ export default function CreateOperator() {
 
   const routes = [
     {
-      title: t("users"),
+      title: t("add.patient"),
       link: true,
       route: `/home/patients`,
     },
-    {
-      title: id ? formik.values?.user_roles?.label : t("create"),
-    },
+    // {
+    //   title: id ? formik.values?.user_roles?.label : t("create"),
+    // },
   ];
 
   const { values, handleChange, setFieldValue, handleSubmit } = formik;
@@ -167,6 +167,7 @@ export default function CreateOperator() {
       <form onSubmit={handleSubmit}>
         <Header
           startAdornment={[<Breadcrumb routes={routes} />]}
+          // title={t("add.patient")}
           endAdornment={[
             <Button
               icon={CancelIcon}

@@ -249,20 +249,20 @@ const UserRolesCreate = Loadable({
   loading: FullScreenLoader,
 });
 
-const Services = Loadable({
-  loader: () => import("views/settings/services1"),
-  loading: FullScreenLoader,
-});
+// const Services = Loadable({
+//   loader: () => import("views/settings/services1"),
+//   loading: FullScreenLoader,
+// });
 
 // const CompanyBranch = Loadable({
 //   loader: () => import("views/settings/company/Branch"),
 //   loading: FullScreenLoader,
 // });
 
-const CompanyBranchCashiers = Loadable({
-  loader: () => import("views/settings/services1/Branch/tabs/Personnel/Cashiers"),
-  loading: FullScreenLoader,
-});
+// const CompanyBranchCashiers = Loadable({
+//   loader: () => import("views/settings/services1/Branch/tabs/Personnel/Cashiers"),
+//   loading: FullScreenLoader,
+// });
 
 // const CompanyBranchCouriers = Loadable({
 //   loader: () => import("views/settings/company/Branch/couriers"),

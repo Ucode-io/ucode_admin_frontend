@@ -101,7 +101,7 @@ const FormItem = ({
       )}
       {children}
       <div
-        className="min-h-6 w-full"
+        className="min-h-6 w-full order-3"
         style={{ fontSize: "12px", lineHeight: 1.5715, color: "#ff4d4f" }}
       >
         {formik.errors[name] && formik.touched[name] ? formik.errors[name] : ""}

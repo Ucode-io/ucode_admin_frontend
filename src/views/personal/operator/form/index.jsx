@@ -153,7 +153,7 @@ export default function CreateOperator() {
     {
       title: t("users"),
       link: true,
-      route: `/home/operator`,
+      route: `/home/patients`,
     },
     {
       title: id ? formik.values?.user_roles?.label : t("create"),
@@ -191,35 +191,93 @@ export default function CreateOperator() {
 
         <div className="p-4">
           <div className="w-full grid grid-cols-12 gap-4">
-            <Card title={t("personal.data")} className="col-span-5">
-              <div className="flex items-baseline">
-                <span className="w-1/4 input-label">{t("first.name")}</span>
-                <div className="w-3/4">
-                  <Form.Item formik={formik} name="name">
-                    <Input
-                      size="large"
-                      id="name"
-                      value={values.name}
-                      onChange={handleChange}
-                    />
-                  </Form.Item>
+            <Card title={t("personal.data")} className="col-span-12">
+              <div className="grid grid-cols-2 gap-8">
+                <div className="flex items-baseline">
+                  <span className="w-1/4 input-label">{t("first.name")}</span>
+                  <div className="w-3/4">
+                    <Form.Item formik={formik} name="name">
+                      <Input
+                        size="large"
+                        id="name"
+                        value={values.name}
+                        onChange={handleChange}
+                      />
+                    </Form.Item>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-baseline">
-                <span className="w-1/4 input-label">{t("last.name")}</span>
-                <div className="w-3/4">
-                  <Form.Item formik={formik}>
-                    <Input
-                      size="large"
-                      // id="lastname"
-                      // value={values.lastname}
-                      // onChange={handleChange}
-                    />
-                  </Form.Item>
+                <div className="flex items-baseline">
+                  <span className="w-1/4 input-label">{t("last.name")}</span>
+                  <div className="w-3/4">
+                    <Form.Item formik={formik}>
+                      <Input
+                        size="large"
+                        // id="lastname"
+                        // value={values.lastname}
+                        // onChange={handleChange}
+                      />
+                    </Form.Item>
+                  </div>
                 </div>
+                <div className="flex items-baseline">
+                  <spam className="w-1/4 input-label">{t("position")}</spam>
+                  <div className="w-3/4">
+                    <Form.Item formik={formik} name="user_roles">
+                      <Select
+                        height={40}
+                        id="user_roles"
+                        options={userRoles}
+                        value={values.user_roles}
+                        onChange={(val) => setFieldValue("user_roles", val)}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                <div className="flex items-baseline">
+                  <span className="w-1/4 input-label">{t("last.name")}</span>
+                  <div className="w-3/4">
+                    <Form.Item formik={formik}>
+                      <Input
+                        size="large"
+                        // id="lastname"
+                        // value={values.lastname}
+                        // onChange={handleChange}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                <div className="flex items-baseline">
+                  <spam className="w-1/4 input-label">{t("position")}</spam>
+                  <div className="w-3/4">
+                    <Form.Item formik={formik} name="user_roles">
+                      <Select
+                        height={40}
+                        id="user_roles"
+                        options={userRoles}
+                        value={values.user_roles}
+                        onChange={(val) => setFieldValue("user_roles", val)}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                <div className="flex items-baseline">
+                  <spam className="w-1/4 input-label">{t("position")}</spam>
+                  <div className="w-3/4">
+                    <Form.Item formik={formik} name="user_roles">
+                      <Select
+                        height={40}
+                        id="user_roles"
+                        options={userRoles}
+                        value={values.user_roles}
+                        onChange={(val) => setFieldValue("user_roles", val)}
+                      />
+                    </Form.Item>
+                  </div>
+                </div>
+                
               </div>
             </Card>
-            <Card title={t("authorization")} className="col-span-7">
+            <Card title={t("authorization")} className="col-span-12">
               <div className="flex items-baseline">
                 <span className="w-1/5 input-label">{t("phone.number")}</span>
                 <div className="w-4/5">

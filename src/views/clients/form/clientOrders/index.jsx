@@ -157,7 +157,7 @@ export default function OrderClient({ customer_id }) {
                 <TableCell>{t("created.date")}</TableCell>
                 <TableCell>{t("client.address")}</TableCell>
                 <TableCell>{t("sum")}</TableCell>
-                <TableCell>{t("operator")}</TableCell>
+                <TableCell>{t("operator1")}</TableCell>
                 <TableCell>{t("branch")}</TableCell>
                 <TableCell>{t("type.delivery")}</TableCell>
                 <TableCell>{t("source")}</TableCell>

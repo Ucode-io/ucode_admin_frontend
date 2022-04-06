@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 import {
   Table,
   TableBody,
@@ -9,31 +11,35 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import Pagination from "components/Pagination";
-import Modal from "components/Modal";
-import { deleteOperator, getOperators } from "services/operator";
-import Filters from "components/Filters";
-import Button from "components/Button";
-import Card from "components/Card";
-import ActionMenu from "components/ActionMenu";
-import LoaderComponent from "components/Loader";
-import SwitchColumns from "components/Filters/SwitchColumns";
+
+import { deleteClick, getClick } from "../../../../services/promotion";
 import { Input } from "alisa-ui";
 import SearchIcon from "@material-ui/icons/Search";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { DownloadIcon, ExportIcon } from "constants/icons";
+//components
+import Pagination from "components/Pagination";
+import Modal from "components/Modal";
+import Filters from "components/Filters";
+import Card from "components/Card";
+import ActionMenu from "components/ActionMenu";
+import LoaderComponent from "components/Loader";
+import SwitchColumns from "components/Filters/SwitchColumns";
+import Button from "components/Button";
+import { DownloadIcon } from "constants/icons";
 
-export default function TableOperator() {
+export default function ClickTable() {
   const [loader, setLoader] = useState(true);
-  const { t } = useTranslation();
-  const history = useHistory();
   const [items, setItems] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);
   const [search, setSearch] = useState("");
   const [columns, setColumns] = useState([]);
+
+  const { t } = useTranslation();
+  const lang = useSelector((state) => state.lang.current);
+  const history = useHistory();
   let debounce = setTimeout(() => {}, 0);
 
   useEffect(() => {
@@ -55,14 +61,14 @@ export default function TableOperator() {
         key: t("actions"),
         render: (record, _) => (
           <ActionMenu
-            id={record.id}
+            id={record.branch_id}
             actions={[
               {
                 icon: <EditIcon />,
                 color: "blue",
                 title: t("change"),
                 action: () => {
-                  history.push(`/home/patients/${record.id}`);
+                  history.push(`category/create/${record.branch_id}`);
                 },
               },
               {
@@ -70,7 +76,7 @@ export default function TableOperator() {
                 color: "red",
                 title: t("delete"),
                 action: () => {
-                  setDeleteModal({ id: record.id });
+                  setDeleteModal({ id: record.branch_id });
                 },
               },
             ]}
@@ -90,7 +96,7 @@ export default function TableOperator() {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteOperator(deleteModal.id)
+    deleteClick(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -102,40 +108,31 @@ export default function TableOperator() {
   const initialColumns = [
     {
       title: "№",
-      key: "order-number",
+      key: "promo-number",
       render: (record, index) => (
         <div>{(currentPage - 1) * 10 + index + 1}</div>
       ),
     },
     {
-      title: t("fullName"),
-      key: "fullName",
-      render: (record) => <div>{record.name}</div>,
+      title: t("service.name"),
+      key: "service_name",
+      render: (record) => <div>{record.branch_name}</div>,
     },
     {
-      title: t("mail"),  
-      key: "mail",
-      render: (record) => <div>{record.mail}</div>,
+      title: t("description"),
+      key: "description",
+      render: (record) => <div>{record.merchant_id}</div>,
     },
-    {
-      title: t("phone"),
-      key: "phone",
-      render: (record) => <div>{record.phone}</div>,
-    },
-    {
-      title: t("last.activity"),
-      key: "status",
-      render: (record) => <div>{record.status}</div>,
-    },
+    
   ];
 
   const getItems = (page) => {
     setLoader(true);
-    getOperators({ limit: 10, page, search })
+    getClick({ limit: 10, page })
       .then((res) => {
         setItems({
           count: res.count,
-          data: res.shipper_users,
+          data: res.click_infos,
         });
       })
       .finally(() => setLoader(false));
@@ -143,29 +140,16 @@ export default function TableOperator() {
 
   const extraFilter = (
     <div className="flex gap-4">
-      {/* <Button
-        icon={ExportIcon}
-        iconClassName="text-blue-600"
-        color="zinc"
-        shape="outlined"
-        size="medium"
-        onClick={() => {
-          console.log("clicked");
-        }}
-      >
-        {t("import")}
-      </Button>
-
       <Button
-        icon={DownloadIcon}
-        iconClassName="text-blue-600"
-        color="zinc"
-        shape="outlined"
-        size="medium"
-        onClick={() => console.log("clicked")}
-      >
-        {t("download")}
-      </Button> */}
+            icon={DownloadIcon}
+            iconClassName="text-blue-600"
+            color="zinc"
+            shape="outlined"
+            size="medium"
+            onClick={() => console.log("clicked")}
+        >
+          {t("download")}
+        </Button>
     </div>
   );
 
@@ -179,7 +163,7 @@ export default function TableOperator() {
 
   return (
     <>
-      {/* <Filters extra={extraFilter}>
+      <Filters extra={extraFilter}>
         <Input
           onChange={onSearch}
           width={280}
@@ -187,40 +171,47 @@ export default function TableOperator() {
           size="middle"
           addonBefore={<SearchIcon style={{ color: "var(--color-primary)" }} />}
         />
-      </Filters> */}
+      </Filters>
 
       <Card className="m-4" footer={pagination}>
         <TableContainer className="rounded-lg border border-lightgray-1">
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                {columns.map((elm) => (
-                  <TableCell key={elm.key}>{elm.title}</TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {items.data &&
-                items.data.length &&
-                items.data.map((item, index) => (
-                  <TableRow
-                    key={item.id}
-                    onClick={() => history.push(`/home/patients/${item.id}`)}
-                    className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-                  >
-                    {columns.map((col) => (
-                      <TableCell key={col.key}>
-                        {col.render ? col.render(item, index) : "----"}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
+          {items.data ? (
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((elm) => (
+                    <TableCell key={elm.key}>{elm.title}</TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {items.data && items.data.length ? (
+                  items.data.map((item, index) => (
+                    <TableRow
+                      key={item.id}
+                      onClick={() => {
+                        history.push(`category/create/${item.branch_id}`);
+                      }}
+                      className={index % 2 === 0 ? "bg-lightgray-5" : ""}
+                    >
+                      {columns.map((col) => (
+                        <TableCell key={col.key}>
+                          {col.render
+                            ? col.render(item, index)
+                            : item[col.dataIndex]}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </TableBody>
+            </Table>
+          ) : (
+            <LoaderComponent isLoader={loader} />
+          )}
         </TableContainer>
-
-        <LoaderComponent isLoader={loader} />
-
         <Modal
           open={deleteModal}
           onClose={() => setDeleteModal(null)}

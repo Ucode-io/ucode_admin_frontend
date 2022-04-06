@@ -1,5 +1,5 @@
 import logo from "assets/icons/logo_blue.png";
-import BrandLogo from "assets/icons/BrandLogo.svg";
+import BrandLogo from "assets/icons/logo.svg";
 
 const defaultSettings = {
   baseURL: process.env.REACT_APP_URL, // base url for whole project
@@ -9,7 +9,7 @@ const defaultSettings = {
   fixedHeader: true, // sticky header
   fixSiderbar: true, // sticky sidebar
   project: {
-    title: "Delever",
+    title: "Medion",
     logo: logo,
     title_svg: BrandLogo,
     createdBy: "Udevs company",

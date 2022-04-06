@@ -31,14 +31,14 @@ const ShipperSettings = Loadable({
   loading: FullScreenLoader,
 });
 
-const ShipperBranches = Loadable({
-  loader: () => import("views/settings/branches/index"),
-  loading: FullScreenLoader,
-});
-const ShipperBranchesForm = Loadable({
-  loader: () => import("views/settings/branches/form/index.jsx"),
-  loading: FullScreenLoader,
-});
+// const ShipperBranches = Loadable({
+//   loader: () => import("views/settings/branches/index"),
+//   loading: FullScreenLoader,
+// });
+// const ShipperBranchesForm = Loadable({
+//   loader: () => import("views/settings/branches/form/index.jsx"),
+//   loading: FullScreenLoader,
+// });
 const ShipperSettingsCreate = Loadable({
   loader: () => import("views/settings/ShipperSettings/Create"),
   loading: FullScreenLoader,
@@ -85,10 +85,10 @@ const ProductCreate = Loadable({
   loader: () => import("views/menu/productCreate"),
   loading: FullScreenLoader,
 });
-const CategoryCreate = Loadable({
-  loader: () => import("views/menu/categoryCreate/index"),
-  loading: FullScreenLoader,
-});
+// const CategoryCreate = Loadable({
+//   loader: () => import("views/menu/categoryCreate/index"),
+//   loading: FullScreenLoader,
+// });
 const News = Loadable({
   loader: () => import("views/catalog/news"),
   loading: FullScreenLoader,
@@ -152,11 +152,11 @@ const CourierTypeCreate = Loadable({
   loader: () => import("views/personal/courierType/form"),
   loading: FullScreenLoader,
 });
-const Fares = Loadable({
+const Branche = Loadable({
   loader: () => import("views/settings/rates"),
   loading: FullScreenLoader,
 });
-const TariffCreate = Loadable({
+const BranchCreate = Loadable({
   loader: () => import("views/settings/rates/form"),
   loading: FullScreenLoader,
 });
@@ -182,60 +182,60 @@ const ShipperBranchesUsersForm = Loadable({
   loading: FullScreenLoader,
 });
 
-const Aggregator = Loadable({
-  loader: () => import("views/settings/aggregator"),
+const Template = Loadable({
+  loader: () => import("views/settings/template"),
   loading: FullScreenLoader,
 });
 
-const AggregatorCreate = Loadable({
-  loader: () => import("views/settings/aggregator/Form"),
+const TemplateCreate = Loadable({
+  loader: () => import("views/settings/template/Form"),
   loading: FullScreenLoader,
 });
 
-const Integrations = Loadable({
-  loader: () => import("views/settings/integrations"),
+const Documents = Loadable({
+  loader: () => import("views/settings/services"),
   loading: FullScreenLoader,
 });
 
-const IikoEdit = Loadable({
-  loader: () => import("views/settings/integrations/iiko"),
+// const IikoEdit = Loadable({
+//   loader: () => import("views/settings/services/iiko"),
+//   loading: FullScreenLoader,
+// });
+// const JowiEdit = Loadable({
+//   loader: () => import("views/settings/services/jowi"),
+//   loading: FullScreenLoader,
+// });
+const Service = Loadable({
+  loader: () => import("views/settings/services/service"),
   loading: FullScreenLoader,
 });
-const JowiEdit = Loadable({
-  loader: () => import("views/settings/integrations/jowi"),
+const ServiceCreate = Loadable({
+  loader: () => import("views/settings/services/service/ServiceCreate"),
   loading: FullScreenLoader,
 });
-const Payme = Loadable({
-  loader: () => import("views/settings/integrations/payme"),
+const Category = Loadable({
+  loader: () => import("views/settings/services/category"),
   loading: FullScreenLoader,
 });
-const PaymeCreate = Loadable({
-  loader: () => import("views/settings/integrations/payme/PaymeCreate"),
+const CategoryCreate = Loadable({
+  loader: () => import("views/settings/services/category/CategoryCreate"),
   loading: FullScreenLoader,
 });
-const Click = Loadable({
-  loader: () => import("views/settings/integrations/click"),
-  loading: FullScreenLoader,
-});
-const ClickCreate = Loadable({
-  loader: () => import("views/settings/integrations/click/ClickCreate"),
-  loading: FullScreenLoader,
-});
-const BranchCreate = Loadable({
-  loader: () => import("views/settings/integrations/iiko/BranchCreate"),
-  loading: FullScreenLoader,
-});
-const JowiBranchCreate = Loadable({
-  loader: () => import("views/settings/integrations/jowi/JowiBranchCreate"),
-  loading: FullScreenLoader,
-});
-const JowiAddProduct = Loadable({
-  loader: () => import("views/settings/integrations/jowi/JowiAddProduct"),
-  loading: FullScreenLoader,
-});
+// const BranchCreate = Loadable({
+//   loader: () => import("views/settings/integrations/iiko/BranchCreate"),
+//   loading: FullScreenLoader,
+// });
+// const JowiBranchCreate = Loadable({
+//   loader: () => import("views/settings/services/jowi/JowiBranchCreate"),
+//   loading: FullScreenLoader,
+// });
+// const JowiAddProduct = Loadable({
+//   loader: () => import("views/settings/services/jowi/JowiAddProduct"),
+//   loading: FullScreenLoader,
+// });
 
-const IntegrationsCreate = Loadable({
-  loader: () => import("views/settings/integrations/Form"),
+const DocumentsCreate = Loadable({
+  loader: () => import("views/settings/services/Form"),
   loading: FullScreenLoader,
 });
 
@@ -249,18 +249,18 @@ const UserRolesCreate = Loadable({
   loading: FullScreenLoader,
 });
 
-const Company = Loadable({
-  loader: () => import("views/settings/company"),
+const Services = Loadable({
+  loader: () => import("views/settings/services1"),
   loading: FullScreenLoader,
 });
 
-const CompanyBranch = Loadable({
-  loader: () => import("views/settings/company/Branch"),
-  loading: FullScreenLoader,
-});
+// const CompanyBranch = Loadable({
+//   loader: () => import("views/settings/company/Branch"),
+//   loading: FullScreenLoader,
+// });
 
 const CompanyBranchCashiers = Loadable({
-  loader: () => import("views/settings/company/Branch/tabs/Personnel/Cashiers"),
+  loader: () => import("views/settings/services1/Branch/tabs/Personnel/Cashiers"),
   loading: FullScreenLoader,
 });
 
@@ -498,36 +498,36 @@ export default [
     permission: "settings",
   },
   // Shipper branch crud
-  {
-    component: ShipperBranches,
-    path: "/company/shipper-company/:id/branches",
-    exact: true,
-    title: "shipperCompanyBranches",
-    permission: "settings",
-  },
-  {
-    component: ShipperBranches,
-    path: "/company/shipper-company/:id/branches",
-    exact: true,
-    title: "shipperCompanyBranches",
-    permission: "settings",
-  },
+  // {
+  //   component: ShipperBranches,
+  //   path: "/company/shipper-company/:id/branches",
+  //   exact: true,
+  //   title: "shipperCompanyBranches",
+  //   permission: "settings",
+  // },
+  // {
+  //   component: ShipperBranches,
+  //   path: "/company/shipper-company/:id/branches",
+  //   exact: true,
+  //   title: "shipperCompanyBranches",
+  //   permission: "settings",
+  // },
 
-  {
-    component: ShipperBranchesForm,
-    path: "/company/shipper-company/:id/branches/create",
-    exact: true,
-    title: "shipperCompanyBranchesCreate",
-    permission: "settings",
-  },
+  // {
+  //   component: ShipperBranchesForm,
+  //   path: "/company/shipper-company/:id/branches/create",
+  //   exact: true,
+  //   title: "shipperCompanyBranchesCreate",
+  //   permission: "settings",
+  // },
 
-  {
-    component: ShipperBranchesForm,
-    path: "/company/shipper-company/:id/branches/:branch_id",
-    exact: true,
-    title: "shipperCompanyBranchesEdit",
-    permission: "settings",
-  },
+  // {
+  //   component: ShipperBranchesForm,
+  //   path: "/company/shipper-company/:id/branches/:branch_id",
+  //   exact: true,
+  //   title: "shipperCompanyBranchesEdit",
+  //   permission: "settings",
+  // },
   {
     component: ShipperBranchesUsersForm,
     path: "/company/shipper-company/:id/branches/:branch_id/users/:user_id",
@@ -733,21 +733,21 @@ export default [
   },
   {
     component: Operator,
-    path: "/operator",
+    path: "/patients",
     exact: true,
     title: "Operator",
     permission: "operator",
   },
   {
     component: OperatorCreate,
-    path: "/operator/create",
+    path: "/patients/create",
     exact: true,
     title: "OperatorCreate",
     permission: "operator",
   },
   {
     component: OperatorCreate,
-    path: "/operator/:id",
+    path: "/patients/:id",
     exact: true,
     title: "OperatorEdit",
     permission: "operator",
@@ -774,162 +774,162 @@ export default [
     permission: "courier_type",
   },
   {
-    component: Fares,
-    path: "/settings/fares",
+    component: Branche,
+    path: "/settings/branch",
     exact: true,
     title: "Fares",
     permission: "fares",
   },
   {
-    component: TariffCreate,
-    path: "/settings/fares/create",
+    component: BranchCreate,
+    path: "/settings/branch/create",
     exact: true,
     title: "Fares.Create",
     permission: "fares",
   },
   {
-    component: TariffCreate,
-    path: "/settings/fares/:id",
+    component: BranchCreate,
+    path: "/settings/branch/:id",
     exact: true,
     title: "Fares.Edit",
     permission: "fares",
   },
   {
-    component: Aggregator,
-    path: "/settings/aggregator",
+    component: Template,
+    path: "/settings/template",
     exact: true,
-    title: "Aggregator",
+    title: "Template",
     permission: "fares",
   },
   {
-    component: AggregatorCreate,
-    path: "/settings/aggregator/create",
+    component: TemplateCreate,
+    path: "/settings/template/create",
     exact: true,
-    title: "Aggregator.Create",
+    title: "Template.Create",
     permission: "fares",
   },
   {
-    component: AggregatorCreate,
-    path: "/settings/aggregator/:id",
+    component: TemplateCreate,
+    path: "/settings/template/:id",
     exact: true,
-    title: "Aggregator.Edit",
+    title: "Template.Edit",
     permission: "fares",
   },
   {
-    component: Integrations,
-    path: "/settings/integrations",
+    component: Documents,
+    path: "/settings/documents",
     exact: true,
     title: "Integrations",
     permission: "fares",
   },
   {
-    component: IntegrationsCreate,
-    path: "/settings/integrations/create",
+    component: DocumentsCreate,
+    path: "/settings/documents/create",
     exact: true,
     title: "Integrations.Create",
     permission: "fares",
   },
+  // {
+  //   component: IikoEdit,
+  //   path: "/settings/integrations/iiko",
+  //   exact: true,
+  //   title: "Iiko.Edit",
+  //   permission: "fares",
+  // },
+  // {
+  //   component: JowiEdit,
+  //   path: "/settings/integrations/jowi",
+  //   exact: true,
+  //   title: "Jowi.Edit",
+  //   permission: "fares",
+  // },
   {
-    component: IikoEdit,
-    path: "/settings/integrations/iiko",
+    component: Service,
+    path: "/settings/services/service",
     exact: true,
-    title: "Iiko.Edit",
+    title: "service",
     permission: "fares",
   },
   {
-    component: JowiEdit,
-    path: "/settings/integrations/jowi",
+    component: ServiceCreate,
+    path: "/settings/services/service/create",
     exact: true,
-    title: "Jowi.Edit",
+    title: "ServiceCreate",
     permission: "fares",
   },
   {
-    component: Payme,
-    path: "/settings/integrations/payme",
+    component: ServiceCreate,
+    path: "/settings/services/service/create/:id",
     exact: true,
-    title: "Payme",
+    title: "ServiceCreate",
     permission: "fares",
   },
   {
-    component: PaymeCreate,
-    path: "/settings/integrations/payme/create",
+    component: Category,
+    path: "/settings/services/category",
     exact: true,
-    title: "PaymeCreate",
+    title: "category",
     permission: "fares",
   },
   {
-    component: PaymeCreate,
-    path: "/settings/integrations/payme/create/:id",
+    component: CategoryCreate,
+    path: "/settings/services/category/create",
     exact: true,
-    title: "PaymeCreate",
+    title: "CategoryCreate",
     permission: "fares",
   },
   {
-    component: Click,
-    path: "/settings/integrations/click",
+    component: CategoryCreate,
+    path: "/settings/services/category/create/:id",
     exact: true,
-    title: "Click",
+    title: "CategoryCreate",
     permission: "fares",
   },
+  // {
+  //   component: BranchCreate,
+  //   path: "/settings/integrations/iiko/branch-create",
+  //   exact: true,
+  //   title: "BranchCreate",
+  //   permission: "fares",
+  // },
+  // {
+  //   component: BranchCreate,
+  //   path: "/settings/integrations/iiko/branch-create/:id",
+  //   exact: true,
+  //   title: "BranchCreate",
+  //   permission: "fares",
+  // },
+  // {
+  //   component: JowiBranchCreate,
+  //   path: "/settings/integrations/jowi/branch-create",
+  //   exact: true,
+  //   title: "BranchCreate",
+  //   permission: "fares",
+  // },
+  // {
+  //   component: JowiBranchCreate,
+  //   path: "/settings/integrations/jowi/branch-create/:id",
+  //   exact: true,
+  //   title: "BranchCreate",
+  //   permission: "fares",
+  // },
+  // {
+  //   component: JowiAddProduct,
+  //   path: "/settings/integrations/jowi/add-product",
+  //   exact: true,
+  //   title: "BranchCreate",
+  //   permission: "fares",
+  // },
+  // {
+  //   component: JowiAddProduct,
+  //   path: "/settings/integrations/jowi/add-product/:id",
+  //   exact: true,
+  //   title: "BranchCreate",
+  //   permission: "fares",
+  // },
   {
-    component: ClickCreate,
-    path: "/settings/integrations/click/create",
-    exact: true,
-    title: "ClickCreate",
-    permission: "fares",
-  },
-  {
-    component: ClickCreate,
-    path: "/settings/integrations/click/create/:id",
-    exact: true,
-    title: "ClickCreate",
-    permission: "fares",
-  },
-  {
-    component: BranchCreate,
-    path: "/settings/integrations/iiko/branch-create",
-    exact: true,
-    title: "BranchCreate",
-    permission: "fares",
-  },
-  {
-    component: BranchCreate,
-    path: "/settings/integrations/iiko/branch-create/:id",
-    exact: true,
-    title: "BranchCreate",
-    permission: "fares",
-  },
-  {
-    component: JowiBranchCreate,
-    path: "/settings/integrations/jowi/branch-create",
-    exact: true,
-    title: "BranchCreate",
-    permission: "fares",
-  },
-  {
-    component: JowiBranchCreate,
-    path: "/settings/integrations/jowi/branch-create/:id",
-    exact: true,
-    title: "BranchCreate",
-    permission: "fares",
-  },
-  {
-    component: JowiAddProduct,
-    path: "/settings/integrations/jowi/add-product",
-    exact: true,
-    title: "BranchCreate",
-    permission: "fares",
-  },
-  {
-    component: JowiAddProduct,
-    path: "/settings/integrations/jowi/add-product/:id",
-    exact: true,
-    title: "BranchCreate",
-    permission: "fares",
-  },
-  {
-    component: IntegrationsCreate,
-    path: "/settings/integrations/:id",
+    component: DocumentsCreate,
+    path: "/settings/documents/:id",
     exact: true,
     title: "Integrations.Edit",
     permission: "fares",
@@ -956,19 +956,19 @@ export default [
     permission: "fares",
   },
   {
-    component: Company,
-    path: "/settings/company",
+    component: Services,
+    path: "/settings/services",
     exact: true,
     title: "Company",
     permission: "fares",
   },
-  {
-    component: CompanyBranch,
-    path: "/settings/company/branches/:id",
-    exact: true,
-    title: "Company.Branches",
-    permission: "fares",
-  },
+  // {
+  //   component: CompanyBranch,
+  //   path: "/settings/company/branches/:id",
+  //   exact: true,
+  //   title: "Company.Branches",
+  //   permission: "fares",
+  // },
   {
     component: CompanyBranchCashiers,
     path: "/settings/company/branches/:id/cashiers/:cashier_id",

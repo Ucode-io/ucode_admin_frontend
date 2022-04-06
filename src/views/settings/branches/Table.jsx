@@ -84,7 +84,7 @@ const ApplicationTable = () => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>№</TableCell>
+                <TableCell></TableCell>
                 <TableCell>{t("branches")}</TableCell>
                 <TableCell>
                   <div className="float-right mr-10">{t("phone.number")}</div>

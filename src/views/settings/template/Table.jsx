@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from "react";
-import Form from "../../../components/Form/Index";
-import Modal from "../../../components/Modal";
-import Button from "../../../components/Button";
+import Form from "components/Form/Index";
+import Modal from "components/Modal";
+import Button from "components/Button";
 import AddIcon from "@material-ui/icons/Add";
 import * as yup from "yup";
 import EditIcon from "@material-ui/icons/Edit";
 import { Input } from "alisa-ui";
 import DeleteIcon from "@material-ui/icons/Delete";
-import Pagination from "../../../components/Pagination";
-import numberToPrice from "../../../helpers/numberToPrice";
+import Pagination from "components/Pagination";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import {
-  deleteFare,
-  getFares,
-  postFare,
-  updateFare,
-} from "../../../services/fares";
+  deleteAggregator,
+  getAggregators,
+  postAggregator,
+  updateAggregator,
+} from "services";
 import { useHistory } from "react-router-dom";
-import LoaderComponent from "../../../components/Loader";
-import Select from "../../../components/Select";
-import Card from "../../../components/Card";
-import ActionMenu from "../../../components/ActionMenu";
+import LoaderComponent from "components/Loader";
+import Select from "components/Select";
+import Card from "components/Card";
+import ActionMenu from "components/ActionMenu";
 import {
   Table,
   TableBody,
@@ -31,7 +30,7 @@ import {
   TableRow,
 } from "@material-ui/core";
 
-export default function FaresTable({ createModal, setCreateModal }) {
+export default function AggregatorTable({ createModal, setCreateModal }) {
   const { t } = useTranslation();
   const history = useHistory();
   const [items, setItems] = useState({});
@@ -41,19 +40,17 @@ export default function FaresTable({ createModal, setCreateModal }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [saveLoading, setSaveLoading] = useState(null);
 
-  console.log('itemssss => ', items)
-
   useEffect(() => {
     getItems(currentPage);
   }, [currentPage]);
 
   const getItems = (page) => {
     setLoader(true);
-    getFares({ limit: 10, page })
+    getAggregators({ limit: 10, page })
       .then((res) => {
         setItems({
           count: res.count,
-          data: res.fares,
+          data: res.aggregators,
         });
       })
       .finally(() => setLoader(false));
@@ -71,7 +68,7 @@ export default function FaresTable({ createModal, setCreateModal }) {
 
   const handleDeleteItem = () => {
     setDeleteLoading(true);
-    deleteFare(deleteModal.id)
+    deleteAggregator(deleteModal.id)
       .then((res) => {
         getItems(currentPage);
         setDeleteLoading(false);
@@ -90,8 +87,8 @@ export default function FaresTable({ createModal, setCreateModal }) {
 
     setSaveLoading(true);
     const selectedAction = createModal.id
-      ? updateFare(createModal.id, data)
-      : postFare(data);
+      ? updateAggregator(createModal.id, data)
+      : postAggregator(data);
     selectedAction
       .then((res) => {
         getItems(currentPage);
@@ -128,30 +125,17 @@ export default function FaresTable({ createModal, setCreateModal }) {
       render: (record, index) => (currentPage - 1) * 10 + index + 1,
     },
     {
-      title: t("name"),
+      title: t("template.type"),
       key: "name",
       render: (record) => record.name,
     },
+    // {
+    //   title: t("price"),
+    //   key: "phone-number",
+    //   render: (record) => <>{record.phone_number}</>,
+    // },
     {
-      title: t("address"),
-      key: "address",
-      render: (record) => <>{numberToPrice(record.base_price, "сум")}</>,
-    },
-    {
-      title: t("phone.number"),
-      key: "phone.number",
-      render: (record) => (
-        <div>
-          {record.type === "fixed"
-            ? t("fixed")
-            : "not-fixed"
-            ? t("not.fixed")
-            : " "}
-        </div>
-      ),
-    },
-    {
-      title: "", // t("actions"),
+      title: "",
       key: "actions",
       render: (record, _) => (
         <div className="flex gap-2">
@@ -162,7 +146,8 @@ export default function FaresTable({ createModal, setCreateModal }) {
                 title: t("edit"),
                 color: "blue",
                 icon: <EditIcon />,
-                action: () => history.push(`/home/settings/branch/${record.id}`),
+                action: () =>
+                  history.push(`/home/settings/template/${record.id}`),
               },
               {
                 title: t("delete"),
@@ -204,7 +189,9 @@ export default function FaresTable({ createModal, setCreateModal }) {
               items.data.map((elm, index) => (
                 <TableRow
                   key={elm.id}
-                  onClick={() => history.push(`/home/settings/branch/${elm.id}`)}
+                  onClick={() =>
+                    history.push(`/home/settings/template/${elm.id}`)
+                  }
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
                   {columns.map((col) => (

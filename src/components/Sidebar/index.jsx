@@ -242,7 +242,7 @@ export default function App() {
       <div
         className={`h-screen sidebar border-l bg-white w-60 sidebar-nav-menu ${
           visible
-            ? "px-4 py-6 border-r"
+            ? "px-4 py-4 border-r"
             : "inset-0 transform -translate-x-4 overflow-hidden"
         }`}
         style={{

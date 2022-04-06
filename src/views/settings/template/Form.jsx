@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import Header from "components/Header";
@@ -12,23 +12,21 @@ import { StyledTab } from "components/StyledTabs";
 import SwipeableViews from "react-swipeable-views";
 import { useTheme } from "@material-ui/core/styles";
 import { TabPanel } from "components/Tab/TabBody";
-import AboutBranch from "./tabs/AboutBranch";
-import Users from "./tabs/Users";
+import General from "./tabs/General";
+import Doctors from "./tabs/Doctors";
 
+export default function AggregateCreate() {
 
-export default function BranchCreate() {
-  
-
-  // ====== variables ====== //
+  // ======== variables ======= //
   const { t } = useTranslation();
   const history = useHistory();
   const [saveLoading, setSaveLoading] = useState(false);
+  const theme = useTheme();
   const [value, setValue] = useState(0)
-  const theme = useTheme()
 
 
 
- // =======  Tab ====== //
+   // ======== Tab ======= //
   const tabLabel = (text, isActive = false) => {
     return <span className="px-1">{text}</span>;
   };
@@ -40,22 +38,21 @@ export default function BranchCreate() {
     };
   };
 
-  const handleChangeIndex = (index) => setValue(index);
   const handleChange = (event, newValue) => setValue(newValue);
+  const handleChangeIndex = (index) => setValue(index);
 
 
   const routes = [
     {
-      title: t(`branch`),
+      title: t(`templates`),
       link: true,
-      route: `/home/settings/branch`,
+      route: `/home/settings/template`,
     },
     {
       title: t("create"),
     },
   ];
 
- 
   const headerButtons = [
     <Button
       icon={CancelIcon}
@@ -89,31 +86,32 @@ export default function BranchCreate() {
           TabIndicatorProps={{ children: <span className="w-2" /> }}
         >
           <StyledTab
-            label={tabLabel(t("about.branch"))}
-            // value="about.branch"
+            label={tabLabel(t("main.page"))}
+            // value="main.page"
             {...a11yProps(0)}
           />
           <StyledTab
-            label={tabLabel(t("users"))}
-            // value="users"
+            label={tabLabel(t("doctors"))}
+            // value="about.branch"
             {...a11yProps(1)}
           />
-          
         </StyledTabs>
       </Filters>
 
       <SwipeableViews
-        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-        index={value}
-        onChangeIndex={handleChangeIndex}
+       axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+       index={value}
+       onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <AboutBranch />
+            <General />
         </TabPanel>
+
         <TabPanel value={value} index={1} dir={theme.direction}>
-          <Users />
+            <Doctors />
         </TabPanel>
       </SwipeableViews>
+
       </>
     // </form>
   );

@@ -16,14 +16,14 @@ export default function Operator() {
   return (
     <>
       <Header
-        title={t("operator")}
+        title={t("patients")}
         endAdornment={[
           <Button
             icon={AddIcon}
             size="medium"
-            onClick={() => history.push("/home/operator/create")}
+            onClick={() => history.push("/home/patients/create")}
           >
-            {t("add")}
+            {t("client.register")}
           </Button>,
         ]}
       />

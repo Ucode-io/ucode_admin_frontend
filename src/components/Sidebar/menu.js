@@ -8,7 +8,12 @@ import {
   DirectionsCar,
   LocalGroceryStore,
   GpsFixedOutlined,
+  DashboardCustomize,
 } from "@material-ui/icons";
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import GroupIcon from '@mui/icons-material/Group';
 import InsertDriveFileIcon from "@material-ui/icons/InsertDriveFile";
 
 export const menu = [
@@ -17,7 +22,7 @@ export const menu = [
     title: "dashboard",
     path: "/home/dashboard",
     isActive: false,
-    icon: Dashboard,
+    icon: AnalyticsIcon,
     permission: "dashboard",
   },
   {
@@ -25,32 +30,31 @@ export const menu = [
     title: "orders",
     path: "/home/orders",
     isActive: false,
-    icon: LocalGroceryStore,
+    icon: PendingActionsIcon,
     permission: "orders",
+  },
+  {
+    id: "patients",
+    title: "patients",
+    path: "/home/patients",
+    isActive: true,
+    icon: PersonAddAltIcon,
+    permission: "dashboard",
+    // children: [
+    //   {
+    //     id: '123',
+    //     title: 'company',
+    //     icon: GroupIcon
+    //   }
+    // ]
   },
   {
     id: "personal",
     title: "clients",
     path: "/home/personal/clients",
-    isActive: true,
-    icon: People,
-  },
-  {
-    id: "person",
-    title: "operator",
-    path: "/home/operator",
-    isActive: true,
-    icon: Person,
-    // children: [
-    //   {
-    //     id: "users",
-    //     title: "company",
-    //     path: "/home/operator",
-    //     isActive: false,
-    //     permission: "operator",
-    //     isChild: true,
-    //   },
-    // ],
+    isActive: false,
+    icon: GroupIcon,
+    // permission: "dashboard"
   },
   // {
   //   id: "company",
@@ -317,52 +321,52 @@ export const menu = [
     path: "/home/settings",
     isActive: true,
     icon: Settings,
-    redirect: "/home/settings/fares",
+    redirect: "/home/settings/branch",
     children: [
       {
-        id: "fares",
-        title: "fares",
-        path: "/home/settings/fares",
+        id: "branch",
+        title: "branch",
+        path: "/home/settings/branch",
         isActive: false,
         permission: "fares",
         isChild: true,
       },
       {
-        id: "integrations",
-        title: "integrations",
-        path: "/home/settings/integrations",
+        id: "documents",
+        title: "documents",
+        path: "/home/settings/documents",
+        isActive: false,
+        permission: "fares",
+        isChild: true,
+      },
+      {
+        id: "templates",
+        title: "templates",
+        path: "/home/settings/template",
+        isActive: false,
+        permission: "fares",
+        isChild: true,
+      },
+      {
+        id: "services",
+        title: "services",
+        path: "/home/settings/services/category",
         isActive: false,
         permission: "fares",
         isChild: true,
         children: [
           {
-            id: "payme",
-            title: "payme",
-            path: "/home/settings/integrations/payme",
+            id: "category",
+            title: "category",
+            path: "/home/settings/services/category",
             isActive: false,
             permission: "fares",
             isChild: true,
           },
           {
-            id: "Iiko",
-            title: "Iiko",
-            path: "/home/settings/integrations/iiko",
-            isActive: false,
-            permission: "fares",
-            isChild: true,
-          },
-          {
-            id: "jowi",
-            title: "jowi",
-            path: "/home/settings/integrations/jowi",
-            isActive: false,
-            permission: "fares",
-            isChild: true,
-          },
-          {
-            id: "click",
-            title: "click",
-            path: "/home/settings/integrations/click",
+            id: "service",
+            title: "services",
+            path: "/home/settings/services/service",
             isActive: false,
             permission: "fares",
             isChild: true,
@@ -370,24 +374,17 @@ export const menu = [
         ],
       },
       {
-        id: "aggregator",
-        title: "aggregator",
-        path: "/home/settings/aggregator",
-        isActive: false,
-        permission: "fares",
-        isChild: true,
-      },
-      {
-        id: "user-roles",
-        title: "user-roles",
+        id: "nomenclature",
+        title: "nomenclature",
         path: "/home/settings/user-roles",
         isActive: false,
         permission: "fares",
         isChild: true,
       },
+
       {
-        id: "company",
-        title: "company",
+        id: "requisites",
+        title: "requisites",
         path: "/home/settings/company",
         isActive: false,
         permission: "fares",

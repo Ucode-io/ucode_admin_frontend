@@ -6,6 +6,8 @@ import GroupIcon from "@material-ui/icons/Group"
 import AssessmentIcon from "@material-ui/icons/Assessment"
 import SettingsIcon from "@material-ui/icons/Settings"
 import Money from "@material-ui/icons/AttachMoney"
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+
 
 export default function iconFinder(name) {
   switch (name) {
@@ -27,6 +29,8 @@ export default function iconFinder(name) {
       return <SettingsIcon />
     case "District":
       return <MapIcon />
+    case "AnalyticsIcon":
+      return <AnalyticsIcon />
     default:
       return <DashboardIcon />
   }

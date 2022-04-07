@@ -99,7 +99,7 @@ ingress:
             path: /                                                                                                                              
             servicePort: 80                                                                                                                 
         tls:                                                                                                                                     
-          - secretName: tls
+          - secretName: react-admin-tls
             hosts:                                                                                                                               
              - "test.admin.medion.udevs.io"                                                                                                  
 

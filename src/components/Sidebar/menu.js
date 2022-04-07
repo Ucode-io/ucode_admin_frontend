@@ -385,7 +385,7 @@ export const menu = [
       {
         id: "requisites",
         title: "requisites",
-        path: "/home/settings/company",
+        path: "/home/settings/requisites",
         isActive: false,
         permission: "fares",
         isChild: true,

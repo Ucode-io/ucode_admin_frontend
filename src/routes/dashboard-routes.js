@@ -144,14 +144,7 @@ const ReportsUser = Loadable({
   loading: FullScreenLoader,
 });
 
-const CourierType = Loadable({
-  loader: () => import("views/personal/courierType"),
-  loading: FullScreenLoader,
-});
-const CourierTypeCreate = Loadable({
-  loader: () => import("views/personal/courierType/form"),
-  loading: FullScreenLoader,
-});
+
 const Branche = Loadable({
   loader: () => import("views/settings/rates"),
   loading: FullScreenLoader,
@@ -196,15 +189,6 @@ const Documents = Loadable({
   loader: () => import("views/settings/services"),
   loading: FullScreenLoader,
 });
-
-// const IikoEdit = Loadable({
-//   loader: () => import("views/settings/services/iiko"),
-//   loading: FullScreenLoader,
-// });
-// const JowiEdit = Loadable({
-//   loader: () => import("views/settings/services/jowi"),
-//   loading: FullScreenLoader,
-// });
 const Service = Loadable({
   loader: () => import("views/settings/services/service"),
   loading: FullScreenLoader,
@@ -225,14 +209,7 @@ const CategoryCreate = Loadable({
 //   loader: () => import("views/settings/integrations/iiko/BranchCreate"),
 //   loading: FullScreenLoader,
 // });
-// const JowiBranchCreate = Loadable({
-//   loader: () => import("views/settings/services/jowi/JowiBranchCreate"),
-//   loading: FullScreenLoader,
-// });
-// const JowiAddProduct = Loadable({
-//   loader: () => import("views/settings/services/jowi/JowiAddProduct"),
-//   loading: FullScreenLoader,
-// });
+
 
 const DocumentsCreate = Loadable({
   loader: () => import("views/settings/services/Form"),
@@ -249,10 +226,10 @@ const UserRolesCreate = Loadable({
   loading: FullScreenLoader,
 });
 
-// const Services = Loadable({
-//   loader: () => import("views/settings/services1"),
-//   loading: FullScreenLoader,
-// });
+const Requisites = Loadable({
+  loader: () => import("views/settings/requisites"),
+  loading: FullScreenLoader,
+}) 
 
 // const CompanyBranch = Loadable({
 //   loader: () => import("views/settings/company/Branch"),
@@ -399,27 +376,27 @@ export default [
     permission: "clients",
   },
 
-  {
-    component: CourierType,
-    path: "/courier/courier-type",
-    exact: true,
-    title: "CourierType",
-    permission: "courier_type",
-  },
-  {
-    component: CourierTypeCreate,
-    path: "/courier/courier-type/create",
-    exact: true,
-    title: "CourierTypeCreate",
-    permission: "courier_type",
-  },
-  {
-    component: CourierTypeCreate,
-    path: "/courier/courier-type/:id",
-    exact: true,
-    title: "CourierTypeEdit",
-    permission: "courier_type",
-  },
+  // {
+  //   component: CourierType,
+  //   path: "/courier/courier-type",
+  //   exact: true,
+  //   title: "CourierType",
+  //   permission: "courier_type",
+  // },
+  // {
+  //   component: CourierTypeCreate,
+  //   path: "/courier/courier-type/create",
+  //   exact: true,
+  //   title: "CourierTypeCreate",
+  //   permission: "courier_type",
+  // },
+  // {
+  //   component: CourierTypeCreate,
+  //   path: "/courier/courier-type/:id",
+  //   exact: true,
+  //   title: "CourierTypeEdit",
+  //   permission: "courier_type",
+  // },
   {
     component: Profile,
     path: "/profile",
@@ -732,7 +709,7 @@ export default [
   //   permission: "courier",
   // },
   {
-    component: Patient,   
+    component: Patient,
     path: "/patients",
     exact: true,
     title: "Operator",
@@ -773,6 +750,14 @@ export default [
   //   title: "CourierTypeEdit",
   //   permission: "courier_type",
   // },
+
+  {
+    component: Requisites,
+    path: "/settings/requisites",
+    exact: true,
+    title: "Requisites",
+    permission: "settings",
+  },
   {
     component: Branche,
     path: "/settings/branch",

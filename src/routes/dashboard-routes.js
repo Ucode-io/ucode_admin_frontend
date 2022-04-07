@@ -113,20 +113,20 @@ const BannerCreate = Loadable({
   loader: () => import("views/marketing/banners/form"),
   loading: FullScreenLoader,
 });
-const Courier = Loadable({
-  loader: () => import("views/personal/courier"),
+// const Courier = Loadable({
+//   loader: () => import("views/personal/courier"),
+//   loading: FullScreenLoader,
+// });
+// const CourierCreate = Loadable({
+//   loader: () => import("views/personal/courier/form"),
+//   loading: FullScreenLoader,
+// });
+const Patient = Loadable({
+  loader: () => import("views/patient/patient"),
   loading: FullScreenLoader,
 });
-const CourierCreate = Loadable({
-  loader: () => import("views/personal/courier/form"),
-  loading: FullScreenLoader,
-});
-const Operator = Loadable({
-  loader: () => import("views/personal/operator"),
-  loading: FullScreenLoader,
-});
-const OperatorCreate = Loadable({
-  loader: () => import("views/personal/operator/form"),
+const PatientCreate = Loadable({
+  loader: () => import("views/patient/patient/form"),
   loading: FullScreenLoader,
 });
 const ReportsCourier = Loadable({
@@ -710,69 +710,69 @@ export default [
     title: "BannerEdit",
     permission: "banner",
   },
+  // {
+  //   component: Courier,
+  //   path: "/courier/list",
+  //   exact: true,
+  //   title: "Courier",
+  //   permission: "courier",
+  // },
+  // {
+  //   component: CourierCreate,
+  //   path: "/courier/list/create",
+  //   exact: true,
+  //   title: "CourierCreate",
+  //   permission: "courier",
+  // },
+  // {
+  //   component: CourierCreate,
+  //   path: "/courier/list/:id",
+  //   exact: true,
+  //   title: "CourierEdit",
+  //   permission: "courier",
+  // },
   {
-    component: Courier,
-    path: "/courier/list",
-    exact: true,
-    title: "Courier",
-    permission: "courier",
-  },
-  {
-    component: CourierCreate,
-    path: "/courier/list/create",
-    exact: true,
-    title: "CourierCreate",
-    permission: "courier",
-  },
-  {
-    component: CourierCreate,
-    path: "/courier/list/:id",
-    exact: true,
-    title: "CourierEdit",
-    permission: "courier",
-  },
-  {
-    component: Operator,
+    component: Patient,   
     path: "/patients",
     exact: true,
     title: "Operator",
     permission: "operator",
   },
   {
-    component: OperatorCreate,
+    component: PatientCreate,
     path: "/patients/create",
     exact: true,
     title: "OperatorCreate",
     permission: "operator",
   },
   {
-    component: OperatorCreate,
+    component: PatientCreate,
     path: "/patients/:id",
     exact: true,
     title: "OperatorEdit",
     permission: "operator",
   },
-  {
-    component: CourierType,
-    path: "/personal/courier_type",
-    exact: true,
-    title: "CourierType",
-    permission: "courier_type",
-  },
-  {
-    component: CourierTypeCreate,
-    path: "/personal/courier_type/create",
-    exact: true,
-    title: "CourierTypeCreate",
-    permission: "courier_type",
-  },
-  {
-    component: CourierTypeCreate,
-    path: "/personal/courier_type/:id",
-    exact: true,
-    title: "CourierTypeEdit",
-    permission: "courier_type",
-  },
+  // {
+  //   component: CourierType,
+  //   path: "/personal/courier_type",
+  //   exact: true,
+  //   title: "CourierType",
+  //   permission: "courier_type",
+  // },
+  // {
+  //   component: CourierTypeCreate,
+  //   path: "/personal/courier_type/create",
+  //   exact: true,
+  //   title: "CourierTypeCreate",
+  //   permission: "courier_type",
+  // },
+  // {
+  //   component: CourierTypeCreate,
+  //   path: "/personal/courier_type/:id",
+  //   exact: true,
+  //   title: "CourierTypeEdit",
+  //   permission: "courier_type",
+  // },
   {
     component: Branche,
     path: "/settings/branch",

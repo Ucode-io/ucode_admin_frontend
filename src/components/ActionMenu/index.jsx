@@ -8,13 +8,13 @@ import { withStyles, makeStyles, createStyles } from "@material-ui/core";
 
 import "./style.scss";
 
-const StyledMenu = withStyles((theme) => ({
-  root: {
-    "& ul": {
-      padding: 0,
-    },
-  },
-}))(Menu);
+// const StyledMenu = withStyles((theme) => ({
+//   root: {
+//     "& ul": {
+//       padding: 0,
+//     },
+//   },
+// }))(Menu);
 
 const useStyles = makeStyles(() =>
   createStyles({

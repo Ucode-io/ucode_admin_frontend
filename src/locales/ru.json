@@ -497,5 +497,16 @@
   "service.naming" : "Наименование услуги",
   "mail": "Почта",
   "last.activity": "Последняя активность",
-  "add.patient" : "Добавить пациента"
+  "add.patient" : "Добавить пациента",
+  "birthday": "Дата рождения",
+  "doctor": "Доктор",
+  "service.type": "Тип услуги",
+  "patient.information": "Сведение о пациенте",
+  "district": "Район",
+  "passport.details": "Паспортные данные",
+  "PINFL": "ПИНФЛ",
+  "passport.series": "Серия паспорта",
+  "passport.number" : "Серия паспорта",
+  "validity": "Срок действия",
+  "passport.photo" : "Фото паспорта"
 }

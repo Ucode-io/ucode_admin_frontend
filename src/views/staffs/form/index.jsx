@@ -18,7 +18,7 @@ export default function Client({ formik, customerTypeOption }) {
 
   return (
     <>
-      {params.id && (
+      {/* {params.id && (
         <ClientCreateCard
           cards={[
             {
@@ -43,7 +43,7 @@ export default function Client({ formik, customerTypeOption }) {
             },
           ]}
         />
-      )}
+      )} */}
 
       <Card className="m-4" title={t("client")}>
         <div className="grid grid-cols-12 gap-8">

@@ -12,8 +12,9 @@ import { StyledTab } from "components/StyledTabs";
 import SwipeableViews from "react-swipeable-views";
 import { useTheme } from "@material-ui/core/styles";
 import { TabPanel } from "components/Tab/TabBody";
-import AboutBranch from "./tabs/AboutBranch";
-import Users from "./tabs/Users";
+import RequisitesCreate from "./RequisitesCreate";
+// import AboutBranch from "./tabs/AboutBranch";
+// import Users from "./tabs/Users";
 
 
 export default function BranchCreate() {
@@ -46,13 +47,11 @@ export default function BranchCreate() {
 
   const routes = [
     {
-      title: t(`branch`),
+      title: t(`Добавить реквизиты`),
       link: true,
       route: `/home/settings/branch`,
     },
-    {
-      title: t("create"),
-    },
+    
   ];
 
  
@@ -80,7 +79,7 @@ export default function BranchCreate() {
         endAdornment={headerButtons}
       />
 
-      <Filters>
+      {/* <Filters>
         <StyledTabs
           value={value}
           onChange={handleChange}
@@ -100,9 +99,10 @@ export default function BranchCreate() {
           />
           
         </StyledTabs>
-      </Filters>
+      </Filters> */}
+      <RequisitesCreate />
 
-      <SwipeableViews
+      {/* <SwipeableViews
         axis={theme.direction === "rtl" ? "x-reverse" : "x"}
         index={value}
         onChangeIndex={handleChangeIndex}
@@ -113,7 +113,7 @@ export default function BranchCreate() {
         <TabPanel value={value} index={1} dir={theme.direction}>
           <Users />
         </TabPanel>
-      </SwipeableViews>
+      </SwipeableViews> */}
       </>
     // </form>
   );

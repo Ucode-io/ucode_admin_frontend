@@ -141,7 +141,7 @@ export default function ApplicationTable() {
 
   return (
     <div>
-      <Filters extra={extraFilter}>
+      {/* <Filters extra={extraFilter}>
         <Input
           onChange={onSearch}
           width={280}
@@ -149,64 +149,11 @@ export default function ApplicationTable() {
           size="middle"
           addonBefore={<SearchIcon style={{ color: "var(--color-primary)" }} />}
         />
-      </Filters>
-      {/* <div className="w-full grid grid-cols-4">
-        <ClientCard
-          classNameCard="justify-between"
-          classNameIcon="mr-8"
-          cards={[
-            {
-              icon: <GroupIcon fontSize="large" />,
-              count: items.count,
-              title: t("clients"),
-            },
-          ]}
-          inversely={false}
-          columnNumber={1}
-        />
-        <ClientCard
-          classNameCard="justify-between"
-          classNameIcon="mr-8"
-          cards={[
-            {
-              icon: <GroupIcon fontSize="large" />,
-              count: items.count,
-              title: t("active.clients"),
-            },
-          ]}
-          inversely={false}
-          columnNumber={1}
-        />
-        <ClientCard
-          classNameCard="justify-between"
-          classNameIcon="mr-8"
-          cards={[
-            {
-              icon: <GroupIcon fontSize="large" />,
-              count: items.count,
-              title: t("today.ordered"),
-            },
-          ]}
-          inversely={false}
-          columnNumber={1}
-        />
-        <ClientCard
-          classNameCard="justify-between"
-          classNameIcon="mr-8"
-          cards={[
-            {
-              icon: <GroupIcon fontSize="large" />,
-              count: items.count,
-              title: t("today.registered"),
-            },
-          ]}
-          inversely={false}
-          columnNumber={1}
-        />
-      </div> */}
-      <div className="p-4 pt-4">
+      </Filters> */}
+  
+      {/* <div className="p-4 pt-4">
         <Widgets data={computedWidgetsData} />
-      </div>
+      </div> */}
 
       <Card
         className="m-4"
@@ -225,7 +172,7 @@ export default function ApplicationTable() {
                 <TableCell>№</TableCell>
                 <TableCell>
                   <TextFilter
-                    title={t("name.client")}
+                    title={t("fio")}
                     filterOptions={[
                       { label: "something", value: 21 },
                       { label: "somebody", value: 321 },
@@ -235,7 +182,7 @@ export default function ApplicationTable() {
                 </TableCell>
                 <TableCell>
                   <TextFilter
-                    title={t("count.orders")}
+                    title={t("category")}
                     filterOptions={[
                       { label: "something", value: 21 },
                       { label: "somebody", value: 321 },
@@ -244,11 +191,21 @@ export default function ApplicationTable() {
                   />
                 </TableCell>
                 <TableCell>
-                  <TextFilter sorter title={t("phone.number")} />
+                  <TextFilter sorter title={t("experience")} />
                 </TableCell>
                 <TableCell>
                   <TextFilter
-                    title={t("status")}
+                    title={t("mail")}
+                    filterOptions={[
+                      { label: "something", value: 21 },
+                      { label: "somebody", value: 321 },
+                    ]}
+                    onFilter={(val) => console.log(val)}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextFilter
+                    title={t("phone")}
                     filterOptions={[
                       { label: "something", value: 21 },
                       { label: "somebody", value: 321 },
@@ -269,7 +226,7 @@ export default function ApplicationTable() {
                         className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                         key={id}
                         onClick={() =>
-                          history.push(`/home/personal/clients/${id}`)
+                          history.push(`/home/staffs/${id}`)
                         }
                       >
                         <TableCell>
@@ -287,6 +244,9 @@ export default function ApplicationTable() {
                               color={is_blocked ? "#F2271C" : "#0E73F6"}
                             />
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          <div>{phone}</div>
                         </TableCell>
                         <TableCell align="right">
                           <ActionMenu

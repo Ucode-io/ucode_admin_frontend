@@ -108,23 +108,28 @@ export default function TableOperator() {
       ),
     },
     {
-      title: t("fullName"),
-      key: "fullName",
+      title: t("naming"),
+      key: "name",
       render: (record) => <div>{record.name}</div>,
     },
     {
-      title: t("mail"),  
-      key: "mail",
+      title: t("code"),
+      key: "code",
       render: (record) => <div>{record.mail}</div>,
     },
     {
-      title: t("phone"),
-      key: "phone",
+      title: t("inn"),
+      key: "inn",
       render: (record) => <div>{record.phone}</div>,
     },
     {
-      title: t("last.activity"),
-      key: "status",
+      title: t("mfo"),
+      key: "mfo",
+      render: (record) => <div>{record.status}</div>,
+    },
+    {
+      title: t("oked"),
+      key: "oked",
       render: (record) => <div>{record.status}</div>,
     },
   ];

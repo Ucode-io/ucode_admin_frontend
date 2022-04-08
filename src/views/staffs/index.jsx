@@ -13,12 +13,12 @@ export default function Clients() {
   return (
     <div>
       <Header
-        title={t("clients")}
+        title={t("staffs")}
         endAdornment={[
           <Button
             icon={AddIcon}
             size="medium"
-            onClick={() => history.push("/home/personal/clients/create")}
+            onClick={() => history.push("/home/staffs/create")}
           >
             {t("add")}
           </Button>,

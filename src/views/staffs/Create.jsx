@@ -188,7 +188,7 @@ export default function CreateClient() {
             </Button>,
           ]}
         />
-        <Filters>
+        {/* <Filters>
           <StyledTabs
             value={selectedTab}
             onChange={(_, value) => setSelectedTab(value)}
@@ -204,7 +204,7 @@ export default function CreateClient() {
             />
             {id && <StyledTab label={tabLabel(t("orders"))} value="orders" />}
           </StyledTabs>
-        </Filters>
+        </Filters> */}
 
         <TabBody tab="about.client">
           <Client customerTypeOption={customerTypeOption} formik={formik} />

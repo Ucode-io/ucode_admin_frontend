@@ -56,7 +56,7 @@ export default function Goods() {
 
   return (
     <>
-      <Header
+      {/* <Header
         title={t("goods")}
         endAdornment={[
           <Button
@@ -84,7 +84,8 @@ export default function Goods() {
         createModal={createModal}
         setCreateModal={setCreateModal}
         search={search}
-      />
+      /> */}
+      <div> goods </div>
     </>
   );
 }

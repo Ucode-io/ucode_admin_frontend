@@ -17,13 +17,13 @@ export default function Requites() {
   return (
     <>
       <Header
-        title={t("requites")}
+        title={t("requisites")}
         endAdornment={[
           <Button
             icon={AddIcon}
             size="medium"
             onClick={() => {
-              history.push("/home/settings/requites/create");
+              history.push("/home/settings/requisites/create");
               // setCreateModal(true)
             }}
           >

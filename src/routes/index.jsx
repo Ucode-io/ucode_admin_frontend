@@ -75,12 +75,12 @@ const AppRouter = () => {
                           <Route
                             key={route.id}
                             path={route.path}
-                            component={
-                              ![...permissions, "dashboard"].includes(
-                                route.permission
-                              )
-                                ? noAccessComponent
-                                : route.component
+                            component={route.component
+                              // ![...permissions, "dashboard"].includes(
+                              //   route.permission
+                              // )
+                              //   ? noAccessComponent
+                              //   : route.component
                             }
                             exact
                           />

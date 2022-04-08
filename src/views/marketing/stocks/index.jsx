@@ -15,7 +15,7 @@ export default function Operator() {
 
     return (
         <>
-            <Header
+            {/* <Header
                 title={t("list.stocks")}
                 endAdornment={[
                     <Button
@@ -27,7 +27,8 @@ export default function Operator() {
                     </Button>,
                 ]}
             />
-            <Table />
+            <Table /> */}
+            <div> marketing </div>
         </>
     )
 }

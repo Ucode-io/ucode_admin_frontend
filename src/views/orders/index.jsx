@@ -84,7 +84,9 @@ export default function Orders() {
 
   return (
     <>
-      <Header
+
+    <div> Visits </div>
+      {/* <Header
         title={t("orders")}
         endAdornment={[
           <Button
@@ -99,7 +101,7 @@ export default function Orders() {
       <Filter
         extra={
           <div className="flex gap-4">
-            {/* <Button
+            <Button
               icon={DownloadIcon}
               iconClassName="text-blue-600"
               color="zinc"
@@ -108,7 +110,7 @@ export default function Orders() {
               onClick={() => console.log("clicked")}
             >
               {t("download")}
-            </Button> */}
+            </Button>
           </div>
         }
       >
@@ -157,7 +159,7 @@ export default function Orders() {
           />
         </div>
       )}
-      <StatusBar filters={filters} />
+      <StatusBar filters={filters} /> */}
     </>
   );
 }

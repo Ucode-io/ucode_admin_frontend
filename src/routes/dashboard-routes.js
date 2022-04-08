@@ -5,12 +5,12 @@ const Dashboard = Loadable({
   loader: () => import("views/dashboard/index"),
   loading: FullScreenLoader,
 });
-const Clients = Loadable({
-  loader: () => import("views/clients"),
+const Staffs = Loadable({
+  loader: () => import("views/staffs"),
   loading: FullScreenLoader,
 });
-const ClientsCreate = Loadable({
-  loader: () => import("views/clients/Create"),
+const StaffsCreate = Loadable({
+  loader: () => import("views/staffs/Create"),
   loading: FullScreenLoader,
 });
 const Profile = Loadable({
@@ -53,14 +53,14 @@ const StockCreate = Loadable({
   loading: FullScreenLoader,
 });
 
-const Banners = Loadable({
-  loader: () => import("views/marketing/banners"),
-  loading: FullScreenLoader,
-});
-const BannerFrom = Loadable({
-  loader: () => import("views/marketing/banners/form"),
-  loading: FullScreenLoader,
-});
+// const Banners = Loadable({
+//   loader: () => import("views/marketing/banners"),
+//   loading: FullScreenLoader,
+// });
+// const BannerFrom = Loadable({
+//   loader: () => import("views/marketing/banners/form"),
+//   loading: FullScreenLoader,
+// });
 const Reviews = Loadable({
   loader: () => import("views/marketing/reviews"),
   loading: FullScreenLoader,
@@ -144,13 +144,12 @@ const ReportsUser = Loadable({
   loading: FullScreenLoader,
 });
 
-
 const Branche = Loadable({
-  loader: () => import("views/settings/rates"),
+  loader: () => import("views/settings/branches"),
   loading: FullScreenLoader,
 });
 const BranchCreate = Loadable({
-  loader: () => import("views/settings/rates/form"),
+  loader: () => import("views/settings/branches/form"),
   loading: FullScreenLoader,
 });
 const BranchUser = Loadable({
@@ -170,10 +169,10 @@ const SettlementCreate = Loadable({
   loading: FullScreenLoader,
 });
 
-const ShipperBranchesUsersForm = Loadable({
-  loader: () => import("views/settings/branches/form/users/form"),
-  loading: FullScreenLoader,
-});
+// const ShipperBranchesUsersForm = Loadable({
+//   loader: () => import("views/settings/branches/form/users/form"),
+//   loading: FullScreenLoader,
+// });
 
 const Template = Loadable({
   loader: () => import("views/settings/template"),
@@ -231,6 +230,10 @@ const Requisites = Loadable({
   loading: FullScreenLoader,
 }) 
 
+const RequisitesCreate = Loadable({
+  loader: () => import("views/settings/requisites/form"),
+  loading: FullScreenLoader,
+})
 // const CompanyBranch = Loadable({
 //   loader: () => import("views/settings/company/Branch"),
 //   loading: FullScreenLoader,
@@ -355,25 +358,25 @@ export default [
     permission: "dashboard",
   },
   {
-    component: Clients,
-    path: "/personal/clients",
+    component: Staffs,
+    path: "/staffs",
     exact: true,
-    title: "clients",
-    permission: "clients",
+    title: "staffs",
+    permission: "staffs",
   },
   {
-    component: ClientsCreate,
-    path: "/personal/clients/create",
+    component: StaffsCreate,
+    path: "/staffs/create",
     exact: true,
-    title: "client-create",
-    permission: "clients",
+    title: "staffs-create",
+    permission: "staffs",
   },
   {
-    component: ClientsCreate,
-    path: "/personal/clients/:id",
+    component: StaffsCreate,
+    path: "/staffs/:id",
     exact: true,
-    title: "client-edit",
-    permission: "clients",
+    title: "staffs-edit",
+    permission: "staffs",
   },
 
   // {
@@ -505,13 +508,13 @@ export default [
   //   title: "shipperCompanyBranchesEdit",
   //   permission: "settings",
   // },
-  {
-    component: ShipperBranchesUsersForm,
-    path: "/company/shipper-company/:id/branches/:branch_id/users/:user_id",
-    exact: true,
-    title: "shipperCompanyBranchesUserUpdate",
-    permission: "settings",
-  },
+  // {
+  //   component: ShipperBranchesUsersForm,
+  //   path: "/company/shipper-company/:id/branches/:branch_id/users/:user_id",
+  //   exact: true,
+  //   title: "shipperCompanyBranchesUserUpdate",
+  //   permission: "settings",
+  // },
   {
     component: ShipperSettingsCreate,
     path: "/company/shipper-company/create",
@@ -757,6 +760,13 @@ export default [
     exact: true,
     title: "Requisites",
     permission: "settings",
+  },
+  {
+    component: RequisitesCreate,
+    path: "/settings/requisites/create",
+    exact: true,
+    title: 'Requisites',
+    permission: "settings"
   },
   {
     component: Branche,

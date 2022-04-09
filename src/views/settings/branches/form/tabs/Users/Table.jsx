@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
+
+import AddIcon from "@material-ui/icons/Add";
+import * as yup from "yup";
 import EditIcon from "@material-ui/icons/Edit";
+import { Input } from "alisa-ui";
 import DeleteIcon from "@material-ui/icons/Delete";
-import Pagination from "../../../components/Pagination";
-import numberToPrice from "../../../helpers/numberToPrice";
+import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
-import {
-  deleteFare,
-  getFares,
-  postFare,
-  updateFare,
-} from "../../../services/fares";
+// import {
+//   deleteFare,
+//   getFares,
+//   postFare,
+//   updateFare,
+// } from "../../../services/fares";
 import { useHistory } from "react-router-dom";
-import LoaderComponent from "../../../components/Loader";
-import Card from "../../../components/Card";
-import ActionMenu from "../../../components/ActionMenu";
+// import LoaderComponent from "../../../components/Loader";
+import Card from 'components/Card'
+
+
 import {
   Table,
   TableBody,
@@ -23,9 +27,13 @@ import {
   TableRow,
 } from "@material-ui/core";
 import SwitchColumns from "components/Filters/SwitchColumns";
+import ActionMenu from "components/ActionMenu";
+import LoaderComponent from "components/Loader";
+import Pagination from "components/Pagination";
+import { getFares } from "services";
 
 
-export default function FaresTable({ createModal, setCreateModal }) {
+export default function UsersTable({ createModal, setCreateModal }) {
   const { t } = useTranslation();
   const history = useHistory();
   const [items, setItems] = useState({});
@@ -81,14 +89,12 @@ export default function FaresTable({ createModal, setCreateModal }) {
     data: [
       {
         id: 1,
-        name: 'ads',
-        address: 'chilnozor',
+        fullName: 'James',
         phone: '8909878',
       },
       {
         id: 2,
-        name: 'ads34',
-        address: 'chiln234ozor',
+        fullName: 'Ozil',
         phone: '8909878',
       },
     ]
@@ -181,14 +187,9 @@ export default function FaresTable({ createModal, setCreateModal }) {
       render: (record, index) => (currentPage - 1) * 10 + index + 1,
     },
     {
-      title: t("branches"),
-      key: "branches",
-      render: (record) =>  record.name ,
-    },
-    {
-      title: t("address"),
-      key: "address",
-      render: (record) =>  record.address,
+      title: t("fullName"),
+      key: "fullName",
+      render: (record) =>  record.fullName ,
     },
     {
       title: t("phone.number"),
@@ -256,7 +257,6 @@ export default function FaresTable({ createModal, setCreateModal }) {
         loading={deleteLoading}
       /> */}
 
-      
     </Card>
   );
 }

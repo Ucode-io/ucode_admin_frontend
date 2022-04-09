@@ -31,6 +31,16 @@ const ShipperSettings = Loadable({
   loading: FullScreenLoader,
 });
 
+const User = Loadable({
+  // loader: () => import("views/settings/branches/form/tabs/Users/index"),
+  loading: FullScreenLoader,
+});
+
+const UserCreate = Loadable({
+  loader: () => import("views/settings/branches/form/tabs/Users/form"),
+  loading: FullScreenLoader,
+});
+
 // const ShipperBranches = Loadable({
 //   loader: () => import("views/settings/branches/index"),
 //   loading: FullScreenLoader,
@@ -209,7 +219,6 @@ const CategoryCreate = Loadable({
 //   loading: FullScreenLoader,
 // });
 
-
 const DocumentsCreate = Loadable({
   loader: () => import("views/settings/services/Form"),
   loading: FullScreenLoader,
@@ -228,12 +237,12 @@ const UserRolesCreate = Loadable({
 const Requisites = Loadable({
   loader: () => import("views/settings/requisites"),
   loading: FullScreenLoader,
-}) 
+});
 
 const RequisitesCreate = Loadable({
   loader: () => import("views/settings/requisites/form"),
   loading: FullScreenLoader,
-})
+});
 // const CompanyBranch = Loadable({
 //   loader: () => import("views/settings/company/Branch"),
 //   loading: FullScreenLoader,
@@ -406,6 +415,20 @@ export default [
     exact: true,
     title: "Profile",
     permission: "profile",
+  },
+  {
+    component: User,
+    path: "/user",
+    exact: true,
+    title: "User",
+    permission: "user",
+  },
+  {
+    component: UserCreate,
+    path: "/settings/branch/create/user/create",
+    exact: true,
+    title: "UserCreate",
+    permission: "usercreate",
   },
   {
     component: Orders,
@@ -765,8 +788,8 @@ export default [
     component: RequisitesCreate,
     path: "/settings/requisites/create",
     exact: true,
-    title: 'Requisites',
-    permission: "settings"
+    title: "Requisites",
+    permission: "settings",
   },
   {
     component: Branche,

@@ -461,5 +461,10 @@
   "operation.type": "Тип операции",
   "account": "Счет",
   "staffs" : "Сотрудники",
-  "experience" : "Cтаж"
+  "experience" : "Cтаж",
+  "add.new.company": "Добавить новую компанию",
+  "company.name": "Названия компании",
+  "staffs.number": "Число сотрудников",
+  "catalog.servive": "Каталог услуг",
+  "user.type": "Тип пользователя"
 }

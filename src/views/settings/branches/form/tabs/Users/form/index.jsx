@@ -10,11 +10,9 @@ import Filters from "components/Filters";
 import { StyledTabs } from "components/StyledTabs";
 import { StyledTab } from "components/StyledTabs";
 import SwipeableViews from "react-swipeable-views";
-import { useTheme } from "@material-ui/core/styles";
 import { TabPanel } from "components/Tab/TabBody";
-import AboutBranch from "./tabs/AboutBranch";
-import UsersTable from "./tabs/Users/Table";
 import AddIcon from "@material-ui/icons/Add";
+import UserCreate from "./UserCreate";
 
 
 export default function BranchCreate() {
@@ -25,9 +23,6 @@ export default function BranchCreate() {
   const history = useHistory();
   const [saveLoading, setSaveLoading] = useState(false);
   const [value, setValue] = useState(0)
-  const theme = useTheme()
-  
-  console.log('history ', history.location.pathname)
 
 
  // =======  Tab ====== //
@@ -45,12 +40,11 @@ export default function BranchCreate() {
   const handleChangeIndex = (index) => setValue(index);
   const handleChange = (event, newValue) => setValue(newValue);
 
-
   const routes = [
     {
-      title: t(`branch`),
+      title: t(`users`),
       link: true,
-      route: `/home/settings/branch`,
+      route: `/home/settings/branch/create/user/create`,
     },
   ];
  
@@ -89,41 +83,11 @@ export default function BranchCreate() {
       <Header
         startAdornment={[
           <Breadcrumb routes={routes} />,
-          <Filters>
-            <StyledTabs
-              value={value}
-              onChange={handleChange}
-              centered={false}
-              aria-label="full width tabs example"
-              TabIndicatorProps={{ children: <span className="w-2" /> }}
-            >
-              <StyledTab
-                label={tabLabel(t("about.branch"))}
-                // value="about.branch"
-                {...a11yProps(0)}
-              />
-              <StyledTab
-                label={tabLabel(t("users"))}
-                // value="users"
-                {...a11yProps(1)}
-              />
-            </StyledTabs>
-          </Filters>
         ]}
-        endAdornment={value === 0 ? headerButtons : addButton}
+        // endAdornment={value === 0 ? headerButtons : addButton}
       />
-      <SwipeableViews
-        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-      >
-        <TabPanel value={value} index={0} dir={theme.direction}>
-          <AboutBranch />
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-          <UsersTable />
-        </TabPanel>
-      </SwipeableViews>
+
+      <UserCreate />
     </>
     // </form>
   );

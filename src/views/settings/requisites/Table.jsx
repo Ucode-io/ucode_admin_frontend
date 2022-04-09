@@ -36,6 +36,8 @@ export default function TableOperator() {
   const [columns, setColumns] = useState([]);
   let debounce = setTimeout(() => {}, 0);
 
+
+
   useEffect(() => {
     getItems(currentPage);
   }, [currentPage, search]);
@@ -54,6 +56,7 @@ export default function TableOperator() {
         ),
         key: t("actions"),
         render: (record, _) => (
+          <div className="flex gap-2">
           <ActionMenu
             id={record.id}
             actions={[
@@ -75,6 +78,7 @@ export default function TableOperator() {
               },
             ]}
           />
+          </div>
         ),
       },
     ];

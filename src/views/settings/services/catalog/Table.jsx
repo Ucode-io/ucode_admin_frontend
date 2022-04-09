@@ -4,7 +4,10 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 import { useTranslation } from "react-i18next";
 import {
+  deleteFare,
   getFares,
+  postFare,
+  updateFare,
 } from "services/fares";
 import { useHistory } from "react-router-dom";
 // import LoaderComponent from "../../../components/Loader";
@@ -25,11 +28,11 @@ import LoaderComponent from "components/Loader";
 import Pagination from "components/Pagination";
 
 
-export default function CategoryTable({ createModal, setCreateModal }) {
+export default function CatalogTable({ createModal, setCreateModal }) {
   const { t } = useTranslation();
   const history = useHistory();
   const [items, setItems] = useState({});
-  const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(true);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -59,7 +62,7 @@ export default function CategoryTable({ createModal, setCreateModal }) {
                   color: "blue",
                   icon: <EditIcon />,
                   action: () =>
-                    history.push(`category/${record.id}`),
+                    history.push(`/home/settings/branch/${record.id}`),
                 },
                 {
                   title: t("delete"),
@@ -81,12 +84,12 @@ export default function CategoryTable({ createModal, setCreateModal }) {
     data: [
       {
         id: 1,
-        category: 'cateogry',
+        catalog_name: 'menu',
         date: '22-20-2020',
       },
       {
         id: 2,
-        category: 'arsenal',
+        catalog_name: 'maksim gorkiy',
         date: '12-34-1919',
       },
     ]
@@ -94,20 +97,20 @@ export default function CategoryTable({ createModal, setCreateModal }) {
 
 
   useEffect(() => {
-    // getItems(currentPage);
+    getItems(currentPage);
   }, [currentPage]);
 
-  // const getItems = (page) => {
-  //   setLoader(true);
-  //   getFares({ limit: 10, page })
-  //     .then((res) => {
-  //       setItems({
-  //         count: res.count,
-  //         data: res.fares,
-  //       });
-  //     })
-  //     .finally(() => setLoader(false));
-  // };
+  const getItems = (page) => {
+    setLoader(true);
+    getFares({ limit: 10, page })
+      .then((res) => {
+        setItems({
+          count: res.count,
+          data: res.fares,
+        });
+      })
+      .finally(() => setLoader(false));
+  };
   
   // const findType = [
   //   {
@@ -179,9 +182,9 @@ export default function CategoryTable({ createModal, setCreateModal }) {
       render: (record, index) => (currentPage - 1) * 10 + index + 1,
     },
     {
-      title: t("category"),
-      key: "category",
-      render: (record) =>  record.category ,
+      title: t("catalog.name"),
+      key: "catalog_name",
+      render: (record) =>  record.catalog_name ,
     },
     {
       title: t("date.branch"),
@@ -222,7 +225,7 @@ export default function CategoryTable({ createModal, setCreateModal }) {
               fakeData.data.map((elm, index) => (
                 <TableRow
                   key={elm.id}
-                  onClick={() => history.push(`category/${elm.id}`)}
+                  onClick={() => history.push(`/home/settings/branch/${elm.id}`)}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                 >
                   {columns.map((col) => (

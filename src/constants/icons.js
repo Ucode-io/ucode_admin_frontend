@@ -7,6 +7,7 @@ import AssessmentIcon from "@material-ui/icons/Assessment"
 import SettingsIcon from "@material-ui/icons/Settings"
 import Money from "@material-ui/icons/AttachMoney"
 import AnalyticsIcon from '@mui/icons-material/Analytics';
+// import UploadIcon from '@mui/icons-material/Upload';
 
 
 export default function iconFinder(name) {
@@ -31,6 +32,8 @@ export default function iconFinder(name) {
       return <MapIcon />
     case "AnalyticsIcon":
       return <AnalyticsIcon />
+    // case "UploadIcon":
+    //   return <UploadIcon />  
     default:
       return <DashboardIcon />
   }
@@ -117,3 +120,20 @@ export const FIlterIcon = () => (
     />
   </svg>
 )
+
+export const UploadIcon = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M4.16663 15.8319C4.16663 15.6108 4.25442 15.3989 4.4107 15.2426C4.56698 15.0863 4.77895 14.9985 4.99996 14.9985H15C15.221 14.9985 15.4329 15.0863 15.5892 15.2426C15.7455 15.3989 15.8333 15.6108 15.8333 15.8319C15.8333 16.0529 15.7455 16.2648 15.5892 16.4211C15.4329 16.5774 15.221 16.6652 15 16.6652H4.99996C4.77895 16.6652 4.56698 16.5774 4.4107 16.4211C4.25442 16.2648 4.16663 16.0529 4.16663 15.8319ZM6.91079 7.25435C6.75457 7.09808 6.6668 6.88616 6.6668 6.66519C6.6668 6.44422 6.75457 6.23229 6.91079 6.07602L9.41079 3.57602C9.56707 3.41979 9.77899 3.33203 9.99996 3.33203C10.2209 3.33203 10.4329 3.41979 10.5891 3.57602L13.0891 6.07602C13.2409 6.23319 13.3249 6.44369 13.323 6.66219C13.3211 6.88068 13.2335 7.0897 13.079 7.2442C12.9245 7.39871 12.7155 7.48635 12.497 7.48825C12.2785 7.49015 12.068 7.40615 11.9108 7.25435L10.8333 6.17685V12.4985C10.8333 12.7195 10.7455 12.9315 10.5892 13.0878C10.4329 13.2441 10.221 13.3319 9.99996 13.3319C9.77895 13.3319 9.56698 13.2441 9.4107 13.0878C9.25442 12.9315 9.16663 12.7195 9.16663 12.4985V6.17685L8.08913 7.25435C7.93285 7.41058 7.72093 7.49834 7.49996 7.49834C7.27899 7.49834 7.06707 7.41058 6.91079 7.25435Z"
+      fill="#0E73F6"
+    />
+  </svg>
+);

@@ -7,7 +7,7 @@ import AddIcon from "@material-ui/icons/Add";
 import Button from "../../../../components/Button";
 
 
-export default function Payme() {
+export default function Service() {
   const { t } = useTranslation();
   const history = useHistory();
 

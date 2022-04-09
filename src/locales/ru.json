@@ -466,5 +466,9 @@
   "company.name": "Названия компании",
   "staffs.number": "Число сотрудников",
   "catalog.servive": "Каталог услуг",
-  "user.type": "Тип пользователя"
+  "user.type": "Тип пользователя",
+  "catalog": "Каталог",
+  "catalog.name": "Название каталога",
+  "catalog.list": "Список каталогов ",
+  "add.category": "Добавить категорию"
 }

@@ -24,9 +24,10 @@ export default function ClickCreate() {
   const [loader, setLoader] = useState(true);
 
   useEffect(() => {
-    getItems();
+    // getItems();
     fetchData();
   }, []);
+
   useEffect(() => {
     if (params.branch_id) {
       getBranchesCount.then((res) => {
@@ -120,13 +121,13 @@ export default function ClickCreate() {
 
   const routes = [
     {
-      title: t(`category`),
+      title: t(`add.category`),
       link: true,
-      route: `/home/settings/services/category`,
+      route: `/home/settings/services/category/create`,
     },
-    {
-      title: t("create"),
-    },
+    // {
+    //   title: t("create"),
+    // },
   ];
 
   const headerButtons = [
@@ -155,8 +156,9 @@ export default function ClickCreate() {
       />
 
       <div className="m-4">
-        <div className="grid grid-cols-2 gap-5">
-          <Card title={t("general.information")}>
+        <div className="flex gap-5">
+          <div className="w-2/3">
+          <Card title={t("category")}>
             <div className="grid grid-cols-4 gap-5 items-baseline">
               <div className="col-span-4">
                 <Form.Item formik={formik} name="branch_id">
@@ -170,9 +172,7 @@ export default function ClickCreate() {
                     name="branch_name"
                   />
                 </Form.Item>
-              </div>
-
-              
+              </div>              
             </div>
             <div className="grid grid-cols-4 gap-5 items-baseline">
               <div className="col-span-4">
@@ -192,6 +192,11 @@ export default function ClickCreate() {
             </div>
            
           </Card>
+          </div>
+
+          <div className="w-1/2">
+            <Card title={t("category")}></Card>
+          </div>
         </div>
       </div>
     </form>

@@ -1,4 +1,3 @@
-import "./style.scss";
 import Table from "./Table";
 import Header from "../../../../components/Header";
 import { useHistory } from "react-router-dom";
@@ -6,12 +5,12 @@ import { useTranslation } from "react-i18next";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "../../../../components/Button";
 import Filters from "components/Filters";
-import { DownloadIcon, UploadIcon } from "constants/icons";
 import Input from "components/Input";
+import { DownloadIcon, UploadIcon } from "constants/icons";
 import SearchIcon from "@material-ui/icons/Search";
 import DatePicker from "components/DatePicker";
 
-export default function Click() {
+export default function Catalog() {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -43,13 +42,13 @@ export default function Click() {
   return (
     <div>
       <Header
-        title={t("categories")}
+        title={t("catalog.list")}
         endAdornment={[
           <Button
             icon={AddIcon}
             size="medium"
             onClick={() =>
-              history.push("/home/settings/services/category/create")
+              history.push("/home/settings/services/catalog/create")
             }
           >
             {t("add")}
@@ -68,6 +67,7 @@ export default function Click() {
           <DatePicker className="ml-2 rounded-lg"/>
         </div>
       </Filters>
+
       <Table />
     </div>
   );

@@ -214,6 +214,16 @@ const CategoryCreate = Loadable({
   loader: () => import("views/settings/services/category/CategoryCreate"),
   loading: FullScreenLoader,
 });
+
+const Catalog = Loadable({
+  loader: () => import("views/settings/services/catalog"),
+  loading: FullScreenLoader,
+})
+
+const CatalogCrate = Loadable({
+  loader: () => import("views/settings/services/catalog/CatalogCreate"),
+  loading: FullScreenLoader,
+})
 // const BranchCreate = Loadable({
 //   loader: () => import("views/settings/integrations/iiko/BranchCreate"),
 //   loading: FullScreenLoader,
@@ -883,6 +893,20 @@ export default [
     permission: "fares",
   },
   {
+    component: Catalog,
+    path: "/settings/services/catalog",
+    exact: true,
+    title: 'Catalog',
+    permission: "fares"
+  },
+  {
+    component: CatalogCrate,
+    path: "/settings/services/catalog/create",
+    exact: true,
+    title: 'Catalog',
+    permission: "fares"
+  },
+  {
     component: Category,
     path: "/settings/services/category",
     exact: true,
@@ -898,7 +922,7 @@ export default [
   },
   {
     component: CategoryCreate,
-    path: "/settings/services/category/create/:id",
+    path: "/settings/services/category/:id",
     exact: true,
     title: "CategoryCreate",
     permission: "fares",

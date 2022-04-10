@@ -211,7 +211,7 @@ const Category = Loadable({
   loading: FullScreenLoader,
 });
 const CategoryCreate = Loadable({
-  loader: () => import("views/settings/services/category/CategoryCreate"),
+  loader: () => import("views/settings/services/category/create/CategoryCreate"),
   loading: FullScreenLoader,
 });
 

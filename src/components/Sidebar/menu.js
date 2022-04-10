@@ -304,7 +304,7 @@ export const menu = [
         children: [
           {
             id: "catalog",
-            title: "catalog",
+            title: "catalog.list",
             path: "/home/settings/services/catalog",
             isActive: false,
             permission: "fares",
@@ -312,7 +312,7 @@ export const menu = [
           },
           {
             id: "category",
-            title: "category",
+            title: "categories",
             path: "/home/settings/services/category",
             isActive: false,
             permission: "fares",

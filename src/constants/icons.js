@@ -9,7 +9,6 @@ import Money from "@material-ui/icons/AttachMoney"
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 // import UploadIcon from '@mui/icons-material/Upload';
 
-
 export default function iconFinder(name) {
   switch (name) {
     case "DashboardIcon":
@@ -31,9 +30,7 @@ export default function iconFinder(name) {
     case "District":
       return <MapIcon />
     case "AnalyticsIcon":
-      return <AnalyticsIcon />
-    // case "UploadIcon":
-    //   return <UploadIcon />  
+      return <AnalyticsIcon />    
     default:
       return <DashboardIcon />
   }

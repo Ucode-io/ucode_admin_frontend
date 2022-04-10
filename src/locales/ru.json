@@ -470,5 +470,7 @@
   "catalog": "Каталог",
   "catalog.name": "Название каталога",
   "catalog.list": "Список каталогов ",
-  "add.category": "Добавить категорию"
+  "add.category": "Добавить категорию",
+  "picture": "Картинка",
+  "subcategories": "Подкатегории"
 }

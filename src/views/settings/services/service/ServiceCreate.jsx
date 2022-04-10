@@ -15,14 +15,25 @@ import { getBranchesCount } from "../../../../services";
 import { getOnePayme, postPayme, updatePayme } from "services/promotion";
 import CustomSkeleton from "components/Skeleton";
 import Gallery from "components/Gallery";
+import { StyledTabs } from "components/StyledTabs";
+import { StyledTab } from "components/StyledTabs";
+import {ReactComponent as FlagEngIcon} from "assets/icons/eng.svg"
+import { ReactComponent as FlagRuIcon } from "assets/icons/rus.svg"
+import { ReactComponent as FlagUzIcon } from "assets/icons/uz.svg"
+import SwipeableViews from "react-swipeable-views";
+import { TabPanel } from "components/Tab/TabBody";
+import { useTheme } from "@material-ui/core/styles";
+import ServiceForm from "./Form";
 
-export default function PaymeCreate() {
+export default function ServiceCreate() {
   const { t } = useTranslation();
   const history = useHistory();
   const params = useParams();
   const [saveLoading, setSaveLoading] = useState(false);
   const [items, setItems] = useState();
   const [loader, setLoader] = useState(true);
+  const [selectedCardTab, setSelectedCardTab] = useState(0);
+  const theme = useTheme()
 
   useEffect(() => {
     getItems();
@@ -122,9 +133,6 @@ export default function PaymeCreate() {
       link: true,
       route: `/home/settings/services`,
     },
-    {
-      title: t("create"),
-    },
   ];
 
   const headerButtons = [
@@ -145,6 +153,19 @@ export default function PaymeCreate() {
 
   if (loader) return <CustomSkeleton />;
 
+  const tabLabel = (text, isActive = false) => {
+    return <span className="px-1">{text}</span>;
+  };
+
+  const a11yProps = (index) => {
+    return {
+      id: `full-width-tab-${index}`,
+      "aria-controls": `full-width-tabpanel-${index}`,
+    };
+  };
+
+
+
   return (
     <form onSubmit={handleSubmit}>
       <Header
@@ -152,87 +173,94 @@ export default function PaymeCreate() {
         endAdornment={headerButtons}
       />
 
-      <div className="m-4">
+      <div className="flex gap-5 m-4">
         <div className="w-2/3 grid gap-5">
-          <Card title={t("general.information")}>
-          <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-3">
-            <Form.Item formik={formik} name="image">
-              <div className="w-full h-full flex mt-6 items-center flex-col">
-                <Gallery
-                  rounded
-                  width={120}
-                  height={120}
-                  gallery={values.image ? [values.image] : []}
-                  setGallery={(elm) => setFieldValue("image", elm[0])}
-                  multiple={false}
+          <Card title={t("service")}>
+            <StyledTabs
+              value={selectedCardTab}
+              onChange={(_, value) => setSelectedCardTab(value)}
+              indicatorColor="primary"
+              textColor="primary"
+              centered={false}
+              aria-label="full width tabs example"
+              TabIndicatorProps={{ children: <span className="w-2" /> }}
+            >
+              <StyledTab
+                icon={<FlagRuIcon />}
+                label={tabLabel(t("russian"))}
+                {...a11yProps(0)}
+              />
+
+              <StyledTab
+                icon={<FlagEngIcon />}
+                label={tabLabel(t("english"))}
+                {...a11yProps(1)}
+              />
+
+              <StyledTab
+                icon={<FlagUzIcon />}
+                label={tabLabel(t("uzbek"))}
+                {...a11yProps(2)}
+              />
+            </StyledTabs>
+
+            <SwipeableViews
+              axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+              index={selectedCardTab}
+            >
+              <TabPanel value={selectedCardTab} index={0} dir={theme.direction}>
+                <ServiceForm
+                  formik={formik}
+                  titleInput={t("category")}
+                  lang="ru"
+                  value={initialValues}
                 />
-              </div>
-            </Form.Item>
-          </div>
-          <div className="col-span-9">
-            <div className="w-full items-baseline">
-              <div className="w-1/4 input-label">
-                {/* <span style={{ color: "red" }}>*</span>{" "} */}
-                <span>{t("name")}</span>
-              </div>
-              <div className="w-full">
-                <div>
-                  <Form.Item formik={formik} name="name">
-                    <Input
-                      size="large"
-                      id="name"
-                      value={values.first_name}
-                      onChange={handleChange}
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-            </div>
+              </TabPanel>
 
-            <div className="w-full items-baseline">
-              <div className="w-1/4 input-label">
-                {/* <span style={{ color: "red" }}>*</span>{" "} */}
-                <span>{t("price")}</span>
-              </div>
-              <div className="w-full">
-                <div>
-                  <Form.Item formik={formik} name="price">
-                    <Input
-                      size="large"
-                      id="price"
-                      value={values.last_name}
-                      onChange={handleChange}
-                    />
-                  </Form.Item>
-                </div>
-              </div>
-            </div>
+              <TabPanel value={selectedCardTab} index={1} dir={theme.direction}>
+                <ServiceForm
+                  formik={formik}
+                  titleInput={t("category")}
+                  lang="eng"
+                  value={initialValues}
+                />
+              </TabPanel>
 
-            <div className="w-full items-baseline">
-              <div className="w-1/4 input-label">
-                {/* <span style={{ color: "red" }}>*</span>{" "} */}
-                <label>{t("categories")}</label>
-              </div>
-              <div className="w-full">
-                <Form.Item formik={formik} name="category">
-                  <Select
-                    id="category"
-                    height={40}
-                    // options={customerTypeOption}
-                    value={values.customer_type_id}
-                    onChange={(val) => {
-                      setFieldValue("customer_type_id", val.value);
-                    }}
-                  />
-                </Form.Item>
-              </div>
-            </div>
-          </div>
+              <TabPanel value={selectedCardTab} index={2} dir={theme.direction}>
+                <ServiceForm
+                  formik={formik}
+                  titleInput={t("category")}
+                  lang="uz"
+                  value={initialValues}
+                />
+              </TabPanel>
+            </SwipeableViews>
+          </Card>
         </div>
+
+        <div className="w-1/2">
+          <Card title={t("photo")}>
+          <Form.Item formik={formik} name="image">
+            <div className="w-full h-full flex mt-6 items-center flex-col">
+              <Gallery
+                rounded
+                width={120}
+                height={120}
+                // gallery={values.image ? [values.image] : []}
+                // setGallery={(elm) => setFieldValue("image", elm[0])}
+                multiple={false}
+              />
+            </div>
+          </Form.Item>
+          </Card>
+
+          <Card title={t("doctors")} className="mt-5">
+          
           </Card>
         </div>
       </div>
+
+     
     </form>
   );
 }

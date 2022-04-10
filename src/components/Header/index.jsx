@@ -139,7 +139,7 @@ export default function Header({
   loading,
 }) {
   return (
-    <div className="w-full h-14 bg-white flex justify-between">
+    <div className="w-full h-14 bg-white flex justify-between border-b">
       <div className="p-4 flex items-center ">
         {title && title.length ? (
           <div className="text-xl leading-6 font-medium pr-4 text-black-1">

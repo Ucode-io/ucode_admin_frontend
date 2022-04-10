@@ -472,5 +472,12 @@
   "catalog.list": "Список каталогов ",
   "add.category": "Добавить категорию",
   "picture": "Картинка",
-  "subcategories": "Подкатегории"
+  "subcategories": "Подкатегории",
+  "service.price": "Цена услуги",
+  "service": "Услуга",
+  "currency": "Валюта",
+  "income.price" : "Цена приход",
+  "selling.price": "Цена продажа",
+  "doctors.percent": "Процент врача",
+  "consumables": "Расходники"
 }

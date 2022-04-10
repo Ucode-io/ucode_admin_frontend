@@ -24,18 +24,27 @@ import { ReactComponent as FlagRuIcon } from "assets/icons/rus.svg"
 import { ReactComponent as FlagUzIcon } from "assets/icons/uz.svg"
 import CategoryForm from "./Form";
 import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
-import { ExpandMore } from "@material-ui/icons";
+import { Add, ExpandMore, KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
+import add_icon from "assets/icons/add.svg"
+import edit_icon from "assets/icons/edit.svg"
+import delete_icon from "assets/icons/delete.svg"
+import { useTheme, withStyles } from "@material-ui/core/styles";
+import SwipeableViews from "react-swipeable-views";
 
 
 export default function CategoryCreate() {
   const { t } = useTranslation();
   const history = useHistory();
   const params = useParams();
+  const theme = useTheme()
   const [saveLoading, setSaveLoading] = useState(false);
   const [items, setItems] = useState();
   const [loader, setLoader] = useState(true);
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedCardTab, setSelectedCardTab] = useState(0);
+  const [expand, setExpand] = useState(false)
+  const [value, setValue] =useState(0)
+  
   const [initialValues, setInitialValues] = useState({
     developer_logo: "",
     gallery: [],
@@ -67,6 +76,28 @@ export default function CategoryCreate() {
       latitude: null,
     },
   });
+
+
+  const fakeData = [
+    {
+      id: 1,
+      title: "Cердечно - сосудистая хирургия",
+    },
+    {
+      id: 2,
+      title: "Абдоминальная хирургия",
+    },
+    {
+      id: 3,
+      title: "пластическая хирургия",
+    },
+  ];
+
+  const IconLeftExpansionPanelSummary = withStyles({
+    expandIcon: {
+        order: -1
+    }
+})(AccordionSummary);
 
   useEffect(() => {
     // getItems();
@@ -204,6 +235,10 @@ export default function CategoryCreate() {
     };
   };
 
+  const handleChangeIndex = (index) => {
+    setValue(index);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <Header
@@ -211,7 +246,7 @@ export default function CategoryCreate() {
         endAdornment={headerButtons}
       />
 
-      <TabPanel value={selectedTab} index={0}>
+      {/* <TabPanel value={selectedTab} index={0}> */}
         <div className="m-4">
           <div className="flex gap-5">
             <div className="w-2/3">
@@ -246,62 +281,114 @@ export default function CategoryCreate() {
                   </StyledTabs>
                 </Filters>
 
-                <TabPanel value={selectedCardTab} index={0}>
-                  <CategoryForm
-                    formik={formik}
-                    titleInput={t("category")}
-                    lang="ru"
-                    value={initialValues}
-                    // setFile={setFile}
-                  />
-                </TabPanel>
+                <SwipeableViews
+                  axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+                  index={selectedCardTab}
+                  // onChangeIndex={handleChangeIndex}
+                >
+                  <TabPanel value={selectedCardTab} index={0} dir={theme.direction}>
+                    <CategoryForm
+                      formik={formik}
+                      titleInput={t("category")}
+                      lang="ru"
+                      value={initialValues}
+                      // setFile={setFile}
+                    />
+                  </TabPanel>
 
-                <TabPanel value={selectedCardTab} index={1}>
-                  <CategoryForm
-                    formik={formik}
-                    titleInput={t("category")}
-                    lang="eng"
-                    value={initialValues}
-                    // setFile={setFile}
-                  />
-                </TabPanel>
+                  <TabPanel value={selectedCardTab} index={1} dir={theme.direction}>
+                    <CategoryForm
+                      formik={formik}
+                      titleInput={t("category")}
+                      lang="eng"
+                      value={initialValues}
+                      // setFile={setFile}
+                    />
+                  </TabPanel>
 
-                <TabPanel value={selectedCardTab} index={2}>
-                  <CategoryForm
-                    formik={formik}
-                    titleInput={t("category")}
-                    lang="uz"
-                    value={initialValues}
-                    // setFile={setFile}
-                  />
-                </TabPanel>
+                  <TabPanel value={selectedCardTab} index={2} dir={theme.direction}>
+                    <CategoryForm
+                      formik={formik}
+                      titleInput={t("category")}
+                      lang="uz"
+                      value={initialValues}
+                      // setFile={setFile}
+                    />
+                  </TabPanel>
+                </SwipeableViews>
               </Card>
             </div>
 
             <div className="w-1/2">
               <Card title={t("subcategories")}>
-                <Accordion>
-                  <AccordionSummary
-                    expandIcon={<ExpandMore />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                    style={{padding: "0px"}}
+                {fakeData.map((item) => (
+                  <Accordion
+                    key={item.id}
+                    onChange={(e, expanded) => {
+                      if (expanded) {
+                        setExpand(true);
+                      } else {
+                        setExpand(false);
+                      }
+                    }}
                   >
-                    accordion 1
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Suspendisse malesuada lacus ex, sit amet blandit leo
-                      lobortis eget.
-                    </Typography>
-                  </AccordionDetails>
-                </Accordion>
+                    <AccordionSummary
+                      // expandIcon={<ExpandMore />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                      style={{ padding: "0px" }}
+                    >
+                      <div className="flex items-center w-full justify-between">
+                        <span>
+                          <KeyboardArrowRight />
+                          {item.title}
+                        </span>
+
+                        <div className="flex">
+                          <img
+                            className="border rounded p-1.5 "
+                            src={add_icon}
+                            alt="add"
+                          />
+                          <img
+                            className="border rounded p-1.5 ml-2"
+                            src={edit_icon}
+                            alt="edit"
+                          />
+                          <img
+                            className="border rounded p-1.5 ml-2"
+                            src={delete_icon}
+                            alt="delete"
+                          />
+                        </div>
+                      </div>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Typography>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Suspendisse malesuada lacus ex, sit amet blandit leo
+                        lobortis eget.
+                      </Typography>
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+                <div className="w-full items-baseline">
+                  <div
+                    className="mt-4 cursor-pointer border border-dashed border-blue-800 text-primary text-sm  p-2 rounded-md flex justify-center items-center gap-2.5"
+                    // onClick={() => setModal(true)}
+                    // ref={productRef}
+                  >
+                    <Add />
+                    <div className="text-black-1 text-primary">
+                      Добавить продукт
+                    </div>
+                  </div>
+                </div>
               </Card>
             </div>
           </div>
         </div>
-      </TabPanel>
+      {/* </TabPanel> */}
     </form>
   );
 }

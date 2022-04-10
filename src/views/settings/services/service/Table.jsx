@@ -33,6 +33,8 @@ import SwitchColumns from "components/Filters/SwitchColumns";
 import StatusTag from "../../../../components/Tag/StatusTag";
 
 import { DownloadIcon } from "constants/icons";
+import Checkbox from "components/Checkbox1";
+import DatePicker from "components/DatePicker";
 
 export default function PaymeTable() {
   const [loader, setLoader] = useState(true);
@@ -49,8 +51,34 @@ export default function PaymeTable() {
   let debounce = setTimeout(() => {}, 0);
 
   useEffect(() => {
-    getItems(currentPage);
+    // getItems(currentPage);
   }, [currentPage, search]);
+
+
+  const fakeData = {
+    count: 1,
+    data: [
+      {
+        id: 1,
+        service_name: 'type',
+        price: '200 000',
+        date: "20-00-2000"
+      },
+      {
+        id: 2,
+        service_name: 'type seinor',
+        price: '400 000',
+        date: "11-00-1990"
+      },
+      {
+        id: 3,
+        service_name: 'backend seinor',
+        price: '1 000 000',
+        date: "11-00-3990"
+      }
+    ]
+
+  }
 
   useEffect(() => {
     const _columns = [
@@ -67,14 +95,14 @@ export default function PaymeTable() {
         key: t("actions"),
         render: (record, _) => (
           <ActionMenu
-            id={record.branch_id}
+            id={record.id}
             actions={[
               {
                 icon: <EditIcon />,
                 color: "blue",
                 title: t("change"),
                 action: () => {
-                  history.push(`service/create/${record.branch_id}`);
+                  history.push(`service/create/${record.id}`);
                 },
               },
               {
@@ -82,7 +110,7 @@ export default function PaymeTable() {
                 color: "red",
                 title: t("delete"),
                 action: () => {
-                  setDeleteModal({ id: record.branch_id });
+                  setDeleteModal({ id: record.id });
                 },
               },
             ]}
@@ -113,6 +141,13 @@ export default function PaymeTable() {
 
   const initialColumns = [
     {
+      title: <Checkbox />,
+      key: "checkbox",
+      render: (record, index) => (
+        <div> <Checkbox /> </div>
+      ),
+    },
+    {
       title: "№",
       key: "promo-number",
       render: (record, index) => (
@@ -120,19 +155,19 @@ export default function PaymeTable() {
       ),
     },
     {
-      title: t("service.naming"),
+      title: t("services"),
       key: "service_name",
       render: (record) => <div>{record.branch_name}</div>,
     },
     {
-      title: t("description"),
-      key: "description",
-      render: (record) => <div>{record.merchant_id}</div>,
+      title: t("service.price"),
+      key: "price",
+      render: (record) => <div>{record.price}</div>,
     },
     {
-      title: t("price"),
-      key: "price",
-      render: (record) => <div>{record.created_at}</div>,
+      title: t("date.branch"),
+      key: "date",
+      render: (record) => <div>{record.date}</div>,
     },
   ];
 
@@ -149,7 +184,7 @@ export default function PaymeTable() {
   };
 
   const extraFilter = (
-    <div className="flex gap-4">
+    <div className="flex gap-4 mr-4">
       <Button
             icon={DownloadIcon}
             iconClassName="text-blue-600"
@@ -174,18 +209,23 @@ export default function PaymeTable() {
   return (
     <>
       <Filters extra={extraFilter}>
-        <Input
-          onChange={onSearch}
-          width={280}
-          placeholder={t("search")}
-          size="middle"
-          addonBefore={<SearchIcon style={{ color: "var(--color-primary)" }} />}
-        />
+        <div className="flex">
+          <Input
+            onChange={onSearch}
+            width={280}
+            placeholder={t("search")}
+            size="middle"
+            addonBefore={
+              <SearchIcon style={{ color: "var(--color-primary)" }} />
+            }
+          />
+          <DatePicker className="ml-2 rounded-lg" />
+        </div>
       </Filters>
 
       <Card className="m-4" footer={pagination}>
         <TableContainer className="rounded-lg border border-lightgray-1">
-          {items.data ? (
+          {fakeData.data ? (
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
@@ -195,8 +235,8 @@ export default function PaymeTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {items.data && items.data.length ? (
-                  items.data.map((item, index) => (
+                {fakeData.data && fakeData.data.length ? (
+                  fakeData.data.map((item, index) => (
                     <TableRow
                       key={item.id}
                       onClick={() => {

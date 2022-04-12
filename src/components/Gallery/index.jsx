@@ -66,10 +66,12 @@ const Gallery = ({
           "Content-Type": "mulpipart/form-data",
         },
       })
-      .catch((err) => console.log("error here: ", err))
       .then((res) => {
-        addNewImage(res.filename);
+        addNewImage(res.data.filename);
+        console.log('res upload ', res)
       })
+      .catch((err) => console.log("error here: ", err))
+
       .finally(() => setLoading(false));
   };
 

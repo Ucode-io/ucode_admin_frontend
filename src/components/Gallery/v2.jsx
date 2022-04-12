@@ -70,6 +70,7 @@ const Gallery = ({
       .catch((err) => console.log("error here: ", err))
       .then((res) => {
         addNewImage(res.filename);
+        console.log('filename' , res.filename)
       })
       .finally(() => setLoading(false));
   };

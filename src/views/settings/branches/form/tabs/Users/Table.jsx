@@ -107,7 +107,7 @@ export default function UsersTable({ createModal, setCreateModal }) {
 
   const getItems = (page) => {
     setLoader(true);
-    getFares({ limit: 10, page })
+    getFares()
       .then((res) => {
         setItems({
           count: res.count,

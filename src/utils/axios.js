@@ -8,7 +8,7 @@ import { showAlert } from "redux/actions/alertActions";
 
 var request = axios.create({
   baseURL: config.baseURL,
-  timeout: 8000,
+  timeout: 10000,
 });
 
 // var waitingTime = 8000;

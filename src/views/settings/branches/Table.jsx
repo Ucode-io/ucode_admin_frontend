@@ -4,12 +4,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "../../../components/Pagination";
 import numberToPrice from "../../../helpers/numberToPrice";
 import { useTranslation } from "react-i18next";
-import {
-  deleteFare,
-  getFares,
-  postFare,
-  updateFare,
-} from "../../../services/fares";
+
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "../../../components/Loader";
 import Card from "../../../components/Card";
@@ -23,15 +18,16 @@ import {
   TableRow,
 } from "@material-ui/core";
 import SwitchColumns from "components/Filters/SwitchColumns";
+import { deleteBranch, getBranchList } from "services/branch";
 
 
-export default function FaresTable({ createModal, setCreateModal }) {
+export default function BranchesTable({ createModal, setCreateModal }) {
   const { t } = useTranslation();
   const history = useHistory();
   const [items, setItems] = useState({});
   const [loader, setLoader] = useState(true);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(null);
+  const [id, setId] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [saveLoading, setSaveLoading] = useState(null);
   const [columns, setColumns] = useState([])
@@ -65,10 +61,15 @@ export default function FaresTable({ createModal, setCreateModal }) {
                   title: t("delete"),
                   color: "red",
                   icon: <DeleteIcon />,
-                  action: () => setDeleteModal({ id: record.id }),
+                  action: () => {
+                    deleteBranch( record.id )
+                    .then((res) => console.log('res', res))
+                  }
+                  ,
                 },
               ]}
             />
+            
           </div>
         ),
       }
@@ -76,40 +77,27 @@ export default function FaresTable({ createModal, setCreateModal }) {
     setColumns(_columns)
   }, []);
 
-  const fakeData = {
-    count: 1,
-    data: [
-      {
-        id: 1,
-        name: 'ads',
-        address: 'chilnozor',
-        phone: '8909878',
-      },
-      {
-        id: 2,
-        name: 'ads34',
-        address: 'chiln234ozor',
-        phone: '8909878',
-      },
-    ]
-  }
+  // const deleteBranchById = () => {
+  //   deleteBranch(id)
+  //   .then((res) => console.log('successfully deleted', res))
+  // }
 
-
-  useEffect(() => {
-    getItems(currentPage);
-  }, [currentPage]);
-
-  const getItems = (page) => {
+  const getAllBranches = (page) => {
     setLoader(true);
-    getFares({ limit: 10, page })
+    getBranchList({limit: 10, page})
       .then((res) => {
         setItems({
-          count: res.count,
-          data: res.fares,
+          count: res.data.count,
+          data: res.data,
         });
       })
+      .catch((err) => console.log(err, 'error'))
       .finally(() => setLoader(false));
-  };
+  }
+
+  useEffect(() => {
+    getAllBranches(currentPage);
+  }, [currentPage]);
   
   // const findType = [
   //   {
@@ -192,8 +180,8 @@ export default function FaresTable({ createModal, setCreateModal }) {
     },
     {
       title: t("phone.number"),
-      key: "phone.number",
-      render: (record) => <div> {record.phone} </div>,
+      key: "phone_numbers",
+      render: (record) => <div> {record.phone_numbers} </div>,
     },
   ];
 
@@ -225,19 +213,23 @@ export default function FaresTable({ createModal, setCreateModal }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {fakeData.data && fakeData.data.length ? (
-              fakeData.data.map((elm, index) => (
-                <TableRow
+            {items?.data?.branches && items?.data?.branches.length ? (
+              items?.data.branches.map((elm, index) => (
+      
+                 <TableRow
                   key={elm.id}
                   onClick={() => history.push(`/home/settings/branch/${elm.id}`)}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-                >
+                > {console.log('id', elm.id)}
                   {columns.map((col) => (
                     <TableCell key={col.key}>
                       {col.render ? col.render(elm, index) : "----"}
                     </TableCell>
                   ))}
                 </TableRow>
+     
+               
+                
               ))
             ) : (
               <></>

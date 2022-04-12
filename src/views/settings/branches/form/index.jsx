@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import Header from "components/Header";
 import Button from "components/Button";
 import Breadcrumb from "components/Breadcrumb";
@@ -15,21 +15,27 @@ import { TabPanel } from "components/Tab/TabBody";
 import AboutBranch from "./tabs/AboutBranch";
 import UsersTable from "./tabs/Users/Table";
 import AddIcon from "@material-ui/icons/Add";
+import { useMemo } from 'react'
+import * as yup from "yup";
+import { useFormik } from 'formik'
+import { postBranch, updateBranch } from "services/branch";
 
 
 export default function BranchCreate() {
-  
 
+  const defaultMap = {
+    lat:41.311151,
+    long: 69.279737,
+  }
   // ====== variables ====== //
   const { t } = useTranslation();
   const history = useHistory();
   const [saveLoading, setSaveLoading] = useState(false);
   const [value, setValue] = useState(0)
   const theme = useTheme()
+  const [coordinators ,setCoordinators ]=useState(defaultMap)
+  const params = useParams()
   
-  console.log('history ', history.location.pathname)
-
-
  // =======  Tab ====== //
   const tabLabel = (text, isActive = false) => {
     return <span className="px-1">{text}</span>;
@@ -53,6 +59,121 @@ export default function BranchCreate() {
       route: `/home/settings/branch`,
     },
   ];
+
+
+  const initialValues = useMemo(
+    () => (
+      {
+        address: "",
+        city: "",
+        company_id: "",
+        inns: [
+          ""
+        ],
+        latitude: '41.311151',
+        logo: "",
+        longitude: '69.279737',
+        name: "",
+        phone_numbers: [
+          ""
+        ],
+        service_ids: [
+          ""
+        ],
+        working_days: [
+          {
+            day: "Monday",
+            end_time: "",
+            is_open: false,
+            start_time: ""
+          },
+          {
+            day: "Tuesday",
+            end_time: "",
+            is_open: false,
+            start_time: ""
+          },
+          {
+            day: "Wednesday",
+            end_time: "",
+            is_open: false,
+            start_time: ""
+          },
+          {
+            day: "Thursday",
+            end_time: "",
+            is_open: false,
+            start_time: ""
+          },
+          {
+            day: "Friday",
+            end_time: "",
+            is_open: false,
+            start_time: ""
+          },
+          {
+            day: "Saturday",
+            end_time: "",
+            is_open: false,
+            start_time: ""
+          },
+          {
+            day: "Sunday",
+            end_time: "",
+            is_open: false,
+            start_time: ""
+          }
+        ]
+      }
+    ),
+    [],
+  );
+
+ 
+
+  const onSubmit = (values) => {
+    if (params.id === undefined) {
+      postBranch(values)
+        .then((res) => {
+          console.log("succes", res);
+        })
+        .catch((err) => console.log("error", err));
+    } else {
+      updateBranch(values).then((res) => console.log("succes ", res));
+    }
+  };
+
+  // postBranch(values)
+    //   .then((res) => {
+    //     console.log("succes", res);
+    //   })
+    //   .catch((err) => console.log("error"));
+
+      //  console.log('values ', values)
+      //  updateBranch(values)
+      //  .then((res) => console.log('succes ', res))
+     
+
+  
+    
+    
+  
+
+  const validationSchema = useMemo(() => {
+    const defaultSchema = yup.mixed().required(t("required.field.error"));
+    return yup.object().shape({
+      name: defaultSchema,
+      type: defaultSchema,
+    });
+  }, []);
+
+  const formik = useFormik({
+    initialValues,
+    onSubmit,
+    // validationSchema,
+  });
+
+  
  
   const headerButtons = [
     <Button
@@ -84,8 +205,7 @@ export default function BranchCreate() {
   ]
 
   return (
-    // <form onSubmit={handleSubmit}>
-    <>
+    <form onSubmit={formik.handleSubmit}>
       <Header
         startAdornment={[
           <Breadcrumb routes={routes} />,
@@ -108,7 +228,7 @@ export default function BranchCreate() {
                 {...a11yProps(1)}
               />
             </StyledTabs>
-          </Filters>
+          </Filters>,
         ]}
         endAdornment={value === 0 ? headerButtons : addButton}
       />
@@ -118,13 +238,17 @@ export default function BranchCreate() {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <AboutBranch />
+          <AboutBranch
+            formik={formik}
+            initialValues={initialValues}
+            coordinators={coordinators}
+            setCoordinators={setCoordinators}
+          />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
           <UsersTable />
         </TabPanel>
       </SwipeableViews>
-    </>
-    // </form>
+    </form>
   );
 }

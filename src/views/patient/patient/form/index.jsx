@@ -31,6 +31,8 @@ export default function CreateOperator() {
   const [regions, setRegions] = useState([]);
 //   const [visible, setVisible] = useState(false);
 
+
+
 //   const getItem = () => {
 //     if (!id) return setLoader(false);
 //     setLoader(true);
@@ -180,14 +182,10 @@ export default function CreateOperator() {
       link: true,
       route: `/home/patients`,
     },
-    // {
-    //   title: id ? formik.values?.user_roles?.label : t("create"),
-    // },
   ];
 
 //   const { values, handleChange, setFieldValue, handleSubmit } = formik;
 
-console.log('formik  => ', formik.values)
 
   return (
     <div className="w-full">

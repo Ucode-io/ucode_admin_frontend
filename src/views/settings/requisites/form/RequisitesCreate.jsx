@@ -1,55 +1,38 @@
 import { Input } from 'alisa-ui'
 import Card from 'components/Card'
 import Form from 'components/Form/Index'
-import { useFormik } from 'formik'
-import { isNumber } from 'helpers/inputHelpers'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import * as yup from "yup";
 import Select from 'components/Select'
+import { useParams } from 'react-router-dom'
+import { getRequisiteById } from 'services/requisites'
+import { useEffect } from 'react'
 
 
-export default function RequisitesCreate() {
-
+export default function RequisitesCreate({formik}) {
 
     // ======== const variables ====== //
     const { t } = useTranslation()
- 
-    // ====== < formik section > ===== //
-    const initialValues = useMemo(
-      () => ({
-        name: null,
-        base_price: null,
-        type: null,
-        base_distance: null,
-        price_per_km: null,
-      }),
-      [],
-    );
+    const params = useParams()
 
-    const onSubmit = (values) => {
-      console.log("submit submit");
-    };
 
-    const validationSchema = useMemo(() => {
-      const defaultSchema = yup.mixed().required(t("required.field.error"));
-      return yup.object().shape({
-        base_price: defaultSchema,
-        type: defaultSchema,
-      });
-    }, []);
+    console.log('formik values', formik.values)
 
-    const formik = useFormik({
-      initialValues,
-      onSubmit,
-      validationSchema,
-    });
+   // ====== < GET Requisite /> ===== //
 
-      const { values, handleChange, setFieldValue, setValues, handleSubmit } =
-    formik;
+   const getRequsite = () => {
+     if(params.id){
+       getRequisiteById(params.id)
+       .then((res) => {
+         console.log("GET requisite by id => ", res)
+         formik.setValues(res.data);
+       })
+     }
+   }
 
-   // ====== < formik section /> ===== //
 
+   useEffect(() => {
+    getRequsite()
+   },[])
 
     return (
       <div className="m-4">
@@ -58,12 +41,12 @@ export default function RequisitesCreate() {
             <div className="grid grid-cols-3 items-baseline">
               <div className="input-label">{t("naming")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="naming">
+                <Form.Item formik={formik} name="name">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
-                    name="naming"
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
+                    name="name"
                   />
                 </Form.Item>
               </div>
@@ -71,19 +54,25 @@ export default function RequisitesCreate() {
               <div className="input-label">{t("code")}</div>
               <div className="col-span-2 grid-rows-2">
                 <Form.Item formik={formik} name="code">
-                  <Input className="order-1" size="large" />
+                  <Input
+                    value={formik.values.code}
+                    onChange={formik.handleChange}
+                    className="order-1"
+                    size="large"
+                    name="code"
+                  />
                 </Form.Item>
               </div>
               <div className="input-label">{t("addresses")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="addresses">
+                <Form.Item formik={formik} name="address">
                   <Select
-                    id="addresses"
-                    isMulti
                     height={40}
-                    name="addresses"
-                    value={values.region_ids}
-                    onChange={(value) => setFieldValue("region_ids", value)}
+                    name="address"
+                    value={formik.values.address}
+                    onChange={(value) =>
+                      formik.setFieldValue("address", value.address)
+                    }
                     //   options={regions}
                   />
                 </Form.Item>
@@ -91,14 +80,14 @@ export default function RequisitesCreate() {
 
               <div className="input-label">{t("contacts")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="contacts">
+                <Form.Item formik={formik} name="contact">
                   <Select
-                    id="contacts"
-                    isMulti
                     height={40}
-                    name="contacts"
-                    value={values.region_ids}
-                    onChange={(value) => setFieldValue("region_ids", value)}
+                    name="contact"
+                    value={formik.values.contact}
+                    onChange={(value) =>
+                      formik.setFieldValue("contact", value.contact)
+                    }
                     //   options={regions}
                   />
                 </Form.Item>
@@ -109,8 +98,8 @@ export default function RequisitesCreate() {
                 <Form.Item formik={formik} name="inn">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
+                    value={formik.values.inn}
+                    onChange={formik.handleChange}
                     name="inn"
                   />
                 </Form.Item>
@@ -118,27 +107,27 @@ export default function RequisitesCreate() {
 
               <div className="input-label">{t("checking.account")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="checking_account">
+                <Form.Item formik={formik} name="account">
                   <Select
-                    id="checking_account"
-                    isMulti
                     height={40}
-                    name="checking_account"
-                    value={values.region_ids}
-                    onChange={(value) => setFieldValue("checking_account", value)}
+                    name="account"
+                    value={formik.values.account}
+                    onChange={(value) =>
+                      formik.setFieldValue("account", value.account)
+                    }
                     //   options={regions}
                   />
                 </Form.Item>
               </div>
 
-              <div className="input-label">{t("Директор")}</div>
+              <div className="input-label">{t("director")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="Директор">
+                <Form.Item formik={formik} name="director">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
-                    name="Директор"
+                    value={formik.values.director}
+                    onChange={formik.handleChange}
+                    name="director"
                   />
                 </Form.Item>
               </div>
@@ -148,8 +137,8 @@ export default function RequisitesCreate() {
                 <Form.Item formik={formik} name="mfo">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
+                    value={formik.values.mfo}
+                    onChange={formik.handleChange}
                     name="mfo"
                   />
                 </Form.Item>
@@ -157,102 +146,102 @@ export default function RequisitesCreate() {
 
               <div className="input-label">{t("chief.accountant")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="naming">
+                <Form.Item formik={formik} name="accountant">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
-                    name="naming"
+                    value={formik.values.accountant}
+                    onChange={formik.handleChange}
+                    name="accountant"
                   />
                 </Form.Item>
               </div>
 
               <div className="input-label">{t("oked")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="naming">
+                <Form.Item formik={formik} name="oked">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
-                    name="naming"
+                    value={formik.values.oked}
+                    onChange={formik.handleChange}
+                    name="oked"
                   />
                 </Form.Item>
               </div>
 
               <div className="input-label">{t("code.okpo")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="naming">
+                <Form.Item formik={formik} name="code_okpo">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
-                    name="naming"
+                    value={formik.values.code_okpo}
+                    onChange={formik.handleChange}
+                    name="code_okpo"
                   />
                 </Form.Item>
               </div>
 
               <div className="input-label">{t("code.nds")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="naming">
+                <Form.Item formik={formik} name="code_nds">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
-                    name="naming"
+                    value={formik.values.code_nds}
+                    onChange={formik.handleChange}
+                    name="code_nds"
                   />
                 </Form.Item>
               </div>
 
               <div className="input-label">{t("region")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="naming">
+                <Form.Item formik={formik} name="region">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
-                    name="naming"
+                    value={formik.values.region}
+                    onChange={formik.handleChange}
+                    name="region"
                   />
                 </Form.Item>
               </div>
 
               <div className="input-label">{t("commentary")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="naming">
+                <Form.Item formik={formik} name="comments">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
-                    name="naming"
+                    value={formik.values.comments}
+                    onChange={formik.handleChange}
+                    name="comments"
                   />
                 </Form.Item>
               </div>
             </div>
           </Card>
 
-          <Card
-            title={t("accounts")}
-            style={{ height: "fit-content" }}
-          >
+          <Card title={t("accounts")} style={{ height: "fit-content" }}>
             <div className="grid grid-cols-3 items-baseline">
               <div className="input-label">{t("name")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="name">
+                <Form.Item formik={formik} name="account_name">
                   <Input
                     size="large"
-                    value={values.name}
-                    onChange={handleChange}
-                    name="name"
+                    value={formik.values.account_name}
+                    onChange={formik.handleChange}
+                    name="account_name"
                   />
                 </Form.Item>
               </div>
 
               <div className="input-label">{t("operation.type")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="name">
+                <Form.Item formik={formik} name="type_operation">
                   <Input
                     className="order-1"
                     size="large"
                     style={{ flex: "1 1 80%" }}
+                    name="type_operation"
+                    value={formik.values.type_operation}
+                    onChange={formik.handleChange}
                   />
                 </Form.Item>
               </div>
@@ -261,12 +250,13 @@ export default function RequisitesCreate() {
               <div className="col-span-2 grid-rows-2">
                 <Form.Item formik={formik} name="account">
                   <Select
-                    id="checking_account"
                     isMulti
                     height={40}
-                    name="checking_account"
-                    value={values.region_ids}
-                    onChange={(value) => setFieldValue("checking_account", value)}
+                    name="account"
+                    value={formik.values.account}
+                    onChange={(value) =>
+                      formik.setFieldValue("account", value.account)
+                    }
                     //   options={regions}
                   />
                 </Form.Item>

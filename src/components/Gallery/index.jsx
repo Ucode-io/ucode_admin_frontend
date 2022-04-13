@@ -37,15 +37,12 @@ const Gallery = ({
     );
   }, [gallery]);
 
-  // console.log('gallery ', gallery)
-  console.log('url', imageLinks[0])
+  
 
   const [loading, setLoading] = useState(false);
 
   const addNewImage = (image) => {
     imageLinks.length ? setGallery([image]) : setGallery([...gallery, image]);
-    // setGallery(image)
-    // console.log('image ', image)
   };
 
   const imageClickHandler = (index) => {

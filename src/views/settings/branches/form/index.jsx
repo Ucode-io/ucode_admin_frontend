@@ -33,8 +33,9 @@ export default function BranchCreate() {
   const [saveLoading, setSaveLoading] = useState(false);
   const [value, setValue] = useState(0)
   const theme = useTheme()
-  const [coordinators ,setCoordinators ]=useState(defaultMap)
+  const [coordinators ,setCoordinators ]= useState(defaultMap)
   const params = useParams()
+  const [inns, setInns] = useState()
   
  // =======  Tab ====== //
   const tabLabel = (text, isActive = false) => {
@@ -51,7 +52,6 @@ export default function BranchCreate() {
   const handleChangeIndex = (index) => setValue(index);
   const handleChange = (event, newValue) => setValue(newValue);
 
-
   const routes = [
     {
       title: t(`branch`),
@@ -59,7 +59,6 @@ export default function BranchCreate() {
       route: `/home/settings/branch`,
     },
   ];
-
 
   const initialValues = useMemo(
     () => (
@@ -129,9 +128,8 @@ export default function BranchCreate() {
     [],
   );
 
- 
-
   const onSubmit = (values) => {
+    // values.inns = inns.join().split(',')
     if (params.id === undefined) {
       postBranch(values)
         .then((res) => {
@@ -144,21 +142,10 @@ export default function BranchCreate() {
   };
      
 
-
-  // const validationSchema = useMemo(() => {
-  //   const defaultSchema = yup.mixed().required(t("required.field.error"));
-  //   return yup.object().shape({
-  //     name: defaultSchema,
-  //     type: defaultSchema,
-  //   });
-  // }, []);
-  
-
   const validationSchema = () => {
     const defaultSchema = yup.mixed().required(t("required.field.error"));
     return yup.object().shape({
       name: defaultSchema,
-      city: defaultSchema,
     })
   }
 
@@ -168,8 +155,6 @@ export default function BranchCreate() {
     onSubmit,
     validationSchema,
   });
-
-  
  
   const headerButtons = [
     <Button
@@ -182,7 +167,15 @@ export default function BranchCreate() {
     >
       {t("cancel")}
     </Button>,
-    <Button icon={SaveIcon} size="large" type="submit" loading={saveLoading}>
+    <Button
+      icon={SaveIcon}
+      size="large"
+      type="submit"
+      loading={saveLoading}
+      // onClick={() => {
+      //   history.push("/home/settings/branch");
+      // }}
+    >
       {t("save")}
     </Button>,
   ];

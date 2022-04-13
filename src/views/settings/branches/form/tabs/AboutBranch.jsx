@@ -13,8 +13,6 @@ import Select from "components/Select/index";
 import Gallery from "components/Gallery";
 import CustomInputMask from "components/CustomInputMask";
 import { mapDefaults } from "constants/mapDefaults";
-import PhoneInputField from "components/PhoneInputMask";
-import { TextField } from "@material-ui/core";
 import { getBranchById } from "services/branch";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -31,8 +29,6 @@ export default function AboutBranch({
   const { t } = useTranslation();
   const params = useParams();
   const [address, setAddress] = useState("");
-
-  console.log('formik ', formik.values)
 
   const cities = [
     {
@@ -109,18 +105,7 @@ export default function AboutBranch({
   const getBranch = () => {
     if(params.id){
       getBranchById(params.id).then((res) => {
-        formik.setFieldValue("name", res.data.name);
-        formik.setFieldValue("company_id", res.data.company_id);
-        formik.setFieldValue("id", res.data.id);
-        formik.setFieldValue("address", res.data.address);
-        formik.setFieldValue("city", res.data.city);
-        formik.setFieldValue("latitude", res.data.ilatituded);
-        formik.setFieldValue("longitude", res.data.longitude);
-        formik.setFieldValue("inns", res.data.inns);
-        formik.setFieldValue("logo", res.data.logo);
-        formik.setFieldValue("phone_numbers", res.data.phone_numbers);
-        formik.setFieldValue("catalog_id", res.data.catalog_id);
-        formik.setFieldValue("working_days", res.data.working_days);
+        formik.setValues(res.data);
       });
     }
   };
@@ -181,14 +166,14 @@ export default function AboutBranch({
                         name="phone_numbers"
                         render={(phone_helper) => (
                           <>
-                            {formik.values.phone_numbers.map((inn, index) => (
+                            {formik.values.phone_numbers.map((phone, index) => (
                               <>
                                 <CustomInputMask
                                   mask={`+\\9\\9\\8 99 999 99 99`}
                                   maskChar={null}
                                   autoComplete="none"
                                   onChange={formik.handleChange}
-                                  value={formik.values[index]}
+                                  value={formik.values.phone_numbers[index]}
                                   placeholder="Введите рабочий телефон"
                                   style={{
                                     flex: "1 1 80%",
@@ -235,12 +220,13 @@ export default function AboutBranch({
                                   type="number"
                                   size="large"
                                   name={`inns.${index}`}
-                                  value={formik.values[index]}
-                                  onChange={String(formik.handleChange)}
+                                  value={formik?.values?.inns[index]}
+                                  onChange={formik.handleChange}
                                   style={{
                                     flex: "1 1 80%",
                                     marginBottom: "10px",
                                   }}
+                                
                                 />
                               </>
                             ))}
@@ -429,7 +415,7 @@ export default function AboutBranch({
                     <Select
                       id="city"
                       height={40}
-                      value={formik.values.city.label}
+                      value={formik?.values?.city?.label}
                       onChange={(value) => {
                         formik.setFieldValue("city", value.label);
                       }}

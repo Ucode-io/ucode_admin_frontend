@@ -99,68 +99,6 @@ export default function BranchesTable({ createModal, setCreateModal }) {
     getAllBranches(currentPage);
   }, [currentPage]);
   
-  // const findType = [
-  //   {
-  //     label: `${t("fixed")}`,
-  //     value: "fixed",
-  //   },
-  //   {
-  //     label: `${t("not.fixed")}`,
-  //     value: "not-fixed",
-  //   },
-  // ];
-
-  // const handleDeleteItem = () => {
-  //   setDeleteLoading(true);
-  //   deleteFare(deleteModal.id)
-  //     .then((res) => {
-  //       getItems(currentPage);
-  //       setDeleteLoading(false);
-  //       setDeleteModal(null);
-  //     })
-  //     .finally(() => setDeleteLoading(false));
-  // };
-
-  // const onSubmit = (values) => {
-  //   const data = {
-  //     ...values,
-  //     type: values?.type?.value,
-  //   };
-  //   data?.type === "fixed" && delete data.base_distance;
-  //   data?.type === "fixed" && delete data.price_per_km;
-
-  //   setSaveLoading(true);
-  //   const selectedAction = createModal.id
-  //     ? updateFare(createModal.id, data)
-  //     : postFare(data);
-  //   selectedAction
-  //     .then((res) => {
-  //       getItems(currentPage);
-  //     })
-  //     .finally(() => {
-  //       setSaveLoading(false);
-  //       closeModal();
-  //     });
-  // };
-
-  // const formik = useFormik({
-  //   initialValues: {
-  //     base_price: null,
-  //     type: null,
-  //     base_distance: null,
-  //     price_per_km: null,
-  //   },
-  //   validationSchema: yup.object().shape({
-  //     base_price: yup.mixed().required(t("required.field.error")),
-  //     type: yup.mixed().required(t("required.field.error")),
-  //   }),
-  //   onSubmit,
-  // });
-
-  // const closeModal = () => {
-  //   setCreateModal(null);
-  //   formik.resetForm();
-  // };
 
   const initialColumns = [
     {
@@ -187,7 +125,7 @@ export default function BranchesTable({ createModal, setCreateModal }) {
 
  
 
-  // const { values, handleChange, setFieldValue, handleSubmit } = formik;
+  
 
   return (
     <Card
@@ -227,9 +165,6 @@ export default function BranchesTable({ createModal, setCreateModal }) {
                     </TableCell>
                   ))}
                 </TableRow>
-     
-               
-                
               ))
             ) : (
               <></>

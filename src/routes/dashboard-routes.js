@@ -802,6 +802,13 @@ export default [
     permission: "settings",
   },
   {
+    component: RequisitesCreate,
+    path: "/settings/requisites/:id",
+    exact: true,
+    title: "Requisites",
+    permission: "settings",
+  },
+  {
     component: Branche,
     path: "/settings/branch",
     exact: true,

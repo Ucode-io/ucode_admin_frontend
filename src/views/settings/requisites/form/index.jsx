@@ -6,15 +6,11 @@ import Button from "components/Button";
 import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
-import Filters from "components/Filters";
-import { StyledTabs } from "components/StyledTabs";
-import { StyledTab } from "components/StyledTabs";
-import SwipeableViews from "react-swipeable-views";
 import { useTheme } from "@material-ui/core/styles";
-import { TabPanel } from "components/Tab/TabBody";
 import RequisitesCreate from "./RequisitesCreate";
-// import AboutBranch from "./tabs/AboutBranch";
-// import Users from "./tabs/Users";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { postRequisites, updateRequisite } from "services/requisites";
 
 
 export default function BranchCreate() {
@@ -25,25 +21,59 @@ export default function BranchCreate() {
   const history = useHistory();
   const [saveLoading, setSaveLoading] = useState(false);
   const [value, setValue] = useState(0)
-  const theme = useTheme()
+  const params = useParams()
+
+// =========  formik  =========== //
+
+const initialValues = {
+  account: "",
+  account_name: "",
+  account_number: "",
+  accountant: "",
+  address: "",
+  code: "",
+  code_nds: "",
+  code_okpo: "",
+  comments: "",
+  company_id: "",
+  contact: "",
+  director: "",
+  inn: "",
+  mfo: "",
+  name: "",
+  oked: "",
+  region: "",
+  type_operation: "",
+};
+
+  // =========  POST and UPDATE Requisite  =========== //
+
+const onSubmit = (values) => {
+  if(params.id === undefined){
+    postRequisites(values)
+    .then((res) => console.log('Requsite POST => ', res))
+    .catch((err) => console.log('ERROR post requisite => ', err))
+  }else{
+    updateRequisite(values)
+    .then((res) => console.log("UPDATE Requisite => ", res))
+  }
+}
+
+const validationSchema = () => {
+  const defaultSchema = yup.mixed().required(t("required.field.error"));
+  return yup.object().shape({
+    name: defaultSchema,
+  });
+};
+
+  const formik = useFormik({
+    initialValues,
+    onSubmit,
+    validationSchema
+  })
 
 
-
- // =======  Tab ====== //
-  const tabLabel = (text, isActive = false) => {
-    return <span className="px-1">{text}</span>;
-  };
-
-  const a11yProps = (index) => {
-    return {
-      id: `full-width-tab-${index}`,
-      "aria-controls": `full-width-tabpanel-${index}`,
-    };
-  };
-
-  const handleChangeIndex = (index) => setValue(index);
-  const handleChange = (event, newValue) => setValue(newValue);
-
+  // =========  routing  =========== //
 
   const routes = [
     {
@@ -51,10 +81,8 @@ export default function BranchCreate() {
       link: true,
       route: `/home/settings/branch`,
     },
-    
   ];
 
- 
   const headerButtons = [
     <Button
       icon={CancelIcon}
@@ -72,49 +100,14 @@ export default function BranchCreate() {
   ];
 
   return (
-    // <form onSubmit={handleSubmit}>
-    <>
-      <Header
-        startAdornment={[<Breadcrumb routes={routes} />]}
-        endAdornment={headerButtons}
-      />
-
-      {/* <Filters>
-        <StyledTabs
-          value={value}
-          onChange={handleChange}
-          centered={false}
-          aria-label="full width tabs example"
-          TabIndicatorProps={{ children: <span className="w-2" /> }}
-        >
-          <StyledTab
-            label={tabLabel(t("about.branch"))}
-            // value="about.branch"
-            {...a11yProps(0)}
-          />
-          <StyledTab
-            label={tabLabel(t("users"))}
-            // value="users"
-            {...a11yProps(1)}
-          />
-          
-        </StyledTabs>
-      </Filters> */}
-      <RequisitesCreate />
-
-      {/* <SwipeableViews
-        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-      >
-        <TabPanel value={value} index={0} dir={theme.direction}>
-          <AboutBranch />
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-          <Users />
-        </TabPanel>
-      </SwipeableViews> */}
+    <form onSubmit={formik.handleSubmit}>
+      <>
+        <Header
+          startAdornment={[<Breadcrumb routes={routes} />]}
+          endAdornment={headerButtons}
+        />
+        <RequisitesCreate formik={formik} />
       </>
-    // </form>
+    </form>
   );
 }

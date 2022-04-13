@@ -11,9 +11,7 @@ import {
 } from "@material-ui/core";
 import Pagination from "components/Pagination";
 import Modal from "components/Modal";
-import { deleteOperator, getOperators } from "services/operator";
-import Filters from "components/Filters";
-import Button from "components/Button";
+import { deleteOperator, } from "services/operator";
 import Card from "components/Card";
 import ActionMenu from "components/ActionMenu";
 import LoaderComponent from "components/Loader";
@@ -23,6 +21,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { DownloadIcon, ExportIcon } from "constants/icons";
+import { deleteRequsite, getRequisites } from "services/requisites";
 
 export default function TableOperator() {
   const [loader, setLoader] = useState(true);
@@ -38,9 +37,7 @@ export default function TableOperator() {
 
 
 
-  useEffect(() => {
-    getItems(currentPage);
-  }, [currentPage, search]);
+
 
   useEffect(() => {
     const _columns = [
@@ -73,7 +70,7 @@ export default function TableOperator() {
                 color: "red",
                 title: t("delete"),
                 action: () => {
-                  setDeleteModal({ id: record.id });
+                  deleteRequsite( record.id );
                 },
               },
             ]}
@@ -92,16 +89,16 @@ export default function TableOperator() {
     }, 300);
   };
 
-  const handleDeleteItem = () => {
-    setDeleteLoading(true);
-    deleteOperator(deleteModal.id)
-      .then((res) => {
-        getItems(currentPage);
-        setDeleteLoading(false);
-        setDeleteModal(null);
-      })
-      .finally(() => setDeleteLoading(false));
-  };
+  // const handleDeleteItem = () => {
+  //   setDeleteLoading(true);
+  //   deleteOperator(deleteModal.id)
+  //     .then((res) => {
+  //       getItems(currentPage);
+  //       setDeleteLoading(false);
+  //       setDeleteModal(null);
+  //     })
+  //     .finally(() => setDeleteLoading(false));
+  // };
 
   const initialColumns = [
     {
@@ -119,36 +116,41 @@ export default function TableOperator() {
     {
       title: t("code"),
       key: "code",
-      render: (record) => <div>{record.mail}</div>,
+      render: (record) => <div>{record.code}</div>,
     },
     {
       title: t("inn"),
       key: "inn",
-      render: (record) => <div>{record.phone}</div>,
+      render: (record) => <div>{record.inn}</div>,
     },
     {
       title: t("mfo"),
       key: "mfo",
-      render: (record) => <div>{record.status}</div>,
+      render: (record) => <div>{record.mfo}</div>,
     },
     {
       title: t("oked"),
       key: "oked",
-      render: (record) => <div>{record.status}</div>,
+      render: (record) => <div>{record.oked}</div>,
     },
   ];
 
-  const getItems = (page) => {
+  const getRequisitesList = (page) => {
     setLoader(true);
-    getOperators({ limit: 10, page, search })
+    getRequisites({ limit: 10, page, search })
       .then((res) => {
+        console.log('res res ', res)
         setItems({
-          count: res.count,
-          data: res.shipper_users,
+          count: res.data.count,
+          data: res.data.requisites,
         });
       })
       .finally(() => setLoader(false));
   };
+
+  useEffect(() => {
+    getRequisitesList(currentPage);
+  }, [currentPage, search]);
 
   const extraFilter = (
     <div className="flex gap-4">
@@ -214,7 +216,7 @@ export default function TableOperator() {
                 items.data.map((item, index) => (
                   <TableRow
                     key={item.id}
-                    onClick={() => history.push(`/home/patients/${item.id}`)}
+                    onClick={() => history.push(`/home/settings/requisites/${item.id}`)}
                     className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                   >
                     {columns.map((col) => (
@@ -233,7 +235,7 @@ export default function TableOperator() {
         <Modal
           open={deleteModal}
           onClose={() => setDeleteModal(null)}
-          onConfirm={handleDeleteItem}
+          onConfirm={getRequisitesList}
           loading={deleteLoading}
         />
       </Card>

@@ -3,7 +3,7 @@ import Button from "components/Button";
 import Card from "components/Card";
 import CheckBox from "components/Checkbox1/CheckBox";
 import Form from "components/Form/Index";
-import { Field, FieldArray, FormikProvider, useFormik } from "formik";
+import { ErrorMessage, Field, FieldArray, FormikProvider, useFormik } from "formik";
 import { isNumber } from "helpers/inputHelpers";
 import { useTranslation } from "react-i18next";
 import * as yup from "yup";
@@ -19,8 +19,6 @@ import { getBranchById } from "services/branch";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { onClickMap } from "services/currentLocation";
-// import Gallery from "components/Gallery/v2";
-import UploadWithDrag from "components/Upload/UploadWithDrag";
 
 
 export default function AboutBranch({
@@ -121,12 +119,10 @@ export default function AboutBranch({
         formik.setFieldValue("inns", res.data.inns);
         formik.setFieldValue("logo", res.data.logo);
         formik.setFieldValue("phone_numbers", res.data.phone_numbers);
-        formik.setFieldValue("service_ids", res.data.service_ids);
+        formik.setFieldValue("catalog_id", res.data.catalog_id);
         formik.setFieldValue("working_days", res.data.working_days);
-        
       });
     }
-    
   };
 
   useEffect(() => {
@@ -145,14 +141,12 @@ export default function AboutBranch({
             <div className="grid grid-cols-12 gap-8">
               <div className="col-span-3">
                 <Form.Item formik={formik} name="logo">
-                  <div className="w-full h-full flex mt-6 items-center flex-col">
+                  <div className="w-full h-full flex mt-6 items-center flex-col text-center">
                     <Gallery
                       width={120}
                       height={120}
                       gallery={formik.values.logo ? [formik.values.logo] : []}
-                      setGallery={(elm) =>
-                        formik.setFieldValue("logo", elm[0])
-                      }
+                      setGallery={(elm) => formik.setFieldValue("logo", elm[0])}
                       multiple={false}
                     />
                   </div>
@@ -182,20 +176,6 @@ export default function AboutBranch({
                     <span>{t("phone")}</span>
                   </div>
                   <div className="col-span-2 flex flex-wrap">
-                    {/* <Form.Item formik={formik} name="phone_numbers">
-                        <CustomInputMask
-                          mask={`+\\9\\9\\8 99 999 99 99`}
-                          maskChar={null}
-                          id="phone_numbers"
-                          // {...formik.getFieldProps("phone_number")}
-                          autoComplete="none"
-                          onChange={formik.handleChange}
-                          value={formik.values.phone}
-                          placeholder="Введите рабочий телефон"
-                          style={{ flex: "1 1 80%" }}
-                        />
-                      </Form.Item> */}
-
                     <FormikProvider value={formik}>
                       <FieldArray
                         name="phone_numbers"
@@ -203,29 +183,17 @@ export default function AboutBranch({
                           <>
                             {formik.values.phone_numbers.map((inn, index) => (
                               <>
-                                <Field
-                                  style={{ flex: "1 1 80%" }}
-                                  size="large"
-                                  className="
-                                  order-1
-                                  Input
-                                  border 
-                                  bg-white
-                                  flex
-                                  space-x-2
-                                  items-center
-                                  rounded-lg
-                                  text-body
-                                  relative
-                                  p-1
-                                  px-2
-                                  w-full
-                                  font-smaller
-                                  focus-within:ring
-                                  focus-within:outline-none
-                                  transition
-                                  focus-within:border-blue-300
-                                  "
+                                <CustomInputMask
+                                  mask={`+\\9\\9\\8 99 999 99 99`}
+                                  maskChar={null}
+                                  autoComplete="none"
+                                  onChange={formik.handleChange}
+                                  value={formik.values[index]}
+                                  placeholder="Введите рабочий телефон"
+                                  style={{
+                                    flex: "1 1 80%",
+                                    marginBottom: "10px",
+                                  }}
                                   name={`phone_numbers.${index}`}
                                 />
                               </>
@@ -263,30 +231,16 @@ export default function AboutBranch({
                           <>
                             {formik.values.inns.map((inn, index) => (
                               <>
-                                <Field
-                                  style={{ flex: "1 1 80%" }}
+                                <Input
+                                  type="number"
                                   size="large"
-                                  className="
-                                  order-1
-                                  Input
-                                  border 
-                                  bg-white
-                                  flex
-                                  space-x-2
-                                  items-center
-                                  rounded-lg
-                                  text-body
-                                  relative
-                                  p-1
-                                  px-2
-                                  w-full
-                                  font-smaller
-                                  focus-within:ring
-                                  focus-within:outline-none
-                                  transition
-                                  focus-within:border-blue-300
-                                  "
                                   name={`inns.${index}`}
+                                  value={formik.values[index]}
+                                  onChange={String(formik.handleChange)}
+                                  style={{
+                                    flex: "1 1 80%",
+                                    marginBottom: "10px",
+                                  }}
                                 />
                               </>
                             ))}
@@ -395,43 +349,47 @@ export default function AboutBranch({
         <div className="w-2/5">
           <Card title={t("work.time")}>
             <div>
-              {formik.values.working_days.map((e, index) => (
+              {formik.values.working_days.map((elm, index) => (
                 <div
                   key={index}
                   className="flex w-full justify-between items-center"
                 >
                   <div style={{ flex: "1 1 50%" }}>
-                    {e.day}
+                    {t(`${elm.day}`)}
                     <Form.Item
                       formik={formik}
                       name={`working_days[${index}].day`}
                     >
-                      <Input
-                        type="time"
-                        name={`working_days[${index}].start_time`}
-                        onKeyPress={isNumber}
-                        size="large"
-                        value={e.start_time}
-                        onChange={formik.handleChange}
-                      />
-                      <Input
-                        type="time"
-                        name={`working_days[${index}].end_time`}
-                        onKeyPress={isNumber}
-                        size="large"
-                        value={e.end_time}
-                        onChange={formik.handleChange}
-                      />
+                      <div className="grid grid-cols-2 gap-5">
+                        <Input
+                          type="time"
+                          name={`working_days[${index}].start_time`}
+                          onKeyPress={isNumber}
+                          size="large"
+                          value={elm.start_time}
+                          onChange={formik.handleChange}
+                        />
+
+                        <Input
+                          type="time"
+                          name={`working_days[${index}].end_time`}
+                          onKeyPress={isNumber}
+                          size="large"
+                          value={elm.end_time}
+                          onChange={formik.handleChange}
+                        />
+                      </div>
                     </Form.Item>
                   </div>
                   <div style={{ width: "4%", marginLeft: "15px" }}>
                     <CheckBox
                       onChange={(e) =>
                         formik.setFieldValue(
-                          "working_days[1].is_open",
+                          `working_days[${index}].is_open`,
                           e.target.checked,
                         )
                       }
+                      className="mt-1.5"
                     />
                   </div>
                 </div>
@@ -446,14 +404,13 @@ export default function AboutBranch({
               </div>
               <div className="w-full">
                 <div>
-                  <Form.Item formik={formik} name="service_ids">
+                  <Form.Item formik={formik} name="catalog_id">
                     <Select
-                      id="service_ids"
-                      isMulti
+                      id="catalog_id"
                       height={40}
-                      value={formik.values.service_ids}
+                      value={formik.values.catalog_id}
                       onChange={(value) =>
-                        formik.setFieldValue("service_ids", value)
+                        formik.setFieldValue("catalog_id", value.label)
                       }
                       options={catalogs}
                     />
@@ -471,10 +428,11 @@ export default function AboutBranch({
                   <Form.Item formik={formik} name="city">
                     <Select
                       id="city"
-                      isMulti
                       height={40}
-                      value={formik.values.city}
-                      onChange={(value) => formik.setFieldValue("city", value)}
+                      value={formik.values.city.label}
+                      onChange={(value) => {
+                        formik.setFieldValue("city", value.label);
+                      }}
                       options={cities}
                     />
                   </Form.Item>

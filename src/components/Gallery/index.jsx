@@ -25,20 +25,27 @@ const Gallery = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
+
+
   const isShow = useMemo(
     () => multiple || !gallery.length,
     [gallery, multiple],
   );
   const imageLinks = useMemo(() => {
     return gallery?.map(
-      (image) => `${process.env.REACT_APP_MINIO_URL}/${image}`,
+      (image) => `${process.env.REACT_APP_MINIO_URL}/medion/${image}`,
     );
   }, [gallery]);
+
+  // console.log('gallery ', gallery)
+  console.log('url', imageLinks[0])
 
   const [loading, setLoading] = useState(false);
 
   const addNewImage = (image) => {
-    setGallery([...gallery, image]);
+    imageLinks.length ? setGallery([image]) : setGallery([...gallery, image]);
+    // setGallery(image)
+    // console.log('image ', image)
   };
 
   const imageClickHandler = (index) => {
@@ -68,7 +75,6 @@ const Gallery = ({
       })
       .then((res) => {
         addNewImage(res.data.filename);
-        console.log('res upload ', res)
       })
       .catch((err) => console.log("error here: ", err))
 
@@ -136,7 +142,7 @@ const Gallery = ({
             className="hidden"
             ref={inputRef}
             onChange={inputChangeHandler}
-            // multiple={multiple}
+            multiple={multiple}
           />
         </div>
       )}
@@ -144,7 +150,7 @@ const Gallery = ({
       {previewVisible && (
         <ImageViewer
           style={{ zIndex: 100000, width, height }}
-          src={imageLinks}
+          src={imageLinks[0]}
           currentIndex={selectedImageIndex}
           disableScroll={true}
           onClose={() => setPreviewVisible(false)}
@@ -152,11 +158,11 @@ const Gallery = ({
         />
       )}
       <span
-        className="mt-2 text-primary text-base"
+        className="mt-2 text-primary text-base align-center"
         onClick={() => inputRef.current.click()}
         style={{ cursor: "pointer" }}
       >
-        {imageLinks.length ? t("change.photo") : t("add.photo")}
+        {t("image")}
       </span>
     </div>
   );

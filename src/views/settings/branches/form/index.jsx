@@ -82,43 +82,43 @@ export default function BranchCreate() {
         ],
         working_days: [
           {
-            day: "Monday",
+            day: "monday",
             end_time: "",
             is_open: false,
             start_time: ""
           },
           {
-            day: "Tuesday",
+            day: "tuesday",
             end_time: "",
             is_open: false,
             start_time: ""
           },
           {
-            day: "Wednesday",
+            day: "wednesday",
             end_time: "",
             is_open: false,
             start_time: ""
           },
           {
-            day: "Thursday",
+            day: "thursday",
             end_time: "",
             is_open: false,
             start_time: ""
           },
           {
-            day: "Friday",
+            day: "friday",
             end_time: "",
             is_open: false,
             start_time: ""
           },
           {
-            day: "Saturday",
+            day: "saturday",
             end_time: "",
             is_open: false,
             start_time: ""
           },
           {
-            day: "Sunday",
+            day: "sunday",
             end_time: "",
             is_open: false,
             start_time: ""
@@ -142,35 +142,31 @@ export default function BranchCreate() {
       updateBranch(values).then((res) => console.log("succes ", res));
     }
   };
-
-  // postBranch(values)
-    //   .then((res) => {
-    //     console.log("succes", res);
-    //   })
-    //   .catch((err) => console.log("error"));
-
-      //  console.log('values ', values)
-      //  updateBranch(values)
-      //  .then((res) => console.log('succes ', res))
      
 
-  
-    
-    
+
+  // const validationSchema = useMemo(() => {
+  //   const defaultSchema = yup.mixed().required(t("required.field.error"));
+  //   return yup.object().shape({
+  //     name: defaultSchema,
+  //     type: defaultSchema,
+  //   });
+  // }, []);
   
 
-  const validationSchema = useMemo(() => {
+  const validationSchema = () => {
     const defaultSchema = yup.mixed().required(t("required.field.error"));
     return yup.object().shape({
       name: defaultSchema,
-      type: defaultSchema,
-    });
-  }, []);
+      city: defaultSchema,
+    })
+  }
+
 
   const formik = useFormik({
     initialValues,
     onSubmit,
-    // validationSchema,
+    validationSchema,
   });
 
   

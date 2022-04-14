@@ -4,7 +4,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "../../../components/Pagination";
 import numberToPrice from "../../../helpers/numberToPrice";
 import { useTranslation } from "react-i18next";
-
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "../../../components/Loader";
 import Card from "../../../components/Card";
@@ -31,6 +30,7 @@ export default function BranchesTable({ createModal, setCreateModal }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [saveLoading, setSaveLoading] = useState(null);
   const [columns, setColumns] = useState([])
+
 
   useEffect(() => {
     const _columns = [
@@ -63,7 +63,7 @@ export default function BranchesTable({ createModal, setCreateModal }) {
                   icon: <DeleteIcon />,
                   action: () => {
                     deleteBranch( record.id )
-                    .then((res) => console.log('res', res))
+                    .then((res) => getAllBranches({limit: 10, currentPage}))
                   }
                   ,
                 },
@@ -118,9 +118,6 @@ export default function BranchesTable({ createModal, setCreateModal }) {
     },
   ];
 
- 
-
-  
 
   return (
     <Card
@@ -153,7 +150,7 @@ export default function BranchesTable({ createModal, setCreateModal }) {
                   key={elm.id}
                   onClick={() => history.push(`/home/settings/branch/${elm.id}`)}
                   className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-                > {console.log('id', elm.id)}
+                > 
                   {columns.map((col) => (
                     <TableCell key={col.key}>
                       {col.render ? col.render(elm, index) : "----"}

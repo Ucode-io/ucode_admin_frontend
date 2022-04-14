@@ -64,8 +64,6 @@ export default function RequisitesCreate({formik}) {
     getRequsite()
    },[])
 
-   console.log('formik --- >', formik.values)
-
     return (
       <div className="m-4">
         <div className="grid grid-cols-2 gap-5">
@@ -132,6 +130,7 @@ export default function RequisitesCreate({formik}) {
                     size="large"
                     value={formik.values.inn}
                     onChange={formik.handleChange}
+                    type="number"
                     name="inn"
                   />
                 </Form.Item>
@@ -278,20 +277,21 @@ export default function RequisitesCreate({formik}) {
                 </Form.Item>
               </div>
 
-              <div className="input-label">{t("checking.account")}</div>
+              <div className="input-label">{t("account")}</div>
               <div className="col-span-2 grid-rows-2">
                 <Form.Item formik={formik} name="account">
                   <Select
                     height={40}
                     name="account"
-                    value={formik.values.account}
+                    value={formik?.values?.account?.label}
                     onChange={(value) =>
-                      formik.setFieldValue("account", value.account)
+                      formik.setFieldValue("account", value.label)
                     }
                       options={account}
                   />
                 </Form.Item>
               </div>
+
             </div>
           </Card>
         </div>

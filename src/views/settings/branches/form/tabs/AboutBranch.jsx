@@ -35,6 +35,8 @@ export default function AboutBranch({
   const params = useParams();
   const [address, setAddress] = useState("");
 
+  formik.values.address = address;
+
   const cities = [
     {
       value: 1,
@@ -81,32 +83,8 @@ export default function AboutBranch({
     },
   ];
 
-  const days = [
-    {
-      title: t("monday"),
-    },
-    {
-      title: t("tuesday"),
-    },
-    {
-      title: t("wednesday"),
-    },
-    {
-      title: t("thursday"),
-    },
-    {
-      title: t("friday"),
-    },
-    {
-      title: t("saturday"),
-    },
-    {
-      title: t("sunday"),
-    },
-  ];
-
   // ====== < formik section /> ===== //
-
+  
   const getBranch = () => {
     if (params.id) {
       getBranchById(params.id).then((res) => {
@@ -283,7 +261,7 @@ export default function AboutBranch({
                         <Input
                           size="large"
                           id="address"
-                          value={address}
+                          value={formik.values.address}
                           onChange={formik.handleChange}
                           disabled
                         />
@@ -305,7 +283,7 @@ export default function AboutBranch({
                 <Map
                   className="w-full"
                   style={{ height: "451px" }}
-                  defaultState={mapDefaults}
+                  // defaultState={mapDefaults}
                   onClick={(e) => {
                     setCoordinators({
                       ...coordinators,
@@ -325,18 +303,26 @@ export default function AboutBranch({
                       latitude: e.get("coords")[0],
                     });
                   }}
-                  onChange={(e) => {
-                    console.log("onChange ee ", e);
-                    setCoordinators({
-                      ...coordinators,
-                      lat: e.get("coords")[0],
-                      long: e.get("coords")[1],
-                    });
-                    formik.setFieldValue("latitude", e.get("coords")[0]);
-                    formik.setFieldValue("longitude", e.get("coords")[1]);
-                  }}
+                  // onChange={(e) => {
+                  //   console.log("onChange ee ", e);
+                  //   setCoordinators({
+                  //     ...coordinators,
+                  //     lat: e.get("coords")[0],
+                  //     long: e.get("coords")[1],
+                  //   });
+                  //   formik.setFieldValue("latitude", e.get("coords")[0]);
+                  //   formik.setFieldValue("longitude", e.get("coords")[1]);
+                  // }}
+
                   state={{
-                    center: [coordinators.lat, coordinators.long],
+                    center: [
+                      formik.values.latitude
+                        ? formik.values.latitude
+                        : coordinators.lat,
+                      formik.values.longitude
+                        ? formik.values.longitude
+                        : coordinators.long,
+                    ],
                     zoom: 16,
                     controls: ["zoomControl", "fullscreenControl"],
                   }}
@@ -346,7 +332,14 @@ export default function AboutBranch({
                     options={{
                       preset: "islands#redStretchyIcon",
                     }}
-                    geometry={[coordinators.lat, coordinators.long]}
+                    geometry={[
+                      formik.values.latitude
+                        ? formik.values.latitude
+                        : coordinators.lat,
+                      formik.values.longitude
+                        ? formik.values.longitude
+                        : coordinators.long,
+                    ]}
                   />
                 </Map>
               </YMaps>
@@ -364,32 +357,25 @@ export default function AboutBranch({
                 >
                   <div style={{ flex: "1 1 50%" }}>
                     {t(`${elm.day}`)}
-                    <Form.Item
-                      formik={formik}
-                      name={`working_days[${index}].day`}
-                    >
-                      <div className="grid grid-cols-2 gap-5">
-                        <div>
-                          <Input
-                            type="time"
-                            name={`working_days[${index}].start_time`}
-                            // onKeyPress={isNumber}
-                            size="large"
-                            value={elm.start_time}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                          />
-                           {/* <ErrorMessage
-                            component="div"
-                            style={{
-                              color: "rgb(255, 77, 79)",
-                              fontSize: "12px",
-                            }}
-                            name={`working_days[${index}].start_time`}
-                          /> */}
-                         
-                        </div>
+                    <div className="grid grid-cols-2 gap-x-5">
+                      <Form.Item
+                        formik={formik}
+                        name={`working_days[${index}].start_time`}
+                      >
+                        <Input
+                          type="time"
+                          name={`working_days[${index}].start_time`}
+                          size="large"
+                          value={elm.start_time}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                        />
+                      </Form.Item>
 
+                      <Form.Item
+                        formik={formik}
+                        name={`working_days[${index}].end_time`}
+                      >
                         <Input
                           type="time"
                           name={`working_days[${index}].end_time`}
@@ -398,10 +384,8 @@ export default function AboutBranch({
                           value={elm.end_time}
                           onChange={formik.handleChange}
                         />
-                      </div>
-                      
-                    </Form.Item>
-                   
+                      </Form.Item>
+                    </div>
                   </div>
                   <div style={{ width: "4%", marginLeft: "15px" }}>
                     <CheckBox

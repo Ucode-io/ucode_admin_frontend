@@ -479,5 +479,6 @@
   "income.price" : "Цена приход",
   "selling.price": "Цена продажа",
   "doctors.percent": "Процент врача",
-  "consumables": "Расходники"
+  "consumables": "Расходники",
+  "fill.this.form": "Заполните эту форму"
 }

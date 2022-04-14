@@ -49,27 +49,33 @@ const initialValues = {
   // =========  POST and UPDATE Requisite  =========== //
 
 const onSubmit = (values) => {
+  values.inn = values.inn.toString()
   if(params.id === undefined){
     postRequisites(values)
-    .then((res) => console.log('Requsite POST => ', res))
+    .then((res) => {
+      if(res.status === 'CREATED'){
+        history.goBack()
+      }
+    })
     .catch((err) => console.log('ERROR post requisite => ', err))
   }else{
-    updateRequisite(values)
-    .then((res) => console.log("UPDATE Requisite => ", res))
+    updateRequisite({...values})
+    .then((res) => {
+      console.log("UPDATE Requisite => ", res)
+      if(res.status === 'OK'){
+        history.goBack()
+      }
+    })
   }
 }
-
-const validationSchema = () => {
-  const defaultSchema = yup.mixed().required(t("required.field.error"));
-  return yup.object().shape({
-    name: defaultSchema,
-  });
-};
 
   const formik = useFormik({
     initialValues,
     onSubmit,
-    validationSchema
+    validationSchema: yup.object({
+      name: yup.string().required(t("required.field.error")),
+      inn: yup.string().length(10, "Должно быть 10 цифр")
+    })
   })
 
 
@@ -94,7 +100,12 @@ const validationSchema = () => {
     >
       {t("cancel")}
     </Button>,
-    <Button icon={SaveIcon} size="large" type="submit" loading={saveLoading}>
+    <Button
+      icon={SaveIcon}
+      size="large"
+      type="submit"
+      loading={saveLoading}
+    >
       {t("save")}
     </Button>,
   ];

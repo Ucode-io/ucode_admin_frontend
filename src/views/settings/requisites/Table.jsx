@@ -35,10 +35,7 @@ export default function TableOperator() {
   const [columns, setColumns] = useState([]);
   let debounce = setTimeout(() => {}, 0);
 
-
-
-
-
+  
   useEffect(() => {
     const _columns = [
       ...initialColumns,
@@ -70,7 +67,8 @@ export default function TableOperator() {
                 color: "red",
                 title: t("delete"),
                 action: () => {
-                  deleteRequsite( record.id );
+                  deleteRequsite( record.id )
+                  .then((res) => getRequisitesList(currentPage))
                 },
               },
             ]}

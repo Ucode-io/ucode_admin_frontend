@@ -19,6 +19,8 @@ import { useMemo } from "react";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { postBranch, updateBranch } from "services/branch";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function BranchCreate() {
   const defaultMap = {
@@ -33,7 +35,6 @@ export default function BranchCreate() {
   const theme = useTheme();
   const [coordinators, setCoordinators] = useState(defaultMap);
   const params = useParams();
-  const [inns, setInns] = useState();
 
   // =======  Tab ====== //
   const tabLabel = (text, isActive = false) => {
@@ -118,9 +119,10 @@ export default function BranchCreate() {
     [],
   );
 
+  const tost = () => toast.error("easy")
+
   const onSubmit = (values) => {
     let stringedInns = values.inns.join().split(",");
-    console.log("log", values);
     const body = {
       ...values,
       inns: stringedInns,
@@ -129,28 +131,41 @@ export default function BranchCreate() {
       postBranch(body)
         .then((res) => {
           console.log("succes", res);
+          if(res.status === 'CREATED'){
+            history.goBack()
+          }
         })
-        .catch((err) => console.log("error", err));
+        .catch((err) => {
+          if(err.status === 500){
+            toast.error("Филиал с таким именем уже существует")
+          }
+        });
     } else {
-      updateBranch(body).then((res) => console.log("succes ", res));
+      updateBranch({...body}).then((res) => {
+        if(res.status === 'OK'){
+          history.goBack()
+        }
+      })
+      .catch((err) => console.log("error", err));
     }
   };
+
+  const validationSchema = yup.object({
+    name: yup.string().required(t("required.field.error")),
+    inns: yup.array().of(yup.string().length(10, "Должно быть 10 цифр")),
+    phone_numbers: yup.array().of(yup.string().length(17, "Должно быть 9 цифр").required(t("required.field.error"))),
+    working_days: yup.array().of(yup.object().shape({
+      start_time: yup.string().required(t("fill.this.form")),
+      end_time: yup.string().required(t("fill.this.form"))
+    })),
+  })
 
   const formik = useFormik({
     initialValues,
     onSubmit,
-    validationSchema: yup.object({
-      name: yup.string().required(t("required.field.error")),
-      inns: yup.array().of(yup.string().length(10, "Должно быть 10 цифр")),
-      phone_numbers: yup.array().of(yup.string().length(17, "Должно быть 9 цифр").required(t("required.field.error"))),
-      working_days: yup.array().of(yup.object().shape({
-        start_time: yup.string().required(t("required.field.error"))
-      }))
-    }),
+    validationSchema
   });
-
-  console.log('formik => ', formik.values)
-
+  
   const headerButtons = [
     <Button
       icon={CancelIcon}
@@ -158,7 +173,7 @@ export default function BranchCreate() {
       shape="outlined"
       color="red"
       borderColor="bordercolor"
-      onClick={() => history.goBack()}
+      onClick={tost}
     >
       {t("cancel")}
     </Button>,
@@ -167,9 +182,6 @@ export default function BranchCreate() {
       size="large"
       type="submit"
       loading={saveLoading}
-      // onClick={() => {
-      //   history.push("/home/settings/branch");
-      // }}
     >
       {t("save")}
     </Button>,
@@ -216,6 +228,7 @@ export default function BranchCreate() {
         ]}
         endAdornment={value === 0 ? headerButtons : addButton}
       />
+      <ToastContainer />
       <SwipeableViews
         axis={theme.direction === "rtl" ? "x-reverse" : "x"}
         index={value}

@@ -77,11 +77,6 @@ export default function BranchesTable({ createModal, setCreateModal }) {
     setColumns(_columns)
   }, []);
 
-  // const deleteBranchById = () => {
-  //   deleteBranch(id)
-  //   .then((res) => console.log('successfully deleted', res))
-  // }
-
   const getAllBranches = (page) => {
     setLoader(true);
     getBranchList({limit: 10, page})
@@ -119,7 +114,7 @@ export default function BranchesTable({ createModal, setCreateModal }) {
     {
       title: t("phone.number"),
       key: "phone_numbers",
-      render: (record) => <div> {record.phone_numbers} </div>,
+      render: (record) => <div> {record?.phone_numbers[0]}, {record?.phone_numbers[1]} </div>,
     },
   ];
 

@@ -3,7 +3,13 @@ import Button from "components/Button";
 import Card from "components/Card";
 import CheckBox from "components/Checkbox1/CheckBox";
 import Form from "components/Form/Index";
-import { ErrorMessage, Field, FieldArray, FormikProvider, useFormik } from "formik";
+import {
+  ErrorMessage,
+  Field,
+  FieldArray,
+  FormikProvider,
+  useFormik,
+} from "formik";
 import { isNumber } from "helpers/inputHelpers";
 import { useTranslation } from "react-i18next";
 import * as yup from "yup";
@@ -17,7 +23,6 @@ import { getBranchById } from "services/branch";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { onClickMap } from "services/currentLocation";
-
 
 export default function AboutBranch({
   formik,
@@ -103,7 +108,7 @@ export default function AboutBranch({
   // ====== < formik section /> ===== //
 
   const getBranch = () => {
-    if(params.id){
+    if (params.id) {
       getBranchById(params.id).then((res) => {
         formik.setValues(res.data);
       });
@@ -112,11 +117,13 @@ export default function AboutBranch({
 
   useEffect(() => {
     getBranch();
-    onClickMap(
-      setAddress,
-      formik.values,
-    );
+    onClickMap(setAddress, formik.values);
   }, []);
+
+  function maxLengthCheck(object) {
+    // if (object.value.length > object.maxLength)
+    //   object.value = object.value.slice(0, object.maxLength)
+  }
 
   return (
     <div className="m-4">
@@ -167,7 +174,12 @@ export default function AboutBranch({
                         render={(phone_helper) => (
                           <>
                             {formik.values.phone_numbers.map((phone, index) => (
-                              <>
+                              <div
+                                style={{
+                                  flex: "1 1 80%",
+                                  marginBottom: "10px",
+                                }}
+                              >
                                 <CustomInputMask
                                   mask={`+\\9\\9\\8 99 999 99 99`}
                                   maskChar={null}
@@ -175,13 +187,18 @@ export default function AboutBranch({
                                   onChange={formik.handleChange}
                                   value={formik.values.phone_numbers[index]}
                                   placeholder="Введите рабочий телефон"
+                                  name={`phone_numbers.${index}`}
+                                  onBlur={formik.handleBlur}
+                                />
+                                <ErrorMessage
+                                  component="div"
                                   style={{
-                                    flex: "1 1 80%",
-                                    marginBottom: "10px",
+                                    color: "rgb(255, 77, 79)",
+                                    fontSize: "12px",
                                   }}
                                   name={`phone_numbers.${index}`}
                                 />
-                              </>
+                              </div>
                             ))}
                             <Button
                               className="order-2 "
@@ -215,20 +232,30 @@ export default function AboutBranch({
                         render={(arrayHelperes) => (
                           <>
                             {formik.values.inns.map((inn, index) => (
-                              <>
+                              <div
+                                style={{
+                                  flex: "1 1 80%",
+                                  marginBottom: "10px",
+                                }}
+                              >
                                 <Input
                                   type="number"
                                   size="large"
                                   name={`inns.${index}`}
+                                  pattern=""
                                   value={formik?.values?.inns[index]}
                                   onChange={formik.handleChange}
-                                  style={{
-                                    flex: "1 1 80%",
-                                    marginBottom: "10px",
-                                  }}
-                                
+                                  onBlur={formik.handleBlur}
                                 />
-                              </>
+                                <ErrorMessage
+                                  component="div"
+                                  style={{
+                                    color: "rgb(255, 77, 79)",
+                                    fontSize: "12px",
+                                  }}
+                                  name={`inns.${index}`}
+                                />
+                              </div>
                             ))}
                             <Button
                               className="order-2 "
@@ -347,14 +374,26 @@ export default function AboutBranch({
                       name={`working_days[${index}].day`}
                     >
                       <div className="grid grid-cols-2 gap-5">
-                        <Input
-                          type="time"
-                          name={`working_days[${index}].start_time`}
-                          onKeyPress={isNumber}
-                          size="large"
-                          value={elm.start_time}
-                          onChange={formik.handleChange}
-                        />
+                        <div>
+                          <Input
+                            type="time"
+                            name={`working_days[${index}].start_time`}
+                            // onKeyPress={isNumber}
+                            size="large"
+                            value={elm.start_time}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                          />
+                           {/* <ErrorMessage
+                            component="div"
+                            style={{
+                              color: "rgb(255, 77, 79)",
+                              fontSize: "12px",
+                            }}
+                            name={`working_days[${index}].start_time`}
+                          /> */}
+                         
+                        </div>
 
                         <Input
                           type="time"
@@ -365,7 +404,9 @@ export default function AboutBranch({
                           onChange={formik.handleChange}
                         />
                       </div>
+                      
                     </Form.Item>
+                   
                   </div>
                   <div style={{ width: "4%", marginLeft: "15px" }}>
                     <CheckBox

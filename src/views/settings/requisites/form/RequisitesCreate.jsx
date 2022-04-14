@@ -14,6 +14,13 @@ export default function RequisitesCreate({formik}) {
     const { t } = useTranslation()
     const params = useParams()
 
+    const addresses = [
+      {
+        value: 1,
+        title: 'maksim grokiy'
+      }
+    ]
+
 
     console.log('formik values', formik.values)
 
@@ -73,7 +80,7 @@ export default function RequisitesCreate({formik}) {
                     onChange={(value) =>
                       formik.setFieldValue("address", value.address)
                     }
-                    //   options={regions}
+                      // options={regions}
                   />
                 </Form.Item>
               </div>

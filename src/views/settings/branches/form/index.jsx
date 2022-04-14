@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import Header from "components/Header";
@@ -15,29 +15,27 @@ import { TabPanel } from "components/Tab/TabBody";
 import AboutBranch from "./tabs/AboutBranch";
 import UsersTable from "./tabs/Users/Table";
 import AddIcon from "@material-ui/icons/Add";
-import { useMemo } from 'react'
+import { useMemo } from "react";
 import * as yup from "yup";
-import { useFormik } from 'formik'
+import { useFormik } from "formik";
 import { postBranch, updateBranch } from "services/branch";
 
-
 export default function BranchCreate() {
-
   const defaultMap = {
-    lat:41.311151,
+    lat: 41.311151,
     long: 69.279737,
-  }
+  };
   // ====== variables ====== //
   const { t } = useTranslation();
   const history = useHistory();
   const [saveLoading, setSaveLoading] = useState(false);
-  const [value, setValue] = useState(0)
-  const theme = useTheme()
-  const [coordinators ,setCoordinators ]= useState(defaultMap)
-  const params = useParams()
-  const [inns, setInns] = useState()
-  
- // =======  Tab ====== //
+  const [value, setValue] = useState(0);
+  const theme = useTheme();
+  const [coordinators, setCoordinators] = useState(defaultMap);
+  const params = useParams();
+  const [inns, setInns] = useState();
+
+  // =======  Tab ====== //
   const tabLabel = (text, isActive = false) => {
     return <span className="px-1">{text}</span>;
   };
@@ -61,101 +59,102 @@ export default function BranchCreate() {
   ];
 
   const initialValues = useMemo(
-    () => (
-      {
-        address: "",
-        city: "",
-        company_id: "",
-        inns: [
-          ""
-        ],
-        latitude: '41.311151',
-        logo: "",
-        longitude: '69.279737',
-        name: "",
-        phone_numbers: [
-          ""
-        ],
-        service_ids: [
-          ""
-        ],
-        working_days: [
-          {
-            day: "monday",
-            end_time: "",
-            is_open: false,
-            start_time: ""
-          },
-          {
-            day: "tuesday",
-            end_time: "",
-            is_open: false,
-            start_time: ""
-          },
-          {
-            day: "wednesday",
-            end_time: "",
-            is_open: false,
-            start_time: ""
-          },
-          {
-            day: "thursday",
-            end_time: "",
-            is_open: false,
-            start_time: ""
-          },
-          {
-            day: "friday",
-            end_time: "",
-            is_open: false,
-            start_time: ""
-          },
-          {
-            day: "saturday",
-            end_time: "",
-            is_open: false,
-            start_time: ""
-          },
-          {
-            day: "sunday",
-            end_time: "",
-            is_open: false,
-            start_time: ""
-          }
-        ]
-      }
-    ),
+    () => ({
+      address: "",
+      city: "",
+      company_id: "",
+      inns: [""],
+      latitude: "41.311151",
+      logo: "",
+      longitude: "69.279737",
+      name: "",
+      phone_numbers: [""],
+      service_ids: [""],
+      working_days: [
+        {
+          day: "monday",
+          end_time: "",
+          is_open: false,
+          start_time: "",
+        },
+        {
+          day: "tuesday",
+          end_time: "",
+          is_open: false,
+          start_time: "",
+        },
+        {
+          day: "wednesday",
+          end_time: "",
+          is_open: false,
+          start_time: "",
+        },
+        {
+          day: "thursday",
+          end_time: "",
+          is_open: false,
+          start_time: "",
+        },
+        {
+          day: "friday",
+          end_time: "",
+          is_open: false,
+          start_time: "",
+        },
+        {
+          day: "saturday",
+          end_time: "",
+          is_open: false,
+          start_time: "",
+        },
+        {
+          day: "sunday",
+          end_time: "",
+          is_open: false,
+          start_time: "",
+        },
+      ],
+    }),
     [],
   );
 
   const onSubmit = (values) => {
-    // values.inns = inns.join().split(',')
-    if (params.id === undefined) {
-      postBranch(values)
-        .then((res) => {
-          console.log("succes", res);
-        })
-        .catch((err) => console.log("error", err));
-    } else {
-      updateBranch(values).then((res) => console.log("succes ", res));
-    }
+    let stringedInns = values.inns.join().split(",");
+    console.log("log", values);
+    const body = {
+      ...values,
+      inns: stringedInns,
+    };
+    // if (params.id === undefined) {
+    //   postBranch(body)
+    //     .then((res) => {
+    //       console.log("succes", res);
+    //     })
+    //     .catch((err) => console.log("error", err));
+    // } else {
+    //   updateBranch(body).then((res) => console.log("succes ", res));
+    // }
   };
-     
-
-  const validationSchema = () => {
-    const defaultSchema = yup.mixed().required(t("required.field.error"));
-    return yup.object().shape({
-      name: defaultSchema,
-    })
-  }
-
-
+  // yup
+  // .array()
+  // .of(yup.string().length(10, "Must be 10 nums").required("aaaa")),
   const formik = useFormik({
     initialValues,
     onSubmit,
-    validationSchema,
+    validationSchema: yup.object({
+      name: yup.string().required(t("required.field.error")),
+      inns: yup.array().of(yup.string().length(10, "Должно быть 10 цифр")),
+      phone_numbers: yup.array().of(yup.string().length(17, "Должно быть 9 цифр").required(t("required.field.error"))),
+      working_days: yup.array().of(yup.object().shape({
+        start_time: yup.string().required(t("required.field.error"))
+      }))
+    }),
   });
- 
+
+  useEffect(() => {
+    console.log("formik", formik);
+  }, [formik]);
+
   const headerButtons = [
     <Button
       icon={CancelIcon}
@@ -182,16 +181,16 @@ export default function BranchCreate() {
 
   const addButton = [
     <Button
-    icon={AddIcon}
-    size="medium"
-    onClick={() => {
-      history.push("/home/settings/branch/create/user/create");
-      // setCreateModal(true)
-    }}
-  >
-    {t("add")}
-  </Button>,
-  ]
+      icon={AddIcon}
+      size="medium"
+      onClick={() => {
+        history.push("/home/settings/branch/create/user/create");
+        // setCreateModal(true)
+      }}
+    >
+      {t("add")}
+    </Button>,
+  ];
 
   return (
     <form onSubmit={formik.handleSubmit}>

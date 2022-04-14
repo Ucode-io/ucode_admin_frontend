@@ -125,19 +125,17 @@ export default function BranchCreate() {
       ...values,
       inns: stringedInns,
     };
-    // if (params.id === undefined) {
-    //   postBranch(body)
-    //     .then((res) => {
-    //       console.log("succes", res);
-    //     })
-    //     .catch((err) => console.log("error", err));
-    // } else {
-    //   updateBranch(body).then((res) => console.log("succes ", res));
-    // }
+    if (params.id === undefined) {
+      postBranch(body)
+        .then((res) => {
+          console.log("succes", res);
+        })
+        .catch((err) => console.log("error", err));
+    } else {
+      updateBranch(body).then((res) => console.log("succes ", res));
+    }
   };
-  // yup
-  // .array()
-  // .of(yup.string().length(10, "Must be 10 nums").required("aaaa")),
+
   const formik = useFormik({
     initialValues,
     onSubmit,
@@ -151,9 +149,7 @@ export default function BranchCreate() {
     }),
   });
 
-  useEffect(() => {
-    console.log("formik", formik);
-  }, [formik]);
+  console.log('formik => ', formik.values)
 
   const headerButtons = [
     <Button

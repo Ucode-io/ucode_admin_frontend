@@ -114,7 +114,7 @@ export default function BranchesTable({ createModal, setCreateModal }) {
     {
       title: t("phone.number"),
       key: "phone_numbers",
-      render: (record) => <div> {record?.phone_numbers[0]}, {record?.phone_numbers[1]} </div>,
+      render: (record) => <div> {record?.phone_numbers[0]} </div>,
     },
   ];
 

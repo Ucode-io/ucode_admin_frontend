@@ -17,12 +17,35 @@ export default function RequisitesCreate({formik}) {
     const addresses = [
       {
         value: 1,
-        title: 'maksim grokiy'
-      }
+        label: 'maksim grokiy'
+      },
+      {
+        value: 2,
+        label: 'chilonzor'
+      },
     ]
 
+    const contacts = [
+      {
+        value: 1,
+        label: 'email'
+      },
+      {
+        value: 2,
+        label: 'telegram'
+      },
+    ]
 
-    console.log('formik values', formik.values)
+    const account = [
+      {
+        value: 1,
+        label: '1'
+      },
+      {
+        value: 2,
+        label: '2'
+      },
+    ]
 
    // ====== < GET Requisite /> ===== //
 
@@ -40,6 +63,8 @@ export default function RequisitesCreate({formik}) {
    useEffect(() => {
     getRequsite()
    },[])
+
+   console.log('formik --- >', formik.values)
 
     return (
       <div className="m-4">
@@ -76,11 +101,11 @@ export default function RequisitesCreate({formik}) {
                   <Select
                     height={40}
                     name="address"
-                    value={formik.values.address}
+                    value={formik?.values?.adress?.label}
                     onChange={(value) =>
-                      formik.setFieldValue("address", value.address)
+                      formik.setFieldValue("address", value.label)
                     }
-                      // options={regions}
+                    options={addresses}
                   />
                 </Form.Item>
               </div>
@@ -91,11 +116,11 @@ export default function RequisitesCreate({formik}) {
                   <Select
                     height={40}
                     name="contact"
-                    value={formik.values.contact}
+                    value={formik?.values?.contact?.label}
                     onChange={(value) =>
-                      formik.setFieldValue("contact", value.contact)
+                      formik.setFieldValue("contact", value.label)
                     }
-                    //   options={regions}
+                      options={contacts}
                   />
                 </Form.Item>
               </div>
@@ -114,15 +139,15 @@ export default function RequisitesCreate({formik}) {
 
               <div className="input-label">{t("checking.account")}</div>
               <div className="col-span-2 grid-rows-2">
-                <Form.Item formik={formik} name="account">
+                <Form.Item formik={formik} name="account_number">
                   <Select
                     height={40}
-                    name="account"
-                    value={formik.values.account}
+                    name="account_number"
+                    value={formik?.values?.account_number?.label}
                     onChange={(value) =>
-                      formik.setFieldValue("account", value.account)
+                      formik.setFieldValue("account_number", value.label)
                     }
-                    //   options={regions}
+                      options={account}
                   />
                 </Form.Item>
               </div>
@@ -257,14 +282,13 @@ export default function RequisitesCreate({formik}) {
               <div className="col-span-2 grid-rows-2">
                 <Form.Item formik={formik} name="account">
                   <Select
-                    isMulti
                     height={40}
                     name="account"
                     value={formik.values.account}
                     onChange={(value) =>
                       formik.setFieldValue("account", value.account)
                     }
-                    //   options={regions}
+                      options={account}
                   />
                 </Form.Item>
               </div>

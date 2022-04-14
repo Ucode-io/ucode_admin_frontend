@@ -120,11 +120,6 @@ export default function AboutBranch({
     onClickMap(setAddress, formik.values);
   }, []);
 
-  function maxLengthCheck(object) {
-    // if (object.value.length > object.maxLength)
-    //   object.value = object.value.slice(0, object.maxLength)
-  }
-
   return (
     <div className="m-4">
       <div className="flex gap-5">

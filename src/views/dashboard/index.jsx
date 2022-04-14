@@ -88,7 +88,7 @@ const Dashboard = () => {
       />
 
       <div className="p-6">
-        <Widgets data={computedWidgetsData} />
+        {/* <Widgets data={computedWidgetsData} /> */}
 
         <AdminDashboard statistics={statistics} />
       </div>

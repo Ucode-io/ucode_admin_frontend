@@ -57,7 +57,8 @@ export function errorHandler(error, hooks) {
           .catch((err) => {
             store.dispatch(logout());
           });
-      } else if (window.location.pathname !== "/auth/login" && access_token) {
+      }
+       else if (window.location.pathname !== "/auth/login" && access_token) {
         store.dispatch(logout());
       }
     }

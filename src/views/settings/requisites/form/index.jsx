@@ -69,13 +69,15 @@ const onSubmit = (values) => {
   }
 }
 
+const validationSchema = yup.object({
+  name: yup.string().required(t("required.field.error")),
+  inn: yup.string().length(10, "Должно быть 10 цифр").required(t("required.field.error"))
+})
+
   const formik = useFormik({
     initialValues,
     onSubmit,
-    validationSchema: yup.object({
-      name: yup.string().required(t("required.field.error")),
-      inn: yup.string().length(10, "Должно быть 10 цифр")
-    })
+    validationSchema
   })
 
 

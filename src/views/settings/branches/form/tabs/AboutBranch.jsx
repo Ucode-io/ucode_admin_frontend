@@ -11,14 +11,12 @@ import {
   useFormik,
 } from "formik";
 import { isNumber } from "helpers/inputHelpers";
-import { useTranslation } from "react-i18next";
-import * as yup from "yup";
+import { useTranslation } from "react-i18next"
 import add_icon from "../../../../../assets/icons/add_icon.svg";
 import { Map, Placemark, YMaps } from "react-yandex-maps";
 import Select from "components/Select/index";
 import Gallery from "components/Gallery";
 import CustomInputMask from "components/CustomInputMask";
-import { mapDefaults } from "constants/mapDefaults";
 import { getBranchById } from "services/branch";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -40,35 +38,51 @@ export default function AboutBranch({
   const cities = [
     {
       value: 1,
-      label: "Tashkent",
+      label: "Ташкент ",
     },
     {
       value: 2,
-      label: "Andijon",
+      label: "Андижан ",
     },
     {
       value: 3,
-      label: "Fergana",
+      label: "Фергана",
     },
     {
       value: 4,
-      label: "Namangan",
+      label: "Наманган",
     },
     {
       value: 5,
-      label: "Sirdaryo",
+      label: "Cирдарё ",
     },
     {
       value: 6,
-      label: "Jizzakh",
+      label: "Жиззах ",
     },
     {
       value: 7,
-      label: "Samarqand",
+      label: "Самарканд",
     },
     {
       value: 8,
-      label: "Kharezm",
+      label: "Харезм",
+    },
+    {
+      value: 9,
+      label: "Бухара ",
+    },
+    {
+      value: 10,
+      label: "Кашкадарья",
+    },
+    {
+      value: 11,
+      label: "Нукус",
+    },
+    {
+      value: 12,
+      label: "Сурхандарья",
     },
   ];
 

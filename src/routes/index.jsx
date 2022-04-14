@@ -39,24 +39,24 @@ const AppRouter = () => {
     leave: { opacity: 0 },
   })
 
-  // if (!token)
-  //   return (
-  //     <Switch>
-  //       {authRoutes.map((route) => (
-  //         <Route
-  //           path={route.path}
-  //           exact={route.exact}
-  //           key={route.id}
-  //           render={(routeProps) => (
-  //             <route.layout history={routeProps.history}>
-  //               <route.component {...routeProps} />
-  //             </route.layout>
-  //           )}
-  //         />
-  //       ))}
-  //       {/* <Redirect to="/auth/login" /> */}
-  //     </Switch>
-  //   )
+  if (!token)
+    return (
+      <Switch>
+        {authRoutes.map((route) => (
+          <Route
+            path={route.path}
+            exact={route.exact}
+            key={route.id}
+            render={(routeProps) => (
+              <route.layout history={routeProps.history}>
+                <route.component {...routeProps} />
+              </route.layout>
+            )}
+          />
+        ))}
+        <Redirect to="/auth/login" />
+      </Switch>
+    )
 
   return (
     <Switch>

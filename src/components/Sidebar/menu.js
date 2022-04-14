@@ -25,14 +25,14 @@ export const menu = [
     icon: AnalyticsIcon,
     permission: "dashboard",
   },
-  {
-    id: "orders",
-    title: "orders",
-    path: "/home/orders",
-    isActive: false,
-    icon: PendingActionsIcon,
-    permission: "orders",
-  },
+  // {
+  //   id: "orders",
+  //   title: "orders",
+  //   path: "/home/orders",
+  //   isActive: false,
+  //   icon: PendingActionsIcon,
+  //   permission: "orders",
+  // },
   {
     id: "patients",
     title: "patients",
@@ -49,13 +49,13 @@ export const menu = [
     icon: GroupIcon,
     permission: "staffs"
   },
-  {
-    id: "catalog",
-    title: "catalog",
-    path: "/home/catalog",
-    redirect: "/home/catalog/goods",
-    isActive: true,
-    icon: Restaurant,
+  // {
+  //   id: "catalog",
+  //   title: "catalog",
+  //   path: "/home/catalog",
+  //   redirect: "/home/catalog/goods",
+  //   isActive: true,
+  //   icon: Restaurant,
     // children: [
     //   {
     //     id: "goods.settings",
@@ -138,52 +138,52 @@ export const menu = [
     //     permission: "settings",
     //   },
     // ],
-  },
-  {
-    id: "marketing",
-    title: "marketing",
-    path: "/home/marketing/stocks",
-    redirect: "/home/marketing/stocks",
-    isActive: true,
-    icon: GpsFixedOutlined,
-    children: [
-      {
-        id: "stock",
-        title: "stock",
-        path: "/home/marketing/stocks",
-        isChild: true,
-        isActive: false,
-        permission: "marketing",
-      },
-    ],
-  },
-  {
-    id: "courier",
-    title: "courier",
-    path: "/home/courier",
-    isActive: true,
-    icon: DirectionsCar,
-    permission: "courier",
-    redirect: "/home/courier/list",
-    children: [
-      {
-        id: "courier_child",
-        title: "courier",
-        path: "/home/courier/list",
-        isActive: false,
-        permission: "courier",
-        isChild: true,
-      },
-      {
-        id: "courier_type",
-        title: "courier.type",
-        path: "/home/courier/courier-type",
-        isActive: false,
-        permission: "courier_type",
-        isChild: true,
-      },
-    ],
-  },
+  // },
+  // {
+  //   id: "marketing",
+  //   title: "marketing",
+  //   path: "/home/marketing/stocks",
+  //   redirect: "/home/marketing/stocks",
+  //   isActive: true,
+  //   icon: GpsFixedOutlined,
+  //   children: [
+  //     {
+  //       id: "stock",
+  //       title: "stock",
+  //       path: "/home/marketing/stocks",
+  //       isChild: true,
+  //       isActive: false,
+  //       permission: "marketing",
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: "courier",
+  //   title: "courier",
+  //   path: "/home/courier",
+  //   isActive: true,
+  //   icon: DirectionsCar,
+  //   permission: "courier",
+  //   redirect: "/home/courier/list",
+  //   children: [
+  //     {
+  //       id: "courier_child",
+  //       title: "courier",
+  //       path: "/home/courier/list",
+  //       isActive: false,
+  //       permission: "courier",
+  //       isChild: true,
+  //     },
+  //     {
+  //       id: "courier_type",
+  //       title: "courier.type",
+  //       path: "/home/courier/courier-type",
+  //       isActive: false,
+  //       permission: "courier_type",
+  //       isChild: true,
+  //     },
+  //   ],
+  // },
   /* *** READY BUT MAY MALFUNCTION *** */
   // {
   //   id: "reports",
@@ -347,38 +347,6 @@ export const menu = [
       },
     ],
   },
-
-  // {
-  //   id: 'new-offers',
-  //   title: 'new.offers',
-  //   path: '/home/new-offers',
-  //   isActive: false,
-  //   icon: Work,
-  //   permission: 'new_offers'
-  // },
-  // {
-  //   id: 'settings',
-  //   title: 'settings',
-  //   path: '/home/settings',
-  //   isActive: true,
-  //   icon: Settings,
-  //   children: [
-  //     {
-  //       id: 'entity.types',
-  //       title: 'entity.types',
-  //       path: '/home/settings/entity-type',
-  //       isChild: true,
-  //       permission: 'entity_type'
-  //     },
-  //     {
-  //       id: 'the.logic.of.the.discussion.of.applications',
-  //       title: 'the.logic.of.the.discussion.of.applications',
-  //       path: '/home/settings/diagram-list',
-  //       isChild: true,
-  //       permission: 'settings_permission_diagram'
-  //     },
-  //   ],
-  // },
 ];
 
 export const settings = [];

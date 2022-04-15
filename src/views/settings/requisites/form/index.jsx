@@ -12,74 +12,73 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { postRequisites, updateRequisite } from "services/requisites";
 
-
 export default function BranchCreate() {
-  
-
   // ====== variables ====== //
   const { t } = useTranslation();
   const history = useHistory();
   const [saveLoading, setSaveLoading] = useState(false);
-  const [value, setValue] = useState(0)
-  const params = useParams()
+  const [value, setValue] = useState(0);
+  const params = useParams();
 
-// =========  formik  =========== //
+  // =========  formik  =========== //
 
-const initialValues = {
-  account: "",
-  account_name: "",
-  account_number: "",
-  accountant: "",
-  address: "",
-  code: "",
-  code_nds: "",
-  code_okpo: "",
-  comments: "",
-  company_id: "",
-  contact: "",
-  director: "",
-  inn: "",
-  mfo: "",
-  name: "",
-  oked: "",
-  region: "",
-  type_operation: "",
-};
+  const initialValues = {
+    account: "",
+    account_name: "",
+    account_number: "",
+    accountant: "",
+    address: "",
+    code: "",
+    code_nds: "",
+    code_okpo: "",
+    comments: "",
+    company_id: "",
+    contact: "",
+    director: "",
+    inn: "",
+    mfo: "",
+    name: "",
+    oked: "",
+    region: "",
+    type_operation: "",
+  };
 
   // =========  POST and UPDATE Requisite  =========== //
 
-const onSubmit = (values) => {
-  values.inn = values.inn.toString()
-  if(params.id === undefined){
-    postRequisites(values)
-    .then((res) => {
-      if(res.status === 'CREATED'){
-        history.goBack()
-      }
-    })
-    .catch((err) => console.log('ERROR post requisite => ', err))
-  }else{
-    updateRequisite({...values})
-    .then((res) => {
-      console.log("UPDATE Requisite => ", res)
-      if(res.status === 'OK'){
-        history.goBack()
-      }
-    })
-  }
-}
+  const onSubmit = (values) => {
+    console.log("SUBMIT ==>", values);
+    values.inn = values.inn?.toString();
+    if (!params.id) {
+      postRequisites(values)
+        .then((res) => {
+          if (res.status === "CREATED") {
+            history.goBack();
+          }
+        })
+        .catch((err) => console.log("ERROR post requisite => ", err));
+    } else {
+      console.log("SUBMIT2222 ==>", values);
+      updateRequisite({ ...values }).then((res) => {
+        console.log("UPDATE Requisite => ", res);
+        if (res.status === "OK") {
+          history.goBack();
+        }
+      });
+    }
+  };
 
-const validationSchema = yup.object({
-  name: yup.string().required(t("required.field.error")),
-  inn: yup.string().length(10, "Должно быть 10 цифр").required(t("required.field.error"))
-})
+  const validationSchema = yup.object({
+    name: yup.string().required(t("required.field.error")),
+    inn: yup.string().length(10, "Должно быть 10 цифр"),
+  });
 
   const formik = useFormik({
     initialValues,
     onSubmit,
-    validationSchema
-  })
+    validationSchema,
+  });
 
+  console.log("FORMIK ==>", formik);
 
   // =========  routing  =========== //
 
@@ -102,12 +101,7 @@ const validationSchema = yup.object({
     >
       {t("cancel")}
     </Button>,
-    <Button
-      icon={SaveIcon}
-      size="large"
-      type="submit"
-      loading={saveLoading}
-    >
+    <Button icon={SaveIcon} size="large" type="submit" loading={saveLoading}>
       {t("save")}
     </Button>,
   ];

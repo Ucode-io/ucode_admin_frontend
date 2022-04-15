@@ -11,7 +11,7 @@ import {
   useFormik,
 } from "formik";
 import { isNumber } from "helpers/inputHelpers";
-import { useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next";
 import add_icon from "../../../../../assets/icons/add_icon.svg";
 import { Map, Placemark, YMaps } from "react-yandex-maps";
 import Select from "components/Select/index";
@@ -21,6 +21,7 @@ import { getBranchById } from "services/branch";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { onClickMap } from "services/currentLocation";
+import { values } from "lodash";
 
 export default function AboutBranch({
   formik,
@@ -33,7 +34,11 @@ export default function AboutBranch({
   const params = useParams();
   const [address, setAddress] = useState("");
 
-  formik.values.address = address;
+  // if(params.id === undefined){
+  // formik.values.address = address;
+  // }
+
+  const city = ["tashkent", "andijan", "fergana"];
 
   const cities = [
     {
@@ -98,7 +103,7 @@ export default function AboutBranch({
   ];
 
   // ====== < formik section /> ===== //
-  
+
   const getBranch = () => {
     if (params.id) {
       getBranchById(params.id).then((res) => {
@@ -109,8 +114,10 @@ export default function AboutBranch({
 
   useEffect(() => {
     getBranch();
-    onClickMap(setAddress, formik.values);
+    // onClickMap(setAddress, formik.values);
   }, []);
+
+  console.log("values ", formik.values);
 
   return (
     <div className="m-4">
@@ -312,7 +319,7 @@ export default function AboutBranch({
                       "longitude",
                       String(e.get("coords")[1]),
                     );
-                    onClickMap(setAddress, {
+                    onClickMap((val) => formik.setFieldValue("address", val), {
                       longitude: e.get("coords")[1],
                       latitude: e.get("coords")[0],
                     });
@@ -424,13 +431,15 @@ export default function AboutBranch({
               </div>
               <div className="w-full">
                 <div>
-                  <Form.Item formik={formik} name="catalog_id">
+                  <Form.Item formik={formik} name="catalogue_id">
                     <Select
-                      id="catalog_id"
+                      name="catalogue_id"
                       height={40}
-                      value={formik.values.catalog_id}
+                      value={catalogs.find(
+                        (item) => item.label === formik.values.catalogue_id,
+                      )}
                       onChange={(value) =>
-                        formik.setFieldValue("catalog_id", value.label)
+                        formik.setFieldValue("catalogue_id", value.label)
                       }
                       options={catalogs}
                     />
@@ -447,9 +456,11 @@ export default function AboutBranch({
                 <div>
                   <Form.Item formik={formik} name="city">
                     <Select
-                      id="city"
+                      name="city"
                       height={40}
-                      value={formik?.values?.city?.label}
+                      value={cities.find(
+                        (item) => item.label === formik.values.city,
+                      )}
                       onChange={(value) => {
                         formik.setFieldValue("city", value.label);
                       }}

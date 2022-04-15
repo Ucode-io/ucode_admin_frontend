@@ -74,52 +74,54 @@ export default function BranchCreate() {
       working_days: [
         {
           day: "monday",
-          end_time: "",
+          end_time: "18:00",
           is_open: false,
-          start_time: "",
+          start_time: "09:00",
         },
         {
           day: "tuesday",
-          end_time: "",
+          end_time: "18:00",
           is_open: false,
-          start_time: "",
+          start_time: "09:00",
         },
         {
           day: "wednesday",
-          end_time: "",
+          end_time: "18:00",
           is_open: false,
-          start_time: "",
+          start_time: "09:00",
         },
         {
           day: "thursday",
-          end_time: "",
+          end_time: "18:00",
           is_open: false,
-          start_time: "",
+          start_time: "09:00",
         },
         {
           day: "friday",
-          end_time: "",
+          end_time: "18:00",
           is_open: false,
-          start_time: "",
+          start_time: "09:00",
         },
         {
           day: "saturday",
-          end_time: "",
+          end_time: "18:00",
           is_open: false,
-          start_time: "",
+          start_time: "09:00",
         },
         {
           day: "sunday",
-          end_time: "",
+          end_time: "18:00",
           is_open: false,
-          start_time: "",
+          start_time: "09:00",
         },
       ],
     }),
     [],
   );
 
-  const tost = () => toast.error("easy")
+  const tost = () => {
+    history.push("/home/settings/branch")
+  }
 
   const onSubmit = (values) => {
     let stringedInns = values.inns.join().split(",");
@@ -128,25 +130,25 @@ export default function BranchCreate() {
       inns: stringedInns,
     };
     if (params.id === undefined) {
+      setSaveLoading(true)
       postBranch(body)
         .then((res) => {
-          console.log("succes", res);
-          if(res.status === 'CREATED'){
-            history.goBack()
-          }
+          history.goBack()
         })
         .catch((err) => {
-          if(err.status === 500){
+          if (err.status === 500) {
             toast.error("Филиал с таким именем уже существует")
           }
-        });
+        })
+        .finally(() => setSaveLoading(false))
     } else {
-      updateBranch({...body}).then((res) => {
-        if(res.status === 'OK'){
+      setSaveLoading(true)
+      updateBranch({ ...body })
+        .then((res) => {
           history.goBack()
-        }
-      })
-      .catch((err) => console.log("error", err));
+        })
+        .catch((err) => console.log("error", err))
+        .finally(() => setSaveLoading(false))
     }
   };
 
@@ -163,9 +165,9 @@ export default function BranchCreate() {
   const formik = useFormik({
     initialValues,
     onSubmit,
-    validationSchema
+    validationSchema,
   });
-  
+
   const headerButtons = [
     <Button
       icon={CancelIcon}

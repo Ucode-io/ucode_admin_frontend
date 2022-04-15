@@ -37,52 +37,56 @@ export default function AboutBranch({
 
   const cities = [
     {
-      value: 1,
+      value: "tashkent",
       label: "Ташкент ",
     },
     {
-      value: 2,
+      value: "andijan",
       label: "Андижан ",
     },
     {
-      value: 3,
+      value: "fergana",
       label: "Фергана",
     },
     {
-      value: 4,
+      value: "namangan",
       label: "Наманган",
     },
     {
-      value: 5,
+      value: "sirdarya",
       label: "Cирдарё ",
     },
     {
-      value: 6,
+      value: "djizzakh",
       label: "Жиззах ",
     },
     {
-      value: 7,
+      value: "samarkand",
       label: "Самарканд",
     },
     {
-      value: 8,
+      value: "xarezm",
       label: "Харезм",
     },
     {
-      value: 9,
+      value: "bukhara",
       label: "Бухара ",
     },
     {
-      value: 10,
+      value: "kashkadarya",
       label: "Кашкадарья",
     },
     {
-      value: 11,
+      value: "nukus",
       label: "Нукус",
     },
     {
-      value: 12,
+      value: "surkhandarya",
       label: "Сурхандарья",
+    },
+    {
+      value: "navoi",
+      label: "Навои",
     },
   ];
 
@@ -98,12 +102,13 @@ export default function AboutBranch({
   ];
 
   // ====== < formik section /> ===== //
-  
+
   const getBranch = () => {
     if (params.id) {
-      getBranchById(params.id).then((res) => {
-        formik.setValues(res.data);
-      });
+      getBranchById(params.id)
+        .then((res) => {
+          formik.setValues(res.data);
+        });
     }
   };
 

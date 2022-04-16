@@ -46,30 +46,34 @@ export default function BranchCreate() {
   // =========  POST and UPDATE Requisite  =========== //
 
   const onSubmit = (values) => {
-    console.log("SUBMIT ==>", values);
     values.inn = values.inn?.toString();
     if (!params.id) {
+      setSaveLoading(true);
       postRequisites(values)
         .then((res) => {
           if (res.status === "CREATED") {
             history.goBack();
           }
         })
-        .catch((err) => console.log("ERROR post requisite => ", err));
+        .catch((err) => console.log("ERROR post requisite => ", err))
+        .finally(() => setSaveLoading(false));
     } else {
-      console.log("SUBMIT2222 ==>", values);
-      updateRequisite({ ...values }).then((res) => {
-        console.log("UPDATE Requisite => ", res);
-        if (res.status === "OK") {
-          history.goBack();
-        }
-      });
+      setSaveLoading(true);
+      updateRequisite({ ...values })
+        .then((res) => {
+          console.log("UPDATE Requisite => ", res);
+          if (res.status === "OK") {
+            history.goBack();
+          }
+        })
+        .finally(() => setSaveLoading(false));
     }
   };
 
   const validationSchema = yup.object({
     name: yup.string().required(t("required.field.error")),
     inn: yup.string().length(10, "Должно быть 10 цифр"),
+    contact: yup.string().length(17, "Должно быть 9 цифр")
   });
 
   const formik = useFormik({

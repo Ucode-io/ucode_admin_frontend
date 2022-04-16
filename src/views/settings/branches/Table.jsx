@@ -25,8 +25,6 @@ export default function BranchesTable({ createModal, setCreateModal, search }) {
   const history = useHistory();
   const [items, setItems] = useState({});
   const [loader, setLoader] = useState(true);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [id, setId] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [saveLoading, setSaveLoading] = useState(null);
   const [columns, setColumns] = useState([])

@@ -23,7 +23,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { DownloadIcon, ExportIcon } from "constants/icons";
 import { deleteRequsite, getRequisites } from "services/requisites";
 
-export default function TableOperator() {
+export default function TableRequisite({search}) {
   const [loader, setLoader] = useState(true);
   const { t } = useTranslation();
   const history = useHistory();
@@ -31,7 +31,7 @@ export default function TableOperator() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
   const [columns, setColumns] = useState([]);
   let debounce = setTimeout(() => {}, 0);
 
@@ -79,13 +79,6 @@ export default function TableOperator() {
     ];
     setColumns(_columns);
   }, []);
-
-  const onSearch = (e) => {
-    clearTimeout(debounce);
-    debounce = setTimeout(() => {
-      setSearch(e.target.value);
-    }, 300);
-  };
 
   // const handleDeleteItem = () => {
   //   setDeleteLoading(true);
@@ -147,8 +140,8 @@ export default function TableOperator() {
   };
 
   useEffect(() => {
-    getRequisitesList(currentPage);
-  }, [currentPage, search]);
+    getRequisitesList(search);
+  }, [search]);
 
   const extraFilter = (
     <div className="flex gap-4">

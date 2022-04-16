@@ -65,7 +65,7 @@ export default function Click() {
             addonBefore={<SearchIcon />}
             // onChange={onSearch}
           />
-          <DatePicker className="ml-2 rounded-lg"/>
+          <DatePicker className="ml-2 rounded-lg" />
         </div>
       </Filters>
       <Table />

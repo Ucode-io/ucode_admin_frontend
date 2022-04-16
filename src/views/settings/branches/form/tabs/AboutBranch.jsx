@@ -8,7 +8,6 @@ import {
   Field,
   FieldArray,
   FormikProvider,
-  useFormik,
 } from "formik";
 import { isNumber } from "helpers/inputHelpers";
 import { useTranslation } from "react-i18next";
@@ -32,7 +31,7 @@ export default function AboutBranch({
   // ======== const variables ====== //
   const { t } = useTranslation();
   const params = useParams();
-  const [address, setAddress] = useState("");
+  // const [address, setAddress] = useState("");
 
   // if(params.id === undefined){
   // formik.values.address = address;
@@ -110,10 +109,16 @@ export default function AboutBranch({
 
   const getBranch = () => {
     if (params.id) {
-      getBranchById(params.id)
-        .then((res) => {
-          formik.setValues(res.data);
-        });
+      getBranchById(params.id).then((res) => {
+        formik.setValues(res.data);
+        console.log('GET Branch ', res.data)
+      });
+    }
+  };
+
+  const functionInn = (e, forMik, idx) => {
+    if (e.target.value.length < 11) {
+      forMik.handleChange(e);
     }
   };
 
@@ -241,10 +246,14 @@ export default function AboutBranch({
                                   type="number"
                                   size="large"
                                   name={`inns.${index}`}
-                                  pattern=""
+                                  pattern="[0-9]"
                                   value={formik?.values?.inns[index]}
-                                  onChange={formik.handleChange}
-                                  onBlur={formik.handleBlur}
+                                  onChange={(e) =>
+                                    e.target.value.length < 11
+                                      ? formik.handleChange(e)
+                                      : () => {}
+                                  }
+                                  // onBlur={formik.handleBlur}
                                 />
                                 <ErrorMessage
                                   component="div"

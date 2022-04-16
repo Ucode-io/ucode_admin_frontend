@@ -13,6 +13,7 @@ export default function Requites() {
   const { t } = useTranslation();
   const history = useHistory();
   const [createModal, setCreateModal] = useState(null);
+  const [search, setSearch] = useState()
 
   return (
     <>
@@ -37,10 +38,10 @@ export default function Requites() {
           placeholder={t("search")}
           size="middle"
           addonBefore={<SearchIcon />}
-          // onChange={onSearch}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </Filters>
-      <Table createModal={createModal} setCreateModal={setCreateModal} />
+      <Table createModal={createModal} setCreateModal={setCreateModal} search={search} />
     </>
   );
 }

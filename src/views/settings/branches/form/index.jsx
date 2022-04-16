@@ -128,14 +128,14 @@ export default function BranchCreate() {
     const body = {
       ...values,
       inns: stringedInns,
-      // city: values.city.label,
-      // catalogue_id: values.catalogue_id.label
     };
-    if (params.id === undefined) {
+    if (!params.id) {
       setSaveLoading(true)
       postBranch(body)
         .then((res) => {
-          history.goBack()
+          if (res.status === "CREATED") {
+            history.goBack();
+          }
         })
         .catch((err) => {
           if (err.status === 500) {
@@ -158,10 +158,10 @@ export default function BranchCreate() {
     name: yup.string().required(t("required.field.error")),
     inns: yup.array().of(yup.string().length(10, "Должно быть 10 цифр")),
     phone_numbers: yup.array().of(yup.string().length(17, "Должно быть 9 цифр").required(t("required.field.error"))),
-    // working_days: yup.array().of(yup.object().shape({
-    //   start_time: yup.string().required(t("fill.this.form")),
-    //   end_time: yup.string().required(t("fill.this.form"))
-    // })),
+    working_days: yup.array().of(yup.object().shape({
+      start_time: yup.string().required(t("fill.this.form")),
+      end_time: yup.string().required(t("fill.this.form"))
+    })),
   })
 
   const formik = useFormik({

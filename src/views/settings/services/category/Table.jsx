@@ -11,6 +11,10 @@ import { useHistory } from "react-router-dom";
 // import Card from "../../../components/Card";
 // import ActionMenu from "../../../components/ActionMenu";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  makeStyles,
   Table,
   TableBody,
   TableCell,
@@ -23,6 +27,8 @@ import ActionMenu from "components/ActionMenu";
 import Card from "components/Card"
 import LoaderComponent from "components/Loader";
 import Pagination from "components/Pagination";
+import { getCategoriesList } from "services/category";
+import { KeyboardArrowRight } from "@material-ui/icons";
 
 
 export default function CategoryTable({ createModal, setCreateModal }) {
@@ -35,6 +41,19 @@ export default function CategoryTable({ createModal, setCreateModal }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [saveLoading, setSaveLoading] = useState(null);
   const [columns, setColumns] = useState([])
+
+
+  const useStyles = makeStyles(theme => ({
+    root: {
+      '& .MuiPaper-root': {
+        backgroundColor: '#F4F6FA'
+      },
+      '& .MuiPaper-elevation1': {
+        boxShadow: 'none'
+      }
+    }
+  }))
+  const cls = useStyles()
 
   useEffect(() => {
     const _columns = [
@@ -92,80 +111,27 @@ export default function CategoryTable({ createModal, setCreateModal }) {
     ]
   }
 
+  console.log('data ', columns )
+
+  const getCategories = () => {
+    getCategoriesList()
+    .then((res) => {
+      console.log('GET Categories list => ', res)
+      setItems({
+        count: res.data.count,
+        data: res.data.categories
+      })
+    })
+  }
+
 
   useEffect(() => {
-    // getItems(currentPage);
-  }, [currentPage]);
+    getCategories()
+  }, []);
 
-  // const getItems = (page) => {
-  //   setLoader(true);
-  //   getFares({ limit: 10, page })
-  //     .then((res) => {
-  //       setItems({
-  //         count: res.count,
-  //         data: res.fares,
-  //       });
-  //     })
-  //     .finally(() => setLoader(false));
-  // };
-  
-  // const findType = [
-  //   {
-  //     label: `${t("fixed")}`,
-  //     value: "fixed",
-  //   },
-  //   {
-  //     label: `${t("not.fixed")}`,
-  //     value: "not-fixed",
-  //   },
-  // ];
 
-  // const handleDeleteItem = () => {
-  //   setDeleteLoading(true);
-  //   deleteFare(deleteModal.id)
-  //     .then((res) => {
-  //       getItems(currentPage);
-  //       setDeleteLoading(false);
-  //       setDeleteModal(null);
-  //     })
-  //     .finally(() => setDeleteLoading(false));
-  // };
 
-  // const onSubmit = (values) => {
-  //   const data = {
-  //     ...values,
-  //     type: values?.type?.value,
-  //   };
-  //   data?.type === "fixed" && delete data.base_distance;
-  //   data?.type === "fixed" && delete data.price_per_km;
-
-  //   setSaveLoading(true);
-  //   const selectedAction = createModal.id
-  //     ? updateFare(createModal.id, data)
-  //     : postFare(data);
-  //   selectedAction
-  //     .then((res) => {
-  //       getItems(currentPage);
-  //     })
-  //     .finally(() => {
-  //       setSaveLoading(false);
-  //       closeModal();
-  //     });
-  // };
-
-  // const formik = useFormik({
-  //   initialValues: {
-  //     base_price: null,
-  //     type: null,
-  //     base_distance: null,
-  //     price_per_km: null,
-  //   },
-  //   validationSchema: yup.object().shape({
-  //     base_price: yup.mixed().required(t("required.field.error")),
-  //     type: yup.mixed().required(t("required.field.error")),
-  //   }),
-  //   onSubmit,
-  // });
+ 
 
   // const closeModal = () => {
   //   setCreateModal(null);
@@ -174,14 +140,14 @@ export default function CategoryTable({ createModal, setCreateModal }) {
 
   const initialColumns = [
     {
-      title: "№",
+      title: "",
       key: "order-number",
-      render: (record, index) => (currentPage - 1) * 10 + index + 1,
+      render: (record, index) => <div className="rounded-full border text-blue-500"> <KeyboardArrowRight /> </div>,
     },
     {
       title: t("category"),
       key: "category",
-      render: (record) =>  record.category ,
+      render: (record) =>  record.name.ru ,
     },
     {
       title: t("date.branch"),
@@ -200,14 +166,14 @@ export default function CategoryTable({ createModal, setCreateModal }) {
       footer={
         <Pagination
           title={t("general.count")}
-          count={1
+          count={
+            1
             // items?.count
           }
           // onChange={(pageNumber) => setCurrentPage(pageNumber)}
         />
       }
     >
-  
       <TableContainer className="rounded-md border border-lightgray-1">
         <Table aria-label="simple table">
           <TableHead>
@@ -218,19 +184,32 @@ export default function CategoryTable({ createModal, setCreateModal }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {fakeData.data && fakeData.data.length ? (
-              fakeData.data.map((elm, index) => (
-                <TableRow
-                  key={elm.id}
-                  onClick={() => history.push(`category/${elm.id}`)}
-                  className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-                >
-                  {columns.map((col) => (
-                    <TableCell key={col.key}>
-                      {col.render ? col.render(elm, index) : "----"}
-                    </TableCell>
-                  ))}
-                </TableRow>
+            {items.data && items.data.length ? (
+              items.data.map((elm, index) => (
+                <>
+                {/* <Accordion>
+                  <AccordionSummary> */}
+                    <TableRow
+                      key={elm.id}
+                      // onClick={() => history.push(`category/${elm.id}`)}
+                      className={index % 2 === 0 ? "bg-lightgray-5" : ""}
+                    >
+                      {columns.map((col, i) => (
+                        <>
+                          <TableCell className={cls.root} key={col.key}>
+                            {col.render ? col.render(elm, index) : "----"}
+                          </TableCell>
+                        </>
+                      ))}
+                    </TableRow>
+                  {/* </AccordionSummary>
+                  <AccordionDetails>
+                    {elm?.subcategories?.map((item) => (
+                      <div> {item.name.ru} </div>
+                    ))}
+                  </AccordionDetails>
+                </Accordion> */}
+                </>
               ))
             ) : (
               <></>
@@ -248,8 +227,6 @@ export default function CategoryTable({ createModal, setCreateModal }) {
         onConfirm={handleDeleteItem}
         loading={deleteLoading}
       /> */}
-
-      
     </Card>
   );
 }

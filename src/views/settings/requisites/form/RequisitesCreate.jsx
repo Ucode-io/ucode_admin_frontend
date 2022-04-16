@@ -6,6 +6,7 @@ import Select from 'components/Select'
 import { useParams } from 'react-router-dom'
 import { getRequisiteById } from 'services/requisites'
 import { useEffect } from 'react'
+import CustomInputMask from 'components/CustomInputMask'
 
 
 export default function RequisitesCreate({formik}) {
@@ -99,7 +100,9 @@ export default function RequisitesCreate({formik}) {
                   <Select
                     height={40}
                     name="address"
-                    value={formik?.values?.adress?.label}
+                    value={addresses.find(
+                      (item) => item.label === formik.values.address,
+                    )}
                     onChange={(value) =>
                       formik.setFieldValue("address", value.label)
                     }
@@ -111,14 +114,14 @@ export default function RequisitesCreate({formik}) {
               <div className="input-label">{t("contacts")}</div>
               <div className="col-span-2 grid-rows-2">
                 <Form.Item formik={formik} name="contact">
-                  <Select
-                    height={40}
+                  <CustomInputMask
+                    mask={`+\\9\\9\\8 99 999 99 99`}
+                    maskChar={null}
+                    autoComplete="none"
+                    onChange={formik.handleChange}
+                    value={formik.values.contact}
+                    placeholder="Введите рабочий телефон"
                     name="contact"
-                    value={formik?.values?.contact?.label}
-                    onChange={(value) =>
-                      formik.setFieldValue("contact", value.label)
-                    }
-                      options={contacts}
                   />
                 </Form.Item>
               </div>
@@ -139,7 +142,13 @@ export default function RequisitesCreate({formik}) {
               <div className="input-label">{t("checking.account")}</div>
               <div className="col-span-2 grid-rows-2">
                 <Form.Item formik={formik} name="account_number">
-                  <Select
+                  <Input
+                    size="large"
+                    value={formik.values.account_number}
+                    onChange={formik.handleChange}
+                    name="account_number"
+                  />
+                  {/* <Select
                     height={40}
                     name="account_number"
                     value={formik?.values?.account_number?.label}
@@ -147,7 +156,7 @@ export default function RequisitesCreate({formik}) {
                       formik.setFieldValue("account_number", value.label)
                     }
                       options={account}
-                  />
+                  /> */}
                 </Form.Item>
               </div>
 
@@ -280,18 +289,24 @@ export default function RequisitesCreate({formik}) {
               <div className="input-label">{t("account")}</div>
               <div className="col-span-2 grid-rows-2">
                 <Form.Item formik={formik} name="account">
-                  <Select
+                  <Input
+                    size="large"
+                    value={formik.values.account}
+                    onChange={formik.handleChange}
+                    name="account"
+                  />
+
+                  {/* <Select
                     height={40}
                     name="account"
                     value={formik?.values?.account?.label}
                     onChange={(value) =>
                       formik.setFieldValue("account", value.label)
                     }
-                      options={account}
-                  />
+                    options={account}
+                  /> */}
                 </Form.Item>
               </div>
-
             </div>
           </Card>
         </div>

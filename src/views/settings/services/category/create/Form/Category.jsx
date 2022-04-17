@@ -1,27 +1,22 @@
-
 import { Input } from "alisa-ui";
 import Form from "components/Form/Index";
-import Gallery from "components/Gallery/v2";
+import Gallery from "components/Gallery";
 import { useTranslation } from "react-i18next";
-
-
 
 
 export default function CategoryForm({formik, lang}) {
 
 const {t} = useTranslation()
 
-console.log('formik, ', formik.values)
-
     return (
       <>
        <div className="grid grid-cols-4 gap-5 items-baseline mt-4">
           <div className="col-span-4">
-            <Form.Item formik={formik} name={`picture`}>
+            <Form.Item formik={formik} name={`category.photo`}>
               <div className="input-label"> {t("picture")}</div>
               <Gallery 
-                gallery={formik.values.photo ? [formik.values.photo] : []}
-                setGallery={(elm) => formik.setFieldValue("photo", elm[0])}
+                gallery={formik.values.category.photo ? [formik.values.category.photo] : []}
+                setGallery={(elm) => formik.setFieldValue("category.photo", elm[0])}
                 multiple={false}
               />
             </Form.Item>
@@ -69,20 +64,6 @@ console.log('formik, ', formik.values)
             </Form.Item>
           </div>
         </div>
-
-        {/* <div className="grid grid-cols-4 gap-5 items-baseline">
-          <div className="col-span-4">
-            <Form.Item formik={formik} name={`language_data.${lang}.name`}>
-              <div className="input-label">{t("branch")}</div>
-              <Input
-                size="large"
-                  value={formik?.values.language_data[lang].name}
-                  onChange={formik.handleChange}
-                name={`language_data.${lang}.name`}
-              />
-            </Form.Item>
-          </div>
-        </div> */}
       </>
     );
 }

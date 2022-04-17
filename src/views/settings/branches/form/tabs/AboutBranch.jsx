@@ -31,11 +31,6 @@ export default function AboutBranch({
   // ======== const variables ====== //
   const { t } = useTranslation();
   const params = useParams();
-  // const [address, setAddress] = useState("");
-
-  // if(params.id === undefined){
-  // formik.values.address = address;
-  // }
 
   const city = ["tashkent", "andijan", "fergana"];
 
@@ -116,18 +111,11 @@ export default function AboutBranch({
     }
   };
 
-  const functionInn = (e, forMik, idx) => {
-    if (e.target.value.length < 11) {
-      forMik.handleChange(e);
-    }
-  };
-
   useEffect(() => {
     getBranch();
     // onClickMap(setAddress, formik.values);
   }, []);
 
-  console.log("values ", formik.values);
 
   return (
     <div className="m-4">
@@ -253,7 +241,6 @@ export default function AboutBranch({
                                       ? formik.handleChange(e)
                                       : () => {}
                                   }
-                                  // onBlur={formik.handleBlur}
                                 />
                                 <ErrorMessage
                                   component="div"
@@ -338,17 +325,6 @@ export default function AboutBranch({
                       latitude: e.get("coords")[0],
                     });
                   }}
-                  // onChange={(e) => {
-                  //   console.log("onChange ee ", e);
-                  //   setCoordinators({
-                  //     ...coordinators,
-                  //     lat: e.get("coords")[0],
-                  //     long: e.get("coords")[1],
-                  //   });
-                  //   formik.setFieldValue("latitude", e.get("coords")[0]);
-                  //   formik.setFieldValue("longitude", e.get("coords")[1]);
-                  // }}
-
                   state={{
                     center: [
                       formik.values.latitude

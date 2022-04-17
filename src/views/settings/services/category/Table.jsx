@@ -15,6 +15,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   makeStyles,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -27,7 +28,7 @@ import ActionMenu from "components/ActionMenu";
 import Card from "components/Card"
 import LoaderComponent from "components/Loader";
 import Pagination from "components/Pagination";
-import { getCategoriesList } from "services/category";
+import { deleteCategory, getCategoriesList } from "services/category";
 import { KeyboardArrowRight } from "@material-ui/icons";
 
 
@@ -66,7 +67,7 @@ export default function CategoryTable({ createModal, setCreateModal }) {
               setColumns((prev) => [...val, prev[prev.length - 1]])
             }
           />
-        ), 
+        ),
         key: t("actions"),
         render: (record, _) => (
           <div className="flex gap-2">
@@ -77,41 +78,27 @@ export default function CategoryTable({ createModal, setCreateModal }) {
                   title: t("edit"),
                   color: "blue",
                   icon: <EditIcon />,
-                  action: () =>
-                    history.push(`category/${record.id}`),
+                  action: () => history.push(`category/${record.id}`),
                 },
                 {
                   title: t("delete"),
                   color: "red",
                   icon: <DeleteIcon />,
-                  action: () => setDeleteModal({ id: record.id }),
+                  action: () => {
+                    deleteCategory(record.id)
+                    .then((res) => getCategories())
+                    
+                  },
                 },
               ]}
             />
           </div>
         ),
-      }
-    ]
+      },
+    ];
     setColumns(_columns)
   }, []);
 
-  const fakeData = {
-    count: 1,
-    data: [
-      {
-        id: 1,
-        category: 'cateogry',
-        date: '22-20-2020',
-      },
-      {
-        id: 2,
-        category: 'arsenal',
-        date: '12-34-1919',
-      },
-    ]
-  }
-
-  console.log('data ', columns )
 
   const getCategories = () => {
     getCategoriesList()
@@ -125,18 +112,13 @@ export default function CategoryTable({ createModal, setCreateModal }) {
   }
 
 
+
   useEffect(() => {
     getCategories()
   }, []);
 
 
-
- 
-
-  // const closeModal = () => {
-  //   setCreateModal(null);
-  //   formik.resetForm();
-  // };
+console.log("data" , items)
 
   const initialColumns = [
     {
@@ -174,7 +156,7 @@ export default function CategoryTable({ createModal, setCreateModal }) {
         />
       }
     >
-      <TableContainer className="rounded-md border border-lightgray-1">
+      {/* <TableContainer className="rounded-md border border-lightgray-1">
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -184,11 +166,36 @@ export default function CategoryTable({ createModal, setCreateModal }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.data && items.data.length ? (
-              items.data.map((elm, index) => (
-                <>
-                {/* <Accordion>
-                  <AccordionSummary> */}
+                {items.data && items.data.length ? (
+                  items.data.map((elm, index) => (
+                     <TableRow   key={elm.id} className={index % 2 === 0 ? "bg-lightgray-5" : ""}>
+                       <TableCell>  </TableCell>
+                       <TableCell> {elm.name.ru} </TableCell>
+                       <TableCell> {elm.name.uz} </TableCell>
+                       <TableCell> {elm.name.uz} </TableCell>
+                     </TableRow>
+                  ))
+                ): ''}
+          </TableBody>
+        </Table>
+      </TableContainer> */}
+
+      <TableContainer className="rounded-md border border-lightgray-1">
+        <Paper>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                {columns.map((elm) => (
+                  <TableCell key={elm.key}>{elm.title}</TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {items.data && items.data.length ? (
+                items.data.map((elm, index) => (
+                  <>
+                    {/* <Accordion> */}
+                    {/* <AccordionSummary> */}
                     <TableRow
                       key={elm.id}
                       // onClick={() => history.push(`category/${elm.id}`)}
@@ -202,20 +209,26 @@ export default function CategoryTable({ createModal, setCreateModal }) {
                         </>
                       ))}
                     </TableRow>
-                  {/* </AccordionSummary>
-                  <AccordionDetails>
-                    {elm?.subcategories?.map((item) => (
-                      <div> {item.name.ru} </div>
-                    ))}
-                  </AccordionDetails>
-                </Accordion> */}
-                </>
-              ))
-            ) : (
-              <></>
-            )}
-          </TableBody>
-        </Table>
+                    {/* </AccordionSummary>
+                  <AccordionDetails> */}
+                    {/* {elm?.subcategories?.map((item) => (
+                    <TableRow>
+                      <TableCell>
+                        <div> {item.name.ru} </div>
+                      </TableCell>
+                    </TableRow>
+                  ))} */}
+
+                    {/* </AccordionDetails> */}
+                    {/* </Accordion> */}
+                  </>
+                ))
+              ) : (
+                <></>
+              )}
+            </TableBody>
+          </Table>
+        </Paper>
       </TableContainer>
 
       <LoaderComponent isLoader={loader} />

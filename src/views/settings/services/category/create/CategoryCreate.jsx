@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Card from "components/Card";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
@@ -10,23 +10,19 @@ import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
 import { getBranchesCount } from "../../../../../services";
-import { getOneClick } from "services/promotion";
 import CustomSkeleton from "components/Skeleton";
 import { TabPanel } from "components/Tab/TabBody";
 import Filters from "components/Filters";
 import { StyledTabs,StyledTab } from "components/StyledTabs";
 import  FlagEngIcon from "assets/icons/eng.svg"
 import FlagRuIcon  from "assets/icons/rus.svg"
-// import { ReactComponent as FlagUzIcon } from "assets/icons/uz.svg"
 import  FlagUzIcon  from "assets/icons/uz.svg"
-import CategoryForm from "./Category";
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
-import { Add, ExpandMore, KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
+import CategoryForm from "./Form/Category";
 import { getCategoryById, updateCategory } from "services/category"
-import { useTheme, withStyles } from "@material-ui/core/styles";
+import { useTheme } from "@material-ui/core/styles";
 import SwipeableViews from "react-swipeable-views";
 import { postCategory } from "services/category";
-import SubCategoryForm from "./SubCategory";
+import SubCategoryForm from "./Form/SubCategory";
 
 
 export default function CategoryCreate() {
@@ -35,10 +31,11 @@ export default function CategoryCreate() {
   const params = useParams();
   const theme = useTheme()
   const [saveLoading, setSaveLoading] = useState(false);
-  const [items, setItems] = useState();
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const [selectedCardTab, setSelectedCardTab] = useState(0);
   const [subCategory, setSubcategory] = useState()
+  const [allCategory, setAllcategory] = useState([]);
+  
 
   const initialValues = 
   {
@@ -73,66 +70,65 @@ export default function CategoryCreate() {
     }
   }
 
-//   const IconLeftExpansionPanelSummary = withStyles({
-//     expandIcon: {
-//         order: -1
-//     }
-// })(AccordionSummary);
-
 const getCategory = () => {
-  getCategoryById(params.id)
-  .then((res) => {
-    console.log("GET Category ", res)
-    setSubcategory(res.data.subcategories)
-    formik.setValues(res.data)
+  if (params.id) {
+    getCategoryById(params.id).then((res) => {
+      console.log("GET Category ", res);
+      setSubcategory(res.data.subcategories);
+      formik.setValues(res.data);
+    })
+    .finally(() => setLoader(false))
+  }
+};
+
+
+  useEffect(() => { 
+    getCategory();
+  }, []);
+
+
+  const validationSchema = yup.object().shape({
+    category: yup.object().shape({
+      name: yup.object().shape({
+        ru: yup.string().required(t("required.field.error")),
+        en: yup.string().required(t("required.field.error")),
+        uz: yup.string().required(t("required.field.error"))
+      })
+    }),
   })
-  .finally(() => setLoader(false));
-}
 
-  useEffect(() => {
-    getCategory()
-  }, []);
-
-
-
-  const getItems = (page) => {
-    getBranchesCount({ limit: 10, page }).then((res) => {
-      setItems(res.branches);
-    });
-  };
-  const branches = items?.map((elm) => ({
-    label: elm?.name,
-    value: elm?.id,
-  }));
-
-  const validationSchema = useMemo(() => {
-    const defaultSchema = yup.mixed().required(t("required.field.error"));
-    return yup.object().shape({
-      branch_id: defaultSchema,
-      key: defaultSchema,
-      service_id: defaultSchema,
-      merchant_user_id: defaultSchema,
-      merchant_id: defaultSchema,
-    });
-  }, []);
+  
 
   const onSubmit = (values) => {
-    if(!params.id){
-      postCategory(values)
-      .then((res) => console.log("POST Category => ", res))
-    }else{
-      updateCategory(values)
-      .then((res) => console.log("UPDATE category => ", res))
+    const body = {
+      ...values,
+      subcategory: {
+        category_id: subCategory?.category_id,
+        subcategories: allCategory,
+      },
+    };
+    const body1 = {
+      ...values,
+      subcategories: allCategory,
+    };
+    if (!params.id) {
+      postCategory(body).then((res) => console.log("POST Category => ", res));
+      history.goBack();
+    } else {
+      updateCategory(body1).then((res) =>
+        console.log("UPDATE category => ", res),
+      );
+      history.goBack();
     }
-   
   };
 
   const formik = useFormik({
     initialValues,
     onSubmit,
-    // validationSchema,
+    validationSchema,
   });
 
+  
   const routes = [
     {
       title: t(`add.category`),
@@ -170,11 +166,6 @@ const getCategory = () => {
     };
   };
 
-
-  
-
-
-
   return (
     <form onSubmit={formik.handleSubmit}>
       <Header
@@ -182,7 +173,6 @@ const getCategory = () => {
         endAdornment={headerButtons}
       />
 
-      {/* <TabPanel value={selectedTab} index={0}> */}
       <div className="m-4">
         <div className="flex gap-5">
           <div className="w-2/3">
@@ -216,7 +206,6 @@ const getCategory = () => {
                     }
                     {...a11yProps(1)}
                   />
-
                   <StyledTab
                     label={
                       <span className="flex">
@@ -231,7 +220,6 @@ const getCategory = () => {
               <SwipeableViews
                 axis={theme.direction === "rtl" ? "x-reverse" : "x"}
                 index={selectedCardTab}
-                // onChangeIndex={handleChangeIndex}
               >
                 <TabPanel
                   value={selectedCardTab}
@@ -243,7 +231,6 @@ const getCategory = () => {
                     titleInput={t("category")}
                     lang="ru"
                     value={initialValues}
-                    // setFile={setFile}
                   />
                 </TabPanel>
 
@@ -257,7 +244,6 @@ const getCategory = () => {
                     titleInput={t("category")}
                     lang="en"
                     value={initialValues}
-                    // setFile={setFile}
                   />
                 </TabPanel>
 
@@ -271,7 +257,6 @@ const getCategory = () => {
                     titleInput={t("category")}
                     lang="uz"
                     value={initialValues}
-                    // setFile={setFile}
                   />
                 </TabPanel>
               </SwipeableViews>
@@ -279,11 +264,16 @@ const getCategory = () => {
           </div>
 
           <div className="w-1/2">
-            <SubCategoryForm formik={formik} subCategory={subCategory} id={params.id}/>
+            <SubCategoryForm
+              formik={formik}
+              subCategory={subCategory}
+              id={params.id}
+              allCategory={allCategory}
+              setAllcategory={setAllcategory}
+            />
           </div>
         </div>
       </div>
-      {/* </TabPanel> */}
     </form>
   );
 }

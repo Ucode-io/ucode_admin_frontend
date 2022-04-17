@@ -4,3 +4,4 @@ export const postCategory = (data) => request({method: 'post', url: '/category',
 export const getCategoriesList = () => request({method: 'get', url: '/category'})
 export const getCategoryById = (id) => request({method: 'get', url: `/category/${id}`})
 export const updateCategory = (data) => request({method: 'put', url: '/category', data})
+export const deleteCategory = (id) => request({method: 'delete', url: `/category/${id}`})

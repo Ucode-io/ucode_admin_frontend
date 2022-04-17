@@ -480,5 +480,8 @@
   "selling.price": "Цена продажа",
   "doctors.percent": "Процент врача",
   "consumables": "Расходники",
-  "fill.this.form": "Заполните эту форму"
+  "fill.this.form": "Заполните эту форму",
+  "fill.all.languages": "Заполнить все языки формы",
+  "subcategory": "Подкатегории",
+  "add.subcategory" : "Добавить подкатегорию"
 }

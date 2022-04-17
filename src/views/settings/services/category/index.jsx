@@ -1,4 +1,3 @@
-import "./style.scss";
 import Table from "./Table";
 import Header from "../../../../components/Header";
 import { useHistory } from "react-router-dom";

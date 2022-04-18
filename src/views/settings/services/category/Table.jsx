@@ -41,6 +41,14 @@ export default function CategoryTable({ search }) {
       '& .MuiPaper-elevation1': {
         boxShadow: 'none'
       }
+    },
+    line: {
+      background: '#E5E9EB',
+      width: '1px',
+      height: '48px',
+      position: 'absolute',
+      top: '-10px',
+      left: '40px'
     }
   }))
   const cls = useStyles()
@@ -103,7 +111,7 @@ export default function CategoryTable({ search }) {
     .finally(() => setLoader(false));
   }
 
-
+console.log("ITEMDs ", items)
   useEffect(() => {
     getCategories(search)
   }, [search]);
@@ -141,56 +149,73 @@ export default function CategoryTable({ search }) {
         />
       }
     >
-      
       <TableContainer className="rounded-md border border-lightgray-1">
-        <Paper>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                {columns.map((elm) => (
-                  <TableCell key={elm.key}>{elm.title}</TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {items.data && items.data.length ? (
-                items.data.map((elm, index) => (
-                  <>
-                    {/* <Accordion> */}
-                    {/* <AccordionSummary> */}
-                    <TableRow
-                      key={elm.id}
-                      // onClick={() => history.push(`category/${elm.id}`)}
-                      className={index % 2 === 0 ? "bg-lightgray-5" : ""}
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              {columns.map((elm) => (
+                <TableCell key={elm.key}>{elm.title} </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+             {/* <Accordion> */}
+            {items.data && items.data.length ? (
+              items.data.map((elm, index) => (
+                <>
+                 
+                  <TableRow
+                    key={elm.id}
+                    // onClick={() => history.push(`category/${elm.id}`)}
+                    className={"bg-lightgray-5"}
                     >
-                      {columns.map((col, i) => (
-                        <>
-                          <TableCell className={cls.root} key={col.key}>
-                            {col.render ? col.render(elm, index) : "----"}
-                          </TableCell>
-                        </>
-                      ))}
-                    </TableRow>
-                    {/* </AccordionSummary>
-                  <AccordionDetails> */}
-                    {/* {elm?.subcategories?.map((item) => (
-                    <TableRow>
-                      <TableCell>
-                        <div> {item.name.ru} </div>
+                    {/* <AccordionSummary> */}
+                    {columns.map((col, i) => (
+                      <TableCell className={cls.root} key={col.key}>
+                        {col.render ? col.render(elm, index) : "----"}
                       </TableCell>
-                    </TableRow>
-                  ))} */}
+                    ))}
+                  {/* </AccordionSummary> */}
+                  </TableRow>
+                  {elm.subcategories?.map((item, i) => (
+                    <TableRow>
+                      {/* <AccordionDetails> */}
+                      <>
+                        <TableCell className={cls.root}>{""}</TableCell>
+                        <TableCell>
+                          <div className="flex relative">
+                            <div className="rounded-full border text-blue-500">
+                              <KeyboardArrowRight />
+                            </div>
+                              <div className={`${cls.line}`}> </div>
+                            <div className="ml-7" >{item.name.ru}</div>
+                          </div>
+                        </TableCell>
 
+                        <TableCell className={cls.root}>
+                          {moment(new Date(item.created_at).toISOString())
+                            .utc()
+                            .format("YYYY-MM-DD")}
+                        </TableCell>
+
+                        <TableCell className={cls.root}>
+                          <div className="flex gap-2">
+                             ...
+                          </div>
+                        </TableCell>
+                      </>
                     {/* </AccordionDetails> */}
-                    {/* </Accordion> */}
-                  </>
-                ))
-              ) : (
-                <></>
-              )}
-            </TableBody>
-          </Table>
-        </Paper>
+                    </TableRow>
+                  ))}
+                
+                </>
+              ))
+            ) : (
+              <></>
+            )}
+              {/* </Accordion> */}
+          </TableBody>
+        </Table>
       </TableContainer>
 
       <LoaderComponent isLoader={loader} />

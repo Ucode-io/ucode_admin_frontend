@@ -44,6 +44,7 @@ export default function UpdateSubCategory({
     }
   };
 
+
   return (
     <Modal
       open={updateModal}

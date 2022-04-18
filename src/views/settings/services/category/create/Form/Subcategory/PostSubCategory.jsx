@@ -27,7 +27,6 @@ export default function PostSubCategory({
 
   const [subCategoryTab, setSubCategoryTab] = useState(0);
   const { t } = useTranslation();
-
   const Submittion = () => {
     if (
       formik?.values?.subcategory?.subcategories[0].name.ru === "" ||
@@ -116,7 +115,8 @@ export default function PostSubCategory({
                 name={`subcategory.subcategories[0].name.ru`}
                 size="large"
                 value={
-                  formik?.values?.subcategory?.subcategories[index]?.name.ru || ""
+                  formik?.values?.subcategory?.subcategories[index]?.name.ru ||
+                  ""
                 }
                 onChange={formik.handleChange}
               />
@@ -132,7 +132,9 @@ export default function PostSubCategory({
                 name={`subcategory.subcategories[0].name.en`}
                 size="large"
                 value={
-                  formik?.values?.subcategory?.subcategories[index]?.name.en || "" }
+                  formik?.values?.subcategory?.subcategories[index]?.name.en ||
+                  ""
+                }
                 onChange={formik.handleChange}
               />
             </Form.Item>
@@ -146,7 +148,10 @@ export default function PostSubCategory({
               <Input
                 name={`subcategory.subcategories[0].name.uz`}
                 size="large"
-                value={formik?.values?.subcategory?.subcategories[index]?.name.uz || ""}
+                value={
+                  formik?.values?.subcategory?.subcategories[index]?.name.uz ||
+                  ""
+                }
                 onChange={formik.handleChange}
               />
             </Form.Item>

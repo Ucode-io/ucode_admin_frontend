@@ -15,7 +15,7 @@ import {
   deleteUserRole,
   updateUserRole,
   postUserRole,
-} from "services";
+} from "services/userRoles";
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "components/Loader";
 import Select from "components/Select";

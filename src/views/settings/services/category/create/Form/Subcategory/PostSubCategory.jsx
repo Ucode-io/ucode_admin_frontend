@@ -57,7 +57,14 @@ export default function PostSubCategory({
       isWarning={false}
     >
       <div>
-        {showText ? <div> {t("fill.all.languages")} </div> : ""}
+        {showText ? (
+          <div className="text-red-600 text-center">
+            {" "}
+            {t("fill.all.languages")}{" "}
+          </div>
+        ) : (
+          ""
+        )}
         <Filters className="mb-6">
           <StyledTabs
             value={subCategoryTab}
@@ -100,10 +107,7 @@ export default function PostSubCategory({
         </Filters>
 
         <>
-          <TabPanel
-            value={subCategoryTab}
-            index={0}
-          >
+          <TabPanel value={subCategoryTab} index={0}>
             <Form.Item
               formik={formik}
               name={`subcategory.subcategories[0].name.ru`}
@@ -112,17 +116,14 @@ export default function PostSubCategory({
                 name={`subcategory.subcategories[0].name.ru`}
                 size="large"
                 value={
-                  formik?.values?.subcategory?.subcategories[index]?.name.ru
+                  formik?.values?.subcategory?.subcategories[index]?.name.ru || ""
                 }
                 onChange={formik.handleChange}
               />
             </Form.Item>
           </TabPanel>
 
-          <TabPanel
-            value={subCategoryTab}
-            index={1}
-          >
+          <TabPanel value={subCategoryTab} index={1}>
             <Form.Item
               formik={formik}
               name={`subcategory.subcategories[0].name.en`}
@@ -131,8 +132,7 @@ export default function PostSubCategory({
                 name={`subcategory.subcategories[0].name.en`}
                 size="large"
                 value={
-                  formik?.values?.subcategory?.subcategories[index]?.name.en
-                }
+                  formik?.values?.subcategory?.subcategories[index]?.name.en || "" }
                 onChange={formik.handleChange}
               />
             </Form.Item>
@@ -146,9 +146,7 @@ export default function PostSubCategory({
               <Input
                 name={`subcategory.subcategories[0].name.uz`}
                 size="large"
-                value={
-                  formik?.values?.subcategory?.subcategories[index]?.name.uz
-                }
+                value={formik?.values?.subcategory?.subcategories[index]?.name.uz || ""}
                 onChange={formik.handleChange}
               />
             </Form.Item>
@@ -172,7 +170,6 @@ export default function PostSubCategory({
             {t("cancel")}
           </Button>
         </div>
-        
       </div>
     </Modal>
   );

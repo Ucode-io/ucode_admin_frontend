@@ -11,16 +11,12 @@ import {
 } from "@material-ui/core";
 import Pagination from "components/Pagination";
 import Modal from "components/Modal";
-import { deleteOperator, } from "services/operator";
 import Card from "components/Card";
 import ActionMenu from "components/ActionMenu";
 import LoaderComponent from "components/Loader";
 import SwitchColumns from "components/Filters/SwitchColumns";
-import { Input } from "alisa-ui";
-import SearchIcon from "@material-ui/icons/Search";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { DownloadIcon, ExportIcon } from "constants/icons";
 import { deleteRequsite, getRequisites } from "services/requisites";
 
 export default function TableRequisite({search}) {
@@ -29,9 +25,8 @@ export default function TableRequisite({search}) {
   const history = useHistory();
   const [items, setItems] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(null);
-  // const [search, setSearch] = useState("");
+  // const [deleteLoading, setDeleteLoading] = useState(false);
+  // const [deleteModal, setDeleteModal] = useState(null);
   const [columns, setColumns] = useState([]);
   let debounce = setTimeout(() => {}, 0);
 
@@ -223,12 +218,12 @@ export default function TableRequisite({search}) {
 
         <LoaderComponent isLoader={loader} />
 
-        <Modal
+        {/* <Modal
           open={deleteModal}
           onClose={() => setDeleteModal(null)}
           onConfirm={getRequisitesList}
           loading={deleteLoading}
-        />
+        /> */}
       </Card>
     </>
   );

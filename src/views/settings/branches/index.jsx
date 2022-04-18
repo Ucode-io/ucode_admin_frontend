@@ -59,7 +59,11 @@ export default function Rates() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </Filters>
-      <Table createModal={createModal} setCreateModal={setCreateModal} search={search}/>
+      <Table
+        createModal={createModal}
+        setCreateModal={setCreateModal}
+        search={search}
+      />
     </>
   );
 }

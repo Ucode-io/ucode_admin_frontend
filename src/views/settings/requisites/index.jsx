@@ -12,7 +12,7 @@ import AddIcon from "@material-ui/icons/Add";
 export default function Requites() {
   const { t } = useTranslation();
   const history = useHistory();
-  const [createModal, setCreateModal] = useState(null);
+  const [createModal, setCreateModal] = useState();
   const [search, setSearch] = useState()
 
   return (
@@ -41,7 +41,7 @@ export default function Requites() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </Filters>
-      <Table createModal={createModal} setCreateModal={setCreateModal} search={search} />
+      <Table search={search} />
     </>
   );
 }

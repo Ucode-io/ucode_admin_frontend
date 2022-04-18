@@ -9,10 +9,12 @@ import { DownloadIcon, UploadIcon } from "constants/icons";
 import Input from "components/Input";
 import SearchIcon from "@material-ui/icons/Search";
 import DatePicker from "components/DatePicker";
+import { useState } from "react";
 
 export default function Click() {
   const { t } = useTranslation();
   const history = useHistory();
+  const [search, setSearch] = useState()
 
   const extraFilter = (
     <div className="flex gap-4">
@@ -62,12 +64,12 @@ export default function Click() {
             placeholder={t("search")}
             size="middle"
             addonBefore={<SearchIcon />}
-            // onChange={onSearch}
+            onChange={(e) => setSearch(e.target.value) }
           />
           <DatePicker className="ml-2 rounded-lg" />
         </div>
       </Filters>
-      <Table />
+      <Table search={search}/>
     </div>
   );
 }

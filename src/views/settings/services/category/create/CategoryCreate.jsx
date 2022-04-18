@@ -9,7 +9,6 @@ import Button from "components/Button";
 import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
-import { getBranchesCount } from "../../../../../services";
 import CustomSkeleton from "components/Skeleton";
 import { TabPanel } from "components/Tab/TabBody";
 import Filters from "components/Filters";
@@ -36,7 +35,6 @@ export default function CategoryCreate() {
   const [subCategory, setSubcategory] = useState()
   const [allCategory, setAllcategory] = useState([]);
   
-
   const initialValues = 
   {
     category: {
@@ -81,11 +79,9 @@ const getCategory = () => {
   }
 };
 
-
   useEffect(() => { 
     getCategory();
   }, []);
-
 
   const validationSchema = yup.object().shape({
     category: yup.object().shape({
@@ -96,8 +92,6 @@ const getCategory = () => {
       })
     }),
   })
-
-  
 
   const onSubmit = (values) => {
     const body = {
@@ -228,9 +222,7 @@ const getCategory = () => {
                 >
                   <CategoryForm
                     formik={formik}
-                    titleInput={t("category")}
                     lang="ru"
-                    value={initialValues}
                   />
                 </TabPanel>
 
@@ -241,9 +233,7 @@ const getCategory = () => {
                 >
                   <CategoryForm
                     formik={formik}
-                    titleInput={t("category")}
                     lang="en"
-                    value={initialValues}
                   />
                 </TabPanel>
 
@@ -254,9 +244,7 @@ const getCategory = () => {
                 >
                   <CategoryForm
                     formik={formik}
-                    titleInput={t("category")}
                     lang="uz"
-                    value={initialValues}
                   />
                 </TabPanel>
               </SwipeableViews>
@@ -264,13 +252,43 @@ const getCategory = () => {
           </div>
 
           <div className="w-1/2">
-            <SubCategoryForm
-              formik={formik}
-              subCategory={subCategory}
-              id={params.id}
-              allCategory={allCategory}
-              setAllcategory={setAllcategory}
-            />
+            <SwipeableViews
+              axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+              index={selectedCardTab}
+            >
+              <TabPanel value={selectedCardTab} index={0} dir={theme.direction}>
+                <SubCategoryForm
+                  formik={formik}
+                  subCategory={subCategory}
+                  id={params.id}
+                  allCategory={allCategory}
+                  setAllcategory={setAllcategory}
+                  lang="ru"
+                />
+              </TabPanel>
+
+              <TabPanel value={selectedCardTab} index={1} dir={theme.direction}>
+                <SubCategoryForm
+                  formik={formik}
+                  subCategory={subCategory}
+                  id={params.id}
+                  allCategory={allCategory}
+                  setAllcategory={setAllcategory}
+                  lang="en"
+                />
+              </TabPanel>
+
+              <TabPanel value={selectedCardTab} index={2} dir={theme.direction}>
+                <SubCategoryForm
+                  formik={formik}
+                  subCategory={subCategory}
+                  id={params.id}
+                  allCategory={allCategory}
+                  setAllcategory={setAllcategory}
+                  lang="uz"
+                />
+              </TabPanel>
+            </SwipeableViews>
           </div>
         </div>
       </div>

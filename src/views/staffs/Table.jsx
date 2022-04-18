@@ -22,17 +22,15 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import GroupIcon from "@material-ui/icons/Group";
 import SearchIcon from "@material-ui/icons/Search";
 import Modal from "components/Modal";
-import { deleteCustomer } from "services";
+// import { deleteCustomer } from "services";
 import StatusTag from "components/Tag/StatusTag";
 import TextFilter from "components/Filters/TextFilter";
 import TableChartIcon from "@material-ui/icons/TableChart";
-import { DownloadIcon, ExportIcon } from "constants/icons";
-import Widgets from "components/Widgets";
 
 export default function ApplicationTable() {
   const { t } = useTranslation();
   const [items, setItems] = useState({});
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const history = useHistory();
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -46,17 +44,17 @@ export default function ApplicationTable() {
   };
 
   const getItems = (page) => {
-    setLoader(true);
-    clearItems();
-    axios
-      .get("/customers", { params: { limit: 10, page, search } })
-      .then((res) => {
-        setItems(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setLoader(false));
+    // setLoader(true);
+    // clearItems();
+    // axios
+    //   .get("/customers", { params: { limit: 10, page, search } })
+    //   .then((res) => {
+    //     setItems(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   })
+    //   .finally(() => setLoader(false));
   };
 
   const onSearch = (e) => {
@@ -66,20 +64,20 @@ export default function ApplicationTable() {
     }, 300);
   };
 
-  const handleDeleteItem = () => {
-    setDeleteLoading(true);
-    deleteCustomer(deleteModal.id)
-      .then(() => {
-        getItems(currentPage);
-        setDeleteLoading(false);
-        setDeleteModal(null);
-      })
-      .finally(() => setDeleteLoading(false));
-  };
+  // const handleDeleteItem = () => {
+  //   setDeleteLoading(true);
+  //   deleteCustomer(deleteModal.id)
+  //     .then(() => {
+  //       getItems(currentPage);
+  //       setDeleteLoading(false);
+  //       setDeleteModal(null);
+  //     })
+  //     .finally(() => setDeleteLoading(false));
+  // };
 
-  useEffect(() => {
-    getItems(currentPage);
-  }, [currentPage, search]);
+  // useEffect(() => {
+  //   getItems(currentPage);
+  // }, [currentPage, search]);
 
   const extraFilter = (
     <div className="flex gap-4">
@@ -282,12 +280,12 @@ export default function ApplicationTable() {
         <LoaderComponent isLoader={loader} />
         {/* <Pagination title={t("general.count")} count={items?.count}
                     onChange={pageNumber => setCurrentPage(pageNumber)} /> */}
-        <Modal
+        {/* <Modal
           open={deleteModal}
           onClose={() => setDeleteModal(null)}
           onConfirm={handleDeleteItem}
           loading={deleteLoading}
-        />
+        /> */}
       </Card>
     </div>
   );

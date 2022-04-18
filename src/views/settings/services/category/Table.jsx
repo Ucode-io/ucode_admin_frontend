@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
-
 import { useTranslation } from "react-i18next";
-import {
-  getFares,
-} from "services/fares";
 import { useHistory } from "react-router-dom";
-// import LoaderComponent from "../../../components/Loader";
-// import Card from "../../../components/Card";
-// import ActionMenu from "../../../components/ActionMenu";
 import {
   Accordion,
   AccordionDetails,
@@ -30,19 +23,15 @@ import LoaderComponent from "components/Loader";
 import Pagination from "components/Pagination";
 import { deleteCategory, getCategoriesList } from "services/category";
 import { KeyboardArrowRight } from "@material-ui/icons";
+import moment from "moment";
 
 
-export default function CategoryTable({ createModal, setCreateModal }) {
+export default function CategoryTable({ search }) {
   const { t } = useTranslation();
   const history = useHistory();
   const [items, setItems] = useState({});
   const [loader, setLoader] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [saveLoading, setSaveLoading] = useState(null);
   const [columns, setColumns] = useState([])
-
 
   const useStyles = makeStyles(theme => ({
     root: {
@@ -101,7 +90,8 @@ export default function CategoryTable({ createModal, setCreateModal }) {
 
 
   const getCategories = () => {
-    getCategoriesList()
+    setLoader(true);
+    getCategoriesList({search})
     .then((res) => {
       console.log('GET Categories list => ', res)
       setItems({
@@ -109,16 +99,14 @@ export default function CategoryTable({ createModal, setCreateModal }) {
         data: res.data.categories
       })
     })
+    .catch((err) => console.log(err, 'error'))
+    .finally(() => setLoader(false));
   }
 
 
-
   useEffect(() => {
-    getCategories()
-  }, []);
-
-
-console.log("data" , items)
+    getCategories(search)
+  }, [search]);
 
   const initialColumns = [
     {
@@ -132,15 +120,12 @@ console.log("data" , items)
       render: (record) =>  record.name.ru ,
     },
     {
-      title: t("date.branch"),
+      title: t("date"),
       key: "date",
-      render: (record) => <div> {record.date} </div>,
+      render: (record) => <div>   { moment(new Date(record.created_at).toISOString()).utc().format('YYYY-MM-DD')} </div>,
     },
   ];
 
- 
-
-  // const { values, handleChange, setFieldValue, handleSubmit } = formik;
 
   return (
     <Card
@@ -156,30 +141,7 @@ console.log("data" , items)
         />
       }
     >
-      {/* <TableContainer className="rounded-md border border-lightgray-1">
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              {columns.map((elm) => (
-                <TableCell key={elm.key}>{elm.title}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-                {items.data && items.data.length ? (
-                  items.data.map((elm, index) => (
-                     <TableRow   key={elm.id} className={index % 2 === 0 ? "bg-lightgray-5" : ""}>
-                       <TableCell>  </TableCell>
-                       <TableCell> {elm.name.ru} </TableCell>
-                       <TableCell> {elm.name.uz} </TableCell>
-                       <TableCell> {elm.name.uz} </TableCell>
-                     </TableRow>
-                  ))
-                ): ''}
-          </TableBody>
-        </Table>
-      </TableContainer> */}
-
+      
       <TableContainer className="rounded-md border border-lightgray-1">
         <Paper>
           <Table aria-label="simple table">

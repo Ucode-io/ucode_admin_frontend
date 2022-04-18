@@ -5,7 +5,6 @@ import CheckBox from "components/Checkbox1/CheckBox";
 import Form from "components/Form/Index";
 import {
   ErrorMessage,
-  Field,
   FieldArray,
   FormikProvider,
 } from "formik";
@@ -17,10 +16,9 @@ import Select from "components/Select/index";
 import Gallery from "components/Gallery";
 import CustomInputMask from "components/CustomInputMask";
 import { getBranchById } from "services/branch";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { onClickMap } from "services/currentLocation";
-import { values } from "lodash";
 
 export default function AboutBranch({
   formik,
@@ -31,8 +29,6 @@ export default function AboutBranch({
   // ======== const variables ====== //
   const { t } = useTranslation();
   const params = useParams();
-
-  const city = ["tashkent", "andijan", "fergana"];
 
   const cities = [
     {
@@ -100,7 +96,7 @@ export default function AboutBranch({
     },
   ];
 
-  // ====== < formik section /> ===== //
+  // ====== < GET BY ID /> ===== //
 
   const getBranch = () => {
     if (params.id) {
@@ -113,7 +109,6 @@ export default function AboutBranch({
 
   useEffect(() => {
     getBranch();
-    // onClickMap(setAddress, formik.values);
   }, []);
 
 
@@ -121,6 +116,7 @@ export default function AboutBranch({
     <div className="m-4">
       <div className="flex gap-5">
         <div className="w-3/5">
+
           <Card title={t("add.new.company")} style={{ height: "fit-content" }}>
             <div className="grid grid-cols-12 gap-8">
               <div className="col-span-3">
@@ -171,6 +167,7 @@ export default function AboutBranch({
                                   flex: "1 1 80%",
                                   marginBottom: "10px",
                                 }}
+                                key={index}
                               >
                                 <CustomInputMask
                                   mask={`+\\9\\9\\8 99 999 99 99`}
@@ -229,6 +226,7 @@ export default function AboutBranch({
                                   flex: "1 1 80%",
                                   marginBottom: "10px",
                                 }}
+                                key={index}
                               >
                                 <Input
                                   type="number"
@@ -295,6 +293,7 @@ export default function AboutBranch({
             </div>
           </Card>
 
+
           <Card title={t("geofence")} className="mt-4">
             <div className="col-span-1">
               <YMaps
@@ -356,9 +355,12 @@ export default function AboutBranch({
               </YMaps>
             </div>
           </Card>
+
         </div>
 
+
         <div className="w-2/5">
+
           <Card title={t("work.time")}>
             <div>
               {formik.values.working_days.map((elm, index) => (
@@ -414,6 +416,7 @@ export default function AboutBranch({
             </div>
           </Card>
 
+
           <Card title={t("settings.branch")} className="mt-4">
             <div className="w-full items-baseline">
               <div className="input-label">
@@ -461,6 +464,7 @@ export default function AboutBranch({
               </div>
             </div>
           </Card>
+          
         </div>
       </div>
     </div>

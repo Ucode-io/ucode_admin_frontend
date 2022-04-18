@@ -8,7 +8,7 @@ import PostSubCategory from "./Subcategory/PostSubCategory";
 import UpdateSubCategory from "./Subcategory/UpdateSubCategory";
 
 
-export default function SubCategoryForm({ formik, subCategory, id, setAllcategory, allCategory}) {
+export default function SubCategoryForm({ formik, subCategory, id, setAllcategory, allCategory, lang}) {
   const { t } = useTranslation();
   const [saveLoading, setSaveLoading] = useState(false);
   const [index, setIndex] = useState(0);
@@ -27,19 +27,26 @@ export default function SubCategoryForm({ formik, subCategory, id, setAllcategor
     return <span className="px-1">{text}</span>;
   };
 
+  const deleteSub = (subId) => {
+    setAllcategory((prev)=>{
+      return [...prev.filter(prev =>prev.id !== subId)]
+    })
+  }
+
   useEffect(() => {
     if (!subCategory) return null;
     setAllcategory((prev) => [...prev, ...subCategory]);
   }, [subCategory]);
 
+  let removeDuplicate = [...new Set(allCategory)]
 
   return (
     <Card title={t("subcategories")}>
-      {allCategory?.map((item, index) => (
-        <div className="flex items-center w-full justify-between border-b pb-2 mb-2">
+      {removeDuplicate?.map((item, index) => (
+        <div key={item.id} className="flex items-center w-full justify-between border-b pb-2 mb-2">
           <span>
             <KeyboardArrowRight />
-            {item.name.ru}
+            {item.name[lang]}
           </span>
 
           <div className="flex">
@@ -56,10 +63,11 @@ export default function SubCategoryForm({ formik, subCategory, id, setAllcategor
               className="border rounded p-1.5 ml-2"
               src={delete_icon}
               alt="delete"
+              onClick={() => deleteSub(item.id)}
             />
           </div>
         </div>
-      ))}
+         ))} 
       <div className="w-full items-baseline">
         <div
           className="mt-4 cursor-pointer border border-dashed border-blue-800 text-primary text-sm  p-2 rounded-md flex justify-center items-center gap-2.5"

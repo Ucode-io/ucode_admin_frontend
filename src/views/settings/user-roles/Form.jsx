@@ -11,7 +11,7 @@ import Button from "components/Button";
 import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
-import { getUserRole, postUserRole, updateUserRole } from "services";
+import { getUserRole, postUserRole, updateUserRole } from "services/userRoles";
 
 export default function UserRolesCreate() {
   const { t } = useTranslation();

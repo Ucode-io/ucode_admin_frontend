@@ -25,7 +25,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { DownloadIcon, ExportIcon } from "constants/icons";
 
 export default function TableOperator() {
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const { t } = useTranslation();
   const history = useHistory();
   const [items, setItems] = useState({});
@@ -36,9 +36,9 @@ export default function TableOperator() {
   const [columns, setColumns] = useState([]);
   let debounce = setTimeout(() => {}, 0);
 
-  useEffect(() => {
-    getItems(currentPage);
-  }, [currentPage, search]);
+  // useEffect(() => {
+  //   getItems(currentPage);
+  // }, [currentPage, search]);
 
   useEffect(() => {
     const _columns = [
@@ -88,16 +88,16 @@ export default function TableOperator() {
     }, 300);
   };
 
-  const handleDeleteItem = () => {
-    setDeleteLoading(true);
-    deleteOperator(deleteModal.id)
-      .then((res) => {
-        getItems(currentPage);
-        setDeleteLoading(false);
-        setDeleteModal(null);
-      })
-      .finally(() => setDeleteLoading(false));
-  };
+  // const handleDeleteItem = () => {
+  //   setDeleteLoading(true);
+  //   deleteOperator(deleteModal.id)
+  //     .then((res) => {
+  //       getItems(currentPage);
+  //       setDeleteLoading(false);
+  //       setDeleteModal(null);
+  //     })
+  //     .finally(() => setDeleteLoading(false));
+  // };
 
   const initialColumns = [
     {
@@ -129,17 +129,17 @@ export default function TableOperator() {
     },
   ];
 
-  const getItems = (page) => {
-    setLoader(true);
-    getOperators({ limit: 10, page, search })
-      .then((res) => {
-        setItems({
-          count: res.count,
-          data: res.shipper_users,
-        });
-      })
-      .finally(() => setLoader(false));
-  };
+  // const getItems = (page) => {
+  //   setLoader(true);
+  //   getOperators({ limit: 10, page, search })
+  //     .then((res) => {
+  //       setItems({
+  //         count: res.count,
+  //         data: res.shipper_users,
+  //       });
+  //     })
+  //     .finally(() => setLoader(false));
+  // };
 
   const extraFilter = (
     <div className="flex gap-4">
@@ -221,12 +221,12 @@ export default function TableOperator() {
 
         <LoaderComponent isLoader={loader} />
 
-        <Modal
+        {/* <Modal
           open={deleteModal}
           onClose={() => setDeleteModal(null)}
           onConfirm={handleDeleteItem}
           loading={deleteLoading}
-        />
+        /> */}
       </Card>
     </>
   );

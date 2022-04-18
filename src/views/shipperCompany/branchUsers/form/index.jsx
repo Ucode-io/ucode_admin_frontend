@@ -17,7 +17,7 @@ import CancelIcon from "@material-ui/icons/Cancel"
 import SaveIcon from "@material-ui/icons/Save"
 
 import "./style.scss"
-import { getUserRoles } from "../../../../services/userRoles"
+// import { getUserRoles } from "../../../../services/userRoles"
 import Select from "../../../../components/Select"
 import { getBranches } from "../../../../services"
 import {
@@ -57,33 +57,33 @@ export default function CreateGeofence() {
       })
   }
 
-  const fetchData = async () => {
-    setLoader(true)
-    try {
-      const { user_roles } = await getUserRoles({ limit: 1000 })
-      setUserRoles(
-        user_roles
-          ? user_roles.map((elm) => ({ label: elm.name, value: elm.id }))
-          : []
-      )
+  // const fetchData = async () => {
+  //   setLoader(true)
+  //   try {
+  //     const { user_roles } = await getUserRoles({ limit: 1000 })
+  //     setUserRoles(
+  //       user_roles
+  //         ? user_roles.map((elm) => ({ label: elm.name, value: elm.id }))
+  //         : []
+  //     )
 
-      const { branches } = await getBranches({ limit: 1000 }, shipper_id)
-      setBranches(
-        branches
-          ? branches.map((elm) => ({ label: elm.name, value: elm.id }))
-          : []
-      )
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoader(false)
-    }
-  }
+  //     const { branches } = await getBranches({ limit: 1000 }, shipper_id)
+  //     setBranches(
+  //       branches
+  //         ? branches.map((elm) => ({ label: elm.name, value: elm.id }))
+  //         : []
+  //     )
+  //   } catch (e) {
+  //     console.log(e)
+  //   } finally {
+  //     setLoader(false)
+  //   }
+  // }
 
-  useEffect(() => {
-    fetchData()
-    getItem()
-  }, [])
+  // useEffect(() => {
+  //   fetchData()
+  //   getItem()
+  // }, [])
 
   const initialValues = useMemo(
     () => ({

@@ -10,13 +10,19 @@ const {t} = useTranslation()
 
     return (
       <>
-       <div className="grid grid-cols-4 gap-5 items-baseline mt-4">
+        <div className="grid grid-cols-4 gap-5 items-baseline mt-4">
           <div className="col-span-4">
             <Form.Item formik={formik} name={`category.photo`}>
               <div className="input-label"> {t("picture")}</div>
-              <Gallery 
-                gallery={formik.values.category.photo ? [formik.values.category.photo] : []}
-                setGallery={(elm) => formik.setFieldValue("category.photo", elm[0])}
+              <Gallery
+                gallery={
+                  formik.values.category.photo
+                    ? [formik.values.category.photo]
+                    : []
+                }
+                setGallery={(elm) =>
+                  formik.setFieldValue("category.photo", elm[0])
+                }
                 multiple={false}
               />
             </Form.Item>
@@ -26,10 +32,13 @@ const {t} = useTranslation()
         <div className="grid grid-cols-4 gap-5 items-baseline">
           <div className="col-span-4">
             <Form.Item formik={formik} name={`category.name.${lang}`}>
-              <div className="input-label"> <span>*</span>  {t("name")}</div>
+              <div className="input-label">
+                {" "}
+                <span>*</span> {t("name")}
+              </div>
               <Input
                 size="large"
-                value={formik?.values?.category?.name[lang]}
+                value={formik?.values?.category?.name[lang] || ""}
                 onChange={formik.handleChange}
                 name={`category.name.${lang}`}
               />
@@ -43,9 +52,9 @@ const {t} = useTranslation()
               <div className="input-label">{t("name")} (URL)</div>
               <Input
                 size="large"
-                  value={formik?.values.category.name_url}
-                  onChange={formik.handleChange}
-                 name={`category.name_url`}
+                value={formik?.values.category.name_url || ''}
+                onChange={formik.handleChange}
+                name={`category.name_url`}
               />
             </Form.Item>
           </div>
@@ -57,9 +66,9 @@ const {t} = useTranslation()
               <div className="input-label">{t("description")}</div>
               <Input
                 size="large"
-                  value={formik?.values.category.description[lang]}
-                  onChange={formik.handleChange}
-                  name={`category.description.${lang}`}
+                value={formik?.values.category.description[lang] || ''}
+                onChange={formik.handleChange}
+                name={`category.description.${lang}`}
               />
             </Form.Item>
           </div>

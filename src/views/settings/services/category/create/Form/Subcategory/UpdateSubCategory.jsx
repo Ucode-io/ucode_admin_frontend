@@ -28,9 +28,20 @@ export default function UpdateSubCategory({
   const [subCategoryTab, setSubCategoryTab] = useState(0);
 
   const Submittion = () => {
-    setShowText(false);
-    setUpdateModal(false);
-    setAllcategory(formik?.values?.subcategories);
+    if (
+      formik?.values?.subcategories[index]?.name.uz === "" ||
+      formik?.values?.subcategories[index]?.name.ru === "" ||
+      formik?.values?.subcategories[index]?.name.en === "" ||
+      formik?.values?.subcategories[index]?.name.en === undefined ||
+      formik?.values?.subcategories[index]?.name.ru === undefined ||
+      formik?.values?.subcategories[index]?.name.uz === undefined 
+    ) {
+      setShowText(true);
+    } else {
+      setShowText(false);
+      setUpdateModal(false);
+      setAllcategory(formik?.values?.subcategories);
+    }
   };
 
   return (
@@ -41,7 +52,7 @@ export default function UpdateSubCategory({
       isWarning={false}
     >
       <div>
-        {/* {showText ? <div> {t("fill.all.languages")} </div> : ""} */}
+        {showText ? <div className="text-red-600 text-center"> {t("fill.all.languages")} </div> : ""}
         <Filters>
           <StyledTabs
             value={subCategoryTab}
@@ -95,7 +106,7 @@ export default function UpdateSubCategory({
                 value={
                   formik?.values?.subcategories
                     ? formik?.values?.subcategories[index]?.name.ru
-                    : ""
+                    : "" || ""
                 }
                 onChange={formik.handleChange}
               />
@@ -113,7 +124,7 @@ export default function UpdateSubCategory({
                 value={
                   formik?.values?.subcategories
                     ? formik?.values?.subcategories[index]?.name.en
-                    : ""
+                    : "" || ""
                 }
                 onChange={formik.handleChange}
               />
@@ -131,7 +142,7 @@ export default function UpdateSubCategory({
                 value={
                   formik?.values?.subcategories
                     ? formik?.values?.subcategories[index]?.name.uz
-                    : ""
+                    : "" || ""
                 }
                 onChange={formik.handleChange}
               />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import Header from "components/Header";
@@ -36,6 +36,10 @@ export default function BranchCreate() {
   const [coordinators, setCoordinators] = useState(defaultMap);
   const params = useParams();
 
+  const goBack = () => {
+    history.push("/home/settings/branch")
+  }
+
   // =======  Tab ====== //
   const tabLabel = (text, isActive = false) => {
     return <span className="px-1">{text}</span>;
@@ -58,6 +62,8 @@ export default function BranchCreate() {
       route: `/home/settings/branch`,
     },
   ];
+
+  //  ============= formik ============ //
 
   const initialValues = useMemo(
     () => ({
@@ -119,10 +125,6 @@ export default function BranchCreate() {
     [],
   );
 
-  const tost = () => {
-    history.push("/home/settings/branch")
-  }
-
   const onSubmit = (values) => {
     let stringedInns = values.inns.join().split(",");
     const body = {
@@ -170,6 +172,8 @@ export default function BranchCreate() {
     validationSchema,
   });
 
+// ========== header Buttons ========= //
+
   const headerButtons = [
     <Button
       icon={CancelIcon}
@@ -177,7 +181,7 @@ export default function BranchCreate() {
       shape="outlined"
       color="red"
       borderColor="bordercolor"
-      onClick={tost}
+      onClick={goBack}
     >
       {t("cancel")}
     </Button>,

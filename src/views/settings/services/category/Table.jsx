@@ -7,6 +7,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  IconButton,
   makeStyles,
   Paper,
   Table,
@@ -18,40 +19,69 @@ import {
 } from "@material-ui/core";
 import SwitchColumns from "components/Filters/SwitchColumns";
 import ActionMenu from "components/ActionMenu";
-import Card from "components/Card"
+import Card from "components/Card";
 import LoaderComponent from "components/Loader";
 import Pagination from "components/Pagination";
 import { deleteCategory, getCategoriesList } from "services/category";
 import { KeyboardArrowRight } from "@material-ui/icons";
 import moment from "moment";
 
-
 export default function CategoryTable({ search }) {
   const { t } = useTranslation();
   const history = useHistory();
   const [items, setItems] = useState({});
   const [loader, setLoader] = useState(false);
-  const [columns, setColumns] = useState([])
+  const [columns, setColumns] = useState([]);
 
-  const useStyles = makeStyles(theme => ({
+  const initialColumns = [
+    {
+      title: "",
+      key: "order-number",
+      render: (record, index) => (
+        <div className="rounded-full border text-blue-500">
+          {" "}
+          <KeyboardArrowRight />{" "}
+        </div>
+      ),
+    },
+    {
+      title: t("category"),
+      key: "category",
+      render: (record) => record.name.ru,
+    },
+    {
+      title: t("date"),
+      key: "date",
+      render: (record) => (
+        <div>
+          {" "}
+          {moment(new Date(record.created_at).toISOString())
+            .utc()
+            .format("YYYY-MM-DD")}{" "}
+        </div>
+      ),
+    },
+  ];
+
+  const useStyles = makeStyles((theme) => ({
     root: {
-      '& .MuiPaper-root': {
-        backgroundColor: '#F4F6FA'
+      "& .MuiPaper-root": {
+        backgroundColor: "#F4F6FA",
       },
-      '& .MuiPaper-elevation1': {
-        boxShadow: 'none'
-      }
+      "& .MuiPaper-elevation1": {
+        boxShadow: "none",
+      },
     },
     line: {
-      background: '#E5E9EB',
-      width: '1px',
-      height: '48px',
-      position: 'absolute',
-      top: '-10px',
-      left: '40px'
-    }
-  }))
-  const cls = useStyles()
+      background: "#E5E9EB",
+      width: "1px",
+      height: "48px",
+      position: "absolute",
+      top: "-10px",
+      left: "40px",
+    },
+  }));
+  const cls = useStyles();
 
   useEffect(() => {
     const _columns = [
@@ -82,9 +112,7 @@ export default function CategoryTable({ search }) {
                   color: "red",
                   icon: <DeleteIcon />,
                   action: () => {
-                    deleteCategory(record.id)
-                    .then((res) => getCategories())
-                    
+                    deleteCategory(record.id).then((res) => getCategories());
                   },
                 },
               ]}
@@ -93,48 +121,52 @@ export default function CategoryTable({ search }) {
         ),
       },
     ];
-    setColumns(_columns)
-  }, []);
 
+    setColumns(_columns);
+  }, []);
 
   const getCategories = () => {
     setLoader(true);
-    getCategoriesList({search})
-    .then((res) => {
-      console.log('GET Categories list => ', res)
-      setItems({
-        count: res.data.count,
-        data: res.data.categories
+    getCategoriesList({ search })
+      .then((res) => {
+        console.log("GET Categories list => ", res);
+        setItems({
+          count: res.data.count,
+          data: res.data.categories.map((el) => {
+            return {
+              ...el,
+              openSubCat: false,
+            };
+          }),
+        });
       })
-    })
-    .catch((err) => console.log(err, 'error'))
-    .finally(() => setLoader(false));
-  }
+      .catch((err) => console.log(err, "error"))
+      .finally(() => setLoader(false));
+  };
 
-console.log("ITEMDs ", items)
+  console.log("ITEMDs ", items);
   useEffect(() => {
-    getCategories(search)
+    getCategories(search);
   }, [search]);
 
-  const initialColumns = [
-    {
-      title: "",
-      key: "order-number",
-      render: (record, index) => <div className="rounded-full border text-blue-500"> <KeyboardArrowRight /> </div>,
-    },
-    {
-      title: t("category"),
-      key: "category",
-      render: (record) =>  record.name.ru ,
-    },
-    {
-      title: t("date"),
-      key: "date",
-      render: (record) => <div>   { moment(new Date(record.created_at).toISOString()).utc().format('YYYY-MM-DD')} </div>,
-    },
-  ];
-
-
+  function handleOpenSubCat(index) {
+    setItems((prev) => {
+      let clone = prev.data.map((el, i) => {
+        if (index === i) {
+          return {
+            ...el,
+            openSubCat: !el.openSubCat,
+          };
+        } else {
+          return el;
+        }
+      });
+      return {
+        ...prev,
+        data: clone,
+      };
+    });
+  }
   return (
     <Card
       className="m-4"
@@ -159,36 +191,30 @@ console.log("ITEMDs ", items)
             </TableRow>
           </TableHead>
           <TableBody>
-             {/* <Accordion> */}
             {items.data && items.data.length ? (
               items.data.map((elm, index) => (
                 <>
-                 
                   <TableRow
                     key={elm.id}
-                    // onClick={() => history.push(`category/${elm.id}`)}
+                    onClick={() => {
+                      // return false;
+                      handleOpenSubCat(index);
+                    }}
                     className={"bg-lightgray-5"}
-                    >
-                    {/* <AccordionSummary> */}
-                    {columns.map((col, i) => (
+                  >
+                    {columns.map((col, ind) => (
                       <TableCell className={cls.root} key={col.key}>
                         {col.render ? col.render(elm, index) : "----"}
                       </TableCell>
                     ))}
-                  {/* </AccordionSummary> */}
                   </TableRow>
-                  {elm.subcategories?.map((item, i) => (
-                    <TableRow>
-                      {/* <AccordionDetails> */}
-                      <>
+                  {elm.subcategories?.map((item, i) =>
+                    elm.openSubCat ? (
+                      <TableRow>
                         <TableCell className={cls.root}>{""}</TableCell>
                         <TableCell>
                           <div className="flex relative">
-                            <div className="rounded-full border text-blue-500">
-                              <KeyboardArrowRight />
-                            </div>
-                              <div className={`${cls.line}`}> </div>
-                            <div className="ml-7" >{item.name.ru}</div>
+                            <div className="ml-7">{item.name.ru}</div>
                           </div>
                         </TableCell>
 
@@ -200,20 +226,36 @@ console.log("ITEMDs ", items)
 
                         <TableCell className={cls.root}>
                           <div className="flex gap-2">
-                             ...
+                            <div className={`inline-block`}>
+                              <div
+                                className={`
+                                            icon-button
+                                            transition
+                                            focus:outline-none
+                                            focus:ring 
+                                            focus:z-40
+                                            focus:border-blue-300
+                                            bg-blue-100`}
+                              >
+                                <div
+                                  className={`flex fill-current text-blue-600 `}
+                                >
+                                  <EditIcon />
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </TableCell>
-                      </>
-                    {/* </AccordionDetails> */}
-                    </TableRow>
-                  ))}
-                
+                      </TableRow>
+                    ) : (
+                      ""
+                    ),
+                  )}
                 </>
               ))
             ) : (
               <></>
             )}
-              {/* </Accordion> */}
           </TableBody>
         </Table>
       </TableContainer>

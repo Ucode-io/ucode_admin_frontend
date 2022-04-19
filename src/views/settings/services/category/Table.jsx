@@ -226,24 +226,28 @@ export default function CategoryTable({ search }) {
 
                         <TableCell className={cls.root}>
                           <div className="flex gap-2">
-                            <div className={`inline-block`}>
-                              <div
-                                className={`
-                                            icon-button
-                                            transition
-                                            focus:outline-none
-                                            focus:ring 
-                                            focus:z-40
-                                            focus:border-blue-300
-                                            bg-blue-100`}
-                              >
-                                <div
-                                  className={`flex fill-current text-blue-600 `}
-                                >
-                                  <EditIcon />
-                                </div>
-                              </div>
-                            </div>
+                            <ActionMenu
+                              id={12312312}
+                              actions={[
+                                {
+                                  title: t("edit"),
+                                  color: "blue",
+                                  icon: <EditIcon />,
+                                  // action: () =>
+                                    // history.push(`category/${record.id}`),
+                                },
+                                {
+                                  title: t("delete"),
+                                  color: "red",
+                                  icon: <DeleteIcon />,
+                                  action: () => {
+                                    // deleteCategory(record.id).then((res) =>
+                                    //   getCategories(),
+                                    // );
+                                  },
+                                },
+                              ]}
+                            />
                           </div>
                         </TableCell>
                       </TableRow>

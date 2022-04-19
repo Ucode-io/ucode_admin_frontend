@@ -26,10 +26,10 @@ const OrderForm = Loadable({
   loading: FullScreenLoader,
 });
 
-const ShipperSettings = Loadable({
-  loader: () => import("views/settings/ShipperSettings"),
-  loading: FullScreenLoader,
-});
+// const ShipperSettings = Loadable({
+//   loader: () => import("views/settings/ShipperSettings"),
+//   loading: FullScreenLoader,
+// });
 
 const User = Loadable({
   // loader: () => import("views/settings/branches/form/tabs/Users/index"),
@@ -49,10 +49,10 @@ const UserCreate = Loadable({
 //   loader: () => import("views/settings/branches/form/index.jsx"),
 //   loading: FullScreenLoader,
 // });
-const ShipperSettingsCreate = Loadable({
-  loader: () => import("views/settings/ShipperSettings/Create"),
-  loading: FullScreenLoader,
-});
+// const ShipperSettingsCreate = Loadable({
+//   loader: () => import("views/settings/ShipperSettings/Create"),
+//   loading: FullScreenLoader,
+// });
 const Stocks = Loadable({
   loader: () => import("views/marketing/stocks"),
   loading: FullScreenLoader,
@@ -234,15 +234,7 @@ const DocumentsCreate = Loadable({
   loading: FullScreenLoader,
 });
 
-const UserRoles = Loadable({
-  loader: () => import("views/settings/user-roles"),
-  loading: FullScreenLoader,
-});
 
-const UserRolesCreate = Loadable({
-  loader: () => import("views/settings/user-roles/Form"),
-  loading: FullScreenLoader,
-});
 
 const Requisites = Loadable({
   loader: () => import("views/settings/requisites"),
@@ -268,105 +260,14 @@ const RequisitesCreate = Loadable({
 //   loading: FullScreenLoader,
 // });
 
-const SettingsCatalogGoods = Loadable({
-  loader: () => import("views/settings/catalog/Goods"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogGoodsCreate = Loadable({
-  loader: () => import("views/settings/catalog/Goods/Create"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogCategory = Loadable({
-  loader: () => import("views/settings/catalog/Category"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogCategoryProduct = Loadable({
-  loader: () => import("views/settings/catalog/Category/CategoryCreate"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogAttributes = Loadable({
-  loader: () => import("views/settings/catalog/Attributes"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogAttributesCreate = Loadable({
-  loader: () => import("views/settings/catalog/Attributes/Create"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogBrands = Loadable({
-  loader: () => import("views/settings/catalog/Brands"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogBrandsCreate = Loadable({
-  loader: () => import("views/settings/catalog/Brands/Create"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogUnits = Loadable({
-  loader: () => import("views/settings/catalog/Units"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogUnitsCreate = Loadable({
-  loader: () => import("views/settings/catalog/Units/Create"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogTags = Loadable({
-  loader: () => import("views/settings/catalog/Tags"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogTagsCreate = Loadable({
-  loader: () => import("views/settings/catalog/Tags/Create"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogProductVariants = Loadable({
-  loader: () => import("views/settings/catalog/ProductVariants"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogProductVariantsCreate = Loadable({
-  loader: () => import("views/settings/catalog/ProductVariants/Create"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogCombo = Loadable({
-  loader: () => import("views/settings/catalog/Combo"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogComboCreate = Loadable({
-  loader: () => import("views/settings/catalog/Combo/Create"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogPriceChanger = Loadable({
-  loader: () => import("views/settings/catalog/PriceChanger"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogPriceChangerCreate = Loadable({
-  loader: () => import("views/settings/catalog/PriceChanger/Create"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogRates = Loadable({
-  loader: () => import("views/settings/catalog/Rates"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogRatesCreate = Loadable({
-  loader: () => import("views/settings/catalog/Rates/Create"),
-  loading: FullScreenLoader,
-});
 
 export default [
   {
@@ -503,13 +404,13 @@ export default [
     title: "productEdit",
     permission: "menu",
   },
-  {
-    component: ShipperSettings,
-    path: "/company/shipper-company",
-    exact: true,
-    title: "ShipperSettings",
-    permission: "settings",
-  },
+  // {
+  //   component: ShipperSettings,
+  //   path: "/company/shipper-company",
+  //   exact: true,
+  //   title: "ShipperSettings",
+  //   permission: "settings",
+  // },
   // Shipper branch crud
   // {
   //   component: ShipperBranches,
@@ -548,20 +449,20 @@ export default [
   //   title: "shipperCompanyBranchesUserUpdate",
   //   permission: "settings",
   // },
-  {
-    component: ShipperSettingsCreate,
-    path: "/company/shipper-company/create",
-    exact: true,
-    title: "ShipperSettings",
-    permission: "settings",
-  },
-  {
-    component: ShipperSettingsCreate,
-    path: "/company/shipper-company/:id",
-    exact: true,
-    title: "ShipperSettings",
-    permission: "settings",
-  },
+  // {
+  //   component: ShipperSettingsCreate,
+  //   path: "/company/shipper-company/create",
+  //   exact: true,
+  //   title: "ShipperSettings",
+  //   permission: "settings",
+  // },
+  // {
+  //   component: ShipperSettingsCreate,
+  //   path: "/company/shipper-company/:id",
+  //   exact: true,
+  //   title: "ShipperSettings",
+  //   permission: "settings",
+  // },
   {
     component: Stocks,
     path: "/marketing/stocks",
@@ -983,27 +884,6 @@ export default [
     title: "Integrations.Edit",
     permission: "fares",
   },
-  {
-    component: UserRoles,
-    path: "/settings/user-roles",
-    exact: true,
-    title: "RoleAccess",
-    permission: "fares",
-  },
-  {
-    component: UserRolesCreate,
-    path: "/settings/user-roles/create",
-    exact: true,
-    title: "RoleAccess.Create",
-    permission: "fares",
-  },
-  {
-    component: UserRolesCreate,
-    path: "/settings/user-roles/:id",
-    exact: true,
-    title: "RoleAccess.Edit",
-    permission: "fares",
-  },
   // {
   //   component: Services,
   //   path: "/settings/services",
@@ -1032,216 +912,12 @@ export default [
   //   title: "Company.Branch.Couriers",
   //   permission: "fares",
   // },
-  {
-    component: SettingsCatalogGoods,
-    path: "/catalog/goods",
-    exact: true,
-    title: "Settings.Catalog.Goods",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogGoodsCreate,
-    path: "/catalog/goods/create",
-    exact: true,
-    title: "Settings.Catalog.Goods.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogGoodsCreate,
-    path: "/catalog/goods/:id",
-    exact: true,
-    title: "Settings.Catalog.Goods.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogCategory,
-    path: "/catalog/category",
-    exact: true,
-    title: "Settings.Catalog.Category",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogCategoryProduct,
-    path: "/catalog/category/create",
-    exact: true,
-    title: "Settings.Catalog.Product.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogCategoryProduct,
-    path: "/catalog/category/:id",
-    exact: true,
-    title: "Settings.Catalog.Product.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogAttributes,
-    path: "/catalog/attributes",
-    exact: true,
-    title: "Settings.Catalog.Attributes",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogAttributesCreate,
-    path: "/catalog/attributes/create",
-    exact: true,
-    title: "Settings.Catalog.Attribute.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogAttributesCreate,
-    path: "/catalog/attributes/:id",
-    exact: true,
-    title: "Settings.Catalog.Attribute.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogBrands,
-    path: "/catalog/brands",
-    exact: true,
-    title: "Settings.Catalog.Brands",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogBrandsCreate,
-    path: "/catalog/brands/create",
-    exact: true,
-    title: "Settings.Catalog.Brand.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogBrandsCreate,
-    path: "/catalog/brands/:id",
-    exact: true,
-    title: "Settings.Catalog.Brand.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogUnits,
-    path: "/catalog/units",
-    exact: true,
-    title: "Settings.Catalog.Unit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogUnitsCreate,
-    path: "/catalog/units/create",
-    exact: true,
-    title: "Settings.Catalog.Unit.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogUnitsCreate,
-    path: "/catalog/units/:id",
-    exact: true,
-    title: "Settings.Catalog.Unit.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogTags,
-    path: "/catalog/tags",
-    exact: true,
-    title: "Settings.Catalog.Tags",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogTagsCreate,
-    path: "/catalog/tags/create",
-    exact: true,
-    title: "Settings.Catalog.Tag.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogTagsCreate,
-    path: "/catalog/tags/:id",
-    exact: true,
-    title: "Settings.Catalog.Tag.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogProductVariants,
-    path: "/catalog/product_variants",
-    exact: true,
-    title: "Settings.Catalog.Product.Variants",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogProductVariantsCreate,
-    path: "/catalog/product_variants/create",
-    exact: true,
-    title: "Settings.Catalog.Product.Variants.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogProductVariantsCreate,
-    path: "/catalog/product_variants/:id",
-    exact: true,
-    title: "Settings.Catalog.Product.Variants.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogCombo,
-    path: "/catalog/combo",
-    exact: true,
-    title: "Settings.Catalog.Combo",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogComboCreate,
-    path: "/catalog/combo/create",
-    exact: true,
-    title: "Settings.Catalog.Combo.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogComboCreate,
-    path: "/catalog/combo/:id",
-    exact: true,
-    title: "Settings.Catalog.Combo.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogPriceChanger,
-    path: "/catalog/price-changers",
-    exact: true,
-    title: "Settings.Catalog.Price.Changer",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogPriceChangerCreate,
-    path: "/catalog/price-changers/create",
-    exact: true,
-    title: "Settings.Catalog.Price.Changer.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogPriceChangerCreate,
-    path: "/catalog/price-changers/:id",
-    exact: true,
-    title: "Settings.Catalog.Price.Changer.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogRates,
-    path: "/catalog/rates",
-    exact: true,
-    title: "Settings.Catalog.Rate",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogRatesCreate,
-    path: "/catalog/rates/create",
-    exact: true,
-    title: "Settings.Catalog.Rate.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogRatesCreate,
-    path: "/catalog/rates/:id",
-    exact: true,
-    title: "Settings.Catalog.Rate.Edit",
-    permission: "fares",
-  },
+  
+  
+  
+  
+  
+  
   {
     component: BranchUser,
     path: "/company/users",

@@ -199,7 +199,7 @@ const Documents = Loadable({
   loading: FullScreenLoader,
 });
 const Service = Loadable({
-  loader: () => import("views/settings/services/service"),
+  loader: () => import("views/settings/services/service/index"),
   loading: FullScreenLoader,
 });
 const ServiceCreate = Loadable({

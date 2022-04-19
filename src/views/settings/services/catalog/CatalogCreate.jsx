@@ -12,7 +12,7 @@ import Breadcrumb from "components/Breadcrumb";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
 import { getBranchesCount } from "../../../../services";
-import { getOneClick, postClick, updateClick } from "services/promotion";
+// import { getOneClick, postClick, updateClick } from "services/promotion";
 import CustomSkeleton from "components/Skeleton";
 
 export default function CatalogCreate() {
@@ -21,7 +21,7 @@ export default function CatalogCreate() {
   const params = useParams();
   const [saveLoading, setSaveLoading] = useState(false);
   const [items, setItems] = useState();
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     // getItems();
@@ -43,21 +43,21 @@ export default function CatalogCreate() {
   }, []);
 
   const fetchData = () => {
-    if (params.id) {
-      getOneClick(params.id)
-        .then((res) => {
-          formik.setValues({
-            key: res.key,
-            branch_id: res.branch_id,
-            merchant_id: res.merchant_id,
-            service_id: res.service_id,
-            merchant_user_id: res.merchant_user_id,
-          });
-        })
-        .finally(() => setLoader(false));
-    } else {
-      setLoader(false);
-    }
+    // if (params.id) {
+    //   getOneClick(params.id)
+    //     .then((res) => {
+    //       formik.setValues({
+    //         key: res.key,
+    //         branch_id: res.branch_id,
+    //         merchant_id: res.merchant_id,
+    //         service_id: res.service_id,
+    //         merchant_user_id: res.merchant_user_id,
+    //       });
+    //     })
+    //     .finally(() => setLoader(false));
+    // } else {
+    //   setLoader(false);
+    // }
   };
 
   const getItems = (page) => {
@@ -93,21 +93,21 @@ export default function CatalogCreate() {
   }, []);
 
   const onSubmit = (values) => {
-    const data = {
-      ...values,
-    };
+    // const data = {
+    //   ...values,
+    // };
 
-    setSaveLoading(true);
-    const selectedAction = params.id
-      ? updateClick(data, params.id)
-      : postClick(data);
-    selectedAction
-      .then((res) => {
-        history.goBack();
-      })
-      .finally(() => {
-        setSaveLoading(false);
-      });
+    // setSaveLoading(true);
+    // const selectedAction = params.id
+    //   ? updateClick(data, params.id)
+    //   : postClick(data);
+    // selectedAction
+    //   .then((res) => {
+    //     history.goBack();
+    //   })
+    //   .finally(() => {
+    //     setSaveLoading(false);
+    //   });
   };
 
   const formik = useFormik({

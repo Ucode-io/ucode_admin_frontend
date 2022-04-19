@@ -10,7 +10,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import Button from "../../../components/Button";
 import { DownloadIcon } from "../../../constants/icons";
 import FDropdown from "../../../components/Filters/FDropdown";
-import { getRegions } from "../../../services/region";
+// import { getRegions } from "../../../services/region";
 
 export default function Reports() {
   const { t } = useTranslation();
@@ -28,10 +28,10 @@ export default function Reports() {
   }, []);
 
   const fetchData = async () => {
-    const { regions } = await getRegions({ limit: 1000 });
-    setRegions(
-      regions ? regions.map((elm) => ({ label: elm.name, value: elm.id })) : [],
-    );
+    // const { regions } = await getRegions({ limit: 1000 });
+    // setRegions(
+    //   regions ? regions.map((elm) => ({ label: elm.name, value: elm.id })) : [],
+    // );
   };
 
   const changeRegion = (regionId, close) => {

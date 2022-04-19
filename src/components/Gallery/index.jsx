@@ -33,7 +33,7 @@ const Gallery = ({
   );
   const imageLinks = useMemo(() => {
     return gallery?.map(
-      (image) => `${process.env.REACT_APP_MINIO_URL}/medion/${image}`,
+      (image) => `${process.env.REACT_APP_MINIO_URL}/${image}`,
     );
   }, [gallery]);
 
@@ -79,17 +79,20 @@ const Gallery = ({
   };
 
   const deleteImage = (id) => {
-    setGallery(gallery.filter((galleryImageId) => galleryImageId !== id));
+    setGallery(gallery.filter((galleryImageId) => galleryImageId !== id.substring(1)));
+    console.log("ID ", id)
   };
 
+  
   const closeButtonHandler = (e, link) => {
     e.stopPropagation();
-    deleteImage(link.replace(`${process.env.REACT_APP_MINIO_URL}/`, ""));
+    deleteImage(link.replace(`${process.env.REACT_APP_MINIO_URL}`, ""));
   };
 
   return (
     <div className={`Gallery`}>
       {imageLinks?.map((link, index) => (
+        
         <div
           className="block mr-2"
           style={
@@ -98,7 +101,7 @@ const Gallery = ({
               : { width, height, borderRadius: rounded ? "50%" : 8 }
           }
           onClick={() => imageClickHandler(index)}
-          key={link}
+          key={index}
         >
           {!notEditable && (
             <button
@@ -159,7 +162,7 @@ const Gallery = ({
         onClick={() => inputRef.current.click()}
         style={{ cursor: "pointer" }}
       >
-        {t("image")}
+        {/* {t("image")} */}
       </span>
     </div>
   );

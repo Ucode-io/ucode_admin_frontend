@@ -16,9 +16,6 @@ export default function SubCategoryForm({ formik, subCategory, id, setAllcategor
   const [updateModal, setUpdateModal] = useState();
   const [showText, setShowText] = useState(false)
 
-
-  console.log("ALL =>", [...new Set(allCategory)])
-
   const subCategoriesProps = (index) => {
     return {
       id: `full-width-tab-${index}`,

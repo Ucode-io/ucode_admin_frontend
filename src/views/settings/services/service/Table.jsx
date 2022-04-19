@@ -12,11 +12,11 @@ import {
   TableRow,
 } from "@material-ui/core";
 
-import {
-  deletePayme,
-  deletePromo,
-  getPayme,
-} from "../../../../services/promotion";
+// import {
+//   deletePayme,
+//   deletePromo,
+//   getPayme,
+// } from "../../../../services/promotion";
 import { Input } from "alisa-ui";
 import SearchIcon from "@material-ui/icons/Search";
 import EditIcon from "@material-ui/icons/Edit";
@@ -35,6 +35,7 @@ import StatusTag from "../../../../components/Tag/StatusTag";
 import { DownloadIcon } from "constants/icons";
 import Checkbox from "components/Checkbox1";
 import DatePicker from "components/DatePicker";
+import { deleteService, getServiceList } from "services/services";
 
 export default function PaymeTable() {
   const [loader, setLoader] = useState(true);
@@ -44,41 +45,29 @@ export default function PaymeTable() {
   const [deleteModal, setDeleteModal] = useState(null);
   const [search, setSearch] = useState("");
   const [columns, setColumns] = useState([]);
+  const [data, setData] = useState()
 
   const { t } = useTranslation();
   const lang = useSelector((state) => state.lang.current);
   const history = useHistory();
   let debounce = setTimeout(() => {}, 0);
 
+
+  const getServices = () => {
+    getServiceList({search}).then((res) => {
+      console.log("GET service list ", res);
+      setItems({
+        count: res.data.count,
+        data: res.data.products,
+      });
+    })
+    .finally(() => setLoader(false))
+  };
+
   useEffect(() => {
-    // getItems(currentPage);
-  }, [currentPage, search]);
+    getServices()
+  }, [search]);
 
-
-  const fakeData = {
-    count: 1,
-    data: [
-      {
-        id: 1,
-        service_name: 'type',
-        price: '200 000',
-        date: "20-00-2000"
-      },
-      {
-        id: 2,
-        service_name: 'type seinor',
-        price: '400 000',
-        date: "11-00-1990"
-      },
-      {
-        id: 3,
-        service_name: 'backend seinor',
-        price: '1 000 000',
-        date: "11-00-3990"
-      }
-    ]
-
-  }
 
   useEffect(() => {
     const _columns = [
@@ -110,7 +99,8 @@ export default function PaymeTable() {
                 color: "red",
                 title: t("delete"),
                 action: () => {
-                  setDeleteModal({ id: record.id });
+                  deleteService(record.id)
+                  .then((res) =>  getServices())
                 },
               },
             ]}
@@ -128,16 +118,6 @@ export default function PaymeTable() {
     }, 300);
   };
 
-  const handleDeleteItem = () => {
-    setDeleteLoading(true);
-    deletePayme(deleteModal.id)
-      .then((res) => {
-        getItems(currentPage);
-        setDeleteLoading(false);
-        setDeleteModal(null);
-      })
-      .finally(() => setDeleteLoading(false));
-  };
 
   const initialColumns = [
     {
@@ -157,12 +137,12 @@ export default function PaymeTable() {
     {
       title: t("services"),
       key: "service_name",
-      render: (record) => <div>{record.branch_name}</div>,
+      render: (record) => <div>{record.name.ru}</div>,
     },
     {
       title: t("service.price"),
-      key: "price",
-      render: (record) => <div>{record.price}</div>,
+      key: "price_sale",
+      render: (record) => <div>${record.price_sale}</div>,
     },
     {
       title: t("date.branch"),
@@ -171,17 +151,17 @@ export default function PaymeTable() {
     },
   ];
 
-  const getItems = (page) => {
-    setLoader(true);
-    getPayme({ limit: 10, page })
-      .then((res) => {
-        setItems({
-          count: res.count,
-          data: res.payme_infos,
-        });
-      })
-      .finally(() => setLoader(false));
-  };
+  // const getItems = (page) => {
+  //   setLoader(true);
+  //   getPayme({ limit: 10, page })
+  //     .then((res) => {
+  //       setItems({
+  //         count: res.count,
+  //         data: res.payme_infos,
+  //       });
+  //     })
+  //     .finally(() => setLoader(false));
+  // };
 
   const extraFilter = (
     <div className="flex gap-4 mr-4">
@@ -211,7 +191,7 @@ export default function PaymeTable() {
       <Filters extra={extraFilter}>
         <div className="flex">
           <Input
-            onChange={onSearch}
+            onChange={(e) => setSearch(e.target.value)}
             width={280}
             placeholder={t("search")}
             size="middle"
@@ -225,7 +205,7 @@ export default function PaymeTable() {
 
       <Card className="m-4" footer={pagination}>
         <TableContainer className="rounded-lg border border-lightgray-1">
-          {fakeData.data ? (
+          {items.data ? (
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
@@ -235,12 +215,12 @@ export default function PaymeTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {fakeData.data && fakeData.data.length ? (
-                  fakeData.data.map((item, index) => (
+                {items.data && items.data.length ? (
+                  items.data.map((item, index) => (
                     <TableRow
                       key={item.id}
                       onClick={() => {
-                        history.push(`service/create/${item.branch_id}`);
+                        history.push(`service/create/${item.id}`);
                       }}
                       className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                     >
@@ -262,12 +242,12 @@ export default function PaymeTable() {
             <LoaderComponent isLoader={loader} />
           )}
         </TableContainer>
-        <Modal
+        {/* <Modal
           open={deleteModal}
           onClose={() => setDeleteModal(null)}
           onConfirm={handleDeleteItem}
           loading={deleteLoading}
-        />
+        /> */}
       </Card>
     </>
   );

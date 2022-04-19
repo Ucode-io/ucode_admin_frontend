@@ -13,7 +13,7 @@ import Select, { customStyles } from "components/Select";
 import AsyncSelect from "components/Select/Async";
 import TextArea from "components/Textarea";
 import Button from "components/Button";
-import { getProducts, getOneProduct, getCouriers } from "services";
+// import { getProducts, getOneProduct, getCouriers } from "services";
 import { RadioGroup, Radio } from "components/Radio";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import DriveEtaIcon from "@material-ui/icons/DriveEta";
@@ -65,54 +65,54 @@ export default function ProductContent({
   }, []);
 
   const loadProducts = useCallback((input, cb) => {
-    getProducts({ limit: 10, page: 1, search: input })
-      .then((res) => {
-        var products = res.products?.map((product) => ({
-          label: product.name,
-          value: product,
-        }));
-        cb(products);
-      })
-      .catch((err) => console.log(err));
+    // getProducts({ limit: 10, page: 1, search: input })
+    //   .then((res) => {
+    //     var products = res.products?.map((product) => ({
+    //       label: product.name,
+    //       value: product,
+    //     }));
+    //     cb(products);
+    //   })
+    //   .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
-    if (shipperId && values.product?.value?.id) {
-      setFieldValue("option", null);
-      setFieldValue("ingredient", null);
+    // if (shipperId && values.product?.value?.id) {
+    //   setFieldValue("option", null);
+    //   setFieldValue("ingredient", null);
 
-      getOneProduct(values.product.value.id, {}, shipperId)
-        .then((res) => {
-          if (res.options && res.options.length) {
-            let isNotRequired = [];
-            let options = res.options.map((elm) => ({
-              ...elm,
-              child_options: elm.child_options.length
-                ? elm.child_options.filter((el) => {
-                    if (!el.is_required) {
-                      isNotRequired.push(el);
-                      // setIngredients(prev => [...prev, el])
-                      return false;
-                    }
-                    return true;
-                  })
-                : [],
-            }));
-            setOptions(options);
-            setIngredients(isNotRequired);
+    //   getOneProduct(values.product.value.id, {}, shipperId)
+    //     .then((res) => {
+    //       if (res.options && res.options.length) {
+    //         let isNotRequired = [];
+    //         let options = res.options.map((elm) => ({
+    //           ...elm,
+    //           child_options: elm.child_options.length
+    //             ? elm.child_options.filter((el) => {
+    //                 if (!el.is_required) {
+    //                   isNotRequired.push(el);
+    //                   // setIngredients(prev => [...prev, el])
+    //                   return false;
+    //                 }
+    //                 return true;
+    //               })
+    //             : [],
+    //         }));
+    //         setOptions(options);
+    //         setIngredients(isNotRequired);
 
-            setFieldValue("option", {
-              label: `${options[0].name[lang]} (${options[0].price})`,
-              value: options[0],
-            });
-            setFieldValue("child_option", options[0].child_options[0]);
-          } else {
-            setOptions([]);
-            setIngredients([]);
-          }
-        })
-        .catch((err) => console.log(err));
-    }
+    //         setFieldValue("option", {
+    //           label: `${options[0].name[lang]} (${options[0].price})`,
+    //           value: options[0],
+    //         });
+    //         setFieldValue("child_option", options[0].child_options[0]);
+    //       } else {
+    //         setOptions([]);
+    //         setIngredients([]);
+    //       }
+    //     })
+    //     .catch((err) => console.log(err));
+    // }
   }, [values.product]);
 
   const totalPrice = useMemo(() => {
@@ -196,15 +196,15 @@ export default function ProductContent({
   }
 
   const fetchCouriers = (search) => {
-    getCouriers({ limit: 10, search })
-      .then((res) => {
-        const _couriers = res.couriers?.map((elm) => ({
-          label: elm.first_name + elm.last_name,
-          value: elm.id,
-        }));
-        setCouriers(_couriers);
-      })
-      .catch((err) => console.log(err));
+    // getCouriers({ limit: 10, search })
+    //   .then((res) => {
+    //     const _couriers = res.couriers?.map((elm) => ({
+    //       label: elm.first_name + elm.last_name,
+    //       value: elm.id,
+    //     }));
+    //     setCouriers(_couriers);
+    //   })
+    //   .catch((err) => console.log(err));
   };
   const onSearchCourier = (inputValue, actionMeta) => {
     clearTimeout(debounce);

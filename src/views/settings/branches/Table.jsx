@@ -20,7 +20,7 @@ import SwitchColumns from "components/Filters/SwitchColumns";
 import { deleteBranch, getBranchList } from "services/branch";
 
 
-export default function BranchesTable({ createModal, setCreateModal, search }) {
+export default function BranchesTable({ search }) {
   const { t } = useTranslation();
   const history = useHistory();
   const [items, setItems] = useState({});
@@ -28,7 +28,6 @@ export default function BranchesTable({ createModal, setCreateModal, search }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [saveLoading, setSaveLoading] = useState(null);
   const [columns, setColumns] = useState([])
-
 
   useEffect(() => {
     const _columns = [
@@ -115,7 +114,6 @@ export default function BranchesTable({ createModal, setCreateModal, search }) {
       render: (record) => <div> {record?.phone_numbers[0]} </div>,
     },
   ];
-
 
   return (
     <Card

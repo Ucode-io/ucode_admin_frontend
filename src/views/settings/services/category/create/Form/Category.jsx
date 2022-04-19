@@ -33,7 +33,6 @@ const {t} = useTranslation()
           <div className="col-span-4">
             <Form.Item formik={formik} name={`category.name.${lang}`}>
               <div className="input-label">
-                {" "}
                 <span>*</span> {t("name")}
               </div>
               <Input

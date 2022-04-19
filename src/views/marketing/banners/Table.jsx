@@ -12,8 +12,8 @@ import {
   TableRow,
 } from "@material-ui/core";
 
-import { deletePromo } from "../../../services/promotion";
-import { getPromos } from "../../../services/promotion";
+
+
 import { Input } from "alisa-ui";
 import SearchIcon from "@material-ui/icons/Search";
 import EditIcon from "@material-ui/icons/Edit";

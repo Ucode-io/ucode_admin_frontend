@@ -10,12 +10,12 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Pagination from "components/Pagination";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
-import {
-  deleteAggregator,
-  getAggregators,
-  postAggregator,
-  updateAggregator,
-} from "services";
+// import {
+//   deleteAggregator,
+//   getAggregators,
+//   postAggregator,
+//   updateAggregator,
+// } from "services";
 import { useHistory } from "react-router-dom";
 import LoaderComponent from "components/Loader";
 import Select from "components/Select";
@@ -34,7 +34,7 @@ export default function AggregatorTable({ createModal, setCreateModal }) {
   const { t } = useTranslation();
   const history = useHistory();
   const [items, setItems] = useState({});
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteModal, setDeleteModal] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,15 +45,15 @@ export default function AggregatorTable({ createModal, setCreateModal }) {
   }, [currentPage]);
 
   const getItems = (page) => {
-    setLoader(true);
-    getAggregators({ limit: 10, page })
-      .then((res) => {
-        setItems({
-          count: res.count,
-          data: res.aggregators,
-        });
-      })
-      .finally(() => setLoader(false));
+    // setLoader(true);
+    // getAggregators({ limit: 10, page })
+    //   .then((res) => {
+    //     setItems({
+    //       count: res.count,
+    //       data: res.aggregators,
+    //     });
+    //   })
+    //   .finally(() => setLoader(false));
   };
   const findType = [
     {
@@ -67,36 +67,36 @@ export default function AggregatorTable({ createModal, setCreateModal }) {
   ];
 
   const handleDeleteItem = () => {
-    setDeleteLoading(true);
-    deleteAggregator(deleteModal.id)
-      .then((res) => {
-        getItems(currentPage);
-        setDeleteLoading(false);
-        setDeleteModal(null);
-      })
-      .finally(() => setDeleteLoading(false));
+    // setDeleteLoading(true);
+    // deleteAggregator(deleteModal.id)
+    //   .then((res) => {
+    //     getItems(currentPage);
+    //     setDeleteLoading(false);
+    //     setDeleteModal(null);
+    //   })
+    //   .finally(() => setDeleteLoading(false));
   };
 
   const onSubmit = (values) => {
-    const data = {
-      ...values,
-      type: values?.type?.value,
-    };
-    data?.type === "fixed" && delete data.base_distance;
-    data?.type === "fixed" && delete data.price_per_km;
+    // const data = {
+    //   ...values,
+    //   type: values?.type?.value,
+    // };
+    // data?.type === "fixed" && delete data.base_distance;
+    // data?.type === "fixed" && delete data.price_per_km;
 
-    setSaveLoading(true);
-    const selectedAction = createModal.id
-      ? updateAggregator(createModal.id, data)
-      : postAggregator(data);
-    selectedAction
-      .then((res) => {
-        getItems(currentPage);
-      })
-      .finally(() => {
-        setSaveLoading(false);
-        closeModal();
-      });
+    // setSaveLoading(true);
+    // const selectedAction = createModal.id
+    //   ? updateAggregator(createModal.id, data)
+    //   : postAggregator(data);
+    // selectedAction
+    //   .then((res) => {
+    //     getItems(currentPage);
+    //   })
+    //   .finally(() => {
+    //     setSaveLoading(false);
+    //     closeModal();
+    //   });
   };
 
   const formik = useFormik({

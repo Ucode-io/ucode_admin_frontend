@@ -210,7 +210,7 @@ export default function CategoryTable({ search }) {
                   </TableRow>
                   {elm.subcategories?.map((item, i) =>
                     elm.openSubCat ? (
-                      <TableRow>
+                      <TableRow key={i}>
                         <TableCell className={cls.root}>{""}</TableCell>
                         <TableCell>
                           <div className="flex relative">

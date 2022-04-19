@@ -15,7 +15,7 @@ import Pagination from "../../../components/Pagination";
 import Card from "../../../components/Card";
 import Col from "../../../components/Col";
 import LoaderComponent from "../../../components/Loader";
-import { getSettlements } from "../../../services/settlements";
+// import { getSettlements } from "../../../services/settlements";
 import "./style.scss";
 
 //icons
@@ -136,22 +136,22 @@ export default function Settlements({ name, shipper_id, filters }) {
   ];
 
   const getItems = (page) => {
-    setLoader(true);
-    getSettlements({
-      limit: 10,
-      page,
-      shipper_id,
-      start_date: filters.start_date,
-      end_data: filters.end_date,
-    })
-      .then((res) => {
-        setItems({
-          count: res.count,
-          data: res.settlements,
-          total: res.totals,
-        });
-      })
-      .finally(() => setLoader(false));
+    // setLoader(true);
+    // getSettlements({
+    //   limit: 10,
+    //   page,
+    //   shipper_id,
+    //   start_date: filters.start_date,
+    //   end_data: filters.end_date,
+    // })
+    //   .then((res) => {
+    //     setItems({
+    //       count: res.count,
+    //       data: res.settlements,
+    //       total: res.totals,
+    //     });
+    //   })
+    //   .finally(() => setLoader(false));
   };
 
   const pagination = (

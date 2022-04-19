@@ -12,8 +12,8 @@ import {
   TableRow,
 } from "@material-ui/core";
 
-import { deletePromo } from "../../../services/promotion";
-import { getPromos } from "../../../services/promotion";
+// import { deletePromo } from "../../../services/promotion";
+// import { getPromos } from "../../../services/promotion";
 import { Input } from "alisa-ui";
 import SearchIcon from "@material-ui/icons/Search";
 import EditIcon from "@material-ui/icons/Edit";
@@ -32,7 +32,7 @@ import StatusTag from "../../../components/Tag/StatusTag";
 import { DownloadIcon } from "constants/icons";
 
 export default function TableOperator() {
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const [items, setItems] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -98,14 +98,14 @@ export default function TableOperator() {
   };
 
   const handleDeleteItem = () => {
-    setDeleteLoading(true);
-    deletePromo(deleteModal.id)
-      .then((res) => {
-        getItems(currentPage);
-        setDeleteLoading(false);
-        setDeleteModal(null);
-      })
-      .finally(() => setDeleteLoading(false));
+    // setDeleteLoading(true);
+    // deletePromo(deleteModal.id)
+    //   .then((res) => {
+    //     getItems(currentPage);
+    //     setDeleteLoading(false);
+    //     setDeleteModal(null);
+    //   })
+    //   .finally(() => setDeleteLoading(false));
   };
 
   const initialColumns = [
@@ -146,15 +146,15 @@ export default function TableOperator() {
   ];
 
   const getItems = (page) => {
-    setLoader(true);
-    getPromos({ limit: 10, page, search })
-      .then((res) => {
-        setItems({
-          count: res.count,
-          data: res.promos,
-        });
-      })
-      .finally(() => setLoader(false));
+    // setLoader(true);
+    // getPromos({ limit: 10, page, search })
+    //   .then((res) => {
+    //     setItems({
+    //       count: res.count,
+    //       data: res.promos,
+    //     });
+    //   })
+    //   .finally(() => setLoader(false));
   };
 
   const extraFilter = (

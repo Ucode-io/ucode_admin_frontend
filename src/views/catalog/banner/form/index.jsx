@@ -16,7 +16,7 @@ import Button from "../../../../components/Button"
 import Gallery from "../../../../components/Gallery"
 import { getOneBanner, postBanner, updateBanner } from "../../../../services/banner"
 import Select from "../../../../components/Select"
-import { getRegions } from "../../../../services/region"
+// import { getRegions } from "../../../../services/region"
 import CancelIcon from "@material-ui/icons/Cancel"
 import SaveIcon from "@material-ui/icons/Save"
 
@@ -48,15 +48,15 @@ export default function CreateBanner() {
   }
 
   const fetchData = async () => {
-    setLoader(true)
-    try {
-      const { regions } = await getRegions({ limit: 1000 })
-      setRegions(regions ? regions.map(elm => ({ label: elm.name, value: elm.id })) : [])
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoader(false)
-    }
+    // setLoader(true)
+    // try {
+    //   const { regions } = await getRegions({ limit: 1000 })
+    //   setRegions(regions ? regions.map(elm => ({ label: elm.name, value: elm.id })) : [])
+    // } catch (e) {
+    //   console.log(e)
+    // } finally {
+    //   setLoader(false)
+    // }
   }
 
   useEffect(() => {

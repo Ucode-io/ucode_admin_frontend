@@ -12,7 +12,7 @@ import Button from "components/Button";
 import Select from "components/Select";
 // import { getUserRoles } from "services/userRoles";
 import { getOperator, postOperator, updateOperator } from "services/operator";
-import { getRegions } from "services/region";
+// import { getRegions } from "services/region";
 import CancelIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
 import CustomSkeleton from "components/Skeleton";

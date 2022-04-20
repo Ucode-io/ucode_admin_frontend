@@ -12,45 +12,43 @@ import SaveIcon from "@material-ui/icons/Save";
 import CustomSkeleton from "components/Skeleton";
 import { TabPanel } from "components/Tab/TabBody";
 import Filters from "components/Filters";
-import { StyledTabs,StyledTab } from "components/StyledTabs";
-import  FlagEngIcon from "assets/icons/eng.svg"
-import FlagRuIcon  from "assets/icons/rus.svg"
-import  FlagUzIcon  from "assets/icons/uz.svg"
+import { StyledTabs, StyledTab } from "components/StyledTabs";
+import FlagEngIcon from "assets/icons/eng.svg";
+import FlagRuIcon from "assets/icons/rus.svg";
+import FlagUzIcon from "assets/icons/uz.svg";
 import CategoryForm from "./Form/Category";
-import { getCategoryById, updateCategory } from "services/category"
+import { getCategoryById, updateCategory } from "services/category";
 import { useTheme } from "@material-ui/core/styles";
 import SwipeableViews from "react-swipeable-views";
 import { postCategory } from "services/category";
 import SubCategoryForm from "./Form/SubCategory";
 
-
 export default function CategoryCreate() {
   const { t } = useTranslation();
   const history = useHistory();
   const params = useParams();
-  const theme = useTheme()
+  const theme = useTheme();
   const [saveLoading, setSaveLoading] = useState(false);
   const [loader, setLoader] = useState(false);
   const [selectedCardTab, setSelectedCardTab] = useState(0);
-  const [subCategory, setSubcategory] = useState()
+  // const [subCategory, setSubcategory] = useState();
   const [allCategory, setAllcategory] = useState([]);
-  
-  const initialValues = 
-  {
+  const [subCatWithId, setSubCatWithId] = useState([]);
+  const initialValues = {
     category: {
       company_id: "",
       description: {
         en: "",
         ru: "",
-        uz: ""
+        uz: "",
       },
       name: {
         en: "",
         ru: "",
-        uz: ""
+        uz: "",
       },
       name_url: "",
-      photo: ""
+      photo: "",
     },
     subcategory: {
       category_id: "",
@@ -61,25 +59,28 @@ export default function CategoryCreate() {
           name: {
             en: "",
             ru: "",
-            uz: ""
-          }
-        }
-      ]
+            uz: "",
+          },
+        },
+      ],
+    },
+  };
+
+  const getCategory = () => {
+    if (params.id) {
+      getCategoryById(params.id)
+        .then((res) => {
+          console.log("GET Category ", res);
+          // setSubcategory(res.data.subcategories);
+          setAllcategory(res.data.subcategories)
+          setSubCatWithId(res.data.subcategories);
+          formik.setValues(res.data);
+        })
+        .finally(() => setLoader(false));
     }
-  }
+  };
 
-const getCategory = () => {
-  if (params.id) {
-    getCategoryById(params.id).then((res) => {
-      console.log("GET Category ", res);
-      setSubcategory(res.data.subcategories);
-      formik.setValues(res.data);
-    })
-    .finally(() => setLoader(false))
-  }
-};
-
-  useEffect(() => { 
+  useEffect(() => {
     getCategory();
   }, []);
 
@@ -88,16 +89,16 @@ const getCategory = () => {
       name: yup.object().shape({
         ru: yup.string().required(t("required.field.error")),
         en: yup.string().required(t("required.field.error")),
-        uz: yup.string().required(t("required.field.error"))
-      })
+        uz: yup.string().required(t("required.field.error")),
+      }),
     }),
-  })
+  });
 
   const onSubmit = (values) => {
     const body = {
       ...values,
       subcategory: {
-        category_id: subCategory?.category_id,
+        // category_id: subCategory?.category_id,
         subcategories: allCategory,
       },
     };
@@ -122,7 +123,6 @@ const getCategory = () => {
     validationSchema,
   });
 
-  
   const routes = [
     {
       title: t(`add.category`),
@@ -220,10 +220,7 @@ const getCategory = () => {
                   index={0}
                   dir={theme.direction}
                 >
-                  <CategoryForm
-                    formik={formik}
-                    lang="ru"
-                  />
+                  <CategoryForm formik={formik} lang="ru" />
                 </TabPanel>
 
                 <TabPanel
@@ -231,10 +228,7 @@ const getCategory = () => {
                   index={1}
                   dir={theme.direction}
                 >
-                  <CategoryForm
-                    formik={formik}
-                    lang="en"
-                  />
+                  <CategoryForm formik={formik} lang="en" />
                 </TabPanel>
 
                 <TabPanel
@@ -242,10 +236,7 @@ const getCategory = () => {
                   index={2}
                   dir={theme.direction}
                 >
-                  <CategoryForm
-                    formik={formik}
-                    lang="uz"
-                  />
+                  <CategoryForm formik={formik} lang="uz" />
                 </TabPanel>
               </SwipeableViews>
             </Card>
@@ -259,7 +250,7 @@ const getCategory = () => {
               <TabPanel value={selectedCardTab} index={0} dir={theme.direction}>
                 <SubCategoryForm
                   formik={formik}
-                  subCategory={subCategory}
+                  // subCategory={subCategory}
                   id={params.id}
                   allCategory={allCategory}
                   setAllcategory={setAllcategory}
@@ -270,7 +261,7 @@ const getCategory = () => {
               <TabPanel value={selectedCardTab} index={1} dir={theme.direction}>
                 <SubCategoryForm
                   formik={formik}
-                  subCategory={subCategory}
+                  // subCategory={subCategory}
                   id={params.id}
                   allCategory={allCategory}
                   setAllcategory={setAllcategory}
@@ -281,7 +272,7 @@ const getCategory = () => {
               <TabPanel value={selectedCardTab} index={2} dir={theme.direction}>
                 <SubCategoryForm
                   formik={formik}
-                  subCategory={subCategory}
+                  // subCategory={subCategory}
                   id={params.id}
                   allCategory={allCategory}
                   setAllcategory={setAllcategory}

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Button from "components/Button";
 import { TabPanel } from "components/Tab/TabBody";
 import Filters from "components/Filters";
@@ -5,52 +7,82 @@ import { StyledTabs, StyledTab } from "components/StyledTabs";
 import FlagEngIcon from "assets/icons/eng.svg";
 import FlagRuIcon from "assets/icons/rus.svg";
 import FlagUzIcon from "assets/icons/uz.svg";
+import { Add } from "@material-ui/icons";
 import Modal from "components/Modal";
 import { Input } from "alisa-ui";
 import Form from "components/Form/Index";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import CancelIcon from "@material-ui/icons/Cancel";
-import { Add } from "@material-ui/icons";
-
-export default function PostSubCategory({
-  postModal,
+const initialValues = {
+  name: {
+    ru: "",
+    uz: "",
+    en: "",
+  },
+};
+export default function SubCategoryHandlerModal({
+  allCategory,
+  newSubCat,
+  subCatHandlerModalShow,
   showText,
   tabLabel,
   subCategoriesProps,
   formik,
   index,
-  setPostModal,
+  setAllcategory,
+  setsubCatHandlerModalShow,
   setShowText,
-  setAllcategory
 }) {
-
-  const [subCategoryTab, setSubCategoryTab] = useState(0);
   const { t } = useTranslation();
+  const [subCategoryTab, setSubCategoryTab] = useState(0);
+  const [subCatData, setSubCatData] = useState(initialValues);
+
   const Submittion = () => {
     if (
-      formik?.values?.subcategory?.subcategories[0].name.ru === "" ||
-      formik?.values?.subcategory?.subcategories[0].name.en === "" ||
-      formik?.values?.subcategory?.subcategories[0].name.uz === ""
+      subCatData?.name.uz === "" ||
+      subCatData?.name.ru === "" ||
+      subCatData?.name.en === ""
     ) {
       setShowText(true);
     } else {
       setShowText(false);
-      setPostModal(false);
+      setsubCatHandlerModalShow(false);
       setAllcategory((prev) => {
-        return [...prev, ...formik?.values?.subcategory?.subcategories];
-      });
-      formik.setFieldValue("subcategory.subcategories[0].name", {
-        uz: "",
-        ru: "",
-        en: "",
+        if (newSubCat) {
+          return [...prev, subCatData];
+        } else {
+          let clone = prev.map((el, i) => {
+            if (i === index) {
+              return subCatData;
+            } else {
+              return el;
+            }
+          });
+          return [...clone];
+        }
       });
     }
   };
-
+  useEffect(() => {
+    if (!newSubCat) {
+      setSubCatData(allCategory[index]);
+    } else {
+      setSubCatData(initialValues);
+    }
+  }, [newSubCat, index, allCategory, setSubCatData]);
+  function handleChange(lang, e) {
+    setSubCatData((prev) => {
+      return {
+        name: {
+          ...prev.name,
+          [lang]: e.target.value,
+        },
+      };
+    });
+  }
+  console.log("data", newSubCat);
   return (
     <Modal
-      open={postModal}
+      open={subCatHandlerModalShow}
       title={t("add.subcategory")}
       footer={null}
       isWarning={false}
@@ -64,7 +96,7 @@ export default function PostSubCategory({
         ) : (
           ""
         )}
-        <Filters className="mb-6">
+        <Filters>
           <StyledTabs
             value={subCategoryTab}
             onChange={(_, value) => setSubCategoryTab(value)}
@@ -107,70 +139,47 @@ export default function PostSubCategory({
 
         <>
           <TabPanel value={subCategoryTab} index={0}>
-            <Form.Item
-              formik={formik}
-              name={`subcategory.subcategories[0].name.ru`}
-            >
-              <Input
-                name={`subcategory.subcategories[0].name.ru`}
-                size="large"
-                value={
-                  formik?.values?.subcategory?.subcategories[index]?.name.ru ||
-                  ""
-                }
-                onChange={formik.handleChange}
-              />
-            </Form.Item>
+            <Input
+              size="large"
+              value={subCatData.name.ru}
+              onChange={(e) => {
+                handleChange("ru", e);
+              }}
+            />
           </TabPanel>
 
           <TabPanel value={subCategoryTab} index={1}>
-            <Form.Item
-              formik={formik}
-              name={`subcategory.subcategories[0].name.en`}
-            >
-              <Input
-                name={`subcategory.subcategories[0].name.en`}
-                size="large"
-                value={
-                  formik?.values?.subcategory?.subcategories[index]?.name.en ||
-                  ""
-                }
-                onChange={formik.handleChange}
-              />
-            </Form.Item>
+            <Input
+              size="large"
+              value={subCatData.name.en}
+              onChange={(e) => {
+                handleChange("en", e);
+              }}
+            />
           </TabPanel>
 
           <TabPanel value={subCategoryTab} index={2}>
-            <Form.Item
-              formik={formik}
-              name={`subcategory.subcategories[0].name.uz`}
-            >
-              <Input
-                name={`subcategory.subcategories[0].name.uz`}
-                size="large"
-                value={
-                  formik?.values?.subcategory?.subcategories[index]?.name.uz ||
-                  ""
-                }
-                onChange={formik.handleChange}
-              />
-            </Form.Item>
+            <Input
+              size="large"
+              value={subCatData.name.uz}
+              onChange={(e) => {
+                handleChange("uz", e);
+              }}
+            />
           </TabPanel>
         </>
 
-        <div className="flex w-full justify-center gap-5">
-          <Button type="button" size="large" onClick={Submittion} icon={Add}>
+        <div className="flex w-full justify-center gap-5 mt-2">
+          <Button type="submit" onClick={Submittion} icon={Add} size="large">
             {t("add")}
           </Button>
-
           <Button
+            type="button"
+            onClick={() => setsubCatHandlerModalShow(false)}
             icon={CancelIcon}
             shape="outlined"
             color="red"
             borderColor="bordercolor"
-            type="button"
-            size="large"
-            onClick={() => setPostModal(false)}
           >
             {t("cancel")}
           </Button>

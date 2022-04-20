@@ -103,13 +103,13 @@ ingress:
             hosts:                                                                                                                               
              - "test.admin.medion.udevs.io"                                                                                                  
 
-resources:                                                                                                           
-   limits:                                                                                                                                
-     cpu: 150m                                                                                                                          
-     memory: 256Mi                                                                                                                        
-   requests:                                                                                                                              
-     cpu: 100m                                                                                                                            
-     memory: 200Mi                                                                                                                        
+resources: {}                                                                                                    
+  #  limits:                                                                                                                                
+  #    cpu: 150m                                                                                                                          
+  #    memory: 256Mi                                                                                                                        
+  #  requests:                                                                                                                              
+  #    cpu: 100m                                                                                                                            
+  #    memory: 200Mi                                                                                                                        
 
 autoscaling:                                                                                                                               
   enabled: false                                                                                                                           

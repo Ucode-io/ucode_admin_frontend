@@ -113,6 +113,7 @@ const catagoryListMaker =(lang) => {
     }else{
       updateService(values)
       .then((res) => console.log("UPDATE ", res))
+      .finally(()=> history.goBack())
     }
     
   }

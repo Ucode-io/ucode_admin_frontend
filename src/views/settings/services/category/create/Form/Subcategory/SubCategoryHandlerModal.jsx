@@ -60,6 +60,7 @@ export default function SubCategoryHandlerModal({
           return [...clone];
         }
       });
+      setSubCategoryTab(0)
     }
   };
   useEffect(() => {
@@ -175,7 +176,7 @@ export default function SubCategoryHandlerModal({
           </Button>
           <Button
             type="button"
-            onClick={() => setsubCatHandlerModalShow(false)}
+            onClick={() => {setsubCatHandlerModalShow(false);setSubCatData(initialValues);setSubCategoryTab(0)}}
             icon={CancelIcon}
             shape="outlined"
             color="red"

@@ -34,7 +34,7 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import TagBtn from "components/Tag/TimeTag";
 import orderTimer from "helpers/orderTimer";
 import { showAlert } from "redux/actions/alertActions";
-import { getAddressListYandex } from "services/yandex";
+// import { getAddressListYandex } from "services/yandex";
 
 export default function CreateClient() {
   const { t } = useTranslation();
@@ -227,26 +227,26 @@ export default function CreateClient() {
   }, [placemarkGeometry]);
 
   useEffect(() => {
-    if (searchAddress) {
-      getAddressListYandex({
-        text: searchAddress,
-        //ll: `${placemarkGeometry[1]},${placemarkGeometry[0]}`,
-      }).then((res) => {
-        if (res.status === 200) {
-          setAddressList(
-            res.data.features.map((item) => ({
-              label: item.properties.name,
-              value: item.properties.CompanyMetaData.id,
-              id: item.properties.CompanyMetaData.id,
-              description: item.properties.description,
-              ...item,
-            })),
-          );
-        }
-      });
-    } else {
-      setAddressList([]);
-    }
+    // if (searchAddress) {
+    //   getAddressListYandex({
+    //     text: searchAddress,
+    //     //ll: `${placemarkGeometry[1]},${placemarkGeometry[0]}`,
+    //   }).then((res) => {
+    //     if (res.status === 200) {
+    //       setAddressList(
+    //         res.data.features.map((item) => ({
+    //           label: item.properties.name,
+    //           value: item.properties.CompanyMetaData.id,
+    //           id: item.properties.CompanyMetaData.id,
+    //           description: item.properties.description,
+    //           ...item,
+    //         })),
+    //       );
+    //     }
+    //   });
+    // } else {
+    //   setAddressList([]);
+    // }
   }, [searchAddress]);
 
   useEffect(() => {

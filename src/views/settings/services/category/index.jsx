@@ -1,14 +1,45 @@
-import "./style.scss";
 import Table from "./Table";
 import Header from "../../../../components/Header";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "../../../../components/Button";
+import Filters from "components/Filters";
+import { DownloadIcon, UploadIcon } from "constants/icons";
+import Input from "components/Input";
+import SearchIcon from "@material-ui/icons/Search";
+import DatePicker from "components/DatePicker";
+import { useState } from "react";
 
 export default function Click() {
   const { t } = useTranslation();
   const history = useHistory();
+  const [search, setSearch] = useState()
+
+  const extraFilter = (
+    <div className="flex gap-4">
+      <Button
+        icon={UploadIcon}
+        iconClassName="text-blue-600"
+        shape="outlined"
+        size="medium"
+        color="zinc"
+      >
+        {t("import")}
+      </Button>
+      <Button
+        icon={DownloadIcon}
+        iconClassName="text-blue-600"
+        color="zinc"
+        shape="outlined"
+        size="medium"
+        onClick={() => console.log("clicked")}
+        className="mr-4"
+      >
+        {t("download")}
+      </Button>
+    </div>
+  );
 
   return (
     <div>
@@ -26,7 +57,19 @@ export default function Click() {
           </Button>,
         ]}
       />
-      <Table />
+      <Filters extra={extraFilter}>
+        <div className="flex">
+          <Input
+            // width={410}
+            placeholder={t("search")}
+            size="middle"
+            addonBefore={<SearchIcon />}
+            onChange={(e) => setSearch(e.target.value) }
+          />
+          <DatePicker className="ml-2 rounded-lg" />
+        </div>
+      </Filters>
+      <Table search={search}/>
     </div>
   );
 }

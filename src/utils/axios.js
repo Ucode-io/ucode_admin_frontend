@@ -8,7 +8,7 @@ import { showAlert } from "redux/actions/alertActions";
 
 var request = axios.create({
   baseURL: config.baseURL,
-  timeout: 8000,
+  timeout: 10000,
 });
 
 // var waitingTime = 8000;
@@ -57,7 +57,8 @@ export function errorHandler(error, hooks) {
           .catch((err) => {
             store.dispatch(logout());
           });
-      } else if (window.location.pathname !== "/auth/login" && access_token) {
+      }
+       else if (window.location.pathname !== "/auth/login" && access_token) {
         store.dispatch(logout());
       }
     }

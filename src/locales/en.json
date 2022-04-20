@@ -252,5 +252,6 @@
   "change": "Change",
   "change.photo": "Rasmni o'zgartirish",
   "add.photo": "Upload a photo",
-  "invalid phone number": "Invalid phone number"
+  "invalid phone number": "Invalid phone number",
+  "image": "Изображение "
 }

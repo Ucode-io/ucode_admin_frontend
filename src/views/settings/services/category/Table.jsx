@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
-
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  IconButton,
+  makeStyles,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -11,40 +17,71 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-
-import { deleteClick, getClick } from "../../../../services/promotion";
-import { Input } from "alisa-ui";
-import SearchIcon from "@material-ui/icons/Search";
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
-//components
-import Pagination from "components/Pagination";
-import Modal from "components/Modal";
-import Filters from "components/Filters";
-import Card from "components/Card";
-import ActionMenu from "components/ActionMenu";
-import LoaderComponent from "components/Loader";
 import SwitchColumns from "components/Filters/SwitchColumns";
-import Button from "components/Button";
-import { DownloadIcon } from "constants/icons";
+import ActionMenu from "components/ActionMenu";
+import Card from "components/Card";
+import LoaderComponent from "components/Loader";
+import Pagination from "components/Pagination";
+import { deleteCategory, getCategoriesList } from "services/category";
+import { KeyboardArrowRight } from "@material-ui/icons";
+import moment from "moment";
 
-export default function ClickTable() {
-  const [loader, setLoader] = useState(true);
+export default function CategoryTable({ search }) {
+  const { t } = useTranslation();
+  const history = useHistory();
   const [items, setItems] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(null);
-  const [search, setSearch] = useState("");
+  const [loader, setLoader] = useState(false);
   const [columns, setColumns] = useState([]);
 
-  const { t } = useTranslation();
-  const lang = useSelector((state) => state.lang.current);
-  const history = useHistory();
-  let debounce = setTimeout(() => {}, 0);
+  const initialColumns = [
+    {
+      title: "",
+      key: "order-number",
+      render: (record, index) => (
+        <div className="rounded-full border text-blue-500">
+          {" "}
+          <KeyboardArrowRight />{" "}
+        </div>
+      ),
+    },
+    {
+      title: t("category"),
+      key: "category",
+      render: (record) => record.name.ru,
+    },
+    {
+      title: t("date"),
+      key: "date",
+      render: (record) => (
+        <div>
+          {" "}
+          {moment(new Date(record.created_at).toISOString())
+            .utc()
+            .format("YYYY-MM-DD")}{" "}
+        </div>
+      ),
+    },
+  ];
 
-  useEffect(() => {
-    getItems(currentPage);
-  }, [currentPage, search]);
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      "& .MuiPaper-root": {
+        backgroundColor: "#F4F6FA",
+      },
+      "& .MuiPaper-elevation1": {
+        boxShadow: "none",
+      },
+    },
+    line: {
+      background: "#E5E9EB",
+      width: "1px",
+      height: "48px",
+      position: "absolute",
+      top: "-10px",
+      left: "40px",
+    },
+  }));
+  const cls = useStyles();
 
   useEffect(() => {
     const _columns = [
@@ -60,165 +97,182 @@ export default function ClickTable() {
         ),
         key: t("actions"),
         render: (record, _) => (
-          <ActionMenu
-            id={record.branch_id}
-            actions={[
-              {
-                icon: <EditIcon />,
-                color: "blue",
-                title: t("change"),
-                action: () => {
-                  history.push(`category/create/${record.branch_id}`);
+          <div className="flex gap-2">
+            <ActionMenu
+              id={record.id}
+              actions={[
+                {
+                  title: t("edit"),
+                  color: "blue",
+                  icon: <EditIcon />,
+                  action: () => history.push(`category/${record.id}`),
                 },
-              },
-              {
-                icon: <DeleteIcon />,
-                color: "red",
-                title: t("delete"),
-                action: () => {
-                  setDeleteModal({ id: record.branch_id });
+                {
+                  title: t("delete"),
+                  color: "red",
+                  icon: <DeleteIcon />,
+                  action: () => {
+                    deleteCategory(record.id).then((res) => getCategories());
+                  },
                 },
-              },
-            ]}
-          />
+              ]}
+            />
+          </div>
         ),
       },
     ];
+
     setColumns(_columns);
   }, []);
 
-  const onSearch = (e) => {
-    clearTimeout(debounce);
-    debounce = setTimeout(() => {
-      setSearch(e.target.value);
-    }, 300);
-  };
-
-  const handleDeleteItem = () => {
-    setDeleteLoading(true);
-    deleteClick(deleteModal.id)
-      .then((res) => {
-        getItems(currentPage);
-        setDeleteLoading(false);
-        setDeleteModal(null);
-      })
-      .finally(() => setDeleteLoading(false));
-  };
-
-  const initialColumns = [
-    {
-      title: "№",
-      key: "promo-number",
-      render: (record, index) => (
-        <div>{(currentPage - 1) * 10 + index + 1}</div>
-      ),
-    },
-    {
-      title: t("service.name"),
-      key: "service_name",
-      render: (record) => <div>{record.branch_name}</div>,
-    },
-    {
-      title: t("description"),
-      key: "description",
-      render: (record) => <div>{record.merchant_id}</div>,
-    },
-    
-  ];
-
-  const getItems = (page) => {
+  const getCategories = () => {
     setLoader(true);
-    getClick({ limit: 10, page })
+    getCategoriesList({ search })
       .then((res) => {
+        console.log("GET Categories list => ", res);
         setItems({
-          count: res.count,
-          data: res.click_infos,
+          count: res.data.count,
+          data: res.data.categories.map((el) => {
+            return {
+              ...el,
+              openSubCat: false,
+            };
+          }),
         });
       })
+      .catch((err) => console.log(err, "error"))
       .finally(() => setLoader(false));
   };
 
-  const extraFilter = (
-    <div className="flex gap-4">
-      <Button
-            icon={DownloadIcon}
-            iconClassName="text-blue-600"
-            color="zinc"
-            shape="outlined"
-            size="medium"
-            onClick={() => console.log("clicked")}
-        >
-          {t("download")}
-        </Button>
-    </div>
-  );
+  console.log("ITEMDs ", items);
+  useEffect(() => {
+    getCategories(search);
+  }, [search]);
 
-  const pagination = (
-    <Pagination
-      title={t("general.count")}
-      count={items?.count}
-      onChange={(pageNumber) => setCurrentPage(pageNumber)}
-    />
-  );
-
+  function handleOpenSubCat(index) {
+    setItems((prev) => {
+      let clone = prev.data.map((el, i) => {
+        if (index === i) {
+          return {
+            ...el,
+            openSubCat: !el.openSubCat,
+          };
+        } else {
+          return el;
+        }
+      });
+      return {
+        ...prev,
+        data: clone,
+      };
+    });
+  }
   return (
-    <>
-      <Filters extra={extraFilter}>
-        <Input
-          onChange={onSearch}
-          width={280}
-          placeholder={t("search")}
-          size="middle"
-          addonBefore={<SearchIcon style={{ color: "var(--color-primary)" }} />}
+    <Card
+      className="m-4"
+      footer={
+        <Pagination
+          title={t("general.count")}
+          count={
+            1
+            // items?.count
+          }
+          // onChange={(pageNumber) => setCurrentPage(pageNumber)}
         />
-      </Filters>
-
-      <Card className="m-4" footer={pagination}>
-        <TableContainer className="rounded-lg border border-lightgray-1">
-          {items.data ? (
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  {columns.map((elm) => (
-                    <TableCell key={elm.key}>{elm.title}</TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {items.data && items.data.length ? (
-                  items.data.map((item, index) => (
-                    <TableRow
-                      key={item.id}
-                      onClick={() => {
-                        history.push(`category/create/${item.branch_id}`);
-                      }}
-                      className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-                    >
-                      {columns.map((col) => (
-                        <TableCell key={col.key}>
-                          {col.render
-                            ? col.render(item, index)
-                            : item[col.dataIndex]}
+      }
+    >
+      <TableContainer className="rounded-md border border-lightgray-1">
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              {columns.map((elm) => (
+                <TableCell key={elm.key}>{elm.title} </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {items.data && items.data.length ? (
+              items.data.map((elm, index) => (
+                <>
+                  <TableRow
+                    key={elm.id}
+                    onClick={() => {
+                      // return false;
+                      handleOpenSubCat(index);
+                    }}
+                    className={"bg-lightgray-5"}
+                  >
+                    {columns.map((col, ind) => (
+                      <TableCell className={cls.root} key={col.key}>
+                        {col.render ? col.render(elm, index) : "----"}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                  {elm.subcategories?.map((item, i) =>
+                    elm.openSubCat ? (
+                      <TableRow key={i}>
+                        <TableCell className={cls.root}>{""}</TableCell>
+                        <TableCell>
+                          <div className="flex relative">
+                            <div className="ml-7">{item.name.ru}</div>
+                          </div>
                         </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <></>
-                )}
-              </TableBody>
-            </Table>
-          ) : (
-            <LoaderComponent isLoader={loader} />
-          )}
-        </TableContainer>
-        <Modal
-          open={deleteModal}
-          onClose={() => setDeleteModal(null)}
-          onConfirm={handleDeleteItem}
-          loading={deleteLoading}
-        />
-      </Card>
-    </>
+
+                        <TableCell className={cls.root}>
+                          {moment(new Date(item.created_at).toISOString())
+                            .utc()
+                            .format("YYYY-MM-DD")}
+                        </TableCell>
+
+                        <TableCell className={cls.root}>
+                          <div className="flex gap-2">
+                            <ActionMenu
+                              id={12312312}
+                              actions={[
+                                {
+                                  title: t("edit"),
+                                  color: "blue",
+                                  icon: <EditIcon />,
+                                  // action: () =>
+                                    // history.push(`category/${record.id}`),
+                                },
+                                {
+                                  title: t("delete"),
+                                  color: "red",
+                                  icon: <DeleteIcon />,
+                                  action: () => {
+                                    // deleteCategory(record.id).then((res) =>
+                                    //   getCategories(),
+                                    // );
+                                  },
+                                },
+                              ]}
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      ""
+                    ),
+                  )}
+                </>
+              ))
+            ) : (
+              <></>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <LoaderComponent isLoader={loader} />
+      {/* <Pagination title={t("general.count")} count={items?.count} onChange={pageNumber => setCurrentPage(pageNumber)} /> */}
+
+      {/* <Modal
+        open={deleteModal}
+        onClose={() => setDeleteModal(null)}
+        onConfirm={handleDeleteItem}
+        loading={deleteLoading}
+      /> */}
+    </Card>
   );
 }

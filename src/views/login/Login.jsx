@@ -5,7 +5,7 @@ import LockIcon from "@material-ui/icons/Lock";
 import PhoneIcon from "@material-ui/icons/Phone";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
-import DeleverLogo from "assets/icons/Delever.png";
+import DeleverLogo from "assets/icons/medion_enter.svg";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import "./style.scss";
@@ -35,7 +35,7 @@ export default function App() {
     setLoader(true);
 
     axios
-      .post("/shipper-users/login", { username, password }) //post_default
+      .post("https://test.shipper-user.api.delever.uz/v1/shipper-users/login", { username, password }) //post_default
       .then((res) => {
         console.log("loginRes", res);
         dispatch({

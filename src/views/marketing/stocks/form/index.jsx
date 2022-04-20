@@ -16,7 +16,7 @@ import { TabPanel } from "components/Tab/TabBody"
 import { useTheme } from "@material-ui/core/styles"
 import GeneralInformation from "./GeneralInformation"
 import CustomSkeleton from "components/Skeleton"
-import {getPromo, postPromo, updatePromo} from "../../../../services/promotion";
+// import {getPromo, postPromo, updatePromo} from "../../../../services/promotion";
 
 export default function CategoryCreate() {
   const { id } = useParams()
@@ -27,47 +27,47 @@ export default function CategoryCreate() {
   const theme = useTheme()
 
   const [buttonLoader, setButtonLoader] = useState(false)
-  const [loader, setLoader] = useState(true)
+  const [loader, setLoader] = useState(false)
 
   const fetchData = () => {
-    setLoader(true)
-    if (!id) return setLoader(false)
-    getPromo(id)
-        .then((res) => {
-          console.log(res)
-          formik.setValues({
-            description_ru: res?.description.ru,
-            description_uz: res?.description.uz,
-            description_en: res?.description.en,
-            image: res?.image.replace("https://test.cdn.delever.uz/delever/", ""),
-            title_ru: res?.title.ru,
-            title_uz: res?.title.uz,
-            title_en: res?.title.en,
-            start_date: "",
-            end_date: "",
-          })
-        })
-        .finally(() => setLoader(false))
+    // setLoader(true)
+    // if (!id) return setLoader(false)
+    // getPromo(id)
+    //     .then((res) => {
+    //       console.log(res)
+    //       formik.setValues({
+    //         description_ru: res?.description.ru,
+    //         description_uz: res?.description.uz,
+    //         description_en: res?.description.en,
+    //         image: res?.image.replace("https://test.cdn.delever.uz/delever/", ""),
+    //         title_ru: res?.title.ru,
+    //         title_uz: res?.title.uz,
+    //         title_en: res?.title.en,
+    //         start_date: "",
+    //         end_date: "",
+    //       })
+    //     })
+    //     .finally(() => setLoader(false))
   }
 
   const saveChanges = (data) => {
-    console.log("data", data)
-    setButtonLoader(true)
-    if (id) {
-      updatePromo(id, data)
-          .then(() => history.go(-1))
-          .catch((err) =>
-              dispatch(showAlert(t(err?.data?.Error?.Message ?? err?.data?.Error))),
-          )
-          .finally(() => setButtonLoader(false))
-    } else {
-      postPromo(data)
-          .then(() => history.go(-1))
-          .catch((err) =>
-              dispatch(showAlert(t(err.data?.Error?.Message ?? err?.data?.Error))),
-          )
-          .finally(() => setButtonLoader(false))
-    }
+    // console.log("data", data)
+    // setButtonLoader(true)
+    // if (id) {
+    //   updatePromo(id, data)
+    //       .then(() => history.go(-1))
+    //       .catch((err) =>
+    //           dispatch(showAlert(t(err?.data?.Error?.Message ?? err?.data?.Error))),
+    //       )
+    //       .finally(() => setButtonLoader(false))
+    // } else {
+    //   postPromo(data)
+    //       .then(() => history.go(-1))
+    //       .catch((err) =>
+    //           dispatch(showAlert(t(err.data?.Error?.Message ?? err?.data?.Error))),
+    //       )
+    //       .finally(() => setButtonLoader(false))
+    // }
   }
 
   const onSubmit = (data) => {

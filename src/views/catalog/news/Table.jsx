@@ -12,7 +12,6 @@ import { useSelector } from "react-redux"
 import { useTranslation } from "react-i18next"
 
 //components
-import TableLoader from "../../../components/TableLoader"
 import Tag from "../../../components/Tag/"
 import Pagination from "../../../components/Pagination"
 import { deleteNew, getNews } from "../../../services/news"

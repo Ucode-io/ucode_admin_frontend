@@ -26,7 +26,7 @@ const CModal = ({
   loading,
   className,
   style,
-  width = 420,
+  width = 450,
   children,
   disable = false,
   isWarning = true,

@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useMemo, useState } from "react"
 import { useFormik } from "formik"
 import * as yup from "yup"
 import { useTranslation } from "react-i18next"
 import { useHistory, useParams } from "react-router-dom"
-import { CircularProgress } from "@material-ui/core"
 
 import { Input } from "alisa-ui"
 
@@ -15,7 +14,7 @@ import Card from "../../../../components/Card"
 import Button from "../../../../components/Button"
 import TextArea from "../../../../components/Textarea"
 import Select from "../../../../components/Select"
-import { getOneNew, postNew, updateNew } from "../../../../services/news"
+import {  postNew, updateNew } from "../../../../services/news"
 import { useSelector } from "react-redux"
 import { getShippers } from "../../../../services"
 import CustomSkeleton from "../../../../components/Skeleton"
@@ -31,33 +30,33 @@ export default function CreateNew() {
   const [loader, setLoader] = useState(true)
   const lang = useSelector((state) => state.lang.current)
 
-  const getShippersFunction = () => {
-    setLoader(true)
-    getShippers()
-      .then((res) => {
-        setShipper(res?.shippers)
-      })
-      .finally(() => setLoader(false))
-  }
+  // const getShippersFunction = () => {
+  //   setLoader(true)
+  //   getShippers()
+  //     .then((res) => {
+  //       setShipper(res?.shippers)
+  //     })
+  //     .finally(() => setLoader(false))
+  // }
 
-  const getNew = () => {
-    if (!id) return setLoader(false)
-    setLoader(true)
-    getOneNew(id)
-      .then((res) => {
-        formik.setValues({
-          name: res.name,
-          description: res.description,
-          shipper_ids: res.shippers.map(({ id }, _) => id),
-        })
-      })
-      .finally(() => setLoader(false))
-  }
+  // const getNew = () => {
+  //   if (!id) return setLoader(false)
+  //   setLoader(true)
+  //   getOneNew(id)
+  //     .then((res) => {
+  //       formik.setValues({
+  //         name: res.name,
+  //         description: res.description,
+  //         shipper_ids: res.shippers.map(({ id }, _) => id),
+  //       })
+  //     })
+  //     .finally(() => setLoader(false))
+  // }
 
-  useEffect(() => {
-    getShippersFunction()
-    getNew()
-  }, [])
+  // useEffect(() => {
+  //   getShippersFunction()
+  //   getNew()
+  // }, [])
 
   const initialValues = useMemo(
     () => ({

@@ -29,12 +29,12 @@ export function TabPanel({
       {forceRenderTabPanel ? 
         value === index && (
           <Box>
-            <Typography>{children}</Typography>
+            <Typography component={'span'} variant={'body2'}>{children}</Typography>
           </Box>
         )
       : (
         <Box>
-          <Typography>{children}</Typography>
+          <Typography component={'span'} variant={'body2'}>{children}</Typography>
         </Box>
       )}
     </div>

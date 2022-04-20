@@ -5,12 +5,12 @@ const Dashboard = Loadable({
   loader: () => import("views/dashboard/index"),
   loading: FullScreenLoader,
 });
-const Clients = Loadable({
-  loader: () => import("views/clients"),
+const Staffs = Loadable({
+  loader: () => import("views/staffs"),
   loading: FullScreenLoader,
 });
-const ClientsCreate = Loadable({
-  loader: () => import("views/clients/Create"),
+const StaffsCreate = Loadable({
+  loader: () => import("views/staffs/Create"),
   loading: FullScreenLoader,
 });
 const Profile = Loadable({
@@ -26,8 +26,18 @@ const OrderForm = Loadable({
   loading: FullScreenLoader,
 });
 
-const ShipperSettings = Loadable({
-  loader: () => import("views/settings/ShipperSettings"),
+// const ShipperSettings = Loadable({
+//   loader: () => import("views/settings/ShipperSettings"),
+//   loading: FullScreenLoader,
+// });
+
+const User = Loadable({
+  // loader: () => import("views/settings/branches/form/tabs/Users/index"),
+  loading: FullScreenLoader,
+});
+
+const UserCreate = Loadable({
+  loader: () => import("views/settings/branches/form/tabs/Users/form"),
   loading: FullScreenLoader,
 });
 
@@ -39,10 +49,10 @@ const ShipperSettings = Loadable({
 //   loader: () => import("views/settings/branches/form/index.jsx"),
 //   loading: FullScreenLoader,
 // });
-const ShipperSettingsCreate = Loadable({
-  loader: () => import("views/settings/ShipperSettings/Create"),
-  loading: FullScreenLoader,
-});
+// const ShipperSettingsCreate = Loadable({
+//   loader: () => import("views/settings/ShipperSettings/Create"),
+//   loading: FullScreenLoader,
+// });
 const Stocks = Loadable({
   loader: () => import("views/marketing/stocks"),
   loading: FullScreenLoader,
@@ -53,14 +63,14 @@ const StockCreate = Loadable({
   loading: FullScreenLoader,
 });
 
-const Banners = Loadable({
-  loader: () => import("views/marketing/banners"),
-  loading: FullScreenLoader,
-});
-const BannerFrom = Loadable({
-  loader: () => import("views/marketing/banners/form"),
-  loading: FullScreenLoader,
-});
+// const Banners = Loadable({
+//   loader: () => import("views/marketing/banners"),
+//   loading: FullScreenLoader,
+// });
+// const BannerFrom = Loadable({
+//   loader: () => import("views/marketing/banners/form"),
+//   loading: FullScreenLoader,
+// });
 const Reviews = Loadable({
   loader: () => import("views/marketing/reviews"),
   loading: FullScreenLoader,
@@ -113,20 +123,20 @@ const BannerCreate = Loadable({
   loader: () => import("views/marketing/banners/form"),
   loading: FullScreenLoader,
 });
-const Courier = Loadable({
-  loader: () => import("views/personal/courier"),
+// const Courier = Loadable({
+//   loader: () => import("views/personal/courier"),
+//   loading: FullScreenLoader,
+// });
+// const CourierCreate = Loadable({
+//   loader: () => import("views/personal/courier/form"),
+//   loading: FullScreenLoader,
+// });
+const Patient = Loadable({
+  loader: () => import("views/patient/patient"),
   loading: FullScreenLoader,
 });
-const CourierCreate = Loadable({
-  loader: () => import("views/personal/courier/form"),
-  loading: FullScreenLoader,
-});
-const Operator = Loadable({
-  loader: () => import("views/personal/operator"),
-  loading: FullScreenLoader,
-});
-const OperatorCreate = Loadable({
-  loader: () => import("views/personal/operator/form"),
+const PatientCreate = Loadable({
+  loader: () => import("views/patient/patient/form"),
   loading: FullScreenLoader,
 });
 const ReportsCourier = Loadable({
@@ -144,20 +154,12 @@ const ReportsUser = Loadable({
   loading: FullScreenLoader,
 });
 
-const CourierType = Loadable({
-  loader: () => import("views/personal/courierType"),
-  loading: FullScreenLoader,
-});
-const CourierTypeCreate = Loadable({
-  loader: () => import("views/personal/courierType/form"),
-  loading: FullScreenLoader,
-});
 const Branche = Loadable({
-  loader: () => import("views/settings/rates"),
+  loader: () => import("views/settings/branches"),
   loading: FullScreenLoader,
 });
 const BranchCreate = Loadable({
-  loader: () => import("views/settings/rates/form"),
+  loader: () => import("views/settings/branches/form"),
   loading: FullScreenLoader,
 });
 const BranchUser = Loadable({
@@ -177,10 +179,10 @@ const SettlementCreate = Loadable({
   loading: FullScreenLoader,
 });
 
-const ShipperBranchesUsersForm = Loadable({
-  loader: () => import("views/settings/branches/form/users/form"),
-  loading: FullScreenLoader,
-});
+// const ShipperBranchesUsersForm = Loadable({
+//   loader: () => import("views/settings/branches/form/users/form"),
+//   loading: FullScreenLoader,
+// });
 
 const Template = Loadable({
   loader: () => import("views/settings/template"),
@@ -196,17 +198,8 @@ const Documents = Loadable({
   loader: () => import("views/settings/services"),
   loading: FullScreenLoader,
 });
-
-// const IikoEdit = Loadable({
-//   loader: () => import("views/settings/services/iiko"),
-//   loading: FullScreenLoader,
-// });
-// const JowiEdit = Loadable({
-//   loader: () => import("views/settings/services/jowi"),
-//   loading: FullScreenLoader,
-// });
 const Service = Loadable({
-  loader: () => import("views/settings/services/service"),
+  loader: () => import("views/settings/services/service/index"),
   loading: FullScreenLoader,
 });
 const ServiceCreate = Loadable({
@@ -218,19 +211,21 @@ const Category = Loadable({
   loading: FullScreenLoader,
 });
 const CategoryCreate = Loadable({
-  loader: () => import("views/settings/services/category/CategoryCreate"),
+  loader: () => import("views/settings/services/category/create/CategoryCreate"),
   loading: FullScreenLoader,
 });
+
+const Catalog = Loadable({
+  loader: () => import("views/settings/services/catalog"),
+  loading: FullScreenLoader,
+})
+
+const CatalogCrate = Loadable({
+  loader: () => import("views/settings/services/catalog/CatalogCreate"),
+  loading: FullScreenLoader,
+})
 // const BranchCreate = Loadable({
 //   loader: () => import("views/settings/integrations/iiko/BranchCreate"),
-//   loading: FullScreenLoader,
-// });
-// const JowiBranchCreate = Loadable({
-//   loader: () => import("views/settings/services/jowi/JowiBranchCreate"),
-//   loading: FullScreenLoader,
-// });
-// const JowiAddProduct = Loadable({
-//   loader: () => import("views/settings/services/jowi/JowiAddProduct"),
 //   loading: FullScreenLoader,
 // });
 
@@ -239,21 +234,17 @@ const DocumentsCreate = Loadable({
   loading: FullScreenLoader,
 });
 
-const UserRoles = Loadable({
-  loader: () => import("views/settings/user-roles"),
+
+
+const Requisites = Loadable({
+  loader: () => import("views/settings/requisites"),
   loading: FullScreenLoader,
 });
 
-const UserRolesCreate = Loadable({
-  loader: () => import("views/settings/user-roles/Form"),
+const RequisitesCreate = Loadable({
+  loader: () => import("views/settings/requisites/form"),
   loading: FullScreenLoader,
 });
-
-// const Services = Loadable({
-//   loader: () => import("views/settings/services1"),
-//   loading: FullScreenLoader,
-// });
-
 // const CompanyBranch = Loadable({
 //   loader: () => import("views/settings/company/Branch"),
 //   loading: FullScreenLoader,
@@ -269,105 +260,14 @@ const UserRolesCreate = Loadable({
 //   loading: FullScreenLoader,
 // });
 
-const SettingsCatalogGoods = Loadable({
-  loader: () => import("views/settings/catalog/Goods"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogGoodsCreate = Loadable({
-  loader: () => import("views/settings/catalog/Goods/Create"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogCategory = Loadable({
-  loader: () => import("views/settings/catalog/Category"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogCategoryProduct = Loadable({
-  loader: () => import("views/settings/catalog/Category/CategoryCreate"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogAttributes = Loadable({
-  loader: () => import("views/settings/catalog/Attributes"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogAttributesCreate = Loadable({
-  loader: () => import("views/settings/catalog/Attributes/Create"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogBrands = Loadable({
-  loader: () => import("views/settings/catalog/Brands"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogBrandsCreate = Loadable({
-  loader: () => import("views/settings/catalog/Brands/Create"),
-  loading: FullScreenLoader,
-});
 
-const SettingsCatalogUnits = Loadable({
-  loader: () => import("views/settings/catalog/Units"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogUnitsCreate = Loadable({
-  loader: () => import("views/settings/catalog/Units/Create"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogTags = Loadable({
-  loader: () => import("views/settings/catalog/Tags"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogTagsCreate = Loadable({
-  loader: () => import("views/settings/catalog/Tags/Create"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogProductVariants = Loadable({
-  loader: () => import("views/settings/catalog/ProductVariants"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogProductVariantsCreate = Loadable({
-  loader: () => import("views/settings/catalog/ProductVariants/Create"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogCombo = Loadable({
-  loader: () => import("views/settings/catalog/Combo"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogComboCreate = Loadable({
-  loader: () => import("views/settings/catalog/Combo/Create"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogPriceChanger = Loadable({
-  loader: () => import("views/settings/catalog/PriceChanger"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogPriceChangerCreate = Loadable({
-  loader: () => import("views/settings/catalog/PriceChanger/Create"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogRates = Loadable({
-  loader: () => import("views/settings/catalog/Rates"),
-  loading: FullScreenLoader,
-});
-
-const SettingsCatalogRatesCreate = Loadable({
-  loader: () => import("views/settings/catalog/Rates/Create"),
-  loading: FullScreenLoader,
-});
 
 export default [
   {
@@ -378,54 +278,68 @@ export default [
     permission: "dashboard",
   },
   {
-    component: Clients,
-    path: "/personal/clients",
+    component: Staffs,
+    path: "/staffs",
     exact: true,
-    title: "clients",
-    permission: "clients",
+    title: "staffs",
+    permission: "staffs",
   },
   {
-    component: ClientsCreate,
-    path: "/personal/clients/create",
+    component: StaffsCreate,
+    path: "/staffs/create",
     exact: true,
-    title: "client-create",
-    permission: "clients",
+    title: "staffs-create",
+    permission: "staffs",
   },
   {
-    component: ClientsCreate,
-    path: "/personal/clients/:id",
+    component: StaffsCreate,
+    path: "/staffs/:id",
     exact: true,
-    title: "client-edit",
-    permission: "clients",
+    title: "staffs-edit",
+    permission: "staffs",
   },
 
-  {
-    component: CourierType,
-    path: "/courier/courier-type",
-    exact: true,
-    title: "CourierType",
-    permission: "courier_type",
-  },
-  {
-    component: CourierTypeCreate,
-    path: "/courier/courier-type/create",
-    exact: true,
-    title: "CourierTypeCreate",
-    permission: "courier_type",
-  },
-  {
-    component: CourierTypeCreate,
-    path: "/courier/courier-type/:id",
-    exact: true,
-    title: "CourierTypeEdit",
-    permission: "courier_type",
-  },
+  // {
+  //   component: CourierType,
+  //   path: "/courier/courier-type",
+  //   exact: true,
+  //   title: "CourierType",
+  //   permission: "courier_type",
+  // },
+  // {
+  //   component: CourierTypeCreate,
+  //   path: "/courier/courier-type/create",
+  //   exact: true,
+  //   title: "CourierTypeCreate",
+  //   permission: "courier_type",
+  // },
+  // {
+  //   component: CourierTypeCreate,
+  //   path: "/courier/courier-type/:id",
+  //   exact: true,
+  //   title: "CourierTypeEdit",
+  //   permission: "courier_type",
+  // },
   {
     component: Profile,
     path: "/profile",
     exact: true,
     title: "Profile",
     permission: "profile",
+  },
+  {
+    component: User,
+    path: "/user",
+    exact: true,
+    title: "User",
+    permission: "user",
+  },
+  {
+    component: UserCreate,
+    path: "/settings/branch/create/user/create",
+    exact: true,
+    title: "UserCreate",
+    permission: "usercreate",
   },
   {
     component: Orders,
@@ -490,13 +404,13 @@ export default [
     title: "productEdit",
     permission: "menu",
   },
-  {
-    component: ShipperSettings,
-    path: "/company/shipper-company",
-    exact: true,
-    title: "ShipperSettings",
-    permission: "settings",
-  },
+  // {
+  //   component: ShipperSettings,
+  //   path: "/company/shipper-company",
+  //   exact: true,
+  //   title: "ShipperSettings",
+  //   permission: "settings",
+  // },
   // Shipper branch crud
   // {
   //   component: ShipperBranches,
@@ -528,27 +442,27 @@ export default [
   //   title: "shipperCompanyBranchesEdit",
   //   permission: "settings",
   // },
-  {
-    component: ShipperBranchesUsersForm,
-    path: "/company/shipper-company/:id/branches/:branch_id/users/:user_id",
-    exact: true,
-    title: "shipperCompanyBranchesUserUpdate",
-    permission: "settings",
-  },
-  {
-    component: ShipperSettingsCreate,
-    path: "/company/shipper-company/create",
-    exact: true,
-    title: "ShipperSettings",
-    permission: "settings",
-  },
-  {
-    component: ShipperSettingsCreate,
-    path: "/company/shipper-company/:id",
-    exact: true,
-    title: "ShipperSettings",
-    permission: "settings",
-  },
+  // {
+  //   component: ShipperBranchesUsersForm,
+  //   path: "/company/shipper-company/:id/branches/:branch_id/users/:user_id",
+  //   exact: true,
+  //   title: "shipperCompanyBranchesUserUpdate",
+  //   permission: "settings",
+  // },
+  // {
+  //   component: ShipperSettingsCreate,
+  //   path: "/company/shipper-company/create",
+  //   exact: true,
+  //   title: "ShipperSettings",
+  //   permission: "settings",
+  // },
+  // {
+  //   component: ShipperSettingsCreate,
+  //   path: "/company/shipper-company/:id",
+  //   exact: true,
+  //   title: "ShipperSettings",
+  //   permission: "settings",
+  // },
   {
     component: Stocks,
     path: "/marketing/stocks",
@@ -710,68 +624,90 @@ export default [
     title: "BannerEdit",
     permission: "banner",
   },
+  // {
+  //   component: Courier,
+  //   path: "/courier/list",
+  //   exact: true,
+  //   title: "Courier",
+  //   permission: "courier",
+  // },
+  // {
+  //   component: CourierCreate,
+  //   path: "/courier/list/create",
+  //   exact: true,
+  //   title: "CourierCreate",
+  //   permission: "courier",
+  // },
+  // {
+  //   component: CourierCreate,
+  //   path: "/courier/list/:id",
+  //   exact: true,
+  //   title: "CourierEdit",
+  //   permission: "courier",
+  // },
   {
-    component: Courier,
-    path: "/courier/list",
-    exact: true,
-    title: "Courier",
-    permission: "courier",
-  },
-  {
-    component: CourierCreate,
-    path: "/courier/list/create",
-    exact: true,
-    title: "CourierCreate",
-    permission: "courier",
-  },
-  {
-    component: CourierCreate,
-    path: "/courier/list/:id",
-    exact: true,
-    title: "CourierEdit",
-    permission: "courier",
-  },
-  {
-    component: Operator,
+    component: Patient,
     path: "/patients",
     exact: true,
     title: "Operator",
     permission: "operator",
   },
   {
-    component: OperatorCreate,
+    component: PatientCreate,
     path: "/patients/create",
     exact: true,
     title: "OperatorCreate",
     permission: "operator",
   },
   {
-    component: OperatorCreate,
+    component: PatientCreate,
     path: "/patients/:id",
     exact: true,
     title: "OperatorEdit",
     permission: "operator",
   },
+  // {
+  //   component: CourierType,
+  //   path: "/personal/courier_type",
+  //   exact: true,
+  //   title: "CourierType",
+  //   permission: "courier_type",
+  // },
+  // {
+  //   component: CourierTypeCreate,
+  //   path: "/personal/courier_type/create",
+  //   exact: true,
+  //   title: "CourierTypeCreate",
+  //   permission: "courier_type",
+  // },
+  // {
+  //   component: CourierTypeCreate,
+  //   path: "/personal/courier_type/:id",
+  //   exact: true,
+  //   title: "CourierTypeEdit",
+  //   permission: "courier_type",
+  // },
+
   {
-    component: CourierType,
-    path: "/personal/courier_type",
+    component: Requisites,
+    path: "/settings/requisites",
     exact: true,
-    title: "CourierType",
-    permission: "courier_type",
+    title: "Requisites",
+    permission: "settings",
   },
   {
-    component: CourierTypeCreate,
-    path: "/personal/courier_type/create",
+    component: RequisitesCreate,
+    path: "/settings/requisites/create",
     exact: true,
-    title: "CourierTypeCreate",
-    permission: "courier_type",
+    title: "Requisites",
+    permission: "settings",
   },
   {
-    component: CourierTypeCreate,
-    path: "/personal/courier_type/:id",
+    component: RequisitesCreate,
+    path: "/settings/requisites/:id",
     exact: true,
-    title: "CourierTypeEdit",
-    permission: "courier_type",
+    title: "Requisites",
+    permission: "settings",
   },
   {
     component: Branche,
@@ -865,6 +801,20 @@ export default [
     permission: "fares",
   },
   {
+    component: Catalog,
+    path: "/settings/services/catalog",
+    exact: true,
+    title: 'Catalog',
+    permission: "fares"
+  },
+  {
+    component: CatalogCrate,
+    path: "/settings/services/catalog/create",
+    exact: true,
+    title: 'Catalog',
+    permission: "fares"
+  },
+  {
     component: Category,
     path: "/settings/services/category",
     exact: true,
@@ -880,7 +830,7 @@ export default [
   },
   {
     component: CategoryCreate,
-    path: "/settings/services/category/create/:id",
+    path: "/settings/services/category/:id",
     exact: true,
     title: "CategoryCreate",
     permission: "fares",
@@ -934,27 +884,6 @@ export default [
     title: "Integrations.Edit",
     permission: "fares",
   },
-  {
-    component: UserRoles,
-    path: "/settings/user-roles",
-    exact: true,
-    title: "RoleAccess",
-    permission: "fares",
-  },
-  {
-    component: UserRolesCreate,
-    path: "/settings/user-roles/create",
-    exact: true,
-    title: "RoleAccess.Create",
-    permission: "fares",
-  },
-  {
-    component: UserRolesCreate,
-    path: "/settings/user-roles/:id",
-    exact: true,
-    title: "RoleAccess.Edit",
-    permission: "fares",
-  },
   // {
   //   component: Services,
   //   path: "/settings/services",
@@ -983,216 +912,12 @@ export default [
   //   title: "Company.Branch.Couriers",
   //   permission: "fares",
   // },
-  {
-    component: SettingsCatalogGoods,
-    path: "/catalog/goods",
-    exact: true,
-    title: "Settings.Catalog.Goods",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogGoodsCreate,
-    path: "/catalog/goods/create",
-    exact: true,
-    title: "Settings.Catalog.Goods.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogGoodsCreate,
-    path: "/catalog/goods/:id",
-    exact: true,
-    title: "Settings.Catalog.Goods.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogCategory,
-    path: "/catalog/category",
-    exact: true,
-    title: "Settings.Catalog.Category",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogCategoryProduct,
-    path: "/catalog/category/create",
-    exact: true,
-    title: "Settings.Catalog.Product.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogCategoryProduct,
-    path: "/catalog/category/:id",
-    exact: true,
-    title: "Settings.Catalog.Product.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogAttributes,
-    path: "/catalog/attributes",
-    exact: true,
-    title: "Settings.Catalog.Attributes",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogAttributesCreate,
-    path: "/catalog/attributes/create",
-    exact: true,
-    title: "Settings.Catalog.Attribute.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogAttributesCreate,
-    path: "/catalog/attributes/:id",
-    exact: true,
-    title: "Settings.Catalog.Attribute.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogBrands,
-    path: "/catalog/brands",
-    exact: true,
-    title: "Settings.Catalog.Brands",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogBrandsCreate,
-    path: "/catalog/brands/create",
-    exact: true,
-    title: "Settings.Catalog.Brand.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogBrandsCreate,
-    path: "/catalog/brands/:id",
-    exact: true,
-    title: "Settings.Catalog.Brand.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogUnits,
-    path: "/catalog/units",
-    exact: true,
-    title: "Settings.Catalog.Unit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogUnitsCreate,
-    path: "/catalog/units/create",
-    exact: true,
-    title: "Settings.Catalog.Unit.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogUnitsCreate,
-    path: "/catalog/units/:id",
-    exact: true,
-    title: "Settings.Catalog.Unit.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogTags,
-    path: "/catalog/tags",
-    exact: true,
-    title: "Settings.Catalog.Tags",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogTagsCreate,
-    path: "/catalog/tags/create",
-    exact: true,
-    title: "Settings.Catalog.Tag.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogTagsCreate,
-    path: "/catalog/tags/:id",
-    exact: true,
-    title: "Settings.Catalog.Tag.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogProductVariants,
-    path: "/catalog/product_variants",
-    exact: true,
-    title: "Settings.Catalog.Product.Variants",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogProductVariantsCreate,
-    path: "/catalog/product_variants/create",
-    exact: true,
-    title: "Settings.Catalog.Product.Variants.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogProductVariantsCreate,
-    path: "/catalog/product_variants/:id",
-    exact: true,
-    title: "Settings.Catalog.Product.Variants.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogCombo,
-    path: "/catalog/combo",
-    exact: true,
-    title: "Settings.Catalog.Combo",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogComboCreate,
-    path: "/catalog/combo/create",
-    exact: true,
-    title: "Settings.Catalog.Combo.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogComboCreate,
-    path: "/catalog/combo/:id",
-    exact: true,
-    title: "Settings.Catalog.Combo.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogPriceChanger,
-    path: "/catalog/price-changers",
-    exact: true,
-    title: "Settings.Catalog.Price.Changer",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogPriceChangerCreate,
-    path: "/catalog/price-changers/create",
-    exact: true,
-    title: "Settings.Catalog.Price.Changer.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogPriceChangerCreate,
-    path: "/catalog/price-changers/:id",
-    exact: true,
-    title: "Settings.Catalog.Price.Changer.Edit",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogRates,
-    path: "/catalog/rates",
-    exact: true,
-    title: "Settings.Catalog.Rate",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogRatesCreate,
-    path: "/catalog/rates/create",
-    exact: true,
-    title: "Settings.Catalog.Rate.Create",
-    permission: "fares",
-  },
-  {
-    component: SettingsCatalogRatesCreate,
-    path: "/catalog/rates/:id",
-    exact: true,
-    title: "Settings.Catalog.Rate.Edit",
-    permission: "fares",
-  },
+  
+  
+  
+  
+  
+  
   {
     component: BranchUser,
     path: "/company/users",

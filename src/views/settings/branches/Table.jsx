@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from "react"
-import { useHistory, useParams } from "react-router-dom"
-import { useTranslation } from "react-i18next"
-
+import React, { useEffect, useState } from "react";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Pagination from "../../../components/Pagination";
+import numberToPrice from "../../../helpers/numberToPrice";
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
+import LoaderComponent from "../../../components/Loader";
+import Card from "../../../components/Card";
+import ActionMenu from "../../../components/ActionMenu";
 import {
   Table,
   TableBody,
@@ -9,154 +15,163 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from "@material-ui/core"
+} from "@material-ui/core";
+import SwitchColumns from "components/Filters/SwitchColumns";
+import { deleteBranch, getBranchList } from "services/branch";
 
-//components
-import Card from "../../../components/Card"
-import Pagination from "../../../components/Pagination"
-import Modal from "../../../components/Modal"
-import LoaderComponent from "../../../components/Loader"
-import Service, { deleteBranch } from "../../../services/branch"
 
-//icons
-import ActionMenu from "../../../components/ActionMenu"
-import EditIcon from "@material-ui/icons/Edit"
-import DeleteIcon from "@material-ui/icons/Delete"
-import TableChartIcon from "@material-ui/icons/TableChart"
+export default function BranchesTable({ search }) {
+  const { t } = useTranslation();
+  const history = useHistory();
+  const [items, setItems] = useState({});
+  const [loader, setLoader] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [saveLoading, setSaveLoading] = useState(null);
+  const [columns, setColumns] = useState([])
 
-const ApplicationTable = () => {
-  const { t } = useTranslation()
-  const [items, setItems] = useState({})
-  const [loader, setLoader] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
-  const history = useHistory()
-  const params = useParams()
-  const [deleteModal, setDeleteModal] = useState(null)
-  const [deleteLoading, setDeleteLoading] = useState(false)
+  useEffect(() => {
+    const _columns = [
+      ...initialColumns,
+      {
+        title: (
+          <SwitchColumns
+            columns={initialColumns}
+            onChange={(val) =>
+              setColumns((prev) => [...val, prev[prev.length - 1]])
+            }
+          />
+        ), 
+        key: t("actions"),
+        render: (record, _) => (
+          <div className="flex gap-2">
+            <ActionMenu
+              id={record.id}
+              actions={[
+                {
+                  title: t("edit"),
+                  color: "blue",
+                  icon: <EditIcon />,
+                  action: () =>
+                    history.push(`/home/settings/branch/${record.id}`),
+                },
+                {
+                  title: t("delete"),
+                  color: "red",
+                  icon: <DeleteIcon />,
+                  action: () => {
+                    deleteBranch( record.id )
+                    .then((res) => getAllBranches({limit: 10, currentPage}))
+                  }
+                  ,
+                },
+              ]}
+            />
+            
+          </div>
+        ),
+      }
+    ]
+    setColumns(_columns)
+  }, []);
 
-  const handleDeleteItem = () => {
-    setDeleteLoading(true)
-    deleteBranch(deleteModal.id, params.id)
+  const getAllBranches = (page) => {
+    setLoader(true);
+    getBranchList({search})
       .then((res) => {
-        getItems(currentPage, params.id)
-        setDeleteLoading(false)
-        setDeleteModal(null)
+        setItems({
+          count: res.data.count,
+          data: res.data,
+        });
       })
-      .finally(() => setDeleteLoading(false))
+      .catch((err) => console.log(err, 'error'))
+      .finally(() => setLoader(false));
   }
 
   useEffect(() => {
-    getItems(currentPage, params.id)
-  }, [currentPage, params.id])
+    getAllBranches(search);
+  }, [search]);
+  
 
-  const clearItems = () => {
-    setItems((prev) => ({ count: prev.count }))
-  }
-
-  const getItems = async (page, id) => {
-    setLoader(true)
-    clearItems()
-    try {
-      setItems({ ...(await Service.getBranch({ page, limit: 10 }, id)) })
-      console.log(id, { ...(await Service.getBranch({ page, limit: 10 }, id)) })
-    } catch (error) {
-      console.log(error)
-    } finally {
-      setLoader(false)
-    }
-  }
-
-  const navigationRoute = (id) =>
-    history.push(`/home/company/shipper-company/${params.id}/branches/${id}`)
-
-  const pagination = (
-    <Pagination
-      title={t("general.count")}
-      count={items?.count}
-      onChange={(pageNumber) => setCurrentPage(pageNumber)}
-    />
-  )
+  const initialColumns = [
+    {
+      title: "№",
+      key: "order-number",
+      render: (record, index) => (currentPage - 1) * 10 + index + 1,
+    },
+    {
+      title: t("branches"),
+      key: "branches",
+      render: (record) =>  record.name ,
+    },
+    {
+      title: t("address"),
+      key: "address",
+      render: (record) =>  record.address,
+    },
+    {
+      title: t("phone.number"),
+      key: "phone_numbers",
+      render: (record) => <div> {record?.phone_numbers[0]} </div>,
+    },
+  ];
 
   return (
-    <div className="p-4">
-      <Card footer={pagination}>
-        <TableContainer className="rounded-lg border border-lightgray-1">
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell>{t("branches")}</TableCell>
-                <TableCell>
-                  <div className="float-right mr-10">{t("phone.number")}</div>
-                </TableCell>
-                <TableCell>
-                  <div className="float-right">
-                    <TableChartIcon className="text-primary" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            {items.branches && items.branches.length ? (
-              <TableBody>
-                {items.branches.map(
-                  ({ id, name, description, phone }, index) => (
-                    <TableRow
-                      onClick={() => navigationRoute(id)}
-                      className={index % 2 === 0 ? "bg-lightgray-5" : ""}
-                      key={id}
-                    >
-                      <TableCell>
-                        <p>{(currentPage - 1) * 10 + index + 1}</p>
-                      </TableCell>
-                      <TableCell>{name}</TableCell>
-                      <TableCell>
-                        <div className="float-right mr-10">{phone}</div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="float-right">
-                          <ActionMenu
-                            id={id}
-                            actions={[
-                              {
-                                icon: <EditIcon />,
-                                color: "blue",
-                                title: t("change"),
-                                action: () => {
-                                  navigationRoute(id)
-                                },
-                              },
-                              {
-                                icon: <DeleteIcon />,
-                                color: "red",
-                                title: t("delete"),
-                                action: () => {
-                                  setDeleteModal({ id: id })
-                                },
-                              },
-                            ]}
-                          />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )
-                )}
-              </TableBody>
+    <Card
+      className="m-4"
+      footer={
+        <Pagination
+          title={t("general.count")}
+          count={1
+            // items?.count
+          }
+          // onChange={(pageNumber) => setCurrentPage(pageNumber)}
+        />
+      }
+    >
+  
+      <TableContainer className="rounded-md border border-lightgray-1">
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              {columns.map((elm) => (
+                <TableCell key={elm.key}>{elm.title}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {items?.data?.branches && items?.data?.branches.length ? (
+              items?.data.branches.map((elm, index) => (
+      
+                 <TableRow
+                  key={elm.id}
+                  onClick={() => history.push(`/home/settings/branch/${elm.id}`)}
+                  className={index % 2 === 0 ? "bg-lightgray-5" : ""}
+                > 
+                  {columns.map((col) => (
+                    <TableCell key={col.key}>
+                      {col.render ? col.render(elm, index) : "----"}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : (
               <></>
             )}
-          </Table>
-        </TableContainer>
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-        <LoaderComponent isLoader={loader} />
-        <Modal
-          open={deleteModal}
-          onClose={() => setDeleteModal(null)}
-          onConfirm={handleDeleteItem}
-          loading={deleteLoading}
-        />
-      </Card>
-    </div>
-  )
+      <LoaderComponent isLoader={loader} />
+      {/* <Pagination title={t("general.count")} count={items?.count} onChange={pageNumber => setCurrentPage(pageNumber)} /> */}
+
+      {/* <Modal
+        open={deleteModal}
+        onClose={() => setDeleteModal(null)}
+        onConfirm={handleDeleteItem}
+        loading={deleteLoading}
+      /> */}
+
+      
+    </Card>
+  );
 }
-
-export default ApplicationTable

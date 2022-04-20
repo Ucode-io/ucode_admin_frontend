@@ -17,7 +17,7 @@ import SaveIcon from "@material-ui/icons/Save"
 import "./style.scss"
 import TextArea from "../../../../components/Textarea"
 import Select from "../../../../components/Select"
-import { postSettlement } from "../../../../services/settlements"
+// import { postSettlement } from "../../../../services/settlements"
 import Button from "../../../../components/Button"
 
 export default function CreateSettlement() {
@@ -58,19 +58,19 @@ export default function CreateSettlement() {
   }, [])
 
   const onSubmit = (values) => {
-    setSaveLoading(true)
-    const data = {
-      ...values,
-      expense_type_id: values?.expense_type?.value,
-    }
-    delete data.expense_type
-    postSettlement(data, { shipper_id })
-      .then((res) => {
-        history.go(-1)
-      })
-      .finally(() => {
-        setSaveLoading(false)
-      })
+    // setSaveLoading(true)
+    // const data = {
+    //   ...values,
+    //   expense_type_id: values?.expense_type?.value,
+    // }
+    // delete data.expense_type
+    // postSettlement(data, { shipper_id })
+    //   .then((res) => {
+    //     history.go(-1)
+    //   })
+    //   .finally(() => {
+    //     setSaveLoading(false)
+    //   })
   }
 
   const formik = useFormik({

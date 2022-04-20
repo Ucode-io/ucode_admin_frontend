@@ -16,7 +16,7 @@ import StatusTag from "../../../components/Tag/StatusTag";
 import StopIcon from "@material-ui/icons/Stop";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { productChange } from "../../../services";
+// import { productChange } from "../../../services";
 import "./style.scss";
 import ActionMenu from "../../../components/ActionMenu";
 import LoaderComponent from "../../../components/Loader";
@@ -263,9 +263,9 @@ const CatalogTable = ({ tab, optionModal, setOptionModal }) => {
                         const isActive = record.is_active
                           ? { is_active: false }
                           : { is_active: true };
-                        productChange(record.id, {}, isActive).then((res) => {
-                          getItems(currentPage);
-                        });
+                        // productChange(record.id, {}, isActive).then((res) => {
+                        //   getItems(currentPage);
+                        // });
                       },
                     },
                     {

@@ -96,7 +96,7 @@ export default function Button({
   }`;
 
   return (
-    <div className={classNameParent} className="order-2">
+    <div className={classNameParent + " order-2"}>
       <button
         disabled={disabled || loading}
         type="button"

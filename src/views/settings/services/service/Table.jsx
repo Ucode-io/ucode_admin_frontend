@@ -12,11 +12,11 @@ import {
   TableRow,
 } from "@material-ui/core";
 
-import {
-  deletePayme,
-  deletePromo,
-  getPayme,
-} from "../../../../services/promotion";
+// import {
+//   deletePayme,
+//   deletePromo,
+//   getPayme,
+// } from "../../../../services/promotion";
 import { Input } from "alisa-ui";
 import SearchIcon from "@material-ui/icons/Search";
 import EditIcon from "@material-ui/icons/Edit";
@@ -33,6 +33,9 @@ import SwitchColumns from "components/Filters/SwitchColumns";
 import StatusTag from "../../../../components/Tag/StatusTag";
 
 import { DownloadIcon } from "constants/icons";
+import Checkbox from "components/Checkbox1";
+import DatePicker from "components/DatePicker";
+import { deleteService, getServiceList } from "services/services";
 
 export default function PaymeTable() {
   const [loader, setLoader] = useState(true);
@@ -42,15 +45,29 @@ export default function PaymeTable() {
   const [deleteModal, setDeleteModal] = useState(null);
   const [search, setSearch] = useState("");
   const [columns, setColumns] = useState([]);
+  const [data, setData] = useState()
 
   const { t } = useTranslation();
   const lang = useSelector((state) => state.lang.current);
   const history = useHistory();
   let debounce = setTimeout(() => {}, 0);
 
+
+  const getServices = () => {
+    getServiceList({search}).then((res) => {
+      console.log("GET service list ", res);
+      setItems({
+        count: res.data.count,
+        data: res.data.products,
+      });
+    })
+    .finally(() => setLoader(false))
+  };
+
   useEffect(() => {
-    getItems(currentPage);
-  }, [currentPage, search]);
+    getServices()
+  }, [search]);
+
 
   useEffect(() => {
     const _columns = [
@@ -67,14 +84,14 @@ export default function PaymeTable() {
         key: t("actions"),
         render: (record, _) => (
           <ActionMenu
-            id={record.branch_id}
+            id={record.id}
             actions={[
               {
                 icon: <EditIcon />,
                 color: "blue",
                 title: t("change"),
                 action: () => {
-                  history.push(`service/create/${record.branch_id}`);
+                  history.push(`service/create/${record.id}`);
                 },
               },
               {
@@ -82,7 +99,8 @@ export default function PaymeTable() {
                 color: "red",
                 title: t("delete"),
                 action: () => {
-                  setDeleteModal({ id: record.branch_id });
+                  deleteService(record.id)
+                  .then((res) =>  getServices())
                 },
               },
             ]}
@@ -100,18 +118,15 @@ export default function PaymeTable() {
     }, 300);
   };
 
-  const handleDeleteItem = () => {
-    setDeleteLoading(true);
-    deletePayme(deleteModal.id)
-      .then((res) => {
-        getItems(currentPage);
-        setDeleteLoading(false);
-        setDeleteModal(null);
-      })
-      .finally(() => setDeleteLoading(false));
-  };
 
   const initialColumns = [
+    {
+      title: <Checkbox />,
+      key: "checkbox",
+      render: (record, index) => (
+        <div> <Checkbox /> </div>
+      ),
+    },
     {
       title: "№",
       key: "promo-number",
@@ -120,36 +135,36 @@ export default function PaymeTable() {
       ),
     },
     {
-      title: t("service.naming"),
+      title: t("services"),
       key: "service_name",
-      render: (record) => <div>{record.branch_name}</div>,
+      render: (record) => <div>{record.name.ru}</div>,
     },
     {
-      title: t("description"),
-      key: "description",
-      render: (record) => <div>{record.merchant_id}</div>,
+      title: t("service.price"),
+      key: "price_sale",
+      render: (record) => <div>${record.price_sale}</div>,
     },
     {
-      title: t("price"),
-      key: "price",
-      render: (record) => <div>{record.created_at}</div>,
+      title: t("date.branch"),
+      key: "date",
+      render: (record) => <div>{record.date}</div>,
     },
   ];
 
-  const getItems = (page) => {
-    setLoader(true);
-    getPayme({ limit: 10, page })
-      .then((res) => {
-        setItems({
-          count: res.count,
-          data: res.payme_infos,
-        });
-      })
-      .finally(() => setLoader(false));
-  };
+  // const getItems = (page) => {
+  //   setLoader(true);
+  //   getPayme({ limit: 10, page })
+  //     .then((res) => {
+  //       setItems({
+  //         count: res.count,
+  //         data: res.payme_infos,
+  //       });
+  //     })
+  //     .finally(() => setLoader(false));
+  // };
 
   const extraFilter = (
-    <div className="flex gap-4">
+    <div className="flex gap-4 mr-4">
       <Button
             icon={DownloadIcon}
             iconClassName="text-blue-600"
@@ -174,13 +189,18 @@ export default function PaymeTable() {
   return (
     <>
       <Filters extra={extraFilter}>
-        <Input
-          onChange={onSearch}
-          width={280}
-          placeholder={t("search")}
-          size="middle"
-          addonBefore={<SearchIcon style={{ color: "var(--color-primary)" }} />}
-        />
+        <div className="flex">
+          <Input
+            onChange={(e) => setSearch(e.target.value)}
+            width={280}
+            placeholder={t("search")}
+            size="middle"
+            addonBefore={
+              <SearchIcon style={{ color: "var(--color-primary)" }} />
+            }
+          />
+          <DatePicker className="ml-2 rounded-lg" />
+        </div>
       </Filters>
 
       <Card className="m-4" footer={pagination}>
@@ -200,7 +220,7 @@ export default function PaymeTable() {
                     <TableRow
                       key={item.id}
                       onClick={() => {
-                        history.push(`service/create/${item.branch_id}`);
+                        history.push(`service/create/${item.id}`);
                       }}
                       className={index % 2 === 0 ? "bg-lightgray-5" : ""}
                     >
@@ -222,12 +242,12 @@ export default function PaymeTable() {
             <LoaderComponent isLoader={loader} />
           )}
         </TableContainer>
-        <Modal
+        {/* <Modal
           open={deleteModal}
           onClose={() => setDeleteModal(null)}
           onConfirm={handleDeleteItem}
           loading={deleteLoading}
-        />
+        /> */}
       </Card>
     </>
   );

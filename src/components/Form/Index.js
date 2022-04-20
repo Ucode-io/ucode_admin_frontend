@@ -3,6 +3,7 @@ import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Input from "../Input/index";
 import RequiredStar from "../RequiredStar";
+import { get } from "lodash";
 
 export default class CustomForm extends Component {
   static Input(props) {
@@ -89,6 +90,8 @@ const FormItem = ({
   required,
   ...args
 }) => {
+
+
   return (
     <>
       {label && (
@@ -101,10 +104,10 @@ const FormItem = ({
       )}
       {children}
       <div
-        className="min-h-6 w-full order-3"
+        className="h-4 w-full order-3"
         style={{ fontSize: "12px", lineHeight: 1.5715, color: "#ff4d4f" }}
       >
-        {formik.errors[name] && formik.touched[name] ? formik.errors[name] : ""}
+        {get(formik.touched, name) && get(formik.errors, name, "")}
       </div>
       {/* {formik.errors[name] && formik.touched[name] ? (
         <div style={{fontSize: '14px', lineHeight: 1.5715, color: '#ff4d4f'}}>{formik.errors[name]}</div>

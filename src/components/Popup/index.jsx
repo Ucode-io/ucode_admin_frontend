@@ -1,5 +1,5 @@
-import { ReactComponent as InfoIcon } from "assets/icons/infoIcon.svg";
-import { ReactComponent as CancelIcon } from "assets/icons/cancelIcon.svg";
+// import { ReactComponent as InfoIcon } from "assets/icons/infoIcon.svg";
+// import { ReactComponent as CancelIcon } from "assets/icons/cancelIcon.svg";
 
 function Popup(props) {
   const {
@@ -39,7 +39,7 @@ function Popup(props) {
               }}
             >
               <div className="m-2">
-                <InfoIcon />
+                {/* <InfoIcon /> */}
               </div>
               <div className="flex flex-col text-sm font-semibold m-2">
                 <h5>{title}</h5>
@@ -47,7 +47,7 @@ function Popup(props) {
               </div>
 
               <div className="cursor-pointer m-2">
-                <CancelIcon onClick={onClose} />
+                {/* <CancelIcon onClick={onClose} /> */}
               </div>
             </div>
           </div>

@@ -44,36 +44,36 @@ const Dashboard = () => {
     ];
   }, [branchesCount, customersCount, couriersCount]);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      let [branches, couriers, statistics, locations] = await Promise.all([
-        requests.getBranchesCount({ page: 1, limit: 1000 }),
-        // requests.getCustomersCount({ page: 1, limit: 10 }),
-        requests.getCouriersCount({ page: 1, limit: 10 }),
-        requests.getStatistics({ month: 2, year: 2022 }),
-        requests.getOrderLocations({
-          page: 1,
-          limit: 10000,
-          start_date: moment().format("YYYY-MM-DD HH:mm:ss"),
-          end_date: moment().add(2, "days").format("YYYY-MM-DD HH:mm:ss"),
-        }),
-      ]);
-      setBranchesCount(branches.count);
-      // setCustomersCount(customers.count);
-      setCouriersCount(couriers.count);
-      setStatistics(statistics);
-      setOrderLocations(locations.orders);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const fetchData = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     let [branches, couriers, statistics, locations] = await Promise.all([
+  //       requests.getBranchesCount({ page: 1, limit: 1000 }),
+  //       // requests.getCustomersCount({ page: 1, limit: 10 }),
+  //       requests.getCouriersCount({ page: 1, limit: 10 }),
+  //       requests.getStatistics({ month: 2, year: 2022 }),
+  //       requests.getOrderLocations({
+  //         page: 1,
+  //         limit: 10000,
+  //         start_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+  //         end_date: moment().add(2, "days").format("YYYY-MM-DD HH:mm:ss"),
+  //       }),
+  //     ]);
+  //     setBranchesCount(branches.count);
+  //     // setCustomersCount(customers.count);
+  //     setCouriersCount(couriers.count);
+  //     setStatistics(statistics);
+  //     setOrderLocations(locations.orders);
+  //   } catch (e) {
+  //     console.log(e);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   return (
     <>
@@ -88,7 +88,7 @@ const Dashboard = () => {
       />
 
       <div className="p-6">
-        <Widgets data={computedWidgetsData} />
+        {/* <Widgets data={computedWidgetsData} /> */}
 
         <AdminDashboard statistics={statistics} />
       </div>

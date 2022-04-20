@@ -62,7 +62,7 @@ const DatePicker = ({
             onSelect={calendarChangeHandler}
             onChange={calendarChangeHandler}
             onOk={calendarSelectHandler}
-            timePicker={!hideTimePicker ? timePickerElement : null}
+            // timePicker={!hideTimePicker ? timePickerElement : null}
           />
         )}
       </div>

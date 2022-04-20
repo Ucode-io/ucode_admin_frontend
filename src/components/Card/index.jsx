@@ -40,7 +40,7 @@ export default function CardContent({
           {filters}
         </div>
       )}
-      <div className="p-4" style={bodyStyle}>
+      <div style={bodyStyle} className="p-4">
         {children}
       </div>
       {footer && (

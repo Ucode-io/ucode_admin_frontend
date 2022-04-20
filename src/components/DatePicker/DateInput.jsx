@@ -24,7 +24,7 @@ const DateInput = ({
   useEffect(() => {
     setInputValue(
       selectedDate?.format(
-        hideTimeBlock ? "DD-MM-YYYY" : "DD-MM-YYYY HH:mm:ss",
+        hideTimeBlock ? "DD-MM-YYYY" : "DD-MM-YYYY",
       ) ?? "",
     );
   }, [selectedDate, hideTimeBlock]);

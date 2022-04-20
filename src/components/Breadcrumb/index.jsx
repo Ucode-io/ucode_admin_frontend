@@ -30,7 +30,7 @@ export default function App({ routes = [], isShowBack = true }) {
   const history = useHistory();
 
   return (
-    <div className="flex">
+    <div className="flex items-center border-r pr-5">
       {isShowBack ? (
         <ArrowBackIcon
           fontSize="small"
@@ -43,13 +43,13 @@ export default function App({ routes = [], isShowBack = true }) {
       {routes.map((el, i) => (
         <div key={el.title} className="flex items-center text-sm">
           <div className="flex justify-start rounded items-center w-22 ">
-            <span className="pr-1">
+            {/* <span className="pr-1">
               {routes.length !== i + 1 ? (
                 <Bread className="fill-current text-gray-300" />
               ) : (
                 <Bread className="fill-current text-blue-400" />
               )}
-            </span>
+            </span> */}
             {routes.length !== i + 1 ? (
               <span
                 className="cursor-pointer px-1"
@@ -58,7 +58,7 @@ export default function App({ routes = [], isShowBack = true }) {
                 {el.title}
               </span>
             ) : (
-              <span className="px-1">{el.title}</span>
+              <span className="px-1 text-xl font-semibold">{el.title}</span>
             )}
             {/* <span className={`${routes.length !== i+1 ? 'cursor-pointer' : ''} px-1`}>{el.title}</span> */}
             {routes.length !== i + 1 ? (

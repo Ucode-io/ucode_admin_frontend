@@ -25,6 +25,8 @@ const Gallery = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
+
+
   const isShow = useMemo(
     () => multiple || !gallery.length,
     [gallery, multiple],
@@ -35,10 +37,12 @@ const Gallery = ({
     );
   }, [gallery]);
 
+  
+
   const [loading, setLoading] = useState(false);
 
   const addNewImage = (image) => {
-    setGallery([...gallery, image]);
+    imageLinks.length ? setGallery([image]) : setGallery([...gallery, image]);
   };
 
   const imageClickHandler = (index) => {
@@ -66,25 +70,29 @@ const Gallery = ({
           "Content-Type": "mulpipart/form-data",
         },
       })
-      .catch((err) => console.log("error here: ", err))
       .then((res) => {
-        addNewImage(res.filename);
+        addNewImage(res.data.filename);
       })
+      .catch((err) => console.log("error here: ", err))
+
       .finally(() => setLoading(false));
   };
 
   const deleteImage = (id) => {
-    setGallery(gallery.filter((galleryImageId) => galleryImageId !== id));
+    setGallery(gallery.filter((galleryImageId) => galleryImageId !== id.substring(1)));
+    console.log("ID ", id)
   };
 
+  
   const closeButtonHandler = (e, link) => {
     e.stopPropagation();
-    deleteImage(link.replace(`${process.env.REACT_APP_MINIO_URL}/`, ""));
+    deleteImage(link.replace(`${process.env.REACT_APP_MINIO_URL}`, ""));
   };
 
   return (
     <div className={`Gallery`}>
       {imageLinks?.map((link, index) => (
+        
         <div
           className="block mr-2"
           style={
@@ -93,7 +101,7 @@ const Gallery = ({
               : { width, height, borderRadius: rounded ? "50%" : 8 }
           }
           onClick={() => imageClickHandler(index)}
-          key={link}
+          key={index}
         >
           {!notEditable && (
             <button
@@ -134,7 +142,7 @@ const Gallery = ({
             className="hidden"
             ref={inputRef}
             onChange={inputChangeHandler}
-            // multiple={multiple}
+            multiple={multiple}
           />
         </div>
       )}
@@ -142,7 +150,7 @@ const Gallery = ({
       {previewVisible && (
         <ImageViewer
           style={{ zIndex: 100000, width, height }}
-          src={imageLinks}
+          src={imageLinks[0]}
           currentIndex={selectedImageIndex}
           disableScroll={true}
           onClose={() => setPreviewVisible(false)}
@@ -150,11 +158,11 @@ const Gallery = ({
         />
       )}
       <span
-        className="mt-2 text-primary text-base"
+        className="mt-2 text-primary text-base align-center"
         onClick={() => inputRef.current.click()}
         style={{ cursor: "pointer" }}
       >
-        {imageLinks.length ? t("change.photo") : t("add.photo")}
+        {/* {t("image")} */}
       </span>
     </div>
   );

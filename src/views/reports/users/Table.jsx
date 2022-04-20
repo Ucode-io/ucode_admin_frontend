@@ -11,7 +11,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { getUserReports } from "../../../services/reports";
+// import { getUserReports } from "../../../services/reports";
 import numberToPrice from "../../../helpers/numberToPrice";
 
 function convertMinsToHrsMins(minutes) {
@@ -21,7 +21,7 @@ function convertMinsToHrsMins(minutes) {
 }
 
 export default function RestaurantTable({ filters }) {
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const { t } = useTranslation();
   const [items, setItems] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,15 +31,15 @@ export default function RestaurantTable({ filters }) {
   }, [currentPage, filters, limit]);
 
   const getItems = (page) => {
-    setLoader(true);
-    getUserReports({ limit, page, ...filters })
-      .then((res) => {
-        setItems({
-          count: res.count,
-          data: res.users_report,
-        });
-      })
-      .finally(() => setLoader(false));
+    // setLoader(true);
+    // getUserReports({ limit, page, ...filters })
+    //   .then((res) => {
+    //     setItems({
+    //       count: res.count,
+    //       data: res.users_report,
+    //     });
+    //   })
+    //   .finally(() => setLoader(false));
   };
 
   const columns = [

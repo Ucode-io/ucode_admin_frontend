@@ -1,9 +1,0 @@
-.children {
-  transition: top 300ms cubic-bezier(0.17, 0.04, 0.03, 0.94);
-}
-
-.is-active .sidebarItem {
-  background: var(--color-primary) !important;
-  color: var(--color-white) !important;
-  font-weight: 500;
-}

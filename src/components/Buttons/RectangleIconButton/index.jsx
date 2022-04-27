@@ -5,12 +5,13 @@ const RectangleIconButton = ({
   color,
   children,
   loader,
+  className,
   onClick = () => {},
   ...props
 }) => {
   return (
     <div
-      className={`RectangleIconButton ${color}`}
+      className={`RectangleIconButton ${color} ${className}`}
       onClick={(e) => {
         e.stopPropagation()
         onClick(e)

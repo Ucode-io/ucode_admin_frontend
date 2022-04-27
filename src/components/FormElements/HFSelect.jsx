@@ -14,6 +14,7 @@ const HFSelect = ({
   width = "100%",
   options = [],
   disabledHelperText,
+  placeholder,
   ...props
 }) => {
   return (
@@ -25,10 +26,11 @@ const HFSelect = ({
         <FormControl style={{ width }}>
           <InputLabel size="small">{label}</InputLabel>
           <Select
-            value={value}
+            value={value || ""}
             label={label}
             size="small"
             error={error}
+            inputProps={{ placeholder }}
             fullWidth
             onChange={(e) => {
               onChange(e.target.value)

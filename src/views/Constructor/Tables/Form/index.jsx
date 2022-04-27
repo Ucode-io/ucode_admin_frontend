@@ -1,12 +1,18 @@
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { Tab, TabList, Tabs, TabPanel } from "react-tabs"
 import SaveButton from "../../../../components/Buttons/SaveButton"
 import Header from "../../../../components/Header"
 import PageFallback from "../../../../components/PageFallback"
-import { createConstructorTableAction, updateConstructorTableAction } from "../../../../store/contructorTable/contructorTable.thunk"
+import contructorFieldService from "../../../../services/contructorFieldService"
+import contructorTableService from "../../../../services/contructorTableService"
+import {
+  createConstructorTableAction,
+  updateConstructorTableAction,
+} from "../../../../store/contructorTable/contructorTable.thunk"
+import Fields from "./Fields"
 import MainInfo from "./MainInfo"
 
 const ContructorTablesFormPage = () => {
@@ -14,16 +20,10 @@ const ContructorTablesFormPage = () => {
   const navigate = useNavigate()
   const { id } = useParams()
 
-  const constructorTables = useSelector((state) => state.contructorTable.list)
-  const loader = useSelector((state) => state.contructorTable.loader)
-
+  const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
 
-  const selectedConstructorTable = useMemo(() => {
-    return constructorTables.find((item) => item.id === id)
-  }, [constructorTables, id])
-
-  const { handleSubmit, control, setValue} = useForm({
+  const { handleSubmit, control, reset, getValues } = useForm({
     defaultValues: {
       show_in_menu: true,
       fields: [],
@@ -33,6 +33,34 @@ const ContructorTablesFormPage = () => {
       icon: "",
     },
   })
+
+  const getData = useCallback(async () => {
+    setLoader(true)
+
+    const getTableData = () => {
+      return contructorTableService.getById(id)
+    }
+
+    const getFieldsData = () => {
+      return contructorFieldService.getList({ table_id: id })
+    }
+
+    try {
+      const [tableData, { fields }] = await Promise.all([
+        getTableData(),
+        getFieldsData(),
+      ])
+
+      reset({
+        ...tableData,
+        fields,
+      })
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoader(false)
+    }
+  }, [id, reset])
 
   const createConstructorTable = (data) => {
     setBtnLoader(true)
@@ -62,18 +90,9 @@ const ContructorTablesFormPage = () => {
   }
 
   useEffect(() => {
-    if(loader) return
-    if (!id || !selectedConstructorTable) return 
-
-    setValue("description", selectedConstructorTable?.description)
-    setValue("slug", selectedConstructorTable?.slug)
-    setValue("icon", selectedConstructorTable?.icon)
-    setValue("label", selectedConstructorTable?.label)
-    setValue("fields", selectedConstructorTable?.fields)
-    setValue("show_in_menu", selectedConstructorTable?.show_in_menu)
-    setValue("id", selectedConstructorTable?.id)
-
-  }, [loader, id, selectedConstructorTable, setValue])
+    if (!id) setLoader(false)
+    else getData()
+  }, [getData, id])
 
   if (loader) return <PageFallback />
 
@@ -82,8 +101,8 @@ const ContructorTablesFormPage = () => {
       <Tabs direction={"ltr"}>
         <Header
           title="Объекты"
-          subtitle={id ? selectedConstructorTable?.label : "Добавить"}
-          icon={selectedConstructorTable?.icon}
+          subtitle={id ? getValues("label") : "Добавить"}
+          icon={getValues("icon")}
           backButtonLink={-1}
           extra={
             <SaveButton onClick={handleSubmit(onSubmit)} loading={btnLoader} />
@@ -98,6 +117,16 @@ const ContructorTablesFormPage = () => {
 
         <TabPanel>
           <MainInfo control={control} />
+        </TabPanel>
+
+        <TabPanel>
+          <div>
+            <h1>LAYOUT</h1>
+          </div>
+        </TabPanel>
+
+        <TabPanel>
+          <Fields control={control} />
         </TabPanel>
       </Tabs>
     </div>

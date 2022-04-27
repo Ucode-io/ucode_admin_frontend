@@ -1,0 +1,92 @@
+@use "/src/scss/colors";
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+
+html {
+  font-size: 0.8rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  text-decoration: none;
+}
+
+.silver-bottom-border {
+  box-shadow: inset 0px -1px 0px #e5e9eb;
+}
+
+.silver-right-border {
+  box-shadow: inset -1px 0px 0px #e5e9eb;
+}
+
+.table-block {
+  padding: 16px;
+}
+
+
+
+.react-tabs {
+  // -webkit-tap-highlight-color: transparent;
+  position: relative;
+
+  &__tab-list {
+    border-bottom: 1px solid rgb(231, 231, 231);
+    // margin: 0 0 20px;
+    padding: 0;
+    display: flex;
+  }
+
+  &__tab {
+    display: flex;
+    align-items: center;
+    border: none;
+    position: relative;
+
+    padding: 16px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    color: colors.$grey;
+
+    &--selected {
+      border-bottom: 2px solid #1890ff;
+      color: #1890ff;
+    }
+
+    &--disabled {
+      color: silver;
+      cursor: default;
+    }
+
+    &:focus {
+      box-shadow: none;
+      // border-color: none;
+      outline: none;
+
+      // &:after {
+      //   content: "";
+      //   position: absolute;
+      //   height: 5px;
+      //   left: -4px;
+      //   right: -4px;
+      //   bottom: -5px;
+      //   background: #fff;
+      // }
+    }
+  }
+
+  &__tab-panel {
+    display: none;
+
+    &--selected {
+      display: block;
+    }
+  }
+}
+
+.p-2 {
+  padding: 16px
+}

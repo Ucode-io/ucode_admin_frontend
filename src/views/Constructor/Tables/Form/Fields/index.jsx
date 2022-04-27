@@ -12,6 +12,7 @@ import {
 } from "../../../../../components/CTable"
 import TableCard from "../../../../../components/TableCard"
 import contructorFieldService from "../../../../../services/contructorFieldService"
+import { generateID } from "../../../../../utils/generateID"
 import FieldCreateForm from "./FieldCreateForm"
 
 const Fields = ({ control }) => {
@@ -27,7 +28,10 @@ const Fields = ({ control }) => {
 
   const createField = (field) => {
     if (!id) {
-      prepend(field)
+      prepend({
+        ...field,
+        id: generateID()
+      })
       setCreateFormVisible(false)
     } else {
       contructorFieldService.create(field).then((res) => {

@@ -13,6 +13,7 @@ import {
   updateConstructorTableAction,
 } from "../../../../store/contructorTable/contructorTable.thunk"
 import Fields from "./Fields"
+import Layout from "./Layout"
 import MainInfo from "./MainInfo"
 
 const ContructorTablesFormPage = () => {
@@ -120,9 +121,7 @@ const ContructorTablesFormPage = () => {
         </TabPanel>
 
         <TabPanel>
-          <div>
-            <h1>LAYOUT</h1>
-          </div>
+          <Layout control={control} />
         </TabPanel>
 
         <TabPanel>

@@ -30,7 +30,7 @@ const PickListAttributes = ({ control, onClose, onSaveButtonClick }) => {
 
       
       
-      <HFCheckbox control={control} name="required" label="Необходимый" />
+      <HFCheckbox control={control} name="required" label="Required" />
       <HFCheckbox
         control={control}
         name="attributes.showTooltip"

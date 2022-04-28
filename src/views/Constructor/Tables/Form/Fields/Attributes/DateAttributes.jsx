@@ -17,7 +17,7 @@ const DateAttributes = ({ control, onClose, onSaveButtonClick }) => {
         <HFTextField autoFocus fullWidth name="label" control={control} />
       </FRow>
 
-      <HFCheckbox control={control} name="required" label="Необходимый" />
+      <HFCheckbox control={control} name="required" label="Required" />
 
       <HFCheckbox
         control={control}

@@ -26,7 +26,7 @@ const SingleLineAttributes = ({ control, onClose, onSaveButtonClick }) => {
         />
       </FRow>
 
-      <HFCheckbox control={control} name="required" label="Необходимый" />
+      <HFCheckbox control={control} name="required" label="Required" />
       <HFCheckbox
         control={control}
         name="unique"

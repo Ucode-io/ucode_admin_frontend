@@ -1,0 +1,73 @@
+
+@use "/src/scss/colors";
+
+.page {
+  display: flex;
+  padding: 16px;
+  gap: 20px;
+
+  .fieldCard {
+    border-radius: 6px;
+
+    .fieldCardHeader {
+      box-shadow: inset 0px -1px 0px #E5E9EB;
+      padding: 10px 20px;
+    }
+    
+    .fieldsWrapperBlock {
+      padding: 8px;
+    }
+  }
+
+  .fieldsBlock {
+    width: 400px;
+    
+    .fieldsWrapperBlock {
+    }
+
+
+    .fieldRow {
+      width: 100%;
+      padding: 8px 16px;
+      border: 1px dashed colors.$primary;
+      border-radius: 6px;
+      margin: 10px 0;
+      cursor: grab;
+      background-color: #fff;
+  
+      .fieldRowLabel {
+        font-weight: 500px;
+      }
+    }
+  }
+
+  
+  
+  .sectionsBlock {
+    flex: 1;
+
+    .sectionCard {
+      border-radius: 6px;
+
+      .sectionCardHeader {
+        box-shadow: inset 0px -1px 0px #E5E9EB;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #F6F8F9;
+      }
+
+      .sectionCardBody {
+        padding: 16px 32px;
+      }
+
+    }
+
+
+  }
+
+  
+
+
+}

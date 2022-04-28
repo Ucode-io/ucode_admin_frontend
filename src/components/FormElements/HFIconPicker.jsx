@@ -6,13 +6,15 @@ const HFIconPicker = ({
   control,
   name,
   disabledHelperText = false,
+  required=false,
+  rules={},
   ...props
 }) => {
   return (
     <Controller
       control={control}
       name={name}
-      rules={{ required: 'THIS IS REQUIRED FIELD' }}
+      rules={{ required: required ? 'THIS IS REQUIRED FIELD' : false, ...rules }}
       render={({ field : { onChange, value }, fieldState : { error  } })  => (
         <div>
           <IconPicker error={error} value={value} onChange={onChange} />

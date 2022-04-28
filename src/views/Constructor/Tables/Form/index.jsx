@@ -13,6 +13,7 @@ import {
   updateConstructorTableAction,
 } from "../../../../store/contructorTable/contructorTable.thunk"
 import Fields from "./Fields"
+import Attributes from "./Fields/Attributes"
 import MainInfo from "./MainInfo"
 
 const ContructorTablesFormPage = () => {
@@ -100,7 +101,7 @@ const ContructorTablesFormPage = () => {
     <div>
       <Tabs direction={"ltr"}>
         <Header
-          title="Объекты"
+          title="Objects"
           subtitle={id ? getValues("label") : "Добавить"}
           icon={getValues("icon")}
           backButtonLink={-1}

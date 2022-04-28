@@ -15,13 +15,15 @@ const HFSelect = ({
   options = [],
   disabledHelperText,
   placeholder,
+  required=false,
+  rules={},
   ...props
 }) => {
   return (
     <Controller
       control={control}
       name={name}
-      rules={{ required: "THIS IS REQUIRED FIELD" }}
+      rules={{ required: required ? 'THIS IS REQUIRED FIELD' : false, ...rules }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FormControl style={{ width }}>
           <InputLabel size="small">{label}</InputLabel>

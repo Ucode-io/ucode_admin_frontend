@@ -3,15 +3,17 @@ import { Controller } from "react-hook-form"
 
 const HFTextField = ({
   control,
-  name,
+  name = "",
   disabledHelperText = false,
+  required=false,
+  rules={},
   ...props
 }) => {
   return (
     <Controller
       control={control}
       name={name}
-      rules={{ required: 'THIS IS REQUIRED FIELD' }}
+      rules={{ required: required ? 'THIS IS REQUIRED FIELD' : false, ...rules }}
       render={({ field : { onChange, value }, fieldState : { error  } })  => (
         <TextField
         size="small"

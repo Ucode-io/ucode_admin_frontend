@@ -13,7 +13,7 @@ const ContructorTablesListPage = () => {
   return (
     <div>
       <Header
-        title={'Объекты'}
+        title={'Objects'}
         extra={
           <CreateButton
             onClick={() => navigate(location.pathname + "/create")}

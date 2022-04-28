@@ -12,6 +12,7 @@ const MainInfo = ({ control }) => {
           name="label"
           fullWidth
           placeholder="Название"
+          required
         />
       </FRow>
       <FRow label="Описание">
@@ -21,6 +22,7 @@ const MainInfo = ({ control }) => {
           fullWidth
           placeholder="Описание"
           multiline
+          required
           rows={4}
         />
       </FRow>
@@ -30,12 +32,14 @@ const MainInfo = ({ control }) => {
           name="slug"
           fullWidth
           placeholder="SLUG"
+          required
         />
       </FRow>
       <FRow label="Иконка">
         <HFIconPicker
           control={control}
           name="icon"
+          required
         />
       </FRow>
     </FormCard>

@@ -8,7 +8,6 @@ const HFIconPicker = ({
   disabledHelperText = false,
   required=false,
   rules={},
-  ...props
 }) => {
   return (
     <Controller

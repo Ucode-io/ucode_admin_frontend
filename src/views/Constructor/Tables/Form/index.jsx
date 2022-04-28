@@ -13,7 +13,6 @@ import {
   updateConstructorTableAction,
 } from "../../../../store/contructorTable/contructorTable.thunk"
 import Fields from "./Fields"
-import Attributes from "./Fields/Attributes"
 import MainInfo from "./MainInfo"
 
 const ContructorTablesFormPage = () => {

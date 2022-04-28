@@ -1,7 +1,8 @@
 import { Card, Typography } from "@mui/material"
-import { useFieldArray } from "react-hook-form"
+import { useFieldArray, useForm } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
 import styles from "./style.module.scss"
+import FormElementGenerator from "../../../../../components/FormElementGenerator"
 
 const FieldsBlock = ({ control }) => {
   const { fields } = useFieldArray({
@@ -9,6 +10,9 @@ const FieldsBlock = ({ control }) => {
     name: "fields",
     keyName: "key",
   })
+
+
+  const { control: Control } = useForm()
 
   return (
     <div className={styles.fieldsBlock}>
@@ -19,15 +23,23 @@ const FieldsBlock = ({ control }) => {
 
         <div className={styles.fieldsWrapperBlock}>
           <Container
-            behaviour="copy"
+            // behaviour="copy"
+            groupName="1"
             onDrop={(values) => console.log("VALUES ==>", values)}
-            ropPlaceholder={{ className: "drag-row-drop-preview" }}
-            getChildPayload={i => fields[i]}
+            dropPlaceholder={{ className: "drag-row-drop-preview" }}
+            getChildPayload={(i) => fields[i]}
           >
             {fields.map((field, index) => (
-              <Draggable key={field.id} style={{ overflow: 'visible' }}>
-                <div className={styles.fieldRow}>
-                  <div className={styles.fieldRowLabel}>{field.label}</div>
+              <Draggable key={field.id} style={{ overflow: "visible" }}>
+                <div className={styles.sectionFieldRow}>
+                  <FormElementGenerator
+                    label={field.label}
+                    control={Control}
+                    type={field.type}
+                    name={field.id}
+                    attributes={field.attributes}
+                    disabledHelperText
+                  />
                 </div>
               </Draggable>
             ))}

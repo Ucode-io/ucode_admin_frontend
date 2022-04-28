@@ -6,6 +6,7 @@ import { Tab, TabList, Tabs, TabPanel } from "react-tabs"
 import SaveButton from "../../../../components/Buttons/SaveButton"
 import Header from "../../../../components/Header"
 import PageFallback from "../../../../components/PageFallback"
+import constructorSectionService from "../../../../services/constructorSectionService"
 import contructorFieldService from "../../../../services/contructorFieldService"
 import contructorTableService from "../../../../services/contructorTableService"
 import {
@@ -28,6 +29,7 @@ const ContructorTablesFormPage = () => {
     defaultValues: {
       show_in_menu: true,
       fields: [],
+      sections: [],
       label: "",
       description: "",
       slug: "",
@@ -46,10 +48,15 @@ const ContructorTablesFormPage = () => {
       return contructorFieldService.getList({ table_id: id })
     }
 
+    const getSessionsData = () => {
+      return constructorSectionService.getList({ table_id: id })
+    }
+
     try {
       const [tableData, { fields }] = await Promise.all([
         getTableData(),
         getFieldsData(),
+        // getSessionsData()
       ])
 
       reset({

@@ -13,8 +13,11 @@ const SingleLineAttributes = ({ control, onClose, onSaveButtonClick }) => {
 
   return (
     <ModalCard title="Single line properties" onClose={onClose} onSaveButtonClick={onSaveButtonClick}  >
-      <FRow label="Field label * ">
+      <FRow label="Field label" required >
         <HFTextField autoFocus fullWidth name="label" control={control} />
+      </FRow>
+      <FRow label="Placeholder">
+        <HFTextField autoFocus fullWidth name="attributes.placeholder" control={control} />
       </FRow>
       <FRow label="Allowed number of characters">
         <HFTextField

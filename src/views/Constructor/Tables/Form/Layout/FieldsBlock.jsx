@@ -1,18 +1,16 @@
 import { Card, Typography } from "@mui/material"
-import { useFieldArray, useForm } from "react-hook-form"
+import { useFieldArray } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
 import styles from "./style.module.scss"
 import FormElementGenerator from "../../../../../components/FormElementGenerator"
 
-const FieldsBlock = ({ control }) => {
+const FieldsBlock = ({ control, layoutControl }) => {
   const { fields } = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
   })
 
-
-  const { control: Control } = useForm()
 
   return (
     <div className={styles.fieldsBlock}>
@@ -33,11 +31,8 @@ const FieldsBlock = ({ control }) => {
               <Draggable key={field.id} style={{ overflow: "visible" }}>
                 <div className={styles.sectionFieldRow}>
                   <FormElementGenerator
-                    label={field.label}
-                    control={Control}
-                    type={field.type}
-                    name={field.id}
-                    attributes={field.attributes}
+                    field={field}
+                    control={layoutControl}
                     disabledHelperText
                   />
                 </div>

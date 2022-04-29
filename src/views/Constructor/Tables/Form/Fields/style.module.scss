@@ -9,6 +9,9 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  &:hover {
+    border-color: colors.$primary;
+  }
 
   p {
     color: colors.$primary;

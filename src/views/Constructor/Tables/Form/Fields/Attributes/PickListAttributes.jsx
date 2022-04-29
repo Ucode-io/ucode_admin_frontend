@@ -14,8 +14,11 @@ const PickListAttributes = ({ control, onClose, onSaveButtonClick }) => {
 
   return (
     <ModalCard title="Pick list Properties" onClose={onClose} onSaveButtonClick={onSaveButtonClick}  >
-      <FRow label="Field Label * ">
+      <FRow label="Field Label" required>
         <HFTextField autoFocus fullWidth name="label" control={control} />
+      </FRow>
+      <FRow label="Placeholder">
+        <HFTextField autoFocus fullWidth name="attributes.placeholder" control={control} />
       </FRow>
       <FRow label="Pick list option">
         <SelectOptionsCreator control={control} name="attributes.options" />

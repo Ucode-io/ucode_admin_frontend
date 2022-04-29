@@ -4,53 +4,59 @@ import HFCheckbox from "../FormElements/HFCheckbox"
 import HFSelect from "../FormElements/HFSelect"
 import HFTextField from "../FormElements/HFTextField"
 
-const FormElementGenerator = ({
-  type,
-  control,
-  name,
-  attributes,
-  label,
-  ...props
-}) => {
+const FormElementGenerator = ({ field = {}, control, ...props }) => {
   const computedOptions = useMemo(() => {
-    if (!attributes?.options) return []
+    if (!field.attributes?.options) return []
 
-    return attributes.options.map((option) => ({
+    return field.attributes.options.map((option) => ({
       value: option,
       label: option,
     }))
-  }, [attributes?.options])
+  }, [field.attributes?.options])
 
+  console.log("FormElementGenerator", field)
 
-  switch (type) {
+  switch (field.type) {
     case "SINGLE_LINE":
       return (
-        <FRow label={label}>
-          <HFTextField control={control} name={name} fullWidth {...props} />
+        <FRow label={field.label} required={field.required}>
+          <HFTextField
+            control={control}
+            name={field.slug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            {...props}
+          />
         </FRow>
       )
 
     case "PICK_LIST":
       return (
-        <FRow label={label}>
+        <FRow label={field.label} required={field.required}>
           <HFSelect
             control={control}
-            name={name}
+            name={field.slug}
             width="100%"
             options={computedOptions}
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            {...props}
           />
         </FRow>
       )
 
     case "MULTI_LINE":
       return (
-        <FRow label={label}>
+        <FRow label={field.label} required={field.required}>
           <HFTextField
             control={control}
-            name={name}
+            name={field.slug}
             fullWidth
             multiline
             rows={4}
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
             {...props}
           />
         </FRow>
@@ -58,12 +64,14 @@ const FormElementGenerator = ({
 
     case "DATE":
       return (
-        <FRow label={label}>
+        <FRow label={field.label} required={field.required}>
           <HFTextField
             control={control}
-            name={name}
+            name={field.slug}
             fullWidth
             type="date"
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
             {...props}
           />
         </FRow>
@@ -71,24 +79,41 @@ const FormElementGenerator = ({
 
     case "NUMBER":
       return (
-        <FRow label={label}>
+        <FRow label={field.label} required={field.required}>
           <HFTextField
             control={control}
-            name={name}
+            name={field.slug}
             fullWidth
             type="number"
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
             {...props}
           />
         </FRow>
       )
 
     case "CHECKBOX":
-      return <HFCheckbox control={control} name label={label} {...props} />
+      return (
+        <HFCheckbox
+          control={control}
+          name={field.slug}
+          label={field.label}
+          required={field.required}
+          {...props}
+        />
+      )
 
     default:
       return (
-        <FRow label={label}>
-          <HFTextField control={control} name={name} fullWidth {...props} />
+        <FRow label={field.label} required={field.required} >
+          <HFTextField
+            control={control}
+            name={field.slug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            {...props}
+          />
         </FRow>
       )
   }

@@ -8,6 +8,10 @@
   .label {
     width: 150px;
     transform: translateY(-13px);
+
+    .requiredStart {
+      color: red;
+    }
   }
 
   .component {

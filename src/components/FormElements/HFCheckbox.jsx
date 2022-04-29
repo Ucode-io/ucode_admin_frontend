@@ -14,7 +14,7 @@ const HFCheckbox = ({ control, name, label, className }) => {
           <Checkbox
             id={`checkbox-${id}`}
             style={{ transform: "translatey(-1px)" }}
-            checked={value}
+            checked={value ?? false}
             onChange={(_, val) => onChange(val)}
           />
           <label htmlFor={`checkbox-${id}`}>{label}</label>

@@ -12,13 +12,12 @@ import {
 } from "../../../../../components/CTable"
 import TableCard from "../../../../../components/TableCard"
 import contructorFieldService from "../../../../../services/contructorFieldService"
-import { generateID } from "../../../../../utils/generateID"
+import { generateGUID } from "../../../../../utils/generateID"
 import FieldCreateForm from "./FieldCreateForm"
 
 const Fields = ({ control }) => {
   const { id } = useParams()
   const [createFormVisible, setCreateFormVisible] = useState(false)
-  const [selectedField, setSelectedField] = useState(null)
 
   const { fields, prepend, update, remove } = useFieldArray({
     control,
@@ -27,14 +26,16 @@ const Fields = ({ control }) => {
   })
 
   const createField = (field) => {
+    const data = {
+      ...field,
+      id: generateGUID(),
+    }
+
     if (!id) {
-      prepend({
-        ...field,
-        id: generateID()
-      })
+      prepend(data)
       setCreateFormVisible(false)
     } else {
-      contructorFieldService.create(field).then((res) => {
+      contructorFieldService.create(data).then((res) => {
         prepend(res)
         setCreateFormVisible(false)
       })
@@ -43,14 +44,25 @@ const Fields = ({ control }) => {
 
   const updateField = (field, index) => {
     if (!id) {
-      update(index, field)
-      setSelectedField(null)
+      update(index, {
+        ...field,
+        editable: false
+      })
     } else {
       contructorFieldService.update(field).then((res) => {
-        update(index, field)
-        setSelectedField(false)
+        update(index, {
+          ...field,
+          editable: false
+        })
       })
     }
+  }
+
+  const openEditForm = (field, index) => {
+    update(index, {
+      ...field,
+      editable: true
+    })
   }
 
   const deleteField = (field, index) => {
@@ -73,7 +85,7 @@ const Fields = ({ control }) => {
         </CTableHead>
         <CTableBody columnsCount={4} dataLength={1}>
           {fields?.map((element, index) => {
-            return selectedField?.id !== element.id ? (
+            return !element.editable ? (
               <CTableRow key={element.key}>
                 <CTableCell>{element.label}</CTableCell>
                 <CTableCell>{element.slug}</CTableCell>
@@ -83,7 +95,7 @@ const Fields = ({ control }) => {
                     <RectangleIconButton
                       color="success"
                       className="mr-1"
-                      onClick={() => setSelectedField(element)}
+                      onClick={() => openEditForm(element, index)}
                     >
                       <Edit color="success" />
                     </RectangleIconButton>
@@ -100,7 +112,7 @@ const Fields = ({ control }) => {
               <FieldCreateForm
                 formIsVisible={true}
                 onSubmit={(field) => updateField(field, index)}
-                initialValues={selectedField}
+                initialValues={element}
               />
             )
           })}

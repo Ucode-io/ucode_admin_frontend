@@ -9,6 +9,7 @@ import PageFallback from "../../../../components/PageFallback"
 import constructorSectionService from "../../../../services/constructorSectionService"
 import contructorFieldService from "../../../../services/contructorFieldService"
 import contructorTableService from "../../../../services/contructorTableService"
+import { contructorTableActions } from "../../../../store/contructorTable/contructorTable.slice"
 import {
   createConstructorTableAction,
   updateConstructorTableAction,
@@ -53,15 +54,14 @@ const ContructorTablesFormPage = () => {
     }
 
     try {
-      const [tableData, { fields }] = await Promise.all([
-        getTableData(),
-        getFieldsData(),
-        // getSessionsData()
-      ])
+      const [tableData, { fields = [] }, { sections = [] }] = await Promise.all(
+        [getTableData(), getFieldsData(), getSessionsData()]
+      )
 
       reset({
         ...tableData,
         fields,
+        sections,
       })
     } catch (error) {
       console.log(error)
@@ -84,12 +84,38 @@ const ContructorTablesFormPage = () => {
   const updateConstructorTable = (data) => {
     setBtnLoader(true)
 
-    dispatch(updateConstructorTableAction(data))
-      .unwrap()
-      .then((res) => {
+    const sections =
+      data.sections.map((section, sectionIndex) => ({
+        ...section,
+        order: sectionIndex + 1,
+        fields:
+          section.fields.map((field, fieldIndex) => ({
+            ...field,
+            order: fieldIndex + 1,
+          })) ?? [],
+      })) ?? []
+
+    const updateTableData = contructorTableService.update(data)
+
+    const updateSectionData = constructorSectionService.update({
+      sections,
+      table_slug: data.slug,
+      table_id: id
+    })
+
+    Promise.all([updateTableData, updateSectionData])
+      .then(() => {
+        dispatch(contructorTableActions.setDataById(data))
         navigate("/constructor/tables")
       })
       .catch(() => setBtnLoader(false))
+
+    // dispatch(updateConstructorTableAction(computedData))
+    //   .unwrap()
+    //   .then((res) => {
+    //     navigate("/constructor/tables")
+    //   })
+    //   .catch(() => setBtnLoader(false))
   }
 
   const onSubmit = (data) => {
@@ -112,6 +138,7 @@ const ContructorTablesFormPage = () => {
           subtitle={id ? getValues("label") : "Добавить"}
           icon={getValues("icon")}
           backButtonLink={-1}
+          sticky
           extra={
             <SaveButton onClick={handleSubmit(onSubmit)} loading={btnLoader} />
           }

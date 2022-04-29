@@ -11,27 +11,25 @@ const Header = ({
   loader,
   backButtonLink,
   icon,
+  sticky,
   ...props
 }) => {
   return (
-    <div className={styles.header} {...props}>
+    <div className={`${styles.header} ${sticky ? styles.sticky : ''}`}  {...props}>
       <div className={styles.leftSide}>
         {backButtonLink && <BackButton link={backButtonLink} />}
-        
+
         {icon && <IconGenerator className={styles.icon} icon={icon} />}
 
         <div className={styles.titleBlock}>
-        {title && <div className={styles.title}>{title}</div>}
-        {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
+          {title && <div className={styles.title}>{title}</div>}
+          {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
         </div>
 
         <div className={styles.line} />
 
         <div>{children}</div>
-
       </div>
-
-     
 
       <div style={styles.rightSide}>{extra}</div>
     </div>

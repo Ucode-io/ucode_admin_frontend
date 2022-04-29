@@ -48,7 +48,7 @@ const FieldCreateForm = ({
       default: "",
       index: "string",
       label: "",
-      required: true,
+      required: false,
       slug: "",
       table_id: id,
       type: "",

@@ -6,8 +6,12 @@
   gap: 20px;
 
   .fieldCard {
+    width: 400px;
     border-radius: 6px;
     z-index: 2;
+    position: fixed;
+    top: 72;
+    
 
     .fieldCardHeader {
       box-shadow: inset 0px -1px 0px #e5e9eb;
@@ -16,11 +20,18 @@
 
     .fieldsWrapperBlock {
       padding: 8px;
+      max-height: calc(100vh - 140px);
+      overflow: auto;
     }
   }
 
   .fieldsBlock {
     width: 400px;
+    position: relative;
+
+    .fieldsBlockCard {
+      
+    }
 
     .fieldsWrapperBlock {
     }
@@ -40,11 +51,14 @@
     }
   }
 
-  .sectionsBlock {
+  .sectionsBlock {  
     flex: 1;
+    // height: calc(100vh - 90px);
+    // overflow: auto;
 
     .sectionCard {
       border-radius: 6px;
+      margin-bottom: 15px;
 
       .sectionCardHeader {
         box-shadow: inset 0px -1px 0px #e5e9eb;
@@ -64,8 +78,39 @@
         }
 
         .sectionCardRow {
+          background-color: #fff;
+          cursor: grab;
+          display: flex;
+          align-items: center;
+          gap: 20px;
         }
       }
+    }
+
+
+    .sectionCreateCard {
+      padding: 16px;
+      
+
+      .sectionCreateButton {
+        width: 100%;
+        border-radius: 6px;
+        border: 1px dashed rgba(110, 139, 183, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        font-size: 16px;
+        line-height: 24px;
+        color: colors.$primary;
+        cursor: pointer;
+        font-weight: 500;
+
+        &:hover {
+          border-color: colors.$primary;
+        }
+      }
+
     }
   }
 }

@@ -1,10 +1,10 @@
 import "./style.scss"
 
 
-const FRow = ({ label, children, position="vertical" }) => {
+const FRow = ({ label, children, position="vertical", required }) => {
   return (
     <div className={`FRow ${position}`} >
-      <div className="label">{label}:</div>
+      <div className="label"> {required && <span className="requiredStart">*</span>} {label}:</div>
       <div className="component">{children}</div>
     </div>  
   )

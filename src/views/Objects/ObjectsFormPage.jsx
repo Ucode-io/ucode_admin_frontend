@@ -138,6 +138,9 @@ const ObjectsFormPage = () => {
             </FormCard>
           ))}
         </div>
+
+        <div className={styles.secondaryCardSide}></div>
+
       </div>
     </div>
   )

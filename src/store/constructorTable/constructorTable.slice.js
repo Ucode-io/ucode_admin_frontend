@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 export const {
-  actions: contructorTableActions,
-  reducer: contructorTableReducer
+  actions: constructorTableActions,
+  reducer: constructorTableReducer
 } = createSlice({
-  name: "contructorTable",
+  name: "constructorTable",
   initialState: {
     list: [],
     loader: false,
@@ -29,7 +29,7 @@ export const {
     }
   },
   // extraReducers: {
-  //   [fetchContructorTableListAction.fulfilled]: (state, { payload }) => {
+  //   [fetchConstructorTableListAction.fulfilled]: (state, { payload }) => {
   //     state.list = payload ?? []
   //   }
   // }

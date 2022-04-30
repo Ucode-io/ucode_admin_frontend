@@ -4,8 +4,10 @@ import AuthLayout from "../layouts/AuthLayout"
 import MainLayout from "../layouts/MainLayout"
 import Login from "../views/Auth/Login"
 import Registration from "../views/Auth/Registration"
-import ObjectsListPage from "../views/Constructor/Tables"
-import ObjectsFormPage from "../views/Constructor/Tables/Form"
+import ConstructorTablesListPage from "../views/Constructor/Tables"
+import ConstructorTablesFormPage from "../views/Constructor/Tables/Form"
+import ObjectsPage from "../views/Objects"
+import ObjectsFormPage from "../views/Objects/ObjectsFormPage"
 
 const Router = () => {
   const isAuth = useSelector((state) => state.auth.isAuth)
@@ -27,9 +29,17 @@ const Router = () => {
     <Routes>
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Navigate to="/constructor/tables" />} />
-        <Route path="constructor/tables" element={<ObjectsListPage />} />
-        <Route path="constructor/tables/create" element={<ObjectsFormPage />} />
-        <Route path="constructor/tables/:id" element={<ObjectsFormPage />} />
+        
+        <Route path="constructor/tables" element={<ConstructorTablesListPage />} />
+        <Route path="constructor/tables/create" element={<ConstructorTablesFormPage />} />
+        <Route path="constructor/tables/:id" element={<ConstructorTablesFormPage />} />
+
+        
+        <Route path="object/:tableSlug" element={<ObjectsPage />} />
+        <Route path="object/:tableSlug/create" element={<ObjectsFormPage />} />
+        <Route path="object/:tableSlug/:id" element={<ObjectsFormPage />} />
+
+
 
         <Route path="*" element={<Navigate to="constructor/tables" />} />
       </Route>

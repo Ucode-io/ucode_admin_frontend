@@ -3,7 +3,7 @@ import persistReducer from "redux-persist/es/persistReducer";
 import { alertReducer } from "./alert/alert.slice";
 import { authReducer } from "./auth/auth.slice";
 import storage from "redux-persist/lib/storage"
-import { contructorTableReducer } from "./contructorTable/contructorTable.slice";
+import { constructorTableReducer } from "./constructorTable/constructorTable.slice";
 
 
 const authPersistConfig = {
@@ -11,14 +11,14 @@ const authPersistConfig = {
   storage,
 }
 
-const contructorTablePersistConfig = {
-  key: "contructorTable",
+const constructorTablePersistConfig = {
+  key: "constructorTable",
   storage,
 }
 
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
-  contructorTable: persistReducer(contructorTablePersistConfig, contructorTableReducer),
+  constructorTable: persistReducer(constructorTablePersistConfig, constructorTableReducer),
   alert: alertReducer,
 })
 

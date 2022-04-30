@@ -7,18 +7,15 @@ import SaveButton from "../../../../components/Buttons/SaveButton"
 import Header from "../../../../components/Header"
 import PageFallback from "../../../../components/PageFallback"
 import constructorSectionService from "../../../../services/constructorSectionService"
-import contructorFieldService from "../../../../services/contructorFieldService"
-import contructorTableService from "../../../../services/contructorTableService"
-import { contructorTableActions } from "../../../../store/contructorTable/contructorTable.slice"
-import {
-  createConstructorTableAction,
-  updateConstructorTableAction,
-} from "../../../../store/contructorTable/contructorTable.thunk"
+import constructorFieldService from "../../../../services/constructorFieldService"
+import constructorTableService from "../../../../services/constructorTableService"
+import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice"
+import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk"
 import Fields from "./Fields"
 import Layout from "./Layout"
 import MainInfo from "./MainInfo"
 
-const ContructorTablesFormPage = () => {
+const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { id } = useParams()
@@ -41,21 +38,15 @@ const ContructorTablesFormPage = () => {
   const getData = useCallback(async () => {
     setLoader(true)
 
-    const getTableData = () => {
-      return contructorTableService.getById(id)
-    }
+    const getTableData = constructorTableService.getById(id)
 
-    const getFieldsData = () => {
-      return contructorFieldService.getList({ table_id: id })
-    }
+    const getFieldsData = constructorFieldService.getList({ table_id: id })
 
-    const getSessionsData = () => {
-      return constructorSectionService.getList({ table_id: id })
-    }
+    const getSessionsData = constructorSectionService.getList({ table_id: id })
 
     try {
       const [tableData, { fields = [] }, { sections = [] }] = await Promise.all(
-        [getTableData(), getFieldsData(), getSessionsData()]
+        [getTableData, getFieldsData, getSessionsData]
       )
 
       reset({
@@ -95,27 +86,20 @@ const ContructorTablesFormPage = () => {
           })) ?? [],
       })) ?? []
 
-    const updateTableData = contructorTableService.update(data)
+    const updateTableData = constructorTableService.update(data)
 
     const updateSectionData = constructorSectionService.update({
       sections,
       table_slug: data.slug,
-      table_id: id
+      table_id: id,
     })
 
     Promise.all([updateTableData, updateSectionData])
       .then(() => {
-        dispatch(contructorTableActions.setDataById(data))
+        dispatch(constructorTableActions.setDataById(data))
         navigate("/constructor/tables")
       })
       .catch(() => setBtnLoader(false))
-
-    // dispatch(updateConstructorTableAction(computedData))
-    //   .unwrap()
-    //   .then((res) => {
-    //     navigate("/constructor/tables")
-    //   })
-    //   .catch(() => setBtnLoader(false))
   }
 
   const onSubmit = (data) => {
@@ -166,4 +150,4 @@ const ContructorTablesFormPage = () => {
   )
 }
 
-export default ContructorTablesFormPage
+export default ConstructorTablesFormPage

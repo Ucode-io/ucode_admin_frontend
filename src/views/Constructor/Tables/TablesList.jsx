@@ -9,14 +9,14 @@ import {
   CTableHead,
   CTableRow,
 } from "../../../components/CTable"
-import { deleteConstructorTableAction } from "../../../store/contructorTable/contructorTable.thunk"
+import { deleteConstructorTableAction } from "../../../store/constructorTable/constructorTable.thunk"
 
 const TablesList = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
-  const list = useSelector((state) => state.contructorTable.list)
-  const loader = useSelector((state) => state.contructorTable.loader)
+  const list = useSelector((state) => state.constructorTable.list)
+  const loader = useSelector((state) => state.constructorTable.loader)
 
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`)

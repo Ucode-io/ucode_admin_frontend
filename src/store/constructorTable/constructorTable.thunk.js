@@ -1,19 +1,19 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import contructorTableService from "../../services/contructorTableService"
-import { contructorTableActions } from "./contructorTable.slice"
+import constructorTableService from "../../services/constructorTableService"
+import { constructorTableActions } from "./constructorTable.slice"
 
-export const fetchContructorTableListAction = createAsyncThunk(
-  "object/fetchContructorTableList",
+export const fetchConstructorTableListAction = createAsyncThunk(
+  "object/fetchConstructorTableList",
   async (_, { dispatch }) => {
-    dispatch(contructorTableActions.setLoader(true))
+    dispatch(constructorTableActions.setLoader(true))
     try {
-      const res = await contructorTableService.getList()
-      dispatch(contructorTableActions.setList(res.tables))
+      const res = await constructorTableService.getList()
+      dispatch(constructorTableActions.setList(res.tables))
     } catch (error) {
       console.log(error)
       throw new Error(error)
     } finally {
-      dispatch(contructorTableActions.setLoader(false))
+      dispatch(constructorTableActions.setLoader(false))
     }
   }
 )
@@ -22,10 +22,10 @@ export const createConstructorTableAction = createAsyncThunk(
   "object/createConstructorTable",
   async (data, { dispatch }) => {
     try {
-      const res = await contructorTableService.create(data)
+      const res = await constructorTableService.create(data)
 
       dispatch(
-        contructorTableActions.add({
+        constructorTableActions.add({
           ...data,
           ...res,
         })
@@ -41,10 +41,10 @@ export const updateConstructorTableAction = createAsyncThunk(
   "object/updateConstructorTable",
   async (data, { dispatch }) => {
     try {
-      await contructorTableService.update(data)
+      await constructorTableService.update(data)
 
       dispatch(
-        contructorTableActions.setDataById(data)
+        constructorTableActions.setDataById(data)
       )
     } catch (error) {
       console.log(error)
@@ -56,18 +56,18 @@ export const updateConstructorTableAction = createAsyncThunk(
 export const deleteConstructorTableAction = createAsyncThunk(
   "object/deleteConstructorTable",
   async (id, { dispatch }) => {
-    dispatch(contructorTableActions.setLoader(true))
+    dispatch(constructorTableActions.setLoader(true))
     try {
-      await contructorTableService.delete(id)
+      await constructorTableService.delete(id)
 
       dispatch(
-        contructorTableActions.delete(id)
+        constructorTableActions.delete(id)
       )
     } catch (error) {
       console.log(error)
       throw new Error(error)
     } finally {
-      dispatch(contructorTableActions.setLoader(false))
+      dispatch(constructorTableActions.setLoader(false))
     }
   }
 )

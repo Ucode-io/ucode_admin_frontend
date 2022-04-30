@@ -6,17 +6,23 @@ import NotificationsIcon from "@mui/icons-material/Notifications"
 import SettingsIcon from "@mui/icons-material/Settings"
 import React, { useEffect, useMemo, useState } from "react"
 import UserAvatar from "../UserAvatar"
-import elements from "./elements"
 import { NavLink, useLocation } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { authActions } from "../../store/auth/auth.slice"
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout"
+import useSidebarElements from "../../hooks/useSidebarElements"
+import IconGenerator from "../IconPicker/IconGenerator"
 
 const Sidebar = () => {
   const location = useLocation()
   const dispatch = useDispatch()
+
+  const { elements } = useSidebarElements()
+
+  console.log("ELEMENTS ==>", elements)
+
   const [rightBlockVisible, setRightBlockVisible] = useState(true)
-  
+
   const selectedMenuItem = useMemo(() => {
     const activeElement = elements.find((el) => {
       if (location.pathname.includes(el.path)) return true
@@ -27,7 +33,7 @@ const Sidebar = () => {
 
     return activeElement
   }, [location.pathname])
-  
+
   const logout = () => {
     dispatch(authActions.logout())
   }
@@ -48,39 +54,26 @@ const Sidebar = () => {
 
         <div className={styles.menuItemsBlock}>
           {elements.map((element) => (
-            <React.Fragment key={element.id} >
-              {element.path ? (
-                <Tooltip
-                  placement="right"
-                  followCursor
-                  key={element.id}
-                  title={element.title}
-                >
-                <NavLink
-                  to={element.path}
-                  key={element.id}
-                  className={`${styles.menuItem} ${selectedMenuItem?.id === element.id ? styles.active : ""}`}
-                >
+            <Tooltip
+              placement="right"
+              followCursor
+              key={element.id}
+              title={element.title}
+            >
+              <NavLink
+                key={element.id}
+                to={element.path ?? element.children?.[0]?.path}
+                className={`${styles.menuItem} ${
+                  selectedMenuItem?.id === element.id ? styles.active : ""
+                }`}
+              >
+                {typeof element.icon === "string" ? (
+                  <IconGenerator icon={element.icon} />
+                ) : (
                   <element.icon />
-                </NavLink>
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  placement="right"
-                  followCursor
-                  key={element.id}
-                  title={element.title}
-                >
-                <NavLink
-                  key={element.id}
-                  to={element.children?.[0]?.path}
-                  className={`${styles.menuItem} ${selectedMenuItem?.id === element.id ? styles.active : ""}`}
-                >
-                  <element.icon />
-                </NavLink>
-               </Tooltip>
-              )}
-            </React.Fragment>
+                )}
+              </NavLink>
+            </Tooltip>
           ))}
         </div>
 
@@ -93,11 +86,9 @@ const Sidebar = () => {
             <SettingsIcon />
           </div>
 
-          
-
           <UserAvatar disableTooltip />
 
-          <div className={styles.menuItem} onClick={logout} >
+          <div className={styles.menuItem} onClick={logout}>
             <LogoutIcon />
           </div>
         </div>

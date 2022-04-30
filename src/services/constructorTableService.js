@@ -1,6 +1,6 @@
 import request from "../utils/request";
 
-const contructorTableService = {
+const constructorTableService = {
   getList: (params) => request.get('/table', { params }),
   update: (data) => request.put('/table', data),
   create: (data) => request.post('/table', data),
@@ -8,4 +8,4 @@ const contructorTableService = {
   delete: (id) => request.delete(`/table/${id}`)
 }
 
-export default contructorTableService;
+export default constructorTableService;

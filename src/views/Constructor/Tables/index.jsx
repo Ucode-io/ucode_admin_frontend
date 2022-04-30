@@ -6,7 +6,7 @@ import SearchInput from "../../../components/SearchInput"
 import TableCard from "../../../components/TableCard"
 import TablesList from "./TablesList"
 
-const ContructorTablesListPage = () => {
+const ConstructorTablesListPage = () => {
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -32,4 +32,4 @@ const ContructorTablesListPage = () => {
   )
 }
 
-export default ContructorTablesListPage
+export default ConstructorTablesListPage

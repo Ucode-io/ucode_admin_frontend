@@ -1,11 +1,26 @@
 import FormCard from "../../../../components/FormCard"
 import FRow from "../../../../components/FormElements-backup/FRow"
 import HFIconPicker from "../../../../components/FormElements/HFIconPicker"
+import HFSwitch from "../../../../components/FormElements/HFSwitch"
 import HFTextField from "../../../../components/FormElements/HFTextField"
 
 const MainInfo = ({ control }) => {
   return (
     <FormCard title="Общие сведение">
+      <FRow label="Иконка">
+        <HFIconPicker
+          control={control}
+          name="icon"
+          required
+        />
+      </FRow>
+      <FRow label="Показать в меню">
+        <HFSwitch
+          control={control}
+          name="show_in_menu"
+          required
+        />
+      </FRow>
       <FRow label="Название">
         <HFTextField
           control={control}
@@ -32,13 +47,6 @@ const MainInfo = ({ control }) => {
           name="slug"
           fullWidth
           placeholder="SLUG"
-          required
-        />
-      </FRow>
-      <FRow label="Иконка">
-        <HFIconPicker
-          control={control}
-          name="icon"
           required
         />
       </FRow>

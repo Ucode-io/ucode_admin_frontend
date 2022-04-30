@@ -11,7 +11,7 @@ import {
   CTableRow,
 } from "../../../../../components/CTable"
 import TableCard from "../../../../../components/TableCard"
-import contructorFieldService from "../../../../../services/contructorFieldService"
+import constructorFieldService from "../../../../../services/constructorFieldService"
 import { generateGUID } from "../../../../../utils/generateID"
 import FieldCreateForm from "./FieldCreateForm"
 
@@ -35,7 +35,7 @@ const Fields = ({ control }) => {
       prepend(data)
       setCreateFormVisible(false)
     } else {
-      contructorFieldService.create(data).then((res) => {
+      constructorFieldService.create(data).then((res) => {
         prepend(res)
         setCreateFormVisible(false)
       })
@@ -49,7 +49,7 @@ const Fields = ({ control }) => {
         editable: false
       })
     } else {
-      contructorFieldService.update(field).then((res) => {
+      constructorFieldService.update(field).then((res) => {
         update(index, {
           ...field,
           editable: false
@@ -68,7 +68,7 @@ const Fields = ({ control }) => {
   const deleteField = (field, index) => {
     if (!id) remove(index)
     else {
-      contructorFieldService.delete(field.id).then((res) => remove(index))
+      constructorFieldService.delete(field.id).then((res) => remove(index))
     }
   }
 

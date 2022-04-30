@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { fetchContructorTableListAction } from "../store/contructorTable/contructorTable.thunk";
+import { fetchConstructorTableListAction } from "../store/constructorTable/constructorTable.thunk";
 
 
 
@@ -8,7 +8,7 @@ const GlobalFunctionsProvider = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(fetchContructorTableListAction())
+    dispatch(fetchConstructorTableListAction())
   }, [dispatch])
 
 

@@ -3,13 +3,29 @@ import { useFieldArray } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
 import styles from "./style.module.scss"
 import FormElementGenerator from "../../../../../components/FormElementGenerator"
+import { applyDrag } from "../../../../../utils/applyDrag"
 
 const FieldsBlock = ({ control, layoutControl }) => {
-  const { fields } = useFieldArray({
+  const { fields, insert, remove, move } = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
   })
+
+
+  const onDrop = (dropResult, colNumber) => {
+    const result = applyDrag(fields, dropResult)
+
+    if (!result) return
+
+    // if (result.length > fields.length) {
+    //   insert(dropResult.addedIndex, { ...dropResult.payload })
+    // } else if (result.length < fields.length) {
+    //   remove(dropResult.removedIndex)
+    // } else {
+    //   move(dropResult.removedIndex, dropResult.addedIndex)
+    // }
+  }
 
 
   return (
@@ -21,9 +37,8 @@ const FieldsBlock = ({ control, layoutControl }) => {
 
         <div className={styles.fieldsWrapperBlock}>
           <Container
-            // behaviour="copy"
             groupName="1"
-            onDrop={(values) => console.log("VALUES ==>", values)}
+            onDrop={onDrop}
             dropPlaceholder={{ className: "drag-row-drop-preview" }}
             getChildPayload={(i) => fields[i]}
           >

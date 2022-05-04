@@ -72,6 +72,7 @@
       .sectionCardBody {
         padding: 16px;
         display: flex;
+        gap: 60px;
 
         .sectionCardColumn {
           flex: 1;
@@ -118,7 +119,7 @@
 .sectionFieldRow {
   width: 100%;
   padding: 8px 16px;
-  border: 1px dashed colors.$primary;
+  border: 1px dashed colors.$grey;
   border-radius: 6px;
   margin: 10px 0;
   cursor: grab;

@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import SaveButton from "../../components/Buttons/SaveButton"
-import FormCard from "../../components/FormCard"
+import FormCard from "./components/FormCard"
 import FormElementGenerator from "../../components/FormElementGenerator"
 import Header from "../../components/Header"
 import PageFallback from "../../components/PageFallback"
@@ -12,6 +12,7 @@ import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
 import { listToMap } from "../../utils/listToMap"
 import styles from "./style.module.scss"
+import { sortByOrder } from "../../utils/sortByOrder"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
@@ -32,6 +33,15 @@ const ObjectsFormPage = () => {
   const fieldsMap = useMemo(() => {
     return listToMap(fields)
   }, [fields])
+
+  const computedSections = useMemo(() => {
+    return sections?.map(section => ({
+      ...section,
+      column1: section.fields?.filter(field => field.column !== 2).sort(sortByOrder) ?? [],
+      column2: section.fields?.filter(field => field.column === 2).sort(sortByOrder) ?? [],
+    })).sort(sortByOrder) ?? []
+  }, [sections])
+
 
   const getAllData = async () => {
     const getFields = constructorFieldService.getList({
@@ -81,7 +91,6 @@ const ObjectsFormPage = () => {
     else getFields()
   }, [id, tableInfo])
 
-  console.log("Fields map ==>", fieldsMap, fields)
 
   const update = (data) => {
     setBtnLoader(true)
@@ -122,19 +131,30 @@ const ObjectsFormPage = () => {
 
       <div className={styles.formArea}>
         <div className={styles.mainCardSide}>
-          {sections.map((section) => (
+          {computedSections.map((section) => (
             <FormCard
               key={section.id}
               title={section.label}
               className={styles.formCard}
             >
-              {section.fields?.map((field) => (
+              <div className={styles.formColumn}>
+              {section.column1?.map((field) => (
                 <FormElementGenerator
                   key={field.id}
                   field={fieldsMap[field.id]}
                   control={control}
                 />
               ))}
+              </div>
+              <div className={styles.formColumn}>
+              {section.column2?.map((field) => (
+                <FormElementGenerator
+                  key={field.id}
+                  field={fieldsMap[field.id]}
+                  control={control}
+                />
+              ))}
+              </div>
             </FormCard>
           ))}
         </div>

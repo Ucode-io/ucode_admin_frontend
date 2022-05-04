@@ -14,6 +14,7 @@ import { createConstructorTableAction } from "../../../../store/constructorTable
 import Fields from "./Fields"
 import Layout from "./Layout"
 import MainInfo from "./MainInfo"
+import { sortByOrder } from "../../../../utils/sortByOrder"
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
@@ -33,6 +34,7 @@ const ConstructorTablesFormPage = () => {
       slug: "",
       icon: "",
     },
+    mode: 'all'
   })
 
   const getData = useCallback(async () => {
@@ -42,17 +44,29 @@ const ConstructorTablesFormPage = () => {
 
     const getFieldsData = constructorFieldService.getList({ table_id: id })
 
-    const getSessionsData = constructorSectionService.getList({ table_id: id })
+    const getSectionsData = constructorSectionService.getList({ table_id: id })
 
     try {
       const [tableData, { fields = [] }, { sections = [] }] = await Promise.all(
-        [getTableData, getFieldsData, getSessionsData]
+        [getTableData, getFieldsData, getSectionsData]
       )
+
+      const computedSections = sections
+        .map((section) => ({
+          ...section,
+          column1: section.fields
+            ?.filter((field) => field.column !== 2)
+            .sort(sortByOrder),
+          column2: section.fields
+            ?.filter((field) => field.column === 2)
+            .sort(sortByOrder),
+        }))
+        ?.sort(sortByOrder)
 
       reset({
         ...tableData,
         fields,
-        sections,
+        sections: computedSections,
       })
     } catch (error) {
       console.log(error)
@@ -75,21 +89,11 @@ const ConstructorTablesFormPage = () => {
   const updateConstructorTable = (data) => {
     setBtnLoader(true)
 
-    const sections =
-      data.sections.map((section, sectionIndex) => ({
-        ...section,
-        order: sectionIndex + 1,
-        fields:
-          section.fields.map((field, fieldIndex) => ({
-            ...field,
-            order: fieldIndex + 1,
-          })) ?? [],
-      })) ?? []
 
     const updateTableData = constructorTableService.update(data)
 
     const updateSectionData = constructorSectionService.update({
-      sections,
+      sections: data.sections ?? [],
       table_slug: data.slug,
       table_id: id,
     })
@@ -103,8 +107,29 @@ const ConstructorTablesFormPage = () => {
   }
 
   const onSubmit = (data) => {
-    if (id) updateConstructorTable(data)
-    else createConstructorTable(data)
+    console.log('data ==>', data)
+    const computedData = {
+      ...data,
+      sections: data.sections.map((section, sectionIndex) => ({
+        ...section,
+        order: sectionIndex + 1,
+        fields: [
+          ...section.column1?.map((field, fieldIndex) => ({
+            ...field,
+            order: fieldIndex + 1,
+            column: 1,
+          })),
+          ...section.column2?.map((field, fieldIndex) => ({
+            ...field,
+            order: fieldIndex + 1,
+            column: 2,
+          })),
+        ],
+      })),
+    }
+
+    if (id) updateConstructorTable(computedData)
+    else createConstructorTable(computedData)
   }
 
   useEffect(() => {

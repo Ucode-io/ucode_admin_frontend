@@ -14,11 +14,6 @@ const Attributes = ({ control, closeModal, reset, getValues, type }) => {
     closeModal()
   }
 
-  useEffect(() => {
-    const values = getValues()
-    initialValues.current = values
-  }, [getValues])
-
   switch (getValues("type")) {
     case "SINGLE_LINE":
       return (

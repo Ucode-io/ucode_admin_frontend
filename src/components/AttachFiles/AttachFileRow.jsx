@@ -4,7 +4,6 @@ import FileIcon from "../FileIcon"
 import { useState } from "react"
 import subtaskService from "../../services/subtaskService"
 import { biteToKilobite } from "../../utils/biteToKilobite"
-import axios from "axios"
 import useDownloader from "../../hooks/useDownloader"
 
 const AttachFileRow = ({ subtaskId, file, removeFile, openFile }) => {

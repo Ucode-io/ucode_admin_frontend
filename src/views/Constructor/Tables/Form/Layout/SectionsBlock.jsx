@@ -14,6 +14,7 @@ const SectionsBlock = ({ control, layoutControl }) => {
     append,
     remove,
     replace,
+    update,
     move
   } = useFieldArray({
     control,
@@ -23,9 +24,8 @@ const SectionsBlock = ({ control, layoutControl }) => {
 
   const addNewSection = () => {
     append({
-      column: "string",
+      column: "SINGLE",
       fields: [],
-      // id: "string",
       label: "",
       order: sections.length,
       id: generateGUID()
@@ -73,6 +73,7 @@ const SectionsBlock = ({ control, layoutControl }) => {
                 section={section}
                 control={control}
                 remove={remove}
+                update={update}
                 layoutControl={layoutControl}
                 fieldsMap={fieldsMap}
               />

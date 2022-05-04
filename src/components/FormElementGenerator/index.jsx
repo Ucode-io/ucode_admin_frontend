@@ -14,7 +14,6 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
     }))
   }, [field.attributes?.options])
 
-  console.log("FormElementGenerator", field)
 
   switch (field.type) {
     case "SINGLE_LINE":

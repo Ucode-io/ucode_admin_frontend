@@ -1,1 +1,0 @@
-console.log('THIS IS TEST JS FILE')

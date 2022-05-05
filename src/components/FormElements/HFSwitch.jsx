@@ -17,8 +17,8 @@ const HFSwitch = ({ control, name, label, labelProps, ...props }) => {
           <Switch
             id={`switch-${id}`}
             {...props}
-            checked={value}
-            onChange={(e, val) => onChange(val)}
+            checked={value ?? JSON.parse(value)}
+            onChange={(e, val) => onChange(JSON.stringify(val))}
           />
           <label htmlFor={`switch-${id}`} {...labelProps}>
             {label}

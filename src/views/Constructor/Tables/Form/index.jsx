@@ -164,7 +164,7 @@ const ConstructorTablesFormPage = () => {
         </TabPanel>
 
         <TabPanel>
-          <Layout control={control} />
+          <Layout control={control} getValues={getValues} />
         </TabPanel>
 
         <TabPanel>

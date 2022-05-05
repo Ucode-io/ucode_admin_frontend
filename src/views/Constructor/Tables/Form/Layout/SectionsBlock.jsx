@@ -8,7 +8,7 @@ import { applyDrag } from "../../../../../utils/applyDrag"
 import { generateGUID } from "../../../../../utils/generateID"
 import { useMemo } from "react"
 
-const SectionsBlock = ({ control, layoutControl }) => {
+const SectionsBlock = ({ control, layoutControl, getValues }) => {
   const {
     fields: sections,
     append,
@@ -26,6 +26,8 @@ const SectionsBlock = ({ control, layoutControl }) => {
     append({
       column: "SINGLE",
       fields: [],
+      column1: [],
+      column2: [],
       label: "",
       order: sections.length,
       id: generateGUID()
@@ -57,6 +59,8 @@ const SectionsBlock = ({ control, layoutControl }) => {
   }, [fieldsList])
 
 
+  console.log('getValues ==>', getValues)
+
   return (
     <div className={styles.sectionsBlock}>
       {!!sections.length && (
@@ -74,6 +78,7 @@ const SectionsBlock = ({ control, layoutControl }) => {
                 control={control}
                 remove={remove}
                 update={update}
+                getValues={getValues}
                 layoutControl={layoutControl}
                 fieldsMap={fieldsMap}
               />

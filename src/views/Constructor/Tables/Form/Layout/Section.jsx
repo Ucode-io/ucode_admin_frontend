@@ -10,7 +10,7 @@ import { applyDrag } from "../../../../../utils/applyDrag"
 import SectionSettingsDropdown from "../../../components/SectionSettingsDropdown"
 import styles from "./style.module.scss"
 
-const Section = ({ section, control, index, remove, update, layoutControl, fieldsMap }) => {
+const Section = ({ section, control, index, remove, update, layoutControl, fieldsMap, getValues }) => {
   
   const columnType = useWatch({
     control,
@@ -39,8 +39,6 @@ const Section = ({ section, control, index, remove, update, layoutControl, field
 
     if (!result) return
 
-    console.log("ONDROP ==>", dropResult, colNumber)
-
     if (result.length > fields.length) {
       insert(dropResult.addedIndex, { ...dropResult.payload })
     } else if (result.length < fields.length) {
@@ -51,10 +49,13 @@ const Section = ({ section, control, index, remove, update, layoutControl, field
   }
 
   const setColumnType = (type) => {
-    update(index, { ...section, column: type })
+    update(index, { ...getValues(`sections.${index}`), column: type })
   }
 
   const removeField = (index, colNumber) => {
+
+    console.log("INDEX ==>", index, "COLUMN ==>", colNumber)
+
     const { remove } = columns[`column${colNumber}`]
 
     remove(index)
@@ -99,7 +100,7 @@ const Section = ({ section, control, index, remove, update, layoutControl, field
                     control={layoutControl}
                     field={fieldsMap[field.id]}
                   />
-                  <RectangleIconButton color={"error"}  onClick={() => removeField(fieldIndex, 2)}>
+                  <RectangleIconButton color={"error"}  onClick={() => removeField(fieldIndex, 1)}>
                     <Delete color="error" />
                   </RectangleIconButton>
                 </div>

@@ -7,7 +7,7 @@ import styles from "./style.module.scss"
 
 const Login = () => {
   const navigate = useNavigate()
-  const [loginType, setLoginType] = useState("ESP")
+  const [loginType, setLoginType] = useState("LOGIN")
  
   const onESPFormSelected = () => setLoginType("ESP")
   const onLoginFormSelected = () => setLoginType("LOGIN")
@@ -21,14 +21,14 @@ const Login = () => {
         Выберите тип авторизации и заполните данные для входа в аккаунт
       </p>
 
-      <div className={styles.typeSwitchRow}>
+      {/* <div className={styles.typeSwitchRow}>
         <div
           className={`${styles.typeSwitchButton} ${
             loginType === "ESP" ? styles.active : ""
           }`}
           onClick={onESPFormSelected}
         >
-          <div className={styles.typeSwitchButtonLabel}>ЕЦП ключ</div>
+          <div className={styles.typeSwitchButtonLabel}>EMAIL</div>
           <KeyOutlined />
         </div>
         <div
@@ -40,7 +40,7 @@ const Login = () => {
           <div className={styles.typeSwitchButtonLabel}>Логин</div>
           <KeyOutlined />
         </div>
-      </div>
+      </div> */}
 
       {loginType === "ESP" ? (
         <ESPLoginForm navigateToRegistrationForm={navigateToRegistrationForm} />

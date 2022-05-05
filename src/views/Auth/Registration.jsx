@@ -9,13 +9,12 @@ const Registration = () => {
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>Регистрация</h1>
-      <p className={styles.subtitle}>Регистрация через ЕЦП ключ</p>
 
       <form className={styles.form}>
         <div className={styles.formArea}>
           <div className={styles.formRow}>
-            <p className={styles.label}>Выберите ЕЦП ключ</p>
-            {/* <ESPselect /> */}
+            <p className={styles.label}>Логин</p>
+            <TextField fullWidth placeholder="Введите логин" />
           </div>
 
           <div className={styles.formRow}>

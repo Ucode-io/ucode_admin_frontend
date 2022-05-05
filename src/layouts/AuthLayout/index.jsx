@@ -7,11 +7,10 @@ const AuthLayout = () => {
       <div className={styles.leftSide}>
         <div></div>
         <div className={styles.logoBlock}>
-          <h1 className={styles.logoTitle}>Soliq</h1>
-          <h1 className={styles.logoTitle}>Servis</h1>
+          <h1 className={styles.logoTitle}>Medion</h1>
         </div>
 
-        <div className={styles.subtitleBlock}>© Soliq Servis. Все права защищены</div>
+        <div className={styles.subtitleBlock}>© Medion. Все права защищены</div>
 
       </div>
       <div className={styles.rightSide}>

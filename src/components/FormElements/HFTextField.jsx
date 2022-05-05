@@ -13,7 +13,7 @@ const HFTextField = ({
     <Controller
       control={control}
       name={name}
-      rules={{ required: required ? 'THIS IS REQUIRED FIELD' : false, ...rules }}
+      rules={{ required: required ? 'This is required field' : false, ...rules }}
       render={({ field : { onChange, value }, fieldState : { error  } })  => (
         <TextField
         size="small"

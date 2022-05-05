@@ -23,7 +23,7 @@ const HFSelect = ({
     <Controller
       control={control}
       name={name}
-      rules={{ required: required ? 'THIS IS REQUIRED FIELD' : false, ...rules }}
+      rules={{ required: required ? 'This is required field' : false, ...rules }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FormControl style={{ width }}>
           <InputLabel size="small">{label}</InputLabel>
@@ -46,7 +46,7 @@ const HFSelect = ({
             ))}
           </Select>
           {!disabledHelperText && (
-            <FormHelperText error>{error?.message}</FormHelperText>
+            <FormHelperText error>{error?.message ?? ' '}</FormHelperText>
           )}
         </FormControl>
       )}

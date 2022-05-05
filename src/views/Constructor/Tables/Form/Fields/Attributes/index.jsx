@@ -24,6 +24,7 @@ const Attributes = ({ control, closeModal, reset, getValues, type }) => {
         />
       )
 
+    case "MULTISELECT":
     case "PICK_LIST":
       return (
         <PickListAttributes
@@ -60,6 +61,7 @@ const Attributes = ({ control, closeModal, reset, getValues, type }) => {
         />
       )
 
+    case "SWITCH":
     case "CHECKBOX":
       return (
         <CheckboxAttributes

@@ -8,10 +8,12 @@ import {
   OutlinedInput,
   Select,
 } from "@mui/material"
+import { useId } from "react"
 import { Controller } from "react-hook-form"
+import styles from "./style.module.scss"
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
+const ITEM_HEIGHT = 48
+const ITEM_PADDING_TOP = 8
 const MenuProps = {
   PaperProps: {
     style: {
@@ -19,9 +21,9 @@ const MenuProps = {
       width: 250,
     },
   },
-};
+}
 
-const HFSelect = ({
+const HFMultipleSelect = ({
   control,
   name,
   label,
@@ -33,33 +35,50 @@ const HFSelect = ({
   rules = {},
   ...props
 }) => {
+  const id = useId()
+
   return (
     <Controller
       control={control}
       name={name}
       rules={{
-        required: required ? "THIS IS REQUIRED FIELD" : false,
+        required: required ? "This is required field" : false,
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FormControl style={{ width }}>
           <InputLabel size="small">{label}</InputLabel>
           <Select
-            labelId="demo-multiple-chip-label"
-            id="demo-multiple-chip"
+            labelId={`multiselect-${id}-label`}
+            id={`multiselect-${id}`}
             multiple
-            value={value ?? []}
+            displayEmpty
+            value={Array.isArray(value) ? value : []}
             onChange={(e) => {
               onChange(e.target.value)
             }}
-            input={<OutlinedInput id="select-multiple-chip" />}
-            renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {selected?.map((value) => (
-                  <Chip key={value} label={value} />
-                ))}
-              </Box>
-            )}
+            input={
+              <OutlinedInput
+                error={error}
+                size="small"
+                id={`multiselect-${id}`}
+              />
+            }
+            renderValue={(selected) => {
+              if (!selected?.length) {
+                return <span className={styles.placeholder} >{placeholder}</span>
+              }
+
+              return (
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                  {selected?.map((value) => (
+                    <div key={value} className={styles.tag}>
+                      {value}
+                    </div>
+                  ))}
+                </Box>
+              )
+            }}
             MenuProps={MenuProps}
           >
             {options.map((option) => (
@@ -100,4 +119,4 @@ const HFSelect = ({
   )
 }
 
-export default HFSelect
+export default HFMultipleSelect

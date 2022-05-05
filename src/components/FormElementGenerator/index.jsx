@@ -2,7 +2,9 @@ import { useMemo } from "react"
 import FRow from "../FormElements-backup/FRow"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
+import HFMultipleSelect from "../FormElements/HFMultipleSelect"
 import HFSelect from "../FormElements/HFSelect"
+import HFSwitch from "../FormElements/HFSwitch"
 import HFTextField from "../FormElements/HFTextField"
 
 const FormElementGenerator = ({ field = {}, control, ...props }) => {
@@ -105,11 +107,42 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
     case "MULTISELECT":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFSelect
+          <HFMultipleSelect
             control={control}
             name={field.slug}
             width="100%"
             options={computedOptions}
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            {...props}
+          />
+        </FRow>
+      )
+
+    case "SWITCH":
+      return (
+        <HFSwitch
+          control={control}
+          name={field.slug}
+          label={field.label}
+          required={field.required}
+          {...props}
+        />
+      )
+
+    case "EMAIL":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFTextField
+            control={control}
+            name={field.slug}
+            rules={{
+              pattern: {
+                value: /\S+@\S+\.\S+/,
+                message: "Incorrect email format",
+              },
+            }}
+            fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
             {...props}

@@ -17,7 +17,7 @@
 //   "URL",
 //   "FORMULA",
 //   "LOOKUP",
-//   "PHOTO"
+  // "PHOTO"
 // ]
 
 export const fieldTypes = [
@@ -27,8 +27,8 @@ export const fieldTypes = [
   "DATE",
   "NUMBER",
   "CHECKBOX",
-  
   "EMAIL",
   "MULTISELECT",
-  "SWITCH"
+  "SWITCH",
+  "FILE"
 ]

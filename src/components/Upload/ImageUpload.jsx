@@ -7,7 +7,7 @@ import CancelIcon from "@mui/icons-material/Cancel"
 import "./Gallery/style.scss"
 import fileService from "../../services/fileService"
 
-const ImageUpload = ({ value, onChange, className }) => {
+const ImageUpload = ({ value, onChange, className = "" }) => {
   const inputRef = useRef(null)
   const [previewVisible, setPreviewVisible] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -23,9 +23,9 @@ const ImageUpload = ({ value, onChange, className }) => {
     const data = new FormData()
     data.append("file", file)
 
-    fileService.uploadImage(data)
+    fileService.upload(data)
       .then((res) => {
-        onChange(process.env.REACT_APP_CDN_API_URL + '/file/' + res.id)
+        onChange(import.meta.env.VITE_CDN_BASE_URL + res.filename)
       })
       .finally(() => setLoading(false))
   }
@@ -50,7 +50,7 @@ const ImageUpload = ({ value, onChange, className }) => {
             >
               <CancelIcon />
             </button>
-          <img src={value} alt="" />
+          <img src={value} className="img" alt="" />
         </div>
       )}
 

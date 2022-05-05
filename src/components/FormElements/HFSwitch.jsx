@@ -2,7 +2,7 @@ import { Switch } from "@mui/material"
 import { useId } from "react"
 import { Controller } from "react-hook-form"
 
-const HFSwitch = ({ control, name, label, labelProps, ...props }) => {
+const HFSwitch = ({ control, name, label, disabledHelperText, labelProps, ...props }) => {
   const id = useId()
   // const randomId = useMemo(() => {
   //   return generateRandomNumber()
@@ -13,7 +13,7 @@ const HFSwitch = ({ control, name, label, labelProps, ...props }) => {
       control={control}
       name={name}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <div>
+        <div className={!disabledHelperText ? 'mb-1' : ''} >
           <Switch
             id={`switch-${id}`}
             {...props}

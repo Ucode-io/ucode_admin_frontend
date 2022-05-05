@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import FRow from "../FormElements-backup/FRow"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
+import HFImageUpload from "../FormElements/HFImageUpload"
 import HFMultipleSelect from "../FormElements/HFMultipleSelect"
 import HFSelect from "../FormElements/HFSelect"
 import HFSwitch from "../FormElements/HFSwitch"
@@ -145,6 +146,18 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
+            {...props}
+          />
+        </FRow>
+      )
+
+      case "PHOTO":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFImageUpload
+            control={control}
+            name={field.slug}
+            required={field.required}
             {...props}
           />
         </FRow>

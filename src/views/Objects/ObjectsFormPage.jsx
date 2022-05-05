@@ -58,7 +58,7 @@ const ObjectsFormPage = () => {
 
       setFields(fields)
       setSections(sections)
-      reset(data)
+      reset(data.response ?? {})
     } finally {
       setLoader(false)
     }
@@ -126,7 +126,7 @@ const ObjectsFormPage = () => {
         backButtonLink={-1}
         sticky
         subtitle={id ? "Edit" : "Create"}
-        extra={<SaveButton onClick={handleSubmit(onSubmit)} />}
+        extra={<SaveButton loading={btnLoader} onClick={handleSubmit(onSubmit)} />}
       />
 
       <div className={styles.formArea}>

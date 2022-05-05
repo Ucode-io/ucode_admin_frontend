@@ -27,4 +27,8 @@ export const fieldTypes = [
   "DATE",
   "NUMBER",
   "CHECKBOX",
+  
+  "EMAIL",
+  "MULTISELECT",
+  "SWITCH"
 ]

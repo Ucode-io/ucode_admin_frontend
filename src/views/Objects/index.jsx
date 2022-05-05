@@ -49,7 +49,7 @@ const ObjectsPage = () => {
         getFields,
       ])
 
-      setTableData(objectToArray(data))
+      setTableData(objectToArray(data.response ?? {}))
       setFields(fields)
     } catch (error) {
       console.log(error)

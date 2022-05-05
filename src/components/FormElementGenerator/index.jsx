@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import FRow from "../FormElements-backup/FRow"
 import HFCheckbox from "../FormElements/HFCheckbox"
+import HFDatePicker from "../FormElements/HFDatePicker"
 import HFSelect from "../FormElements/HFSelect"
 import HFTextField from "../FormElements/HFTextField"
 
@@ -13,7 +14,6 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
       label: option,
     }))
   }, [field.attributes?.options])
-
 
   switch (field.type) {
     case "SINGLE_LINE":
@@ -64,11 +64,11 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
     case "DATE":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFTextField
+          <HFDatePicker
             control={control}
             name={field.slug}
             fullWidth
-            type="date"
+            width={"100%"}
             required={field.required}
             placeholder={field.attributes?.placeholder}
             {...props}
@@ -102,9 +102,24 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         />
       )
 
+    case "MULTISELECT":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFSelect
+            control={control}
+            name={field.slug}
+            width="100%"
+            options={computedOptions}
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            {...props}
+          />
+        </FRow>
+      )
+
     default:
       return (
-        <FRow label={field.label} required={field.required} >
+        <FRow label={field.label} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}

@@ -19,8 +19,6 @@ const Sidebar = () => {
 
   const { elements } = useSidebarElements()
 
-  console.log("ELEMENTS ==>", elements)
-
   const [rightBlockVisible, setRightBlockVisible] = useState(true)
 
   const selectedMenuItem = useMemo(() => {
@@ -53,7 +51,7 @@ const Sidebar = () => {
         </div>
 
         <div className={styles.menuItemsBlock}>
-          {elements.map((element) => (
+          {elements.filter(element => element.icon).map((element) => (
             <Tooltip
               placement="right"
               followCursor

@@ -28,11 +28,11 @@ const Router = () => {
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
-        <Route index element={<Navigate to="/constructor/tables" />} />
+        <Route index element={<Navigate to="/settings/constructor/tables" />} />
         
-        <Route path="constructor/tables" element={<ConstructorTablesListPage />} />
-        <Route path="constructor/tables/create" element={<ConstructorTablesFormPage />} />
-        <Route path="constructor/tables/:id" element={<ConstructorTablesFormPage />} />
+        <Route path="settings/constructor/tables" element={<ConstructorTablesListPage />} />
+        <Route path="settings/constructor/tables/create" element={<ConstructorTablesFormPage />} />
+        <Route path="settings/constructor/tables/:id" element={<ConstructorTablesFormPage />} />
 
         
         <Route path="object/:tableSlug" element={<ObjectsPage />} />
@@ -41,9 +41,9 @@ const Router = () => {
 
 
 
-        <Route path="*" element={<Navigate to="constructor/tables" />} />
+        <Route path="*" element={<Navigate to="/settings/constructor/tables" />} />
       </Route>
-      <Route path="*" element={<Navigate to="constructor/tables" />} />
+      <Route path="*" element={<Navigate to="/settings/constructor/tables" />} />
     </Routes>
   )
 }

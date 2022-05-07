@@ -4,13 +4,21 @@ import { Container, Draggable } from "react-smooth-dnd"
 import styles from "./style.module.scss"
 import FormElementGenerator from "../../../../../components/FormElementGenerator"
 import { applyDrag } from "../../../../../utils/applyDrag"
+import { useMemo } from "react"
 
-const FieldsBlock = ({ control, layoutControl }) => {
+const FieldsBlock = ({ control, layoutControl, usedFields }) => {
   const { fields, insert, remove, move } = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
   })
+
+  const unusedFields = useMemo(() => {
+
+    console.log('usedFields', usedFields, fields)
+
+    return fields?.filter(field => !usedFields.includes(field.id))
+  }, [usedFields, fields])
 
 
   const onDrop = (dropResult, colNumber) => {
@@ -40,9 +48,9 @@ const FieldsBlock = ({ control, layoutControl }) => {
             groupName="1"
             onDrop={onDrop}
             dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            getChildPayload={(i) => fields[i]}
+            getChildPayload={(i) => unusedFields[i]}
           >
-            {fields.map((field, index) => (
+            {unusedFields.map((field, index) => (
               <Draggable key={field.id} style={{ overflow: "visible" }}>
                 <div className={styles.sectionFieldRow}>
                   <FormElementGenerator

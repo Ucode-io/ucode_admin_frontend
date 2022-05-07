@@ -17,12 +17,12 @@ const Sidebar = () => {
   const location = useLocation()
   const dispatch = useDispatch()
 
-  const { elements } = useSidebarElements()
+  const { elements, settingsElements } = useSidebarElements()
 
   const [rightBlockVisible, setRightBlockVisible] = useState(true)
 
   const selectedMenuItem = useMemo(() => {
-    const activeElement = elements.find((el) => {
+    const activeElement = [...elements, ...settingsElements].find((el) => {
       if (location.pathname.includes(el.path)) return true
       return el.children?.some((child) =>
         location.pathname.includes(child.path)
@@ -31,6 +31,10 @@ const Sidebar = () => {
 
     return activeElement
   }, [location.pathname])
+
+
+  console.log("selectedMenuItem", selectedMenuItem, rightBlockVisible, location.pathname, settingsElements)
+
 
   const logout = () => {
     dispatch(authActions.logout())
@@ -51,28 +55,30 @@ const Sidebar = () => {
         </div>
 
         <div className={styles.menuItemsBlock}>
-          {elements.filter(element => element.icon).map((element) => (
-            <Tooltip
-              placement="right"
-              followCursor
-              key={element.id}
-              title={element.title}
-            >
-              <NavLink
+          {elements
+            .filter((element) => element.icon)
+            .map((element) => (
+              <Tooltip
+                placement="right"
+                followCursor
                 key={element.id}
-                to={element.path ?? element.children?.[0]?.path}
-                className={`${styles.menuItem} ${
-                  selectedMenuItem?.id === element.id ? styles.active : ""
-                }`}
+                title={element.title}
               >
-                {typeof element.icon === "string" ? (
-                  <IconGenerator icon={element.icon} />
-                ) : (
-                  <element.icon />
-                )}
-              </NavLink>
-            </Tooltip>
-          ))}
+                <NavLink
+                  key={element.id}
+                  to={element.path ?? element.children?.[0]?.path}
+                  className={`${styles.menuItem} ${
+                    selectedMenuItem?.id === element.id ? styles.active : ""
+                  }`}
+                >
+                  {typeof element.icon === "string" ? (
+                    <IconGenerator icon={element.icon} />
+                  ) : (
+                    <element.icon />
+                  )}
+                </NavLink>
+              </Tooltip>
+            ))}
         </div>
 
         <div className={styles.footer}>
@@ -80,9 +86,30 @@ const Sidebar = () => {
             <NotificationsIcon />
           </div>
 
-          <div className={styles.menuItem}>
-            <SettingsIcon />
-          </div>
+          {settingsElements
+            .filter((element) => element.icon)
+            .map((element) => (
+              <Tooltip
+                placement="right"
+                followCursor
+                key={element.id}
+                title={element.title}
+              >
+                <NavLink
+                  key={element.id}
+                  to={element.path ?? element.children?.[0]?.path}
+                  className={`${styles.menuItem} ${
+                    selectedMenuItem?.id === element.id ? styles.active : ""
+                  }`}
+                >
+                  {typeof element.icon === "string" ? (
+                    <IconGenerator icon={element.icon} />
+                  ) : (
+                    <element.icon />
+                  )}
+                </NavLink>
+              </Tooltip>
+            ))}
 
           <UserAvatar disableTooltip />
 

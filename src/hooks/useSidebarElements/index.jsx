@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useSelector } from "react-redux"
-import { elements } from "./elements"
+import { elements, settingsElements } from "./elements"
 import * as icons from "@mui/icons-material"
 
 const useSidebarElements = () => {
@@ -28,7 +28,7 @@ const useSidebarElements = () => {
 
   
 
-  return { elements: computedElements ?? [] }
+  return { elements: computedElements ?? [], settingsElements }
 }
 
 export default useSidebarElements

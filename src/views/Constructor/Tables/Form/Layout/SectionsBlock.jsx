@@ -59,8 +59,6 @@ const SectionsBlock = ({ control, layoutControl, getValues }) => {
   }, [fieldsList])
 
 
-  console.log('getValues ==>', getValues)
-
   return (
     <div className={styles.sectionsBlock}>
       {!!sections.length && (

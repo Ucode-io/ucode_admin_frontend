@@ -15,15 +15,16 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
   const imageClickHandler = (index) => {
     setPreviewVisible(true)
   }
-  
+
   const inputChangeHandler = (e) => {
     setLoading(true)
     const file = e.target.files[0]
-    
+
     const data = new FormData()
     data.append("file", file)
 
-    fileService.upload(data)
+    fileService
+      .upload(data)
       .then((res) => {
         onChange(import.meta.env.VITE_CDN_BASE_URL + res.filename)
       })
@@ -43,13 +44,13 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
     <div className={`Gallery ${className}`}>
       {value && (
         <div className="block" onClick={() => imageClickHandler()}>
-            <button
-              className="close-btn"
-              type="button"
-              onClick={(e) => closeButtonHandler(e)}
-            >
-              <CancelIcon />
-            </button>
+          <button
+            className="close-btn"
+            type="button"
+            onClick={(e) => closeButtonHandler(e)}
+          >
+            <CancelIcon />
+          </button>
           <img src={value} className="img" alt="" />
         </div>
       )}

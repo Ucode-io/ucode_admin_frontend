@@ -1,13 +1,13 @@
-import { Widgets } from "@mui/icons-material"
+import Settings from "@mui/icons-material/Settings"
 
 export const elements = [
-  {
-    id: "constructor",
-    title: "Constructor",
-    path: "/constructor",
-    icon: Widgets,
-    // permission: "PROJECTS"
-  },
+  // {
+  //   id: "constructor",
+  //   title: "Constructor",
+  //   path: "/constructor",
+  //   icon: Widgets,
+  //   // permission: "PROJECTS"
+  // },
   // {
   //   id: "docs",
   //   title: "Документы",
@@ -47,4 +47,19 @@ export const elements = [
   //   ]
   // },
 
+]
+
+export const settingsElements = [
+  {
+    id: "settings",
+    title: "Settings",
+    icon: Settings,
+    children: [
+      {
+        id: "settings",
+        title: "Contructor",
+        path: "/settings/constructor/tables",
+      }
+    ]
+  },
 ]

@@ -100,7 +100,7 @@ const ObjectsPage = () => {
               >
                 <CTableCell>{rowIndex + 1}</CTableCell>
                 {fields.map((field) => (
-                  <CTableCell key={field.id}>
+                  <CTableCell className="text-nowrap"  key={field.id}>
                     <CellElementGenerator
                       type={field.type}
                       value={row[field.slug]}

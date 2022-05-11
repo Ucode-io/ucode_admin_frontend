@@ -9,6 +9,7 @@ import {
   CTableHead,
   CTableRow,
 } from "../../components/CTable"
+import CellElementGenerator from "../../components/ElementGenerators/CellElementGenerator"
 import Header from "../../components/Header"
 import PageFallback from "../../components/PageFallback"
 import TableCard from "../../components/TableCard"
@@ -58,8 +59,12 @@ const ObjectsPage = () => {
     }
   }
 
-  const navigateToCreatePage = () => { navigate(`${pathname}/create`) }
-  const navigateToEditPage = (id) => { navigate(`${pathname}/${id}`) }
+  const navigateToCreatePage = () => {
+    navigate(`${pathname}/create`)
+  }
+  const navigateToEditPage = (id) => {
+    navigate(`${pathname}/${id}`)
+  }
 
   useEffect(() => {
     getAllData()
@@ -69,7 +74,10 @@ const ObjectsPage = () => {
 
   return (
     <div>
-      <Header title={tableInfo.label} extra={<CreateButton onClick={navigateToCreatePage} />} />
+      <Header
+        title={tableInfo.label}
+        extra={<CreateButton onClick={navigateToCreatePage} />}
+      />
 
       <TableCard>
         <CTable>
@@ -90,9 +98,14 @@ const ObjectsPage = () => {
                 key={row.id}
                 onClick={() => navigateToEditPage(row.id)}
               >
-                <CTableCell>{ rowIndex + 1 }</CTableCell>
+                <CTableCell>{rowIndex + 1}</CTableCell>
                 {fields.map((field) => (
-                  <CTableCell key={field.id}>{ row[field.slug] }</CTableCell>
+                  <CTableCell key={field.id}>
+                    <CellElementGenerator
+                      type={field.type}
+                      value={row[field.slug]}
+                    />
+                  </CTableCell>
                 ))}
               </CTableRow>
             ))}

@@ -1,10 +1,9 @@
 import { Delete } from "@mui/icons-material"
 import { Card } from "@mui/material"
-import { useState } from "react"
 import { useFieldArray, useWatch } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
-import FormElementGenerator from "../../../../../components/FormElementGenerator"
+import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import { applyDrag } from "../../../../../utils/applyDrag"
 import SectionSettingsDropdown from "../../../components/SectionSettingsDropdown"
@@ -31,6 +30,7 @@ const Section = ({ section, control, index, remove, update, layoutControl, field
 
   const columns = { column1, column2 }
 
+
   const onDrop = (dropResult, colNumber) => {
 
     const { fields, insert, move, remove } = columns[`column${colNumber}`]
@@ -54,15 +54,10 @@ const Section = ({ section, control, index, remove, update, layoutControl, field
 
   const removeField = (index, colNumber) => {
 
-    console.log("INDEX ==>", index, "COLUMN ==>", colNumber)
-
     const { remove } = columns[`column${colNumber}`]
-
     remove(index)
   }
   
-
-
   return (
     <Card className={styles.sectionCard}>
       <div className={styles.sectionCardHeader}>

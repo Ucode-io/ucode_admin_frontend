@@ -7,6 +7,7 @@ const HFDatePicker = ({ control, className, name, label, width, inputProps, disa
     <Controller
       control={control}
       name={name}
+      defaultValue=""
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={className}>
           <DatePicker

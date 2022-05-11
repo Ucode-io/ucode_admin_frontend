@@ -2,7 +2,7 @@ import { Card, Typography } from "@mui/material"
 import { useFieldArray } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
 import styles from "./style.module.scss"
-import FormElementGenerator from "../../../../../components/FormElementGenerator"
+import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator"
 import { applyDrag } from "../../../../../utils/applyDrag"
 import { useMemo } from "react"
 
@@ -14,8 +14,6 @@ const FieldsBlock = ({ control, layoutControl, usedFields }) => {
   })
 
   const unusedFields = useMemo(() => {
-
-    console.log('usedFields', usedFields, fields)
 
     return fields?.filter(field => !usedFields.includes(field.id))
   }, [usedFields, fields])

@@ -14,6 +14,7 @@ const HFImageUpload = ({
     <Controller
       control={control}
       name={name}
+      defaultValue=""
       rules={{
         required: required ? "This is required field" : false,
         ...rules,

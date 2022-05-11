@@ -4,14 +4,12 @@ import { Controller } from "react-hook-form"
 
 const HFSwitch = ({ control, name, label, disabledHelperText, labelProps, ...props }) => {
   const id = useId()
-  // const randomId = useMemo(() => {
-  //   return generateRandomNumber()
-  // }, [])
 
   return (
     <Controller
       control={control}
       name={name}
+      defaultValue={false}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={!disabledHelperText ? 'mb-1' : ''} >
           <Switch

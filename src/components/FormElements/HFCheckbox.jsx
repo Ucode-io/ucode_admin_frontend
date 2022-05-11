@@ -9,6 +9,7 @@ const HFCheckbox = ({ control, name, label, className }) => {
     <Controller
       control={control}
       name={name}
+      defaultValue={false}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={className} >
           <Checkbox

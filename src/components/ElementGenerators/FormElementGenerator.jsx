@@ -7,6 +7,7 @@ import HFMultipleSelect from "../FormElements/HFMultipleSelect"
 import HFSelect from "../FormElements/HFSelect"
 import HFSwitch from "../FormElements/HFSwitch"
 import HFTextField from "../FormElements/HFTextField"
+import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 
 const FormElementGenerator = ({ field = {}, control, ...props }) => {
   const computedOptions = useMemo(() => {
@@ -28,6 +29,21 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
+            {...props}
+          />
+        </FRow>
+      )
+
+    case "PHONE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFTextFieldWithMask
+            control={control}
+            name={field.slug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            mask={'(99) 999-99-99'}
             {...props}
           />
         </FRow>

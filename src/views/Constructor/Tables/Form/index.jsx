@@ -15,11 +15,13 @@ import Fields from "./Fields"
 import Layout from "./Layout"
 import MainInfo from "./MainInfo"
 import { sortByOrder } from "../../../../utils/sortByOrder"
+import Relations from "./Relations"
+import constructorRelationService from "../../../../services/constructorRelationService"
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { id, slug } = useParams()
 
   const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
@@ -34,7 +36,7 @@ const ConstructorTablesFormPage = () => {
       slug: "",
       icon: "",
     },
-    mode: 'all'
+    mode: "all",
   })
 
   const getData = useCallback(async () => {
@@ -46,9 +48,11 @@ const ConstructorTablesFormPage = () => {
 
     const getSectionsData = constructorSectionService.getList({ table_id: id })
 
+    const getReletionsData = constructorRelationService.getList({ table_slug: slug })
+
     try {
-      const [tableData, { fields = [] }, { sections = [] }] = await Promise.all(
-        [getTableData, getFieldsData, getSectionsData]
+      const [tableData, { fields = [] }, { sections = [] }, { relations = [] }] = await Promise.all(
+        [getTableData, getFieldsData, getSectionsData, getReletionsData]
       )
 
       const computedSections = sections
@@ -67,13 +71,14 @@ const ConstructorTablesFormPage = () => {
         ...tableData,
         fields,
         sections: computedSections,
+        relations
       })
     } catch (error) {
       console.log(error)
     } finally {
       setLoader(false)
     }
-  }, [id, reset])
+  }, [id, reset, slug])
 
   const createConstructorTable = (data) => {
     setBtnLoader(true)
@@ -88,7 +93,6 @@ const ConstructorTablesFormPage = () => {
 
   const updateConstructorTable = (data) => {
     setBtnLoader(true)
-
 
     const updateTableData = constructorTableService.update(data)
 
@@ -107,7 +111,6 @@ const ConstructorTablesFormPage = () => {
   }
 
   const onSubmit = (data) => {
-    console.log('data ==>', data)
     const computedData = {
       ...data,
       sections: data.sections.map((section, sectionIndex) => ({
@@ -156,6 +159,7 @@ const ConstructorTablesFormPage = () => {
             <Tab>Details</Tab>
             <Tab>Layouts</Tab>
             <Tab>Fields</Tab>
+            <Tab>Relations</Tab>
           </TabList>
         </Header>
 
@@ -169,6 +173,10 @@ const ConstructorTablesFormPage = () => {
 
         <TabPanel>
           <Fields control={control} />
+        </TabPanel>
+
+        <TabPanel>
+          <Relations control={control} />
         </TabPanel>
       </Tabs>
     </div>

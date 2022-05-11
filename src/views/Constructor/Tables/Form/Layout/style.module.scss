@@ -9,8 +9,6 @@
     width: 400px;
     border-radius: 6px;
     z-index: 2;
-    position: fixed;
-    top: 72;
     
 
     .fieldCardHeader {
@@ -20,14 +18,17 @@
 
     .fieldsWrapperBlock {
       padding: 8px;
-      max-height: calc(100vh - 140px);
-      overflow: auto;
+      // max-height: calc(100vh - 140px);
+      // overflow: auto;
     }
   }
 
   .fieldsBlock {
     width: 400px;
-    position: relative;
+    // top: 56px;
+    height: calc(100vh - 90px);
+    overflow: auto;
+
 
     .fieldsBlockCard {
       
@@ -53,8 +54,8 @@
 
   .sectionsBlock {  
     flex: 1;
-    // height: calc(100vh - 90px);
-    // overflow: auto;
+    height: calc(100vh - 90px);
+    overflow: auto;
 
     .sectionCard {
       border-radius: 6px;

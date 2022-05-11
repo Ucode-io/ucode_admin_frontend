@@ -18,8 +18,8 @@ const TablesList = () => {
   const list = useSelector((state) => state.constructorTable.list)
   const loader = useSelector((state) => state.constructorTable.loader)
 
-  const navigateToEditForm = (id) => {
-    navigate(`${location.pathname}/${id}`)
+  const navigateToEditForm = (id, slug) => {
+    navigate(`${location.pathname}/${id}/${slug}`)
   }
 
   const deleteTable = (id) => {
@@ -39,7 +39,7 @@ const TablesList = () => {
           {list?.map((element, index) => (
             <CTableRow
               key={element.id}
-              onClick={() => navigateToEditForm(element.id)}
+              onClick={() => navigateToEditForm(element.id, element.slug)}
             >
               <CTableCell>{index + 1}</CTableCell>
               <CTableCell>{element.label}</CTableCell>

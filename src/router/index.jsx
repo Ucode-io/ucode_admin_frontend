@@ -32,13 +32,12 @@ const Router = () => {
         
         <Route path="settings/constructor/tables" element={<ConstructorTablesListPage />} />
         <Route path="settings/constructor/tables/create" element={<ConstructorTablesFormPage />} />
-        <Route path="settings/constructor/tables/:id" element={<ConstructorTablesFormPage />} />
+        <Route path="settings/constructor/tables/:id/:slug" element={<ConstructorTablesFormPage />} />
 
         
         <Route path="object/:tableSlug" element={<ObjectsPage />} />
         <Route path="object/:tableSlug/create" element={<ObjectsFormPage />} />
         <Route path="object/:tableSlug/:id" element={<ObjectsFormPage />} />
-
 
 
         <Route path="*" element={<Navigate to="/settings/constructor/tables" />} />

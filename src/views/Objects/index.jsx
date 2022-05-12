@@ -96,7 +96,7 @@ const ObjectsPage = () => {
             {tableData.map((row, rowIndex) => (
               <CTableRow
                 key={row.id}
-                onClick={() => navigateToEditPage(row.id)}
+                onClick={() => navigateToEditPage(row.guid)}
               >
                 <CTableCell>{rowIndex + 1}</CTableCell>
                 {fields.map((field) => (

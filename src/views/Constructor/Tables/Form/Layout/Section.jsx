@@ -9,30 +9,33 @@ import { applyDrag } from "../../../../../utils/applyDrag"
 import SectionSettingsDropdown from "../../../components/SectionSettingsDropdown"
 import styles from "./style.module.scss"
 
-const Section = ({ section, control, index, remove, update, layoutControl, fieldsMap, getValues }) => {
-  
+const Section = ({
+  mainForm,
+  index,
+  sectionsFieldArray,
+  layoutForm,
+  fieldsMap,
+}) => {
   const columnType = useWatch({
-    control,
-    name: `sections.${index}.column`
+    control: mainForm.control,
+    name: `sections.${index}.column`,
   })
 
   const column1 = useFieldArray({
-    control,
+    control: mainForm.control,
     name: `sections[${index}].column1`,
     keyName: "key",
   })
 
   const column2 = useFieldArray({
-    control,
+    control: mainForm.control,
     name: `sections[${index}].column2`,
     keyName: "key",
   })
 
   const columns = { column1, column2 }
 
-
   const onDrop = (dropResult, colNumber) => {
-
     const { fields, insert, move, remove } = columns[`column${colNumber}`]
 
     const result = applyDrag(fields, dropResult)
@@ -49,15 +52,17 @@ const Section = ({ section, control, index, remove, update, layoutControl, field
   }
 
   const setColumnType = (type) => {
-    update(index, { ...getValues(`sections.${index}`), column: type })
+    sectionsFieldArray.update(index, {
+      ...mainForm.getValues(`sections.${index}`),
+      column: type,
+    })
   }
 
   const removeField = (index, colNumber) => {
-
     const { remove } = columns[`column${colNumber}`]
     remove(index)
   }
-  
+
   return (
     <Card className={styles.sectionCard}>
       <div className={styles.sectionCardHeader}>
@@ -65,7 +70,7 @@ const Section = ({ section, control, index, remove, update, layoutControl, field
           autoFocus
           disabledHelperText
           placeholder="Label"
-          control={control}
+          control={mainForm.control}
           name={`sections[${index}].label`}
           size="small"
           style={{ width: 300 }}
@@ -74,8 +79,8 @@ const Section = ({ section, control, index, remove, update, layoutControl, field
         <SectionSettingsDropdown
           columnType={columnType}
           setColumnType={setColumnType}
-          control={control}
-          onDelete={() => remove(index)}
+          control={mainForm.control}
+          onDelete={() => sectionsFieldArray.remove(index)}
         />
       </div>
       <div className={styles.sectionCardBody}>
@@ -92,10 +97,13 @@ const Section = ({ section, control, index, remove, update, layoutControl, field
               <Draggable key={field.key}>
                 <div className={styles.sectionCardRow}>
                   <FormElementGenerator
-                    control={layoutControl}
+                    control={layoutForm.control}
                     field={fieldsMap[field.id]}
                   />
-                  <RectangleIconButton color={"error"}  onClick={() => removeField(fieldIndex, 1)}>
+                  <RectangleIconButton
+                    color={"error"}
+                    onClick={() => removeField(fieldIndex, 1)}
+                  >
                     <Delete color="error" />
                   </RectangleIconButton>
                 </div>
@@ -105,31 +113,35 @@ const Section = ({ section, control, index, remove, update, layoutControl, field
         </div>
 
         <div className={styles.sectionCardColumn}>
-          {columnType === 'DOUBLE' &&  <Container
-            style={{ minHeight: 150 }}
-            groupName="1"
-            drag-row="drag-row"
-            dragClass="drag-row"
-            dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            onDrop={(dragResults) => onDrop(dragResults, 2)}
-            getChildPayload={(index) => columns.column2.fields[index]}
-          >
-            {column2.fields?.map((field, fieldIndex) => (
-              <Draggable key={field.key}>
-                <div className={styles.sectionCardRow}>
-                  <FormElementGenerator
-                    control={layoutControl}
-                    field={fieldsMap[field.id]}
-                  />
-                  <RectangleIconButton color={"error"} onClick={() => removeField(fieldIndex, 2)}  >
-                    <Delete color="error" />
-                  </RectangleIconButton>
-                </div>
-              </Draggable>
-            ))}
-          </Container>}
+          {columnType === "DOUBLE" && (
+            <Container
+              style={{ minHeight: 150 }}
+              groupName="1"
+              drag-row="drag-row"
+              dragClass="drag-row"
+              dropPlaceholder={{ className: "drag-row-drop-preview" }}
+              onDrop={(dragResults) => onDrop(dragResults, 2)}
+              getChildPayload={(index) => columns.column2.fields[index]}
+            >
+              {column2.fields?.map((field, fieldIndex) => (
+                <Draggable key={field.key}>
+                  <div className={styles.sectionCardRow}>
+                    <FormElementGenerator
+                      control={layoutForm.control}
+                      field={fieldsMap[field.id]}
+                    />
+                    <RectangleIconButton
+                      color={"error"}
+                      onClick={() => removeField(fieldIndex, 2)}
+                    >
+                      <Delete color="error" />
+                    </RectangleIconButton>
+                  </div>
+                </Draggable>
+              ))}
+            </Container>
+          )}
         </div>
-
       </div>
     </Card>
   )

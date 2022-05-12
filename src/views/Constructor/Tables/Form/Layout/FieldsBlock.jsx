@@ -6,9 +6,9 @@ import FormElementGenerator from "../../../../../components/ElementGenerators/Fo
 import { applyDrag } from "../../../../../utils/applyDrag"
 import { useMemo } from "react"
 
-const FieldsBlock = ({ control, layoutControl, usedFields }) => {
+const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
   const { fields, insert, remove, move } = useFieldArray({
-    control,
+    control: mainForm.control,
     name: "fields",
     keyName: "key",
   })
@@ -53,7 +53,7 @@ const FieldsBlock = ({ control, layoutControl, usedFields }) => {
                 <div className={styles.sectionFieldRow}>
                   <FormElementGenerator
                     field={field}
-                    control={layoutControl}
+                    control={layoutForm.control}
                     disabledHelperText
                   />
                 </div>

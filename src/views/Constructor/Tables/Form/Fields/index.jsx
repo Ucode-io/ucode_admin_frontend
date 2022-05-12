@@ -15,12 +15,12 @@ import constructorFieldService from "../../../../../services/constructorFieldSer
 import { generateGUID } from "../../../../../utils/generateID"
 import FieldCreateForm from "./FieldCreateForm"
 
-const Fields = ({ control }) => {
+const Fields = ({ mainForm }) => {
   const { id } = useParams()
   const [createFormVisible, setCreateFormVisible] = useState(false)
 
   const { fields, prepend, update, remove } = useFieldArray({
-    control,
+    control: mainForm.control,
     name: "fields",
     keyName: "key",
   })

@@ -5,10 +5,10 @@ import FieldsBlock from "./FieldsBlock";
 import SectionsBlock from "./SectionsBlock";
 import styles from "./style.module.scss"
 
-const Layout = ({ control, setValue, getValues }) => {
+const Layout = ({ mainForm }) => {
 
   const sections = useWatch({
-    control,
+    control: mainForm.control,
     name: `sections`
   })
 
@@ -23,13 +23,13 @@ const Layout = ({ control, setValue, getValues }) => {
     return list
   }, [sections])
 
-  const { control: layoutControl } = useForm({ mode: 'onChange' })
+  const layoutForm = useForm({ mode: 'onChange' })
 
   return ( <div className={styles.page} >
 
-    <FieldsBlock usedFields={usedFields} control={control} layoutControl={layoutControl} />
+    <FieldsBlock usedFields={usedFields} mainForm={mainForm} layoutForm={layoutForm} />
     
-    <SectionsBlock control={control} layoutControl={layoutControl} setValue={setValue} getValues={getValues} />
+    <SectionsBlock mainForm={mainForm} layoutForm={layoutForm} />
 
     
   </div> );

@@ -14,7 +14,7 @@ import constructorRelationService from "../../../../../services/constructorRelat
 import { generateGUID } from "../../../../../utils/generateID"
 import RelationCreateForm from "./RelationCreateForm"
 
-const Relations = ({ control }) => {
+const Relations = ({ mainForm }) => {
   const [createFormVisible, setCreateFormVisible] = useState(false)
 
   const {
@@ -23,7 +23,7 @@ const Relations = ({ control }) => {
     update,
     remove,
   } = useFieldArray({
-    control,
+    control: mainForm.control,
     name: "relations",
     keyName: "key",
   })

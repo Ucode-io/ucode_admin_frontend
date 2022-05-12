@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { Tab, TabList, Tabs, TabPanel } from "react-tabs"
 import SaveButton from "../../../../components/Buttons/SaveButton"
@@ -17,16 +17,21 @@ import MainInfo from "./MainInfo"
 import { sortByOrder } from "../../../../utils/sortByOrder"
 import Relations from "./Relations"
 import constructorRelationService from "../../../../services/constructorRelationService"
+import { computeSections, computeSectionsOnSubmit } from "../utils"
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { id, slug } = useParams()
 
+  const allConstructorTables = useSelector(
+    (state) => state.constructorTable.list
+  )
+
   const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
 
-  const { handleSubmit, control, reset, getValues } = useForm({
+  const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
       fields: [],
@@ -39,7 +44,7 @@ const ConstructorTablesFormPage = () => {
     mode: "all",
   })
 
-  const getData = useCallback(async () => {
+  const getData = async () => {
     setLoader(true)
 
     const getTableData = constructorTableService.getById(id)
@@ -48,37 +53,67 @@ const ConstructorTablesFormPage = () => {
 
     const getSectionsData = constructorSectionService.getList({ table_id: id })
 
-    const getReletionsData = constructorRelationService.getList({ table_slug: slug })
+    const getReletionsData = constructorRelationService.getList({
+      table_slug: slug,
+    })
 
     try {
-      const [tableData, { fields = [] }, { sections = [] }, { relations = [] }] = await Promise.all(
-        [getTableData, getFieldsData, getSectionsData, getReletionsData]
-      )
+      const [
+        tableData,
+        { fields = [] },
+        { sections = [] },
+        { relations = [] },
+      ] = await Promise.all([
+        getTableData,
+        getFieldsData,
+        getSectionsData,
+        getReletionsData,
+      ])
 
-      const computedSections = sections
-        .map((section) => ({
-          ...section,
-          column1: section.fields
-            ?.filter((field) => field.column !== 2)
-            .sort(sortByOrder),
-          column2: section.fields
-            ?.filter((field) => field.column === 2)
-            .sort(sortByOrder),
-        }))
-        ?.sort(sortByOrder)
-
-      reset({
+      mainForm.reset({
         ...tableData,
         fields,
-        sections: computedSections,
-        relations
+        sections: computeSections(sections),
+        relations,
       })
-    } catch (error) {
-      console.log(error)
+
+      getRelationFields(relations)
     } finally {
       setLoader(false)
     }
-  }, [id, reset, slug])
+  }
+
+  const getRelationFields = async (relations = []) => {
+    const tables = relations
+      .filter(
+        (relation) =>
+          relation.type === "One2Many" && relation.table_from === slug
+      )
+      .map((relation) =>
+        allConstructorTables.find((table) => table.slug === relation.table_to)
+      )
+
+    const actions = tables.map((table) =>
+      constructorFieldService.getList({ table_id: table.id })
+    )
+
+    const fields = await Promise.all(actions)
+
+    const computedFields = fields.map((field) =>
+      field.fields.map((field) => ({
+        ...field,
+        table_slug: tables.find((table) => table.id === field.table_id)?.slug,
+      }))
+    )
+
+    if(!computedFields?.length) return
+
+    mainForm.setValue("fields", [
+      ...mainForm.getValues('fields'),
+      ...[].concat(...computedFields)
+    ])
+  }
+  
 
   const createConstructorTable = (data) => {
     setBtnLoader(true)
@@ -113,22 +148,7 @@ const ConstructorTablesFormPage = () => {
   const onSubmit = (data) => {
     const computedData = {
       ...data,
-      sections: data.sections.map((section, sectionIndex) => ({
-        ...section,
-        order: sectionIndex + 1,
-        fields: [
-          ...section.column1?.map((field, fieldIndex) => ({
-            ...field,
-            order: fieldIndex + 1,
-            column: 1,
-          })),
-          ...section.column2?.map((field, fieldIndex) => ({
-            ...field,
-            order: fieldIndex + 1,
-            column: 2,
-          })),
-        ],
-      })),
+      sections: computeSectionsOnSubmit(data.sections),
     }
 
     if (id) updateConstructorTable(computedData)
@@ -138,7 +158,7 @@ const ConstructorTablesFormPage = () => {
   useEffect(() => {
     if (!id) setLoader(false)
     else getData()
-  }, [getData, id])
+  }, [id])
 
   if (loader) return <PageFallback />
 
@@ -147,12 +167,15 @@ const ConstructorTablesFormPage = () => {
       <Tabs direction={"ltr"}>
         <Header
           title="Objects"
-          subtitle={id ? getValues("label") : "Добавить"}
-          icon={getValues("icon")}
+          subtitle={id ? mainForm.getValues("label") : "Добавить"}
+          icon={mainForm.getValues("icon")}
           backButtonLink={-1}
           sticky
           extra={
-            <SaveButton onClick={handleSubmit(onSubmit)} loading={btnLoader} />
+            <SaveButton
+              onClick={mainForm.handleSubmit(onSubmit)}
+              loading={btnLoader}
+            />
           }
         >
           <TabList>
@@ -164,19 +187,19 @@ const ConstructorTablesFormPage = () => {
         </Header>
 
         <TabPanel>
-          <MainInfo control={control} />
+          <MainInfo control={mainForm.control} />
         </TabPanel>
 
         <TabPanel>
-          <Layout control={control} getValues={getValues} />
+          <Layout mainForm={mainForm} />
         </TabPanel>
 
         <TabPanel>
-          <Fields control={control} />
+          <Fields mainForm={mainForm} />
         </TabPanel>
 
         <TabPanel>
-          <Relations control={control} />
+          <Relations mainForm={mainForm} />
         </TabPanel>
       </Tabs>
     </div>

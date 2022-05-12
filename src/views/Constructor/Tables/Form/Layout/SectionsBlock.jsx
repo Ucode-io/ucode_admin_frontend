@@ -8,22 +8,15 @@ import { applyDrag } from "../../../../../utils/applyDrag"
 import { generateGUID } from "../../../../../utils/generateID"
 import { useMemo } from "react"
 
-const SectionsBlock = ({ control, layoutControl, getValues }) => {
-  const {
-    fields: sections,
-    append,
-    remove,
-    replace,
-    update,
-    move
-  } = useFieldArray({
-    control,
+const SectionsBlock = ({ mainForm, layoutForm }) => {
+  const { fields: sections, ...sectionsFieldArray } = useFieldArray({
+    control: mainForm.control,
     name: "sections",
     keyName: "key",
   })
 
   const addNewSection = () => {
-    append({
+    sectionsFieldArray.append({
       column: "SINGLE",
       fields: [],
       column1: [],
@@ -38,13 +31,13 @@ const SectionsBlock = ({ control, layoutControl, getValues }) => {
     const result = applyDrag(sections, dropResult)
 
     if(result) {
-      move(dropResult.removedIndex, dropResult.addedIndex)
-      replace(result)
+      sectionsFieldArray.move(dropResult.removedIndex, dropResult.addedIndex)
+      sectionsFieldArray.replace(result)
     }
   }
 
   const fieldsList = useWatch({
-    control,
+    control: mainForm.control,
     name: `fields`
   })
 
@@ -72,12 +65,9 @@ const SectionsBlock = ({ control, layoutControl, getValues }) => {
               <Section
                 key={section.id}
                 index={index}
-                section={section}
-                control={control}
-                remove={remove}
-                update={update}
-                getValues={getValues}
-                layoutControl={layoutControl}
+                mainForm={mainForm}
+                sectionsFieldArray={sectionsFieldArray}
+                layoutForm={layoutForm}
                 fieldsMap={fieldsMap}
               />
             </Draggable>

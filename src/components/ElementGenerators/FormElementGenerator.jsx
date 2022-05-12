@@ -19,6 +19,22 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
     }))
   }, [field.attributes?.options])
 
+
+  if (field.table_slug)
+    return (
+      <FRow label={`${field.label}  (${field.table_slug})`} required={field.required}>
+        <HFSelect
+          control={control}
+          name={field.slug}
+          width="100%"
+          options={computedOptions}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          {...props}
+        />
+      </FRow>
+    )
+
   switch (field.type) {
     case "SINGLE_LINE":
       return (
@@ -43,7 +59,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            mask={'(99) 999-99-99'}
+            mask={"(99) 999-99-99"}
             {...props}
           />
         </FRow>
@@ -167,7 +183,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         </FRow>
       )
 
-      case "PHOTO":
+    case "PHOTO":
       return (
         <FRow label={field.label} required={field.required}>
           <HFImageUpload

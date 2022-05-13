@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import FRow from "../FormElements-backup/FRow"
+import FRow from "../FormElements/FRow"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
 import HFImageUpload from "../FormElements/HFImageUpload"
@@ -26,7 +26,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
 
   if (field.id?.includes("#"))
     return (
-      <RelationFormElement control={control} field={field} />
+      <RelationFormElement control={control} field={field} {...props} />
     )
 
   switch (field.type) {

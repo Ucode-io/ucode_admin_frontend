@@ -12,6 +12,15 @@
     .requiredStart {
       color: red;
     }
+
+    .labelInput {
+      border: none;
+      outline: none;
+      min-width: 10px;
+      width: auto;
+      font-weight: bold;
+      font-size: 13px;
+    }
   }
 
   .component {

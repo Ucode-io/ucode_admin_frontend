@@ -99,6 +99,11 @@ const Section = ({
                   <FormElementGenerator
                     control={layoutForm.control}
                     field={fieldsMap[field.id] ?? field}
+                    isLayout={true}
+                    sectionIndex={index}
+                    column={1}
+                    fieldIndex={fieldIndex}
+                    mainForm={mainForm}
                   />
                   <RectangleIconButton
                     color={"error"}
@@ -129,6 +134,11 @@ const Section = ({
                     <FormElementGenerator
                       control={layoutForm.control}
                       field={fieldsMap[field.id] ?? field}
+                      isLayout={true}
+                      sectionIndex={index}
+                      column={2}
+                      fieldIndex={fieldIndex}
+                      mainForm={mainForm}
                     />
                     <RectangleIconButton
                       color={"error"}

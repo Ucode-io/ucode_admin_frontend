@@ -1,4 +1,4 @@
-import "./style.scss"
+import "../FormElements-backup/style.scss"
 
 
 const FRow = ({ label, children, position="vertical", required }) => {
@@ -9,5 +9,7 @@ const FRow = ({ label, children, position="vertical", required }) => {
     </div>  
   )
 }
+
+
 
 export default FRow

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
@@ -14,7 +14,6 @@ import { createConstructorTableAction } from "../../../../store/constructorTable
 import Fields from "./Fields"
 import Layout from "./Layout"
 import MainInfo from "./MainInfo"
-import { sortByOrder } from "../../../../utils/sortByOrder"
 import Relations from "./Relations"
 import constructorRelationService from "../../../../services/constructorRelationService"
 import { computeSections, computeSectionsOnSubmit } from "../utils"
@@ -84,36 +83,40 @@ const ConstructorTablesFormPage = () => {
   }
 
   const getRelationFields = async (relations = []) => {
-    const tables = relations
-      .filter(
-        (relation) =>
-          relation.type === "One2Many" && relation.table_from === slug
-      )
-      .map((relation) =>
-        allConstructorTables.find((table) => table.slug === relation.table_to)
-      )
-
-    const actions = tables.map((table) =>
-      constructorFieldService.getList({ table_id: table.id })
+    const filteredRelations = relations.filter(
+      (relation) => relation.type === "Many2One" || relation.type === "One2One"
     )
 
-    const fields = await Promise.all(actions)
+    const actions = filteredRelations.map(
+      (relation) =>
+        new Promise((resolve, reject) =>
+          constructorFieldService
+            .getList({ table_slug: relation.table_to })
+            .then((res) => {
+              const computedFields =
+                res.fields?.map((field) => ({
+                  ...field,
+                  table_slug: relation.table_to,
+                  id: `${relation.table_to}#${field.id}`,
+                })) ?? []
 
-    const computedFields = fields.map((field) =>
-      field.fields.map((field) => ({
-        ...field,
-        table_slug: tables.find((table) => table.id === field.table_id)?.slug,
-      }))
+              const computedRelation = {
+                ...relation,
+                fields: computedFields,
+              }
+
+              resolve(computedRelation)
+            })
+            .catch((err) => {
+              reject(err)
+            })
+        )
     )
 
-    if(!computedFields?.length) return
+    const relationsWithFields = await Promise.all(actions)
 
-    mainForm.setValue("fields", [
-      ...mainForm.getValues('fields'),
-      ...[].concat(...computedFields)
-    ])
+    mainForm.setValue("relations", relationsWithFields)
   }
-  
 
   const createConstructorTable = (data) => {
     setBtnLoader(true)

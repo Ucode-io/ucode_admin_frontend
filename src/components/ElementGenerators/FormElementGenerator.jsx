@@ -8,8 +8,12 @@ import HFSelect from "../FormElements/HFSelect"
 import HFSwitch from "../FormElements/HFSwitch"
 import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
+import RelationFormElement from "./RelationFormElement"
 
 const FormElementGenerator = ({ field = {}, control, ...props }) => {
+
+  console.log("FIELD ==>", field)
+
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
@@ -20,19 +24,9 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
   }, [field.attributes?.options])
 
 
-  if (field.table_slug)
+  if (field.id?.includes("#"))
     return (
-      <FRow label={`${field.label}  (${field.table_slug})`} required={field.required}>
-        <HFSelect
-          control={control}
-          name={field.slug}
-          width="100%"
-          options={computedOptions}
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          {...props}
-        />
-      </FRow>
+      <RelationFormElement control={control} field={field} />
     )
 
   switch (field.type) {

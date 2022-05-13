@@ -117,6 +117,9 @@ const ObjectsFormPage = () => {
 
   const { handleSubmit, control, reset } = useForm()
 
+  console.log('computedSections ==>', computedSections)
+
+
   if (loader) return <PageFallback />
 
   return (
@@ -128,7 +131,7 @@ const ObjectsFormPage = () => {
         subtitle={id ? "Edit" : "Create"}
         extra={<SaveButton loading={btnLoader} onClick={handleSubmit(onSubmit)} />}
       />
-
+      
       <div className={styles.formArea}>
         <div className={styles.mainCardSide}>
           {computedSections.map((section) => (
@@ -141,7 +144,7 @@ const ObjectsFormPage = () => {
               {section.column1?.map((field) => (
                 <FormElementGenerator
                   key={field.id}
-                  field={fieldsMap[field.id]}
+                  field={field}
                   control={control}
                 />
               ))}
@@ -150,7 +153,7 @@ const ObjectsFormPage = () => {
               {section.column2?.map((field) => (
                 <FormElementGenerator
                   key={field.id}
-                  field={fieldsMap[field.id]}
+                  field={field}
                   control={control}
                 />
               ))}

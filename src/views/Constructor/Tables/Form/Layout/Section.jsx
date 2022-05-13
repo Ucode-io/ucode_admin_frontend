@@ -98,7 +98,7 @@ const Section = ({
                 <div className={styles.sectionCardRow}>
                   <FormElementGenerator
                     control={layoutForm.control}
-                    field={fieldsMap[field.id]}
+                    field={fieldsMap[field.id] ?? field}
                   />
                   <RectangleIconButton
                     color={"error"}
@@ -128,7 +128,7 @@ const Section = ({
                   <div className={styles.sectionCardRow}>
                     <FormElementGenerator
                       control={layoutForm.control}
-                      field={fieldsMap[field.id]}
+                      field={fieldsMap[field.id] ?? field}
                     />
                     <RectangleIconButton
                       color={"error"}

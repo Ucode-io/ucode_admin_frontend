@@ -48,6 +48,8 @@ const SectionsBlock = ({ mainForm, layoutForm }) => {
       map[field.id] = field
     })
 
+    
+
     return map
   }, [fieldsList])
 

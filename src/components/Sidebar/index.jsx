@@ -33,8 +33,6 @@ const Sidebar = () => {
   }, [location.pathname])
 
 
-  console.log("selectedMenuItem", selectedMenuItem, rightBlockVisible, location.pathname, settingsElements)
-
 
   const logout = () => {
     dispatch(authActions.logout())

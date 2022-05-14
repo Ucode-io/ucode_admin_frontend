@@ -13,9 +13,9 @@ import CellElementGenerator from "../../components/ElementGenerators/CellElement
 import Header from "../../components/Header"
 import PageFallback from "../../components/PageFallback"
 import TableCard from "../../components/TableCard"
-import constructorFieldService from "../../services/constructorFieldService"
 import constructorObjectService from "../../services/constructorObjectService"
 import { objectToArray } from "../../utils/objectToArray"
+import { get } from '@ngard/tiny-get';
 
 const ObjectsPage = () => {
   const { tableSlug } = useParams()
@@ -94,7 +94,7 @@ const ObjectsPage = () => {
                   <CTableCell key={field.id} className="text-nowrap">
                     <CellElementGenerator
                       type={field.type}
-                      value={row[field.slug]}
+                      value={get(row, field.slug, '')}
                     />
                   </CTableCell>
                 ))}

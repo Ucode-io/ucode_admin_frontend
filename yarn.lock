@@ -1394,6 +1394,11 @@
     react-transition-group "^4.4.2"
     rifm "^0.12.1"
 
+"@ngard/tiny-get@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@ngard/tiny-get/-/tiny-get-1.2.2.tgz#3784ea1fdd852a59a44d50c144f070529422d7a7"
+  integrity sha512-+B2yx8KGWPxi/z0fqCgA+gNEWGwoVJZ8v98DFHIEVtEfn5BHXV8Wcr9NfracmrZa2dqekyXduPFcw2sL1HUw6Q==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -3141,6 +3146,11 @@ lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
+
+lodash.get@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
+  integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
 
 lodash.merge@^4.6.2:
   version "4.6.2"

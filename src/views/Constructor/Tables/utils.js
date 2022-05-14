@@ -6,14 +6,15 @@ export const computeSections = (sections) => {
       ...section,
       column1: section.fields
         ?.filter((field) => field.column !== 2)
+        .map(field => ({...field, field_name: field.label}))
         .sort(sortByOrder),
       column2: section.fields
         ?.filter((field) => field.column === 2)
+        .map(field => ({...field, field_name: field.label}))
         .sort(sortByOrder),
     }))
     ?.sort(sortByOrder)
 }
-
 
 export const computeSectionsOnSubmit = (sections) => {
   return sections.map((section, sectionIndex) => ({

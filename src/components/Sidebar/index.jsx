@@ -33,6 +33,9 @@ const Sidebar = () => {
   }, [location.pathname])
 
 
+  
+
+
 
   const logout = () => {
     dispatch(authActions.logout())
@@ -83,6 +86,7 @@ const Sidebar = () => {
           <div className={styles.menuItem}>
             <NotificationsIcon />
           </div>
+
 
           {settingsElements
             .filter((element) => element.icon)

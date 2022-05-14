@@ -116,7 +116,7 @@ const Section = ({
             ))}
           </Container>
         </div>
-
+        
         <div className={styles.sectionCardColumn}>
           {columnType === "DOUBLE" && (
             <Container

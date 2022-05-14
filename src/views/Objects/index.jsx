@@ -36,22 +36,13 @@ const ObjectsPage = () => {
   const getAllData = async () => {
     if (!tableInfo) return
 
-    const getTableData = constructorObjectService.getList(tableSlug, {
-      data: { offset: 0, limit: 10 },
-    })
-
-    const getFields = constructorFieldService.getList({
-      table_id: tableInfo.id,
-    })
-
     try {
-      const [{ data = {} }, { fields = [] }] = await Promise.all([
-        getTableData,
-        getFields,
-      ])
+      const { data } = await constructorObjectService.getList(tableSlug, {
+        data: { offset: 0, limit: 10 },
+      })
 
       setTableData(objectToArray(data.response ?? {}))
-      setFields(fields)
+      setFields(data.fields ?? [])
     } catch (error) {
       console.log(error)
     } finally {
@@ -95,12 +86,12 @@ const ObjectsPage = () => {
           >
             {tableData.map((row, rowIndex) => (
               <CTableRow
-                key={row.id}
+                key={row.guid}
                 onClick={() => navigateToEditPage(row.guid)}
               >
                 <CTableCell>{rowIndex + 1}</CTableCell>
                 {fields.map((field) => (
-                  <CTableCell className="text-nowrap"  key={field.id}>
+                  <CTableCell key={field.id} className="text-nowrap">
                     <CellElementGenerator
                       type={field.type}
                       value={row[field.slug]}

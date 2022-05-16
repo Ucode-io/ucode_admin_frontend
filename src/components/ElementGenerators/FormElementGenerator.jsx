@@ -12,8 +12,6 @@ import RelationFormElement from "./RelationFormElement"
 
 const FormElementGenerator = ({ field = {}, control, ...props }) => {
 
-  console.log("FIELD ==>", field)
-
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 

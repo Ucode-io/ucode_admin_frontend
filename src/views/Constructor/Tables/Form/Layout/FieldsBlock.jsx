@@ -15,7 +15,7 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
 
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
-    name: "relations",
+    name: "layoutRelations",
     keyName: "key",
   })
 
@@ -28,8 +28,8 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
       ...relation,
       fields: relation.fields?.filter(
         (field) => !usedFields.includes(field.id)
-      ),
-    }))
+      ) ?? [],
+    })) ?? []
   }, [usedFields, relations])
 
   const onDrop = (dropResult, colNumber) => {
@@ -45,6 +45,8 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
     //   move(dropResult.removedIndex, dropResult.addedIndex)
     // }
   }
+
+  console.log('COMPUTED ', computedRelations)
 
   return (
     <div className={styles.fieldsBlock}>
@@ -63,7 +65,7 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
               field_name: unusedFields[i]?.label,
             })}
           >
-            {unusedFields.map((field, index) => (
+            {unusedFields?.map((field, index) => (
               <Draggable key={field.id} style={{ overflow: "visible" }}>
                 <div className={styles.sectionFieldRow}>
                   <FormElementGenerator
@@ -81,7 +83,7 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
       {computedRelations?.map((relation) => (
         <Card className={styles.fieldCard}>
           <div className={styles.fieldCardHeader}>
-            <Typography variant="h4">{relation.table_to}</Typography>
+            <Typography variant="h4">{relation.table_to.label}</Typography>
           </div>
 
           <div className={styles.fieldsWrapperBlock}>
@@ -94,7 +96,7 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
                 field_name: relation.fields[i]?.label,
               })}
             >
-              {relation.fields.map((field, index) => (
+              {relation.fields?.map((field, index) => (
                 <Draggable key={field.id} style={{ overflow: "visible" }}>
                   <div className={styles.sectionFieldRow}>
                     <FormElementGenerator

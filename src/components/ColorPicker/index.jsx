@@ -14,7 +14,7 @@ const ColorPicker = ({
         <CircularProgress size={17} />
       </IconButton>
     )
-
+  
   return (
     <PopupState variant="popover">
       {(popupState) => (

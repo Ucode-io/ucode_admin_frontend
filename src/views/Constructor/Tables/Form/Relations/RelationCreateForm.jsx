@@ -17,14 +17,13 @@ const RelationCreateForm = ({
   setFormIsVisible,
   initialValues = {},
 }) => {
-  const { slug } = useParams()
   const tablesList = useSelector(state => state.constructorTable.list)
 
 
   const computedTablesList = useMemo(() => {
     return tablesList.map(table => ({
       value: table.slug,
-      label: table.label,
+      label: table.slug,
     }))
   }, [tablesList])
 
@@ -43,10 +42,10 @@ const RelationCreateForm = ({
 
   useEffect(() => {
     reset({
-      table_from: slug,
-      table_to: "",
-      type: "",
-      ...initialValues,
+      table_from: initialValues?.table_from?.slug ?? '',
+      table_to: initialValues?.table_to?.slug ?? '',
+      type: initialValues?.type ?? '',
+      id: initialValues?.id ?? '',
     })
   }, [formIsVisible])
 
@@ -74,7 +73,6 @@ const RelationCreateForm = ({
           control={control}
           placeholder="Field Label"
           options={computedTablesList}
-          disabled
           autoFocus
           required
         />

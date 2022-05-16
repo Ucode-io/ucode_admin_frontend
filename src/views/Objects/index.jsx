@@ -15,10 +15,10 @@ import PageFallback from "../../components/PageFallback"
 import TableCard from "../../components/TableCard"
 import constructorObjectService from "../../services/constructorObjectService"
 import { objectToArray } from "../../utils/objectToArray"
-import { get } from '@ngard/tiny-get';
+import { get } from "@ngard/tiny-get"
 
-const ObjectsPage = () => {
-  const { tableSlug } = useParams()
+const ObjectsPage = ({ isRelation, tableSlug, filters = [] }) => {
+  const params = useParams()
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
@@ -29,16 +29,18 @@ const ObjectsPage = () => {
   const [tableData, setTableData] = useState([])
   const [fields, setFields] = useState([])
 
+  const computedTableSlug = isRelation ? tableSlug : params.tableSlug
+
   const tableInfo = useMemo(() => {
-    return tablesList.find((el) => el.slug === tableSlug)
-  }, [tablesList, tableSlug])
+    if(isRelation) return {}
+    return tablesList.find((el) => el.slug === params.tableSlug)
+  }, [tablesList, params.tableSlug, isRelation])
 
   const getAllData = async () => {
-    if (!tableInfo) return
-
+    setLoader(true)
     try {
-      const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: 0, limit: 10 },
+      const { data } = await constructorObjectService.getList(computedTableSlug, {
+        data: { offset: 0, limit: 10, ...filters},
       })
 
       setTableData(objectToArray(data.response ?? {}))
@@ -54,21 +56,24 @@ const ObjectsPage = () => {
     navigate(`${pathname}/create`)
   }
   const navigateToEditPage = (id) => {
-    navigate(`${pathname}/${id}`)
+    if(isRelation) navigate(`/object/${computedTableSlug}/${id}`, { state: filters })
+    else navigate(`${pathname}/${id}`)
   }
 
   useEffect(() => {
     getAllData()
-  }, [tableInfo])
+  }, [computedTableSlug])
 
   if (loader) return <PageFallback />
 
   return (
     <div>
-      <Header
-        title={tableInfo.label}
-        extra={<CreateButton onClick={navigateToCreatePage} />}
-      />
+      {!isRelation && (
+        <Header
+          title={tableInfo.label}
+          extra={<CreateButton onClick={navigateToCreatePage} />}
+        />
+      )}
 
       <TableCard>
         <CTable>
@@ -94,7 +99,7 @@ const ObjectsPage = () => {
                   <CTableCell key={field.id} className="text-nowrap">
                     <CellElementGenerator
                       type={field.type}
-                      value={get(row, field.slug, '')}
+                      value={get(row, field.slug, "")}
                     />
                   </CTableCell>
                 ))}

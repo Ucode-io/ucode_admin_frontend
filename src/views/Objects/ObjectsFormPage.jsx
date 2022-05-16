@@ -3,21 +3,17 @@ import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import SaveButton from "../../components/Buttons/SaveButton"
-import FormCard from "./components/FormCard"
-import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator"
 import Header from "../../components/Header"
 import PageFallback from "../../components/PageFallback"
-import constructorFieldService from "../../services/constructorFieldService"
 import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
-import { listToMap } from "../../utils/listToMap"
-import styles from "./style.module.scss"
 import { sortByOrder } from "../../utils/sortByOrder"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import MainInfo from "./MainInfo"
 import constructorRelationService from "../../services/constructorRelationService"
 import IconGenerator from "../../components/IconPicker/IconGenerator"
 import ObjectsPage from "."
+import InfoIcon from '@mui/icons-material/Info';
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
@@ -152,8 +148,8 @@ const ObjectsFormPage = () => {
             <SaveButton loading={btnLoader} onClick={handleSubmit(onSubmit)} />
           }
         >
-          {id && <TabList>
-            <Tab>Main info</Tab>
+          {id && !!tableRelations?.length && <TabList>
+            <Tab> <InfoIcon /> Main info</Tab>
 
             {tableRelations?.map((relation) => (
               <Tab>

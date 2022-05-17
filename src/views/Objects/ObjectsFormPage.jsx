@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import SaveButton from "../../components/Buttons/SaveButton"
 import Header from "../../components/Header"
 import PageFallback from "../../components/PageFallback"
@@ -14,14 +14,13 @@ import constructorRelationService from "../../services/constructorRelationServic
 import IconGenerator from "../../components/IconPicker/IconGenerator"
 import ObjectsPage from "."
 import InfoIcon from '@mui/icons-material/Info';
-
+ 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
-  const location = useLocation()
   const navigate = useNavigate()
-
+  
   const tablesList = useSelector((state) => state.constructorTable.list)
-
+ 
   const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
 

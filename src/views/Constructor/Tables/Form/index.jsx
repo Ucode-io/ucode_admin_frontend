@@ -75,8 +75,8 @@ const ConstructorTablesFormPage = () => {
         ...relation,
         relatedTableSlug:
           relation.table_to?.slug === slug
-            ? relation.table_from.slug
-            : relation.table_to.slug,
+            ? 'table_from'
+            : 'table_to',
       }))
 
       const layoutRelations = []
@@ -96,13 +96,13 @@ const ConstructorTablesFormPage = () => {
         (relation) =>
           new Promise((resolve, reject) =>
             constructorFieldService
-              .getList({ table_slug: relation.relatedTableSlug })
+              .getList({ table_slug: relation[relation.relatedTableSlug]?.slug })
               .then((res) => {
                 const computedFields =
                   res.fields?.map((field) => ({
                     ...field,
-                    table_slug: relation.relatedTableSlug,
-                    id: `${relation.table_to.slug}#${field.id}`,
+                    table_slug: relation[relation.relatedTableSlug]?.slug,
+                    id: `${relation[relation.relatedTableSlug]?.slug}#${field.id}`,
                   })) ?? []
 
                 const computedRelation = {

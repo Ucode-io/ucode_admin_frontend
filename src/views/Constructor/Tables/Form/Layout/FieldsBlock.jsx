@@ -83,7 +83,7 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
       {computedRelations?.map((relation) => (
         <Card className={styles.fieldCard}>
           <div className={styles.fieldCardHeader}>
-            <Typography variant="h4">{relation.table_to.label}</Typography>
+            <Typography variant="h4">{relation[relation.relatedTableSlug]?.label}</Typography>
           </div>
 
           <div className={styles.fieldsWrapperBlock}>

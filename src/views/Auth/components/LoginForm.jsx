@@ -25,8 +25,8 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
       </div>
 
       <div className={classes.buttonsArea}>
-        <PrimaryButton   >Войти</PrimaryButton>
-        <SecondaryButton type="button" onClick={navigateToRegistrationForm} >Зарегистрироваться</SecondaryButton>
+        <PrimaryButton size="large"  >Войти</PrimaryButton>
+        <SecondaryButton type="button" size="large" onClick={navigateToRegistrationForm} >Зарегистрироваться</SecondaryButton>
       </div>
 
     </form>

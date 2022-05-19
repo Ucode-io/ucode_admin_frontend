@@ -1,15 +1,23 @@
 @use '/src/scss/colors';
 
 .button {
-  padding: 8px 20px;
+  padding: 4px 16px;
   outline: none;
   border: 1px solid;
   cursor: pointer;
   border-radius: 8px;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 0.9rem;
   transition-duration: .3s;
   line-height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &.large {
+    padding: 8px 20px;
+    font-size: 16px;
+  }
   
   &.primary {
     background-color: colors.$primary;
@@ -28,6 +36,17 @@
 
     &:hover {
       border-color: colors.$primary;
+    }
+  }
+
+  &.filtersButton {
+    background: #F6F8F9;
+    border-color: #E5E9EB;
+    color: #000;
+
+    &:hover {
+      border-color: colors.$primary;
+      color: colors.$primary;
     }
   }
 

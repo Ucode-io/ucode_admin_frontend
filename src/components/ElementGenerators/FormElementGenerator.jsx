@@ -21,6 +21,10 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
     }))
   }, [field.attributes?.options])
 
+  const computedSlug = useMemo(() => {
+    if(field.id?.includes('@')) return `${field.id.split("#")?.[0]}.${field.slug}`
+    return field.slug
+  }, [field.id, field.slug])
 
   if (field.id?.includes("#"))
     return (
@@ -33,7 +37,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         <FRow label={field.label} required={field.required}>
           <HFTextField
             control={control}
-            name={field.slug}
+            name={computedSlug}
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
@@ -47,7 +51,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         <FRow label={field.label} required={field.required}>
           <HFTextFieldWithMask
             control={control}
-            name={field.slug}
+            name={computedSlug}
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
@@ -62,7 +66,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         <FRow label={field.label} required={field.required}>
           <HFSelect
             control={control}
-            name={field.slug}
+            name={computedSlug}
             width="100%"
             options={computedOptions}
             required={field.required}
@@ -77,7 +81,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         <FRow label={field.label} required={field.required}>
           <HFTextField
             control={control}
-            name={field.slug}
+            name={computedSlug}
             fullWidth
             multiline
             rows={4}
@@ -93,7 +97,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         <FRow label={field.label} required={field.required}>
           <HFDatePicker
             control={control}
-            name={field.slug}
+            name={computedSlug}
             fullWidth
             width={"100%"}
             required={field.required}
@@ -108,7 +112,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         <FRow label={field.label} required={field.required}>
           <HFTextField
             control={control}
-            name={field.slug}
+            name={computedSlug}
             fullWidth
             type="number"
             required={field.required}
@@ -122,7 +126,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
       return (
         <HFCheckbox
           control={control}
-          name={field.slug}
+          name={computedSlug}
           label={field.label}
           required={field.required}
           {...props}
@@ -134,7 +138,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         <FRow label={field.label} required={field.required}>
           <HFMultipleSelect
             control={control}
-            name={field.slug}
+            name={computedSlug}
             width="100%"
             options={computedOptions}
             required={field.required}
@@ -148,7 +152,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
       return (
         <HFSwitch
           control={control}
-          name={field.slug}
+          name={computedSlug}
           label={field.label}
           required={field.required}
           {...props}
@@ -160,7 +164,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         <FRow label={field.label} required={field.required}>
           <HFTextField
             control={control}
-            name={field.slug}
+            name={computedSlug}
             rules={{
               pattern: {
                 value: /\S+@\S+\.\S+/,
@@ -180,7 +184,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
         <FRow label={field.label} required={field.required}>
           <HFImageUpload
             control={control}
-            name={field.slug}
+            name={computedSlug}
             required={field.required}
             {...props}
           />

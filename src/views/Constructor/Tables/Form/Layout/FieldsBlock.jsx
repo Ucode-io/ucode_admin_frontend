@@ -36,17 +36,7 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
     const result = applyDrag(fields, dropResult)
 
     if (!result) return
-
-    // if (result.length > fields.length) {
-    //   insert(dropResult.addedIndex, { ...dropResult.payload })
-    // } else if (result.length < fields.length) {
-    //   remove(dropResult.removedIndex)
-    // } else {
-    //   move(dropResult.removedIndex, dropResult.addedIndex)
-    // }
   }
-
-  console.log('COMPUTED ', computedRelations)
 
   return (
     <div className={styles.fieldsBlock}>

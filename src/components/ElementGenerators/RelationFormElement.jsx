@@ -17,7 +17,6 @@ const RelationFormElement = ({ control, field, isLayout, sectionIndex, fieldInde
     constructorObjectService
       .getList(tableSlug, { data: { offset: 0, limit: 10 } })
       .then((res) => {
-        console.log("REs ==>", res.data.response, tableSlug)
         setOptions(listToOptions(res.data.response, field.slug, "guid"))
       })
   }, [tableSlug])

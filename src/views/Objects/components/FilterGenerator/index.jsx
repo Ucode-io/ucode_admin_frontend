@@ -6,8 +6,7 @@ import {
   Select,
   TextField,
 } from "@mui/material"
-import { useEffect, useMemo } from "react"
-import ReactInputMask from "react-input-mask"
+import { useMemo } from "react"
 import TableColumnFilter from "../../../../components/TableColumnFilter"
 
 const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
@@ -20,32 +19,26 @@ const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
     }))
   }, [field.attributes?.options])
 
-  // useEffect(() => {
-  //   console.log("MOUNTEs", filters[name])
-  // }, [])
-
-  console.log("MOUNTEs", filters[name], name, filters)
-
   switch (field.type) {
-    case "PHONE":
-      return (
-        <TableColumnFilter>
-          <ReactInputMask
-            value={filters[name] ?? undefined}
-            onChange={(e) => onChange(e.target.value, name)}
-            mask={"(99) 999-99-99"}
-          >
-            {(inputProps) => (
-              <TextField
-                placeholder={field.attributes?.placeholder}
-                fullWidth
-                size="small"
-                {...inputProps}
-              />
-            )}
-          </ReactInputMask>
-        </TableColumnFilter>
-      )
+    // case "PHONE":
+    //   return (
+    //     <TableColumnFilter>
+    //       <ReactInputMask
+    //         value={filters[name] ?? undefined}
+    //         onChange={(e) => onChange(e.target.value, name)}
+    //         mask={"(99) 999-99-99"}
+    //       >
+    //         {(inputProps) => (
+    //           <TextField
+    //             placeholder={field.attributes?.placeholder}
+    //             fullWidth
+    //             size="small"
+    //             {...inputProps}
+    //           />
+    //         )}
+    //       </ReactInputMask>
+    //     </TableColumnFilter>
+    //   )
 
     case "PICK_LIST":
       return (
@@ -75,8 +68,6 @@ const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
             inputFormat="dd.MM.yyyy"
             mask="__.__.____"
             toolbarFormat="dd.MM.yyyy"
-            // value={value}
-            // onChange={onChange}
             value={filters[name]}
             onChange={(val) => onChange(val, name)}
             renderInput={(params) => (

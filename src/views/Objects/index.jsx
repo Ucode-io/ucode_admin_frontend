@@ -2,25 +2,16 @@ import { useEffect, useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import CreateButton from "../../components/Buttons/CreateButton"
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableRow,
-} from "../../components/CTable"
-import CellElementGenerator from "../../components/ElementGenerators/CellElementGenerator"
 import Header from "../../components/Header"
 import PageFallback from "../../components/PageFallback"
-import TableCard from "../../components/TableCard"
 import constructorObjectService from "../../services/constructorObjectService"
 import { objectToArray } from "../../utils/objectToArray"
-import { get } from "@ngard/tiny-get"
-import FiltersBlock from "../../components/FiltersBlock"
-import ColumnsSelector from "./components/ColumnsSelector"
 import { tableColumnActions } from "../../store/tableColumn/tableColumn.slice"
-import TableColumnFilter from "../../components/TableColumnFilter"
-import FilterGenerator from "./components/FilterGenerator"
+import TableView from "./TableView"
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
+import { Add, CalendarToday, TableChart } from "@mui/icons-material"
+import TabButton from "../../components/Buttons/TabButton"
+import CalendarView from "./CalendartView"
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
   const params = useParams()
@@ -37,15 +28,12 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const [filters, setFilters] = useState({})
 
   const filterChangeHandler = (value, name) => {
-    console.log("CHANGE ==>", value, name)
     setFilters({
       ...filters,
       [name]: value,
     })
     getAllData()
   }
-
-  console.log("FILTERS ==>", filters)
 
   const computedTableSlug = isRelation ? tableSlug : params.tableSlug
 
@@ -86,6 +74,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const navigateToCreatePage = () => {
     navigate(`${pathname}/create`)
   }
+
   const navigateToEditPage = (id) => {
     if (isRelation)
       navigate(`/object/${computedTableSlug}/${id}`, { state: filters })
@@ -99,64 +88,48 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   if (loader) return <PageFallback />
 
   return (
-    <div>
-      {!isRelation && (
-        <Header
-          title={tableInfo.label}
-          extra={<CreateButton onClick={navigateToCreatePage} />}
-        />
-      )}
-
-      <FiltersBlock
-        extra={
-          <>
-            <ColumnsSelector tableSlug={computedTableSlug} />
-          </>
-        }
-      />
-
-      <TableCard>
-        <CTable>
-          <CTableHead>
-            <CTableCell width={10}>№</CTableCell>
-            {computedColumns.map((field) => (
-              <CTableCell key={field.id}>
-                {field.label}
-                <FilterGenerator
-                  field={field}
-                  name={field.slug}
-                  onChange={filterChangeHandler}
-                  filters={filters}
-                />
-              </CTableCell>
-            ))}
-          </CTableHead>
-
-          <CTableBody
-            loader={tableLoader}
-            columnsCount={computedColumns.length + 1}
-            dataLength={tableData.length}
+    <Tabs direction={"ltr"}>
+      <div>
+        {!isRelation && (
+          <Header
+            title={tableInfo?.label}
+            extra={<CreateButton onClick={navigateToCreatePage} />}
           >
-            {tableData.map((row, rowIndex) => (
-              <CTableRow
-                key={row.guid}
-                onClick={() => navigateToEditPage(row.guid)}
-              >
-                <CTableCell>{rowIndex + 1}</CTableCell>
-                {computedColumns.map((field) => (
-                  <CTableCell key={field.id} className="text-nowrap">
-                    <CellElementGenerator
-                      type={field.type}
-                      value={get(row, field.slug, "")}
-                    />
-                  </CTableCell>
-                ))}
-              </CTableRow>
-            ))}
-          </CTableBody>
-        </CTable>
-      </TableCard>
-    </div>
+            <TabList>
+              <Tab>
+                <TableChart /> Таблица
+              </Tab>
+
+              <Tab>
+                <CalendarToday /> Календарь
+              </Tab>
+
+              <TabButton>
+                <Add /> Вид
+              </TabButton>
+              
+            </TabList>
+          </Header>
+        )}
+
+        <TabPanel>
+          <TableView
+            computedColumns={computedColumns}
+            filterChangeHandler={filterChangeHandler}
+            filters={filters}
+            tableLoader={tableLoader}
+            tableData={tableData}
+            navigateToEditPage={navigateToEditPage}
+            tableSlug={computedTableSlug}
+          />
+        </TabPanel>
+
+        <TabPanel>
+          <CalendarView />
+        </TabPanel>
+
+      </div>
+    </Tabs>
   )
 }
 

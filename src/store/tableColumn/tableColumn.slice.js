@@ -31,10 +31,18 @@ export const { actions: tableColumnActions, reducer: tableColumnReducer } =
             }
           })
 
-          state.list[tableSlug] = [...state.list[tableSlug], ...newColumns]
+          state.list[tableSlug] = [
+            ...state.list[tableSlug],
+            ...newColumns,
+          ].filter(
+            (el) => columns.findIndex((column) => column.id === el.id) > -1
+          )
         }
       },
-      setColumnVisible: (state, { payload: { tableSlug, index, isVisible } }) => {
+      setColumnVisible: (
+        state,
+        { payload: { tableSlug, index, isVisible } }
+      ) => {
         state.list[tableSlug][index].isVisible = isVisible
       },
       setAllColumnsVisible: (state, { payload: { tableSlug, isVisible } }) => {
@@ -44,7 +52,7 @@ export const { actions: tableColumnActions, reducer: tableColumnReducer } =
       },
       setColumnsPosition: (state, { payload: { tableSlug, columns } }) => {
         state.list[tableSlug] = columns
-      }
+      },
     },
     // extraReducers: {
     //   [fetchConstructorTableListAction.fulfilled]: (state, { payload }) => {

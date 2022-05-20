@@ -29,15 +29,12 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const dispatch = useDispatch()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
-  const columns = useSelector(
-    (state) => state.tableColumn.list
-  )
+  const columns = useSelector((state) => state.tableColumn.list)
 
   const [loader, setLoader] = useState(true)
   const [tableLoader, setTableLoader] = useState(false)
   const [tableData, setTableData] = useState([])
   const [filters, setFilters] = useState({})
-
 
   const filterChangeHandler = (value, name) => {
     console.log("CHANGE ==>", value, name)
@@ -58,7 +55,9 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   }, [tablesList, params.tableSlug, isRelation])
 
   const computedColumns = useMemo(() => {
-    return columns[computedTableSlug]?.filter(column => column.isVisible) ?? []
+    return (
+      columns[computedTableSlug]?.filter((column) => column.isVisible) ?? []
+    )
   }, [columns, computedTableSlug])
 
   const getAllData = async () => {
@@ -92,7 +91,6 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
       navigate(`/object/${computedTableSlug}/${id}`, { state: filters })
     else navigate(`${pathname}/${id}`)
   }
-  
 
   useEffect(() => {
     getAllData()
@@ -122,7 +120,15 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             {computedColumns.map((field) => (
-              <CTableCell key={field.id}>{field.label} <FilterGenerator field={field} name={field.slug} onChange={ filterChangeHandler } filters={filters}  /> </CTableCell>
+              <CTableCell key={field.id}>
+                {field.label}
+                <FilterGenerator
+                  field={field}
+                  name={field.slug}
+                  onChange={filterChangeHandler}
+                  filters={filters}
+                />
+              </CTableCell>
             ))}
           </CTableHead>
 

@@ -14,7 +14,7 @@ image:
   repository: medion/medion_react_admin
   pullPolicy: IfNotPresent                                                                                                                 
   # Overrides the image tag whose default is the chart appVersion.                                                                         
-  tag: "latest"                                                                                                                            
+  tag: "test"                                                                                                                            
                                                                                                                                            
 imagePullSecrets: "gitlab-registry"                                                                                                        
 nameOverride: ""                                                                                                                           
@@ -35,10 +35,10 @@ serviceAccount:
                                                                                                                                            
 podAnnotations:
   vault.hashicorp.com/agent-inject: "true"
-  vault.hashicorp.com/auth-path: "auth/kubernetes-medion-prod"
+  vault.hashicorp.com/auth-path: "auth/kubernetes-medion-test"
   vault.hashicorp.com/agent-inject-secret-.env: "secret/data/k8s/medion/go-admin-api-gateway" 
   vault.hashicorp.com/secret-volume-path-.env: "/app"
-  vault.hashicorp.com/role: "medion-prod"
+  vault.hashicorp.com/role: "medion-test"
   vault.hashicorp.com/agent-inject-template-.env: |
     {{- with secret "secret/data/k8s/medion/go-admin-api-gateway" -}}
     {{- range $key, $value := .Data.data }}
@@ -95,13 +95,13 @@ ingress:
           cert-manager.io/cluster-issuer: letsencrypt-prod
         type: web
         hosts:                                                                                                                                   
-          - host: "admin.medion.uz"
+          - host: "test.admin.medion.uz"
             path: /                                                                                                                              
             servicePort: 80                                                                                                                 
         tls:                                                                                                                                     
           - secretName: react-admin-tls
             hosts:                                                                                                                               
-             - "admin.medion.uz"                                                                                                  
+             - "test.admin.medion.uz"                                                                                                  
 
 resources: {}                                                                                                    
   #  limits:                                                                                                                                

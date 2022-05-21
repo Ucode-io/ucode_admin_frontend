@@ -18,7 +18,7 @@ export const { actions: tableColumnActions, reducer: tableColumnReducer } =
 
           columns.forEach((column) => {
             const index = state.list[tableSlug]?.findIndex(
-              (item) => item.slug === column.slug
+              (item) => item.id === column.id
             )
 
             if (index === -1) {

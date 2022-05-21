@@ -104,7 +104,7 @@ const ConstructorTablesFormPage = () => {
                     table_slug: relation[relation.relatedTableSlug]?.slug,
                     id: relation.type === 'One2One' ? `${relation[relation.relatedTableSlug]?.slug}@${field.id}` : `${relation[relation.relatedTableSlug]?.slug}#${field.id}`,
                   })) ?? []
-
+                  
                 const computedRelation = {
                   ...relation,
                   fields: computedFields,

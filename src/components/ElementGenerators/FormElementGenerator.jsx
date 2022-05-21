@@ -22,7 +22,7 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
   }, [field.attributes?.options])
 
   const computedSlug = useMemo(() => {
-    if(field.id?.includes('@')) return `$${field.id.split("#")?.[0]}.${field.slug}`
+    if(field.id?.includes('@')) return `$${field.id.split("@")?.[0]}.${field.slug}`
     return field.slug
   }, [field.id, field.slug])
 

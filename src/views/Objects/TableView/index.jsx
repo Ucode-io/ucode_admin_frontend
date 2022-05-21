@@ -21,9 +21,6 @@ const TableView = ({
   navigateToEditPage,
   tableSlug,
 }) => {
-
-  console.log("COMPUTED ==>", computedColumns)
-
   return (
     <>
       <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} />
@@ -33,13 +30,15 @@ const TableView = ({
             <CTableCell width={10}>№</CTableCell>
             {computedColumns.map((field, index) => (
               <CTableCell key={index}>
-                {field.label}
-                <FilterGenerator
-                  field={field}
-                  name={field.slug}
-                  onChange={filterChangeHandler}
-                  filters={filters}
-                />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
+                  {field.label}
+                  <FilterGenerator
+                    field={field}
+                    name={field.slug}
+                    onChange={filterChangeHandler}
+                    filters={filters}
+                  />
+                </div>
               </CTableCell>
             ))}
           </CTableHead>

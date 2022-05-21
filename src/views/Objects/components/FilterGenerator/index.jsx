@@ -68,11 +68,30 @@ const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
             inputFormat="dd.MM.yyyy"
             mask="__.__.____"
             toolbarFormat="dd.MM.yyyy"
-            value={filters[name]}
+            value={filters[name] ?? ""}
             onChange={(val) => onChange(val, name)}
             renderInput={(params) => (
-              <TextField {...params} style={{ width: "100%" }} size="small" />
+              <TextField
+                {...params}
+                error={false}
+                style={{ width: "100%" }}
+                size="small"
+              />
             )}
+          />
+        </TableColumnFilter>
+      )
+
+    case "NUMBER":
+      return (
+        <TableColumnFilter>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder={field.label}
+            type="number"
+            value={filters[name] ?? ""}
+            onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
           />
         </TableColumnFilter>
       )

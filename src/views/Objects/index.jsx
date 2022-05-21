@@ -12,6 +12,7 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import { Add, CalendarToday, TableChart } from "@mui/icons-material"
 import TabButton from "../../components/Buttons/TabButton"
 import CalendarView from "./CalendartView"
+import useDebouncedWatch from "../../hooks/useDebouncedWatch"
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
   const params = useParams()
@@ -28,11 +29,11 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const [filters, setFilters] = useState({})
 
   const filterChangeHandler = (value, name) => {
+    
     setFilters({
       ...filters,
       [name]: value,
     })
-    getAllData()
   }
 
   const computedTableSlug = isRelation ? tableSlug : params.tableSlug
@@ -80,6 +81,10 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
       navigate(`/object/${computedTableSlug}/${id}`, { state: filters })
     else navigate(`${pathname}/${id}`)
   }
+
+  useDebouncedWatch(() => {
+    getAllData()
+  }, [filters], 500)
 
   useEffect(() => {
     getAllData()

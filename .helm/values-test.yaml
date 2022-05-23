@@ -32,20 +32,7 @@ serviceAccount:
   # The name of the service account to use.                                                                                                
   # If not set and create is true, a name is generated using the fullname template                                                                                                                                                                                                    
   name: "vault-auth"                                                                                                                                 
-                                                                                                                                           
-podAnnotations:
-  vault.hashicorp.com/agent-inject: "true"
-  vault.hashicorp.com/auth-path: "auth/kubernetes-medion-test"
-  vault.hashicorp.com/agent-inject-secret-.env: "secret/data/k8s/medion/go-admin-api-gateway" 
-  vault.hashicorp.com/secret-volume-path-.env: "/app"
-  vault.hashicorp.com/role: "medion-test"
-  vault.hashicorp.com/agent-inject-template-.env: |
-    {{- with secret "secret/data/k8s/medion/go-admin-api-gateway" -}}
-    {{- range $key, $value := .Data.data }}
-    {{ $key }}: {{ $value }}
-    {{- end }}
-    {{ end -}}
-  
+                                                                                                                                            
 podLabels:
   app: react_admin
 
@@ -64,7 +51,7 @@ vault:
   secretName: vault-secrets                                                                                                                
   variables:                                                                                                                               
     VAULT_TOKEN: vault_token                                                                                                               
-    SECRETS_PATH: vault_admin_api_gateway_path                                                                                                            
+    SECRETS_PATH: vault_admin_api_gateway_path                                                                                                           
 
 environment: {}
 volumes:                                                                                                                                   
@@ -95,13 +82,13 @@ ingress:
           cert-manager.io/cluster-issuer: letsencrypt-prod
         type: web
         hosts:                                                                                                                                   
-          - host: "test.admin.medion.uz"
+          - host: "test.admin.medion.udevs.io"
             path: /                                                                                                                              
             servicePort: 80                                                                                                                 
         tls:                                                                                                                                     
           - secretName: react-admin-tls
             hosts:                                                                                                                               
-             - "test.admin.medion.uz"                                                                                                  
+             - "test.admin.medion.udevs.io"                                                                                                  
 
 resources: {}                                                                                                    
   #  limits:                                                                                                                                

@@ -32,20 +32,7 @@ serviceAccount:
   # The name of the service account to use.                                                                                                
   # If not set and create is true, a name is generated using the fullname template                                                                                                                                                                                                    
   name: "vault-auth"                                                                                                                                 
-                                                                                                                                           
-podAnnotations:
-  vault.hashicorp.com/agent-inject: "true"
-  vault.hashicorp.com/auth-path: "auth/kubernetes-medion-prod"
-  vault.hashicorp.com/agent-inject-secret-.env: "secret/data/k8s/medion/go-admin-api-gateway" 
-  vault.hashicorp.com/secret-volume-path-.env: "/app"
-  vault.hashicorp.com/role: "medion-prod"
-  vault.hashicorp.com/agent-inject-template-.env: |
-    {{- with secret "secret/data/k8s/medion/go-admin-api-gateway" -}}
-    {{- range $key, $value := .Data.data }}
-    {{ $key }}: {{ $value }}
-    {{- end }}
-    {{ end -}}
-  
+
 podLabels:
   app: react_admin
 

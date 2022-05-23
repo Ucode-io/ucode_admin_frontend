@@ -2,6 +2,7 @@ import { useMemo } from "react"
 import FRow from "../FormElements/FRow"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
+import HFDateTimePicker from "../FormElements/HFDateTimePicker"
 import HFImageUpload from "../FormElements/HFImageUpload"
 import HFMultipleSelect from "../FormElements/HFMultipleSelect"
 import HFSelect from "../FormElements/HFSelect"
@@ -108,6 +109,22 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
           />
         </FRow>
       )
+
+      case "DATE_TIME":
+        return (
+          <FRow label={field.label} required={field.required}>
+            <HFDateTimePicker
+              ampm={false}
+              control={control}
+              name={computedSlug}
+              fullWidth
+              width={"100%"}
+              required={field.required}
+              placeholder={field.attributes?.placeholder}
+              {...props}
+            />
+          </FRow>
+        )
 
     case "NUMBER":
       return (

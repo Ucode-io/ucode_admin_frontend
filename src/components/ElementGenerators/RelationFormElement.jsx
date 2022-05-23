@@ -20,6 +20,9 @@ const RelationFormElement = ({ control, field, isLayout, sectionIndex, fieldInde
       .then((res) => {
 
         if(field.type === "DATE") res.data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy') })
+        if(field.type === "DATE_TIME") res.data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy HH:mm') })
+
+        
 
         setOptions(listToOptions(res.data.response, field.slug, "guid"))
       })

@@ -10,7 +10,7 @@ import listToOptions from "../../../utils/listToOptions"
 
 const ViewCreateModal = ({ tableSlug, fields, closeModal }) => {
 
-  const { control } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       group_fields: [
         {
@@ -37,8 +37,13 @@ const ViewCreateModal = ({ tableSlug, fields, closeModal }) => {
     return listToOptions(fields, 'label', 'slug')
   }, [fields])
 
+  const submitHandler = (values) => {
+    console.log('submitHandler', JSON.stringify(values))
+    closeModal()
+  }
+
   return (
-    <ModalCard title="Create view" onClose={closeModal} >
+    <ModalCard title="Create view" onClose={closeModal} onSaveButtonClick={handleSubmit(submitHandler)}  >
       <form>
         <FRow label="View type">
           <HFSelect

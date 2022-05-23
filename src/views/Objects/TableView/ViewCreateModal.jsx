@@ -1,0 +1,94 @@
+import { useMemo } from "react"
+import { useForm } from "react-hook-form"
+import FRow from "../../../components/FormElements/FRow"
+import HFMultipleSelect from "../../../components/FormElements/HFMultipleSelect"
+import HFSelect from "../../../components/FormElements/HFSelect"
+import ModalCard from "../../../components/ModalCard"
+import { arrayToOptions } from "../../../utils/arrayToOptions"
+import { viewTypes } from "../../../utils/constants/viewTypes"
+import listToOptions from "../../../utils/listToOptions"
+
+const ViewCreateModal = ({ tableSlug, fields, closeModal }) => {
+
+  const { control } = useForm({
+    defaultValues: {
+      group_fields: [
+        {
+          field_slug: "",
+          field_type: "start_timestamp",
+        },
+        {
+          field_slug: "",
+          field_type: "end_timestamp",
+        },
+      ],
+      main_field: "",
+      table_slug: tableSlug,
+      type: "",
+      view_fields: [],
+    },
+  })
+
+  const computedViewTypes = useMemo(() => {
+    return arrayToOptions(viewTypes)
+  }, [])
+
+  const computedFields = useMemo(() => {
+    return listToOptions(fields, 'label', 'slug')
+  }, [fields])
+
+  return (
+    <ModalCard title="Create view" onClose={closeModal} >
+      <form>
+        <FRow label="View type">
+          <HFSelect
+            autoFocus
+            fullWidth
+            options={computedViewTypes}
+            control={control}
+            name="type"
+          />
+        </FRow>
+
+        <FRow label="Start timestamp">
+          <HFSelect
+            fullWidth
+            options={computedFields}
+            control={control}
+            name="group_fields[0].field_slug"
+          />
+        </FRow>
+
+        <FRow label="End timestamp">
+          <HFSelect
+            fullWidth
+            options={computedFields}
+            control={control}
+            name="group_fields[1].field_slug"
+          />
+        </FRow>
+
+        <FRow label="Main field">
+          <HFSelect
+            fullWidth
+            options={computedFields}
+            control={control}
+            name="main_field"
+          />
+        </FRow>
+
+        <FRow label="View fields">
+          <HFMultipleSelect
+            fullWidth
+            options={computedFields}
+            control={control}
+            name="view_fields"
+          />
+        </FRow>
+
+      </form>
+    </ModalCard>
+  )
+}
+
+export default ViewCreateModal

@@ -86,31 +86,12 @@ const HFMultipleSelect = ({
               <MenuItem
                 key={option.value}
                 value={option.value}
-                // style={getStyles(name, personName, theme)}
               >
                 {option.label}
               </MenuItem>
             ))}
           </Select>
 
-          {/* <Select
-            value={value || ""}
-            label={label}
-            size="small"
-            error={error}
-            inputProps={{ placeholder }}
-            fullWidth
-            onChange={(e) => {
-              onChange(e.target.value)
-            }}
-            {...props}
-          >
-            {options?.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select> */}
           {!disabledHelperText && (
             <FormHelperText error>{error?.message}</FormHelperText>
           )}

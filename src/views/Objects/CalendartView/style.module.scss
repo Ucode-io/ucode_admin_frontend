@@ -1,0 +1,90 @@
+
+
+.main {
+  padding: 16px;
+  
+
+  .card {
+    background-color: #fff;
+    height: calc(100vh - 150px);
+    overflow: auto;
+  }
+
+
+  .wrapper {
+    min-width: 100%;
+    position: relative;
+    min-height: calc(100vh - 150px);
+    display:inline-block
+  }
+}
+
+.datesRow {
+  height: 48px;
+  display: flex;
+  position: sticky;
+  top: 0;
+
+  .sss {
+    min-width: 130px;
+    box-shadow: inset -1px -1px 0px #E5E9EB;
+    position: sticky;
+    left: 0;
+    background-color: #fff;
+  }
+
+
+  .dateBlock {
+    min-width: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset -1px -1px 0px #E5E9EB;
+  }
+}
+
+.mainFieldRow {
+  display: flex;
+
+
+  .mainFieldNamesBlock {
+    min-width: 130px;
+    width: 130px;
+    box-shadow: inset -1px -1px 0px #E5E9EB;
+    position: sticky;
+    left: 0;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+
+    div {
+      flex: 1;
+      padding: 5px 24px;
+      font-weight: 600;
+      box-shadow: inset -1px -1px 0px #E5E9EB;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .mainFieldBlock {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset -1px -1px 0px #E5E9EB;
+
+    .mainFieldTitle {
+      font-weight: 600;
+    }
+
+    .mainFieldSubtitle {
+      color: #9AA6AC;
+    }
+
+  }
+
+
+}

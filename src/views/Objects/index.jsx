@@ -99,7 +99,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
 
   return (
     <>
-      <Tabs direction={"ltr"} selectedIndex={1} >
+      <Tabs direction={"ltr"} >
         <div>
           {!isRelation && (
             <Header

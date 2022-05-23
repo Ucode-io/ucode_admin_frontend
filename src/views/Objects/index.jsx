@@ -13,6 +13,7 @@ import { Add, CalendarToday, TableChart } from "@mui/icons-material"
 import TabButton from "../../components/Buttons/TabButton"
 import CalendarView from "./CalendartView"
 import useDebouncedWatch from "../../hooks/useDebouncedWatch"
+import ViewCreateModal from "./TableView/ViewCreateModal"
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
   const params = useParams()
@@ -27,9 +28,9 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const [tableLoader, setTableLoader] = useState(false)
   const [tableData, setTableData] = useState([])
   const [filters, setFilters] = useState({})
+  const [viewCreateModalVisible, setViewCreateModalVisible] = useState(false)
 
   const filterChangeHandler = (value, name) => {
-    
     setFilters({
       ...filters,
       [name]: value,
@@ -82,9 +83,13 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
     else navigate(`${pathname}/${id}`)
   }
 
-  useDebouncedWatch(() => {
-    getAllData()
-  }, [filters], 500)
+  useDebouncedWatch(
+    () => {
+      getAllData()
+    },
+    [filters],
+    500
+  )
 
   useEffect(() => {
     getAllData()
@@ -93,48 +98,55 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   if (loader) return <PageFallback />
 
   return (
-    <Tabs direction={"ltr"}>
-      <div>
-        {!isRelation && (
-          <Header
-            title={tableInfo?.label}
-            extra={<CreateButton onClick={navigateToCreatePage} />}
-          >
-            <TabList>
-              <Tab>
-                <TableChart /> Таблица
-              </Tab>
+    <>
+      <Tabs direction={"ltr"} selectedIndex={1} >
+        <div>
+          {!isRelation && (
+            <Header
+              title={tableInfo?.label}
+              extra={<CreateButton onClick={navigateToCreatePage} />}
+            >
+              <TabList  >
+                <Tab>
+                  <TableChart /> Таблица
+                </Tab>
 
-              <Tab>
-                <CalendarToday /> Календарь
-              </Tab>
+                <Tab>
+                  <CalendarToday /> Календарь
+                </Tab>
 
-              <TabButton>
-                <Add /> Вид
-              </TabButton>
-              
-            </TabList>
-          </Header>
-        )}
+                <TabButton onClick={() => setViewCreateModalVisible(true)} >
+                  <Add /> Вид
+                </TabButton>
+              </TabList>
+            </Header>
+          )}
 
-        <TabPanel>
-          <TableView
-            computedColumns={computedColumns}
-            filterChangeHandler={filterChangeHandler}
-            filters={filters}
-            tableLoader={tableLoader}
-            tableData={tableData}
-            navigateToEditPage={navigateToEditPage}
-            tableSlug={computedTableSlug}
-          />
-        </TabPanel>
+          <TabPanel>
+            <TableView
+              computedColumns={computedColumns}
+              filterChangeHandler={filterChangeHandler}
+              filters={filters}
+              tableLoader={tableLoader}
+              tableData={tableData}
+              navigateToEditPage={navigateToEditPage}
+              tableSlug={computedTableSlug}
+            />
+          </TabPanel>
 
-        <TabPanel>
-          <CalendarView />
-        </TabPanel>
+          <TabPanel>
+            <CalendarView />
+          </TabPanel>
+        </div>
+      </Tabs>
 
-      </div>
-    </Tabs>
+      {viewCreateModalVisible && (
+        <ViewCreateModal
+          fields={computedColumns}
+          closeModal={() => setViewCreateModalVisible(false)}
+        />
+      )}
+    </>
   )
 }
 

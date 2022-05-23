@@ -12,13 +12,13 @@ import TableColumnFilter from "../../../../components/TableColumnFilter"
 const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
-
+    
     return field.attributes.options.map((option) => ({
       value: option,
       label: option,
     }))
   }, [field.attributes?.options])
-
+  
   switch (field.type) {
     // case "PHONE":
     //   return (

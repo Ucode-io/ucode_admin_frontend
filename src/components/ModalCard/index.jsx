@@ -5,6 +5,7 @@ import SecondaryButton from "../Buttons/SecondaryButton"
 import styles from './style.module.scss'
 
 const ModalCard = ({ title, children, onClose, onSaveButtonClick }) => {
+
   return <div>
     <Modal open className={styles.modal} onClose={onClose} >
       <Card className={styles.card}  >
@@ -21,8 +22,8 @@ const ModalCard = ({ title, children, onClose, onSaveButtonClick }) => {
         </div>
         
         <dir className={styles.footer}>
-          <SecondaryButton className={styles.button} onClick={onClose} >Отменить</SecondaryButton>
-          <PrimaryButton className={styles.button} onClick={onSaveButtonClick} >Сохранить</PrimaryButton>
+          <SecondaryButton size="large" className={styles.button} onClick={onClose} >Отменить</SecondaryButton>
+          <PrimaryButton size="large" className={styles.button} onClick={onSaveButtonClick} >Сохранить</PrimaryButton>
         </dir>
 
       </Card>

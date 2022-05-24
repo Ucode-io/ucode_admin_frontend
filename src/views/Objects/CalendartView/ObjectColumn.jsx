@@ -1,3 +1,4 @@
+import { get } from "@ngard/tiny-get"
 import { differenceInMinutes, format, setHours } from "date-fns"
 import { useMemo } from "react"
 import { timesList } from "../../../utils/timesList"
@@ -27,6 +28,7 @@ const ObjectColumn = ({ data = [], view }) => {
 
   }, [data])
 
+  console.log("VIEW ==>", view, data)
 
   return (
     <div className={styles.objectColumn}>
@@ -41,8 +43,13 @@ const ObjectColumn = ({ data = [], view }) => {
           style={{ top: el.startPosition }}
         >
           <div className={styles.infoBlock} style={{ height: el.height }} >
-            <p>Khamidullaev</p>
-            <p>Zafar</p>
+            {
+              view?.view_fields?.map(field => (
+                <p key={field} >{  get(el, field) }</p>
+              ))
+            }
+           
+            {/* <p>Zafar</p> */}
             <p className={styles.time}>{ format(el.startTime, 'HH:mm') } - { format(el.endTime, 'HH:mm') }</p>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { differenceInMinutes, setHours } from "date-fns"
+import { differenceInMinutes, format, setHours } from "date-fns"
 import { useMemo } from "react"
 import { timesList } from "../../../utils/timesList"
 import styles from "./style.module.scss"
@@ -25,10 +25,8 @@ const ObjectColumn = ({ data = [], view }) => {
 
     return result
 
-    // const startTime = data[view.]
   }, [data])
 
-  console.log("COMPUTED POSITOINS ==>", computedData)
 
   return (
     <div className={styles.objectColumn}>
@@ -45,7 +43,7 @@ const ObjectColumn = ({ data = [], view }) => {
           <div className={styles.infoBlock} style={{ height: el.height }} >
             <p>Khamidullaev</p>
             <p>Zafar</p>
-            <p className={styles.time}>8:00 - 9:00</p>
+            <p className={styles.time}>{ format(el.startTime, 'HH:mm') } - { format(el.endTime, 'HH:mm') }</p>
           </div>
         </div>
       ))}

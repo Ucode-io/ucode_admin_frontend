@@ -13,6 +13,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  justify-content: center;
 
   &.large {
     padding: 8px 20px;
@@ -70,6 +71,7 @@
   transition-duration: .3s;
   cursor: pointer;
   margin-left: 20px;
+
   
   &:hover {
     color: colors.$primary;

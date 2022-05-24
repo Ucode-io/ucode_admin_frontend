@@ -1,3 +1,4 @@
+import { format } from "date-fns"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Controller } from "react-hook-form"
 import constructorObjectService from "../../services/constructorObjectService"
@@ -17,9 +18,15 @@ const RelationFormElement = ({ control, field, isLayout, sectionIndex, fieldInde
     constructorObjectService
       .getList(tableSlug, { data: { offset: 0, limit: 10 } })
       .then((res) => {
+
+        if(field.type === "DATE") res.data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy') })
+        if(field.type === "DATE_TIME") res.data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy HH:mm') })
+
+        
+
         setOptions(listToOptions(res.data.response, field.slug, "guid"))
       })
-  }, [tableSlug])
+  }, [tableSlug, field])
 
   useEffect(() => {
     updateOptions()

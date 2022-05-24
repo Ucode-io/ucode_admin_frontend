@@ -25,6 +25,7 @@ export const fieldTypes = [
   "MULTI_LINE",
   "PICK_LIST",
   "DATE",
+  "DATE_TIME",
   "NUMBER",
   "CHECKBOX",
   "EMAIL",

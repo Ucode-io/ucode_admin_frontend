@@ -3,18 +3,24 @@ import { memo } from "react"
 import LogoDisplay from "../LogoDisplay"
 
 const CellElementGenerator = ({ type, value }) => {
-
   switch (type) {
     case "DATE":
       return (
         <span className="text-nowrap">
-          {value ? format(new Date(value), 'dd.MM.yyyy') : '---'}
+          {value ? format(new Date(value), "dd.MM.yyyy") : "---"}
         </span>
       )
-    
+
+    case "DATE_TIME":
+      return (
+        <span className="text-nowrap">
+          {value ? format(new Date(value), "dd.MM.yyyy HH:mm") : "---"}
+        </span>
+      )
+
     case "CHECKBOX":
-      case "SWITCH":
-        return value ? 'Да' : 'Нет'
+    case "SWITCH":
+      return value ? "Да" : "Нет"
 
     case "PHOTO":
       return <LogoDisplay url={value} />

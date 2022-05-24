@@ -28,8 +28,6 @@ const ObjectColumn = ({ data = [], view }) => {
 
   }, [data])
 
-  console.log("VIEW ==>", view, data)
-
   return (
     <div className={styles.objectColumn}>
       {timesList.map((time) => (

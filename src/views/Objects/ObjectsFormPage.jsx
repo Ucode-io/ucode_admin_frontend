@@ -83,6 +83,7 @@ const ObjectsFormPage = () => {
                 : relation.table_to,
           }))
       )
+      
 
       reset(data.response ?? {})
     } finally {

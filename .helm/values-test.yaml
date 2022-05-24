@@ -14,7 +14,7 @@ image:
   repository: medion/medion_react_admin
   pullPolicy: IfNotPresent                                                                                                                 
   # Overrides the image tag whose default is the chart appVersion.                                                                         
-  tag: "latest"                                                                                                                            
+  tag: "test"                                                                                                                            
                                                                                                                                            
 imagePullSecrets: "gitlab-registry"                                                                                                        
 nameOverride: ""                                                                                                                           
@@ -32,7 +32,7 @@ serviceAccount:
   # The name of the service account to use.                                                                                                
   # If not set and create is true, a name is generated using the fullname template                                                                                                                                                                                                    
   name: "vault-auth"                                                                                                                                 
-
+                                                                                                                                            
 podLabels:
   app: react_admin
 
@@ -51,7 +51,7 @@ vault:
   secretName: vault-secrets                                                                                                                
   variables:                                                                                                                               
     VAULT_TOKEN: vault_token                                                                                                               
-    SECRETS_PATH: vault_admin_api_gateway_path                                                                                                            
+    SECRETS_PATH: vault_admin_api_gateway_path                                                                                                           
 
 environment: {}
 volumes:                                                                                                                                   
@@ -82,13 +82,13 @@ ingress:
           cert-manager.io/cluster-issuer: letsencrypt-prod
         type: web
         hosts:                                                                                                                                   
-          - host: "admin.medion.uz"
+          - host: "test.admin.medion.udevs.io"
             path: /                                                                                                                              
             servicePort: 80                                                                                                                 
         tls:                                                                                                                                     
           - secretName: react-admin-tls
             hosts:                                                                                                                               
-             - "admin.medion.uz"                                                                                                  
+             - "test.admin.medion.udevs.io"                                                                                                  
 
 resources: {}                                                                                                    
   #  limits:                                                                                                                                

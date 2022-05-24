@@ -14,6 +14,7 @@ import TabButton from "../../components/Buttons/TabButton"
 import CalendarView from "./CalendartView"
 import useDebouncedWatch from "../../hooks/useDebouncedWatch"
 import ViewCreateModal from "./TableView/ViewCreateModal"
+import constructorViewService from "../../services/constructorViewService"
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
   const params = useParams()
@@ -24,6 +25,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const tablesList = useSelector((state) => state.constructorTable.list)
   const columns = useSelector((state) => state.tableColumn.list)
 
+  const [views, setViews] = useState([])
   const [loader, setLoader] = useState(true)
   const [tableLoader, setTableLoader] = useState(false)
   const [tableData, setTableData] = useState([])
@@ -53,13 +55,20 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const getAllData = async () => {
     setTableLoader(true)
     try {
-      const { data } = await constructorObjectService.getList(
-        computedTableSlug,
-        {
-          data: { offset: 0, limit: 10, ...filters },
-        }
-      )
+      const getTableData = constructorObjectService.getList(computedTableSlug, {
+        data: { offset: 0, limit: 100, ...filters },
+      })
 
+      const getViews = constructorViewService.getList({
+        table_slug: computedTableSlug,
+      })
+
+      const [{ data }, { views = [] }] = await Promise.all([
+        getTableData,
+        getViews
+      ])
+
+      setViews(views)
       setTableData(objectToArray(data.response ?? {}))
       dispatch(
         tableColumnActions.setList({
@@ -95,27 +104,30 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
     getAllData()
   }, [computedTableSlug])
 
+
   if (loader) return <PageFallback />
 
   return (
     <>
-      <Tabs direction={"ltr"} selectedIndex={1} >
+      <Tabs direction={"ltr"}>
         <div>
           {!isRelation && (
             <Header
               title={tableInfo?.label}
               extra={<CreateButton onClick={navigateToCreatePage} />}
             >
-              <TabList  >
+              <TabList>
                 <Tab>
                   <TableChart /> Таблица
                 </Tab>
 
-                <Tab>
-                  <CalendarToday /> Календарь
-                </Tab>
+                {!!views.length && (
+                  <Tab>
+                    <CalendarToday /> Календарь
+                  </Tab>
+                )}
 
-                <TabButton onClick={() => setViewCreateModalVisible(true)} >
+                <TabButton onClick={() => setViewCreateModalVisible(true)}>
                   <Add /> Вид
                 </TabButton>
               </TabList>
@@ -134,9 +146,12 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
             />
           </TabPanel>
 
-          <TabPanel>
-            <CalendarView />
-          </TabPanel>
+          {!!views.length && (
+            <TabPanel>
+              <CalendarView view={views[0]} data={tableData} />
+            </TabPanel>
+          )}
+
         </div>
       </Tabs>
 

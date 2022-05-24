@@ -20,22 +20,27 @@
 }
 
 .datesRow {
-  height: 48px;
   display: flex;
   position: sticky;
-  top: 0;
+  height: 48px;
+  top: 0px;
+  background-color: #fff;
+  z-index: 1;
 
   .sss {
     min-width: 130px;
+    width: 130px;
     box-shadow: inset -1px -1px 0px #E5E9EB;
     position: sticky;
     left: 0;
     background-color: #fff;
+    display: flex;
+    flex-direction: column;
   }
 
 
   .dateBlock {
-    min-width: 600px;
+    // min-width: 600px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,7 +50,10 @@
 
 .mainFieldRow {
   display: flex;
-
+  position: sticky;
+  top: 48px;
+  background-color: #fff;
+  z-index: 1;
 
   .mainFieldNamesBlock {
     min-width: 130px;
@@ -86,5 +94,36 @@
 
   }
 
+}
+
+.calendar {
+  display: flex;
+}
+
+
+.timesBlock {
+  position: sticky;
+  left: 0;
+
+  .timeBlock {
+    width: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    box-shadow: inset -1px -1px 0px #E5E9EB;
+    background-color: #fff;
+    
+  }
+}
+
+
+.objectColumn {
+  width: 200px;
+
+  .calendarRow {
+    height: 40px;
+    box-shadow: inset -1px -1px 0px #E5E9EB;
+  }
 
 }

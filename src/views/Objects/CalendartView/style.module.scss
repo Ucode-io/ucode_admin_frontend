@@ -120,10 +120,34 @@
 
 .objectColumn {
   width: 200px;
+  position: relative;
 
   .calendarRow {
     height: 40px;
     box-shadow: inset -1px -1px 0px #E5E9EB;
   }
+
+  .infoBlockWrapper {
+    width: 100%;
+    padding: 5px 20px;
+    height: 40px;
+    position: absolute;
+    
+
+    .infoBlock {
+      background-color: #E2F4E6;
+      border-radius: 12px;
+      padding: 8px;
+      overflow: hidden;
+      height: 70px;
+
+      .time {
+        color: #84919A;
+        font-size: 12px;
+      }
+    }
+  }
+
+  
 
 }

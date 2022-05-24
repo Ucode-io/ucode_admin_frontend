@@ -1,32 +1,45 @@
 import { get } from "@ngard/tiny-get"
-import { add, differenceInDays, parse } from "date-fns"
-import { format } from "date-fns/esm"
-import { useMemo, useState } from "react"
+import { add, differenceInDays, startOfWeek } from "date-fns"
+import { endOfWeek, format } from "date-fns/esm"
+import { useEffect, useMemo, useState } from "react"
 import FiltersBlock from "../../../components/FiltersBlock"
+import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
+import constructorObjectService from "../../../services/constructorObjectService"
+import constructorViewService from "../../../services/constructorViewService"
+import { objectToArray } from "../../../utils/objectToArray"
 import DatesRow from "./DatesRow"
 import MainFieldRow from "./MainFieldRow"
 import ObjectColumn from "./ObjectColumn"
 import styles from "./style.module.scss"
 import TimesBlock from "./TimesBlock"
 
-const CalendarView = ({ view, data }) => {
-  const [startDate, setStartDate] = useState(
-    parse("20.05.2022", "dd.MM.yyyy", new Date())
-  )
-  const [endDate, setEndDate] = useState(
-    parse("28.05.2022", "dd.MM.yyyy", new Date())
-  )
+const CalendarView = ({ view, tableSlug, setViews }) => {
+  const [filters, setFilters] = useState({})
+  const [loader, setLoader] = useState(true)
+
+  const filterChangeHandler = (value, name) => {
+    setFilters({
+      ...filters,
+      [name]: value,
+    })
+  }
+  
+  const [dateFilters, setDateFilters] = useState([ startOfWeek(new Date()), endOfWeek(new Date()) ])
+  const [data, setData] = useState([])
 
   const computedData = useMemo(() => {
     const startTimeStampSlug = view.group_fields?.find(
       ({ field_type }) => field_type === "start_timestamp"
     )?.field_slug
+    const endTimeStampSlug = view.group_fields?.find(
+      ({ field_type }) => field_type === "end_timestamp"
+    )?.field_slug
 
-    const differenceDays = differenceInDays(endDate, startDate)
+    const differenceDays = differenceInDays(dateFilters[1], dateFilters[0])
     let result = {}
 
     for (let i = 0; i < differenceDays; i++) {
-      const date = format(add(startDate, { days: i }), "dd.MM.yyyy")
+      const date = format(add(dateFilters[0], { days: i }), "dd.MM.yyyy")
 
       result[date] = {
         date,
@@ -36,15 +49,23 @@ const CalendarView = ({ view, data }) => {
 
     data.forEach((el) => {
       const date = format(new Date(get(el, startTimeStampSlug)), "dd.MM.yyyy")
+      const startTime = new Date(get(el, startTimeStampSlug))
+      const endTime = new Date(get(el, endTimeStampSlug))
       const mainField = get(el, view.main_field)
+
+      const computedEl = {
+        ...el,
+        startTime,
+        endTime,
+      }
 
       if (result[date]) {
         if (result[date]?.mainFields?.[mainField]?.data) {
-          result[date][mainField].data.push(el)
+          result[date][mainField].data.push(computedEl)
         } else {
           result[date].mainFields[mainField] = {
             title: mainField,
-            data: [el],
+            data: [computedEl],
           }
         }
       }
@@ -57,11 +78,88 @@ const CalendarView = ({ view, data }) => {
     })
 
     return result
-  }, [data, view, startDate, endDate])
+  }, [data, view, dateFilters])
+
+
+  useDebouncedWatch(
+    () => {
+      getAllData()
+    },
+    [filters, dateFilters],
+    500
+  )
+
+  useEffect(() => {
+    getAllData()
+  }, [tableSlug])
+
+
+  const getAllData = async () => {
+    setLoader(true)
+    try {
+      const getTableData = constructorObjectService.getList(tableSlug, {
+        data: { offset: 0, limit: 100, ...filters },
+      })
+
+      const getViews = constructorViewService.getList({
+        table_slug: tableSlug,
+      })
+
+      const [{ data }, { views = [] }] = await Promise.all([
+        getTableData,
+        getViews
+      ])
+
+
+      setViews(views)
+      setData(objectToArray(data.response ?? {}))
+      
+
+
+      // dispatch(
+      //   tableColumnActions.setList({
+      //     tableSlug: tableSlug,
+      //     columns: data.fields ?? [],
+      //   })
+      // )
+    } finally {
+      setLoader(false)
+      // setLoader(false)
+    }
+  }
+
+
+
 
   return (
     <div>
-      <FiltersBlock />
+      <FiltersBlock>
+        {/* <DateRangePicker
+          startText="Check-in"
+          endText="Check-out"
+          value={dateFilters ?? [null, null]}
+          onChange={setDateFilters}
+          renderInput={(startProps, endProps) => (
+            <>
+              <TextField
+                fullWidth
+                size="small"
+                {...startProps}
+                label={null}
+                InputLabelProps={{ shrink: false }}
+              />
+              <Box sx={{ mx: 2 }}> - </Box>
+              <TextField
+                fullWidth
+                size="small"
+                {...endProps}
+                label={null}
+                InputLabelProps={{ shrink: false }}
+              />
+            </>
+          )}
+        /> */}
+      </FiltersBlock>
 
       <div className={styles.main}>
         <div className={styles.card}>
@@ -77,9 +175,11 @@ const CalendarView = ({ view, data }) => {
                 if (!el.mainFields?.length)
                   return <ObjectColumn key={el.date} />
                 return el.mainFields.map((mainField) => (
-                  mainField.data.map(objectData => (
-                    <ObjectColumn key={objectData.id} data={objectData}  />
-                  ))
+                  <ObjectColumn
+                    key={mainField.title}
+                    data={mainField.data}
+                    view={view}
+                  />
                 ))
               })}
             </div>

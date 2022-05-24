@@ -11,16 +11,98 @@ import { get } from "@ngard/tiny-get"
 import FiltersBlock from "../../../components/FiltersBlock"
 import ColumnsSelector from "../components/ColumnsSelector"
 import TableCard from "../../../components/TableCard"
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
+import { Delete } from "@mui/icons-material"
+import { useEffect, useState } from "react"
+import constructorObjectService from "../../../services/constructorObjectService"
+import constructorViewService from "../../../services/constructorViewService"
+import { objectToArray } from "../../../utils/objectToArray"
+import { useDispatch } from "react-redux"
+import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice"
+import { useLocation, useNavigate } from "react-router-dom"
+import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 
 const TableView = ({
   computedColumns,
-  filterChangeHandler,
-  filters,
-  tableLoader,
-  tableData,
-  navigateToEditPage,
   tableSlug,
+  setViews,
+  isRelation
 }) => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+
+  const [tableLoader, setTableLoader] = useState(false)
+  const [tableData, setTableData] = useState([])
+  const [filters, setFilters] = useState({})
+
+
+  const filterChangeHandler = (value, name) => {
+    setFilters({
+      ...filters,
+      [name]: value,
+    })
+  }
+
+
+  const getAllData = async () => {
+    setTableLoader(true)
+    try {
+      const getTableData = constructorObjectService.getList(tableSlug, {
+        data: { offset: 0, limit: 100, ...filters },
+      })
+
+      const getViews = constructorViewService.getList({
+        table_slug: tableSlug,
+      })
+
+      const [{ data }, { views = [] }] = await Promise.all([
+        getTableData,
+        getViews
+      ])
+
+      setViews(views)
+      setTableData(objectToArray(data.response ?? {}))
+      dispatch(
+        tableColumnActions.setList({
+          tableSlug: tableSlug,
+          columns: data.fields ?? [],
+        })
+      )
+    } finally {
+      setTableLoader(false)
+      // setLoader(false)
+    }
+  }
+
+  const deleteHandler = async (id) => {
+    try {
+      await constructorObjectService.delete(tableSlug, id)
+      getAllData()
+    } catch {
+      setTableLoader(false)
+    }
+  }
+
+  const navigateToEditPage = (id) => {
+    if (isRelation)
+      navigate(`/object/${tableSlug}/${id}`, { state: filters })
+    else navigate(`${pathname}/${id}`)
+  }
+
+  useDebouncedWatch(
+    () => {
+      getAllData()
+    },
+    [filters],
+    500
+  )
+
+  useEffect(() => {
+    getAllData()
+  }, [tableSlug])
+
+
   return (
     <>
       <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} />
@@ -41,11 +123,12 @@ const TableView = ({
                 </div>
               </CTableCell>
             ))}
+            <CTableCell width={70} ></CTableCell>
           </CTableHead>
 
           <CTableBody
             loader={tableLoader}
-            columnsCount={computedColumns.length + 1}
+            columnsCount={computedColumns.length + 2}
             dataLength={tableData.length}
           >
             {tableData.map((row, rowIndex) => (
@@ -62,6 +145,13 @@ const TableView = ({
                     />
                   </CTableCell>
                 ))}
+
+                <CTableCell>
+                  <RectangleIconButton color="error" onClick={() => deleteHandler(row.guid)} >
+                    <Delete color="error" />
+                  </RectangleIconButton>
+                </CTableCell>
+
               </CTableRow>
             ))}
           </CTableBody>

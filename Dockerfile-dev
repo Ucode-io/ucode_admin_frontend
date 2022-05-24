@@ -7,7 +7,7 @@ COPY . ./
 
 RUN yarn install --network-timeout 1000000000
 
-RUN yarn build
+RUN yarn build --mode staging
 
 FROM nginx:alpine
 COPY --from=builder /app/build /build

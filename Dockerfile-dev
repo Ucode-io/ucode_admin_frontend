@@ -3,8 +3,8 @@ RUN apk update && apk add yarn
 RUN mkdir app
 WORKDIR /app
 
-COPY .env.production .
-RUN mv /app/.env.production /app/.env
+COPY .env.development /app/
+RUN mv /app/.env.development /app/.env
 
 COPY . ./
 

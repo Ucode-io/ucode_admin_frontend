@@ -20,6 +20,10 @@ mark-as-production-image:
 	docker tag ${REGISTRY}/${APP}:${TAG} ${REGISTRY}/${APP}:production
 	docker push ${REGISTRY}/${APP}:production
 
+build-image-staging:
+	docker build --rm -t ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} . -f Dockerfile-dev
+	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:${ENV_TAG}
+
 build-image:
 	docker build --rm -t ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} .
 	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:${ENV_TAG}

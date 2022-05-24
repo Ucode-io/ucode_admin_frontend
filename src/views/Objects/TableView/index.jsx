@@ -76,6 +76,7 @@ const TableView = ({
   }
 
   const deleteHandler = async (id) => {
+    setTableLoader(true)
     try {
       await constructorObjectService.delete(tableSlug, id)
       getAllData()
@@ -107,7 +108,7 @@ const TableView = ({
     <>
       <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} />
       <TableCard>
-        <CTable>
+        <CTable removableHeight={240} >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             {computedColumns.map((field, index) => (

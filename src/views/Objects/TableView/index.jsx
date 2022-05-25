@@ -15,27 +15,23 @@ import RectangleIconButton from "../../../components/Buttons/RectangleIconButton
 import { Delete } from "@mui/icons-material"
 import { useEffect, useState } from "react"
 import constructorObjectService from "../../../services/constructorObjectService"
-import constructorViewService from "../../../services/constructorViewService"
 import { objectToArray } from "../../../utils/objectToArray"
 import { useDispatch } from "react-redux"
 import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice"
 import { useLocation, useNavigate } from "react-router-dom"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
+import { pageToOffset } from "../../../utils/pageToOffset"
 
-const TableView = ({
-  computedColumns,
-  tableSlug,
-  setViews,
-  isRelation
-}) => {
+const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
-  const [tableLoader, setTableLoader] = useState(false)
+  const [tableLoader, setTableLoader] = useState(true)
   const [tableData, setTableData] = useState([])
   const [filters, setFilters] = useState({})
-
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageCount, setPageCount] = useState(1)
 
   const filterChangeHandler = (value, name) => {
     setFilters({
@@ -44,25 +40,19 @@ const TableView = ({
     })
   }
 
-
   const getAllData = async () => {
     setTableLoader(true)
     try {
-      const getTableData = constructorObjectService.getList(tableSlug, {
-        data: { offset: 0, limit: 100, ...filters },
+
+      const { data } = await constructorObjectService.getList(tableSlug, {
+        data: { offset: pageToOffset(currentPage), limit: 10, ...filters },
       })
 
-      const getViews = constructorViewService.getList({
-        table_slug: tableSlug,
-      })
+      const pageCount = Math.ceil(data.count / 10)
 
-      const [{ data }, { views = [] }] = await Promise.all([
-        getTableData,
-        getViews
-      ])
-
-      setViews(views)
+      setViews(data.views ?? [])
       setTableData(objectToArray(data.response ?? {}))
+      setPageCount(isNaN(pageCount) ? 1 : pageCount)
       dispatch(
         tableColumnActions.setList({
           tableSlug: tableSlug,
@@ -71,7 +61,6 @@ const TableView = ({
       )
     } finally {
       setTableLoader(false)
-      // setLoader(false)
     }
   }
 
@@ -86,34 +75,45 @@ const TableView = ({
   }
 
   const navigateToEditPage = (id) => {
-    if (isRelation)
-      navigate(`/object/${tableSlug}/${id}`, { state: filters })
+    if (isRelation) navigate(`/object/${tableSlug}/${id}`, { state: filters })
     else navigate(`${pathname}/${id}`)
   }
 
   useDebouncedWatch(
     () => {
-      getAllData()
+      if(currentPage === 1) getAllData()
+      setCurrentPage(1)
     },
     [filters],
     500
   )
 
   useEffect(() => {
-    getAllData()
-  }, [tableSlug])
-
+    if(currentPage === 1) getAllData()
+    setCurrentPage(1)
+  }, [currentPage])
 
   return (
     <>
       <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} />
       <TableCard>
-        <CTable removableHeight={240} >
+        <CTable
+          removableHeight={240}
+          count={pageCount}
+          page={currentPage}
+          setCurrentPage={setCurrentPage}
+        >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             {computedColumns.map((field, index) => (
               <CTableCell key={index}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
                   {field.label}
                   <FilterGenerator
                     field={field}
@@ -124,7 +124,7 @@ const TableView = ({
                 </div>
               </CTableCell>
             ))}
-            <CTableCell width={70} ></CTableCell>
+            <CTableCell width={70}></CTableCell>
           </CTableHead>
 
           <CTableBody
@@ -148,11 +148,13 @@ const TableView = ({
                 ))}
 
                 <CTableCell>
-                  <RectangleIconButton color="error" onClick={() => deleteHandler(row.guid)} >
+                  <RectangleIconButton
+                    color="error"
+                    onClick={() => deleteHandler(row.guid)}
+                  >
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>
-
               </CTableRow>
             ))}
           </CTableBody>

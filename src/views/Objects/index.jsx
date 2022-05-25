@@ -11,6 +11,7 @@ import CalendarView from "./CalendartView"
 import ViewCreateModal from "./TableView/ViewCreateModal"
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
+  
   const params = useParams()
   const { pathname } = useLocation()
   const navigate = useNavigate()
@@ -37,6 +38,8 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const navigateToCreatePage = () => {
     navigate(`${pathname}/create`)
   }
+  
+  // if(loader) return <PageFallback />
 
   return (
     <>

@@ -97,21 +97,12 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
   const getAllData = async () => {
     setLoader(true)
     try {
-      const getTableData = constructorObjectService.getList(tableSlug, {
-        data: { offset: 0, limit: 100, ...filters },
+      const { data } = await constructorObjectService.getList(tableSlug, {
+        data: { offset: 0, limit: 10, ...filters },
       })
 
-      const getViews = constructorViewService.getList({
-        table_slug: tableSlug,
-      })
 
-      const [{ data }, { views = [] }] = await Promise.all([
-        getTableData,
-        getViews
-      ])
-
-
-      setViews(views)
+      setViews(data.views ?? [])
       setData(objectToArray(data.response ?? {}))
       
 

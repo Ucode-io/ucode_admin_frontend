@@ -1,7 +1,9 @@
+import { TextField } from "@mui/material"
 import { get } from "@ngard/tiny-get"
 import { add, differenceInDays, startOfWeek } from "date-fns"
 import { endOfWeek, format } from "date-fns/esm"
 import { useEffect, useMemo, useState } from "react"
+import CRangePicker from "../../../components/DatePickers/CRangePicker"
 import FiltersBlock from "../../../components/FiltersBlock"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import constructorObjectService from "../../../services/constructorObjectService"
@@ -61,7 +63,6 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
 
       if (result[date]) {
         if (result[date]?.mainFields?.[mainField]?.data?.length) {
-          console.log('zzzzz', result[date]?.mainFields?.[mainField]?.data)
           result[date].mainFields[mainField].data.push(computedEl)
         } else {
           result[date].mainFields[mainField] = {
@@ -86,13 +87,14 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
     () => {
       getAllData()
     },
-    [filters, dateFilters],
+    [filters],
     500
   )
 
   useEffect(() => {
+    if(!dateFilters[0] || !dateFilters[1]) return
     getAllData()
-  }, [tableSlug])
+  }, [dateFilters])
 
 
   const getAllData = async () => {
@@ -120,37 +122,10 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
     }
   }
 
-
-
-
   return (
     <div>
       <FiltersBlock>
-        {/* <DateRangePicker
-          startText="Check-in"
-          endText="Check-out"
-          value={dateFilters ?? [null, null]}
-          onChange={setDateFilters}
-          renderInput={(startProps, endProps) => (
-            <>
-              <TextField
-                fullWidth
-                size="small"
-                {...startProps}
-                label={null}
-                InputLabelProps={{ shrink: false }}
-              />
-              <Box sx={{ mx: 2 }}> - </Box>
-              <TextField
-                fullWidth
-                size="small"
-                {...endProps}
-                label={null}
-                InputLabelProps={{ shrink: false }}
-              />
-            </>
-          )}
-        /> */}
+        <CRangePicker value={dateFilters} onChange={setDateFilters} />
       </FiltersBlock>
 
       <div className={styles.main}>

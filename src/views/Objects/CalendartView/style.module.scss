@@ -32,6 +32,7 @@
     width: 130px;
     box-shadow: inset -1px -1px 0px #E5E9EB;
     position: sticky;
+    z-index: 1;
     left: 0;
     background-color: #fff;
     display: flex;
@@ -64,6 +65,7 @@
     background-color: #fff;
     display: flex;
     flex-direction: column;
+    z-index: 1;
 
     div {
       flex: 1;
@@ -104,6 +106,7 @@
 .timesBlock {
   position: sticky;
   left: 0;
+  z-index: 1;
 
   .timeBlock {
     width: 130px;

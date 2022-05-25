@@ -21,7 +21,6 @@ import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice
 import { useLocation, useNavigate } from "react-router-dom"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import { pageToOffset } from "../../../utils/pageToOffset"
-import DatePicker from "../../../components/DatePickers/DatePicker"
 
 const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
   const dispatch = useDispatch()
@@ -96,14 +95,11 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
     if(currentPage === 1) getAllData()
     setCurrentPage(1)
   }, [currentPage])
-
   
 
   return (
     <>
-      <FiltersBlock   extra={<ColumnsSelector tableSlug={tableSlug} />} >
-        <DatePicker />
-      </FiltersBlock>
+      <FiltersBlock   extra={<ColumnsSelector tableSlug={tableSlug} />} />
       <TableCard>
         <CTable
           removableHeight={240}

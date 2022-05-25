@@ -60,8 +60,9 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
       }
 
       if (result[date]) {
-        if (result[date]?.mainFields?.[mainField]?.data) {
-          result[date][mainField].data.push(computedEl)
+        if (result[date]?.mainFields?.[mainField]?.data?.length) {
+          console.log('zzzzz', result[date]?.mainFields?.[mainField]?.data)
+          result[date].mainFields[mainField].data.push(computedEl)
         } else {
           result[date].mainFields[mainField] = {
             title: mainField,

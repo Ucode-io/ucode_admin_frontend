@@ -21,6 +21,7 @@ import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice
 import { useLocation, useNavigate } from "react-router-dom"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import { pageToOffset } from "../../../utils/pageToOffset"
+import DatePicker from "../../../components/DatePickers/DatePicker"
 
 const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
   const dispatch = useDispatch()
@@ -39,6 +40,9 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
       [name]: value,
     })
   }
+
+
+  
 
   const getAllData = async () => {
     setTableLoader(true)
@@ -93,9 +97,13 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
     setCurrentPage(1)
   }, [currentPage])
 
+  
+
   return (
     <>
-      <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} />
+      <FiltersBlock   extra={<ColumnsSelector tableSlug={tableSlug} />} >
+        <DatePicker />
+      </FiltersBlock>
       <TableCard>
         <CTable
           removableHeight={240}
@@ -108,11 +116,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
             {computedColumns.map((field, index) => (
               <CTableCell key={index}>
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
+                  className="table-filter-cell"
                 >
                   {field.label}
                   <FilterGenerator

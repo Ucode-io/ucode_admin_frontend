@@ -124,3 +124,9 @@ html {
 .mb-1 {
   margin-bottom: 8px;
 } 
+
+.table-filter-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

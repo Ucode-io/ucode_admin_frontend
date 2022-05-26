@@ -11,7 +11,6 @@ import CalendarView from "./CalendartView"
 import ViewCreateModal from "./TableView/ViewCreateModal"
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
-  
   const params = useParams()
   const { pathname } = useLocation()
   const navigate = useNavigate()
@@ -38,7 +37,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const navigateToCreatePage = () => {
     navigate(`${pathname}/create`)
   }
-  
+
   // if(loader) return <PageFallback />
 
   return (
@@ -55,12 +54,12 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
                   <TableChart /> Таблица
                 </Tab>
 
-                {!!views.length && (
-                  <Tab>
-                    <CalendarToday /> Календарь
-                  </Tab>
-                )}
-
+                {views.map((view) => (
+                  <Tab key={view.id} >
+                  <CalendarToday /> Календарь
+                </Tab>
+                ))}
+                
                 <TabButton onClick={() => setViewCreateModalVisible(true)}>
                   <Add /> Вид
                 </TabButton>
@@ -77,16 +76,16 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
             />
           </TabPanel>
 
-          {!!views.length && (
-            <TabPanel>
+          {views.map((view) => (
+            <TabPanel key={view.id}>
               <CalendarView
-                view={views[0]}
+                view={view}
                 tableSlug={computedTableSlug}
                 computedColumns={computedColumns}
                 setViews={setViews}
               />
             </TabPanel>
-          )}
+          ))}
         </div>
       </Tabs>
 

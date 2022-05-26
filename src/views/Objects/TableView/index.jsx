@@ -21,6 +21,7 @@ import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice
 import { useLocation, useNavigate } from "react-router-dom"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import { pageToOffset } from "../../../utils/pageToOffset"
+import useWatch from "../../../hooks/useWatch"
 
 const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
   const dispatch = useDispatch()
@@ -91,10 +92,13 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
     500
   )
 
-  useEffect(() => {
-    if(currentPage === 1) getAllData()
-    setCurrentPage(1)
+  useWatch(() => {
+    getAllData()
   }, [currentPage])
+
+  useEffect(() => {
+    getAllData()
+  }, [])
   
 
   return (
@@ -137,7 +141,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
                 key={row.guid}
                 onClick={() => navigateToEditPage(row.guid)}
               >
-                <CTableCell>{rowIndex + 1}</CTableCell>
+                <CTableCell>{(currentPage - 1 ) * 10 + rowIndex + 1}</CTableCell>
                 {computedColumns.map((field) => (
                   <CTableCell key={field.id} className="text-nowrap">
                     <CellElementGenerator

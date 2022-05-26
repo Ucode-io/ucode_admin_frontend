@@ -1,4 +1,3 @@
-import { TextField } from "@mui/material"
 import { get } from "@ngard/tiny-get"
 import { add, differenceInDays, startOfWeek } from "date-fns"
 import { endOfWeek, format } from "date-fns/esm"
@@ -7,7 +6,6 @@ import CRangePicker from "../../../components/DatePickers/CRangePicker"
 import FiltersBlock from "../../../components/FiltersBlock"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import constructorObjectService from "../../../services/constructorObjectService"
-import constructorViewService from "../../../services/constructorViewService"
 import { objectToArray } from "../../../utils/objectToArray"
 import DatesRow from "./DatesRow"
 import MainFieldRow from "./MainFieldRow"
@@ -26,7 +24,7 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
     })
   }
   
-  const [dateFilters, setDateFilters] = useState([ startOfWeek(new Date()), endOfWeek(new Date()) ])
+  const [dateFilters, setDateFilters] = useState([ startOfWeek(new Date(), {weekStartsOn: 1}), endOfWeek(new Date(), {weekStartsOn: 1}) ])
   const [data, setData] = useState([])
 
   const computedData = useMemo(() => {

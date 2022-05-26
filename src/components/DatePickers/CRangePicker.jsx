@@ -1,5 +1,10 @@
-import ReactDatePicker from "react-datepicker"
+import ReactDatePicker, { registerLocale } from "react-datepicker"
+import ru from 'date-fns/locale/ru';
+
 import "./style.scss"
+
+registerLocale('ru', ru)
+
 
 const CRangePicker = ({ value = [null, null], onChange }) => {
 
@@ -12,6 +17,7 @@ const CRangePicker = ({ value = [null, null], onChange }) => {
       selectsRange
       showPopperArrow={false}
       dateFormat="dd.MM.yyyy"
+      locale="ru"
     />
   )
 }

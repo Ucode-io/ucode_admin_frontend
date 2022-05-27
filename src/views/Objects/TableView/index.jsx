@@ -130,7 +130,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
             ))}
             <CTableCell width={70}></CTableCell>
           </CTableHead>
-
+          
           <CTableBody
             loader={tableLoader}
             columnsCount={computedColumns.length + 2}

@@ -11,9 +11,10 @@ import listToOptions from "../../../utils/listToOptions"
 
 const ViewCreateModal = ({
   tableSlug,
-  fields,
+  fields = [],
   closeModal,
   initialValues = {},
+  setViews
 }) => {
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -31,7 +32,7 @@ const ViewCreateModal = ({
       table_slug: tableSlug,
       type: "",
       view_fields: [],
-      ...initialValues,
+      // ...initialValues,
     },
   })
 
@@ -44,8 +45,8 @@ const ViewCreateModal = ({
   }, [fields])
 
   const submitHandler = async (values) => {
-    console.log("submitHandler", JSON.stringify(values))
-
+    
+    
     try {
 
       let res
@@ -57,15 +58,16 @@ const ViewCreateModal = ({
 
       } else {
         res = await constructorViewService.create(values)
+
+        setViews(prev => [...prev, res])
       }
 
-      console.log("res", res)
 
+      closeModal()
 
 
     } catch (error) {}
 
-    closeModal()
   }
 
   return (

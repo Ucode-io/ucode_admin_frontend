@@ -40,6 +40,8 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
 
   // if(loader) return <PageFallback />
 
+  console.log("COLUMNS ==>", columns)
+
   return (
     <>
       <Tabs direction={"ltr"}>
@@ -91,8 +93,10 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
 
       {viewCreateModalVisible && (
         <ViewCreateModal
-          fields={computedColumns}
+          fields={columns[computedTableSlug]}
           closeModal={() => setViewCreateModalVisible(false)}
+          setViews={setViews}
+          tableSlug={computedTableSlug}
         />
       )}
     </>

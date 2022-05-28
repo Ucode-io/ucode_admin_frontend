@@ -39,7 +39,9 @@ const Router = () => {
         
         <Route path="object/:tableSlug" element={<ReloadWrapper component={ObjectsPage} />} />
         <Route path="object/:tableSlug/create" element={<ObjectsFormPage />} />
-        <Route path="object/:tableSlug/:id" element={<ObjectsFormPage />} />
+
+        <Route path="object/:tableSlug/:id" element={<ReloadWrapper component={ObjectsFormPage} />} />
+
 
 
         <Route path="*" element={<Navigate to="/settings/constructor/tables" />} />

@@ -21,22 +21,14 @@ const Section = ({
     name: `sections.${index}.column`,
   })
 
-  const column1 = useFieldArray({
+  const sectionFields = useFieldArray({
     control: mainForm.control,
-    name: `sections[${index}].column1`,
+    name: `sections.${index}.fields`,
     keyName: "key",
   })
 
-  const column2 = useFieldArray({
-    control: mainForm.control,
-    name: `sections[${index}].column2`,
-    keyName: "key",
-  })
-
-  const columns = { column1, column2 }
-
-  const onDrop = (dropResult, colNumber) => {
-    const { fields, insert, move, remove } = columns[`column${colNumber}`]
+  const onDrop = (dropResult) => {
+    const { fields, insert, move, remove } = sectionFields
 
     const result = applyDrag(fields, dropResult)
 
@@ -59,7 +51,7 @@ const Section = ({
   }
 
   const removeField = (index, colNumber) => {
-    const { remove } = columns[`column${colNumber}`]
+    const { remove } = sectionFields
     remove(index)
   }
 
@@ -84,74 +76,36 @@ const Section = ({
         />
       </div>
       <div className={styles.sectionCardBody}>
-        <div className={styles.sectionCardColumn}>
-          <Container
-            style={{ minHeight: 150 }}
-            groupName="1"
-            dragClass="drag-row"
-            dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            onDrop={(dragResults) => onDrop(dragResults, 1)}
-            getChildPayload={(index) => columns.column1.fields[index]}
-          >
-            {column1?.fields?.map((field, fieldIndex) => (
-              <Draggable key={field.key}>
-                <div className={styles.sectionCardRow}>
-                  <FormElementGenerator
-                    control={layoutForm.control}
-                    field={fieldsMap[field.id] ?? field}
-                    isLayout={true}
-                    sectionIndex={index}
-                    column={1}
-                    fieldIndex={fieldIndex}
-                    mainForm={mainForm}
-                  />
-                  <RectangleIconButton
-                    color={"error"}
-                    onClick={() => removeField(fieldIndex, 1)}
-                  >
-                    <Delete color="error" />
-                  </RectangleIconButton>
-                </div>
-              </Draggable>
-            ))}
-          </Container>
-        </div>
-        
-        <div className={styles.sectionCardColumn}>
-          {columnType === "DOUBLE" && (
-            <Container
-              style={{ minHeight: 150 }}
-              groupName="1"
-              drag-row="drag-row"
-              dragClass="drag-row"
-              dropPlaceholder={{ className: "drag-row-drop-preview" }}
-              onDrop={(dragResults) => onDrop(dragResults, 2)}
-              getChildPayload={(index) => columns.column2.fields[index]}
-            >
-              {column2.fields?.map((field, fieldIndex) => (
-                <Draggable key={field.key}>
-                  <div className={styles.sectionCardRow}>
-                    <FormElementGenerator
-                      control={layoutForm.control}
-                      field={fieldsMap[field.id] ?? field}
-                      isLayout={true}
-                      sectionIndex={index}
-                      column={2}
-                      fieldIndex={fieldIndex}
-                      mainForm={mainForm}
-                    />
-                    <RectangleIconButton
-                      color={"error"}
-                      onClick={() => removeField(fieldIndex, 2)}
-                    >
-                      <Delete color="error" />
-                    </RectangleIconButton>
-                  </div>
-                </Draggable>
-              ))}
-            </Container>
-          )}
-        </div>
+        <Container
+          style={{ minHeight: 150, width: '100%' }}
+          groupName="1"
+          dragClass="drag-row"
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+          onDrop={(dragResults) => onDrop(dragResults, 1)}
+          getChildPayload={(index) => sectionFields.fields[index]}
+        >
+          {sectionFields?.fields?.map((field, fieldIndex) => (
+            <Draggable key={field.key}>
+              <div className={styles.sectionCardRow}>
+                <FormElementGenerator
+                  control={layoutForm.control}
+                  field={fieldsMap[field.id] ?? field}
+                  isLayout={true}
+                  sectionIndex={index}
+                  column={1}
+                  fieldIndex={fieldIndex}
+                  mainForm={mainForm}
+                />
+                <RectangleIconButton
+                  color={"error"}
+                  onClick={() => removeField(fieldIndex, 1)}
+                >
+                  <Delete color="error" />
+                </RectangleIconButton>
+              </div>
+            </Draggable>
+          ))}
+        </Container>
       </div>
     </Card>
   )

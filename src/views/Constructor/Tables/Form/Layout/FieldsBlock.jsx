@@ -22,6 +22,7 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
   const unusedFields = useMemo(() => {
     return fields?.filter((field) => !usedFields.includes(field.id))
   }, [usedFields, fields])
+  
 
   const computedRelations = useMemo(() => {
     return relations.map((relation) => ({

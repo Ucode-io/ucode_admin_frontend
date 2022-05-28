@@ -41,9 +41,6 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
     })
   }
 
-
-  
-
   const getAllData = async () => {
     setTableLoader(true)
     try {

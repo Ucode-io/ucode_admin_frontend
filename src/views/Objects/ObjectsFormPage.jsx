@@ -38,14 +38,7 @@ const ObjectsFormPage = () => {
       sections
         ?.map((section) => ({
           ...section,
-          column1:
-            section.fields
-              ?.filter((field) => field.column !== 2)
-              .sort(sortByOrder) ?? [],
-          column2:
-            section.fields
-              ?.filter((field) => field.column === 2)
-              .sort(sortByOrder) ?? [],
+          fields: section.fields?.sort(sortByOrder) ?? []
         }))
         .sort(sortByOrder) ?? []
     )

@@ -14,7 +14,7 @@ const ViewCreateModal = ({
   fields = [],
   closeModal,
   initialValues = {},
-  setViews
+  setViews,
 }) => {
   const { control, handleSubmit } = useForm({
     defaultValues: {
@@ -45,29 +45,19 @@ const ViewCreateModal = ({
   }, [fields])
 
   const submitHandler = async (values) => {
-    
-    
     try {
-
       let res
 
       if (initialValues.id) {
         res = await constructorViewService.update(values)
-
-        
-
       } else {
         res = await constructorViewService.create(values)
 
-        setViews(prev => [...prev, res])
+        setViews((prev) => [...prev, res])
       }
 
-
       closeModal()
-
-
     } catch (error) {}
-
   }
 
   return (

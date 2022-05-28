@@ -4,14 +4,14 @@ export const computeSections = (sections) => {
   return sections
     .map((section) => ({
       ...section,
+      columns: section.columns?.sort(sortByOrder) ?? [],
       column1: section.fields
-        ?.filter((field) => field.column !== 2)
         .map(field => ({...field, field_name: field.label}))
         .sort(sortByOrder),
-      column2: section.fields
-        ?.filter((field) => field.column === 2)
-        .map(field => ({...field, field_name: field.label}))
-        .sort(sortByOrder),
+      // column2: section.fields
+      //   ?.filter((field) => field.column === 2)
+      //   .map(field => ({...field, field_name: field.label}))
+      //   .sort(sortByOrder),
     }))
     ?.sort(sortByOrder)
 }

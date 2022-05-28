@@ -38,10 +38,6 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
     navigate(`${pathname}/create`)
   }
 
-  // if(loader) return <PageFallback />
-
-  console.log("COLUMNS ==>", columns)
-
   return (
     <>
       <Tabs direction={"ltr"}>

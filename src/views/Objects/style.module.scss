@@ -17,6 +17,8 @@
 .secondaryCardSide {
   flex: 1;
   max-width: calc(100% - 400px);
+  height: calc(100vh - 56px);
+  overflow: auto;
 }
 
 .formColumn {

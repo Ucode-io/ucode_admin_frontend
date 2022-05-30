@@ -37,7 +37,7 @@ const RelationSection = ({ relation }) => {
       const { data } = await constructorObjectService.getList(
         relation.relatedTable?.slug,
         {
-          data: { offset: pageToOffset(currentPage), limit: 10, [`${tableSlug}_id`]: id },
+          data: { offset: pageToOffset(currentPage, 5), limit: 5, [`${tableSlug}_id`]: id },
         }
       )
       
@@ -96,6 +96,7 @@ const RelationSection = ({ relation }) => {
           count={pageCount}
           page={currentPage}
           setCurrentPage={setCurrentPage}
+          loader={tableLoader}
         >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>

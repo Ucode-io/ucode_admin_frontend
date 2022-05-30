@@ -2,7 +2,6 @@ import { ArrowDropDown, ArrowRight } from "@mui/icons-material"
 import styles from "./style.module.scss"
 
 const MainFieldRow = ({ data }) => {
-  console.log("DATA ==--->", data)
 
   return (
     <div className={styles.mainFieldRow}>

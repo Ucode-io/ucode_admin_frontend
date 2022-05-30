@@ -4,12 +4,18 @@ import FRow from "../../../components/FormElements/FRow"
 import HFMultipleSelect from "../../../components/FormElements/HFMultipleSelect"
 import HFSelect from "../../../components/FormElements/HFSelect"
 import ModalCard from "../../../components/ModalCard"
+import constructorViewService from "../../../services/constructorViewService"
 import { arrayToOptions } from "../../../utils/arrayToOptions"
 import { viewTypes } from "../../../utils/constants/viewTypes"
 import listToOptions from "../../../utils/listToOptions"
 
-const ViewCreateModal = ({ tableSlug, fields, closeModal }) => {
-
+const ViewCreateModal = ({
+  tableSlug,
+  fields = [],
+  closeModal,
+  initialValues = {},
+  setViews,
+}) => {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       group_fields: [
@@ -26,6 +32,7 @@ const ViewCreateModal = ({ tableSlug, fields, closeModal }) => {
       table_slug: tableSlug,
       type: "",
       view_fields: [],
+      // ...initialValues,
     },
   })
 
@@ -34,16 +41,31 @@ const ViewCreateModal = ({ tableSlug, fields, closeModal }) => {
   }, [])
 
   const computedFields = useMemo(() => {
-    return listToOptions(fields, 'label', 'slug')
+    return listToOptions(fields, "label", "slug")
   }, [fields])
 
-  const submitHandler = (values) => {
-    console.log('submitHandler', JSON.stringify(values))
-    closeModal()
+  const submitHandler = async (values) => {
+    try {
+      let res
+
+      if (initialValues.id) {
+        res = await constructorViewService.update(values)
+      } else {
+        res = await constructorViewService.create(values)
+
+        setViews((prev) => [...prev, res])
+      }
+
+      closeModal()
+    } catch (error) {}
   }
 
   return (
-    <ModalCard title="Create view" onClose={closeModal} onSaveButtonClick={handleSubmit(submitHandler)}  >
+    <ModalCard
+      title="Create view"
+      onClose={closeModal}
+      onSaveButtonClick={handleSubmit(submitHandler)}
+    >
       <form>
         <FRow label="View type">
           <HFSelect
@@ -90,7 +112,6 @@ const ViewCreateModal = ({ tableSlug, fields, closeModal }) => {
             name="view_fields"
           />
         </FRow>
-
       </form>
     </ModalCard>
   )

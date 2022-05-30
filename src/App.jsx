@@ -10,6 +10,9 @@ import "./i18next"
 import { Suspense } from "react"
 
 function App() {
+
+  console.log('llllllllllllllllllllllllllllllllllllllllsssssssssss')
+
   return (
     <Suspense fallback="Loading..." >
       <div className="App">

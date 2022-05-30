@@ -2,10 +2,10 @@ import { get } from "@ngard/tiny-get"
 import { add, differenceInDays, startOfWeek } from "date-fns"
 import { endOfWeek, format } from "date-fns/esm"
 import { useEffect, useMemo, useState } from "react"
+import CRangePicker from "../../../components/DatePickers/CRangePicker"
 import FiltersBlock from "../../../components/FiltersBlock"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import constructorObjectService from "../../../services/constructorObjectService"
-import constructorViewService from "../../../services/constructorViewService"
 import { objectToArray } from "../../../utils/objectToArray"
 import DatesRow from "./DatesRow"
 import MainFieldRow from "./MainFieldRow"
@@ -24,7 +24,7 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
     })
   }
   
-  const [dateFilters, setDateFilters] = useState([ startOfWeek(new Date()), endOfWeek(new Date()) ])
+  const [dateFilters, setDateFilters] = useState([ startOfWeek(new Date(), {weekStartsOn: 1}), endOfWeek(new Date(), {weekStartsOn: 1}) ])
   const [data, setData] = useState([])
 
   const computedData = useMemo(() => {
@@ -60,8 +60,8 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
       }
 
       if (result[date]) {
-        if (result[date]?.mainFields?.[mainField]?.data) {
-          result[date][mainField].data.push(computedEl)
+        if (result[date]?.mainFields?.[mainField]?.data?.length) {
+          result[date].mainFields[mainField].data.push(computedEl)
         } else {
           result[date].mainFields[mainField] = {
             title: mainField,
@@ -85,33 +85,25 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
     () => {
       getAllData()
     },
-    [filters, dateFilters],
+    [filters],
     500
   )
 
   useEffect(() => {
+    if(!dateFilters[0] || !dateFilters[1]) return
     getAllData()
-  }, [tableSlug])
+  }, [dateFilters])
 
 
   const getAllData = async () => {
     setLoader(true)
     try {
-      const getTableData = constructorObjectService.getList(tableSlug, {
-        data: { offset: 0, limit: 100, ...filters },
+      const { data } = await constructorObjectService.getList(tableSlug, {
+        data: { offset: 0, limit: 10, ...filters },
       })
 
-      const getViews = constructorViewService.getList({
-        table_slug: tableSlug,
-      })
 
-      const [{ data }, { views = [] }] = await Promise.all([
-        getTableData,
-        getViews
-      ])
-
-
-      setViews(views)
+      setViews(data.views ?? [])
       setData(objectToArray(data.response ?? {}))
       
 
@@ -128,37 +120,10 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
     }
   }
 
-
-
-
   return (
     <div>
       <FiltersBlock>
-        {/* <DateRangePicker
-          startText="Check-in"
-          endText="Check-out"
-          value={dateFilters ?? [null, null]}
-          onChange={setDateFilters}
-          renderInput={(startProps, endProps) => (
-            <>
-              <TextField
-                fullWidth
-                size="small"
-                {...startProps}
-                label={null}
-                InputLabelProps={{ shrink: false }}
-              />
-              <Box sx={{ mx: 2 }}> - </Box>
-              <TextField
-                fullWidth
-                size="small"
-                {...endProps}
-                label={null}
-                InputLabelProps={{ shrink: false }}
-              />
-            </>
-          )}
-        /> */}
+        <CRangePicker value={dateFilters} onChange={setDateFilters} />
       </FiltersBlock>
 
       <div className={styles.main}>

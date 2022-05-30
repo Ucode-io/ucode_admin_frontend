@@ -2,18 +2,27 @@
 
 
 .formArea {
-  padding: 16px;
+  // padding: 16px;
   display: flex;
 }
 
 .mainCardSide {
-  flex: 5;
+  min-width: 400px;
+  width: 400px;
+  height: calc(100vh - 56px);
+  padding: 8px;
+  overflow: auto;
 }
 
 .secondaryCardSide {
-  flex: 4;
+  flex: 1;
+  max-width: calc(100% - 400px);
 }
 
 .formColumn {
   flex: 1;
 }
+
+
+
+

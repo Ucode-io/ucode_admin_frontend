@@ -12,12 +12,13 @@ const Layout = ({ mainForm }) => {
     name: `sections`
   })
 
+  console.log("SECTIONS ===>", sections)
+
   const usedFields = useMemo(() => {
     const list = []
 
     sections?.forEach(section => {
-      section.column1?.forEach(field => { list.push(field.id) })
-      section.column2?.forEach(field => { list.push(field.id) })
+      section.fields?.forEach(field => { list.push(field.id) })
     })
 
     return list

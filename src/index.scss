@@ -113,6 +113,10 @@ html {
   display: flex;
 }
 
+.p-1 {
+  padding: 8px;
+}
+
 .p-2 {
   padding: 16px
 }
@@ -124,3 +128,9 @@ html {
 .mb-1 {
   margin-bottom: 8px;
 } 
+
+.table-filter-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

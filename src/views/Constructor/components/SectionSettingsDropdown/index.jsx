@@ -35,13 +35,13 @@ const SectionSettingsDropdown = ({
           }}
         >
           <div className={styles.menuItemIcon}>
-            {columnType !== "DOUBLE" && (
+            {/* {columnType !== "DOUBLE" && ( */}
               <Check color="success" fontSize="small" />
-            )}
+            {/* )} */}
           </div>
           Single column
         </MenuItem>
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             setColumnType("DOUBLE")
           }}
@@ -53,7 +53,7 @@ const SectionSettingsDropdown = ({
             )}
           </div>
           Double column
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem onClick={onDelete} className={styles.menuItem}>
           <div className={styles.menuItemIcon}>
             <Delete color="error" fontSize="small" />

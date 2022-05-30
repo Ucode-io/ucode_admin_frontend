@@ -11,7 +11,7 @@ export const CTable = ({ children, count, page, setCurrentPage, removableHeight 
       <div className="table" style={{ height: removableHeight ? `calc(100vh - ${removableHeight}px)` : 'auto' }} >
         <table>{children}</table>
       </div>
-
+      
       {!disablePagination && <CPagination count={count} page={page} setCurrentPage={setCurrentPage} />}
     </Paper>
   )

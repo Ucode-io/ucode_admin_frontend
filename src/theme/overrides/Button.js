@@ -6,6 +6,7 @@ export default function Button(theme) {
       styleOverrides: {
         root: {
           textTransform: 'none',
+          borderRadius: 5,
           '&:hover': {
             boxShadow: 'none'
           }

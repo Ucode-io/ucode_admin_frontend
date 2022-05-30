@@ -84,7 +84,6 @@ const ConstructorTablesFormPage = () => {
 
       relationsWithRelatedTableSlug.forEach((relation) => {
         if (
-          relation.type === "One2One" ||
           (relation.type === "Many2One" && relation.table_from.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to.slug === slug)
         )
@@ -102,7 +101,7 @@ const ConstructorTablesFormPage = () => {
                   res.fields?.map((field) => ({
                     ...field,
                     table_slug: relation[relation.relatedTableSlug]?.slug,
-                    id: relation.type === 'One2One' ? `${relation[relation.relatedTableSlug]?.slug}@${field.id}` : `${relation[relation.relatedTableSlug]?.slug}#${field.id}`,
+                    id: `${relation[relation.relatedTableSlug]?.slug}#${field.id}`
                   })) ?? []
                   
                 const computedRelation = {

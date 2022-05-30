@@ -4,7 +4,7 @@ import styles from './style.module.scss'
 
 const MainInfo = ({ computedSections, control }) => {
   return (
-    <div className={styles.formArea}>
+    
       <div className={styles.mainCardSide}>
         {computedSections.map((section) => (
           <FormCard
@@ -14,7 +14,7 @@ const MainInfo = ({ computedSections, control }) => {
           >
             
             <div className={styles.formColumn}>
-              {section.column1?.map((field) => (
+              {section.fields?.map((field) => (
                 <FormElementGenerator
                   key={field.id}
                   field={field}
@@ -22,7 +22,7 @@ const MainInfo = ({ computedSections, control }) => {
                 />
               ))}
             </div>
-            <div className={styles.formColumn}>
+            {/* <div className={styles.formColumn}>
               {section.column2?.map((field) => (
                 <FormElementGenerator
                   key={field.id}
@@ -30,13 +30,11 @@ const MainInfo = ({ computedSections, control }) => {
                   control={control}
                 />
               ))}
-            </div>
+            </div> */}
           </FormCard>
         ))}
+        
       </div>
-
-      <div className={styles.secondaryCardSide}></div>
-    </div>
   )
 }
 

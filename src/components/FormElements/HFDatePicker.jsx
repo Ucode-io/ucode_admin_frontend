@@ -2,7 +2,7 @@ import { DatePicker } from "@mui/lab"
 import { TextField } from "@mui/material"
 import { Controller } from "react-hook-form"
 
-const HFDatePicker = ({ control, className, name, label, width, inputProps, disabledHelperText, ...props }) => {
+const HFDatePicker = ({ control, className, name, label, width, inputProps, disabledHelperText, placeholder, ...props }) => {
   return (
     <Controller
       control={control}
@@ -26,6 +26,10 @@ const HFDatePicker = ({ control, className, name, label, width, inputProps, disa
                 error={error  }
                 helperText={!disabledHelperText && (error?.message ?? ' ')}
                 {...inputProps}
+                inputProps={{
+                  ...params.inputProps,
+                  placeholder
+                }}
                 label={label}
               />
             )}

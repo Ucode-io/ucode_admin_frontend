@@ -52,12 +52,12 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
                   <TableChart /> Таблица
                 </Tab>
 
-                {!!views.length && (
-                  <Tab>
-                    <CalendarToday /> Календарь
-                  </Tab>
-                )}
-
+                {views.map((view) => (
+                  <Tab key={view.id} >
+                  <CalendarToday /> Календарь
+                </Tab>
+                ))}
+                
                 <TabButton onClick={() => setViewCreateModalVisible(true)}>
                   <Add /> Вид
                 </TabButton>
@@ -74,23 +74,25 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
             />
           </TabPanel>
 
-          {!!views.length && (
-            <TabPanel>
+          {views.map((view) => (
+            <TabPanel key={view.id}>
               <CalendarView
-                view={views[0]}
+                view={view}
                 tableSlug={computedTableSlug}
                 computedColumns={computedColumns}
                 setViews={setViews}
               />
             </TabPanel>
-          )}
+          ))}
         </div>
       </Tabs>
 
       {viewCreateModalVisible && (
         <ViewCreateModal
-          fields={computedColumns}
+          fields={columns[computedTableSlug]}
           closeModal={() => setViewCreateModalVisible(false)}
+          setViews={setViews}
+          tableSlug={computedTableSlug}
         />
       )}
     </>

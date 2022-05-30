@@ -13,14 +13,16 @@ import MainInfo from "./MainInfo"
 import constructorRelationService from "../../services/constructorRelationService"
 import IconGenerator from "../../components/IconPicker/IconGenerator"
 import ObjectsPage from "."
-import InfoIcon from '@mui/icons-material/Info';
- 
+import InfoIcon from "@mui/icons-material/Info"
+import RelationSection from "./RelationSection"
+import styles from "./style.module.scss"
+
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
   const navigate = useNavigate()
-  
+
   const tablesList = useSelector((state) => state.constructorTable.list)
- 
+
   const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
 
@@ -36,14 +38,7 @@ const ObjectsFormPage = () => {
       sections
         ?.map((section) => ({
           ...section,
-          column1:
-            section.fields
-              ?.filter((field) => field.column !== 2)
-              .sort(sortByOrder) ?? [],
-          column2:
-            section.fields
-              ?.filter((field) => field.column === 2)
-              .sort(sortByOrder) ?? [],
+          fields: section.fields?.sort(sortByOrder) ?? []
         }))
         .sort(sortByOrder) ?? []
     )
@@ -83,7 +78,6 @@ const ObjectsFormPage = () => {
                 : relation.table_to,
           }))
       )
-      
 
       reset(data.response ?? {})
     } finally {
@@ -132,49 +126,48 @@ const ObjectsFormPage = () => {
     else create(data)
   }
 
-  const { handleSubmit, control, reset } = useForm()
+  const { handleSubmit, control, reset, getValues } = useForm()
 
   if (loader) return <PageFallback />
 
   return (
     <div>
-      <Tabs direction={"ltr"} forceRenderTabPanel>
-        <Header
-          title={tableInfo.label}
-          backButtonLink={-1}
-          sticky
-          subtitle={id ? "Edit" : "Create"}
-          extra={
-            <SaveButton loading={btnLoader} onClick={handleSubmit(onSubmit)} />
-          }
-        >
-          {id && !!tableRelations?.length && <TabList>
-            <Tab> <InfoIcon /> Main info</Tab>
+      <Header
+        title={tableInfo.label}
+        backButtonLink={-1}
+        sticky
+        subtitle={
+          id
+            ? tableInfo.subtitle_field_slug
+              ? getValues(tableInfo.subtitle_field_slug)
+              : "Edit"
+            : "Create"
+        }
+        extra={
+          <SaveButton loading={btnLoader} onClick={handleSubmit(onSubmit)} />
+        }
+      ></Header>
 
-            {tableRelations?.map((relation) => (
-              <Tab>
-                <IconGenerator icon={relation.relatedTable.icon} />
-                {relation.relatedTable.label}
-              </Tab>
-            ))}
-          </TabList>}
-        </Header>
+      <div className={styles.formArea}>
+        <MainInfo control={control} computedSections={computedSections} />
 
+        <div className={styles.secondaryCardSide}>
+          {tableRelations?.map((relation) => (
+            <RelationSection key={relation.id} relation={relation} />
+          ))}
+        </div>
+      </div>
+
+      {/* {tableRelations?.map((relation) => (
         <TabPanel>
-          <MainInfo control={control} computedSections={computedSections} />
+          <ObjectsPage
+            relation={relation}
+            isRelation
+            tableSlug={relation.relatedTable.slug}
+            filters={{ [`${tableSlug}_id`]: id }}
+          />
         </TabPanel>
-
-        {tableRelations?.map((relation) => (
-          <TabPanel>
-            <ObjectsPage
-              relation={relation}
-              isRelation
-              tableSlug={relation.relatedTable.slug}
-              filters={{ [`${tableSlug}_id`]: id }}
-            />
-          </TabPanel>
-        ))}
-      </Tabs>
+      ))} */}
     </div>
   )
 }

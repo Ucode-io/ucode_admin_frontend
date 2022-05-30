@@ -1,12 +1,28 @@
+import { useMemo } from "react"
+import { useFieldArray } from "react-hook-form"
 import FormCard from "../../../../components/FormCard"
 import FRow from "../../../../components/FormElements/FRow"
 import HFIconPicker from "../../../../components/FormElements/HFIconPicker"
+import HFSelect from "../../../../components/FormElements/HFSelect"
 import HFSwitch from "../../../../components/FormElements/HFSwitch"
 import HFTextField from "../../../../components/FormElements/HFTextField"
+import listToOptions from "../../../../utils/listToOptions"
 
 const MainInfo = ({ control }) => {
+
+  const { fields } = useFieldArray({
+    control,
+    name: "fields",
+    keyName: "key",
+  })
+
+  const computedFields = useMemo(() => {
+    return listToOptions(fields, "label", "slug")
+  }, [fields])
+
   return (
     <FormCard title="Общие сведение">
+      <div className="flex" >
       <FRow label="Иконка">
         <HFIconPicker
           control={control}
@@ -21,6 +37,8 @@ const MainInfo = ({ control }) => {
           required
         />
       </FRow>
+      </div>
+      
       <FRow label="Название">
         <HFTextField
           control={control}
@@ -48,6 +66,15 @@ const MainInfo = ({ control }) => {
           fullWidth
           placeholder="SLUG"
           required
+        />
+      </FRow>
+      <FRow label="Subtitle field">
+        <HFSelect
+          control={control}
+          name="subtitle_field_slug"
+          fullWidth
+          placeholder="Subtitle field"
+          options={computedFields}
         />
       </FRow>
     </FormCard>

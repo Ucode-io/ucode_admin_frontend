@@ -4,6 +4,7 @@ import { useFieldArray, useWatch } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator"
+import HFIconPicker from "../../../../../components/FormElements/HFIconPicker"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import { applyDrag } from "../../../../../utils/applyDrag"
 import SectionSettingsDropdown from "../../../components/SectionSettingsDropdown"
@@ -58,6 +59,8 @@ const Section = ({
   return (
     <Card className={styles.sectionCard}>
       <div className={styles.sectionCardHeader}>
+        <HFIconPicker control={mainForm.control} name={`sections[${index}].icon`} />
+
         <HFTextField
           autoFocus
           disabledHelperText

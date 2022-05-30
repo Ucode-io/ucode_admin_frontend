@@ -17,11 +17,6 @@ const IconPicker = ({ value = "", onChange, error, loading, ...props }) => {
 
   const handleOpen = () => setDropdownIsOpen(true)
 
-  // const computedIconsList = useMemo(() => {
-  //   const filteredList = iconsList.filter((icon) => icon.includes(searchText))
-
-  //   return filteredList.slice(0, 40)
-  // }, [searchText])
 
   useDebouncedWatch(() => {
     const filteredList = iconsList.filter((icon) => icon.includes(searchText))

@@ -6,7 +6,7 @@ const IconGenerator = ({ icon, size=20, ...props }) => {
 
   return (
     <SVG
-      src={`https://cdn.upm.udevs.io/icons/${icon}`}
+      src={`${import.meta.env.VITE_ICON_PICKER_CDN_BASE_URL}${icon}`}
       width={size}
       height={size}
       preProcessor={(code) =>

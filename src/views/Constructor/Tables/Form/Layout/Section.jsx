@@ -59,17 +59,23 @@ const Section = ({
   return (
     <Card className={styles.sectionCard}>
       <div className={styles.sectionCardHeader}>
-        <HFIconPicker control={mainForm.control} name={`sections[${index}].icon`} />
+        <div  className={styles.sectionCardHeaderLeftSide}>
+          <HFIconPicker
+            control={mainForm.control}
+            name={`sections[${index}].icon`}
+            disabledHelperText
+          />
 
-        <HFTextField
-          autoFocus
-          disabledHelperText
-          placeholder="Label"
-          control={mainForm.control}
-          name={`sections[${index}].label`}
-          size="small"
-          style={{ width: 300 }}
-        />
+          <HFTextField
+            autoFocus
+            disabledHelperText
+            placeholder="Label"
+            control={mainForm.control}
+            name={`sections[${index}].label`}
+            size="small"
+            style={{ width: 300 }}
+          />
+        </div>
 
         <SectionSettingsDropdown
           columnType={columnType}
@@ -80,7 +86,7 @@ const Section = ({
       </div>
       <div className={styles.sectionCardBody}>
         <Container
-          style={{ minHeight: 150, width: '100%' }}
+          style={{ minHeight: 150, width: "100%" }}
           groupName="1"
           dragClass="drag-row"
           dropPlaceholder={{ className: "drag-row-drop-preview" }}

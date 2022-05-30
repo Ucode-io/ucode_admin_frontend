@@ -158,16 +158,6 @@ const ObjectsFormPage = () => {
         </div>
       </div>
 
-      {/* {tableRelations?.map((relation) => (
-        <TabPanel>
-          <ObjectsPage
-            relation={relation}
-            isRelation
-            tableSlug={relation.relatedTable.slug}
-            filters={{ [`${tableSlug}_id`]: id }}
-          />
-        </TabPanel>
-      ))} */}
     </div>
   )
 }

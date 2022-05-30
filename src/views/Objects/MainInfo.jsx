@@ -11,6 +11,7 @@ const MainInfo = ({ computedSections, control }) => {
             key={section.id}
             title={section.label}
             className={styles.formCard}
+            icon={section.icon}
           >
             
             <div className={styles.formColumn}>
@@ -22,15 +23,7 @@ const MainInfo = ({ computedSections, control }) => {
                 />
               ))}
             </div>
-            {/* <div className={styles.formColumn}>
-              {section.column2?.map((field) => (
-                <FormElementGenerator
-                  key={field.id}
-                  field={field}
-                  control={control}
-                />
-              ))}
-            </div> */}
+
           </FormCard>
         ))}
         

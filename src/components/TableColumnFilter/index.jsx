@@ -16,8 +16,8 @@ const TableColumnFilter = ({ children }) => {
     setAnchorEl(null)
   }
 
-  return ( <span style={{  whiteSpace: 'nowrap', marginLeft: 'auto' }} >
-      <FilterAlt onClick={openMenu} fontSize="10" className="pointer" />
+  return ( <span className={styles.filterWrapper} >
+      <FilterAlt classes={{ root: styles.filterIcon }}  onClick={openMenu} fontSize="10" className="pointer" />
 
 
       <Menu

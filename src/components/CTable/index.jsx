@@ -2,13 +2,13 @@ import { Paper } from "@mui/material"
 import { forwardRef } from "react"
 import CPagination from "../CPagination"
 import EmptyDataComponent from "../EmptyDataComponent"
-import TableLoader from "../TableLoader"
+import TableLoader from "../TableLoader/index"
 import "./style.scss"
 
-export const CTable = ({ children, count, page, setCurrentPage, removableHeight = 186, disablePagination, }) => {
+export const CTable = ({ children, count, page, setCurrentPage, removableHeight = 186, disablePagination, loader }) => {
   return (
     <Paper className="CTableContainer">
-      <div className="table" style={{ height: removableHeight ? `calc(100vh - ${removableHeight}px)` : 'auto' }} >
+      <div className="table" style={{ height: removableHeight ? `calc(100vh - ${removableHeight}px)` : 'auto', overflow: loader ? 'hidden' : 'auto' }} >
         <table>{children}</table>
       </div>
       
@@ -28,11 +28,14 @@ export const CTableHeadRow = ({ children }) => {
 export const CTableBody = forwardRef(({ children, columnsCount, loader, dataLength, ...props }, ref) => {
 
   return (
+    <>
+    <TableLoader isVisible={loader} columnsCount={columnsCount} rowsCount={dataLength || 3}  />
+
     <tbody className="CTableBody" {...props} ref={ref} >
-      {!loader && children}
-      <EmptyDataComponent isVisible={!loader && !dataLength}  />
-      <TableLoader isVisible={loader} columnsCount={columnsCount} />
+      {children}
+      <EmptyDataComponent columnsCount={columnsCount} isVisible={!dataLength}  />
     </tbody>
+    </>
   )
 })
 

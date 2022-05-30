@@ -58,6 +58,12 @@
         align-items: center;
         justify-content: space-between;
         background: #f6f8f9;
+
+        .sectionCardHeaderLeftSide {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+        }
       }
 
       .sectionCardBody {

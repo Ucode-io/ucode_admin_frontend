@@ -12,6 +12,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    .headerLeftSide {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
   }
 
   .body {

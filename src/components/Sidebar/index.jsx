@@ -12,6 +12,7 @@ import { authActions } from "../../store/auth/auth.slice"
 import LogoutIcon from "@mui/icons-material/Logout"
 import useSidebarElements from "../../hooks/useSidebarElements"
 import IconGenerator from "../IconPicker/IconGenerator"
+// import { IconPickerItem } from "react-fa-icon-picker"
 
 const Sidebar = () => {
   const location = useLocation()
@@ -31,11 +32,6 @@ const Sidebar = () => {
 
     return activeElement
   }, [location.pathname])
-
-
-  
-
-
 
   const logout = () => {
     dispatch(authActions.logout())
@@ -73,7 +69,8 @@ const Sidebar = () => {
                   }`}
                 >
                   {typeof element.icon === "string" ? (
-                    <IconGenerator icon={element.icon} />
+                    <IconGenerator icon={element.icon} size={18} />
+                    // <IconPickerItem icon="FaAdobe" size={24} />
                   ) : (
                     <element.icon />
                   )}
@@ -105,7 +102,7 @@ const Sidebar = () => {
                   }`}
                 >
                   {typeof element.icon === "string" ? (
-                    <IconGenerator icon={element.icon} />
+                    <IconGenerator icon={element.icon} size={18} />
                   ) : (
                     <element.icon />
                   )}

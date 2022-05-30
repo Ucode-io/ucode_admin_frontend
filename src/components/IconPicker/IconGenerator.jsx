@@ -1,14 +1,20 @@
-import { memo } from "react";
-import { iconsList } from "./iconsList";
+import { memo } from "react"
+import SVG from "react-inlinesvg"
 
+const IconGenerator = ({ icon, size=20, ...props }) => {
+  if (!icon) return null
 
-const IconGenerator = ({ icon, ...props }) => {
-
-
-    const findedIcon = iconsList.find(el => el.name === icon)
-    if(!findedIcon) return null
-
-  return <findedIcon.component {...props} />;
+  return (
+    <SVG
+      src={`https://cdn.upm.udevs.io/icons/${icon}`}
+      width={size}
+      height={size}
+      preProcessor={(code) =>
+        code.replace('path', 'path fill="currentColor"')
+      }
+      {...props}
+    />
+  )
 }
- 
-export default memo(IconGenerator);
+
+export default memo(IconGenerator)

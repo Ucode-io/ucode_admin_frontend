@@ -2,7 +2,7 @@ import { Delete } from "@mui/icons-material"
 import { get } from "@ngard/tiny-get"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import CreateButton from "../../../components/Buttons/CreateButton"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import {
@@ -20,6 +20,7 @@ import { pageToOffset } from "../../../utils/pageToOffset"
 import RelationCreateModal from "./RelationCreateModal"
 
 const RelationSection = ({ relation }) => {
+  const { tableSlug, id } = useParams()
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -36,7 +37,7 @@ const RelationSection = ({ relation }) => {
       const { data } = await constructorObjectService.getList(
         relation.relatedTable?.slug,
         {
-          data: { offset: pageToOffset(currentPage), limit: 10 },
+          data: { offset: pageToOffset(currentPage), limit: 10, [`${tableSlug}_id`]: id },
         }
       )
       
@@ -81,6 +82,7 @@ const RelationSection = ({ relation }) => {
           table={relation.relatedTable}
           closeModal={() => setModalVisible(false)}
           onCreate={getAllData}
+          
         />
       )}
       <FormCard

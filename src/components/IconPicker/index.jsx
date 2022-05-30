@@ -1,22 +1,34 @@
-import "./style.scss"
-import { Card, CircularProgress, IconButton, Popover } from "@mui/material"
-import { iconsList } from "./iconsList"
-import { memo, useState } from "react"
+import { CircularProgress, IconButton, Menu, TextField } from "@mui/material"
+import { memo, useId, useMemo, useRef, useState } from "react"
+import useDebouncedWatch from "../../hooks/useDebouncedWatch"
+import { iconsList } from "../../utils/constants/iconsList"
 import IconGenerator from "./IconGenerator"
+import styles from "./style.module.scss"
 
 const IconPicker = ({ value = "", onChange, error, loading, ...props }) => {
-  const [anchorEl, setAnchorEl] = useState(null)
+  const buttonRef = useRef()
+  const id = useId()
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+  const [dropdownIsOpen, setDropdownIsOpen] = useState(false)
+  const [searchText, setSearchText] = useState("")
+  const [computedIconsList, setComputedIconsList] = useState(iconsList.slice(0, 40))
 
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
+  const handleClose = () => setDropdownIsOpen(false)
 
-  const open = Boolean(anchorEl)
-  const id = open ? "simple-popover" : undefined
+  const handleOpen = () => setDropdownIsOpen(true)
+
+  // const computedIconsList = useMemo(() => {
+  //   const filteredList = iconsList.filter((icon) => icon.includes(searchText))
+
+  //   return filteredList.slice(0, 40)
+  // }, [searchText])
+
+  useDebouncedWatch(() => {
+    const filteredList = iconsList.filter((icon) => icon.includes(searchText))
+
+    setComputedIconsList(filteredList.slice(0, 40))
+  }, [searchText], 300)
+  
 
   if (loading)
     return (
@@ -26,42 +38,47 @@ const IconPicker = ({ value = "", onChange, error, loading, ...props }) => {
     )
 
   return (
-    <div className="IconPicker" onClick={(e) => e.stopPropagation()} {...props}>
+    <div onClick={(e) => e.stopPropagation()} {...props}>
       <div
-        className={`icon-wrapper ${error ? "error" : ""}`}
+        ref={buttonRef}
+        className={`${styles.iconWrapper} ${error ? styles.error : ""}`}
         style={{ backgroundColor: value ?? "#fff" }}
         aria-describedby={id}
-        onClick={handleClick}
+        onClick={handleOpen}
       >
         <IconGenerator icon={value} />
       </div>
 
-      <Popover
+      <Menu
         id={id}
-        open={open}
-        anchorEl={anchorEl}
+        anchorEl={buttonRef.current}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
+        open={dropdownIsOpen}
+        anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+        classes={{ paper: styles.menuPaper, list: styles.menuList }}
       >
-        <Card elevation={12} className="IconPickerPopup">
-          {iconsList.map((icon, index) => (
+        <TextField
+          size="small"
+          fullWidth
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+
+        <div className={styles.iconsBlock}>
+          {computedIconsList.map((icon) => (
             <div
-              className="icon-wrapper"
-              key={index}
-              onClick={() => onChange(icon.name)}
+              key={icon}
+              className={styles.popupIconWrapper}
+              onClick={() => {
+                onChange(icon)
+                handleClose()
+              }}
             >
-              <icon.component />
+              <IconGenerator icon={icon} />
             </div>
           ))}
-        </Card>
-      </Popover>
+        </div>
+      </Menu>
     </div>
   )
 }

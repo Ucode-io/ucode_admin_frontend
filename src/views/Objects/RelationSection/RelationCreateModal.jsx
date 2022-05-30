@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useParams } from "react-router-dom"
 import FormElementGenerator from "../../../components/ElementGenerators/FormElementGenerator"
 import LargeModalCard from "../../../components/LargeModalCard"
 import constructorObjectService from "../../../services/constructorObjectService"
 import constructorSectionService from "../../../services/constructorSectionService"
 
 const RelationCreateModal = ({ table, onCreate, closeModal }) => {
+  const { tableSlug, id } = useParams()
+
   const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
 
@@ -31,7 +34,11 @@ const RelationCreateModal = ({ table, onCreate, closeModal }) => {
     }
   }
 
-  const { handleSubmit, control, reset, getValues } = useForm()
+  const { handleSubmit, control } = useForm({
+    defaultValues: {
+      [`${tableSlug}_id`]: id
+    },
+  })
 
   const onSubmit = async (values) => {
     setBtnLoader(true)

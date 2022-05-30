@@ -75,7 +75,6 @@ const MainInfo = ({ control }) => {
           fullWidth
           placeholder="Subtitle field"
           options={computedFields}
-          required
         />
       </FRow>
     </FormCard>

@@ -6,31 +6,46 @@ import listToOptions from "../../utils/listToOptions"
 import FEditableRow from "../FormElements/FEditableRow"
 import FRow from "../FormElements/FRow"
 import HFSelect from "../FormElements/HFSelect"
+import { useQuery } from "react-query"
 
 const RelationFormElement = ({ control, field, isLayout, sectionIndex, fieldIndex, column, mainForm, ...props }) => {
-  const [options, setOptions] = useState([])
+  // const [options, setOptions] = useState([])
 
   const tableSlug = useMemo(() => {
     return field.id.split("#")?.[0] ?? ""
   }, [field.id])
 
-  const updateOptions = useCallback(() => {
-    constructorObjectService
-      .getList(tableSlug, { data: { offset: 0, limit: 10 } })
-      .then((res) => {
+  // const updateOptions = useCallback(() => {
+  //   constructorObjectService
+  //     .getList(tableSlug, { data: { offset: 0, limit: 10 } })
+  //     .then((res) => {
 
-        if(field.type === "DATE") res.data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy') })
-        if(field.type === "DATE_TIME") res.data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy HH:mm') })
+  //       if(field.type === "DATE") res.data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy') })
+  //       if(field.type === "DATE_TIME") res.data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy HH:mm') })
 
         
 
-        setOptions(listToOptions(res.data.response, field.slug, "guid"))
-      })
-  }, [tableSlug, field])
+  //       setOptions(listToOptions(res.data.response, field.slug, "guid"))
+  //     })
+  // }, [tableSlug, field])
 
-  useEffect(() => {
-    updateOptions()
-  }, [updateOptions])
+
+
+  const { data: options } = useQuery(["GET_OBJECT_LIST", tableSlug], () => constructorObjectService.getList(tableSlug, { data: {} }), {
+    select: ({data}) => {
+      if(field.type === "DATE") data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy') })
+      if(field.type === "DATE_TIME") data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy HH:mm') })
+
+      return listToOptions(data.response, field.slug, "guid")
+    }
+  })
+
+  console.log("RelationFormElement", options)
+
+
+  // useEffect(() => {
+  //   updateOptions()
+  // }, [updateOptions])
 
   if (!isLayout)
     return (
@@ -61,7 +76,7 @@ const RelationFormElement = ({ control, field, isLayout, sectionIndex, fieldInde
             control={control}
             name={`${tableSlug}_id`}
             width="100%"
-            options={options}
+            // options={options}
             required={field.required}
             {...props}
           />

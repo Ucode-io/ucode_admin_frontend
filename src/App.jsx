@@ -8,14 +8,15 @@ import Router from "./router"
 import { persistor, store } from "./store"
 import "./i18next"
 import { Suspense } from "react"
+import { QueryClientProvider } from "react-query"
+import queryClient from "./queries"
 
 function App() {
-
-  console.log('llllllllllllllllllllllllllllllllllllllllsssssssssss')
 
   return (
     <Suspense fallback="Loading..." >
       <div className="App">
+        <QueryClientProvider client={queryClient} >
         <Provider store={store}>
           <PersistGate persistor={persistor}>
             <MaterialUIProvider>
@@ -28,6 +29,7 @@ function App() {
             </MaterialUIProvider>
           </PersistGate>
         </Provider>
+        </QueryClientProvider>
       </div>
     </Suspense>
   )

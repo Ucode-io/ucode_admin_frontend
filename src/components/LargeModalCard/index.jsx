@@ -11,6 +11,7 @@ const LargeModalCard = ({
   onClose,
   onSaveButtonClick,
   btnLoader,
+  oneColumn,
   loader,
 }) => {
   return (
@@ -31,7 +32,7 @@ const LargeModalCard = ({
             </div>
           ) : (
             <div className={styles.body}>
-              <div className={styles.formWrapper}>{children}</div>
+              <div className={`${styles.formWrapper} ${oneColumn ? styles.oneColumn : ''}`}>{children}</div>
             </div>
           )}
 

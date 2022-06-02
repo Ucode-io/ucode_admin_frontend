@@ -8,12 +8,8 @@ import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
 import { sortByOrder } from "../../utils/sortByOrder"
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import MainInfo from "./MainInfo"
 import constructorRelationService from "../../services/constructorRelationService"
-import IconGenerator from "../../components/IconPicker/IconGenerator"
-import ObjectsPage from "."
-import InfoIcon from "@mui/icons-material/Info"
 import RelationSection from "./RelationSection"
 import styles from "./style.module.scss"
 
@@ -65,6 +61,7 @@ const ObjectsFormPage = () => {
         relations
           .filter(
             (relation) =>
+              relation.type === 'Many2Many' || 
               (relation.type === "Many2One" &&
                 relation.table_to?.slug === tableSlug) ||
               (relation.type === "One2Many" &&
@@ -73,9 +70,9 @@ const ObjectsFormPage = () => {
           .map((relation) => ({
             ...relation,
             relatedTable:
-              relation.type === "Many2One"
-                ? relation.table_from
-                : relation.table_to,
+              relation.table_from.slug === tableSlug
+                ? relation.table_to
+                : relation.table_from,
           }))
       )
 
@@ -87,11 +84,37 @@ const ObjectsFormPage = () => {
 
   const getFields = async () => {
     try {
-      const { sections = [] } = await constructorSectionService.getList({
+
+      const getRelations = constructorRelationService.getList({
         table_slug: tableSlug,
       })
 
+      const getSections = constructorSectionService.getList({
+        table_slug: tableSlug,
+      })
+
+      const [ {sections = []}, { relations = [] } ] = await Promise.all([getSections, getRelations])
+
       setSections(sections)
+
+      setTableRelations(
+        relations
+          .filter(
+            (relation) =>
+              relation.type === 'Many2Many' || 
+              (relation.type === "Many2One" &&
+                relation.table_to?.slug === tableSlug) ||
+              (relation.type === "One2Many" &&
+                relation.table_from?.slug === tableSlug)
+          )
+          .map((relation) => ({
+            ...relation,
+            relatedTable:
+              relation.table_from.slug === tableSlug
+                ? relation.table_to
+                : relation.table_from,
+          }))
+      )
     } finally {
       setLoader(false)
     }
@@ -117,7 +140,7 @@ const ObjectsFormPage = () => {
 
     constructorObjectService
       .create(tableSlug, { data })
-      .then(() => navigate(-1))
+      .then((res) => navigate(`/object/${tableSlug}/${res.data?.data?.guid}`))
       .catch(() => setBtnLoader(false))
   }
 
@@ -153,7 +176,7 @@ const ObjectsFormPage = () => {
 
         <div className={styles.secondaryCardSide}>
           {tableRelations?.map((relation) => (
-            <RelationSection key={relation.id} relation={relation} />
+            <RelationSection key={relation.id} relation={relation} control={control} />
           ))}
         </div>
       </div>

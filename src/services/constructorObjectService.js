@@ -6,6 +6,9 @@ const constructorObjectService = {
   create: (tableSlug, data) => request.post(`/object/${tableSlug}`, data),
   getById: (tableSlug, id) => request.get(`/object/${tableSlug}/${id}`),
   delete: (tableSlug, id) => request.delete(`/object/${tableSlug}/${id}`, { data: { data: {} } }),
+  updateManyToMany: (data) => request.put('/many-to-many', data),
+  deleteManyToMany: (data) => request.delete('/many-to-many', { data }),
+
 }
 
 export default constructorObjectService;

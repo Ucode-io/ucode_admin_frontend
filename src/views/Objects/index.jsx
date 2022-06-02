@@ -37,7 +37,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const navigateToCreatePage = () => {
     navigate(`${pathname}/create`)
   }
-
+  
   return (
     <>
       <Tabs direction={"ltr"}>

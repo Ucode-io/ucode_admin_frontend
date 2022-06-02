@@ -9,6 +9,7 @@ import {
   CTableHead,
   CTableRow,
 } from "../../../components/CTable"
+import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
 import { deleteConstructorTableAction } from "../../../store/constructorTable/constructorTable.thunk"
 
 const TablesList = () => {
@@ -45,12 +46,13 @@ const TablesList = () => {
               <CTableCell>{element.label}</CTableCell>
               <CTableCell>{element.description}</CTableCell>
               <CTableCell>
-                <RectangleIconButton
-                  color="error"
-                  onClick={() => deleteTable(element.id)}
-                >
-                  <Delete color="error" />
-                </RectangleIconButton>
+                <DeleteWrapperModal id={element.id} onDelete={deleteTable} >
+                  <RectangleIconButton
+                    color="error"
+                  >
+                    <Delete color="error" />
+                  </RectangleIconButton>
+                </DeleteWrapperModal>
               </CTableCell>
             </CTableRow>
           ))}

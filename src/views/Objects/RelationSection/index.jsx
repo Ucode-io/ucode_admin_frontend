@@ -59,10 +59,25 @@ const RelationSection = ({ relation, control }) => {
     }
   }
 
-  const deleteHandler = async (id) => {
+  const deleteHandler = async (elementId) => {
     setTableLoader(true)
     try {
-      await constructorObjectService.delete(relation.relatedTable?.slug, id)
+
+      if(relation.type === 'Many2Many') {
+
+        const data = {
+          id_from: id,
+          id_to: [elementId],
+          table_from: tableSlug,
+          table_to: relation.relatedTable?.slug,
+        }
+
+        await constructorObjectService.deleteManyToMany(data)
+
+      } else {
+        await constructorObjectService.delete(relation.relatedTable?.slug, elementId)
+      }
+
       getAllData()
     } catch {
       setTableLoader(false)

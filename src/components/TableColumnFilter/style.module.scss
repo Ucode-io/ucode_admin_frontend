@@ -1,4 +1,4 @@
-
+@use "/src/scss/colors";
 
 .paper {
   margin-top: 10px;
@@ -11,11 +11,15 @@
 
 .filterWrapper {
   white-space: nowrap;
-  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .filterIcon {
-  transform: translateY(3px);
-  margin-left: 10px;
+  font-size: 20px !important;
+  color: colors.$grey;
+  // transform: translateY(10px);
+  
 }
 

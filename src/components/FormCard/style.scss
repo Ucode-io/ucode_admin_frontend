@@ -17,6 +17,12 @@
     align-items: center;
     justify-content: space-between;
 
+
+    .left-side {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
     // .title {
     //   color: #6E8BB7;
     // }

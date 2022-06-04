@@ -22,6 +22,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import useWatch from "../../../hooks/useWatch"
+import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
 
 const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
   const dispatch = useDispatch()
@@ -44,7 +45,6 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
   const getAllData = async () => {
     setTableLoader(true)
     try {
-
       const { data } = await constructorObjectService.getList(tableSlug, {
         data: { offset: pageToOffset(currentPage), limit: 10, ...filters },
       })
@@ -82,7 +82,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
 
   useDebouncedWatch(
     () => {
-      if(currentPage === 1) getAllData()
+      if (currentPage === 1) getAllData()
       setCurrentPage(1)
     },
     [filters],
@@ -96,11 +96,10 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
   useEffect(() => {
     getAllData()
   }, [])
-  
 
   return (
     <>
-      <FiltersBlock   extra={<ColumnsSelector tableSlug={tableSlug} />} />
+      <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} />
       <TableCard>
         <CTable
           removableHeight={240}
@@ -112,9 +111,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
             <CTableCell width={10}>№</CTableCell>
             {computedColumns.map((field, index) => (
               <CTableCell key={index}>
-                <div
-                  className="table-filter-cell"
-                >
+                <div className="table-filter-cell">
                   {field.label}
                   <FilterGenerator
                     field={field}
@@ -127,7 +124,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
             ))}
             <CTableCell width={70}></CTableCell>
           </CTableHead>
-          
+
           <CTableBody
             loader={tableLoader}
             columnsCount={computedColumns.length + 2}
@@ -138,7 +135,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
                 key={row.guid}
                 onClick={() => navigateToEditPage(row.guid)}
               >
-                <CTableCell>{(currentPage - 1 ) * 10 + rowIndex + 1}</CTableCell>
+                <CTableCell>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
                 {computedColumns.map((field) => (
                   <CTableCell key={field.id} className="text-nowrap">
                     <CellElementGenerator
@@ -149,12 +146,14 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
                 ))}
 
                 <CTableCell>
-                  <RectangleIconButton
-                    color="error"
-                    onClick={() => deleteHandler(row.guid)}
-                  >
-                    <Delete color="error" />
-                  </RectangleIconButton>
+                  <DeleteWrapperModal id={row.guid} onDelete={deleteHandler} >
+                    <RectangleIconButton
+                      color="error"
+                      // onClick={() => deleteHandler(row.guid)}
+                    >
+                      <Delete color="error" />
+                    </RectangleIconButton>
+                  </DeleteWrapperModal>
                 </CTableCell>
               </CTableRow>
             ))}

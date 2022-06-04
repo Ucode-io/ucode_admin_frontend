@@ -21,8 +21,6 @@ const ConstructorTablesListPage = () => {
         }
       />
 
-      
-
       <FiltersBlock>
         <SearchInput />
       </FiltersBlock>

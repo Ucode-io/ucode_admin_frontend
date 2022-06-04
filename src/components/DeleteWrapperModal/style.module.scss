@@ -1,3 +1,4 @@
+
 .modal {
   display: flex;
   align-items: center;
@@ -5,7 +6,7 @@
   overflow: auto;
 
   .card {
-    min-width: 1000px;
+    min-width: 400px;
     padding: 32px;
     border: none;
 
@@ -21,33 +22,19 @@
         line-height: 32px;
       }
 
+      .closeButton {
+        
+      }
 
       .closeIcon {
         font-size: 28px;
       }
     }
 
-    .loader {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 60px;
-    }
-
     .body {
-      height: calc(100vh - 300px);
       overflow: auto;
-      
-
-      .formWrapper {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        column-gap: 50px;
-        
-        &.oneColumn {
-          grid-template-columns: 1fr;
-        }
-      }
+      margin-bottom: 16px;
+      // font-weight: bold;
     }
 
     .footer {

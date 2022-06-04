@@ -1,13 +1,12 @@
-import { FilterAlt } from "@mui/icons-material";
-import { Menu } from "@mui/material";
-import { useState } from "react";
+import FilterAltTwoToneIcon from "@mui/icons-material/FilterAltTwoTone"
+import { Menu } from "@mui/material"
+import { useState } from "react"
 import styles from "./style.module.scss"
 
 const TableColumnFilter = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const menuVisible = Boolean(anchorEl)
-
-
+  
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget)
   }
@@ -16,9 +15,13 @@ const TableColumnFilter = ({ children }) => {
     setAnchorEl(null)
   }
 
-  return ( <span className={styles.filterWrapper} >
-      <FilterAlt classes={{ root: styles.filterIcon }}  onClick={openMenu} fontSize="10" className="pointer" />
-
+  return (
+    <div className={styles.filterWrapper}>
+      <FilterAltTwoToneIcon
+        classes={{ root: styles.filterIcon }}
+        onClick={openMenu}
+        className="pointer"
+      />
 
       <Menu
         id="lock-menu"
@@ -27,10 +30,10 @@ const TableColumnFilter = ({ children }) => {
         onClose={closeMenu}
         classes={{ list: styles.menu, paper: styles.paper }}
       >
-        { children }
+        {children}
       </Menu>
-
-  </span> );
+    </div>
+  )
 }
- 
-export default TableColumnFilter;
+
+export default TableColumnFilter

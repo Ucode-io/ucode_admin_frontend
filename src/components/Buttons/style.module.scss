@@ -25,6 +25,15 @@
     border-color: colors.$primary;
     color: #fff;
 
+    &.error {
+      background-color: colors.$error;
+      border-color: colors.$error;
+
+      &:hover {
+        background-color: colors.$error-hover;
+      }
+    }
+
     &:hover {
       background-color: colors.$primary-hover;
     }

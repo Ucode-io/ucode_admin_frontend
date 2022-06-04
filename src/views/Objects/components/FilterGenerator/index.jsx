@@ -8,17 +8,42 @@ import {
 } from "@mui/material"
 import { useMemo } from "react"
 import TableColumnFilter from "../../../../components/TableColumnFilter"
+import TableOrderingButton from "../../../../components/TableOrderingButton"
 
 const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
+  const orderingType = useMemo(
+    () => filters.order?.[name],
+    [filters.order, name]
+  )
+
+  const onOrderingChange = (value) => {
+    if (!value) return onChange(value, "order")
+    const data = {
+      [name]: value,
+    }
+    onChange(data, "order")
+  }
+
+  return (
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
+      <Filter field={field} name={name} filters={filters} onChange={onChange} />
+    </div>
+  )
+}
+
+export default FilterGenerator
+
+const Filter = ({ field, name, filters = {}, onChange }) => {
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
-    
+
     return field.attributes.options.map((option) => ({
       value: option,
       label: option,
     }))
   }, [field.attributes?.options])
-  
+
   switch (field.type) {
     // case "PHONE":
     //   return (
@@ -91,7 +116,9 @@ const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
             placeholder={field.label}
             type="number"
             value={filters[name] ?? ""}
-            onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
+            onChange={(e) =>
+              onChange(Number(e.target.value) || undefined, name)
+            }
           />
         </TableColumnFilter>
       )
@@ -110,5 +137,3 @@ const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
       )
   }
 }
-
-export default FilterGenerator

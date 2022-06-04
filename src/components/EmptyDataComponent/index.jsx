@@ -12,8 +12,8 @@ const EmptyDataComponent = ({ title = "No data", isVisible, columnsCount }) => {
   console.log("IS VISIBLE", isVisible)
 
   return (
-    <tr>
-      <td colSpan={columnsCount}>
+    <tr >
+      <td colSpan={columnsCount} style={{ border: 'none' }} >
         <div className="EmptyDataComponent">
           <div className="block">
             <div className="icon">

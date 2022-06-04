@@ -1,7 +1,6 @@
 import { Delete } from "@mui/icons-material"
 import { get } from "@ngard/tiny-get"
 import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import CreateButton from "../../../components/Buttons/CreateButton"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
@@ -17,11 +16,11 @@ import FormCard from "../../../components/FormCard"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
 import { pageToOffset } from "../../../utils/pageToOffset"
+import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal"
 import RelationCreateModal from "./RelationCreateModal"
 
 const RelationSection = ({ relation }) => {
   const { tableSlug, id } = useParams()
-  const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const [tableLoader, setTableLoader] = useState(true)
@@ -30,21 +29,24 @@ const RelationSection = ({ relation }) => {
   const [pageCount, setPageCount] = useState(1)
   const [columns, setColumns] = useState([])
   const [modalVisible, setModalVisible] = useState(false)
-
+  
   const getAllData = async () => {
     setTableLoader(true)
     try {
       const { data } = await constructorObjectService.getList(
         relation.relatedTable?.slug,
         {
-          data: { offset: pageToOffset(currentPage, 5), limit: 5, [`${tableSlug}_id`]: id },
+          data: { offset: pageToOffset(currentPage, 5), limit: 5, [`${tableSlug}_${relation.type === 'Many2Many' ? 'ids' : 'id'}`]: id },
         }
       )
       
       const pageCount = Math.ceil(data.count / 10)
 
-      setTableData(objectToArray(data.response ?? {}))
-      setPageCount(isNaN(pageCount) ? 1 : pageCount)
+      if(id) {
+        setTableData(objectToArray(data.response ?? {}))
+        setPageCount(isNaN(pageCount) ? 1 : pageCount)
+      }
+     
       setColumns(data.fields ?? [])
       // dispatch(
       //   tableColumnActions.setList({
@@ -57,10 +59,25 @@ const RelationSection = ({ relation }) => {
     }
   }
 
-  const deleteHandler = async (id) => {
+  const deleteHandler = async (elementId) => {
     setTableLoader(true)
     try {
-      await constructorObjectService.delete(relation.relatedTable?.slug, id)
+
+      if(relation.type === 'Many2Many') {
+
+        const data = {
+          id_from: id,
+          id_to: [elementId],
+          table_from: tableSlug,
+          table_to: relation.relatedTable?.slug,
+        }
+
+        await constructorObjectService.deleteManyToMany(data)
+
+      } else {
+        await constructorObjectService.delete(relation.relatedTable?.slug, elementId)
+      }
+
       getAllData()
     } catch {
       setTableLoader(false)
@@ -77,19 +94,28 @@ const RelationSection = ({ relation }) => {
 
   return (
     <>
-      {modalVisible && (
+      {modalVisible && relation.type !== 'Many2Many' && (
         <RelationCreateModal
           table={relation.relatedTable}
           closeModal={() => setModalVisible(false)}
           onCreate={getAllData}
-          
         />
       )}
+      {
+        modalVisible && relation.type === 'Many2Many' && (
+          <ManyToManyRelationCreateModal
+            table={relation.relatedTable}
+            closeModal={() => setModalVisible(false)}
+            onCreate={getAllData}
+          />
+        )
+      }
       <FormCard
+        icon={relation.relatedTable?.icon}
         title={relation.relatedTable?.label}
         maxWidth="100%"
         className="p-1"
-        extra={<CreateButton onClick={() => setModalVisible(true)} />}
+        extra={<CreateButton disabled={!id} onClick={() => setModalVisible(true)} />}
       >
         <CTable
           removableHeight={false}

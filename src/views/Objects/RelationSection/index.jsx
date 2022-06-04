@@ -19,7 +19,7 @@ import { pageToOffset } from "../../../utils/pageToOffset"
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal"
 import RelationCreateModal from "./RelationCreateModal"
 
-const RelationSection = ({ relation, control }) => {
+const RelationSection = ({ relation }) => {
   const { tableSlug, id } = useParams()
   const navigate = useNavigate()
 
@@ -111,6 +111,7 @@ const RelationSection = ({ relation, control }) => {
         )
       }
       <FormCard
+        icon={relation.relatedTable?.icon}
         title={relation.relatedTable?.label}
         maxWidth="100%"
         className="p-1"

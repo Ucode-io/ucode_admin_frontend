@@ -5,6 +5,7 @@ import { authReducer } from "./auth/auth.slice";
 import storage from "redux-persist/lib/storage"
 import { constructorTableReducer } from "./constructorTable/constructorTable.slice";
 import { tableColumnReducer } from "./tableColumn/tableColumn.slice";
+import { tabRouteReducer } from "./tabRoute/tabRoute.slice";
 
 
 const authPersistConfig = {
@@ -22,10 +23,16 @@ const tableColumnTablePersistConfig = {
   storage,
 }
 
+const tabRoutePersistConfig = {
+  key: "tabRoute",
+  storage,
+}
+
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   constructorTable: persistReducer(constructorTablePersistConfig, constructorTableReducer),
   tableColumn: persistReducer(tableColumnTablePersistConfig, tableColumnReducer),
+  tabRoute: persistReducer(tabRoutePersistConfig, tabRouteReducer),
   alert: alertReducer,
 })
 

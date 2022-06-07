@@ -29,24 +29,29 @@ const RelationSection = ({ relation }) => {
   const [pageCount, setPageCount] = useState(1)
   const [columns, setColumns] = useState([])
   const [modalVisible, setModalVisible] = useState(false)
-  
+
   const getAllData = async () => {
     setTableLoader(true)
     try {
       const { data } = await constructorObjectService.getList(
         relation.relatedTable?.slug,
         {
-          data: { offset: pageToOffset(currentPage, 5), limit: 5, [`${tableSlug}_${relation.type === 'Many2Many' ? 'ids' : 'id'}`]: id },
+          data: {
+            offset: pageToOffset(currentPage, 5),
+            limit: 5,
+            [`${tableSlug}_${relation.type === "Many2Many" ? "ids" : "id"}`]:
+              id,
+          },
         }
       )
-      
+
       const pageCount = Math.ceil(data.count / 10)
 
-      if(id) {
+      if (id) {
         setTableData(objectToArray(data.response ?? {}))
         setPageCount(isNaN(pageCount) ? 1 : pageCount)
       }
-     
+
       setColumns(data.fields ?? [])
       // dispatch(
       //   tableColumnActions.setList({
@@ -62,9 +67,7 @@ const RelationSection = ({ relation }) => {
   const deleteHandler = async (elementId) => {
     setTableLoader(true)
     try {
-
-      if(relation.type === 'Many2Many') {
-
+      if (relation.type === "Many2Many") {
         const data = {
           id_from: id,
           id_to: [elementId],
@@ -73,9 +76,11 @@ const RelationSection = ({ relation }) => {
         }
 
         await constructorObjectService.deleteManyToMany(data)
-
       } else {
-        await constructorObjectService.delete(relation.relatedTable?.slug, elementId)
+        await constructorObjectService.delete(
+          relation.relatedTable?.slug,
+          elementId
+        )
       }
 
       getAllData()
@@ -94,28 +99,28 @@ const RelationSection = ({ relation }) => {
 
   return (
     <>
-      {modalVisible && relation.type !== 'Many2Many' && (
+      {modalVisible && relation.type !== "Many2Many" && (
         <RelationCreateModal
           table={relation.relatedTable}
           closeModal={() => setModalVisible(false)}
           onCreate={getAllData}
         />
       )}
-      {
-        modalVisible && relation.type === 'Many2Many' && (
-          <ManyToManyRelationCreateModal
-            table={relation.relatedTable}
-            closeModal={() => setModalVisible(false)}
-            onCreate={getAllData}
-          />
-        )
-      }
+      {modalVisible && relation.type === "Many2Many" && (
+        <ManyToManyRelationCreateModal
+          table={relation.relatedTable}
+          closeModal={() => setModalVisible(false)}
+          onCreate={getAllData}
+        />
+      )}
       <FormCard
         icon={relation.relatedTable?.icon}
         title={relation.relatedTable?.label}
         maxWidth="100%"
         className="p-1"
-        extra={<CreateButton disabled={!id} onClick={() => setModalVisible(true)} />}
+        extra={
+          <CreateButton disabled={!id} onClick={() => setModalVisible(true)} />
+        }
       >
         <CTable
           removableHeight={false}
@@ -148,8 +153,8 @@ const RelationSection = ({ relation }) => {
                 {columns.map((field) => (
                   <CTableCell key={field.id} className="text-nowrap">
                     <CellElementGenerator
-                      type={field.type}
-                      value={get(row, field.slug, "")}
+                      field={field}
+                      row={row}
                     />
                   </CTableCell>
                 ))}

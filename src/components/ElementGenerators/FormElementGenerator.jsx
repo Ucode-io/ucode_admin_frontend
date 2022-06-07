@@ -11,7 +11,7 @@ import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 import RelationFormElement from "./RelationFormElement"
 
-const FormElementGenerator = ({ field = {}, control, ...props }) => {
+const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
 
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
@@ -31,8 +31,6 @@ const FormElementGenerator = ({ field = {}, control, ...props }) => {
     return (
       <RelationFormElement control={control} field={field} {...props} />
     )
-
-  
 
   switch (field.type) {
     case "SINGLE_LINE":

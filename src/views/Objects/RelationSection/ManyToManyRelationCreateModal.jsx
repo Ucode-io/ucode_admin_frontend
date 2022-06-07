@@ -119,7 +119,7 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
               key={row.guid}
               // onClick={() => navigateToEditPage(row.guid)}
             >
-              <CTableCell>
+              <CTableCell style={{ padding: '0 16px' }} >
                 <Checkbox
                   onChange={(e) => onCheck(e, row.guid)}
                   checked={checkedElements.includes(row.guid)}
@@ -129,8 +129,8 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
               {fields.map((field) => (
                 <CTableCell key={field.id} className="text-nowrap">
                   <CellElementGenerator
-                    type={field.type}
-                    value={get(row, field.slug, "")}
+                    row={row}
+                    field={field}
                   />
                 </CTableCell>
               ))}

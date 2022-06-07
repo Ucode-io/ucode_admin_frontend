@@ -129,8 +129,8 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
               {fields.map((field) => (
                 <CTableCell key={field.id} className="text-nowrap">
                   <CellElementGenerator
-                    type={field.type}
-                    value={get(row, field.slug, "")}
+                    row={row}
+                    field={field}
                   />
                 </CTableCell>
               ))}

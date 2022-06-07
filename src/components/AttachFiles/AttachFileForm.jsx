@@ -1,5 +1,5 @@
 import AttachmentIcon from "@mui/icons-material/Attachment"
-import { format } from "date-fns/esm"
+import { format } from "date-fns"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import fileService from "../../services/fileService"

@@ -2,12 +2,9 @@ import { get } from "@ngard/tiny-get"
 import { format } from "date-fns"
 import { memo, useMemo } from "react"
 import LogoDisplay from "../LogoDisplay"
+import { Offscreen } from "react"
 
 const CellElementGenerator = ({ field = {}, row }) => {
-
-
-  
-
   const value = useMemo(() => {
 
     if(!field.id?.includes("#")) return get(row, field.slug, "")
@@ -15,7 +12,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
     const tableSlug = field.id.split("#")[0]
 
     const result = field.attributes?.map(viewField => get(row, `${tableSlug}.${viewField.slug}`, "")) ?? ""
-    
+     
     return result
 
   }, [row, field])

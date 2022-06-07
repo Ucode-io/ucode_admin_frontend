@@ -1,6 +1,6 @@
 import { get } from "@ngard/tiny-get"
 import { add, differenceInDays, isValid, startOfWeek } from "date-fns"
-import { endOfWeek, format } from "date-fns/esm"
+import { endOfWeek, format } from "date-fns"
 import { useEffect, useMemo, useState } from "react"
 import CRangePicker from "../../../components/DatePickers/CRangePicker"
 import FiltersBlock from "../../../components/FiltersBlock"

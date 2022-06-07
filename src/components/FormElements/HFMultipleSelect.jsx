@@ -8,8 +8,9 @@ import {
   OutlinedInput,
   Select,
 } from "@mui/material"
-import { useId } from "react"
+import { useId, useMemo } from "react"
 import { Controller } from "react-hook-form"
+import { listToMap } from "../../utils/listToMap"
 import styles from "./style.module.scss"
 
 const ITEM_HEIGHT = 48
@@ -35,6 +36,11 @@ const HFMultipleSelect = ({
   rules = {},
   ...props
 }) => {
+
+  const optionsMap = useMemo(() => {
+    return listToMap(options, 'value')
+  }, [options])
+
   const id = useId()
 
   return (
@@ -65,7 +71,10 @@ const HFMultipleSelect = ({
                 id={`multiselect-${id}`}
               />
             }
+            
             renderValue={(selected) => {
+
+
               if (!selected?.length) {
                 return <span className={styles.placeholder} >{placeholder}</span>
               }
@@ -74,7 +83,7 @@ const HFMultipleSelect = ({
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                   {selected?.map((value) => (
                     <div key={value} className={styles.tag}>
-                      {value}
+                      { optionsMap[value]?.label ?? value }
                     </div>
                   ))}
                 </Box>

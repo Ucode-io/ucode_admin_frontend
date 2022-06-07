@@ -17,6 +17,7 @@ import MainInfo from "./MainInfo"
 import Relations from "./Relations"
 import constructorRelationService from "../../../../services/constructorRelationService"
 import { computeSections, computeSectionsOnSubmit } from "../utils"
+import { addOrderNumberToSections } from "../../../../utils/sectionsOrderNumber"
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
@@ -74,9 +75,7 @@ const ConstructorTablesFormPage = () => {
       const relationsWithRelatedTableSlug = relations.map((relation) => ({
         ...relation,
         relatedTableSlug:
-          relation.table_to?.slug === slug
-            ? 'table_from'
-            : 'table_to',
+          relation.table_to?.slug === slug ? "table_from" : "table_to",
       }))
 
       const layoutRelations = []
@@ -90,37 +89,43 @@ const ConstructorTablesFormPage = () => {
           layoutRelations.push(relation)
         else tableRelations.push(relation)
       })
+      const layoutRelationsFields = layoutRelations.map((relation) => ({
+        id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
+        attributes: {
+          fields: relation.view_fields ?? [],
+        },
+        label: relation[relation.relatedTableSlug]?.label,
+      }))
 
-      const actions = layoutRelations.map(
-        (relation) =>
-          new Promise((resolve, reject) =>
-            constructorFieldService
-              .getList({ table_slug: relation[relation.relatedTableSlug]?.slug })
-              .then((res) => {
-                const computedFields =
-                  res.fields?.map((field) => ({
-                    ...field,
-                    table_slug: relation[relation.relatedTableSlug]?.slug,
-                    id: `${relation[relation.relatedTableSlug]?.slug}#${field.id}`
-                  })) ?? []
-                  
-                const computedRelation = {
-                  ...relation,
-                  fields: computedFields,
-                }
+      // const actions = layoutRelations.map(
+      //   (relation) =>
+      //     new Promise((resolve, reject) =>
+      //       constructorFieldService
+      //         .getList({ table_slug: relation[relation.relatedTableSlug]?.slug })
+      //         .then((res) => {
+      //           const computedFields =
+      //             res.fields?.map((field) => ({
+      //               ...field,
+      //               table_slug: relation[relation.relatedTableSlug]?.slug,
+      //               id: `${relation[relation.relatedTableSlug]?.slug}#${field.id}`
+      //             })) ?? []
 
-                resolve(computedRelation)
-              })
-              .catch((err) => {
-                reject(err)
-              })
-          )
-      )
+      //           const computedRelation = {
+      //             ...relation,
+      //             fields: computedFields,
+      //           }
 
-      const layoutRelationsWithFields = await Promise.all(actions)
+      //           resolve(computedRelation)
+      //         })
+      //         .catch((err) => {
+      //           reject(err)
+      //         })
+      //     )
+      // )
+      // const layoutRelationsWithFields = await Promise.all(actions)
 
       mainForm.setValue("relations", relations)
-      mainForm.setValue("layoutRelations", layoutRelationsWithFields)
+      mainForm.setValue("layoutRelations", layoutRelationsFields)
       mainForm.setValue("tableRelations", tableRelations)
 
       resolve()
@@ -144,7 +149,7 @@ const ConstructorTablesFormPage = () => {
     const updateTableData = constructorTableService.update(data)
 
     const updateSectionData = constructorSectionService.update({
-      sections: data.sections ?? [],
+      sections: addOrderNumberToSections(data.sections),
       table_slug: data.slug,
       table_id: id,
     })

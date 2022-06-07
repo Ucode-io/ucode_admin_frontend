@@ -23,14 +23,19 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
     return fields?.filter((field) => !usedFields.includes(field.id))
   }, [usedFields, fields])
   
+  const unusedRelations = useMemo(() => {
+    return relations?.filter((relation) => !usedFields.includes(relation.id))
+  })
 
   const computedRelations = useMemo(() => {
-    return relations.map((relation) => ({
-      ...relation,
-      fields: relation.fields?.filter(
-        (field) => !usedFields.includes(field.id)
-      ) ?? [],
-    })) ?? []
+    return (
+      relations.map((relation) => ({
+        ...relation,
+        fields:
+          relation.fields?.filter((field) => !usedFields.includes(field.id)) ??
+          [],
+      })) ?? []
+    )
   }, [usedFields, relations])
 
   const onDrop = (dropResult, colNumber) => {
@@ -71,23 +76,34 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
         </div>
       </Card>
 
-      {computedRelations?.map((relation) => (
-        <Card className={styles.fieldCard}>
-          <div className={styles.fieldCardHeader}>
-            <Typography variant="h4">{relation[relation.relatedTableSlug]?.label}</Typography>
-          </div>
+      <Card className={styles.fieldCard}>
+        <div className={styles.fieldCardHeader}>
+          <Typography variant="h4">Relation fields</Typography>
+        </div>
 
-          <div className={styles.fieldsWrapperBlock}>
-            <Container
-              groupName="1"
-              onDrop={onDrop}
-              dropPlaceholder={{ className: "drag-row-drop-preview" }}
-              getChildPayload={(i) => ({
-                ...relation.fields[i],
-                field_name: relation.fields[i]?.label,
-              })}
-            >
-              {relation.fields?.map((field, index) => (
+        <div className={styles.fieldsWrapperBlock}>
+          <Container
+            groupName="1"
+            onDrop={onDrop}
+            dropPlaceholder={{ className: "drag-row-drop-preview" }}
+            getChildPayload={(i) => ({
+              ...unusedRelations[i],
+              field_name: unusedRelations[i]?.label,
+            })}
+          >
+            {unusedRelations?.map((relation) => (
+              <Draggable key={relation.id} style={{ overflow: "visible" }}>
+                <div className={styles.sectionFieldRow}>
+                  <FormElementGenerator
+                    field={relation}
+                    control={layoutForm.control}
+                    disabledHelperText
+                  />
+                </div>
+              </Draggable>
+            ))}
+
+            {/* {relation.fields?.map((field, index) => (
                 <Draggable key={field.id} style={{ overflow: "visible" }}>
                   <div className={styles.sectionFieldRow}>
                     <FormElementGenerator
@@ -97,11 +113,10 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
                     />
                   </div>
                 </Draggable>
-              ))}
-            </Container>
-          </div>
-        </Card>
-      ))}
+              ))} */}
+          </Container>
+        </div>
+      </Card>
     </div>
   )
 }

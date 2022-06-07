@@ -55,6 +55,8 @@ const Section = ({
     const { remove } = sectionFields
     remove(index)
   }
+  
+  console.log("sectionFields ===>", sectionFields)
 
   return (
     <Card className={styles.sectionCard}>

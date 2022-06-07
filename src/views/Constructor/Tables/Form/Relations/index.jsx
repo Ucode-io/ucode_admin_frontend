@@ -1,27 +1,25 @@
-import { Delete, Edit } from "@mui/icons-material"
-import { useState } from "react"
+import { Add, Delete, Edit } from "@mui/icons-material"
+import { useMemo, useState } from "react"
 import { useFieldArray } from "react-hook-form"
 import { useParams } from "react-router-dom"
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
 import {
-  CTable,
-  CTableBody,
   CTableCell,
   CTableRow,
 } from "../../../../../components/CTable"
+import DataTable from "../../../../../components/DataTable"
 import TableCard from "../../../../../components/TableCard"
 import constructorRelationService from "../../../../../services/constructorRelationService"
 import { generateGUID } from "../../../../../utils/generateID"
 import RelationCreateForm from "./RelationCreateForm"
+import styles from "../Fields/style.module.scss"
 
 const Relations = ({ mainForm, getRelationFields }) => {
-  const [createFormVisible, setCreateFormVisible] = useState(false)
+  const [formLoader, setFormLoader] = useState(false)
+  const [drawerState, setDrawerState] = useState(null)
   const [loader, setLoader] = useState(false)
 
-  const {
-    fields: relations,
-    update,
-  } = useFieldArray({
+  const { fields: relations, update } = useFieldArray({
     control: mainForm.control,
     name: "relations",
     keyName: "key",
@@ -34,7 +32,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
 
     await getRelationFields()
 
-    setCreateFormVisible(false)
+    setDrawerState(null)
     setLoader(false)
   }
 
@@ -43,15 +41,16 @@ const Relations = ({ mainForm, getRelationFields }) => {
       ...field,
       id: generateGUID(),
     }
-    
+
     if (!id) {
       updateRelations()
-      setCreateFormVisible(false)
+      setDrawerState(null)
     } else {
+      setFormLoader(true)
       constructorRelationService.create(data).then((res) => {
         updateRelations(res)
-        setCreateFormVisible(false)
-      })
+        setDrawerState(null)
+      }).finally(() => setFormLoader(false))
     }
   }
 
@@ -59,77 +58,94 @@ const Relations = ({ mainForm, getRelationFields }) => {
     if (!id) {
       updateRelations()
     } else {
+      setFormLoader(true)
       constructorRelationService.update(field).then((res) => {
         updateRelations()
-      })
+      }).finally(() => setFormLoader(false))
     }
   }
 
   const openEditForm = (field, index) => {
-    update(index, {
-      ...field,
-      editable: true,
-    })
+    setDrawerState(field)
+    // update(index, {
+    //   ...field,
+    //   editable: true,
+    // })
   }
 
   const deleteField = (field, index) => {
     if (!id) updateRelations()
     else {
-      constructorRelationService.delete(field.id).then((res) => updateRelations())
+      constructorRelationService
+        .delete(field.id)
+        .then((res) => updateRelations())
     }
   }
 
+  const onFormSubmit = (values) => {
+    if (drawerState === "CREATE") {
+      createField(values)
+    } else {
+      updateField(values)
+    }
+  }
+
+  const columns = useMemo(
+    () => [
+      {
+        id: 1,
+        label: "Table from",
+        slug: "table_from.label",
+      },
+      {
+        id: 2,
+        label: "Table to",
+        slug: "table_to.label",
+      },
+      {
+        id: 3,
+        label: "Relation type",
+        slug: "type",
+      },
+    ],
+    []
+  )
+
   return (
     <TableCard>
-      <CTable disablePagination removableHeight={false}>
-        <CTableRow>
-          <CTableCell width="33%">Table from</CTableCell>
-          <CTableCell width="33%">Table to</CTableCell>
-          <CTableCell width="33%">Relation type</CTableCell>
-          <CTableCell width={10}></CTableCell>
-        </CTableRow>
+      <DataTable
+        data={relations}
+        removableHeight={false}
+        columns={columns}
+        disablePagination
+        loader={loader}
+        onDeleteClick={deleteField}
+        onEditClick={openEditForm}
+        additionalRow={
+          <CTableRow>
+            <CTableCell colSpan={columns.length + 1}>
+              <div
+                className={styles.createButton}
+                onClick={() => setDrawerState("CREATE")}
+              >
+                <Add color="primary" />
+                <p>Добавить</p>
+              </div>
+            </CTableCell>
+          </CTableRow>
+        }
+      />
 
-        <CTableBody loader={loader} columnsCount={4} dataLength={1}>
-          {relations?.map((relation, index) =>
-            !relation.editable ? (
-              <CTableRow key={relation.id}>
-                <CTableCell>{relation.table_from.slug}</CTableCell>
-                <CTableCell>{relation.table_to.slug}</CTableCell>
-                <CTableCell>{relation.type}</CTableCell>
-                <CTableCell>
-                  <div className="flex">
-                    <RectangleIconButton
-                      color="success"
-                      className="mr-1"
-                      onClick={() => openEditForm(relation, index)}
-                    >
-                      <Edit color="success" />
-                    </RectangleIconButton>
-                    <RectangleIconButton
-                      color="error"
-                      onClick={() => deleteField(relation, index)}
-                    >
-                      <Delete color="error" />
-                    </RectangleIconButton>
-                  </div>
-                </CTableCell>
-              </CTableRow>
-            ) : (
-              <RelationCreateForm
-                formIsVisible={true}
-                onSubmit={(relation) => updateField(relation, index)}
-                initialValues={relation}
-              />
-            )
-          )}
-
-          <RelationCreateForm
-            formIsVisible={createFormVisible}
-            setFormIsVisible={setCreateFormVisible}
-            onSubmit={createField}
-          />
-        </CTableBody>
-      </CTable>
+      {
+        <RelationCreateForm
+          open={drawerState}
+          initialValues={drawerState}
+          formIsVisible={drawerState}
+          closeDrawer={() => setDrawerState(null)}
+          onSubmit={onFormSubmit}
+          isLoading={formLoader}
+        />
+      }
     </TableCard>
   )
 }

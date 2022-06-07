@@ -1,5 +1,5 @@
 import { get } from "@ngard/tiny-get"
-import { add, differenceInDays, startOfWeek } from "date-fns"
+import { add, differenceInDays, isValid, startOfWeek } from "date-fns"
 import { endOfWeek, format } from "date-fns/esm"
 import { useEffect, useMemo, useState } from "react"
 import CRangePicker from "../../../components/DatePickers/CRangePicker"
@@ -48,9 +48,10 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
     }
 
     data.forEach((el) => {
-      const date = format(new Date(get(el, startTimeStampSlug)), "dd.MM.yyyy")
-      const startTime = new Date(get(el, startTimeStampSlug))
-      const endTime = new Date(get(el, endTimeStampSlug))
+
+      const date = isValid(new Date(get(el, startTimeStampSlug))) && format(new Date(get(el, startTimeStampSlug)), "dd.MM.yyyy")
+      const startTime = isValid(new Date(get(el, startTimeStampSlug))) && new Date(get(el, startTimeStampSlug))
+      const endTime = isValid(new Date(get(el, endTimeStampSlug))) && new Date(get(el, endTimeStampSlug))
       const mainField = get(el, view.main_field)
 
       const computedEl = {

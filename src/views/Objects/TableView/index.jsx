@@ -7,7 +7,6 @@ import {
 } from "../../../components/CTable"
 import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator"
 import FilterGenerator from "../components/FilterGenerator"
-import { get } from "@ngard/tiny-get"
 import FiltersBlock from "../../../components/FiltersBlock"
 import ColumnsSelector from "../components/ColumnsSelector"
 import TableCard from "../../../components/TableCard"
@@ -139,8 +138,8 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
                 {computedColumns.map((field) => (
                   <CTableCell key={field.id} className="text-nowrap">
                     <CellElementGenerator
-                      type={field.type}
-                      value={get(row, field.slug, "")}
+                      field={field}
+                      row={row}
                     />
                   </CTableCell>
                 ))}

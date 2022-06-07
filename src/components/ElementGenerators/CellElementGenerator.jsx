@@ -1,9 +1,26 @@
+import { get } from "@ngard/tiny-get"
 import { format } from "date-fns"
-import { memo } from "react"
+import { memo, useMemo } from "react"
 import LogoDisplay from "../LogoDisplay"
 
-const CellElementGenerator = ({ type, value }) => {
-  switch (type) {
+const CellElementGenerator = ({ field = {}, row }) => {
+
+
+  
+
+  const value = useMemo(() => {
+
+    if(!field.id?.includes("#")) return get(row, field.slug, "")
+
+    const tableSlug = field.id.split("#")[0]
+
+    const result = field.attributes?.map(viewField => get(row, `${tableSlug}.${viewField.slug}`, "")) ?? ""
+    
+    return result
+
+  }, [row, field])
+
+  switch (field.type) {
     case "DATE":
       return (
         <span className="text-nowrap">

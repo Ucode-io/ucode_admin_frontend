@@ -153,8 +153,8 @@ const RelationSection = ({ relation }) => {
                 {columns.map((field) => (
                   <CTableCell key={field.id} className="text-nowrap">
                     <CellElementGenerator
-                      type={field.type}
-                      value={get(row, field.slug, "")}
+                      field={field}
+                      row={row}
                     />
                   </CTableCell>
                 ))}

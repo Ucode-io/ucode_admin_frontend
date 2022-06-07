@@ -1,6 +1,8 @@
 
 
 export const addOrderNumberToSections = (sections = []) => {
+  return sections
+
   const sectionsWithOrderNumber = sections.map((section, index) => ({
     ...section,
     order_number: index + 1,

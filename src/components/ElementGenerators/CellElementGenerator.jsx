@@ -2,11 +2,13 @@ import { get } from "@ngard/tiny-get"
 import { format } from "date-fns"
 import { memo, useMemo } from "react"
 import LogoDisplay from "../LogoDisplay"
-import { Offscreen } from "react"
 
 const CellElementGenerator = ({ field = {}, row }) => {
+  console.log("FIELD ===>", field, row)
+
+
   const value = useMemo(() => {
-    if (!field.id?.includes("#")) return get(row, field.slug, "")
+    if (typeof(field.id) !== 'string' || !field.id?.includes("#")) return get(row, field.slug, "")
 
     const tableSlug = field.id.split("#")[0]
 

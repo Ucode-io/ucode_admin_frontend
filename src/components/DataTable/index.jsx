@@ -54,8 +54,8 @@ const DataTable = ({
             {columns.map((column, index) => (
               <CTableCell key={column.id} className="text-nowrap">
                 <CellElementGenerator
-                  type={column.type}
-                  value={get(row, column.slug, "")}
+                  field={column}
+                  row={row}
                 />
               </CTableCell>
             ))}

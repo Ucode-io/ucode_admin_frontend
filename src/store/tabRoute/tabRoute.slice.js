@@ -6,9 +6,16 @@ export const {
 } = createSlice({
   name: "tabRoute",
   initialState: {
-    list: [],
+    list: [
+      {
+        id: 123,
+        history: [
+          {
+            
+          }
+        ]
+      }
+    ],
   },
-  reducers: {
-     
-  },
+  reducers: {},
 })

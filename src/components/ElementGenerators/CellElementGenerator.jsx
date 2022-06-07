@@ -6,15 +6,16 @@ import { Offscreen } from "react"
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
-
-    if(!field.id?.includes("#")) return get(row, field.slug, "")
+    if (!field.id?.includes("#")) return get(row, field.slug, "")
 
     const tableSlug = field.id.split("#")[0]
 
-    const result = field.attributes?.map(viewField => get(row, `${tableSlug}.${viewField.slug}`, "")) ?? ""
-     
-    return result
+    const result =
+      field.attributes
+        ?.map((viewField) => get(row, `${tableSlug}.${viewField.slug}`, ""))
+        .join(" ") ?? ""
 
+    return result
   }, [row, field])
 
   switch (field.type) {

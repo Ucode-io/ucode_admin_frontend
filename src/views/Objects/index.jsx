@@ -37,7 +37,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   }, [columns, computedTableSlug])
 
   const navigateToCreatePage = () => {
-    navigateToForm(tableSlug)
+    navigateToForm(computedTableSlug)
   }
   
   return (

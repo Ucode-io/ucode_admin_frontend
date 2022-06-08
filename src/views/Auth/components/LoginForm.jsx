@@ -26,7 +26,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
         </div>
         <div className={classes.formRow}>
           <p className={classes.label}>Пароль</p>
-          <TextField value={password} onChange={e => setPassword(e.target.value)} fullWidth placeholder="Введите пароль" />
+          <TextField type="password" value={password} onChange={e => setPassword(e.target.value)} fullWidth placeholder="Введите пароль" />
         </div>
       </div>
 

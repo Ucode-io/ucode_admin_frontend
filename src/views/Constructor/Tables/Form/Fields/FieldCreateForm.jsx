@@ -1,26 +1,33 @@
 import { useEffect, useMemo, useState } from "react"
-import { CTableCell, CTableRow } from "../../../../../components/CTable"
-import { Add, Save, Settings } from "@mui/icons-material"
-import styles from "./style.module.scss"
 import { useForm } from "react-hook-form"
-import HFTextField from "../../../../../components/FormElements/HFTextField"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
-import { fieldTypes } from "../../../../../utils/constants/fieldTypes"
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
+import { useSelector } from "react-redux"
+import { relationTyes } from "../../../../../utils/constants/relationTypes"
+import DrawerCard from "../../../../../components/DrawerCard"
+import FRow from "../../../../../components/FormElements/FRow"
+import { useQuery } from "react-query"
+import constructorFieldService from "../../../../../services/constructorFieldService"
+import listToOptions from "../../../../../utils/listToOptions"
+import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect"
 import { useParams } from "react-router-dom"
+import HFTextField from "../../../../../components/FormElements/HFTextField"
+import { fieldTypes } from "../../../../../utils/constants/fieldTypes"
+import { Divider } from "@mui/material"
 import Attributes from "./Attributes"
 
 const FieldCreateForm = ({
   onSubmit,
-  formIsVisible,
-  setFormIsVisible,
+  closeDrawer,
   initialValues = {},
+  open,
+  isLoading = false,
 }) => {
   const { id } = useParams()
+  const { handleSubmit, control, reset, watch, getValues } = useForm()
 
-  const [attributesModalVisible, setAttributesModalVisible] = useState(false)
-
-  const { handleSubmit, control, reset, getValues, watch } = useForm()
+  const submitHandler = (values) => {
+    onSubmit(values)
+  }
 
   const computedFieldTypes = useMemo(() => {
     return fieldTypes.map((type) => ({
@@ -29,60 +36,49 @@ const FieldCreateForm = ({
     }))
   }, [])
 
-  const openAttributesModal = () => {
-    if(!getValues('type')) return
-    setAttributesModalVisible(true)
-  }
-
-  const closeAttributesModal = () => {
-    setAttributesModalVisible(false)
-  }
-
-  const submitHandler = (values) => {
-    onSubmit(values)
-  }
-
   useEffect(() => {
-    reset({
-      attributes: {},
-      default: "",
-      index: "string",
-      label: "",
-      required: false,
-      slug: "",
-      table_id: id,
-      type: "",
-      ...initialValues,
-    })
-  }, [formIsVisible])
-
-  if (!formIsVisible)
-    return (
-      <CTableRow>
-        <CTableCell colSpan={4}>
-          <div
-            className={styles.createButton}
-            onClick={() => setFormIsVisible(true)}
-          >
-            <Add color="primary" />
-            <p>Добавить</p>
-          </div>
-        </CTableCell>
-      </CTableRow>
-    )
+    if (initialValues !== "CREATE")
+      reset({
+        attributes: {},
+        default: "",
+        index: "string",
+        label: "",
+        required: false,
+        slug: "",
+        table_id: id,
+        type: "",
+        ...initialValues,
+      })
+    else
+      reset({
+        attributes: {},
+        default: "",
+        index: "string",
+        label: "",
+        required: false,
+        slug: "",
+        table_id: id,
+        type: "",
+      })
+    // reset({
+    //   table_from: initialValues?.table_from?.slug ?? "",
+    //   table_to: initialValues?.table_to?.slug ?? "",
+    //   type: initialValues?.type ?? "",
+    //   id: initialValues?.id ?? "",
+    //   view_fields: initialValues?.view_fields?.map(field => field.id) ?? [],
+    // })
+  }, [open])
 
   return (
-    <>
-      {attributesModalVisible && (
-        <Attributes
-          control={control}
-          getValues={getValues}
-          reset={reset}
-          closeModal={closeAttributesModal}
-        />
-      )}
-      <CTableRow>
-        <CTableCell>
+    <DrawerCard
+      title={initialValues === "CREATE" ? "Create field" : "Edit field"}
+      onClose={closeDrawer}
+      open={open}
+      onSaveButtonClick={handleSubmit(submitHandler)}
+      loader={isLoading}
+    >
+      <form onSubmit={handleSubmit(submitHandler)}>
+        <FRow label="Field Label" required>
           <HFTextField
             disabledHelperText
             fullWidth
@@ -92,8 +88,9 @@ const FieldCreateForm = ({
             autoFocus
             required
           />
-        </CTableCell>
-        <CTableCell>
+        </FRow>
+
+        <FRow label="Field SLUG" required>
           <HFTextField
             disabledHelperText
             fullWidth
@@ -102,8 +99,9 @@ const FieldCreateForm = ({
             placeholder="Field SLUG"
             required
           />
-        </CTableCell>
-        <CTableCell>
+        </FRow>
+
+        <FRow label="Field type" required>
           <HFSelect
             disabledHelperText
             name="type"
@@ -112,26 +110,22 @@ const FieldCreateForm = ({
             placeholder="Type"
             required
           />
-        </CTableCell>
-        <CTableCell>
-          <div className="flex">
-            <RectangleIconButton
-              color="success"
-              className="mr-1"
-              onClick={openAttributesModal}
-            >
-              <Settings color="success" />
-            </RectangleIconButton>
-            <RectangleIconButton
-              color="primary"
-              onClick={handleSubmit(submitHandler)}
-            >
-              <Save color="primary" />
-            </RectangleIconButton>
-          </div>
-        </CTableCell>
-      </CTableRow>
-    </>
+        </FRow>
+
+        <Divider style={{ margin: "20px 0" }} />
+
+        <Attributes control={control} watch={watch} />
+
+        {/* <FRow label="Fields">
+          <HFMultipleSelect
+            name="view_fields"
+            control={control}
+            options={relatedTableFields}
+            allowClear
+          />
+        </FRow> */}
+      </form>
+    </DrawerCard>
   )
 }
 

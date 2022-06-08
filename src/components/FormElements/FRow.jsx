@@ -1,7 +1,7 @@
 import "../FormElements-backup/style.scss"
 
 
-const FRow = ({ label, children, position="vertical", required }) => {
+const FRow = ({ label, children, position="vertical", required = false }) => {
   return (
     <div className={`FRow ${position}`} >
       <div className="label"> {required && <span className="requiredStart">*</span>} {label}:</div>

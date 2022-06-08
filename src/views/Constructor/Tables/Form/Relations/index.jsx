@@ -136,16 +136,16 @@ const Relations = ({ mainForm, getRelationFields }) => {
         }
       />
 
-      {
-        <RelationCreateForm
-          open={drawerState}
-          initialValues={drawerState}
-          formIsVisible={drawerState}
-          closeDrawer={() => setDrawerState(null)}
-          onSubmit={onFormSubmit}
-          isLoading={formLoader}
-        />
-      }
+      
+      <RelationCreateForm
+        open={drawerState}
+        initialValues={drawerState}
+        formIsVisible={drawerState}
+        closeDrawer={() => setDrawerState(null)}
+        onSubmit={onFormSubmit}
+        isLoading={formLoader}
+      />
+      
     </TableCard>
   )
 }

@@ -12,10 +12,7 @@ const NumberAttributes = ({ control, onClose, onSaveButtonClick }) => {
   })
 
   return (
-    <ModalCard title="Number properties" onClose={onClose} onSaveButtonClick={onSaveButtonClick}  >
-      <FRow label="Field label" required>
-        <HFTextField autoFocus fullWidth name="label" control={control} />
-      </FRow>
+    <>
       <FRow label="Placeholder">
         <HFTextField autoFocus fullWidth name="attributes.placeholder" control={control} />
       </FRow>
@@ -47,7 +44,7 @@ const NumberAttributes = ({ control, onClose, onSaveButtonClick }) => {
           <HFTextField fullWidth name="attributes.tooltipText" control={control} />
         </FRow>
       )}
-    </ModalCard>
+    </>
   )
 }
 

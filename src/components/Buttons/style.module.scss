@@ -47,6 +47,18 @@
     &:hover {
       border-color: colors.$primary;
     }
+
+    &.error {
+      color: colors.$error;
+      border-color: colors.$error;
+
+      &:hover {
+        border-color: colors.$error-hover;
+        color: colors.$error-hover;
+      }
+    }
+
+    
   }
 
   &.filtersButton {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import SaveButton from "../../components/Buttons/SaveButton"
 import Header from "../../components/Header"
 import PageFallback from "../../components/PageFallback"
@@ -12,10 +12,19 @@ import MainInfo from "./MainInfo"
 import constructorRelationService from "../../services/constructorRelationService"
 import RelationSection from "./RelationSection"
 import styles from "./style.module.scss"
+import Footer from "../../components/Footer"
+import useTabRouter from "../../hooks/useTabRouter"
+import PrimaryButton from "../../components/Buttons/PrimaryButton"
+import { Save } from "@mui/icons-material"
+import SecondaryButton from "../../components/Buttons/SecondaryButton"
+import { useQueryClient } from "react-query"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
   const navigate = useNavigate()
+  const { pathname, state = {} } = useLocation()
+  const { removeTab, navigateToForm } = useTabRouter()
+  const queryClient = useQueryClient()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
 
@@ -34,7 +43,7 @@ const ObjectsFormPage = () => {
       sections
         ?.map((section) => ({
           ...section,
-          fields: section.fields?.sort(sortByOrder) ?? []
+          fields: section.fields?.sort(sortByOrder) ?? [],
         }))
         .sort(sortByOrder) ?? []
     )
@@ -61,7 +70,7 @@ const ObjectsFormPage = () => {
         relations
           .filter(
             (relation) =>
-              relation.type === 'Many2Many' || 
+              relation.type === "Many2Many" ||
               (relation.type === "Many2One" &&
                 relation.table_to?.slug === tableSlug) ||
               (relation.type === "One2Many" &&
@@ -84,7 +93,6 @@ const ObjectsFormPage = () => {
 
   const getFields = async () => {
     try {
-
       const getRelations = constructorRelationService.getList({
         table_slug: tableSlug,
       })
@@ -93,7 +101,10 @@ const ObjectsFormPage = () => {
         table_slug: tableSlug,
       })
 
-      const [ {sections = []}, { relations = [] } ] = await Promise.all([getSections, getRelations])
+      const [{ sections = [] }, { relations = [] }] = await Promise.all([
+        getSections,
+        getRelations,
+      ])
 
       setSections(sections)
 
@@ -101,7 +112,7 @@ const ObjectsFormPage = () => {
         relations
           .filter(
             (relation) =>
-              relation.type === 'Many2Many' || 
+              relation.type === "Many2Many" ||
               (relation.type === "Many2One" &&
                 relation.table_to?.slug === tableSlug) ||
               (relation.type === "One2Many" &&
@@ -131,7 +142,10 @@ const ObjectsFormPage = () => {
 
     constructorObjectService
       .update(tableSlug, { data })
-      .then(() => navigate(-1))
+      .then(() => {
+        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
+        removeTab(pathname)
+      })
       .catch(() => setBtnLoader(false))
   }
 
@@ -140,7 +154,11 @@ const ObjectsFormPage = () => {
 
     constructorObjectService
       .create(tableSlug, { data })
-      .then((res) => navigate(`/object/${tableSlug}/${res.data?.data?.guid}`))
+      .then((res) => {
+        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
+        removeTab(pathname)
+        if(!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
+      })
       .catch(() => setBtnLoader(false))
   }
 
@@ -149,38 +167,37 @@ const ObjectsFormPage = () => {
     else create(data)
   }
 
-  const { handleSubmit, control, reset, getValues } = useForm()
+  const { handleSubmit, control, reset } = useForm({
+    defaultValues: state
+  })
 
   if (loader) return <PageFallback />
 
   return (
-    <div>
-      <Header
-        title={tableInfo.label}
-        backButtonLink={-1}
-        sticky
-        subtitle={
-          id
-            ? tableInfo.subtitle_field_slug
-              ? getValues(tableInfo.subtitle_field_slug)
-              : "Edit"
-            : "Create"
-        }
-        extra={
-          <SaveButton loading={btnLoader} onClick={handleSubmit(onSubmit)} />
-        }
-      ></Header>
+    <div className={styles.formPage} >
 
       <div className={styles.formArea}>
         <MainInfo control={control} computedSections={computedSections} />
 
         <div className={styles.secondaryCardSide}>
           {tableRelations?.map((relation) => (
-            <RelationSection key={relation.id} relation={relation} control={control} />
+            <RelationSection
+              key={relation.id}
+              relation={relation}
+              control={control}
+            />
           ))}
         </div>
       </div>
 
+      <Footer
+        extra={
+          <>
+          <SecondaryButton onClick={() => removeTab(pathname)} color="error" > Закрыть </SecondaryButton>
+          <PrimaryButton loader={btnLoader} onClick={handleSubmit(onSubmit)}  > <Save />  Сохранить </PrimaryButton>
+          </>
+        }
+      />
     </div>
   )
 }

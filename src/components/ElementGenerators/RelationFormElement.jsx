@@ -15,11 +15,14 @@ const RelationFormElement = ({
   fieldIndex,
   column,
   mainForm,
+  disabledHelperText,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
     return field.id.split("#")?.[0] ?? ""
   }, [field.id])
+
+
 
   // const { data: options } = useQuery(["GET_OBJECT_LIST", tableSlug], () => constructorObjectService.getList(tableSlug, { data: {} }), {
   //   select: ({data}) => {
@@ -43,6 +46,8 @@ const RelationFormElement = ({
               setValue={onChange}
               field={field}
               tableSlug={tableSlug}
+              error={error}
+              disabledHelperText={disabledHelperText}
             />
           )}
         />
@@ -52,7 +57,7 @@ const RelationFormElement = ({
   return (
     <Controller
       control={mainForm.control}
-      name={`sections[${sectionIndex}].column${column}.[${fieldIndex}].field_name`}
+      name={`sections[${sectionIndex}]fields.[${fieldIndex}].field_name`}
       defaultValue={field.label}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FEditableRow
@@ -70,6 +75,8 @@ const RelationFormElement = ({
                 setValue={onChange}
                 field={field}
                 tableSlug={tableSlug}
+                error={error}
+                disabledHelperText={disabledHelperText}
               />
             )}
           />
@@ -79,7 +86,7 @@ const RelationFormElement = ({
   )
 }
 
-const AutoCompleteElement = ({ field, value, tableSlug, setValue }) => {
+const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disabledHelperText }) => {
   const [loader, setLoader] = useState(false)
 
   const [options, setOptions] = useState([])
@@ -89,14 +96,18 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue }) => {
   const getOptionLabel = (option) => {
     let label = ""
 
+    // console.log('Elll ===>', field.attributes?.fields)
+
     field.attributes?.fields?.forEach((el) => {
       let value = ""
 
-      if (el.type === "DATE")
-        value = format(new Date(option[el.slug]), "dd.MM.yyyy")
-      else if (el.type === "DATE_TIME")
-        value = format(new Date(option[el.slug]), "dd.MM.yyyy HH:mm")
-      else value = option[el.slug]
+      console.log("EL ===>", el)
+
+      if (el?.type === "DATE")
+        value = format(new Date(option[el?.slug]), "dd.MM.yyyy")
+      else if (el?.type === "DATE_TIME")
+        value = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm")
+      else value = option[el?.slug]
 
       label += `${value ?? ""} `
     })
@@ -161,6 +172,8 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue }) => {
         <TextField
           {...params}
           size="small"
+          error={error}
+          helperText={!disabledHelperText && (error?.message ?? ' ')}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

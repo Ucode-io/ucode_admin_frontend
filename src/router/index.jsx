@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux"
 import { Navigate, Route, Routes } from "react-router-dom"
+import KeepAliveWrapper from "../components/KeepAliveWrapper"
 import ReloadWrapper from "../components/ReloadWrapper"
 import AuthLayout from "../layouts/AuthLayout"
 import MainLayout from "../layouts/MainLayout"
@@ -38,9 +39,13 @@ const Router = () => {
         
         
         <Route path="object/:tableSlug" element={<ReloadWrapper component={ObjectsPage} />} />
-        <Route path="object/:tableSlug/create" element={<ObjectsFormPage />} />
+       
+        {/* <Route path="object/:tableSlug/create" element={<ObjectsFormPage />} />
+        <Route path="object/:tableSlug/:id" element={<ReloadWrapper component={ObjectsFormPage} />} /> */}
 
-        <Route path="object/:tableSlug/:id" element={<ReloadWrapper component={ObjectsFormPage} />} />
+
+        <Route path="object/:tableSlug/create/:formId" element={<KeepAliveWrapper><ObjectsFormPage /></KeepAliveWrapper>} />
+        <Route path="object/:tableSlug/:id" element={<KeepAliveWrapper><ObjectsFormPage /></KeepAliveWrapper>} />
 
 
 

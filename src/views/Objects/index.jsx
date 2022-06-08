@@ -9,11 +9,13 @@ import { Add, CalendarToday, TableChart } from "@mui/icons-material"
 import TabButton from "../../components/Buttons/TabButton"
 import CalendarView from "./CalendartView"
 import ViewCreateModal from "./TableView/ViewCreateModal"
+import useTabRouter from "../../hooks/useTabRouter"
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
   const params = useParams()
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const { navigateToForm } = useTabRouter()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
   const columns = useSelector((state) => state.tableColumn.list)
@@ -35,7 +37,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   }, [columns, computedTableSlug])
 
   const navigateToCreatePage = () => {
-    navigate(`${pathname}/create`)
+    navigateToForm(tableSlug)
   }
   
   return (
@@ -71,6 +73,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
               computedColumns={computedColumns}
               setViews={setViews}
               isRelation={isRelation}
+              tableInfo={tableInfo}
             />
           </TabPanel>
 

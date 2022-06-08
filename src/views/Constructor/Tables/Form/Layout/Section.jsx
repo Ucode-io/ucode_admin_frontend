@@ -29,6 +29,8 @@ const Section = ({
   })
 
   const onDrop = (dropResult) => {
+
+
     const { fields, insert, move, remove } = sectionFields
 
     const result = applyDrag(fields, dropResult)
@@ -36,6 +38,8 @@ const Section = ({
     if (!result) return
 
     if (result.length > fields.length) {
+      console.log("DROP RESULT ----->", dropResult)
+
       insert(dropResult.addedIndex, { ...dropResult.payload })
     } else if (result.length < fields.length) {
       remove(dropResult.removedIndex)

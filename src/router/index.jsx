@@ -12,7 +12,7 @@ import ObjectsPage from "../views/Objects"
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage"
 
 const Router = () => {
-  const isAuth = useSelector((state) => state.auth.isAuth)
+  const isAuth = useSelector((state) => state.auth.isAuthorizated)
 
   if (!isAuth)
     return (

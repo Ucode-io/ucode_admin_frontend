@@ -24,15 +24,6 @@ const RelationFormElement = ({
 
 
 
-  // const { data: options } = useQuery(["GET_OBJECT_LIST", tableSlug], () => constructorObjectService.getList(tableSlug, { data: {} }), {
-  //   select: ({data}) => {
-  //     if(field.type === "DATE") data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy') })
-  //     if(field.type === "DATE_TIME") data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy HH:mm') })
-
-  //     return listToOptions(data.response, field.slug, "guid")
-  //   }
-  // })
-
   if (!isLayout)
     return (
       <FRow label={field.label} required={field.required}>
@@ -86,6 +77,10 @@ const RelationFormElement = ({
   )
 }
 
+
+
+
+
 const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disabledHelperText }) => {
   const [loader, setLoader] = useState(false)
 
@@ -95,8 +90,6 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
 
   const getOptionLabel = (option) => {
     let label = ""
-
-    // console.log('Elll ===>', field.attributes?.fields)
 
     field.attributes?.fields?.forEach((el) => {
       let value = ""
@@ -190,59 +183,3 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
 }
 
 export default RelationFormElement
-
-// const RelationFormElement = ({ control, field, isLayout, sectionIndex, fieldIndex, column, mainForm, ...props }) => {
-
-//   const tableSlug = useMemo(() => {
-//     return field.id.split("#")?.[0] ?? ""
-//   }, [field.id])
-
-//   const { data: options } = useQuery(["GET_OBJECT_LIST", tableSlug], () => constructorObjectService.getList(tableSlug, { data: {} }), {
-//     select: ({data}) => {
-//       if(field.type === "DATE") data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy') })
-//       if(field.type === "DATE_TIME") data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy HH:mm') })
-
-//       return listToOptions(data.response, field.slug, "guid")
-//     }
-//   })
-
-//   if (!isLayout)
-//     return (
-//       <FRow label={field.label} required={field.required}>
-//         <HFSelect
-//           control={control}
-//           name={`${tableSlug}_id`}
-//           width="100%"
-//           options={options}
-//           required={field.required}
-//           {...props}
-//         />
-//       </FRow>
-//     )
-
-//   return (
-//     <Controller
-//       control={mainForm.control}
-//       name={`sections[${sectionIndex}].column${column}.[${fieldIndex}].field_name`}
-//       defaultValue={field.label}
-//       render={({ field: { onChange, value }, fieldState: { error } }) => (
-//         <FEditableRow
-//           label={value}
-//           onLabelChange={onChange}
-//           required={field.required}
-//         >
-//           <HFSelect
-//             control={control}
-//             name={`${tableSlug}_id`}
-//             width="100%"
-//             // options={options}
-//             required={field.required}
-//             {...props}
-//           />
-//         </FEditableRow>
-//       )}
-//     ></Controller>
-//   )
-// }
-
-// export default RelationFormElement

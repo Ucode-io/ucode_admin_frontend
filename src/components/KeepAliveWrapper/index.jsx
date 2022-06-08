@@ -1,4 +1,4 @@
-import KeepAlive from "react-activation"
+import {KeepAlive} from "react-activation"
 import { useLocation } from "react-router-dom"
 
 const KeepAliveWrapper = ({ children }) => {

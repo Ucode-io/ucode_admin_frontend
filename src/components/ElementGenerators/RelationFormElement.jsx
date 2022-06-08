@@ -57,7 +57,7 @@ const RelationFormElement = ({
   return (
     <Controller
       control={mainForm.control}
-      name={`sections[${sectionIndex}]fields.[${fieldIndex}].field_name`}
+      name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FEditableRow

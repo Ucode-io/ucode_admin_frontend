@@ -104,7 +104,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo
       <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} />
       <TableCard>
         <CTable
-          removableHeight={240}
+          removableHeight={296}
           count={pageCount}
           page={currentPage}
           setCurrentPage={setCurrentPage}

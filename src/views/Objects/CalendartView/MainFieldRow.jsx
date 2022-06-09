@@ -3,15 +3,18 @@ import styles from "./style.module.scss"
 
 const MainFieldRow = ({ data }) => {
 
+  console.log("DATA ===>", data)
+
+
   return (
     <div className={styles.mainFieldRow}>
       <div className={styles.mainFieldNamesBlock}>
         <div>
-          Доктор <ArrowRight />{" "}
+          Доктор <ArrowRight />
         </div>
 
         <div>
-          Время <ArrowDropDown />{" "}
+          Время <ArrowDropDown />
         </div>
       </div>
 

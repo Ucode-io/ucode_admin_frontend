@@ -1,5 +1,5 @@
 import { get } from "@ngard/tiny-get"
-import { differenceInMinutes, format, setHours } from "date-fns"
+import { differenceInMinutes, format, setHours, setMinutes } from "date-fns"
 import { useMemo } from "react"
 import { getFieldLabel } from "../../../utils/getFieldLabel"
 import { timesList } from "../../../utils/timesList"
@@ -9,9 +9,12 @@ const ObjectColumn = ({ data = [], view }) => {
   const computedData = useMemo(() => {
     if (!data.length) return []
 
-    const calendarStartTime = setHours(data[0].startTime, 8)
+    const calendarStartTime = setMinutes(setHours(data[0].startTime, 8), 0)
 
     const result = data.map((el) => {
+
+      console.log('oooooo ===>', differenceInMinutes(el.startTime, calendarStartTime), el.startTime, calendarStartTime)
+
       const startPosition =
         Math.floor(differenceInMinutes(el.startTime, calendarStartTime) / 30) *
         40

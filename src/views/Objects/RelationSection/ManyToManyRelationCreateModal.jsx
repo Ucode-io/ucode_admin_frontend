@@ -93,7 +93,7 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
       <div className="flex align-center gap-2 mb-2" >
         <SearchInput style={{ flex: 1 }} autoFocus />
         <CreateButton title="Создать новый" onClick={() => {
-          navigateToForm(table.slug, "CREATE")
+          navigateToForm(table.slug, "CREATE", null, {})
           closeModal()
         }} />
       </div>

@@ -3,6 +3,7 @@ import { get } from "@ngard/tiny-get"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useParams } from "react-router-dom"
+import CreateButton from "../../../components/Buttons/CreateButton"
 import {
   CTable,
   CTableBody,
@@ -12,12 +13,16 @@ import {
 } from "../../../components/CTable"
 import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator"
 import LargeModalCard from "../../../components/LargeModalCard"
+import SearchInput from "../../../components/SearchInput"
+import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
 import { pageToOffset } from "../../../utils/pageToOffset"
+import styles from "./style.module.scss"
 
 const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
   const { tableSlug, id } = useParams()
+  const { navigateToForm } = useTabRouter()
 
   const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
@@ -85,6 +90,14 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
       onSaveButtonClick={onSubmit}
       onClose={closeModal}
     >
+      <div className="flex align-center gap-2 mb-2" >
+        <SearchInput style={{ flex: 1 }} autoFocus />
+        <CreateButton title="Создать новый" onClick={() => {
+          navigateToForm(table.slug, "CREATE")
+          closeModal()
+        }} />
+      </div>
+
       <CTable
         removableHeight={false}
         count={pageCount}
@@ -119,7 +132,7 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
               key={row.guid}
               // onClick={() => navigateToEditPage(row.guid)}
             >
-              <CTableCell style={{ padding: '0 16px' }} >
+              <CTableCell style={{ padding: "0 16px" }}>
                 <Checkbox
                   onChange={(e) => onCheck(e, row.guid)}
                   checked={checkedElements.includes(row.guid)}
@@ -128,10 +141,7 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
               <CTableCell>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
               {fields.map((field) => (
                 <CTableCell key={field.id} className="text-nowrap">
-                  <CellElementGenerator
-                    row={row}
-                    field={field}
-                  />
+                  <CellElementGenerator row={row} field={field} />
                 </CTableCell>
               ))}
 

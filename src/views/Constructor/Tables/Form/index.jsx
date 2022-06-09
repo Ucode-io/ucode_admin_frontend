@@ -77,7 +77,6 @@ const ConstructorTablesFormPage = () => {
 
       const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData])
 
-
       mainForm.setValue("fields", fields)
       
 

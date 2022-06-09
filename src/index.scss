@@ -113,6 +113,18 @@ html {
   display: flex;
 }
 
+.align-center {
+  align-items: center;
+}
+
+.gap-1 {
+  gap: 4px;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
 .p-1 {
   padding: 8px;
 }
@@ -121,12 +133,12 @@ html {
   padding: 16px
 }
 
-.mr-1 {
+.mb-1 {
   margin-right: 8px;
 } 
 
-.mb-1 {
-  margin-bottom: 8px;
+.mb-2 {
+  margin-bottom: 16px;
 } 
 
 .table-filter-cell {

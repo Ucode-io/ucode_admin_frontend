@@ -78,7 +78,6 @@ const RelationSection = ({ relation }) => {
 
 }, {
   onSettled: () => {
-    
     queryClient.refetchQueries(["GET_OBJECT_LIST", relation.relatedTable?.slug])
   }
 })

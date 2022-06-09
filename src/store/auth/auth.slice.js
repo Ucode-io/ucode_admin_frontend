@@ -7,7 +7,7 @@ export const {
 } = createSlice({
   name: "auth",
   initialState: {
-    isAuthorizated: true
+    isAuthorizated: false
   },
   reducers: {
     login: (state) => {

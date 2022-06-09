@@ -20,23 +20,13 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
   })
 
   const unusedFields = useMemo(() => {
-    return fields?.filter((field) => !usedFields.includes(field.id))
+    return fields?.filter((field) => field.type !== "LOOKUP" && field.type !== "LOOKUPS" && !usedFields.includes(field.id))
   }, [usedFields, fields])
   
   const unusedRelations = useMemo(() => {
     return relations?.filter((relation) => !usedFields.includes(relation.id))
-  })
+  }, [relations, usedFields])
 
-  const computedRelations = useMemo(() => {
-    return (
-      relations.map((relation) => ({
-        ...relation,
-        fields:
-          relation.fields?.filter((field) => !usedFields.includes(field.id)) ??
-          [],
-      })) ?? []
-    )
-  }, [usedFields, relations])
 
   const onDrop = (dropResult, colNumber) => {
     const result = applyDrag(fields, dropResult)

@@ -6,21 +6,17 @@ import NumberAttributes from "./NumberAttributes"
 import PickListAttributes from "./PickListAttributes"
 import SingleLineAttributes from "./SingleLineAttributes"
 
-const Attributes = ({ control, closeModal, reset, getValues, type }) => {
-  const initialValues = useRef()
+const Attributes = ({ control, watch }) => {
 
-  const undoChanges = () => {
-    reset(initialValues.current)
-    closeModal()
-  }
+  const fieldType = watch('type')
 
-  switch (getValues("type")) {
+  if(!fieldType) return null
+
+  switch (fieldType) {
     case "SINGLE_LINE":
       return (
         <SingleLineAttributes
           control={control}
-          onClose={undoChanges}
-          onSaveButtonClick={closeModal}
         />
       )
 
@@ -29,8 +25,6 @@ const Attributes = ({ control, closeModal, reset, getValues, type }) => {
       return (
         <PickListAttributes
           control={control}
-          onClose={undoChanges}
-          onSaveButtonClick={closeModal}
         />
       )
 
@@ -38,8 +32,6 @@ const Attributes = ({ control, closeModal, reset, getValues, type }) => {
       return (
         <MultiLineAttributes
           control={control}
-          onClose={undoChanges}
-          onSaveButtonClick={closeModal}
         />
       )
 
@@ -47,8 +39,6 @@ const Attributes = ({ control, closeModal, reset, getValues, type }) => {
       return (
         <DateAttributes
           control={control}
-          onClose={undoChanges}
-          onSaveButtonClick={closeModal}
         />
       )
 
@@ -56,8 +46,6 @@ const Attributes = ({ control, closeModal, reset, getValues, type }) => {
       return (
         <NumberAttributes
           control={control}
-          onClose={undoChanges}
-          onSaveButtonClick={closeModal}
         />
       )
 
@@ -66,8 +54,6 @@ const Attributes = ({ control, closeModal, reset, getValues, type }) => {
       return (
         <CheckboxAttributes
           control={control}
-          onClose={undoChanges}
-          onSaveButtonClick={closeModal}
         />
       )
 
@@ -75,8 +61,6 @@ const Attributes = ({ control, closeModal, reset, getValues, type }) => {
       return (
         <SingleLineAttributes
           control={control}
-          onClose={undoChanges}
-          onSaveButtonClick={closeModal}
         />
       )
   }

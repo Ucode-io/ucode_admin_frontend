@@ -22,11 +22,15 @@ import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import useWatch from "../../../hooks/useWatch"
 import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
+import useTabRouter from "../../../hooks/useTabRouter"
+import { get } from "@ngard/tiny-get"
 
-const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
+const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const { navigateToForm } = useTabRouter()
+
 
   const [tableLoader, setTableLoader] = useState(true)
   const [tableData, setTableData] = useState([])
@@ -74,9 +78,8 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
     }
   }
 
-  const navigateToEditPage = (id) => {
-    if (isRelation) navigate(`/object/${tableSlug}/${id}`, { state: filters })
-    else navigate(`${pathname}/${id}`)
+  const navigateToEditPage = (row) => {
+    navigateToForm(tableSlug, "EDIT", row)
   }
 
   useDebouncedWatch(
@@ -101,7 +104,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
       <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} />
       <TableCard>
         <CTable
-          removableHeight={240}
+          removableHeight={296}
           count={pageCount}
           page={currentPage}
           setCurrentPage={setCurrentPage}
@@ -132,7 +135,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation }) => {
             {tableData.map((row, rowIndex) => (
               <CTableRow
                 key={row.guid}
-                onClick={() => navigateToEditPage(row.guid)}
+                onClick={() => navigateToEditPage(row)}
               >
                 <CTableCell>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
                 {computedColumns.map((field) => (

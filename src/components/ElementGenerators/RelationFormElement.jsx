@@ -6,6 +6,10 @@ import useDebouncedWatch from "../../hooks/useDebouncedWatch"
 import FRow from "../FormElements/FRow"
 import { Controller } from "react-hook-form"
 import FEditableRow from "../FormElements/FEditableRow"
+import IconGenerator from "../IconPicker/IconGenerator"
+import useDebounce from "../../hooks/useDebounce"
+import useTabRouter from "../../hooks/useTabRouter"
+import { generateGUID, generateID } from "../../utils/generateID"
 
 const RelationFormElement = ({
   control,
@@ -15,20 +19,12 @@ const RelationFormElement = ({
   fieldIndex,
   column,
   mainForm,
+  disabledHelperText,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
     return field.id.split("#")?.[0] ?? ""
   }, [field.id])
-
-  // const { data: options } = useQuery(["GET_OBJECT_LIST", tableSlug], () => constructorObjectService.getList(tableSlug, { data: {} }), {
-  //   select: ({data}) => {
-  //     if(field.type === "DATE") data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy') })
-  //     if(field.type === "DATE_TIME") data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy HH:mm') })
-
-  //     return listToOptions(data.response, field.slug, "guid")
-  //   }
-  // })
 
   if (!isLayout)
     return (
@@ -43,6 +39,8 @@ const RelationFormElement = ({
               setValue={onChange}
               field={field}
               tableSlug={tableSlug}
+              error={error}
+              disabledHelperText={disabledHelperText}
             />
           )}
         />
@@ -52,7 +50,7 @@ const RelationFormElement = ({
   return (
     <Controller
       control={mainForm.control}
-      name={`sections[${sectionIndex}].fields.[${fieldIndex}].field_name`}
+      name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <FEditableRow
@@ -70,6 +68,8 @@ const RelationFormElement = ({
                 setValue={onChange}
                 field={field}
                 tableSlug={tableSlug}
+                error={error}
+                disabledHelperText={disabledHelperText}
               />
             )}
           />
@@ -79,24 +79,36 @@ const RelationFormElement = ({
   )
 }
 
-const AutoCompleteElement = ({ field, value, tableSlug, setValue }) => {
+const AutoCompleteElement = ({
+  field,
+  value,
+  tableSlug,
+  setValue,
+  error,
+  disabledHelperText,
+}) => {
   const [loader, setLoader] = useState(false)
+  const { navigateToForm } = useTabRouter()
 
   const [options, setOptions] = useState([])
-  const id = useId()
   const [searchText, setSearchText] = useState("")
+
+  const id = useMemo(() => {
+    return generateGUID()
+  }, [])
+  
+  console.log("IIIIDDD ===>", id)
 
   const getOptionLabel = (option) => {
     let label = ""
 
     field.attributes?.fields?.forEach((el) => {
       let value = ""
-
-      if (el.type === "DATE")
-        value = format(new Date(option[el.slug]), "dd.MM.yyyy")
-      else if (el.type === "DATE_TIME")
-        value = format(new Date(option[el.slug]), "dd.MM.yyyy HH:mm")
-      else value = option[el.slug]
+      if (el?.type === "DATE")
+        value = format(new Date(option[el?.slug]), "dd.MM.yyyy")
+      else if (el?.type === "DATE_TIME")
+        value = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm")
+      else value = option[el?.slug]
 
       label += `${value ?? ""} `
     })
@@ -105,16 +117,24 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue }) => {
   }
 
   const computedValue = useMemo(() => {
-    return options.find((el) => el.guid === value) ?? null
+    const findedOption = options.find((el) => el.guid === value)
+
+    return findedOption ? [findedOption] : []
   }, [options, value])
 
-  const getOptions = () => {
+
+  const getOptions = (search) => {
     setLoader(true)
     constructorObjectService
-      .getList(tableSlug, { data: { search: searchText } })
-      .then((res) => setOptions(res.data.response ?? []))
+      .getList(tableSlug, { data: { search } })
+      .then((res) => {
+        if(JSON.stringify(res.data.response) !== JSON.stringify(options)) setOptions(res.data.response ?? [])
+      })
       .finally(() => setLoader(false))
   }
+
+  const debouncedGetOptions = useDebounce(getOptions, 500)
+
 
   const getValueOption = () => {
     setLoader(true)
@@ -126,13 +146,13 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue }) => {
       .finally(() => setLoader(false))
   }
 
-  useDebouncedWatch(
-    () => {
-      getOptions()
-    },
-    [searchText],
-    500
-  )
+  // useDebouncedWatch(
+  //   () => {
+  //     getOptions()
+  //   },
+  //   [searchText],
+  //   500
+  // )
 
   useEffect(() => {
     if (value) getValueOption()
@@ -144,92 +164,62 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue }) => {
       id={id}
       options={options}
       getOptionLabel={getOptionLabel}
-      // isOptionEqualToValue={(option, value) => {
-      //   console.log("llllll ===>", option, value)
-      //   return option.guid === value.guid
-      // }}
+      disableCloseOnSelect
+      multiple
       onInputChange={(event, newInputValue) => {
-        setSearchText(newInputValue)
+        debouncedGetOptions(newInputValue)
+        // setSearchText(newInputValue)
       }}
       filterOptions={(x) => x}
       value={computedValue}
       loading={loader}
+      // onSelect
       onChange={(event, newValue) => {
-        setValue(newValue?.guid ?? null)
+        setValue(newValue?.[newValue?.length - 1]?.guid ?? null)
       }}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          size="small"
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: (
-              <>
-                {loader ? <CircularProgress color="primary" size={20} /> : null}
-                {params.InputProps.endAdornment}
-              </>
-            ),
-          }}
-        />
-      )}
+      renderTags={(value, index) => {
+        return (
+          <>
+            {getOptionLabel(value[0])}
+            <IconGenerator
+              icon="arrow-up-right-from-square.svg"
+              style={{ marginLeft: "10px", cursor: "pointer" }}
+              size={15}
+              onClick={(e) => {
+                e.stopPropagation()
+                e.preventDefault()
+                navigateToForm(tableSlug, "EDIT", value[0])
+              }}
+            />
+          </>
+        )
+      }}
+      renderInput={(params) => {
+        console.log("PRAAMS ==>", params)
+        return (
+          <TextField
+            {...params}
+            size="small"
+            error={error}
+            helperText={!disabledHelperText && (error?.message ?? " ")}
+            inputProps={{
+              ...params.inputProps,
+              // value: '0000'
+            }}
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <>
+                  {loader ? <CircularProgress color="primary" size={20} /> : null}
+                  {params.InputProps.endAdornment}
+                </>
+              ),
+            }}
+          />
+        )
+      }}
     />
   )
 }
 
 export default RelationFormElement
-
-// const RelationFormElement = ({ control, field, isLayout, sectionIndex, fieldIndex, column, mainForm, ...props }) => {
-
-//   const tableSlug = useMemo(() => {
-//     return field.id.split("#")?.[0] ?? ""
-//   }, [field.id])
-
-//   const { data: options } = useQuery(["GET_OBJECT_LIST", tableSlug], () => constructorObjectService.getList(tableSlug, { data: {} }), {
-//     select: ({data}) => {
-//       if(field.type === "DATE") data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy') })
-//       if(field.type === "DATE_TIME") data.response.forEach(el => { el[field.slug] = format(new Date(el[field.slug]), 'dd.MM.yyyy HH:mm') })
-
-//       return listToOptions(data.response, field.slug, "guid")
-//     }
-//   })
-
-//   if (!isLayout)
-//     return (
-//       <FRow label={field.label} required={field.required}>
-//         <HFSelect
-//           control={control}
-//           name={`${tableSlug}_id`}
-//           width="100%"
-//           options={options}
-//           required={field.required}
-//           {...props}
-//         />
-//       </FRow>
-//     )
-
-//   return (
-//     <Controller
-//       control={mainForm.control}
-//       name={`sections[${sectionIndex}].column${column}.[${fieldIndex}].field_name`}
-//       defaultValue={field.label}
-//       render={({ field: { onChange, value }, fieldState: { error } }) => (
-//         <FEditableRow
-//           label={value}
-//           onLabelChange={onChange}
-//           required={field.required}
-//         >
-//           <HFSelect
-//             control={control}
-//             name={`${tableSlug}_id`}
-//             width="100%"
-//             // options={options}
-//             required={field.required}
-//             {...props}
-//           />
-//         </FEditableRow>
-//       )}
-//     ></Controller>
-//   )
-// }
-
-// export default RelationFormElement

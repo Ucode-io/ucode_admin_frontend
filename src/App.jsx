@@ -10,6 +10,7 @@ import "./i18next"
 import { Suspense } from "react"
 import { QueryClientProvider } from "react-query"
 import queryClient from "./queries"
+import { AliveScope } from "react-activation"
 
 function App() {
 
@@ -23,7 +24,9 @@ function App() {
               <AlertProvider>
                 <GlobalFunctionsProvider />
                 <BrowserRouter>
-                  <Router />
+                  <AliveScope>
+                    <Router />
+                  </AliveScope>
                 </BrowserRouter>
               </AlertProvider>
             </MaterialUIProvider>

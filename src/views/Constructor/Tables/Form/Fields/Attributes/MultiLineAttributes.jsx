@@ -12,10 +12,7 @@ const MultiLineAttributes = ({ control, onClose, onSaveButtonClick }) => {
   })
 
   return (
-    <ModalCard title="Multiline properties" onClose={onClose} onSaveButtonClick={onSaveButtonClick}  >
-      <FRow label="Field label" required>
-        <HFTextField autoFocus fullWidth name="label" control={control} />
-      </FRow>
+    <>
       <FRow label="Placeholder">
         <HFTextField autoFocus fullWidth name="attributes.placeholder" control={control} />
       </FRow>
@@ -43,7 +40,7 @@ const MultiLineAttributes = ({ control, onClose, onSaveButtonClick }) => {
           <HFTextField fullWidth name="attributes.tooltipText" control={control} />
         </FRow>
       )}
-    </ModalCard>
+    </>
   )
 }
 

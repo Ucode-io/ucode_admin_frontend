@@ -12,11 +12,7 @@ const CheckboxAttributes = ({ control, onClose, onSaveButtonClick }) => {
   })
 
   return (
-    <ModalCard title="Checkbox properties" onClose={onClose} onSaveButtonClick={onSaveButtonClick}  >
-      <FRow label="Field label * ">
-        <HFTextField autoFocus fullWidth name="label" control={control} />
-      </FRow>
-
+    <>
       <HFCheckbox control={control} name="required" label="Required" />
 
       <HFCheckbox
@@ -31,7 +27,7 @@ const CheckboxAttributes = ({ control, onClose, onSaveButtonClick }) => {
           <HFTextField fullWidth name="attributes.tooltipText" control={control} />
         </FRow>
       )}
-    </ModalCard>
+    </>
   )
 }
 

@@ -4,8 +4,6 @@ import { memo, useMemo } from "react"
 import LogoDisplay from "../LogoDisplay"
 
 const CellElementGenerator = ({ field = {}, row }) => {
-  console.log("FIELD ===>", field, row)
-
 
   const value = useMemo(() => {
     if (typeof(field.id) !== 'string' || !field.id?.includes("#")) return get(row, field.slug, "")
@@ -14,7 +12,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     const result =
       field.attributes
-        ?.map((viewField) => get(row, `${tableSlug}.${viewField.slug}`, ""))
+        ?.map((viewField) => get(row, `${tableSlug}.${viewField?.slug}`, ""))
         .join(" ") ?? ""
 
     return result

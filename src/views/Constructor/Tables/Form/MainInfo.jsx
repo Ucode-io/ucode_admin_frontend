@@ -15,12 +15,33 @@ const MainInfo = ({ control }) => {
     keyName: "key",
   })
 
+  const { fields: relations } = useFieldArray({
+    control: control,
+    name: "layoutRelations",
+    keyName: "key",
+  })
+
   const computedFields = useMemo(() => {
-    return listToOptions(fields, "label", "slug")
+    const computedRelations = relations.map((relation) => {
+      const tableSlug = relation.id.split("#")[0]
+      const viewFields =
+        relation.attributes?.fields?.map(
+          (viewField) => `${tableSlug}.${viewField.slug}`
+        ) ?? []
+
+      const slug = viewFields.join("#")
+
+      return {
+        ...relation,
+        slug: slug,
+      }
+    })
+
+    return listToOptions([...fields, ...computedRelations], "label", "slug")
   }, [fields])
 
   return (
-    <div className="p-2" >
+    <div className="p-2">
       <FormCard title="Общие сведение">
         <div className="flex">
           <FRow label="Иконка">

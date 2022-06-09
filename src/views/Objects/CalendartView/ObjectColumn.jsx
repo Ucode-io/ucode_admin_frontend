@@ -1,4 +1,3 @@
-import { get } from "@ngard/tiny-get"
 import { differenceInMinutes, format, setHours, setMinutes } from "date-fns"
 import { useMemo } from "react"
 import { getFieldLabel } from "../../../utils/getFieldLabel"
@@ -12,8 +11,6 @@ const ObjectColumn = ({ data = [], view }) => {
     const calendarStartTime = setMinutes(setHours(data[0].startTime, 8), 0)
 
     const result = data.map((el) => {
-
-      console.log('oooooo ===>', differenceInMinutes(el.startTime, calendarStartTime), el.startTime, calendarStartTime)
 
       const startPosition =
         Math.floor(differenceInMinutes(el.startTime, calendarStartTime) / 30) *

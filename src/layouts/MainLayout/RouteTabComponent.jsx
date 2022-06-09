@@ -22,11 +22,15 @@ const RouteTabComponent = ({ tab }) => {
   const title = useMemo(() => {
     if (tab.row) {
       
+      
+
       return getFieldLabel(tab.row, tableInfo.subtitle_field_slug)
     }
 
     return `${tableInfo.label} (New)`
   }, [tableInfo, tab.row])
+
+  console.log("TITLE ===>", title)
 
   return (
     <div

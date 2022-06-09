@@ -45,18 +45,18 @@ const ConstructorTablesFormPage = () => {
 
     const getTableData = constructorTableService.getById(id)
 
-    const getFieldsData = constructorFieldService.getList({ table_id: id })
+    // const getFieldsData = constructorFieldService.getList({ table_id: id })
 
     const getSectionsData = constructorSectionService.getList({ table_id: id })
 
     try {
-      const [tableData, { fields = [] }, { sections = [] }] = await Promise.all(
-        [getTableData, getFieldsData, getSectionsData]
+      const [tableData, { sections = [] }] = await Promise.all(
+        [getTableData, getSectionsData]
       )
 
       mainForm.reset({
         ...tableData,
-        fields,
+        fields: [],
         sections: computeSections(sections),
       })
 
@@ -68,9 +68,18 @@ const ConstructorTablesFormPage = () => {
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
-      const { relations = [] } = await constructorRelationService.getList({
+     
+      const getFieldsData = constructorFieldService.getList({ table_id: id })
+
+      const getRelations = constructorRelationService.getList({
         table_slug: slug,
       })
+
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData])
+
+
+      mainForm.setValue("fields", fields)
+      
 
       const relationsWithRelatedTableSlug = relations.map((relation) => ({
         ...relation,
@@ -202,7 +211,7 @@ const ConstructorTablesFormPage = () => {
             <Tab>Relations</Tab>
           </TabList>
         </Header>
-
+        
         <TabPanel>
           <MainInfo control={mainForm.control} />
         </TabPanel>

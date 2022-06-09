@@ -23,12 +23,9 @@ import { pageToOffset } from "../../../utils/pageToOffset"
 import useWatch from "../../../hooks/useWatch"
 import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
 import useTabRouter from "../../../hooks/useTabRouter"
-import { get } from "@ngard/tiny-get"
 
 const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo }) => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const { pathname } = useLocation()
   const { navigateToForm } = useTabRouter()
 
 

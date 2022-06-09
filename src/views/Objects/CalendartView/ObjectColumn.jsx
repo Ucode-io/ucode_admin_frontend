@@ -1,6 +1,7 @@
 import { get } from "@ngard/tiny-get"
 import { differenceInMinutes, format, setHours } from "date-fns"
 import { useMemo } from "react"
+import { getFieldLabel } from "../../../utils/getFieldLabel"
 import { timesList } from "../../../utils/timesList"
 import styles from "./style.module.scss"
 
@@ -43,7 +44,7 @@ const ObjectColumn = ({ data = [], view }) => {
           <div className={styles.infoBlock} style={{ height: el.height }} >
             {
               view?.view_fields?.map(field => (
-                <p key={field} >{  get(el, field) }</p>
+                <p key={field} >{  getFieldLabel(el, field) }</p>
               ))
             }
            

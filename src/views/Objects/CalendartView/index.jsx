@@ -6,6 +6,7 @@ import CRangePicker from "../../../components/DatePickers/CRangePicker"
 import FiltersBlock from "../../../components/FiltersBlock"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import constructorObjectService from "../../../services/constructorObjectService"
+import { getFieldLabel } from "../../../utils/getFieldLabel"
 import { objectToArray } from "../../../utils/objectToArray"
 import DatesRow from "./DatesRow"
 import MainFieldRow from "./MainFieldRow"
@@ -52,7 +53,9 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
       const date = isValid(new Date(get(el, startTimeStampSlug))) && format(new Date(get(el, startTimeStampSlug)), "dd.MM.yyyy")
       const startTime = isValid(new Date(get(el, startTimeStampSlug))) && new Date(get(el, startTimeStampSlug))
       const endTime = isValid(new Date(get(el, endTimeStampSlug))) && new Date(get(el, endTimeStampSlug))
-      const mainField = get(el, view.main_field)
+      
+      
+      const mainField = getFieldLabel(el, view.main_field)
 
       const computedEl = {
         ...el,

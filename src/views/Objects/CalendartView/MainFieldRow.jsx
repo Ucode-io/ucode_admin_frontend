@@ -21,7 +21,7 @@ const MainFieldRow = ({ data }) => {
         return el.mainFields.map((mainField) => (
           <div key={mainField.title} className={styles.mainFieldBlock}>
             <p className={styles.mainFieldTitle}>{mainField.title}</p>
-            <p className={styles.mainFieldSubtitle}>Кардиолог</p>
+            <p className={styles.mainFieldSubtitle}></p>
           </div>
         ))
       })}

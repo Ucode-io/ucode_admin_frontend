@@ -41,8 +41,32 @@ const ViewCreateModal = ({
   }, [])
 
   const computedFields = useMemo(() => {
-    return listToOptions(fields, "label", "slug")
+
+    const newFields = fields?.map(field => {
+
+      // console.log("FIELD ===>", field)
+
+      let slug = field.slug
+
+      if(field.id.includes('#')) {
+        
+        const tableSlug = field.id.split('#')[0]
+        const viewFields = field.attributes?.map(viewField => `${tableSlug}.${viewField.slug}`) ?? []
+
+        slug = viewFields.join('#')
+      }
+
+      return {...field, slug}
+    })
+
+    
+
+    return listToOptions(newFields, "label", "slug")
   }, [fields])
+
+
+
+  console.log({fields})
 
   const submitHandler = async (values) => {
     try {
@@ -59,6 +83,8 @@ const ViewCreateModal = ({
       closeModal()
     } catch (error) {}
   }
+
+  console.log("COMPUTED FIELDS ===>", computedFields)
 
   return (
     <ModalCard

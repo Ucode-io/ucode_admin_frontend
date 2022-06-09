@@ -86,15 +86,10 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
             groupName="1"
             onDrop={onDrop}
             dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            getChildPayload={(i) => {
-              const data = {
-                ...unusedRelations[i],
-                field_name: unusedRelations[i]?.label,
-              }
-
-              console.log("DATA ====>", data)
-              return data
-            }}
+            getChildPayload={(i) => ({
+              ...unusedRelations[i],
+              field_name: unusedRelations[i]?.label,
+            })}
           >
             {unusedRelations?.map((relation) => (
               <Draggable key={relation.id} style={{ overflow: "visible" }}>

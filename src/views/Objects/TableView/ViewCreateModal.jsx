@@ -55,7 +55,6 @@ const ViewCreateModal = ({
 
         slug = viewFields.join('#')
       }
-
       return {...field, slug}
     })
 

@@ -6,6 +6,7 @@ import { useSelector } from "react-redux"
 import { useLocation, useNavigate } from "react-router-dom"
 import IconGenerator from "../../components/IconPicker/IconGenerator"
 import useTabRouter from "../../hooks/useTabRouter"
+import { getFieldLabel } from "../../utils/getFieldLabel"
 import styles from "./style.module.scss"
 
 const RouteTabComponent = ({ tab }) => {
@@ -20,11 +21,16 @@ const RouteTabComponent = ({ tab }) => {
 
   const title = useMemo(() => {
     if (tab.row) {
-      return get(tab.row, tableInfo.subtitle_field_slug)
+      
+      
+
+      return getFieldLabel(tab.row, tableInfo.subtitle_field_slug)
     }
 
     return `${tableInfo.label} (New)`
   }, [tableInfo, tab.row])
+
+  console.log("TITLE ===>", title)
 
   return (
     <div

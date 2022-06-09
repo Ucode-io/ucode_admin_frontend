@@ -65,8 +65,6 @@ const ObjectsFormPage = () => {
 
       setSections(sortSections(sections))
 
-      
-
       setTableRelations(
         relations
           .filter(

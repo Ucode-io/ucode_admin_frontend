@@ -51,6 +51,7 @@ const Sidebar = () => {
           <img className={styles.logo} src={companyLogo} alt="soliq-logo" />
         </div>
 
+        <div className={styles.scrollBlock} >
         <div className={styles.menuItemsBlock}>
           {elements
             .filter((element) => element.icon)
@@ -116,6 +117,9 @@ const Sidebar = () => {
             <LogoutIcon />
           </div>
         </div>
+        </div>
+
+      
       </div>
 
       <Collapse

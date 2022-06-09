@@ -2,8 +2,6 @@ import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import SaveButton from "../../components/Buttons/SaveButton"
-import Header from "../../components/Header"
 import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
@@ -18,6 +16,7 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import { Save } from "@mui/icons-material"
 import SecondaryButton from "../../components/Buttons/SecondaryButton"
 import { useQueryClient } from "react-query"
+import { sortSections } from "../../utils/sectionsOrderNumber"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
@@ -64,7 +63,9 @@ const ObjectsFormPage = () => {
       const [{ sections = [] }, { data = {} }, { relations = [] }] =
         await Promise.all([getSections, getFormData, getRelations])
 
-      setSections(sections)
+      setSections(sortSections(sections))
+
+      
 
       setTableRelations(
         relations
@@ -106,7 +107,7 @@ const ObjectsFormPage = () => {
         getRelations,
       ])
 
-      setSections(sections)
+      setSections(sortSections(sections))
 
       setTableRelations(
         relations
@@ -157,7 +158,7 @@ const ObjectsFormPage = () => {
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
         removeTab(pathname)
-        if(!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
+        if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
       })
       .catch(() => setBtnLoader(false))
   }
@@ -168,14 +169,13 @@ const ObjectsFormPage = () => {
   }
 
   const { handleSubmit, control, reset } = useForm({
-    defaultValues: state
+    defaultValues: state,
   })
 
   if (loader) return <PageFallback />
 
   return (
-    <div className={styles.formPage} >
-
+    <div className={styles.formPage}>
       <div className={styles.formArea}>
         <MainInfo control={control} computedSections={computedSections} />
 
@@ -193,8 +193,14 @@ const ObjectsFormPage = () => {
       <Footer
         extra={
           <>
-          <SecondaryButton onClick={() => removeTab(pathname)} color="error" > Закрыть </SecondaryButton>
-          <PrimaryButton loader={btnLoader} onClick={handleSubmit(onSubmit)}  > <Save />  Сохранить </PrimaryButton>
+            <SecondaryButton onClick={() => removeTab(pathname)} color="error">
+              {" "}
+              Закрыть{" "}
+            </SecondaryButton>
+            <PrimaryButton loader={btnLoader} onClick={handleSubmit(onSubmit)}>
+              {" "}
+              <Save /> Сохранить{" "}
+            </PrimaryButton>
           </>
         }
       />

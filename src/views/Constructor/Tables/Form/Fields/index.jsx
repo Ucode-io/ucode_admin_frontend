@@ -3,12 +3,8 @@ import { Add } from "@mui/icons-material"
 import { useMemo, useState } from "react"
 import { useFieldArray } from "react-hook-form"
 import { useParams } from "react-router-dom"
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
 import {
-  CTable,
-  CTableBody,
   CTableCell,
-  CTableHead,
   CTableRow,
 } from "../../../../../components/CTable"
 import DataTable from "../../../../../components/DataTable"
@@ -21,7 +17,6 @@ import styles from "./style.module.scss"
 const Fields = ({ mainForm }) => {
   const { id } = useParams()
   const [formLoader, setFormLoader] = useState(false)
-  const [createFormVisible, setCreateFormVisible] = useState(false)
   const [drawerState, setDrawerState] = useState(null)
 
 

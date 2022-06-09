@@ -1,3 +1,4 @@
+import { sortByOrder } from "./sortByOrder";
 
 
 export const addOrderNumberToSections = (sections = []) => {
@@ -11,4 +12,15 @@ export const addOrderNumberToSections = (sections = []) => {
   })) ?? [];
 
   return sectionsWithOrderNumber;
+}
+
+export const sortSections = (sections = []) => {
+
+  const sortedSections = sections.sort(sortByOrder).map(section => ({
+    ...section,
+    fields: section.fields?.sort(sortByOrder) ?? []
+  })) ?? []
+
+  return sortedSections
+
 }

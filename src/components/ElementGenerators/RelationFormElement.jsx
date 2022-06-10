@@ -117,7 +117,8 @@ const AutoCompleteElement = ({
   }
 
   const computedValue = useMemo(() => {
-    const findedOption = options.find((el) => el.guid === value)
+
+    const findedOption = options.find((el) => el?.guid === value)
 
     return findedOption ? [findedOption] : []
   }, [options, value])

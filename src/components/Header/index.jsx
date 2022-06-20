@@ -31,7 +31,7 @@ const Header = ({
         <div>{children}</div>
       </div>
 
-      <div style={styles.rightSide}>{extra}</div>
+      <div className={styles.rightSide}>{extra}</div>
     </div>
   )
 }

@@ -1,12 +1,12 @@
 import FileUploadIcon from "@mui/icons-material/FileUpload"
 import { useRef, useState } from "react"
-import fileService from "../../services/fileService"
 import CancelIcon from "@mui/icons-material/Cancel"
 import EyeIcon from "@mui/icons-material/RemoveRedEye"
 import ImageViewer from "react-simple-image-viewer"
 
 import "./style.scss"
 import { CircularProgress, IconButton } from "@mui/material"
+import fileService from "../../services/fileService"
 
 const AvatarUpload = ({
   value,
@@ -27,9 +27,9 @@ const AvatarUpload = ({
     data.append("file", file)
 
     fileService
-      .uploadImage(data)
+      .upload(data)
       .then((res) => {
-        onChange(process.env.REACT_APP_CDN_API_URL + "/file/" + res.id)
+        onChange(import.meta.env.VITE_CDN_BASE_URL + res.filename)
       })
       .finally(() => setLoading(false))
   }

@@ -56,10 +56,21 @@ export const settingsElements = [
     icon: Settings,
     children: [
       {
-        id: "settings",
+        id: "constructor",
         title: "Contructor",
         path: "/settings/constructor/tables",
+      },
+      {
+        id: "authMatrix",
+        title: "Auth matrix",
+        path: `/settings/auth-matrix/${import.meta.env.VITE_AUTH_PROJECT_ID}`,
+      },
+      {
+        id: "users",
+        title: "Users",
+        path: "/settings/users",
       }
     ]
   },
+  
 ]

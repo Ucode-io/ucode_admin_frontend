@@ -2,7 +2,6 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
-
 html {
   font-size: 0.8rem;
 }
@@ -14,7 +13,7 @@ html {
   font-family: "Inter", sans-serif;
   text-decoration: none;
 }
-
+  
 .silver-bottom-border {
   box-shadow: inset 0px -1px 0px #e5e9eb;
 }
@@ -145,4 +144,14 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.child-position-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hidden-element {
+  display: none;
 }

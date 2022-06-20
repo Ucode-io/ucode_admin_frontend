@@ -16,6 +16,7 @@ const HFSelect = ({
   disabledHelperText,
   placeholder,
   required=false,
+  onChange=()=>{},
   rules={},
   ...props
 }) => {
@@ -25,7 +26,7 @@ const HFSelect = ({
       name={name}
       defaultValue=""
       rules={{ required: required ? 'This is required field' : false, ...rules }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({ field: { onChange: onFormChange, value }, fieldState: { error } }) => (
         <FormControl style={{ width }}>
           <InputLabel size="small">{label}</InputLabel>
           <Select
@@ -37,6 +38,7 @@ const HFSelect = ({
             fullWidth
             onChange={(e) => {
               onChange(e.target.value)
+              onFormChange(e.target.value)
             }}
             {...props}
           >

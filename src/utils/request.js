@@ -34,15 +34,15 @@ const errorHandler = (error, hooks) => {
 
     const originalRequest = error.config
 
-    // return authService.refreshToken(params)
-    //   .then((res) => {
-    //     store.dispatch(authActions.setTokens(res))
-    //     return request(originalRequest);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //     return Promise.reject(error)
-    //   })
+    return authService.refreshToken(params)
+      .then((res) => {
+        store.dispatch(authActions.setTokens(res))
+        return request(originalRequest);
+      })
+      .catch((err) => {
+        console.log(err)
+        return Promise.reject(error)
+      })
   } else {
     if (error?.response) {
       if(error.response?.data?.data) {

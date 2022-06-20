@@ -82,13 +82,13 @@ ingress:
           cert-manager.io/cluster-issuer: letsencrypt-prod
         type: web
         hosts:                                                                                                                                   
-          - host: "test.admin.medion.udevs.io"
+          - host: "test.admin.medion.uz"
             path: /                                                                                                                              
             servicePort: 80                                                                                                                 
         tls:                                                                                                                                     
           - secretName: react-admin-tls
             hosts:                                                                                                                               
-             - "test.admin.medion.udevs.io"                                                                                                  
+             - "test.admin.medion.uz"                                                                                                  
 
 resources: {}                                                                                                    
   #  limits:                                                                                                                                

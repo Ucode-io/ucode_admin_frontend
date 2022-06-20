@@ -1,9 +1,18 @@
+import { useEffect } from "react"
+import { useDispatch } from "react-redux"
 import { Outlet } from "react-router-dom"
 import Sidebar from "../../components/Sidebar"
+import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk"
 import RouterTabsBlock from "./RouterTabsBlock"
 import styles from "./style.module.scss"
 
 const MainLayout = () => {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchConstructorTableListAction())
+  }, [dispatch])
+
   return (
     <div className={styles.layout}>
       <Sidebar />

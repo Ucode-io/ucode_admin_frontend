@@ -1,40 +1,61 @@
-import { TextField } from "@mui/material"
 import { useState } from "react"
+import { useForm } from "react-hook-form"
 import { useDispatch } from "react-redux"
 import PrimaryButton from "../../../components/Buttons/PrimaryButton"
-import SecondaryButton from "../../../components/Buttons/SecondaryButton"
-import { showAlert } from "../../../store/alert/alert.thunk"
-import { authActions } from "../../../store/auth/auth.slice"
+import HFTextField from "../../../components/FormElements/HFTextField"
+import { loginAction } from "../../../store/auth/auth.thunk"
 import classes from "../style.module.scss"
 
 const LoginForm = ({ navigateToRegistrationForm }) => {
-  const [login, setLogin] = useState("")
-  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
 
-  
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  })
+
+  const onSubmit = (data) => {
+    setLoading(true)
+
+    dispatch(loginAction(data)).unwrap().catch(() => setLoading(false))
+  }
+
   return (
-    <form onSubmit={e => {
-      e.preventDefault()
-      if(login === 'medionAdmin' && password === '123456')  dispatch(authActions.login())
-      else dispatch(showAlert("Логин или пароль не верный"))
-    }} className={classes.form}>
-      <div className={classes.formArea}>
+    <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
+      <div onSubmit={handleSubmit} className={classes.formArea}>
         <div className={classes.formRow}>
           <p className={classes.label}>Логин</p>
-          <TextField value={login} onChange={e => setLogin(e.target.value)} fullWidth placeholder="Введите логин" />
+          <HFTextField
+            required
+            control={control}
+            name="username"
+            size="large"
+            fullWidth
+            placeholder="Введите логин"
+            autoFocus
+          />
         </div>
         <div className={classes.formRow}>
           <p className={classes.label}>Пароль</p>
-          <TextField type="password" value={password} onChange={e => setPassword(e.target.value)} fullWidth placeholder="Введите пароль" />
+          <HFTextField
+            required
+            control={control}
+            name="password"
+            type="password"
+            size="large"
+            fullWidth
+            placeholder="Введите пароль"
+          />
         </div>
       </div>
 
       <div className={classes.buttonsArea}>
-        <PrimaryButton size="large"  >Войти</PrimaryButton>
-        <SecondaryButton type="button" size="large" onClick={navigateToRegistrationForm} >Зарегистрироваться</SecondaryButton>
+        <PrimaryButton size="large" loader={loading} >Войти</PrimaryButton>
+        {/* <SecondaryButton type="button" size="large" onClick={navigateToRegistrationForm} >Зарегистрироваться</SecondaryButton> */}
       </div>
-
     </form>
   )
 }

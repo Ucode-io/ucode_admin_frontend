@@ -24,7 +24,7 @@ const UsersForm = lazy(() => import("../views/Users/Form"))
 const UsersPage = lazy(() => import("../views/Users/index"))
 
 const Router = () => {
-  const isAuth = useSelector((state) => state.auth.isAuthorizated)
+  const isAuth = useSelector((state) => state.auth.isAuth)
 
   if (!isAuth)
     return (

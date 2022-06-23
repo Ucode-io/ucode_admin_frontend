@@ -1,6 +1,8 @@
+import { Delete } from "@mui/icons-material"
 import { Card } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
 import ButtonsPopover from "../../components/ButtonsPopover"
 import {
   CTable,
@@ -12,7 +14,6 @@ import {
 } from "../../components/CTable"
 import TableRowButton from "../../components/TableRowButton"
 import UserInfoBlock from "../../components/UserInfoBlock"
-import useDebounce from "../../hooks/useDebounce"
 import useDebouncedWatch from "../../hooks/useDebouncedWatch"
 import userService from "../../services/auth/userService"
 import { pageToOffset } from "../../utils/pageToOffset"
@@ -51,24 +52,15 @@ const UsersTable = ({ searchText }) => {
       .catch(() => setLoader(false))
   }
 
-  const navigateToEditForm = (e, id) => {
-    navigate(`/settings/users/${id}`)
+  const navigateToEditForm = (id) => {
+    navigate(`/settings/auth/users/${id}`)
   }
-
-  // const filtersChangeHandle = useDebounce(() => {
-  //   if(currentPage === 1) fetchTableData()
-  //   else setCurrentPage(1)
-  // }, 400)
 
   useDebouncedWatch(() => {
     if(currentPage === 1) fetchTableData()
     else setCurrentPage(1)
   }, [searchText], 400)
 
-  // useEffect(() => {
-  //   if(currentPage === 1) fetchTableData()
-  //   else setCurrentPage(1)
-  // }, [searchText])
 
   useEffect(() => {
     fetchTableData()
@@ -101,22 +93,20 @@ const UsersTable = ({ searchText }) => {
           {tableData?.map((data, index) => (
             <CTableRow
               key={data.id}
-              // onClick={() => navigate(`/projects/${data.id}/backlog`)}
+              onClick={() => navigateToEditForm(data.id)}
             >
               <CTableCell>{index + 1}</CTableCell>
               <CTableCell> <UserInfoBlock img={data.photo_url} title={data.name} subtitle={data.phone} /> </CTableCell>
               <CTableCell>{data.email}</CTableCell>
               <CTableCell>{data.login}</CTableCell>
               <CTableCell>
-                <ButtonsPopover
-                  id={data.id}
-                  onEditClick={navigateToEditForm}
-                  onDeleteClick={deleteTableData}
-                />
+                <RectangleIconButton color="error" onClick={() => deleteTableData(data.id)} >
+                  <Delete color="error" />
+                </RectangleIconButton>
               </CTableCell>
             </CTableRow>
           ))}
-          <TableRowButton colSpan={5} onClick={() => navigate(`/settings/users/create`)} />
+          <TableRowButton colSpan={5} onClick={() => navigate(`/settings/auth/users/create`)} />
         </CTableBody>
       }
     </CTable>

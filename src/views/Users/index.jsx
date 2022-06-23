@@ -10,7 +10,7 @@ const UsersPage = () => {
   return (
     <div className="UsersPage">
       <HeaderSettings
-        title='Users'
+        title='Пользователи'
       />
       <FiltersBlock>
         <SearchInput value={searchText} onChange={setSearchText} />

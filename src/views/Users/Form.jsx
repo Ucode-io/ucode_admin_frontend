@@ -154,6 +154,9 @@ const UsersForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Header
+        title="Пользователи"
+        backButtonLink={-1}
+        subtitle={userId ? watch('name') : "Новый"}
         loader={loader}
         extra={
           <>
@@ -162,7 +165,7 @@ const UsersForm = () => {
           </>
         }
       >
-        <CBreadcrumbs withDefautlIcon items={breadCrumbItems} type="link" />
+        {/* <CBreadcrumbs withDefautlIcon items={breadCrumbItems} type="link" /> */}
       </Header>
 
       <FormCard visible={!loader} title="Main info" className="UsersForm p-2">

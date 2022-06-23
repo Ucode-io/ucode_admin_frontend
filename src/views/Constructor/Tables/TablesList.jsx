@@ -15,16 +15,19 @@ import TableCard from "../../../components/TableCard"
 import TableRowButton from "../../../components/TableRowButton"
 import applicationService from "../../../services/applicationSercixe"
 import constructorTableService from "../../../services/constructorTableService"
+import ImportModal from "./ImportModal"
 
-const TablesList = ({ mainForm, appData }) => {
+const TablesList = ({ mainForm, appData, getData}) => {
   const navigate = useNavigate()
   const location = useLocation()
   const [loader, setLoader] = useState(false)
+  const [importModalVisible, setImportModalVisible] = useState(false)
+  const [modalLoader, setModalLoader] = useState()
 
-  const { fields: list, remove } = useFieldArray({
+  const { fields: list, remove,  } = useFieldArray({
     control: mainForm.control,
     name: "tables",
-    keyName: 'key'
+    keyName: "key",
   })
 
   const navigateToEditForm = (id, slug) => {
@@ -35,62 +38,95 @@ const TablesList = ({ mainForm, appData }) => {
     navigate(`${location.pathname}/objects/create`)
   }
 
-  const deleteTable = async (id) => {
+  const openImportModal = () => {
+    setImportModalVisible(true)
+  }
 
+  const closeImportModal = () => {
+    setImportModalVisible(false)
+  }
+
+  const importTable = (checkedElements) => {
+    setModalLoader()
+
+
+    applicationService
+      .update({
+        ...appData,
+        table_ids: [...list, ...checkedElements],
+      })
+      .then(() => {
+        closeImportModal()
+        getData()
+      })
+      .finally(() => setModalLoader(false))
+  }
+
+  const deleteTable = async (id) => {
     setLoader(true)
 
-    const index = list?.findIndex(table => table.id === id)
+    const index = list?.findIndex((table) => table.id === id)
 
-
-    const computedTableIds = list?.filter((table) => table.id !== id).map(table => table.id) ?? []
+    const computedTableIds =
+      list?.filter((table) => table.id !== id).map((table) => table.id) ?? []
 
     try {
-      await constructorTableService.delete(id)
+      // await constructorTableService.delete(id)
 
-      await applicationService
-      .update({
+      await applicationService.update({
         ...appData,
         table_ids: computedTableIds,
       })
       remove(index)
-
     } finally {
       setLoader(false)
-    }      
+    }
   }
 
   return (
-    <TableCard>
-      <CTable disablePagination removableHeight={120} >
-        <CTableHead>
-          <CTableCell width={10}>№</CTableCell>
-          <CTableCell>Название</CTableCell>
-          <CTableCell>Описание</CTableCell>
-          <CTableCell width={60} />
-        </CTableHead>
-        <CTableBody columnsCount={4} dataLength={1} loader={loader}   >
-          {list?.map((element, index) => (
-            <CTableRow
-              key={element.id}
-              onClick={() => navigateToEditForm(element.id, element.slug)}
-            >
-              <CTableCell>{index + 1}</CTableCell>
-              <CTableCell>{element.label}</CTableCell>
-              <CTableCell>{element.description}</CTableCell>
-              <CTableCell>
-                <DeleteWrapperModal id={element.id} onDelete={deleteTable}>
-                  <RectangleIconButton color="error">
-                    <Delete color="error" />
-                  </RectangleIconButton>
-                </DeleteWrapperModal>
-              </CTableCell>
-            </CTableRow>
-          ))}
+    <>
+      {importModalVisible && <ImportModal  closeModal={closeImportModal} importTable={importTable} btnLoader={modalLoader} />}
+      <TableCard>
+        <CTable disablePagination removableHeight={120}>
+          <CTableHead>
+            <CTableCell width={10}>№</CTableCell>
+            <CTableCell>Название</CTableCell>
+            <CTableCell>Описание</CTableCell>
+            <CTableCell width={60} />
+          </CTableHead>
+          <CTableBody columnsCount={4} dataLength={1} loader={loader}>
+            {list?.map((element, index) => (
+              <CTableRow
+                key={element.id}
+                onClick={() => navigateToEditForm(element.id, element.slug)}
+              >
+                <CTableCell>{index + 1}</CTableCell>
+                <CTableCell>{element.label}</CTableCell>
+                <CTableCell>{element.description}</CTableCell>
+                <CTableCell>
+                  <DeleteWrapperModal id={element.id} onDelete={deleteTable}>
+                    <RectangleIconButton color="error">
+                      <Delete color="error" />
+                    </RectangleIconButton>
+                  </DeleteWrapperModal>
+                </CTableCell>
+              </CTableRow>
+            ))}
 
-          <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
-        </CTableBody>
-      </CTable>
-    </TableCard>
+            <TableRowButton
+              colSpan={4}
+              onClick={openImportModal}
+              title="Импортировать из других приложений"
+            />
+            <TableRowButton
+              colSpan={4}
+              onClick={navigateToCreateForm}
+              title="Создать новый"
+            />
+          </CTableBody>
+        </CTable>
+      </TableCard>
+    </>
   )
 }
 

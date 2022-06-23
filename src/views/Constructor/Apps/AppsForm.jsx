@@ -161,7 +161,7 @@ const AppsForm = () => {
 
         {appId && (
           <TabPanel>
-            <TablesList mainForm={mainForm} appData={appData} />
+            <TablesList mainForm={mainForm} appData={appData} getData={getData} />
           </TabPanel>
         )}
       </Tabs>

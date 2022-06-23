@@ -3,7 +3,7 @@ import { CTableCell, CTableRow } from "../CTable";
 import styles from './style.module.scss'
 
 
-const TableRowButton = ({ colSpan=2, onClick=()=>{} }) => {
+const TableRowButton = ({ colSpan=2, onClick=()=>{}, title="Добавить" }) => {
   return ( <CTableRow>
     <CTableCell colSpan={colSpan}>
       <div
@@ -11,7 +11,7 @@ const TableRowButton = ({ colSpan=2, onClick=()=>{} }) => {
         onClick={onClick}
       >
         <Add color="primary" />
-        <p>Добавить</p>
+        <p>{title}</p>
       </div>
     </CTableCell>
   </CTableRow> );

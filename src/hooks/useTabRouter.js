@@ -1,6 +1,6 @@
 import { useAliveController } from "react-activation"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { tabRouterActions } from "../store/tabRouter/tabRouter.slice"
 import { generateID } from "../utils/generateID"
 
@@ -10,6 +10,7 @@ import { generateID } from "../utils/generateID"
 export default function useTabRouter() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { appId } = useParams()
   const tabs = useSelector(state => state.tabRouter.tabs)
   const { drop } = useAliveController()
 
@@ -19,7 +20,7 @@ export default function useTabRouter() {
 
       const id = generateID()
 
-      const link = `/object/${tableSlug}/create/${id}`
+      const link = `/main/${appId}/object/${tableSlug}/create/${id}`
 
       const newTab = {
         id,
@@ -32,7 +33,7 @@ export default function useTabRouter() {
       return
     }
 
-    const link = `/object/${tableSlug}/${row.guid}`
+    const link = `/main/${appId}/object/${tableSlug}/${row.guid}`
 
     const tab = tabs.find(tab => tab.link === link)
 
@@ -59,7 +60,7 @@ export default function useTabRouter() {
     let navigateLink = ""
 
     if(tabs.length === 1) {
-      navigateLink = `/object/${link.split('/')[2]}`
+      navigateLink = `/main/${appId}`
     } else {
       navigateLink = tabs[index - 1]?.link || tabs[index + 1]?.link
     }

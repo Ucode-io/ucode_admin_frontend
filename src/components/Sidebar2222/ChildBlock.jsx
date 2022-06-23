@@ -1,7 +1,8 @@
 import { Collapse } from "@mui/material"
 // import { Collapse } from "react-collapse"
 import { NavLink } from "react-router-dom"
-import PermissionWrapper from "../PermissionWrapper"
+// import PermissionWrapper from "../PermissionWrapper"
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 const ChildBlock = ({ element, isVisible }) => {
   // const transitions = useTransition(isVisible, {
@@ -43,7 +44,10 @@ const ChildBlock = ({ element, isVisible }) => {
               to={childElement.path}
               className="nav-element"
             >
-              {childElement.icon && <childElement.icon className="icon" />}
+              <div className="child-element-dot" >
+                <FiberManualRecordIcon className="icon" fontSize="1" style={{ fontSize: '7px', margin: 0 }} />
+              </div>
+             
               <div className="label"> {childElement.title}</div>
             </NavLink>
           // </PermissionWrapper>

@@ -6,6 +6,7 @@ const HFTextField = ({
   name = "",
   disabledHelperText = false,
   required=false,
+  fullWidth=false,
   rules={},
   ...props
 }) => {
@@ -22,6 +23,7 @@ const HFTextField = ({
         onChange={e => onChange(e.target.value)}
         name={name}
         error={error}
+        fullWidth={fullWidth}
         helperText={!disabledHelperText && (error?.message ?? ' ')}
         {...props}
       />

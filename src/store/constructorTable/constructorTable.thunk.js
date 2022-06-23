@@ -1,13 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
+import applicationService from "../../services/applicationSercixe"
 import constructorTableService from "../../services/constructorTableService"
 import { constructorTableActions } from "./constructorTable.slice"
 
 export const fetchConstructorTableListAction = createAsyncThunk(
   "object/fetchConstructorTableList",
-  async (_, { dispatch }) => {
+  async (appId, { dispatch }) => {
     dispatch(constructorTableActions.setLoader(true))
     try {
-      const res = await constructorTableService.getList()
+      const res = await applicationService.getById(appId)
       dispatch(constructorTableActions.setList(res.tables))
     } catch (error) {
       console.log(error)

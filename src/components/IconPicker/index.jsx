@@ -5,7 +5,7 @@ import { iconsList } from "../../utils/constants/iconsList"
 import IconGenerator from "./IconGenerator"
 import styles from "./style.module.scss"
 
-const IconPicker = ({ value = "", onChange, error, loading, ...props }) => {
+const IconPicker = ({ value = "", onChange, error, loading, shape="circle", ...props }) => {
   const buttonRef = useRef()
   const id = useId()
 
@@ -36,7 +36,7 @@ const IconPicker = ({ value = "", onChange, error, loading, ...props }) => {
     <div onClick={(e) => e.stopPropagation()} {...props}>
       <div
         ref={buttonRef}
-        className={`${styles.iconWrapper} ${error ? styles.error : ""}`}
+        className={`${styles.iconWrapper} ${error ? styles.error : ""} ${styles[shape]}`}
         style={{ backgroundColor: value ?? "#fff" }}
         aria-describedby={id}
         onClick={handleOpen}

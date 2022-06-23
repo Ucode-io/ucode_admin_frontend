@@ -1,5 +1,6 @@
 import { Delete } from "@mui/icons-material"
-import { useDispatch, useSelector } from "react-redux"
+import { useState } from "react"
+import { useFieldArray } from "react-hook-form"
 import { useLocation, useNavigate } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import {
@@ -10,33 +11,64 @@ import {
   CTableRow,
 } from "../../../components/CTable"
 import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
-import { deleteConstructorTableAction } from "../../../store/constructorTable/constructorTable.thunk"
+import TableCard from "../../../components/TableCard"
+import TableRowButton from "../../../components/TableRowButton"
+import applicationService from "../../../services/applicationSercixe"
+import constructorTableService from "../../../services/constructorTableService"
 
-const TablesList = () => {
+const TablesList = ({ mainForm, appData }) => {
   const navigate = useNavigate()
   const location = useLocation()
-  const dispatch = useDispatch()
-  const list = useSelector((state) => state.constructorTable.list)
-  const loader = useSelector((state) => state.constructorTable.loader)
+  const [loader, setLoader] = useState(false)
+
+  const { fields: list, remove } = useFieldArray({
+    control: mainForm.control,
+    name: "tables",
+    keyName: 'key'
+  })
 
   const navigateToEditForm = (id, slug) => {
-    navigate(`${location.pathname}/${id}/${slug}`)
+    navigate(`${location.pathname}/objects/${id}/${slug}`)
   }
 
-  const deleteTable = (id) => {
-    dispatch(deleteConstructorTableAction(id))
+  const navigateToCreateForm = () => {
+    navigate(`${location.pathname}/objects/create`)
+  }
+
+  const deleteTable = async (id) => {
+
+    setLoader(true)
+
+    const index = list?.findIndex(table => table.id === id)
+
+
+    const computedTableIds = list?.filter((table) => table.id !== id).map(table => table.id) ?? []
+
+    try {
+      await constructorTableService.delete(id)
+
+      await applicationService
+      .update({
+        ...appData,
+        table_ids: computedTableIds,
+      })
+      remove(index)
+
+    } finally {
+      setLoader(false)
+    }      
   }
 
   return (
-    <div>
-      <CTable disablePagination>
+    <TableCard>
+      <CTable disablePagination removableHeight={120} >
         <CTableHead>
           <CTableCell width={10}>№</CTableCell>
           <CTableCell>Название</CTableCell>
           <CTableCell>Описание</CTableCell>
           <CTableCell width={60} />
         </CTableHead>
-        <CTableBody loader={loader} columnsCount={4} dataLength={list.length}>
+        <CTableBody columnsCount={4} dataLength={1} loader={loader}   >
           {list?.map((element, index) => (
             <CTableRow
               key={element.id}
@@ -46,19 +78,19 @@ const TablesList = () => {
               <CTableCell>{element.label}</CTableCell>
               <CTableCell>{element.description}</CTableCell>
               <CTableCell>
-                <DeleteWrapperModal id={element.id} onDelete={deleteTable} >
-                  <RectangleIconButton
-                    color="error"
-                  >
+                <DeleteWrapperModal id={element.id} onDelete={deleteTable}>
+                  <RectangleIconButton color="error">
                     <Delete color="error" />
                   </RectangleIconButton>
                 </DeleteWrapperModal>
               </CTableCell>
             </CTableRow>
           ))}
+
+          <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
         </CTableBody>
       </CTable>
-    </div>
+    </TableCard>
   )
 }
 

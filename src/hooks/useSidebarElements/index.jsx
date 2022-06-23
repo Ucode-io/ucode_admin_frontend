@@ -1,9 +1,10 @@
 import { useMemo } from "react"
 import { useSelector } from "react-redux"
 import { elements, settingsElements } from "./elements"
-import * as icons from "@mui/icons-material"
+import { useLocation } from "react-router-dom"
 
 const useSidebarElements = () => {
+  const { pathname } = useLocation()
   const constructorElements = useSelector(
     (state) => state.constructorTable.list
   )
@@ -14,7 +15,7 @@ const useSidebarElements = () => {
       .map((el) => ({
         ...el,
         title: el.label,
-        path: `/object/${el.slug}`,
+        path: `${pathname}/object/${el.slug}`,
       }))
 
     return [

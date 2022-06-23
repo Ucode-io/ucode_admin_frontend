@@ -192,12 +192,10 @@ const ObjectsFormPage = () => {
         extra={
           <>
             <SecondaryButton onClick={() => removeTab(pathname)} color="error">
-              {" "}
-              Закрыть{" "}
+              Закрыть
             </SecondaryButton>
             <PrimaryButton loader={btnLoader} onClick={handleSubmit(onSubmit)}>
-              {" "}
-              <Save /> Сохранить{" "}
+              <Save /> Сохранить
             </PrimaryButton>
           </>
         }

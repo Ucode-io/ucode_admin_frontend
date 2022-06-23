@@ -14,6 +14,7 @@ const DataTable = ({
   pagesCount = 1,
   columns = [],
   additionalRow,
+  dataLength,
   onDeleteClick,
   onEditClick,
 }) => {
@@ -47,7 +48,7 @@ const DataTable = ({
       <CTableBody
         loader={loader}
         columnsCount={columns.length}
-        dataLength={data.length}
+        dataLength={dataLength || data.length}
       >
         {data?.map((row, index) => (
           <CTableRow key={row.id}>

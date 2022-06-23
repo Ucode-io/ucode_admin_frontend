@@ -58,7 +58,7 @@ export const settingsElements = [
       {
         id: "constructor",
         title: "Contructor",
-        path: "/settings/constructor/tables",
+        path: "/settings/constructor/objects",
       },
       {
         id: "authMatrix",

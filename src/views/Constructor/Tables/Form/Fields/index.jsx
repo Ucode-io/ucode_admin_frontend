@@ -108,6 +108,7 @@ const Fields = ({ mainForm }) => {
         removableHeight={false}
         columns={columns}
         disablePagination
+        dataLength={1}
         // loader={loader}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}

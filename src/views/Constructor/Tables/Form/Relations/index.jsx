@@ -121,6 +121,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
         loader={loader}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
+        dataLength={1}
         additionalRow={
           <CTableRow>
             <CTableCell colSpan={columns.length + 1}>

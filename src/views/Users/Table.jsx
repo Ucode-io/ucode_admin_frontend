@@ -10,6 +10,7 @@ import {
   CTableHeadRow,
   CTableRow,
 } from "../../components/CTable"
+import TableRowButton from "../../components/TableRowButton"
 import UserInfoBlock from "../../components/UserInfoBlock"
 import useDebounce from "../../hooks/useDebounce"
 import useDebouncedWatch from "../../hooks/useDebouncedWatch"
@@ -80,7 +81,7 @@ const UsersTable = ({ searchText }) => {
       page={currentPage}
       setCurrentPage={setCurrentPage}
       loader={loader}
-      removableHeight={280}
+      removableHeight={225}
     >
       <CTableHead>
         <CTableHeadRow>
@@ -115,6 +116,7 @@ const UsersTable = ({ searchText }) => {
               </CTableCell>
             </CTableRow>
           ))}
+          <TableRowButton colSpan={5} onClick={() => navigate(`/settings/users/create`)} />
         </CTableBody>
       }
     </CTable>

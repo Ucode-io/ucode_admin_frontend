@@ -1,20 +1,25 @@
 import { useMemo, useState } from "react"
 import { useSelector } from "react-redux"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
-import CreateButton from "../../components/Buttons/CreateButton"
-import Header from "../../components/Header"
+import { useParams } from "react-router-dom"
 import TableView from "./TableView"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
-import { Add, CalendarToday, TableChart } from "@mui/icons-material"
-import TabButton from "../../components/Buttons/TabButton"
 import CalendarView from "./CalendartView"
 import ViewCreateModal from "./TableView/ViewCreateModal"
 import useTabRouter from "../../hooks/useTabRouter"
+import { generateGUID } from "../../utils/generateID"
+import Header from "../../components/Header"
+import CreateButton from "../../components/Buttons/CreateButton"
+import { CalendarToday, TableChart } from "@mui/icons-material"
+
+const staticViews = [
+  {
+    id: generateGUID,
+    type: "TABLE",
+  },
+]
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
   const params = useParams()
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
   const { navigateToForm } = useTabRouter()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
@@ -22,6 +27,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
 
   const [views, setViews] = useState([])
   const [viewCreateModalVisible, setViewCreateModalVisible] = useState(false)
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
   const computedTableSlug = isRelation ? tableSlug : params.tableSlug
 
@@ -36,15 +42,19 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
     )
   }, [columns, computedTableSlug])
 
+  const computedViews = useMemo(() => {
+    return [...staticViews, views]
+  }, [views])
+
   const navigateToCreatePage = () => {
     navigateToForm(computedTableSlug)
   }
-  
+
   return (
     <>
-      <Tabs direction={"ltr"}>
+      <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
         <div>
-          {!isRelation && (
+          {/* {!isRelation && (
             <Header
               title={tableInfo?.label}
               extra={<CreateButton onClick={navigateToCreatePage} />}
@@ -65,7 +75,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
                 </TabButton>
               </TabList>
             </Header>
-          )}
+          )} */}
 
           <TabPanel>
             <TableView
@@ -74,10 +84,43 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
               setViews={setViews}
               isRelation={isRelation}
               tableInfo={tableInfo}
+              selectedTab={selectedTabIndex}
+              setSelectedTab={setSelectedTabIndex}
             />
           </TabPanel>
 
-          {views.map((view) => (
+          {computedViews.map((view) => {
+            switch (view.type) {
+              case "CALENDAR":
+                return (
+                  <TabPanel key={view.id}>
+                    <CalendarView
+                      view={view}
+                      tableSlug={computedTableSlug}
+                      computedColumns={computedColumns}
+                      setViews={setViews}
+                    />
+                  </TabPanel>
+                )
+
+              default:
+                return (
+                  <TabPanel key={view.id}>
+                    <TableView
+                      tableSlug={computedTableSlug}
+                      computedColumns={computedColumns}
+                      setViews={setViews}
+                      isRelation={isRelation}
+                      tableInfo={tableInfo}
+                      selectedTab={selectedTabIndex}
+                      setSelectedTab={setSelectedTabIndex}
+                    />
+                  </TabPanel>
+                )
+            }
+          })}
+
+          {/* {views.map((view) => (
             <TabPanel key={view.id}>
               <CalendarView
                 view={view}
@@ -86,7 +129,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
                 setViews={setViews}
               />
             </TabPanel>
-          ))}
+          ))} */}
         </div>
       </Tabs>
 

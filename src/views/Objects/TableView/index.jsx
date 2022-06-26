@@ -17,14 +17,14 @@ import constructorObjectService from "../../../services/constructorObjectService
 import { objectToArray } from "../../../utils/objectToArray"
 import { useDispatch } from "react-redux"
 import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice"
-import { useLocation, useNavigate } from "react-router-dom"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import useWatch from "../../../hooks/useWatch"
 import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
 import useTabRouter from "../../../hooks/useTabRouter"
+import ViewTabSelector from "../components/ViewTypeSelector"
 
-const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo }) => {
+const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo, selectedTabIndex, setSelectedTabIndex }) => {
   const dispatch = useDispatch()
   const { navigateToForm } = useTabRouter()
 
@@ -98,7 +98,9 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo
 
   return (
     <>
-      <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} />
+      <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} >
+        <ViewTabSelector />
+      </FiltersBlock>
       <TableCard>
         <CTable
           removableHeight={296}
@@ -107,6 +109,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo
           setCurrentPage={setCurrentPage}
         >
           <CTableHead>
+            <CTableRow>
             <CTableCell width={10}>№</CTableCell>
             {computedColumns.map((field, index) => (
               <CTableCell key={index}>
@@ -121,7 +124,8 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo
                 </div>
               </CTableCell>
             ))}
-            <CTableCell width={70}></CTableCell>
+            <CTableCell></CTableCell>
+            </CTableRow>
           </CTableHead>
 
           <CTableBody
@@ -144,7 +148,7 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo
                   </CTableCell>
                 ))}
 
-                <CTableCell>
+                <CTableCell buttonsCell >
                   <DeleteWrapperModal id={row.guid} onDelete={deleteHandler} >
                     <RectangleIconButton
                       color="error"

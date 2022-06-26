@@ -70,6 +70,7 @@ const ObjectsFormPage = () => {
           .filter(
             (relation) =>
               relation.type === "Many2Many" ||
+              relation.type === "Recursive" ||
               (relation.type === "Many2One" &&
                 relation.table_to?.slug === tableSlug) ||
               (relation.type === "One2Many" &&
@@ -112,10 +113,11 @@ const ObjectsFormPage = () => {
           .filter(
             (relation) =>
               relation.type === "Many2Many" ||
+              relation.type === "Recursive" ||
               (relation.type === "Many2One" &&
                 relation.table_to?.slug === tableSlug) ||
               (relation.type === "One2Many" &&
-                relation.table_from?.slug === tableSlug)
+                relation.table_from?.slug === tableSlug) 
           )
           .map((relation) => ({
             ...relation,

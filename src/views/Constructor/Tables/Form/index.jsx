@@ -100,7 +100,7 @@ const ConstructorTablesFormPage = () => {
       relationsWithRelatedTableSlug.forEach((relation) => {
         if (
           (relation.type === "Many2One" && relation.table_from.slug === slug) ||
-          (relation.type === "One2Many" && relation.table_to.slug === slug)
+          (relation.type === "One2Many" && relation.table_to.slug === slug) || relation.type === "Recursive"
         )
           layoutRelations.push(relation)
         else tableRelations.push(relation)

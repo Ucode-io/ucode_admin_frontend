@@ -11,7 +11,7 @@ import FiltersBlock from "../../../components/FiltersBlock"
 import ColumnsSelector from "../components/ColumnsSelector"
 import TableCard from "../../../components/TableCard"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
-import { Delete } from "@mui/icons-material"
+import { Delete, Download, FilterAlt, JoinInner, Upload } from "@mui/icons-material"
 import { useEffect, useState } from "react"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
@@ -23,11 +23,22 @@ import useWatch from "../../../hooks/useWatch"
 import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
 import useTabRouter from "../../../hooks/useTabRouter"
 import ViewTabSelector from "../components/ViewTypeSelector"
+import SearchInput from "../../../components/SearchInput"
+import CreateButton from "../../../components/Buttons/CreateButton"
+import FiltersBlockButton from "../../../components/Buttons/FiltersBlockButton"
 
-const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo, selectedTabIndex, setSelectedTabIndex }) => {
+const TableView = ({
+  computedColumns,
+  tableSlug,
+  views,
+  setViews,
+  isRelation,
+  tableInfo,
+  selectedTabIndex,
+  setSelectedTabIndex,
+}) => {
   const dispatch = useDispatch()
   const { navigateToForm } = useTabRouter()
-
 
   const [tableLoader, setTableLoader] = useState(true)
   const [tableData, setTableData] = useState([])
@@ -96,35 +107,64 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo
     getAllData()
   }, [])
 
+  const navigateToCreatePage = () => {
+    navigateToForm(tableSlug)
+  }
+
   return (
     <>
-      <FiltersBlock extra={<ColumnsSelector tableSlug={tableSlug} />} >
-        <ViewTabSelector />
+      <FiltersBlock
+        extra={
+          <>
+            <RectangleIconButton color="grey" >
+              <JoinInner color="primary" />
+            </RectangleIconButton>
+            <ColumnsSelector tableSlug={tableSlug} />
+            <RectangleIconButton color="grey" >
+              <Upload color="primary" />
+            </RectangleIconButton>
+            <RectangleIconButton color="grey" >
+              <Download color="primary" />
+            </RectangleIconButton>
+          </>
+        }
+      >
+        <ViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+          setViews={setViews}
+        />
+        <SearchInput />
+        <FiltersBlockButton>
+          <FilterAlt color="primary" />
+          Быстрый фильтр
+        </FiltersBlockButton>
       </FiltersBlock>
-      <TableCard>
+      <TableCard extra={<CreateButton onClick={navigateToCreatePage} />}>
         <CTable
-          removableHeight={296}
+          removableHeight={250}
           count={pageCount}
           page={currentPage}
           setCurrentPage={setCurrentPage}
         >
           <CTableHead>
             <CTableRow>
-            <CTableCell width={10}>№</CTableCell>
-            {computedColumns.map((field, index) => (
-              <CTableCell key={index}>
-                <div className="table-filter-cell">
-                  {field.label}
-                  <FilterGenerator
-                    field={field}
-                    name={field.slug}
-                    onChange={filterChangeHandler}
-                    filters={filters}
-                  />
-                </div>
-              </CTableCell>
-            ))}
-            <CTableCell></CTableCell>
+              <CTableCell width={10}>№</CTableCell>
+              {computedColumns.map((field, index) => (
+                <CTableCell key={index}>
+                  <div className="table-filter-cell">
+                    {field.label}
+                    <FilterGenerator
+                      field={field}
+                      name={field.slug}
+                      onChange={filterChangeHandler}
+                      filters={filters}
+                    />
+                  </div>
+                </CTableCell>
+              ))}
+              <CTableCell></CTableCell>
             </CTableRow>
           </CTableHead>
 
@@ -134,22 +174,16 @@ const TableView = ({ computedColumns, tableSlug, setViews, isRelation, tableInfo
             dataLength={tableData.length}
           >
             {tableData.map((row, rowIndex) => (
-              <CTableRow
-                key={row.guid}
-                onClick={() => navigateToEditPage(row)}
-              >
+              <CTableRow key={row.guid} onClick={() => navigateToEditPage(row)}>
                 <CTableCell>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
                 {computedColumns.map((field) => (
                   <CTableCell key={field.id} className="text-nowrap">
-                    <CellElementGenerator
-                      field={field}
-                      row={row}
-                    />
+                    <CellElementGenerator field={field} row={row} />
                   </CTableCell>
                 ))}
 
-                <CTableCell buttonsCell >
-                  <DeleteWrapperModal id={row.guid} onDelete={deleteHandler} >
+                <CTableCell buttonsCell>
+                  <DeleteWrapperModal id={row.guid} onDelete={deleteHandler}>
                     <RectangleIconButton
                       color="error"
                       // onClick={() => deleteHandler(row.guid)}

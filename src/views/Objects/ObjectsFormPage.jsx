@@ -20,7 +20,6 @@ import { sortSections } from "../../utils/sectionsOrderNumber"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
-  const navigate = useNavigate()
   const { pathname, state = {} } = useLocation()
   const { removeTab, navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()

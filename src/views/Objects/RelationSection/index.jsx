@@ -49,6 +49,7 @@ const RelationSection = ({ relation }) => {
     onSuccess: ({data}) => {
       const pageCount = Math.ceil(data.count / 10)
       if (id) {
+        console.log("DATA ====>", data.response)
         setTableData(objectToArray(data.response ?? {}))
         setPageCount(isNaN(pageCount) ? 1 : pageCount)
       }
@@ -84,7 +85,6 @@ const RelationSection = ({ relation }) => {
 
   const tableLoader = deleteLoading || dataFetchingLoading
 
-
   // const deleteHandler = async (elementId) => {
   //   // setTableLoader(true)
   //   try {
@@ -109,7 +109,7 @@ const RelationSection = ({ relation }) => {
   //     // setTableLoader(false)
   //   }
   // } 
-
+ 
   const navigateToEditPage = (row) => {
     navigateToForm(relation.relatedTable?.slug, "EDIT", row)
     // navigate(`/object/${relation.relatedTable?.slug}/${id}`)

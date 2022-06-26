@@ -10,6 +10,7 @@ import { generateGUID } from "../../utils/generateID"
 import Header from "../../components/Header"
 import CreateButton from "../../components/Buttons/CreateButton"
 import { CalendarToday, TableChart } from "@mui/icons-material"
+import TreeView from "./TreeView"
 
 const staticViews = [
   {
@@ -26,8 +27,9 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   const columns = useSelector((state) => state.tableColumn.list)
 
   const [views, setViews] = useState([])
-  const [viewCreateModalVisible, setViewCreateModalVisible] = useState(false)
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+
+
 
   const computedTableSlug = isRelation ? tableSlug : params.tableSlug
 
@@ -43,12 +45,8 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   }, [columns, computedTableSlug])
 
   const computedViews = useMemo(() => {
-    return [...staticViews, views]
+    return [...staticViews, ...views]
   }, [views])
-
-  const navigateToCreatePage = () => {
-    navigateToForm(computedTableSlug)
-  }
 
   return (
     <>
@@ -77,17 +75,18 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
             </Header>
           )} */}
 
-          <TabPanel>
+          {/* <TabPanel>
             <TableView
               tableSlug={computedTableSlug}
               computedColumns={computedColumns}
-              setViews={setViews}
               isRelation={isRelation}
               tableInfo={tableInfo}
               selectedTab={selectedTabIndex}
               setSelectedTab={setSelectedTabIndex}
+              views={computedViews}
+              setViews={setViews}
             />
-          </TabPanel>
+          </TabPanel> */}
 
           {computedViews.map((view) => {
             switch (view.type) {
@@ -99,6 +98,26 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
                       tableSlug={computedTableSlug}
                       computedColumns={computedColumns}
                       setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={computedViews}
+                    />
+                  </TabPanel>
+                )
+
+                case "TREE":
+                return (
+                  <TabPanel key={view.id}>
+                   <TreeView
+                      tableSlug={computedTableSlug}
+                      computedColumns={computedColumns}
+                      isRelation={isRelation}
+                      tableInfo={tableInfo}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={computedViews}
+                      setViews={setViews}
+                      view={view}
                     />
                   </TabPanel>
                 )
@@ -109,38 +128,21 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
                     <TableView
                       tableSlug={computedTableSlug}
                       computedColumns={computedColumns}
-                      setViews={setViews}
                       isRelation={isRelation}
                       tableInfo={tableInfo}
-                      selectedTab={selectedTabIndex}
-                      setSelectedTab={setSelectedTabIndex}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={computedViews}
+                      setViews={setViews}
                     />
                   </TabPanel>
                 )
             }
           })}
-
-          {/* {views.map((view) => (
-            <TabPanel key={view.id}>
-              <CalendarView
-                view={view}
-                tableSlug={computedTableSlug}
-                computedColumns={computedColumns}
-                setViews={setViews}
-              />
-            </TabPanel>
-          ))} */}
         </div>
       </Tabs>
 
-      {viewCreateModalVisible && (
-        <ViewCreateModal
-          fields={columns[computedTableSlug]}
-          closeModal={() => setViewCreateModalVisible(false)}
-          setViews={setViews}
-          tableSlug={computedTableSlug}
-        />
-      )}
+     
     </>
   )
 }

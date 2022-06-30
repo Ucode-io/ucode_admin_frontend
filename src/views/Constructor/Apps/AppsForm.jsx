@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useDispatch } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import PrimaryButton from "../../../components/Buttons/PrimaryButton"
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
@@ -24,6 +24,7 @@ const AppsForm = () => {
   const { appId } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const [search, setSearch] = useSearchParams()
   const [btnLoader, setBtnLoader] = useState()
   const [loader, setLoader] = useState(true)
   const [appData, setAppData] = useState({})
@@ -36,7 +37,6 @@ const AppsForm = () => {
       table_ids: [],
     },
   })
-  
 
   const createApp = (data) => {
     setBtnLoader(true)
@@ -44,7 +44,7 @@ const AppsForm = () => {
     applicationService
       .create(data)
       .then(() => {
-        console.log('sdasdasdadadas')
+        console.log("sdasdasdadadas")
         navigate(applicationListPageLink)
         dispatch(fetchApplicationListActions())
       })
@@ -68,12 +68,13 @@ const AppsForm = () => {
   const getData = () => {
     setLoader(true)
 
-    applicationService.getById(appId)
-      .then(res => {
+    applicationService
+      .getById(appId)
+      .then((res) => {
         const computedData = {
           ...mainForm.getValues(),
           ...res,
-          table_ids: res.tables?.map(table => table.id) ?? []
+          table_ids: res.tables?.map((table) => table.id) ?? [],
         }
         mainForm.reset(computedData)
         setAppData(computedData)
@@ -82,21 +83,28 @@ const AppsForm = () => {
   }
 
   useEffect(() => {
-    if(appId) getData()
+    if (appId) getData()
     else setLoader(false)
   }, [])
 
-
   const onSubmit = (data) => {
-    if(appId) updateApp(data)
-    else createApp(data) 
+    if (appId) updateApp(data)
+    else createApp(data)
   }
 
-  if(loader) return <PageFallback />
+  if (loader) return <PageFallback />
+
+  console.log('search.get("tab") =====>', search.get("tab"))
+
 
   return (
     <div>
-      <Tabs direction={"ltr"} style={{ height: "100vh", position: "relative" }}>
+      <Tabs
+        selectedIndex={Number(search.get("tab") ?? 0)}
+        onSelect={(index) => setSearch({ tab: index })}
+        direction={"ltr"}
+        style={{ height: "100vh", position: "relative" }}
+      >
         <HeaderSettings
           title="Приложение"
           backButtonLink={applicationListPageLink}
@@ -149,8 +157,16 @@ const AppsForm = () => {
           <Footer
             extra={
               <>
-                <SecondaryButton onClick={() => navigate(applicationListPageLink)} color="error">Закрыть</SecondaryButton>
-                <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)}>
+                <SecondaryButton
+                  onClick={() => navigate(applicationListPageLink)}
+                  color="error"
+                >
+                  Закрыть
+                </SecondaryButton>
+                <PrimaryButton
+                  loader={btnLoader}
+                  onClick={mainForm.handleSubmit(onSubmit)}
+                >
                   <Save /> Сохранить
                 </PrimaryButton>
               </>
@@ -160,7 +176,11 @@ const AppsForm = () => {
 
         {appId && (
           <TabPanel>
-            <TablesList mainForm={mainForm} appData={appData} getData={getData} />
+            <TablesList
+              mainForm={mainForm}
+              appData={appData}
+              getData={getData}
+            />
           </TabPanel>
         )}
       </Tabs>

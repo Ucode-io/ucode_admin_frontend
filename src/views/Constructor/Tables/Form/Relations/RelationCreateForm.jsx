@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
-import { useSelector } from "react-redux"
 import { relationTyes } from "../../../../../utils/constants/relationTypes"
 import DrawerCard from "../../../../../components/DrawerCard"
 import FRow from "../../../../../components/FormElements/FRow"
@@ -19,8 +18,6 @@ const RelationCreateForm = ({
   open,
   isLoading=false
 }) => {
-  // const [tablesList, setTablesList] = useState()
-  // const tablesList = useSelector((state) => state.constructorTable.list)
   const {appId} = useParams()
 
   const { handleSubmit, control, reset, watch } = useForm()

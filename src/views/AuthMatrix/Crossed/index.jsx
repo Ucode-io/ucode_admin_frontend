@@ -38,7 +38,7 @@ const CrossedPage = () => {
     <div className="UsersPage">
       <Header
         title={tabs[selectedTab]?.title}
-        backButtonLink={`/settings/auth-matrix/${projectId}`}
+        backButtonLink={`/settings/auth/matrix/${projectId}`}
         extra={
           <CreateButton
             onClick={() => navigate(tabs[selectedTab]?.createPageLink)}

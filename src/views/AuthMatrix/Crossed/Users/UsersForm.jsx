@@ -65,7 +65,7 @@ const UsersForm = () => {
     userService
       .create(data)
       .then((res) => {
-        navigate(`/settings/auth-matrix/${projectId}/${platformId}/${typeId}/user`)
+        navigate(`/settings/auth/matrix/${projectId}/${platformId}/${typeId}/user`)
       })
       .finally(() => setBtnLoader(false))
   }
@@ -78,7 +78,7 @@ const UsersForm = () => {
         id: userId,
       })
       .then((res) => {
-        navigate(`/settings/auth-matrix/${projectId}/${platformId}/${typeId}/user`)
+        navigate(`/settings/auth/matrix/${projectId}/${platformId}/${typeId}/user`)
       })
       .finally(() => setBtnLoader(false))
   }

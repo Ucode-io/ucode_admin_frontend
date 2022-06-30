@@ -34,7 +34,7 @@ const ClientPlatform = () => {
 
   return (
     <div className="ClientPlatform">
-      <Header title="Platform" backButtonLink={`/settings/auth-matrix/${projectId}`} />
+      <Header title="Platform" backButtonLink={`/settings/auth/matrix/${projectId}`} />
 
       {loader ? (
         <div className="main-area">

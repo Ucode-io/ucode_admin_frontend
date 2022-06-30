@@ -245,7 +245,7 @@ const AuthMatrix = () => {
                     style={{ gridColumnStart: index + 2 }}
                     onClick={() =>
                       navigate(
-                        `/settings/auth-matrix/${projectId}/platform/${platform.id}`
+                        `/settings/auth/matrix/${projectId}/platform/${platform.id}`
                       )
                     }
                   >
@@ -280,7 +280,7 @@ const AuthMatrix = () => {
                     style={{ gridRowStart: index + 2 }}
                     onClick={() =>
                       navigate(
-                        `/settings/auth-matrix/${projectId}/client-type/${type.id}`
+                        `/settings/auth/matrix/${projectId}/client-type/${type.id}`
                       )
                     }
                   >

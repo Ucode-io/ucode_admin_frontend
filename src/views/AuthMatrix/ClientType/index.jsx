@@ -33,7 +33,7 @@ const ClientType = () => {
 
   return (
     <div className="ClientType">
-      <Header title="Client-type" backButtonLink={`/settings/auth-matrix/${projectId}`} />
+      <Header title="Client-type" backButtonLink={`/settings/auth/matrix/${projectId}`} />
       <div className="main-area">
         {/* <RolesBlock rolesList={rolesList} setRolesList={setRolesList} /> */}
         <InfoFieldsSection fieldsList={fieldsList} setFieldsList={setFieldsList} />

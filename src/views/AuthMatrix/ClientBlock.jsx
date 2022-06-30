@@ -58,7 +58,7 @@ const ClientBlock = ({
     e.stopPropagation()
     if (editFormVisible) return null
     navigate(
-      `/settings/auth-matrix/${projectId}/${client.client_platform_id}/${client.client_type_id}/crossed`
+      `/settings/auth/matrix/${projectId}/${client.client_platform_id}/${client.client_type_id}/crossed`
     )
   }
 

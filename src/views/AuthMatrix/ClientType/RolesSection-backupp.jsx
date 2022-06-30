@@ -49,7 +49,7 @@ const RolesBlock = () => {
             <CreateRowButton
               onClick={() =>
                 navigate(
-                  `/settings/auth-matrix/${projectId}/client-type/${typeId}/role/create`
+                  `/settings/auth/matrix/${projectId}/client-type/${typeId}/role/create`
                 )
               }
             />
@@ -71,7 +71,7 @@ const RolesBlock = () => {
                   onDeleteClick={deleteRole}
                   onEditClick={() =>
                     navigate(
-                      `/settings/auth-matrix/${projectId}/client-type/${typeId}/role/${role.id}`
+                      `/settings/auth/matrix/${projectId}/client-type/${typeId}/role/${role.id}`
                     )
                   }
                 />

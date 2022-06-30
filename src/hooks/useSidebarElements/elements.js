@@ -63,7 +63,7 @@ export const settingsElements = [
       {
         id: "authMatrix",
         title: "Auth matrix",
-        path: `/settings/auth-matrix/${import.meta.env.VITE_AUTH_PROJECT_ID}`,
+        path: `/settings/auth/matrix/${import.meta.env.VITE_AUTH_PROJECT_ID}`,
       },
       {
         id: "users",

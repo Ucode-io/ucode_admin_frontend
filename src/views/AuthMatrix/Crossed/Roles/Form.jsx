@@ -64,7 +64,7 @@ const RolesForm = () => {
       .create(data)
       .then((res) => {
         navigate(
-          `/settings/auth-matrix/${projectId}/${platformId}/${typeId}/crossed`
+          `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/crossed`
         )
       })
       .finally(() => setBtnLoader(false))
@@ -87,7 +87,7 @@ const RolesForm = () => {
       await roleService.addPermissionToRole({ permissions })
 
       navigate(
-        `/settings/auth-matrix/${projectId}/${platformId}/${typeId}/crossed`
+        `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/crossed`
       )
 
     } finally {

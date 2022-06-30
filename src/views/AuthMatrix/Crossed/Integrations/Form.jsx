@@ -63,7 +63,7 @@ const IntegrationsForm = () => {
       .create(data)
       .then((res) => {
         navigate(
-          `/settings/auth-matrix/${projectId}/${platformId}/${typeId}/crossed`
+          `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/crossed`
         )
       })
       .finally(() => setBtnLoader(false))
@@ -79,7 +79,7 @@ const IntegrationsForm = () => {
       })
 
       navigate(
-        `/settings/auth-matrix/${projectId}/${platformId}/${typeId}/crossed`
+        `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/crossed`
       )
     } finally {
       setBtnLoader(false)

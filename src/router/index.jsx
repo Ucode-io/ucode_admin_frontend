@@ -88,7 +88,6 @@ const Router = () => {
         <Route path="constructor/apps/:appId/objects/:id/:slug" element={<ConstructorTablesFormPage />} />
 
 
-
         <Route path="auth/users" element={<Suspense fallback={<PageFallback />}><UsersPage /></Suspense>} />
         <Route path="auth/users/create" element={<Suspense fallback={<PageFallback />}><UsersForm /></Suspense>} />
         <Route path="auth/users/:userId" element={<Suspense fallback={<PageFallback />}><UsersForm /></Suspense>} />

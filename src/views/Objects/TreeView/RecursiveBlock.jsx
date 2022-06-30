@@ -14,11 +14,10 @@ const RecursiveBlock = ({ row, view, data = [], setData, level = 1 }) => {
   const [deleteLoader, setDeleteLoader] = useState(false)
   const { navigateToForm } = useTabRouter()
 
-
   const children = useMemo(() => {
     return data.filter((el) => el[`${tableSlug}_id`] === row.guid)
   }, [data, row, tableSlug])
-
+ 
   const switchChildBlock = () => setChildBlockVisible(prev => !prev)
 
   const navigateToCreatePage = () => {
@@ -33,7 +32,7 @@ const RecursiveBlock = ({ row, view, data = [], setData, level = 1 }) => {
     } catch {
       setDeleteLoader(false)
     }
-  }
+  } 
 
   return (
     <>

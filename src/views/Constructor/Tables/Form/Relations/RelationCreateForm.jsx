@@ -10,6 +10,7 @@ import constructorFieldService from "../../../../../services/constructorFieldSer
 import listToOptions from "../../../../../utils/listToOptions"
 import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect"
 import { useParams } from "react-router-dom"
+import applicationService from "../../../../../services/applicationSercixe"
 
 const RelationCreateForm = ({
   onSubmit,
@@ -18,8 +19,9 @@ const RelationCreateForm = ({
   open,
   isLoading=false
 }) => {
-  const tablesList = useSelector((state) => state.constructorTable.list)
-
+  // const [tablesList, setTablesList] = useState()
+  // const tablesList = useSelector((state) => state.constructorTable.list)
+  const {appId} = useParams()
 
   const { handleSubmit, control, reset, watch } = useForm()
 
@@ -46,12 +48,19 @@ const RelationCreateForm = ({
     }
   )
 
+  const { data: app } = useQuery(
+    ["GET_TABLE_LIST", appId],
+    () => {
+      return applicationService.getById(appId)
+    }
+  )
+
   const computedTablesList = useMemo(() => {
-    return tablesList.map((table) => ({
+    return app?.tables?.map((table) => ({
       value: table.slug,
       label: table.label,
     }))
-  }, [tablesList])
+  }, [app])
 
   const isRecursiveRelation = useMemo(() => {
     return values.type === "Recursive"

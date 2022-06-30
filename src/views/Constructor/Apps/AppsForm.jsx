@@ -57,7 +57,6 @@ const AppsForm = () => {
     applicationService
       .update({
         ...data,
-        table_ids: ['9c39d7f2-7303-4ea8-b80e-5a72ad3b73d4']
       })
       .then(() => {
         navigate(applicationListPageLink)

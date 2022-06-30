@@ -8,12 +8,12 @@ const TableCard = ({ children, disablePagination = false, extra, width }) => {
         className={style.card}
         style={{ width }}
       >
-        <div className={style.header}>
+        {extra && <div className={style.header}>
           <div></div>
           <div>
             {extra}
           </div>
-        </div>
+        </div>}
 
         <div className={style.body} style={{ padding: disablePagination ? "16px" : "16px 16px 10px 16px" }} >
           {children}

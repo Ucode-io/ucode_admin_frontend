@@ -3,8 +3,14 @@
 export const staticApps = [
   {
     id: 'settings',
-    name: 'Settings',
+    name: 'Настройки',
     icon: 'gear.svg',
+    type: 'static',
+  },
+  {
+    id: 'cashbox',
+    name: 'Касса',
+    icon: 'cash-register.svg',
     type: 'static',
   }
 ]

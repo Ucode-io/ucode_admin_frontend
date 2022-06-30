@@ -23,7 +23,6 @@ import { Save } from "@mui/icons-material"
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
 
 
-
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -212,7 +211,7 @@ const ConstructorTablesFormPage = () => {
         extra={
           <>
           <SecondaryButton onClick={() => navigate(-1)} color="error" >Закрыть</SecondaryButton>
-          <PrimaryButton onClick={mainForm.handleSubmit(onSubmit)}
+          <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)}
           loading={btnLoader}>
             <Save /> Сохранить
           </PrimaryButton>

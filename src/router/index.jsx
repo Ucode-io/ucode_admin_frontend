@@ -5,10 +5,12 @@ import KeepAliveWrapper from "../components/KeepAliveWrapper"
 import PageFallback from "../components/PageFallback"
 import ReloadWrapper from "../components/ReloadWrapper"
 import AuthLayout from "../layouts/AuthLayout"
+import CashboxLayout from "../layouts/CashboxLayout"
 import MainLayout from "../layouts/MainLayout"
 import SettingsLayout from "../layouts/SettingsLayout"
 import Login from "../views/Auth/Login"
 import Registration from "../views/Auth/Registration"
+import CashboxVisits from "../views/Cashbox/Visits"
 import AppsPage from "../views/Constructor/Apps"
 import AppsForm from "../views/Constructor/Apps/AppsForm"
 import ConstructorTablesFormPage from "../views/Constructor/Tables/Form"
@@ -32,6 +34,7 @@ const Router = () => {
 
   const redirectLink = useMemo(() => {
     if(location.pathname.includes('settings')) return '/settings/constructor/apps'
+    if(location.pathname.includes('cashbox')) return '/cashbox/visits'
 
     if(!applications.length) return '/settings/constructor/apps'
     
@@ -111,6 +114,17 @@ const Router = () => {
         <Route path="auth/matrix/:projectId/:platformId/:typeId/crossed/integration/:integrationId" element={<Suspense fallback={<PageFallback />}><IntegrationsForm /></Suspense>} />
         <Route path="auth/matrix/:projectId/:platformId/:typeId/crossed/integration/:integrationId/sessions" element={<Suspense fallback={<PageFallback />}><SessionsPage /></Suspense>} />
 
+
+      </Route>
+
+
+      <Route path="/cashbox" element={<CashboxLayout />} >
+
+       <Route index element={<Navigate to={'/cashbox/visits'} />} />
+
+        <Route path="visits" element={<CashboxVisits />}  />
+
+       <Route path="*" element={<Navigate to={redirectLink} />} />
 
       </Route>
 

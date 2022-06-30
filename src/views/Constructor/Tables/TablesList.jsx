@@ -53,7 +53,7 @@ const TablesList = ({ mainForm, appData, getData}) => {
     applicationService
       .update({
         ...appData,
-        table_ids: [...list, ...checkedElements],
+        table_ids: [...list.map(el => el.id), ...checkedElements],
       })
       .then(() => {
         closeImportModal()

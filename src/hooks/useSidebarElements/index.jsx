@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { useSelector } from "react-redux"
-import { elements, settingsElements } from "./elements"
+import { elements } from "./elements"
 import { useParams } from "react-router-dom"
 
 const useSidebarElements = () => {
@@ -29,7 +29,7 @@ const useSidebarElements = () => {
 
   
 
-  return { elements: computedElements ?? [], settingsElements }
+  return { elements: computedElements ?? [] }
 }
 
 export default useSidebarElements

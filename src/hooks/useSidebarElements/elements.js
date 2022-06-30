@@ -48,29 +48,3 @@ export const elements = [
   // },
 
 ]
-
-export const settingsElements = [
-  {
-    id: "settings",
-    title: "Settings",
-    icon: Settings,
-    children: [
-      {
-        id: "constructor",
-        title: "Contructor",
-        path: "/settings/constructor/objects",
-      },
-      {
-        id: "authMatrix",
-        title: "Auth matrix",
-        path: `/settings/auth/matrix/${import.meta.env.VITE_AUTH_PROJECT_ID}`,
-      },
-      {
-        id: "users",
-        title: "Users",
-        path: "/settings/users",
-      }
-    ]
-  },
-  
-]

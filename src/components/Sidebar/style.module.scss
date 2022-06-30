@@ -38,7 +38,7 @@
     align-items: center;
     padding: 10px;
     gap: 5px;
-    min-height: calc(100vh - 240px);
+    min-height: calc(100vh - 200px);
   }
 
 
@@ -65,8 +65,6 @@
       background-color: colors.$primary;
     }
   }
-
-
 }
 
 .rightSide {

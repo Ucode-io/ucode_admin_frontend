@@ -1,28 +1,53 @@
-import { useEffect, useMemo, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableRow,
-} from "../../../components/CTable"
-import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator"
+import { useEffect, useEffectxe, useState } from "react"
+import DataTable from "../../../components/DataTable"
 import useCashboxTabRouter from "../../../hooks/useCashboxTabRouter"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
-import useTabRouter from "../../../hooks/useTabRouter"
-import useWatch from "../../../hooks/useWatch"
+import offlineAppointmentsService from "../../../services/cashbox/offlineAppointmentsService"
+import onlineAppointmentsService from "../../../services/cashbox/onlineAppointmentsService"
 import constructorObjectService from "../../../services/constructorObjectService"
-import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice"
 import { objectToArray } from "../../../utils/objectToArray"
 import { pageToOffset } from "../../../utils/pageToOffset"
-import FilterGenerator from "../../Objects/components/FilterGenerator"
 
-const CashboxAppointMentsTable = ({ tableSlug }) => {
+const computedColumns = [
+  {
+    id: "1",
+    label: "Дата",
+    slug: "date",
+    type: "DATE",
+  },
+  {
+    id: "2",
+    label: "ФИО пациента",
+    slug: "patient_full_name",
+    type: "SINGLE_LINE",
+  },
+  {
+    id: "2",
+    label: "ФИО пациента",
+    slug: "patient_full_name",
+    type: "SINGLE_LINE",
+  },
+  {
+    id: "3",
+    label: "Cтатус",
+    slug: "payment_status",
+    type: "SWITCH",
+    attributes: {
+      text_true: "Оплачено",
+      text_false: "Не оплачено",
+
+    }
+  },
+  {
+    id: "4",
+    label: "Стоимость",
+    slug: "overall_price",
+    type: "NUMBER"
+  },
+]
+
+const CashboxAppointMentsTable = ({ tableSlug, type }) => {
   const { navigateToForm } = useCashboxTabRouter()
-  const dispatch = useDispatch()
-
-  const columns = useSelector((state) => state.tableColumn.list)
 
   const [tableLoader, setTableLoader] = useState(true)
   const [tableData, setTableData] = useState([])
@@ -30,35 +55,22 @@ const CashboxAppointMentsTable = ({ tableSlug }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageCount, setPageCount] = useState(1)
 
-  const computedColumns = useMemo(() => {
-    return columns[tableSlug]?.filter((column) => column.isVisible) ?? []
-  }, [columns, tableSlug])
-
-  const filterChangeHandler = (value, name) => {
-    setFilters({
-      ...filters,
-      [name]: value,
-    })
-  }
-
   const getAllData = async () => {
     setTableLoader(true)
     try {
-      const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: pageToOffset(currentPage), limit: 10, ...filters },
+
+      let service
+      if(type === "online") service = onlineAppointmentsService
+      else service = offlineAppointmentsService
+
+      const data = await service.getList(tableSlug, {
+        data: { offset: pageToOffset(currentPage), limit: 10 },
       })
 
       const pageCount = Math.ceil(data.count / 10)
 
-      // setViews(data.views ?? [])
-      setTableData(objectToArray(data.response ?? {}))
+      setTableData(data.offline_appointments ?? data.booked_appointments ?? [])
       setPageCount(isNaN(pageCount) ? 1 : pageCount)
-      dispatch(
-        tableColumnActions.setList({
-          tableSlug: tableSlug,
-          columns: data.fields ?? [],
-        })
-      )
     } finally {
       setTableLoader(false)
     }
@@ -75,7 +87,7 @@ const CashboxAppointMentsTable = ({ tableSlug }) => {
   }
 
   const navigateToEditPage = (row) => {
-    navigateToForm(row.guid)
+    navigateToForm(row.id, type, row.patient_full_name)
   }
 
   useDebouncedWatch(
@@ -87,17 +99,24 @@ const CashboxAppointMentsTable = ({ tableSlug }) => {
     500
   )
 
-  useWatch(() => {
+  useEffect(() => {
     getAllData()
   }, [currentPage])
 
-  useEffect(() => {
-    getAllData()
-  }, [])
-
   return (
-    <div className="pt-2" >
-      <CTable
+    <div className="pt-2">
+      <DataTable
+        columns={computedColumns}
+        data={tableData}
+        loader={tableLoader}
+        removableHeight={250}
+        currentPage={currentPage}
+        pagesCount={pageCount}
+        onPaginationChange={setCurrentPage}
+        onRowClick={navigateToEditPage}
+      />
+
+      {/* <CTable
         removableHeight={250}
         count={pageCount}
         page={currentPage}
@@ -138,21 +157,21 @@ const CashboxAppointMentsTable = ({ tableSlug }) => {
                 ))}
 
                 <CTableCell buttonsCell>
-                  {/* <DeleteWrapperModal id={row.guid} onDelete={deleteHandler}>
+                  <DeleteWrapperModal id={row.guid} onDelete={deleteHandler}>
                     <RectangleIconButton
                       color="error"
                       // onClick={() => deleteHandler(row.guid)}
                     >
                       <Delete color="error" />
                     </RectangleIconButton>
-                  </DeleteWrapperModal> */}
+                  </DeleteWrapperModal>
                 </CTableCell>
               </CTableRow>
             ))}
           </CTableBody>
 
 
-      </CTable>
+      </CTable> */}
     </div>
   )
 }

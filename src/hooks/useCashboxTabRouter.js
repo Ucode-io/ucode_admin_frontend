@@ -12,9 +12,9 @@ export default function useCashboxTabRouter() {
   const tabs = useSelector(state => state.tabRouter.tabs)
   const { drop } = useAliveController()
 
-  const navigateToForm = (id) => {
+  const navigateToForm = (id, type, title) => {
 
-    const link = `/cashbox/appointments/${id}`
+    const link = `/cashbox/appointments/${type}/${id}`
 
     const tab = tabs.find(tab => tab.link === link)
 
@@ -25,6 +25,7 @@ export default function useCashboxTabRouter() {
 
     const newTab = {
       id: generateID(),
+      title,
       link,
     }
 

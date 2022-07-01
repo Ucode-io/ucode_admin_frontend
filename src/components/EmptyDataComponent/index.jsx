@@ -9,8 +9,6 @@ const StyledTitle = experimentalStyled(Typography)(({ theme }) => ({
 const EmptyDataComponent = ({ title = "No data", isVisible, columnsCount }) => {
   if (!isVisible) return null
 
-  console.log("IS VISIBLE", isVisible)
-
   return (
     <tr >
       <td colSpan={columnsCount} style={{ border: 'none' }} >

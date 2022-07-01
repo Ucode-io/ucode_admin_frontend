@@ -1,7 +1,13 @@
 import { Delete, Edit } from "@mui/icons-material"
 import { get } from "@ngard/tiny-get"
 import RectangleIconButton from "../Buttons/RectangleIconButton"
-import { CTable, CTableBody, CTableCell, CTableRow } from "../CTable"
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableRow,
+} from "../CTable"
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator"
 
 const DataTable = ({
@@ -17,6 +23,7 @@ const DataTable = ({
   dataLength,
   onDeleteClick,
   onEditClick,
+  onRowClick=()=>{}
 }) => {
   return (
     <CTable
@@ -27,23 +34,27 @@ const DataTable = ({
       setCurrentPage={onPaginationChange}
       loader={loader}
     >
-      <CTableRow>
-        {columns.map((column, index) => (
-          <CTableCell key={index}>
-            <div className="table-filter-cell">
-              {column.label}
-              {/* <FilterGenerator
+      <CTableHead>
+        <CTableRow>
+          {columns.map((column, index) => (
+            <CTableCell key={index}>
+              <div className="table-filter-cell">
+                {column.label}
+                {/* <FilterGenerator
                 field={field}
                 name={field.slug}
                 onChange={filterChangeHandler}
                 filters={filters}
               /> */}
-            </div>
-          </CTableCell>
-        ))}
+              </div>
+            </CTableCell>
+          ))}
 
-        {(onDeleteClick || onEditClick) && <CTableCell width={10}></CTableCell>}
-      </CTableRow>
+          {(onDeleteClick || onEditClick) && (
+            <CTableCell width={10}></CTableCell>
+          )}
+        </CTableRow>
+      </CTableHead>
 
       <CTableBody
         loader={loader}
@@ -51,13 +62,10 @@ const DataTable = ({
         dataLength={dataLength || data.length}
       >
         {data?.map((row, index) => (
-          <CTableRow key={row.id}>
+          <CTableRow key={row.id} onClick={() => {onRowClick(row, index)}} >
             {columns.map((column, index) => (
               <CTableCell key={column.id} className="text-nowrap">
-                <CellElementGenerator
-                  field={column}
-                  row={row}
-                />
+                <CellElementGenerator field={column} row={row} />
               </CTableCell>
             ))}
 

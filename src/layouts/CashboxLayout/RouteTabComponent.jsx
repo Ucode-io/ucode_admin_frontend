@@ -12,7 +12,7 @@ const RouteTabComponent = ({ tab }) => {
   const navigate = useNavigate()
 
   const title = useMemo(() => {
-    return 'Title'
+    return tab.title
   }, [])
 
   return (

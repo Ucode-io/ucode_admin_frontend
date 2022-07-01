@@ -1,66 +1,116 @@
-import FormCard from "../../../../components/FormCard";
 import style from "./style.module.scss"
-import ReceiptBorder from "../../../../assets/images/receipt-border.png"
-import Logo from "../../../../assets/images/medion-logo.svg"
-import { Divider } from "@mui/material";
+
+import ServicesList from "./ServicesList"
+import Payments from "./Payments"
+import { useForm } from "react-hook-form"
+import { useEffect } from "react"
+import { useState } from "react"
+import { useLocation, useParams } from "react-router-dom"
+import onlineAppointmentsService from "../../../../services/cashbox/onlineAppointmentsService"
+import offlineAppointmentsService from "../../../../services/cashbox/offlineAppointmentsService"
+import PageFallback from "../../../../components/PageFallback"
+import Receipt from "./Receipt"
+import Footer from "../../../../components/Footer"
+import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
+import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
+import { Save } from "@mui/icons-material"
+import useCashboxTabRouter from "../../../../hooks/useCashboxTabRouter"
+import { el } from "date-fns/locale"
 
 const AppointmentsForm = () => {
-  return ( <div className={style.page} >
+  const { id, type } = useParams()
+  const { pathname } = useLocation()
+  const { removeTab } = useCashboxTabRouter()
 
-    <div className={style.content}>
+  const [loader, setLoader] = useState(true)
+  const [btnLoader, setBtnLoader] = useState(false)
+  const [isUpdated, setIsUpdated] = useState(false)
 
-      <FormCard title="Список услуг" maxWidth='auto' >
+  const form = useForm({
+    defaultValues: {
+      appointment_type: type === "online" ? "booked" : type,
+      id,
+      payments: [],
+      services: [],
+    },
+  })
 
-      </FormCard>
+  const getData = () => {
+    setLoader(true)
 
-    </div>
+    let service
+    if (type === "online") service = onlineAppointmentsService
+    else service = offlineAppointmentsService
+
+    service
+      .getById(id)
+      .then((res) => {
+        const computedServices = res.services?.map((el) => ({
+          ...el,
+          checked: true,
+        }))
+
+        if(res.payments?.length) setIsUpdated(true)
+
+        form.reset({
+          ...form.getValues(),
+          ...res,
+          services: computedServices,
+        })
+      })
+      .finally(() => setLoader(false))
+  }
+
+  const onSubmit = (data) => {
+    setBtnLoader(true)
 
 
-    <div className={style.receipt} >
-      <img src={ReceiptBorder} alt="border" className={style.border} />
-      <img src={ReceiptBorder} alt="border" className={style.borderBottom} />
-      
+    onlineAppointmentsService
+      .update(id, {
+        ...data,
+        service_ids: data.services?.map((el) => el.id) ?? [],
+        payments: data.payments?.map(el => ({...el, amount: Number(el.amount)}))
+      })
+      .then(() => {
+        removeTab(pathname)
+      })
+      .catch(() => setBtnLoader(false))
+  }
 
-      <div className={style.logoBlock} >
-        <img src={Logo} alt="logo" />
+  useEffect(() => {
+    getData()
+  }, [])
+
+  if (loader) return <PageFallback />
+
+  return (
+    <>
+      <div className={style.page}>
+        <div className={style.content}>
+          <ServicesList form={form} isUpdated={isUpdated} />
+
+          <Payments form={form} isUpdated={isUpdated} />
+        </div>
+
+        <Receipt form={form} />
       </div>
-
-      <Divider className={style.divider} />
-
-
-      <div className={style.section} >
-        <div className={style.row} >
-          <b>Medion Clinics</b>
-        </div>
-
-        <div className={style.row} >
-          <b>Дата: </b>05.04.2021 10:00:00
-        </div>
-      </div>
-
-      <Divider className={style.divider} />
-
-      <div className={style.section} >
-        <div className={style.row} >
-          <b>1. Рентген</b>
-        </div>
-
-        <div className={style.row} >
-          <div>2 x 199 000</div>
-          <div className={style.dashed} />
-          <b>398 000</b>
-        </div>
-
-        <div className={style.row} >
-          <div>в т.ч. НДС 15%</div>
-          <div className={style.dashed} />
-          <b>29 850</b>
-        </div>
-      </div>
-
-    </div>
-
-  </div> );
+      <Footer
+        extra={
+          <>
+            <SecondaryButton onClick={() => removeTab(pathname)} color="error">
+              Закрыть
+            </SecondaryButton>
+            <PrimaryButton
+              loader={btnLoader}
+              onClick={form.handleSubmit(onSubmit)}
+            >
+              <Save /> Сохранить
+            </PrimaryButton>
+          </>
+        }
+      />
+    </>
+  )
 }
- 
-export default AppointmentsForm;
+
+export default AppointmentsForm

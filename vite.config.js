@@ -12,6 +12,9 @@ export default defineConfig({
     outDir: 'build',
     minify: 'esbuild'
   },
+  server: {
+    port: 7777
+  },
   // esbuild: {
   //   drop: ['console'],
   // },

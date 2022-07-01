@@ -20,10 +20,10 @@ const CashboxAppointments = () => {
             <Tab>Офлайн</Tab>
           </TabList>
           <TabPanel>
-            <CashboxAppointMentsTable tableSlug="booked_appointments"  />
+            <CashboxAppointMentsTable tableSlug="booked_appointments" type={"online"}  />
           </TabPanel>
           <TabPanel>
-            <CashboxAppointMentsTable tableSlug="offline_appointments" />
+            <CashboxAppointMentsTable tableSlug="offline_appointments" type={"offline"} />
           </TabPanel>
         </TableCard>
       </Tabs>

@@ -124,7 +124,7 @@ const Router = () => {
        <Route index element={<Navigate to={'/cashbox/appointments'} />} />
 
         <Route path="appointments" element={<CashboxAppointments />}  />
-        <Route path="appointments/:id" element={<AppointmentsForm />}  />
+        <Route path="appointments/:type/:id" element={<KeepAliveWrapper><AppointmentsForm /></KeepAliveWrapper>}  />
 
        <Route path="*" element={<Navigate to={redirectLink} />} />
 

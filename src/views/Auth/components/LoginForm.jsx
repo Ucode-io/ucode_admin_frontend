@@ -1,3 +1,5 @@
+import { AccountBalance, AccountCircle, Lock, PointOfSale } from "@mui/icons-material"
+import { InputAdornment } from "@mui/material"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useDispatch } from "react-redux"
@@ -36,6 +38,13 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
             fullWidth
             placeholder="Введите логин"
             autoFocus
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" >
+                  <AccountCircle style={{ fontSize: '30px' }} />
+                </InputAdornment>
+              ),
+            }}
           />
         </div>
         <div className={classes.formRow}>
@@ -48,6 +57,49 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
             size="large"
             fullWidth
             placeholder="Введите пароль"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" >
+                  <Lock style={{ fontSize: '30px' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </div>
+        <div className={classes.formRow}>
+          <p className={classes.label}>Филиал</p>
+          <HFTextField
+            // required
+            control={control}
+            name="branch"
+            size="large"
+            fullWidth
+            placeholder="Выберите филиал"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" >
+                  <AccountBalance style={{ fontSize: '30px' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </div>
+        <div className={classes.formRow}>
+          <p className={classes.label}>Касса</p>
+          <HFTextField
+            // required
+            control={control}
+            name="cashbox"
+            size="large"
+            fullWidth
+            placeholder="Выберите кассу"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" >
+                  <PointOfSale style={{ fontSize: '30px' }} />
+                </InputAdornment>
+              ),
+            }}
           />
         </div>
       </div>

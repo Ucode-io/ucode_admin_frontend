@@ -1,36 +1,20 @@
+
+
 import { useAliveController } from "react-activation"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { tabRouterActions } from "../store/tabRouter/tabRouter.slice"
 import { generateID } from "../utils/generateID"
 
-export default function useTabRouter() {
+export default function useCashboxTabRouter() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { appId } = useParams()
   const tabs = useSelector(state => state.tabRouter.tabs)
   const { drop } = useAliveController()
 
-  const navigateToForm = (tableSlug, type = "CREATE", row = {}, state) => {
+  const navigateToForm = (id) => {
 
-    if(type === 'CREATE') {
-
-      const id = generateID()
-
-      const link = `/main/${appId}/object/${tableSlug}/create/${id}`
-
-      const newTab = {
-        id,
-        link,
-        tableSlug: tableSlug,
-      }
-
-      dispatch(tabRouterActions.addTab(newTab))
-      navigate(link, { state })
-      return
-    }
-
-    const link = `/main/${appId}/object/${tableSlug}/${row.guid}`
+    const link = `/cashbox/appointments/${id}`
 
     const tab = tabs.find(tab => tab.link === link)
 
@@ -42,8 +26,6 @@ export default function useTabRouter() {
     const newTab = {
       id: generateID(),
       link,
-      tableSlug,
-      row
     }
 
     dispatch(tabRouterActions.addTab(newTab))
@@ -57,7 +39,7 @@ export default function useTabRouter() {
     let navigateLink = ""
 
     if(tabs.length === 1) {
-      navigateLink = `/main/${appId}`
+      navigateLink = `/cashbox/appointments`
     } else {
       navigateLink = tabs[index - 1]?.link || tabs[index + 1]?.link
     }

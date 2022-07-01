@@ -86,6 +86,10 @@ const TableView = ({
     }
   }
 
+  const navigateToCreatePage = () => {
+    navigateToForm(tableSlug)
+  }
+
   const navigateToEditPage = (row) => {
     navigateToForm(tableSlug, "EDIT", row)
   }
@@ -106,10 +110,6 @@ const TableView = ({
   useEffect(() => {
     getAllData()
   }, [])
-
-  const navigateToCreatePage = () => {
-    navigateToForm(tableSlug)
-  }
 
   return (
     <>

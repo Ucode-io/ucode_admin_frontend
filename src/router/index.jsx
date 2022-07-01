@@ -10,7 +10,8 @@ import MainLayout from "../layouts/MainLayout"
 import SettingsLayout from "../layouts/SettingsLayout"
 import Login from "../views/Auth/Login"
 import Registration from "../views/Auth/Registration"
-import CashboxVisits from "../views/Cashbox/Visits"
+import CashboxAppointments from "../views/Cashbox/Appointments"
+import AppointmentsForm from "../views/Cashbox/Appointments/Form"
 import AppsPage from "../views/Constructor/Apps"
 import AppsForm from "../views/Constructor/Apps/AppsForm"
 import ConstructorTablesFormPage from "../views/Constructor/Tables/Form"
@@ -34,7 +35,7 @@ const Router = () => {
 
   const redirectLink = useMemo(() => {
     if(location.pathname.includes('settings')) return '/settings/constructor/apps'
-    if(location.pathname.includes('cashbox')) return '/cashbox/visits'
+    if(location.pathname.includes('cashbox')) return '/cashbox/appointments'
 
     if(!applications.length) return '/settings/constructor/apps'
     
@@ -120,9 +121,10 @@ const Router = () => {
 
       <Route path="/cashbox" element={<CashboxLayout />} >
 
-       <Route index element={<Navigate to={'/cashbox/visits'} />} />
+       <Route index element={<Navigate to={'/cashbox/appointments'} />} />
 
-        <Route path="visits" element={<CashboxVisits />}  />
+        <Route path="appointments" element={<CashboxAppointments />}  />
+        <Route path="appointments/:id" element={<AppointmentsForm />}  />
 
        <Route path="*" element={<Navigate to={redirectLink} />} />
 

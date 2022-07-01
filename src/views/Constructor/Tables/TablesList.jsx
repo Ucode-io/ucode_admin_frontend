@@ -14,7 +14,6 @@ import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
 import TableCard from "../../../components/TableCard"
 import TableRowButton from "../../../components/TableRowButton"
 import applicationService from "../../../services/applicationSercixe"
-import constructorTableService from "../../../services/constructorTableService"
 import ImportModal from "./ImportModal"
 
 const TablesList = ({ mainForm, appData, getData}) => {

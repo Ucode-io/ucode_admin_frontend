@@ -1,7 +1,7 @@
 import { Card } from "@mui/material"
 import style from "./style.module.scss"
 
-const TableCard = ({ children, disablePagination = false, extra, width }) => {
+const TableCard = ({ children, disablePagination = false, extra, header, width }) => {
   return (
     <div className={style.wrapper}>
       <Card

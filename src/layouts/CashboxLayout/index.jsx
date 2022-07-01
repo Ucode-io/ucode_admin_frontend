@@ -1,15 +1,15 @@
-import { AttachMoney } from "@mui/icons-material"
+import { Payments } from "@mui/icons-material"
 import { Outlet } from "react-router-dom"
 import Sidebar from "../../components/Sidebar"
-import RouterTabsBlock from "../MainLayout/RouterTabsBlock"
+import RouterTabsBlock from "./RouterTabsBlock"
 import styles from "./style.module.scss"
 
 const elements = [
   {
     id: "cashbox",
     title: "Касса",
-    path: "/cashbox/visit",
-    icon: AttachMoney,
+    path: "/cashbox/appointments",
+    icon: Payments,
     // permission: "PROJECTS"
   },
 ]

@@ -15,12 +15,14 @@ import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
 import { Save } from "@mui/icons-material"
 import useCashboxTabRouter from "../../../../hooks/useCashboxTabRouter"
-import { el } from "date-fns/locale"
+import { useDispatch } from "react-redux"
+import { showAlert } from "../../../../store/alert/alert.thunk"
 
 const AppointmentsForm = () => {
   const { id, type } = useParams()
   const { pathname } = useLocation()
   const { removeTab } = useCashboxTabRouter()
+  const dispatch = useDispatch()
 
   const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
@@ -50,7 +52,7 @@ const AppointmentsForm = () => {
           checked: true,
         }))
 
-        if(res.payments?.length) setIsUpdated(true)
+        if (res.payments?.length) setIsUpdated(true)
 
         form.reset({
           ...form.getValues(),
@@ -62,14 +64,35 @@ const AppointmentsForm = () => {
   }
 
   const onSubmit = (data) => {
-    setBtnLoader(true)
+    let totalPrice = 0
+    data.services?.forEach(
+      (service) => (totalPrice += Number(service.service_price))
+    )
 
+    let paymentsTotalPrice = 0
+    data.payments?.forEach(
+      (payment) => (paymentsTotalPrice += Number(payment.amount))
+    )
+
+    const difference = Number(paymentsTotalPrice) - Number(totalPrice)
+
+    if (difference > 0) {
+      return dispatch(showAlert("Вы не оплатили полную стоимость приема"))
+    }
+    if (difference < 0) {
+      return dispatch(showAlert("Вы оплатили больше чем положено"))
+    }
+
+    setBtnLoader(true)
 
     onlineAppointmentsService
       .update(id, {
         ...data,
         service_ids: data.services?.map((el) => el.id) ?? [],
-        payments: data.payments?.map(el => ({...el, amount: Number(el.amount)}))
+        payments: data.payments?.map((el) => ({
+          ...el,
+          amount: Number(el.amount),
+        })),
       })
       .then(() => {
         removeTab(pathname)
@@ -100,12 +123,14 @@ const AppointmentsForm = () => {
             <SecondaryButton onClick={() => removeTab(pathname)} color="error">
               Закрыть
             </SecondaryButton>
-            <PrimaryButton
-              loader={btnLoader}
-              onClick={form.handleSubmit(onSubmit)}
-            >
-              <Save /> Сохранить
-            </PrimaryButton>
+            {!isUpdated && (
+              <PrimaryButton
+                loader={btnLoader}
+                onClick={form.handleSubmit(onSubmit)}
+              >
+                <Save /> Сохранить
+              </PrimaryButton>
+            )}
           </>
         }
       />

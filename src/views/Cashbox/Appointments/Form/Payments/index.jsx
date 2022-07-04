@@ -93,9 +93,9 @@ const Payments = ({ form, isUpdated }) => {
             <div className={style.header}>
               <div>{payment.payment_type}</div>
 
-              <IconButton onClick={() => remove(index)}>
+              {!isUpdated && <IconButton onClick={() => remove(index)}>
                 <Close />
-              </IconButton>
+              </IconButton>}
             </div>
 
             <div className={style.body}>

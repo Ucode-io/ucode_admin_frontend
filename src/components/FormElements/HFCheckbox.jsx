@@ -2,7 +2,7 @@ import { Checkbox } from "@mui/material"
 import { useId } from "react"
 import { Controller } from "react-hook-form"
 
-const HFCheckbox = ({ control, name, label, className }) => {
+const HFCheckbox = ({ control, name, label, className, ...props }) => {
   const id = useId()
 
   return (
@@ -17,6 +17,7 @@ const HFCheckbox = ({ control, name, label, className }) => {
             style={{ transform: "translatey(-1px)" }}
             checked={value ?? false}
             onChange={(_, val) => onChange(val)}
+            {...props}
           />
           <label htmlFor={`checkbox-${id}`}>{label}</label>
         </div>

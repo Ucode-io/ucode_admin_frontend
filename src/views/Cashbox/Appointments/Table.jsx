@@ -5,7 +5,6 @@ import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import offlineAppointmentsService from "../../../services/cashbox/offlineAppointmentsService"
 import onlineAppointmentsService from "../../../services/cashbox/onlineAppointmentsService"
 import constructorObjectService from "../../../services/constructorObjectService"
-import { objectToArray } from "../../../utils/objectToArray"
 import { pageToOffset } from "../../../utils/pageToOffset"
 
 const computedColumns = [
@@ -14,12 +13,6 @@ const computedColumns = [
     label: "Дата",
     slug: "date",
     type: "DATE",
-  },
-  {
-    id: "2",
-    label: "ФИО пациента",
-    slug: "patient_full_name",
-    type: "SINGLE_LINE",
   },
   {
     id: "2",

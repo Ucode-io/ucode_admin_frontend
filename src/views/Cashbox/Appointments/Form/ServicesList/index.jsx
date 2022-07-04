@@ -29,7 +29,7 @@ const ServicesList = ({ form, isUpdated }) => {
 
             <tr>
               <td>
-                <HFCheckbox readOnly={isUpdated} name={`services[${index}].checked`} control={form.control} />
+                <HFCheckbox disabled={isUpdated} name={`services[${index}].checked`} control={form.control} />
               </td>
 
               <td>

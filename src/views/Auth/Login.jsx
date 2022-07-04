@@ -1,21 +1,14 @@
-import { useNavigate } from "react-router-dom"
 import LoginForm from "./components/LoginForm"
 import styles from "./style.module.scss"
 
 const Login = () => {
-  const navigate = useNavigate()
-
-  // const navigateToRegistrationForm = () => navigate("/registration")
-  
-
-
 
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>Вход в систему</h1>
-      {/* <p className={styles.subtitle}>
+      <p className={styles.subtitle}>
         Заполните данные для входа в аккаунт
-      </p> */}
+      </p>
 
       <LoginForm />
     </div>

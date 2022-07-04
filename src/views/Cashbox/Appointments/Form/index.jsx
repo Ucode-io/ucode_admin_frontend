@@ -64,8 +64,11 @@ const AppointmentsForm = () => {
   }
 
   const onSubmit = (data) => {
+    const computedServices = data.services?.filter(({checked}) => checked)
+
     let totalPrice = 0
-    data.services?.forEach(
+
+    computedServices?.forEach(
       (service) => (totalPrice += Number(service.service_price))
     )
 
@@ -76,10 +79,10 @@ const AppointmentsForm = () => {
 
     const difference = Number(paymentsTotalPrice) - Number(totalPrice)
 
-    if (difference > 0) {
+    if (difference < 0) {
       return dispatch(showAlert("Вы не оплатили полную стоимость приема"))
     }
-    if (difference < 0) {
+    if (difference > 0) {
       return dispatch(showAlert("Вы оплатили больше чем положено"))
     }
 
@@ -88,7 +91,7 @@ const AppointmentsForm = () => {
     onlineAppointmentsService
       .update(id, {
         ...data,
-        service_ids: data.services?.map((el) => el.id) ?? [],
+        service_ids: computedServices?.map((el) => el.id) ?? [],
         payments: data.payments?.map((el) => ({
           ...el,
           amount: Number(el.amount),

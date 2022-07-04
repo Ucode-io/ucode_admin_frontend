@@ -4,7 +4,7 @@ import Header from "../../components/Header"
 import clientPlatformService from "../../services/auth/clientPlatformService"
 import clientTypeService from "../../services/auth/clientTypeService"
 import "./style.scss"
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
+// import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
 import clientService from "../../services/auth/clientService"
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper"
 import PlatformModal from "./PlatformModal"
@@ -268,7 +268,7 @@ const AuthMatrix = () => {
                   className="create-block platform-block block"
                   style={{ gridColumnStart: clientPlatformList?.length + 2 }}
                 >
-                  <AddCircleOutlineIcon color="primary" className="icon" />
+                  {/* <AddCircleOutlineIcon color="primary" className="icon" /> */}
                 </div>
 
                 {/* ----------TYPES BLOCK--------------- */}
@@ -302,7 +302,7 @@ const AuthMatrix = () => {
                   className="create-block type-block block"
                   style={{ gridRowStart: clientTypeList?.length + 2 }}
                 >
-                  <AddCircleOutlineIcon color="primary" className="icon" />
+                  {/* <AddCircleOutlineIcon color="primary" className="icon" /> */}
                 </div>
 
                 {/* -------------CLIENTS LSIT---------------- */}

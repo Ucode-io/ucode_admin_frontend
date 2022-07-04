@@ -104,7 +104,7 @@ const Payments = ({ form, isUpdated }) => {
                 name={`payments[${index}].amount`}
                 defaultValue={0}
                 render={({ field: { onChange, value } }) => (
-                  <input readOnly={isUpdated} type="number" min={0} value={value} onChange={onChange} />
+                  <input readOnly={isUpdated} type="number" min={0} value={value == 0 ? '' : value} onChange={onChange} autofocus />
                 )}
               />
             </div>

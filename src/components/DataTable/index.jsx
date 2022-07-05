@@ -1,5 +1,6 @@
 import { Delete, Edit } from "@mui/icons-material"
 import { get } from "@ngard/tiny-get"
+import FilterGenerator from "../../views/Objects/components/FilterGenerator"
 import RectangleIconButton from "../Buttons/RectangleIconButton"
 import {
   CTable,
@@ -23,7 +24,9 @@ const DataTable = ({
   dataLength,
   onDeleteClick,
   onEditClick,
-  onRowClick=()=>{}
+  onRowClick=()=>{},
+  filterChangeHandler=()=>{},
+  filters
 }) => {
   return (
     <CTable
@@ -40,12 +43,12 @@ const DataTable = ({
             <CTableCell key={index}>
               <div className="table-filter-cell">
                 {column.label}
-                {/* <FilterGenerator
-                field={field}
-                name={field.slug}
+                <FilterGenerator
+                field={column}
+                name={column.slug}
                 onChange={filterChangeHandler}
                 filters={filters}
-              /> */}
+              />
               </div>
             </CTableCell>
           ))}

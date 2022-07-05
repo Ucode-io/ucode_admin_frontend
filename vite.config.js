@@ -13,7 +13,7 @@ export default defineConfig({
   //   name: 'host-app',
   //   filename: 'remoteEntry.js',
   //   remotes: {
-  //     fileSystem: 'https://filesystem.upm.udevs.io/remoteEntry.js',
+  //     fileSystem: 'http://localhost:4173/assets/remoteEntry.js',
   //   },
   //   shared: {
   //     ...deps,

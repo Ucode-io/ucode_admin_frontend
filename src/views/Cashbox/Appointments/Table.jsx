@@ -48,6 +48,13 @@ const CashboxAppointMentsTable = ({ tableSlug, type }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageCount, setPageCount] = useState(1)
 
+  const filterChangeHandler = (value, name) => {
+    setFilters({
+      ...filters,
+      [name]: value,
+    })
+  }
+
   const getAllData = async () => {
     setTableLoader(true)
     try {
@@ -56,9 +63,7 @@ const CashboxAppointMentsTable = ({ tableSlug, type }) => {
       if(type === "online") service = onlineAppointmentsService
       else service = offlineAppointmentsService
 
-      const data = await service.getList(tableSlug, {
-        data: { offset: pageToOffset(currentPage), limit: 10 },
-      })
+      const data = await service.getList({ offset: pageToOffset(currentPage), limit: 10, ...filters })
 
       const pageCount = Math.ceil(data.count / 10)
 
@@ -107,6 +112,8 @@ const CashboxAppointMentsTable = ({ tableSlug, type }) => {
         pagesCount={pageCount}
         onPaginationChange={setCurrentPage}
         onRowClick={navigateToEditPage}
+        filters={filters}
+        filterChangeHandler={filterChangeHandler}
       />
 
       {/* <CTable

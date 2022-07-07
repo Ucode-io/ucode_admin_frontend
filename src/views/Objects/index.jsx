@@ -51,42 +51,6 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
         <div>
-          {/* {!isRelation && (
-            <Header
-              title={tableInfo?.label}
-              extra={<CreateButton onClick={navigateToCreatePage} />}
-            >
-              <TabList>
-                <Tab>
-                  <TableChart /> Таблица
-                </Tab>
-
-                {views.map((view) => (
-                  <Tab key={view.id} >
-                  <CalendarToday /> Календарь
-                </Tab>
-                ))}
-                
-                <TabButton onClick={() => setViewCreateModalVisible(true)}>
-                  <Add /> Вид
-                </TabButton>
-              </TabList>
-            </Header>
-          )} */}
-
-          {/* <TabPanel>
-            <TableView
-              tableSlug={computedTableSlug}
-              computedColumns={computedColumns}
-              isRelation={isRelation}
-              tableInfo={tableInfo}
-              selectedTab={selectedTabIndex}
-              setSelectedTab={setSelectedTabIndex}
-              views={computedViews}
-              setViews={setViews}
-            />
-          </TabPanel> */}
-
           {computedViews.map((view) => {
             switch (view.type) {
               case "CALENDAR":
@@ -104,22 +68,22 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
                   </TabPanel>
                 )
 
-                case "TREE":
-                return (
-                  <TabPanel key={view.id}>
-                   <TreeView
-                      tableSlug={computedTableSlug}
-                      computedColumns={computedColumns}
-                      isRelation={isRelation}
-                      tableInfo={tableInfo}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={computedViews}
-                      setViews={setViews}
-                      view={view}
-                    />
-                  </TabPanel>
-                )
+                // case "TREE":
+                // return (
+                //   <TabPanel key={view.id}>
+                //    <TreeView
+                //       tableSlug={computedTableSlug}
+                //       computedColumns={computedColumns}
+                //       isRelation={isRelation}
+                //       tableInfo={tableInfo}
+                //       selectedTabIndex={selectedTabIndex}
+                //       setSelectedTabIndex={setSelectedTabIndex}
+                //       views={computedViews}
+                //       setViews={setViews}
+                //       view={view}
+                //     />
+                //   </TabPanel>
+                // )
 
               default:
                 return (

@@ -21,6 +21,7 @@ import {
 } from "../../utils/getRelationFieldLabel"
 import PageFallback from "../../components/PageFallback"
 import { CircularProgress } from "@mui/material"
+import TreeView from "./TreeView"
 
 const ViewsWithGroups = ({
   tableSlug,
@@ -135,26 +136,52 @@ const ViewsWithGroups = ({
             <>
               {tabs?.map((tab) => (
                 <TabPanel key={tab.value}>
-                  <TableView
-                    computedColumns={computedColumns}
-                    tableSlug={tableSlug}
-                    setViews={setViews}
-                    filters={filters}
-                    filterChangeHandler={filterChangeHandler}
-                    groupField={groupField}
-                    group={tab}
-                  />
+                  {view.type === "TREE" ? (
+                    <TreeView
+                      computedColumns={computedColumns}
+                      tableSlug={tableSlug}
+                      setViews={setViews}
+                      filters={filters}
+                      filterChangeHandler={filterChangeHandler}
+                      groupField={groupField}
+                      group={tab}
+                      view={view}
+                    />
+                  ) : (
+                    <TableView
+                      computedColumns={computedColumns}
+                      tableSlug={tableSlug}
+                      setViews={setViews}
+                      filters={filters}
+                      filterChangeHandler={filterChangeHandler}
+                      groupField={groupField}
+                      group={tab}
+                    />
+                  )}
                 </TabPanel>
               ))}
 
               {!groupField && (
-                <TableView
-                  computedColumns={computedColumns}
-                  tableSlug={tableSlug}
-                  setViews={setViews}
-                  filters={filters}
-                  filterChangeHandler={filterChangeHandler}
-                />
+                <>
+                  {view.type === "TREE" ? (
+                    <TreeView
+                      computedColumns={computedColumns}
+                      tableSlug={tableSlug}
+                      setViews={setViews}
+                      filters={filters}
+                      filterChangeHandler={filterChangeHandler}
+                      view={view}
+                    />
+                  ) : (
+                    <TableView
+                      computedColumns={computedColumns}
+                      tableSlug={tableSlug}
+                      setViews={setViews}
+                      filters={filters}
+                      filterChangeHandler={filterChangeHandler}
+                    />
+                  )}
+                </>
               )}
             </>
           )}

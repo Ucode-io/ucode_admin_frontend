@@ -16,15 +16,14 @@ import RecursiveBlock from "./RecursiveBlock"
 
 const TreeView = ({
   computedColumns,
-  views,
+  tableSlug,
   setViews,
-  isRelation,
-  tableInfo,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  view,
+  filters,
+  filterChangeHandler,
+  groupField,
+  group,
+  view
 }) => {
-  const { tableSlug } = useParams()
   const { navigateToForm } = useTabRouter()
   const [tableLoader, setTableLoader] = useState(true)
   const [data, setData] = useState([])
@@ -33,15 +32,17 @@ const TreeView = ({
     return data.filter((row) => !row[`${tableSlug}_id`])
   }, [data, tableSlug])
 
-  const navigateToCreatePage = () => {
-    navigateToForm(tableSlug)
-  }
-
   const getAllData = async () => {
     setTableLoader(true)
     try {
+
+      let groupFieldName = ''
+
+      if(groupField?.id?.includes('#')) groupFieldName = `${groupField.id.split('#')[0]}_id`
+      if(groupField?.slug) groupFieldName = groupField?.slug
+
       const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: 0, limit: 1000 },
+        data: { offset: 0, limit: 1000, [groupFieldName]: group?.value },
       })
 
       setViews(data.views ?? [])
@@ -63,27 +64,11 @@ const TreeView = ({
 
   return (
     <div>
-      <FiltersBlock>
-        <ViewTabSelector
-          selectedTabIndex={selectedTabIndex}
-          setSelectedTabIndex={setSelectedTabIndex}
-          views={views}
-          setViews={setViews}
-        />
-        <SearchInput />
-        <FiltersBlockButton>
-          <FilterAlt color="primary" />
-          Быстрый фильтр
-        </FiltersBlockButton>
-      </FiltersBlock>
 
       {tableLoader ? (
         <PageFallback />
       ) : (
-        <TableCard
-          width={740}
-          extra={<CreateButton onClick={navigateToCreatePage} />}
-        >
+        <>
           {parentElements?.map((row) => (
             <RecursiveBlock
               key={row.guid}
@@ -93,7 +78,7 @@ const TreeView = ({
               setData={setData}
             />
           ))}
-        </TableCard>
+        </>
       )}
     </div>
   )

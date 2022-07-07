@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom"
 import TableView from "./TableView"
 import { TabPanel, Tabs } from "react-tabs"
 import CalendarView from "./CalendartView"
-import useTabRouter from "../../hooks/useTabRouter"
 import { generateGUID } from "../../utils/generateID"
 import TreeView from "./TreeView"
+import ViewsWithGroups from "./ViewsWithGroups"
 
 const staticViews = [
   {
@@ -17,17 +17,16 @@ const staticViews = [
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
   const params = useParams()
-  const { navigateToForm } = useTabRouter()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
-  const columns = useSelector((state) => state.tableColumn.list)
 
   const [views, setViews] = useState([])
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
-
-
   const computedTableSlug = isRelation ? tableSlug : params.tableSlug
+
+  const columns = useSelector((state) => state.tableColumn.list[computedTableSlug] ?? [])
+  const groupColumnId = useSelector(state => state.tableColumn.groupColumnIds[computedTableSlug])
 
   const tableInfo = useMemo(() => {
     if (isRelation) return {}
@@ -36,10 +35,14 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
 
   const computedColumns = useMemo(() => {
     return (
-      columns[computedTableSlug]?.filter((column) => column.isVisible) ?? []
+      columns?.filter((column) => column.isVisible) ?? []
     )
-  }, [columns, computedTableSlug])
+  }, [columns])
 
+  const groupField = useMemo(() => {
+    return columns.find(column => column.id === groupColumnId)
+  }, [groupColumnId])
+  
   const computedViews = useMemo(() => {
     return [...staticViews, ...views]
   }, [views])
@@ -121,15 +124,15 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
               default:
                 return (
                   <TabPanel key={view.id}>
-                    <TableView
+                    <ViewsWithGroups
                       tableSlug={computedTableSlug}
                       computedColumns={computedColumns}
-                      isRelation={isRelation}
-                      tableInfo={tableInfo}
                       selectedTabIndex={selectedTabIndex}
                       setSelectedTabIndex={setSelectedTabIndex}
                       views={computedViews}
                       setViews={setViews}
+                      groupField={groupField}
+                      view={view}
                     />
                   </TabPanel>
                 )

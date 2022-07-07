@@ -78,11 +78,13 @@ const ObjectsFormPage = () => {
           .map((relation) => ({
             ...relation,
             relatedTable:
-              relation.table_from.slug === tableSlug
+              relation.table_from?.slug === tableSlug
                 ? relation.table_to
                 : relation.table_from,
           }))
       )
+
+      console.log("DATA ====>", data.response)
 
       reset(data.response ?? {})
     } finally {

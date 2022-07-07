@@ -1,4 +1,12 @@
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material"
+import { Clear } from "@mui/icons-material"
+import {
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material"
 
 const CSelect = ({
   label,
@@ -8,7 +16,7 @@ const CSelect = ({
   options = [],
   disabledHelperText,
   placeholder,
-  onChange=()=>{},
+  onChange = () => {},
   ...props
 }) => {
   return (
@@ -22,6 +30,18 @@ const CSelect = ({
         inputProps={{ placeholder }}
         fullWidth
         onChange={onChange}
+        endAdornment={
+          <IconButton
+            sx={{ display: value ? "" : "none", transform: 'translateX(10px)' }}
+            onClick={e => onChange({ ...e, target: { value: "" } })}
+          >
+            <Clear />
+          </IconButton>
+        }
+        sx={{
+          "& .MuiSelect-iconOutlined": { display: value ? "none" : "" },
+          "&.Mui-focused .MuiIconButton-root": { color: "primary.main" },
+        }}
         {...props}
       >
         {options?.map((option) => (

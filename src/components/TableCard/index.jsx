@@ -9,7 +9,7 @@ const TableCard = ({ children, disablePagination = false, extra, header, width }
         style={{ width }}
       >
         {extra && <div className={style.header}>
-          <div></div>
+          <div>{header}</div>
           <div>
             {extra}
           </div>

@@ -71,18 +71,14 @@ const Filter = ({ field = {}, name, filters = {}, onChange }) => {
         <TableColumnFilter>
           <FormControl style={{ width: "100%" }}>
             <InputLabel size="small">{}</InputLabel>
-            <Select
+            <CSelect
               value={filters[name] ?? ""}
               onChange={(e) => onChange(e.target.value, name)}
               size="small"
               fullWidth
-            >
-              {computedOptions?.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
+              disabledHelperText
+              options={computedOptions}
+            />
           </FormControl>
         </TableColumnFilter>
       )

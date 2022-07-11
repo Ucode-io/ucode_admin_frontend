@@ -28,7 +28,7 @@ const IntegrationsForm = lazy(() => import( "../views/AuthMatrix/Crossed/Integra
 const SessionsPage = lazy(() => import("../views/AuthMatrix/Crossed/Integrations/Sessions"))
 const UsersForm = lazy(() => import("../views/Users/Form"))
 const UsersPage = lazy(() => import("../views/Users/index"))
-// const FileSystemModule = lazy(() => import("fileSystem/FileSystemModule"))
+const FileSystemModule = lazy(() => import("fileSystem/FileSystemModule"))
 
 
 const Router = () => {
@@ -62,7 +62,7 @@ const Router = () => {
 
   return (
     <Routes>
-      {/* <Route path="remote" element={<Suspense fallback="Loading..." > <SafeComponent><FileSystemModule /></SafeComponent></Suspense>} /> */}
+      <Route path="remote" element={<Suspense fallback="Loading..." > <SafeComponent><FileSystemModule /></SafeComponent></Suspense>} />
 
       <Route path="/main" element={<MainLayout />}>
         {/* <Route index element={<Navigate to={redirectLink} />} /> */}

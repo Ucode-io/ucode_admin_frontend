@@ -33,7 +33,7 @@ const RelationSection = ({ relation }) => {
 
   const queryClient = useQueryClient()
   
-  const { isLoading: dataFetchingLoading, refetch } = useQuery(["GET_OBJECT_LIST", relation.relatedTable?.slug, tableSlug, relation.type, currentPage], () => {
+  const { isLoading: dataFetchingLoading, refetch } = useQuery(["GET_OBJECT_LIST", relation.relatedTable?.slug, tableSlug, relation.type, currentPage, id], () => {
     return constructorObjectService.getList(
       relation.relatedTable?.slug,
       {

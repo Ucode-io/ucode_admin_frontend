@@ -1,11 +1,9 @@
 import { useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
-import TableView from "./TableView"
 import { TabPanel, Tabs } from "react-tabs"
 import CalendarView from "./CalendartView"
 import { generateGUID } from "../../utils/generateID"
-import TreeView from "./TreeView"
 import ViewsWithGroups from "./ViewsWithGroups"
 
 const staticViews = [
@@ -67,23 +65,6 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
                     />
                   </TabPanel>
                 )
-
-                // case "TREE":
-                // return (
-                //   <TabPanel key={view.id}>
-                //    <TreeView
-                //       tableSlug={computedTableSlug}
-                //       computedColumns={computedColumns}
-                //       isRelation={isRelation}
-                //       tableInfo={tableInfo}
-                //       selectedTabIndex={selectedTabIndex}
-                //       setSelectedTabIndex={setSelectedTabIndex}
-                //       views={computedViews}
-                //       setViews={setViews}
-                //       view={view}
-                //     />
-                //   </TabPanel>
-                // )
 
               default:
                 return (

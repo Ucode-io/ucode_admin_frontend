@@ -81,7 +81,6 @@ const Sidebar = ({ elements = [] }) => {
             <NotificationsIcon />
           </div>
 
-
           {/* {settingsElements
             .filter((element) => element.icon)
             .map((element) => (

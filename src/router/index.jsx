@@ -44,8 +44,6 @@ const Router = () => {
     return `/main/${applications[0].id}`
   }, [location.pathname, applications])
 
-  console.log("REDIRECT ==>", redirectLink)
-
   if (!isAuth)
     return (
       <Routes>
@@ -118,6 +116,12 @@ const Router = () => {
         <Route path="auth/matrix/:projectId/:platformId/:typeId/crossed/integration/:integrationId" element={<Suspense fallback={<PageFallback />}><IntegrationsForm /></Suspense>} />
         <Route path="auth/matrix/:projectId/:platformId/:typeId/crossed/integration/:integrationId/sessions" element={<Suspense fallback={<PageFallback />}><SessionsPage /></Suspense>} />
 
+
+      </Route>
+
+
+
+      <Route path="analytics" element={<div>HELLLO</div>} >
 
       </Route>
 

@@ -1,85 +1,46 @@
-import { LocalPostOffice, Settings, ManageAccounts, Person, PivotTableChart, GridView } from "@mui/icons-material"
+import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
+import LockIcon from '@mui/icons-material/Lock';
 
 const routes = [
   {
-    id: "dashboard",
-    title: "Дэшборд",
-    path: "/dashboard",
-    icon: GridView,
-    // permission: "PROJECTS"
-  },
-  {
-    id: "docs",
-    title: "Документы",
-    path: "/docs",
-    icon: LocalPostOffice,
-    // permission: "PROJECTS",
+    id: "auth",
+    title: "Авторизация",
+    path: "/settings/auth",
+    icon: LockIcon,
     children: [
       {
-        id: "incoming",
-        title: "Входящие",
-        path: `/docs/incoming`,
-        isChild: true,
+        id: 'users',
+        title: 'Пользователи',
+        path: '/settings/auth/users',
+        isChild: true
       },
       {
-        id: "outgoing",
-        title: "Исходящие",
-        path: `/docs/outgoing`,
-        isChild: true,
-      },
-      {
-        id: "saved",
-        title: "Сохраненные",
-        path: `/docs/saved`,
-        isChild: true,
-      },
-      {
-        id: "deleted",
-        title: "Удаленные",
-        path: `/docs/deleted`,
-        isChild: true,
-      },
-      {
-        id: "archived",
-        title: "Архив",
-        path: `/docs/archived`,
-        isChild: true,
-      },
+        id: 'matrix',
+        title: 'Матрица',
+        path: `/settings/auth/matrix/${import.meta.env.VITE_AUTH_PROJECT_ID}`,
+        isChild: true
+      }
     ]
   },
   {
-    id: "settings",
-    title: "Настройки",
-    path: "/settings",
-    icon: Settings,
-    permission: "SETTINGS",
-    // children: [
-
-    //   {
-    //     id: "users",
-    //     title: "Users",
-    //     path: `/settings/users`,
-    //     icon: Person,
-    //     isChild: true,
-    //     permission: "SETTINGS/USERS"
-    //   },
-    //   {
-    //     id: "phases",
-    //     title: "Phases",
-    //     path: "/settings/phases",
-    //     icon: Bookmark,
-    //     isChild: true,
-    //     permission: "SETTINGS/PHASES"
-    //   },
-    //   {
-    //     id: "positions",
-    //     title: "Positions",
-    //     path: "/settings/positions",
-    //     icon: ManageAccounts,
-    //     isChild: true,
-    //     permission: "SETTINGS/POSITIONS"
-    //   },
-    // ],
+    id: "constructor",
+    title: "Конструктор",
+    path: "/settings/constructor",
+    icon: DashboardCustomizeIcon,
+    children: [
+      {
+        id: "apps",
+        title: "Приложение",
+        path: `/settings/constructor/apps`,
+        isChild: true,
+      },
+      // {
+      //   id: "objects",
+      //   title: "Обекты",
+      //   path: `/settings/constructor/objects`,
+      //   isChild: true,
+      // }
+    ]
   },
 ]
 

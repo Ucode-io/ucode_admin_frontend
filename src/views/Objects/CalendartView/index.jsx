@@ -8,13 +8,14 @@ import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { getFieldLabel } from "../../../utils/getFieldLabel"
 import { objectToArray } from "../../../utils/objectToArray"
+import ViewTabSelector from "../components/ViewTypeSelector"
 import DatesRow from "./DatesRow"
 import MainFieldRow from "./MainFieldRow"
 import ObjectColumn from "./ObjectColumn"
 import styles from "./style.module.scss"
 import TimesBlock from "./TimesBlock"
 
-const CalendarView = ({ view, tableSlug, setViews }) => {
+const CalendarView = ({ view, tableSlug, setViews, selectedTabIndex, setSelectedTabIndex, views }) => {
   const [filters, setFilters] = useState({})
   const [loader, setLoader] = useState(true)
 
@@ -24,8 +25,11 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
       [name]: value,
     })
   }
-  
-  const [dateFilters, setDateFilters] = useState([ startOfWeek(new Date(), {weekStartsOn: 1}), endOfWeek(new Date(), {weekStartsOn: 1}) ])
+
+  const [dateFilters, setDateFilters] = useState([
+    startOfWeek(new Date(), { weekStartsOn: 1 }),
+    endOfWeek(new Date(), { weekStartsOn: 1 }),
+  ])
   const [data, setData] = useState([])
 
   const computedData = useMemo(() => {
@@ -49,12 +53,16 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
     }
 
     data.forEach((el) => {
+      const date =
+        isValid(new Date(get(el, startTimeStampSlug))) &&
+        format(new Date(get(el, startTimeStampSlug)), "dd.MM.yyyy")
+      const startTime =
+        isValid(new Date(get(el, startTimeStampSlug))) &&
+        new Date(get(el, startTimeStampSlug))
+      const endTime =
+        isValid(new Date(get(el, endTimeStampSlug))) &&
+        new Date(get(el, endTimeStampSlug))
 
-      const date = isValid(new Date(get(el, startTimeStampSlug))) && format(new Date(get(el, startTimeStampSlug)), "dd.MM.yyyy")
-      const startTime = isValid(new Date(get(el, startTimeStampSlug))) && new Date(get(el, startTimeStampSlug))
-      const endTime = isValid(new Date(get(el, endTimeStampSlug))) && new Date(get(el, endTimeStampSlug))
-      
-      
       const mainField = getFieldLabel(el, view.main_field)
 
       const computedEl = {
@@ -84,7 +92,6 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
     return result
   }, [data, view, dateFilters])
 
-
   useDebouncedWatch(
     () => {
       getAllData()
@@ -94,10 +101,9 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
   )
 
   useEffect(() => {
-    if(!dateFilters[0] || !dateFilters[1]) return
+    if (!dateFilters[0] || !dateFilters[1]) return
     getAllData()
   }, [dateFilters])
-
 
   const getAllData = async () => {
     setLoader(true)
@@ -106,11 +112,8 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
         data: { offset: 0, limit: 10, ...filters },
       })
 
-
       setViews(data.views ?? [])
       setData(objectToArray(data.response ?? {}))
-      
-
 
       // dispatch(
       //   tableColumnActions.setList({
@@ -127,6 +130,12 @@ const CalendarView = ({ view, tableSlug, setViews }) => {
   return (
     <div>
       <FiltersBlock>
+        <ViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+          setViews={setViews}
+        />
         <CRangePicker value={dateFilters} onChange={setDateFilters} />
       </FiltersBlock>
 

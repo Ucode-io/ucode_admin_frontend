@@ -1,7 +1,7 @@
 
 .iconWrapper {
-  width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     border: 1px solid silver;
     display: flex;
     align-items: center;
@@ -9,6 +9,11 @@
     justify-content: center;
     cursor: pointer;
     color: #0067F4;
+
+    &.rectangle {
+      border-radius: 6px;
+      margin-top: 7px;
+    }
 
     &.error {
       border-color: red !important;

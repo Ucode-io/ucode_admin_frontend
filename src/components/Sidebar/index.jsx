@@ -3,27 +3,23 @@ import companyLogo from "../../assets/icons/soliq-logo.svg"
 import { Collapse, Tooltip, Typography } from "@mui/material"
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft"
 import NotificationsIcon from "@mui/icons-material/Notifications"
-import SettingsIcon from "@mui/icons-material/Settings"
 import React, { useEffect, useMemo, useState } from "react"
 import UserAvatar from "../UserAvatar"
 import { NavLink, useLocation } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { authActions } from "../../store/auth/auth.slice"
 import LogoutIcon from "@mui/icons-material/Logout"
-import useSidebarElements from "../../hooks/useSidebarElements"
 import IconGenerator from "../IconPicker/IconGenerator"
 // import { IconPickerItem } from "react-fa-icon-picker"
 
-const Sidebar = () => {
+const Sidebar = ({ elements = [] }) => {
   const location = useLocation()
   const dispatch = useDispatch()
-
-  const { elements, settingsElements } = useSidebarElements()
 
   const [rightBlockVisible, setRightBlockVisible] = useState(true)
 
   const selectedMenuItem = useMemo(() => {
-    const activeElement = [...elements, ...settingsElements].find((el) => {
+    const activeElement = elements.find((el) => {
       if (location.pathname.includes(el.path)) return true
       return el.children?.some((child) =>
         location.pathname.includes(child.path)
@@ -86,7 +82,7 @@ const Sidebar = () => {
           </div>
 
 
-          {settingsElements
+          {/* {settingsElements
             .filter((element) => element.icon)
             .map((element) => (
               <Tooltip
@@ -109,7 +105,7 @@ const Sidebar = () => {
                   )}
                 </NavLink>
               </Tooltip>
-            ))}
+            ))} */}
 
           <UserAvatar disableTooltip />
 

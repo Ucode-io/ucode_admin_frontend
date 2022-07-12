@@ -3,8 +3,6 @@ import { useForm } from "react-hook-form"
 import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 import { Tab, TabList, Tabs, TabPanel } from "react-tabs"
-import SaveButton from "../../../../components/Buttons/SaveButton"
-import Header from "../../../../components/Header"
 import PageFallback from "../../../../components/PageFallback"
 import constructorSectionService from "../../../../services/constructorSectionService"
 import constructorFieldService from "../../../../services/constructorFieldService"
@@ -18,11 +16,17 @@ import Relations from "./Relations"
 import constructorRelationService from "../../../../services/constructorRelationService"
 import { computeSections, computeSectionsOnSubmit } from "../utils"
 import { addOrderNumberToSections } from "../../../../utils/sectionsOrderNumber"
+import HeaderSettings from "../../../../components/HeaderSettings"
+import Footer from "../../../../components/Footer"
+import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
+import { Save } from "@mui/icons-material"
+import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
+
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { id, slug } = useParams()
+  const { id, slug, appId } = useParams()
 
   const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
@@ -31,6 +35,7 @@ const ConstructorTablesFormPage = () => {
     defaultValues: {
       show_in_menu: true,
       fields: [],
+      app_id: appId,
       sections: [],
       label: "",
       description: "",
@@ -50,9 +55,10 @@ const ConstructorTablesFormPage = () => {
     const getSectionsData = constructorSectionService.getList({ table_id: id })
 
     try {
-      const [tableData, { sections = [] }] = await Promise.all(
-        [getTableData, getSectionsData]
-      )
+      const [tableData, { sections = [] }] = await Promise.all([
+        getTableData,
+        getSectionsData,
+      ])
 
       mainForm.reset({
         ...tableData,
@@ -68,17 +74,18 @@ const ConstructorTablesFormPage = () => {
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
-     
       const getFieldsData = constructorFieldService.getList({ table_id: id })
 
       const getRelations = constructorRelationService.getList({
         table_slug: slug,
       })
 
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData])
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ])
 
       mainForm.setValue("fields", fields)
-      
 
       const relationsWithRelatedTableSlug = relations.map((relation) => ({
         ...relation,
@@ -91,8 +98,8 @@ const ConstructorTablesFormPage = () => {
 
       relationsWithRelatedTableSlug.forEach((relation) => {
         if (
-          (relation.type === "Many2One" && relation.table_from.slug === slug) ||
-          (relation.type === "One2Many" && relation.table_to.slug === slug)
+          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
+          (relation.type === "One2Many" && relation.table_to?.slug === slug) || relation.type === "Recursive"
         )
           layoutRelations.push(relation)
         else tableRelations.push(relation)
@@ -104,33 +111,6 @@ const ConstructorTablesFormPage = () => {
         },
         label: relation[relation.relatedTableSlug]?.label,
       }))
-
-      // const actions = layoutRelations.map(
-      //   (relation) =>
-      //     new Promise((resolve, reject) =>
-      //       constructorFieldService
-      //         .getList({ table_slug: relation[relation.relatedTableSlug]?.slug })
-      //         .then((res) => {
-      //           const computedFields =
-      //             res.fields?.map((field) => ({
-      //               ...field,
-      //               table_slug: relation[relation.relatedTableSlug]?.slug,
-      //               id: `${relation[relation.relatedTableSlug]?.slug}#${field.id}`
-      //             })) ?? []
-
-      //           const computedRelation = {
-      //             ...relation,
-      //             fields: computedFields,
-      //           }
-
-      //           resolve(computedRelation)
-      //         })
-      //         .catch((err) => {
-      //           reject(err)
-      //         })
-      //     )
-      // )
-      // const layoutRelationsWithFields = await Promise.all(actions)
 
       mainForm.setValue("relations", relations)
       mainForm.setValue("layoutRelations", layoutRelationsFields)
@@ -146,7 +126,7 @@ const ConstructorTablesFormPage = () => {
     dispatch(createConstructorTableAction(data))
       .unwrap()
       .then((res) => {
-        navigate("/constructor/tables")
+        navigate(-1)
       })
       .catch(() => setBtnLoader(false))
   }
@@ -165,7 +145,7 @@ const ConstructorTablesFormPage = () => {
     Promise.all([updateTableData, updateSectionData])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data))
-        navigate("/constructor/tables")
+        navigate(-1)
       })
       .catch(() => setBtnLoader(false))
   }
@@ -188,20 +168,15 @@ const ConstructorTablesFormPage = () => {
   if (loader) return <PageFallback />
 
   return (
-    <div>
+    <>
+    <div className="pageWithStickyFooter" >
       <Tabs direction={"ltr"}>
-        <Header
+        <HeaderSettings
           title="Objects"
           subtitle={id ? mainForm.getValues("label") : "Добавить"}
           icon={mainForm.getValues("icon")}
           backButtonLink={-1}
           sticky
-          extra={
-            <SaveButton
-              onClick={mainForm.handleSubmit(onSubmit)}
-              loading={btnLoader}
-            />
-          }
         >
           <TabList>
             <Tab>Details</Tab>
@@ -209,8 +184,8 @@ const ConstructorTablesFormPage = () => {
             <Tab>Fields</Tab>
             <Tab>Relations</Tab>
           </TabList>
-        </Header>
-        
+        </HeaderSettings>
+
         <TabPanel>
           <MainInfo control={mainForm.control} />
         </TabPanel>
@@ -230,7 +205,20 @@ const ConstructorTablesFormPage = () => {
           />
         </TabPanel>
       </Tabs>
+     
     </div>
+    <Footer
+        extra={
+          <>
+          <SecondaryButton onClick={() => navigate(-1)} color="error" >Закрыть</SecondaryButton>
+          <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)}
+          loading={btnLoader}>
+            <Save /> Сохранить
+          </PrimaryButton>
+          </>
+        }
+      />
+    </>
   )
 }
 

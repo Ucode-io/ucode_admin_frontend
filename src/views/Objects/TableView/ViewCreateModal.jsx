@@ -16,7 +16,7 @@ const ViewCreateModal = ({
   initialValues = {},
   setViews,
 }) => {
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       group_fields: [
         {
@@ -35,6 +35,8 @@ const ViewCreateModal = ({
       // ...initialValues,
     },
   })
+  
+  const type = watch('type')
 
   const computedViewTypes = useMemo(() => {
     return arrayToOptions(viewTypes)
@@ -83,8 +85,6 @@ const ViewCreateModal = ({
     } catch (error) {}
   }
 
-  console.log("COMPUTED FIELDS ===>", computedFields)
-
   return (
     <ModalCard
       title="Create view"
@@ -102,23 +102,23 @@ const ViewCreateModal = ({
           />
         </FRow>
 
-        <FRow label="Start timestamp">
+        {type === "CALENDAR" && <FRow label="Start timestamp">
           <HFSelect
             fullWidth
             options={computedFields}
             control={control}
             name="group_fields[0].field_slug"
           />
-        </FRow>
+        </FRow>}
 
-        <FRow label="End timestamp">
+        {type === "CALENDAR" && <FRow label="End timestamp">
           <HFSelect
             fullWidth
             options={computedFields}
             control={control}
             name="group_fields[1].field_slug"
           />
-        </FRow>
+        </FRow>}
 
         <FRow label="Main field">
           <HFSelect
@@ -129,14 +129,14 @@ const ViewCreateModal = ({
           />
         </FRow>
 
-        <FRow label="View fields">
+        {type === "CALENDAR" && <FRow label="View fields">
           <HFMultipleSelect
             fullWidth
             options={computedFields}
             control={control}
             name="view_fields"
           />
-        </FRow>
+        </FRow>}
       </form>
     </ModalCard>
   )

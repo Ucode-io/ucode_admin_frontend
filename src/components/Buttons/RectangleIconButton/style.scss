@@ -3,17 +3,22 @@
 .RectangleIconButton {
   border: 1px solid #E5E9EB;
   border-radius: 6px;
-  width: 35px;
-  min-width: 35px;
-  height: 35px;
-  min-height: 35px;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  min-height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition-duration: .2s;
 
-  &.primary:hover {
+  &.grey {
+    border-color: #E5E9EB;
+    background: #F6F8F9;
+  }
+
+  &:hover {
     border-color: #0067F4;
   } 
 

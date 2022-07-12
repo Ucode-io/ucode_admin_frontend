@@ -48,12 +48,20 @@
 
   td {
     white-space: nowrap;
+    min-height: 48px;
   }
 
 }
 
 .CTableCell {
-  padding: 16px;
+  padding: 8px 16px;
+  height: 48px;
+
+
+  &.buttonsCell {
+    padding: 6px 10px;
+    width: 60px;
+  }
 }
 
 .CTableRow {

@@ -12,11 +12,12 @@ import {
 import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator"
 import LargeModalCard from "../../../components/LargeModalCard"
 import SearchInput from "../../../components/SearchInput"
+import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
 import { pageToOffset } from "../../../utils/pageToOffset"
-import styles from "./style.module.scss"
+
 
 const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
   const { tableSlug, id } = useParams()
@@ -27,6 +28,7 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageCount, setPageCount] = useState(1)
   const [checkedElements, setCheckedElements] = useState([])
+  const [searchText, setSearchText] = useState("")
 
   const [fields, setFields] = useState([])
   const [tableData, setTableData] = useState([])
@@ -36,9 +38,9 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
       const {
         data: { response = {}, count = 1, fields = [] },
       } = await constructorObjectService.getList(table.slug, {
-        data: { offset: pageToOffset(currentPage), limit: 10 },
+        data: { offset: pageToOffset(currentPage), limit: 10, search: searchText },
       })
-
+      
       const pageCount = Math.ceil(count / 10)
 
       setFields(fields)
@@ -69,7 +71,7 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
       }
 
       await constructorObjectService.updateManyToMany(data)
-
+      
       await onCreate(checkedElements)
       closeModal()
     } catch (error) {}
@@ -77,7 +79,12 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
 
   useEffect(() => {
     getList()
-  }, [])
+  }, [currentPage])
+
+  useDebouncedWatch(() => {
+    if(currentPage !== 1) setCurrentPage(1)
+    else  getList()
+  }, [searchText])
 
   return (
     <LargeModalCard
@@ -89,7 +96,7 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
       onClose={closeModal}
     >
       <div className="flex align-center gap-2 mb-2" >
-        <SearchInput style={{ flex: 1 }} autoFocus />
+        <SearchInput style={{ flex: 1 }} autoFocus onChange={setSearchText} />
         <CreateButton title="Создать новый" onClick={() => {
           navigateToForm(table.slug, "CREATE", null, {})
           closeModal()

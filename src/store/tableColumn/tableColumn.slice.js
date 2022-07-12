@@ -5,6 +5,7 @@ export const { actions: tableColumnActions, reducer: tableColumnReducer } =
     name: "tableColumn",
     initialState: {
       list: {},
+      groupColumnIds: {}
     },
     reducers: {
       setList: (state, { payload: { tableSlug, columns } }) => {
@@ -53,6 +54,9 @@ export const { actions: tableColumnActions, reducer: tableColumnReducer } =
       setColumnsPosition: (state, { payload: { tableSlug, columns } }) => {
         state.list[tableSlug] = columns
       },
+      setGroupColumnId: (state, { payload: { tableSlug, id } }) => {
+        state.groupColumnIds[tableSlug] = id
+      }
     },
     // extraReducers: {
     //   [fetchConstructorTableListAction.fulfilled]: (state, { payload }) => {

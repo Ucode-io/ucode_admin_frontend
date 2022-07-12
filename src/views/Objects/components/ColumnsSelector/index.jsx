@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Container, Draggable } from "react-smooth-dnd"
 import FiltersBlockButton from "../../../../components/Buttons/FiltersBlockButton"
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
 import { tableColumnActions } from "../../../../store/tableColumn/tableColumn.slice"
 import { applyDrag } from "../../../../utils/applyDrag"
 import styles from "./style.module.scss"
@@ -53,12 +54,12 @@ const ColumnsSelector = ({ tableSlug }) => {
 
   return (
     <div>
-      <FiltersBlockButton
+      <RectangleIconButton
         onClick={openMenu}
-        color="primary"
+        color="grey"
       >
-        <TableChart color="primary" /> Колонки
-      </FiltersBlockButton>
+        <TableChart color="primary" />
+      </RectangleIconButton>
 
       <Menu
         id="lock-menu"

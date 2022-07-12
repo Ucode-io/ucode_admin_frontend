@@ -7,6 +7,7 @@ import {
   TextField,
 } from "@mui/material"
 import { useMemo } from "react"
+import CSelect from "../../../../components/CSelect"
 import TableColumnFilter from "../../../../components/TableColumnFilter"
 import TableOrderingButton from "../../../../components/TableOrderingButton"
 
@@ -34,7 +35,7 @@ const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
 
 export default FilterGenerator
 
-const Filter = ({ field, name, filters = {}, onChange }) => {
+const Filter = ({ field = {}, name, filters = {}, onChange }) => {
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
@@ -70,18 +71,14 @@ const Filter = ({ field, name, filters = {}, onChange }) => {
         <TableColumnFilter>
           <FormControl style={{ width: "100%" }}>
             <InputLabel size="small">{}</InputLabel>
-            <Select
+            <CSelect
               value={filters[name] ?? ""}
               onChange={(e) => onChange(e.target.value, name)}
               size="small"
               fullWidth
-            >
-              {computedOptions?.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
+              disabledHelperText
+              options={computedOptions}
+            />
           </FormControl>
         </TableColumnFilter>
       )
@@ -119,6 +116,29 @@ const Filter = ({ field, name, filters = {}, onChange }) => {
             onChange={(e) =>
               onChange(Number(e.target.value) || undefined, name)
             }
+          />
+        </TableColumnFilter>
+      )
+
+    case "SWITCH":
+      return (
+        <TableColumnFilter>
+          <CSelect
+            fullWidth
+            placeholder={field.label}
+            value={filters[name] ?? ""}
+            disabledHelperText
+            options={[
+              {
+                label: field.attributes?.text_true ?? "Да",
+                value: 'true',
+              },
+              {
+                label: field.attributes?.text_false ?? "Нет",
+                value: 'false',
+              },
+            ]}
+            onChange={(e) => onChange(e.target.value, name)}
           />
         </TableColumnFilter>
       )

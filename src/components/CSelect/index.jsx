@@ -1,27 +1,58 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material"
+import { Clear } from "@mui/icons-material"
+import {
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material"
 
-const CSelect = ({value, onChange = () => {}, width, style, label, options, id, variant, required, error, helperText ,...props}) => {
-
+const CSelect = ({
+  label,
+  value,
+  error,
+  width = "100%",
+  options = [],
+  disabledHelperText,
+  placeholder,
+  onChange = () => {},
+  ...props
+}) => {
   return (
-    <FormControl fullWidth style={style}  >
-      <InputLabel required={required} size="small" id={'CSelect-' + id + '-label'}>{label}</InputLabel>
+    <FormControl style={{ width }}>
+      <InputLabel size="small">{label}</InputLabel>
       <Select
-        labelId={'CSelect-' + id + '-label'}
-        value={value}
+        value={value || ""}
         label={label}
-        onChange={onChange}
-        variant={variant}
-        error={error}
-        style={{ width }}
         size="small"
+        error={error}
+        inputProps={{ placeholder }}
+        fullWidth
+        onChange={onChange}
+        endAdornment={
+          <IconButton
+            sx={{ display: value ? "" : "none", transform: 'translateX(10px)' }}
+            onClick={e => onChange({ ...e, target: { value: "" } })}
+          >
+            <Clear />
+          </IconButton>
+        }
+        sx={{
+          "& .MuiSelect-iconOutlined": { display: value ? "none" : "" },
+          "&.Mui-focused .MuiIconButton-root": { color: "primary.main" },
+        }}
         {...props}
       >
-        {
-          options?.map((option, index) => (
-            <MenuItem style={{justifyContent: "center"}} key={index} value={option.value}>{option.label}</MenuItem>
-          ))
-        }
+        {options?.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
       </Select>
+      {!disabledHelperText && (
+        <FormHelperText error>{error?.message ?? " "}</FormHelperText>
+      )}
     </FormControl>
   )
 }

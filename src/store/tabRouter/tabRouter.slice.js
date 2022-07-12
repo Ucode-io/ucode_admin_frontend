@@ -14,6 +14,9 @@ export const {
     },
     removeTab: (state, action) => {
       state.tabs = state.tabs.filter(tab => tab.link !== action.payload)
+    },
+    clear: (state, action) => {
+      state.tabs = []
     }
   },
 })

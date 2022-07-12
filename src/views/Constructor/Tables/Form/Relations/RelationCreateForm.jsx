@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo } from "react"
 import { useForm } from "react-hook-form"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
-import { useSelector } from "react-redux"
 import { relationTyes } from "../../../../../utils/constants/relationTypes"
 import DrawerCard from "../../../../../components/DrawerCard"
 import FRow from "../../../../../components/FormElements/FRow"
@@ -10,6 +9,7 @@ import constructorFieldService from "../../../../../services/constructorFieldSer
 import listToOptions from "../../../../../utils/listToOptions"
 import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect"
 import { useParams } from "react-router-dom"
+import applicationService from "../../../../../services/applicationSercixe"
 
 const RelationCreateForm = ({
   onSubmit,
@@ -18,9 +18,7 @@ const RelationCreateForm = ({
   open,
   isLoading=false
 }) => {
-  const {slug} = useParams()
-  const tablesList = useSelector((state) => state.constructorTable.list)
-
+  const {appId} = useParams()
 
   const { handleSubmit, control, reset, watch } = useForm()
 
@@ -29,9 +27,10 @@ const RelationCreateForm = ({
 
   const relatedTableSlug = useMemo(() => {
     if(values.type === 'Many2One') return values.table_to
-    if(values.type === 'One2Many') return values.table_from
+    if(values.type === 'One2Many' || values.type === 'Recursive') return values.table_from
     return null
   }, [values])
+  
 
   const { data: relatedTableFields } = useQuery(
     ["GET_TABLE_FIELDS", relatedTableSlug],
@@ -46,12 +45,23 @@ const RelationCreateForm = ({
     }
   )
 
+  const { data: app } = useQuery(
+    ["GET_TABLE_LIST", appId],
+    () => {
+      return applicationService.getById(appId)
+    }
+  )
+
   const computedTablesList = useMemo(() => {
-    return tablesList.map((table) => ({
+    return app?.tables?.map((table) => ({
       value: table.slug,
       label: table.label,
     }))
-  }, [tablesList])
+  }, [app])
+
+  const isRecursiveRelation = useMemo(() => {
+    return values.type === "Recursive"
+  }, [values.type])
 
   const computedRelationsTypesList = useMemo(() => {
     return relationTyes.map((type) => ({
@@ -61,7 +71,10 @@ const RelationCreateForm = ({
   }, [])
 
   const submitHandler = (values) => {
-    onSubmit(values)
+    onSubmit({
+      ...values,
+      table_to: isRecursiveRelation ? values.table_from : values.table_to
+    })
   }
 
   useEffect(() => {
@@ -93,8 +106,8 @@ const RelationCreateForm = ({
             required
           />
         </FRow>
-
-        <FRow label="Table to">
+        
+        {!isRecursiveRelation && <FRow label="Table to">
           <HFSelect
             name="table_to"
             control={control}
@@ -102,7 +115,7 @@ const RelationCreateForm = ({
             options={computedTablesList}
             required
           />
-        </FRow>
+        </FRow>}
 
         <FRow label="Relation type">
           <HFSelect

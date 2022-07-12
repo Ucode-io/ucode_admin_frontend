@@ -68,7 +68,7 @@ const RelationCreateModal = ({ table, onCreate, closeModal }) => {
       onClose={closeModal}
     >
       {fields.map((field) => (
-        <FormElementGenerator key={field.id} field={field} control={control} />
+        <FormElementGenerator key={field.id} field={field} control={control} disableHelperText />
       ))}
     </LargeModalCard>
   )

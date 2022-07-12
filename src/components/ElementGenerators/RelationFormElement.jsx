@@ -1,15 +1,15 @@
 import { format } from "date-fns"
-import { useEffect, useId, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import constructorObjectService from "../../services/constructorObjectService"
 import { Autocomplete, CircularProgress, TextField } from "@mui/material"
-import useDebouncedWatch from "../../hooks/useDebouncedWatch"
 import FRow from "../FormElements/FRow"
 import { Controller } from "react-hook-form"
 import FEditableRow from "../FormElements/FEditableRow"
 import IconGenerator from "../IconPicker/IconGenerator"
 import useDebounce from "../../hooks/useDebounce"
 import useTabRouter from "../../hooks/useTabRouter"
-import { generateGUID, generateID } from "../../utils/generateID"
+import { generateGUID } from "../../utils/generateID"
+import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
 
 const RelationFormElement = ({
   control,
@@ -97,23 +97,8 @@ const AutoCompleteElement = ({
     return generateGUID()
   }, [])
   
-  console.log("IIIIDDD ===>", id)
-
   const getOptionLabel = (option) => {
-    let label = ""
-
-    field.attributes?.fields?.forEach((el) => {
-      let value = ""
-      if (el?.type === "DATE")
-        value = format(new Date(option[el?.slug]), "dd.MM.yyyy")
-      else if (el?.type === "DATE_TIME")
-        value = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm")
-      else value = option[el?.slug]
-
-      label += `${value ?? ""} `
-    })
-
-    return label
+    return getRelationFieldLabel(field, option)
   }
 
   const computedValue = useMemo(() => {
@@ -174,7 +159,6 @@ const AutoCompleteElement = ({
       filterOptions={(x) => x}
       value={computedValue}
       loading={loader}
-      // onSelect
       onChange={(event, newValue) => {
         setValue(newValue?.[newValue?.length - 1]?.guid ?? null)
       }}
@@ -196,7 +180,6 @@ const AutoCompleteElement = ({
         )
       }}
       renderInput={(params) => {
-        console.log("PRAAMS ==>", params)
         return (
           <TextField
             {...params}

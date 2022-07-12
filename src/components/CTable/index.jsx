@@ -43,9 +43,9 @@ export const CTableRow = ({ children, ...props }) => {
   return <tr className="CTableRow" {...props} >{children}</tr>
 }
 
-export const CTableCell = ({ children, className="", ...props }) => {
+export const CTableCell = ({ children, className="", buttonsCell=false, ...props }) => {
   return (
-    <td className={`CTableCell ${className}`} {...props}>
+    <td className={`CTableCell ${className} ${buttonsCell ? 'buttonsCell' : ''}`} {...props}>
       {children}
     </td>
   )

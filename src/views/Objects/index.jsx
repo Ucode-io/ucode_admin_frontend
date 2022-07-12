@@ -1,29 +1,30 @@
 import { useMemo, useState } from "react"
 import { useSelector } from "react-redux"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
-import CreateButton from "../../components/Buttons/CreateButton"
-import Header from "../../components/Header"
-import TableView from "./TableView"
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
-import { Add, CalendarToday, TableChart } from "@mui/icons-material"
-import TabButton from "../../components/Buttons/TabButton"
+import { useParams } from "react-router-dom"
+import { TabPanel, Tabs } from "react-tabs"
 import CalendarView from "./CalendartView"
-import ViewCreateModal from "./TableView/ViewCreateModal"
-import useTabRouter from "../../hooks/useTabRouter"
+import { generateGUID } from "../../utils/generateID"
+import ViewsWithGroups from "./ViewsWithGroups"
+
+const staticViews = [
+  {
+    id: generateGUID,
+    type: "TABLE",
+  },
+]
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
   const params = useParams()
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
-  const { navigateToForm } = useTabRouter()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
-  const columns = useSelector((state) => state.tableColumn.list)
 
   const [views, setViews] = useState([])
-  const [viewCreateModalVisible, setViewCreateModalVisible] = useState(false)
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
   const computedTableSlug = isRelation ? tableSlug : params.tableSlug
+
+  const columns = useSelector((state) => state.tableColumn.list[computedTableSlug] ?? [])
+  const groupColumnId = useSelector(state => state.tableColumn.groupColumnIds[computedTableSlug])
 
   const tableInfo = useMemo(() => {
     if (isRelation) return {}
@@ -32,72 +33,60 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
 
   const computedColumns = useMemo(() => {
     return (
-      columns[computedTableSlug]?.filter((column) => column.isVisible) ?? []
+      columns?.filter((column) => column.isVisible) ?? []
     )
-  }, [columns, computedTableSlug])
+  }, [columns])
 
-  const navigateToCreatePage = () => {
-    navigateToForm(computedTableSlug)
-  }
+  const groupField = useMemo(() => {
+    return columns.find(column => column.id === groupColumnId)
+  }, [groupColumnId])
   
+  const computedViews = useMemo(() => {
+    return [...staticViews, ...views]
+  }, [views])
+
   return (
     <>
-      <Tabs direction={"ltr"}>
+      <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
         <div>
-          {!isRelation && (
-            <Header
-              title={tableInfo?.label}
-              extra={<CreateButton onClick={navigateToCreatePage} />}
-            >
-              <TabList>
-                <Tab>
-                  <TableChart /> Таблица
-                </Tab>
+          {computedViews.map((view) => {
+            switch (view.type) {
+              case "CALENDAR":
+                return (
+                  <TabPanel key={view.id}>
+                    <CalendarView
+                      view={view}
+                      tableSlug={computedTableSlug}
+                      computedColumns={computedColumns}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={computedViews}
+                    />
+                  </TabPanel>
+                )
 
-                {views.map((view) => (
-                  <Tab key={view.id} >
-                  <CalendarToday /> Календарь
-                </Tab>
-                ))}
-                
-                <TabButton onClick={() => setViewCreateModalVisible(true)}>
-                  <Add /> Вид
-                </TabButton>
-              </TabList>
-            </Header>
-          )}
-
-          <TabPanel>
-            <TableView
-              tableSlug={computedTableSlug}
-              computedColumns={computedColumns}
-              setViews={setViews}
-              isRelation={isRelation}
-              tableInfo={tableInfo}
-            />
-          </TabPanel>
-
-          {views.map((view) => (
-            <TabPanel key={view.id}>
-              <CalendarView
-                view={view}
-                tableSlug={computedTableSlug}
-                computedColumns={computedColumns}
-                setViews={setViews}
-              />
-            </TabPanel>
-          ))}
+              default:
+                return (
+                  <TabPanel key={view.id}>
+                    <ViewsWithGroups
+                      tableSlug={computedTableSlug}
+                      computedColumns={computedColumns}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={computedViews}
+                      setViews={setViews}
+                      groupField={groupField}
+                      view={view}
+                    />
+                  </TabPanel>
+                )
+            }
+          })}
         </div>
       </Tabs>
 
-      {viewCreateModalVisible && (
-        <ViewCreateModal
-          fields={columns[computedTableSlug]}
-          closeModal={() => setViewCreateModalVisible(false)}
-          setViews={setViews}
-          tableSlug={computedTableSlug}
-        />
-      )}
+     
     </>
   )
 }

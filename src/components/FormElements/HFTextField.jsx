@@ -5,8 +5,9 @@ const HFTextField = ({
   control,
   name = "",
   disabledHelperText = false,
-  required=false,
-  rules={},
+  required = false,
+  fullWidth = false,
+  rules = {},
   ...props
 }) => {
   return (
@@ -14,20 +15,23 @@ const HFTextField = ({
       control={control}
       name={name}
       defaultValue=""
-      rules={{ required: required ? 'This is required field' : false, ...rules }}
-      render={({ field : { onChange, value }, fieldState : { error  } })  => (
+      rules={{
+        required: required ? "This is required field" : false,
+        ...rules,
+      }}
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
-        size="small"
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        name={name}
-        error={error}
-        helperText={!disabledHelperText && (error?.message ?? ' ')}
-        {...props}
-      />
+          size="small"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          name={name}
+          error={error}
+          fullWidth={fullWidth}
+          helperText={!disabledHelperText && (error?.message ?? " ")}
+          {...props}
+        />
       )}
-    >
-    </Controller>
+    ></Controller>
   )
 }
 

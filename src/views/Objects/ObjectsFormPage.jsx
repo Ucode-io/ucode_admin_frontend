@@ -20,7 +20,6 @@ import { sortSections } from "../../utils/sectionsOrderNumber"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
-  const navigate = useNavigate()
   const { pathname, state = {} } = useLocation()
   const { removeTab, navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
@@ -70,6 +69,7 @@ const ObjectsFormPage = () => {
           .filter(
             (relation) =>
               relation.type === "Many2Many" ||
+              relation.type === "Recursive" ||
               (relation.type === "Many2One" &&
                 relation.table_to?.slug === tableSlug) ||
               (relation.type === "One2Many" &&
@@ -78,11 +78,13 @@ const ObjectsFormPage = () => {
           .map((relation) => ({
             ...relation,
             relatedTable:
-              relation.table_from.slug === tableSlug
+              relation.table_from?.slug === tableSlug
                 ? relation.table_to
                 : relation.table_from,
           }))
       )
+
+      console.log("DATA ====>", data.response)
 
       reset(data.response ?? {})
     } finally {
@@ -112,10 +114,11 @@ const ObjectsFormPage = () => {
           .filter(
             (relation) =>
               relation.type === "Many2Many" ||
+              relation.type === "Recursive" ||
               (relation.type === "Many2One" &&
                 relation.table_to?.slug === tableSlug) ||
               (relation.type === "One2Many" &&
-                relation.table_from?.slug === tableSlug)
+                relation.table_from?.slug === tableSlug) 
           )
           .map((relation) => ({
             ...relation,
@@ -192,12 +195,10 @@ const ObjectsFormPage = () => {
         extra={
           <>
             <SecondaryButton onClick={() => removeTab(pathname)} color="error">
-              {" "}
-              Закрыть{" "}
+              Закрыть
             </SecondaryButton>
             <PrimaryButton loader={btnLoader} onClick={handleSubmit(onSubmit)}>
-              {" "}
-              <Save /> Сохранить{" "}
+              <Save /> Сохранить
             </PrimaryButton>
           </>
         }

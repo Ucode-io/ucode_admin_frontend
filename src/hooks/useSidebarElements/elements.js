@@ -48,18 +48,3 @@ export const elements = [
   // },
 
 ]
-
-export const settingsElements = [
-  {
-    id: "settings",
-    title: "Settings",
-    icon: Settings,
-    children: [
-      {
-        id: "settings",
-        title: "Contructor",
-        path: "/settings/constructor/tables",
-      }
-    ]
-  },
-]

@@ -1,9 +1,10 @@
 import { useMemo } from "react"
 import { useSelector } from "react-redux"
-import { elements, settingsElements } from "./elements"
-import * as icons from "@mui/icons-material"
+import { elements } from "./elements"
+import { useParams } from "react-router-dom"
 
 const useSidebarElements = () => {
+  const { appId } = useParams()
   const constructorElements = useSelector(
     (state) => state.constructorTable.list
   )
@@ -14,7 +15,7 @@ const useSidebarElements = () => {
       .map((el) => ({
         ...el,
         title: el.label,
-        path: `/object/${el.slug}`,
+        path: `/main/${appId}/object/${el.slug}`,
       }))
 
     return [
@@ -28,7 +29,7 @@ const useSidebarElements = () => {
 
   
 
-  return { elements: computedElements ?? [], settingsElements }
+  return { elements: computedElements ?? [] }
 }
 
 export default useSidebarElements

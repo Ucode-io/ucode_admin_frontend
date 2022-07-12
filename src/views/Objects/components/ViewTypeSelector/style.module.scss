@@ -1,0 +1,35 @@
+
+@use '/src/scss/colors';
+
+.selector {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #D5DADD;
+
+  .element {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    background: #F6F8F9;
+    border-right: 1px solid #D5DADD;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6E8BB7;
+    cursor: pointer;
+
+    &:last-of-type {
+      border: none;
+    }
+
+    &.active {
+      color: colors.$primary;
+    }
+
+    &:hover {
+      transform: scale(1.2);
+      border: 1px solid #D5DADD;
+    }
+  }
+}

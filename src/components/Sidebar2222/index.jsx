@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux"
 // import { globalSettingsActions } from "../../redux/slices/globalSettings.slice"
 import PermissionWrapper from "../PermissionWrapper"
 
-const Sidebar = () => {
+const Sidebar2222 = () => {
   // const rightSideVisible = useSelector(state => state.globalSettings.sidebarNavigationVisible)
   const dispatch = useDispatch()
   const [rightSideVisible, setRightSideVisible] = useState(true)
@@ -65,7 +65,7 @@ const Sidebar = () => {
           >
             <img src={brandLogo} alt="logo" />
           </div>
-          <div className="brand-name">SOLIQ SERVIS</div>
+          <div className="brand-name">MEDION SETTINGS</div>
         </div>
         <div
           className="cloes-btn"
@@ -128,18 +128,18 @@ const Sidebar = () => {
               <div className="label">Shaxsiy ma'lumotlar</div>
             </NavLink>
           </div> */}
-          <div className="parent-block">
+          {/* <div className="parent-block">
             <div className="nav-element" onClick={logoutHandler}>
               <div className="icon">
                 <ExitToAppIcon />
               </div>
               <div className="label" >Logout</div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
   )
 }
 
-export default Sidebar
+export default Sidebar2222

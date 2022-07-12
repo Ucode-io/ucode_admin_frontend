@@ -1,12 +1,14 @@
 import { get } from "@ngard/tiny-get"
 import { format } from "date-fns"
 import { memo, useMemo } from "react"
+import { numberWithSpaces } from "../../utils/formatNumbers"
 import LogoDisplay from "../LogoDisplay"
+import TableTag from "../TableTag"
 
 const CellElementGenerator = ({ field = {}, row }) => {
-
   const value = useMemo(() => {
-    if (typeof(field.id) !== 'string' || !field.id?.includes("#")) return get(row, field.slug, "")
+    if (typeof field.id !== "string" || !field.id?.includes("#"))
+      return get(row, field.slug, "")
 
     const tableSlug = field.id.split("#")[0]
 
@@ -26,6 +28,11 @@ const CellElementGenerator = ({ field = {}, row }) => {
         </span>
       )
 
+    case "NUMBER":
+      return (
+        <span>{ numberWithSpaces(value) }</span>
+      )
+
     case "DATE_TIME":
       return (
         <span className="text-nowrap">
@@ -35,7 +42,15 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     case "CHECKBOX":
     case "SWITCH":
-      return value ? "Да" : "Нет"
+      return JSON.parse(value) ? (
+        <TableTag color="success">
+          {field.attributes?.text_true ?? 'Да'}
+        </TableTag>
+      ) : (
+        <TableTag color="error">
+          {field.attributes?.text_false ?? 'Нет'}
+        </TableTag>
+      )
 
     case "PHOTO":
       return <LogoDisplay url={value} />

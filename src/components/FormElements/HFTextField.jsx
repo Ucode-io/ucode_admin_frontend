@@ -7,6 +7,7 @@ const HFTextField = ({
   disabledHelperText = false,
   required = false,
   fullWidth = false,
+  withTrim = false,
   rules = {},
   ...props
 }) => {
@@ -23,7 +24,9 @@ const HFTextField = ({
         <TextField
           size="small"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) =>
+            onChange(withTrim ? e.target.value?.trim() : e.target.value)
+          }
           name={name}
           error={error}
           fullWidth={fullWidth}

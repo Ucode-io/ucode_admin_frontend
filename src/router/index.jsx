@@ -4,10 +4,18 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import KeepAliveWrapper from "../components/KeepAliveWrapper"
 import PageFallback from "../components/PageFallback"
 import ReloadWrapper from "../components/ReloadWrapper"
+import AnalyticsLayout from "../layouts/AnalyticsLayout"
 import AuthLayout from "../layouts/AuthLayout"
 import CashboxLayout from "../layouts/CashboxLayout"
 import MainLayout from "../layouts/MainLayout"
 import SettingsLayout from "../layouts/SettingsLayout"
+import DashboardList from "../views/Analytics/Dashboard"
+import DashboardCreatePage from "../views/Analytics/Dashboard/DashboardCreatePage"
+import DashboardSettings from "../views/Analytics/Dashboard/DashboardSettings"
+import DashboardMainInfo from "../views/Analytics/Dashboard/DashboardSettings/DashboardMainInfo"
+import VariableCreateForm from "../views/Analytics/Dashboard/DashboardSettings/VariableCreateForm"
+import Variables from "../views/Analytics/Dashboard/DashboardSettings/Variables"
+import DashboardDetailPage from "../views/Analytics/Dashboard/Detail"
 import Login from "../views/Auth/Login"
 import Registration from "../views/Auth/Registration"
 import CashboxAppointments from "../views/Cashbox/Appointments"
@@ -28,7 +36,6 @@ const SessionsPage = lazy(() => import("../views/AuthMatrix/Crossed/Integrations
 const UsersForm = lazy(() => import("../views/Users/Form"))
 const UsersPage = lazy(() => import("../views/Users/index"))
 // const FileSystemModule = lazy(() => import("fileSystem/FileSystemModule"))
-
 
 const Router = () => {
   const location = useLocation()
@@ -119,10 +126,24 @@ const Router = () => {
 
       </Route>
 
+      {/* ---------ANALYTICS APP---------------- */}
 
+      <Route path="analytics" element={<AnalyticsLayout />} >
 
-      <Route path="analytics" element={<div>HELLLO</div>} >
+        <Route index element={<Navigate to={'/analytics/dashboard'} />} />
 
+        <Route path="dashboard" element={<DashboardList />} />
+
+        <Route path="dashboard/create/:formId" element={<KeepAliveWrapper><DashboardCreatePage /></KeepAliveWrapper>} />
+        <Route path="dashboard/:id" element={<DashboardDetailPage />} />
+        <Route path="dashboard/:id/settings" element={<DashboardSettings />}>
+          <Route path="main" element={<DashboardMainInfo />} />
+          <Route path="variables" element={<Variables />} />
+          <Route path="variables/create" element={<VariableCreateForm />} />
+          <Route path="variables/:variableId" element={<VariableCreateForm />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to={'/analytics/dashboard'} />} />
       </Route>
 
 

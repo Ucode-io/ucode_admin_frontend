@@ -1,6 +1,5 @@
 import BackButton from "../BackButton"
 import IconGenerator from "../IconPicker/IconGenerator"
-import RowLinearLoader from "../RowLinearLoader"
 import styles from "./style.module.scss"
 
 const Header = ({

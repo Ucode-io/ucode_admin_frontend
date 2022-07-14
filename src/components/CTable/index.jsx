@@ -5,10 +5,10 @@ import EmptyDataComponent from "../EmptyDataComponent"
 import TableLoader from "../TableLoader/index"
 import "./style.scss"
 
-export const CTable = ({ children, count, page, setCurrentPage, removableHeight = 186, disablePagination, loader }) => {
+export const CTable = ({ children, count, page, setCurrentPage, removableHeight = 186, disablePagination, loader, tableStyle={}, wrapperStyle={} }) => {
   return (
-    <Paper className="CTableContainer">
-      <div className="table" style={{ height: removableHeight ? `calc(100vh - ${removableHeight}px)` : 'auto', overflow: loader ? 'hidden' : 'auto' }} >
+    <Paper className="CTableContainer" style={wrapperStyle}>
+      <div className="table" style={{ height: removableHeight ? `calc(100vh - ${removableHeight}px)` : 'auto', overflow: loader ? 'hidden' : 'auto', ...tableStyle}} >
         <table>{children}</table>
       </div>
       

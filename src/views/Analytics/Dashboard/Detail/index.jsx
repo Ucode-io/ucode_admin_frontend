@@ -1,0 +1,165 @@
+import { Analytics, Edit, Save, Settings, Share, Star } from "@mui/icons-material"
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
+import Header from "../../../../components/Header"
+import GridLayout, { WidthProvider } from "react-grid-layout"
+import "/node_modules/react-grid-layout/css/styles.css"
+import "/node_modules/react-resizable/css/styles.css"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
+import Panel from "./Panel"
+import { useMutation, useQuery } from "react-query"
+import dashboardService from "../../../../services/analytics/dashboardService"
+import { useState } from "react"
+import PageFallback from "../../../../components/PageFallback"
+import { useMemo } from "react"
+import CreatePanelButton from "./Panel/CreatePanelButton"
+import { useRef } from "react"
+import request from "../../../../utils/request"
+
+const ResponsiveGridLayout = WidthProvider(GridLayout)
+
+const DashboardDetailPage = () => {
+  const { id } = useParams()
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const [layout, setLayout] = useState([])
+  const [layoutIsEditable, setLayoutIsEditable] = useState(false)
+  const intermediateLayout = useRef()
+
+  const navigateToSettingsPage = () => {
+    navigate(`${pathname}/settings/main`)
+  }
+
+  const { data, isLoading } = useQuery(
+    ["GET_DASHBOARD_DATA", id],
+    () => {
+      return dashboardService.getById(id)
+    },
+    {
+      onSuccess: ({ panels = [] }) => {
+        const computedLayout =
+          panels.map((panel) => ({
+            i: panel.id,
+            x: panel?.coordinates[0],
+            y: panel?.coordinates[1],
+            w: panel?.coordinates[2],
+            h: panel?.coordinates[3],
+          })) ?? []
+
+        setLayout(computedLayout)
+      },
+    }
+  )
+
+  const computedLayout = useMemo(() => {
+    if(!layoutIsEditable) return layout
+
+    let lastRowElement = { y: 0, h: 0, w: 0, x: 0 }
+
+    layout.forEach((element) => {
+      if (
+        element.y + element.h + element.x + element.w >
+        lastRowElement.y +
+          lastRowElement.h +
+          lastRowElement.x +
+          lastRowElement.w
+      ) {
+        lastRowElement = element
+      }
+    })
+
+    const createPanel = {
+      i: "CREATE",
+      x:
+        lastRowElement.x + lastRowElement.w + 3 > 12
+          ? 0
+          : lastRowElement.x + lastRowElement.w,
+      y: 0,
+      w: 3,
+      h: 5,
+    }
+
+    return [...layout, createPanel]
+  }, [layout, layoutIsEditable])
+
+
+  const {mutate, isLoading: btnLoading} = useMutation(() => {
+
+    const data = intermediateLayout.current?.map(el => ({
+      id: el.i,
+      coordinates: [el.x, el.y, el.w, el.h],
+    }))
+    
+    return request.post("/analytics/panel/updateCoordinates", { panel_coordinates: data })
+  }, {
+    onSuccess: () => {
+      setLayout(intermediateLayout.current)
+      setLayoutIsEditable(false)
+    }
+  })
+
+  const switchLayoutEditable = () => {
+
+    if(!layoutIsEditable) return setLayoutIsEditable(true)
+
+    mutate()
+  }
+
+  return (
+    <div>
+      <Header
+        title="Главная / Дешборд"
+        backButtonLink={"/analytics/dashboard"}
+        extra={
+          <>
+            <RectangleIconButton>
+              <Analytics />
+            </RectangleIconButton>
+            <RectangleIconButton onClick={switchLayoutEditable} >
+              {layoutIsEditable ? <Save color="primary" /> : <Edit />}
+            </RectangleIconButton>
+            <RectangleIconButton onClick={navigateToSettingsPage}>
+              <Settings />
+            </RectangleIconButton>
+          </>
+        }
+      >
+        <RectangleIconButton>
+          <Star color="gray" />
+        </RectangleIconButton>
+        <RectangleIconButton>
+          <Share color="gray" />
+        </RectangleIconButton>
+      </Header>
+
+      {isLoading ? (
+        <PageFallback />
+      ) : (
+        <ResponsiveGridLayout
+          className="layout"
+          layout={computedLayout}
+          cols={12}
+          rowHeight={60}
+          onLayoutChange={(layout) => {
+            intermediateLayout.current = layout?.filter((item) => item.i !== "CREATE")
+            // setLayout(layout?.filter((item) => item.i !== "CREATE"))
+          }}
+          compactType={null}
+          isResizable={layoutIsEditable}
+          isDraggable={layoutIsEditable}
+        >
+          {data?.panels?.map((panel) => (
+            <div key={panel.id}>
+              <Panel panel={panel} />
+            </div>
+          ))}
+
+          {layoutIsEditable && <div key="CREATE">
+            <CreatePanelButton />
+          </div>}
+        </ResponsiveGridLayout>
+      )}
+    </div>
+  )
+}
+
+export default DashboardDetailPage

@@ -16,6 +16,7 @@ import DashboardMainInfo from "../views/Analytics/Dashboard/DashboardSettings/Da
 import VariableCreateForm from "../views/Analytics/Dashboard/DashboardSettings/VariableCreateForm"
 import Variables from "../views/Analytics/Dashboard/DashboardSettings/Variables"
 import DashboardDetailPage from "../views/Analytics/Dashboard/Detail"
+import PanelCreateForm from "../views/Analytics/Dashboard/Detail/PanelForm"
 import Login from "../views/Auth/Login"
 import Registration from "../views/Auth/Registration"
 import CashboxAppointments from "../views/Cashbox/Appointments"
@@ -136,6 +137,13 @@ const Router = () => {
 
         <Route path="dashboard/create/:formId" element={<KeepAliveWrapper><DashboardCreatePage /></KeepAliveWrapper>} />
         <Route path="dashboard/:id" element={<DashboardDetailPage />} />
+
+        <Route path="dashboard/:id/panel" >
+          <Route path=":panelId" element={<PanelCreateForm />} />
+          <Route path="create" element={<PanelCreateForm />} />
+        </Route>  
+      
+        
         <Route path="dashboard/:id/settings" element={<DashboardSettings />}>
           <Route path="main" element={<DashboardMainInfo />} />
           <Route path="variables" element={<Variables />} />

@@ -1,22 +1,23 @@
-import { Edit } from "@mui/icons-material"
 import { useMemo } from "react"
 import { useQuery } from "react-query"
-import { useLocation, useNavigate } from "react-router-dom"
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
+import { useParams } from "react-router-dom"
 import DataTable from "../../../../../components/DataTable"
 import request from "../../../../../utils/request"
 import styles from "./style.module.scss"
 
-const Panel = ({ panel = {}, layoutIsEditable }) => {
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
+const PanelPreview = ({ form }) => {
+  const {panelId} = useParams()
 
+  const title = form.watch('title')
+    
   const { data, isLoading } = useQuery(
-    ["GET_DATA_BY_QUERY", panel.query],
+    ["GET_DATA_BY_QUERY_IN_PREVIEW", panelId, title],
     () => {
+      const query = form.getValues('query')
+      if(!query) return []
       return request.post("/query", {
         data: {},
-        query: panel.query,
+        query: query,
       })
     }
   )
@@ -31,19 +32,11 @@ const Panel = ({ panel = {}, layoutIsEditable }) => {
     }))
   }, [data])
 
-  const navigateToEditPage = (e) => {
-    navigate(`${pathname}/panel/${panel.id}`)
-  }
+  
 
   return (
     <div className={styles.panel}>
-      <div className={styles.title}>
-        <div>{panel.title}</div>{" "}
-        
-        {layoutIsEditable && <RectangleIconButton className={styles.editButton} onClick={navigateToEditPage} >
-          <Edit color="primary" />
-        </RectangleIconButton>}
-      </div>
+      <div className={styles.title}>{title}</div>
 
       <DataTable
         loader={isLoading}
@@ -64,4 +57,4 @@ const Panel = ({ panel = {}, layoutIsEditable }) => {
   )
 }
 
-export default Panel
+export default PanelPreview

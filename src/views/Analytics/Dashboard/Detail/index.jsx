@@ -76,6 +76,8 @@ const DashboardDetailPage = () => {
       y: 0,
       w: 3,
       h: 5,
+      isDraggable: false,
+      isResizable: false
     }
 
     return [...layout, createPanel]
@@ -114,7 +116,7 @@ const DashboardDetailPage = () => {
             <RectangleIconButton>
               <Analytics />
             </RectangleIconButton>
-            <RectangleIconButton onClick={switchLayoutEditable} >
+            <RectangleIconButton loader={btnLoading} onClick={switchLayoutEditable} >
               {layoutIsEditable ? <Save color="primary" /> : <Edit />}
             </RectangleIconButton>
             <RectangleIconButton onClick={navigateToSettingsPage}>
@@ -148,11 +150,11 @@ const DashboardDetailPage = () => {
           isDraggable={layoutIsEditable}
         >
           {data?.panels?.map((panel) => (
-            <div key={panel.id}>
-              <Panel panel={panel} />
+            <div key={panel.id} >
+              <Panel panel={panel} layoutIsEditable={layoutIsEditable} />
             </div>
           ))}
-
+          
           {layoutIsEditable && <div key="CREATE">
             <CreatePanelButton />
           </div>}

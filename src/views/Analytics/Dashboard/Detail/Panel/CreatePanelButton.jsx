@@ -1,11 +1,17 @@
-
-
-
 import { AddCircleOutline } from "@mui/icons-material";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./style.module.scss"
 
 const CreatePanelButton = () => {
-  return ( <div className={styles.createPanelButton} >
+  const {pathname} = useLocation()
+  const navigate = useNavigate()
+
+  
+  const navigateToCreateForm = (e) => {
+    navigate(`${pathname}/panel/create`)
+  }
+
+  return ( <div className={styles.createPanelButton} onClick={navigateToCreateForm} >
     
     <AddCircleOutline sx={{ fontSize: 40 }} />
 

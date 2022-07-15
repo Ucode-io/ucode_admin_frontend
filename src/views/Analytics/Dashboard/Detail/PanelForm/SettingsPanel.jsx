@@ -30,7 +30,7 @@ const SettingsPanel = ({ form }) => {
           <HFTextField control={form.control} name="title" fullWidth />
         </FRow>
 
-        {/* <FRow label={"X-axis"} >
+        <FRow label={"X-axis"} >
           <HFTextField control={form.control} name="test1" fullWidth />
         </FRow>
 
@@ -46,7 +46,7 @@ const SettingsPanel = ({ form }) => {
 
         <FRow label={"Show label on y-axis"} >
           <HFSwitch control={form.control} name="test4" fullWidth />
-        </FRow> */}
+        </FRow>
 
 
       </div>

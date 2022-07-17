@@ -1,4 +1,4 @@
-import { BackupTable, CopyAll, Segment } from "@mui/icons-material"
+import { CopyAll, PlayArrow, Segment } from "@mui/icons-material"
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
 import styles from "./style.module.scss"
 // import ReactPrismEditor from "react-prism-editor"
@@ -46,7 +46,7 @@ const QueryRedactor = ({ form }) => {
       <div className={styles.toolbar}>
         <Tooltip title="Update table" placement="left">
           <RectangleIconButton onClick={updateTable} >
-            <BackupTable color="primary" />
+            <PlayArrow color="primary" />
           </RectangleIconButton>
         </Tooltip>
         <Tooltip title="Copy" placement="left">

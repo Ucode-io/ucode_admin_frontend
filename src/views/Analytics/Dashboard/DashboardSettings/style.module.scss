@@ -20,9 +20,16 @@
     overflow: auto;
     padding: 16px;
     
+    
     .row {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 30px;
+
+
+      .element {
+        flex: 1;
+      }
     }
   }
 }

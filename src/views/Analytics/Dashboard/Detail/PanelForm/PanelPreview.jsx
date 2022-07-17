@@ -5,18 +5,18 @@ import DataTable from "../../../../../components/DataTable"
 import request from "../../../../../utils/request"
 import styles from "./style.module.scss"
 
-const PanelPreview = ({ form }) => {
+const PanelPreview = ({ form, variablesValue = {} }) => {
   const {panelId} = useParams()
 
   const title = form.watch('title')
     
   const { data, isLoading } = useQuery(
-    ["GET_DATA_BY_QUERY_IN_PREVIEW", panelId, title],
+    ["GET_DATA_BY_QUERY_IN_PREVIEW", panelId, title, variablesValue],
     () => {
       const query = form.getValues('query')
       if(!query) return []
       return request.post("/query", {
-        data: {},
+        data: variablesValue,
         query: query,
       })
     }
@@ -50,6 +50,7 @@ const PanelPreview = ({ form }) => {
           display: "flex",
           flexDirection: "column",
           padding: 10,
+          height: '100px'
         }}
         tableStyle={{ flex: 1 }}
       />

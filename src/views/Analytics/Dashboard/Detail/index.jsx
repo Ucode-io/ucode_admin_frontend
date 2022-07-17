@@ -1,4 +1,4 @@
-import { Analytics, Edit, Save, Settings, Share, Star } from "@mui/icons-material"
+import { Analytics, Edit, Save, Settings } from "@mui/icons-material"
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
 import Header from "../../../../components/Header"
 import GridLayout, { WidthProvider } from "react-grid-layout"
@@ -14,6 +14,7 @@ import { useMemo } from "react"
 import CreatePanelButton from "./Panel/CreatePanelButton"
 import { useRef } from "react"
 import request from "../../../../utils/request"
+import VariablesBar from "../../components/VariablesBar"
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
 
@@ -23,6 +24,7 @@ const DashboardDetailPage = () => {
   const navigate = useNavigate()
   const [layout, setLayout] = useState([])
   const [layoutIsEditable, setLayoutIsEditable] = useState(false)
+  const [variabesValue, setVariablesValue] = useState({})
   const intermediateLayout = useRef()
 
   const navigateToSettingsPage = () => {
@@ -51,7 +53,7 @@ const DashboardDetailPage = () => {
   )
 
   const computedLayout = useMemo(() => {
-    if(!layoutIsEditable) return layout
+    if (!layoutIsEditable) return layout
 
     let lastRowElement = { y: 0, h: 0, w: 0, x: 0 }
 
@@ -77,46 +79,50 @@ const DashboardDetailPage = () => {
       w: 3,
       h: 5,
       isDraggable: false,
-      isResizable: false
+      isResizable: false,
     }
 
     return [...layout, createPanel]
   }, [layout, layoutIsEditable])
 
+  const { mutate, isLoading: btnLoading } = useMutation(
+    () => {
+      const data = intermediateLayout.current?.map((el) => ({
+        id: el.i,
+        coordinates: [el.x, el.y, el.w, el.h],
+      }))
 
-  const {mutate, isLoading: btnLoading} = useMutation(() => {
-
-    const data = intermediateLayout.current?.map(el => ({
-      id: el.i,
-      coordinates: [el.x, el.y, el.w, el.h],
-    }))
-    
-    return request.post("/analytics/panel/updateCoordinates", { panel_coordinates: data })
-  }, {
-    onSuccess: () => {
-      setLayout(intermediateLayout.current)
-      setLayoutIsEditable(false)
+      return request.post("/analytics/panel/updateCoordinates", {
+        panel_coordinates: data,
+      })
+    },
+    {
+      onSuccess: () => {
+        setLayout(intermediateLayout.current)
+        setLayoutIsEditable(false)
+      },
     }
-  })
+  )
 
   const switchLayoutEditable = () => {
-
-    if(!layoutIsEditable) return setLayoutIsEditable(true)
-
+    if (!layoutIsEditable) return setLayoutIsEditable(true)
     mutate()
   }
 
   return (
     <div>
       <Header
-        title="Главная / Дешборд"
+        title={data?.name}
         backButtonLink={"/analytics/dashboard"}
         extra={
           <>
             <RectangleIconButton>
               <Analytics />
             </RectangleIconButton>
-            <RectangleIconButton loader={btnLoading} onClick={switchLayoutEditable} >
+            <RectangleIconButton
+              loader={btnLoading}
+              onClick={switchLayoutEditable}
+            >
               {layoutIsEditable ? <Save color="primary" /> : <Edit />}
             </RectangleIconButton>
             <RectangleIconButton onClick={navigateToSettingsPage}>
@@ -124,14 +130,13 @@ const DashboardDetailPage = () => {
             </RectangleIconButton>
           </>
         }
-      >
-        <RectangleIconButton>
-          <Star color="gray" />
-        </RectangleIconButton>
-        <RectangleIconButton>
-          <Share color="gray" />
-        </RectangleIconButton>
-      </Header>
+      />
+
+      <VariablesBar
+        variables={data?.variables}
+        variablesValue={variabesValue}
+        setVariablesValue={setVariablesValue}
+      />
 
       {isLoading ? (
         <PageFallback />
@@ -142,22 +147,25 @@ const DashboardDetailPage = () => {
           cols={12}
           rowHeight={60}
           onLayoutChange={(layout) => {
-            intermediateLayout.current = layout?.filter((item) => item.i !== "CREATE")
-            // setLayout(layout?.filter((item) => item.i !== "CREATE"))
+            intermediateLayout.current = layout?.filter(
+              (item) => item.i !== "CREATE"
+            )
           }}
           compactType={null}
           isResizable={layoutIsEditable}
           isDraggable={layoutIsEditable}
         >
           {data?.panels?.map((panel) => (
-            <div key={panel.id} >
-              <Panel panel={panel} layoutIsEditable={layoutIsEditable} />
+            <div key={panel.id}>
+              <Panel panel={panel} layoutIsEditable={layoutIsEditable} variablesValue={variabesValue} />
             </div>
           ))}
-          
-          {layoutIsEditable && <div key="CREATE">
-            <CreatePanelButton />
-          </div>}
+
+          {layoutIsEditable && (
+            <div key="CREATE">
+              <CreatePanelButton />
+            </div>
+          )}
         </ResponsiveGridLayout>
       )}
     </div>

@@ -1,4 +1,4 @@
-import { useQuery } from "react-query"
+import { useMutation, useQuery } from "react-query"
 import { useLocation, useNavigate } from "react-router-dom"
 import DataTable from "../../../../components/DataTable"
 import TableRowButton from "../../../../components/TableRowButton"
@@ -22,8 +22,14 @@ const Variables = () => {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
-  const { data, isLoading } = useQuery(["GET_VARIABLES_LIST"], () => {
+  const { data, isLoading, refetch } = useQuery(["GET_VARIABLES_LIST"], () => {
     return variableService.getList()
+  })
+
+  const { mutate: deleteVariable, isLoading: deleteLoading } = useMutation((row) => {
+    return variableService.delete(row.id)
+  }, {
+    onSuccess: () => refetch()
   })
 
   const navigateToCreateForm = () => navigate(`${pathname}/create`)
@@ -45,10 +51,10 @@ const Variables = () => {
           }
           onRowClick={navigateToEditForm}
           dataLength={1}
-          loader={isLoading}
+          loader={isLoading || deleteLoading}
           data={data?.variables}
           columns={columns}
-          onDeleteClick={() => {}}
+          onDeleteClick={deleteVariable}
           disableFilters
         />
       </div>

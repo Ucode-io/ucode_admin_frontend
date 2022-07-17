@@ -6,6 +6,8 @@ import Footer from "../../../../components/Footer"
 import FRow from "../../../../components/FormElements/FRow"
 import HFSelect from "../../../../components/FormElements/HFSelect"
 import HFTextField from "../../../../components/FormElements/HFTextField"
+import PageFallback from "../../../../components/PageFallback"
+import SelectOptionsCreator from "../../../../components/SelectOptionsCreator"
 import variableService from "../../../../services/analytics/variableService"
 import styles from "./style.module.scss"
 
@@ -17,13 +19,12 @@ const variableTypes = [
   {
     label: "Custom",
     value: "Custom",
-  }
+  },
 ]
-
 
 const VariableCreateForm = () => {
   const { id, variableId } = useParams()
-  const { control, reset, handleSubmit } = useForm()
+  const { control, reset, handleSubmit, watch } = useForm()
   const navigate = useNavigate()
 
   const { isLoading } = useQuery(
@@ -31,9 +32,12 @@ const VariableCreateForm = () => {
     () => {
       if (!variableId)
         return {
+          dashboard_id: id,
           label: "",
           slug: "",
-          type: "",
+          field_slug: "",
+          type: "Custom",
+          options: [],
         }
       return variableService.getById(variableId)
     },
@@ -43,6 +47,8 @@ const VariableCreateForm = () => {
       },
     }
   )
+
+  const variableType = watch("type")
 
   const { mutate, isLoading: btnLoading } = useMutation(
     (data) => {
@@ -60,31 +66,49 @@ const VariableCreateForm = () => {
     <div className={styles.formCard}>
       <h2 className={styles.title}>Общие сведение</h2>
 
-      <div className={styles.mainBlock}>
-        <div className={styles.row}>
-          <FRow label="Названия">
-            <HFTextField control={control} name="label" fullWidth required />
-          </FRow>
+      {isLoading ? (
+        <PageFallback />
+      ) : (
+        <div className={styles.mainBlock}>
+          <div className={styles.row}>
+            <FRow label="Названия">
+              <HFTextField control={control} name="label" fullWidth required />
+            </FRow>
+      
+            <FRow label="Тип">
+              <HFSelect
+                options={variableTypes}
+                control={control}
+                name="type"
+                required
+              />
+            </FRow>
+          </div>
 
-          <FRow label="Slug">
-            <HFTextField control={control} name="slug" fullWidth required />
-          </FRow>
+          <div className={styles.row}>
+            <FRow label="Slug">
+              <HFTextField control={control} name="slug" fullWidth required />
+            </FRow>
+
+            {variableType === "Query" && (
+              <FRow label="Field slug">
+                <HFTextField control={control} name="field_slug" fullWidth />
+              </FRow>
+            )}
+      
+            {variableType === "Custom" && (
+              <FRow label="Options">
+                <SelectOptionsCreator control={control} name="options" />
+              </FRow>
+            )}
+          </div>
         </div>
-
-        <div className={styles.row}>
-          <FRow label="Названия">
-            <HFSelect options={variableTypes} control={control} name="type" required />
-          </FRow>
-
-          <div style={{ width: '100%' }} ></div>
-
-        </div>
-      </div>
+      )}
 
       <Footer
-      extra={
-        <SaveButton loading={btnLoading} onClick={handleSubmit(mutate)} />
-      }
+        extra={
+          <SaveButton loading={btnLoading} onClick={handleSubmit(mutate)} />
+        }
       />
     </div>
   )

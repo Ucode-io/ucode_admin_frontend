@@ -172,7 +172,7 @@ const DashboardDetailPage = () => {
               ))}
 
               {layoutIsEditable && (
-                <div key="CREATE">
+                <div key="CREATE" style={{ padding: "5px" }} >
                   <CreatePanelButton />
                 </div>
               )}

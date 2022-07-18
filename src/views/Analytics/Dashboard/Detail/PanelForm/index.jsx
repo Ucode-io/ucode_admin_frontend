@@ -28,7 +28,7 @@ const PanelCreateForm = () => {
         return {
           dashboard_id: id,
           attributes: {},
-          coordinates: [0, 0, 5, 5],
+          coordinates: [0, 0, 15, 15],
           query: "",
           title: "",
         }

@@ -2,7 +2,11 @@ import RippleLoader from "../Loaders/RippleLoader"
 import styles from './style.module.scss'
 
 
-const PageFallback = () => {
+const PageFallback = ({ rowHeight }) => {
+
+  console.log("WIDTH222 ====>", rowHeight)
+
+
   return (
     <div className={styles.fallbackPage}>
 

@@ -15,6 +15,8 @@ import CreatePanelButton from "./Panel/CreatePanelButton"
 import { useRef } from "react"
 import request from "../../../../utils/request"
 import VariablesBar from "../../components/VariablesBar"
+import styles from "./style.module.scss"
+import Grid from "../../components/Grid"
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
 
@@ -72,12 +74,12 @@ const DashboardDetailPage = () => {
     const createPanel = {
       i: "CREATE",
       x:
-        lastRowElement.x + lastRowElement.w + 3 > 12
+        lastRowElement.x + lastRowElement.w + 9 > 36
           ? 0
           : lastRowElement.x + lastRowElement.w,
       y: 0,
-      w: 3,
-      h: 5,
+      w: 9,
+      h: 10,
       isDraggable: false,
       isResizable: false,
     }
@@ -138,37 +140,46 @@ const DashboardDetailPage = () => {
         setVariablesValue={setVariablesValue}
       />
 
-      {isLoading ? (
-        <PageFallback />
-      ) : (
-        <ResponsiveGridLayout
-          className="layout"
-          layout={computedLayout}
-          cols={12}
-          rowHeight={60}
-          onLayoutChange={(layout) => {
-            intermediateLayout.current = layout?.filter(
-              (item) => item.i !== "CREATE"
-            )
-          }}
-          compactType={null}
-          isResizable={layoutIsEditable}
-          isDraggable={layoutIsEditable}
-          
-        >
-          {data?.panels?.map((panel) => (
-            <div key={panel.id}>
-              <Panel panel={panel} layoutIsEditable={layoutIsEditable} variablesValue={variabesValue} refetch={refetch} />
-            </div>
-          ))}
+      <div style={{ padding: "5px" }}>
+        <Grid layoutIsEditable={layoutIsEditable} >
+          {isLoading ? (
+            <PageFallback />
+          ) : (
+            <ResponsiveGridLayout
+              className="layout"
+              layout={computedLayout}
+              containerPadding={[0, 0]}
+              margin={[0, 0]}
+              cols={36}
+              onLayoutChange={(layout) => {
+                intermediateLayout.current = layout?.filter(
+                  (item) => item.i !== "CREATE"
+                )
+              }}
+              compactType={null}
+              isResizable={layoutIsEditable}
+              isDraggable={layoutIsEditable}
+            >
+              {data?.panels?.map((panel) => (
+                <div key={panel.id} style={{ padding: "5px" }}>
+                  <Panel
+                    panel={panel}
+                    layoutIsEditable={layoutIsEditable}
+                    variablesValue={variabesValue}
+                    refetch={refetch}
+                  />
+                </div>
+              ))}
 
-          {layoutIsEditable && (
-            <div key="CREATE">
-              <CreatePanelButton />
-            </div>
+              {layoutIsEditable && (
+                <div key="CREATE">
+                  <CreatePanelButton />
+                </div>
+              )}
+            </ResponsiveGridLayout>
           )}
-        </ResponsiveGridLayout>
-      )}
+        </Grid>
+      </div>
     </div>
   )
 }

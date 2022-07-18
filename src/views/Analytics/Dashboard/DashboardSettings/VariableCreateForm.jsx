@@ -13,12 +13,12 @@ import styles from "./style.module.scss"
 
 const variableTypes = [
   {
-    label: "Query",
-    value: "Query",
+    label: "QUERY",
+    value: "QUERY",
   },
   {
-    label: "Custom",
-    value: "Custom",
+    label: "CUSTOM",
+    value: "CUSTOM",
   },
 ]
 
@@ -36,7 +36,9 @@ const VariableCreateForm = () => {
           label: "",
           slug: "",
           field_slug: "",
-          type: "Custom",
+          view_field_slug: "",
+          query: "",
+          type: "",
           options: [],
         }
       return variableService.getById(variableId)
@@ -74,7 +76,7 @@ const VariableCreateForm = () => {
             <FRow label="Названия">
               <HFTextField control={control} name="label" fullWidth required />
             </FRow>
-      
+
             <FRow label="Тип">
               <HFSelect
                 options={variableTypes}
@@ -90,18 +92,30 @@ const VariableCreateForm = () => {
               <HFTextField control={control} name="slug" fullWidth required />
             </FRow>
 
-            {variableType === "Query" && (
-              <FRow label="Field slug">
-                <HFTextField control={control} name="field_slug" fullWidth />
-              </FRow>
-            )}
-      
-            {variableType === "Custom" && (
+            {variableType === "CUSTOM" && (
               <FRow label="Options">
                 <SelectOptionsCreator control={control} name="options" />
               </FRow>
             )}
+
+            {variableType === "QUERY" && (
+              <FRow label="Query">
+                <HFTextField control={control} name="query" fullWidth />
+              </FRow>
+            )}
           </div>
+
+          {variableType === "QUERY" && (
+            <div className={styles.row}>
+              <FRow label="Field slug">
+                <HFTextField control={control} name="field_slug" fullWidth />
+              </FRow>
+
+              <FRow label="View field slug">
+                <HFTextField control={control} name="view_field_slug" fullWidth />
+              </FRow>
+            </div>
+          )}
         </div>
       )}
 

@@ -1,13 +1,20 @@
-import { Edit } from "@mui/icons-material"
+import { Delete, Edit } from "@mui/icons-material"
 import { useMemo } from "react"
-import { useQuery } from "react-query"
+import { useMutation, useQuery } from "react-query"
 import { useLocation, useNavigate } from "react-router-dom"
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
 import DataTable from "../../../../../components/DataTable"
+import DeleteWrapperModal from "../../../../../components/DeleteWrapperModal"
+import panelService from "../../../../../services/analytics/panelService"
 import request from "../../../../../utils/request"
 import styles from "./style.module.scss"
 
-const Panel = ({ panel = {}, layoutIsEditable, variablesValue = {} }) => {
+const Panel = ({
+  panel = {},
+  layoutIsEditable,
+  variablesValue = {},
+  refetch,
+}) => {
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
@@ -18,6 +25,17 @@ const Panel = ({ panel = {}, layoutIsEditable, variablesValue = {} }) => {
         data: variablesValue,
         query: panel.query,
       })
+    }
+  )
+     
+  const { mutate: deletePanel, isLoading: deleteLoading } = useMutation(
+    () => {
+      return panelService.delete(panel.id)
+    },
+    {
+      onSuccess: () => {
+        refetch()
+      },
     }
   )
 
@@ -39,14 +57,28 @@ const Panel = ({ panel = {}, layoutIsEditable, variablesValue = {} }) => {
     <div className={styles.panel}>
       <div className={styles.title}>
         <div>{panel.title}</div>
-        
-        
-    
 
-        {layoutIsEditable && <RectangleIconButton className={styles.editButton} onClick={navigateToEditPage} >
-          <Edit color="primary" />
-        </RectangleIconButton>}
-        
+        {layoutIsEditable && (
+          <div className={styles.btnsBlock}>
+            <RectangleIconButton
+              className={styles.editButton}
+              onClick={navigateToEditPage}
+            >
+              <Edit color="primary" />
+            </RectangleIconButton>
+
+            <DeleteWrapperModal onDelete={deletePanel}>
+              <RectangleIconButton
+                className={styles.editButton}
+                onClick={navigateToEditPage}
+                loader={deleteLoading}
+                color="error"
+              >
+                <Delete color="error" />
+              </RectangleIconButton>
+            </DeleteWrapperModal>
+          </div>
+        )}
       </div>
 
       <DataTable
@@ -61,7 +93,7 @@ const Panel = ({ panel = {}, layoutIsEditable, variablesValue = {} }) => {
           display: "flex",
           flexDirection: "column",
           padding: 10,
-          height: '100px',
+          height: "100px",
         }}
         tableStyle={{ flex: 1 }}
       />

@@ -73,7 +73,7 @@ const PanelCreateForm = () => {
         <div className={styles.mainArea}>
           <div className={styles.mainSide}>
             <VariablesBar
-              variables={data.variables}
+              variables={data?.variables}
               variablesValue={variablesValue}
               setVariablesValue={setVariablesValue}
             />

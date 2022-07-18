@@ -31,7 +31,7 @@ const DashboardDetailPage = () => {
     navigate(`${pathname}/settings/main`)
   }
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     ["GET_DASHBOARD_DATA", id],
     () => {
       return dashboardService.getById(id)
@@ -154,10 +154,11 @@ const DashboardDetailPage = () => {
           compactType={null}
           isResizable={layoutIsEditable}
           isDraggable={layoutIsEditable}
+          
         >
           {data?.panels?.map((panel) => (
             <div key={panel.id}>
-              <Panel panel={panel} layoutIsEditable={layoutIsEditable} variablesValue={variabesValue} />
+              <Panel panel={panel} layoutIsEditable={layoutIsEditable} variablesValue={variabesValue} refetch={refetch} />
             </div>
           ))}
 

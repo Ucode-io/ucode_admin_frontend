@@ -1,6 +1,5 @@
 
-import { KeyboardArrowDown } from "@mui/icons-material";
-import { Collapse, IconButton } from "@mui/material";
+import { Collapse } from "@mui/material";
 import { useState } from "react";
 import CollapseIcon from "../../../../../components/CollapseIcon";
 import FRow from "../../../../../components/FormElements/FRow";
@@ -15,9 +14,7 @@ const SettingsPanel = ({ form }) => {
     
     <div className={styles.sectionButton} onClick={() => setOpen(prev => !prev)} >
       <CollapseIcon isOpen={open} />
-      {/* <IconButton  >
-        <KeyboardArrowDown color="primary" />
-      </IconButton> */}
+
       <div className={styles.sectionButtonTitle} >
           Main info
       </div>
@@ -28,6 +25,10 @@ const SettingsPanel = ({ form }) => {
       <div className={styles.form} >
         <FRow label={"Title"} >
           <HFTextField control={form.control} name="title" fullWidth />
+        </FRow>
+
+        <FRow label={"Pagination"} >
+          <HFSwitch control={form.control} name="has_pagination" />
         </FRow>
 
         <FRow label={"X-axis"} >
@@ -47,8 +48,6 @@ const SettingsPanel = ({ form }) => {
         <FRow label={"Show label on y-axis"} >
           <HFSwitch control={form.control} name="test4" fullWidth />
         </FRow>
-
-
       </div>
     </Collapse>
 

@@ -15,7 +15,6 @@ import CreatePanelButton from "./Panel/CreatePanelButton"
 import { useRef } from "react"
 import request from "../../../../utils/request"
 import VariablesBar from "../../components/VariablesBar"
-import styles from "./style.module.scss"
 import Grid from "../../components/Grid"
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)

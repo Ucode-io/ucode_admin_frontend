@@ -1,5 +1,5 @@
 import { Delete, Edit } from "@mui/icons-material"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useMutation, useQuery } from "react-query"
 import { useLocation, useNavigate } from "react-router-dom"
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
@@ -17,10 +17,20 @@ const Panel = ({
 }) => {
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const [currentPage, setCurrentPage] = useState(1)
+
 
   const { data, isLoading } = useQuery(
-    ["GET_DATA_BY_QUERY", panel.query, variablesValue],
+    ["GET_DATA_BY_QUERY", panel.query, variablesValue, currentPage],
     () => {
+
+      const computedData = variablesValue
+
+      if(panel.has_pagination) {
+        computedData.offset = (currentPage - 1) * 10
+        computedData.limit = 10
+      }
+
       return request.post("/query", {
         data: variablesValue,
         query: panel.query,
@@ -85,7 +95,7 @@ const Panel = ({
         loader={isLoading}
         data={data?.rows}
         columns={columns}
-        disablePagination
+        disablePagination={!panel.has_pagination}
         removableHeight={null}
         disableFilters
         wrapperStyle={{

@@ -44,6 +44,7 @@ const BoardColumn = ({
       <div className={`${styles.columnHeaderBlock} column-header`}>
         <div className={styles.title}>{column.label}</div>
         <div className={styles.rightSide}>
+          <div className={styles.counter}>{computedData?.length ?? 0}</div>
           <IconButton color="primary" onClick={navigateToCreatePage} >
             <Add />
           </IconButton>

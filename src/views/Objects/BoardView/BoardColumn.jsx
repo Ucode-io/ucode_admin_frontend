@@ -14,6 +14,7 @@ const BoardColumn = ({
   groupFieldName,
   tableColumns = [],
   tableSlug,
+  navigateToCreatePage
 }) => {
   const [computedData, setComputedData] = useState(
     data.filter((el) => el[groupFieldName] === column.value)
@@ -43,7 +44,7 @@ const BoardColumn = ({
       <div className={`${styles.columnHeaderBlock} column-header`}>
         <div className={styles.title}>{column.label}</div>
         <div className={styles.rightSide}>
-          <IconButton color="primary">
+          <IconButton color="primary" onClick={navigateToCreatePage} >
             <Add />
           </IconButton>
         </div>

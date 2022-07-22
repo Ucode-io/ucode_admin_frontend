@@ -1,5 +1,6 @@
 import { Add, Download, FilterAlt, Upload } from "@mui/icons-material"
 import { IconButton } from "@mui/material"
+import { useId } from "react"
 import { useEffect } from "react"
 import { useMemo, useState } from "react"
 import { useQuery } from "react-query"
@@ -9,6 +10,7 @@ import RectangleIconButton from "../../../components/Buttons/RectangleIconButton
 import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
 import SearchInput from "../../../components/SearchInput"
+import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { applyDrag } from "../../../utils/applyDrag"
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
@@ -27,16 +29,21 @@ const BoardView = ({
   groupField,
   tableColumns,
 }) => {
+  const id = useId()
   const [columns, setColumns] = useState([])
+  const { navigateToForm } = useTabRouter()
+  
 
   const { data, isLoading } = useQuery(
-    ["GET_OBJECT_LIST_ALL", tableSlug],
+    ["GET_OBJECT_LIST_ALL", tableSlug, id],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: {},
       })
     }
   )
+
+  console.log("ISLOADING ===>", isLoading)
 
   const { data: columnsData, isLoading: groupFieldIsLoading } = useQuery(
     ["GET_OBJECT_LIST_FOR_COLUMNS", groupField],
@@ -56,6 +63,10 @@ const BoardView = ({
 
     return ""
   }, [groupField])
+
+  const navigateToCreatePage = () => {
+    navigateToForm(tableSlug)
+  }
 
   useEffect(() => {
     if (!groupField) return []
@@ -89,8 +100,6 @@ const BoardView = ({
 
     if (result) setColumns(result)
   }
-
-  console.log('columns ==>', columns, columnsData)
 
   return (
     <div>
@@ -150,6 +159,7 @@ const BoardView = ({
                   groupFieldName={groupFieldName}
                   tableColumns={tableColumns}
                   tableSlug={tableSlug}
+                  navigateToCreatePage={navigateToCreatePage}
                 />
               </Draggable>
             ))}

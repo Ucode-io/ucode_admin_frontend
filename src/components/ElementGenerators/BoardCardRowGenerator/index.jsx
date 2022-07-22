@@ -5,8 +5,6 @@ import styles from "./style.module.scss"
 
 const BoardCardRowGenerator = ({ tableColumn, el }) => {
 
-  console.log("TABLE COLUMN ===>", tableColumn, el)
-
   const value = useMemo(() => {
     if (typeof tableColumn.id !== "string" || !tableColumn.id?.includes("#"))
       return get(el, tableColumn.slug, "")

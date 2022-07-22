@@ -16,10 +16,8 @@ import style from "./style.module.scss"
 import { useEffect } from "react"
 import constructorObjectService from "../../services/constructorObjectService"
 import {
-  getRelationFieldLabel,
   getRelationFieldTabsLabel,
 } from "../../utils/getRelationFieldLabel"
-import PageFallback from "../../components/PageFallback"
 import { CircularProgress } from "@mui/material"
 import TreeView from "./TreeView"
 

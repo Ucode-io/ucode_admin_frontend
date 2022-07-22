@@ -3,10 +3,12 @@ import {
   Add,
   CalendarMonth,
   TableChart,
+  ViewColumn,
 } from "@mui/icons-material"
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
+import IconGenerator from "../../../../components/IconPicker/IconGenerator"
 import ViewCreateModal from "../../TableView/ViewCreateModal"
 import style from "./style.module.scss"
 
@@ -35,6 +37,7 @@ const ViewTabSelector = ({
             {view.type === "TABLE" && <TableChart />}
             {view.type === "CALENDAR" && <CalendarMonth />}
             {view.type === "TREE" && <AccountTree />}
+            {view.type === "BOARD" && <IconGenerator icon="brand_trello.svg" />}
           </div>
         ))}
 

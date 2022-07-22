@@ -1,0 +1,46 @@
+
+.board {
+  display: flex;
+  padding: 16px;
+  gap: 24px;
+
+  .column {
+    width: 300px;
+
+    .columnHeaderBlock {
+      background-color: #fff;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+
+      
+      .title {
+        flex: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        line-height: 24px;
+        font-weight: 700;
+      }
+
+      .rightSide {
+
+      }
+    }
+
+
+    .card {
+      background-color: #fff;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+
+}

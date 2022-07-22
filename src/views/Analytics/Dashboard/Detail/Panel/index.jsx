@@ -19,7 +19,6 @@ const Panel = ({
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
 
-
   const { data, isLoading } = useQuery(
     ["GET_DATA_BY_QUERY", panel.query, variablesValue, currentPage],
     () => {

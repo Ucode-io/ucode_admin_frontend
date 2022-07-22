@@ -5,6 +5,7 @@ import { TabPanel, Tabs } from "react-tabs"
 import CalendarView from "./CalendartView"
 import { generateGUID } from "../../utils/generateID"
 import ViewsWithGroups from "./ViewsWithGroups"
+import BoardView from "./BoardView"
 
 const staticViews = [
   {
@@ -16,8 +17,6 @@ const staticViews = [
 const ObjectsPage = ({ isRelation, tableSlug }) => {
   const params = useParams()
 
-  const tablesList = useSelector((state) => state.constructorTable.list)
-
   const [views, setViews] = useState([])
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
@@ -25,11 +24,6 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
 
   const columns = useSelector((state) => state.tableColumn.list[computedTableSlug] ?? [])
   const groupColumnId = useSelector(state => state.tableColumn.groupColumnIds[computedTableSlug])
-
-  const tableInfo = useMemo(() => {
-    if (isRelation) return {}
-    return tablesList.find((el) => el.slug === params.tableSlug)
-  }, [tablesList, params.tableSlug, isRelation])
 
   const computedColumns = useMemo(() => {
     return (
@@ -61,6 +55,23 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
                       setViews={setViews}
                       selectedTabIndex={selectedTabIndex}
                       setSelectedTabIndex={setSelectedTabIndex}
+                      views={computedViews}
+                    />
+                  </TabPanel>
+                )
+
+              case "BOARD":
+                return (
+                  <TabPanel key={view.id}>
+                    <BoardView 
+                      view={view}
+                      tableSlug={computedTableSlug}
+                      tableColumns={computedColumns}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      groupField={groupField}
+
                       views={computedViews}
                     />
                   </TabPanel>

@@ -69,7 +69,7 @@ const BoardView = ({
   }
 
   useEffect(() => {
-    if (!groupField) return []
+    if (!groupField) return 
     if (groupField.type === "PICK_LIST") {
       setColumns(
         groupField.attributes?.options?.map((el) => ({

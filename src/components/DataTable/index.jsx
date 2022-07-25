@@ -28,7 +28,11 @@ const DataTable = ({
   onRowClick = () => {},
   filterChangeHandler = () => {},
   filters,
+  disableFilters,
+  tableStyle,
+  wrapperStyle
 }) => {
+
   return (
     <CTable
       disablePagination={disablePagination}
@@ -37,6 +41,8 @@ const DataTable = ({
       page={currentPage}
       setCurrentPage={onPaginationChange}
       loader={loader}
+      tableStyle={tableStyle}
+      wrapperStyle={wrapperStyle}
     >
       <CTableHead>
         <CTableRow>
@@ -45,12 +51,12 @@ const DataTable = ({
             <CTableCell key={index}>
               <div className="table-filter-cell">
                 {column.label}
-                <FilterGenerator
+               {!disableFilters && <FilterGenerator
                   field={column}
                   name={column.slug}
                   onChange={filterChangeHandler}
                   filters={filters}
-                />
+                />}
               </div>
             </CTableCell>
           ))}

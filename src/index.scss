@@ -167,3 +167,24 @@ html {
 .pageWithStickyFooter {
   min-height: calc(100vh - 56px);
 }
+
+.monaco-editor {
+  // padding-top: 15px;
+  // padding-bottom: 15px;
+ }
+ 
+ .drag-cards-drop-preview {
+  background-color: rgba(150, 150, 200, 0.1);
+  border: 1px dashed #abc;
+  margin: 5px 35px 5px 5px;
+}
+
+.drag-card-ghost {
+  transition: transform 0.18s ease;
+  transform: translateY(-10px);
+}
+
+.drag-card-ghost-drop {
+  transition: transform 0.18s ease-in-out;
+  transform: translateY(0);
+}

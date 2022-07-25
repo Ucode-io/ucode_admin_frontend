@@ -12,7 +12,7 @@ const SelectOptionsCreator = ({ control, name }) => {
   
   return (
     <div>
-      <div className={styles.block}>
+      {Boolean(fields?.length) && <div className={styles.block}>
         {fields.map((field, index) => (
           <div className={styles.row} key={field.id}>
             <HFTextField autoFocus placeholder={`Option ${index + 1}`} disabledHelperText size="small" fullWidth control={control} name={`${name}[${index}]`} className={styles.input} />
@@ -21,7 +21,7 @@ const SelectOptionsCreator = ({ control, name }) => {
             </RectangleIconButton>
           </div>
         ))}
-      </div>
+      </div>}
 
       <div className={styles.createButton} onClick={() => append('')} >
         <Add />

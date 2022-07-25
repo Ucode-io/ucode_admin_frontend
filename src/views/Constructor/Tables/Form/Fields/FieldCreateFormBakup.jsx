@@ -101,6 +101,7 @@ const FieldCreateForm = ({
             control={control}
             placeholder="Field SLUG"
             required
+            withTrim
           />
         </CTableCell>
         <CTableCell>

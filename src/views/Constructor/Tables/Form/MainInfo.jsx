@@ -79,6 +79,7 @@ const MainInfo = ({ control }) => {
             fullWidth
             placeholder="SLUG"
             required
+            withTrim
           />
         </FRow>
         <FRow label="Subtitle field">

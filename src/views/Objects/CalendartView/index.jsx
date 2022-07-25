@@ -18,19 +18,12 @@ import TimesBlock from "./TimesBlock"
 const CalendarView = ({ view, tableSlug, setViews, selectedTabIndex, setSelectedTabIndex, views }) => {
   const [filters, setFilters] = useState({})
   const [loader, setLoader] = useState(true)
-
-  const filterChangeHandler = (value, name) => {
-    setFilters({
-      ...filters,
-      [name]: value,
-    })
-  }
+  const [data, setData] = useState([])
 
   const [dateFilters, setDateFilters] = useState([
     startOfWeek(new Date(), { weekStartsOn: 1 }),
     endOfWeek(new Date(), { weekStartsOn: 1 }),
   ])
-  const [data, setData] = useState([])
 
   const computedData = useMemo(() => {
     const startTimeStampSlug = view.group_fields?.find(
@@ -92,6 +85,30 @@ const CalendarView = ({ view, tableSlug, setViews, selectedTabIndex, setSelected
     return result
   }, [data, view, dateFilters])
 
+
+   const filterChangeHandler = (value, name) => {
+    setFilters({
+      ...filters,
+      [name]: value,
+    })
+  }
+
+  const getAllData = async () => {
+    setLoader(true)
+    try {
+      const { data } = await constructorObjectService.getList(tableSlug, {
+        data: { offset: 0, limit: 10, ...filters },
+      })
+
+      setViews(data.views ?? [])
+      setData(objectToArray(data.response ?? {}))
+
+    } finally {
+      setLoader(false)
+    }
+  }
+
+
   useDebouncedWatch(
     () => {
       getAllData()
@@ -104,29 +121,6 @@ const CalendarView = ({ view, tableSlug, setViews, selectedTabIndex, setSelected
     if (!dateFilters[0] || !dateFilters[1]) return
     getAllData()
   }, [dateFilters])
-
-  const getAllData = async () => {
-    setLoader(true)
-    try {
-      const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: 0, limit: 10, ...filters },
-      })
-
-      setViews(data.views ?? [])
-      setData(objectToArray(data.response ?? {}))
-
-      // dispatch(
-      //   tableColumnActions.setList({
-      //     tableSlug: tableSlug,
-      //     columns: data.fields ?? [],
-      //   })
-      // )
-    } finally {
-      setLoader(false)
-      // setLoader(false)
-    }
-  }
-
   return (
     <div>
       <FiltersBlock>

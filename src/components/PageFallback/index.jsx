@@ -4,8 +4,6 @@ import styles from './style.module.scss'
 
 const PageFallback = ({ rowHeight }) => {
 
-  console.log("WIDTH222 ====>", rowHeight)
-
 
   return (
     <div className={styles.fallbackPage}>

@@ -92,7 +92,7 @@ const TableView = ({
 
   return (
       <DataTable
-        removableHeight={270}
+        removableHeight={260}
         currentPage={currentPage}
         pagesCount={pageCount}
         onPaginationChange={setCurrentPage}

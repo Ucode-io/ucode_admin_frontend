@@ -42,17 +42,14 @@ const HFSelect = ({
             }}
             {...props}
           >
-            {/* <MenuItem value="" disabled>
-            controlled Native placeholder
-          </MenuItem> */}
             {options?.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>
             ))}
           </Select>
-          {!disabledHelperText && (
-            <FormHelperText error>{error?.message ?? ' '}</FormHelperText>
+          {!disabledHelperText && error?.message && (
+            <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </FormControl>
       )}

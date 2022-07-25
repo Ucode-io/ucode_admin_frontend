@@ -24,7 +24,7 @@ const HFDateTimePicker = ({ control, className, name, label, width, inputProps, 
                 style={{ width }}
                 size="small"
                 error={error  }
-                helperText={!disabledHelperText && (error?.message ?? ' ')}
+                helperText={!disabledHelperText && error?.message}
                 label={label}
                 inputProps={{
                   ...params.inputProps,

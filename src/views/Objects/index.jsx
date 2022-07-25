@@ -19,7 +19,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
 
   const [views, setViews] = useState([])
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
-
+  
   const computedTableSlug = isRelation ? tableSlug : params.tableSlug
 
   const columns = useSelector((state) => state.tableColumn.list[computedTableSlug] ?? [])

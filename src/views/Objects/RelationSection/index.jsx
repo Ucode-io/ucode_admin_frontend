@@ -85,30 +85,6 @@ const RelationSection = ({ relation }) => {
 
   const tableLoader = deleteLoading || dataFetchingLoading
 
-  // const deleteHandler = async (elementId) => {
-  //   // setTableLoader(true)
-  //   try {
-  //     if (relation.type === "Many2Many") {
-  //       const data = {
-  //         id_from: id,
-  //         id_to: [elementId],
-  //         table_from: tableSlug,
-  //         table_to: relation.relatedTable?.slug,
-  //       }
-
-  //       await constructorObjectService.deleteManyToMany(data)
-  //     } else {
-  //       await constructorObjectService.delete(
-  //         relation.relatedTable?.slug,
-  //         elementId
-  //       )
-  //     }
-
-  //     // getAllData()
-  //   } catch {
-  //     // setTableLoader(false)
-  //   }
-  // } 
  
   const navigateToEditPage = (row) => {
     navigateToForm(relation.relatedTable?.slug, "EDIT", row)
@@ -120,17 +96,12 @@ const RelationSection = ({ relation }) => {
     else navigateToForm(relation.relatedTable?.slug, "CREATE", null, { [`${tableSlug}_id`]: id })
   }
 
-  useEffect(() => {
-    // getAllData()
-  }, [currentPage])
-
   return (
     <>
       {modalVisible && relation.type !== "Many2Many" && (
         <RelationCreateModal
           table={relation.relatedTable}
           closeModal={() => setModalVisible(false)}
-          // onCreate={getAllData}
         />
       )}
       {modalVisible && relation.type === "Many2Many" && (

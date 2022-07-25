@@ -94,9 +94,6 @@ const AppsForm = () => {
 
   if (loader) return <PageFallback />
 
-  console.log('search.get("tab") =====>', search.get("tab"))
-
-
   return (
     <div>
       <Tabs

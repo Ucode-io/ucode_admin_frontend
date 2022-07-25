@@ -101,7 +101,7 @@ const HFMultipleSelect = ({
             ))}
           </Select>
 
-          {!disabledHelperText && (
+          {!disabledHelperText && error?.message && (
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </FormControl>

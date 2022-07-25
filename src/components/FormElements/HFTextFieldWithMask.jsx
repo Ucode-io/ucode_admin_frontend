@@ -31,7 +31,7 @@ const HFTextFieldWithMask = ({
               size="small"
               name={name}
               error={error}
-              helperText={!disabledHelperText && (error?.message ?? " ")}
+              helperText={!disabledHelperText && error?.message}
               {...inputProps}
               {...props}
             />

@@ -8,7 +8,7 @@
 
   .header {
     box-shadow: inset 0px -1px 0px #E5E9EB;
-    padding: 10px 20px;
+    padding: 15px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -25,4 +25,8 @@
     display: flex;
     gap: 50px;
   } 
+}
+
+.title {
+  font-size: 18px;
 }

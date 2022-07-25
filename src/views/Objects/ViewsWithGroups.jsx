@@ -116,7 +116,7 @@ const ViewsWithGroups = ({
       </FiltersBlock>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
-        <TableCard>
+        <TableCard cardStyles={{ paddingTop: 0 }} >
           <div className={style.tableCardHeader}>
             <TabList>
               {tabs?.map((tab) => (

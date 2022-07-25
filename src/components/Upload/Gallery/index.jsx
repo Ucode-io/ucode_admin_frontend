@@ -2,7 +2,6 @@ import AddCircleOutlineIcon from "@mui/icons-material/Upload"
 import { useState } from "react"
 import { useRef } from "react"
 import ImageViewer from "react-simple-image-viewer"
-import { useMemo } from "react"
 import { CircularProgress } from "@mui/material"
 import CancelIcon from "@mui/icons-material/Cancel"
 import "./style.scss"
@@ -72,7 +71,6 @@ const Gallery = ({ gallery, setGallery, notEditable }) => {
             {!loading ? (
               <>
                 <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
-                {/* <p>Max size: 4 MB</p> */}
               </>
             ) : (
               <CircularProgress />
@@ -90,7 +88,7 @@ const Gallery = ({ gallery, setGallery, notEditable }) => {
 
       {previewVisible && (
         <ImageViewer
-          backgroundStyle={{ zIndex: 5 }}
+          backgroundStyle={{ zIndex: 100 }}
           src={gallery}
           currentIndex={selectedImageIndex}
           disableScroll={true}

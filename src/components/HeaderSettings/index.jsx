@@ -1,7 +1,9 @@
 import AppSelector from "../AppSelector"
 import BackButton from "../BackButton"
+import ExitButton from "../Buttons/ExitButton"
 import IconGenerator from "../IconPicker/IconGenerator"
 import RowLinearLoader from "../RowLinearLoader"
+import UserAvatar from "../UserAvatar"
 import styles from "./style.module.scss"
 
 const HeaderSettings = ({
@@ -16,7 +18,10 @@ const HeaderSettings = ({
   ...props
 }) => {
   return (
-    <div className={`${styles.header} ${sticky ? styles.sticky : ''}`}  {...props}>
+    <div
+      className={`${styles.header} ${sticky ? styles.sticky : ""}`}
+      {...props}
+    >
       <div className={styles.leftSide}>
         {backButtonLink && <BackButton link={backButtonLink} />}
 
@@ -33,9 +38,14 @@ const HeaderSettings = ({
       </div>
 
       <div className={styles.rightSide}>
-
         <AppSelector />
-
+        <ExitButton />
+        <UserAvatar
+          user={{
+            name: "User",
+            photo_url: "https://image.emojisky.com/71/8041071-middle.png",
+          }}
+        />
       </div>
     </div>
   )

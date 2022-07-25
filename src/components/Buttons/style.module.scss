@@ -46,6 +46,7 @@
 
     &:hover {
       border-color: colors.$primary;
+      color: #fff;
     }
 
     &.error {
@@ -56,9 +57,7 @@
         border-color: colors.$error-hover;
         color: colors.$error-hover;
       }
-    }
-
-    
+    }    
   }
 
   &.filtersButton {
@@ -98,4 +97,8 @@
     color: colors.$primary;
     border-color: colors.$primary;
   }
+}
+
+.exitButton {
+  color: colors.$grey;
 }

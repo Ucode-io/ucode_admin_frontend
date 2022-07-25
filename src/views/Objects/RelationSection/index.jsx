@@ -1,9 +1,10 @@
-import { Delete } from "@mui/icons-material"
+import { Add, Delete } from "@mui/icons-material"
 import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
 import CreateButton from "../../../components/Buttons/CreateButton"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
+import SecondaryButton from "../../../components/Buttons/SecondaryButton"
 import {
   CTable,
   CTableBody,
@@ -12,11 +13,11 @@ import {
   CTableRow,
 } from "../../../components/CTable"
 import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator"
-import FormCard from "../../../components/FormCard"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
 import { pageToOffset } from "../../../utils/pageToOffset"
+import FormCard from "../components/FormCard"
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal"
 import RelationCreateModal from "./RelationCreateModal"
 
@@ -49,7 +50,6 @@ const RelationSection = ({ relation }) => {
     onSuccess: ({data}) => {
       const pageCount = Math.ceil(data.count / 10)
       if (id) {
-        console.log("DATA ====>", data.response)
         setTableData(objectToArray(data.response ?? {}))
         setPageCount(isNaN(pageCount) ? 1 : pageCount)
       }
@@ -115,9 +115,8 @@ const RelationSection = ({ relation }) => {
         icon={relation.relatedTable?.icon}
         title={relation.relatedTable?.label}
         maxWidth="100%"
-        className="p-1"
         extra={
-          <CreateButton disabled={!id} onClick={navigateToCreatePage} />
+          <SecondaryButton disabled={!id} onClick={navigateToCreatePage} > <Add /> Добавить</SecondaryButton>
         }
       >
         <CTable

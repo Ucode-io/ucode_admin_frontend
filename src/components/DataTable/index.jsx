@@ -81,7 +81,7 @@ const DataTable = ({
           >
              <CTableCell>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
             {columns.map((column, index) => (
-              <CTableCell key={column.id} className="text-nowrap">
+              <CTableCell key={column.id} className="text-nowrap overflow-ellipsis max-width-450" >
                 <CellElementGenerator field={column} row={row} />
               </CTableCell>
             ))}

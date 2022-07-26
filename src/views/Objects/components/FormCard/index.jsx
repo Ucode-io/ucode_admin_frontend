@@ -1,8 +1,7 @@
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
 import IconGenerator from "../../../../components/IconPicker/IconGenerator"
 import styles from "./style.module.scss"
 
-const FormCard = ({ title, children, icon }) => {
+const FormCard = ({ title, children, icon, extra }) => {
   return (
     <div className={styles.card}>
       <div className={styles.header}>
@@ -14,6 +13,9 @@ const FormCard = ({ title, children, icon }) => {
             {title}
           </h4>
         </div>
+
+        <div className={styles.headerRightSide}>{extra}</div>
+
       </div>
       <div className={styles.body}>{children}</div>
     </div>

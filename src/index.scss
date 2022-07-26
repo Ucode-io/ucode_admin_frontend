@@ -108,6 +108,15 @@ html {
   white-space: nowrap;
 }
 
+.overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.max-width-450 {
+  max-width: 450px;
+}
+
 .flex {
   display: flex;
 }

@@ -2,6 +2,7 @@ import AppSelector from "../AppSelector"
 import BackButton from "../BackButton"
 import ExitButton from "../Buttons/ExitButton"
 import IconGenerator from "../IconPicker/IconGenerator"
+import ProfilePanel from "../ProfilePanel"
 import RowLinearLoader from "../RowLinearLoader"
 import UserAvatar from "../UserAvatar"
 import styles from "./style.module.scss"
@@ -39,13 +40,7 @@ const HeaderSettings = ({
 
       <div className={styles.rightSide}>
         <AppSelector />
-        <ExitButton />
-        <UserAvatar
-          user={{
-            name: "User",
-            photo_url: "https://image.emojisky.com/71/8041071-middle.png",
-          }}
-        />
+        <ProfilePanel />
       </div>
     </div>
   )

@@ -1,4 +1,9 @@
-import { AccountBalance, AccountCircle, Lock, SupervisedUserCircle } from "@mui/icons-material"
+import {
+  AccountBalance,
+  AccountCircle,
+  Lock,
+  SupervisedUserCircle,
+} from "@mui/icons-material"
 import { InputAdornment } from "@mui/material"
 import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -30,27 +35,35 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     ["GET_CLIENT_TYPES"],
     () => {
       return clientTypeService.getList()
-    },
+    }
   )
 
   const computedClientTypes = useMemo(() => {
-    return listToOptions(clientTypes, 'name', 'id')
+    return listToOptions(clientTypes, "name", "id")
   }, [clientTypes])
 
   const clientTypeId = watch("client_type")
 
   const selectedClientType = useMemo(() => {
-    return clientTypes?.find(clientType => clientType.id === clientTypeId)
+    return clientTypes?.find((clientType) => clientType.id === clientTypeId)
   }, [clientTypeId, clientTypes])
 
   const onSubmit = (data) => {
+
+    const computedData = {
+      ...data,
+      tables: Object.keys(data.tables).map((key) => ({
+        table_slug: key,
+        object_id: data.tables[key],
+      })),
+    }
+
     setLoading(true)
 
-    dispatch(loginAction(data))
+    dispatch(loginAction(computedData))
       .unwrap()
       .catch(() => setLoading(false))
   }
-
 
   // const { data: branches } = useQuery(
   //   ["GET_OBJECTS_LIST"],
@@ -122,14 +135,14 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
           />
         </div>
 
-
-        {
-          selectedClientType?.tables?.map(table => (
-            <DynamicFields key={table.slug} table={table} control={control} />
-          ))
-        }
-          
-
+        {selectedClientType?.tables?.map((table, index) => (
+          <DynamicFields
+            key={table.slug}
+            table={table}
+            control={control}
+            index={index}
+          />
+        ))}
       </div>
 
       <div className={classes.buttonsArea}>

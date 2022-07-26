@@ -1,18 +1,9 @@
-import { SupervisedUserCircle } from "@mui/icons-material"
-import { InputAdornment } from "@mui/material"
 import { useMemo } from "react"
-import { useQuery } from "react-query"
 import HFSelect from "../../../components/FormElements/HFSelect"
-import constructorTableService from "../../../services/constructorTableService"
 import classes from "../style.module.scss"
 
-const DynamicFields = ({ control, table = {} }) => {
+const DynamicFields = ({ control, table = {}, index }) => {
 
-  // const { data } = useQuery(["GET_TABLE_DATA", table.slug], () => {
-  //   return constructorTableService.getById(table.slug)
-  // })
-
-  console.log("TABLE ===>", table)
 
   const computedOptions = useMemo(() => {
     return table?.data?.response?.map(el => {
@@ -27,16 +18,13 @@ const DynamicFields = ({ control, table = {} }) => {
     }) ?? []
   }, [table])
 
-
-
-
   return (
     <div className={classes.formRow}>
       <p className={classes.label}>{table.label}</p>
       <HFSelect
         // required
         control={control}
-        name={`${table.slug}_id`}
+        name={`tables.${table.slug}`}
         size="large"
         fullWidth
         options={computedOptions}

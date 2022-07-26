@@ -12,6 +12,7 @@ import {
   CTableHead,
   CTableRow,
 } from "../../../components/CTable"
+import DataTable from "../../../components/DataTable"
 import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
@@ -119,7 +120,21 @@ const RelationSection = ({ relation }) => {
           <SecondaryButton disabled={!id} onClick={navigateToCreatePage} > <Add /> Добавить</SecondaryButton>
         }
       >
-        <CTable
+
+        <DataTable 
+          removableHeight={false}
+          loader={tableLoader}
+          data={tableData}
+          columns={columns}
+          pagesCount={pageCount}
+          currentPage={currentPage}
+          onRowClick={navigateToEditPage}
+          onDeleteClick={deleteHandler}
+          disableFilters
+          onPaginationChange={setCurrentPage}
+        />
+
+        {/* <CTable
           removableHeight={false}
           count={pageCount}
           page={currentPage}
@@ -167,7 +182,7 @@ const RelationSection = ({ relation }) => {
               </CTableRow>
             ))}
           </CTableBody>
-        </CTable>
+        </CTable> */}
       </FormCard>
     </>
   )

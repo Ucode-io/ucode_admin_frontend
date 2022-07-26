@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import Header from "../../../components/Header"
+import HeaderSettings from "../../../components/HeaderSettings"
 import clientTypeService from "../../../services/auth/clientTypeService"
 import InfoFieldsSection from "./InfoFieldsSection"
 import RelationsSection from "./RelationsSection"
@@ -33,7 +34,7 @@ const ClientType = () => {
 
   return (
     <div className="ClientType">
-      <Header title="Client-type" backButtonLink={`/settings/auth/matrix/${projectId}`} />
+      <HeaderSettings title="Client-type" backButtonLink={`/settings/auth/matrix/${projectId}`} />
       <div className="main-area">
         {/* <RolesBlock rolesList={rolesList} setRolesList={setRolesList} /> */}
         <InfoFieldsSection fieldsList={fieldsList} setFieldsList={setFieldsList} />

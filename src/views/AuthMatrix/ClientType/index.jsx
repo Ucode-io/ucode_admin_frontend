@@ -6,6 +6,7 @@ import clientTypeService from "../../../services/auth/clientTypeService"
 import InfoFieldsSection from "./InfoFieldsSection"
 import RelationsSection from "./RelationsSection"
 import "./style.scss"
+import TablesSection from "./TablesSection"
 
 const ClientType = () => {
   const { typeId, projectId } = useParams()
@@ -14,12 +15,17 @@ const ClientType = () => {
   const [rolesList, setRolesList] = useState([])
   const [fieldsList, setFieldsList] = useState([])
   const [relationsList, setRelationsList] = useState([])
+  const [data, setData] = useState({})
+  const [tables, setTables] = useState([])
 
   const getData = () => {
     setLoader(true)
 
-    clientTypeService.getById(typeId)
-      .then(res => {
+    clientTypeService
+      .getById(typeId)
+      .then((res) => {
+        setData(res.client_type ?? {})
+        setTables(res.client_type?.tables ?? [])
         setRolesList(res.roles ?? [])
         setFieldsList(res.user_info_fields ?? [])
         setRelationsList(res.relations ?? [])
@@ -27,18 +33,33 @@ const ClientType = () => {
       .finally(() => setLoader(false))
   }
 
+  console.log("DATA ===>", data)
+
   useEffect(() => {
     getData()
   }, [])
 
-
   return (
     <div className="ClientType">
-      <HeaderSettings title="Client-type" backButtonLink={`/settings/auth/matrix/${projectId}`} />
+      <HeaderSettings
+        title="Client-type"
+        backButtonLink={`/settings/auth/matrix/${projectId}`}
+      />
       <div className="main-area">
         {/* <RolesBlock rolesList={rolesList} setRolesList={setRolesList} /> */}
-        <InfoFieldsSection fieldsList={fieldsList} setFieldsList={setFieldsList} />
-        <RelationsSection relationsList={relationsList} setRelationsList={setRelationsList} />
+        <InfoFieldsSection
+          fieldsList={fieldsList}
+          setFieldsList={setFieldsList}
+        />
+
+        <TablesSection data={data} tables={tables} setTables={setTables} />
+
+        {/* <RelationsSection
+          relationsList={relationsList}
+          setRelationsList={setRelationsList}
+        /> */}
+
+
       </div>
     </div>
   )

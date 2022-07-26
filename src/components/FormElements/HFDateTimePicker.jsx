@@ -1,4 +1,4 @@
-import { DatePicker, DateTimePicker } from "@mui/lab"
+import { DateTimePicker } from "@mui/x-date-pickers"
 import { TextField } from "@mui/material"
 import { Controller } from "react-hook-form"
 

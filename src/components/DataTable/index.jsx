@@ -30,7 +30,8 @@ const DataTable = ({
   filters,
   disableFilters,
   tableStyle,
-  wrapperStyle
+  wrapperStyle,
+  tableSlug,
 }) => {
 
   return (
@@ -51,12 +52,14 @@ const DataTable = ({
             <CTableCell key={index}>
               <div className="table-filter-cell">
                 {column.label}
-               {!disableFilters && <FilterGenerator
-                  field={column}
-                  name={column.slug}
-                  onChange={filterChangeHandler}
-                  filters={filters}
-                />}
+               {!disableFilters && 
+                  <FilterGenerator
+                    field={column}
+                    name={column.slug}
+                    onChange={filterChangeHandler}
+                    filters={filters}
+                    tableSlug={tableSlug}
+                  />}
               </div>
             </CTableCell>
           ))}

@@ -1,17 +1,12 @@
 import { DatePicker } from "@mui/lab"
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material"
+import { FormControl, InputLabel, TextField } from "@mui/material"
 import { useMemo } from "react"
 import CSelect from "../../../../components/CSelect"
 import TableColumnFilter from "../../../../components/TableColumnFilter"
 import TableOrderingButton from "../../../../components/TableOrderingButton"
+import DefaultFilter from "./DefaultFilter"
 
-const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
+const FilterGenerator = ({ field, name, filters = {}, onChange, tableSlug }) => {
   const orderingType = useMemo(
     () => filters.order?.[name],
     [filters.order, name]
@@ -28,14 +23,14 @@ const FilterGenerator = ({ field, name, filters = {}, onChange }) => {
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
-      <Filter field={field} name={name} filters={filters} onChange={onChange} />
+      <Filter field={field} name={name} filters={filters} onChange={onChange} tableSlug={tableSlug} />
     </div>
   )
 }
 
 export default FilterGenerator
 
-const Filter = ({ field = {}, name, filters = {}, onChange }) => {
+const Filter = ({ field = {}, name, filters = {}, onChange , tableSlug}) => {
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
@@ -131,11 +126,11 @@ const Filter = ({ field = {}, name, filters = {}, onChange }) => {
             options={[
               {
                 label: field.attributes?.text_true ?? "Да",
-                value: 'true',
+                value: "true",
               },
               {
                 label: field.attributes?.text_false ?? "Нет",
-                value: 'false',
+                value: "false",
               },
             ]}
             onChange={(e) => onChange(e.target.value, name)}
@@ -146,12 +141,12 @@ const Filter = ({ field = {}, name, filters = {}, onChange }) => {
     default:
       return (
         <TableColumnFilter>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder={field.label}
-            value={filters[name] ?? ""}
-            onChange={(e) => onChange(e.target.value, name)}
+          <DefaultFilter
+            field={field}
+            filters={filters}
+            onChange={onChange}
+            name={name}
+            tableSlug={tableSlug}
           />
         </TableColumnFilter>
       )

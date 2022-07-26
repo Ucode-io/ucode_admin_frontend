@@ -103,6 +103,7 @@ const TableView = ({
         filterChangeHandler={filterChangeHandler}
         onRowClick={navigateToEditPage}
         onDeleteClick={deleteHandler}
+        tableSlug={tableSlug}
       />
   )
 }

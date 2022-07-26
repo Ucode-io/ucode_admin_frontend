@@ -1,6 +1,6 @@
 import { Autocomplete, CircularProgress, TextField } from "@mui/material"
 import { useId } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query"
 import useDebounce from "../../../../hooks/useDebounce";
 import constructorObjectService from "../../../../services/constructorObjectService"
@@ -15,11 +15,9 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
     return constructorObjectService.getList(tableSlug, {
       data: { offset: 0, limit: 10, [field.slug]: searchText },
     })
-  }, { select: (data) => {
-    return data.response?.map(el => ({label: el[field.slug]}))
+  }, { select: ({data}) => {
+    return [...new Set(data.response?.map(el => el[field.slug]) ?? [])].filter(el => el)
   } })
-
-  console.log("DATA ====>", options)
 
   const search = useDebounce((_, searchText) => {
     setSearchText(searchText)
@@ -32,15 +30,17 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
   return (
     <Autocomplete
       id={id}
-      // isOptionEqualToValue={(option, value) => option.title === value.title}
-      // getOptionLabel={(option) => option.title}
-      options={options}
+      isOptionEqualToValue={(option, value) => option === value}
+      getOptionLabel={(option) => option}
+      options={options ?? []}
       loading={isLoading}
+      value={filters[name]}
       onInputChange={search}
+      onChange={(e, val) => onChange(val ?? "", name)}
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="asdasd"
+          placeholder={field.label}
           // label="Asynchronous"
           size="small"
           InputProps={{

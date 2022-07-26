@@ -73,10 +73,13 @@ const Filter = ({ field = {}, name, filters = {}, onChange , tableSlug}) => {
               fullWidth
               disabledHelperText
               options={computedOptions}
+              placeholder={field.label}
             />
           </FormControl>
         </TableColumnFilter>
       )
+
+    case "PHOTO": return null
 
     case "DATE":
       return (

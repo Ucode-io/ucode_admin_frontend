@@ -45,6 +45,8 @@ const TableView = ({
 
       const pageCount = Math.ceil(data.count / 10)
 
+      console.log("DATA ==========>", data)
+
       setViews(data.views ?? [])
       setTableData(objectToArray(data.response ?? {}))
       setPageCount(isNaN(pageCount) ? 1 : pageCount)
@@ -73,14 +75,11 @@ const TableView = ({
     navigateToForm(tableSlug, "EDIT", row)
   }
 
-  useDebouncedWatch(
-    () => {
-      if (currentPage === 1) getAllData()
-      setCurrentPage(1)
-    },
-    [filters],
-    500
-  )
+  useWatch(() => {
+    if (currentPage === 1) getAllData()
+    setCurrentPage(1)
+  },
+  [filters])
 
   useWatch(() => {
     getAllData()

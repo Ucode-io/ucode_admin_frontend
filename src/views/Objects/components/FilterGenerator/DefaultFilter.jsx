@@ -8,7 +8,6 @@ import constructorObjectService from "../../../../services/constructorObjectServ
 const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
   const {id} = useId()
   const [searchText, setSearchText] = useState("");
-  
 
   const { data: options, isLoading } = useQuery(["GET_OBJECT_LIST", tableSlug, searchText], () => {
     if (!tableSlug) return null
@@ -22,10 +21,6 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
   const search = useDebounce((_, searchText) => {
     setSearchText(searchText)
   }, 400)
-  
-  // const search = (_, searchText) => {
-    
-  // }
 
   return (
     <Autocomplete

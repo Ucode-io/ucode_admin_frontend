@@ -5,7 +5,7 @@ export const { actions: tableColumnActions, reducer: tableColumnReducer } =
     name: "tableColumn",
     initialState: {
       list: {},
-      groupColumnIds: {}
+      groupColumnIds: {},
     },
     reducers: {
       setList: (state, { payload: { tableSlug, columns } }) => {
@@ -13,6 +13,7 @@ export const { actions: tableColumnActions, reducer: tableColumnReducer } =
           state.list[tableSlug] = columns.map((column) => ({
             ...column,
             isVisible: true,
+            isFilterVisible: false
           }))
         } else {
           const newColumns = []
@@ -28,6 +29,7 @@ export const { actions: tableColumnActions, reducer: tableColumnReducer } =
               state.list[tableSlug][index] = {
                 ...column,
                 isVisible: state.list[tableSlug][index].isVisible,
+                isFilterVisible: state.list[tableSlug][index].isFilterVisible,
               }
             }
           })
@@ -46,6 +48,14 @@ export const { actions: tableColumnActions, reducer: tableColumnReducer } =
       ) => {
         state.list[tableSlug][index].isVisible = isVisible
       },
+
+      setColumnFilterVisible: (
+        state,
+        { payload: { tableSlug, index, isFilterVisible } }
+      ) => {
+        state.list[tableSlug][index].isFilterVisible = isFilterVisible
+      },
+
       setAllColumnsVisible: (state, { payload: { tableSlug, isVisible } }) => {
         state.list[tableSlug].forEach((column) => {
           column.isVisible = isVisible
@@ -56,11 +66,6 @@ export const { actions: tableColumnActions, reducer: tableColumnReducer } =
       },
       setGroupColumnId: (state, { payload: { tableSlug, id } }) => {
         state.groupColumnIds[tableSlug] = id
-      }
+      },
     },
-    // extraReducers: {
-    //   [fetchConstructorTableListAction.fulfilled]: (state, { payload }) => {
-    //     state.list = payload ?? []
-    //   }
-    // }
   })

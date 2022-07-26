@@ -20,6 +20,7 @@ import {
 } from "../../utils/getRelationFieldLabel"
 import { CircularProgress } from "@mui/material"
 import TreeView from "./TreeView"
+import FastFilter from "./components/FastFilter"
 
 const ViewsWithGroups = ({
   tableSlug,
@@ -109,10 +110,7 @@ const ViewsWithGroups = ({
           setViews={setViews}
         />
         <SearchInput />
-        <FiltersBlockButton>
-          <FilterAlt color="primary" />
-          Быстрый фильтр
-        </FiltersBlockButton>
+        <FastFilter filters={filters} onChange={filterChangeHandler} />
       </FiltersBlock>
 
       <Tabs direction={"ltr"} defaultIndex={0}>

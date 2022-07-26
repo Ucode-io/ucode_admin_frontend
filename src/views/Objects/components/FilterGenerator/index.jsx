@@ -5,8 +5,15 @@ import CSelect from "../../../../components/CSelect"
 import TableColumnFilter from "../../../../components/TableColumnFilter"
 import TableOrderingButton from "../../../../components/TableOrderingButton"
 import DefaultFilter from "./DefaultFilter"
+import RelationFilter from "./RelationFilter"
 
-const FilterGenerator = ({ field, name, filters = {}, onChange, tableSlug }) => {
+const FilterGenerator = ({
+  field,
+  name,
+  filters = {},
+  onChange,
+  tableSlug,
+}) => {
   const orderingType = useMemo(
     () => filters.order?.[name],
     [filters.order, name]
@@ -23,14 +30,28 @@ const FilterGenerator = ({ field, name, filters = {}, onChange, tableSlug }) => 
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
-      <Filter field={field} name={name} filters={filters} onChange={onChange} tableSlug={tableSlug} />
+      <TableColumnFilter>
+        <Filter
+          field={field}
+          name={name}
+          filters={filters}
+          onChange={onChange}
+          tableSlug={tableSlug}
+        />
+      </TableColumnFilter>
     </div>
   )
 }
 
 export default FilterGenerator
 
-const Filter = ({ field = {}, name, filters = {}, onChange , tableSlug}) => {
+export const Filter = ({
+  field = {},
+  name,
+  filters = {},
+  onChange,
+  tableSlug,
+}) => {
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
@@ -39,6 +60,17 @@ const Filter = ({ field = {}, name, filters = {}, onChange , tableSlug}) => {
       label: option,
     }))
   }, [field.attributes?.options])
+
+  if (field.id?.includes("#"))
+    return (
+      <RelationFilter
+        field={field}
+        filters={filters}
+        onChange={onChange}
+        name={name}
+        tableSlug={tableSlug}
+      />
+    )
 
   switch (field.type) {
     // case "PHONE":
@@ -63,95 +95,84 @@ const Filter = ({ field = {}, name, filters = {}, onChange , tableSlug}) => {
 
     case "PICK_LIST":
       return (
-        <TableColumnFilter>
-          <FormControl style={{ width: "100%" }}>
-            <InputLabel size="small">{}</InputLabel>
-            <CSelect
-              value={filters[name] ?? ""}
-              onChange={(e) => onChange(e.target.value, name)}
-              size="small"
-              fullWidth
-              disabledHelperText
-              options={computedOptions}
-              placeholder={field.label}
-            />
-          </FormControl>
-        </TableColumnFilter>
+        <FormControl style={{ width: "100%" }}>
+          <InputLabel size="small">{}</InputLabel>
+          <CSelect
+            value={filters[name] ?? ""}
+            onChange={(e) => onChange(e.target.value, name)}
+            size="small"
+            fullWidth
+            disabledHelperText
+            options={computedOptions}
+            placeholder={field.label}
+          />
+        </FormControl>
       )
 
-    case "PHOTO": return null
+    case "PHOTO":
+      return null
 
     case "DATE":
       return (
-        <TableColumnFilter>
-          <DatePicker
-            inputFormat="dd.MM.yyyy"
-            mask="__.__.____"
-            toolbarFormat="dd.MM.yyyy"
-            value={filters[name] ?? ""}
-            onChange={(val) => onChange(val, name)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                error={false}
-                style={{ width: "100%" }}
-                size="small"
-              />
-            )}
-          />
-        </TableColumnFilter>
+        <DatePicker
+          inputFormat="dd.MM.yyyy"
+          mask="__.__.____"
+          toolbarFormat="dd.MM.yyyy"
+          value={filters[name] ?? ""}
+          onChange={(val) => onChange(val, name)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              error={false}
+              style={{ width: "100%" }}
+              size="small"
+            />
+          )}
+        />
       )
 
     case "NUMBER":
       return (
-        <TableColumnFilter>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder={field.label}
-            type="number"
-            value={filters[name] ?? ""}
-            onChange={(e) =>
-              onChange(Number(e.target.value) || undefined, name)
-            }
-          />
-        </TableColumnFilter>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder={field.label}
+          type="number"
+          value={filters[name] ?? ""}
+          onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
+        />
       )
 
     case "SWITCH":
       return (
-        <TableColumnFilter>
-          <CSelect
-            fullWidth
-            placeholder={field.label}
-            value={filters[name] ?? ""}
-            disabledHelperText
-            options={[
-              {
-                label: field.attributes?.text_true ?? "Да",
-                value: "true",
-              },
-              {
-                label: field.attributes?.text_false ?? "Нет",
-                value: "false",
-              },
-            ]}
-            onChange={(e) => onChange(e.target.value, name)}
-          />
-        </TableColumnFilter>
+        <CSelect
+          fullWidth
+          placeholder={field.label}
+          value={filters[name] ?? ""}
+          disabledHelperText
+          options={[
+            {
+              label: field.attributes?.text_true ?? "Да",
+              value: "true",
+            },
+            {
+              label: field.attributes?.text_false ?? "Нет",
+              value: "false",
+            },
+          ]}
+          onChange={(e) => onChange(e.target.value, name)}
+        />
       )
 
     default:
       return (
-        <TableColumnFilter>
-          <DefaultFilter
-            field={field}
-            filters={filters}
-            onChange={onChange}
-            name={name}
-            tableSlug={tableSlug}
-          />
-        </TableColumnFilter>
+        <DefaultFilter
+          field={field}
+          filters={filters}
+          onChange={onChange}
+          name={name}
+          tableSlug={tableSlug}
+        />
       )
   }
 }

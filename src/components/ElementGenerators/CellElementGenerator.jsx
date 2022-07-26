@@ -53,7 +53,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       )
 
     case "PHOTO":
-      return <LogoDisplay url={value} />
+      return <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} ><LogoDisplay url={value} /></span>
 
     default:
       return value

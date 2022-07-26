@@ -22,6 +22,8 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   
   const computedTableSlug = isRelation ? tableSlug : params.tableSlug
 
+
+
   const columns = useSelector((state) => state.tableColumn.list[computedTableSlug] ?? [])
   const groupColumnId = useSelector(state => state.tableColumn.groupColumnIds[computedTableSlug])
 

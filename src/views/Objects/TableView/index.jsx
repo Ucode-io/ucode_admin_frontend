@@ -1,16 +1,12 @@
-import TableCard from "../../../components/TableCard"
 import { useEffect, useState } from "react"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
 import { useDispatch } from "react-redux"
 import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice"
-import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import useWatch from "../../../hooks/useWatch"
 import useTabRouter from "../../../hooks/useTabRouter"
-import CreateButton from "../../../components/Buttons/CreateButton"
 import DataTable from "../../../components/DataTable"
-import { Tab, TabList, Tabs } from "react-tabs"
 
 const TableView = ({
   computedColumns,
@@ -45,7 +41,6 @@ const TableView = ({
 
       const pageCount = Math.ceil(data.count / 10)
 
-      console.log("DATA ==========>", data)
 
       setViews(data.views ?? [])
       setTableData(objectToArray(data.response ?? {}))

@@ -78,7 +78,7 @@ const ViewsWithGroups = ({
 
     constructorObjectService
       .getList(tableSlug, {
-        data: { offset: 0, limit: 1000 },
+        data: { offset: 0, limit: 10 },
       })
       .then(({ data }) => setTabsData(data.response))
       .finally(() => setLoader(false))

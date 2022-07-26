@@ -32,7 +32,7 @@ const TreeView = ({
       if(groupField?.slug) groupFieldName = groupField?.slug
 
       const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: 0, limit: 1000, [groupFieldName]: group?.value },
+        data: { offset: 0, limit: 10, [groupFieldName]: group?.value },
       })
 
       setViews(data.views ?? [])

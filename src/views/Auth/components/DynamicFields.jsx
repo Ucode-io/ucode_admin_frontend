@@ -24,7 +24,6 @@ const DynamicFields = ({ control, table = {} }) => {
         label,
         value: el.guid,
       }
-
     }) ?? []
   }, [table])
 
@@ -41,12 +40,12 @@ const DynamicFields = ({ control, table = {} }) => {
         size="large"
         fullWidth
         options={computedOptions}
-        placeholder="Выберите тип пользователя"
-        startAdornment={
-          <InputAdornment position="start">
-            <SupervisedUserCircle style={{ fontSize: "30px" }} />
-          </InputAdornment>
-        }
+        placeholder={table.label}
+        // startAdornment={
+        //   <InputAdornment position="start">
+        //     <SupervisedUserCircle style={{ fontSize: "30px" }} />
+        //   </InputAdornment>
+        // }
       />
     </div>
   )

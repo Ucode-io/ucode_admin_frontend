@@ -1,4 +1,4 @@
-import { DatePicker } from "@mui/lab"
+import { DatePicker } from "@mui/x-date-pickers"
 import { FormControl, InputLabel, TextField } from "@mui/material"
 import { useMemo } from "react"
 import CSelect from "../../../../components/CSelect"

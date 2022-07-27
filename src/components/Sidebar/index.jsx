@@ -76,12 +76,12 @@ const Sidebar = ({ elements = [] }) => {
             ))}
         </div>
 
-        <div className={styles.footer}>
+        {/* <div className={styles.footer}>
           <div className={styles.menuItem}>
             <NotificationsIcon />
           </div>
 
-          {/* {settingsElements
+          {settingsElements
             .filter((element) => element.icon)
             .map((element) => (
               <Tooltip
@@ -104,14 +104,14 @@ const Sidebar = ({ elements = [] }) => {
                   )}
                 </NavLink>
               </Tooltip>
-            ))} */}
+            ))}
 
           <UserAvatar disableTooltip />
 
           <div className={styles.menuItem} onClick={logout}>
             <LogoutIcon />
           </div>
-        </div>
+        </div> */}
         </div>
 
       

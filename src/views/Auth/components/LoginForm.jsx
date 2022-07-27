@@ -13,7 +13,6 @@ import PrimaryButton from "../../../components/Buttons/PrimaryButton"
 import HFSelect from "../../../components/FormElements/HFSelect"
 import HFTextField from "../../../components/FormElements/HFTextField"
 import clientTypeService from "../../../services/auth/clientTypeService"
-import constructorObjectService from "../../../services/constructorObjectService"
 import { loginAction } from "../../../store/auth/auth.thunk"
 import listToOptions from "../../../utils/listToOptions"
 import classes from "../style.module.scss"
@@ -52,7 +51,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
 
     const computedData = {
       ...data,
-      tables: Object.keys(data.tables).map((key) => ({
+      tables: Object.keys(data.tables ?? {}).map((key) => ({
         table_slug: key,
         object_id: data.tables[key],
       })),

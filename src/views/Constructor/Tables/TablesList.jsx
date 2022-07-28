@@ -15,6 +15,7 @@ import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
 import HFSwitch from "../../../components/FormElements/HFSwitch"
 import TableCard from "../../../components/TableCard"
 import TableRowButton from "../../../components/TableRowButton"
+import useDebounce from "../../../hooks/useDebounce"
 import applicationService from "../../../services/applicationSercixe"
 import constructorTableService from "../../../services/constructorTableService"
 import ImportModal from "./ImportModal"
@@ -98,7 +99,8 @@ const TablesList = ({ mainForm, appData, getData }) => {
   }
 
   const switchChangeHandler = (val, index) => {
-    const computedTableIds = list?.map((table, tableIndex) => {
+
+    const computedTableIds = mainForm.getValues('tables')?.map((table, tableIndex) => {
       return {
         table_id: table.id,
         is_visible: tableIndex !== index ? Boolean(table.is_visible) : val,
@@ -111,6 +113,7 @@ const TablesList = ({ mainForm, appData, getData }) => {
       tables: computedTableIds,
     })
   }
+  
 
   return (
     <>

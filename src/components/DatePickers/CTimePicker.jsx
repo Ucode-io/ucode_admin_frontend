@@ -1,14 +1,27 @@
 import DatePicker from "react-multi-date-picker"
-import weekends from "react-multi-date-picker/plugins/highlight_weekends"
-import { InputAdornment, TextField } from "@mui/material"
 import TimePickerPlugin from "./Plugins/TimePickerPlugin"
 import "react-multi-date-picker/styles/layouts/mobile.css"
-import { DateRange } from "@mui/icons-material"
-import { locale } from "./Plugins/locale"
 import "./style2.scss"
-import CustomNavButton from "./Plugins/CustomNavButton"
+import { InputAdornment, TextField } from "@mui/material"
+import { DateRange } from "@mui/icons-material"
 
 const CTimePicker = ({ value, onChange }) => {
+
+
+
+  const getValue = () => {
+
+    if(!value) return ""
+
+    const result = new Date()
+
+    result.setHours(value.split(':')?.[0])
+    result.setMinutes(value.split(':')?.[1])
+
+    return result
+    // value ?  : new Date()
+  }
+
   return (
     <DatePicker
       render={(value, openCalendar, handleChange) => {
@@ -30,21 +43,23 @@ const CTimePicker = ({ value, onChange }) => {
           />
         )
       }}
-      renderButton={<CustomNavButton />}
+      // renderButton={<CustomNavButton />}
       disableDayPicker
       // animations={[opacity()]}
-      plugins={[weekends(), <TimePickerPlugin disablePreview />]}
-      weekStartDayIndex={1}
-      portal
-      locale={locale}
+      plugins={[ <TimePickerPlugin disablePreview />]}
+      // weekStartDayIndex={1}
+      // portal
+      // locale={locale}
       format="HH:mm"
+      value={getValue()}
       // currentDate={new DateObject()}
-      value={new Date('12:20')}
+      // value={value}
       // mobileLabels={{
       //   OK: "sdfsdfsdfsdfsdfsdfsdfsd",
       // }}
       onChange={(date) => {
-        onChange(date?.isValid ? date : "");
+        console.log("DATE ===>", date)
+        onChange(date?.isValid ? date.format('HH:mm') : "");
       }}
     />
   )

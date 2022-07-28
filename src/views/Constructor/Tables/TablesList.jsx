@@ -1,5 +1,4 @@
 import { Delete } from "@mui/icons-material"
-import { Switch } from "@mui/material"
 import { useState } from "react"
 import { useFieldArray } from "react-hook-form"
 import { useLocation, useNavigate } from "react-router-dom"
@@ -15,7 +14,6 @@ import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
 import HFSwitch from "../../../components/FormElements/HFSwitch"
 import TableCard from "../../../components/TableCard"
 import TableRowButton from "../../../components/TableRowButton"
-import useDebounce from "../../../hooks/useDebounce"
 import applicationService from "../../../services/applicationSercixe"
 import constructorTableService from "../../../services/constructorTableService"
 import ImportModal from "./ImportModal"
@@ -90,8 +88,6 @@ const TablesList = ({ mainForm, appData, getData }) => {
           tables: computedTableIds,
         }) 
       }
-      
-
       remove(index)
     } finally {
       setLoader(false)
@@ -99,7 +95,6 @@ const TablesList = ({ mainForm, appData, getData }) => {
   }
 
   const switchChangeHandler = (val, index) => {
-
     const computedTableIds = mainForm.getValues('tables')?.map((table, tableIndex) => {
       return {
         table_id: table.id,
@@ -107,14 +102,12 @@ const TablesList = ({ mainForm, appData, getData }) => {
         is_own_table: Boolean(table.is_own_table)
       }
     })
-
     applicationService.update({
       ...appData,
       tables: computedTableIds,
     })
   }
   
-
   return (
     <>
       {importModalVisible && (

@@ -1,4 +1,4 @@
-import { DatePicker, DateTimePicker } from "@mui/lab"
+import { DateTimePicker } from "@mui/x-date-pickers"
 import { TextField } from "@mui/material"
 import { Controller } from "react-hook-form"
 
@@ -24,7 +24,7 @@ const HFDateTimePicker = ({ control, className, name, label, width, inputProps, 
                 style={{ width }}
                 size="small"
                 error={error  }
-                helperText={!disabledHelperText && (error?.message ?? ' ')}
+                helperText={!disabledHelperText && error?.message}
                 label={label}
                 inputProps={{
                   ...params.inputProps,

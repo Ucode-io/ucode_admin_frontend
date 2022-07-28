@@ -2,50 +2,99 @@ import {
   AccountBalance,
   AccountCircle,
   Lock,
+  SupervisedUserCircle,
 } from "@mui/icons-material"
 import { InputAdornment } from "@mui/material"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useQuery } from "react-query"
 import { useDispatch } from "react-redux"
 import PrimaryButton from "../../../components/Buttons/PrimaryButton"
 import HFSelect from "../../../components/FormElements/HFSelect"
 import HFTextField from "../../../components/FormElements/HFTextField"
-import constructorObjectService from "../../../services/constructorObjectService"
+import clientTypeService from "../../../services/auth/clientTypeService"
 import { loginAction } from "../../../store/auth/auth.thunk"
 import listToOptions from "../../../utils/listToOptions"
 import classes from "../style.module.scss"
+import DynamicFields from "./DynamicFields"
 
 const LoginForm = ({ navigateToRegistrationForm }) => {
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, watch } = useForm({
     defaultValues: {
+      client_type: "",
       username: "",
       password: "",
     },
   })
 
+  const { data: { client_types: clientTypes } = {} } = useQuery(
+    ["GET_CLIENT_TYPES"],
+    () => {
+      return clientTypeService.getList()
+    }
+  )
+
+  const computedClientTypes = useMemo(() => {
+    return listToOptions(clientTypes, "name", "id")
+  }, [clientTypes])
+
+  const clientTypeId = watch("client_type")
+
+  const selectedClientType = useMemo(() => {
+    return clientTypes?.find((clientType) => clientType.id === clientTypeId)
+  }, [clientTypeId, clientTypes])
+
   const onSubmit = (data) => {
+
+    const computedData = {
+      ...data,
+      tables: Object.keys(data.tables ?? {}).map((key) => ({
+        table_slug: key,
+        object_id: data.tables[key],
+      })),
+    }
+
     setLoading(true)
 
-    dispatch(loginAction(data))
+    dispatch(loginAction(computedData))
       .unwrap()
       .catch(() => setLoading(false))
   }
 
-  const { data: branches } = useQuery(["GET_OBJECTS_LIST"], () => {
-    return constructorObjectService.getList("branches", { data: {} })
-  }, {
-    select: ({ data }) => listToOptions(data.response, 'name', 'guid') ?? []
-  })
-
-  // console.log('branches ===>', branches)
+  // const { data: branches } = useQuery(
+  //   ["GET_OBJECTS_LIST"],
+  //   () => {
+  //     return constructorObjectService.getList("branches", { data: {} })
+  //   },
+  //   {
+  //     select: ({ data }) => listToOptions(data.response, "name", "guid") ?? [],
+  //   }
+  // )
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
       <div onSubmit={handleSubmit} className={classes.formArea}>
+        <div className={classes.formRow}>
+          <p className={classes.label}>Тип пользователя</p>
+          <HFSelect
+            required
+            control={control}
+            name="client_type"
+            size="large"
+            fullWidth
+            options={computedClientTypes}
+            placeholder="Выберите тип пользователя"
+            startAdornment={
+              <InputAdornment position="start">
+                <SupervisedUserCircle style={{ fontSize: "30px" }} />
+              </InputAdornment>
+            }
+          />
+        </div>
+
         <div className={classes.formRow}>
           <p className={classes.label}>Логин</p>
           <HFTextField
@@ -84,23 +133,15 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
             }}
           />
         </div>
-        <div className={classes.formRow}>
-          <p className={classes.label}>Филиал</p>
-          <HFSelect
-            // required
+
+        {selectedClientType?.tables?.map((table, index) => (
+          <DynamicFields
+            key={table.slug}
+            table={table}
             control={control}
-            name="branch_id"
-            size="large"
-            fullWidth
-            options={branches}
-            placeholder="Выберите филиал"
-            startAdornment={
-              <InputAdornment position="start">
-                <AccountBalance style={{ fontSize: "30px" }} />
-              </InputAdornment>
-            }
+            index={index}
           />
-        </div>
+        ))}
       </div>
 
       <div className={classes.buttonsArea}>

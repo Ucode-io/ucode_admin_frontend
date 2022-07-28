@@ -21,9 +21,9 @@ const FormCard = ({
           <div className="header">
             <div className="left-side" >
               <IconGenerator icon={icon} />
-              <Typography variant="h4" className="title">
+              <h4 className="title">
                 {title}
-              </Typography>
+              </h4>
             </div>
 
             <div className="extra">{extra}</div>

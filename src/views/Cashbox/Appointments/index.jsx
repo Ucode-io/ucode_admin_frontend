@@ -9,7 +9,7 @@ const CashboxAppointments = () => {
 
   return (
     <div>
-      <Tabs
+      {/* <Tabs
         selectedIndex={selectedIndex}
         onSelect={setSelectedIndex}
         direction={"ltr"}
@@ -22,11 +22,13 @@ const CashboxAppointments = () => {
           <TabPanel>
             <CashboxAppointMentsTable tableSlug="booked_appointments" type={"online"}  />
           </TabPanel>
-          <TabPanel>
+          <TabPanel> */}
+          <TableCard>
             <CashboxAppointMentsTable tableSlug="offline_appointments" type={"offline"} />
-          </TabPanel>
+          </TableCard>
+          {/* </TabPanel>
         </TableCard>
-      </Tabs>
+      </Tabs> */}
     </div>
   )
 }

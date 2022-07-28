@@ -1,7 +1,7 @@
 import { Card } from "@mui/material"
 import style from "./style.module.scss"
 
-const TableCard = ({ children, disablePagination = false, extra, header, width }) => {
+const TableCard = ({ children, disablePagination = false, extra, header, width, cardStyles={} }) => {
   return (
     <div className={style.wrapper}>
       <Card
@@ -15,7 +15,7 @@ const TableCard = ({ children, disablePagination = false, extra, header, width }
           </div>
         </div>}
 
-        <div className={style.body} style={{ padding: disablePagination ? "16px" : "16px 16px 10px 16px" }} >
+        <div className={style.body} style={{ padding: disablePagination ? "16px" : "8px 8px 8px 8px", ...cardStyles }} >
           {children}
         </div>
       </Card>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
@@ -58,6 +58,7 @@ const ObjectsFormPage = () => {
       table_slug: tableSlug,
     })
 
+
     try {
       const [{ sections = [] }, { data = {} }, { relations = [] }] =
         await Promise.all([getSections, getFormData, getRelations])
@@ -83,8 +84,6 @@ const ObjectsFormPage = () => {
                 : relation.table_from,
           }))
       )
-
-      console.log("DATA ====>", data.response)
 
       reset(data.response ?? {})
     } finally {

@@ -20,6 +20,7 @@ import {
 } from "../../utils/getRelationFieldLabel"
 import { CircularProgress } from "@mui/material"
 import TreeView from "./TreeView"
+import FastFilter from "./components/FastFilter"
 
 const ViewsWithGroups = ({
   tableSlug,
@@ -78,7 +79,7 @@ const ViewsWithGroups = ({
 
     constructorObjectService
       .getList(tableSlug, {
-        data: { offset: 0, limit: 1000 },
+        data: { offset: 0, limit: 10 },
       })
       .then(({ data }) => setTabsData(data.response))
       .finally(() => setLoader(false))
@@ -109,14 +110,11 @@ const ViewsWithGroups = ({
           setViews={setViews}
         />
         <SearchInput />
-        <FiltersBlockButton>
-          <FilterAlt color="primary" />
-          Быстрый фильтр
-        </FiltersBlockButton>
+        <FastFilter filters={filters} onChange={filterChangeHandler} />
       </FiltersBlock>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
-        <TableCard>
+        <TableCard cardStyles={{ paddingTop: 0 }} >
           <div className={style.tableCardHeader}>
             <TabList>
               {tabs?.map((tab) => (

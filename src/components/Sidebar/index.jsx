@@ -2,13 +2,10 @@ import styles from "./style.module.scss"
 import companyLogo from "../../assets/icons/soliq-logo.svg"
 import { Collapse, Tooltip, Typography } from "@mui/material"
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft"
-import NotificationsIcon from "@mui/icons-material/Notifications"
 import React, { useEffect, useMemo, useState } from "react"
-import UserAvatar from "../UserAvatar"
 import { NavLink, useLocation } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { authActions } from "../../store/auth/auth.slice"
-import LogoutIcon from "@mui/icons-material/Logout"
 import IconGenerator from "../IconPicker/IconGenerator"
 // import { IconPickerItem } from "react-fa-icon-picker"
 
@@ -76,12 +73,12 @@ const Sidebar = ({ elements = [] }) => {
             ))}
         </div>
 
-        <div className={styles.footer}>
+        {/* <div className={styles.footer}>
           <div className={styles.menuItem}>
             <NotificationsIcon />
           </div>
 
-          {/* {settingsElements
+          {settingsElements
             .filter((element) => element.icon)
             .map((element) => (
               <Tooltip
@@ -104,14 +101,14 @@ const Sidebar = ({ elements = [] }) => {
                   )}
                 </NavLink>
               </Tooltip>
-            ))} */}
+            ))}
 
           <UserAvatar disableTooltip />
 
           <div className={styles.menuItem} onClick={logout}>
             <LogoutIcon />
           </div>
-        </div>
+        </div> */}
         </div>
 
       

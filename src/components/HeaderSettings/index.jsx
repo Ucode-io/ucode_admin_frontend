@@ -1,7 +1,10 @@
 import AppSelector from "../AppSelector"
 import BackButton from "../BackButton"
+import ExitButton from "../Buttons/ExitButton"
 import IconGenerator from "../IconPicker/IconGenerator"
+import ProfilePanel from "../ProfilePanel"
 import RowLinearLoader from "../RowLinearLoader"
+import UserAvatar from "../UserAvatar"
 import styles from "./style.module.scss"
 
 const HeaderSettings = ({
@@ -16,7 +19,10 @@ const HeaderSettings = ({
   ...props
 }) => {
   return (
-    <div className={`${styles.header} ${sticky ? styles.sticky : ''}`}  {...props}>
+    <div
+      className={`${styles.header} ${sticky ? styles.sticky : ""}`}
+      {...props}
+    >
       <div className={styles.leftSide}>
         {backButtonLink && <BackButton link={backButtonLink} />}
 
@@ -33,9 +39,8 @@ const HeaderSettings = ({
       </div>
 
       <div className={styles.rightSide}>
-
         <AppSelector />
-
+        <ProfilePanel />
       </div>
     </div>
   )

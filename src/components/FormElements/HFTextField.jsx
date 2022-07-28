@@ -30,7 +30,7 @@ const HFTextField = ({
           name={name}
           error={error}
           fullWidth={fullWidth}
-          helperText={!disabledHelperText && (error?.message ?? " ")}
+          helperText={!disabledHelperText && error?.message}
           {...props}
         />
       )}

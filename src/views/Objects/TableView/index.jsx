@@ -1,16 +1,12 @@
-import TableCard from "../../../components/TableCard"
 import { useEffect, useState } from "react"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
 import { useDispatch } from "react-redux"
 import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice"
-import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import useWatch from "../../../hooks/useWatch"
 import useTabRouter from "../../../hooks/useTabRouter"
-import CreateButton from "../../../components/Buttons/CreateButton"
 import DataTable from "../../../components/DataTable"
-import { Tab, TabList, Tabs } from "react-tabs"
 
 const TableView = ({
   computedColumns,
@@ -45,6 +41,7 @@ const TableView = ({
 
       const pageCount = Math.ceil(data.count / 10)
 
+
       setViews(data.views ?? [])
       setTableData(objectToArray(data.response ?? {}))
       setPageCount(isNaN(pageCount) ? 1 : pageCount)
@@ -73,14 +70,11 @@ const TableView = ({
     navigateToForm(tableSlug, "EDIT", row)
   }
 
-  useDebouncedWatch(
-    () => {
-      if (currentPage === 1) getAllData()
-      setCurrentPage(1)
-    },
-    [filters],
-    500
-  )
+  useWatch(() => {
+    if (currentPage === 1) getAllData()
+    setCurrentPage(1)
+  },
+  [filters])
 
   useWatch(() => {
     getAllData()
@@ -92,7 +86,7 @@ const TableView = ({
 
   return (
       <DataTable
-        removableHeight={270}
+        removableHeight={230}
         currentPage={currentPage}
         pagesCount={pageCount}
         onPaginationChange={setCurrentPage}
@@ -103,6 +97,7 @@ const TableView = ({
         filterChangeHandler={filterChangeHandler}
         onRowClick={navigateToEditPage}
         onDeleteClick={deleteHandler}
+        tableSlug={tableSlug}
       />
   )
 }

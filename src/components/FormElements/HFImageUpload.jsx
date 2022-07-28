@@ -10,6 +10,7 @@ const HFImageUpload = ({
   disabledHelperText = false,
   ...props
 }) => {
+
   return (
     <Controller
       control={control}
@@ -28,8 +29,8 @@ const HFImageUpload = ({
             // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
             {...props}
           />
-          {!disabledHelperText && (
-            <FormHelperText error>{error?.message ?? " "}</FormHelperText>
+          {!disabledHelperText && error?.message && (
+            <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </>
       )}

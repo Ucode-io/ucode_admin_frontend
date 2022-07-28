@@ -5,7 +5,7 @@
 }
 
 .rmdp-day span {
-  border-radius: 4px;
+  border-radius: 50%;
 }
 
 .rmdp-day.rmdp-selected span {
@@ -35,9 +35,11 @@ rmdp-day.rmdp-today.highlight span {
 
 .rmdp-header-values span{
   font-weight: 500;
+  font-size: 24px;
+  color: colors.$primary;
 
   &:hover {
-    color: colors.$primary;
+    color: colors.$primary-hover;
   }
 }
 
@@ -52,3 +54,22 @@ rmdp-day.rmdp-today.highlight span {
   border: 1px solid #CC0402;
   color: #CC0402;
 }
+
+.rmdp-calendar {
+  padding: 30px !important;
+  padding-bottom: 0px !important;
+}
+
+
+// .rmdp-header {
+//   height: 70px !important;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   border-bottom: 1px solid colors.$borders;
+//   margin: 0 !important;
+//   padding: 0 !important;
+//   padding-top: 5px !important;
+//   // background-color: colors.$primary;
+//   // color: #fff !important;
+// }

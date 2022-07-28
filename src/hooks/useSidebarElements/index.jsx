@@ -11,7 +11,7 @@ const useSidebarElements = () => {
 
   const computedElements = useMemo(() => {
     const computedConstructorElements = constructorElements
-      .filter((el) => el.show_in_menu)
+      .filter((el) => el.is_visible)
       .map((el) => ({
         ...el,
         title: el.label,

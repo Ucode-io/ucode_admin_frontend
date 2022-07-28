@@ -142,7 +142,10 @@ const TimePickerPlugin = (props) => {
   return (
     <div className={styles.timePicker} >
       <div className={styles.previewBlock} >
-        {hours[hourValue] ?? '00'} : {minutes[minuteValue] ?? '00'}
+
+        <div className={styles.date} >{availbleDate?.format('MMMM DD, ddd') ?? ''}</div>
+
+        <div>{hours[hourValue] ?? '00'} : {minutes[minuteValue] ?? '00'}</div>
       </div>
 
       <div className={styles.timePickerBlock}>

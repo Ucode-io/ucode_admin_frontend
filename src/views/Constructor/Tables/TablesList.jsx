@@ -16,6 +16,7 @@ import HFSwitch from "../../../components/FormElements/HFSwitch"
 import TableCard from "../../../components/TableCard"
 import TableRowButton from "../../../components/TableRowButton"
 import applicationService from "../../../services/applicationSercixe"
+import constructorTableService from "../../../services/constructorTableService"
 import ImportModal from "./ImportModal"
 
 const TablesList = ({ mainForm, appData, getData }) => {
@@ -80,12 +81,17 @@ const TablesList = ({ mainForm, appData, getData }) => {
       list?.filter((table) => table.id !== id).map((table) => ({table_id: table.id, is_visible: table.is_visible, is_own_table: table.is_own_table})) ?? []
 
     try {
-      // await constructorTableService.delete(id)
 
-      await applicationService.update({
-        ...appData,
-        tables: computedTableIds,
-      })
+      if(list[index]?.is_own_table) await constructorTableService.delete(id)
+
+      else {
+        await applicationService.update({
+          ...appData,
+          tables: computedTableIds,
+        }) 
+      }
+      
+
       remove(index)
     } finally {
       setLoader(false)

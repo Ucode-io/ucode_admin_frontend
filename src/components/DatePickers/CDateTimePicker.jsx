@@ -3,7 +3,7 @@ import weekends from "react-multi-date-picker/plugins/highlight_weekends"
 import { InputAdornment, TextField } from "@mui/material"
 import TimePickerPlugin from "./Plugins/TimePickerPlugin"
 import "react-multi-date-picker/styles/layouts/mobile.css"
-import { CalendarToday } from "@mui/icons-material"
+import { AccessTime, CalendarToday, DateRange } from "@mui/icons-material"
 import { locale } from "./Plugins/locale"
 import "./style2.scss"
 import CustomNavButton from "./Plugins/CustomNavButton"
@@ -23,7 +23,7 @@ const CDateTimePicker = ({ value, onChange }) => {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <CalendarToday />
+                  <DateRange />
                 </InputAdornment>
               ),
             }}

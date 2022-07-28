@@ -42,11 +42,13 @@ const Payments = ({ form, isUpdated }) => {
 
   const paymentsTotalPrice = useMemo(() => {
     let result = 0
-
-    computedPayments.forEach(
-      (payment) => (result += Number(payment.amount))
-    )
+    if (computedPayments !== null) {
+      computedPayments.forEach(
+        (payment) => (result += Number(payment.amount))
+      )
+    }
     return result
+    
   }, [computedPayments])
 
   const difference = Number(paymentsTotalPrice) - Number(totalPrice)

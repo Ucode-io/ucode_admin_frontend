@@ -29,7 +29,6 @@ const TablesList = ({ mainForm, appData, getData }) => {
   const {
     fields: list,
     remove,
-    update,
   } = useFieldArray({
     control: mainForm.control,
     name: "tables",
@@ -56,7 +55,7 @@ const TablesList = ({ mainForm, appData, getData }) => {
     setModalLoader()
 
     const computedTables = [
-      ...list.map((el) => ({ table_id: el.id, is_visible: el.is_visible, is_own_table: el.is_own_table })),
+      ...list.map((el) => ({ table_id: el.id, is_visible: Boolean(el.is_visible), is_own_table: Boolean(el.is_own_table) })),
       ...checkedElements.map((el) => ({ table_id: el, is_visible: true, is_own_table: false })),
     ]
 
@@ -78,7 +77,7 @@ const TablesList = ({ mainForm, appData, getData }) => {
     const index = list?.findIndex((table) => table.id === id)
 
     const computedTableIds =
-      list?.filter((table) => table.id !== id).map((table) => ({table_id: table.id, is_visible: table.is_visible, is_own_table: table.is_own_table})) ?? []
+      list?.filter((table) => table.id !== id).map((table) => ({table_id: table.id, is_visible: Boolean(table.is_visible), is_own_table: Boolean(table.is_own_table)})) ?? []
 
     try {
 
@@ -102,8 +101,8 @@ const TablesList = ({ mainForm, appData, getData }) => {
     const computedTableIds = list?.map((table, tableIndex) => {
       return {
         table_id: table.id,
-        is_visible: tableIndex !== index ? table.is_visible : val,
-        is_own_table: table.is_own_table
+        is_visible: tableIndex !== index ? Boolean(table.is_visible) : val,
+        is_own_table: Boolean(table.is_own_table)
       }
     })
 

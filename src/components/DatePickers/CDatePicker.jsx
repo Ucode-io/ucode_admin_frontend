@@ -1,14 +1,16 @@
+
+
+
 import DatePicker from "react-multi-date-picker"
 import weekends from "react-multi-date-picker/plugins/highlight_weekends"
 import { InputAdornment, TextField } from "@mui/material"
-import TimePickerPlugin from "./Plugins/TimePickerPlugin"
 import "react-multi-date-picker/styles/layouts/mobile.css"
-import { DateRange } from "@mui/icons-material"
+import { Today } from "@mui/icons-material"
 import { locale } from "./Plugins/locale"
 import "./style2.scss"
 import CustomNavButton from "./Plugins/CustomNavButton"
 
-const CDateTimePicker = ({ value, onChange }) => {
+const CDatePicker = ({ value, onChange }) => {
   return (
     <DatePicker
       render={(value, openCalendar, handleChange) => {
@@ -23,7 +25,7 @@ const CDateTimePicker = ({ value, onChange }) => {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <DateRange />
+                  <Today />
                 </InputAdornment>
               ),
             }}
@@ -32,20 +34,16 @@ const CDateTimePicker = ({ value, onChange }) => {
       }}
       renderButton={<CustomNavButton />}
       // animations={[opacity()]}
-      plugins={[weekends(), <TimePickerPlugin hideSeconds />]}
+      plugins={[weekends()]}
       weekStartDayIndex={1}
       portal
       locale={locale}
-      format="DD.MM.YYYY HH:mm"
-      // currentDate={new Date()}
+      className="datePicker"
+      format="DD.MM.YYYY"
       value={new Date(value) || ""}
-      className="rmdp-mobile"
-      // mobileLabels={{
-      //   OK: "sdfsdfsdfsdfsdfsdfsdfsd",
-      // }}
       onChange={(val) => onChange(val ? new Date(val) : "")}
     />
   )
 }
 
-export default CDateTimePicker
+export default CDatePicker

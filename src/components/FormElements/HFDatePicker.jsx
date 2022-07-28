@@ -1,6 +1,5 @@
-import { DatePicker } from "@mui/x-date-pickers"
-import { TextField } from "@mui/material"
 import { Controller } from "react-hook-form"
+import CDatePicker from "../DatePickers/CDatePicker"
 
 const HFDatePicker = ({ control, className, name, label, width, inputProps, disabledHelperText, placeholder, ...props }) => {
   return (
@@ -10,7 +9,8 @@ const HFDatePicker = ({ control, className, name, label, width, inputProps, disa
       defaultValue=""
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={className}>
-          <DatePicker
+          <CDatePicker value={value} onChange={onChange} />
+          {/* <DatePicker
             // inputFormat="dd.MM.yyyy"
             // mask="__.__.____"
             // toolbarFormat="dd.MM.yyyy"
@@ -34,7 +34,7 @@ const HFDatePicker = ({ control, className, name, label, width, inputProps, disa
                 label={label}
               />
             )}
-          />
+          /> */}
         </div>
       )}
     ></Controller>

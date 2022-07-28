@@ -8,7 +8,7 @@ import { locale } from "./Plugins/locale"
 import "./style2.scss"
 import CustomNavButton from "./Plugins/CustomNavButton"
 
-const CDateTimePicker = ({ value, onChange }) => {
+const CTimePicker = ({ value, onChange }) => {
   return (
     <DatePicker
       render={(value, openCalendar, handleChange) => {
@@ -31,21 +31,23 @@ const CDateTimePicker = ({ value, onChange }) => {
         )
       }}
       renderButton={<CustomNavButton />}
+      disableDayPicker
       // animations={[opacity()]}
-      plugins={[weekends(), <TimePickerPlugin hideSeconds />]}
+      plugins={[weekends(), <TimePickerPlugin disablePreview />]}
       weekStartDayIndex={1}
       portal
       locale={locale}
-      format="DD.MM.YYYY HH:mm"
-      // currentDate={new Date()}
-      value={new Date(value) || ""}
-      className="rmdp-mobile"
+      format="HH:mm"
+      // currentDate={new DateObject()}
+      value={new Date('12:20')}
       // mobileLabels={{
       //   OK: "sdfsdfsdfsdfsdfsdfsdfsd",
       // }}
-      onChange={(val) => onChange(val ? new Date(val) : "")}
+      onChange={(date) => {
+        onChange(date?.isValid ? date : "");
+      }}
     />
   )
 }
 
-export default CDateTimePicker
+export default CTimePicker

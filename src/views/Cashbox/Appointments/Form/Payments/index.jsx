@@ -42,11 +42,9 @@ const Payments = ({ form, isUpdated }) => {
 
   const paymentsTotalPrice = useMemo(() => {
     let result = 0
-    if (computedPayments !== null) {
-      computedPayments.forEach(
-        (payment) => (result += Number(payment.amount))
-      )
-    }
+    computedPayments?.forEach(
+      (payment) => (result += Number(payment.amount))
+    )
     return result
     
   }, [computedPayments])

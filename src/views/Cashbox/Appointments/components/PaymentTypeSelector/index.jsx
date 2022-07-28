@@ -44,23 +44,33 @@ const PaymentTypeSelector = ({ onSelect = () => {} }) => {
       >
         <MenuItem
           onClick={() => {
-            onSelect('Cash')
+            onSelect('Наличними')
             handleClose()
           }}
           className={style.menuItem}
         >
           <Payments color="success" className={style.icon} />
-          Cash
+          Наличними
         </MenuItem>
         <MenuItem
           onClick={() => {
-            onSelect('Plastic card')
+            onSelect('UzCard')
             handleClose()
           }}
           className={style.menuItem}
         >
           <Payment color="error" className={style.icon} />
-          Plastic card
+          UzCard
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            onSelect('Humo')
+            handleClose()
+          }}
+          className={style.menuItem}
+        >
+          <Payment color="error" className={style.icon} />
+          Humo
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -72,7 +82,7 @@ const PaymentTypeSelector = ({ onSelect = () => {} }) => {
           <Contactless color="warning" className={style.icon} />
           Payme
         </MenuItem>
-        <MenuItem
+        {/*<MenuItem
           onClick={() => {
             onSelect('Click')
             handleClose()
@@ -81,7 +91,7 @@ const PaymentTypeSelector = ({ onSelect = () => {} }) => {
         >
           <AccountBalanceWallet color="primary" className={style.icon} />
           Click
-        </MenuItem>
+        </MenuItem>*/}
       </Menu>
     </div>
   )

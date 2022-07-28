@@ -33,7 +33,6 @@ const DataTable = ({
   wrapperStyle,
   tableSlug,
 }) => {
-
   return (
     <CTable
       disablePagination={disablePagination}
@@ -73,7 +72,7 @@ const DataTable = ({
       <CTableBody
         loader={loader}
         columnsCount={columns.length}
-        dataLength={dataLength || data.length}
+        dataLength={dataLength || data?.length}
       >
         {data?.map((row, rowIndex) => (
           <CTableRow

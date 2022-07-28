@@ -1,4 +1,4 @@
-import { Add, Close } from "@mui/icons-material"
+import { Close } from "@mui/icons-material"
 import { Divider, IconButton } from "@mui/material"
 import { useMemo } from "react"
 import { Controller, useFieldArray, useWatch } from "react-hook-form"
@@ -57,10 +57,6 @@ const Payments = ({ form, isUpdated }) => {
       amount: 0,
     })
   }
-
-  
-
-
 
   return (
     <FormCard title="Оплата услуги" maxWidth="auto">

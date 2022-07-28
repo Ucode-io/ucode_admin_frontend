@@ -15,7 +15,7 @@ const VariablesBar = ({
 
   return (
     <div className={styles.bar}>
-      {variables.map((variable) => (
+      {variables?.map((variable) => (
         <Variable
           key={variable.id}
           variable={variable}

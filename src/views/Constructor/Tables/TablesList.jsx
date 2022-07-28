@@ -1,4 +1,5 @@
 import { Delete } from "@mui/icons-material"
+import { Switch } from "@mui/material"
 import { useState } from "react"
 import { useFieldArray } from "react-hook-form"
 import { useLocation, useNavigate } from "react-router-dom"
@@ -11,19 +12,24 @@ import {
   CTableRow,
 } from "../../../components/CTable"
 import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
+import HFSwitch from "../../../components/FormElements/HFSwitch"
 import TableCard from "../../../components/TableCard"
 import TableRowButton from "../../../components/TableRowButton"
 import applicationService from "../../../services/applicationSercixe"
 import ImportModal from "./ImportModal"
 
-const TablesList = ({ mainForm, appData, getData}) => {
+const TablesList = ({ mainForm, appData, getData }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const [loader, setLoader] = useState(false)
   const [importModalVisible, setImportModalVisible] = useState(false)
   const [modalLoader, setModalLoader] = useState()
 
-  const { fields: list, remove,  } = useFieldArray({
+  const {
+    fields: list,
+    remove,
+    update,
+  } = useFieldArray({
     control: mainForm.control,
     name: "tables",
     keyName: "key",
@@ -45,14 +51,18 @@ const TablesList = ({ mainForm, appData, getData}) => {
     setImportModalVisible(false)
   }
 
-  const importTable = (checkedElements) => {
+  const importTable = (checkedElements = []) => {
     setModalLoader()
 
+    const computedTables = [
+      ...list.map((el) => ({ table_id: el.id, is_visible: el.is_visible, is_own_table: el.is_own_table })),
+      ...checkedElements.map((el) => ({ table_id: el, is_visible: true, is_own_table: false })),
+    ]
 
     applicationService
       .update({
         ...appData,
-        table_ids: [...list.map(el => el.id), ...checkedElements],
+        tables: computedTables,
       })
       .then(() => {
         closeImportModal()
@@ -67,14 +77,14 @@ const TablesList = ({ mainForm, appData, getData}) => {
     const index = list?.findIndex((table) => table.id === id)
 
     const computedTableIds =
-      list?.filter((table) => table.id !== id).map((table) => table.id) ?? []
+      list?.filter((table) => table.id !== id).map((table) => ({table_id: table.id, is_visible: table.is_visible, is_own_table: table.is_own_table})) ?? []
 
     try {
       // await constructorTableService.delete(id)
 
       await applicationService.update({
         ...appData,
-        table_ids: computedTableIds,
+        tables: computedTableIds,
       })
       remove(index)
     } finally {
@@ -82,15 +92,37 @@ const TablesList = ({ mainForm, appData, getData}) => {
     }
   }
 
+  const switchChangeHandler = (val, index) => {
+    const computedTableIds = list?.map((table, tableIndex) => {
+      return {
+        table_id: table.id,
+        is_visible: tableIndex !== index ? table.is_visible : val,
+        is_own_table: table.is_own_table
+      }
+    })
+
+    applicationService.update({
+      ...appData,
+      tables: computedTableIds,
+    })
+  }
+
   return (
     <>
-      {importModalVisible && <ImportModal  closeModal={closeImportModal} importTable={importTable} btnLoader={modalLoader} />}
+      {importModalVisible && (
+        <ImportModal
+          closeModal={closeImportModal}
+          importTable={importTable}
+          btnLoader={modalLoader}
+        />
+      )}
       <TableCard>
         <CTable disablePagination removableHeight={120}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>
             <CTableCell>Описание</CTableCell>
+            <CTableCell width={60}>Показать в меню</CTableCell>
             <CTableCell width={60} />
           </CTableHead>
           <CTableBody columnsCount={4} dataLength={1} loader={loader}>
@@ -103,6 +135,14 @@ const TablesList = ({ mainForm, appData, getData}) => {
                 <CTableCell>{element.label}</CTableCell>
                 <CTableCell>{element.description}</CTableCell>
                 <CTableCell>
+                  <HFSwitch
+                    onClick={(e) => e.stopPropagation()}
+                    control={mainForm.control}
+                    name={`tables[${index}].is_visible`}
+                    onChange={(val) => switchChangeHandler(val, index)}
+                  />
+                </CTableCell>
+                <CTableCell>
                   <DeleteWrapperModal id={element.id} onDelete={deleteTable}>
                     <RectangleIconButton color="error">
                       <Delete color="error" />
@@ -113,12 +153,12 @@ const TablesList = ({ mainForm, appData, getData}) => {
             ))}
 
             <TableRowButton
-              colSpan={4}
+              colSpan={5}
               onClick={openImportModal}
               title="Импортировать из других приложений"
             />
             <TableRowButton
-              colSpan={4}
+              colSpan={5}
               onClick={navigateToCreateForm}
               title="Создать новый"
             />

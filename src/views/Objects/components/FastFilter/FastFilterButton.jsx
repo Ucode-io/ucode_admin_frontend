@@ -4,16 +4,20 @@ import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import FiltersBlockButton from "../../../../components/Buttons/FiltersBlockButton"
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
 import { tableColumnActions } from "../../../../store/tableColumn/tableColumn.slice"
 import styles from "./style.module.scss"
 
-const FiltersDropdown = ({ columns }) => {
+const FastFilterButton = () => {
   const { tableSlug } = useParams()
+  const dispatch = useDispatch()
+
+  const columns = useSelector(
+    (state) => state.tableColumn.list[tableSlug] ?? []
+  )
 
   const [anchorEl, setAnchorEl] = useState(null)
   const menuVisible = Boolean(anchorEl)
-
-  const dispatch = useDispatch()
 
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget)
@@ -35,10 +39,9 @@ const FiltersDropdown = ({ columns }) => {
 
   return (
     <div>
-      <FiltersBlockButton onClick={openMenu}>
+      <RectangleIconButton color="grey" onClick={openMenu} >
         <FilterAlt color="primary" />
-        Быстрый фильтр
-      </FiltersBlockButton>
+      </RectangleIconButton>
 
       <Menu
         anchorEl={anchorEl}
@@ -62,4 +65,4 @@ const FiltersDropdown = ({ columns }) => {
   )
 }
 
-export default FiltersDropdown
+export default FastFilterButton

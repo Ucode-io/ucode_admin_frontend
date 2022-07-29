@@ -3,7 +3,6 @@ import { useMemo } from "react"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { Filter } from "../FilterGenerator"
-import FiltersDropdown from "./FiltersDropdown"
 import styles from "./style.module.scss"
 
 const FastFilter = ({ filters, onChange }) => {
@@ -16,10 +15,9 @@ const FastFilter = ({ filters, onChange }) => {
   const computedFields = useMemo(() => {
     return columns.filter((column) => column.isFilterVisible)
   }, [columns])
-
+  
   return (
     <div className={styles.filtersBlock} >
-      <FiltersDropdown columns={columns} />
 
       
       {

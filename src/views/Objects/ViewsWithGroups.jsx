@@ -21,6 +21,8 @@ import {
 import { CircularProgress } from "@mui/material"
 import TreeView from "./TreeView"
 import FastFilter from "./components/FastFilter"
+import SettingsButton from "./components/SettingsButton"
+import FastFilterButton from "./components/FastFilter/FastFilterButton"
 
 const ViewsWithGroups = ({
   tableSlug,
@@ -90,9 +92,11 @@ const ViewsWithGroups = ({
       <FiltersBlock
         extra={
           <>
+            <FastFilterButton  />
+
             <GroupFieldSelector tableSlug={tableSlug} />
 
-            <ColumnsSelector tableSlug={tableSlug} />
+            <ColumnsSelector tableSlug={tableSlug}  />
 
             <RectangleIconButton color="grey">
               <Upload color="primary" />
@@ -100,6 +104,9 @@ const ViewsWithGroups = ({
             <RectangleIconButton color="grey">
               <Download color="primary" />
             </RectangleIconButton>
+
+            <SettingsButton />
+
           </>
         }
       >
@@ -109,7 +116,7 @@ const ViewsWithGroups = ({
           views={views}
           setViews={setViews}
         />
-        <SearchInput />
+        {/* <SearchInput /> */}
         <FastFilter filters={filters} onChange={filterChangeHandler} />
       </FiltersBlock>
 

@@ -8,7 +8,7 @@ const elements = [
   {
     id: "cashbox",
     title: "Касса",
-    path: "/cashbox/appointments",
+    path: "/cashbox",
     icon: Payments,
     // permission: "PROJECTS"
   },

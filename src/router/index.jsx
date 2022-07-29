@@ -21,6 +21,7 @@ import Login from "../views/Auth/Login"
 import Registration from "../views/Auth/Registration"
 import CashboxAppointments from "../views/Cashbox/Appointments"
 import AppointmentsForm from "../views/Cashbox/Appointments/Form"
+import CashboxOpening from "../views/Cashbox/Opening"
 import AppsPage from "../views/Constructor/Apps"
 import AppsForm from "../views/Constructor/Apps/AppsForm"
 import ConstructorTablesFormPage from "../views/Constructor/Tables/Form"
@@ -36,7 +37,6 @@ const IntegrationsForm = lazy(() => import( "../views/AuthMatrix/Crossed/Integra
 const SessionsPage = lazy(() => import("../views/AuthMatrix/Crossed/Integrations/Sessions"))
 const UsersForm = lazy(() => import("../views/Users/Form"))
 const UsersPage = lazy(() => import("../views/Users/index"))
-// const FileSystemModule = lazy(() => import("fileSystem/FileSystemModule"))
 
 const Router = () => {
   const location = useLocation()
@@ -46,9 +46,7 @@ const Router = () => {
   const redirectLink = useMemo(() => {
     if(location.pathname.includes('settings')) return '/settings/constructor/apps'
     if(location.pathname.includes('cashbox')) return '/cashbox/appointments'
-
     if(!applications.length) return '/settings/constructor/apps'
-    
     return `/main/${applications[0].id}`
   }, [location.pathname, applications])
 
@@ -159,6 +157,8 @@ const Router = () => {
 
        <Route index element={<Navigate to={'/cashbox/appointments'} />} />
 
+        <Route path="opening" element={<CashboxOpening />} />
+        
         <Route path="appointments" element={<CashboxAppointments />}  />
         <Route path="appointments/:type/:id" element={<KeepAliveWrapper><AppointmentsForm /></KeepAliveWrapper>}  />
 

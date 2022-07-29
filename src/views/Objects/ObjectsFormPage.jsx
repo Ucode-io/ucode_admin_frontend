@@ -158,7 +158,8 @@ const ObjectsFormPage = () => {
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
         removeTab(pathname)
-        if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
+        // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
+        if(tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data)
       })
       .catch(() => setBtnLoader(false))
   }

@@ -13,8 +13,6 @@ const MainLayout = () => {
 
   const { elements } = useSidebarElements()
 
-  
-
   useEffect(() => {
     dispatch(fetchConstructorTableListAction(appId))
   }, [dispatch, appId])

@@ -3,7 +3,7 @@
 
 .selector {
   display: flex;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
   border: 1px solid #D5DADD;
 
@@ -11,7 +11,7 @@
     width: 32px;
     height: 32px;
     min-width: 32px;
-    background: #F6F8F9;
+    background: #fff;
     border-right: 1px solid #D5DADD;
     display: flex;
     align-items: center;

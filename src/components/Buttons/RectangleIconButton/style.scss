@@ -2,7 +2,7 @@
 
 .RectangleIconButton {
   border: 1px solid #E5E9EB;
-  border-radius: 6px;
+  border-radius: 4px;
   width: 32px;
   min-width: 32px;
   height: 32px;
@@ -21,6 +21,7 @@
   &:hover {
     border-color: #0067F4;
   } 
+  
 
   &.error:hover {
     border-color: #FF4842;
@@ -33,5 +34,14 @@
   &.success:hover {
     border-color: #1AC19D;
   } 
+
+  &.white {
+    background-color: #fff;
+    color: #6E8BB7;
+
+    &:hover {
+      border-color: #6E8BB7;
+    }
+  }
 
 }

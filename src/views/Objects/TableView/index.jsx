@@ -87,7 +87,7 @@ const TableView = ({
 
   return (
       <DataTable
-        removableHeight={230}
+        removableHeight={217}
         currentPage={currentPage}
         pagesCount={pageCount}
         onPaginationChange={setCurrentPage}
@@ -99,6 +99,7 @@ const TableView = ({
         onRowClick={navigateToEditPage}
         onDeleteClick={deleteHandler}
         tableSlug={tableSlug}
+        tableStyle={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #E5E9EB' }}
       />
   )
 }

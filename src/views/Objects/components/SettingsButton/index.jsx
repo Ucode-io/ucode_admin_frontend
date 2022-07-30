@@ -17,8 +17,8 @@ const SettingsButton = () => {
 
   return (
     <NavLink to={url} target={"_blank"} >
-      <RectangleIconButton color="grey">
-        <Settings color="primary" />
+      <RectangleIconButton color="white">
+        <Settings />
       </RectangleIconButton>
     </NavLink>
   )

@@ -5,6 +5,7 @@ export default function Input(theme) {
     MuiInputBase: {
       styleOverrides: {
         root: {
+          backgroundColor: '#fff',
           [`& fieldset`]: {
                 borderRadius: 2,
           },

@@ -55,10 +55,9 @@ const ColumnsSelector = ({ tableSlug }) => {
     <div>
       <RectangleIconButton
         onClick={openMenu}
-        color="grey"
-        
+        color="white"
       >
-        <TableChart color="primary" />
+        <TableChart />
       </RectangleIconButton>
 
       <Menu

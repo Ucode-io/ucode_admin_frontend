@@ -22,7 +22,6 @@ const Sidebar = ({ elements = [] }) => {
         location.pathname.includes(child.path)
       )
     })
-
     return activeElement
   }, [location.pathname])
 

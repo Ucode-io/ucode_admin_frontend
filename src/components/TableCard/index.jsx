@@ -1,9 +1,13 @@
 import { Card } from "@mui/material"
 import style from "./style.module.scss"
 
-const TableCard = ({ children, disablePagination = false, extra, header, width, cardStyles={} }) => {
+
+const TableCard = ({ children, type, disablePagination = false, extra, header, width, cardStyles={} }) => {
+
+  
+
   return (
-    <div className={style.wrapper}>
+    <div className={`${style.wrapper} ${style[type] ?? ""}`}>
       <Card
         className={style.card}
         style={{ width }}

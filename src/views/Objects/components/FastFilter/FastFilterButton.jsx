@@ -39,8 +39,8 @@ const FastFilterButton = () => {
 
   return (
     <div>
-      <RectangleIconButton color="grey" onClick={openMenu} >
-        <FilterAlt color="primary" />
+      <RectangleIconButton color="white" onClick={openMenu} >
+        <FilterAlt />
       </RectangleIconButton>
 
       <Menu

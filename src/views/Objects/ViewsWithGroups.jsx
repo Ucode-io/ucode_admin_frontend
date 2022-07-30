@@ -18,7 +18,7 @@ import constructorObjectService from "../../services/constructorObjectService"
 import {
   getRelationFieldTabsLabel,
 } from "../../utils/getRelationFieldLabel"
-import { CircularProgress } from "@mui/material"
+import { Card, CircularProgress } from "@mui/material"
 import TreeView from "./TreeView"
 import FastFilter from "./components/FastFilter"
 import SettingsButton from "./components/SettingsButton"
@@ -98,11 +98,11 @@ const ViewsWithGroups = ({
 
             <ColumnsSelector tableSlug={tableSlug}  />
 
-            <RectangleIconButton color="grey">
-              <Upload color="primary" />
+            <RectangleIconButton color="white">
+              <Upload />
             </RectangleIconButton>
-            <RectangleIconButton color="grey">
-              <Download color="primary" />
+            <RectangleIconButton color="white">
+              <Download />
             </RectangleIconButton>
 
             <SettingsButton />
@@ -121,14 +121,14 @@ const ViewsWithGroups = ({
       </FiltersBlock>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
-        <TableCard cardStyles={{ paddingTop: 0 }} >
+        <TableCard type="withoutPadding" >
           <div className={style.tableCardHeader}>
             <TabList>
               {tabs?.map((tab) => (
                 <Tab key={tab.value}>{tab.label}</Tab>
               ))}
             </TabList>
-            <CreateButton onClick={navigateToCreatePage} />
+            <CreateButton type="secondary" onClick={navigateToCreatePage} />
           </div>
 
           {loader ? (

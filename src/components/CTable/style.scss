@@ -17,7 +17,7 @@
 
       td {
         border-bottom: 1px solid #E5E9EB;
-        border-left: 1px solid #E5E9EB;
+        border-right: 1px solid #E5E9EB;
       }
       
       // tr td:first-child {
@@ -38,7 +38,7 @@
 .CTableHead {
   position: sticky;
   top: 0;
-  background-color: #F6F7FA;
+  // background-color: #F6F7FA;
   z-index: 2;
 
   tr td {
@@ -55,6 +55,7 @@
 
 .CTableCell {
   padding: 8px 16px;
+  line-height: 12px;
   height: 48px;
 
 
@@ -68,17 +69,17 @@
   cursor: pointer;
   transition-duration: .2s;
   
-  &:nth-of-type(even)  {
+  // &:nth-of-type(even)  {
 
-    &:hover td {
-      background-color: #F5FBFF;
-    }
+  //   &:hover td {
+  //     background-color: #F5FBFF;
+  //   }
 
-    td {
-      background-color: #f4f6fa91;
-    }
+  //   td {
+  //     background-color: #f4f6fa91;
+  //   }
     
-  }
+  // }
 
   &:hover {
     background-color: rgba(#F5FBFF, 1) !important;

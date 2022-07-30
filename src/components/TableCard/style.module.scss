@@ -14,4 +14,25 @@
       justify-content: space-between;
     }
   }
+
+
+
+  &.withoutPadding {
+    padding: 0;
+
+    .card {
+      border-radius: 0;
+    }
+
+    .body {
+      padding: 0 !important;
+      padding-bottom: 8px !important;
+
+
+    }
+    // display: none;
+
+  } 
 }
+
+

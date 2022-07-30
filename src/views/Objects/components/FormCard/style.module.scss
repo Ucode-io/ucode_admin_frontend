@@ -5,10 +5,11 @@
 
   .header {
     box-shadow: inset 0px -1px 0px #e5e9eb;
-    padding: 14px 8px;
+    padding: 11px 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    min-height: 56px;
 
     .headerLeftSide {
       display: flex;

@@ -65,7 +65,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     dispatch(loginAction({data: computedData, cashboxData}))
       .unwrap()
       .then(() => {
-        if(selectedClientType?.name !== "CASHIER") {
+        if(selectedClientType?.name === "CASHIER") {
           navigate("/cashbox/opening")
         }
       })

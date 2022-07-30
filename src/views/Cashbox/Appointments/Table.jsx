@@ -107,7 +107,7 @@ const CashboxAppointMentsTable = ({ tableSlug, type }) => {
         columns={computedColumns}
         data={tableData}
         loader={tableLoader}
-        removableHeight={160}
+        removableHeight={220}
         currentPage={currentPage}
         pagesCount={pageCount}
         onPaginationChange={setCurrentPage}

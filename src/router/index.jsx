@@ -281,11 +281,10 @@ const Router = () => {
       </Route>
 
       <Route path="/cashbox" element={<CashboxLayout />}>
-        <Route index element={<Navigate to={cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"} />} />
+        <Route index element={<Navigate to={!cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"} />} />
 
-        {cashboxIsOpen && (
+        {cashboxIsOpen ? (
           <>
-            <Route path="opening" element={<CashboxOpening />} />
             <Route path="closing" element={<CashboxClosing />} />
 
             <Route path="appointments" element={<CashboxAppointments />} />
@@ -298,9 +297,9 @@ const Router = () => {
               }
             />
           </>
-        )}
+        ) :  <Route path="opening" element={<CashboxOpening />} />}
 
-        <Route path="*" element={<Navigate to={cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"} />} />
+        <Route path="*" element={<Navigate to={!cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"} />} />
       </Route>
 
       <Route path="*" element={<Navigate to={redirectLink} />} />

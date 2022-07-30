@@ -14,7 +14,6 @@ const elements = [
   },
 ]
 
-
 const CashboxLayout = () => {
   // const dispatch = useDispatch()
 

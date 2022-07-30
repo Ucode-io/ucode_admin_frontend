@@ -1,16 +1,21 @@
 import { DragHandle, Payments, Remove } from "@mui/icons-material"
 import { Divider, TextField } from "@mui/material"
 import { useForm } from "react-hook-form"
-import { useQuery } from "react-query"
+import { useMutation, useQuery } from "react-query"
+import { useDispatch } from "react-redux"
+import SaveButton from "../../../components/Buttons/SaveButton"
+import Footer from "../../../components/Footer"
 import FRow from "../../../components/FormElements/FRow"
 import HFTextField from "../../../components/FormElements/HFTextField"
 import PageFallback from "../../../components/PageFallback"
 import TableCard from "../../../components/TableCard"
+import { cashboxActions } from "../../../store/cashbox/cashbox.slice"
 import request from "../../../utils/request"
 import PaymentTypeIconGenerator from "../components/PaymentTypeIconGenerator"
 import styles from "./style.module.scss"
 
 const CashboxOpening = () => {
+  const dispatch = useDispatch()
   const { control, reset, watch, handleSubmit } = useForm({
     mode: 'all'
   })
@@ -31,14 +36,36 @@ const CashboxOpening = () => {
 
   const data = watch()
 
-  const onSubmit = (val) => {
-    console.log("VALll ---->", val)
+  const { mutate, isLoading: btnLoading } = useMutation((data) => {
+    return request.post('/cashbox_transaction', data)
+  }, {
+    onSuccess: () => {
+      dispatch(cashboxActions.setStatus('Открыто'))
+    }
+  })
+
+  const onSubmit = (values) => {
+    let amount = 0
+    let summ = 0
+
+    values?.overall_payments?.forEach((el) => {
+      amount += Number(el.amount ?? 0)
+      summ += Number(el.summ ?? 0)
+    })
+
+    const data = {
+      comment: values.comment,
+      status: 'Открыто',
+      amount_of_money: amount - summ
+    }
+    mutate(data)
   }
   
   if (isLoading) return <PageFallback />
 
   return (
-    <div>
+    <>
+    <div className={styles.page} >
       <TableCard>
         <table className={styles.table}>
           <thead>
@@ -63,7 +90,9 @@ const CashboxOpening = () => {
                 <td>
                   <TextField
                     size="small"
-                    readOnly
+                    InputProps={{
+                      readOnly: true,
+                    }}
                     value={payment.amount ?? 0}
                     fullWidth
                     type="number"
@@ -85,10 +114,12 @@ const CashboxOpening = () => {
                 <td>
                   <TextField
                     size="small"
-                    disabled
                     value={payment.amount - payment.summ}
                     fullWidth
                     type="number"
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 </td>
               </tr>
@@ -102,7 +133,7 @@ const CashboxOpening = () => {
           <HFTextField
             fullWidth
             control={control}
-            name="4"
+            name="comment"
             multiline
             rows={4}
             placeholder="Enter a comment"
@@ -111,6 +142,10 @@ const CashboxOpening = () => {
         </FRow>
       </TableCard>
     </div>
+    <Footer extra={<SaveButton onClick={handleSubmit(onSubmit)} loading={btnLoading} />} >
+
+    </Footer>
+    </>
   )
 }
 

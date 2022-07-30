@@ -11,6 +11,9 @@ export const {
   reducers: {
     setData: (state, {payload}) => {
       state.data = payload ?? {}
+    },
+    setStatus: (state, {payload}) => {
+      state.data.is_open = payload
     }
   }
 })

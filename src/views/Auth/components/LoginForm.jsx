@@ -9,6 +9,7 @@ import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useQuery } from "react-query"
 import { useDispatch } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import PrimaryButton from "../../../components/Buttons/PrimaryButton"
 import HFSelect from "../../../components/FormElements/HFSelect"
 import HFTextField from "../../../components/FormElements/HFTextField"
@@ -21,6 +22,7 @@ import DynamicFields from "./DynamicFields"
 const LoginForm = ({ navigateToRegistrationForm }) => {
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -48,7 +50,6 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   }, [clientTypeId, clientTypes])
 
   const onSubmit = (data) => {
-
     const computedData = {
       ...data,
       tables: Object.keys(data.tables ?? {}).map((key) => ({
@@ -57,11 +58,27 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
       })),
     }
 
+    const cashboxData = getCashboxData(data)
+
     setLoading(true)
 
-    dispatch(loginAction(computedData))
+    dispatch(loginAction({data: computedData, cashboxData}))
       .unwrap()
+      .then(() => {
+        if(cashboxData?.is_open === "Открыто") {
+          navigate("/cashbox/opening")
+        }
+      })
       .catch(() => setLoading(false))
+  }
+
+
+  const getCashboxData = (data) => {
+    if(selectedClientType?.name !== "CASHIER") return null
+    const cashboxId = data.tables.cashbox 
+    const cashboxTable = selectedClientType?.tables?.find(table => table.slug === "cashbox")
+    const selectedCashbox = cashboxTable?.data?.response?.find(object => object.guid === cashboxId)
+    return selectedCashbox
   }
 
   // const { data: branches } = useQuery(

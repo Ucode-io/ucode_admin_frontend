@@ -11,7 +11,9 @@ import PaymentTypeIconGenerator from "../components/PaymentTypeIconGenerator"
 import styles from "./style.module.scss"
 
 const CashboxOpening = () => {
-  const { control, reset, watch } = useForm()
+  const { control, reset, watch, handleSubmit } = useForm({
+    mode: 'all'
+  })
 
   const { isLoading } = useQuery(
     ["GET_CASHBOX_OPENING_DATA"],
@@ -19,17 +21,20 @@ const CashboxOpening = () => {
       return request.get("/open-cashbox")
     },
     {
-      onSuccess: (ddd) => {
-        console.log("DATA ===>", ddd)
-        // reset(data?.overall_payments?.map(el => ({...el, amount: el.amount ?? 0})))
+      onSuccess: (res) => {
+        reset({
+          overall_payments: res?.overall_payments?.map(el => ({...el, amount: el.amount ?? 0}))
+        })
       },
     }
   )
 
   const data = watch()
 
-  console.log("DATA ===>", data)
-
+  const onSubmit = (val) => {
+    console.log("VALll ---->", val)
+  }
+  
   if (isLoading) return <PageFallback />
 
   return (
@@ -58,7 +63,7 @@ const CashboxOpening = () => {
                 <td>
                   <TextField
                     size="small"
-                    disabled
+                    readOnly
                     value={payment.amount ?? 0}
                     fullWidth
                     type="number"
@@ -101,6 +106,7 @@ const CashboxOpening = () => {
             multiline
             rows={4}
             placeholder="Enter a comment"
+            readOnly
           />
         </FRow>
       </TableCard>

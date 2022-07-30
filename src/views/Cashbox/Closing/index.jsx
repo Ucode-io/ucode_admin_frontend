@@ -1,20 +1,57 @@
 import { DragHandle, Payments, Remove } from "@mui/icons-material"
-import { Divider } from "@mui/material"
+import { Divider, TextField } from "@mui/material"
 import { useForm } from "react-hook-form"
 import FRow from "../../../components/FormElements/FRow"
 import HFTextField from "../../../components/FormElements/HFTextField"
 import TableCard from "../../../components/TableCard"
 import styles from "../Opening/style.module.scss"
-import PaymeIcon from "../../../assets/icons/payme-icon.svg"
-import CashIcon from "../../../assets/icons/cash-icon.svg"
-import UzCardIcon from "../../../assets/icons/uzcard-icon.svg"
-import HumoIcon from "../../../assets/icons/humo-icon.svg"
-import ClickIcon from "../../../assets/icons/click-icon.svg"
-import SVG from "react-inlinesvg"
-
+import { useQuery } from "react-query"
+import request from "../../../utils/request"
+import PageFallback from "../../../components/PageFallback"
+import PaymentTypeIconGenerator from "../components/PaymentTypeIconGenerator"
+import { useMemo } from "react"
+import { numberWithSpaces } from "../../../utils/formatNumbers"
 
 const CashboxClosing = () => {
-  const { control } = useForm()
+  const { control, reset, watch, handleSubmit } = useForm({
+    mode: "all",
+  })
+
+  const { isLoading } = useQuery(
+    ["GET_CASHBOX_OPENING_DATA"],
+    () => {
+      return request.get("/close-cashbox")
+    },
+    {
+      onSuccess: (res) => {
+        reset({
+          overall_payments: res?.overall_payments?.map((el) => ({
+            ...el,
+            amount: el.amount ?? 0,
+          })),
+        })
+      },
+    }
+  )
+
+  const data = watch()
+
+  const total = useMemo(() => {
+    let amount = 0
+    let summ = 0
+
+    data?.overall_payments?.forEach((el) => {
+      amount += Number(el.amount ?? 0)
+      summ += Number(el.summ ?? 0)
+    })
+
+    return {
+      amount,
+      summ,
+    }
+  }, [data])
+
+  if (isLoading) return <PageFallback />
 
   return (
     <div>
@@ -22,14 +59,14 @@ const CashboxClosing = () => {
         <div className={styles.row}>
           <div className={styles.section}>
             <p className={styles.label}>Общая сумма</p>
-            
-            <div className={styles.value}>10 500 000</div>
+
+            <div className={styles.value}>{ numberWithSpaces(total.amount) }</div>
           </div>
 
           <div className={styles.section}>
             <p className={styles.label}>Расход</p>
 
-            <div className={styles.value}>-1 500 000</div>
+            <div className={styles.value}>{ numberWithSpaces(total.amount - total.summ) }</div>
           </div>
         </div>
       </TableCard>
@@ -48,113 +85,54 @@ const CashboxClosing = () => {
           </thead>
 
           <tbody>
-            <tr>
-              <td>
-                <div className={styles.iconBlock}>
-                  <SVG src={ClickIcon} />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="1" fullWidth />
-              </td>
-              <td>
-                <div className={styles.iconBlock}>
-                  <Remove color="primary" />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="2" fullWidth />
-              </td>
-              <td>
-                <div className={styles.iconBlock}>
-                  <DragHandle color="primary" />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="3" fullWidth />
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <div className={styles.iconBlock}>
-                <SVG src={UzCardIcon} />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="1" fullWidth />
-              </td>
-              <td>
-                <div className={styles.iconBlock}>
-                  <Remove color="primary" />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="2" fullWidth />
-              </td>
-              <td>
-                <div className={styles.iconBlock}>
-                  <DragHandle color="primary" />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="3" fullWidth />
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <div className={styles.iconBlock}>
-                  <SVG src={HumoIcon} />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="1" fullWidth />
-              </td>
-              <td>
-                <div className={styles.iconBlock}>
-                  <Remove color="primary" />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="2" fullWidth />
-              </td>
-              <td>
-                <div className={styles.iconBlock}>
-                  <DragHandle color="primary" />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="3" fullWidth />
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <div className={styles.iconBlock}>
-                  <SVG src={CashIcon} />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="1" fullWidth />
-              </td>
-              <td>
-                <div className={styles.iconBlock}>
-                  <Remove color="primary" />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="2" fullWidth />
-              </td>
-              <td>
-                <div className={styles.iconBlock}>
-                  <DragHandle color="primary" />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="3" fullWidth />
-              </td>
-            </tr>
+            {data?.overall_payments?.map((payment, index) => (
+              <tr key={payment.type}>
+                <td>
+                  <div className={styles.iconBlock}>
+                    <PaymentTypeIconGenerator type={payment.type} />
+                  </div>
+                </td>
+                <td>
+                  <TextField
+                    size="small"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    value={payment.amount ?? 0}
+                    fullWidth
+                    type="number"
+                  />
+                </td>
+                <td>
+                  <div className={styles.iconBlock}>
+                    <Remove color="primary" />
+                  </div>
+                </td>
+                <td>
+                  <HFTextField
+                    control={control}
+                    name={`overall_payments.[${index}].summ`}
+                    fullWidth
+                  />
+                </td>
+                <td>
+                  <div className={styles.iconBlock}>
+                    <DragHandle color="primary" />
+                  </div>
+                </td>
+                <td>
+                  <TextField
+                    size="small"
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    value={Number(payment.amount ?? 0) - Number(payment.summ ?? 0)}
+                    fullWidth
+                    type="number"
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
 

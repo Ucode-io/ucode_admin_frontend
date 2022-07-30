@@ -52,7 +52,7 @@ const RelationSection = ({ relation }) => {
       const pageCount = Math.ceil(data.count / 10)
       if (id) {
         setTableData(objectToArray(data.response ?? {}))
-        setPageCount(isNaN(pageCount) ? 1 : pageCount)
+        setPageCount(isNaN(data.count) ? 1 : Math.ceil(data.count / 5))
       }
 
       setColumns(data.fields ?? [])

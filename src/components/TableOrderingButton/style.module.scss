@@ -11,8 +11,8 @@
 
 
   .icon {
-    font-size: 28px;
-    color: colors.$grey;
+    font-size: 18px;
+    color: #6E7C87;
 
 
     &.active {
@@ -22,12 +22,12 @@
 
     &.up {
       // margin-bottom: -8px;
-      transform: translateY(9px);
+      transform: translateY(5px);
     }
 
     &.down {
       // margin-top: -7px;
-      transform: translateY(-9px);
+      transform: translateY(-4px);
     }
   }
 

@@ -128,7 +128,7 @@ const ViewsWithGroups = ({
                 <Tab key={tab.value}>{tab.label}</Tab>
               ))}
             </TabList>
-            <CreateButton type="secondary" onClick={navigateToCreatePage} />
+            <CreateButton type="secondary" onClick={navigateToCreatePage}  />
           </div>
 
           {loader ? (

@@ -44,7 +44,7 @@ const TableView = ({
 
       setViews(data.views ?? [])
       setTableData(objectToArray(data.response ?? {}))
-      setPageCount(isNaN(pageCount) ? 1 : pageCount)
+      setPageCount(isNaN(data?.count) ? 1 : Math.ceil(data.count / 10))
       dispatch(
         tableColumnActions.setList({
           tableSlug: tableSlug,

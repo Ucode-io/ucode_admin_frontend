@@ -21,6 +21,7 @@ import Login from "../views/Auth/Login"
 import Registration from "../views/Auth/Registration"
 import CashboxAppointments from "../views/Cashbox/Appointments"
 import AppointmentsForm from "../views/Cashbox/Appointments/Form"
+import CashboxClosing from "../views/Cashbox/Closing"
 import CashboxOpening from "../views/Cashbox/Opening"
 import AppsPage from "../views/Constructor/Apps"
 import AppsForm from "../views/Constructor/Apps/AppsForm"
@@ -158,6 +159,7 @@ const Router = () => {
        <Route index element={<Navigate to={'/cashbox/appointments'} />} />
 
         <Route path="opening" element={<CashboxOpening />} />
+        <Route path="closing" element={<CashboxClosing />} />
         
         <Route path="appointments" element={<CashboxAppointments />}  />
         <Route path="appointments/:type/:id" element={<KeepAliveWrapper><AppointmentsForm /></KeepAliveWrapper>}  />

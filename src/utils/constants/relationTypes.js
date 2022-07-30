@@ -1,7 +1,7 @@
 
 
 export const relationTyes = [
-  'One2Many',
+  // 'One2Many',
   'Many2One',
   'Many2Many',
   'Recursive'

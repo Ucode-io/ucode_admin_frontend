@@ -41,7 +41,7 @@ const Sidebar = ({ elements = [] }) => {
           className={styles.header}
           onClick={() => setRightBlockVisible((prev) => !prev)}
         >
-          <img className={styles.logo} src={companyLogo} alt="soliq-logo" />
+          <img className={styles.logo} src={companyLogo} alt="logo" />
         </div>
 
         <div className={styles.scrollBlock} >

@@ -27,18 +27,14 @@
       tr:last-child td {
         // border-bottom: none;
       }
-    
     }
-
-
-
   }
 }
 
 .CTableHead {
   position: sticky;
   top: 0;
-  // background-color: #F6F7FA;
+  background-color: #fff;
   z-index: 2;
 
   tr td {
@@ -68,18 +64,6 @@
 .CTableRow {
   cursor: pointer;
   transition-duration: .2s;
-  
-  // &:nth-of-type(even)  {
-
-  //   &:hover td {
-  //     background-color: #F5FBFF;
-  //   }
-
-  //   td {
-  //     background-color: #f4f6fa91;
-  //   }
-    
-  // }
 
   &:hover {
     background-color: rgba(#F5FBFF, 1) !important;

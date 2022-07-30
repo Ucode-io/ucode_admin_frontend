@@ -1,13 +1,36 @@
 import { DragHandle, Payments, Remove } from "@mui/icons-material"
-import { Divider } from "@mui/material"
+import { Divider, TextField } from "@mui/material"
 import { useForm } from "react-hook-form"
+import { useQuery } from "react-query"
 import FRow from "../../../components/FormElements/FRow"
 import HFTextField from "../../../components/FormElements/HFTextField"
+import PageFallback from "../../../components/PageFallback"
 import TableCard from "../../../components/TableCard"
+import request from "../../../utils/request"
+import PaymentTypeIconGenerator from "../components/PaymentTypeIconGenerator"
 import styles from "./style.module.scss"
 
 const CashboxOpening = () => {
-  const { control } = useForm()
+  const { control, reset, watch } = useForm()
+
+  const { isLoading } = useQuery(
+    ["GET_CASHBOX_OPENING_DATA"],
+    () => {
+      return request.get("/open-cashbox")
+    },
+    {
+      onSuccess: (ddd) => {
+        console.log("DATA ===>", ddd)
+        // reset(data?.overall_payments?.map(el => ({...el, amount: el.amount ?? 0})))
+      },
+    }
+  )
+
+  const data = watch()
+
+  console.log("DATA ===>", data)
+
+  if (isLoading) return <PageFallback />
 
   return (
     <div>
@@ -25,41 +48,61 @@ const CashboxOpening = () => {
           </thead>
 
           <tbody>
-            <tr>
-              <td>
-                <div className={styles.iconBlock}>
-                  <Payments color="primary" />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="1" fullWidth  />
-              </td>
-              <td>
-                <div className={styles.iconBlock}>
-                  <Remove color="primary" />
-                </div>
-              </td>
-              <td>
-              <HFTextField control={control} name="2" fullWidth  />
-              </td>
-              <td>
-                <div className={styles.iconBlock}>
-                  <DragHandle color="primary" />
-                </div>
-              </td>
-              <td>
-                <HFTextField control={control} name="3" fullWidth  />
-              </td>
-            </tr>
+            {data?.overall_payments?.map((payment, index) => (
+              <tr key={payment.type}>
+                <td>
+                  <div className={styles.iconBlock}>
+                    <PaymentTypeIconGenerator type={payment.type} />
+                  </div>
+                </td>
+                <td>
+                  <TextField
+                    size="small"
+                    disabled
+                    value={payment.amount ?? 0}
+                    fullWidth
+                    type="number"
+                  />
+                </td>
+                <td>
+                  <div className={styles.iconBlock}>
+                    <Remove color="primary" />
+                  </div>
+                </td>
+                <td>
+                  <HFTextField control={control} name={`overall_payments.[${index}].summ`} fullWidth />
+                </td>
+                <td>
+                  <div className={styles.iconBlock}>
+                    <DragHandle color="primary" />
+                  </div>
+                </td>
+                <td>
+                  <TextField
+                    size="small"
+                    disabled
+                    value={payment.amount - payment.summ}
+                    fullWidth
+                    type="number"
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
 
         <Divider className={styles.divider} />
 
-        <FRow label="Комментария" >
-          <HFTextField fullWidth control={control} name="4" multiline rows={4} placeholder="Enter a comment" />
+        <FRow label="Комментария">
+          <HFTextField
+            fullWidth
+            control={control}
+            name="4"
+            multiline
+            rows={4}
+            placeholder="Enter a comment"
+          />
         </FRow>
-
       </TableCard>
     </div>
   )

@@ -4,7 +4,7 @@ import SecondaryButton from './SecondaryButton';
 
 const CreateButton = ({ children, title = "Добавить", type, ...props }) => {
 
-  if(type === 'secondary') return <SecondaryButton>
+  if(type === 'secondary') return <SecondaryButton {...props} >
     <AddIcon />
     {title}
   </SecondaryButton>

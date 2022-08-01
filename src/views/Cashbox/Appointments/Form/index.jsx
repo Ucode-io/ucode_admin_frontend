@@ -77,14 +77,14 @@ const AppointmentsForm = () => {
       (payment) => (paymentsTotalPrice += Number(payment.amount))
     )
 
-    const difference = Number(paymentsTotalPrice) - Number(totalPrice)
+    // const difference = Number(paymentsTotalPrice) - Number(totalPrice)
 
-    if (difference < 0) {
-      return dispatch(showAlert("Вы не оплатили полную стоимость приема"))
-    }
-    if (difference > 0) {
-      return dispatch(showAlert("Вы оплатили больше чем положено"))
-    }
+    // if (difference < 0) {
+    //   return dispatch(showAlert("Вы не оплатили полную стоимость приема"))
+    // }
+    // if (difference > 0) {
+    //   return dispatch(showAlert("Вы оплатили больше чем положено"))
+    // }
 
     setBtnLoader(true)
 

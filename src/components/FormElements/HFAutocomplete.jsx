@@ -1,13 +1,15 @@
 import {
+  Autocomplete,
   FormControl,
   FormHelperText,
   InputLabel,
   MenuItem,
   Select,
+  TextField,
 } from "@mui/material"
 import { Controller } from "react-hook-form"
 
-const HFSelect = ({
+const HFAutocomplete = ({
   control,
   name,
   label,
@@ -35,7 +37,7 @@ const HFSelect = ({
       }) => (
         <FormControl style={{ width }}>
           <InputLabel size="small">{label}</InputLabel>
-          <Select
+          {/* <Select
             value={value || ""}
             label={label}
             size="small"
@@ -60,7 +62,15 @@ const HFSelect = ({
                 {option.label}
               </MenuItem>
             ))}
-          </Select>
+          </Select> */}
+          <Autocomplete
+            // disablePortal
+            options={options}
+            value={value}
+            onChange={(e, value) => onChange(value.value)}
+            // sx={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} size="small" />}
+          />
           {!disabledHelperText && error?.message && (
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
@@ -70,4 +80,4 @@ const HFSelect = ({
   )
 }
 
-export default HFSelect
+export default HFAutocomplete

@@ -7,6 +7,7 @@ export const fetchConstructorTableListAction = createAsyncThunk(
   "object/fetchConstructorTableList",
   async (appId, { dispatch }) => {
     dispatch(constructorTableActions.setLoader(true))
+    dispatch(constructorTableActions.setList([]))
     try {
       const res = await applicationService.getById(appId)
       dispatch(constructorTableActions.setList(res.tables))

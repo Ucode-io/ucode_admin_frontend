@@ -1,17 +1,18 @@
-import { differenceInMinutes, format, setHours, setMinutes } from "date-fns"
+import { Add } from "@mui/icons-material"
+import { IconButton } from "@mui/material"
+import { add, differenceInMinutes, format, setHours, setMinutes } from "date-fns"
 import { useMemo } from "react"
 import { getFieldLabel } from "../../../utils/getFieldLabel"
 import { timesList } from "../../../utils/timesList"
 import styles from "./style.module.scss"
 
-const ObjectColumn = ({ data = [], view }) => {
+const ObjectColumn = ({ data = [], view, columnIndex, navigateToCreatePage }) => {
   const computedData = useMemo(() => {
     if (!data.length) return []
 
     const calendarStartTime = setMinutes(setHours(data[0].startTime, 8), 0)
 
     const result = data.map((el) => {
-
       const startPosition =
         Math.floor(differenceInMinutes(el.startTime, calendarStartTime) / 30) *
         40
@@ -24,15 +25,14 @@ const ObjectColumn = ({ data = [], view }) => {
         height,
       }
     })
-
     return result
-
   }, [data])
 
   return (
-    <div className={styles.objectColumn}>
+    <div className={styles.objectColumn}  >
       {timesList.map((time) => (
-        <div key={time} className={styles.calendarRow} />
+        <div key={time} className={styles.calendarRow} style={{ overflow: 'auto' }} >
+          <div className={styles.addButton} onClick={() => navigateToCreatePage(time, columnIndex, data)} > <Add color="" />Создат</div> </div>
       ))}
 
       {computedData.map((el) => (

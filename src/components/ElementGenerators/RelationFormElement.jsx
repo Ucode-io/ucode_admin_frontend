@@ -1,15 +1,13 @@
-import { format } from "date-fns"
-import { useEffect, useMemo, useState } from "react"
-import constructorObjectService from "../../services/constructorObjectService"
-import { Autocomplete, CircularProgress, TextField } from "@mui/material"
-import FRow from "../FormElements/FRow"
+import { Autocomplete, TextField } from "@mui/material"
+import { useMemo, useState } from "react"
 import { Controller } from "react-hook-form"
-import FEditableRow from "../FormElements/FEditableRow"
-import IconGenerator from "../IconPicker/IconGenerator"
-import useDebounce from "../../hooks/useDebounce"
+import { useQuery } from "react-query"
 import useTabRouter from "../../hooks/useTabRouter"
-import { generateGUID } from "../../utils/generateID"
+import constructorObjectService from "../../services/constructorObjectService"
 import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
+import FEditableRow from "../FormElements/FEditableRow"
+import FRow from "../FormElements/FRow"
+import IconGenerator from "../IconPicker/IconGenerator"
 
 const RelationFormElement = ({
   control,
@@ -79,6 +77,8 @@ const RelationFormElement = ({
   )
 }
 
+// ============== AUTOCOMPLETE ELEMENT =====================
+
 const AutoCompleteElement = ({
   field,
   value,
@@ -87,121 +87,79 @@ const AutoCompleteElement = ({
   error,
   disabledHelperText,
 }) => {
-  const [loader, setLoader] = useState(false)
   const { navigateToForm } = useTabRouter()
 
-  const [options, setOptions] = useState([])
-  const [searchText, setSearchText] = useState("")
+  const { data: options } = useQuery(
+    ["GET_OBJECT_LIST", tableSlug],
+    () => {
+      return constructorObjectService.getList(tableSlug, { data: {} })
+    },
+    {
+      select: (res) => {
+        return res?.data?.response ?? []
+      },
+    }
+  )
 
-  const id = useMemo(() => {
-    return generateGUID()
-  }, [])
-  
+  const computedValue = useMemo(() => {
+    const findedOption = options?.find((el) => el?.guid === value)
+    return findedOption ? [findedOption] : []
+  }, [options, value])
+
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option)
   }
 
-  const computedValue = useMemo(() => {
-
-    const findedOption = options.find((el) => el?.guid === value)
-
-    return findedOption ? [findedOption] : []
-  }, [options, value])
-
-
-  const getOptions = (search) => {
-    setLoader(true)
-    constructorObjectService
-      .getList(tableSlug, { data: { search } })
-      .then((res) => {
-        if(JSON.stringify(res.data.response) !== JSON.stringify(options)) setOptions(res.data.response ?? [])
-      })
-      .finally(() => setLoader(false))
-  }
-
-  const debouncedGetOptions = useDebounce(getOptions, 500)
-
-
-  const getValueOption = () => {
-    setLoader(true)
-    constructorObjectService
-      .getById(tableSlug, value)
-      .then((res) => {
-        setOptions([res.data.response])
-      })
-      .finally(() => setLoader(false))
-  }
-
-  // useDebouncedWatch(
-  //   () => {
-  //     getOptions()
-  //   },
-  //   [searchText],
-  //   500
-  // )
-
-  useEffect(() => {
-    if (value) getValueOption()
-    else getOptions()
-  }, [])
-
   return (
     <Autocomplete
-      id={id}
-      options={options}
-      getOptionLabel={getOptionLabel}
-      disableCloseOnSelect
-      multiple
-      onInputChange={(event, newInputValue) => {
-        debouncedGetOptions(newInputValue)
-        // setSearchText(newInputValue)
-      }}
-      filterOptions={(x) => x}
+      options={options ?? []}
       value={computedValue}
-      loading={loader}
       onChange={(event, newValue) => {
         setValue(newValue?.[newValue?.length - 1]?.guid ?? null)
       }}
-      renderTags={(value, index) => {
-        return (
-          <>
-            {getOptionLabel(value[0])}
-            <IconGenerator
-              icon="arrow-up-right-from-square.svg"
-              style={{ marginLeft: "10px", cursor: "pointer" }}
-              size={15}
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                navigateToForm(tableSlug, "EDIT", value[0])
-              }}
-            />
-          </>
-        )
-      }}
-      renderInput={(params) => {
-        return (
-          <TextField
-            {...params}
-            size="small"
-            error={error}
-            helperText={!disabledHelperText && error?.message}
-            inputProps={{
-              ...params.inputProps,
-              // value: '0000'
-            }}
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loader ? <CircularProgress color="primary" size={20} /> : null}
-                  {params.InputProps.endAdornment}
-                </>
-              ),
+      blurOnSelect
+      openOnFocus
+      getOptionLabel={(option) => getRelationFieldLabel(field, option)}
+      multiple
+      isOptionEqualToValue={(option, value) => option.value === value}
+      renderInput={(params) => <TextField {...params} size="small" />}
+      renderTags={(value, index) => (
+        <>
+          {getOptionLabel(value[0])}
+          <IconGenerator
+            icon="arrow-up-right-from-square.svg"
+            style={{ marginLeft: "10px", cursor: "pointer" }}
+            size={15}
+            onClick={(e) => {
+              e.stopPropagation()
+              e.preventDefault()
+              navigateToForm(tableSlug, "EDIT", value[0])
             }}
           />
-        )
-      }}
+        </>
+      )}
+
+      // renderOption={(props, option, { inputValue }) => {
+      //   const matches = match(option.title, inputValue);
+      //   const parts = parse(option.title, matches);
+
+      //   return (
+      //     <li {...props}>
+      //       <div>
+      //         {parts.map((part, index) => (
+      //           <span
+      //             key={index}
+      //             style={{
+      //               fontWeight: part.highlight ? 700 : 400,
+      //             }}
+      //           >
+      //             {part.text}
+      //           </span>
+      //         ))}
+      //       </div>
+      //     </li>
+      //   );
+      // }}
     />
   )
 }

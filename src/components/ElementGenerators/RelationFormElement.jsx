@@ -117,11 +117,17 @@ const AutoCompleteElement = ({
       onChange={(event, newValue) => {
         setValue(newValue?.[newValue?.length - 1]?.guid ?? null)
       }}
+      noOptionsText={
+        <span onClick={() =>  navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
+          Создать новый
+        </span>
+      }
+      disablePortal
       blurOnSelect
       openOnFocus
       getOptionLabel={(option) => getRelationFieldLabel(field, option)}
       multiple
-      isOptionEqualToValue={(option, value) => option.value === value}
+      isOptionEqualToValue={(option, value) => option.guid === value.guid}
       renderInput={(params) => <TextField {...params} size="small" />}
       renderTags={(value, index) => (
         <>

@@ -11,6 +11,7 @@ import { endOfWeek, format } from "date-fns"
 import { useEffect, useMemo, useState } from "react"
 import CRangePicker from "../../../components/DatePickers/CRangePicker"
 import FiltersBlock from "../../../components/FiltersBlock"
+import PageFallback from "../../../components/PageFallback"
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
@@ -151,18 +152,18 @@ const CalendarView = ({
     navigateToForm(tableSlug, "CREATE", null, { [startTimeStampSlug]: computedDate, ...filters })
   }
 
-  useDebouncedWatch(
-    () => {
-      getAllData()
-    },
-    [filters],
-    500
-  )
+  // useDebouncedWatch(
+  //   () => {
+  //     getAllData()
+  //   },
+  //   [filters],
+  //   500
+  // )
 
   useEffect(() => {
     if (!dateFilters[0] || !dateFilters[1]) return
     getAllData()
-  }, [dateFilters])
+  }, [dateFilters, filters])
 
   return (
     <div>
@@ -183,7 +184,7 @@ const CalendarView = ({
         <FastFilter filters={filters} onChange={filterChangeHandler} />
       </FiltersBlock>
 
-      <div className={styles.main}>
+      {loader ? <PageFallback /> : <div className={styles.main}>
         <div className={styles.card}>
           <div className={styles.wrapper}>
             <DatesRow data={computedData} />
@@ -216,7 +217,7 @@ const CalendarView = ({
             </div>
           </div>
         </div>
-      </div>
+      </div>}
     </div>
   )
 }

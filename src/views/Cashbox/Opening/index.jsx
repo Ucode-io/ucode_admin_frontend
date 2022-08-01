@@ -17,7 +17,7 @@ import styles from "./style.module.scss"
 const CashboxOpening = () => {
   const dispatch = useDispatch()
   const { control, reset, watch, handleSubmit } = useForm({
-    mode: 'all'
+    mode: "all",
   })
 
   const { isLoading } = useQuery(
@@ -28,7 +28,10 @@ const CashboxOpening = () => {
     {
       onSuccess: (res) => {
         reset({
-          overall_payments: res?.overall_payments?.map(el => ({...el, amount: el.amount ?? 0}))
+          overall_payments: res?.overall_payments?.map((el) => ({
+            ...el,
+            amount: el.amount ?? 0,
+          })),
         })
       },
     }
@@ -36,13 +39,16 @@ const CashboxOpening = () => {
 
   const data = watch()
 
-  const { mutate, isLoading: btnLoading } = useMutation((data) => {
-    return request.post('/cashbox_transaction', data)
-  }, {
-    onSuccess: () => {
-      dispatch(cashboxActions.setStatus('Открыто'))
+  const { mutate, isLoading: btnLoading } = useMutation(
+    (data) => {
+      return request.post("/cashbox_transaction", data)
+    },
+    {
+      onSuccess: () => {
+        dispatch(cashboxActions.setStatus("Открыто"))
+      },
     }
-  })
+  )
 
   const onSubmit = (values) => {
     let amount = 0
@@ -55,96 +61,102 @@ const CashboxOpening = () => {
 
     const data = {
       comment: values.comment,
-      status: 'Открыто',
-      amount_of_money: amount - summ
+      status: "Открыто",
+      amount_of_money: summ - amount,
     }
     mutate(data)
   }
-  
+
   if (isLoading) return <PageFallback />
 
   return (
     <>
-    <div className={styles.page} >
-      <TableCard>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Тип</th>
-              <th>План</th>
-              <th></th>
-              <th>Факт</th>
-              <th></th>
-              <th>Разница</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {data?.overall_payments?.map((payment, index) => (
-              <tr key={payment.type}>
-                <td>
-                  <div className={styles.iconBlock}>
-                    <PaymentTypeIconGenerator type={payment.type} />
-                  </div>
-                </td>
-                <td>
-                  <TextField
-                    size="small"
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                    value={payment.amount ?? 0}
-                    fullWidth
-                    type="number"
-                  />
-                </td>
-                <td>
-                  <div className={styles.iconBlock}>
-                    <Remove color="primary" />
-                  </div>
-                </td>
-                <td>
-                  <HFTextField control={control} name={`overall_payments.[${index}].summ`} fullWidth />
-                </td>
-                <td>
-                  <div className={styles.iconBlock}>
-                    <DragHandle color="primary" />
-                  </div>
-                </td>
-                <td>
-                  <TextField
-                    size="small"
-                    value={payment.amount - payment.summ}
-                    fullWidth
-                    type="number"
-                    InputProps={{
-                      readOnly: true,
-                    }}
-                  />
-                </td>
+      <div className={styles.page}>
+        <TableCard>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Тип</th>
+                <th>Факт</th>
+                <th></th>
+                <th>План</th>
+                <th></th>
+                <th>Разница</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
 
-        <Divider className={styles.divider} />
+            <tbody>
+              {data?.overall_payments?.map((payment, index) => (
+                <tr key={payment.type}>
+                  <td>
+                    <div className={styles.iconBlock}>
+                      <PaymentTypeIconGenerator type={payment.type} />
+                    </div>
+                  </td>
+                  <td>
+                    <HFTextField
+                      control={control}
+                      name={`overall_payments.[${index}].summ`}
+                      fullWidth
+                    />
+                  </td>
+                  <td>
+                    <div className={styles.iconBlock}>
+                      <Remove color="primary" />
+                    </div>
+                  </td>
+                  <td>
+                    <TextField
+                      size="small"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                      value={payment.amount ?? 0}
+                      fullWidth
+                      type="number"
+                    />
+                  </td>
+                  <td>
+                    <div className={styles.iconBlock}>
+                      <DragHandle color="primary" />
+                    </div>
+                  </td>
+                  <td>
+                    <TextField
+                      size="small"
+                      value={payment.summ - payment.amount}
+                      fullWidth
+                      type="number"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-        <FRow label="Комментария">
-          <HFTextField
-            fullWidth
-            control={control}
-            name="comment"
-            multiline
-            rows={4}
-            placeholder="Enter a comment"
-            readOnly
-          />
-        </FRow>
-      </TableCard>
-    </div>
-    <Footer extra={<SaveButton onClick={handleSubmit(onSubmit)} loading={btnLoading} />} >
+          <Divider className={styles.divider} />
 
-    </Footer>
+          <FRow label="Комментария">
+            <HFTextField
+              fullWidth
+              control={control}
+              name="comment"
+              multiline
+              rows={4}
+              placeholder="Enter a comment"
+              readOnly
+            />
+          </FRow>
+        </TableCard>
+      </div>
+      <Footer
+        extra={
+          <SaveButton onClick={handleSubmit(onSubmit)} loading={btnLoading} />
+        }
+      ></Footer>
     </>
   )
 }

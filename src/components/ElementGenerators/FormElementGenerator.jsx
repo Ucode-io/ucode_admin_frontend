@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import FRow from "../FormElements/FRow"
+import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
@@ -66,11 +67,11 @@ const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
     case "PICK_LIST":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFSelect
+          <HFAutocomplete
             control={control}
             name={computedSlug}
             width="100%"
-            options={computedOptions}
+            options={field?.attributes?.options}
             required={field.required}
             placeholder={field.attributes?.placeholder}
             {...props}

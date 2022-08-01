@@ -1,13 +1,6 @@
-import {
-  Autocomplete,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material"
+import { FormControl, FormHelperText, InputLabel } from "@mui/material"
 import { Controller } from "react-hook-form"
+import CAutoCompleteSelect from "../CAutoCompleteSelect"
 
 const HFAutocomplete = ({
   control,
@@ -63,13 +56,13 @@ const HFAutocomplete = ({
               </MenuItem>
             ))}
           </Select> */}
-          <Autocomplete
-            // disablePortal
-            options={options}
+          <CAutoCompleteSelect
             value={value}
-            onChange={(e, value) => onChange(value.value)}
-            // sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} size="small" />}
+            onChange={(val) => {
+              onChange(val)
+              onFormChange(val)
+            }}
+            options={options}
           />
           {!disabledHelperText && error?.message && (
             <FormHelperText error>{error?.message}</FormHelperText>

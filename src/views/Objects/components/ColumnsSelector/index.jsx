@@ -3,7 +3,6 @@ import { Menu, Switch } from "@mui/material"
 import { useMemo, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Container, Draggable } from "react-smooth-dnd"
-import FiltersBlockButton from "../../../../components/Buttons/FiltersBlockButton"
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
 import { tableColumnActions } from "../../../../store/tableColumn/tableColumn.slice"
 import { applyDrag } from "../../../../utils/applyDrag"
@@ -56,9 +55,9 @@ const ColumnsSelector = ({ tableSlug }) => {
     <div>
       <RectangleIconButton
         onClick={openMenu}
-        color="grey"
+        color="white"
       >
-        <TableChart color="primary" />
+        <TableChart />
       </RectangleIconButton>
 
       <Menu

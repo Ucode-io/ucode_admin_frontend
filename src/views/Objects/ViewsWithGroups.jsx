@@ -18,8 +18,11 @@ import constructorObjectService from "../../services/constructorObjectService"
 import {
   getRelationFieldTabsLabel,
 } from "../../utils/getRelationFieldLabel"
-import { CircularProgress } from "@mui/material"
+import { Card, CircularProgress } from "@mui/material"
 import TreeView from "./TreeView"
+import FastFilter from "./components/FastFilter"
+import SettingsButton from "./components/SettingsButton"
+import FastFilterButton from "./components/FastFilter/FastFilterButton"
 
 const ViewsWithGroups = ({
   tableSlug,
@@ -78,7 +81,7 @@ const ViewsWithGroups = ({
 
     constructorObjectService
       .getList(tableSlug, {
-        data: { offset: 0, limit: 1000 },
+        data: { offset: 0, limit: 10 },
       })
       .then(({ data }) => setTabsData(data.response))
       .finally(() => setLoader(false))
@@ -89,16 +92,21 @@ const ViewsWithGroups = ({
       <FiltersBlock
         extra={
           <>
+            <FastFilterButton  />
+
             <GroupFieldSelector tableSlug={tableSlug} />
 
-            <ColumnsSelector tableSlug={tableSlug} />
+            <ColumnsSelector tableSlug={tableSlug}  />
 
-            <RectangleIconButton color="grey">
-              <Upload color="primary" />
+            <RectangleIconButton color="white">
+              <Upload />
             </RectangleIconButton>
-            <RectangleIconButton color="grey">
-              <Download color="primary" />
+            <RectangleIconButton color="white">
+              <Download />
             </RectangleIconButton>
+
+            <SettingsButton />
+
           </>
         }
       >
@@ -108,22 +116,19 @@ const ViewsWithGroups = ({
           views={views}
           setViews={setViews}
         />
-        <SearchInput />
-        <FiltersBlockButton>
-          <FilterAlt color="primary" />
-          Быстрый фильтр
-        </FiltersBlockButton>
+        {/* <SearchInput /> */}
+        <FastFilter filters={filters} onChange={filterChangeHandler} />
       </FiltersBlock>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
-        <TableCard>
+        <TableCard type="withoutPadding" >
           <div className={style.tableCardHeader}>
             <TabList>
               {tabs?.map((tab) => (
                 <Tab key={tab.value}>{tab.label}</Tab>
               ))}
             </TabList>
-            <CreateButton onClick={navigateToCreatePage} />
+            <CreateButton type="secondary" onClick={navigateToCreatePage}  />
           </div>
 
           {loader ? (

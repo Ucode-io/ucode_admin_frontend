@@ -1,17 +1,8 @@
-import { FilterAlt } from "@mui/icons-material"
 import { useEffect, useMemo } from "react"
 import { useState } from "react"
-import { useParams } from "react-router-dom"
-import CreateButton from "../../../components/Buttons/CreateButton"
-import FiltersBlockButton from "../../../components/Buttons/FiltersBlockButton"
-import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
-import SearchInput from "../../../components/SearchInput"
-import TableCard from "../../../components/TableCard"
-import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
-import ViewTabSelector from "../components/ViewTypeSelector"
 import RecursiveBlock from "./RecursiveBlock"
 
 const TreeView = ({
@@ -24,7 +15,6 @@ const TreeView = ({
   group,
   view
 }) => {
-  const { navigateToForm } = useTabRouter()
   const [tableLoader, setTableLoader] = useState(true)
   const [data, setData] = useState([])
 
@@ -42,7 +32,7 @@ const TreeView = ({
       if(groupField?.slug) groupFieldName = groupField?.slug
 
       const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: 0, limit: 1000, [groupFieldName]: group?.value },
+        data: { offset: 0, limit: 10, [groupFieldName]: group?.value },
       })
 
       setViews(data.views ?? [])

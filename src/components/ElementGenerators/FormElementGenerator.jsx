@@ -9,6 +9,7 @@ import HFSelect from "../FormElements/HFSelect"
 import HFSwitch from "../FormElements/HFSwitch"
 import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
+import HFTimePicker from "../FormElements/HFTimePicker"
 import RelationFormElement from "./RelationFormElement"
 
 const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
@@ -112,11 +113,21 @@ const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
         return (
           <FRow label={field.label} required={field.required}>
             <HFDateTimePicker
-              ampm={false}
               control={control}
               name={computedSlug}
-              fullWidth
-              width={"100%"}
+              required={field.required}
+              placeholder={field.attributes?.placeholder}
+              {...props}
+            />
+          </FRow>
+        )
+
+      case "TIME":
+        return (
+          <FRow label={field.label} required={field.required}>
+            <HFTimePicker
+              control={control}
+              name={computedSlug}
               required={field.required}
               placeholder={field.attributes?.placeholder}
               {...props}

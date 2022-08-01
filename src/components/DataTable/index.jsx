@@ -30,9 +30,9 @@ const DataTable = ({
   filters,
   disableFilters,
   tableStyle,
-  wrapperStyle
+  wrapperStyle,
+  tableSlug,
 }) => {
-
   return (
     <CTable
       disablePagination={disablePagination}
@@ -51,12 +51,14 @@ const DataTable = ({
             <CTableCell key={index}>
               <div className="table-filter-cell">
                 {column.label}
-               {!disableFilters && <FilterGenerator
-                  field={column}
-                  name={column.slug}
-                  onChange={filterChangeHandler}
-                  filters={filters}
-                />}
+               {!disableFilters && 
+                  <FilterGenerator
+                    field={column}
+                    name={column.slug}
+                    onChange={filterChangeHandler}
+                    filters={filters}
+                    tableSlug={tableSlug}
+                  />}
               </div>
             </CTableCell>
           ))}
@@ -70,7 +72,7 @@ const DataTable = ({
       <CTableBody
         loader={loader}
         columnsCount={columns.length}
-        dataLength={dataLength || data.length}
+        dataLength={dataLength || data?.length}
       >
         {data?.map((row, rowIndex) => (
           <CTableRow
@@ -81,7 +83,7 @@ const DataTable = ({
           >
              <CTableCell>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
             {columns.map((column, index) => (
-              <CTableCell key={column.id} className="text-nowrap">
+              <CTableCell key={column.id} className="text-nowrap overflow-ellipsis max-width-450" >
                 <CellElementGenerator field={column} row={row} />
               </CTableCell>
             ))}

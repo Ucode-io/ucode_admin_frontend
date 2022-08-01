@@ -1,5 +1,8 @@
 import { useSelector } from "react-redux"
 import AppSelector from "../../components/AppSelector"
+import ExitButton from "../../components/Buttons/ExitButton"
+import ProfilePanel from "../../components/ProfilePanel"
+import UserAvatar from "../../components/UserAvatar"
 import RouteTabComponent from "./RouteTabComponent"
 import styles from "./style.module.scss"
 
@@ -17,7 +20,8 @@ const RouterTabsBlock = () => {
       </div>
 
       <div className={styles.rightSide} >
-        <AppSelector />
+      <AppSelector />
+      <ProfilePanel />
       </div>
     </div>
   )

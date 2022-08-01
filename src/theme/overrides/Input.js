@@ -4,6 +4,12 @@ export default function Input(theme) {
   return {
     MuiInputBase: {
       styleOverrides: {
+        root: {
+          backgroundColor: '#fff',
+          [`& fieldset`]: {
+                borderRadius: 2,
+          },
+       },
         input: {
           '&::placeholder': {
             opacity: 1,

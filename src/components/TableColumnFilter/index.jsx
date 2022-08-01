@@ -1,3 +1,4 @@
+import { FilterAltOutlined } from "@mui/icons-material"
 import FilterAltTwoToneIcon from "@mui/icons-material/FilterAltTwoTone"
 import { Menu } from "@mui/material"
 import { useState } from "react"
@@ -17,7 +18,7 @@ const TableColumnFilter = ({ children }) => {
 
   return (
     <div className={styles.filterWrapper}>
-      <FilterAltTwoToneIcon
+      <FilterAltOutlined
         classes={{ root: styles.filterIcon }}
         onClick={openMenu}
         className="pointer"

@@ -51,8 +51,8 @@ const GroupFieldSelector = ({ tableSlug }) => {
 
   return (
     <div>
-      <RectangleIconButton onClick={openMenu} color="grey">
-        <JoinInner color="primary" />
+      <RectangleIconButton onClick={openMenu} color="white">
+        <JoinInner />
       </RectangleIconButton>
 
       <Menu

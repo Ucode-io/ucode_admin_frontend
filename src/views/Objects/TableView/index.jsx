@@ -1,20 +1,16 @@
-import TableCard from "../../../components/TableCard"
 import { useEffect, useState } from "react"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
 import { useDispatch } from "react-redux"
 import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice"
-import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import useWatch from "../../../hooks/useWatch"
 import useTabRouter from "../../../hooks/useTabRouter"
-import CreateButton from "../../../components/Buttons/CreateButton"
 import DataTable from "../../../components/DataTable"
-import { Tab, TabList, Tabs } from "react-tabs"
+import { useParams } from "react-router-dom"
 
 const TableView = ({
   computedColumns,
-  tableSlug,
   setViews,
   filters,
   filterChangeHandler,
@@ -23,6 +19,7 @@ const TableView = ({
 }) => {
   const dispatch = useDispatch()
   const { navigateToForm } = useTabRouter()
+  const {tableSlug} = useParams()
 
   const [tableLoader, setTableLoader] = useState(true)
   const [tableData, setTableData] = useState([])
@@ -32,7 +29,6 @@ const TableView = ({
   const getAllData = async () => {
     setTableLoader(true)
     try {
-
       let groupFieldName = ''
 
       if(groupField?.id?.includes('#')) groupFieldName = `${groupField.id.split('#')[0]}_id`
@@ -45,9 +41,10 @@ const TableView = ({
 
       const pageCount = Math.ceil(data.count / 10)
 
+
       setViews(data.views ?? [])
       setTableData(objectToArray(data.response ?? {}))
-      setPageCount(isNaN(pageCount) ? 1 : pageCount)
+      setPageCount(isNaN(data?.count) ? 1 : Math.ceil(data.count / 10))
       dispatch(
         tableColumnActions.setList({
           tableSlug: tableSlug,
@@ -59,10 +56,11 @@ const TableView = ({
     }
   }
 
-  const deleteHandler = async (id) => {
+  const deleteHandler = async (row) => {
+
     setTableLoader(true)
     try {
-      await constructorObjectService.delete(tableSlug, id)
+      await constructorObjectService.delete(tableSlug, row.guid)
       getAllData()
     } catch {
       setTableLoader(false)
@@ -73,14 +71,11 @@ const TableView = ({
     navigateToForm(tableSlug, "EDIT", row)
   }
 
-  useDebouncedWatch(
-    () => {
-      if (currentPage === 1) getAllData()
-      setCurrentPage(1)
-    },
-    [filters],
-    500
-  )
+  useWatch(() => {
+    if (currentPage === 1) getAllData()
+    setCurrentPage(1)
+  },
+  [filters])
 
   useWatch(() => {
     getAllData()
@@ -92,7 +87,7 @@ const TableView = ({
 
   return (
       <DataTable
-        removableHeight={260}
+        removableHeight={207}
         currentPage={currentPage}
         pagesCount={pageCount}
         onPaginationChange={setCurrentPage}
@@ -103,6 +98,8 @@ const TableView = ({
         filterChangeHandler={filterChangeHandler}
         onRowClick={navigateToEditPage}
         onDeleteClick={deleteHandler}
+        tableSlug={tableSlug}
+        tableStyle={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #E5E9EB' }}
       />
   )
 }

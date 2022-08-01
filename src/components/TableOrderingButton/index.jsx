@@ -1,6 +1,7 @@
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp"
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
 import styles from "./style.module.scss"
+import { ExpandLess, ExpandMore } from "@mui/icons-material"
 
 const TableOrderingButton = ({ value, onChange }) => {
 
@@ -13,8 +14,8 @@ const TableOrderingButton = ({ value, onChange }) => {
 
   return (
     <div className={styles.button} onClick={clickHandler} >
-      <ArrowDropUpIcon className={`${styles.icon} ${styles.up} ${value === 1 ? styles.active : ''}`} />
-      <ArrowDropDownIcon className={`${styles.icon} ${styles.down} ${value === -1 ? styles.active : ''}`} />
+      <ExpandLess className={`${styles.icon} ${styles.up} ${value === 1 ? styles.active : ''}`} />
+      <ExpandMore className={`${styles.icon} ${styles.down} ${value === -1 ? styles.active : ''}`} />
     </div>
   )
 }

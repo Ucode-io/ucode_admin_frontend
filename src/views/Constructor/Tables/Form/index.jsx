@@ -87,7 +87,7 @@ const ConstructorTablesFormPage = () => {
 
       mainForm.setValue("fields", fields)
 
-      const relationsWithRelatedTableSlug = relations.map((relation) => ({
+      const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
         relatedTableSlug:
           relation.table_to?.slug === slug ? "table_from" : "table_to",
@@ -96,7 +96,7 @@ const ConstructorTablesFormPage = () => {
       const layoutRelations = []
       const tableRelations = []
 
-      relationsWithRelatedTableSlug.forEach((relation) => {
+      relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
           (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) || relation.type === "Recursive"

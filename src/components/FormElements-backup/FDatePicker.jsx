@@ -1,4 +1,4 @@
-import { DatePicker } from "@mui/lab"
+import { DatePicker } from "@mui/x-date-pickers"
 import { TextField } from "@mui/material"
 import { get } from 'lodash-es'
 

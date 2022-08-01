@@ -1,17 +1,38 @@
 
 
 .wrapper {
-  padding: 16px;
+  padding: 8px;
 
   .card {
     
 
     .header {
-      box-shadow: inset 0px -1px 0px #E5E9EB;
-      padding: 6px 16px;
+      // box-shadow: inset 0px -1px 0px #E5E9EB;
+      padding: 10px 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
   }
+
+
+
+  &.withoutPadding {
+    padding: 0;
+
+    .card {
+      border-radius: 0;
+    }
+
+    .body {
+      padding: 0 !important;
+      padding-bottom: 8px !important;
+
+
+    }
+    // display: none;
+
+  } 
 }
+
+

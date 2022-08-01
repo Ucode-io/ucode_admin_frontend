@@ -11,7 +11,6 @@ const RectangleIconButton = forwardRef(({
   ...props
 }, ref) => {
   return (
-    
     <div
       className={`RectangleIconButton ${color} ${className}`}
       onClick={(e) => {

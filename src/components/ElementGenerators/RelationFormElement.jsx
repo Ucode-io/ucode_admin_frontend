@@ -185,7 +185,7 @@ const AutoCompleteElement = ({
             {...params}
             size="small"
             error={error}
-            helperText={!disabledHelperText && (error?.message ?? " ")}
+            helperText={!disabledHelperText && error?.message}
             inputProps={{
               ...params.inputProps,
               // value: '0000'

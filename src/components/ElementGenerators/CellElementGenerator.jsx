@@ -1,6 +1,7 @@
 import { get } from "@ngard/tiny-get"
 import { format } from "date-fns"
 import { memo, useMemo } from "react"
+import { formatDate } from "../../utils/dateFormatter"
 import { numberWithSpaces } from "../../utils/formatNumbers"
 import LogoDisplay from "../LogoDisplay"
 import TableTag from "../TableTag"
@@ -24,7 +25,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
     case "DATE":
       return (
         <span className="text-nowrap">
-          {value ? format(new Date(value), "dd.MM.yyyy") : "---"}
+          {formatDate(value)}
         </span>
       )
 
@@ -36,7 +37,8 @@ const CellElementGenerator = ({ field = {}, row }) => {
     case "DATE_TIME":
       return (
         <span className="text-nowrap">
-          {value ? format(new Date(value), "dd.MM.yyyy HH:mm") : "---"}
+          {formatDate(value, "DATE_TIME")}
+          {/* {value ? format(new Date(value), "dd.MM.yyyy HH:mm") : "---"} */}
         </span>
       )
 
@@ -53,7 +55,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       )
 
     case "PHOTO":
-      return <LogoDisplay url={value} />
+      return <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} ><LogoDisplay url={value} /></span>
 
     default:
       return value

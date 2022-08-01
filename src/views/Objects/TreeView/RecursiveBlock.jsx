@@ -1,9 +1,10 @@
-import { Add, ChevronRight, Delete } from "@mui/icons-material"
-import { Collapse, IconButton } from "@mui/material"
+import { Add, Delete } from "@mui/icons-material"
+import { Collapse } from "@mui/material"
 import { useState } from "react"
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
+import CollapseIcon from "../../../components/CollapseIcon"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import style from "./style.module.scss"
@@ -18,10 +19,20 @@ const RecursiveBlock = ({ row, view, data = [], setData, level = 1 }) => {
     return data.filter((el) => el[`${tableSlug}_id`] === row.guid)
   }, [data, row, tableSlug])
  
-  const switchChildBlock = () => setChildBlockVisible(prev => !prev)
+  const switchChildBlock = (e) => {
+    e.stopPropagation()
+    setChildBlockVisible(prev => !prev)
+  }
 
   const navigateToCreatePage = () => {
     navigateToForm(tableSlug, "CREATE", null,  { [`${tableSlug}_id`]: row.guid})
+  }
+  
+  const navigateToEditPage = () => {
+
+    console.log(row)
+
+    navigateToForm(tableSlug, "EDIT", row)
   }
 
   const deleteHandler = async (id) => {
@@ -36,10 +47,12 @@ const RecursiveBlock = ({ row, view, data = [], setData, level = 1 }) => {
 
   return (
     <>
-      <div className={`${style.recursiveBlock} ${style[`level${level}`]}`} style={{ paddingLeft: 15 * level }} >
-        <IconButton color="primary" onClick={switchChildBlock} >
+      <div onClick={navigateToEditPage} className={`${style.recursiveBlock} ${style[`level${level}`]}`} style={{ paddingLeft: 15 * level }} >
+        {children?.length ? <CollapseIcon isOpen={childBlockVisible} onClick={switchChildBlock} /> : <div className="mr-2" ></div>}
+        
+        {/* <IconButton color="primary" onClick={switchChildBlock} >
           <ChevronRight />
-        </IconButton>
+        </IconButton> */}
 
         <div className={style.title}>{row[view.main_field]}</div>
 

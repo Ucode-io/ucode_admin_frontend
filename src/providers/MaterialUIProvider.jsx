@@ -1,6 +1,8 @@
-import { LocalizationProvider } from "@mui/lab";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import ThemeConfig from "../theme/index";
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import ruLocale from "date-fns/locale/ru";
+
 
 const MaterialUIProvider = ({children}) => {
   const theme = "light"
@@ -8,7 +10,7 @@ const MaterialUIProvider = ({children}) => {
   return (
     <div className={theme === "dark" ? 'night-mode' : ''} >
       <ThemeConfig >
-        <LocalizationProvider dateAdapter={AdapterDateFns} >
+        <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale} >
           {children}
         </LocalizationProvider>
       </ThemeConfig>

@@ -1,5 +1,5 @@
 import { Edit, Save } from "@mui/icons-material"
-import { DatePicker } from "@mui/lab"
+import { DatePicker } from "@mui/x-date-pickers"
 import { IconButton, TextField } from "@mui/material"
 import { format } from "date-fns"
 import { useState } from "react"

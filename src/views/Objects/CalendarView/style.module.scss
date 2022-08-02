@@ -6,7 +6,7 @@
 
   .card {
     background-color: #fff;
-    height: calc(100vh - 110px);
+    height: calc(100vh - 160px);
     overflow: auto;
   }
 
@@ -14,7 +14,7 @@
   .wrapper {
     min-width: 100%;
     position: relative;
-    min-height: calc(100vh - 150px);
+    min-height: calc(100vh - 170px);
     display:inline-block
   }
 }
@@ -132,9 +132,20 @@
     align-items: center;
     justify-content: center;
 
+    &.disabled {
+      background-color: rgba(223, 223, 223, 0.276);
+      
+      &:hover {
+        .addButton {
+          display: none;
+        }
+      }
+    }
+
     .addButton {
       display: none;
       align-items: center;
+     
 
       &:hover {
         cursor: pointer;

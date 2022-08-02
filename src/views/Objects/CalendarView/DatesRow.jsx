@@ -1,14 +1,15 @@
+import { useMemo } from "react"
 import styles from "./style.module.scss"
+import { add, format } from "date-fns"
 
-const DatesRow = ({ data }) => {
+const DatesRow = ({ computedDates }) => {
 
-
-  return (
+    return (
     <div className={styles.datesRow}>
       <div className={styles.sss} />
 
-      {data?.map((el) => (
-        <div key={el.date} className={styles.dateBlock} style={{ minWidth: 200 * el.mainFields.length || 200 }} >{el.date}</div>
+      {computedDates?.map((el) => (
+        <div key={el} className={styles.dateBlock} style={{ minWidth: 200 }} >{el}</div>
       ))}
     </div>
   )

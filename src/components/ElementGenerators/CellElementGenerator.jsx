@@ -1,8 +1,8 @@
 import { get } from "@ngard/tiny-get"
-import { format } from "date-fns"
 import { memo, useMemo } from "react"
 import { formatDate } from "../../utils/dateFormatter"
 import { numberWithSpaces } from "../../utils/formatNumbers"
+import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel"
 import LogoDisplay from "../LogoDisplay"
 import TableTag from "../TableTag"
 
@@ -13,10 +13,12 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     const tableSlug = field.id.split("#")[0]
 
-    const result =
-      field.attributes
-        ?.map((viewField) => get(row, `${tableSlug}.${viewField?.slug}`, ""))
-        .join(" ") ?? ""
+    const result = getRelationFieldTableCellLabel(field, row, tableSlug)
+
+    // const result =
+    //   field.attributes
+    //     ?.map((viewField) => get(row, `${tableSlug}.${viewField?.slug}`, ""))
+    //     .join(" ") ?? ""
 
     return result
   }, [row, field])

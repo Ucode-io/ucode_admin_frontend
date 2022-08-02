@@ -76,7 +76,7 @@ const DataTable = ({
       >
         {data?.map((row, rowIndex) => (
           <CTableRow
-            key={row.id}
+            key={row.guid || row.id}
             onClick={() => {
               onRowClick(row, rowIndex)
             }}

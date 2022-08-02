@@ -34,13 +34,9 @@ const TableView = ({
       if(groupField?.id?.includes('#')) groupFieldName = `${groupField.id.split('#')[0]}_id`
       if(groupField?.slug) groupFieldName = groupField?.slug
 
-
       const { data } = await constructorObjectService.getList(tableSlug, {
         data: { offset: pageToOffset(currentPage), limit: 10, ...filters, [groupFieldName]: group?.value },
       })
-
-      const pageCount = Math.ceil(data.count / 10)
-
 
       setViews(data.views ?? [])
       setTableData(objectToArray(data.response ?? {}))

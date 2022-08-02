@@ -1,11 +1,9 @@
-import { Download, FilterAlt, Upload } from "@mui/icons-material"
+import { Download, Upload } from "@mui/icons-material"
 import { useMemo, useState } from "react"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import CreateButton from "../../components/Buttons/CreateButton"
-import FiltersBlockButton from "../../components/Buttons/FiltersBlockButton"
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
 import FiltersBlock from "../../components/FiltersBlock"
-import SearchInput from "../../components/SearchInput"
 import TableCard from "../../components/TableCard"
 import useTabRouter from "../../hooks/useTabRouter"
 import ColumnsSelector from "./components/ColumnsSelector"
@@ -15,14 +13,15 @@ import TableView from "./TableView"
 import style from "./style.module.scss"
 import { useEffect } from "react"
 import constructorObjectService from "../../services/constructorObjectService"
-import {
-  getRelationFieldTabsLabel,
-} from "../../utils/getRelationFieldLabel"
-import { Card, CircularProgress } from "@mui/material"
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel"
+import { CircularProgress } from "@mui/material"
 import TreeView from "./TreeView"
 import FastFilter from "./components/FastFilter"
 import SettingsButton from "./components/SettingsButton"
 import FastFilterButton from "./components/FastFilter/FastFilterButton"
+import CalendarView from "./CalendarView/index"
+import { endOfWeek, startOfWeek } from "date-fns"
+import CRangePicker from "../../components/DatePickers/CRangePicker"
 
 const ViewsWithGroups = ({
   tableSlug,
@@ -38,6 +37,10 @@ const ViewsWithGroups = ({
   const { navigateToForm } = useTabRouter()
   const [tabsData, setTabsData] = useState(null)
   const [loader, setLoader] = useState(false)
+  const [dateFilters, setDateFilters] = useState([
+    startOfWeek(new Date(), { weekStartsOn: 1 }),
+    endOfWeek(new Date(), { weekStartsOn: 1 }),
+  ])
 
   const filterChangeHandler = (value, name) => {
     setFilters({
@@ -74,6 +77,7 @@ const ViewsWithGroups = ({
   }, [groupField, tabsData])
 
   useEffect(() => {
+    console.log('GROUP FIELD --->', groupField)
     if (!groupField?.id?.includes("#")) return setTabsData(null)
     const tableSlug = groupField.id.split("#")?.[0]
 
@@ -92,11 +96,11 @@ const ViewsWithGroups = ({
       <FiltersBlock
         extra={
           <>
-            <FastFilterButton  />
+            <FastFilterButton />
 
             <GroupFieldSelector tableSlug={tableSlug} />
 
-            <ColumnsSelector tableSlug={tableSlug}  />
+            <ColumnsSelector tableSlug={tableSlug} />
 
             <RectangleIconButton color="white">
               <Upload />
@@ -106,7 +110,6 @@ const ViewsWithGroups = ({
             </RectangleIconButton>
 
             <SettingsButton />
-
           </>
         }
       >
@@ -116,19 +119,24 @@ const ViewsWithGroups = ({
           views={views}
           setViews={setViews}
         />
+
+        {view.type === "CALENDAR" && (
+          <CRangePicker value={dateFilters} onChange={setDateFilters} />
+        )}
+
         {/* <SearchInput /> */}
         <FastFilter filters={filters} onChange={filterChangeHandler} />
       </FiltersBlock>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
-        <TableCard type="withoutPadding" >
+        <TableCard type="withoutPadding">
           <div className={style.tableCardHeader}>
             <TabList>
               {tabs?.map((tab) => (
                 <Tab key={tab.value}>{tab.label}</Tab>
               ))}
             </TabList>
-            <CreateButton type="secondary" onClick={navigateToCreatePage}  />
+            <CreateButton type="secondary" onClick={navigateToCreatePage} />
           </div>
 
           {loader ? (
@@ -148,6 +156,18 @@ const ViewsWithGroups = ({
                       filterChangeHandler={filterChangeHandler}
                       groupField={groupField}
                       group={tab}
+                      view={view}
+                    />
+                  ) : view.type === "CALENDAR" ? (
+                    <CalendarView
+                      computedColumns={computedColumns}
+                      tableSlug={tableSlug}
+                      setViews={setViews}
+                      filters={filters}
+                      filterChangeHandler={filterChangeHandler}
+                      groupField={groupField}
+                      group={tab}
+                      dateFilters={dateFilters}
                       view={view}
                     />
                   ) : (
@@ -174,6 +194,16 @@ const ViewsWithGroups = ({
                       filters={filters}
                       filterChangeHandler={filterChangeHandler}
                       view={view}
+                    />
+                  ) : view.type === "CALENDAR" ? (
+                    <CalendarView
+                      omputedColumns={computedColumns}
+                      tableSlug={tableSlug}
+                      setViews={setViews}
+                      filters={filters}
+                      filterChangeHandler={filterChangeHandler}
+                      view={view}
+                      dateFilters={dateFilters}
                     />
                   ) : (
                     <TableView

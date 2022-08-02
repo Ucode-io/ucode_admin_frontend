@@ -1,47 +1,50 @@
-import { get } from "@ngard/tiny-get"
-import {
-  add,
-  differenceInDays,
-  isValid,
-  setHours,
-  setMinutes,
-  startOfWeek,
-} from "date-fns"
-import { endOfWeek, format } from "date-fns"
+import { add, differenceInDays, format, parse, setHours, setMinutes } from "date-fns"
+import el from "date-fns/esm/locale/el/index.js"
 import { useEffect, useMemo, useState } from "react"
-import CRangePicker from "../../../components/DatePickers/CRangePicker"
-import FiltersBlock from "../../../components/FiltersBlock"
+import { useQuery } from "react-query"
+import { useParams } from "react-router-dom"
 import PageFallback from "../../../components/PageFallback"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
-import { getFieldLabel } from "../../../utils/getFieldLabel"
 import { objectToArray } from "../../../utils/objectToArray"
-import FastFilter from "../components/FastFilter"
-import FastFilterButton from "../components/FastFilter/FastFilterButton"
-import ViewTabSelector from "../components/ViewTypeSelector"
 import DatesRow from "./DatesRow"
-import MainFieldRow from "./MainFieldRow"
 import ObjectColumn from "./ObjectColumn"
 import styles from "./style.module.scss"
 import TimesBlock from "./TimesBlock"
 
+const weekDays = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
+
+
 const CalendarView = ({
-  view,
-  tableSlug,
+  computedColumns,
   setViews,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  views,
+  filters,
+  filterChangeHandler,
+  groupField,
+  group,
+  view,
+  dateFilters,
 }) => {
-  const [filters, setFilters] = useState({})
-  const [loader, setLoader] = useState(true)
+  const { tableSlug } = useParams()
+
+  const [tableLoader, setTableLoader] = useState(true)
   const [data, setData] = useState([])
   const { navigateToForm } = useTabRouter()
 
-  const [dateFilters, setDateFilters] = useState([
-    startOfWeek(new Date(), { weekStartsOn: 1 }),
-    endOfWeek(new Date(), { weekStartsOn: 1 }),
-  ])
+
+  // ======= Computed values =======
+
+  const computedDates = useMemo(() => {
+    if (!dateFilters?.[0] || !dateFilters?.[1]) return null
+
+    const differenceDays = differenceInDays(dateFilters[1], dateFilters[0])
+
+    const result = []
+    for (let i = 0; i < differenceDays; i++) {
+      result.push(format(add(dateFilters[0], { days: i }), "dd.MM.yyyy"))
+    }
+    return result
+  }, [dateFilters])
 
   const computedData = useMemo(() => {
     const startTimeStampSlug = view.group_fields?.find(
@@ -51,163 +54,133 @@ const CalendarView = ({
       ({ field_type }) => field_type === "end_timestamp"
     )?.field_slug
 
-    const differenceDays = differenceInDays(dateFilters[1], dateFilters[0])
-    let result = {}
+    return computedDates?.map((date) => ({
+      date,
+      data: data
+        .filter((el) => {
+          return (
+            el[startTimeStampSlug] &&
+            format(new Date(el[startTimeStampSlug]), "dd.MM.yyyy") === date
+          )
+        })
+        .map((el) => ({
+          ...el,
+          calendarStartTime: el[startTimeStampSlug]
+            ? new Date(el[startTimeStampSlug])
+            : null,
+          calendarEndTime: el[endTimeStampSlug]
+            ? new Date(el[endTimeStampSlug])
+            : null,
+        })),
+    }))
+  }, [data, computedDates])
 
-    for (let i = 0; i < differenceDays; i++) {
-      const date = format(add(dateFilters[0], { days: i }), "dd.MM.yyyy")
+  const { data: disableDatesTable } = useQuery(["GET_OBJECTS_LIST"], () => {
+    if(!view?.disable_dates?.table_slug) return []
+    
+    let groupFieldName = ""
 
-      result[date] = {
-        date,
-        mainFields: {},
-      }
-    }
+    if (groupField?.id?.includes("#"))
+      groupFieldName = `${groupField.id.split("#")[0]}_id`
+    if (groupField?.slug) groupFieldName = groupField?.slug
 
-    data.forEach((el) => {
-      const date =
-        isValid(new Date(get(el, startTimeStampSlug))) &&
-        format(new Date(get(el, startTimeStampSlug)), "dd.MM.yyyy")
-      const startTime =
-        isValid(new Date(get(el, startTimeStampSlug))) &&
-        new Date(get(el, startTimeStampSlug))
-      const endTime =
-        isValid(new Date(get(el, endTimeStampSlug))) &&
-        new Date(get(el, endTimeStampSlug))
+    return constructorObjectService.getList(view?.disable_dates?.table_slug, {
+      data: { [groupFieldName]: group?.value },
+    })
+  }, {
+    select: (res) => {
+      const result = {}
 
-      const mainField = getFieldLabel(el, view.main_field)
+      res?.data?.response?.forEach(el => {
+        const weekIndex = weekDays.indexOf(el[view?.disable_dates?.day_slug])
+        const calendarFromTime = el[view?.disable_dates?.time_from_slug]
+        const calendarToTime = el[view?.disable_dates?.time_to_slug]
 
-      const computedEl = {
-        ...el,
-        startTime,
-        endTime,
-      }
-
-      if (result[date]) {
-        if (result[date]?.mainFields?.[mainField]?.data?.length) {
-          result[date].mainFields[mainField].data.push(computedEl)
-        } else {
-          result[date].mainFields[mainField] = {
-            title: mainField,
-            data: [computedEl],
+        if(weekIndex !== -1) {
+          result[weekIndex] = {
+            ...el,
+            calendarFromTime,
+            calendarToTime
           }
         }
-      }
-    })
+      })
 
-    result = Object.values(result)
 
-    result.forEach((el) => {
-      el.mainFields = Object.values(el.mainFields)
-    })
-
-    return result
-  }, [data, view, dateFilters])
-
-  const filterChangeHandler = (value, name) => {
-    setFilters({
-      ...filters,
-      [name]: value,
-    })
-  }
+      return result
+    }
+  })
 
   const getAllData = async () => {
-    setLoader(true)
+    setTableLoader(true)
     try {
+      let groupFieldName = ""
+
+      if (groupField?.id?.includes("#"))
+        groupFieldName = `${groupField.id.split("#")[0]}_id`
+      if (groupField?.slug) groupFieldName = groupField?.slug
+
       const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: 0, limit: 10, ...filters },
+        data: { ...filters, [groupFieldName]: group?.value },
       })
 
       setViews(data.views ?? [])
       setData(objectToArray(data.response ?? {}))
     } finally {
-      setLoader(false)
+      setTableLoader(false)
     }
   }
 
-  const navigateToCreatePage = (time, columnIndex, data) => {
-    if (!time || !dateFilters?.[0]) return
-    const date = add(dateFilters[0], { days: columnIndex })
+  const navigateToCreatePage = (date, time) => {
+    if (!time || !date) return
+    const columnDate = parse(date, 'dd.MM.yyyy', new Date())
 
     const [hour, minute] = time?.split("-")?.[0]?.trim()?.split(":")
 
-    const computedDate = setHours(setMinutes(date, minute), hour)
+    const computedDate = setHours(setMinutes(columnDate, minute), hour)
+
 
     const startTimeStampSlug = view.group_fields?.find(
       ({ field_type }) => field_type === "start_timestamp"
     )?.field_slug
-    
-    let filters = {}
 
-    if(view.main_field?.includes('#')) {
-      const slug = view.main_field.split('#')?.[0]?.split('.')?.[0]
-      filters = {
-        [`${slug}_id`]: data?.[0]?.[[`${slug}_id`]]
-      }
-    }
+    let groupFieldName = ""
 
-    // console.log("STATE =====>", { [startTimeStampSlug]: computedDate, ...filters }, data)
+      if (groupField?.id?.includes("#"))
+        groupFieldName = `${groupField.id.split("#")[0]}_id`
+      if (groupField?.slug) groupFieldName = groupField?.slug
 
-    navigateToForm(tableSlug, "CREATE", null, { [startTimeStampSlug]: computedDate, ...filters })
+    navigateToForm(tableSlug, "CREATE", null, { [startTimeStampSlug]: computedDate, [groupFieldName]: group?.value })
+
   }
 
   useEffect(() => {
-    if (!dateFilters[0] || !dateFilters[1]) return
     getAllData()
-  }, [dateFilters, filters])
+  }, [filters, groupField])
+
+  if(tableLoader) return <PageFallback />
 
   return (
-    <div>
-      <FiltersBlock
-        extra={
-          <>
-            <FastFilterButton />
-          </>
-        }
-      >
-        <ViewTabSelector
-          selectedTabIndex={selectedTabIndex}
-          setSelectedTabIndex={setSelectedTabIndex}
-          views={views}
-          setViews={setViews}
-        />
-        <CRangePicker value={dateFilters} onChange={setDateFilters} />
-        <FastFilter filters={filters} onChange={filterChangeHandler} />
-      </FiltersBlock>
+    <div className={styles.main}>
+      <div className={styles.card}>
+        <div className={styles.wrapper}>
+          <DatesRow computedDates={computedDates} />
 
-      {loader ? <PageFallback /> : <div className={styles.main}>
-        <div className={styles.card}>
-          <div className={styles.wrapper}>
-            <DatesRow data={computedData} />
+          <div className={styles.calendar}>
+            <TimesBlock />
 
-            <MainFieldRow data={computedData} />
-
-            <div className={styles.calendar}>
-              <TimesBlock />
-
-              {computedData?.map((el, columnIndex) => {
-                if (!el.mainFields?.length)
-                  return (
-                    <ObjectColumn
-                      key={el.date}
-                      columnIndex={columnIndex}
-                      dateFilters={dateFilters}
-                      navigateToCreatePage={navigateToCreatePage}
-                    />
-                  )
-                return el.mainFields.map((mainField) => (
-                  <ObjectColumn
-                    key={mainField.title}
-                    data={mainField.data}
-                    view={view}
-                    columnIndex={columnIndex}
-                    navigateToCreatePage={navigateToCreatePage}
-                  />
-                ))
-              })}
-            </div>
+            {computedData?.map((column, columnIndex) => (
+              <ObjectColumn
+                key={column.date}
+                column={column}
+                view={view}
+                columnIndex={columnIndex}
+                disableDatesTable={disableDatesTable}
+                navigateToCreatePage={navigateToCreatePage}
+              />
+            ))}
           </div>
         </div>
-      </div>}
+      </div>
     </div>
   )
 }

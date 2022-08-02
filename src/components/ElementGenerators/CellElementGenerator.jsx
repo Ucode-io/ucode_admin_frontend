@@ -42,6 +42,12 @@ const CellElementGenerator = ({ field = {}, row }) => {
         </span>
       )
 
+    case "MULTI_LINE":
+      console.log("VALUE =====>", value)
+      return (
+        <span dangerouslySetInnerHTML={{ __html: value }} ></span>
+      )
+
     case "CHECKBOX":
     case "SWITCH":
       return JSON.parse(value) ? (

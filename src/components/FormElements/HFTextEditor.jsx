@@ -1,11 +1,11 @@
-import { CircularProgress } from "@mui/material"
 import { lazy, Suspense } from "react"
 import { Controller, useWatch } from "react-hook-form"
 
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper"
-
-import ReactQuill from "react-quill"
 import "react-quill/dist/quill.snow.css"
+
+
+const ReactQuill = lazy(() => import("react-quill"))
 
 const HFTextEditor = ({
   control,
@@ -21,8 +21,6 @@ const HFTextEditor = ({
     control,
     name,
   })
-
-  console.log("VALUE ===>", value)
 
   return (
     <Controller

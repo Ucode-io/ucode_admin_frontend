@@ -162,7 +162,7 @@ const ViewCreateModal = ({
 
             <Divider className="my-2" />
 
-            <h3>Disabled dates</h3>
+            <h3>Enabled dates</h3>
 
             <Divider className="my-1" />
 

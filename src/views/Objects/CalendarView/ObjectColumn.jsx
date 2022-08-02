@@ -5,7 +5,7 @@ import { getFieldLabel } from "../../../utils/getFieldLabel"
 import { timesList } from "../../../utils/timesList"
 import styles from "./style.module.scss"
 
-const ObjectColumn = ({ column, view, columnIndex, disableDatesTable = {}, navigateToCreatePage }) => {
+const ObjectColumn = ({ column, view, columnIndex, disableDatesTable = {}, navigateToCreatePage, hasDisabledDates }) => {
   const computedData = useMemo(() => {
     const data = column.data
 
@@ -46,6 +46,7 @@ const ObjectColumn = ({ column, view, columnIndex, disableDatesTable = {}, navig
     const startIndex = Math.ceil(differenceInMinutes(startTime, calendarStartedTime) / 30)
     const endIndex = Math.floor(differenceInMinutes(endTime, calendarStartedTime) / 30) - 1
 
+    if(isNaN(startIndex) || isNaN(endIndex)) return null
 
     return {
       startIndex,
@@ -53,17 +54,15 @@ const ObjectColumn = ({ column, view, columnIndex, disableDatesTable = {}, navig
     }
 
   }, [column, disableDatesTable])
-  
 
-  console.log('disabledDatesdisabledDatesdisabledDatesdisabledDates ===>', disableDatesTable)
-
+  console.log('disableDatesTable ===>', disabledDates)
 
   return (
     <div className={styles.objectColumn}>
       {timesList.map((time, index) => (
         <div
           key={time}
-          className={`${styles.calendarRow} ${index < disabledDates.startIndex || index > disabledDates.endIndex ? styles.disabled : ''}`}
+          className={`${styles.calendarRow} ${index < disabledDates?.startIndex || index > disabledDates?.endIndex || (hasDisabledDates && !disabledDates) ? styles.disabled : ''}`}
           style={{ overflow: "auto" }}
         >
           <div

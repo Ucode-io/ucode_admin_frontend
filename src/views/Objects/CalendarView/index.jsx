@@ -178,6 +178,7 @@ const CalendarView = ({
                 columnIndex={columnIndex}
                 disableDatesTable={disableDatesTable}
                 navigateToCreatePage={navigateToCreatePage}
+                hasDisabledDates={!!view?.disable_dates?.table_slug}
               />
             ))}
           </div>

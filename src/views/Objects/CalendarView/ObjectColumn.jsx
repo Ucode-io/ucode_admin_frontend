@@ -53,6 +53,9 @@ const ObjectColumn = ({ column, view, columnIndex, disableDatesTable = {}, navig
     }
 
   }, [column, disableDatesTable])
+  
+
+  console.log('disabledDatesdisabledDatesdisabledDatesdisabledDates ===>', disableDatesTable)
 
 
   return (

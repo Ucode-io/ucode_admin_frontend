@@ -76,13 +76,15 @@ const CalendarView = ({
   }, [data, computedDates])
 
   const { data: disableDatesTable } = useQuery(["GET_OBJECTS_LIST"], () => {
-    if(!view?.disable_dates?.table_slug) return []
+    if(!view?.disable_dates?.table_slug) return {}
     
     let groupFieldName = ""
 
     if (groupField?.id?.includes("#"))
       groupFieldName = `${groupField.id.split("#")[0]}_id`
     if (groupField?.slug) groupFieldName = groupField?.slug
+
+    if(!groupFieldName) return {}
 
     return constructorObjectService.getList(view?.disable_dates?.table_slug, {
       data: { [groupFieldName]: group?.value },

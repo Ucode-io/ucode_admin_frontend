@@ -40,7 +40,7 @@ const CalendarView = ({
     const differenceDays = differenceInDays(dateFilters[1], dateFilters[0])
 
     const result = []
-    for (let i = 0; i < differenceDays; i++) {
+    for (let i = 0; i <= differenceDays; i++) {
       result.push(format(add(dateFilters[0], { days: i }), "dd.MM.yyyy"))
     }
     return result

@@ -8,6 +8,7 @@ import HFImageUpload from "../FormElements/HFImageUpload"
 import HFMultipleSelect from "../FormElements/HFMultipleSelect"
 import HFSelect from "../FormElements/HFSelect"
 import HFSwitch from "../FormElements/HFSwitch"
+import HFTextEditor from "../FormElements/HFTextEditor"
 import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 import HFTimePicker from "../FormElements/HFTimePicker"
@@ -82,7 +83,7 @@ const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
     case "MULTI_LINE":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFTextField
+          <HFTextEditor
             control={control}
             name={computedSlug}
             fullWidth

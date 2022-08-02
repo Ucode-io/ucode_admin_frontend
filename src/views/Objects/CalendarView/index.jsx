@@ -12,7 +12,6 @@ import { useEffect, useMemo, useState } from "react"
 import CRangePicker from "../../../components/DatePickers/CRangePicker"
 import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
-import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { getFieldLabel } from "../../../utils/getFieldLabel"
@@ -126,7 +125,6 @@ const CalendarView = ({
   }
 
   const navigateToCreatePage = (time, columnIndex, data) => {
-    console.log("DATA ================>", view)
     if (!time || !dateFilters?.[0]) return
     const date = add(dateFilters[0], { days: columnIndex })
 
@@ -151,14 +149,6 @@ const CalendarView = ({
 
     navigateToForm(tableSlug, "CREATE", null, { [startTimeStampSlug]: computedDate, ...filters })
   }
-
-  // useDebouncedWatch(
-  //   () => {
-  //     getAllData()
-  //   },
-  //   [filters],
-  //   500
-  // )
 
   useEffect(() => {
     if (!dateFilters[0] || !dateFilters[1]) return

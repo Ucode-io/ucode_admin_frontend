@@ -8,21 +8,25 @@ const RelationFilter = ({ field = {}, filters, onChange }) => {
   const { id } = useId()
   const [searchText, setSearchText] = useState("")
 
+
+
   const fieldTableSlug = field.id.split("#")[0]
   const name = `${fieldTableSlug}_id`
   const viewField = field.attributes?.[0]
 
+  
   const { data: options, isLoading } = useQuery(
     ["GET_OBJECT_LIST", fieldTableSlug, searchText],
     () => {
       if (!fieldTableSlug) return null
       return constructorObjectService.getList(fieldTableSlug, {
-        data: { offset: 0, limit: 10, [field.slug]: searchText },
+        data: { offset: 0, limit: 10, [viewField.slug]: searchText },
       })
     },
     {
       select: ({ data }) => {
         const result = {}
+
         data.response?.forEach((el) => {
           result[el.guid] = {
             label: el[viewField.slug],
@@ -34,6 +38,10 @@ const RelationFilter = ({ field = {}, filters, onChange }) => {
       },
     }
   )
+
+  console.log('options --->', options)
+
+
 
 
   const search = useDebounce((_, searchText) => {

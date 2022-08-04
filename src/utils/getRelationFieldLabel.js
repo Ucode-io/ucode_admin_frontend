@@ -19,9 +19,14 @@ export const getRelationFieldLabel = (field, option) => {
 }
 
 export const getRelationFieldTabsLabel = (field, option) => {
+
+  if(!Array.isArray(field?.attributes)) return ""
+
   let label = ""
 
-  field.attributes?.forEach((el) => {
+  // console.log("field.attributes ---->", field.attributes, option)
+
+  field?.attributes?.forEach((el) => {
     let result = ""
     if (el?.type === "DATE")
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy")

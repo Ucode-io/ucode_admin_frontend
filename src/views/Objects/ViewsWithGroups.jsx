@@ -20,8 +20,6 @@ import FastFilter from "./components/FastFilter"
 import SettingsButton from "./components/SettingsButton"
 import FastFilterButton from "./components/FastFilter/FastFilterButton"
 import CalendarView from "./CalendarView/index"
-import { endOfWeek, startOfWeek } from "date-fns"
-import CRangePicker from "../../components/DatePickers/CRangePicker"
 
 const ViewsWithGroups = ({
   tableSlug,
@@ -37,10 +35,6 @@ const ViewsWithGroups = ({
   const { navigateToForm } = useTabRouter()
   const [tabsData, setTabsData] = useState(null)
   const [loader, setLoader] = useState(false)
-  const [dateFilters, setDateFilters] = useState([
-    startOfWeek(new Date(), { weekStartsOn: 1 }),
-    endOfWeek(new Date(), { weekStartsOn: 1 }),
-  ])
 
   const filterChangeHandler = (value, name) => {
     setFilters({
@@ -77,7 +71,6 @@ const ViewsWithGroups = ({
   }, [groupField, tabsData])
 
   useEffect(() => {
-    console.log('GROUP FIELD --->', groupField)
     if (!groupField?.id?.includes("#")) return setTabsData(null)
     const tableSlug = groupField.id.split("#")?.[0]
 
@@ -85,11 +78,11 @@ const ViewsWithGroups = ({
 
     constructorObjectService
       .getList(tableSlug, {
-        data: { offset: 0, limit: 10 },
+        data: {},
       })
       .then(({ data }) => setTabsData(data.response))
       .finally(() => setLoader(false))
-  }, [groupField])
+  }, [groupField?.id])
 
   return (
     <>
@@ -119,12 +112,6 @@ const ViewsWithGroups = ({
           views={views}
           setViews={setViews}
         />
-
-        {view.type === "CALENDAR" && (
-          <CRangePicker value={dateFilters} onChange={setDateFilters} />
-        )}
-
-        {/* <SearchInput /> */}
         <FastFilter filters={filters} onChange={filterChangeHandler} />
       </FiltersBlock>
 
@@ -167,7 +154,7 @@ const ViewsWithGroups = ({
                       filterChangeHandler={filterChangeHandler}
                       groupField={groupField}
                       group={tab}
-                      dateFilters={dateFilters}
+                      // dateFilters={dateFilters}
                       view={view}
                     />
                   ) : (
@@ -203,7 +190,7 @@ const ViewsWithGroups = ({
                       filters={filters}
                       filterChangeHandler={filterChangeHandler}
                       view={view}
-                      dateFilters={dateFilters}
+                      // dateFilters={dateFilters}
                     />
                   ) : (
                     <TableView

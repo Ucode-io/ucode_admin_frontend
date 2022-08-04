@@ -1,10 +1,11 @@
 export const listToMap = (list = [], fieldName = 'id') => {
 
-  const map = {};
+  const map = {}
 
-  list.forEach(item => {
-    map[item[fieldName]] = item;
-  });
+  list.forEach((item) => {
+    map[item[fieldName]] = item
+  }
+  )
 
-  return map;
+  return map
 }

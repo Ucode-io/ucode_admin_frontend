@@ -1,50 +1,44 @@
-import { add, differenceInDays, format, parse, setHours, setMinutes } from "date-fns"
-import el from "date-fns/esm/locale/el/index.js"
-import { useEffect, useMemo, useState } from "react"
+import { Download, Upload } from "@mui/icons-material"
+import { add, differenceInDays, endOfWeek, startOfWeek } from "date-fns"
+import { useMemo, useState } from "react"
 import { useQuery } from "react-query"
-import { useParams } from "react-router-dom"
+import { useDispatch } from "react-redux"
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
+import CRangePicker from "../../../components/DatePickers/CRangePicker"
+import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
-import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
+import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice"
 import { objectToArray } from "../../../utils/objectToArray"
-import DatesRow from "./DatesRow"
-import ObjectColumn from "./ObjectColumn"
-import styles from "./style.module.scss"
-import TimesBlock from "./TimesBlock"
-
-const weekDays = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
-
+import ColumnsSelector from "../components/ColumnsSelector"
+import FastFilter from "../components/FastFilter"
+import CalendarFastFilter from "../components/FastFilter/CalendarFastFilter.jsx"
+import CalendarFastFilterButton from "../components/FastFilter/CalendarFastFilter.jsx/CalendarFastFilterButton"
+import FastFilterButton from "../components/FastFilter/FastFilterButton"
+import CalendarGroupFieldSelector from "../components/GroupFieldSelector/CalendarGroupFieldSelector"
+import SettingsButton from "../components/SettingsButton"
+import ViewTabSelector from "../components/ViewTypeSelector"
+import Calendar from "./Calendar"
 
 const CalendarView = ({
-  computedColumns,
-  setViews,
-  filters,
-  filterChangeHandler,
-  groupField,
-  group,
   view,
-  dateFilters,
+  tableSlug,
+  tableColumns,
+  setViews,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  groupField,
+  views,
 }) => {
-  const { tableSlug } = useParams()
+  const [dateFilters, setDateFilters] = useState([
+    startOfWeek(new Date(), { weekStartsOn: 1 }),
+    endOfWeek(new Date(), { weekStartsOn: 1 }),
+  ])
+  const dispatch = useDispatch()
 
-  const [tableLoader, setTableLoader] = useState(true)
   const [data, setData] = useState([])
-  const { navigateToForm } = useTabRouter()
-
-
-  // ======= Computed values =======
-
-  const computedDates = useMemo(() => {
-    if (!dateFilters?.[0] || !dateFilters?.[1]) return null
-
-    const differenceDays = differenceInDays(dateFilters[1], dateFilters[0])
-
-    const result = []
-    for (let i = 0; i <= differenceDays; i++) {
-      result.push(format(add(dateFilters[0], { days: i }), "dd.MM.yyyy"))
-    }
-    return result
-  }, [dateFilters])
+  const [filters, setFilters] = useState({})
+  
 
   const computedData = useMemo(() => {
     const startTimeStampSlug = view.group_fields?.find(
@@ -54,136 +48,105 @@ const CalendarView = ({
       ({ field_type }) => field_type === "end_timestamp"
     )?.field_slug
 
-    return computedDates?.map((date) => ({
-      date,
-      data: data
-        .filter((el) => {
-          return (
-            el[startTimeStampSlug] &&
-            format(new Date(el[startTimeStampSlug]), "dd.MM.yyyy") === date
-          )
-        })
-        .map((el) => ({
-          ...el,
-          calendarStartTime: el[startTimeStampSlug]
-            ? new Date(el[startTimeStampSlug])
-            : null,
-          calendarEndTime: el[endTimeStampSlug]
-            ? new Date(el[endTimeStampSlug])
-            : null,
-        })),
+    return data?.map((el) => ({
+      ...el,
+      calendarStartTime: el[startTimeStampSlug]
+        ? new Date(el[startTimeStampSlug])
+        : null,
+      calendarEndTime: el[endTimeStampSlug]
+        ? new Date(el[endTimeStampSlug])
+        : null,
     }))
-  }, [data, computedDates])
+  }, [data, view])
 
-  const { data: disableDatesTable } = useQuery(["GET_OBJECTS_LIST"], () => {
-    if(!view?.disable_dates?.table_slug) return {}
-    
-    let groupFieldName = ""
+  const { isLoading = true } = useQuery(
+    ["GET_OBJECTS_LIST_WITH_RELATIONS", tableSlug, filters],
+    () => {
+      return constructorObjectService.getList(tableSlug, {
+        data: { with_relations: true, ...filters },
+      })
+    },
+    {
+      onSuccess: ({ data }) => {
+        setViews(data.views ?? [])
+        setData(objectToArray(data.response ?? {}))
+        // dispatch(
+        //   tableColumnActions.setList({
+        //     tableSlug,
+        //     columns: data.fields ?? [],
+        //   })
+        // )
+        dispatch(
+          tableColumnActions.setRelationColumns({
+            tableSlug,
+            columns: data.relation_fields ?? [],
+          })
+        )
+      },
+    }
+  )
 
-    if (groupField?.id?.includes("#"))
-      groupFieldName = `${groupField.id.split("#")[0]}_id`
-    if (groupField?.slug) groupFieldName = groupField?.slug
+  const computedDates = useMemo(() => {
+    if (!dateFilters?.[0] || !dateFilters?.[1]) return null
 
-    if(!groupFieldName) return {}
+    const differenceDays = differenceInDays(dateFilters[1], dateFilters[0])
 
-    return constructorObjectService.getList(view?.disable_dates?.table_slug, {
-      data: { [groupFieldName]: group?.value },
+    const result = []
+    for (let i = 0; i <= differenceDays; i++) {
+      result.push(add(dateFilters[0], { days: i }))
+    }
+    return result
+  }, [dateFilters])
+
+
+  const filterChangeHandler = (value, name) => {
+    setFilters({
+      ...filters,
+      [name]: value,
     })
-  }, {
-    select: (res) => {
-      const result = {}
-
-      res?.data?.response?.forEach(el => {
-        const weekIndex = weekDays.indexOf(el[view?.disable_dates?.day_slug])
-        const calendarFromTime = el[view?.disable_dates?.time_from_slug]
-        const calendarToTime = el[view?.disable_dates?.time_to_slug]
-
-        if(weekIndex !== -1) {
-          result[weekIndex] = {
-            ...el,
-            calendarFromTime,
-            calendarToTime
-          }
-        }
-      })
-
-
-      return result
-    }
-  })
-
-  const getAllData = async () => {
-    setTableLoader(true)
-    try {
-      let groupFieldName = ""
-
-      if (groupField?.id?.includes("#"))
-        groupFieldName = `${groupField.id.split("#")[0]}_id`
-      if (groupField?.slug) groupFieldName = groupField?.slug
-
-      const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { ...filters, [groupFieldName]: group?.value },
-      })
-
-      setViews(data.views ?? [])
-      setData(objectToArray(data.response ?? {}))
-    } finally {
-      setTableLoader(false)
-    }
   }
-
-  const navigateToCreatePage = (date, time) => {
-    if (!time || !date) return
-    const columnDate = parse(date, 'dd.MM.yyyy', new Date())
-
-    const [hour, minute] = time?.split("-")?.[0]?.trim()?.split(":")
-
-    const computedDate = setHours(setMinutes(columnDate, minute), hour)
-
-
-    const startTimeStampSlug = view.group_fields?.find(
-      ({ field_type }) => field_type === "start_timestamp"
-    )?.field_slug
-
-    let groupFieldName = ""
-
-      if (groupField?.id?.includes("#"))
-        groupFieldName = `${groupField.id.split("#")[0]}_id`
-      if (groupField?.slug) groupFieldName = groupField?.slug
-
-    navigateToForm(tableSlug, "CREATE", null, { [startTimeStampSlug]: computedDate, [groupFieldName]: group?.value })
-
-  }
-
-  useEffect(() => {
-    getAllData()
-  }, [filters, groupField])
-
-  if(tableLoader) return <PageFallback />
 
   return (
-    <div className={styles.main}>
-      <div className={styles.card}>
-        <div className={styles.wrapper}>
-          <DatesRow computedDates={computedDates} />
+    <div>
+      <FiltersBlock
+        extra={
+          <>
+            <CalendarFastFilterButton />
 
-          <div className={styles.calendar}>
-            <TimesBlock />
+            <CalendarGroupFieldSelector tableSlug={tableSlug} />
 
-            {computedData?.map((column, columnIndex) => (
-              <ObjectColumn
-                key={column.date}
-                column={column}
-                view={view}
-                columnIndex={columnIndex}
-                disableDatesTable={disableDatesTable}
-                navigateToCreatePage={navigateToCreatePage}
-                hasDisabledDates={!!view?.disable_dates?.table_slug}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+            <ColumnsSelector tableSlug={tableSlug} />
+
+            <RectangleIconButton color="white">
+              <Upload />
+            </RectangleIconButton>
+            <RectangleIconButton color="white">
+              <Download />
+            </RectangleIconButton>
+
+            <SettingsButton />
+          </>
+        }
+      >
+        <ViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+          setViews={setViews}
+        />
+
+        <CRangePicker value={dateFilters} onChange={setDateFilters} />
+
+        {/* <SearchInput /> */}
+        <CalendarFastFilter filters={filters} onChange={filterChangeHandler} />
+      </FiltersBlock>
+        
+      {isLoading && (
+        <PageFallback />
+      )}
+
+      <Calendar dateFilters={dateFilters} computedDates={computedDates} data={computedData} view={view} filters={filters} />
+
     </div>
   )
 }

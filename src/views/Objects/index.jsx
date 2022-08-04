@@ -1,10 +1,11 @@
-import { Fragment, useEffect, useMemo, useState } from "react"
+import { Fragment, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { TabPanel, Tabs } from "react-tabs"
 import { generateGUID } from "../../utils/generateID"
 import ViewsWithGroups from "./ViewsWithGroups"
 import BoardView from "./BoardView"
+import CalendarView from "./CalendarView"
 
 const staticViews = [
   {
@@ -45,9 +46,20 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
         <div>
           {computedViews.map((view) => {
             return (
-                <TabPanel key={view.id}>
+              <TabPanel key={view.id}>
                 {view.type === "BOARD" ? (
                   <BoardView
+                    view={view}
+                    tableSlug={computedTableSlug}
+                    tableColumns={computedColumns}
+                    setViews={setViews}
+                    selectedTabIndex={selectedTabIndex}
+                    setSelectedTabIndex={setSelectedTabIndex}
+                    groupField={groupField}
+                    views={computedViews}
+                  />
+                ) : view.type === "CALENDAR" ? (
+                  <CalendarView
                     view={view}
                     tableSlug={computedTableSlug}
                     tableColumns={computedColumns}

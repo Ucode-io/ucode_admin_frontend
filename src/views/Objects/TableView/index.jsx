@@ -35,7 +35,7 @@ const TableView = ({
       if(groupField?.slug) groupFieldName = groupField?.slug
 
       const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: pageToOffset(currentPage), limit: 10, ...filters, [groupFieldName]: group?.value },
+        data: { offset: pageToOffset(currentPage), limit: 10, ...filters, [groupFieldName]: group?.value},
       })
 
       setViews(data.views ?? [])
@@ -43,7 +43,7 @@ const TableView = ({
       setPageCount(isNaN(data?.count) ? 1 : Math.ceil(data.count / 10))
       dispatch(
         tableColumnActions.setList({
-          tableSlug: tableSlug,
+          tableSlug,
           columns: data.fields ?? [],
         })
       )
@@ -80,7 +80,7 @@ const TableView = ({
   useEffect(() => {
     getAllData()
   }, [])
-
+  
   return (
       <DataTable
         removableHeight={207}

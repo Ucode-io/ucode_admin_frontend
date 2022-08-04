@@ -10,7 +10,7 @@ const ObjectColumn = ({ column, view, columnIndex, disableDatesTable = {}, navig
     const data = column.data
 
     if (!data?.length) return []
-
+    
     const calendarStartedTime = setMinutes(setHours(data[0]?.calendarStartTime, 8), 0)
 
     const result = data.map((el) => {

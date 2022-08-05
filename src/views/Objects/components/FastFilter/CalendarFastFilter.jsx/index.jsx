@@ -30,8 +30,6 @@ const CalendarFastFilter = ({ filters, onChange }) => {
     })
   }, [relationColumns])
 
-  console.log('computedRelationFields===>', computedRelationFields)
-
   return (
     <div className={styles.filtersBlock}>
       {computedFields.map((filter) => (

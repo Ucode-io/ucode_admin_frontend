@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { useEffect, useMemo } from "react"
-import { useQueries } from "react-query"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import constructorObjectService from "../../../services/constructorObjectService"
@@ -14,7 +13,7 @@ const Calendar = ({ dateFilters, computedDates, data, view, filters }) => {
   const groupColumns = useSelector(
     (state) => state.tableColumn.calendarGroupColumns[tableSlug] ?? []
   )
-
+  
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState([])
 
@@ -27,8 +26,6 @@ const Calendar = ({ dateFilters, computedDates, data, view, filters }) => {
       Object.keys(computedFilters).forEach(key => {
         if(!computedFilters[key]) delete computedFilters[key]
       })
-
-      console.log('computedFilters --->', computedFilters)
 
       const requests = groupColumns.map(
         (column) => constructorObjectService.getList(column.table_slug, {
@@ -69,8 +66,6 @@ const Calendar = ({ dateFilters, computedDates, data, view, filters }) => {
   // )
 
   useEffect(() => {
-    console.log("RESULT22222 ---->", result)
-
     fetchGroupObjects()
   }, [filters])
 
@@ -107,9 +102,6 @@ const Calendar = ({ dateFilters, computedDates, data, view, filters }) => {
       ...el,
       child: recursiveFunction(el, 0)
     }))
-
-    console.log('COMPUTEDDDD', computed)
-
 
     return computed
   }, [isLoading, result, data])

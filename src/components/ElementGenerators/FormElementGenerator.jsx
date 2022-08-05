@@ -6,7 +6,6 @@ import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
 import HFImageUpload from "../FormElements/HFImageUpload"
 import HFMultipleSelect from "../FormElements/HFMultipleSelect"
-import HFSelect from "../FormElements/HFSelect"
 import HFSwitch from "../FormElements/HFSwitch"
 import HFTextEditor from "../FormElements/HFTextEditor"
 import HFTextField from "../FormElements/HFTextField"
@@ -15,7 +14,6 @@ import HFTimePicker from "../FormElements/HFTimePicker"
 import RelationFormElement from "./RelationFormElement"
 
 const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
-
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
@@ -230,6 +228,9 @@ const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
+            InputProps={{
+              readOnly: field.type === "INCREMENT_ID",
+            }}
             {...props}
           />
         </FRow>

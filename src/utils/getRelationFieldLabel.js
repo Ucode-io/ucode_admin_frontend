@@ -4,7 +4,7 @@ import { format } from "date-fns"
 export const getRelationFieldLabel = (field, option) => {
   let label = ""
 
-  field.attributes?.fields?.forEach((el) => {
+  field.attributes?.view_fields?.forEach((el) => {
     let result = ""
     if (el?.type === "DATE")
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy")

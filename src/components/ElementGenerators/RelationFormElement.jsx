@@ -18,6 +18,7 @@ const RelationFormElement = ({
   column,
   mainForm,
   disabledHelperText,
+  setFormValue,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -39,6 +40,7 @@ const RelationFormElement = ({
               tableSlug={tableSlug}
               error={error}
               disabledHelperText={disabledHelperText}
+              setFormValue={setFormValue}
             />
           )}
         />
@@ -86,6 +88,7 @@ const AutoCompleteElement = ({
   setValue,
   error,
   disabledHelperText,
+  setFormValue=()=>{}
 }) => {
   const { navigateToForm } = useTabRouter()
 
@@ -106,8 +109,25 @@ const AutoCompleteElement = ({
     return findedOption ? [findedOption] : []
   }, [options, value])
 
+
+
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option)
+  }
+
+  const changeHandler = (value) => {
+
+    const val = value?.[value?.length - 1]
+
+    setValue(val?.guid ?? null)
+
+    if(!field?.attributes?.autofill) return
+
+    field.attributes.autofill.forEach(({field_from, field_to}) => {
+
+      setFormValue(field_to, val?.[field_from])
+    })
+
   }
 
   return (
@@ -115,7 +135,7 @@ const AutoCompleteElement = ({
       options={options ?? []}
       value={computedValue}
       onChange={(event, newValue) => {
-        setValue(newValue?.[newValue?.length - 1]?.guid ?? null)
+        changeHandler(newValue)
       }}
       noOptionsText={
         <span onClick={() =>  navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
@@ -145,27 +165,6 @@ const AutoCompleteElement = ({
         </>
       )}
 
-      // renderOption={(props, option, { inputValue }) => {
-      //   const matches = match(option.title, inputValue);
-      //   const parts = parse(option.title, matches);
-
-      //   return (
-      //     <li {...props}>
-      //       <div>
-      //         {parts.map((part, index) => (
-      //           <span
-      //             key={index}
-      //             style={{
-      //               fontWeight: part.highlight ? 700 : 400,
-      //             }}
-      //           >
-      //             {part.text}
-      //           </span>
-      //         ))}
-      //       </div>
-      //     </li>
-      //   );
-      // }}
     />
   )
 }

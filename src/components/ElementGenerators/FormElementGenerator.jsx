@@ -13,7 +13,7 @@ import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 import HFTimePicker from "../FormElements/HFTimePicker"
 import RelationFormElement from "./RelationFormElement"
 
-const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
+const FormElementGenerator = ({ field = {}, control, relation, setFormValue, ...props }) => {
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
@@ -30,7 +30,7 @@ const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
 
   if (field.id?.includes("#"))
     return (
-      <RelationFormElement control={control} field={field} {...props} />
+      <RelationFormElement control={control} field={field} setFormValue={setFormValue} {...props} />
     )
 
   switch (field.type) {

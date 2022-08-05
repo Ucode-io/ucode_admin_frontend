@@ -5,6 +5,7 @@ WORKDIR /app
 
 COPY . ./
 
+RUN mv .env.production .env
 RUN yarn install --network-timeout 1000000000
 
 RUN yarn build

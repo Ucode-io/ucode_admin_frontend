@@ -23,7 +23,7 @@ build_image_staging:
   only:
     - staging
 
-deploy_to_staging:
+build_image_parfume:
   image: gitlab.udevs.io:5050/docker/helm:dind
   stage: build
   script:

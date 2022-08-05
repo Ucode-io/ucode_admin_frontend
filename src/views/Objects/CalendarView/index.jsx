@@ -1,5 +1,5 @@
 import { Download, Upload } from "@mui/icons-material"
-import { add, differenceInDays, endOfWeek, startOfWeek } from "date-fns"
+import { add, differenceInDays, endOfWeek, format, startOfWeek } from "date-fns"
 import { useMemo, useState } from "react"
 import { useQuery } from "react-query"
 import { useDispatch } from "react-redux"
@@ -11,10 +11,8 @@ import constructorObjectService from "../../../services/constructorObjectService
 import { tableColumnActions } from "../../../store/tableColumn/tableColumn.slice"
 import { objectToArray } from "../../../utils/objectToArray"
 import ColumnsSelector from "../components/ColumnsSelector"
-import FastFilter from "../components/FastFilter"
 import CalendarFastFilter from "../components/FastFilter/CalendarFastFilter.jsx"
 import CalendarFastFilterButton from "../components/FastFilter/CalendarFastFilter.jsx/CalendarFastFilterButton"
-import FastFilterButton from "../components/FastFilter/FastFilterButton"
 import CalendarGroupFieldSelector from "../components/GroupFieldSelector/CalendarGroupFieldSelector"
 import SettingsButton from "../components/SettingsButton"
 import ViewTabSelector from "../components/ViewTypeSelector"
@@ -34,11 +32,11 @@ const CalendarView = ({
     startOfWeek(new Date(), { weekStartsOn: 1 }),
     endOfWeek(new Date(), { weekStartsOn: 1 }),
   ])
+
   const dispatch = useDispatch()
 
   const [data, setData] = useState([])
   const [filters, setFilters] = useState({})
-  
 
   const computedData = useMemo(() => {
     const startTimeStampSlug = view.group_fields?.find(
@@ -85,6 +83,42 @@ const CalendarView = ({
       },
     }
   )
+
+  const { data: workingDays } = useQuery(["GET_OBJECTS_LIST"], () => {
+    if(!view?.disable_dates?.table_slug) return {}
+
+    return constructorObjectService.getList(view?.disable_dates?.table_slug, { data: {} })
+  }, {
+    select: (res) => {
+      const result = {}
+    
+      res?.data?.response?.forEach(el => {
+        const date = el[view?.disable_dates?.day_slug]
+        const calendarFromTime = el[view?.disable_dates?.time_from_slug]
+        const calendarToTime = el[view?.disable_dates?.time_to_slug]
+
+        if(date) {
+          const formattedDate = format(new Date(date), 'dd.MM.yyyy')
+
+          if(!result[formattedDate]?.[0]) {
+            result[formattedDate] = [{
+              ...el,
+              calendarFromTime,
+              calendarToTime
+            }]
+          } else {
+            result[formattedDate].push({
+              ...el,
+              calendarFromTime,
+              calendarToTime
+            })
+          }
+        }
+      })
+
+      return result
+    }
+  })
 
   const computedDates = useMemo(() => {
     if (!dateFilters?.[0] || !dateFilters?.[1]) return null
@@ -145,7 +179,7 @@ const CalendarView = ({
         <PageFallback />
       )}
 
-      <Calendar dateFilters={dateFilters} computedDates={computedDates} data={computedData} view={view} filters={filters} />
+      <Calendar dateFilters={dateFilters} computedDates={computedDates} data={computedData} view={view} filters={filters} workingDays={workingDays} />
 
     </div>
   )

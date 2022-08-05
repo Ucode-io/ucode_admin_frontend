@@ -6,8 +6,7 @@ import MockColumn from "./MockColumn"
 import RecursiveBlock from "./RecursiveBlock"
 import styles from "./style.module.scss"
 
-const CalendarColumn = ({ date, computedData, groupColumns, view }) => {
-
+const CalendarColumn = ({ date, computedData, groupColumns, view, workingDays }) => {
   return (
     <div>
       <div className={styles.dateBlock}>{format(date, "dd MMMM yyyy")}</div>
@@ -18,8 +17,7 @@ const CalendarColumn = ({ date, computedData, groupColumns, view }) => {
           <div className={styles.block}>
             <div className={styles.blockElement} >{getRelationFieldTabsLabel(groupColumns[0], el)}</div>
 
-            {!el.child?.length ? <MockColumn /> : <RecursiveBlock date={date} computedData={el?.child} groupColumns={groupColumns} level={1} view={view} />}
-
+            {!el.child?.length ? <MockColumn groupColumns={groupColumns} level={1} workingDays={workingDays} date={date} view={view}  /> : <RecursiveBlock date={date} computedData={el?.child} groupColumns={groupColumns} level={1} view={view} workingDays={workingDays} />}
           </div>
           
           </>

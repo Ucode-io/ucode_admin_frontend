@@ -23,7 +23,7 @@
     height: 40px;
     box-shadow: inset -1px -1px 0px #E5E9EB;
     background-color: #fff;
-    
+    display: none;
   }
 }
 
@@ -36,6 +36,8 @@
   position: sticky;
   top: 0px;
   box-shadow: inset -1px -1px 0px #E5E9EB;
+  background-color: #fff;
+  z-index: 2;
 }
 
 .row {
@@ -62,6 +64,36 @@
   width: 100%;
   box-shadow: inset -1px -1px 0px #E5E9EB;
   height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .addButton {
+    display: none;
+    align-items: center;
+
+    &:hover {
+      cursor: pointer;
+      color: #007AFF;
+    }
+  }
+
+  &:hover {
+    .addButton {
+      display: inline-flex;
+    }
+  }
+
+  &.disabled {
+    background-color: rgba(223, 223, 223, 0.276);
+
+    &:hover {
+      .addButton {
+        display: none;
+      }
+    }
+
+  }
 }
 
 
@@ -79,7 +111,6 @@
     padding: 5px 20px;
     height: 40px;
     position: absolute;
-    
 
     .infoBlock {
       background-color: #E2F4E6;
@@ -87,6 +118,12 @@
       padding: 8px;
       overflow: hidden;
       height: 70px;
+      cursor: pointer;
+      transition-duration: .3s;
+
+      &:hover {
+        background-color: #aad4b3;
+      }
 
       .time {
         color: #84919A;

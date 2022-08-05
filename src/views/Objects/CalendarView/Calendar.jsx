@@ -8,7 +8,7 @@ import CalendarColumn from "./CalendarColumn"
 import styles from "./style.module.scss"
 import TimesColumn from "./TimesColumn"
 
-const Calendar = ({ dateFilters, computedDates, data, view, filters }) => {
+const Calendar = ({ dateFilters, computedDates, data, view, filters, workingDays }) => {
   const { tableSlug } = useParams()
   const groupColumns = useSelector(
     (state) => state.tableColumn.calendarGroupColumns[tableSlug] ?? []
@@ -75,13 +75,13 @@ const Calendar = ({ dateFilters, computedDates, data, view, filters }) => {
     if (level === groupColumns?.length - 1) {
       const slug = groupColumns[level]?.slug
 
-      return data?.filter((child) => child[slug] === el.guid)
+      return data?.filter((child) => child[slug] === el.guid).map(child => ({...child, parent_slug: slug}))
+    
     } else {
       const slug = selectElementFromEndOfString({
         string: groupColumns[level]?.slug,
         separator: ".",
       })
-
       const ddd = result[level + 1]?.data?.response
 
       return ddd
@@ -119,6 +119,7 @@ const Calendar = ({ dateFilters, computedDates, data, view, filters }) => {
             computedData={computedData}
             groupColumns={groupColumns}
             view={view}
+            workingDays={workingDays}
           />
         ))}
     </div>

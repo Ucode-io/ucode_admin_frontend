@@ -5,7 +5,7 @@ stages:
   - build
   - deploy
 
-test_linter_and_build_image_prod:
+build_image_prod:
   image: gitlab.udevs.io:5050/docker/helm:dind
   stage: build
   script:
@@ -14,16 +14,16 @@ test_linter_and_build_image_prod:
   only:
     - master
 
-test_linter_and_build_image_test:
+build_image_staging:
   image: gitlab.udevs.io:5050/docker/helm:dind
   stage: build
   script:
-    - make build-image TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY ENV_TAG=test
-    - make push-image TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY ENV_TAG=test
+    - make build-image-staging TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY ENG_TAG=test
+    - make push-image TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY ENG_TAG=test
   only:
     - staging
 
-test_linter_and_build_image_parfume:
+deploy_to_staging:
   image: gitlab.udevs.io:5050/docker/helm:dind
   stage: build
   script:

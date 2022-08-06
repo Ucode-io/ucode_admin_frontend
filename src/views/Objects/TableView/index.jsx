@@ -100,6 +100,7 @@ const TableView = ({
         onDeleteClick={deleteHandler}
         tableSlug={tableSlug}
         tableStyle={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #E5E9EB' }}
+        isResizeble={true}
       />
   )
 }

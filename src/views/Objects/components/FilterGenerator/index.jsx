@@ -6,7 +6,6 @@ import TableColumnFilter from "../../../../components/TableColumnFilter"
 import TableOrderingButton from "../../../../components/TableOrderingButton"
 import DefaultFilter from "./DefaultFilter"
 import RelationFilter from "./RelationFilter"
-import { useSelector } from "react-redux"
 
 const FilterGenerator = ({
   field,
@@ -53,7 +52,6 @@ export const Filter = ({
   onChange,
   tableSlug,
 }) => {
-  const filtersRedux = useSelector(state => state?.filters?.filters)
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
@@ -100,7 +98,7 @@ export const Filter = ({
         <FormControl style={{ width: "100%" }}>
           <InputLabel size="small">{}</InputLabel>
           <CSelect
-            value={filtersRedux[name] ?? ""}
+            value={filters[name] ?? ""}
             onChange={(e) => onChange(e.target.value, name)}
             size="small"
             fullWidth
@@ -120,7 +118,7 @@ export const Filter = ({
           inputFormat="dd.MM.yyyy"
           mask="__.__.____"
           toolbarFormat="dd.MM.yyyy"
-          value={filtersRedux[name] ?? ""}
+          value={filters[name] ?? ""}
           onChange={(val) => onChange(val, name)}
           renderInput={(params) => (
             <TextField
@@ -140,7 +138,7 @@ export const Filter = ({
           size="small"
           placeholder={field.label}
           type="number"
-          value={filtersRedux[name] ?? ""}
+          value={filters[name] ?? ""}
           onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
         />
       )
@@ -150,7 +148,7 @@ export const Filter = ({
         <CSelect
           fullWidth
           placeholder={field.label}
-          value={filtersRedux[name] ?? ""}
+          value={filters[name] ?? ""}
           disabledHelperText
           options={[
             {

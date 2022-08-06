@@ -41,7 +41,7 @@ const ViewsWithGroups = ({
   const dispatch = useDispatch();
 
   const filterChangeHandler = (value, name) => {
-    dispatch(filterAction.setFilters({ name, value }));
+    // dispatch(filterAction.setFilters({ name, value }));
     setFilters({
       ...filters,
       [name]: value,
@@ -164,18 +164,6 @@ const ViewsWithGroups = ({
                       group={tab}
                       view={view}
                     />
-                  ) : view.type === "CALENDAR" ? (
-                    <CalendarView
-                      computedColumns={computedColumns}
-                      tableSlug={tableSlug}
-                      setViews={setViews}
-                      filters={filters}
-                      filterChangeHandler={filterChangeHandler}
-                      groupField={groupField}
-                      group={tab}
-                      // dateFilters={dateFilters}
-                      view={view}
-                    />
                   ) : (
                     <TableView
                       computedColumns={computedColumns}
@@ -200,16 +188,6 @@ const ViewsWithGroups = ({
                       filters={filters}
                       filterChangeHandler={filterChangeHandler}
                       view={view}
-                    />
-                  ) : view.type === "CALENDAR" ? (
-                    <CalendarView
-                      omputedColumns={computedColumns}
-                      tableSlug={tableSlug}
-                      setViews={setViews}
-                      filters={filters}
-                      filterChangeHandler={filterChangeHandler}
-                      view={view}
-                      // dateFilters={dateFilters}
                     />
                   ) : (
                     <TableView

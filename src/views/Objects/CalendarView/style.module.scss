@@ -15,15 +15,14 @@
   left: 0;
   z-index: 1;
 
-  .timeBlock {
-    width: 130px;
+  .timeRow {
+    min-width: 130px;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 40px;
     box-shadow: inset -1px -1px 0px #E5E9EB;
     background-color: #fff;
-    display: none;
   }
 }
 

@@ -2,7 +2,7 @@ import FormElementGenerator from '../../components/ElementGenerators/FormElement
 import FormCard from './components/FormCard'
 import styles from './style.module.scss'
 
-const MainInfo = ({ computedSections, control }) => {
+const MainInfo = ({ computedSections, control, setFormValue }) => {
   return (
     
       <div className={styles.mainCardSide}>
@@ -20,6 +20,7 @@ const MainInfo = ({ computedSections, control }) => {
                   key={field.id}
                   field={field}
                   control={control}
+                  setFormValue={setFormValue}
                 />
               ))}
             </div>

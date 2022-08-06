@@ -22,7 +22,6 @@ const RelationCreateForm = ({
 
   const { handleSubmit, control, reset, watch } = useForm()
 
-
   const values = watch()
 
   const relatedTableSlug = useMemo(() => {
@@ -40,6 +39,7 @@ const RelationCreateForm = ({
     },
     {
       select: ({ fields }) => {
+        console.log("FIELDS ====>", fields)
         return listToOptions(fields?.filter(field => field.type !== 'LOOKUP'), "label", "id")
       },
     }

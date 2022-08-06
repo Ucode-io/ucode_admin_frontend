@@ -1,19 +1,19 @@
 import { useMemo } from "react"
 import FRow from "../FormElements/FRow"
+import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
 import HFImageUpload from "../FormElements/HFImageUpload"
 import HFMultipleSelect from "../FormElements/HFMultipleSelect"
-import HFSelect from "../FormElements/HFSelect"
 import HFSwitch from "../FormElements/HFSwitch"
+import HFTextEditor from "../FormElements/HFTextEditor"
 import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 import HFTimePicker from "../FormElements/HFTimePicker"
 import RelationFormElement from "./RelationFormElement"
 
-const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
-
+const FormElementGenerator = ({ field = {}, control, relation, setFormValue, ...props }) => {
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
@@ -30,7 +30,7 @@ const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
 
   if (field.id?.includes("#"))
     return (
-      <RelationFormElement control={control} field={field} {...props} />
+      <RelationFormElement control={control} field={field} setFormValue={setFormValue} {...props} />
     )
 
   switch (field.type) {
@@ -66,11 +66,11 @@ const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
     case "PICK_LIST":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFSelect
+          <HFAutocomplete
             control={control}
             name={computedSlug}
             width="100%"
-            options={computedOptions}
+            options={field?.attributes?.options}
             required={field.required}
             placeholder={field.attributes?.placeholder}
             {...props}
@@ -81,7 +81,7 @@ const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
     case "MULTI_LINE":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFTextField
+          <HFTextEditor
             control={control}
             name={computedSlug}
             fullWidth
@@ -228,6 +228,9 @@ const FormElementGenerator = ({ field = {}, control, relation, ...props }) => {
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
+            InputProps={{
+              readOnly: field.type === "INCREMENT_ID",
+            }}
             {...props}
           />
         </FRow>

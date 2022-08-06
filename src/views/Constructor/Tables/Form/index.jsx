@@ -22,7 +22,6 @@ import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
 import { Save } from "@mui/icons-material"
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
 
-
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -41,6 +40,10 @@ const ConstructorTablesFormPage = () => {
       description: "",
       slug: "",
       icon: "",
+      increment_id: {
+        digit_number: 4,
+        with_increment_id: false,
+      },
     },
     mode: "all",
   })
@@ -60,11 +63,14 @@ const ConstructorTablesFormPage = () => {
         getSectionsData,
       ])
 
-      mainForm.reset({
+      const data = {
+        ...mainForm.getValues(),
         ...tableData,
         fields: [],
         sections: computeSections(sections),
-      })
+      }
+
+      mainForm.reset(data)
 
       await getRelationFields()
     } finally {
@@ -98,8 +104,10 @@ const ConstructorTablesFormPage = () => {
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
-          (relation.type === "One2Many" && relation.table_to?.slug === slug) || relation.type === "Recursive"
+          (relation.type === "Many2One" &&
+            relation.table_from?.slug === slug) ||
+          (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
+          relation.type === "Recursive"
         )
           layoutRelations.push(relation)
         else tableRelations.push(relation)
@@ -169,52 +177,56 @@ const ConstructorTablesFormPage = () => {
 
   return (
     <>
-    <div className="pageWithStickyFooter" >
-      <Tabs direction={"ltr"}>
-        <HeaderSettings
-          title="Objects"
-          subtitle={id ? mainForm.getValues("label") : "Добавить"}
-          icon={mainForm.getValues("icon")}
-          backButtonLink={-1}
-          sticky
-        >
-          <TabList>
-            <Tab>Details</Tab>
-            <Tab>Layouts</Tab>
-            <Tab>Fields</Tab>
-            <Tab>Relations</Tab>
-          </TabList>
-        </HeaderSettings>
+      <div className="pageWithStickyFooter">
+        <Tabs direction={"ltr"}>
+          <HeaderSettings
+            title="Objects"
+            subtitle={id ? mainForm.getValues("label") : "Добавить"}
+            icon={mainForm.getValues("icon")}
+            backButtonLink={-1}
+            sticky
+          >
+            <TabList>
+              <Tab>Details</Tab>
+              <Tab>Layouts</Tab>
+              <Tab>Fields</Tab>
+              <Tab>Relations</Tab>
+            </TabList>
+          </HeaderSettings>
 
-        <TabPanel>
-          <MainInfo control={mainForm.control} />
-        </TabPanel>
+          <TabPanel>
+            <MainInfo control={mainForm.control} />
+          </TabPanel>
 
-        <TabPanel>
-          <Layout mainForm={mainForm} />
-        </TabPanel>
+          <TabPanel>
+            <Layout mainForm={mainForm} />
+          </TabPanel>
 
-        <TabPanel>
-          <Fields mainForm={mainForm} />
-        </TabPanel>
+          <TabPanel>
+            <Fields mainForm={mainForm} />
+          </TabPanel>
 
-        <TabPanel>
-          <Relations
-            mainForm={mainForm}
-            getRelationFields={getRelationFields}
-          />
-        </TabPanel>
-      </Tabs>
-     
-    </div>
-    <Footer
+          <TabPanel>
+            <Relations
+              mainForm={mainForm}
+              getRelationFields={getRelationFields}
+            />
+          </TabPanel>
+        </Tabs>
+      </div>
+      <Footer
         extra={
           <>
-          <SecondaryButton onClick={() => navigate(-1)} color="error" >Закрыть</SecondaryButton>
-          <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)}
-          loading={btnLoader}>
-            <Save /> Сохранить
-          </PrimaryButton>
+            <SecondaryButton onClick={() => navigate(-1)} color="error">
+              Закрыть
+            </SecondaryButton>
+            <PrimaryButton
+              loader={btnLoader}
+              onClick={mainForm.handleSubmit(onSubmit)}
+              loading={btnLoader}
+            >
+              <Save /> Сохранить
+            </PrimaryButton>
           </>
         }
       />

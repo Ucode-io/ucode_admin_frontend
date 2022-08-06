@@ -83,7 +83,7 @@ const ViewsWithGroups = ({
 
     constructorObjectService
       .getList(tableSlug, {
-        data: { offset: 0, limit: 10 },
+        data: {},
       })
       .then(({ data }) => setTabsData(data.response))
       .finally(() => setLoader(false));
@@ -117,7 +117,6 @@ const ViewsWithGroups = ({
           views={views}
           setViews={setViews}
         />
-        {/* <SearchInput /> */}
         <FastFilter filters={filters} onChange={filterChangeHandler} />
       </FiltersBlock>
 
@@ -165,6 +164,18 @@ const ViewsWithGroups = ({
                       group={tab}
                       view={view}
                     />
+                  ) : view.type === "CALENDAR" ? (
+                    <CalendarView
+                      computedColumns={computedColumns}
+                      tableSlug={tableSlug}
+                      setViews={setViews}
+                      filters={filters}
+                      filterChangeHandler={filterChangeHandler}
+                      groupField={groupField}
+                      group={tab}
+                      // dateFilters={dateFilters}
+                      view={view}
+                    />
                   ) : (
                     <TableView
                       computedColumns={computedColumns}
@@ -189,6 +200,16 @@ const ViewsWithGroups = ({
                       filters={filters}
                       filterChangeHandler={filterChangeHandler}
                       view={view}
+                    />
+                  ) : view.type === "CALENDAR" ? (
+                    <CalendarView
+                      omputedColumns={computedColumns}
+                      tableSlug={tableSlug}
+                      setViews={setViews}
+                      filters={filters}
+                      filterChangeHandler={filterChangeHandler}
+                      view={view}
+                      // dateFilters={dateFilters}
                     />
                   ) : (
                     <TableView

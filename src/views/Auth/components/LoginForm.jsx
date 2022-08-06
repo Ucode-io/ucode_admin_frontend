@@ -1,5 +1,4 @@
 import {
-  AccountBalance,
   AccountCircle,
   Lock,
   SupervisedUserCircle,
@@ -72,7 +71,6 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
       .catch(() => setLoading(false))
   }
 
-
   const getCashboxData = (data) => {
     if(selectedClientType?.name !== "CASHIER") return null
     const cashboxId = data.tables.cashbox 
@@ -80,16 +78,6 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     const selectedCashbox = cashboxTable?.data?.response?.find(object => object.guid === cashboxId)
     return selectedCashbox
   }
-
-  // const { data: branches } = useQuery(
-  //   ["GET_OBJECTS_LIST"],
-  //   () => {
-  //     return constructorObjectService.getList("branches", { data: {} })
-  //   },
-  //   {
-  //     select: ({ data }) => listToOptions(data.response, "name", "guid") ?? [],
-  //   }
-  // )
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>

@@ -59,13 +59,16 @@ const CashboxClosing = () => {
     }
   }, [data])
 
-  const { mutate, isLoading: btnLoading } = useMutation((data) => {
-    return request.post('/cashbox_transaction', data)
-  }, {
-    onSuccess: () => {
-      dispatch(cashboxActions.setStatus('Закрыто'))
+  const { mutate, isLoading: btnLoading } = useMutation(
+    (data) => {
+      return request.post("/cashbox_transaction", data)
+    },
+    {
+      onSuccess: () => {
+        dispatch(cashboxActions.setStatus("Закрыто"))
+      },
     }
-  })
+  )
 
   const onSubmit = (values) => {
     let amount = 0
@@ -78,8 +81,8 @@ const CashboxClosing = () => {
 
     const data = {
       comment: values.comment,
-      status: 'Закрыто',
-      amount_of_money: amount - summ
+      status: "Закрыто",
+      amount_of_money: summ - amount,
     }
     mutate(data)
   }
@@ -88,7 +91,7 @@ const CashboxClosing = () => {
 
   return (
     <>
-      <div className={styles.page} >
+      <div className={styles.page}>
         <TableCard>
           <div className={styles.row}>
             <div className={styles.section}>
@@ -103,7 +106,7 @@ const CashboxClosing = () => {
               <p className={styles.label}>Расход</p>
 
               <div className={styles.value}>
-                {numberWithSpaces(total.amount - total.summ)}
+                {numberWithSpaces(total.summ - total.amount)}
               </div>
             </div>
           </div>
@@ -114,9 +117,9 @@ const CashboxClosing = () => {
             <thead>
               <tr>
                 <th>Тип</th>
-                <th>План</th>
-                <th></th>
                 <th>Факт</th>
+                <th></th>
+                <th>План</th>
                 <th></th>
                 <th>Разница</th>
               </tr>
@@ -128,6 +131,18 @@ const CashboxClosing = () => {
                   <td>
                     <div className={styles.iconBlock}>
                       <PaymentTypeIconGenerator type={payment.type} />
+                    </div>
+                  </td>
+                  <td>
+                    <HFTextField
+                      control={control}
+                      name={`overall_payments.[${index}].summ`}
+                      fullWidth
+                    />
+                  </td>
+                  <td>
+                    <div className={styles.iconBlock}>
+                      <Remove color="primary" />
                     </div>
                   </td>
                   <td>
@@ -143,18 +158,6 @@ const CashboxClosing = () => {
                   </td>
                   <td>
                     <div className={styles.iconBlock}>
-                      <Remove color="primary" />
-                    </div>
-                  </td>
-                  <td>
-                    <HFTextField
-                      control={control}
-                      name={`overall_payments.[${index}].summ`}
-                      fullWidth
-                    />
-                  </td>
-                  <td>
-                    <div className={styles.iconBlock}>
                       <DragHandle color="primary" />
                     </div>
                   </td>
@@ -165,7 +168,7 @@ const CashboxClosing = () => {
                         readOnly: true,
                       }}
                       value={
-                        Number(payment.amount ?? 0) - Number(payment.summ ?? 0)
+                        Number(payment.summ ?? 0) - Number(payment.amount ?? 0)
                       }
                       fullWidth
                       type="number"
@@ -193,7 +196,7 @@ const CashboxClosing = () => {
       <Footer
         extra={
           <>
-            <CancelButton onClick={() => navigate(-1)} /> 
+            <CancelButton onClick={() => navigate(-1)} />
             <SaveButton loading={btnLoading} onClick={handleSubmit(onSubmit)} />
           </>
         }

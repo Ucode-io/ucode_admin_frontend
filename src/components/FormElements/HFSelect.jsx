@@ -43,7 +43,6 @@ const HFSelect = ({
             inputProps={{ placeholder }}
             fullWidth
             just
-            // provide
             following
             attributes
             into

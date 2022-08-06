@@ -1,18 +1,16 @@
-import { useEffect, useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
+import { useEffect, useMemo } from "react"
+import { useForm, useWatch } from "react-hook-form"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
-import { useSelector } from "react-redux"
-import { relationTyes } from "../../../../../utils/constants/relationTypes"
 import DrawerCard from "../../../../../components/DrawerCard"
 import FRow from "../../../../../components/FormElements/FRow"
-import constructorFieldService from "../../../../../services/constructorFieldService"
-import listToOptions from "../../../../../utils/listToOptions"
-import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect"
 import { useParams } from "react-router-dom"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import { fieldTypes } from "../../../../../utils/constants/fieldTypes"
 import { Divider } from "@mui/material"
 import Attributes from "./Attributes"
+import { useQuery } from "react-query"
+import constructorFieldService from "../../../../../services/constructorFieldService"
+import listToOptions from "../../../../../utils/listToOptions"
 
 const FieldCreateForm = ({
   onSubmit,
@@ -20,6 +18,7 @@ const FieldCreateForm = ({
   initialValues = {},
   open,
   isLoading = false,
+  mainForm,
 }) => {
   const { id } = useParams()
   const { handleSubmit, control, reset, watch, getValues } = useForm()
@@ -27,6 +26,39 @@ const FieldCreateForm = ({
   const submitHandler = (values) => {
     onSubmit(values)
   }
+  
+  const selectedAutofillTableSlug = useWatch({
+    control,
+    name: 'autofill_table'
+  })
+
+  const layoutRelations = useWatch({
+    control: mainForm.control,
+    name: "layoutRelations",
+  })
+
+
+  const computedRelationTables = useMemo(() => {
+    return layoutRelations?.map(table => ({
+      value: table.id?.split('#')?.[0],
+      label: table.label,
+    }))
+  }, [layoutRelations])
+
+
+  const { data: computedRelationFields } = useQuery(['GET_TABLE_FIELDS', selectedAutofillTableSlug], () => {
+    if (!selectedAutofillTableSlug) return []
+    return constructorFieldService.getList({ table_slug: selectedAutofillTableSlug })
+  }, {
+    select: ({ fields }) => listToOptions(fields?.filter(field => field.type !== 'LOOKUP'), "label", "slug")
+  })
+
+  console.log('layoutRelations --->', computedRelationFields)
+  
+  // const { data } = useQuery(['GET_TABLES_LIST'], () => {
+  //   return constructorTableService.getList()
+  // }, { select: (res) => res?.data ?? [] })
+  
 
   const computedFieldTypes = useMemo(() => {
     return fieldTypes.map((type) => ({
@@ -109,6 +141,28 @@ const FieldCreateForm = ({
             options={computedFieldTypes}
             placeholder="Type"
             required
+          />
+        </FRow>
+
+        <Divider style={{ margin: "20px 0" }} />
+
+        <FRow label="Autofill table">
+          <HFSelect
+            disabledHelperText
+            name="autofill_table"
+            control={control}
+            options={computedRelationTables}
+            placeholder="Type"
+          />
+        </FRow>
+
+        <FRow label="Autofill field">
+          <HFSelect
+            disabledHelperText
+            name="autofill_field"
+            control={control}
+            options={computedRelationFields}
+            placeholder="Type"
           />
         </FRow>
 

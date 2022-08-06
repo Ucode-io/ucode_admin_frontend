@@ -1,14 +1,16 @@
 import { useMemo } from "react"
-import { useFieldArray } from "react-hook-form"
+import { useFieldArray, useWatch } from "react-hook-form"
 import FormCard from "../../../../components/FormCard"
 import FRow from "../../../../components/FormElements/FRow"
 import HFIconPicker from "../../../../components/FormElements/HFIconPicker"
+import HFNumberField from "../../../../components/FormElements/HFNumberField"
 import HFSelect from "../../../../components/FormElements/HFSelect"
 import HFSwitch from "../../../../components/FormElements/HFSwitch"
 import HFTextField from "../../../../components/FormElements/HFTextField"
 import listToOptions from "../../../../utils/listToOptions"
 
 const MainInfo = ({ control }) => {
+
   const { fields } = useFieldArray({
     control,
     name: "fields",
@@ -19,6 +21,11 @@ const MainInfo = ({ control }) => {
     control: control,
     name: "layoutRelations",
     keyName: "key",
+  })
+
+  const withIncrementID = useWatch({
+    control: control,
+    name: 'increment_id.with_increment_id'
   })
 
   const computedFields = useMemo(() => {
@@ -91,6 +98,21 @@ const MainInfo = ({ control }) => {
             options={computedFields}
           />
         </FRow>
+
+        <div className="flex">
+          <FRow label="Генератор ID">
+            <HFSwitch control={control} name="increment_id.with_increment_id" />
+          </FRow>
+          {withIncrementID && <FRow label="Количество символов">
+            <HFNumberField
+              control={control}
+              name="increment_id.digit_number"
+              fullWidth
+              type="number"
+              
+            />
+          </FRow>}
+        </div>
       </FormCard>
     </div>
   )

@@ -8,6 +8,7 @@ import { tableColumnReducer } from "./tableColumn/tableColumn.slice";
 import { tabRouterReducer } from "./tabRouter/tabRouter.slice";
 import { applicationReducer } from "./application/application.slice";
 import { cashboxReducer } from "./cashbox/cashbox.slice";
+import { filterReducer } from "./filter/filter.slice";
 
 const authPersistConfig = {
   key: "auth",
@@ -26,6 +27,11 @@ const applicationPersistConfig = {
 
 const tableColumnTablePersistConfig = {
   key: "tableColumn",
+  storage,
+}
+
+const filtersPersistConfig = {
+  key: "filters",
   storage,
 }
 
@@ -49,6 +55,7 @@ const rootReducer = combineReducers({
   constructorTable: persistReducer(constructorTablePersistConfig, constructorTableReducer),
   application: persistReducer(applicationPersistConfig, applicationReducer),
   tableColumn: persistReducer(tableColumnTablePersistConfig, tableColumnReducer),
+  filters: persistReducer(filtersPersistConfig, filterReducer),
   tabRouter: persistReducer(tabRouterPersistConfig, tabRouterReducer),
   cashbox: persistReducer(cashboxPersistConfig, cashboxReducer),
   // groupField: persistReducer(groupFieldPersistConfig, groupFieldReducer),

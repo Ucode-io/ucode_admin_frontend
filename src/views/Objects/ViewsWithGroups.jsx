@@ -1,28 +1,28 @@
-import { Download, FilterAlt, Upload } from "@mui/icons-material"
-import { useMemo, useState } from "react"
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
-import CreateButton from "../../components/Buttons/CreateButton"
-import FiltersBlockButton from "../../components/Buttons/FiltersBlockButton"
-import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
-import FiltersBlock from "../../components/FiltersBlock"
-import SearchInput from "../../components/SearchInput"
-import TableCard from "../../components/TableCard"
-import useTabRouter from "../../hooks/useTabRouter"
-import ColumnsSelector from "./components/ColumnsSelector"
-import GroupFieldSelector from "./components/GroupFieldSelector"
-import ViewTabSelector from "./components/ViewTypeSelector"
-import TableView from "./TableView"
-import style from "./style.module.scss"
-import { useEffect } from "react"
-import constructorObjectService from "../../services/constructorObjectService"
-import {
-  getRelationFieldTabsLabel,
-} from "../../utils/getRelationFieldLabel"
-import { Card, CircularProgress } from "@mui/material"
-import TreeView from "./TreeView"
-import FastFilter from "./components/FastFilter"
-import SettingsButton from "./components/SettingsButton"
-import FastFilterButton from "./components/FastFilter/FastFilterButton"
+import { Close, Download, Upload } from "@mui/icons-material";
+import { useMemo, useState } from "react";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import CreateButton from "../../components/Buttons/CreateButton";
+// import FiltersBlockButton from "../../components/Buttons/FiltersBlockButton"
+import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
+import FiltersBlock from "../../components/FiltersBlock";
+// import SearchInput from "../../components/SearchInput"
+import TableCard from "../../components/TableCard";
+import useTabRouter from "../../hooks/useTabRouter";
+import ColumnsSelector from "./components/ColumnsSelector";
+import GroupFieldSelector from "./components/GroupFieldSelector";
+import ViewTabSelector from "./components/ViewTypeSelector";
+import TableView from "./TableView";
+import style from "./style.module.scss";
+import { useEffect } from "react";
+import constructorObjectService from "../../services/constructorObjectService";
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
+import { CircularProgress } from "@mui/material";
+import TreeView from "./TreeView";
+import FastFilter from "./components/FastFilter";
+import SettingsButton from "./components/SettingsButton";
+import FastFilterButton from "./components/FastFilter/FastFilterButton";
+import { useDispatch } from "react-redux";
+import { filterAction } from "../../store/filter/filter.slice";
 
 const ViewsWithGroups = ({
   tableSlug,
@@ -34,69 +34,71 @@ const ViewsWithGroups = ({
   groupField,
   view,
 }) => {
-  const [filters, setFilters] = useState({})
-  const { navigateToForm } = useTabRouter()
-  const [tabsData, setTabsData] = useState(null)
-  const [loader, setLoader] = useState(false)
+  const [filters, setFilters] = useState({});
+  const { navigateToForm } = useTabRouter();
+  const [tabsData, setTabsData] = useState(null);
+  const [loader, setLoader] = useState(false);
+  const dispatch = useDispatch();
 
   const filterChangeHandler = (value, name) => {
+    dispatch(filterAction.setFilters({ name, value }));
     setFilters({
       ...filters,
       [name]: value,
-    })
-  }
+    });
+  };
 
   const navigateToCreatePage = () => {
-    navigateToForm(tableSlug)
-  }
+    navigateToForm(tableSlug);
+  };
 
   const tabs = useMemo(() => {
-    if (!groupField) return []
+    if (!groupField) return [];
     if (groupField.type === "PICK_LIST") {
       return (
         groupField.attributes?.options?.map((el) => ({
           label: el,
           value: el,
         })) ?? []
-      )
+      );
     }
 
     if (tabsData?.length) {
       return tabsData.map((el) => {
-        const label = getRelationFieldTabsLabel(groupField, el)
+        const label = getRelationFieldTabsLabel(groupField, el);
 
         return {
           label: label,
           value: el.guid,
-        }
-      })
+        };
+      });
     }
-  }, [groupField, tabsData])
+  }, [groupField, tabsData]);
 
   useEffect(() => {
-    if (!groupField?.id?.includes("#")) return setTabsData(null)
-    const tableSlug = groupField.id.split("#")?.[0]
+    if (!groupField?.id?.includes("#")) return setTabsData(null);
+    const tableSlug = groupField.id.split("#")?.[0];
 
-    setLoader(true)
+    setLoader(true);
 
     constructorObjectService
       .getList(tableSlug, {
         data: { offset: 0, limit: 10 },
       })
       .then(({ data }) => setTabsData(data.response))
-      .finally(() => setLoader(false))
-  }, [groupField])
+      .finally(() => setLoader(false));
+  }, [groupField]);
 
   return (
     <>
       <FiltersBlock
         extra={
           <>
-            <FastFilterButton  />
+            <FastFilterButton />
 
             <GroupFieldSelector tableSlug={tableSlug} />
 
-            <ColumnsSelector tableSlug={tableSlug}  />
+            <ColumnsSelector tableSlug={tableSlug} />
 
             <RectangleIconButton color="white">
               <Upload />
@@ -106,7 +108,6 @@ const ViewsWithGroups = ({
             </RectangleIconButton>
 
             <SettingsButton />
-
           </>
         }
       >
@@ -121,14 +122,28 @@ const ViewsWithGroups = ({
       </FiltersBlock>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
-        <TableCard type="withoutPadding" >
+        <TableCard type="withoutPadding">
           <div className={style.tableCardHeader}>
             <TabList>
               {tabs?.map((tab) => (
                 <Tab key={tab.value}>{tab.label}</Tab>
               ))}
             </TabList>
-            <CreateButton type="secondary" onClick={navigateToCreatePage}  />
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              {/* <button
+                style={{
+                  background: "transparent",
+                  border: "1px solid #e0e0e0",
+                  padding: "4px",
+                  borderRadius: "6px",
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                <Close />
+              </button> */}
+              <CreateButton type="secondary" onClick={navigateToCreatePage} />
+            </div>
           </div>
 
           {loader ? (
@@ -191,7 +206,7 @@ const ViewsWithGroups = ({
         </TableCard>
       </Tabs>
     </>
-  )
-}
+  );
+};
 
-export default ViewsWithGroups
+export default ViewsWithGroups;

@@ -1,9 +1,17 @@
-
 .filtersBlock {
   display: flex;
   align-items: center;
   gap: 10px;
-  
+  overflow: scroll;
+  max-width: 1280px;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  @media screen and (max-width: 1440px) {
+    max-width: 950px;
+  }
+  @media screen and (max-width: 1340px) {
+    max-width: 800px;
+  }
   .filter {
     width: 180px;
   }
@@ -26,12 +34,11 @@
     display: flex;
     align-items: center;
     padding: 5px 12px;
-    box-shadow: inset 0px -1px 0px #E5E9EB;
+    box-shadow: inset 0px -1px 0px #e5e9eb;
     min-width: 300px;
     gap: 8px;
     background-color: #fff;
-    
-    
+
     .dragIcon {
       cursor: grab;
     }
@@ -40,5 +47,4 @@
       flex: 1;
     }
   }
-
 }

@@ -3,7 +3,6 @@ import {
   Add,
   CalendarMonth,
   TableChart,
-  ViewColumn,
 } from "@mui/icons-material"
 import { useState } from "react"
 import { useSelector } from "react-redux"

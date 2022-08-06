@@ -15,7 +15,10 @@ import constructorObjectService from "../../../services/constructorObjectService
 import { applyDrag } from "../../../utils/applyDrag"
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import ColumnsSelector from "../components/ColumnsSelector"
+import FastFilter from "../components/FastFilter"
+import FastFilterButton from "../components/FastFilter/FastFilterButton"
 import GroupFieldSelector from "../components/GroupFieldSelector"
+import SettingsButton from "../components/SettingsButton"
 import ViewTabSelector from "../components/ViewTypeSelector"
 import BoardColumn from "./BoardColumn"
 import styles from "./style.module.scss"
@@ -32,6 +35,7 @@ const BoardView = ({
   const id = useId()
   const [columns, setColumns] = useState([])
   const { navigateToForm } = useTabRouter()
+  const [filters, setFilters] = useState({})
   
 
   const { data, isLoading } = useQuery(
@@ -63,6 +67,13 @@ const BoardView = ({
 
     return ""
   }, [groupField])
+
+  const filterChangeHandler = (value, name) => {
+    setFilters({
+      ...filters,
+      [name]: value,
+    })
+  }
 
   const navigateToCreatePage = () => {
     navigateToForm(tableSlug)
@@ -106,16 +117,21 @@ const BoardView = ({
       <FiltersBlock
         extra={
           <>
+            <FastFilterButton  />
+
             <GroupFieldSelector tableSlug={tableSlug} />
 
-            <ColumnsSelector tableSlug={tableSlug} />
+            <ColumnsSelector tableSlug={tableSlug}  />
 
-            <RectangleIconButton color="grey">
-              <Upload color="primary" />
+            <RectangleIconButton color="white">
+              <Upload />
             </RectangleIconButton>
-            <RectangleIconButton color="grey">
-              <Download color="primary" />
+            <RectangleIconButton color="white">
+              <Download />
             </RectangleIconButton>
+
+            <SettingsButton />
+
           </>
         }
       >
@@ -125,11 +141,8 @@ const BoardView = ({
           views={views}
           setViews={setViews}
         />
-        <SearchInput />
-        <FiltersBlockButton>
-          <FilterAlt color="primary" />
-          Быстрый фильтр
-        </FiltersBlockButton>
+        {/* <SearchInput /> */}
+        <FastFilter filters={filters} onChange={filterChangeHandler} />
       </FiltersBlock>
 
       {isLoading || groupFieldIsLoading ? (

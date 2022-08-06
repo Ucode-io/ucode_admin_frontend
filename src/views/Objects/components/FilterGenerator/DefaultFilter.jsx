@@ -1,26 +1,36 @@
-import { Autocomplete, CircularProgress, TextField } from "@mui/material"
+import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import { useId } from "react";
 import { useState } from "react";
-import { useQuery } from "react-query"
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 import useDebounce from "../../../../hooks/useDebounce";
-import constructorObjectService from "../../../../services/constructorObjectService"
+import constructorObjectService from "../../../../services/constructorObjectService";
 
-const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
-  const {id} = useId()
+const DefaultFilter = ({ field, onChange, name, tableSlug }) => {
+  const filtersRedux = useSelector((state) => state?.filters?.filters);
+  const { id } = useId();
   const [searchText, setSearchText] = useState("");
 
-  const { data: options, isLoading } = useQuery(["GET_OBJECT_LIST", tableSlug, searchText], () => {
-    if (!tableSlug) return null
-    return constructorObjectService.getList(tableSlug, {
-      data: { offset: 0, limit: 10, [field.slug]: searchText },
-    })
-  }, { select: ({data}) => {
-    return [...new Set(data.response?.map(el => el[field.slug]) ?? [])].filter(el => el)
-  } })
+  const { data: options, isLoading } = useQuery(
+    ["GET_OBJECT_LIST", tableSlug, searchText],
+    () => {
+      if (!tableSlug) return null;
+      return constructorObjectService.getList(tableSlug, {
+        data: { offset: 0, limit: 10, [field.slug]: searchText },
+      });
+    },
+    {
+      select: ({ data }) => {
+        return [
+          ...new Set(data.response?.map((el) => el[field.slug]) ?? []),
+        ].filter((el) => el);
+      },
+    }
+  );
 
   const search = useDebounce((_, searchText) => {
-    setSearchText(searchText)
-  }, 400)
+    setSearchText(searchText);
+  }, 400);
 
   return (
     <Autocomplete
@@ -29,9 +39,11 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
       getOptionLabel={(option) => option}
       options={options ?? []}
       loading={isLoading}
-      value={filters[name]}
+      value={filtersRedux[name]}
       onInputChange={search}
-      onChange={(e, val) => onChange(val ?? "", name)}
+      onChange={(e, val) => {
+        onChange(val?.value ?? val, name);
+      }}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -42,7 +54,9 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
             ...params.InputProps,
             endAdornment: (
               <>
-                {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
+                {isLoading ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : null}
                 {params.InputProps.endAdornment}
               </>
             ),
@@ -50,7 +64,7 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
         />
       )}
     />
-  )
-}
+  );
+};
 
-export default DefaultFilter
+export default DefaultFilter;

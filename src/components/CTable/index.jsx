@@ -9,7 +9,7 @@ export const CTable = ({ children, count, page, setCurrentPage, removableHeight 
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
       <div className="table" style={{ height: removableHeight ? `calc(100vh - ${removableHeight}px)` : 'auto', overflow: loader ? 'hidden' : 'auto', ...tableStyle}} >
-        <table>{children}</table>
+        <table id="resizeMe">{children}</table>
       </div>
       
       {!disablePagination && <CPagination count={count} page={page} setCurrentPage={setCurrentPage} />}
@@ -24,6 +24,17 @@ export const CTableHead = ({ children }) => {
 export const CTableHeadRow = ({ children }) => {
   return <tr className="CTableHeadRow">{children}</tr>
 }
+
+
+export const CTableHeadCell = ({ children, className="", buttonsCell=false, ...props }) => {
+  return (
+    <th {...props}>
+      {children}
+    </th>
+  )
+}
+
+
 
 export const CTableBody = forwardRef(({ children, columnsCount, loader, dataLength, ...props }, ref) => {
 
@@ -45,7 +56,7 @@ export const CTableRow = ({ children, ...props }) => {
 
 export const CTableCell = ({ children, className="", buttonsCell=false, ...props }) => {
   return (
-    <td className={`CTableCell ${className} ${buttonsCell ? 'buttonsCell' : ''}`} {...props}>
+    <td className={`CTableCell ${className} ${buttonsCell ? 'buttonsCell' : ''}`} {...props} {...props}>
       {children}
     </td>
   )

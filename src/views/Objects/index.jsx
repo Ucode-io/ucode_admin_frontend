@@ -12,10 +12,10 @@ const staticViews = [
     id: generateGUID,
     type: "TABLE",
   },
-]
+];
 
 const ObjectsPage = ({ isRelation, tableSlug }) => {
-  const params = useParams()
+  const params = useParams();
 
   const [views, setViews] = useState([])
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
@@ -37,8 +37,8 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
   }, [groupColumnId])
 
   const computedViews = useMemo(() => {
-    return [...staticViews, ...views]
-  }, [views])
+    return [...staticViews, ...views];
+  }, [views]);
 
   return (
     <>
@@ -87,7 +87,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
         </div>
       </Tabs>
     </>
-  )
-}
+  );
+};
 
-export default ObjectsPage
+export default ObjectsPage;

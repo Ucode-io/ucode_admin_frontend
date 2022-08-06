@@ -1,27 +1,60 @@
-import { Settings } from "@mui/icons-material"
-import { useMemo } from "react"
-import { useSelector } from "react-redux"
-import { NavLink, useParams } from "react-router-dom"
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
+import { Settings } from "@mui/icons-material";
+import { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { NavLink, useParams } from "react-router-dom";
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
+import OutsideClickHandler from "react-outside-click-handler";
+import "./settingsButton.scss";
+import ViewSettingsModal from "./ViewSettingsModal";
 
 const SettingsButton = () => {
-  const { tableSlug, appId } = useParams()
+  const { tableSlug, appId } = useParams();
+  const [open, setOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
 
-  const tables = useSelector((state) => state.constructorTable.list)
+  const tables = useSelector((state) => state.constructorTable.list);
 
   const tableInfo = useMemo(() => {
-    return tables?.find((table) => table.slug === tableSlug)
-  }, [tables, tableSlug])
+    return tables?.find((table) => table.slug === tableSlug);
+  }, [tables, tableSlug]);
 
-  const url = `/settings/constructor/apps/${appId}/objects/${tableInfo?.id}/${tableInfo?.slug}`
+  const url = `/settings/constructor/apps/${appId}/objects/${tableInfo?.id}/${tableInfo?.slug}`;
 
   return (
-    <NavLink to={url} target={"_blank"} >
-      <RectangleIconButton color="white">
+    <div className="settingBtn">
+      <RectangleIconButton
+        color="white"
+        onClick={() => {
+          setOpen(!open);
+        }}
+      >
         <Settings />
       </RectangleIconButton>
-    </NavLink>
-  )
-}
+      {open ? (
+        <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
+          <div className="settingModal">
+            <NavLink
+              to={url}
+              target={"_blank"}
+              style={{
+                color: "#303940",
+              }}
+            >
+              <div className="modalItems">Object settings</div>
+            </NavLink>
+            <div className="modalItems" onClick={() => {
+              setOpen(false)
+              setViewOpen(true)
+            }}>View settings</div>
+          </div>
+        </OutsideClickHandler>
+      ) : null}
 
-export default SettingsButton
+      {/* <ViewSettingsModal open={viewOpen} setOpen={setViewOpen}>
+
+      </ViewSettingsModal> */}
+    </div>
+  );
+};
+
+export default SettingsButton;

@@ -1,52 +1,46 @@
-import { Autocomplete, CircularProgress, TextField } from "@mui/material"
-import { useId, useState } from "react"
-import { useQuery } from "react-query"
-import useDebounce from "../../../../hooks/useDebounce"
-import constructorObjectService from "../../../../services/constructorObjectService"
+import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import { useId, useState } from "react";
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
+import useDebounce from "../../../../hooks/useDebounce";
+import constructorObjectService from "../../../../services/constructorObjectService";
 
 const RelationFilter = ({ field = {}, filters, onChange }) => {
-  const { id } = useId()
-  const [searchText, setSearchText] = useState("")
+  const { id } = useId();
+  const [searchText, setSearchText] = useState("");
+  const filtersRedux = useSelector((state) => state?.filters?.filters);
 
-
-
-  const fieldTableSlug = field.id.split("#")[0]
-  const name = `${fieldTableSlug}_id`
-  const viewField = field.attributes?.[0]
+  const fieldTableSlug = field.id.split("#")[0];
+  const name = `${fieldTableSlug}_id`;
+  const viewField = field.attributes?.[0];
 
   
   const { data: options, isLoading } = useQuery(
     ["GET_OBJECT_LIST", fieldTableSlug, searchText],
     () => {
-      if (!fieldTableSlug) return null
+      if (!fieldTableSlug) return null;
       return constructorObjectService.getList(fieldTableSlug, {
-        data: { offset: 0, limit: 10, [viewField.slug]: searchText },
-      })
+        data: { offset: 0, limit: 10, [field.slug]: searchText },
+      });
     },
     {
       select: ({ data }) => {
-        const result = {}
-
+        const result = {};
         data.response?.forEach((el) => {
           result[el.guid] = {
             label: el[viewField.slug],
             value: el.guid,
-          }
-        })
+          };
+        });
 
-        return Object.values(result)
+        return Object.values(result);
       },
     }
-  )
-
-  console.log('options --->', options)
-
-
-
+  );
 
   const search = useDebounce((_, searchText) => {
-    setSearchText(searchText)
-  }, 400)
+    setSearchText(searchText);
+  }, 400);
 
   return (
     <Autocomplete
@@ -55,9 +49,11 @@ const RelationFilter = ({ field = {}, filters, onChange }) => {
       getOptionLabel={(option) => option.label}
       options={options ?? []}
       loading={isLoading}
-      value={filters[name]}
+      value={{ label: filtersRedux[name] ? filtersRedux[name] : "" }}
       onInputChange={search}
-      onChange={(e, val) => onChange(val?.value ?? "", name)}
+      onChange={(e, val) => {
+        onChange(val?.label ?? "", name);
+      }}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -78,7 +74,7 @@ const RelationFilter = ({ field = {}, filters, onChange }) => {
         />
       )}
     />
-  )
-}
+  );
+};
 
-export default RelationFilter
+export default RelationFilter;

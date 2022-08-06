@@ -1,31 +1,43 @@
-import { FilterAlt } from "@mui/icons-material"
-import { Menu, Switch } from "@mui/material"
-import { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { useParams } from "react-router-dom"
-import FiltersBlockButton from "../../../../components/Buttons/FiltersBlockButton"
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
-import { tableColumnActions } from "../../../../store/tableColumn/tableColumn.slice"
-import styles from "./style.module.scss"
+import { Close, FilterAlt } from "@mui/icons-material";
+import { Menu, Switch } from "@mui/material";
+import { useMemo } from "react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
+import { filterAction } from "../../../../store/filter/filter.slice";
+import { tableColumnActions } from "../../../../store/tableColumn/tableColumn.slice";
+import styles from "./style.module.scss";
 
 const FastFilterButton = () => {
-  const { tableSlug } = useParams()
-  const dispatch = useDispatch()
+  const { tableSlug } = useParams();
+  const dispatch = useDispatch();
 
   const columns = useSelector(
     (state) => state.tableColumn.list[tableSlug] ?? []
-  )
+  );
+  const filterRedux = useSelector((state) => state?.filters?.filters);
 
-  const [anchorEl, setAnchorEl] = useState(null)
-  const menuVisible = Boolean(anchorEl)
+  const counter = useMemo(() => {
+    let result = 0;
+
+    Object.keys(filterRedux)?.forEach((key) => {
+      if (filterRedux[key]) result++;
+    });
+
+    return result;
+  }, [filterRedux]);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const menuVisible = Boolean(anchorEl);
 
   const openMenu = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const closeMenu = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   const onChecked = (value, index) => {
     dispatch(
@@ -34,13 +46,44 @@ const FastFilterButton = () => {
         index,
         isFilterVisible: value,
       })
-    )
-  }
+    );
+  };
 
   return (
     <div>
-      <RectangleIconButton color="white" onClick={openMenu} >
-        <FilterAlt />
+      <RectangleIconButton
+        color="white"
+        onClick={openMenu}
+        style={
+          counter
+            ? {
+                width: "64px",
+                display: "flex",
+                gap: "4px",
+                alignItems: "center",
+              }
+            : {}
+        }
+      >
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <FilterAlt />
+        </div>
+        {counter ? (
+          <>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {counter}
+            </div>
+            <div
+              style={{ display: "flex", alignItems: "center" }}
+              onClick={(e) => {
+                e.stopPropagation();
+                dispatch(filterAction.clearFilters());
+              }}
+            >
+              <Close />
+            </div>
+          </>
+        ) : null}
       </RectangleIconButton>
 
       <Menu
@@ -62,7 +105,7 @@ const FastFilterButton = () => {
         </div>
       </Menu>
     </div>
-  )
-}
+  );
+};
 
-export default FastFilterButton
+export default FastFilterButton;

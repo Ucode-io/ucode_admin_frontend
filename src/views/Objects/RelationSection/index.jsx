@@ -59,11 +59,11 @@ const RelationSection = ({ relation }) => {
     }
   })
 
-  const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation("DELETE_OBJECT", (elementId) => {
+  const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation((row) => {
     if (relation.type === "Many2Many") {
       const data = {
         id_from: id,
-        id_to: [elementId],
+        id_to: [row.guid],
         table_from: tableSlug,
         table_to: relation.relatedTable?.slug,
       }
@@ -74,7 +74,7 @@ const RelationSection = ({ relation }) => {
   else {
     return constructorObjectService.delete(
       relation.relatedTable?.slug,
-      elementId
+      row.guid
     )
   }
 

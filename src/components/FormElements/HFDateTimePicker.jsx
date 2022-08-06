@@ -14,7 +14,6 @@ const HFDateTimePicker = ({
   placeholder,
   ...props
 }) => {
-  // console.log("VALLLUE ====>", name)
 
   return (
     <Controller
@@ -22,7 +21,6 @@ const HFDateTimePicker = ({
       name={name}
       defaultValue=""
       render={({ field: { onChange, value }, fieldState: { error } }) => {
-        console.log("VALLLUE ====>", value, name)
         return (
           // <div className={className}>
           //   <DateTimePicker

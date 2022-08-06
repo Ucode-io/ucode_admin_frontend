@@ -1,15 +1,13 @@
-import { format } from "date-fns"
-import { useEffect, useMemo, useState } from "react"
-import constructorObjectService from "../../services/constructorObjectService"
-import { Autocomplete, CircularProgress, TextField } from "@mui/material"
-import FRow from "../FormElements/FRow"
+import { Autocomplete, TextField } from "@mui/material"
+import { useMemo } from "react"
 import { Controller } from "react-hook-form"
-import FEditableRow from "../FormElements/FEditableRow"
-import IconGenerator from "../IconPicker/IconGenerator"
-import useDebounce from "../../hooks/useDebounce"
+import { useQuery } from "react-query"
 import useTabRouter from "../../hooks/useTabRouter"
-import { generateGUID } from "../../utils/generateID"
+import constructorObjectService from "../../services/constructorObjectService"
 import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
+import FEditableRow from "../FormElements/FEditableRow"
+import FRow from "../FormElements/FRow"
+import IconGenerator from "../IconPicker/IconGenerator"
 
 const RelationFormElement = ({
   control,
@@ -20,6 +18,7 @@ const RelationFormElement = ({
   column,
   mainForm,
   disabledHelperText,
+  setFormValue,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -41,6 +40,7 @@ const RelationFormElement = ({
               tableSlug={tableSlug}
               error={error}
               disabledHelperText={disabledHelperText}
+              setFormValue={setFormValue}
             />
           )}
         />
@@ -79,6 +79,8 @@ const RelationFormElement = ({
   )
 }
 
+// ============== AUTOCOMPLETE ELEMENT =====================
+
 const AutoCompleteElement = ({
   field,
   value,
@@ -86,122 +88,83 @@ const AutoCompleteElement = ({
   setValue,
   error,
   disabledHelperText,
+  setFormValue=()=>{}
 }) => {
-  const [loader, setLoader] = useState(false)
   const { navigateToForm } = useTabRouter()
 
-  const [options, setOptions] = useState([])
-  const [searchText, setSearchText] = useState("")
-
-  const id = useMemo(() => {
-    return generateGUID()
-  }, [])
-  
-  const getOptionLabel = (option) => {
-    return getRelationFieldLabel(field, option)
-  }
+  const { data: options } = useQuery(
+    ["GET_OBJECT_LIST", tableSlug],
+    () => {
+      return constructorObjectService.getList(tableSlug, { data: {} })
+    },
+    {
+      select: (res) => {
+        return res?.data?.response ?? []
+      },
+    }
+  )
 
   const computedValue = useMemo(() => {
-
-    const findedOption = options.find((el) => el?.guid === value)
-
+    const findedOption = options?.find((el) => el?.guid === value)
     return findedOption ? [findedOption] : []
   }, [options, value])
 
 
-  const getOptions = (search) => {
-    setLoader(true)
-    constructorObjectService
-      .getList(tableSlug, { data: { search } })
-      .then((res) => {
-        if(JSON.stringify(res.data.response) !== JSON.stringify(options)) setOptions(res.data.response ?? [])
-      })
-      .finally(() => setLoader(false))
+
+  const getOptionLabel = (option) => {
+    return getRelationFieldLabel(field, option)
   }
 
-  const debouncedGetOptions = useDebounce(getOptions, 500)
+  const changeHandler = (value) => {
 
+    const val = value?.[value?.length - 1]
 
-  const getValueOption = () => {
-    setLoader(true)
-    constructorObjectService
-      .getById(tableSlug, value)
-      .then((res) => {
-        setOptions([res.data.response])
-      })
-      .finally(() => setLoader(false))
+    setValue(val?.guid ?? null)
+
+    if(!field?.attributes?.autofill) return
+
+    field.attributes.autofill.forEach(({field_from, field_to}) => {
+
+      setFormValue(field_to, val?.[field_from])
+    })
+
   }
-
-  // useDebouncedWatch(
-  //   () => {
-  //     getOptions()
-  //   },
-  //   [searchText],
-  //   500
-  // )
-
-  useEffect(() => {
-    if (value) getValueOption()
-    else getOptions()
-  }, [])
 
   return (
     <Autocomplete
-      id={id}
-      options={options}
-      getOptionLabel={getOptionLabel}
-      disableCloseOnSelect
-      multiple
-      onInputChange={(event, newInputValue) => {
-        debouncedGetOptions(newInputValue)
-        // setSearchText(newInputValue)
-      }}
-      filterOptions={(x) => x}
+      options={options ?? []}
       value={computedValue}
-      loading={loader}
       onChange={(event, newValue) => {
-        setValue(newValue?.[newValue?.length - 1]?.guid ?? null)
+        changeHandler(newValue)
       }}
-      renderTags={(value, index) => {
-        return (
-          <>
-            {getOptionLabel(value[0])}
-            <IconGenerator
-              icon="arrow-up-right-from-square.svg"
-              style={{ marginLeft: "10px", cursor: "pointer" }}
-              size={15}
-              onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                navigateToForm(tableSlug, "EDIT", value[0])
-              }}
-            />
-          </>
-        )
-      }}
-      renderInput={(params) => {
-        return (
-          <TextField
-            {...params}
-            size="small"
-            error={error}
-            helperText={!disabledHelperText && error?.message}
-            inputProps={{
-              ...params.inputProps,
-              // value: '0000'
-            }}
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loader ? <CircularProgress color="primary" size={20} /> : null}
-                  {params.InputProps.endAdornment}
-                </>
-              ),
+      noOptionsText={
+        <span onClick={() =>  navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
+          Создать новый
+        </span>
+      }
+      disablePortal
+      blurOnSelect
+      openOnFocus
+      getOptionLabel={(option) => getRelationFieldLabel(field, option)}
+      multiple
+      isOptionEqualToValue={(option, value) => option.guid === value.guid}
+      renderInput={(params) => <TextField {...params} size="small" />}
+      renderTags={(value, index) => (
+        <>
+          {getOptionLabel(value[0])}
+          <IconGenerator
+            icon="arrow-up-right-from-square.svg"
+            style={{ marginLeft: "10px", cursor: "pointer" }}
+            size={15}
+            onClick={(e) => {
+              e.stopPropagation()
+              e.preventDefault()
+              navigateToForm(tableSlug, "EDIT", value[0])
             }}
           />
-        )
-      }}
+        </>
+      )}
+
     />
   )
 }

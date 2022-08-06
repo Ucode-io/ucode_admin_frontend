@@ -18,7 +18,7 @@ const FilterGenerator = ({
     () => filters.order?.[name],
     [filters.order, name]
   )
-
+  
   const onOrderingChange = (value) => {
     if (!value) return onChange(value, "order")
     const data = {

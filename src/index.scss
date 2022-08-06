@@ -149,6 +149,24 @@ html {
   padding-top: 16px;
 }
 
+.m-1 {
+  margin: 8px;
+}
+
+.m-2 {
+  margin: 16px;
+}
+
+.my-1 {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.my-2 {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
 .mb-1 {
   margin-bottom: 8px;
 } 
@@ -208,4 +226,8 @@ html {
 
 .rmdp-container {
   width: 100%;
+}
+
+.ql-editor {
+  min-height: 100px;
 }

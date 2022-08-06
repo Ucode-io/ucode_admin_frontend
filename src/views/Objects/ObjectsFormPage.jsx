@@ -169,7 +169,7 @@ const ObjectsFormPage = () => {
     else create(data)
   }
 
-  const { handleSubmit, control, reset } = useForm({
+  const { handleSubmit, control, reset, setValue: setFormValue } = useForm({
     defaultValues: state,
   })
 
@@ -178,7 +178,7 @@ const ObjectsFormPage = () => {
   return (
     <div className={styles.formPage}>
       <div className={styles.formArea}>
-        <MainInfo control={control} computedSections={computedSections} />
+        <MainInfo control={control} computedSections={computedSections} setFormValue={setFormValue} />
 
         <div className={styles.secondaryCardSide}>
           {tableRelations?.map((relation) => (

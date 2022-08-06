@@ -135,6 +135,7 @@ const Fields = ({ mainForm }) => {
         closeDrawer={() => setDrawerState(null)}
         onSubmit={onFormSubmit}
         isLoading={formLoader}
+        mainForm={mainForm}
       />
 
 

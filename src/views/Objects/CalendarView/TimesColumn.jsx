@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { timesList } from "../../../utils/timesList"
@@ -9,15 +10,19 @@ const TimesColumn = () => {
     (state) => state.tableColumn.calendarGroupColumns[tableSlug] ?? []
   )
 
+  useEffect(() => {
+    console.log('ssssss')
+  } , [])
+
   return (
     <div className={styles.timesColumn}>
-      <div className={styles.timeBlock}></div>
+      <div className={styles.timeRow}></div>
       {groupColumns?.map((el) => (
-        <div className={styles.timeBlock} />
+        <div className={styles.timeRow} />
       ))}
 
       {timesList.map((time) => (
-        <div key={time} className={styles.timeBlock}>
+        <div key={time} className={styles.timeRow}>
           {time}
         </div>
       ))}

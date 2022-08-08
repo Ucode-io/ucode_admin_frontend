@@ -1,19 +1,11 @@
-import { Add, Delete } from "@mui/icons-material"
-import { useEffect, useState } from "react"
+import { Add } from "@mui/icons-material"
+import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
-import CreateButton from "../../../components/Buttons/CreateButton"
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
+
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableRow,
-} from "../../../components/CTable"
+
 import DataTable from "../../../components/DataTable"
-import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"

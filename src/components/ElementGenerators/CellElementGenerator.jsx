@@ -8,17 +8,9 @@ import TableTag from "../TableTag"
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
-    if (typeof field.id !== "string" || !field.id?.includes("#"))
-      return get(row, field.slug, "")
+    if (field.type !== "LOOKUP") return get(row, field.slug, "")
 
-    const tableSlug = field.id.split("#")[0]
-
-    const result = getRelationFieldTableCellLabel(field, row, tableSlug)
-
-    // const result =
-    //   field.attributes
-    //     ?.map((viewField) => get(row, `${tableSlug}.${viewField?.slug}`, ""))
-    //     .join(" ") ?? ""
+    const result = getRelationFieldTableCellLabel(field, row, field.table_slug)
 
     return result
   }, [row, field])
@@ -45,7 +37,6 @@ const CellElementGenerator = ({ field = {}, row }) => {
       )
 
     case "MULTI_LINE":
-      console.log("VALUE =====>", value)
       return (
         <span dangerouslySetInnerHTML={{ __html: value }} ></span>
       )

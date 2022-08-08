@@ -14,7 +14,7 @@ import ColumnsSelector from "../components/ColumnsSelector"
 import CalendarFastFilter from "../components/FastFilter/CalendarFastFilter.jsx"
 import CalendarFastFilterButton from "../components/FastFilter/CalendarFastFilter.jsx/CalendarFastFilterButton"
 import CalendarGroupFieldSelector from "../components/GroupFieldSelector/CalendarGroupFieldSelector"
-import SettingsButton from "../components/SettingsButton"
+import SettingsButton from "../components/ViewSettings/SettingsButton"
 import ViewTabSelector from "../components/ViewTypeSelector"
 import Calendar from "./Calendar"
 

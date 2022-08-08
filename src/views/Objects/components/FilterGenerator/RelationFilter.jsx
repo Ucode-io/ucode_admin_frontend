@@ -3,24 +3,20 @@ import { useId, useState } from "react"
 import { useQuery } from "react-query"
 import useDebounce from "../../../../hooks/useDebounce"
 import constructorObjectService from "../../../../services/constructorObjectService"
+import { getRelationFieldLabel, getRelationFieldTabsLabel } from "../../../../utils/getRelationFieldLabel"
 
-const RelationFilter = ({ field = {}, filters, onChange }) => {
+const RelationFilter = ({ field = {}, filters, name, onChange }) => {
   const { id } = useId()
   const [searchText, setSearchText] = useState("")
-
-
-
-  const fieldTableSlug = field.id.split("#")[0]
-  const name = `${fieldTableSlug}_id`
-  const viewField = field.attributes?.[0]
-
   
+
+
   const { data: options, isLoading } = useQuery(
-    ["GET_OBJECT_LIST", fieldTableSlug, searchText],
+    ["GET_OBJECT_LIST", field.table_slug, searchText],
     () => {
-      if (!fieldTableSlug) return null
-      return constructorObjectService.getList(fieldTableSlug, {
-        data: { offset: 0, limit: 10, [viewField.slug]: searchText },
+      if (!field.table_slug) return null
+      return constructorObjectService.getList(field.table_slug, {
+        data: { offset: 0, limit: 10, [field.slug]: searchText },
       })
     },
     {
@@ -29,7 +25,7 @@ const RelationFilter = ({ field = {}, filters, onChange }) => {
 
         data.response?.forEach((el) => {
           result[el.guid] = {
-            label: el[viewField.slug],
+            label: getRelationFieldTabsLabel(field, el),
             value: el.guid,
           }
         })
@@ -38,11 +34,6 @@ const RelationFilter = ({ field = {}, filters, onChange }) => {
       },
     }
   )
-
-  console.log('options --->', options)
-
-
-
 
   const search = useDebounce((_, searchText) => {
     setSearchText(searchText)

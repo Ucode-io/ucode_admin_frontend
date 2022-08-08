@@ -1,84 +1,71 @@
-import { Fragment, useMemo, useState } from "react"
-import { useSelector } from "react-redux"
+import { Fragment, useState } from "react"
 import { useParams } from "react-router-dom"
 import { TabPanel, Tabs } from "react-tabs"
-import { generateGUID } from "../../utils/generateID"
 import ViewsWithGroups from "./ViewsWithGroups"
 import BoardView from "./BoardView"
 import CalendarView from "./CalendarView"
+import { useQuery } from "react-query"
+import PageFallback from "../../components/PageFallback"
+import constructorObjectService from "../../services/constructorObjectService"
+import { listToMap } from "../../utils/listToMap"
 
-const staticViews = [
-  {
-    id: generateGUID,
-    type: "TABLE",
-  },
-];
+const ObjectsPage = () => {
+  const { tableSlug } = useParams()
 
-const ObjectsPage = ({ isRelation, tableSlug }) => {
-  const params = useParams();
-
-  const [views, setViews] = useState([])
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+  
 
-  const computedTableSlug = isRelation ? tableSlug : params.tableSlug
-  const columns = useSelector(
-    (state) => state.tableColumn.list[computedTableSlug] ?? []
+  const { data: { views, fieldsMap } = { views: [], fieldsMap: {} }, isLoading } = useQuery(
+    ["GET_VIEWS_AND_FIELDS", tableSlug],
+    () => {
+      return constructorObjectService.getList(tableSlug, { data: { limit: 0, offset: 0 } })
+    },
+    {
+      select: ({data}) => {
+        return {
+          views: data?.views ?? [],
+          fieldsMap: listToMap(data?.fields),
+        }
+      },
+    }
   )
-  const groupColumnId = useSelector(
-    (state) => state.tableColumn.groupColumnIds[computedTableSlug]
-  )
 
-  const computedColumns = useMemo(() => {
-    return columns?.filter((column) => column.isVisible) ?? []
-  }, [columns])
+  const setViews = () => {}
 
-  const groupField = useMemo(() => {
-    return columns.find((column) => column.id === groupColumnId)
-  }, [groupColumnId])
-
-  const computedViews = useMemo(() => {
-    return [...staticViews, ...views];
-  }, [views]);
+  if (isLoading) return <PageFallback />
 
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
         <div>
-          {computedViews.map((view) => {
+          {views.map((view) => {
             return (
               <TabPanel key={view.id}>
                 {view.type === "BOARD" ? (
                   <BoardView
                     view={view}
-                    tableSlug={computedTableSlug}
-                    tableColumns={computedColumns}
                     setViews={setViews}
                     selectedTabIndex={selectedTabIndex}
                     setSelectedTabIndex={setSelectedTabIndex}
-                    groupField={groupField}
-                    views={computedViews}
+                    views={views}
+                    fieldsMap={fieldsMap}
                   />
                 ) : view.type === "CALENDAR" ? (
                   <CalendarView
                     view={view}
-                    tableSlug={computedTableSlug}
-                    tableColumns={computedColumns}
                     setViews={setViews}
                     selectedTabIndex={selectedTabIndex}
                     setSelectedTabIndex={setSelectedTabIndex}
-                    groupField={groupField}
-                    views={computedViews}
+                    views={views}
+                    fieldsMap={fieldsMap}
                   />
                 ) : (
                   <ViewsWithGroups
-                    tableSlug={computedTableSlug}
-                    computedColumns={computedColumns}
                     selectedTabIndex={selectedTabIndex}
                     setSelectedTabIndex={setSelectedTabIndex}
-                    views={computedViews}
-                    setViews={setViews}
-                    groupField={groupField}
+                    views={views}
                     view={view}
+                    fieldsMap={fieldsMap}
                   />
                 )}
               </TabPanel>
@@ -87,7 +74,7 @@ const ObjectsPage = ({ isRelation, tableSlug }) => {
         </div>
       </Tabs>
     </>
-  );
-};
+  )
+}
 
-export default ObjectsPage;
+export default ObjectsPage

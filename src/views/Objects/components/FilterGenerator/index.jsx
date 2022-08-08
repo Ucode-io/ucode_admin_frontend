@@ -61,7 +61,7 @@ export const Filter = ({
     }))
   }, [field.attributes?.options])
 
-  if (field.id?.includes("#"))
+  if (field.type === "LOOKUP")
     return (
       <RelationFilter
         field={field}

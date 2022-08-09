@@ -6,15 +6,12 @@ import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
 import FiltersBlock from "../../components/FiltersBlock"
 import TableCard from "../../components/TableCard"
 import useTabRouter from "../../hooks/useTabRouter"
-import ColumnsSelector from "./components/ColumnsSelector"
-import GroupFieldSelector from "./components/GroupFieldSelector"
 import ViewTabSelector from "./components/ViewTypeSelector"
 import TableView from "./TableView"
 import style from "./style.module.scss"
 import TreeView from "./TreeView"
 import FastFilter from "./components/FastFilter"
 import SettingsButton from "./components/ViewSettings/SettingsButton"
-import FastFilterButton from "./components/FastFilter/FastFilterButton"
 import { useParams } from "react-router-dom"
 import constructorObjectService from "../../services/constructorObjectService"
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel"
@@ -61,7 +58,6 @@ const ViewsWithGroups = ({
       }).finally(() => {
         setLoader(false)
       })
-
   }
 
 
@@ -89,7 +85,6 @@ const ViewsWithGroups = ({
     }
   }, [view, fieldsMap])
 
-  console.log('TABS -->', view)
 
   return (
     <>

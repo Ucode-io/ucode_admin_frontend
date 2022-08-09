@@ -1,11 +1,11 @@
 import { Close } from "@mui/icons-material"
 import { Card, IconButton } from "@mui/material"
+import { useMemo } from "react"
 import { useState } from "react"
 import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
 import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper"
 import constructorObjectService from "../../../../services/constructorObjectService"
-import constructorViewService from "../../../../services/constructorViewService"
 import styles from "./style.module.scss"
 import ViewForm from "./ViewForm"
 import ViewsList from "./ViewsList"
@@ -17,21 +17,23 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
   const closeForm = () => setSelectedView(null)
 
   const {
-    data: { views, columns } = { views: [], columns: {} },
+    data: { views, columns, relationColumns } = { views: [], columns: [], relationColumns: [] },
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", tableSlug],
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 0, offset: 0 },
+        data: { limit: 10, offset: 0, with_relations: true},
       })
     },
     {
       select: ({ data }) => {
+        console.log('data ==>', data)
         return {
           views: data?.views ?? [],
-          columns: data?.fields,
+          columns: data?.fields ?? [],
+          relationColumns: data?.relation_fields ?? [],
         }
       },
     }
@@ -64,6 +66,7 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
               closeModal={closeModal}
               setIsChanged={setIsChanged}
               columns={columns}
+              relationColumns={relationColumns}
             />
           )}
         </div>

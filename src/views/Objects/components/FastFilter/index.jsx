@@ -12,8 +12,6 @@ const FastFilter = ({ filters, onChange, view, fieldsMap }) => {
 
   }, [ view, fieldsMap ])
     
-  console.log('FILTERS ===?', view?.quick_filters)
-
   return (
     <div className={styles.filtersBlock} >
       {

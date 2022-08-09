@@ -21,7 +21,7 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", tableSlug],
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", tableSlug],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: { limit: 0, offset: 0 },

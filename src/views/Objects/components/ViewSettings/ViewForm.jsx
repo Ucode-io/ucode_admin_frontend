@@ -17,11 +17,11 @@ import GroupsTab from "./GroupsTab"
 import QuickFiltersTab from "./QuicFiltersTab"
 import styles from "./style.module.scss"
 
-const ViewForm = ({ initialValues, closeForm, refetchViews, closeModal, setIsChanged }) => {
+const ViewForm = ({ initialValues, closeForm, refetchViews, closeModal, setIsChanged, columns }) => {
   const { tableSlug } = useParams()
-  const columns = useSelector(
-    (state) => state.tableColumn.list[tableSlug] ?? []
-  )
+  // const columns = useSelector(
+  //   (state) => state.tableColumn.list[tableSlug] ?? []
+  // )
 
   const [btnLoader, setBtnLoader] = useState(false)
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false)
@@ -149,7 +149,7 @@ const getInitialValues = (initialValues, tableSlug, columns) => {
         time_from_slug: "",
         time_to_slug: "",
       },
-      columns: columns?.map(el => el.id) ?? [],
+      columns: columns?.map(el => ({...el, is_checked: true})) ?? [],
       quick_filters: [],
       group_fields: [],
       table_slug: tableSlug,
@@ -174,6 +174,11 @@ const getInitialValues = (initialValues, tableSlug, columns) => {
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",
     calendar_to_slug: initialValues?.calendar_to_slug ?? "",
   }
+}
+
+const computeColumns = (checkedColumnsIds = [], columns) => {
+
+  
 }
 
 export default ViewForm

@@ -1,4 +1,5 @@
 import { Checkbox } from "@mui/material"
+import { useMemo } from "react"
 import { useWatch } from "react-hook-form"
 import { CTable, CTableBody, CTableCell, CTableRow } from "../../../../components/CTable"
 
@@ -7,6 +8,10 @@ const GroupsTab = ({ columns, form }) => {
     control: form.control,
     name: "group_fields",
   })
+
+  const computedColumns = useMemo(() => {
+    return columns?.filter(column => column.type === "LOOKUP" || column.type === "PICK_LIST")
+  }, [ columns ])
 
   const onCheckboxChange = (val, id) => {
     let computedValue = []
@@ -24,7 +29,7 @@ const GroupsTab = ({ columns, form }) => {
         tableStyle={{ border: "none" }}
       >
         <CTableBody dataLength={1}>
-          {columns.map((column) => (
+          {computedColumns.map((column) => (
             <CTableRow key={column.id} >
               <CTableCell>{column.label}</CTableCell>
               <CTableCell style={{ width: 20 }}>

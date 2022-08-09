@@ -1,47 +1,74 @@
 import { Checkbox } from "@mui/material"
-import { useWatch } from "react-hook-form"
-import { CTable, CTableBody, CTableCell, CTableRow } from "../../../../components/CTable"
+import { useMemo } from "react"
+import { useFieldArray, useWatch } from "react-hook-form"
+import { Container, Draggable } from "react-smooth-dnd"
+import HFCheckbox from "../../../../components/FormElements/HFCheckbox"
+import { applyDrag } from "../../../../utils/applyDrag"
+import styles from "./style.module.scss"
 
-const ColumnsTab = ({ columns, form }) => {
-  const selectedColumns = useWatch({
+const ColumnsTab = ({ form }) => {
+  const { fields: columns, move } = useFieldArray({
+    control: form.control,
+    name: "columns",
+    keyName: "key",
+  })
+
+  const watchedColumns = useWatch({
     control: form.control,
     name: "columns",
   })
 
-  const onCheckboxChange = (val, id) => {
-    const computedValue = [...selectedColumns]
+  const onDrop = (dropResult) => {
+    const result = applyDrag(columns, dropResult)
+    if (result) move(dropResult.removedIndex, dropResult.addedIndex)
+  }
 
-    if (val) {
-      computedValue.push(id)
-    } else {
-      const index = selectedColumns.findIndex((el) => el === id)
-      computedValue.splice(index, 1)
-    }
+  const isAllChecked = useMemo(() => {
+    return watchedColumns?.every((column) => column.is_checked)
+  }, [watchedColumns])
 
-    form.setValue('columns', computedValue)
+  const onAllChecked = (_, val) => {
+
+    const columns = form.getValues('columns')
+
+    columns?.forEach((column, index) => {
+      form.setValue(`columns[${index}].is_checked`, val)
+    })
   }
 
   return (
     <div>
-      <CTable
-        removableHeight={false}
-        disablePagination
-        tableStyle={{ border: "none" }}
-      >
-        <CTableBody dataLength={1}>
-          {columns.map((column) => (
-            <CTableRow key={column.id} >
-              <CTableCell>{column.label}</CTableCell>
-              <CTableCell style={{ width: 20 }}>
-                <Checkbox
-                  checked={selectedColumns.includes(column.id)}
-                  onChange={(e, val) => onCheckboxChange(val, column.id)}
-                />
-              </CTableCell>
-            </CTableRow>
+      <div className={styles.table}>
+        <div className={styles.row}>
+          <div className={styles.cell} style={{ flex: 1 }}> <b>All</b> </div>
+          <div className={styles.cell} style={{ width: 70 }}>
+            <Checkbox
+              checked={isAllChecked}
+              onChange={onAllChecked}
+            />
+          </div>
+        </div>
+        <Container
+          onDrop={onDrop}
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+        >
+          {columns.map((column, index) => (
+            <Draggable key={column.id}>
+              <div key={column.id} className={styles.row}>
+                <div className={styles.cell} style={{ flex: 1 }}>
+                  {column.label}
+                </div>
+                <div className={styles.cell} style={{ width: 70 }}>
+                  <HFCheckbox
+                    control={form.control}
+                    name={`columns[${index}].is_checked`}
+                  />
+                </div>
+              </div>
+            </Draggable>
           ))}
-        </CTableBody>
-      </CTable>
+        </Container>
+      </div>
     </div>
   )
 }

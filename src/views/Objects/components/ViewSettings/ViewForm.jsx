@@ -19,9 +19,6 @@ import styles from "./style.module.scss"
 
 const ViewForm = ({ initialValues, closeForm, refetchViews, closeModal, setIsChanged, columns }) => {
   const { tableSlug } = useParams()
-  // const columns = useSelector(
-  //   (state) => state.tableColumn.list[tableSlug] ?? []
-  // )
 
   const [btnLoader, setBtnLoader] = useState(false)
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false)
@@ -39,9 +36,19 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, closeModal, setIsCha
   const onSubmit = (values) => {
     setBtnLoader(true)
 
+
+    const computedValues = {
+      ...values,
+      columns: values.columns?.filter(el => el.is_checked).map(el => el.id) ?? [],
+      quick_filters: values.quick_filters?.filter(el => el.is_checked).map(el => ({
+        field_id: el.id,
+        default_value: el.default_value ?? '',
+      })) ?? [],
+    }
+
     if (initialValues === "NEW") {
       constructorViewService
-        .create(values)
+        .create(computedValues)
         .then(() => {
           closeForm()
           refetchViews()
@@ -50,7 +57,7 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, closeModal, setIsCha
         .finally(() => setBtnLoader(false))
     } else {
       constructorViewService
-        .update(values)
+        .update(computedValues)
         .then(() => {
           closeForm()
           refetchViews()
@@ -150,7 +157,7 @@ const getInitialValues = (initialValues, tableSlug, columns) => {
         time_to_slug: "",
       },
       columns: columns?.map(el => ({...el, is_checked: true})) ?? [],
-      quick_filters: [],
+      quick_filters: columns ?? [],
       group_fields: [],
       table_slug: tableSlug,
     }
@@ -166,8 +173,8 @@ const getInitialValues = (initialValues, tableSlug, columns) => {
       time_from_slug: initialValues?.disable_dates?.time_from_slug ?? "",
       time_to_slug: initialValues?.disable_dates?.time_to_slug ?? "",
     },
-    columns: initialValues?.columns ?? [],
-    quick_filters: initialValues?.quick_filters ?? [],
+    columns: computeColumns(initialValues?.columns, columns),
+    quick_filters: computeQuickFilters(initialValues?.quick_filters, columns) ?? [],
     group_fields: initialValues?.group_fields ?? [],
     table_slug: tableSlug,
     id: initialValues?.id,
@@ -177,8 +184,22 @@ const getInitialValues = (initialValues, tableSlug, columns) => {
 }
 
 const computeColumns = (checkedColumnsIds = [], columns) => {
-
   
+  const selectedColumns = checkedColumnsIds?.filter(id => columns.find(el => el.id === id))?.map(id => ({...columns.find(el => el.id === id), is_checked: true})) ?? []
+
+  const unselectedColumns = columns?.filter(el => !checkedColumnsIds?.includes(el.id)) ?? []
+  
+  return [...selectedColumns, ...unselectedColumns]
+}
+
+const computeQuickFilters = (quickFilters = [], columns) => {
+
+  const selectedQuickFilters = quickFilters?.filter(filter => columns.find(el => el.id === filter.field_id))?.map(filter => ({...columns.find(el => el.id === filter.field_id), ...filter, is_checked: true})) ?? []
+
+
+  const unselectedQuickFilters = columns?.filter(el => !quickFilters?.find(filter => filter.field_id === el.id)) ?? []
+
+  return [...selectedQuickFilters, ...unselectedQuickFilters]
 }
 
 export default ViewForm

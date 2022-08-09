@@ -8,14 +8,16 @@ const FastFilter = ({ filters, onChange, view, fieldsMap }) => {
 
   const computedFields = useMemo(() => {
 
-    return view?.quick_filters?.map(el => fieldsMap[el?.field_id]) ?? []
+    return view?.quick_filters?.map(el => fieldsMap[el?.field_id])?.filter(el => el) ?? []
 
   }, [ view, fieldsMap ])
     
+  console.log('FILTERS ===?', view?.quick_filters)
+
   return (
     <div className={styles.filtersBlock} >
       {
-        computedFields.map(filter => (
+        computedFields?.map(filter => (
           <div className={styles.filter} key={filter.id} >
 
             <Filter field={filter} name={filter.slug} tableSlug={tableSlug} filters={filters} onChange={onChange} />

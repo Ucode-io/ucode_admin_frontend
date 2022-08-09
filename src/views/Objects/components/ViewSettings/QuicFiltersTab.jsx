@@ -1,5 +1,6 @@
 import { Checkbox } from "@mui/material"
 import { useFieldArray } from "react-hook-form"
+import { Container, Draggable } from "react-smooth-dnd"
 import CSelect from "../../../../components/CSelect"
 import {
   CTable,
@@ -7,59 +8,73 @@ import {
   CTableCell,
   CTableRow,
 } from "../../../../components/CTable"
+import HFCheckbox from "../../../../components/FormElements/HFCheckbox"
+import { applyDrag } from "../../../../utils/applyDrag"
+import styles from "./style.module.scss"
 
-const QuickFiltersTab = ({ columns, form }) => {
-  const { fields: quickFilters, append, remove } = useFieldArray({
+const QuickFiltersTab = ({ form }) => {
+  const { fields: quickFilters, move } = useFieldArray({
     control: form.control,
     name: "quick_filters",
-    keyName: 'key'
+    keyName: "key",
   })
 
-  const onCheckboxChange = (val, id) => {
-    if(val) {
-      append({
-        default_value: "",
-        field_id: id,
-      })
-    }
-    else {
-      const index = quickFilters.findIndex(({ field_id }) => field_id === id)
-      remove(index)
-    }
+  console.log('quick_filters', quickFilters)
+
+  const onDrop = (dropResult) => {
+    const result = applyDrag(quickFilters, dropResult)
+    if (result) move(dropResult.removedIndex, dropResult.addedIndex)
   }
 
   return (
     <div>
-      <CTable
-        removableHeight={false}
-        disablePagination
-        tableStyle={{ border: "none" }}
-      >
-        <CTableBody dataLength={1}>
-          {columns.map((column, index) => (
-            <QuickFilterRow key={column.id} column={column} index={index} onCheckboxChange={onCheckboxChange} quickFilters={quickFilters} />
+      <div className={styles.table}>
+        <Container
+          onDrop={onDrop}
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+        >
+          {quickFilters.map((column, index) => (
+            <Draggable key={column.id} >
+              <QuickFilterRow
+                key={column.id}
+                column={column}
+                index={index}
+                control={form.control}
+              />
+            </Draggable>
           ))}
-        </CTableBody>
-      </CTable>
+        </Container>
+      </div>
     </div>
   )
 }
 
-const QuickFilterRow = ({column, onCheckboxChange, quickFilters}) => {
-  const isActive = quickFilters.some(({ field_id }) => field_id === column.id)
-
+const QuickFilterRow = ({ column, onCheckboxChange, index, control }) => {
 
   return (
-    <CTableRow>
-      <CTableCell>{column.label}</CTableCell>
-      <CTableCell style={{ width: 20 }}>
-        <Checkbox checked={isActive} onChange={(e, val) => onCheckboxChange(val, column.id)} />
-      </CTableCell>
-      <CTableCell style={{ width: 250 }} >
-        {isActive && <CSelect disabledHelperText />}
-      </CTableCell>
-    </CTableRow>
+    <div className={styles.row} >
+      <div className={styles.cell} style={{ flex: 1 }}>{column.label}</div>
+      <div className={styles.cell} style={{ width: 70 }}>
+        <HFCheckbox control={control} name={`quick_filters[${index}].is_checked`} />
+      </div>
+    </div>
   )
+
+
+  // return (
+  //   <CTableRow>
+  //     <CTableCell>{column.label}</CTableCell>
+  //     <CTableCell style={{ width: 20 }}>
+  //       <Checkbox
+  //         checked={isActive}
+  //         onChange={(e, val) => onCheckboxChange(val, column.id)}
+  //       />
+  //     </CTableCell>
+  //     <CTableCell style={{ width: 250 }}>
+  //       {isActive && <CSelect disabledHelperText />}
+  //     </CTableCell>
+  //   </CTableRow>
+  // )
 }
 
 export default QuickFiltersTab

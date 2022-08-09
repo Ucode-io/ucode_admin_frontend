@@ -42,12 +42,10 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, setIsChanged, column
   }, [initialValues, tableSlug, form])
 
   useEffect(() => {
-    const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)
+    // const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)
     const formQuickFilters = form.getValues('quick_filters')?.filter(el => el?.is_checked)?.map(el => ({field_id: el.id}))
 
-    console.log('formColumns', formColumns, columns)
-
-    form.setValue('columns', computeColumns(formColumns, computedColumns))
+    // form.setValue('columns', computeColumns(formColumns, computedColumns))
     form.setValue('quick_filters', computeQuickFilters(formQuickFilters, computedColumns))
   }, [computedColumns])
 

@@ -12,6 +12,7 @@ import constructorObjectService from "../../../services/constructorObjectService
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { listToMap } from "../../../utils/listToMap"
 import { objectToArray } from "../../../utils/objectToArray"
+import FastFilter from "../components/FastFilter"
 import SettingsButton from "../components/ViewSettings/SettingsButton"
 import ViewTabSelector from "../components/ViewTypeSelector"
 import Calendar from "./Calendar"
@@ -125,6 +126,8 @@ const CalendarView = ({
         />
 
         <CRangePicker value={dateFilters} onChange={setDateFilters} />
+        <FastFilter filters={filters} view={view} fieldsMap={fieldsMap} />
+
       </FiltersBlock>
 
       {isLoading ? (

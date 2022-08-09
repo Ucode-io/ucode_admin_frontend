@@ -1,14 +1,49 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const { actions: tableSizeAction, reducer: tableSizeReducer } = createSlice({
-  name: "tableSize",
-  initialState: {
-    tableSize: {}
-  },
-  reducers: {
-    setTableSize: (state, {payload: {pageName, colSlug, colWidth}}) => {
-      state.tableSize[pageName] = state.tableSize[pageName] || {};
-      state.tableSize[pageName][colSlug] = colWidth;
-    }
-  },
-});
+export const { actions: tableSizeAction, reducer: tableSizeReducer } =
+  createSlice({
+    name: "tableSize",
+    initialState: {
+      tableSize: {},
+      tableSettings: {},
+    },
+    reducers: {
+      setTableSize: (state, { payload: { pageName, colID, colWidth } }) => {
+        state.tableSize[pageName] = state.tableSize[pageName] || {};
+        state.tableSize[pageName][colID] = colWidth;
+      },
+      setTableSettings: (
+        state,
+        { payload: { pageName, colID, colWidth, isStiky, colIdx } }
+      ) => {
+        state.tableSettings[pageName] = state.tableSettings[pageName] || [];
+        if (state.tableSettings[pageName].find((item) => item.id === colID)) {
+          const selectedColumn = state.tableSettings[pageName].find(
+            (item) => item.id === colID
+          );
+
+          selectedColumn.isStiky =
+            isStiky === "ineffective"
+              ? selectedColumn.isStiky
+              : isStiky && selectedColumn.isStiky
+              ? !isStiky
+              : isStiky;
+          selectedColumn.colWidth = colWidth
+            ? colWidth
+            : selectedColumn.colWidth;
+          selectedColumn.colIdx = colIdx ? colIdx : selectedColumn.colIdx;
+        } else {
+          state.tableSettings[pageName].push({
+            id: colID,
+            isStiky: isStiky === "ineffective" ? false : isStiky,
+            colWidth: colWidth,
+            colIdx,
+          });
+
+          state.tableSettings[pageName] = state.tableSettings[pageName].sort(
+            (a, b) => a.colIdx - b.colIdx
+          )
+        }
+      },
+    },
+  });

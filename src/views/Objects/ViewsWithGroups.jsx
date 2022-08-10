@@ -41,6 +41,9 @@ const ViewsWithGroups = ({
 
   const { data: tabs, isLoading: loader } = useQuery(queryGenerator(groupField, filters))
 
+  console.log('tableLoader || deleteLoader', loader)
+
+
   return (
     <>
       <FiltersBlock
@@ -146,9 +149,9 @@ const ViewsWithGroups = ({
 
 const queryGenerator = (groupField, filters = {}) => {
 
-  if(!groupField) return
-
-  console.log('GROUP FIELD ', groupField)
+  if(!groupField) return {
+    queryFn: () => {}
+  }
 
   const filterValue = filters[groupField.slug]
   const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {}

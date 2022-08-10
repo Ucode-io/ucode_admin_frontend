@@ -11,6 +11,7 @@ const RecursiveBlock = ({
   view,
   tabs,
   level = 0,
+  workingDays,
 }) => {
   const elements = useMemo(() => {
     if (!parentTab) return tabs?.[level]?.list
@@ -37,6 +38,7 @@ const RecursiveBlock = ({
               fieldsMap={fieldsMap}
               view={view}
               level={level + 1}
+              workingDays={workingDays}
             />
           ) : (
             <DataColumn
@@ -45,6 +47,7 @@ const RecursiveBlock = ({
               parentTab={tab}
               fieldsMap={fieldsMap}
               view={view}
+              workingDays={workingDays}
             />
           )}
           {/* {!el.child?.length ? <MockColumn groupColumns={groupColumns} level={1} workingDays={workingDays} date={date} view={view}  /> : <RecursiveBlock date={date} computedData={el?.child} groupColumns={groupColumns} level={1} view={view} workingDays={workingDays} />} */}

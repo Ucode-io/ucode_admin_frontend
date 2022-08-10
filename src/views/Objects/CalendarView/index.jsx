@@ -33,6 +33,8 @@ const CalendarView = ({
 
   const [filters, setFilters] = useState({})
 
+  const hasDisabledDates = view?.disable_dates?.day_slug
+
   const { data: { data, fieldsMap } = { data: [], fieldsMap: [] }, isLoading } =
     useQuery(
       ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters }],
@@ -68,8 +70,43 @@ const CalendarView = ({
       }
     )
 
+    const { data: workingDays } = useQuery(["GET_OBJECTS_LIST"], () => {
+      if(!view?.disable_dates?.table_slug) return {}
+  
+      return constructorObjectService.getList(view?.disable_dates?.table_slug, { data: {} })
+    }, {
+      select: (res) => {
+        const result = {}
+      
+        res?.data?.response?.forEach(el => {
+          const date = el[view?.disable_dates?.day_slug]
+          const calendarFromTime = el[view?.disable_dates?.time_from_slug]
+          const calendarToTime = el[view?.disable_dates?.time_to_slug]
+  
+          if(date) {
+            const formattedDate = format(new Date(date), 'dd.MM.yyyy')
+  
+            if(!result[formattedDate]?.[0]) {
+              result[formattedDate] = [{
+                ...el,
+                calendarFromTime,
+                calendarToTime
+              }]
+            } else {
+              result[formattedDate].push({
+                ...el,
+                calendarFromTime,
+                calendarToTime
+              })
+            }
+          }
+        })
+  
+        return result
+      }
+    })
+
   const getTabsData = async (groupFields) => {
-    console.log('bbbbbb')
     setLoader(true)
     const promises = groupFields.map((field) => promiseGenerator(field))
 
@@ -130,7 +167,7 @@ const CalendarView = ({
 
       </FiltersBlock>
 
-      {isLoading ? (
+      {isLoading || loader ? (
         <PageFallback />
       ) : (
         <Calendar
@@ -139,6 +176,7 @@ const CalendarView = ({
           datesList={datesList}
           view={view}
           tabs={tabs}
+          workingDays={workingDays}
         />
       )}
     </div>

@@ -2,7 +2,7 @@ import TimesColumn from "../CalendarView-baaackup/TimesColumn"
 import CalendarColumn from "./CalendarColumn"
 import styles from "./style.module.scss"
 
-const Calendar = ({ data, fieldsMap, datesList, view, tabs }) => {
+const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
   return (
     <div className={styles.calendar}>
       <TimesColumn />
@@ -15,6 +15,7 @@ const Calendar = ({ data, fieldsMap, datesList, view, tabs }) => {
           fieldsMap={fieldsMap}
           view={view}
           tabs={tabs}
+          workingDays={workingDays}
         />
       ))}
     </div>

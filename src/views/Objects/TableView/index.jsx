@@ -20,9 +20,8 @@ const TableView = ({
   const filters = useSelector((state) => state.filter.list[tableSlug]?.[view.id] ?? {})
 
 
-  // const [tableData, setTableData] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-  // const [pageCount, setPageCount] = useState(1)
+  const [deleteLoader, setDeleteLoader] = useState(false)
 
   const columns = useMemo(() => {
     return view?.columns?.map(el => fieldsMap[el])
@@ -46,12 +45,12 @@ const TableView = ({
 
   const deleteHandler = async (row) => {
 
-    // setTableLoader(true)
+    setDeleteLoader(true)
     try {
       await constructorObjectService.delete(tableSlug, row.guid)
       refetch()
-    } catch {
-      // setTableLoader(false)
+    } finally {
+      setDeleteLoader(false)
     }
   }
 
@@ -69,7 +68,7 @@ const TableView = ({
         pagesCount={pageCount}
         columns={columns}
         onPaginationChange={setCurrentPage}
-        loader={tableLoader}
+        loader={tableLoader || deleteLoader}
         data={tableData}
         filters={filters}
         filterChangeHandler={filterChangeHandler}

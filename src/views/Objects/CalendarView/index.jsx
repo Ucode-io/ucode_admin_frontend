@@ -63,7 +63,8 @@ const CalendarView = ({
           const fieldsMap = listToMap([...fields, ...relationFields])
           const data = res.data?.response?.map((row) => ({
             ...row,
-            date: row[view.calendar_from_slug]
+            calendar: {
+              date: row[view.calendar_from_slug]
               ? format(new Date(row[view.calendar_from_slug]), "dd.MM.yyyy")
               : null,
             elementFromTime: row[view.calendar_from_slug]
@@ -72,6 +73,7 @@ const CalendarView = ({
             elementToTime: row[view.calendar_to_slug]
               ? new Date(row[view.calendar_to_slug])
               : null,
+            }
           }))
 
           return {

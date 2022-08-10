@@ -3,42 +3,51 @@ import { differenceInMinutes, format, parse, setHours, setMinutes } from "date-f
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import useTabRouter from "../../../hooks/useTabRouter"
-import { getRelationFieldTableCellLabel, getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { timesList } from "../../../utils/timesList"
-import DataCard from "./DaraCard"
+import DataCard from "./DataCard"
 import styles from "./style.module.scss"
 
 const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => {
   const { tableSlug } = useParams()
   const { navigateToForm } = useTabRouter()
-
+  
 
   const elements = useMemo(() => {
     if (!parentTab) return []
 
-    return data?.filter((el) => el[parentTab.slug] === parentTab.value && el.date === format(date, 'dd.MM.yyyy'))
+    
+
+    return data?.filter((el) => el[parentTab.slug] === parentTab.value && el.calendar?.date === format(date, 'dd.MM.yyyy'))
   }, [parentTab, data])
+
 
   const elementsWithPosition = useMemo(() => {
     const calendarStartedTime = setMinutes(setHours(date, 8), 0)
 
     return elements?.map((el) => {
+
+
       const startPosition =
         Math.floor(
-          differenceInMinutes(el.elementFromTime, calendarStartedTime) / 30
+          differenceInMinutes(el.calendar?.elementFromTime, calendarStartedTime) / 30
         ) * 40
 
       const height =
         Math.ceil(
-          differenceInMinutes(el.elementToTime, el.elementFromTime) / 30
+          differenceInMinutes(el.calendar?.elementToTime, el.calendar?.elementFromTime) / 30
         ) *
           40 -
         10
 
+
       return {
         ...el,
-        startPosition,
-        height,
+        calendar: {
+          ...el.calendar,
+          startPosition,
+          height,
+        }
+        
       }
     })
   }, [date, elements])
@@ -46,8 +55,6 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
   const viewFields = useMemo(() => {
     return view?.columns?.map(id => fieldsMap[id])?.filter(el => el)
   }, [fieldsMap, view])
-
-
 
   const disabledTimes = useMemo(() => {
     if (!workingDays) return null
@@ -125,7 +132,7 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
       ))}
 
       {elementsWithPosition?.map((el) => (
-        <DataCard key={el.id} data={el} viewFields={viewFields} navigateToEditPage={navigateToEditPage} />
+        <DataCard key={el.id} date={date} view={view} fieldsMap={fieldsMap} data={el} viewFields={viewFields} navigateToEditPage={navigateToEditPage} />
       ))}
     </div>
   )

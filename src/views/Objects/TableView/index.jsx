@@ -7,6 +7,7 @@ import useTabRouter from "../../../hooks/useTabRouter"
 import DataTable from "../../../components/DataTable"
 import { useParams } from "react-router-dom"
 import { useSelector } from "react-redux"
+import { useQuery } from "react-query"
 
 const TableView = ({
   filterChangeHandler,
@@ -19,58 +20,47 @@ const TableView = ({
   const filters = useSelector((state) => state.filter.list[tableSlug]?.[view.id] ?? {})
 
 
-  const [tableLoader, setTableLoader] = useState(true)
-  const [tableData, setTableData] = useState([])
+  // const [tableData, setTableData] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageCount, setPageCount] = useState(1)
+  // const [pageCount, setPageCount] = useState(1)
 
   const columns = useMemo(() => {
     return view?.columns?.map(el => fieldsMap[el])
   }, [view, fieldsMap])
 
-  const getAllData = async () => {
-    setTableLoader(true)
-    try {
-
-      const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: pageToOffset(currentPage), limit: 10, ...filters, [tab?.slug]: tab?.value},
+  const { data: { tableData, pageCount } = { tableData: [], pageCount: 1 } , refetch, isLoading: tableLoader } = useQuery({
+    queryKey: ["GET_OBJECTS_LIST", { tableSlug, currentPage, limit: 10, filters: { ...filters, [tab?.slug]: tab?.value } }],
+    queryFn: () => {
+      return constructorObjectService.getList(tableSlug, {
+        data: { offset: pageToOffset(currentPage), limit: 100, ...filters, [tab?.slug]: tab?.value },
       })
+    },
+    select: (res) => {
+      return {
+        tableData: res.data?.response ?? [],
+        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / 10)
+      }
+    },
+  })
 
-      setTableData(objectToArray(data.response ?? {}))
-      setPageCount(isNaN(data?.count) ? 1 : Math.ceil(data.count / 10))
-    } finally {
-      setTableLoader(false)
-    }
-  }
 
   const deleteHandler = async (row) => {
 
-    setTableLoader(true)
+    // setTableLoader(true)
     try {
       await constructorObjectService.delete(tableSlug, row.guid)
-      getAllData()
+      refetch()
     } catch {
-      setTableLoader(false)
+      // setTableLoader(false)
     }
   }
 
   const navigateToEditPage = (row) => {
     navigateToForm(tableSlug, "EDIT", row)
   }
-
-  useWatch(() => {
-    if (currentPage === 1) getAllData()
-    setCurrentPage(1)
-  },
-  [filters])
-
-  useWatch(() => {
-    getAllData()
-  }, [currentPage])
-
-  useEffect(() => {
-    getAllData()
-  }, [])
+  // useEffect(() => {
+  //   getAllData()
+  // }, [])
   
   return (
       <DataTable

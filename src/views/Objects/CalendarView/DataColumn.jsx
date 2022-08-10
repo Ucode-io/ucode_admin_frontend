@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom"
 import useTabRouter from "../../../hooks/useTabRouter"
 import { getRelationFieldTableCellLabel, getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { timesList } from "../../../utils/timesList"
+import DataCard from "./DaraCard"
 import styles from "./style.module.scss"
 
 const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => {
@@ -124,26 +125,7 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
       ))}
 
       {elementsWithPosition?.map((el) => (
-        <div
-          key={el.guid}
-          className={styles.infoBlockWrapper}
-          style={{ top: el.startPosition }}
-          onClick={() => navigateToEditPage(el)}
-        >
-          <div className={styles.infoBlock} style={{ height: el.height }}>
-
-            {
-              viewFields?.map(field => (
-                <div  > <b>{field.label}: </b> { field.type === "LOOKUP" ? getRelationFieldTableCellLabel(field, el, field.table_slug) : el[field.slug] } </div>
-              ))
-            }
-
-            <p className={styles.time}>
-              {format(el.elementFromTime, "HH:mm")} -{" "}
-              {format(el.elementToTime, "HH:mm")}
-            </p>
-          </div>
-        </div>
+        <DataCard key={el.id} data={el} viewFields={viewFields} navigateToEditPage={navigateToEditPage} />
       ))}
     </div>
   )

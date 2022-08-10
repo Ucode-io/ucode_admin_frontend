@@ -39,7 +39,10 @@ const ViewsWithGroups = ({
   const groupFieldId = view.group_fields[0]
   const groupField = fieldsMap[groupFieldId]
 
-  const { data: tabs, isLoading: loader } = useQuery(queryGenerator(groupField, filters))
+  const tabs = []
+  const loader = false
+
+  // const { data: tabs, isLoading: loader } = useQuery(queryGenerator(groupField, filters))
 
   return (
     <>
@@ -145,6 +148,10 @@ const ViewsWithGroups = ({
 
 
 const queryGenerator = (groupField, filters = {}) => {
+
+  if(!groupField) return { queryFn: () => null }
+
+  console.log('GROUP FIELD ', groupField)
 
   const filterValue = filters[groupField.slug]
   const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {}

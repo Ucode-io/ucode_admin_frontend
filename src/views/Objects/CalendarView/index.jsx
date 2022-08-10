@@ -1,6 +1,5 @@
 import { Download, Upload } from "@mui/icons-material"
 import { add, differenceInDays, endOfWeek, format, startOfWeek } from "date-fns"
-import { useEffect } from "react"
 import { useMemo, useState } from "react"
 import { useQueries, useQuery } from "react-query"
 import { useSelector } from "react-redux"
@@ -123,7 +122,6 @@ const CalendarView = ({
     }
   })
 
-
   const tabResponses = useQueries(queryGenerator(groupFields, filters))
   const tabs = tabResponses?.map(response => response?.data)
   const tabLoading = tabResponses?.some(response => response?.isLoading)
@@ -172,12 +170,17 @@ const CalendarView = ({
   )
 }
 
-const queryGenerator = (groupFields, filters = {}) => {
 
-  return groupFields?.map(field => queryGenerator2(field, filters))
+
+// ========== UTILS==========
+
+
+const queryGenerator = (groupFields, filters = {}) => {
+  return groupFields?.map(field => promiseGenerator(field, filters))
 }
 
-const queryGenerator2 = (groupField, filters = {}) => {
+
+const promiseGenerator = (groupField, filters = {}) => {
 
   const filterValue = filters[groupField.slug]
   const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {}
@@ -196,9 +199,7 @@ const queryGenerator2 = (groupField, filters = {}) => {
       relationFilters[slug] = value
     }
   })
-
   const computedFilters = {...defaultFilters, ...relationFilters}
-
 
   if(groupField?.type === "PICK_LIST") {
     return {

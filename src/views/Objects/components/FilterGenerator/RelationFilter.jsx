@@ -10,7 +10,6 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
   const [searchText, setSearchText] = useState("")
   
 
-
   const { data: options, isLoading } = useQuery(
     ["GET_OBJECT_LIST", field.table_slug, searchText],
     () => {
@@ -53,7 +52,6 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
         <TextField
           {...params}
           placeholder={field.label}
-          // label="Asynchronous"
           size="small"
           InputProps={{
             ...params.InputProps,

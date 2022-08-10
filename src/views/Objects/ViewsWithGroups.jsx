@@ -91,12 +91,6 @@ const ViewsWithGroups = ({
       <FiltersBlock
         extra={
           <>
-            {/* <FastFilterButton />
-
-            <GroupFieldSelector tableSlug={tableSlug} />
-
-            <ColumnsSelector tableSlug={tableSlug} /> */}
-
             <RectangleIconButton color="white">
               <Upload />
             </RectangleIconButton>

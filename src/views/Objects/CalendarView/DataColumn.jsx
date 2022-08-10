@@ -84,14 +84,10 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
     return index < disabledTimes?.startIndex || index > disabledTimes?.endIndex
   }
 
-  console.log('view =>', view)
-
   const navigateToCreatePage = (time) => {
     const [hour, minute] = time?.split("-")?.[0]?.trim()?.split(":")
 
     const computedDate = setHours(setMinutes(date, minute), hour)
-
-    
 
     const startTimeStampSlug = view?.calendar_from_slug
 
@@ -112,7 +108,6 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
       {timesList.map((time, index) => (
         <div
           key={time}
-          // className={styles.timeBlock}
           className={`${styles.timeBlock} ${
             isDisabled(index) ? styles.disabled : ""
           }`}

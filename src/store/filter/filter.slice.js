@@ -3,14 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 export const { actions: filterAction, reducer: filterReducer } = createSlice({
   name: "filter",
   initialState: {
-    filters: {},
+    list: {},
   },
   reducers: {
-    setFilters: (state, { payload: { name, value } }) => {
-      state.filters[name] = value;
+    setFilter: (state, { payload: { tableSlug, viewId, name, value } }) => {
+      state.list[tableSlug][viewId][name] = value
     },
-    clearFilters: (state) => {
-      state.filters = {};
+    clearFilters: (state, { payload: { tableSlug, viewId } }) => {
+      state.list[tableSlug][viewId] = {}
     }
   },
 });

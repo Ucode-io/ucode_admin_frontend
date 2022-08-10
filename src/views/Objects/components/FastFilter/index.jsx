@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { Filter } from "../FilterGenerator"
 import styles from "./style.module.scss"
 
-const FastFilter = ({ filters, onChange, view, fieldsMap }) => {
+const FastFilter = ({ filters, view, fieldsMap }) => {
   const { tableSlug } = useParams()
 
   const computedFields = useMemo(() => {
@@ -12,6 +12,10 @@ const FastFilter = ({ filters, onChange, view, fieldsMap }) => {
 
   }, [ view, fieldsMap ])
     
+  const onChange = (value, name) => {
+    console.log('onChange', value, name)
+  }
+
   return (
     <div className={styles.filtersBlock} >
       {

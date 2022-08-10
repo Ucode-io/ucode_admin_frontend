@@ -8,6 +8,8 @@ import { useQuery } from "react-query"
 import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
 import { listToMap } from "../../utils/listToMap"
+import FiltersBlock from "../../components/FiltersBlock"
+import SettingsButton from "./components/ViewSettings/SettingsButton"
 
 const ObjectsPage = () => {
   const { tableSlug } = useParams()
@@ -73,6 +75,12 @@ const ObjectsPage = () => {
           })}
         </div>
       </Tabs>
+
+      
+
+      {!views?.length && <FiltersBlock extra={<SettingsButton />} />}
+
+
     </>
   )
 }

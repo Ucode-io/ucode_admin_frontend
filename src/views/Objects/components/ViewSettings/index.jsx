@@ -33,7 +33,7 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],
-          relationColumns: data?.relation_fields ?? [],
+          relationColumns: data?.relation_fields?.map(el => ({...el, label: `${el.label} (${el.table_label})`})) ?? [],
         }
       },
     }

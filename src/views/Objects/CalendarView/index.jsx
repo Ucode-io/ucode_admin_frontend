@@ -2,7 +2,8 @@ import { Download, Upload } from "@mui/icons-material"
 import { add, differenceInDays, endOfWeek, format, startOfWeek } from "date-fns"
 import { useEffect } from "react"
 import { useMemo, useState } from "react"
-import { useQuery } from "react-query"
+import { useQueries, useQuery } from "react-query"
+import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import CRangePicker from "../../../components/DatePickers/CRangePicker"
@@ -11,7 +12,7 @@ import PageFallback from "../../../components/PageFallback"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { listToMap } from "../../../utils/listToMap"
-import { objectToArray } from "../../../utils/objectToArray"
+import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd"
 import FastFilter from "../components/FastFilter"
 import SettingsButton from "../components/ViewSettings/SettingsButton"
 import ViewTabSelector from "../components/ViewTypeSelector"
@@ -28,14 +29,26 @@ const CalendarView = ({
     startOfWeek(new Date(), { weekStartsOn: 1 }),
     endOfWeek(new Date(), { weekStartsOn: 1 }),
   ])
-  const [tabs, setTabs] = useState(null)
-  const [loader, setLoader] = useState(false)
+  const [fieldsMap, setFieldsMap] = useState({})
 
-  const [filters, setFilters] = useState({})
+  const filters = useSelector((state) => state.filter.list[tableSlug]?.[view.id] ?? {})
 
-  const hasDisabledDates = view?.disable_dates?.day_slug
+  const groupFieldIds = view.group_fields
+  const groupFields = groupFieldIds.map((id) => fieldsMap[id]).filter(el => el)
 
-  const { data: { data, fieldsMap } = { data: [], fieldsMap: [] }, isLoading } =
+  const datesList = useMemo(() => {
+    if (!dateFilters?.[0] || !dateFilters?.[1]) return
+
+    const differenceDays = differenceInDays(dateFilters[1], dateFilters[0])
+
+    const result = []
+    for (let i = 0; i <= differenceDays; i++) {
+      result.push(add(dateFilters[0], { days: i }))
+    }
+    return result
+  }, [dateFilters])
+
+  const { data: { data } = { data: [] }, isLoading } =
     useQuery(
       ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters }],
       () => {
@@ -44,12 +57,12 @@ const CalendarView = ({
         })
       },
       {
+        cacheTime: 10,
         select: (res) => {
-          const responseData = objectToArray(res.data.response ?? {})
           const fields = res.data?.fields ?? []
-          const relationFields = res?.data?.relation_fields ?? []
+          const relationFields = res?.data?.relation_fields?.map(el => ({...el, label: `${el.label} (${el.table_label})`})) ?? []
           const fieldsMap = listToMap([...fields, ...relationFields])
-          const data = responseData.map((row) => ({
+          const data = res.data?.response?.map((row) => ({
             ...row,
             date: row[view.calendar_from_slug]
               ? format(new Date(row[view.calendar_from_slug]), "dd.MM.yyyy")
@@ -63,82 +76,58 @@ const CalendarView = ({
           }))
 
           return {
-            data,
             fieldsMap,
+            data
           }
         },
+        onSuccess: (res) => {
+          if(Object.keys(fieldsMap)?.length) return
+          setFieldsMap(res.fieldsMap)
+        }
       }
     )
 
-    const { data: workingDays } = useQuery(["GET_OBJECTS_LIST"], () => {
-      if(!view?.disable_dates?.table_slug) return {}
-  
-      return constructorObjectService.getList(view?.disable_dates?.table_slug, { data: {} })
-    }, {
-      select: (res) => {
-        const result = {}
-      
-        res?.data?.response?.forEach(el => {
-          const date = el[view?.disable_dates?.day_slug]
-          const calendarFromTime = el[view?.disable_dates?.time_from_slug]
-          const calendarToTime = el[view?.disable_dates?.time_to_slug]
-  
-          if(date) {
-            const formattedDate = format(new Date(date), 'dd.MM.yyyy')
-  
-            if(!result[formattedDate]?.[0]) {
-              result[formattedDate] = [{
-                ...el,
-                calendarFromTime,
-                calendarToTime
-              }]
-            } else {
-              result[formattedDate].push({
-                ...el,
-                calendarFromTime,
-                calendarToTime
-              })
-            }
+  const { data: workingDays } = useQuery(["GET_OBJECTS_LIST", view?.disable_dates?.table_slug], () => {
+    if(!view?.disable_dates?.table_slug) return {}
+
+    return constructorObjectService.getList(view?.disable_dates?.table_slug, { data: {} })
+  }, {
+    select: (res) => {
+      const result = {}
+    
+      res?.data?.response?.forEach(el => {
+        const date = el[view?.disable_dates?.day_slug]
+        const calendarFromTime = el[view?.disable_dates?.time_from_slug]
+        const calendarToTime = el[view?.disable_dates?.time_to_slug]
+
+        if(date) {
+          const formattedDate = format(new Date(date), 'dd.MM.yyyy')
+
+          if(!result[formattedDate]?.[0]) {
+            result[formattedDate] = [{
+              ...el,
+              calendarFromTime,
+              calendarToTime
+            }]
+          } else {
+            result[formattedDate].push({
+              ...el,
+              calendarFromTime,
+              calendarToTime
+            })
           }
-        })
-  
-        return result
-      }
-    })
+        }
+      })
 
-  const getTabsData = async (groupFields) => {
-    setLoader(true)
-    const promises = groupFields.map((field) => promiseGenerator(field))
-
-    try {
-      const tabsData = await Promise.all(promises)
-      setTabs(tabsData)
-    } finally {
-      setLoader(false)
+      return result
     }
-  }
-
-  useEffect(() => {
-    const groupFieldIds = view.group_fields
-    const groupFields = groupFieldIds.map((id) => fieldsMap[id]).filter(el => el)
-
-    if(!groupFields?.length) return
-
-    getTabsData(groupFields)
-  }, [view, fieldsMap])
+  })
 
 
-  const datesList = useMemo(() => {
-    if (!dateFilters?.[0] || !dateFilters?.[1]) return
+  const tabResponses = useQueries(queryGenerator(groupFields, filters))
+  const tabs = tabResponses?.map(response => response?.data)
+  const tabLoading = tabResponses?.some(response => response?.isLoading)
 
-    const differenceDays = differenceInDays(dateFilters[1], dateFilters[0])
-
-    const result = []
-    for (let i = 0; i <= differenceDays; i++) {
-      result.push(add(dateFilters[0], { days: i }))
-    }
-    return result
-  }, [dateFilters])
 
   return (
     <div>
@@ -163,11 +152,11 @@ const CalendarView = ({
         />
 
         <CRangePicker value={dateFilters} onChange={setDateFilters} />
-        <FastFilter filters={filters} view={view} fieldsMap={fieldsMap} />
+        <FastFilter view={view} fieldsMap={fieldsMap} />
 
       </FiltersBlock>
 
-      {isLoading || loader ? (
+      {isLoading || tabLoading ? (
         <PageFallback />
       ) : (
         <Calendar
@@ -183,39 +172,66 @@ const CalendarView = ({
   )
 }
 
-const promiseGenerator = (field) => {
-  if (field?.type === "LOOKUP")
-    return new Promise((resolve, reject) => {
-      constructorObjectService
-        .getList(field.slug?.slice(0, -3), { data: {} })
-        .then((res) => {
-          const data = {
-            id: field.id,
-            list: res.data?.response?.map((el) => ({
-              ...el,
-              label: getRelationFieldTabsLabel(field, el),
-              value: el.guid,
-              slug: field?.slug,
-            })),
-          }
+const queryGenerator = (groupFields, filters = {}) => {
 
-          resolve(data)
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    })
+  return groupFields?.map(field => queryGenerator2(field, filters))
+}
 
-  return new Promise((resolve) => {
-    resolve({
-      id: field.id,
-      list: field.attributes?.options?.map((el) => ({
-        label: el,
-        value: el,
-        slug: field?.slug,
-      })),
-    })
+const queryGenerator2 = (groupField, filters = {}) => {
+
+  const filterValue = filters[groupField.slug]
+  const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {}
+  
+  const relationFilters = {}
+
+  Object.entries(filters)?.forEach(([key, value]) => {
+    if(!key?.includes('.')) return 
+
+    const filterTableSlug = selectElementFromEndOfString({ string: key, separator: '.', index: 2 })
+
+    if(filterTableSlug === groupField.table_slug) {
+
+      const slug = key.split('.')?.pop()
+
+      relationFilters[slug] = value
+    }
   })
+
+  const computedFilters = {...defaultFilters, ...relationFilters}
+
+
+  if(groupField?.type === "PICK_LIST") {
+    return {
+      queryKey: ['GET_GROUP_OPTIONS', groupField.id],
+      queryFn: () => ({
+        id: groupField.id,
+        list: groupField.attributes?.options?.map((el) => ({
+          ...el,
+          label: el,
+          value: el,
+          slug: groupField?.slug,
+        })),
+      })
+    }
+  }
+
+  if(groupField?.type === "LOOKUP") {
+    const queryFn = () => constructorObjectService.getList(groupField.table_slug, { data: computedFilters ?? {} })
+
+    return {
+      queryKey: ["GET_OBJECT_LIST_ALL", { tableSlug: groupField.slug?.slice(0, -3), filters: computedFilters }],
+      queryFn,
+      select: res => ({
+        id: groupField.id,
+        list: res.data?.response?.map((el) => ({
+          ...el,
+          label: getRelationFieldTabsLabel(groupField, el),
+          value: el.guid,
+          slug: groupField?.slug,
+        })),
+      })
+    }
+  }
 }
 
 export default CalendarView

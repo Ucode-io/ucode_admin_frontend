@@ -6,9 +6,9 @@ import useWatch from "../../../hooks/useWatch"
 import useTabRouter from "../../../hooks/useTabRouter"
 import DataTable from "../../../components/DataTable"
 import { useParams } from "react-router-dom"
+import { useSelector } from "react-redux"
 
 const TableView = ({
-  filters,
   filterChangeHandler,
   tab,
   view,
@@ -16,6 +16,8 @@ const TableView = ({
 }) => {
   const { navigateToForm } = useTabRouter()
   const {tableSlug} = useParams()
+  const filters = useSelector((state) => state.filter.list[tableSlug]?.[view.id] ?? {})
+
 
   const [tableLoader, setTableLoader] = useState(true)
   const [tableData, setTableData] = useState([])
@@ -31,7 +33,7 @@ const TableView = ({
     try {
 
       const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: pageToOffset(currentPage), limit: 10, [tab?.slug]: tab?.value, ...filters},
+        data: { offset: pageToOffset(currentPage), limit: 10, ...filters, [tab?.slug]: tab?.value},
       })
 
       setTableData(objectToArray(data.response ?? {}))
@@ -69,8 +71,6 @@ const TableView = ({
   useEffect(() => {
     getAllData()
   }, [])
-
-  console.log('view -->', view, columns)
   
   return (
       <DataTable

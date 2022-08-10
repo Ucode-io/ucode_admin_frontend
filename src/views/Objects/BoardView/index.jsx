@@ -39,7 +39,7 @@ const BoardView = ({
   
 
   const { data, isLoading } = useQuery(
-    ["GET_OBJECT_LIST_ALL", tableSlug, id],
+    ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters: {} }],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: {},

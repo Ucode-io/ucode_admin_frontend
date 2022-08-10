@@ -1,53 +1,47 @@
 import { Autocomplete, CircularProgress, TextField } from "@mui/material"
-import { useId, useState } from "react"
+import { useId, useMemo } from "react"
 import { useQuery } from "react-query"
-import useDebounce from "../../../../hooks/useDebounce"
 import constructorObjectService from "../../../../services/constructorObjectService"
-import { getRelationFieldLabel, getRelationFieldTabsLabel } from "../../../../utils/getRelationFieldLabel"
+import { getRelationFieldTabsLabel } from "../../../../utils/getRelationFieldLabel"
 
 const RelationFilter = ({ field = {}, filters, name, onChange }) => {
   const { id } = useId()
-  const [searchText, setSearchText] = useState("")
-  
 
   const { data: options, isLoading } = useQuery(
-    ["GET_OBJECT_LIST", field.table_slug, searchText],
+    ["GET_OBJECT_LIST_ALL", { tableSlug: field.table_slug, filters: {} }],
     () => {
-      if (!field.table_slug) return null
-      return constructorObjectService.getList(field.table_slug, {
-        data: { offset: 0, limit: 10, [field.slug]: searchText },
-      })
+      return constructorObjectService.getList(field.table_slug, { data: {} })
     },
     {
-      select: ({ data }) => {
-        const result = {}
-
-        data.response?.forEach((el) => {
-          result[el.guid] = {
-            label: getRelationFieldTabsLabel(field, el),
-            value: el.guid,
-          }
-        })
-
-        return Object.values(result)
+      select: (res) => {
+        return res?.data?.response ?? []
       },
     }
   )
 
-  const search = useDebounce((_, searchText) => {
-    setSearchText(searchText)
-  }, 400)
+  const getOptionLabel = (option) => {
+    return getRelationFieldTabsLabel(field, option)
+  }
+
+  const computedValue = useMemo(() => {
+    const findedOption = options?.find((el) => el?.guid === filters[name])
+    return findedOption ?? null
+  }, [options, filters, name])
 
   return (
     <Autocomplete
       id={id}
-      isOptionEqualToValue={(option, value) => option.value === value.value}
-      getOptionLabel={(option) => option.label}
+      // isOptionEqualToValue={(option, value) => option.value === value.value}
+      getOptionLabel={getOptionLabel}
       options={options ?? []}
       loading={isLoading}
-      value={filters[name]}
-      onInputChange={search}
-      onChange={(e, val) => onChange(val?.value ?? "", name)}
+      value={computedValue}
+      // onInputChange={search}
+      onChange={(e, val) => onChange(val?.guid ?? "", name)}
+      isOptionEqualToValue={(option, value) => {
+        console.log('sss =>', option, value)
+        return option.guid === value.guid
+      }}
       renderInput={(params) => (
         <TextField
           {...params}

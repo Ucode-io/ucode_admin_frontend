@@ -16,6 +16,8 @@ import { useParams } from "react-router-dom"
 import constructorObjectService from "../../services/constructorObjectService"
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel"
 import { CircularProgress } from "@mui/material"
+import { useQuery } from "react-query"
+import { useSelector } from "react-redux"
 
 const ViewsWithGroups = ({
   views,
@@ -25,66 +27,19 @@ const ViewsWithGroups = ({
   fieldsMap
 }) => {
   const { tableSlug } = useParams()
+  const filters = useSelector((state) => state.filter.list[tableSlug]?.[view.id] ?? {})
 
-  const [filters, setFilters] = useState({})
   const { navigateToForm } = useTabRouter()
-
-  const [tabs, setTabs] = useState(null)
-  const [loader, setLoader] = useState(true)
-
-  const filterChangeHandler = (value, name) => {
-    setFilters({
-      ...filters,
-      [name]: value,
-    })
-  }
 
   const navigateToCreatePage = () => {
     navigateToForm(tableSlug)
   }
 
+  
+  const groupFieldId = view.group_fields[0]
+  const groupField = fieldsMap[groupFieldId]
 
-  const getTabsData = (groupField) => {
-    
-    setLoader(true)
-
-    constructorObjectService.getList(groupField.table_slug, { data: {} })
-      .then((res) => {
-        setTabs(res?.data?.response?.map(el => ({
-          label: getRelationFieldTabsLabel(groupField, el),
-          value: el.guid,
-          slug: groupField?.slug
-        })))
-      }).finally(() => {
-        setLoader(false)
-      })
-  }
-
-
-  useEffect(() => {
-    if(!view.group_fields?.length) {
-      setLoader(false)
-      return
-    }
-    const groupFieldId = view.group_fields[0]
-    const groupField = fieldsMap[groupFieldId]
-
-    if(groupField?.type === "PICK_LIST") {
-      const tabs = groupField?.attributes?.options?.map(el => ({
-        label: el,
-        value: el,
-        slug: groupField?.slug
-      }))
-
-      setTabs(tabs)
-      setLoader(false)
-    }
-    
-    if(groupField?.type === "LOOKUP" ) {
-      getTabsData(groupField)
-    }
-  }, [view, fieldsMap])
-
+  const { data: tabs, isLoading: loader } = useQuery(queryGenerator(groupField, filters))
 
   return (
     <>
@@ -107,7 +62,7 @@ const ViewsWithGroups = ({
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
         />
-        <FastFilter filters={filters} onChange={filterChangeHandler} view={view} fieldsMap={fieldsMap} />
+        <FastFilter view={view} fieldsMap={fieldsMap} />
       </FiltersBlock>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
@@ -149,14 +104,12 @@ const ViewsWithGroups = ({
                   {view.type === "TREE" ? (
                     <TreeView
                       filters={filters}
-                      filterChangeHandler={filterChangeHandler}
                       group={tab}
                       view={view}
                     />
                   ) : (
                     <TableView
                       filters={filters}
-                      filterChangeHandler={filterChangeHandler}
                       tab={tab}
                       view={view}
                       fieldsMap={fieldsMap}
@@ -170,14 +123,12 @@ const ViewsWithGroups = ({
                   {view.type === "TREE" ? (
                     <TreeView
                       filters={filters}
-                      filterChangeHandler={filterChangeHandler}
                       view={view}
                       fieldsMap={fieldsMap}
                     />
                   ) : (
                     <TableView
                       filters={filters}
-                      filterChangeHandler={filterChangeHandler}
                       view={view}
                       fieldsMap={fieldsMap}
                     />
@@ -190,6 +141,39 @@ const ViewsWithGroups = ({
       </Tabs>
     </>
   )
+}
+
+
+const queryGenerator = (groupField, filters = {}) => {
+
+  const filterValue = filters[groupField.slug]
+  const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {}
+  
+  if(groupField?.type === "PICK_LIST") {
+    return {
+      queryKey: ['GET_GROUP_OPTIONS', groupField.id],
+      queryFn: () => groupField?.attributes?.options?.map(el => ({
+        label: el,
+        value: el,
+        slug: groupField?.slug
+      }))
+    }
+  }
+
+  if(groupField?.type === "LOOKUP") {
+    const queryFn = () => constructorObjectService.getList(groupField.table_slug, { data: computedFilters ?? {} })
+
+    return {
+      queryKey: ["GET_OBJECT_LIST_ALL", { tableSlug: groupField.table_slug, filters: computedFilters }],
+      queryFn,
+      select: res => res?.data?.response?.map(el => ({
+        label: getRelationFieldTabsLabel(groupField, el),
+        value: el.guid,
+        slug: groupField?.slug
+      }))
+    }
+  }
+
 }
 
 export default ViewsWithGroups

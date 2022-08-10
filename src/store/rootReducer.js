@@ -32,7 +32,7 @@ const tableColumnTablePersistConfig = {
 }
 
 const filtersPersistConfig = {
-  key: "filters",
+  key: "filter",
   storage,
 }
 const tableSizePersistConfig = {
@@ -60,7 +60,8 @@ const rootReducer = combineReducers({
   constructorTable: persistReducer(constructorTablePersistConfig, constructorTableReducer),
   application: persistReducer(applicationPersistConfig, applicationReducer),
   tableColumn: persistReducer(tableColumnTablePersistConfig, tableColumnReducer),
-  filters: persistReducer(filtersPersistConfig, filterReducer),
+  filter: persistReducer(filtersPersistConfig, filterReducer),
+  // filter: filterReducer,
   tableSize: persistReducer(tableSizePersistConfig, tableSizeReducer),
   tabRouter: persistReducer(tabRouterPersistConfig, tabRouterReducer),
   cashbox: persistReducer(cashboxPersistConfig, cashboxReducer),

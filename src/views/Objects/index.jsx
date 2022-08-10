@@ -76,10 +76,7 @@ const ObjectsPage = () => {
         </div>
       </Tabs>
 
-      
-
       {!views?.length && <FiltersBlock extra={<SettingsButton />} />}
-
 
     </>
   )

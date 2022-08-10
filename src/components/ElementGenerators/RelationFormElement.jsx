@@ -127,7 +127,6 @@ const AutoCompleteElement = ({
 
       setFormValue(field_to, val?.[field_from])
     })
-
   }
 
   return (

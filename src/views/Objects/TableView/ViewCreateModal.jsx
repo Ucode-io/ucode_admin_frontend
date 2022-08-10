@@ -54,7 +54,6 @@ const ViewCreateModal = ({
 
   const computedFields = useMemo(() => {
     const newFields = fields?.map((field) => {
-      // console.log("FIELD ===>", field)
 
       let slug = field.slug
 

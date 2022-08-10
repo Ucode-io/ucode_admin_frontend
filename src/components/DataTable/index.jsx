@@ -49,9 +49,7 @@ const DataTable = ({
     // document.addEventListener("DOMContentLoaded", function () {
     const createResizableTable = function (table) {
       if (!table) return;
-      console.log("TABLE", table);
       const cols = table.querySelectorAll("th");
-      console.log("TH", cols);
       [].forEach.call(cols, function (col, idx) {
         // Add a resizer element to the column
         const resizer = document.createElement("span");

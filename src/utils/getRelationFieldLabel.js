@@ -20,13 +20,9 @@ export const getRelationFieldLabel = (field, option) => {
 
 export const getRelationFieldTabsLabel = (field, option) => {
 
-  console.log('FIELD ==>', field, option)
-
   if(!Array.isArray(field?.view_fields)) return ""
 
   let label = ""
-
-  // console.log("field.attributes ---->", field.attributes, option)
 
   field?.view_fields?.forEach((el) => {
     let result = ""

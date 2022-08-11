@@ -18,8 +18,9 @@ const DataRow = ({ tab, datesList, view, fieldsMap, data }) => {
     return result
   }, [ data, tab ])
 
+  const rowWidth = datesList?.length * 160 + 200
 
-  return ( <div className={styles.row} >
+  return ( <div className={styles.row} style={{ width: rowWidth }} >
     <div className={`${styles.tabBlock}`} style={{ paddingLeft: 20 }}  > {tab.label} </div>
 
     {

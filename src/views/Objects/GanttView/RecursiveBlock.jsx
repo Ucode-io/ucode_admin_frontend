@@ -18,12 +18,14 @@ const RecursiveBlock = ({
     )
   }, [parentTab, tabs, level])
 
+  const rowWidth = datesList?.length * 160 + 200
+
   return (
     <div>
       {elements?.map((tab) => (
         <Fragment key={tab.id} >
           {tabs?.[level + 1] ? (
-            <div className={styles.row}>
+            <div className={styles.row} style={{ width: rowWidth }} >
               <div className={`${styles.tabBlock} ${styles.parent}`} >{tab.label}</div>
             </div>
           ) : (

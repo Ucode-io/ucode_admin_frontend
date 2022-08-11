@@ -29,7 +29,7 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, setIsChanged, column
   const type = form.watch("type")
 
   const computedColumns = useMemo(() => {
-    if(type !== "CALENDAR") {
+    if(type !== "CALENDAR" && type !== "GANTT") {
       return columns
     }
     else {
@@ -119,7 +119,7 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, setIsChanged, column
           </div>
         </div>
 
-        {type === "CALENDAR" && (
+        {(type === "CALENDAR" || type === "GANTT" ) && (
           <CalendarSettings form={form} columns={columns} />
         )}
 

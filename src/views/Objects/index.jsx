@@ -10,6 +10,7 @@ import constructorObjectService from "../../services/constructorObjectService"
 import { listToMap } from "../../utils/listToMap"
 import FiltersBlock from "../../components/FiltersBlock"
 import SettingsButton from "./components/ViewSettings/SettingsButton"
+import GanttView from "./GanttView"
 
 const ObjectsPage = () => {
   const { tableSlug } = useParams()
@@ -54,6 +55,15 @@ const ObjectsPage = () => {
                   />
                 ) : view.type === "CALENDAR" ? (
                   <CalendarView
+                    view={view}
+                    setViews={setViews}
+                    selectedTabIndex={selectedTabIndex}
+                    setSelectedTabIndex={setSelectedTabIndex}
+                    views={views}
+                    fieldsMap={fieldsMap}
+                  />
+                ) : view.type === "GANTT" ? (
+                  <GanttView
                     view={view}
                     setViews={setViews}
                     selectedTabIndex={selectedTabIndex}

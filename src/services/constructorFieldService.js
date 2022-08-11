@@ -8,4 +8,5 @@ const constructorFieldService = {
   delete: (id) => request.delete(`/field/${id}`)
 }
 
+
 export default constructorFieldService;

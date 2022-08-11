@@ -21,6 +21,7 @@ const ViewsList = ({ views, selectedView, setSelectedView }) => {
           >
             {view.type === "TABLE" && <TableChart className={styles.icon} />}
             {view.type === "CALENDAR" && (<CalendarMonth className={styles.icon} />)}
+            {view.type === "GANTT" && (<IconGenerator className={styles.icon} icon="chart-gantt.svg" />)}
             {view.type === "TREE" && <AccountTree className={styles.icon} />}
             {view.type === "BOARD" && (<IconGenerator className={styles.icon} icon="brand_trello.svg" />)}
             <div className={styles.viewName}>{view.name ?? view.type}</div>

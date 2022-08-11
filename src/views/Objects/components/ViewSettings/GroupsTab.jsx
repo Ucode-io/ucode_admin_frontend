@@ -23,7 +23,7 @@ const GroupsTab = ({ columns, form }) => {
   const onCheckboxChange = (val, id) => {
     const type = form.getValues("type")
 
-    if (type !== "CALENDAR") {
+    if (type !== "CALENDAR" && type !== "GANTT") {
       return form.setValue("group_fields", val ? [id] : [])
     }
 

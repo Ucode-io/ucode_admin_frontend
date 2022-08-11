@@ -25,6 +25,7 @@ const ViewTabSelector = ({
           >
             {view.type === "TABLE" && <TableChart />}
             {view.type === "CALENDAR" && <CalendarMonth />}
+            {view.type === "GANTT" && (<IconGenerator icon="chart-gantt.svg" />)}
             {view.type === "TREE" && <AccountTree />}
             {view.type === "BOARD" && <IconGenerator icon="brand_trello.svg" />}
           </div>

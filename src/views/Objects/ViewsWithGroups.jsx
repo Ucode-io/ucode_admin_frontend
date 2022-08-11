@@ -36,7 +36,7 @@ const ViewsWithGroups = ({
   }
 
   
-  const groupFieldId = view.group_fields[0]
+  const groupFieldId = view?.group_fields?.[0]
   const groupField = fieldsMap[groupFieldId]
 
   const { data: tabs, isLoading: loader } = useQuery(queryGenerator(groupField, filters))

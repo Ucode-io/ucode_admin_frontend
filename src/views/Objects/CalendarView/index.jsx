@@ -75,7 +75,6 @@ const CalendarView = ({
               : null,
             }
           }))
-
           return {
             fieldsMap,
             data

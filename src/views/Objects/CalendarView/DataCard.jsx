@@ -6,7 +6,7 @@ import Moveable from "react-moveable"
 import { timesList } from "../../../utils/timesList"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { useParams } from "react-router-dom"
-
+import "./moveable.scss"
 
 const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage }) => {
   const ref = useRef()

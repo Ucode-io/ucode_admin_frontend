@@ -116,8 +116,10 @@
 
     .infoBlock {
       background-color: #E2F4E6;
-      border-radius: 12px;
+      // border-radius: 12px;
       padding: 8px;
+      padding-top: 20px;
+      border-radius: 12px 12px 0 0;
       overflow: hidden;
       height: 70px;
       cursor: pointer;

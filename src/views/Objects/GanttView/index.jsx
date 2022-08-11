@@ -118,7 +118,7 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
           views={views}
         />
 
-        <CRangePicker value={dateFilters} onChange={setDateFilters} />
+        <CRangePicker interval={'months'} value={dateFilters} onChange={setDateFilters} />
         <FastFilter view={view} fieldsMap={fieldsMap} />
       </FiltersBlock>
 

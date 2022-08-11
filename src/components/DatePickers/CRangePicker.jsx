@@ -9,12 +9,13 @@ import { add } from "date-fns";
 registerLocale('ru', ru)
 
 
-const CRangePicker = ({ value = [null, null], onChange }) => {
+const CRangePicker = ({ value = [null, null], onChange, interval="weeks" }) => {
 
-  const clickHandler = (weekNumber) => {
+  const clickHandler = (number) => {
     if(!value[0] || !value[1]) return
+    
 
-    const newValue = [add(value[0], { weeks: weekNumber }), add(value[1], { weeks: weekNumber })]
+    const newValue = [add(value[0], { [interval]: number }), add(value[1], { [interval]: number })]
     onChange(newValue)
   }
 

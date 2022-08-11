@@ -1,6 +1,5 @@
 import { Close } from "@mui/icons-material"
 import { Card, IconButton } from "@mui/material"
-import { useMemo } from "react"
 import { useState } from "react"
 import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
@@ -29,7 +28,6 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
     },
     {
       select: ({ data }) => {
-        console.log('data ==>', data)
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],

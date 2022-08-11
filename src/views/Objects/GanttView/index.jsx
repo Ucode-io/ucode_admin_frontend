@@ -42,7 +42,7 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
     .filter((el) => el)
 
   const datesList = useMemo(() => {
-    if (!dateFilters?.[0] || !dateFilters?.[1]) return
+    if (!dateFilters?.[0] || !dateFilters?.[1]) return []
 
     const differenceDays = differenceInDays(dateFilters[1], dateFilters[0])
 
@@ -52,6 +52,8 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
     }
     return result
   }, [dateFilters])
+
+  console.log('aaaa =>', dateFilters, datesList)
 
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters }],

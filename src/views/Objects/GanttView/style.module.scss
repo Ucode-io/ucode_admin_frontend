@@ -1,32 +1,62 @@
 
 
-.gantt {
+.wrapper {
   overflow: auto;
+}
+
+.gantt {
   background-color: #fff;
   height: calc(100vh - 103px);
   position: relative;
+  display: inline-block;
 }
 
 .datesRow {
   display: flex;
 
+
   .dateBlock {
-    height: 32px;
-    min-width: 160px;
-    width: 160px;
-    border-width: 0px 1px 1px 0px;
-    border-style: solid;
-    border-color: #E5E9EB;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: -1px -1px 0 0;      
 
-
-    &.mockBlock {
-      min-width: 200px;
-      width: 200px;
+    .monthBlock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      height: 32px;
+      border: 1px solid #E5E9EB;
+      border-left: none;
+      margin: -1px -1px 0 0;
     }
+
+    .daysRow {
+      display: flex;
+    }
+
+    .dayBlock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      min-width: 160px;
+      border: 1px solid #E5E9EB;
+      margin: -1px -1px 0 0;
+      
+
+      &:first-of-type {
+        border-left: none;
+      }
+    }
+  }
+
+  .mockBlock {
+    min-width: 200px;
+    width: 200px;
+    border-right: 1px solid #E5E9EB;
+    border-bottom: 1px solid #E5E9EB;
+    position: sticky;
+    left: 0;
+    background-color: #fff;
+    z-index: 2;
   }
 }
 

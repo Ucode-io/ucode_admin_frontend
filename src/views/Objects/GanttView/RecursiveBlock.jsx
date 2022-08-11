@@ -24,7 +24,7 @@ const RecursiveBlock = ({
         <Fragment key={tab.id} >
           {tabs?.[level + 1] ? (
             <div className={styles.row}>
-              <div className={`${styles.tabBlock} ${styles.parent}`}>{tab.label}</div>
+              <div className={`${styles.tabBlock} ${styles.parent}`} >{tab.label}</div>
             </div>
           ) : (
             <DataRow tab={tab} datesList={datesList} view={view} fieldsMap={fieldsMap} data={data} />

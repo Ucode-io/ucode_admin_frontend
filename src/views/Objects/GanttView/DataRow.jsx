@@ -20,7 +20,7 @@ const DataRow = ({ tab, datesList, view, fieldsMap, data }) => {
 
 
   return ( <div className={styles.row} >
-    <div className={styles.tabBlock} > {tab.label} </div>
+    <div className={`${styles.tabBlock}`} style={{ paddingLeft: 20 }}  > {tab.label} </div>
 
     {
       datesList?.map((date) => (

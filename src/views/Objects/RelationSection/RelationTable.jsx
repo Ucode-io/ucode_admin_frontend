@@ -23,14 +23,14 @@ const RelationTable = ({ relation }) => {
   const { isLoading: dataFetchingLoading } = useQuery(
     [
       "GET_OBJECT_LIST",
-      relation.relatedTable?.slug,
+      relation.relatedTable,
       tableSlug,
       relation.type,
       currentPage,
       id,
     ],
     () => {
-      return constructorObjectService.getList(relation.relatedTable?.slug, {
+      return constructorObjectService.getList(relation.relatedTable, {
         data: {
           offset: pageToOffset(currentPage, 5),
           limit: 10,
@@ -57,13 +57,13 @@ const RelationTable = ({ relation }) => {
           id_from: id,
           id_to: [elementId],
           table_from: tableSlug,
-          table_to: relation.relatedTable?.slug,
+          table_to: relation.relatedTable,
         }
 
         return constructorObjectService.deleteManyToMany(data)
       } else {
         return constructorObjectService.delete(
-          relation.relatedTable?.slug,
+          relation.relatedTable,
           elementId
         )
       }
@@ -72,7 +72,7 @@ const RelationTable = ({ relation }) => {
       onSettled: () => {
         queryClient.refetchQueries([
           "GET_OBJECT_LIST",
-          relation.relatedTable?.slug,
+          relation.relatedTable,
         ])
       },
     }
@@ -81,11 +81,11 @@ const RelationTable = ({ relation }) => {
   const tableLoader = deleteLoading || dataFetchingLoading
 
   const navigateToEditPage = (row) => {
-    navigateToForm(relation.relatedTable?.slug, "EDIT", row)
+    navigateToForm(relation.relatedTable, "EDIT", row)
   }
 
   const navigateToTablePage = () => {
-    navigate(`/main/${appId}/object/${relation.relatedTable?.slug}`, {
+    navigate(`/main/${appId}/object/${relation.relatedTable}`, {
       state: { [`${tableSlug}_${relation.type === "Many2Many" ? "ids" : "id"}`]: id }
     })
   }

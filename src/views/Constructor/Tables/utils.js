@@ -17,3 +17,17 @@ export const computeSectionsOnSubmit = (sections) => {
     fields: section.fields
   }))
 }
+
+export const computeViewRelations = (relations, slug) => {
+  console.log('RELATIONS ===>', relations)
+
+  return relations?.sort(sortByOrder) ?? []
+}
+
+export const computeViewRelationsOnSubmit = (relations) => {
+  return relations.map((relation, relationIndex) => ({
+    ...relation,
+    relation_id: relation.relation?.id,
+    order: relationIndex + 1,
+  }))
+}

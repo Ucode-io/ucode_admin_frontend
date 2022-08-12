@@ -14,13 +14,14 @@ import Layout from "./Layout"
 import MainInfo from "./MainInfo"
 import Relations from "./Relations"
 import constructorRelationService from "../../../../services/constructorRelationService"
-import { computeSections, computeSectionsOnSubmit } from "../utils"
+import { computeSections, computeSectionsOnSubmit, computeViewRelations, computeViewRelationsOnSubmit } from "../utils"
 import { addOrderNumberToSections } from "../../../../utils/sectionsOrderNumber"
 import HeaderSettings from "../../../../components/HeaderSettings"
 import Footer from "../../../../components/Footer"
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
 import { Save } from "@mui/icons-material"
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
+import constructorViewRelationService from "../../../../services/constructorViewRelationService"
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
@@ -36,6 +37,7 @@ const ConstructorTablesFormPage = () => {
       fields: [],
       app_id: appId,
       sections: [],
+      view_relations: [],
       label: "",
       description: "",
       slug: "",
@@ -52,15 +54,16 @@ const ConstructorTablesFormPage = () => {
     setLoader(true)
 
     const getTableData = constructorTableService.getById(id)
-
     // const getFieldsData = constructorFieldService.getList({ table_id: id })
 
     const getSectionsData = constructorSectionService.getList({ table_id: id })
+    const getViewRelationsData = constructorViewRelationService.getList({ table_slug: slug })
 
     try {
-      const [tableData, { sections = [] }] = await Promise.all([
+      const [tableData, { sections = [] }, { view_relations = [] }] = await Promise.all([
         getTableData,
         getSectionsData,
+        getViewRelationsData
       ])
 
       const data = {
@@ -68,6 +71,7 @@ const ConstructorTablesFormPage = () => {
         ...tableData,
         fields: [],
         sections: computeSections(sections),
+        view_relations: computeViewRelations(view_relations, slug)
       }
 
       mainForm.reset(data)
@@ -150,7 +154,12 @@ const ConstructorTablesFormPage = () => {
       table_id: id,
     })
 
-    Promise.all([updateTableData, updateSectionData])
+    const updateViewRelationsData = constructorViewRelationService.update({
+      view_relations: data.view_relations,
+      table_slug: data.slug,
+    })
+
+    Promise.all([updateTableData, updateSectionData, updateViewRelationsData])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data))
         navigate(-1)
@@ -162,6 +171,7 @@ const ConstructorTablesFormPage = () => {
     const computedData = {
       ...data,
       sections: computeSectionsOnSubmit(data.sections),
+      view_relations: computeViewRelationsOnSubmit(data.view_relations),
     }
 
     if (id) updateConstructorTable(computedData)

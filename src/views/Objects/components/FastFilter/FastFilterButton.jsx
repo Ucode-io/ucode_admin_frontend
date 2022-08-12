@@ -21,7 +21,6 @@ const FastFilterButton = ({ view }) => {
 
   const selectedOrdersNumber = useMemo(() => {
     const orders = filters.order ?? {}
-
     return Object.values(orders)?.filter((el) => el)?.length
   }, [filters])
 

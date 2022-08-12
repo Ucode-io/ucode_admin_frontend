@@ -1,28 +1,41 @@
 import { Add } from "@mui/icons-material"
 import { Card } from "@mui/material"
+import { useState } from "react"
 import { useParams } from "react-router-dom"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
 import IconGenerator from "../../../components/IconPicker/IconGenerator"
+import useTabRouter from "../../../hooks/useTabRouter"
 import RelationTable from "./RelationTable"
 import styles from "./style.module.scss"
 
 const RelationSection = ({ relations }) => {
+  const {tableSlug} = useParams()
+  const { navigateToForm } = useTabRouter()
+
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+  
+
   const {id} = useParams()
+
+  const navigateToCreatePage = () => {
+    const relation = relations[selectedTabIndex]
+    navigateToForm(relation.relatedTable, "CREATE", null, { [`${tableSlug}_id`]: id })
+  }
+
+  if(!relations?.length) return null
 
   return (
     <Card className={styles.card}>
-      <Tabs forceRenderTabPanel>
+      <Tabs forceRenderTabPanel tabIndex={selectedTabIndex} onChange={setSelectedTabIndex} >
         <div className={styles.cardHeader}>
           <TabList className={styles.tabList} >
-            {relations?.map((relation) => (
-              <Tab key={relation.id}> <IconGenerator icon={relation.relatedTable?.icon} /> {relation.relatedTable?.label}</Tab>
+            {relations?.map((relation, index) => (
+              <Tab key={index}> <IconGenerator icon={relation?.icon} /> {relation.label}</Tab>
             ))}
           </TabList>
 
-          <SecondaryButton disabled={!id} > <Add /> Добавить</SecondaryButton>
-
-
+          <SecondaryButton onClick={navigateToCreatePage} disabled={!id} > <Add /> Добавить</SecondaryButton>
         </div>
 
         {relations?.map((relation) => (

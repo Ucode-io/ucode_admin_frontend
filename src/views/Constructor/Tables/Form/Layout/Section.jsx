@@ -79,7 +79,7 @@ const Section = ({
             control={mainForm.control}
             name={`sections[${index}].label`}
             size="small"
-            style={{ width: 300 }}
+            style={{ width: 250 }}
           />
         </div>
 

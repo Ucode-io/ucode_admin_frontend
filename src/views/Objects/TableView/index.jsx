@@ -1,13 +1,11 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import constructorObjectService from "../../../services/constructorObjectService"
-import { objectToArray } from "../../../utils/objectToArray"
 import { pageToOffset } from "../../../utils/pageToOffset"
-import useWatch from "../../../hooks/useWatch"
 import useTabRouter from "../../../hooks/useTabRouter"
 import DataTable from "../../../components/DataTable"
 import { useParams } from "react-router-dom"
-import { useSelector } from "react-redux"
 import { useQuery } from "react-query"
+import useFilters from "../../../hooks/useFilters"
 
 const TableView = ({
   filterChangeHandler,
@@ -17,8 +15,8 @@ const TableView = ({
 }) => {
   const { navigateToForm } = useTabRouter()
   const {tableSlug} = useParams()
-  const filters = useSelector((state) => state.filter.list[tableSlug]?.[view.id] ?? {})
-
+  
+  const { filters } = useFilters(tableSlug, view.id)
 
   const [currentPage, setCurrentPage] = useState(1)
   const [deleteLoader, setDeleteLoader] = useState(false)

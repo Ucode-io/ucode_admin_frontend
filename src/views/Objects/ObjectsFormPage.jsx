@@ -181,13 +181,18 @@ const ObjectsFormPage = () => {
         <MainInfo control={control} computedSections={computedSections} setFormValue={setFormValue} />
 
         <div className={styles.secondaryCardSide}>
-          {tableRelations?.map((relation) => (
+          <RelationSection 
+            relations={tableRelations}
+            control={control}
+          />
+
+          {/* {tableRelations?.map((relation) => (
             <RelationSection
               key={relation.id}
               relation={relation}
               control={control}
             />
-          ))}
+          ))} */}
         </div>
       </div>
 

@@ -40,6 +40,7 @@ const DataTable = ({
   wrapperStyle,
   tableSlug,
   isResizeble,
+  paginationExtraButton
 }) => {
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -184,6 +185,7 @@ const DataTable = ({
       loader={loader}
       tableStyle={tableStyle}
       wrapperStyle={wrapperStyle}
+      paginationExtraButton={paginationExtraButton}
     >
       <CTableHead>
         <CTableRow>

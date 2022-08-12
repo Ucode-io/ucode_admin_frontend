@@ -12,7 +12,7 @@ const TableCard = ({ children, type, disablePagination = false, extra, header, w
         className={style.card}
         style={{ width }}
       >
-        {extra && <div className={style.header}>
+        {(extra || header) && <div className={style.header}>
           <div>{header}</div>
           <div>
             {extra}

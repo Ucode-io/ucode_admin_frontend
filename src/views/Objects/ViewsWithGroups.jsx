@@ -18,6 +18,7 @@ import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel"
 import { CircularProgress } from "@mui/material"
 import { useQuery } from "react-query"
 import { useSelector } from "react-redux"
+import useFilters from "../../hooks/useFilters"
 
 const ViewsWithGroups = ({
   views,
@@ -27,7 +28,7 @@ const ViewsWithGroups = ({
   fieldsMap
 }) => {
   const { tableSlug } = useParams()
-  const filters = useSelector((state) => state.filter.list[tableSlug]?.[view.id] ?? {})
+  const {filters} = useFilters(tableSlug, view.id)
 
   const { navigateToForm } = useTabRouter()
 

@@ -14,7 +14,7 @@ import GanttView from "./GanttView"
 
 const ObjectsPage = () => {
   const { tableSlug } = useParams()
-
+  
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
   
 

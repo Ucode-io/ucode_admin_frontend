@@ -43,6 +43,7 @@ html {
     padding: 0;
     display: flex;
     overflow: auto;
+    transform: translateY(1px);
   }
 
   &__tab {
@@ -56,6 +57,8 @@ html {
     cursor: pointer;
     font-weight: 500;
     color: colors.$grey;
+    border-bottom: 2px solid transparent;
+
 
     &--selected {
       border-bottom: 2px solid #1890ff;

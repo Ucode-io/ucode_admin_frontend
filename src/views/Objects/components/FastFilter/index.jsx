@@ -1,6 +1,7 @@
 import { useMemo } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { useParams } from "react-router-dom"
+import useFilters from "../../../../hooks/useFilters"
 import { filterActions } from "../../../../store/filter/filter.slice"
 import { Filter } from "../FilterGenerator"
 import styles from "./style.module.scss"
@@ -8,7 +9,8 @@ import styles from "./style.module.scss"
 const FastFilter = ({view, fieldsMap }) => {
   const { tableSlug } = useParams()
   const dispatch = useDispatch()
-  const filters = useSelector((state) => state.filter.list[tableSlug]?.[view.id] ?? {})
+
+  const { filters } = useFilters(tableSlug, view.id)
 
   const computedFields = useMemo(() => {
 

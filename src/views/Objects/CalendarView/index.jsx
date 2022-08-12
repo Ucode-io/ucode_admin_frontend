@@ -8,6 +8,7 @@ import RectangleIconButton from "../../../components/Buttons/RectangleIconButton
 import CRangePicker from "../../../components/DatePickers/CRangePicker"
 import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
+import useFilters from "../../../hooks/useFilters"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { listToMap } from "../../../utils/listToMap"
@@ -30,7 +31,7 @@ const CalendarView = ({
   ])
   const [fieldsMap, setFieldsMap] = useState({})
 
-  const filters = useSelector((state) => state.filter.list[tableSlug]?.[view.id] ?? {})
+  const {filters} = useFilters(tableSlug, view.id)
 
   const groupFieldIds = view.group_fields
   const groupFields = groupFieldIds.map((id) => fieldsMap[id]).filter(el => el)

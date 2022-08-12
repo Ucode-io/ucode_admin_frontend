@@ -14,6 +14,7 @@ import RectangleIconButton from "../../../components/Buttons/RectangleIconButton
 import CRangePicker from "../../../components/DatePickers/CRangePicker"
 import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
+import useFilters from "../../../hooks/useFilters"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { listToMap } from "../../../utils/listToMap"
@@ -26,9 +27,7 @@ import Gantt from "./Gantt"
 const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   const { tableSlug } = useParams()
 
-  const filters = useSelector(
-    (state) => state.filter.list[tableSlug]?.[view.id] ?? {}
-  )
+  const {filters} = useFilters(tableSlug, view.id)
 
   const [dateFilters, setDateFilters] = useState([
     startOfMonth(new Date()),

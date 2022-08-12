@@ -19,6 +19,7 @@ import { CircularProgress } from "@mui/material"
 import { useQuery } from "react-query"
 import { useSelector } from "react-redux"
 import useFilters from "../../hooks/useFilters"
+import FastFilterButton from "./components/FastFilter/FastFilterButton"
 
 const ViewsWithGroups = ({
   views,
@@ -50,6 +51,8 @@ const ViewsWithGroups = ({
       <FiltersBlock
         extra={
           <>
+
+            <FastFilterButton view={view} />
             <RectangleIconButton color="white">
               <Upload />
             </RectangleIconButton>

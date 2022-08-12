@@ -12,7 +12,14 @@ export const { actions: filterActions, reducer: filterReducer } = createSlice({
       state.list[tableSlug][viewId][name] = value
     },
     clearFilters: (state, { payload: { tableSlug, viewId } }) => {
-      state.list[tableSlug][viewId] = {}
+      if(state.list[tableSlug]?.[viewId]?.order) {
+        state.list[tableSlug][viewId] = { order: state.list[tableSlug][viewId].order }
+      } else {
+        state.list[tableSlug][viewId] = {}
+      }
+    },
+    clearOrders: (state, { payload: { tableSlug, viewId } }) => {
+      state.list[tableSlug][viewId].order = {}
     }
   },
 });

@@ -8,7 +8,6 @@ import { useQuery } from "react-query"
 import useFilters from "../../../hooks/useFilters"
 
 const TableView = ({
-  filterChangeHandler,
   tab,
   view,
   fieldsMap
@@ -16,7 +15,7 @@ const TableView = ({
   const { navigateToForm } = useTabRouter()
   const {tableSlug} = useParams()
   
-  const { filters } = useFilters(tableSlug, view.id)
+  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id)
 
   const [currentPage, setCurrentPage] = useState(1)
   const [deleteLoader, setDeleteLoader] = useState(false)

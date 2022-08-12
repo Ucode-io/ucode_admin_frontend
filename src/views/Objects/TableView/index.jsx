@@ -21,7 +21,7 @@ const TableView = ({
   const [deleteLoader, setDeleteLoader] = useState(false)
 
   const columns = useMemo(() => {
-    return view?.columns?.map(el => fieldsMap[el])
+    return view?.columns?.map(el => fieldsMap[el])?.filter(el => el)
   }, [view, fieldsMap])
 
   const { data: { tableData, pageCount } = { tableData: [], pageCount: 1 } , refetch, isLoading: tableLoader } = useQuery({

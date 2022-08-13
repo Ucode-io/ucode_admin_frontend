@@ -144,6 +144,7 @@
       align-items: center;
       padding-right: 10px;
       gap: 10px;
+      border-bottom: 1px solid #e5e9eb;
 
       .tabList {
         max-width: 750px;
@@ -151,7 +152,7 @@
         display: flex;
 
         .tab {
-          padding: 12px;
+          padding: 8px 12px;
           background-color: #fff;
           display: flex;
           align-items: center;
@@ -159,17 +160,19 @@
           cursor: grab;
           color: #6e8bb7;
 
-          .tabLabelInput {
-            // border: none;
-            // outline: none;
-            min-width: 10px;
-            width: auto;
-            // width: 200px;
-            font-weight: 500;
-            max-width: auto;
+          &.active {
+            color: colors.$primary;
+
+            .tabLabelInput {
+              color: colors.$primary;
+            }
           }
         }
       }
+    }
+
+    .cardBody {
+      padding: 8px;
     }
   }
 }

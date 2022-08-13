@@ -8,9 +8,11 @@ import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidth
 import IconGenerator from "../../../../../components/IconPicker/IconGenerator"
 import { applyDrag } from "../../../../../utils/applyDrag"
 import { generateGUID } from "../../../../../utils/generateID"
+import LayoutRelationTable from "./LayoutRelationTable"
 import styles from "./style.module.scss"
 
 const LayoutRelationsBlock = ({ mainForm }) => {
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
   const { fields: viewRelations, ...viewRelationsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "view_relations",
@@ -58,9 +60,9 @@ const LayoutRelationsBlock = ({ mainForm }) => {
               <Container orientation="horizontal" onDrop={onDrop} >
                 {viewRelations.map((relation, index) => (
                   <Draggable key={relation.id} >
-                    <div className={styles.tab} >
+                    <div className={`${styles.tab} ${selectedTabIndex === index ? styles.active : ''}`}  onClick={() => setSelectedTabIndex(index)} >
                       <IconGenerator icon={relation.icon} />
-                      <HFAutoWidthInput control={mainForm.control} name={`view_relations[${index}].label`} />
+                      <HFAutoWidthInput inputClassName={styles.tabLabelInput} control={mainForm.control} name={`view_relations[${index}].label`} />
                       <IconButton onClick={() => removeViewRelation(index)} ><Delete /></IconButton>
                     </div>
                   </Draggable>
@@ -73,6 +75,12 @@ const LayoutRelationsBlock = ({ mainForm }) => {
               onSelect={addNewViewRelation}
             />
           </div>
+
+
+          <div className={styles.cardBody} >
+            <LayoutRelationTable relation={viewRelations[0]} />
+          </div>
+
         </Tabs>
       </Card>
     </div>

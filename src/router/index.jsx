@@ -42,6 +42,9 @@ const SessionsPage = lazy(() =>
 )
 const UsersForm = lazy(() => import("../views/Users/Form"))
 const UsersPage = lazy(() => import("../views/Users/index"))
+const MatrixPage = lazy(() => import("../views/Matrix"))
+const MatrixDetail = lazy(() => import("../views/Matrix/MatrixDetail"))
+const MatrixRolePage = lazy(() => import("../views/Matrix/MatrixRolePage"))
 
 const Router = () => {
   const location = useLocation()
@@ -243,6 +246,30 @@ const Router = () => {
             </Suspense>
           }
         />
+        <Route
+          path="auth/matrix_v2"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <MatrixPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="auth/matrix_v2/:typeId/:platformId"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <MatrixDetail />
+            </Suspense>
+          }
+        />
+        <Route
+          path="auth/matrix_v2/role/:roleId"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <MatrixRolePage />
+            </Suspense>
+          }
+        />
       </Route>
 
       {/* ---------ANALYTICS APP---------------- */}
@@ -281,7 +308,14 @@ const Router = () => {
       </Route>
 
       <Route path="/cashbox" element={<CashboxLayout />}>
-        <Route index element={<Navigate to={!cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"} />} />
+        <Route
+          index
+          element={
+            <Navigate
+              to={!cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"}
+            />
+          }
+        />
 
         {cashboxIsOpen ? (
           <>
@@ -297,9 +331,18 @@ const Router = () => {
               }
             />
           </>
-        ) :  <Route path="opening" element={<CashboxOpening />} />}
+        ) : (
+          <Route path="opening" element={<CashboxOpening />} />
+        )}
 
-        <Route path="*" element={<Navigate to={!cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"} />} />
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to={!cashboxIsOpen ? "/cashbox/opening" : "/cashbox/appointments"}
+            />
+          }
+        />
       </Route>
 
       <Route path="*" element={<Navigate to={redirectLink} />} />

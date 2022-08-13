@@ -14,6 +14,7 @@ import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { listToMap } from "../../../utils/listToMap"
 import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd"
 import FastFilter from "../components/FastFilter"
+import FastFilterButton from "../components/FastFilter/FastFilterButton"
 import SettingsButton from "../components/ViewSettings/SettingsButton"
 import ViewTabSelector from "../components/ViewTypeSelector"
 import Calendar from "./Calendar"
@@ -134,6 +135,7 @@ const CalendarView = ({
       <FiltersBlock
         extra={
           <>
+          <FastFilterButton view={view} />
             <RectangleIconButton color="white">
               <Upload />
             </RectangleIconButton>

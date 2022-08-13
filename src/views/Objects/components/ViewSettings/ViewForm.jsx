@@ -8,6 +8,7 @@ import SaveButton from "../../../../components/Buttons/SaveButton"
 import FRow from "../../../../components/FormElements/FRow"
 import HFSelect from "../../../../components/FormElements/HFSelect"
 import HFTextField from "../../../../components/FormElements/HFTextField"
+import useWatch from "../../../../hooks/useWatch"
 import constructorViewService from "../../../../services/constructorViewService"
 import { viewTypes } from "../../../../utils/constants/viewTypes"
 import CalendarSettings from "./CalendarSettings"
@@ -38,16 +39,16 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, setIsChanged, column
   }, [columns, relationColumns, type])
 
   useEffect(() => {
-    form.reset(getInitialValues(initialValues, tableSlug, computedColumns))
+    form.reset(getInitialValues(initialValues, tableSlug, columns, relationColumns))
   }, [initialValues, tableSlug, form])
 
-  useEffect(() => {
+  useWatch(() => {
     // const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)
     const formQuickFilters = form.getValues('quick_filters')?.filter(el => el?.is_checked)?.map(el => ({field_id: el.id}))
 
     // form.setValue('columns', computeColumns(formColumns, computedColumns))
-    form.setValue('quick_filters', computeQuickFilters(formQuickFilters, computedColumns))
-  }, [computedColumns])
+    form.setValue('quick_filters', computeQuickFilters(formQuickFilters, type === "CALENDAR" || type === "GANTT" ? [...columns, ...relationColumns] : columns))
+  }, [type])
 
   const onSubmit = (values) => {
     setBtnLoader(true)
@@ -159,7 +160,10 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, setIsChanged, column
   )
 }
 
-const getInitialValues = (initialValues, tableSlug, columns) => {
+const getInitialValues = (initialValues, tableSlug, columns, relationColumns) => {
+  console.log('CCC -->', columns, relationColumns)
+
+
   if (initialValues === "NEW")
     return {
       type: "TABLE",
@@ -190,7 +194,7 @@ const getInitialValues = (initialValues, tableSlug, columns) => {
       time_to_slug: initialValues?.disable_dates?.time_to_slug ?? "",
     },
     columns: computeColumns(initialValues?.columns, columns),
-    quick_filters: computeQuickFilters(initialValues?.quick_filters, columns) ?? [],
+    quick_filters: computeQuickFilters(initialValues?.quick_filters, initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT" ? [...columns, ...relationColumns] : columns) ?? [],
     group_fields: initialValues?.group_fields ?? [],
     table_slug: tableSlug,
     id: initialValues?.id,
@@ -206,6 +210,7 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
 }
 
 const computeQuickFilters = (quickFilters = [], columns) => {
+  console.log('QUICK FILTERS ===>', columns)
   const selectedQuickFilters = quickFilters?.filter(filter => columns.find(el => el.id === filter.field_id))?.map(filter => ({...columns.find(el => el.id === filter.field_id), ...filter, is_checked: true})) ?? []
   const unselectedQuickFilters = columns?.filter(el => !quickFilters?.find(filter => filter.field_id === el.id)) ?? []
   return [...selectedQuickFilters, ...unselectedQuickFilters]

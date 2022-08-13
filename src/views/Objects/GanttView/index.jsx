@@ -20,6 +20,7 @@ import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { listToMap } from "../../../utils/listToMap"
 import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd"
 import FastFilter from "../components/FastFilter"
+import FastFilterButton from "../components/FastFilter/FastFilterButton"
 import SettingsButton from "../components/ViewSettings/SettingsButton"
 import ViewTabSelector from "../components/ViewTypeSelector"
 import Gantt from "./Gantt"
@@ -100,6 +101,7 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
       <FiltersBlock
         extra={
           <>
+            <FastFilterButton view={view} />
             <RectangleIconButton color="white">
               <Upload />
             </RectangleIconButton>
@@ -148,9 +150,16 @@ const promiseGenerator = (groupField, filters = {}) => {
   const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {}
 
   const relationFilters = {}
+  console.log('groupField.relation_fields =>', groupField)
 
   Object.entries(filters)?.forEach(([key, value]) => {
+
     if (!key?.includes(".")) return
+
+    if(key.split(".")?.pop() === groupField.slug) {
+      relationFilters[key.split(".")?.pop()] = value
+      return
+    }
 
     const filterTableSlug = selectElementFromEndOfString({
       string: key,

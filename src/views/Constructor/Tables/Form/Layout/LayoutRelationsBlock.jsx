@@ -19,6 +19,8 @@ const LayoutRelationsBlock = ({ mainForm }) => {
     keyName: "key",
   })
 
+  console.log('viewRelations =-->', viewRelations)
+
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
@@ -28,7 +30,11 @@ const LayoutRelationsBlock = ({ mainForm }) => {
     viewRelationsFieldArray.append({
       id: generateGUID(),
       label: option.label,
-      relation: option.relation,
+      relation: {
+        ...option.relation,
+        table_from: option.relation.table_from.slug,
+        table_to: option.relation.table_to.slug,
+      },
       icon: option.icon,
     })
   }
@@ -78,7 +84,7 @@ const LayoutRelationsBlock = ({ mainForm }) => {
 
 
           <div className={styles.cardBody} >
-            <LayoutRelationTable relation={viewRelations[0]} />
+            <LayoutRelationTable relation={viewRelations[selectedTabIndex]} />
           </div>
 
         </Tabs>

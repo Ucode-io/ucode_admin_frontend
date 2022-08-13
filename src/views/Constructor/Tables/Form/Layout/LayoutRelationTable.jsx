@@ -1,14 +1,11 @@
-import { useMemo, useState } from "react"
-import { useQuery, useQueryClient } from "react-query"
-import { useNavigate, useParams } from "react-router-dom"
+import { useMemo } from "react"
+import { useQuery } from "react-query"
+import { useParams } from "react-router-dom"
 import DataTable from "../../../../../components/DataTable"
 import constructorObjectService from "../../../../../services/constructorObjectService"
 
 const LayoutRelationTable = ({ relation }) => {
   const { slug } = useParams()
-
-  const queryClient = useQueryClient()
-  const navigate = useNavigate()
 
   const relatedTableSlug = useMemo(() => {
     const computedRelation = relation?.relation
@@ -18,11 +15,7 @@ const LayoutRelationTable = ({ relation }) => {
       : computedRelation?.table_from
   }, [relation, slug])
 
-  console.log("relation", relatedTableSlug)
-
-  const [columns, setColumns] = useState([])
-
-  const { isLoading: dataFetchingLoading } = useQuery(
+  const { data: columns ,isLoading: dataFetchingLoading } = useQuery(
     ["GET_VIEW_RELATION_FIELDS", relatedTableSlug],
     () => {
       return constructorObjectService.getList(relatedTableSlug, {
@@ -30,8 +23,8 @@ const LayoutRelationTable = ({ relation }) => {
       })
     },
     {
-      onSuccess: (res) => {
-        setColumns(res?.data?.fields ?? [])
+      select: (res) => {
+        return res?.data?.fields ?? []
       },
     }
   )

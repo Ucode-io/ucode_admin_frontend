@@ -19,7 +19,6 @@ const LayoutRelationsBlock = ({ mainForm }) => {
     keyName: "key",
   })
 
-  console.log('viewRelations =-->', viewRelations)
 
   const tableRelations = useWatch({
     control: mainForm.control,
@@ -40,6 +39,9 @@ const LayoutRelationsBlock = ({ mainForm }) => {
   }
 
   const removeViewRelation = (index) => {
+    if(selectedTabIndex === index) {
+      setSelectedTabIndex(0)
+    }
     viewRelationsFieldArray.remove(index)
   }
 

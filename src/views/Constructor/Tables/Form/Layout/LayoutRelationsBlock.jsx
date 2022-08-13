@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 import { useFieldArray, useWatch } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
 import { Tabs } from "react-tabs"
+import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput"
 import IconGenerator from "../../../../../components/IconPicker/IconGenerator"
 import { applyDrag } from "../../../../../utils/applyDrag"
 import { generateGUID } from "../../../../../utils/generateID"
@@ -59,7 +60,7 @@ const LayoutRelationsBlock = ({ mainForm }) => {
                   <Draggable key={relation.id} >
                     <div className={styles.tab} >
                       <IconGenerator icon={relation.icon} />
-                      <input type="text" className={styles.tabLabelInput} defaultValue={relation.label} onChange={e => mainForm.setValue(`view_relations[${index}].label`, e.target.value)} />
+                      <HFAutoWidthInput control={mainForm.control} name={`view_relations[${index}].label`} />
                       <IconButton onClick={() => removeViewRelation(index)} ><Delete /></IconButton>
                     </div>
                   </Draggable>

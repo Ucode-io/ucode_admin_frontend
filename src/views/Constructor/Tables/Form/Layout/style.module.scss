@@ -6,6 +6,31 @@
   gap: 20px;
   overflow: auto;
 
+  .collapseBlock {
+    width: 40px;
+    height: calc(100vh - 90px - 56px);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    .collapseButton {
+      transform: rotate(-90deg) translateY(-17px);
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 24px;
+      gap: 8px;
+      transition-duration: .3s;
+    }
+
+    &:hover {
+      .collapseButton {
+        color: colors.$primary;
+      }
+    }
+  }
+
   .fieldCard {
     width: 400px;
     border-radius: 6px;
@@ -15,6 +40,9 @@
     .fieldCardHeader {
       box-shadow: inset 0px -1px 0px #e5e9eb;
       padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .fieldsWrapperBlock {
@@ -132,11 +160,11 @@
           color: #6e8bb7;
 
           .tabLabelInput {
-            border: none;
-            outline: none;
+            // border: none;
+            // outline: none;
             min-width: 10px;
             width: auto;
-            width: 200px;
+            // width: 200px;
             font-weight: 500;
             max-width: auto;
           }

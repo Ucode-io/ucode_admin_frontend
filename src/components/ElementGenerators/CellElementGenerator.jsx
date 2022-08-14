@@ -3,6 +3,7 @@ import { memo, useMemo } from "react"
 import { formatDate } from "../../utils/dateFormatter"
 import { numberWithSpaces } from "../../utils/formatNumbers"
 import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel"
+import IconGenerator from "../IconPicker/IconGenerator"
 import LogoDisplay from "../LogoDisplay"
 import TableTag from "../TableTag"
 
@@ -52,6 +53,9 @@ const CellElementGenerator = ({ field = {}, row }) => {
           {field.attributes?.text_false ?? 'Нет'}
         </TableTag>
       )
+
+    case "ICON": 
+      return <IconGenerator icon={value} />
 
     case "PHOTO":
       return <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} ><LogoDisplay url={value} /></span>

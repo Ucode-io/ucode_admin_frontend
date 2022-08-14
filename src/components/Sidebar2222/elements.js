@@ -19,6 +19,12 @@ const routes = [
         title: 'Матрица',
         path: `/settings/auth/matrix/${import.meta.env.VITE_AUTH_PROJECT_ID}`,
         isChild: true
+      },
+      {
+        id: 'matrix_v2',
+        title: 'Матрица V2',
+        path: `/settings/auth/matrix_v2`,
+        isChild: true
       }
     ]
   },

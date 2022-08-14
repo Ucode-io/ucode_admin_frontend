@@ -7,12 +7,13 @@ const RectangleIconButton = forwardRef(({
   children,
   loader,
   className,
+  size="",
   onClick = () => {},
   ...props
 }, ref) => {
   return (
     <div
-      className={`RectangleIconButton ${color} ${className}`}
+      className={`RectangleIconButton ${color} ${className} ${size}`}
       onClick={(e) => {
         e.stopPropagation()
         onClick(e)

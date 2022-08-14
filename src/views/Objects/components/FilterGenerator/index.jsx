@@ -61,7 +61,7 @@ export const Filter = ({
     }))
   }, [field.attributes?.options])
 
-  if (field.id?.includes("#"))
+  if (field.type === "LOOKUP")
     return (
       <RelationFilter
         field={field}
@@ -73,26 +73,6 @@ export const Filter = ({
     )
 
   switch (field.type) {
-    // case "PHONE":
-    //   return (
-    //     <TableColumnFilter>
-    //       <ReactInputMask
-    //         value={filters[name] ?? undefined}
-    //         onChange={(e) => onChange(e.target.value, name)}
-    //         mask={"(99) 999-99-99"}
-    //       >
-    //         {(inputProps) => (
-    //           <TextField
-    //             placeholder={field.attributes?.placeholder}
-    //             fullWidth
-    //             size="small"
-    //             {...inputProps}
-    //           />
-    //         )}
-    //       </ReactInputMask>
-    //     </TableColumnFilter>
-    //   )
-
     case "PICK_LIST":
       return (
         <FormControl style={{ width: "100%" }}>

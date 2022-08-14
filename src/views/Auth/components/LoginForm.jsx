@@ -85,7 +85,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
         <div className={classes.formRow}>
           <p className={classes.label}>Тип пользователя</p>
           <HFSelect
-            required
+            // required
             control={control}
             name="client_type"
             size="large"

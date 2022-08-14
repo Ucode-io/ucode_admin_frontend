@@ -42,6 +42,8 @@ html {
     // margin: 0 0 20px;
     padding: 0;
     display: flex;
+    overflow: auto;
+    transform: translateY(1px);
   }
 
   &__tab {
@@ -55,6 +57,8 @@ html {
     cursor: pointer;
     font-weight: 500;
     color: colors.$grey;
+    border-bottom: 2px solid transparent;
+
 
     &--selected {
       border-bottom: 2px solid #1890ff;
@@ -147,6 +151,14 @@ html {
 
 .pt-2 {
   padding-top: 16px;
+}
+
+.pl-1 {
+  padding-left: 8px;
+}
+
+.pl-2 {
+  padding-left: 16px;
 }
 
 .m-1 {

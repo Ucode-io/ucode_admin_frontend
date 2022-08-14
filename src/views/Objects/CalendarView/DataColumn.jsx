@@ -1,64 +1,67 @@
 import { Add } from "@mui/icons-material"
-import {
-  differenceInMinutes,
-  format,
-  parse,
-  setHours,
-  setMinutes,
-} from "date-fns"
+import { differenceInMinutes, format, parse, setHours, setMinutes } from "date-fns"
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import useTabRouter from "../../../hooks/useTabRouter"
-import { getFieldLabel } from "../../../utils/getFieldLabel"
 import { timesList } from "../../../utils/timesList"
+import DataCard from "./DataCard"
 import styles from "./style.module.scss"
 
-const DataColumn = ({ computedData, date, view, workingDays }) => {
-  const { navigateToForm } = useTabRouter()
+const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => {
   const { tableSlug } = useParams()
+  const { navigateToForm } = useTabRouter()
+  
 
-  const parentSlug = computedData?.[0]?.parent_slug
-  const parentValue = computedData?.[0]?.[parentSlug]
+  const elements = useMemo(() => {
+    if (!parentTab) return []
 
-  const computedDataWithPosition = useMemo(() => {
-    if (!computedData?.length) return []
+    
 
+    return data?.filter((el) => el[parentTab.slug] === parentTab.value && el.calendar?.date === format(date, 'dd.MM.yyyy'))
+  }, [parentTab, data])
+
+
+  const elementsWithPosition = useMemo(() => {
     const calendarStartedTime = setMinutes(setHours(date, 8), 0)
 
-    const result = computedData
-      .filter(
-        (el) =>
-          format(el.calendarStartTime, "dd.MM.yyyy") ===
-          format(date, "dd.MM.yyyy")
-      )
-      .map((el) => {
-        const startPosition =
-          Math.floor(
-            differenceInMinutes(el.calendarStartTime, calendarStartedTime) / 30
-          ) * 40
-        const height =
-          Math.ceil(
-            differenceInMinutes(el.calendarEndTime, el.calendarStartTime) / 30
-          ) *
-            40 -
-          10
+    return elements?.map((el) => {
 
-        return {
-          ...el,
+
+      const startPosition =
+        Math.floor(
+          differenceInMinutes(el.calendar?.elementFromTime, calendarStartedTime) / 30
+        ) * 40
+
+      const height =
+        Math.ceil(
+          differenceInMinutes(el.calendar?.elementToTime, el.calendar?.elementFromTime) / 30
+        ) *
+          40 -
+        10
+
+
+      return {
+        ...el,
+        calendar: {
+          ...el.calendar,
           startPosition,
           height,
         }
-      })
+        
+      }
+    })
+  }, [date, elements])
 
-    return result
-  }, [computedData, date])
+  const viewFields = useMemo(() => {
+    return view?.columns?.map(id => fieldsMap[id])?.filter(el => el)
+  }, [fieldsMap, view])
 
   const disabledTimes = useMemo(() => {
     if (!workingDays) return null
     const workingDay = workingDays[format(date, "dd.MM.yyyy")]
 
     const filteredWorkingDay = workingDay?.find(
-      (el) => el[parentSlug] === parentValue
+      (el) => el[parentTab?.slug] === parentTab?.value
     )
 
     const calendarStartedTime = setMinutes(setHours(date, 8), 0)
@@ -78,7 +81,8 @@ const DataColumn = ({ computedData, date, view, workingDays }) => {
       startIndex,
       endIndex,
     }
-  }, [workingDays, date, computedData])
+  }, [workingDays, date, parentTab])
+
 
   const isDisabled = (index) => {
     if (!view?.disable_dates?.day_slug) return false
@@ -93,19 +97,17 @@ const DataColumn = ({ computedData, date, view, workingDays }) => {
 
     const computedDate = setHours(setMinutes(date, minute), hour)
 
-    const startTimeStampSlug = view.group_fields?.find(
-      ({ field_type }) => field_type === "start_timestamp"
-    )?.field_slug
+    const startTimeStampSlug = view?.calendar_from_slug
 
     navigateToForm(tableSlug, "CREATE", null, {
       [startTimeStampSlug]: computedDate,
-      [parentSlug]: parentValue,
+      [parentTab?.slug]: parentTab?.value,
     })
   }
 
   const navigateToEditPage = (el) => {
     navigateToForm(tableSlug, "EDIT", el, {
-      [parentSlug]: parentValue,
+      [parentTab?.slug]: parentTab?.value,
     })
   }
 
@@ -129,24 +131,8 @@ const DataColumn = ({ computedData, date, view, workingDays }) => {
         </div>
       ))}
 
-      {computedDataWithPosition?.map((el) => (
-        <div
-          key={el.guid}
-          className={styles.infoBlockWrapper}
-          style={{ top: el.startPosition }}
-          onClick={() => navigateToEditPage(el)}
-        >
-          <div className={styles.infoBlock} style={{ height: el.height }}>
-            {view?.view_fields?.map((field) => (
-              <p key={field}>{getFieldLabel(el, field)}</p>
-            ))}
-
-            <p className={styles.time}>
-              {format(el.calendarStartTime, "HH:mm")} -{" "}
-              {format(el.calendarEndTime, "HH:mm")}
-            </p>
-          </div>
-        </div>
+      {elementsWithPosition?.map((el) => (
+        <DataCard key={el.id} date={date} view={view} fieldsMap={fieldsMap} data={el} viewFields={viewFields} navigateToEditPage={navigateToEditPage} />
       ))}
     </div>
   )

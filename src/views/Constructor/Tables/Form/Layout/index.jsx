@@ -2,6 +2,7 @@
 import { useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import FieldsBlock from "./FieldsBlock";
+import LayoutRelationsBlock from "./LayoutRelationsBlock";
 import SectionsBlock from "./SectionsBlock";
 import styles from "./style.module.scss"
 
@@ -11,8 +12,6 @@ const Layout = ({ mainForm }) => {
     control: mainForm.control,
     name: `sections`
   })
-
-  console.log("SECTIONS ===>", sections)
 
   const usedFields = useMemo(() => {
     const list = []
@@ -29,10 +28,8 @@ const Layout = ({ mainForm }) => {
   return ( <div className={styles.page} >
 
     <FieldsBlock usedFields={usedFields} mainForm={mainForm} layoutForm={layoutForm} />
-    
     <SectionsBlock mainForm={mainForm} layoutForm={layoutForm} />
-
-    
+    <LayoutRelationsBlock mainForm={mainForm} />
   </div> );
 }
  

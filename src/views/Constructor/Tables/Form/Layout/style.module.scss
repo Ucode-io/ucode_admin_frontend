@@ -4,17 +4,45 @@
   display: flex;
   padding: 16px;
   gap: 20px;
+  overflow: auto;
+
+  .collapseBlock {
+    width: 40px;
+    height: calc(100vh - 90px - 56px);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    .collapseButton {
+      transform: rotate(-90deg) translateY(-17px);
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 24px;
+      gap: 8px;
+      transition-duration: .3s;
+    }
+
+    &:hover {
+      .collapseButton {
+        color: colors.$primary;
+      }
+    }
+  }
 
   .fieldCard {
     width: 400px;
     border-radius: 6px;
     z-index: 2;
     margin-bottom: 20px;
-    
 
     .fieldCardHeader {
       box-shadow: inset 0px -1px 0px #e5e9eb;
       padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .fieldsWrapperBlock {
@@ -23,8 +51,8 @@
   }
 
   .fieldsBlock {
-    width: 400px;
-    height: calc(100vh - 90px);
+    min-width: 400px;
+    height: calc(100vh - 90px - 56px);
     overflow: auto;
 
     .fieldRow {
@@ -42,14 +70,15 @@
     }
   }
 
-  .sectionsBlock {  
-    flex: 1;
-    height: calc(100vh - 90px);
+  .sectionsBlock {
+    height: calc(100vh - 90px - 56px);
     overflow: auto;
+    min-width: 460px;
 
     .sectionCard {
       border-radius: 6px;
       margin-bottom: 15px;
+      min-width: 460px;
 
       .sectionCardHeader {
         box-shadow: inset 0px -1px 0px #e5e9eb;
@@ -82,10 +111,8 @@
       }
     }
 
-
     .sectionCreateCard {
       padding: 16px;
-      
 
       .sectionCreateButton {
         width: 100%;
@@ -105,7 +132,47 @@
           border-color: colors.$primary;
         }
       }
+    }
+  }
 
+  .relationsBlock {
+    min-width: 800px;
+    width: 800px;
+
+    .cardHeader {
+      display: flex;
+      align-items: center;
+      padding-right: 10px;
+      gap: 10px;
+      border-bottom: 1px solid #e5e9eb;
+
+      .tabList {
+        max-width: 750px;
+        overflow: auto;
+        display: flex;
+
+        .tab {
+          padding: 8px 12px;
+          background-color: #fff;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          cursor: grab;
+          color: #6e8bb7;
+
+          &.active {
+            color: colors.$primary;
+
+            .tabLabelInput {
+              color: colors.$primary;
+            }
+          }
+        }
+      }
+    }
+
+    .cardBody {
+      padding: 8px;
     }
   }
 }
@@ -118,4 +185,27 @@
   margin: 10px 0;
   cursor: grab;
   background-color: #fff;
+}
+
+.paper {
+  margin-top: 0px;
+}
+
+.menu {
+  padding: 0 !important;
+
+  .menuItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px 8px 16px;
+    box-shadow: inset 0px -1px 0px #e5e9eb;
+    min-width: 300px;
+    background-color: #fff;
+    cursor: pointer;
+
+    &:hover {
+      background-color: colors.$hover-silver;
+    }
+  }
 }

@@ -1,0 +1,17 @@
+
+
+.card {
+
+  .cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    border-bottom: 1px solid #E5E9EB;
+    
+  }
+
+  .cardBody {
+    padding: 12px;
+  }
+}

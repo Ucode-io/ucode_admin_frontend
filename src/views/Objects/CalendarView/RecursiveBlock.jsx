@@ -1,30 +1,59 @@
-import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
+import { useMemo } from "react"
 import DataColumn from "./DataColumn"
 import MockColumn from "./MockColumn"
 import styles from "./style.module.scss"
 
-const RecursiveBlock = ({ date, computedData, groupColumns, level, view, workingDays }) => {
+const RecursiveBlock = ({
+  date,
+  data,
+  fieldsMap,
+  parentTab,
+  view,
+  tabs,
+  level = 0,
+  workingDays,
+}) => {
+  const elements = useMemo(() => {
+    if (!parentTab) return tabs?.[level]?.list
 
+    return tabs?.[level]?.list?.filter(
+      (el) => el[parentTab.slug] === parentTab.value
+    )
+  }, [parentTab, tabs, level])
 
-  if(level > groupColumns?.length) return null
-
-  if(level === groupColumns?.length) return (
-    <DataColumn computedData={computedData} date={date} view={view} workingDays={workingDays} />
-  )
-  
-  
+  if(!elements?.length) return <MockColumn />
 
   return (
-    <>
-      <div className={styles.row}>
-        {computedData?.map((el) => (
-          <div className={styles.block}>
-             <div className={styles.blockElement} >{getRelationFieldTabsLabel(groupColumns[level], el)}</div>
-             {!el?.child?.length ? <MockColumn groupColumns={groupColumns} level={level} workingDays={workingDays} date={date} view={view} /> : <RecursiveBlock date={date} computedData={el?.child} groupColumns={groupColumns} level={level + 1} view={view} workingDays={workingDays} />}
-          </div>
-        ))}
-      </div>
-    </>
+    <div className={styles.row}>
+      {elements?.map((tab) => (
+        <div className={styles.block}>
+          <div className={styles.blockElement}>{tab.label}</div>
+
+          {tabs?.[level + 1] ? (
+            <RecursiveBlock
+              date={date}
+              data={data}
+              tabs={tabs}
+              parentTab={tab}
+              fieldsMap={fieldsMap}
+              view={view}
+              level={level + 1}
+              workingDays={workingDays}
+            />
+          ) : (
+            <DataColumn
+              date={date}
+              data={data}
+              parentTab={tab}
+              fieldsMap={fieldsMap}
+              view={view}
+              workingDays={workingDays}
+            />
+          )}
+          {/* {!el.child?.length ? <MockColumn groupColumns={groupColumns} level={1} workingDays={workingDays} date={date} view={view}  /> : <RecursiveBlock date={date} computedData={el?.child} groupColumns={groupColumns} level={1} view={view} workingDays={workingDays} />} */}
+        </div>
+      ))}
+    </div>
   )
 }
 

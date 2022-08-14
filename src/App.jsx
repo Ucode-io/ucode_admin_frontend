@@ -10,6 +10,7 @@ import "./i18next"
 import { Suspense } from "react"
 import { QueryClientProvider } from "react-query"
 import queryClient from "./queries"
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { AliveScope } from "react-activation"
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
     <Suspense fallback="Loading..." >
       <div className="App">
         <QueryClientProvider client={queryClient} >
+        <ReactQueryDevtools initialIsOpen={false} />
         <Provider store={store}>
           <PersistGate persistor={persistor}>
             <MaterialUIProvider>

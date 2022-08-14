@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Delete, Edit } from "@mui/icons-material";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
@@ -17,7 +17,7 @@ import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import { useLocation } from "react-router-dom";
 import "./style.scss";
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
-import OutsideClickHandler from "react-outside-click-handler";
+import useOnClickOutside from 'use-onclickoutside'
 
 const DataTable = ({
   data = [],
@@ -40,6 +40,7 @@ const DataTable = ({
   wrapperStyle,
   tableSlug,
   isResizeble,
+  paginationExtraButton
 }) => {
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -47,9 +48,13 @@ const DataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
 
+  const popupRef = useRef(null)
+  useOnClickOutside(popupRef, () => setColumnId(""))
+
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (!isResizeble) return;
     const createResizableTable = function (table) {
@@ -180,6 +185,7 @@ const DataTable = ({
       loader={loader}
       tableStyle={tableStyle}
       wrapperStyle={wrapperStyle}
+      paginationExtraButton={paginationExtraButton}
     >
       <CTableHead>
         <CTableRow>
@@ -238,9 +244,9 @@ const DataTable = ({
                     tableSlug={tableSlug}
                   />
                 )}
-                {columnId === column?.id ? (
-                  <div className="cell-popup">
-                    <OutsideClickHandler onOutsideClick={() => setColumnId("")}>
+                {columnId === column?.id && (
+                  <div className="cell-popup" ref={popupRef} >
+                    {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
                       <div
                         className="cell-popup-item"
                         onClick={() => handlePin(column?.id, index)}
@@ -261,9 +267,9 @@ const DataTable = ({
                         <ResizeIcon />
                         <span>Autosize</span>
                       </div>
-                    </OutsideClickHandler>
+                    {/* </OutsideClickHandler> */}
                   </div>
-                ) : null}
+                )}
               </div>
             </CTableHeadCell>
           ))}

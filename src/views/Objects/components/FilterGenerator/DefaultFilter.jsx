@@ -25,13 +25,15 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
   return (
     <Autocomplete
       id={id}
+      multiple
       isOptionEqualToValue={(option, value) => option === value}
       getOptionLabel={(option) => option}
       options={options ?? []}
       loading={isLoading}
-      value={filters[name]}
+      size="small"
+      value={filters[name] ?? []}
       onInputChange={search}
-      onChange={(e, val) => onChange(val ?? "", name)}
+      onChange={(e, val) => onChange(val ?? null, name)}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -40,6 +42,7 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
           size="small"
           InputProps={{
             ...params.InputProps,
+            style: filters[name]?.length ? { paddingTop: 3, paddingBottom: 3 } : {},
             endAdornment: (
               <>
                 {isLoading ? <CircularProgress color="inherit" size={20} /> : null}

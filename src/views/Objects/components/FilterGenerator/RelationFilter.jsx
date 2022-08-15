@@ -24,9 +24,17 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
   }
 
   const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === filters[name])
-    return findedOption ?? null
+    if(!Array.isArray(filters[name])) return []
+
+    return filters[name].map((filterValue) => {
+      return options?.find(option => option.guid === filterValue)
+    })?.filter(el => el)
+
+    // const findedOption = options?.find((el) => el?.guid === filters[name])
+    // return findedOption ?? null
   }, [options, filters, name])
+
+  console.log('computedValuecomputedValue', computedValue)
 
   return (
     <Autocomplete
@@ -36,10 +44,11 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
       options={options ?? []}
       loading={isLoading}
       value={computedValue}
+      multiple
+      size="small"
       // onInputChange={search}
-      onChange={(e, val) => onChange(val?.guid ?? "", name)}
+      onChange={(e, val) => onChange(val?.map(el => el.guid) ?? null, name)}
       isOptionEqualToValue={(option, value) => {
-        console.log('sss =>', option, value)
         return option.guid === value.guid
       }}
       renderInput={(params) => (
@@ -49,6 +58,7 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
           size="small"
           InputProps={{
             ...params.InputProps,
+            style: computedValue?.length ? { paddingTop: 3, paddingBottom: 3 } : {},
             endAdornment: (
               <>
                 {isLoading ? (

@@ -17,6 +17,7 @@ import { Save } from "@mui/icons-material"
 import SecondaryButton from "../../components/Buttons/SecondaryButton"
 import { useQueryClient } from "react-query"
 import { sortSections } from "../../utils/sectionsOrderNumber"
+import constructorViewRelationService from "../../services/constructorViewRelationService"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
@@ -54,16 +55,24 @@ const ObjectsFormPage = () => {
 
     const getFormData = constructorObjectService.getById(tableSlug, id)
 
-    const getRelations = constructorRelationService.getList({
+    const getRelations = constructorViewRelationService.getList({
       table_slug: tableSlug,
     })
 
 
     try {
-      const [{ sections = [] }, { data = {} }, { relations = [] }] =
+      const [{ sections = [] }, { data = {} }, { view_relations = [] }] =
         await Promise.all([getSections, getFormData, getRelations])
 
       setSections(sortSections(sections))
+
+      const relations = view_relations?.map(el => ({
+        ...el,
+        ...el.relation
+      })) ?? {}
+
+      console.log('view_relations', view_relations)
+
 
       setTableRelations(
         relations
@@ -72,39 +81,48 @@ const ObjectsFormPage = () => {
               relation.type === "Many2Many" ||
               relation.type === "Recursive" ||
               (relation.type === "Many2One" &&
-                relation.table_to?.slug === tableSlug) ||
+                relation.table_to === tableSlug) ||
               (relation.type === "One2Many" &&
-                relation.table_from?.slug === tableSlug)
+                relation.table_from === tableSlug)
           )
           .map((relation) => ({
             ...relation,
             relatedTable:
-              relation.table_from?.slug === tableSlug
+              relation.table_from === tableSlug
                 ? relation.table_to
                 : relation.table_from,
           }))
       )
 
       reset(data.response ?? {})
-    } finally {
+    } catch(error) { console.error(error) } finally {
       setLoader(false)
     }
   }
 
   const getFields = async () => {
     try {
-      const getRelations = constructorRelationService.getList({
-        table_slug: tableSlug,
-      })
+      
 
       const getSections = constructorSectionService.getList({
         table_slug: tableSlug,
       })
 
-      const [{ sections = [] }, { relations = [] }] = await Promise.all([
+      const getRelations = constructorViewRelationService.getList({
+        table_slug: tableSlug,
+      })
+
+      const [{ sections = [] }, { view_relations = [] }] = await Promise.all([
         getSections,
         getRelations,
       ])
+
+      
+
+      const relations = view_relations?.map(el => ({
+        ...el,
+        ...el.relation
+      })) ?? []
 
       setSections(sortSections(sections))
 
@@ -115,19 +133,19 @@ const ObjectsFormPage = () => {
               relation.type === "Many2Many" ||
               relation.type === "Recursive" ||
               (relation.type === "Many2One" &&
-                relation.table_to?.slug === tableSlug) ||
+                relation.table_to === tableSlug) ||
               (relation.type === "One2Many" &&
-                relation.table_from?.slug === tableSlug) 
+                relation.table_from === tableSlug) 
           )
           .map((relation) => ({
             ...relation,
             relatedTable:
-              relation.table_from.slug === tableSlug
+              relation.table_from === tableSlug
                 ? relation.table_to
                 : relation.table_from,
           }))
       )
-    } finally {
+    } catch(error) { console.error(error) } finally {
       setLoader(false)
     }
   }
@@ -181,13 +199,18 @@ const ObjectsFormPage = () => {
         <MainInfo control={control} computedSections={computedSections} setFormValue={setFormValue} />
 
         <div className={styles.secondaryCardSide}>
-          {tableRelations?.map((relation) => (
+          {<RelationSection 
+            relations={tableRelations}
+            control={control}
+          />}
+
+          {/* {tableRelations?.map((relation) => (
             <RelationSection
               key={relation.id}
               relation={relation}
               control={control}
             />
-          ))}
+          ))} */}
         </div>
       </div>
 

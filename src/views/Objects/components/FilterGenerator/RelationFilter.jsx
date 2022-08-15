@@ -1,68 +1,51 @@
 import { Autocomplete, CircularProgress, TextField } from "@mui/material"
-import { useId, useState } from "react"
+import { useId, useMemo } from "react"
 import { useQuery } from "react-query"
-import useDebounce from "../../../../hooks/useDebounce"
 import constructorObjectService from "../../../../services/constructorObjectService"
+import { getRelationFieldTabsLabel } from "../../../../utils/getRelationFieldLabel"
 
-const RelationFilter = ({ field = {}, filters, onChange }) => {
+const RelationFilter = ({ field = {}, filters, name, onChange }) => {
   const { id } = useId()
-  const [searchText, setSearchText] = useState("")
 
-
-
-  const fieldTableSlug = field.id.split("#")[0]
-  const name = `${fieldTableSlug}_id`
-  const viewField = field.attributes?.[0]
-
-  
   const { data: options, isLoading } = useQuery(
-    ["GET_OBJECT_LIST", fieldTableSlug, searchText],
+    ["GET_OBJECT_LIST_ALL", { tableSlug: field.table_slug, filters: {} }],
     () => {
-      if (!fieldTableSlug) return null
-      return constructorObjectService.getList(fieldTableSlug, {
-        data: { offset: 0, limit: 10, [viewField.slug]: searchText },
-      })
+      return constructorObjectService.getList(field.table_slug, { data: {} })
     },
     {
-      select: ({ data }) => {
-        const result = {}
-
-        data.response?.forEach((el) => {
-          result[el.guid] = {
-            label: el[viewField.slug],
-            value: el.guid,
-          }
-        })
-
-        return Object.values(result)
+      select: (res) => {
+        return res?.data?.response ?? []
       },
     }
   )
 
-  console.log('options --->', options)
+  const getOptionLabel = (option) => {
+    return getRelationFieldTabsLabel(field, option)
+  }
 
-
-
-
-  const search = useDebounce((_, searchText) => {
-    setSearchText(searchText)
-  }, 400)
+  const computedValue = useMemo(() => {
+    const findedOption = options?.find((el) => el?.guid === filters[name])
+    return findedOption ?? null
+  }, [options, filters, name])
 
   return (
     <Autocomplete
       id={id}
-      isOptionEqualToValue={(option, value) => option.value === value.value}
-      getOptionLabel={(option) => option.label}
+      // isOptionEqualToValue={(option, value) => option.value === value.value}
+      getOptionLabel={getOptionLabel}
       options={options ?? []}
       loading={isLoading}
-      value={filters[name]}
-      onInputChange={search}
-      onChange={(e, val) => onChange(val?.value ?? "", name)}
+      value={computedValue}
+      // onInputChange={search}
+      onChange={(e, val) => onChange(val?.guid ?? "", name)}
+      isOptionEqualToValue={(option, value) => {
+        console.log('sss =>', option, value)
+        return option.guid === value.guid
+      }}
       renderInput={(params) => (
         <TextField
           {...params}
           placeholder={field.label}
-          // label="Asynchronous"
           size="small"
           InputProps={{
             ...params.InputProps,

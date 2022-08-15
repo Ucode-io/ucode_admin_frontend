@@ -3,7 +3,7 @@
 .RectangleIconButton {
   border: 1px solid #E5E9EB;
   border-radius: 4px;
-  width: 32px;
+  min-width: 32px;
   min-width: 32px;
   height: 32px;
   min-height: 32px;
@@ -12,6 +12,11 @@
   justify-content: center;
   cursor: pointer;
   transition-duration: .2s;
+
+  &.long {
+    gap: 8px;
+    padding: 0 8px;
+  }
 
   &.grey {
     border-color: #E5E9EB;

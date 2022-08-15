@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Delete, Edit } from "@mui/icons-material";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
@@ -15,6 +15,9 @@ import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import { useDispatch, useSelector } from "react-redux";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import { useLocation } from "react-router-dom";
+import "./style.scss";
+import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
+import useOnClickOutside from 'use-onclickoutside'
 
 const DataTable = ({
   data = [],
@@ -37,21 +40,26 @@ const DataTable = ({
   wrapperStyle,
   tableSlug,
   isResizeble,
+  paginationExtraButton
 }) => {
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
+  const [columnId, setColumnId] = useState("");
+  const tableSettings = useSelector((state) => state.tableSize.tableSettings);
+  const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
+
+  const popupRef = useRef(null)
+  useOnClickOutside(popupRef, () => setColumnId(""))
 
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (!isResizeble) return;
-    // document.addEventListener("DOMContentLoaded", function () {
     const createResizableTable = function (table) {
       if (!table) return;
-      console.log("TABLE", table);
       const cols = table.querySelectorAll("th");
-      console.log("TH", cols);
       [].forEach.call(cols, function (col, idx) {
         // Add a resizer element to the column
         const resizer = document.createElement("span");
@@ -84,9 +92,18 @@ const DataTable = ({
 
       const mouseMoveHandler = function (e) {
         const dx = e.clientX - x;
-        const colSlug = col.getAttribute("id");
+        const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colSlug, colWidth }));
+        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(
+          tableSizeAction.setTableSettings({
+            pageName,
+            colID,
+            colWidth,
+            isStiky: "ineffective",
+            colIdx: idx - 1,
+          })
+        );
         col.style.width = `${colWidth}px`;
       };
 
@@ -100,11 +117,63 @@ const DataTable = ({
     };
 
     createResizableTable(document.getElementById("resizeMe"));
-    // });
   }, []);
 
+  const handleAutoSize = (colID,colIdx) => {
+    dispatch(
+      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
+    );
+    const element = document.getElementById(colID);
+    element.style.width = "auto";
+    element.style.minWidth = "auto";
+    dispatch(
+      tableSizeAction.setTableSettings({
+        pageName,
+        colID,
+        colWidth: element.offsetWidth,
+        isStiky: 'ineffective',
+        colIdx
+      })
+    );
+    setColumnId("");
+  };
 
-  
+  const handlePin = (colID, colIdx) => {
+    dispatch(
+      tableSizeAction.setTableSettings({
+        pageName,
+        colID,
+        colWidth: currentColumnWidth,
+        isStiky: true,
+        colIdx,
+      })
+    );
+    setColumnId("");
+  };
+
+  const calculateWidth = (colId, index) => {
+    const colIdx = tableSettings?.[pageName]
+      ?.filter((item) => item?.isStiky === true)
+      ?.findIndex((item) => item?.id === colId);
+
+    if (index === 0) {
+      return 0;
+    } else if (colIdx === 0) {
+      return 0;
+    } else if (
+      tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
+        .length === 1
+    ) {
+      return 0;
+    } else {
+      return (
+        tableSettings?.[pageName]
+          ?.filter((item) => item?.isStiky === true)
+          ?.slice(0, colIdx)
+          ?.reduce((acc, item) => acc + item?.colWidth, 0)
+      );
+    }
+  };
 
   return (
     <CTable
@@ -116,6 +185,7 @@ const DataTable = ({
       loader={loader}
       tableStyle={tableStyle}
       wrapperStyle={wrapperStyle}
+      paginationExtraButton={paginationExtraButton}
     >
       <CTableHead>
         <CTableRow>
@@ -129,12 +199,42 @@ const DataTable = ({
                   ? tableSize?.[pageName]?.[column.id]
                   : "auto",
                 width: tableSize?.[pageName]?.[column.id]
-                ? tableSize?.[pageName]?.[column.id]
-                : "auto",
+                  ? tableSize?.[pageName]?.[column.id]
+                  : "auto",
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? calculateWidth(column?.id, index)
+                  : "0",
+                backgroundColor: "#fff",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
               }}
             >
-              <div className="table-filter-cell">
-                {column.label}
+              <div
+                className="table-filter-cell cell-data"
+                onMouseEnter={(e) => {
+                  setCurrentColumnWidth(e.relatedTarget.offsetWidth);
+                }}
+              >
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setColumnId((prev) =>
+                      prev === column.id ? "" : column.id
+                    );
+                  }}
+                >
+                  {column.label}
+                </span>
                 {!disableFilters && (
                   <FilterGenerator
                     field={column}
@@ -143,6 +243,32 @@ const DataTable = ({
                     filters={filters}
                     tableSlug={tableSlug}
                   />
+                )}
+                {columnId === column?.id && (
+                  <div className="cell-popup" ref={popupRef} >
+                    {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
+                      <div
+                        className="cell-popup-item"
+                        onClick={() => handlePin(column?.id, index)}
+                      >
+                        <PinIcon
+                          pinned={
+                            tableSettings?.[pageName]?.find(
+                              (item) => item?.id === column?.id
+                            )?.isStiky
+                          }
+                        />
+                        <span>Pin column</span>
+                      </div>
+                      <div
+                        className="cell-popup-item"
+                        onClick={() => handleAutoSize(column?.id, index)}
+                      >
+                        <ResizeIcon />
+                        <span>Autosize</span>
+                      </div>
+                    {/* </OutsideClickHandler> */}
+                  </div>
                 )}
               </div>
             </CTableHeadCell>
@@ -171,6 +297,24 @@ const DataTable = ({
               <CTableCell
                 key={column.id}
                 className="overflow-ellipsis"
+                style={{
+                  position: tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky
+                    ? "sticky"
+                    : "relative",
+                  left: tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky
+                    ? calculateWidth(column?.id, index)
+                    : "0",
+                  backgroundColor: "#fff",
+                  zIndex: tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky
+                    ? "1"
+                    : "",
+                }}
               >
                 <CellElementGenerator field={column} row={row} />
               </CTableCell>

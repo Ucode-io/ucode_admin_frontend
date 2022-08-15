@@ -4,6 +4,7 @@ import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
+import HFIconPicker from "../FormElements/HFIconPicker"
 import HFImageUpload from "../FormElements/HFImageUpload"
 import HFMultipleSelect from "../FormElements/HFMultipleSelect"
 import HFSwitch from "../FormElements/HFSwitch"
@@ -47,6 +48,8 @@ const FormElementGenerator = ({ field = {}, control, relation, setFormValue, ...
           />
         </FRow>
       )
+
+    
 
     case "PHONE":
       return (
@@ -211,6 +214,18 @@ const FormElementGenerator = ({ field = {}, control, relation, setFormValue, ...
       return (
         <FRow label={field.label} required={field.required}>
           <HFImageUpload
+            control={control}
+            name={computedSlug}
+            required={field.required}
+            {...props}
+          />
+        </FRow>
+      )
+
+    case "ICON":
+      return (
+        <FRow label={field.label} required={field.required} >
+          <HFIconPicker
             control={control}
             name={computedSlug}
             required={field.required}

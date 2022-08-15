@@ -1,190 +1,50 @@
-import { Add, Delete } from "@mui/icons-material"
-import { useEffect, useState } from "react"
-import { useMutation, useQuery, useQueryClient } from "react-query"
+import { Add } from "@mui/icons-material"
+import { Card } from "@mui/material"
+import { useState } from "react"
 import { useParams } from "react-router-dom"
-import CreateButton from "../../../components/Buttons/CreateButton"
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableRow,
-} from "../../../components/CTable"
-import DataTable from "../../../components/DataTable"
-import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator"
+import IconGenerator from "../../../components/IconPicker/IconGenerator"
 import useTabRouter from "../../../hooks/useTabRouter"
-import constructorObjectService from "../../../services/constructorObjectService"
-import { objectToArray } from "../../../utils/objectToArray"
-import { pageToOffset } from "../../../utils/pageToOffset"
-import FormCard from "../components/FormCard"
-import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal"
-import RelationCreateModal from "./RelationCreateModal"
+import RelationTable from "./RelationTable"
+import styles from "./style.module.scss"
 
-const RelationSection = ({ relation }) => {
-  const { tableSlug, id } = useParams()
+const RelationSection = ({ relations }) => {
+  const {tableSlug} = useParams()
   const { navigateToForm } = useTabRouter()
 
-  // const [tableLoader, setTableLoader] = useState(true)
-  const [tableData, setTableData] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageCount, setPageCount] = useState(1)
-  const [columns, setColumns] = useState([])
-  const [modalVisible, setModalVisible] = useState(false)
-
-  const queryClient = useQueryClient()
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
   
-  const { isLoading: dataFetchingLoading, refetch } = useQuery(["GET_OBJECT_LIST", relation.relatedTable?.slug, tableSlug, relation.type, currentPage, id], () => {
-    return constructorObjectService.getList(
-      relation.relatedTable?.slug,
-      {
-        data: {
-          offset: pageToOffset(currentPage, 5),
-          limit: 5,
-          [`${tableSlug}_${relation.type === "Many2Many" ? "ids" : "id"}`]:
-            id,
-        },
-      }
-    )
-  }, {
-    onSuccess: ({data}) => {
-      const pageCount = Math.ceil(data.count / 10)
-      if (id) {
-        setTableData(objectToArray(data.response ?? {}))
-        setPageCount(isNaN(data.count) ? 1 : Math.ceil(data.count / 5))
-      }
 
-      setColumns(data.fields ?? [])
-    }
-  })
-
-  const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation((row) => {
-    if (relation.type === "Many2Many") {
-      const data = {
-        id_from: id,
-        id_to: [row.guid],
-        table_from: tableSlug,
-        table_to: relation.relatedTable?.slug,
-      }
-
-      return constructorObjectService.deleteManyToMany(data)
-  }
-
-  else {
-    return constructorObjectService.delete(
-      relation.relatedTable?.slug,
-      row.guid
-    )
-  }
-
-}, {
-  onSettled: () => {
-    queryClient.refetchQueries(["GET_OBJECT_LIST", relation.relatedTable?.slug])
-  }
-})
-
-  const tableLoader = deleteLoading || dataFetchingLoading
-
- 
-  const navigateToEditPage = (row) => {
-    navigateToForm(relation.relatedTable?.slug, "EDIT", row)
-    // navigate(`/object/${relation.relatedTable?.slug}/${id}`)
-  }
+  const {id} = useParams()
 
   const navigateToCreatePage = () => {
-    if(relation.type === "Many2Many") setModalVisible(true)
-    else navigateToForm(relation.relatedTable?.slug, "CREATE", null, { [`${tableSlug}_id`]: id })
+    const relation = relations[selectedTabIndex]
+    navigateToForm(relation.relatedTable, "CREATE", null, { [`${tableSlug}_id`]: id })
   }
 
+  if(!relations?.length) return null
+
   return (
-    <>
-      {modalVisible && relation.type !== "Many2Many" && (
-        <RelationCreateModal
-          table={relation.relatedTable}
-          closeModal={() => setModalVisible(false)}
-        />
-      )}
-      {modalVisible && relation.type === "Many2Many" && (
-        <ManyToManyRelationCreateModal
-          table={relation.relatedTable}
-          closeModal={() => setModalVisible(false)}
-          onCreate={refetch}
-        />
-      )}
-      <FormCard
-        icon={relation.relatedTable?.icon}
-        title={relation.relatedTable?.label}
-        maxWidth="100%"
-        extra={
-          <SecondaryButton disabled={!id} onClick={navigateToCreatePage} > <Add /> Добавить</SecondaryButton>
-        }
-      >
-
-        <DataTable 
-          removableHeight={false}
-          loader={tableLoader}
-          data={tableData}
-          columns={columns}
-          pagesCount={pageCount}
-          currentPage={currentPage}
-          onRowClick={navigateToEditPage}
-          onDeleteClick={deleteHandler}
-          disableFilters
-          onPaginationChange={setCurrentPage}
-        />
-
-        {/* <CTable
-          removableHeight={false}
-          count={pageCount}
-          page={currentPage}
-          setCurrentPage={setCurrentPage}
-          loader={tableLoader}
-        >
-          <CTableHead>
-            <CTableCell width={10}>№</CTableCell>
-            {columns.map((field, index) => (
-              <CTableCell key={index}>
-                <div className="table-filter-cell">{field.label}</div>
-              </CTableCell>
+    <Card className={styles.card}>
+      <Tabs forceRenderTabPanel tabIndex={selectedTabIndex} onChange={setSelectedTabIndex} >
+        <div className={styles.cardHeader}>
+          <TabList className={styles.tabList} >
+            {relations?.map((relation, index) => (
+              <Tab key={index}> <IconGenerator icon={relation?.icon} /> {relation.label}</Tab>
             ))}
-            <CTableCell width={70}></CTableCell>
-          </CTableHead>
+          </TabList>
 
-          <CTableBody
-            loader={tableLoader}
-            columnsCount={columns.length + 2}
-            dataLength={tableData.length}
-          >
-            {tableData.map((row, rowIndex) => (
-              <CTableRow
-                key={row.guid}
-                onClick={() => navigateToEditPage(row)}
-              >
-                <CTableCell>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
-                {columns.map((field) => (
-                  <CTableCell key={field.id} className="text-nowrap">
-                    <CellElementGenerator
-                      field={field}
-                      row={row}
-                    />
-                  </CTableCell>
-                ))}
+          <SecondaryButton onClick={navigateToCreatePage} disabled={!id} > <Add /> Добавить</SecondaryButton>
+        </div>
 
-                <CTableCell>
-                  <RectangleIconButton
-                    color="error"
-                    onClick={() => deleteHandler(row.guid)}
-                  >
-                    <Delete color="error" />
-                  </RectangleIconButton>
-                </CTableCell>
-              </CTableRow>
-            ))}
-          </CTableBody>
-        </CTable> */}
-      </FormCard>
-    </>
+        {relations?.map((relation) => (
+          <TabPanel key={relation.id}>
+            <RelationTable key={relation.id} relation={relation} />
+          </TabPanel>
+        ))}
+      </Tabs>
+    </Card>
   )
 }
 

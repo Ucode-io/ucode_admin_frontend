@@ -1,4 +1,5 @@
-import { Autocomplete, TextField } from "@mui/material"
+import { Add, Close } from "@mui/icons-material"
+import { Autocomplete, IconButton, TextField } from "@mui/material"
 import { useMemo } from "react"
 import { Controller } from "react-hook-form"
 import { useQuery } from "react-query"
@@ -88,7 +89,7 @@ const AutoCompleteElement = ({
   setValue,
   error,
   disabledHelperText,
-  setFormValue=()=>{}
+  setFormValue = () => {},
 }) => {
   const { navigateToForm } = useTabRouter()
 
@@ -109,25 +110,20 @@ const AutoCompleteElement = ({
     return findedOption ? [findedOption] : []
   }, [options, value])
 
-
-
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option)
   }
 
   const changeHandler = (value) => {
-
     const val = value?.[value?.length - 1]
 
     setValue(val?.guid ?? null)
 
-    if(!field?.attributes?.autofill) return
+    if (!field?.attributes?.autofill) return
 
-    field.attributes.autofill.forEach(({field_from, field_to}) => {
-
+    field.attributes.autofill.forEach(({ field_from, field_to }) => {
       setFormValue(field_to, val?.[field_from])
     })
-
   }
 
   return (
@@ -138,7 +134,10 @@ const AutoCompleteElement = ({
         changeHandler(newValue)
       }}
       noOptionsText={
-        <span onClick={() =>  navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
+        <span
+          onClick={() => navigateToForm(tableSlug)}
+          style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+        >
           Создать новый
         </span>
       }
@@ -148,7 +147,29 @@ const AutoCompleteElement = ({
       getOptionLabel={(option) => getRelationFieldLabel(field, option)}
       multiple
       isOptionEqualToValue={(option, value) => option.guid === value.guid}
-      renderInput={(params) => <TextField {...params} size="small" />}
+      disableClearable
+      renderInput={(params) => (
+        <TextField
+          {...params}
+         
+          InputProps={{
+            ...params.InputProps,
+            style: { padding: '3px 6px', paddingRight: 20, display: 'flex', alignItems: 'center' },
+            endAdornment: (
+              <>
+               {value && <IconButton className="autocomplete-icon" size="small" onClick={() => setValue(null)} >
+                <Close color="grey" />
+               </IconButton>}
+               <IconButton className="autocomplete-icon" size="small" onClick={() => navigateToForm(tableSlug)}>
+                <Add color="grey" />
+               </IconButton>
+                {params.InputProps.endAdornment}
+              </>
+            ),
+          }}
+          size="small"
+        />
+      )}
       renderTags={(value, index) => (
         <>
           {getOptionLabel(value[0])}
@@ -164,7 +185,6 @@ const AutoCompleteElement = ({
           />
         </>
       )}
-
     />
   )
 }

@@ -1,0 +1,151 @@
+import { format, setHours, setMinutes } from "date-fns"
+import { useEffect, useRef, useState } from "react"
+import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel"
+import styles from "./style.module.scss"
+import Moveable from "react-moveable"
+import { timesList } from "../../../utils/timesList"
+import constructorObjectService from "../../../services/constructorObjectService"
+import { useParams } from "react-router-dom"
+import "./moveable.scss"
+
+const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage }) => {
+  const ref = useRef()
+  const [target, setTarget] = useState()
+  const { tableSlug } = useParams()
+
+  const [frame, setFrame] = useState({
+    translate: [0, data.calendar?.startPosition ?? 0],
+  })
+
+  useEffect(() => {
+    if (!ref?.current) return null
+    setTarget(ref.current)
+  }, [ref])
+
+
+  const onPositionChange = (position) => {
+    if (!position || position.translate[1] < 0) return null
+
+    const beginIndex = Math.floor((position.translate[1] + 2) / 40)
+    const endIndex = Math.ceil((position.translate[1] + position.height) / 40)
+    
+    
+
+
+
+    const startTime = computeTime(beginIndex)
+    const endTime = computeTime(endIndex)
+    
+
+    constructorObjectService.update(tableSlug, { data: {
+      ...data,
+      [view.calendar_from_slug]: startTime,
+      [view.calendar_to_slug]: endTime,
+    } })
+
+  }
+
+  const computeTime = (index) => {
+    const startTime = timesList[index]?.split('-')?.[0]
+    const time = startTime?.split(':')
+
+    const hour = Number(time?.[0])
+    const minute = Number(time?.[1])
+
+
+
+    return setMinutes(setHours(date, hour), minute)
+
+  }
+
+   // ---------DRAG ACTIONS------------
+
+   const onDragStart = (e) => {
+    e.set([0, frame.translate[1] > 0 ? frame.translate[1] : 0])
+  }
+
+  const onDrag = ({ target, beforeTranslate }) => {
+    console.log(beforeTranslate)
+    if (beforeTranslate[1] < 0) return null
+    target.style.transform = `translateY(${beforeTranslate[1]}px)`
+  }
+
+  const onDragEnd = ({ lastEvent }) => {
+    if (lastEvent) {
+      frame.translate = lastEvent.beforeTranslate
+      onPositionChange(lastEvent)
+    }
+  }
+
+   // ----------RESIZE ACTIONS----------------------
+
+   const onResizeStart = (e) => {
+    e.setOrigin(["%", "%"])
+    e.dragStart && e.dragStart.set(frame.translate)
+  }
+
+  const onResize = ({ target, height, drag }) => {
+    const beforeTranslate = drag.beforeTranslate
+    if (beforeTranslate[1] < 0) return null
+    target.style.height = `${height}px`
+    target.style.transform = `translateY(${beforeTranslate[1]}px)`
+  }
+
+  const onResizeEnd = ({ lastEvent }) => {
+    if (lastEvent) {
+      frame.translate = lastEvent.drag.beforeTranslate
+      onPositionChange(lastEvent.drag)
+    }
+  }
+
+
+  return (
+    <>
+    <div
+      key={data.guid}
+      className={styles.infoBlockWrapper}
+      style={{ top: 0, transform: `translateY(${data.calendar?.startPosition}px)`, height: data.calendar?.height }}
+      onClick={() => navigateToEditPage(data)}
+      ref={ref}
+    >
+      <div className={styles.infoBlock} style={{ height: '100%' }}>
+        {viewFields?.map((field) => (
+          <div>
+            <b>{field.label}: </b>
+            {field.type === "LOOKUP"
+              ? getRelationFieldTableCellLabel(field, data, field.table_slug)
+              : data[field.slug]}
+          </div>
+        ))}
+
+        <p className={styles.time}>
+          {format(data.calendar?.elementFromTime, "HH:mm")} -{" "}
+          {format(data.calendar?.elementToTime, "HH:mm")}
+        </p>
+      </div>
+    </div>
+
+        <Moveable
+          target={target}
+          // container={container}
+          draggable
+          resizable
+          // throttleDrag={40}
+          // throttleResize={40}
+          keepRatio={false}
+          origin={false}
+          renderDirections={["s", "n"]}
+          padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
+          onDragStart={onDragStart}
+          onDrag={onDrag}
+          onDragEnd={onDragEnd}
+          onResizeStart={onResizeStart}
+          onResize={onResize}
+          onResizeEnd={onResizeEnd}
+        />
+
+    </>
+  )
+}
+
+export default DataCard

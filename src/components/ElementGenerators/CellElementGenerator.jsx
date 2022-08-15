@@ -3,22 +3,15 @@ import { memo, useMemo } from "react"
 import { formatDate } from "../../utils/dateFormatter"
 import { numberWithSpaces } from "../../utils/formatNumbers"
 import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel"
+import IconGenerator from "../IconPicker/IconGenerator"
 import LogoDisplay from "../LogoDisplay"
 import TableTag from "../TableTag"
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
-    if (typeof field.id !== "string" || !field.id?.includes("#"))
-      return get(row, field.slug, "")
+    if (field.type !== "LOOKUP") return get(row, field.slug, "")
 
-    const tableSlug = field.id.split("#")[0]
-
-    const result = getRelationFieldTableCellLabel(field, row, tableSlug)
-
-    // const result =
-    //   field.attributes
-    //     ?.map((viewField) => get(row, `${tableSlug}.${viewField?.slug}`, ""))
-    //     .join(" ") ?? ""
+    const result = getRelationFieldTableCellLabel(field, row, field.table_slug)
 
     return result
   }, [row, field])
@@ -45,7 +38,6 @@ const CellElementGenerator = ({ field = {}, row }) => {
       )
 
     case "MULTI_LINE":
-      console.log("VALUE =====>", value)
       return (
         <span dangerouslySetInnerHTML={{ __html: value }} ></span>
       )
@@ -61,6 +53,9 @@ const CellElementGenerator = ({ field = {}, row }) => {
           {field.attributes?.text_false ?? 'Нет'}
         </TableTag>
       )
+
+    case "ICON": 
+      return <IconGenerator icon={value} />
 
     case "PHOTO":
       return <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} ><LogoDisplay url={value} /></span>

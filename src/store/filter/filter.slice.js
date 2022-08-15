@@ -1,16 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const { actions: filterAction, reducer: filterReducer } = createSlice({
+export const { actions: filterActions, reducer: filterReducer } = createSlice({
   name: "filter",
   initialState: {
-    filters: {},
+    list: {},
   },
   reducers: {
-    setFilters: (state, { payload: { name, value } }) => {
-      state.filters[name] = value;
+    setFilter: (state, { payload: { tableSlug, viewId, name, value } }) => {
+      if(!state.list[tableSlug]) state.list[tableSlug] = {};
+      if(!state.list[tableSlug][viewId]) state.list[tableSlug][viewId] = {};
+      state.list[tableSlug][viewId][name] = value
     },
-    clearFilters: (state) => {
-      state.filters = {};
+    clearFilters: (state, { payload: { tableSlug, viewId } }) => {
+      if(state.list[tableSlug]?.[viewId]?.order) {
+        state.list[tableSlug][viewId] = { order: state.list[tableSlug][viewId].order }
+      } else {
+        state.list[tableSlug][viewId] = {}
+      }
+    },
+    clearOrders: (state, { payload: { tableSlug, viewId } }) => {
+      state.list[tableSlug][viewId].order = {}
     }
   },
 });

@@ -33,5 +33,6 @@ export const fieldTypes = [
   "MULTISELECT",
   "SWITCH",
   "PHOTO",
-  "PHONE"
+  "PHONE",
+  "ICON"
 ]

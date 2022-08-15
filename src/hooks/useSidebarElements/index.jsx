@@ -23,10 +23,6 @@ const useSidebarElements = () => {
       ...elements,
     ]
   }, [constructorElements])
-
-
-
-  console.log('computedElements  ===>', constructorElements) 
   
 
   return { elements: computedElements ?? [] }

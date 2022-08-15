@@ -2,13 +2,13 @@
 
 .page {
   display: flex;
-  padding: 16px;
-  gap: 20px;
+  padding: 8px;
+  gap: 8px;
   overflow: auto;
 
   .collapseBlock {
     width: 40px;
-    height: calc(100vh - 90px - 56px);
+    height: calc(100vh - 90px - 56px - 38px);
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -52,7 +52,7 @@
 
   .fieldsBlock {
     min-width: 400px;
-    height: calc(100vh - 90px - 56px);
+    height: calc(100vh - 90px - 56px - 38px);
     overflow: auto;
 
     .fieldRow {
@@ -71,14 +71,18 @@
   }
 
   .sectionsBlock {
-    height: calc(100vh - 90px - 56px);
+    height: calc(100vh - 90px - 56px - 38px);
     overflow: auto;
-    min-width: 460px;
+    min-width: 390px;
 
     .sectionCard {
       border-radius: 6px;
       margin-bottom: 15px;
-      min-width: 460px;
+      // min-width: 460px;
+
+      &.short {
+        min-width: 160px;
+      }
 
       .sectionCardHeader {
         box-shadow: inset 0px -1px 0px #e5e9eb;
@@ -107,6 +111,10 @@
           display: flex;
           align-items: center;
           gap: 20px;
+
+          .deleteButton {
+            transform: translateY(10px);
+          }
         }
       }
     }
@@ -136,8 +144,9 @@
   }
 
   .relationsBlock {
-    min-width: 800px;
-    width: 800px;
+    // min-width: 800px;
+    // width: 800px;
+    flex: 1;
 
     .cardHeader {
       display: flex;
@@ -208,4 +217,9 @@
       background-color: colors.$hover-silver;
     }
   }
+}
+
+
+.layoutTabsBlock {
+  background-color: #fff;
 }

@@ -16,6 +16,10 @@ const CellElementGenerator = ({ field = {}, row }) => {
     return result
   }, [row, field])
 
+  if (field.render) {
+    return field.render(row)
+  }
+
   switch (field.type) {
     case "DATE":
       return (
@@ -54,7 +58,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
         </TableTag>
       )
 
-    case "ICON": 
+    case "ICO": 
       return <IconGenerator icon={value} />
 
     case "PHOTO":

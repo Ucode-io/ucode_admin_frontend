@@ -3,9 +3,10 @@
   align-items: center;
   justify-content: center;
   overflow: auto;
+  padding: 0 50px;
 
   .card {
-    min-width: 1000px;
+    width: calc(100vw - 100px);
     padding: 32px;
     border: none;
 
@@ -35,7 +36,7 @@
     }
 
     .body {
-      height: calc(100vh - 300px);
+      height: calc(100vh - 200px);
       overflow: auto;
       
 

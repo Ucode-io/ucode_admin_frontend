@@ -17,7 +17,7 @@ const Sidebar = ({ elements = [] }) => {
 
   const selectedMenuItem = useMemo(() => {
     const activeElement = elements.find((el) => {
-      if (location.pathname.includes(el.path)) return true
+      if (location.pathname === el.path) return true
       return el.children?.some((child) =>
         location.pathname.includes(child.path)
       )

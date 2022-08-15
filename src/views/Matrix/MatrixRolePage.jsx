@@ -42,7 +42,6 @@ const MatrixRolePage = () => {
         },
       })
       .then((res) => {
-        console.log("recordPermissions", res)
         setRecordPermissions(res?.data?.response || [])
       })
       .catch((err) => {
@@ -51,7 +50,6 @@ const MatrixRolePage = () => {
   }
 
   const handleRecordPermission = (record, type, value, tabSlug) => {
-    console.log("record", record)
     const data = {
       role_id: roleId,
       update: record?.update ? record?.update : "No",
@@ -70,7 +68,6 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          console.log("res", res)
           setTableSlug(null)
           getRecordPermissions()
         })
@@ -86,7 +83,6 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          console.log("res", res)
           setTableSlug(null)
           getRecordPermissions()
         })
@@ -100,7 +96,6 @@ const MatrixRolePage = () => {
     roleServiceV2
       .getById(roleId)
       .then((res) => {
-        console.log("roleID", res)
         setRole(res?.data?.response || {})
         roleForm.setValue("name", res?.data?.response?.name || "")
       })
@@ -113,7 +108,6 @@ const MatrixRolePage = () => {
     applicationService
       .getList()
       .then((res) => {
-        console.log("Apps", res)
         setApps(res?.apps || [])
         setRoles(res?.apps || [])
       })
@@ -123,12 +117,10 @@ const MatrixRolePage = () => {
   }
 
   const getAppChildren = (id) => {
-    console.log("id", id)
     applicationService
       .getById(id)
       .then((res) => {
         const result = []
-        console.log("AppChildren", res)
         apps?.forEach((element) => {
           if (element?.id !== id) {
             result.push(element)
@@ -159,69 +151,18 @@ const MatrixRolePage = () => {
     getRoleById()
     getApps()
   }, [])
-  // console.log("roleForm", recordPermissions.find((item) => item.table_slug === "project").read);
-
-  // const aaa = {tableSlug === app?.slug ? (
-  //   <div
-  //     style={{
-  //       display: "flex",
-  //       alignItems: "center",
-  //       gap: "8px",
-  //       backgroundColor: "white",
-  //       border: "1px solid #eee",
-  //       padding: "12px 16px",
-  //       borderRadius: "6px",
-  //       position: "absolute",
-  //       top: "40px",
-  //       left: "30px",
-  //       zIndex: "2",
-  //     }}
-  //   >
-  //     <span
-  //       onClick={(e) => {
-  //         e.stopPropagation()
-  //         handleRecordPermission(
-  //           recordPermissions?.find(
-  //             (item) => item?.table_slug === app?.slug
-  //           ),
-  //           "read",
-  //           "Yes",
-  //           app?.slug
-  //         )
-  //       }}
-  //     >
-  //       <TwoUserIcon />
-  //     </span>
-  //     <span
-  //       onClick={(e) => {
-  //         e.stopPropagation()
-  //         handleRecordPermission(
-  //           recordPermissions?.find(
-  //             (item) => item?.table_slug === app?.slug
-  //           ),
-  //           "read",
-  //           "No",
-  //           app?.slug
-  //         )
-  //       }}
-  //     >
-  //       <CrossPeson />
-  //     </span>
-  //   </div>
-  // ) : null}
 
   return (
     <div>
-      <Header title="Роли" />
+      <Header
+        title="Роли"
+        backButtonLink={`/settings/auth/matrix_v2`}
+        style={{ minHeight: "55px" }}
+      />
       <div style={{ margin: "8px" }}>
         <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
           <FRow label="Название">
-            <HFTextField
-              label="Название"
-              name="name"
-              control={roleForm.control}
-              fullWidth
-            />
+            <HFTextField name="name" control={roleForm.control} fullWidth />
           </FRow>
         </FormCard>
 
@@ -231,15 +172,14 @@ const MatrixRolePage = () => {
               <CTableRow>
                 <CTableHeadCell>Объекты</CTableHeadCell>
                 <CTableHeadCell style={{ padding: 0 }} colSpan={4}>
-                  <div style={{ borderBottom: "1px solid #eee" }}>
+                  <div style={{ borderBottom: "1px solid #eee", padding: "8px 16px" }}>
                     <div>Record permissions</div>
                   </div>
                   <div>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr 1fr 1fr",
                       }}
                     >
                       <div

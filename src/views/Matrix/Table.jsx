@@ -20,7 +20,7 @@ import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2"
 import styles from "./styles.module.scss"
 import { useNavigate } from "react-router-dom"
 
-const MatrixTable = ({}) => {
+const MatrixTable = () => {
   const [clientTypes, setClientTypes] = useState([])
   const [clientPlatforms, setClientPlatforms] = useState([])
   const [platformId, setPlatformId] = useState(null)
@@ -90,14 +90,10 @@ const MatrixTable = ({}) => {
     clientTypeServiceV2
       .getList()
       .then((res) => {
-        console.log("clientTypes", res)
         setClientTypes(res?.data?.response)
       })
       .catch((err) => {
         console.log("err", err)
-      })
-      .finally(() => {
-        console.log("finally")
       })
   }
 
@@ -105,14 +101,10 @@ const MatrixTable = ({}) => {
     clientPlatformServiceV2
       .getList()
       .then((res) => {
-        console.log("clientPlatforms", res)
         setClientPlatforms(res?.data?.response)
       })
       .catch((err) => {
         console.log("err", err)
-      })
-      .finally(() => {
-        console.log("finally")
       })
   }
 
@@ -120,19 +112,9 @@ const MatrixTable = ({}) => {
     setModalType("platformCreate")
   }
 
-  // const openPlatformEditModal = (e, id) => {
-  //   setSelectedObject(clientPlatformList.find((el) => el.id === id))
-  //   setModalType("platformEdit")
-  // }
-
   const openTypeCreateModal = () => {
     setModalType("typeCreate")
   }
-
-  // const openTypeEditModal = (e, id) => {
-  //   setSelectedObject(clientTypeList.find((el) => el.id === id))
-  //   setModalType("typeEdit")
-  // }
 
   useEffect(() => {
     getClientTypes()

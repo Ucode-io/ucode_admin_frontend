@@ -1,17 +1,20 @@
+import { Save } from "@mui/icons-material"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useParams } from "react-router-dom"
 import { EditIcon, PlusIcon } from "../../assets/icons/icon"
 import FormCard from "../../components/FormCard"
 import HFIconPicker from "../../components/FormElements/HFIconPicker"
+import HFSelect from "../../components/FormElements/HFSelect"
 import HFTextField from "../../components/FormElements/HFTextField"
 import constructorObjectService from "../../services/constructorObjectService"
-import ConnectionCreateModal from "./ConnectionCreateModal"
 import styles from "./styles.module.scss"
 
 const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
+  const { typeId } = useParams()
   const [connections, setConnections] = useState([])
-  const [open, setOpen] = useState(false)
-  const [isEdit, setIsEdit] = useState(false)
+  const [isEdit, setIsEdit] = useState("")
+  const [isCreating, setIsCreating] = useState(false)
   const connectionForm = useForm({
     defaultValues: {
       icon: "",
@@ -23,12 +26,12 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
       guid: "",
     },
   })
+  const [selectedConnection, setSelectedConnection] = useState({})
 
   const getConnections = () => {
     constructorObjectService
-      .getList("connections", { data: { client_type_id: clientType.guid } })
+      .getList("connections", { data: { client_type_id: typeId } })
       .then((res) => {
-        console.log("connections", res)
         setConnections(res?.data?.response || [])
       })
       .catch((err) => {
@@ -37,9 +40,8 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
   }
 
   const editingConnections = (connection) => {
-    console.log("connection", connection)
-    setIsEdit(true)
-    setOpen(true)
+    setIsEdit(connection?.guid)
+    setSelectedConnection(connection)
     connectionForm.setValue("icon", connection?.icon)
     connectionForm.setValue("name", connection?.name)
     connectionForm.setValue(
@@ -55,7 +57,7 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
     })
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = (type) => {
     const data = {
       icon: connectionForm.getValues().icon,
       name: connectionForm.getValues().name,
@@ -67,17 +69,18 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
       client_type_id: clientType.guid,
       guid: connectionForm.getValues().guid,
     }
-    console.log("data", data)
-    if (isEdit) {
+    if (type === "update") {
       constructorObjectService
         .update("connections", {
           data: {
             ...data,
-          }
+          },
         })
         .then((res) => {
-          console.log("res", res)
           getConnections()
+          setIsEdit("")
+          connectionForm.reset()
+
         })
         .catch((err) => {
           console.log("err", err)
@@ -90,7 +93,7 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
           },
         })
         .then((res) => {
-          console.log("res", res)
+          setIsCreating(false)
           getConnections()
         })
         .catch((err) => {
@@ -111,85 +114,247 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
             <div className={styles.card_holder} key={item?.guid}>
               <div className={styles.card_header}>
                 <div className={styles.card_header_left}>
-                  <HFIconPicker
-                    name=""
-                    control={connectionForm.control}
-                    shape="rectangle"
-                    value={item?.icon}
-                    disabled
-                  />
-                  <HFTextField
-                    name=""
-                    value={item?.name}
-                    disabled
-                    control={connectionForm.control}
-                    fullWidth
-                  />
-                  <HFTextField
-                    name=""
-                    value={
-                      tables?.find((table) => table.slug === item?.table_slug)
-                        ?.label
-                    }
-                    disabled
-                    control={connectionForm.control}
-                    fullWidth
-                  />
+                  {isEdit !== item?.guid ? (
+                    <>
+                      <HFIconPicker
+                        name=""
+                        control={connectionForm.control}
+                        shape="rectangle"
+                        value={item?.icon}
+                        disabled={isEdit !== item?.guid}
+                      />
+                      <HFTextField
+                        name=""
+                        value={item?.name}
+                        disabled={isEdit !== item?.guid}
+                        control={connectionForm.control}
+                        fullWidth
+                      />
+                      <HFTextField
+                        name=""
+                        value={
+                          tables?.find(
+                            (table) => table.slug === item?.table_slug
+                          )?.label
+                        }
+                        disabled={isEdit !== item?.guid}
+                        control={connectionForm.control}
+                        fullWidth
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <HFIconPicker
+                        name=""
+                        value={selectedConnection?.icon}
+                        control={connectionForm.control}
+                        shape="rectangle"
+                        onChange={(e) => {
+                          connectionForm.setValue("icon", e)
+                          setSelectedConnection({
+                            ...selectedConnection,
+                            icon: e,
+                          })
+                        }}
+                      />
+                      <HFTextField
+                        label="Name"
+                        name=""
+                        value={selectedConnection?.name}
+                        onChange={(e) => {
+                          connectionForm.setValue("name", e.target.value)
+                          setSelectedConnection({
+                            ...selectedConnection,
+                            name: e.target.value,
+                          })
+                        }}
+                        control={connectionForm.control}
+                        fullWidth
+                      />
+                      <HFSelect
+                        options={tables}
+                        control={connectionForm.control}
+                        onChange={(e) => {
+                          getFields({ table_id: e })
+                          connectionForm.setValue("table_slug", e)
+                        }}
+                        name="table_slug"
+                        required
+                      />
+                    </>
+                  )}
                 </div>
-                <div
-                  className={styles.card_header_right}
-                  onClick={() => {
-                    editingConnections(item)
-                  }}
-                >
-                  <EditIcon />
-                </div>
+                {isEdit !== item?.guid ? (
+                  <div
+                    className={styles.card_header_right}
+                    onClick={() => {
+                      editingConnections(item)
+                    }}
+                  >
+                    <EditIcon />
+                  </div>
+                ) : (
+                  <div
+                    className={styles.card_header_right}
+                    onClick={() => {
+                      handleSubmit("update")
+                    }}
+                  >
+                    <Save />
+                  </div>
+                )}
               </div>
               <div className={styles.card_body}>
                 <div className={styles.card_body_items}>
-                  <div>
-                    <HFTextField
-                      name=""
-                      value={item?.view_label}
-                      control={connectionForm.control}
-                      fullWidth
-                      disabled
-                    />
-                  </div>
-                  <div>
-                    <HFTextField
-                      name=""
-                      value={item?.view_slug}
-                      control={connectionForm.control}
-                      fullWidth
-                      disabled
-                    />
-                  </div>
+                  {isEdit !== item?.guid ? (
+                    <>
+                      <div>
+                        <HFTextField
+                          name=""
+                          value={item?.view_label}
+                          control={connectionForm.control}
+                          fullWidth
+                          disabled
+                        />
+                      </div>
+                      <div>
+                        <HFTextField
+                          name=""
+                          value={item?.view_slug}
+                          control={connectionForm.control}
+                          fullWidth
+                          disabled
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <HFTextField
+                          name="view_label"
+                          value={selectedConnection?.view_label}
+                          onChange={(e) => {
+                            connectionForm.setValue(
+                              "view_label",
+                              e.target.value
+                            )
+                            setSelectedConnection({
+                              ...selectedConnection,
+                              view_label: e.target.value,
+                            })
+                          }}
+                          control={connectionForm.control}
+                          fullWidth
+                        />
+                      </div>
+                      <div>
+                        <HFSelect
+                          options={fields}
+                          control={connectionForm.control}
+                          name="view_slug"
+                          onChange={(e) => {
+                            connectionForm.setValue("view_slug", e)
+                          }}
+                          required
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </div>
+        {isCreating && (
+          <div className={styles.card_holder}>
+            <div className={styles.card_header}>
+              <div className={styles.card_header_left}>
+                <HFIconPicker
+                  name="icon"
+                  control={connectionForm.control}
+                  shape="rectangle"
+                  onChange={(e) => {
+                    connectionForm.setValue("icon", e)
+                  }}
+                />
+                <HFTextField
+                  label="Name"
+                  name="name"
+                  onChange={(e) => {
+                    connectionForm.setValue("name", e.target.value)
+                  }}
+                  control={connectionForm.control}
+                  fullWidth
+                />
+                <HFSelect
+                  options={tables}
+                  control={connectionForm.control}
+                  onChange={(e) => {
+                    getFields({ table_id: e })
+                    connectionForm.setValue("table_slug", e)
+                  }}
+                  name="table_slug"
+                  required
+                />
+              </div>
+            </div>
+            <div className={styles.card_body}>
+              <div className={styles.card_body_items}>
+                <div>
+                  <HFTextField
+                    name="view_label"
+                    // value={connectionForm.getValues().view_label}
+                    onChange={(e) => {
+                      connectionForm.setValue("view_label", e.target.value)
+                    }}
+                    control={connectionForm.control}
+                    fullWidth
+                  />
+                </div>
+                <div>
+                  <HFSelect
+                    options={fields}
+                    control={connectionForm.control}
+                    name="view_slug"
+                    onChange={(e) => {
+                      connectionForm.setValue("view_slug", e)
+                    }}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div className={styles.actions}>
+              <button
+                className={styles.cancel_btn}
+                onClick={() => {
+                  setIsCreating(false)
+                  connectionForm.reset()
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.craete_btn}
+                onClick={() => {
+                  handleSubmit()
+                }}
+              >
+                {isEdit ? "Update" : "Create"}
+              </button>
+            </div>
+          </div>
+        )}
         <div>
           <button
             className={styles.add_login_btn}
-            onClick={() => setOpen(true)}
+            onClick={() => setIsCreating(true)}
           >
             <PlusIcon />
             Добавить
           </button>
         </div>
       </div>
-      <ConnectionCreateModal
-        open={open}
-        setOpen={setOpen}
-        tables={tables}
-        fields={fields}
-        getFields={getFields}
-        connectionForm={connectionForm}
-        handleSubmit={handleSubmit}
-        isEdit={isEdit}
-      />
     </FormCard>
   )
 }

@@ -40,23 +40,16 @@ const MatrixDetail = () => {
       .catch((err) => {
         console.log(err)
       })
-      .finally(() => {
-        console.log("finally")
-      })
   }
 
   const getFields = (params) => {
     constructorFieldService
       .getList(params)
       .then((res) => {
-        console.log("fields", res)
         setFields(res?.fields || [])
       })
       .catch((err) => {
         console.log(err)
-      })
-      .finally(() => {
-        console.log("finally")
       })
   }
 
@@ -64,7 +57,6 @@ const MatrixDetail = () => {
     clientTypeServiceV2
       .getById(params.typeId)
       .then((res) => {
-        console.log("res", res?.data?.response)
         setClientType(res?.data?.response)
         const platform = res?.data?.response?.$client_platform?.find(
           (item) => item?.guid === params.platformId
@@ -76,9 +68,6 @@ const MatrixDetail = () => {
       })
       .catch((err) => {
         console.log("err", err)
-      })
-      .finally(() => {
-        console.log("finally")
       })
   }
 
@@ -108,7 +97,11 @@ const MatrixDetail = () => {
 
   return (
     <div>
-      <Header title="Matrix">
+      <Header
+        title="Matrix"
+        backButtonLink={"/settings/auth/matrix_v2"}
+        style={{ minHeight: "55px" }}
+      >
         <CustomTabs tabIndex={tabIndex} setTabIndex={setTabIndex} tabs={tabs} />
       </Header>
 
@@ -118,23 +111,16 @@ const MatrixDetail = () => {
             <div className={styles.info_card}>
               <FRow label="Domain">
                 <HFTextField
-                  label="Domain"
                   name="subdomain"
                   control={infoForm.control}
                   fullWidth
                 />
               </FRow>
               <FRow label="Название">
-                <HFTextField
-                  label="Название"
-                  name="name"
-                  control={infoForm.control}
-                  fullWidth
-                />
+                <HFTextField name="name" control={infoForm.control} fullWidth />
               </FRow>
               <FRow label="User type">
                 <HFTextField
-                  label="User type"
                   name="userType"
                   control={infoForm.control}
                   fullWidth

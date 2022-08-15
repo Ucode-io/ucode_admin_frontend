@@ -37,7 +37,6 @@ const MatrixRoles = ({ infoForm }) => {
       <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
         <FRow label="Название">
           <HFTextField
-            label="Название"
             name="userType"
             control={infoForm.control}
             fullWidth

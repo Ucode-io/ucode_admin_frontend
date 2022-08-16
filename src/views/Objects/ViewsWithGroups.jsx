@@ -17,7 +17,6 @@ import constructorObjectService from "../../services/constructorObjectService"
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel"
 import { CircularProgress } from "@mui/material"
 import { useQuery } from "react-query"
-import { useSelector } from "react-redux"
 import useFilters from "../../hooks/useFilters"
 import FastFilterButton from "./components/FastFilter/FastFilterButton"
 

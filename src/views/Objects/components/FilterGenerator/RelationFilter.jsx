@@ -47,7 +47,7 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
       multiple
       size="small"
       // onInputChange={search}
-      onChange={(e, val) => onChange(val?.map(el => el.guid) ?? null, name)}
+      onChange={(e, val) => onChange(val?.length ? val?.map(el => el.guid) : null, name)}
       isOptionEqualToValue={(option, value) => {
         return option.guid === value.guid
       }}

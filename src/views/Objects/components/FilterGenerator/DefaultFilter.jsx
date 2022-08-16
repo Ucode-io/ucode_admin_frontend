@@ -33,7 +33,7 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
       size="small"
       value={filters[name] ?? []}
       onInputChange={search}
-      onChange={(e, val) => onChange(val ?? null, name)}
+      onChange={(e, val) => onChange(val?.length ? val : null, name)}
       renderInput={(params) => (
         <TextField
           {...params}

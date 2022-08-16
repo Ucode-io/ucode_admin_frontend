@@ -23,7 +23,8 @@ const useFilters = (tableSlug, viewId) => {
   }, [ dispatch, tableSlug, viewId ])
 
   const filters = useMemo(() => {
-    return { ...filtersFromRedux, ...filtersFromLocation}
+    const filterObject = { ...filtersFromLocation, ...filtersFromRedux }
+    return Object.entries(filterObject).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {})
   }, [filtersFromRedux, filtersFromLocation])
 
   return {filters, clearFilters, filterChangeHandler, clearOrders}

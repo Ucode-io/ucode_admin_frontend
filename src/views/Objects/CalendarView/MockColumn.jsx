@@ -1,10 +1,14 @@
 
-import { timesList } from "../../../utils/timesList";
+import useTimeList from "../../../hooks/useTimeList";
 import styles from "./style.module.scss"
 
-const MockColumn = () => {
+const MockColumn = ({ view }) => {
+  const { timeList } = useTimeList(view.time_interval)
+
+
+
   return ( <div className={styles.objectColumn}>
-    {timesList.map((time, index) => (
+    {timeList.map((time, index) => (
       <div
         key={time}
         className={`${styles.timeBlock} ${styles.disabled}`}
@@ -12,9 +16,6 @@ const MockColumn = () => {
       >
       </div>
     ))}
-
-
-    
   </div> );
 }
  

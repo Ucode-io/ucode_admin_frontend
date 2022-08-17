@@ -1,18 +1,18 @@
-import { useEffect } from "react"
+
+
+import { format } from "date-fns"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
-import { timesList } from "../../../utils/timesList"
+import useTimeList from "../../../hooks/useTimeList"
 import styles from "./style.module.scss"
 
-const TimesColumn = () => {
+const TimesColumn = ({ view }) => {
   const { tableSlug } = useParams()
+  const { timeList } = useTimeList(view.time_interval)
+
   const groupColumns = useSelector(
     (state) => state.tableColumn.calendarGroupColumns[tableSlug] ?? []
   )
-
-  useEffect(() => {
-    console.log('ssssss')
-  } , [])
 
   return (
     <div className={styles.timesColumn}>
@@ -21,9 +21,9 @@ const TimesColumn = () => {
         <div className={styles.timeRow} />
       ))}
 
-      {timesList.map((time) => (
+      {timeList.map((time) => (
         <div key={time} className={styles.timeRow}>
-          {time}
+          { format(time, 'HH:mm') }
         </div>
       ))}
     </div>

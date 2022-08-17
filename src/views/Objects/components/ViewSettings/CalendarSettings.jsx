@@ -9,6 +9,9 @@ import constructorTableService from "../../../../services/constructorTableServic
 import listToOptions from "../../../../utils/listToOptions"
 import styles from "./style.module.scss"
 
+
+
+
 const CalendarSettings = ({ columns, form }) => {
 
   const computedColumns = useMemo(() => {
@@ -41,6 +44,7 @@ const CalendarSettings = ({ columns, form }) => {
       </div>
 
       <div className={styles.sectionBody}>
+        
         <div className={styles.formRow}>
           <FRow label="Time from">
             <HFSelect options={computedColumns} control={form.control} name="calendar_from_slug" />
@@ -48,6 +52,17 @@ const CalendarSettings = ({ columns, form }) => {
           <FRow label="Time to">
             <HFSelect options={computedColumns} control={form.control} name="calendar_to_slug" />
           </FRow>
+        </div>
+
+        <div className={styles.formRow}>
+          <FRow label="Time interval">
+            <HFSelect options={timeIntervalOptions} control={form.control} name="time_interval" />
+          </FRow>
+
+
+          <FRow style={{ opacity: 0 }} ></FRow>
+          
+
         </div>
 
         <Divider className="my-1" />
@@ -74,9 +89,43 @@ const CalendarSettings = ({ columns, form }) => {
         </div>
 
 
+
+
       </div>
     </div>
   )
 }
+
+
+const timeIntervalOptions = [
+  {
+    label: '5 минут',
+    value: 5
+  },
+  {
+    label: "10 минут",
+    value: 10
+  },
+  {
+    label: "15 минут",
+    value: 15
+  },
+  {
+    label: "20 минут",
+    value: 20
+  },
+  {
+    label: "30 минут",
+    value: 30
+  },
+  {
+    label: '45 минут',
+    value: 45
+  },
+  {
+    label: "1 час",
+    value: 60
+  }
+]
 
 export default CalendarSettings

@@ -17,6 +17,8 @@ const TableView = ({
   
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id)
 
+  console.log("FILTERSsss -->", filters)
+
   const [currentPage, setCurrentPage] = useState(1)
   const [deleteLoader, setDeleteLoader] = useState(false)
 
@@ -28,7 +30,7 @@ const TableView = ({
     queryKey: ["GET_OBJECTS_LIST", { tableSlug, currentPage, limit: 10, filters: { ...filters, [tab?.slug]: tab?.value } }],
     queryFn: () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { offset: pageToOffset(currentPage), limit: 100, ...filters, [tab?.slug]: tab?.value },
+        data: { offset: pageToOffset(currentPage), limit: 10, ...filters, [tab?.slug]: tab?.value },
       })
     },
     select: (res) => {

@@ -161,15 +161,13 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, setIsChanged, column
 }
 
 const getInitialValues = (initialValues, tableSlug, columns, relationColumns) => {
-  console.log('CCC -->', columns, relationColumns)
-
-
   if (initialValues === "NEW")
     return {
       type: "TABLE",
       users: [],
       name: "",
       main_field: "",
+      time_interval: 60,
       disable_dates: {
         day_slug: "",
         table_slug: "",
@@ -200,6 +198,7 @@ const getInitialValues = (initialValues, tableSlug, columns, relationColumns) =>
     id: initialValues?.id,
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",
     calendar_to_slug: initialValues?.calendar_to_slug ?? "",
+    time_interval: initialValues?.time_interval ?? 60
   }
 }
 
@@ -210,7 +209,6 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
 }
 
 const computeQuickFilters = (quickFilters = [], columns) => {
-  console.log('QUICK FILTERS ===>', columns)
   const selectedQuickFilters = quickFilters?.filter(filter => columns.find(el => el.id === filter.field_id))?.map(filter => ({...columns.find(el => el.id === filter.field_id), ...filter, is_checked: true})) ?? []
   const unselectedQuickFilters = columns?.filter(el => !quickFilters?.find(filter => filter.field_id === el.id)) ?? []
   return [...selectedQuickFilters, ...unselectedQuickFilters]

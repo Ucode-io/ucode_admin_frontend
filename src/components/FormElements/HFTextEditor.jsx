@@ -37,7 +37,7 @@ const HFTextEditor = ({
             theme="snow"
             defaultValue={value}
             onChange={onChange}
-            
+            autoFocus={false}
           />
         </Suspense>
         // <TextField

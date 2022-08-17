@@ -1,114 +1,63 @@
-import { Add, Download, FilterAlt, Upload } from "@mui/icons-material"
-import { IconButton } from "@mui/material"
+import { Download, Upload } from "@mui/icons-material"
 import { useId } from "react"
-import { useEffect } from "react"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { useQuery } from "react-query"
+import { useParams } from "react-router-dom"
 import { Container, Draggable } from "react-smooth-dnd"
-import FiltersBlockButton from "../../../components/Buttons/FiltersBlockButton"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
-import SearchInput from "../../../components/SearchInput"
+import useFilters from "../../../hooks/useFilters"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { applyDrag } from "../../../utils/applyDrag"
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
-import ColumnsSelector from "../components/ColumnsSelector"
 import FastFilter from "../components/FastFilter"
 import FastFilterButton from "../components/FastFilter/FastFilterButton"
-import GroupFieldSelector from "../components/GroupFieldSelector"
-import SettingsButton from "../components/SettingsButton"
+import SettingsButton from "../components/ViewSettings/SettingsButton"
 import ViewTabSelector from "../components/ViewTypeSelector"
 import BoardColumn from "./BoardColumn"
 import styles from "./style.module.scss"
 
 const BoardView = ({
-  tableSlug,
+  view,
+  setViews,
   selectedTabIndex,
   setSelectedTabIndex,
   views,
-  setViews,
-  groupField,
-  tableColumns,
+  fieldsMap,
 }) => {
+  const { tableSlug } = useParams()
   const id = useId()
   const [columns, setColumns] = useState([])
   const { navigateToForm } = useTabRouter()
-  const [filters, setFilters] = useState({})
-  
+  const { filters } = useFilters(tableSlug, view.id)
 
-  const { data, isLoading } = useQuery(
-    ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters: {} }],
+  const { data = [], isLoading: dataLoader } = useQuery(
+    ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: {},
+        data: filters ?? {},
       })
+    }, {
+      select: ({data}) => data.response ?? [],
     }
   )
 
-  console.log("ISLOADING ===>", isLoading)
-
-  const { data: columnsData, isLoading: groupFieldIsLoading } = useQuery(
-    ["GET_OBJECT_LIST_FOR_COLUMNS", groupField],
-    () => {
-      if (!groupField?.id?.includes("#")) return null
-      const computedTableSlug = groupField.id.split("#")?.[0]
-      return constructorObjectService.getList(computedTableSlug, {
-        data: {},
-      })
-    }
+  const groupFieldId = view?.group_fields?.[0]
+  const groupField = fieldsMap[groupFieldId]
+  const { data: tabs, isLoading: tabsLoader } = useQuery(
+    queryGenerator(groupField, filters)
   )
 
-  const groupFieldName = useMemo(() => {
-    if (groupField?.id?.includes("#"))
-      return `${groupField.id.split("#")[0]}_id`
-    if (groupField?.slug) return groupField?.slug
-
-    return ""
-  }, [groupField])
-
-  const filterChangeHandler = (value, name) => {
-    setFilters({
-      ...filters,
-      [name]: value,
-    })
-  }
+  const loader = dataLoader || tabsLoader
 
   const navigateToCreatePage = () => {
     navigateToForm(tableSlug)
   }
 
-  useEffect(() => {
-    if (!groupField) return 
-    if (groupField.type === "PICK_LIST") {
-      setColumns(
-        groupField.attributes?.options?.map((el) => ({
-          label: el,
-          value: el,
-        })) ?? []
-      )
-    }
-
-    const data = columnsData?.data?.response
-
-    if (data?.length) {
-      setColumns(
-        data.map((el) => {
-          const label = getRelationFieldTabsLabel(groupField, el)
-
-          return {
-            label: label,
-            value: el.guid,
-          }
-        })
-      )
-    }
-  }, [columnsData, groupField])
-
   const onDrop = (dropResult) => {
     const result = applyDrag(columns, dropResult)
-
     if (result) setColumns(result)
   }
 
@@ -117,11 +66,7 @@ const BoardView = ({
       <FiltersBlock
         extra={
           <>
-            <FastFilterButton  />
-
-            <GroupFieldSelector tableSlug={tableSlug} />
-
-            <ColumnsSelector tableSlug={tableSlug}  />
+            <FastFilterButton view={view} />
 
             <RectangleIconButton color="white">
               <Upload />
@@ -131,7 +76,6 @@ const BoardView = ({
             </RectangleIconButton>
 
             <SettingsButton />
-
           </>
         }
       >
@@ -141,18 +85,17 @@ const BoardView = ({
           views={views}
           setViews={setViews}
         />
-        {/* <SearchInput /> */}
-        <FastFilter filters={filters} onChange={filterChangeHandler} />
+        <FastFilter fieldsMap={fieldsMap} view={view} />
       </FiltersBlock>
 
-      {isLoading || groupFieldIsLoading ? (
+      {loader ? (
         <PageFallback />
       ) : (
         <div className={styles.board}>
           <Container
             lockAxis="x"
-            orientation="horizontal"
             onDrop={onDrop}
+            orientation="horizontal"
             dragHandleSelector=".column-header"
             dragClass="drag-card-ghost"
             dropClass="drag-card-ghost-drop"
@@ -163,15 +106,14 @@ const BoardView = ({
             }}
             style={{ display: "flex", gap: 24 }}
           >
-            {columns?.map((column) => (
-              <Draggable key={column.value}>
+            {tabs?.map((tab) => (
+              <Draggable key={tab.value}>
                 <BoardColumn
-                  key={column.value}
-                  column={column}
-                  data={data?.data?.response}
-                  groupFieldName={groupFieldName}
-                  tableColumns={tableColumns}
-                  tableSlug={tableSlug}
+                  key={tab.value}
+                  tab={tab}
+                  data={data}
+                  fieldsMap={fieldsMap}
+                  view={view}
                   navigateToCreatePage={navigateToCreatePage}
                 />
               </Draggable>
@@ -181,6 +123,49 @@ const BoardView = ({
       )}
     </div>
   )
+}
+
+const queryGenerator = (groupField, filters = {}) => {
+  if (!groupField)
+    return {
+      queryFn: () => {},
+    }
+
+  const filterValue = filters[groupField.slug]
+  const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {}
+
+  if (groupField?.type === "PICK_LIST") {
+    return {
+      queryKey: ["GET_GROUP_OPTIONS", groupField.id],
+      queryFn: () =>
+        groupField?.attributes?.options?.map((el) => ({
+          label: el,
+          value: el,
+          slug: groupField?.slug,
+        })),
+    }
+  }
+
+  if (groupField?.type === "LOOKUP") {
+    const queryFn = () =>
+      constructorObjectService.getList(groupField.table_slug, {
+        data: computedFilters ?? {},
+      })
+
+    return {
+      queryKey: [
+        "GET_OBJECT_LIST_ALL",
+        { tableSlug: groupField.table_slug, filters: computedFilters },
+      ],
+      queryFn,
+      select: (res) =>
+        res?.data?.response?.map((el) => ({
+          label: getRelationFieldTabsLabel(groupField, el),
+          value: el.guid,
+          slug: groupField?.slug,
+        })),
+    }
+  }
 }
 
 export default BoardView

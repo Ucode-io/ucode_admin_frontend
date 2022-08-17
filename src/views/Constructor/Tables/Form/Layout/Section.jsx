@@ -16,6 +16,7 @@ const Section = ({
   sectionsFieldArray,
   layoutForm,
   fieldsMap,
+  disableSection
 }) => {
   const columnType = useWatch({
     control: mainForm.control,
@@ -59,11 +60,9 @@ const Section = ({
     const { remove } = sectionFields
     remove(index)
   }
-  
-  console.log("sectionFields ===>", sectionFields)
 
   return (
-    <Card className={styles.sectionCard}>
+    <Card className={`${styles.sectionCard} ${disableSection ? styles.short : ''}`} >
       <div className={styles.sectionCardHeader}>
         <div  className={styles.sectionCardHeaderLeftSide}>
           <HFIconPicker
@@ -73,7 +72,6 @@ const Section = ({
           />
 
           <HFTextField
-            autoFocus
             disabledHelperText
             placeholder="Label"
             control={mainForm.control}
@@ -111,12 +109,13 @@ const Section = ({
                   fieldIndex={fieldIndex}
                   mainForm={mainForm}
                 />
-                <RectangleIconButton
+                {!disableSection && <RectangleIconButton
+                  className={styles.deleteButton}
                   color={"error"}
                   onClick={() => removeField(fieldIndex, 1)}
                 >
                   <Delete color="error" />
-                </RectangleIconButton>
+                </RectangleIconButton>}
               </div>
             </Draggable>
           ))}

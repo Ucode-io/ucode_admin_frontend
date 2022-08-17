@@ -18,6 +18,7 @@ const LayoutRelationTable = ({ relation }) => {
   const { data: columns ,isLoading: dataFetchingLoading } = useQuery(
     ["GET_VIEW_RELATION_FIELDS", relatedTableSlug],
     () => {
+      if(!relatedTableSlug) return null
       return constructorObjectService.getList(relatedTableSlug, {
         data: { limit: 0, offset: 0 },
       })

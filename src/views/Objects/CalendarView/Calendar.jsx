@@ -1,11 +1,11 @@
-import TimesColumn from "../CalendarView-baaackup/TimesColumn"
 import CalendarColumn from "./CalendarColumn"
 import styles from "./style.module.scss"
+import TimesColumn from "./TimesColumns"
 
 const Calendar = ({ data, fieldsMap, datesList, view, tabs, workingDays }) => {
   return (
     <div className={styles.calendar}>
-      <TimesColumn />
+      <TimesColumn view={view} />
 
       {datesList?.map((date) => (
         <CalendarColumn

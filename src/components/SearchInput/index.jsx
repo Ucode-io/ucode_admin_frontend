@@ -7,7 +7,6 @@ const SearchInput = ({onChange, ...props}) => {
       size="small"
       placeholder="Search..."
       onChange={e => onChange(e.target.value)}
-      
       {...props}
       InputProps={{
         startAdornment: (

@@ -6,9 +6,6 @@ import { InputAdornment, TextField } from "@mui/material"
 import { DateRange } from "@mui/icons-material"
 
 const CTimePicker = ({ value, onChange }) => {
-
-
-
   const getValue = () => {
 
     if(!value) return ""

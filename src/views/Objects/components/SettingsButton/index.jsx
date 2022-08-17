@@ -5,7 +5,6 @@ import { NavLink, useParams } from "react-router-dom";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import OutsideClickHandler from "react-outside-click-handler";
 import "./settingsButton.scss";
-import ViewSettingsModal from "./ViewSettingsModal";
 
 const SettingsButton = () => {
   const { tableSlug, appId } = useParams();

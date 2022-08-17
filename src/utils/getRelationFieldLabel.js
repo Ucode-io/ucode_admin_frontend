@@ -39,6 +39,7 @@ export const getRelationFieldTabsLabel = (field, option) => {
 }
 
 export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {
+
   let label = ""
 
   field.view_fields?.forEach((el) => {

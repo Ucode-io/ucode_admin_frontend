@@ -8,7 +8,7 @@ import { applyDrag } from "../../../../../utils/applyDrag"
 import { generateGUID } from "../../../../../utils/generateID"
 import { useMemo } from "react"
 
-const SectionsBlock = ({ mainForm, layoutForm }) => {
+const SectionsBlock = ({ mainForm, layoutForm, disableSection }) => {
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "sections",
@@ -63,7 +63,7 @@ const SectionsBlock = ({ mainForm, layoutForm }) => {
           dropPlaceholder={{ className: "drag-row-drop-preview" }}
         >
           {sections.map((section, index) => (
-            <Draggable key={section.id}>
+            <Draggable key={section.id}  >
               <Section
                 key={section.id}
                 index={index}
@@ -71,6 +71,7 @@ const SectionsBlock = ({ mainForm, layoutForm }) => {
                 sectionsFieldArray={sectionsFieldArray}
                 layoutForm={layoutForm}
                 fieldsMap={fieldsMap}
+                disableSection={disableSection}
               />
             </Draggable>
           ))}

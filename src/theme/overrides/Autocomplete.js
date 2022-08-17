@@ -6,7 +6,7 @@ export default function Autocomplete(theme) {
       styleOverrides: {
         paper: {
           boxShadow: theme.customShadows.z20
-        }
+        },
       }
     }
   };

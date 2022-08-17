@@ -23,10 +23,20 @@ const useFilters = (tableSlug, viewId) => {
   }, [ dispatch, tableSlug, viewId ])
 
   const filters = useMemo(() => {
-    return { ...filtersFromRedux, ...filtersFromLocation}
+    const filterObject = { ...filtersFromLocation, ...filtersFromRedux }
+    return Object.entries(filterObject).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {})
   }, [filtersFromRedux, filtersFromLocation])
 
-  return {filters, clearFilters, filterChangeHandler, clearOrders}
+
+  const dataFilters = useMemo(() => {
+    
+    const filterObject = { ...filtersFromLocation, ...filtersFromRedux }
+
+    return Object.entries(filterObject).filter(([key]) => !key.includes('.')).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {})
+
+  }, [filtersFromRedux, filtersFromLocation])
+
+  return {filters, dataFilters, clearFilters, filterChangeHandler, clearOrders}
 }
 
 export default useFilters

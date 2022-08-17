@@ -3,38 +3,36 @@ import { differenceInMinutes, format, parse, setHours, setMinutes } from "date-f
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
 import useTabRouter from "../../../hooks/useTabRouter"
-import { timesList } from "../../../utils/timesList"
+import useTimeList from "../../../hooks/useTimeList"
 import DataCard from "./DataCard"
 import styles from "./style.module.scss"
 
 const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => {
   const { tableSlug } = useParams()
   const { navigateToForm } = useTabRouter()
-  
+  const { timeList, timeInterval } = useTimeList(view.time_interval)
+
 
   const elements = useMemo(() => {
     if (!parentTab) return []
-
-    
-
     return data?.filter((el) => el[parentTab.slug] === parentTab.value && el.calendar?.date === format(date, 'dd.MM.yyyy'))
-  }, [parentTab, data])
+  }, [parentTab, data, date])
 
 
   const elementsWithPosition = useMemo(() => {
-    const calendarStartedTime = setMinutes(setHours(date, 8), 0)
+    const calendarStartedTime = setMinutes(setHours(date, 6), 0)
 
     return elements?.map((el) => {
 
 
       const startPosition =
         Math.floor(
-          differenceInMinutes(el.calendar?.elementFromTime, calendarStartedTime) / 30
+          differenceInMinutes(el.calendar?.elementFromTime, calendarStartedTime) / timeInterval
         ) * 40
 
       const height =
         Math.ceil(
-          differenceInMinutes(el.calendar?.elementToTime, el.calendar?.elementFromTime) / 30
+          differenceInMinutes(el.calendar?.elementToTime, el.calendar?.elementFromTime) / timeInterval
         ) *
           40 -
         10
@@ -50,7 +48,7 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
         
       }
     })
-  }, [date, elements])
+  }, [date, elements, timeInterval])
 
   const viewFields = useMemo(() => {
     return view?.columns?.map(id => fieldsMap[id])?.filter(el => el)
@@ -64,16 +62,16 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
       (el) => el[parentTab?.slug] === parentTab?.value
     )
 
-    const calendarStartedTime = setMinutes(setHours(date, 8), 0)
+    const calendarStartedTime = setMinutes(setHours(date, 6), 0)
 
     const startTime = parse(filteredWorkingDay?.calendarFromTime, "HH:mm", date)
     const endTime = parse(filteredWorkingDay?.calendarToTime, "HH:mm", date)
 
     const startIndex = Math.ceil(
-      differenceInMinutes(startTime, calendarStartedTime) / 30
+      differenceInMinutes(startTime, calendarStartedTime) / timeInterval
     )
     const endIndex =
-      Math.floor(differenceInMinutes(endTime, calendarStartedTime) / 30) - 1
+      Math.floor(differenceInMinutes(endTime, calendarStartedTime) / timeInterval) - 1
 
     if (isNaN(startIndex) || isNaN(endIndex)) return null
 
@@ -81,7 +79,7 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
       startIndex,
       endIndex,
     }
-  }, [workingDays, date, parentTab])
+  }, [workingDays, date, parentTab, timeInterval])
 
 
   const isDisabled = (index) => {
@@ -93,7 +91,8 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
   }
 
   const navigateToCreatePage = (time) => {
-    const [hour, minute] = time?.split("-")?.[0]?.trim()?.split(":")
+    const hour = Number(format(time, "H"))
+    const minute = Number(format(time, "m"))
 
     const computedDate = setHours(setMinutes(date, minute), hour)
 
@@ -113,7 +112,7 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
 
   return (
     <div className={styles.objectColumn}>
-      {timesList.map((time, index) => (
+      {timeList.map((time, index) => (
         <div
           key={time}
           className={`${styles.timeBlock} ${

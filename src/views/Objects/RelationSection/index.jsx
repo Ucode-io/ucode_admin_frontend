@@ -6,12 +6,14 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
 import IconGenerator from "../../../components/IconPicker/IconGenerator"
 import useTabRouter from "../../../hooks/useTabRouter"
+import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal"
 import RelationTable from "./RelationTable"
 import styles from "./style.module.scss"
 
 const RelationSection = ({ relations }) => {
   const {tableSlug} = useParams()
   const { navigateToForm } = useTabRouter()
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null)
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
   
@@ -20,12 +22,21 @@ const RelationSection = ({ relations }) => {
 
   const navigateToCreatePage = () => {
     const relation = relations[selectedTabIndex]
-    navigateToForm(relation.relatedTable, "CREATE", null, { [`${tableSlug}_id`]: id })
+    if(relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
+    else navigateToForm(relation.relatedTable, "CREATE", null, { [`${tableSlug}_id`]: id })
   }
 
   if(!relations?.length) return null
 
   return (
+    <>
+    {selectedManyToManyRelation && (
+        <ManyToManyRelationCreateModal
+          relation={selectedManyToManyRelation}
+          closeModal={() => setSelectedManyToManyRelation(null)}
+          // onCreate={refetch}
+        />
+      )}
     <Card className={styles.card}>
       <Tabs forceRenderTabPanel tabIndex={selectedTabIndex} onChange={setSelectedTabIndex} >
         <div className={styles.cardHeader}>
@@ -45,6 +56,7 @@ const RelationSection = ({ relations }) => {
         ))}
       </Tabs>
     </Card>
+    </>
   )
 }
 

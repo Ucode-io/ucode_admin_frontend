@@ -1,8 +1,8 @@
 import "./style.scss"
 
-const FiltersBlock = ({ children, extra }) => {
+const FiltersBlock = ({ children, extra, ...props }) => {
   return (
-    <div className="FiltersBlock">
+    <div className="FiltersBlock" {...props} >
       <div className="side">{children}</div>
       <div className="side"> {extra}</div>
     </div>

@@ -1,55 +1,72 @@
 import { Checkbox } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
+import { useState } from "react"
+import { useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
 import CreateButton from "../../../components/Buttons/CreateButton"
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableRow,
-} from "../../../components/CTable"
-import CellElementGenerator from "../../../components/ElementGenerators/CellElementGenerator"
+import DataTable from "../../../components/DataTable"
 import LargeModalCard from "../../../components/LargeModalCard"
 import SearchInput from "../../../components/SearchInput"
-import useDebouncedWatch from "../../../hooks/useDebouncedWatch"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
+import { generateID } from "../../../utils/generateID"
 import { objectToArray } from "../../../utils/objectToArray"
 import { pageToOffset } from "../../../utils/pageToOffset"
 
-
-const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
+const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const { tableSlug, id } = useParams()
   const { navigateToForm } = useTabRouter()
+  const queryClient = useQueryClient()
 
-  const [loader, setLoader] = useState(true)
+
   const [btnLoader, setBtnLoader] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageCount, setPageCount] = useState(1)
   const [checkedElements, setCheckedElements] = useState([])
   const [searchText, setSearchText] = useState("")
+  const [filters, setFilters] = useState({})
 
-  const [fields, setFields] = useState([])
-  const [tableData, setTableData] = useState([])
+  const { isLoading: loader, data: { tableData, pageCount, fields } = { tableData: [], pageCount: 1, fields: [] } } = useQuery([
+    "GET_OBJECT_LIST",
+    {
+      tableSlug: relation.relatedTable,
+      limit: 10,
+      offset: pageToOffset(currentPage),
+      filters
+    },
+  ], () => {
+    return constructorObjectService.getList(relation.relatedTable, {
+      data: {
+        offset: pageToOffset(currentPage),
+        limit: 10,
+        search: searchText,
+        ...filters
+      },
+    })
+  }, {
+    select: ({data}) => {
+      const pageCount = Math.ceil(data?.count / 10)
 
-  const getList = async () => {
-    try {
-      const {
-        data: { response = {}, count = 1, fields = [] },
-      } = await constructorObjectService.getList(table.slug, {
-        data: { offset: pageToOffset(currentPage), limit: 10, search: searchText },
-      })
-      
-      const pageCount = Math.ceil(count / 10)
 
-      setFields(fields)
-      setPageCount(isNaN(pageCount) ? 1 : pageCount)
-      setTableData(objectToArray(response ?? {}))
-    } finally {
-      setLoader(false)
+      return {
+        fields: data?.fields ?? [],
+        tableData: objectToArray(data?.response ?? {}),
+        pageCount: isNaN(pageCount) ? 1 : pageCount,
+      }
+
     }
-  }
+  })
+
+  const computedFields = useMemo(() => {
+    const staticFields = [{
+      id: generateID(),
+      render: (row) => <Checkbox
+      onChange={(e) => onCheck(e, row.guid)}
+      checked={checkedElements.includes(row.guid)}
+    />
+    }]
+
+    return [...staticFields, ...fields]
+  }, [fields, checkedElements])
 
   const onCheck = (e, id) => {
     if (e.target.checked) {
@@ -57,6 +74,13 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
     } else {
       setCheckedElements(checkedElements.filter((element) => element !== id))
     }
+  }
+
+  const filterChangeHandler = (value, name) => {
+    setFilters({
+      ...filters,
+      [name]: value,
+    })
   }
 
   const onSubmit = async () => {
@@ -67,43 +91,52 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
         id_from: id,
         id_to: checkedElements,
         table_from: tableSlug,
-        table_to: table.slug,
+        table_to: relation.relatedTable,
       }
 
       await constructorObjectService.updateManyToMany(data)
-      
-      await onCreate(checkedElements)
+
+      queryClient.invalidateQueries(["GET_OBJECT_LIST", relation.relatedTable])
       closeModal()
-    } catch (error) {}
+    } catch (error) {
+      setBtnLoader(false)
+    }
   }
-
-  useEffect(() => {
-    getList()
-  }, [currentPage])
-
-  useDebouncedWatch(() => {
-    if(currentPage !== 1) setCurrentPage(1)
-    else  getList()
-  }, [searchText])
 
   return (
     <LargeModalCard
-      title={table.label}
-      loader={loader}
+      title={relation.label}
+      // loader={loader}
       btnLoader={btnLoader}
       oneColumn
       onSaveButtonClick={onSubmit}
       onClose={closeModal}
     >
-      <div className="flex align-center gap-2 mb-2" >
+      <div className="flex align-center gap-2 mb-2">
         <SearchInput style={{ flex: 1 }} autoFocus onChange={setSearchText} />
-        <CreateButton title="Создать новый" onClick={() => {
-          navigateToForm(table.slug, "CREATE", null, {})
-          closeModal()
-        }} />
+        <CreateButton
+          title="Создать новый"
+          onClick={() => {
+            navigateToForm(relation.relatedTable, "CREATE", null, {})
+            closeModal()
+          }}
+        />
       </div>
 
-      <CTable
+      <DataTable
+        removableHeight={320}
+        columns={computedFields}
+        data={tableData}
+        loader={loader}
+        currentPage={currentPage}
+        onPaginationChange={setCurrentPage}
+        pagesCount={pageCount}
+        tableSlug={relation.relatedTable}
+        filterChangeHandler={filterChangeHandler}
+        filters={filters}
+      />
+
+      {/* <CTable
         removableHeight={false}
         count={pageCount}
         page={currentPage}
@@ -116,12 +149,12 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
             <CTableCell key={index}>
               <div className="table-filter-cell">
                 {field.label}
-                {/* <FilterGenerator
+                <FilterGenerator
                   field={field}
                   name={field.slug}
                   onChange={filterChangeHandler}
                   filters={filters}
-                /> */}
+                />
               </div>
             </CTableCell>
           ))}
@@ -150,7 +183,7 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
                 </CTableCell>
               ))}
 
-              {/* <CTableCell>
+              <CTableCell>
                 <DeleteWrapperModal id={row.guid} onDelete={deleteHandler}>
                   <RectangleIconButton
                     color="error"
@@ -159,11 +192,11 @@ const ManyToManyRelationCreateModal = ({ table, onCreate, closeModal }) => {
                     <Delete color="error" />
                   </RectangleIconButton>
                 </DeleteWrapperModal>
-              </CTableCell> */}
+              </CTableCell>
             </CTableRow>
           ))}
         </CTableBody>
-      </CTable>
+      </CTable> */}
     </LargeModalCard>
   )
 }

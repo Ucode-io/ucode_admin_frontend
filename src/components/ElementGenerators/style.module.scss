@@ -1,0 +1,14 @@
+@use "/src/scss/colors";
+
+.autocompleteWrapper {
+  position: relative;
+
+
+  .createButton {
+    position: absolute;
+    right: 0;
+    top: -28px;
+    color: #1990FF;
+    cursor: pointer;
+  }
+}

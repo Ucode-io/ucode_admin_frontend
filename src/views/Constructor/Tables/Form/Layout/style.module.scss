@@ -90,7 +90,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: #f6f8f9;
+        // background: #f6f8f9;
 
         .sectionCardHeaderLeftSide {
           display: flex;
@@ -154,6 +154,7 @@
       padding-right: 10px;
       gap: 10px;
       border-bottom: 1px solid #e5e9eb;
+      min-height: 55px;
 
       .tabList {
         max-width: 750px;

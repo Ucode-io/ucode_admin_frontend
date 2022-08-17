@@ -1,5 +1,4 @@
-import { Add, Close } from "@mui/icons-material"
-import { Autocomplete, IconButton, TextField } from "@mui/material"
+import { Autocomplete, TextField } from "@mui/material"
 import { useMemo } from "react"
 import { Controller } from "react-hook-form"
 import { useQuery } from "react-query"
@@ -9,6 +8,7 @@ import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
 import FEditableRow from "../FormElements/FEditableRow"
 import FRow from "../FormElements/FRow"
 import IconGenerator from "../IconPicker/IconGenerator"
+import styles from "./style.module.scss"
 
 const RelationFormElement = ({
   control,
@@ -127,65 +127,50 @@ const AutoCompleteElement = ({
   }
 
   return (
-    <Autocomplete
-      options={options ?? []}
-      value={computedValue}
-      onChange={(event, newValue) => {
-        changeHandler(newValue)
-      }}
-      noOptionsText={
-        <span
-          onClick={() => navigateToForm(tableSlug)}
-          style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-        >
-          Создать новый
-        </span>
-      }
-      disablePortal
-      blurOnSelect
-      openOnFocus
-      getOptionLabel={(option) => getRelationFieldLabel(field, option)}
-      multiple
-      isOptionEqualToValue={(option, value) => option.guid === value.guid}
-      disableClearable
-      renderInput={(params) => (
-        <TextField
-          {...params}
-         
-          InputProps={{
-            ...params.InputProps,
-            style: { padding: '3px 6px', paddingRight: 20, display: 'flex', alignItems: 'center' },
-            endAdornment: (
-              <>
-               {value && <IconButton className="autocomplete-icon" size="small" onClick={() => setValue(null)} >
-                <Close color="grey" />
-               </IconButton>}
-               <IconButton className="autocomplete-icon" size="small" onClick={() => navigateToForm(tableSlug)}>
-                <Add color="grey" />
-               </IconButton>
-                {params.InputProps.endAdornment}
-              </>
-            ),
-          }}
-          size="small"
-        />
-      )}
-      renderTags={(value, index) => (
-        <>
-          {getOptionLabel(value[0])}
-          <IconGenerator
-            icon="arrow-up-right-from-square.svg"
-            style={{ marginLeft: "10px", cursor: "pointer" }}
-            size={15}
-            onClick={(e) => {
-              e.stopPropagation()
-              e.preventDefault()
-              navigateToForm(tableSlug, "EDIT", value[0])
-            }}
-          />
-        </>
-      )}
-    />
+    <div className={styles.autocompleteWrapper} >
+
+      <div className={styles.createButton} onClick={() => navigateToForm(tableSlug)} >
+        Создать новый
+      </div>
+
+      <Autocomplete
+        options={options ?? []}
+        value={computedValue}
+        onChange={(event, newValue) => {
+          changeHandler(newValue)
+        }}
+        noOptionsText={
+          <span
+            onClick={() => navigateToForm(tableSlug)}
+            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+          >
+            Создать новый
+          </span>
+        }
+        disablePortal
+        blurOnSelect
+        openOnFocus
+        getOptionLabel={(option) => getRelationFieldLabel(field, option)}
+        multiple
+        isOptionEqualToValue={(option, value) => option.guid === value.guid}
+        renderInput={(params) => <TextField {...params} size="small" />}
+        renderTags={(value, index) => (
+          <>
+            {getOptionLabel(value[0])}
+            <IconGenerator
+              icon="arrow-up-right-from-square.svg"
+              style={{ marginLeft: "10px", cursor: "pointer" }}
+              size={15}
+              onClick={(e) => {
+                e.stopPropagation()
+                e.preventDefault()
+                navigateToForm(tableSlug, "EDIT", value[0])
+              }}
+            />
+          </>
+        )}
+      />
+    </div>
   )
 }
 

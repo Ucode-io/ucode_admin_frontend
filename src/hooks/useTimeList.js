@@ -2,13 +2,10 @@ import { add, setHours, setMinutes } from "date-fns";
 import { useMemo } from "react";
 
 
-
-
 const useTimeList = (timeInterval = 60) => {
   const timeList = useMemo(() => {
     const startTime = setMinutes(setHours(new Date(), 6), 0);
     const endTime = setMinutes(setHours(new Date(), 23), 0);
-
 
     const timeArray = [];
 

@@ -111,17 +111,17 @@ export const Filter = ({
         />
       )
 
-    // case "NUMBER":
-    //   return (
-    //     <TextField
-    //       fullWidth
-    //       size="small"
-    //       placeholder={field.label}
-    //       type="number"
-    //       value={filters[name] ?? ""}
-    //       onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
-    //     />
-    //   )
+    case "NUMBER":
+      return (
+        <TextField
+          fullWidth
+          size="small"
+          placeholder={field.label}
+          type="number"
+          value={filters[name] ?? ""}
+          onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
+        />
+      )
 
     case "SWITCH":
       return (

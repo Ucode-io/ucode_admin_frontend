@@ -32,7 +32,8 @@ const CalendarView = ({
   ])
   const [fieldsMap, setFieldsMap] = useState({})
 
-  const {filters} = useFilters(tableSlug, view.id)
+  const {filters, dataFilters} = useFilters(tableSlug, view.id)
+  
 
   const groupFieldIds = view.group_fields
   const groupFields = groupFieldIds.map((id) => fieldsMap[id]).filter(el => el)
@@ -51,10 +52,10 @@ const CalendarView = ({
 
   const { data: { data } = { data: [] }, isLoading } =
     useQuery(
-      ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters }],
+      ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, dataFilters }],
       () => {
         return constructorObjectService.getList(tableSlug, {
-          data: { with_relations: true, ...filters },
+          data: { with_relations: true, ...dataFilters },
         })
       },
       {
@@ -192,6 +193,7 @@ const promiseGenerator = (groupField, filters = {}) => {
   const relationFilters = {}
 
   Object.entries(filters)?.forEach(([key, value]) => {
+
     if(!key?.includes('.')) return 
 
     const filterTableSlug = selectElementFromEndOfString({ string: key, separator: '.', index: 2 })
@@ -201,7 +203,18 @@ const promiseGenerator = (groupField, filters = {}) => {
       const slug = key.split('.')?.pop()
 
       relationFilters[slug] = value
+    } else {
+
+      const slug = key.split('.')?.pop()
+
+      if(groupField.slug === slug) {
+        relationFilters[slug] = value
+      }      
     }
+
+
+    
+
   })
   const computedFilters = {...defaultFilters, ...relationFilters}
 

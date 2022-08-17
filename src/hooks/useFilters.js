@@ -27,7 +27,16 @@ const useFilters = (tableSlug, viewId) => {
     return Object.entries(filterObject).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {})
   }, [filtersFromRedux, filtersFromLocation])
 
-  return {filters, clearFilters, filterChangeHandler, clearOrders}
+
+  const dataFilters = useMemo(() => {
+    
+    const filterObject = { ...filtersFromLocation, ...filtersFromRedux }
+
+    return Object.entries(filterObject).filter(([key]) => !key.includes('.')).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {})
+
+  }, [filtersFromRedux, filtersFromLocation])
+
+  return {filters, dataFilters, clearFilters, filterChangeHandler, clearOrders}
 }
 
 export default useFilters

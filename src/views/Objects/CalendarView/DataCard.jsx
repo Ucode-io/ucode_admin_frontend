@@ -98,7 +98,6 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
     }
   }
 
-
   return (
     <>
     <div
@@ -119,8 +118,8 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
         ))}
 
         <p className={styles.time}>
-          {format(data.calendar?.elementFromTime, "HH:mm")} -{" "}
-          {format(data.calendar?.elementToTime, "HH:mm")}
+          {data.calendar?.elementFromTime ? format(data.calendar?.elementFromTime, "HH:mm") : ''} -{" "}
+          {data.calendar?.elementToTime ? format(data.calendar?.elementToTime, "HH:mm") : ''}
         </p>
       </div>
     </div>

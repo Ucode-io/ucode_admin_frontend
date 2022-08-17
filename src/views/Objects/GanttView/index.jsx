@@ -146,6 +146,9 @@ const queryGenerator = (groupFields, filters = {}) => {
 }
 
 const promiseGenerator = (groupField, filters = {}) => {
+
+  
+
   const filterValue = filters[groupField.slug]
   const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {}
 

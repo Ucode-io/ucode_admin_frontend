@@ -6,6 +6,7 @@ import TableColumnFilter from "../../../../components/TableColumnFilter"
 import TableOrderingButton from "../../../../components/TableOrderingButton"
 import DefaultFilter from "./DefaultFilter"
 import RelationFilter from "./RelationFilter"
+import FilterAutoComplete from "./FilterAutocomplete"
 
 const FilterGenerator = ({
   field,
@@ -75,18 +76,25 @@ export const Filter = ({
   switch (field.type) {
     case "PICK_LIST":
       return (
-        <FormControl style={{ width: "100%" }}>
-          <InputLabel size="small">{}</InputLabel>
-          <CSelect
-            value={filters[name] ?? ""}
-            onChange={(e) => onChange(e.target.value, name)}
-            size="small"
-            fullWidth
-            disabledHelperText
-            options={computedOptions}
-            placeholder={field.label}
-          />
-        </FormControl>
+
+        <FilterAutoComplete 
+          options={computedOptions}
+          value={filters[name] ?? []}
+          onChange={(val) => onChange(val?.length ? val : null, name)}
+          label={field.label}
+        />
+
+        // <FormControl style={{ width: "100%" }}>
+        //   <CSelect
+        //     value={filters[name] ?? ""}
+        //     onChange={(e) => onChange(e.target.value, name)}
+        //     size="small"
+        //     fullWidth
+        //     disabledHelperText
+        //     options={computedOptions}
+        //     placeholder={field.label}
+        //   />
+        // </FormControl>
       )
 
     case "PHOTO":

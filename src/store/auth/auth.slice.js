@@ -25,7 +25,8 @@ export const {
       state.userInfo = payload.user
       state.roleInfo = payload.role
 
-      state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
+      // state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
+      state.permissions = payload.permissions
       state.loading = false
     },
     setTokens(state, { payload }) {

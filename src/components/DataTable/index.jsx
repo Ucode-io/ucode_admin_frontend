@@ -17,7 +17,7 @@ import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import { useLocation } from "react-router-dom";
 import "./style.scss";
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
-import useOnClickOutside from 'use-onclickoutside'
+import useOnClickOutside from "use-onclickoutside";
 
 const DataTable = ({
   data = [],
@@ -40,16 +40,20 @@ const DataTable = ({
   wrapperStyle,
   tableSlug,
   isResizeble,
-  paginationExtraButton
+  paginationExtraButton,
 }) => {
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const [columnId, setColumnId] = useState("");
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
+  const permissions = useSelector((state) => state.auth.permissions);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
+  const canDelete = permissions?.find(
+    (permission) => permission?.table_slug === tableSlug
+  )?.delete;
 
-  const popupRef = useRef(null)
-  useOnClickOutside(popupRef, () => setColumnId(""))
+  const popupRef = useRef(null);
+  useOnClickOutside(popupRef, () => setColumnId(""));
 
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
@@ -119,7 +123,7 @@ const DataTable = ({
     createResizableTable(document.getElementById("resizeMe"));
   }, []);
 
-  const handleAutoSize = (colID,colIdx) => {
+  const handleAutoSize = (colID, colIdx) => {
     dispatch(
       tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
     );
@@ -131,8 +135,8 @@ const DataTable = ({
         pageName,
         colID,
         colWidth: element.offsetWidth,
-        isStiky: 'ineffective',
-        colIdx
+        isStiky: "ineffective",
+        colIdx,
       })
     );
     setColumnId("");
@@ -166,12 +170,10 @@ const DataTable = ({
     ) {
       return 0;
     } else {
-      return (
-        tableSettings?.[pageName]
-          ?.filter((item) => item?.isStiky === true)
-          ?.slice(0, colIdx)
-          ?.reduce((acc, item) => acc + item?.colWidth, 0)
-      );
+      return tableSettings?.[pageName]
+        ?.filter((item) => item?.isStiky === true)
+        ?.slice(0, colIdx)
+        ?.reduce((acc, item) => acc + item?.colWidth, 0);
     }
   };
 
@@ -245,28 +247,28 @@ const DataTable = ({
                   />
                 )}
                 {columnId === column?.id && (
-                  <div className="cell-popup" ref={popupRef} >
+                  <div className="cell-popup" ref={popupRef}>
                     {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
-                      <div
-                        className="cell-popup-item"
-                        onClick={() => handlePin(column?.id, index)}
-                      >
-                        <PinIcon
-                          pinned={
-                            tableSettings?.[pageName]?.find(
-                              (item) => item?.id === column?.id
-                            )?.isStiky
-                          }
-                        />
-                        <span>Pin column</span>
-                      </div>
-                      <div
-                        className="cell-popup-item"
-                        onClick={() => handleAutoSize(column?.id, index)}
-                      >
-                        <ResizeIcon />
-                        <span>Autosize</span>
-                      </div>
+                    <div
+                      className="cell-popup-item"
+                      onClick={() => handlePin(column?.id, index)}
+                    >
+                      <PinIcon
+                        pinned={
+                          tableSettings?.[pageName]?.find(
+                            (item) => item?.id === column?.id
+                          )?.isStiky
+                        }
+                      />
+                      <span>Pin column</span>
+                    </div>
+                    <div
+                      className="cell-popup-item"
+                      onClick={() => handleAutoSize(column?.id, index)}
+                    >
+                      <ResizeIcon />
+                      <span>Autosize</span>
+                    </div>
                     {/* </OutsideClickHandler> */}
                   </div>
                 )}
@@ -274,9 +276,11 @@ const DataTable = ({
             </CTableHeadCell>
           ))}
 
-          {(onDeleteClick || onEditClick) && (
-            <CTableHeadCell width={10}></CTableHeadCell>
-          )}
+          {canDelete === "Yes"
+            ? (onDeleteClick || onEditClick) && (
+                <CTableHeadCell width={10}></CTableHeadCell>
+              )
+            : null}
         </CTableRow>
       </CTableHead>
 
@@ -320,31 +324,35 @@ const DataTable = ({
               </CTableCell>
             ))}
 
-            {(onDeleteClick || onEditClick) && (
-              <CTableCell>
-                <div className="flex">
-                  {onEditClick && (
-                    <RectangleIconButton
-                      color="success"
-                      className="mr-1"
-                      onClick={() => onEditClick(row, rowIndex)}
-                    >
-                      <Edit color="success" />
-                    </RectangleIconButton>
-                  )}
-                  {onDeleteClick && (
-                    <DeleteWrapperModal
-                      id={row.guid}
-                      onDelete={() => onDeleteClick(row, rowIndex)}
-                    >
-                      <RectangleIconButton color="error">
-                        <Delete color="error" />
-                      </RectangleIconButton>
-                    </DeleteWrapperModal>
-                  )}
-                </div>
-              </CTableCell>
-            )}
+            {canDelete === "Yes"
+              ? (onDeleteClick || onEditClick) && (
+                  <CTableCell>
+                    <div className="flex">
+                      {onEditClick && (
+                        <RectangleIconButton
+                          color="success"
+                          className="mr-1"
+                          onClick={() => onEditClick(row, rowIndex)}
+                        >
+                          <Edit color="success" />
+                        </RectangleIconButton>
+                      )}
+                      {canDelete === "Yes"
+                        ? onDeleteClick && (
+                            <DeleteWrapperModal
+                              id={row.guid}
+                              onDelete={() => onDeleteClick(row, rowIndex)}
+                            >
+                              <RectangleIconButton color="error">
+                                <Delete color="error" />
+                              </RectangleIconButton>
+                            </DeleteWrapperModal>
+                          )
+                        : null}
+                    </div>
+                  </CTableCell>
+                )
+              : null}
           </CTableRow>
         ))}
 

@@ -1,10 +1,7 @@
-import {
-  AccountCircle,
-  Lock,
-  SupervisedUserCircle,
-} from "@mui/icons-material"
+import { AccountCircle, Lock, SupervisedUserCircle } from "@mui/icons-material"
 import { InputAdornment } from "@mui/material"
-import { useMemo, useState } from "react"
+import axios from "axios"
+import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useQuery } from "react-query"
 import { useDispatch } from "react-redux"
@@ -12,7 +9,7 @@ import { useNavigate } from "react-router-dom"
 import PrimaryButton from "../../../components/Buttons/PrimaryButton"
 import HFSelect from "../../../components/FormElements/HFSelect"
 import HFTextField from "../../../components/FormElements/HFTextField"
-import clientTypeService from "../../../services/auth/clientTypeService"
+import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2"
 import { loginAction } from "../../../store/auth/auth.thunk"
 import listToOptions from "../../../utils/listToOptions"
 import classes from "../style.module.scss"
@@ -22,49 +19,69 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [connections, setConnections] = useState([])
 
-  const { control, handleSubmit, watch } = useForm({
+  const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       client_type: "",
       username: "",
       password: "",
+      tables: [
+        {
+          object_id: "",
+          table_slug: "",
+        },
+      ],
     },
   })
 
-  const { data: { client_types: clientTypes } = {} } = useQuery(
-    ["GET_CLIENT_TYPES"],
-    () => {
-      return clientTypeService.getList()
-    }
-  )
+  const { data: { data } = {} } = useQuery(["GET_CLIENT_TYPES"], () => {
+    return clientTypeServiceV2.getList()
+  })
+
 
   const computedClientTypes = useMemo(() => {
-    return listToOptions(clientTypes, "name", "id")
-  }, [clientTypes])
+    return listToOptions(data?.response, "name", "guid")
+  }, [data?.response])
 
   const clientTypeId = watch("client_type")
 
+  const getConnections = () => {
+    axios
+      .post(
+        `https://test.api.client.medion.uz/v1/object/get-list/connections`,
+        { data: { client_type_id: clientTypeId } }
+      )
+      .then((res) => {
+        setConnections(res?.data?.data?.data?.response || [])
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
   const selectedClientType = useMemo(() => {
-    return clientTypes?.find((clientType) => clientType.id === clientTypeId)
-  }, [clientTypeId, clientTypes])
+    return data?.response?.find(
+      (clientType) => clientType.guid === clientTypeId
+    )
+  }, [clientTypeId, data?.response])
 
   const onSubmit = (data) => {
     const computedData = {
       ...data,
-      tables: Object.keys(data.tables ?? {}).map((key) => ({
-        table_slug: key,
-        object_id: data.tables[key],
-      })),
+      // tables: Object.keys(data.tables ?? {}).map((key) => ({
+      //   table_slug: key,
+      //   object_id: data.tables[key],
+      // })),
     }
 
     const cashboxData = getCashboxData(data)
 
     setLoading(true)
 
-    dispatch(loginAction({data: computedData, cashboxData}))
+    dispatch(loginAction({ data: computedData, cashboxData }))
       .unwrap()
       .then(() => {
-        if(selectedClientType?.name === "CASHIER") {
+        if (selectedClientType?.name === "CASHIER") {
           navigate("/cashbox/opening")
         }
       })
@@ -72,12 +89,21 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   }
 
   const getCashboxData = (data) => {
-    if(selectedClientType?.name !== "CASHIER") return null
-    const cashboxId = data.tables.cashbox 
-    const cashboxTable = selectedClientType?.tables?.find(table => table.slug === "cashbox")
-    const selectedCashbox = cashboxTable?.data?.response?.find(object => object.guid === cashboxId)
+    if (selectedClientType?.name !== "CASHIER") return null
+    const cashboxId = data.tables.cashbox
+    const cashboxTable = selectedClientType?.tables?.find(
+      (table) => table.slug === "cashbox"
+    )
+    const selectedCashbox = cashboxTable?.data?.response?.find(
+      (object) => object.guid === cashboxId
+    )
     return selectedCashbox
   }
+
+  useEffect(() => {
+    if (!clientTypeId) return
+    getConnections()
+  }, [clientTypeId])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
@@ -139,14 +165,13 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
           />
         </div>
 
-        {selectedClientType?.tables?.map((table, index) => (
-          <DynamicFields
-            key={table.slug}
-            table={table}
-            control={control}
-            index={index}
-          />
-        ))}
+        {connections?.length ? <DynamicFields
+          // key={table.slug}
+          table={connections}
+          control={control}
+          setValue={setValue}
+          // index={index}
+        /> : null}
       </div>
 
       <div className={classes.buttonsArea}>

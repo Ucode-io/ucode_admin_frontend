@@ -47,7 +47,6 @@ const DataTable = ({
   const [columnId, setColumnId] = useState("");
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const permissions = useSelector((state) => state.auth.permissions);
-  const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
   const canDelete = permissions?.find(
     (permission) => permission?.table_slug === tableSlug
@@ -297,14 +296,12 @@ const DataTable = ({
               onRowClick(row, rowIndex);
             }}
           >
-            <CTableCell align='center'>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
+            <CTableCell>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
             {columns.map((column, index) => (
               <CTableCell
                 key={column.id}
                 className="overflow-ellipsis"
                 style={{
-                  height: tableHeight === 'large' ? '72px' : tableHeight === 'medium' ? '48px' : '30px',
-                  padding: "8px 12px 4px",
                   position: tableSettings?.[pageName]?.find(
                     (item) => item?.id === column?.id
                   )?.isStiky

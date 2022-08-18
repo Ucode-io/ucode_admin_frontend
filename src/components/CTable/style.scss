@@ -6,19 +6,19 @@
     width: 100%;
     overflow: auto;
     border-radius: 5px;
-    border: 1px solid #E5E9EB;
+    border: 1px solid #e5e9eb;
     position: relative;
-    
+
     table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
 
       td {
-        border-bottom: 1px solid #E5E9EB;
-        border-right: 1px solid #E5E9EB;
+        border-bottom: 1px solid #e5e9eb;
+        border-right: 1px solid #e5e9eb;
       }
-      
+
       // tr td:first-child {
       //   border-left: none;
       // }
@@ -42,7 +42,7 @@
   }
 
   tr td {
-    border-bottom: 1px solid #E5E9EB !important;
+    border-bottom: 1px solid #e5e9eb !important;
     font-weight: bold;
   }
 
@@ -50,13 +50,12 @@
     white-space: nowrap;
     min-height: 48px;
   }
-
 }
 
 .CTableCell {
   padding: 8px 16px;
+  vertical-align: top;
   line-height: 12px;
-
 
   &.buttonsCell {
     padding: 6px 10px;
@@ -66,14 +65,14 @@
 
 .CTableRow {
   cursor: pointer;
-  transition-duration: .2s;
+  transition-duration: 0.2s;
 
   th {
     padding: 8px 16px;
   }
 
   &:hover td {
-    background-color: rgba(#F5FBFF, 1) !important;
+    background-color: rgba(#f5fbff, 1) !important;
   }
 }
 
@@ -82,12 +81,11 @@
 
   th {
     font-weight: 400;
-    
   }
 }
 
 th {
-  border: 0.5px solid #E5E9EB;
+  border: 0.5px solid #e5e9eb;
   border-top: 0;
   position: relative;
 }

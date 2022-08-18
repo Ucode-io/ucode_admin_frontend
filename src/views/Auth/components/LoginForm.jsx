@@ -68,10 +68,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   const onSubmit = (data) => {
     const computedData = {
       ...data,
-      // tables: Object.keys(data.tables ?? {}).map((key) => ({
-      //   table_slug: key,
-      //   object_id: data.tables[key],
-      // })),
+      tables: data.tables[0].object_id ? data.tables : [],
     }
 
     const cashboxData = getCashboxData(data)

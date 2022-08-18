@@ -1,12 +1,12 @@
-import { useState } from "react"
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { useParams } from "react-router-dom"
+import { useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import {
   ChevronDownIcon,
   CrossPeson,
   TwoUserIcon,
-} from "../../assets/icons/icon"
+} from "../../assets/icons/icon";
 import {
   CTable,
   CTableBody,
@@ -14,25 +14,25 @@ import {
   CTableHead,
   CTableHeadCell,
   CTableRow,
-} from "../../components/CTable"
-import FormCard from "../../components/FormCard"
-import FRow from "../../components/FormElements/FRow"
-import HFTextField from "../../components/FormElements/HFTextField"
-import Header from "../../components/Header"
-import applicationService from "../../services/applicationSercixe"
-import constructorObjectService from "../../services/constructorObjectService"
-import roleServiceV2 from "../../services/roleServiceV2"
+} from "../../components/CTable";
+import FormCard from "../../components/FormCard";
+import FRow from "../../components/FormElements/FRow";
+import HFTextField from "../../components/FormElements/HFTextField";
+import HeaderSettings from "../../components/HeaderSettings";
+import applicationService from "../../services/applicationSercixe";
+import constructorObjectService from "../../services/constructorObjectService";
+import roleServiceV2 from "../../services/roleServiceV2";
 
 const MatrixRolePage = () => {
-  const { roleId } = useParams()
-  const [appId, setAppId] = useState(null)
-  const [tableSlug, setTableSlug] = useState(null)
-  const [role, setRole] = useState({})
-  const [apps, setApps] = useState([])
-  const [roles, setRoles] = useState([])
-  const [recordPermissions, setRecordPermissions] = useState([])
+  const { roleId } = useParams();
+  const [appId, setAppId] = useState(null);
+  const [tableSlug, setTableSlug] = useState(null);
+  const [role, setRole] = useState({});
+  const [apps, setApps] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [recordPermissions, setRecordPermissions] = useState([]);
 
-  const roleForm = useForm({})
+  const roleForm = useForm({});
 
   const getRecordPermissions = () => {
     constructorObjectService
@@ -42,12 +42,12 @@ const MatrixRolePage = () => {
         },
       })
       .then((res) => {
-        setRecordPermissions(res?.data?.response || [])
+        setRecordPermissions(res?.data?.response || []);
       })
       .catch((err) => {
-        console.log(err)
-      })
-  }
+        console.log(err);
+      });
+  };
 
   const handleRecordPermission = (record, type, value, tabSlug) => {
     const data = {
@@ -58,7 +58,7 @@ const MatrixRolePage = () => {
       write: record?.write ? record?.write : "No",
       table_slug: tabSlug,
       guid: record?.guid ? record?.guid : "",
-    }
+    };
     if (record?.guid) {
       constructorObjectService
         .update("record_permission", {
@@ -68,12 +68,12 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          setTableSlug(null)
-          getRecordPermissions()
+          setTableSlug(null);
+          getRecordPermissions();
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     } else {
       constructorObjectService
         .create("record_permission", {
@@ -83,81 +83,80 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          setTableSlug(null)
-          getRecordPermissions()
+          setTableSlug(null);
+          getRecordPermissions();
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     }
-  }
+  };
 
   const getRoleById = () => {
     roleServiceV2
       .getById(roleId)
       .then((res) => {
-        setRole(res?.data?.response || {})
-        roleForm.setValue("name", res?.data?.response?.name || "")
+        setRole(res?.data?.response || {});
+        roleForm.setValue("name", res?.data?.response?.name || "");
       })
       .catch((err) => {
-        console.log("err", err)
-      })
-  }
+        console.log("err", err);
+      });
+  };
 
   const getApps = () => {
     applicationService
       .getList()
       .then((res) => {
-        setApps(res?.apps || [])
-        setRoles(res?.apps || [])
+        setApps(res?.apps || []);
+        setRoles(res?.apps || []);
       })
       .catch((err) => {
-        console.log("err", err)
-      })
-  }
+        console.log("err", err);
+      });
+  };
 
   const getAppChildren = (id) => {
     applicationService
       .getById(id)
       .then((res) => {
-        const result = []
+        const result = [];
         apps?.forEach((element) => {
           if (element?.id !== id) {
-            result.push(element)
+            result.push(element);
           } else {
-            result.push(element)
+            result.push(element);
             result.push(
               ...res?.tables.map((table) => ({ ...table, children: "true" }))
-            )
+            );
           }
-        })
-        setApps(result)
+        });
+        setApps(result);
       })
       .catch((err) => {
-        console.log("err", err)
-      })
-  }
+        console.log("err", err);
+      });
+  };
 
   useEffect(() => {
     if (!appId) {
-      setApps(roles)
+      setApps(roles);
     } else {
-      getAppChildren(appId)
+      getAppChildren(appId);
     }
-  }, [appId])
+  }, [appId]);
 
   useEffect(() => {
-    getRecordPermissions()
-    getRoleById()
-    getApps()
-  }, [])
+    getRecordPermissions();
+    getRoleById();
+    getApps();
+  }, []);
 
   return (
     <div>
-      <Header
+      <HeaderSettings
         title="Роли"
         backButtonLink={`/settings/auth/matrix_v2`}
-        style={{ minHeight: "55px" }}
       />
       <div style={{ margin: "8px" }}>
         <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
@@ -172,7 +171,12 @@ const MatrixRolePage = () => {
               <CTableRow>
                 <CTableHeadCell>Объекты</CTableHeadCell>
                 <CTableHeadCell style={{ padding: 0 }} colSpan={4}>
-                  <div style={{ borderBottom: "1px solid #eee", padding: "8px 16px" }}>
+                  <div
+                    style={{
+                      borderBottom: "1px solid #eee",
+                      padding: "8px 16px",
+                    }}
+                  >
                     <div>Record permissions</div>
                   </div>
                   <div>
@@ -240,8 +244,8 @@ const MatrixRolePage = () => {
                       app.children
                         ? () => {}
                         : () => {
-                            setApps(roles)
-                            setAppId((prev) => (prev === app.id ? "" : app.id))
+                            setApps(roles);
+                            setAppId((prev) => (prev === app.id ? "" : app.id));
                           }
                     }
                   >
@@ -260,15 +264,15 @@ const MatrixRolePage = () => {
                   <CTableCell
                     align="center"
                     onClick={(e) => {
-                      e.stopPropagation()
+                      e.stopPropagation();
                       setTableSlug((prev) =>
                         prev === app.slug
                           ? ""
                           : app.slug
                           ? app.slug + "read"
                           : ""
-                      )
-                      console.log("Read")
+                      );
+                      console.log("Read");
                     }}
                     style={{ position: "relative" }}
                   >
@@ -297,7 +301,7 @@ const MatrixRolePage = () => {
                       >
                         <span
                           onClick={(e) => {
-                            e.stopPropagation()
+                            e.stopPropagation();
                             handleRecordPermission(
                               recordPermissions?.find(
                                 (item) => item?.table_slug === app?.slug
@@ -305,14 +309,14 @@ const MatrixRolePage = () => {
                               "read",
                               "Yes",
                               app?.slug
-                            )
+                            );
                           }}
                         >
                           <TwoUserIcon />
                         </span>
                         <span
                           onClick={(e) => {
-                            e.stopPropagation()
+                            e.stopPropagation();
                             handleRecordPermission(
                               recordPermissions?.find(
                                 (item) => item?.table_slug === app?.slug
@@ -320,7 +324,7 @@ const MatrixRolePage = () => {
                               "read",
                               "No",
                               app?.slug
-                            )
+                            );
                           }}
                         >
                           <CrossPeson />
@@ -331,15 +335,15 @@ const MatrixRolePage = () => {
                   <CTableCell
                     align="center"
                     onClick={(e) => {
-                      e.stopPropagation()
+                      e.stopPropagation();
                       setTableSlug((prev) =>
                         prev === app.slug
                           ? ""
                           : app.slug
                           ? app.slug + "write"
                           : ""
-                      )
-                      console.log("Write")
+                      );
+                      console.log("Write");
                     }}
                     style={{ position: "relative" }}
                   >
@@ -368,7 +372,7 @@ const MatrixRolePage = () => {
                       >
                         <span
                           onClick={(e) => {
-                            e.stopPropagation()
+                            e.stopPropagation();
                             handleRecordPermission(
                               recordPermissions?.find(
                                 (item) => item?.table_slug === app?.slug
@@ -376,14 +380,14 @@ const MatrixRolePage = () => {
                               "write",
                               "Yes",
                               app?.slug
-                            )
+                            );
                           }}
                         >
                           <TwoUserIcon />
                         </span>
                         <span
                           onClick={(e) => {
-                            e.stopPropagation()
+                            e.stopPropagation();
                             handleRecordPermission(
                               recordPermissions?.find(
                                 (item) => item?.table_slug === app?.slug
@@ -391,7 +395,7 @@ const MatrixRolePage = () => {
                               "write",
                               "No",
                               app?.slug
-                            )
+                            );
                           }}
                         >
                           <CrossPeson />
@@ -402,15 +406,15 @@ const MatrixRolePage = () => {
                   <CTableCell
                     align="center"
                     onClick={(e) => {
-                      e.stopPropagation()
+                      e.stopPropagation();
                       setTableSlug((prev) =>
                         prev === app.slug
                           ? ""
                           : app.slug
                           ? app.slug + "update"
                           : ""
-                      )
-                      console.log("Update")
+                      );
+                      console.log("Update");
                     }}
                     style={{ position: "relative" }}
                   >
@@ -439,7 +443,7 @@ const MatrixRolePage = () => {
                       >
                         <span
                           onClick={(e) => {
-                            e.stopPropagation()
+                            e.stopPropagation();
                             handleRecordPermission(
                               recordPermissions?.find(
                                 (item) => item?.table_slug === app?.slug
@@ -447,14 +451,14 @@ const MatrixRolePage = () => {
                               "update",
                               "Yes",
                               app?.slug
-                            )
+                            );
                           }}
                         >
                           <TwoUserIcon />
                         </span>
                         <span
                           onClick={(e) => {
-                            e.stopPropagation()
+                            e.stopPropagation();
                             handleRecordPermission(
                               recordPermissions?.find(
                                 (item) => item?.table_slug === app?.slug
@@ -462,7 +466,7 @@ const MatrixRolePage = () => {
                               "update",
                               "No",
                               app?.slug
-                            )
+                            );
                           }}
                         >
                           <CrossPeson />
@@ -473,15 +477,15 @@ const MatrixRolePage = () => {
                   <CTableCell
                     align="center"
                     onClick={(e) => {
-                      e.stopPropagation()
+                      e.stopPropagation();
                       setTableSlug((prev) =>
                         prev === app.slug
                           ? ""
                           : app.slug
                           ? app.slug + "delete"
                           : ""
-                      )
-                      console.log("Delete")
+                      );
+                      console.log("Delete");
                     }}
                     style={{ position: "relative" }}
                   >
@@ -510,7 +514,7 @@ const MatrixRolePage = () => {
                       >
                         <span
                           onClick={(e) => {
-                            e.stopPropagation()
+                            e.stopPropagation();
                             handleRecordPermission(
                               recordPermissions?.find(
                                 (item) => item?.table_slug === app?.slug
@@ -518,14 +522,14 @@ const MatrixRolePage = () => {
                               "delete",
                               "Yes",
                               app?.slug
-                            )
+                            );
                           }}
                         >
                           <TwoUserIcon />
                         </span>
                         <span
                           onClick={(e) => {
-                            e.stopPropagation()
+                            e.stopPropagation();
                             handleRecordPermission(
                               recordPermissions?.find(
                                 (item) => item?.table_slug === app?.slug
@@ -533,7 +537,7 @@ const MatrixRolePage = () => {
                               "delete",
                               "No",
                               app?.slug
-                            )
+                            );
                           }}
                         >
                           <CrossPeson />
@@ -548,7 +552,7 @@ const MatrixRolePage = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MatrixRolePage
+export default MatrixRolePage;

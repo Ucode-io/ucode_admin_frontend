@@ -1,13 +1,13 @@
-import Header from "../../components/Header"
-import MatrixTable from "./Table"
+import HeaderSettings from "../../components/HeaderSettings";
+import MatrixTable from "./Table";
 
 const Matrix = () => {
   return (
     <div>
-      <Header title="Matrix" style={{ minHeight: "55px" }} />
+      <HeaderSettings title="Matrix" />
       <MatrixTable />
     </div>
-  )
-}
+  );
+};
 
-export default Matrix
+export default Matrix;

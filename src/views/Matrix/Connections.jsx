@@ -158,7 +158,6 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
                         }}
                       />
                       <HFTextField
-                        label="Name"
                         name=""
                         value={selectedConnection?.name}
                         onChange={(e) => {
@@ -278,7 +277,6 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
                   }}
                 />
                 <HFTextField
-                  label="Name"
                   name="name"
                   onChange={(e) => {
                     connectionForm.setValue("name", e.target.value)

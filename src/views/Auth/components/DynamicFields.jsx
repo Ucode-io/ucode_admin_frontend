@@ -3,37 +3,26 @@ import HFSelect from "../../../components/FormElements/HFSelect"
 import classes from "../style.module.scss"
 
 const DynamicFields = ({ control, table = {}, index }) => {
-
+  console.log("table", table?.data?.fields)
+  // console.log('table', table);
 
   const computedOptions = useMemo(() => {
-    return table?.data?.response?.map(el => {
-      const label = table.view_field?.map(field => {
-        return `${el[field]} `
-      })?.join(" ")
-
-      return {
-        label,
-        value: el.guid,
-      }
-    }) ?? []
+    return table?.data?.fields?.map((field) => ({
+      value: field.slug,
+      label: field.label,
+    }))
   }, [table])
 
   return (
     <div className={classes.formRow}>
       <p className={classes.label}>{table.label}</p>
       <HFSelect
-        // required
         control={control}
         name={`tables.${table.slug}`}
         size="large"
         fullWidth
         options={computedOptions}
         placeholder={table.label}
-        // startAdornment={
-        //   <InputAdornment position="start">
-        //     <SupervisedUserCircle style={{ fontSize: "30px" }} />
-        //   </InputAdornment>
-        // }
       />
     </div>
   )

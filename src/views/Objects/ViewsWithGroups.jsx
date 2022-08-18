@@ -20,8 +20,8 @@ import { useQuery } from "react-query";
 import useFilters from "../../hooks/useFilters";
 import FastFilterButton from "./components/FastFilter/FastFilterButton";
 import { useDispatch, useSelector } from "react-redux";
-import OutsideClickHandler from "react-outside-click-handler";
-import { CheckIcon, HeightControlIcon } from "../../assets/icons/icon";
+// import OutsideClickHandler from "react-outside-click-handler";
+// import { CheckIcon, HeightControlIcon } from "../../assets/icons/icon";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 
 const ViewsWithGroups = ({
@@ -108,7 +108,7 @@ const ViewsWithGroups = ({
               ))}
             </TabList>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <OutsideClickHandler
+              {/* <OutsideClickHandler
                 onOutsideClick={() => setHeightControl(false)}
               >
                 <div style={{ position: "relative" }}>
@@ -133,7 +133,7 @@ const ViewsWithGroups = ({
                     </div>
                   )}
                 </div>
-              </OutsideClickHandler>
+              </OutsideClickHandler> */}
               {permissions?.find(
                 (permission) => permission?.table_slug === tableSlug
               )?.write === "Yes" ? (

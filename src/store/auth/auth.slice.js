@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { listToMap } from '../../utils/listToMap'
+import { createSlice } from "@reduxjs/toolkit";
+// import { listToMap } from "../../utils/listToMap";
 
 const initialState = {
   isAuth: false,
@@ -7,32 +7,36 @@ const initialState = {
   refreshToken: null,
   userInfo: null,
   roleInfo: null,
-  permissions: {}
+  permissions: {},
+};
 
-}
-
-export const {
-  actions: authActions,
-  reducer: authReducer 
-} = createSlice({
+export const { actions: authActions, reducer: authReducer } = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginSuccess(state, {payload}) {
-      state.isAuth = true
-      state.token = payload.token.access_token
-      state.refreshToken = payload.token.refresh_token
-      state.userInfo = payload.user
-      state.roleInfo = payload.role
+    loginSuccess(state, { payload }) {
+      state.isAuth = true;
+      state.token = payload.token.access_token;
+      state.refreshToken = payload.token.refresh_token;
+      state.userInfo = payload.user;
+      state.roleInfo = payload.role;
 
       // state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
-      state.permissions = payload.permissions
-      state.loading = false
+      state.permissions = payload.permissions.reduce((acc, curr) => {
+        acc[curr.table_slug] = {
+          read: curr.read === "Yes",
+          write: curr.write === "Yes",
+          update: curr.update === "Yes",
+          delete: curr.delete === "Yes",
+        };
+        return acc;
+      }, {});
+      state.loading = false;
     },
     setTokens(state, { payload }) {
-      state.token = payload.token.access_token
-      state.refreshToken = payload.token.refresh_token
+      state.token = payload.token.access_token;
+      state.refreshToken = payload.token.refresh_token;
     },
     logout: (state) => initialState,
-  }
-})
+  },
+});

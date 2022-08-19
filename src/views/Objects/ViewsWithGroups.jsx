@@ -21,8 +21,9 @@ import useFilters from "../../hooks/useFilters";
 import FastFilterButton from "./components/FastFilter/FastFilterButton";
 import { useDispatch, useSelector } from "react-redux";
 // import OutsideClickHandler from "react-outside-click-handler";
-// import { CheckIcon, HeightControlIcon } from "../../assets/icons/icon";
+import { CheckIcon, HeightControlIcon } from "../../assets/icons/icon";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import ExcelButtons from "./components/ExcelButtons";
 
 const ViewsWithGroups = ({
@@ -35,7 +36,6 @@ const ViewsWithGroups = ({
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
   const { filters } = useFilters(tableSlug, view.id);
-  const permissions = useSelector((state) => state.auth.permissions);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [heightControl, setHeightControl] = useState(false);
   const { navigateToForm } = useTabRouter();
@@ -104,37 +104,31 @@ const ViewsWithGroups = ({
               ))}
             </TabList>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              {/* <OutsideClickHandler
-                onOutsideClick={() => setHeightControl(false)}
-              >
-                <div style={{ position: "relative" }}>
-                  <span
-                    onClick={() => setHeightControl(!heightControl)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <HeightControlIcon />
-                  </span>
-                  {heightControl && (
-                    <div className={style.heightControl}>
-                      {tableHeightOptions.map((el) => (
-                        <div
+              {/* <div style={{ position: "relative" }}>
+                <span
+                  onClick={() => setHeightControl(!heightControl)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <HeightControlIcon />
+                </span>
+                {heightControl && (
+                  <div className={style.heightControl}>
+                    {tableHeightOptions.map((el) => (
+                      <div
                         key={el.value}
                         className={style.heightControl_item}
                         onClick={() => handleHeightControl(el.value)}
-                        >
-                          {el.label}
-                          {tableHeight === el.value ? <CheckIcon/> : null}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </OutsideClickHandler> */}
-              {permissions?.find(
-                (permission) => permission?.table_slug === tableSlug
-              )?.write === "Yes" ? (
+                      >
+                        {el.label}
+                        {tableHeight === el.value ? <CheckIcon /> : null}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div> */}
+              <PermissionWrapperV2 tabelSlug={tableSlug} type='write'>
                 <CreateButton type="secondary" onClick={navigateToCreatePage} />
-              ) : null}
+              </PermissionWrapperV2>
             </div>
           </div>
 
@@ -161,48 +155,37 @@ const ViewsWithGroups = ({
             <>
               {tabs?.map((tab) => (
                 <TabPanel key={tab.value}>
-                  {permissions?.find(
-                    (permission) => permission?.table_slug === tableSlug
-                  )?.read === "Yes" ? (
-                    view.type === "TREE" ? (
-                      <TreeView
-                        filters={filters}
-                        tableSlug={tableSlug}
-                        group={tab}
-                        view={view}
-                      />
-                    ) : (
-                      <TableView
-                        filters={filters}
-                        tab={tab}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                      />
-                    )
-                  ) : null}
+                  {view.type === "TREE" ? (
+                    <TreeView
+                      filters={filters}
+                      view={view}
+                      fieldsMap={fieldsMap}
+                    />
+                  ) : (
+                    <TableView
+                      filters={filters}
+                      view={view}
+                      fieldsMap={fieldsMap}
+                    />
+                  )}
                 </TabPanel>
               ))}
 
               {!tabs?.length && (
                 <>
-                  {permissions?.find(
-                    (permission) => permission?.table_slug === tableSlug
-                  )?.read === "Yes" ? (
-                    view.type === "TREE" ? (
-                      <TreeView
-                        filters={filters}
-                        tableSlug={tableSlug}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                      />
-                    ) : (
-                      <TableView
-                        filters={filters}
-                        view={view}
-                        fieldsMap={fieldsMap}
-                      />
-                    )
-                  ) : null}
+                  {view.type === "TREE" ? (
+                    <TreeView
+                      filters={filters}
+                      view={view}
+                      fieldsMap={fieldsMap}
+                    />
+                  ) : (
+                    <TableView
+                      filters={filters}
+                      view={view}
+                      fieldsMap={fieldsMap}
+                    />
+                  )}
                 </>
               )}
             </>

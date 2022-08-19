@@ -8,22 +8,19 @@ const useSidebarElements = () => {
   const constructorElements = useSelector(
     (state) => state.constructorTable.list
   )
+  const permissions = useSelector((state) => state.auth.permissions)
 
   const computedElements = useMemo(() => {
     const computedConstructorElements = constructorElements
-      .filter((el) => el.is_visible)
+      .filter((el) => el.is_visible && permissions?.[el.slug]?.["read"])
       .map((el) => ({
         ...el,
         title: el.label,
         path: `/main/${appId}/object/${el.slug}`,
       }))
 
-    return [
-      ...computedConstructorElements,
-      ...elements,
-    ]
-  }, [constructorElements])
-  
+    return [...computedConstructorElements, ...elements]
+  }, [constructorElements, permissions])
 
   return { elements: computedElements ?? [] }
 }

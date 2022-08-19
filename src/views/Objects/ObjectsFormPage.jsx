@@ -7,7 +7,6 @@ import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
 import { sortByOrder } from "../../utils/sortByOrder"
 import MainInfo from "./MainInfo"
-import constructorRelationService from "../../services/constructorRelationService"
 import RelationSection from "./RelationSection"
 import styles from "./style.module.scss"
 import Footer from "../../components/Footer"
@@ -18,13 +17,10 @@ import SecondaryButton from "../../components/Buttons/SecondaryButton"
 import { useQueryClient } from "react-query"
 import { sortSections } from "../../utils/sectionsOrderNumber"
 import constructorViewRelationService from "../../services/constructorViewRelationService"
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
-  const permissions = useSelector((state) => state.auth.permissions)
-  const canEdit = permissions.find(
-    (permission) => permission.table_slug === tableSlug
-  ).update
   const { pathname, state = {} } = useLocation()
   const { removeTab, navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
@@ -229,14 +225,14 @@ const ObjectsFormPage = () => {
             <SecondaryButton onClick={() => removeTab(pathname)} color="error">
               Закрыть
             </SecondaryButton>
-            {canEdit === "Yes" ? (
+            <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
               <PrimaryButton
                 loader={btnLoader}
                 onClick={handleSubmit(onSubmit)}
               >
                 <Save /> Сохранить
               </PrimaryButton>
-            ) : null}
+            </PermissionWrapperV2>
           </>
         }
       />

@@ -18,6 +18,7 @@ import { useLocation } from "react-router-dom";
 import "./style.scss";
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
 import useOnClickOutside from "use-onclickoutside";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 
 const DataTable = ({
   data = [],
@@ -46,11 +47,8 @@ const DataTable = ({
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const [columnId, setColumnId] = useState("");
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
-  const permissions = useSelector((state) => state.auth.permissions);
+  const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
-  const canDelete = permissions?.find(
-    (permission) => permission?.table_slug === tableSlug
-  )?.delete;
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -276,11 +274,11 @@ const DataTable = ({
             </CTableHeadCell>
           ))}
 
-          {canDelete === "Yes"
-            ? (onDeleteClick || onEditClick) && (
-                <CTableHeadCell width={10}></CTableHeadCell>
-              )
-            : null}
+          <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+            {(onDeleteClick || onEditClick) && (
+              <CTableHeadCell width={10}></CTableHeadCell>
+            )}
+          </PermissionWrapperV2>
         </CTableRow>
       </CTableHead>
 
@@ -296,12 +294,21 @@ const DataTable = ({
               onRowClick(row, rowIndex);
             }}
           >
-            <CTableCell>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
+            <CTableCell align="center">
+              {(currentPage - 1) * 10 + rowIndex + 1}
+            </CTableCell>
             {columns.map((column, index) => (
               <CTableCell
                 key={column.id}
                 className="overflow-ellipsis"
                 style={{
+                  height:
+                    tableHeight === "large"
+                      ? "72px"
+                      : tableHeight === "medium"
+                      ? "48px"
+                      : "30px",
+                  padding: "8px 12px 4px",
                   position: tableSettings?.[pageName]?.find(
                     (item) => item?.id === column?.id
                   )?.isStiky
@@ -323,36 +330,33 @@ const DataTable = ({
                 <CellElementGenerator field={column} row={row} />
               </CTableCell>
             ))}
-
-            {canDelete === "Yes"
-              ? (onDeleteClick || onEditClick) && (
-                  <CTableCell>
-                    <div className="flex">
-                      {onEditClick && (
-                        <RectangleIconButton
-                          color="success"
-                          className="mr-1"
-                          onClick={() => onEditClick(row, rowIndex)}
-                        >
-                          <Edit color="success" />
+            <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+              {(onDeleteClick || onEditClick) && (
+                <CTableCell>
+                  <div className="flex">
+                    {onEditClick && (
+                      <RectangleIconButton
+                        color="success"
+                        className="mr-1"
+                        onClick={() => onEditClick(row, rowIndex)}
+                      >
+                        <Edit color="success" />
+                      </RectangleIconButton>
+                    )}
+                    {onDeleteClick && (
+                      <DeleteWrapperModal
+                        id={row.guid}
+                        onDelete={() => onDeleteClick(row, rowIndex)}
+                      >
+                        <RectangleIconButton color="error">
+                          <Delete color="error" />
                         </RectangleIconButton>
-                      )}
-                      {canDelete === "Yes"
-                        ? onDeleteClick && (
-                            <DeleteWrapperModal
-                              id={row.guid}
-                              onDelete={() => onDeleteClick(row, rowIndex)}
-                            >
-                              <RectangleIconButton color="error">
-                                <Delete color="error" />
-                              </RectangleIconButton>
-                            </DeleteWrapperModal>
-                          )
-                        : null}
-                    </div>
-                  </CTableCell>
-                )
-              : null}
+                      </DeleteWrapperModal>
+                    )}
+                  </div>
+                </CTableCell>
+              )}
+            </PermissionWrapperV2>
           </CTableRow>
         ))}
 

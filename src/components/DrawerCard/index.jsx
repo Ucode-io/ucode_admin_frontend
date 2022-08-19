@@ -6,8 +6,6 @@ import styles from "./style.module.scss"
 
 const DrawerCard = ({ children, onClose = () => {}, title="", open, onSaveButtonClick = () => {}, loader }) => {
 
-  console.log("OPPPPP ENNN ===>", open)
-
   return (
     <Drawer
       open={open}
@@ -27,13 +25,6 @@ const DrawerCard = ({ children, onClose = () => {}, title="", open, onSaveButton
       <div className={styles.body} >{ children }</div>
 
       <dir className={styles.footer}>
-        {/* <SecondaryButton
-          size="large"
-          className={styles.button}
-          onClick={onClose}
-        >
-          Отменить
-        </SecondaryButton> */}
         <PrimaryButton
           size="large"
           className={styles.button}

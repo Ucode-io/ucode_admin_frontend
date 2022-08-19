@@ -25,7 +25,6 @@ import Gantt from "./Gantt"
 
 const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   const { tableSlug } = useParams()
-
   const {filters} = useFilters(tableSlug, view.id)
 
   const [dateFilters, setDateFilters] = useState([
@@ -50,8 +49,6 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
     }
     return result
   }, [dateFilters])
-
-  console.log('aaaa =>', dateFilters, datesList)
 
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters }],
@@ -93,7 +90,7 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   const tabResponses = useQueries(queryGenerator(groupFields, filters))
   const tabs = tabResponses?.map((response) => response?.data)
   const tabLoading = tabResponses?.some((response) => response?.isLoading)
-
+  
   return (
     <div>
       <FiltersBlock
@@ -111,7 +108,6 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
         />
-
         <CRangePicker interval={'months'} value={dateFilters} onChange={setDateFilters} />
         <FastFilter view={view} fieldsMap={fieldsMap} />
       </FiltersBlock>
@@ -128,20 +124,20 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
           // workingDays={workingDays}
         />
       )}
+
+
+
     </div>
   )
 }
 
-// ========== UTILS==========
+// ========== UTILS ==========
 
 const queryGenerator = (groupFields, filters = {}) => {
   return groupFields?.map((field) => promiseGenerator(field, filters))
 }
 
 const promiseGenerator = (groupField, filters = {}) => {
-
-  
-
   const filterValue = filters[groupField.slug]
   const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {}
 

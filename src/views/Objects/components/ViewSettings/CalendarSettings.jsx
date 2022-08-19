@@ -18,6 +18,12 @@ const CalendarSettings = ({ columns, form }) => {
     return listToOptions(columns, 'label', 'slug')
   }, [ columns ])
 
+  const computedPickListColumns = useMemo(() => {
+
+    const filteredColumns = columns.filter(({ type }) => type === 'PICK_LIST')
+    return listToOptions(filteredColumns, 'label', 'id')
+  }, [ columns ])
+
   const selectedDisableDatesTableSlug = useWatch({
     control: form.control,
     name: "disable_dates.table_slug"
@@ -60,7 +66,9 @@ const CalendarSettings = ({ columns, form }) => {
           </FRow>
 
 
-          <FRow style={{ opacity: 0 }} ></FRow>
+          <FRow label="Status field">
+            <HFSelect options={computedPickListColumns} control={form.control} name="status_field_slug" />
+          </FRow>
           
 
         </div>

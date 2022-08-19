@@ -10,6 +10,7 @@ import InfoBlock from "./InfoBlock"
 import { Menu } from "@mui/material"
 import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel"
 import IconGenerator from "../../../components/IconPicker/IconGenerator"
+import CalendarStatusSelect from "../components/CalendarStatusSelect"
 
 const DataCard = ({
   date,
@@ -19,15 +20,16 @@ const DataCard = ({
   viewFields,
   navigateToEditPage,
 }) => {
+  const [info, setInfo] = useState(data)
   const [anchorEl, setAnchorEl] = useState(null)
   const ref = useRef()
   const [target, setTarget] = useState()
   const { tableSlug } = useParams()
   const { timeList } = useTimeList()
-  const [isSingleLine, setIsSingleLine] = useState(data.calendar?.height <= 40)
+  const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40)
 
   const [frame, setFrame] = useState({
-    translate: [0, data.calendar?.startPosition ?? 0],
+    translate: [0, info.calendar?.startPosition ?? 0],
   })
 
   useEffect(() => {
@@ -44,13 +46,15 @@ const DataCard = ({
     const startTime = computeTime(beginIndex)
     const endTime = computeTime(endIndex)
 
+    const computedData = {
+      ...info,
+      [view.calendar_from_slug]: startTime,
+      [view.calendar_to_slug]: endTime,
+    }
+
     constructorObjectService.update(tableSlug, {
-      data: {
-        ...data,
-        [view.calendar_from_slug]: startTime,
-        [view.calendar_to_slug]: endTime,
-      },
-    })
+      data: computedData,
+    }).then(res => setInfo(computedData))
   }
 
   const computeTime = (index) => {
@@ -121,8 +125,8 @@ const DataCard = ({
         className={styles.infoBlockWrapper}
         style={{
           top: 0,
-          transform: `translateY(${data.calendar?.startPosition}px)`,
-          height: data.calendar?.height,
+          transform: `translateY(${info.calendar?.startPosition}px)`,
+          height: info.calendar?.height,
         }}
         onClick={openMenu}
         ref={ref}
@@ -130,7 +134,7 @@ const DataCard = ({
         <div className={styles.infoCard} style={{ height: "100%" }}>
           <InfoBlock
             viewFields={viewFields}
-            data={data}
+            data={info}
             isSingleLine={isSingleLine}
           />
         </div>
@@ -146,21 +150,23 @@ const DataCard = ({
       >
         <div className={styles.popupHeader} >
           <p className={styles.time}>
-            {data.calendar?.elementFromTime ? format(data.calendar?.elementFromTime, "HH:mm") : ''} -
-            {data.calendar?.elementToTime ? format(data.calendar?.elementToTime, " HH:mm") : ''}
+            {info.calendar?.elementFromTime ? format(info.calendar?.elementFromTime, "HH:mm") : ''} -
+            {info.calendar?.elementToTime ? format(info.calendar?.elementToTime, " HH:mm") : ''}
           </p>
 
-          <IconGenerator onClick={() => navigateToEditPage(data)} className={styles.linkIcon} icon="arrow-up-right-from-square.svg" size={16} />
+          <IconGenerator onClick={() => navigateToEditPage(info)} className={styles.linkIcon} icon="arrow-up-right-from-square.svg" size={16} />
 
         </div>
         {viewFields?.map((field) => (
           <div>
             <b>{field.label}: </b>
             {field.type === "LOOKUP"
-              ? getRelationFieldTableCellLabel(field, data, field.table_slug)
-              : data[field.slug]}
+              ? getRelationFieldTableCellLabel(field, info, field.table_slug)
+              : info[field.slug]}
           </div>
         ))}
+
+        <CalendarStatusSelect view={view} fieldsMap={fieldsMap} info={info} setInfo={setInfo} />
       </Menu>
 
       <Moveable

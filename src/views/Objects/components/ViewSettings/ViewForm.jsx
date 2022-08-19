@@ -168,6 +168,7 @@ const getInitialValues = (initialValues, tableSlug, columns, relationColumns) =>
       name: "",
       main_field: "",
       time_interval: 60,
+      status_field_slug: "",
       disable_dates: {
         day_slug: "",
         table_slug: "",
@@ -185,6 +186,7 @@ const getInitialValues = (initialValues, tableSlug, columns, relationColumns) =>
     users: initialValues?.users ?? [],
     name: initialValues?.name ?? "",
     main_field: initialValues?.main_field ?? "",
+    status_field_slug: initialValues?.status_field_slug ?? "",
     disable_dates: {
       day_slug: initialValues?.disable_dates?.day_slug ?? "",
       table_slug: initialValues?.disable_dates?.table_slug ?? "",

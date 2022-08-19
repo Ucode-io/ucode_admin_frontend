@@ -34,5 +34,6 @@ export const fieldTypes = [
   "SWITCH",
   "PHOTO",
   "PHONE",
-  "ICON"
+  "ICON",
+  "PASSWORD",
 ]

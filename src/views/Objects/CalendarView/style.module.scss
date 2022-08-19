@@ -114,12 +114,14 @@
     height: 40px;
     position: absolute;
 
-    .infoBlock {
+    &.resizing .infoCard:hover {
       background-color: #E2F4E6;
-      // border-radius: 12px;
-      padding: 8px;
-      padding-top: 20px;
-      border-radius: 12px 12px 0 0;
+    }
+
+    .infoCard {
+      background-color: #E2F4E6;
+      padding: 5px;
+      // padding-top: 20px;
       overflow: hidden;
       height: 70px;
       cursor: pointer;
@@ -132,6 +134,14 @@
       .time {
         color: #84919A;
         font-size: 12px;
+      }
+    }
+
+    .infoBlock {
+      &.singleLine {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
     }
   }

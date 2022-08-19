@@ -1,17 +1,19 @@
 import { format, setHours, setMinutes } from "date-fns"
 import { useEffect, useRef, useState } from "react"
-import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel"
 import styles from "./style.module.scss"
 import Moveable from "react-moveable"
-import { timesList } from "../../../utils/timesList"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { useParams } from "react-router-dom"
 import "./moveable.scss"
+import useTimeList from "../../../hooks/useTimeList"
+import InfoBlock from "./InfoBlock"
 
 const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage }) => {
   const ref = useRef()
   const [target, setTarget] = useState()
   const { tableSlug } = useParams()
+  const { timeList } = useTimeList()
+  const [isMultiLine, setIsMultiLine] = useState(data.calendar?.height > 40)
 
   const [frame, setFrame] = useState({
     translate: [0, data.calendar?.startPosition ?? 0],
@@ -22,16 +24,13 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
     setTarget(ref.current)
   }, [ref])
 
-
   const onPositionChange = (position) => {
     if (!position || position.translate[1] < 0) return null
 
     const beginIndex = Math.floor((position.translate[1] + 2) / 40)
     const endIndex = Math.ceil((position.translate[1] + position.height) / 40)
-    
-    
 
-
+    
 
     const startTime = computeTime(beginIndex)
     const endTime = computeTime(endIndex)
@@ -46,12 +45,12 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
   }
 
   const computeTime = (index) => {
-    const startTime = timesList[index]?.split('-')?.[0]
-    const time = startTime?.split(':')
+    const computedTime = timeList[index]
 
-    const hour = Number(time?.[0])
-    const minute = Number(time?.[1])
+    console.log('START TIME ===>', computedTime, index)
 
+    const hour = Number(format(computedTime, 'H'))
+    const minute =  Number(format(computedTime, 'm'))
 
 
     return setMinutes(setHours(date, hour), minute)
@@ -82,6 +81,7 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
    const onResizeStart = (e) => {
     e.setOrigin(["%", "%"])
     e.dragStart && e.dragStart.set(frame.translate)
+    ref.current.classList.add(styles.resizing);
   }
 
   const onResize = ({ target, height, drag }) => {
@@ -95,6 +95,7 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
     if (lastEvent) {
       frame.translate = lastEvent.drag.beforeTranslate
       onPositionChange(lastEvent.drag)
+      ref.current.classList.remove(styles.resizing);
     }
   }
 
@@ -107,8 +108,9 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
       onClick={() => navigateToEditPage(data)}
       ref={ref}
     >
-      <div className={styles.infoBlock} style={{ height: '100%' }}>
-        {viewFields?.map((field) => (
+      <div className={styles.infoCard} style={{ height: '100%' }}>
+        <InfoBlock viewFields={viewFields} data={data} />
+        {/* {viewFields?.map((field) => (
           <div>
             <b>{field.label}: </b>
             {field.type === "LOOKUP"
@@ -118,9 +120,9 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
         ))}
 
         <p className={styles.time}>
-          {data.calendar?.elementFromTime ? format(data.calendar?.elementFromTime, "HH:mm") : ''} -{" "}
-          {data.calendar?.elementToTime ? format(data.calendar?.elementToTime, "HH:mm") : ''}
-        </p>
+          {data.calendar?.elementFromTime ? format(data.calendar?.elementFromTime, "HH:mm") : ''} -
+          {data.calendar?.elementToTime ? format(data.calendar?.elementToTime, " HH:mm") : ''}
+        </p> */}
       </div>
     </div>
 
@@ -129,8 +131,8 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
           // container={container}
           draggable
           resizable
-          // throttleDrag={40}
-          // throttleResize={40}
+          throttleDrag={40}
+          throttleResize={40}
           keepRatio={false}
           origin={false}
           renderDirections={["s", "n"]}

@@ -1,7 +1,7 @@
 
 
 
-
+@use "/src/scss/colors";
 
 
 
@@ -130,11 +130,6 @@
       &:hover {
         background-color: #aad4b3;
       }
-
-      .time {
-        color: #84919A;
-        font-size: 12px;
-      }
     }
 
     .infoBlock {
@@ -146,4 +141,33 @@
     }
   }
 
+}
+
+.time {
+  color: #84919A;
+  font-size: 12px;
+}
+
+.paper {
+
+}
+
+.menu {
+  padding: 8px;
+  max-width: 200px;
+}
+
+.popupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.linkIcon {
+  transition-duration: .3s;
+  cursor: pointer;
+
+  &:hover {
+    color: colors.$primary;
+  }
 }

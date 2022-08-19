@@ -3,6 +3,7 @@ import { memo, useMemo } from "react"
 import { formatDate } from "../../utils/dateFormatter"
 import { numberWithSpaces } from "../../utils/formatNumbers"
 import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel"
+import { parseBoolean } from "../../utils/parseBoolean"
 import IconGenerator from "../IconPicker/IconGenerator"
 import LogoDisplay from "../LogoDisplay"
 import TableTag from "../TableTag"
@@ -48,7 +49,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     case "CHECKBOX":
     case "SWITCH":
-      return JSON.parse(value) ? (
+      return parseBoolean(value) ? (
         <TableTag color="success">
           {field.attributes?.text_true ?? 'Да'}
         </TableTag>

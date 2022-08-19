@@ -1,4 +1,3 @@
-import { Download, Upload } from "@mui/icons-material"
 import {
   add,
   differenceInDays,
@@ -8,9 +7,7 @@ import {
 } from "date-fns"
 import { useMemo, useState } from "react"
 import { useQueries, useQuery } from "react-query"
-import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import CRangePicker from "../../../components/DatePickers/CRangePicker"
 import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
@@ -19,6 +16,7 @@ import constructorObjectService from "../../../services/constructorObjectService
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { listToMap } from "../../../utils/listToMap"
 import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd"
+import ExcelButtons from "../components/ExcelButtons"
 import FastFilter from "../components/FastFilter"
 import FastFilterButton from "../components/FastFilter/FastFilterButton"
 import SettingsButton from "../components/ViewSettings/SettingsButton"
@@ -102,12 +100,7 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
         extra={
           <>
             <FastFilterButton view={view} />
-            <RectangleIconButton color="white">
-              <Upload />
-            </RectangleIconButton>
-            <RectangleIconButton color="white">
-              <Download />
-            </RectangleIconButton>
+            <ExcelButtons />
 
             <SettingsButton />
           </>

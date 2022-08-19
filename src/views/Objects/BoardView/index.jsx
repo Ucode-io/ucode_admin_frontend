@@ -12,6 +12,7 @@ import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { applyDrag } from "../../../utils/applyDrag"
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
+import ExcelButtons from "../components/ExcelButtons"
 import FastFilter from "../components/FastFilter"
 import FastFilterButton from "../components/FastFilter/FastFilterButton"
 import SettingsButton from "../components/ViewSettings/SettingsButton"
@@ -68,12 +69,7 @@ const BoardView = ({
           <>
             <FastFilterButton view={view} />
 
-            <RectangleIconButton color="white">
-              <Upload />
-            </RectangleIconButton>
-            <RectangleIconButton color="white">
-              <Download />
-            </RectangleIconButton>
+            <ExcelButtons />
 
             <SettingsButton />
           </>

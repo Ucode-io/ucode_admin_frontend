@@ -13,6 +13,7 @@ import constructorObjectService from "../../../services/constructorObjectService
 import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
 import { listToMap } from "../../../utils/listToMap"
 import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd"
+import ExcelButtons from "../components/ExcelButtons"
 import FastFilter from "../components/FastFilter"
 import FastFilterButton from "../components/FastFilter/FastFilterButton"
 import SettingsButton from "../components/ViewSettings/SettingsButton"
@@ -137,12 +138,7 @@ const CalendarView = ({
         extra={
           <>
           <FastFilterButton view={view} />
-            <RectangleIconButton color="white">
-              <Upload />
-            </RectangleIconButton>
-            <RectangleIconButton color="white">
-              <Download />
-            </RectangleIconButton>
+          <ExcelButtons />
 
             <SettingsButton />
           </>

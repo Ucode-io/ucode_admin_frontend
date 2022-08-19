@@ -8,6 +8,7 @@ const constructorObjectService = {
   delete: (tableSlug, id) => request.delete(`/object/${tableSlug}/${id}`, { data: { data: {} } }),
   updateManyToMany: (data) => request.put('/many-to-many', data),
   deleteManyToMany: (data) => request.delete('/many-to-many', { data }),
+  downloadExcel: (tableSlug, data) => request.post(`/object/excel/${tableSlug}`, data) 
 
 }
 

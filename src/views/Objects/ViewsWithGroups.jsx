@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 // import OutsideClickHandler from "react-outside-click-handler";
 // import { CheckIcon, HeightControlIcon } from "../../assets/icons/icon";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import ExcelButtons from "./components/ExcelButtons";
 
 const ViewsWithGroups = ({
   views,
@@ -80,12 +81,7 @@ const ViewsWithGroups = ({
         extra={
           <>
             <FastFilterButton view={view} />
-            <RectangleIconButton color="white">
-              <Upload />
-            </RectangleIconButton>
-            <RectangleIconButton color="white">
-              <Download />
-            </RectangleIconButton>
+            <ExcelButtons />
 
             <SettingsButton />
           </>

@@ -17,8 +17,6 @@ const TableView = ({
   
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id)
 
-  console.log("FILTERSsss -->", filters)
-
   const [currentPage, setCurrentPage] = useState(1)
   const [deleteLoader, setDeleteLoader] = useState(false)
 

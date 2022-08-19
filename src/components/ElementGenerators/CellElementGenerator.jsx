@@ -48,7 +48,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     case "CHECKBOX":
     case "SWITCH":
-      return JSON.parse(value) ? (
+      return value && JSON.parse(value) ? (
         <TableTag color="success">
           {field.attributes?.text_true ?? 'Да'}
         </TableTag>

@@ -1,4 +1,3 @@
-import { Download, Upload } from "@mui/icons-material";
 import { useState } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CreateButton from "../../components/Buttons/CreateButton";
@@ -20,11 +19,11 @@ import { useQuery } from "react-query";
 import useFilters from "../../hooks/useFilters";
 import FastFilterButton from "./components/FastFilter/FastFilterButton";
 import { useDispatch, useSelector } from "react-redux";
-// import OutsideClickHandler from "react-outside-click-handler";
-import { CheckIcon, HeightControlIcon } from "../../assets/icons/icon";
+import { CheckIcon } from "../../assets/icons/icon";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import ExcelButtons from "./components/ExcelButtons";
+import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 
 const ViewsWithGroups = ({
   views,
@@ -82,7 +81,37 @@ const ViewsWithGroups = ({
           <>
             <FastFilterButton view={view} />
             <ExcelButtons />
-
+            {view.type === "TABLE" && (
+              <RectangleIconButton color="white" onClick={() => setHeightControl(!heightControl)}>
+                <div
+                  style={{ position: "relative" }}
+                >
+                  <span
+                    style={{
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <FormatLineSpacingIcon />
+                  </span>
+                  {heightControl && (
+                    <div className={style.heightControl}>
+                      {tableHeightOptions.map((el) => (
+                        <div
+                          key={el.value}
+                          className={style.heightControl_item}
+                          onClick={() => handleHeightControl(el.value)}
+                        >
+                          {el.label}
+                          {tableHeight === el.value ? <CheckIcon /> : null}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </RectangleIconButton>
+            )}
             <SettingsButton />
           </>
         }
@@ -104,29 +133,7 @@ const ViewsWithGroups = ({
               ))}
             </TabList>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              {/* <div style={{ position: "relative" }}>
-                <span
-                  onClick={() => setHeightControl(!heightControl)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <HeightControlIcon />
-                </span>
-                {heightControl && (
-                  <div className={style.heightControl}>
-                    {tableHeightOptions.map((el) => (
-                      <div
-                        key={el.value}
-                        className={style.heightControl_item}
-                        onClick={() => handleHeightControl(el.value)}
-                      >
-                        {el.label}
-                        {tableHeight === el.value ? <CheckIcon /> : null}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div> */}
-              <PermissionWrapperV2 tabelSlug={tableSlug} type='write'>
+              <PermissionWrapperV2 tabelSlug={tableSlug} type="write">
                 <CreateButton type="secondary" onClick={navigateToCreatePage} />
               </PermissionWrapperV2>
             </div>

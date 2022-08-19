@@ -110,7 +110,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
       },
       login_label: "",
       password_label: "",
-      lgoin_view: "",
+      login_view: "",
       password_view: "",
     },
   });
@@ -236,13 +236,15 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                         fullWidth
                         disabled
                       />
-                      <HFTextField
-                        name=""
-                        control={loginForm.control}
-                        fullWidth
-                        value={login?.password_label}
-                        disabled
-                      />
+                      {login_strategy === "Login with password" && (
+                        <HFTextField
+                          name=""
+                          control={loginForm.control}
+                          fullWidth
+                          value={login?.password_label}
+                          disabled
+                        />
+                      )}
                     </>
                   ) : (
                     <>
@@ -259,19 +261,24 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                         control={loginForm.control}
                         fullWidth
                       />
-                      <HFTextField
-                        name=""
-                        value={selectedClient?.password}
-                        onChange={(e) => {
-                          setSelectedClient({
-                            ...selectedClient,
-                            password_label: e.target.value,
-                          });
-                          loginForm.setValue("password_label", e.target.value);
-                        }}
-                        control={loginForm.control}
-                        fullWidth
-                      />
+                      {login_strategy === "Login with password" && (
+                        <HFTextField
+                          name=""
+                          value={selectedClient?.password}
+                          onChange={(e) => {
+                            setSelectedClient({
+                              ...selectedClient,
+                              password_label: e.target.value,
+                            });
+                            loginForm.setValue(
+                              "password_label",
+                              e.target.value
+                            );
+                          }}
+                          control={loginForm.control}
+                          fullWidth
+                        />
+                      )}
                     </>
                   )}
                 </div>
@@ -285,13 +292,15 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                         fullWidth
                         disabled
                       />
-                      <HFTextField
-                        name=""
-                        control={loginForm.control}
-                        value={login?.password_view}
-                        fullWidth
-                        disabled
-                      />
+                      {login_strategy === "Login with password" && (
+                        <HFTextField
+                          name=""
+                          control={loginForm.control}
+                          value={login?.password_view}
+                          fullWidth
+                          disabled
+                        />
+                      )}
                     </>
                   ) : (
                     <>
@@ -309,20 +318,22 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                         value={selectedClient?.login_view}
                         required
                       />
-                      <HFSelect
-                        options={fields}
-                        control={loginForm.control}
-                        name="password_view"
-                        onChange={(e) => {
-                          loginForm.setValue("password_view", e);
-                          setSelectedClient({
-                            ...selectedClient,
-                            password_view: e,
-                          });
-                        }}
-                        value={selectedClient?.password_view}
-                        required
-                      />
+                      {login_strategy === "Login with password" && (
+                        <HFSelect
+                          options={fields}
+                          control={loginForm.control}
+                          name="password_view"
+                          onChange={(e) => {
+                            loginForm.setValue("password_view", e);
+                            setSelectedClient({
+                              ...selectedClient,
+                              password_view: e,
+                            });
+                          }}
+                          value={selectedClient?.password_view}
+                          required
+                        />
+                      )}
                     </>
                   )}
                 </div>
@@ -401,7 +412,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                       options={fields}
                       control={loginForm.control}
                       name="login_view"
-                      value={loginForm.getValues().login_table.view_fields[0]}
+                      value={loginForm.getValues().login_view}
                       onChange={(e) => {
                         loginForm.setValue("login_view", e);
                       }}
@@ -411,7 +422,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                       <HFSelect
                         options={fields}
                         control={loginForm.control}
-                        value={loginForm.getValues().login_table.view_fields[1]}
+                        value={loginForm.getValues().password_view}
                         name="password_view"
                         onChange={(e) => {
                           loginForm.setValue("password_view", e);

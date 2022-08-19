@@ -35,11 +35,11 @@ const DataCard = ({
     setTarget(ref.current)
   }, [ref])
 
-  const onPositionChange = (position) => {
+  const onPositionChange = (position, height) => {
     if (!position || position.translate[1] < 0) return null
 
     const beginIndex = Math.floor((position.translate[1] + 2) / 40)
-    const endIndex = Math.ceil((position.translate[1] + position.height) / 40)
+    const endIndex = Math.ceil((position.translate[1] + height) / 40)
 
     const startTime = computeTime(beginIndex)
     const endTime = computeTime(endIndex)
@@ -55,8 +55,6 @@ const DataCard = ({
 
   const computeTime = (index) => {
     const computedTime = timeList[index]
-
-    console.log("START TIME ===>", computedTime, index)
 
     const hour = Number(format(computedTime, "H"))
     const minute = Number(format(computedTime, "m"))
@@ -79,7 +77,7 @@ const DataCard = ({
   const onDragEnd = ({ lastEvent }) => {
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate
-      onPositionChange(lastEvent)
+      onPositionChange(lastEvent.drag, lastEvent.height)
     }
   }
 
@@ -103,7 +101,7 @@ const DataCard = ({
   const onResizeEnd = ({ lastEvent }) => {
     if (lastEvent) {
       frame.translate = lastEvent.drag.beforeTranslate
-      onPositionChange(lastEvent.drag)
+      onPositionChange(lastEvent.drag, lastEvent.height)
       ref.current.classList.remove(styles.resizing)
     }
   }
@@ -111,7 +109,7 @@ const DataCard = ({
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget)
   }
-
+  
   const closeMenu = () => {
     setAnchorEl(null)
   }
@@ -135,19 +133,6 @@ const DataCard = ({
             data={data}
             isSingleLine={isSingleLine}
           />
-          {/* {viewFields?.map((field) => (
-          <div>
-            <b>{field.label}: </b>
-            {field.type === "LOOKUP"
-              ? getRelationFieldTableCellLabel(field, data, field.table_slug)
-              : data[field.slug]}
-          </div>
-        ))}
-
-        <p className={styles.time}>
-          {data.calendar?.elementFromTime ? format(data.calendar?.elementFromTime, "HH:mm") : ''} -
-          {data.calendar?.elementToTime ? format(data.calendar?.elementToTime, " HH:mm") : ''}
-        </p> */}
         </div>
       </div>
 

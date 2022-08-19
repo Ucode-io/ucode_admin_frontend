@@ -68,6 +68,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   const onSubmit = (data) => {
     const computedData = {
       ...data,
+      client_type: computedClientTypes.find(item => item.value === data.client_type).label,
       tables: data.tables[0].object_id ? data.tables : [],
     }
 

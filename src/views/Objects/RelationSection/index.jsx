@@ -26,6 +26,9 @@ const RelationSection = ({ relations }) => {
     else navigateToForm(relation.relatedTable, "CREATE", null, { [`${tableSlug}_id`]: id })
   }
 
+  console.log("SELECTED -->", selectedTabIndex)
+
+
   if(!relations?.length) return null
 
   return (
@@ -38,7 +41,7 @@ const RelationSection = ({ relations }) => {
         />
       )}
     <Card className={styles.card}>
-      <Tabs forceRenderTabPanel tabIndex={selectedTabIndex} onChange={setSelectedTabIndex} >
+      <Tabs forceRenderTabPanel selectedIndex={selectedTabIndex}  onSelect={setSelectedTabIndex} >
         <div className={styles.cardHeader}>
           <TabList className={styles.tabList} >
             {relations?.map((relation, index) => (

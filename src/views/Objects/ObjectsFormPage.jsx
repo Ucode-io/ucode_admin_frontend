@@ -207,15 +207,8 @@ const ObjectsFormPage = () => {
         />
 
         <div className={styles.secondaryCardSide}>
-          {<RelationSection relations={tableRelations} control={control} />}
+          <RelationSection relations={tableRelations} control={control} />
 
-          {/* {tableRelations?.map((relation) => (
-            <RelationSection
-              key={relation.id}
-              relation={relation}
-              control={control}
-            />
-          ))} */}
         </div>
       </div>
 

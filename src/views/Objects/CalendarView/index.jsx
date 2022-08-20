@@ -140,7 +140,7 @@ const CalendarView = ({
           <FastFilterButton view={view} />
           <ExcelButtons />
 
-            <SettingsButton />
+          <SettingsButton />
           </>
         }
       >

@@ -50,7 +50,6 @@ const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
         updated_fields: updatedFields,
       }
 
-      console.log("DATAsssss ===>", data)
       await constructorObjectService.updateMultiple(tableSlug, data)
 
       onClose()

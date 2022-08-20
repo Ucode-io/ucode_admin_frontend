@@ -332,12 +332,13 @@ const DataTable = ({
             ))}
             <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
               {(onDeleteClick || onEditClick) && (
-                <CTableCell>
+                <CTableCell style={{ padding: "8px 12px 4px", verticalAlign: 'middle' }}>
                   <div className="flex">
                     {onEditClick && (
                       <RectangleIconButton
                         color="success"
                         className="mr-1"
+                        size='small'
                         onClick={() => onEditClick(row, rowIndex)}
                       >
                         <Edit color="success" />

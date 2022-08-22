@@ -90,20 +90,20 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
         data: {
           ...resData.data,
         },
-        tables: getValues().tables[0].object_id ? [...getValues().tables] : [],
+        tables: [],
       })
       .then((res) => {
-        dispatch(authActions.loginSuccess(res))
+        dispatch(authActions.loginSuccess(res));
       });
   };
 
   const onSubmit = (data) => {
     const computedData = {
       ...data,
-      client_type: computedClientTypes.find(
-        (item) => item.value === data.client_type
-      ).label,
-      tables: data.tables[0].object_id ? data.tables : [],
+      client_type: computedClientTypes?.find(
+        (item) => item?.value === data?.client_type
+      )?.label,
+      tables: data?.tables[0]?.object_id ? data?.tables : [],
     };
 
     // return console.log('computedData', computedData)
@@ -177,7 +177,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
               className={classes.formArea}
               style={{ marginTop: "10px" }}
             >
-              {!isCodeSent && (
+              {selectedTab !== 1 ? (
                 <div className={classes.formRow}>
                   <p className={classes.label}>Тип пользователя</p>
                   <HFSelect
@@ -195,7 +195,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                     }
                   />
                 </div>
-              )}
+              ) : null}
 
               <TabPanel>
                 <div className={classes.formRow}>
@@ -296,7 +296,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                 </div>
               </TabPanel>
               {connections?.length
-                ? !isCodeSent && (
+                ? selectedTab !== 1 && (
                     <DynamicFields
                       // key={table.slug}
                       table={connections}

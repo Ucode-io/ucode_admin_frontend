@@ -1,5 +1,5 @@
 import { AccountCircle, Lock, SupervisedUserCircle } from "@mui/icons-material";
-import { Card, InputAdornment } from "@mui/material";
+import { InputAdornment } from "@mui/material";
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,7 +10,9 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
+import authService from "../../../services/auth/authService";
 import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
+import { authActions } from "../../../store/auth/auth.slice";
 import { loginAction } from "../../../store/auth/auth.thunk";
 import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
@@ -22,10 +24,16 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState(0);
   const [connections, setConnections] = useState([]);
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [resData, setResData] = useState({});
 
-  const { control, handleSubmit, setValue, watch } = useForm({
+  const { control, handleSubmit, setValue, getValues, watch } = useForm({
     defaultValues: {
       client_type: "",
+      recipient: "",
+      sms_id: "",
+      otp: "",
+      email: "",
       username: "",
       password: "",
       tables: [
@@ -37,9 +45,11 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     },
   });
 
+  const otpCode = watch("otp");
+
   useEffect(() => {
-    setValue('username', '');
-    setValue('password', '');
+    setValue("username", "");
+    setValue("password", "");
   }, [selectedTab]);
 
   const { data: { data } = {} } = useQuery(["GET_CLIENT_TYPES"], () => {
@@ -71,6 +81,20 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     );
   }, [clientTypeId, data?.response]);
 
+  const verifySmsCode = (e) => {
+    e.preventDefault();
+    authService
+      .verifyCode(resData?.sms_id, otpCode, {
+        data: {
+          ...resData.data,
+        },
+        tables: getValues().tables[0].object_id ? [...getValues().tables] : [],
+      })
+      .then((res) => {
+        dispatch(authActions.loginSuccess(res))
+      });
+  };
+
   const onSubmit = (data) => {
     const computedData = {
       ...data,
@@ -80,18 +104,35 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
       tables: data.tables[0].object_id ? data.tables : [],
     };
 
+    // return console.log('computedData', computedData)
+
     const cashboxData = getCashboxData(data);
 
     setLoading(true);
 
-    dispatch(loginAction({ data: computedData, cashboxData }))
-      .unwrap()
-      .then(() => {
-        if (selectedClientType?.name === "CASHIER") {
-          navigate("/cashbox/opening");
-        }
-      })
-      .catch(() => setLoading(false));
+    if (selectedTab === 0) {
+      dispatch(loginAction({ data: computedData, cashboxData }))
+        .unwrap()
+        .then(() => {
+          if (selectedClientType?.name === "CASHIER") {
+            navigate("/cashbox/opening");
+          }
+        })
+        .catch(() => setLoading(false));
+    } else if (selectedTab === 1) {
+      authService
+        .sendCode({ recipient: computedData.recipient, text: "Code..." })
+        .then((res) => {
+          console.log("res", res);
+          setResData(res);
+          setIsCodeSent(true);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log("err", err);
+          setLoading(false);
+        });
+    }
   };
 
   const getCashboxData = (data) => {
@@ -112,7 +153,10 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   }, [clientTypeId]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
+    <form
+      onSubmit={isCodeSent ? verifySmsCode : handleSubmit(onSubmit)}
+      className={classes.form}
+    >
       <Tabs
         direction={"ltr"}
         selectedIndex={selectedTab}
@@ -131,23 +175,25 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
               className={classes.formArea}
               style={{ marginTop: "10px" }}
             >
-              <div className={classes.formRow}>
-                <p className={classes.label}>Тип пользователя</p>
-                <HFSelect
-                  // required
-                  control={control}
-                  name="client_type"
-                  size="large"
-                  fullWidth
-                  options={computedClientTypes}
-                  placeholder="Выберите тип пользователя"
-                  startAdornment={
-                    <InputAdornment position="start">
-                      <SupervisedUserCircle style={{ fontSize: "30px" }} />
-                    </InputAdornment>
-                  }
-                />
-              </div>
+              {!isCodeSent && (
+                <div className={classes.formRow}>
+                  <p className={classes.label}>Тип пользователя</p>
+                  <HFSelect
+                    // required
+                    control={control}
+                    name="client_type"
+                    size="large"
+                    fullWidth
+                    options={computedClientTypes}
+                    placeholder="Выберите тип пользователя"
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <SupervisedUserCircle style={{ fontSize: "30px" }} />
+                      </InputAdornment>
+                    }
+                  />
+                </div>
+              )}
 
               <TabPanel>
                 <div className={classes.formRow}>
@@ -196,7 +242,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                   <HFTextField
                     required
                     control={control}
-                    name="username"
+                    name="recipient"
                     size="large"
                     fullWidth
                     placeholder="Введите телефон"
@@ -210,6 +256,20 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                     }}
                   />
                 </div>
+                {isCodeSent && (
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>Смс код *</p>
+                    <HFTextField
+                      required
+                      control={control}
+                      name="otp"
+                      size="large"
+                      fullWidth
+                      placeholder="Введите смс код"
+                      autoFocus
+                    />
+                  </div>
+                )}
               </TabPanel>
               {/* Email */}
               <TabPanel>
@@ -218,7 +278,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                   <HFTextField
                     required
                     control={control}
-                    name="username"
+                    name="email"
                     size="large"
                     fullWidth
                     placeholder="Введите Эл. адрес"
@@ -233,15 +293,17 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                   />
                 </div>
               </TabPanel>
-              {connections?.length ? (
-                <DynamicFields
-                  // key={table.slug}
-                  table={connections}
-                  control={control}
-                  setValue={setValue}
-                  // index={index}
-                />
-              ) : null}
+              {connections?.length
+                ? !isCodeSent && (
+                    <DynamicFields
+                      // key={table.slug}
+                      table={connections}
+                      control={control}
+                      setValue={setValue}
+                      // index={index}
+                    />
+                  )
+                : null}
             </div>
           </div>
         </div>

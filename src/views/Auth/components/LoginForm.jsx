@@ -50,6 +50,8 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   useEffect(() => {
     setValue("username", "");
     setValue("password", "");
+    setValue("recipient", "");
+    setIsCodeSent(false);
   }, [selectedTab]);
 
   const { data: { data } = {} } = useQuery(["GET_CLIENT_TYPES"], () => {

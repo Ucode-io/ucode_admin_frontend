@@ -86,7 +86,13 @@ const ObjectsPage = () => {
         </div>
       </Tabs>
 
-      {!views?.length && <FiltersBlock extra={<SettingsButton />} />}
+      {!views?.length && <FiltersBlock>
+        <ViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+        />
+      </FiltersBlock>}
 
     </>
   )

@@ -23,13 +23,21 @@ import applicationService from "../../services/applicationSercixe";
 import constructorObjectService from "../../services/constructorObjectService";
 import roleServiceV2 from "../../services/roleServiceV2";
 
+const staticTables = [
+  {
+    label: "APP",
+    slug: "app",
+    children: "true",
+  }
+];
+
 const MatrixRolePage = () => {
   const { roleId } = useParams();
   const [appId, setAppId] = useState(null);
   const [tableSlug, setTableSlug] = useState(null);
   const [role, setRole] = useState({});
-  const [apps, setApps] = useState([]);
-  const [roles, setRoles] = useState([]);
+  const [apps, setApps] = useState([{ name: "Settings", id: "settings" }]);
+  const [roles, setRoles] = useState([{ name: "Settings", id: "settings" }]);
   const [recordPermissions, setRecordPermissions] = useState([]);
 
   const roleForm = useForm({});
@@ -108,8 +116,8 @@ const MatrixRolePage = () => {
     applicationService
       .getList()
       .then((res) => {
-        setApps(res?.apps || []);
-        setRoles(res?.apps || []);
+        setApps((prev) => [...prev, ...(res?.apps || [])]);
+        setRoles((prev) => [...prev, ...(res?.apps || [])]);
       })
       .catch((err) => {
         console.log("err", err);
@@ -117,26 +125,42 @@ const MatrixRolePage = () => {
   };
 
   const getAppChildren = (id) => {
-    applicationService
-      .getById(id)
-      .then((res) => {
-        const result = [];
-        apps?.forEach((element) => {
-          if (element?.id !== id) {
-            result.push(element);
-          } else {
-            result.push(element);
-            result.push(
-              ...res?.tables.map((table) => ({ ...table, children: "true" }))
-            );
-          }
-        });
-        setApps(result);
-      })
-      .catch((err) => {
-        console.log("err", err);
+    if (id === "settings") {
+      console.log("settings");
+      const result = [];
+      apps?.forEach((element) => {
+        if (element?.id !== id) {
+          result.push(element);
+        } else {
+          result.push(element);
+          result.push(...staticTables);
+        }
       });
+      setApps(result);
+    } else {
+      applicationService
+        .getById(id)
+        .then((res) => {
+          const result = [];
+          apps?.forEach((element) => {
+            if (element?.id !== id) {
+              result.push(element);
+            } else {
+              result.push(element);
+              result.push(
+                ...res?.tables.map((table) => ({ ...table, children: "true" }))
+              );
+            }
+          });
+          setApps(result);
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+    }
   };
+
+  console.log("apps", apps);
 
   useEffect(() => {
     if (!appId) {

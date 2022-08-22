@@ -123,7 +123,13 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
         .catch(() => setLoading(false));
     } else if (selectedTab === 1) {
       authService
-        .sendCode({ recipient: computedData.recipient, text: "Code..." })
+        .sendCode({
+          client_type: computedClientTypes?.find(
+            (item) => item?.value === data?.client_type
+          )?.label,
+          recipient: computedData.recipient,
+          text: "Code...",
+        })
         .then((res) => {
           console.log("res", res);
           setResData(res);
@@ -177,7 +183,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
               className={classes.formArea}
               style={{ marginTop: "10px" }}
             >
-              {selectedTab !== 1 ? (
+              {!isCodeSent && (
                 <div className={classes.formRow}>
                   <p className={classes.label}>Тип пользователя</p>
                   <HFSelect
@@ -195,7 +201,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                     }
                   />
                 </div>
-              ) : null}
+              )}
 
               <TabPanel>
                 <div className={classes.formRow}>
@@ -295,17 +301,13 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                   />
                 </div>
               </TabPanel>
-              {connections?.length
-                ? selectedTab !== 1 && (
-                    <DynamicFields
-                      // key={table.slug}
-                      table={connections}
-                      control={control}
-                      setValue={setValue}
-                      // index={index}
-                    />
-                  )
-                : null}
+              {connections?.length ? (
+                <DynamicFields
+                  table={connections}
+                  control={control}
+                  setValue={setValue}
+                />
+              ) : null}
             </div>
           </div>
         </div>

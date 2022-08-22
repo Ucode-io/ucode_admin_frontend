@@ -33,12 +33,14 @@ const routes = [
     title: "Конструктор",
     path: "/settings/constructor",
     icon: DashboardCustomizeIcon,
+    slug: "app",
     children: [
       {
         id: "apps",
         title: "Приложение",
         path: `/settings/constructor/apps`,
         isChild: true,
+        slug: 'app'
       },
       // {
       //   id: "objects",

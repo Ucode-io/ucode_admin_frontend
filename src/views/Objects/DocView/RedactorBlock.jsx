@@ -8,7 +8,6 @@ import Footer from "../../../components/Footer"
 import HFAutoWidthInput from "../../../components/FormElements/HFAutoWidthInput"
 import PageFallback from "../../../components/PageFallback"
 import documentTemplateService from "../../../services/documentTemplateService"
-import request from "../../../utils/request"
 import Redactor from "./Redactor"
 import styles from "./style.module.scss"
 
@@ -85,8 +84,8 @@ const RedactorBlock = ({
       <Footer
         extra={
           <>
-            <CancelButton onClick={() => setSelectedTemplate(null)} />{" "}
-            <SaveButton loading={btnLoader} onClick={handleSubmit(onSubmit)} />{" "}
+            <CancelButton onClick={() => setSelectedTemplate(null)} />
+            <SaveButton loading={btnLoader} onClick={handleSubmit(onSubmit)} />
           </>
         }
       />

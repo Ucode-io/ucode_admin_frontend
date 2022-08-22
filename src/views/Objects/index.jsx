@@ -11,6 +11,8 @@ import { listToMap } from "../../utils/listToMap"
 import FiltersBlock from "../../components/FiltersBlock"
 import SettingsButton from "./components/ViewSettings/SettingsButton"
 import GanttView from "./GanttView"
+import ViewTabSelector from "./components/ViewTypeSelector"
+
 import DocView from "./DocView"
 
 const ObjectsPage = () => {
@@ -100,7 +102,14 @@ const ObjectsPage = () => {
         </div>
       </Tabs>
 
-      {!views?.length && <FiltersBlock extra={<SettingsButton />} />}
+      {!views?.length && <FiltersBlock>
+        <ViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+        />
+      </FiltersBlock>}
+
     </>
   )
 }

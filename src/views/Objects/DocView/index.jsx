@@ -20,6 +20,7 @@ const DocView = ({
   const { tableSlug } = useParams()
   const [templates, setTemplates] = useState([])
   const [selectedTemplate, setSelectedTemplate] = useState(null)
+  const [selectedSettingsTab, setSelectedSettingsTab] = useState(0)
 
   const { isLoading } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],

@@ -39,6 +39,7 @@
     "@mui/styles": "^5.2.3",
     "@mui/x-date-pickers": "^5.0.0-beta.2",
     "@ngard/tiny-get": "^1.2.2",
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@reduxjs/toolkit": "^1.7.1",
     "@uiw/react-codemirror": "^4.11.4",
     "@uiw/react-textarea-code-editor": "^2.0.3",

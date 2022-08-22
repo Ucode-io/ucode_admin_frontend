@@ -1,5 +1,4 @@
-
-@use '/src/scss/colors';
+@use "/src/scss/colors";
 
 .mainBlock {
   display: flex;
@@ -7,16 +6,15 @@
 
 .redactorBlock {
   flex: 1;
-  
+
   // display: flex;
   // flex-direction: column;
   // align-items: center;
 
-
   .pageBlock {
     width: 800px;
     margin: 0 auto;
-    
+
     height: calc(100vh - 48px - 48px - 56px);
     overflow: auto;
 
@@ -24,9 +22,8 @@
       font-weight: 400;
       font-size: 14px;
       line-height: 16px;
-      color: #5B6871;
+      color: #5b6871;
       padding: 10px 0;
-
     }
   }
 }
@@ -35,7 +32,7 @@
   background-color: #fff;
   width: 100%;
   padding: 10px;
-  border: 1px solid #E5E9EB;
+  border: 1px solid #e5e9eb;
   padding-left: 55px;
 }
 
@@ -43,20 +40,19 @@
   width: 280px;
   background-color: #fff;
   height: calc(100vh - 48px - 48px);
-  border-right: 1px solid #E5E9EB;
+  border-right: 1px solid #e5e9eb;
 
   .doclistHeader {
     padding: 10px 20px;
-    border-bottom: 1px solid #E5E9EB;
+    border-bottom: 1px solid #e5e9eb;
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-
     .doclistHeaderTitle {
       font-size: 18px;
       font-weight: 600;
-      color: #252C32;
+      color: #252c32;
     }
   }
 
@@ -65,7 +61,11 @@
 
     .row {
       padding: 10px 20px;
-      border-bottom: 1px solid #E5E9EB;
+      border-bottom: 1px solid #e5e9eb;
+
+      &:hover {
+        background-color: #eef0f26c;
+      }
 
       &.active {
         background-color: colors.$primary;
@@ -73,29 +73,35 @@
       }
     }
 
-    .addButton {
+    .pageSizeRow {
       display: flex;
       align-items: center;
-      justify-content: center;
-      border: 1px dashed silver;
-      padding: 4px;
-      color: gray;
-      font-weight: 500;
+      padding: 10px 30px;
+      gap: 35px;
 
       &:hover {
-        border-color: colors.$primary;
-        color: colors.$primary;
+        background-color: #eef0f26c;
+      }
+
+      .pageSizeValue {
+        color: #6e7c87;
+      }
+
+      .documentIcon {
+        background: #eef0f2;
+        border-radius: 4px;
+        padding: 6px;
+        font-weight: 500;
+        font-size: 8px;
+        line-height: 10px;
       }
     }
-
   }
-
 }
-
 
 .docSettingsBlock {
   width: 280px;
   background-color: #fff;
   height: calc(100vh - 48px - 48px);
-  border-left: 1px solid #E5E9EB;
+  border-left: 1px solid #e5e9eb;
 }

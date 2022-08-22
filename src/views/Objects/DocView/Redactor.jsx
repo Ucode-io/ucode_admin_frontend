@@ -18,8 +18,6 @@ const Redactor = forwardRef(({ control }, ref) => {
     name: "html",
   })
 
-  console.log("VALUE ==>", value)
-
   const handleInitialize = useCallback((instance) => {
     editorCore.current = instance
     ref.current = instance

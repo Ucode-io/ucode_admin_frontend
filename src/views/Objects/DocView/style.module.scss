@@ -1,0 +1,101 @@
+
+@use '/src/scss/colors';
+
+.mainBlock {
+  display: flex;
+}
+
+.redactorBlock {
+  flex: 1;
+  
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
+
+
+  .pageBlock {
+    width: 800px;
+    margin: 0 auto;
+    
+    height: calc(100vh - 48px - 48px - 56px);
+    overflow: auto;
+
+    .pageSize {
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 16px;
+      color: #5B6871;
+      padding: 10px 0;
+
+    }
+  }
+}
+
+.page {
+  background-color: #fff;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #E5E9EB;
+  padding-left: 55px;
+}
+
+.docListBlock {
+  width: 280px;
+  background-color: #fff;
+  height: calc(100vh - 48px - 48px);
+  border-right: 1px solid #E5E9EB;
+
+  .doclistHeader {
+    padding: 10px 20px;
+    border-bottom: 1px solid #E5E9EB;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+
+    .doclistHeaderTitle {
+      font-size: 18px;
+      font-weight: 600;
+      color: #252C32;
+    }
+  }
+
+  .docList {
+    cursor: pointer;
+
+    .row {
+      padding: 10px 20px;
+      border-bottom: 1px solid #E5E9EB;
+
+      &.active {
+        background-color: colors.$primary;
+        color: #fff;
+      }
+    }
+
+    .addButton {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px dashed silver;
+      padding: 4px;
+      color: gray;
+      font-weight: 500;
+
+      &:hover {
+        border-color: colors.$primary;
+        color: colors.$primary;
+      }
+    }
+
+  }
+
+}
+
+
+.docSettingsBlock {
+  width: 280px;
+  background-color: #fff;
+  height: calc(100vh - 48px - 48px);
+  border-left: 1px solid #E5E9EB;
+}

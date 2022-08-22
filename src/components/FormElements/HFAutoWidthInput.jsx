@@ -20,7 +20,7 @@ const HFAutoWidthInput = ({
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <AutoWidthInput value={value} onChange={onChange}  {...props} />
+        <AutoWidthInput value={value} onChange={onChange} {...props} />
       )}
     ></Controller>
   )

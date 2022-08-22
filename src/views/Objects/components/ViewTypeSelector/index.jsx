@@ -1,6 +1,7 @@
 import {
   AccountTree,
   CalendarMonth,
+  Description,
   Settings,
   TableChart,
 } from "@mui/icons-material"
@@ -26,7 +27,7 @@ const ViewTabSelector = ({
   }
   const closeModal = () => {
     setSettingsModalVisible(false)
-    if(isChanged) queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"])
+    if (isChanged) queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"])
   }
 
   return (
@@ -57,12 +58,25 @@ const ViewTabSelector = ({
           </div>
         ))}
 
-        <div className={style.element} onClick={openModal} >
+        <div
+          className={`${style.element} ${
+            selectedTabIndex === views?.length ? style.active : ""
+          }`}
+          onClick={() => setSelectedTabIndex(views?.length)}
+        >
+          <Description className={style.icon} />
+        </div>
+
+        <div className={style.element} onClick={openModal}>
           <Settings className={style.icon} />
         </div>
       </div>
 
-      <Modal className={style.modal} open={settingsModalVisible} onClose={closeModal}>
+      <Modal
+        className={style.modal}
+        open={settingsModalVisible}
+        onClose={closeModal}
+      >
         <ViewSettings closeModal={closeModal} setIsChanged={setIsChanged} />
       </Modal>
     </>

@@ -27,7 +27,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [resData, setResData] = useState({});
 
-  const { control, handleSubmit, setValue, getValues, watch } = useForm({
+  const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       client_type: "",
       recipient: "",
@@ -103,7 +103,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
       client_type: computedClientTypes?.find(
         (item) => item?.value === data?.client_type
       )?.label,
-      tables: data?.tables[0]?.object_id ? data?.tables : [],
+      tables: data?.tables?.filter(table => table?.object_id?.length > 0)
     };
 
     // return console.log('computedData', computedData)
@@ -172,10 +172,29 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
       >
         <div style={{ padding: "20px" }}>
           <div style={{ padding: "10px" }}>
+            {/* {!isCodeSent && ( */}
+            <div className={classes.formRow}>
+              <p className={classes.label}>Тип пользователя</p>
+              <HFSelect
+                control={control}
+                name="client_type"
+                size="large"
+                fullWidth
+                options={computedClientTypes}
+                placeholder="Выберите тип пользователя"
+                startAdornment={
+                  <InputAdornment position="start">
+                    <SupervisedUserCircle style={{ fontSize: "30px" }} />
+                  </InputAdornment>
+                }
+              />
+            </div>
+            {/* )} */}
+
             <TabList>
-              <Tab>Login</Tab>
-              <Tab>Phone</Tab>
-              <Tab>Email</Tab>
+              <Tab>Логин</Tab>
+              <Tab>Телефон</Tab>
+              <Tab>E-mail</Tab>
             </TabList>
 
             <div
@@ -183,26 +202,6 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
               className={classes.formArea}
               style={{ marginTop: "10px" }}
             >
-              {!isCodeSent && (
-                <div className={classes.formRow}>
-                  <p className={classes.label}>Тип пользователя</p>
-                  <HFSelect
-                    // required
-                    control={control}
-                    name="client_type"
-                    size="large"
-                    fullWidth
-                    options={computedClientTypes}
-                    placeholder="Выберите тип пользователя"
-                    startAdornment={
-                      <InputAdornment position="start">
-                        <SupervisedUserCircle style={{ fontSize: "30px" }} />
-                      </InputAdornment>
-                    }
-                  />
-                </div>
-              )}
-
               <TabPanel>
                 <div className={classes.formRow}>
                   <p className={classes.label}>Логин</p>
@@ -243,7 +242,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                   />
                 </div>
               </TabPanel>
-              {/* Phone */}
+
               <TabPanel>
                 <div className={classes.formRow}>
                   <p className={classes.label}>Телефон</p>
@@ -279,7 +278,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                   </div>
                 )}
               </TabPanel>
-              {/* Email */}
+
               <TabPanel>
                 <div className={classes.formRow}>
                   <p className={classes.label}>Эл. адрес</p>
@@ -301,13 +300,25 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                   />
                 </div>
               </TabPanel>
-              {connections?.length ? (
+              {/* {connections?.length ? (
                 <DynamicFields
                   table={connections}
                   control={control}
                   setValue={setValue}
                 />
-              ) : null}
+              ) : null} */}
+              {connections.length
+                ? connections.map((connection, idx) => (
+                    <DynamicFields
+                      key={connection?.guid}
+                      table={connections}
+                      connection={connection}
+                      index={idx}
+                      control={control}
+                      setValue={setValue}
+                    />
+                  ))
+                : null}
             </div>
           </div>
         </div>
@@ -317,7 +328,6 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
         <PrimaryButton size="large" loader={loading}>
           Войти
         </PrimaryButton>
-        {/* <SecondaryButton type="button" size="large" onClick={navigateToRegistrationForm} >Зарегистрироваться</SecondaryButton> */}
       </div>
     </form>
   );

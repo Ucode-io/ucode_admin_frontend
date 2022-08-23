@@ -1,6 +1,6 @@
 import edjsParser from "editorjs-parser"
-import { useState } from "react"
-import { useEffect, useRef } from "react"
+import { forwardRef, useState } from "react"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import CancelButton from "../../../components/Buttons/CancelButton"
 import SaveButton from "../../../components/Buttons/SaveButton"
@@ -13,84 +13,89 @@ import styles from "./style.module.scss"
 
 const parser = new edjsParser()
 
-const RedactorBlock = ({
-  selectedTemplate,
-  setSelectedTemplate,
-  updateTemplate,
-  addNewTemplate,
-}) => {
-  const { control, handleSubmit, reset } = useForm()
-  const editorCore = useRef(null)
-  const [loader, setLoader] = useState(false)
-  const [btnLoader, setBtnLoader] = useState(false)
+const RedactorBlock = forwardRef(
+  ({
+    selectedTemplate,
+    setSelectedTemplate,
+    updateTemplate,
+    addNewTemplate,
+    tableViewIsActive
+  }, redactorRef) => {
+    const { control, handleSubmit, reset } = useForm()
+    const [loader, setLoader] = useState(false)
+    const [btnLoader, setBtnLoader] = useState(false)
 
-  useEffect(() => {
-    setLoader(true)
+    useEffect(() => {
+      setLoader(true)
 
-    reset({
-      ...selectedTemplate,
-      html: selectedTemplate.html ? JSON.parse(selectedTemplate.html) : [],
-    })
+      reset({
+        ...selectedTemplate,
+        html: selectedTemplate.html ? JSON.parse(selectedTemplate.html) : [],
+      })
 
-    setTimeout(() => {
-      setLoader(false)
-    })
-  }, [selectedTemplate, reset])
+      setTimeout(() => {
+        setLoader(false)
+      })
+    }, [selectedTemplate, reset])
 
-  const onSubmit = async (values) => {
-    try {
-      setBtnLoader(true)
+    const onSubmit = async (values) => {
+      try {
+        setBtnLoader(true)
 
-      const savedData = await editorCore.current.save()
+        const savedData = await redactorRef.current.save()
 
-      const data = {
-        ...values,
-        html: savedData ? JSON.stringify(savedData) : "",
+        const data = {
+          ...values,
+          html: savedData ? JSON.stringify(savedData) : "",
+        }
+
+        if (values.type !== "CREATE") {
+          await documentTemplateService.update(data)
+          updateTemplate(data)
+        } else {
+          const res = await documentTemplateService.create(data)
+          addNewTemplate(res)
+        }
+
+        setSelectedTemplate(null)
+      } catch (error) {
+        console.log(error)
+        setBtnLoader(false)
       }
-
-      if (values.type !== "CREATE") {
-        await documentTemplateService.update(data)
-        updateTemplate(data)
-      } else {
-        const res = await documentTemplateService.create(data)
-        addNewTemplate(res)
-      }
-
-      setSelectedTemplate(null)
-    } catch (error) {
-      console.log(error)
-      setBtnLoader(false)
     }
-  }
 
-  if (loader) return <div className={styles.redactorBlock} />
+    if (loader) return <div className={styles.redactorBlock} />
 
-  return (
-    <div className={styles.redactorBlock}>
-      <div className={styles.pageBlock}>
-        <div>
-          <HFAutoWidthInput
-            control={control}
-            name="title"
-            inputStyle={{ fontSize: 20 }}
-          />
+    return (
+      <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`}>
+        <div className={styles.pageBlock}>
+          <div>
+            <HFAutoWidthInput
+              control={control}
+              name="title"
+              inputStyle={{ fontSize: 20 }}
+            />
+          </div>
+
+          <div className={styles.pageSize}>A4 (595 x 842)</div>
+
+          <Redactor ref={redactorRef} control={control} />
         </div>
 
-        <div className={styles.pageSize}>A4 (595 x 842)</div>
-
-        <Redactor ref={editorCore} control={control} />
+        <Footer
+          extra={
+            <>
+              <CancelButton onClick={() => setSelectedTemplate(null)} />
+              <SaveButton
+                loading={btnLoader}
+                onClick={handleSubmit(onSubmit)}
+              />
+            </>
+          }
+        />
       </div>
-
-      <Footer
-        extra={
-          <>
-            <CancelButton onClick={() => setSelectedTemplate(null)} />
-            <SaveButton loading={btnLoader} onClick={handleSubmit(onSubmit)} />
-          </>
-        }
-      />
-    </div>
-  )
-}
+    )
+  }
+)
 
 export default RedactorBlock

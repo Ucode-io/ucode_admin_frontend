@@ -1,13 +1,16 @@
+import { BackupTable } from "@mui/icons-material"
 import edjsParser from "editorjs-parser"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
 import documentTemplateService from "../../../services/documentTemplateService"
 import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSelector"
 
 import ViewTabSelector from "../components/ViewTypeSelector"
+import TableView from "../TableView"
 import DocSettingsBlock from "./DocSettingsBlock"
 import RedactorBlock from "./RedactorBlock"
 import styles from "./style.module.scss"
@@ -15,19 +18,22 @@ import TemplatesList from "./TemplatesList"
 
 const parser = new edjsParser()
 
-
 const DocView = ({
-  view,
   views,
-  fieldsMap,
   selectedTabIndex,
   setSelectedTabIndex,
+  fieldsMap,
 }) => {
+  const redactorRef = useRef()
   const { tableSlug } = useParams()
   const [templates, setTemplates] = useState([])
   const [selectedTemplate, setSelectedTemplate] = useState(null)
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0)
   const [pdfLoader, setPdfLoader] = useState(false)
+  const [tableViewIsActive, setTableViewIsActive] = useState(false)
+  const [selectedObject, setSelectedObject] = useState(null)
+
+  const view = views.find((view) => view.type === "TABLE")
 
   const { isLoading } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
@@ -50,20 +56,25 @@ const DocView = ({
     })
   }
 
-  const exportToHtml = () => {
-    if(!selectedTemplate) return
+  const exportToHtml = async () => {
+    if (!selectedTemplate) return
     setPdfLoader(true)
-    documentTemplateService
-      .exportToPDF({
-        data: {},
-        html: parser.parse(JSON.parse(selectedTemplate.html)),
+
+    try {
+      const savedData = await redactorRef.current.save()
+
+      const res = await documentTemplateService.exportToPDF({
+        data: {
+          table_slug: tableSlug,
+          object_id: selectedObject,
+        },
+        html: savedData ? parser.parse(savedData)?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>') : "",
       })
-      .then((res) => {
-        window.open(res.link, { target: "_blank" })
-      })
-      .finally(() => {
-        setPdfLoader(false)
-      })
+
+      window.open(res.link, { target: "_blank" })
+    } finally {
+      setPdfLoader(false)
+    }
   }
 
   const addNewTemplate = (template) => {
@@ -72,15 +83,29 @@ const DocView = ({
     })
   }
 
+  const onCheckboxChange = (val, row) => {
+    if (val) setSelectedObject(row.guid)
+    else setSelectedObject(null)
+  }
+
   return (
     <div>
       <FiltersBlock
         style={{ padding: 0 }}
         extra={
-          <DocumentSettingsTypeSelector
-            selectedTabIndex={selectedSettingsTab}
-            setSelectedTabIndex={setSelectedSettingsTab}
-          />
+          <>
+            <RectangleIconButton
+              color="white"
+              onClick={() => setTableViewIsActive((prev) => !prev)}
+            >
+              <BackupTable color={tableViewIsActive ? "primary" : ""} />
+            </RectangleIconButton>
+
+            <DocumentSettingsTypeSelector
+              selectedTabIndex={selectedSettingsTab}
+              setSelectedTabIndex={setSelectedSettingsTab}
+            />
+          </>
         }
       >
         <ViewTabSelector
@@ -99,16 +124,34 @@ const DocView = ({
             selectedTemplate={selectedTemplate}
             setSelectedTemplate={setSelectedTemplate}
           />
-          {selectedTemplate ? (
-            <RedactorBlock
-              selectedTemplate={selectedTemplate}
-              setSelectedTemplate={setSelectedTemplate}
-              updateTemplate={updateTemplate}
-              addNewTemplate={addNewTemplate}
-            />
-          ) : (
-            <div className={styles.redactorBlock} />
+
+          {tableViewIsActive && (
+            <div className={styles.redactorBlock}>
+              <TableView
+                checkboxValue={selectedObject}
+                onCheckboxChange={onCheckboxChange}
+                isDocView
+                filters={{}}
+                view={view}
+                fieldsMap={fieldsMap}
+              />
+            </div>
           )}
+
+            
+            {selectedTemplate ? (
+              <RedactorBlock
+                selectedTemplate={selectedTemplate}
+                setSelectedTemplate={setSelectedTemplate}
+                updateTemplate={updateTemplate}
+                addNewTemplate={addNewTemplate}
+                ref={redactorRef}
+                tableViewIsActive={tableViewIsActive}
+              />
+            ) : (
+              <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`} />
+            )}
+
           <DocSettingsBlock
             exportToHtml={exportToHtml}
             selectedSettingsTab={selectedSettingsTab}

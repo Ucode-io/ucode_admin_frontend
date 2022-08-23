@@ -19,6 +19,7 @@ import "./style.scss";
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
 import useOnClickOutside from "use-onclickoutside";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import { Checkbox } from "@mui/material";
 
 const DataTable = ({
   data = [],
@@ -42,6 +43,8 @@ const DataTable = ({
   tableSlug,
   isResizeble,
   paginationExtraButton,
+  checkboxValue,
+  onCheckboxChange
 }) => {
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -56,6 +59,7 @@ const DataTable = ({
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     if (!isResizeble) return;
@@ -189,7 +193,8 @@ const DataTable = ({
     >
       <CTableHead>
         <CTableRow>
-          <CTableHeadCell width={10}>№</CTableHeadCell>
+          <CTableCell width={10} />
+          {onCheckboxChange && <CTableHeadCell width={10}>№</CTableHeadCell>}
           {columns.map((column, index) => (
             <CTableHeadCell
               id={column.id}
@@ -294,6 +299,9 @@ const DataTable = ({
               onRowClick(row, rowIndex);
             }}
           >
+            {onCheckboxChange && <CTableCell>
+              <Checkbox checked={checkboxValue === row.guid} onChange={(_, val) => onCheckboxChange(val, row)} onClick={e => e.stopPropagation()} />
+            </CTableCell>}
             <CTableCell align="center">
               {(currentPage - 1) * 10 + rowIndex + 1}
             </CTableCell>

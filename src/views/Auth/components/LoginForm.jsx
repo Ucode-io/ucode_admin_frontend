@@ -25,6 +25,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [connections, setConnections] = useState([]);
   const [isCodeSent, setIsCodeSent] = useState(false);
+  const [loginStrategies, setLoginStrategies] = useState({});
   const [resData, setResData] = useState({});
 
   const { control, handleSubmit, setValue, watch } = useForm({
@@ -77,6 +78,28 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
         console.log(err);
       });
   };
+
+  const getLoginStrategies = () => {
+    axios
+      .post(`https://test.api.client.medion.uz/v1/object/get-list/test_login`, {
+        data: { client_type_id: clientTypeId },
+      })
+      .then((res) => {
+        setLoginStrategies(
+          res?.data?.data?.data?.response?.reduce(
+            (acc, curr) => ({
+              ...acc,
+              [curr["login_strategy"]]: curr.login_strategy?.length > 0,
+            }),
+            {}
+          )
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const selectedClientType = useMemo(() => {
     return data?.response?.find(
       (clientType) => clientType.guid === clientTypeId
@@ -103,7 +126,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
       client_type: computedClientTypes?.find(
         (item) => item?.value === data?.client_type
       )?.label,
-      tables: data?.tables?.filter(table => table?.object_id?.length > 0)
+      tables: data?.tables?.filter((table) => table?.object_id?.length > 0),
     };
 
     // return console.log('computedData', computedData)
@@ -158,6 +181,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   useEffect(() => {
     if (!clientTypeId) return;
     getConnections();
+    getLoginStrategies();
   }, [clientTypeId]);
 
   return (
@@ -192,9 +216,9 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
             {/* )} */}
 
             <TabList>
-              <Tab>Логин</Tab>
-              <Tab>Телефон</Tab>
-              <Tab>E-mail</Tab>
+              {loginStrategies["Login with password"] && <Tab>Логин</Tab>}
+              {loginStrategies["Phone OTP"] && <Tab>Телефон</Tab>}
+              {loginStrategies["Email OTP"] && <Tab>E-mail</Tab>}
             </TabList>
 
             <div
@@ -202,104 +226,110 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
               className={classes.formArea}
               style={{ marginTop: "10px" }}
             >
-              <TabPanel>
-                <div className={classes.formRow}>
-                  <p className={classes.label}>Логин</p>
-                  <HFTextField
-                    required
-                    control={control}
-                    name="username"
-                    size="large"
-                    fullWidth
-                    placeholder="Введите логин"
-                    autoFocus
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle style={{ fontSize: "30px" }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </div>
-                <div className={classes.formRow}>
-                  <p className={classes.label}>Пароль</p>
-                  <HFTextField
-                    required
-                    control={control}
-                    name="password"
-                    type="password"
-                    size="large"
-                    fullWidth
-                    placeholder="Введите пароль"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Lock style={{ fontSize: "30px" }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </div>
-              </TabPanel>
-
-              <TabPanel>
-                <div className={classes.formRow}>
-                  <p className={classes.label}>Телефон</p>
-                  <HFTextField
-                    required
-                    control={control}
-                    name="recipient"
-                    size="large"
-                    fullWidth
-                    placeholder="Введите телефон"
-                    autoFocus
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle style={{ fontSize: "30px" }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </div>
-                {isCodeSent && (
+              {(Object.keys(loginStrategies)?.length === 0 || loginStrategies["Login with password"]) && (
+                <TabPanel>
                   <div className={classes.formRow}>
-                    <p className={classes.label}>Смс код *</p>
+                    <p className={classes.label}>Логин</p>
                     <HFTextField
                       required
                       control={control}
-                      name="otp"
+                      name="username"
                       size="large"
                       fullWidth
-                      placeholder="Введите смс код"
+                      placeholder="Введите логин"
                       autoFocus
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccountCircle style={{ fontSize: "30px" }} />
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </div>
-                )}
-              </TabPanel>
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>Пароль</p>
+                    <HFTextField
+                      required
+                      control={control}
+                      name="password"
+                      type="password"
+                      size="large"
+                      fullWidth
+                      placeholder="Введите пароль"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Lock style={{ fontSize: "30px" }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </div>
+                </TabPanel>
+              )}
 
-              <TabPanel>
-                <div className={classes.formRow}>
-                  <p className={classes.label}>Эл. адрес</p>
-                  <HFTextField
-                    required
-                    control={control}
-                    name="email"
-                    size="large"
-                    fullWidth
-                    placeholder="Введите Эл. адрес"
-                    autoFocus
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle style={{ fontSize: "30px" }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </div>
-              </TabPanel>
+              {loginStrategies["Phone OTP"] && (
+                <TabPanel>
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>Телефон</p>
+                    <HFTextField
+                      required
+                      control={control}
+                      name="recipient"
+                      size="large"
+                      fullWidth
+                      placeholder="Введите телефон"
+                      autoFocus
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccountCircle style={{ fontSize: "30px" }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </div>
+                  {isCodeSent && (
+                    <div className={classes.formRow}>
+                      <p className={classes.label}>Смс код *</p>
+                      <HFTextField
+                        required
+                        control={control}
+                        name="otp"
+                        size="large"
+                        fullWidth
+                        placeholder="Введите смс код"
+                        autoFocus
+                      />
+                    </div>
+                  )}
+                </TabPanel>
+              )}
+
+              {loginStrategies["Email OTP"] && (
+                <TabPanel>
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>Эл. адрес</p>
+                    <HFTextField
+                      required
+                      control={control}
+                      name="email"
+                      size="large"
+                      fullWidth
+                      placeholder="Введите Эл. адрес"
+                      autoFocus
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AccountCircle style={{ fontSize: "30px" }} />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </div>
+                </TabPanel>
+              )}
               {/* {connections?.length ? (
                 <DynamicFields
                   table={connections}

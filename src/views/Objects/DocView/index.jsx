@@ -1,3 +1,4 @@
+import edjsParser from "editorjs-parser"
 import { useState } from "react"
 import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
@@ -11,6 +12,9 @@ import DocSettingsBlock from "./DocSettingsBlock"
 import RedactorBlock from "./RedactorBlock"
 import styles from "./style.module.scss"
 import TemplatesList from "./TemplatesList"
+
+const parser = new edjsParser()
+
 
 const DocView = ({
   view,
@@ -52,7 +56,7 @@ const DocView = ({
     documentTemplateService
       .exportToPDF({
         data: {},
-        html: selectedTemplate.html,
+        html: parser.parse(JSON.parse(selectedTemplate.html)),
       })
       .then((res) => {
         window.open(res.link, { target: "_blank" })

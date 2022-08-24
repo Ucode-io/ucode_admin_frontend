@@ -33,6 +33,7 @@ const DocView = ({
   const [pdfLoader, setPdfLoader] = useState(false)
   const [tableViewIsActive, setTableViewIsActive] = useState(false)
   const [selectedObject, setSelectedObject] = useState(null)
+  const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0)
 
   const view = views.find((view) => view.type === "TABLE")
 
@@ -94,7 +95,7 @@ const DocView = ({
 
 
       fields.forEach(field => {
-        parsedHTML = parsedHTML.replaceAll(`|| ${field.label} ||`, `<%= it.${field.path_slug ?? field.slug} %>`)
+        parsedHTML = parsedHTML.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
       })
 
 
@@ -183,6 +184,8 @@ const DocView = ({
                 ref={redactorRef}
                 tableViewIsActive={tableViewIsActive}
                 fields={fields}
+                selectedPaperSizeIndex={selectedPaperSizeIndex}
+                setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
               />
             ) : (
               <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`} />
@@ -192,6 +195,8 @@ const DocView = ({
             exportToHtml={exportToHtml}
             selectedSettingsTab={selectedSettingsTab}
             pdfLoader={pdfLoader}
+            selectedPaperSizeIndex={selectedPaperSizeIndex}
+            setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
           />
         </div>
       )}

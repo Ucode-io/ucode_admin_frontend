@@ -164,7 +164,7 @@ class TestInlinePlugin {
 
       const element = document.createElement('span')
       
-      element.innerHTML = `|| ${this.selectedFontSize} ||`
+      element.innerHTML = `{ ${this.selectedFontSize} }`
       range.deleteContents()
       range.insertNode(element)
     }

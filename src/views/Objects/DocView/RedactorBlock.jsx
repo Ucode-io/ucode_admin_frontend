@@ -1,4 +1,3 @@
-import edjsParser from "editorjs-parser"
 import { forwardRef, useState } from "react"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
@@ -6,12 +5,11 @@ import CancelButton from "../../../components/Buttons/CancelButton"
 import SaveButton from "../../../components/Buttons/SaveButton"
 import Footer from "../../../components/Footer"
 import HFAutoWidthInput from "../../../components/FormElements/HFAutoWidthInput"
-import PageFallback from "../../../components/PageFallback"
+import usePaperSize from "../../../hooks/usePaperSize"
 import documentTemplateService from "../../../services/documentTemplateService"
 import Redactor from "./Redactor"
 import styles from "./style.module.scss"
 
-const parser = new edjsParser()
 
 const RedactorBlock = forwardRef(
   ({
@@ -20,11 +18,14 @@ const RedactorBlock = forwardRef(
     updateTemplate,
     addNewTemplate,
     tableViewIsActive,
-    fields
+    fields,
+    selectedPaperSizeIndex,
+    setSelectedPaperSizeIndex
   }, redactorRef) => {
     const { control, handleSubmit, reset } = useForm()
     const [loader, setLoader] = useState(false)
     const [btnLoader, setBtnLoader] = useState(false)
+    const { selectedPaperSize, selectPaperIndexBySize } = usePaperSize(selectedPaperSizeIndex)
 
     useEffect(() => {
       setLoader(true)
@@ -33,6 +34,8 @@ const RedactorBlock = forwardRef(
         ...selectedTemplate,
         html: selectedTemplate.html ? JSON.parse(selectedTemplate.html) : [],
       })
+
+      setSelectedPaperSizeIndex(selectPaperIndexBySize(selectedTemplate.size))
 
       setTimeout(() => {
         setLoader(false)
@@ -48,6 +51,7 @@ const RedactorBlock = forwardRef(
         const data = {
           ...values,
           html: savedData ? JSON.stringify(savedData) : "",
+          size: [selectedPaperSize.width?.toString(), selectedPaperSize.height?.toString()]
         }
 
         if (values.type !== "CREATE") {
@@ -69,7 +73,7 @@ const RedactorBlock = forwardRef(
 
     return (
       <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`}>
-        <div className={styles.pageBlock}>
+        <div className={styles.pageBlock} style={{ width: selectedPaperSize.width + 'pt' }} >
           <div>
             <HFAutoWidthInput
               control={control}
@@ -78,7 +82,7 @@ const RedactorBlock = forwardRef(
             />
           </div>
 
-          <div className={styles.pageSize}>A4 (595 x 842)</div>
+          <div className={styles.pageSize}>{selectedPaperSize.name} ({selectedPaperSize.width} x {selectedPaperSize.height})</div>
 
           <Redactor ref={redactorRef} control={control} fields={fields} />
         </div>

@@ -1,6 +1,12 @@
+import usePaperSize from "../../../hooks/usePaperSize"
 import styles from "./style.module.scss"
 
-const PageSizeBlock = () => {
+const PageSizeBlock = ({
+  selectedPaperSizeIndex,
+  setSelectedPaperSizeIndex,
+}) => {
+  const { paperSizes } = usePaperSize()
+
   return (
     <div className={styles.docListBlock}>
       <div className={styles.doclistHeader}>
@@ -8,26 +14,22 @@ const PageSizeBlock = () => {
       </div>
 
       <div className={styles.docList}>
-
-      <div className={styles.pageSizeRow}>
-        <h3>Paper</h3>
-      </div>
-
         <div className={styles.pageSizeRow}>
-          A4 <span className={styles.pageSizeValue}>595 x 842</span>
+          <h3>Paper</h3>
         </div>
 
-        <div className={styles.pageSizeRow}>
-          A5 <span className={styles.pageSizeValue}>420 x 595</span>
-        </div>
-
-        <div className={styles.pageSizeRow}>
-          A6 <span className={styles.pageSizeValue}>297 x 792</span>
-        </div>
-
-        <div className={styles.pageSizeRow}>
-          Letter <span className={styles.pageSizeValue}>612 x 792</span>
-        </div>
+        {paperSizes.map((paper, index) => (
+          <div
+            onClick={() => setSelectedPaperSizeIndex(index)}
+            key={paper.name}
+            className={`${styles.pageSizeRow} ${selectedPaperSizeIndex === index ? styles.pageSizeRowActive : ''}`}
+          >
+            {paper.name}
+            <span className={styles.pageSizeValue}>
+              {paper.width} x {paper.height}
+            </span>
+          </div>
+        ))}
 
         {/* {templates?.map((template) => (
           <div

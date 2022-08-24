@@ -84,8 +84,18 @@
       padding: 10px 30px;
       gap: 35px;
 
+
       &:hover {
         background-color: #eef0f26c;
+      }
+
+      &.pageSizeRowActive {
+        background-color: colors.$primary;
+        color: #fff;
+
+        .pageSizeValue {
+          color: #fff;
+        }
       }
 
       .pageSizeValue {

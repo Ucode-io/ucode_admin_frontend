@@ -13,8 +13,6 @@ import FontSize from 'editorjs-inline-font-size-tool'
 import ColorPlugin from 'editorjs-text-color-plugin'
 import AlignmentTuneTool from 'editorjs-text-alignment-blocktune'
 import Paragraph from '@editorjs/paragraph'
-import TestImagePlugin from './RedactorPlugins/SimpleImagePlugin'
-import TestInlinePlugin from './RedactorPlugins/TestInlinePlugin'
 // import { Too } from "@editorjs/editorjs"
 
 

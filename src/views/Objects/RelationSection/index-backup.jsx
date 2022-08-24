@@ -122,6 +122,7 @@ const RelationSection = ({ relation }) => {
           onRowClick={navigateToEditPage}
           onDeleteClick={deleteHandler}
           disableFilters
+          tableSlug={tableSlug}
           onPaginationChange={setCurrentPage}
         />
       </FormCard>

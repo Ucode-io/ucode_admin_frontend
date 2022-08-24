@@ -20,6 +20,7 @@ import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
 import useOnClickOutside from "use-onclickoutside";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import { Checkbox } from "@mui/material";
+import { numberWithSpaces } from "../../utils/formatNumbers";
 
 const DataTable = ({
   data = [],
@@ -37,6 +38,7 @@ const DataTable = ({
   onRowClick = () => {},
   filterChangeHandler = () => {},
   filters,
+  func = [],
   disableFilters,
   tableStyle,
   wrapperStyle,
@@ -44,7 +46,7 @@ const DataTable = ({
   isResizeble,
   paginationExtraButton,
   checkboxValue,
-  onCheckboxChange
+  onCheckboxChange,
 }) => {
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -59,7 +61,6 @@ const DataTable = ({
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
   const dispatch = useDispatch();
-
 
   useEffect(() => {
     if (!isResizeble) return;
@@ -279,7 +280,10 @@ const DataTable = ({
             </CTableHeadCell>
           ))}
 
-          <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+          <PermissionWrapperV2
+            tabelSlug={tableSlug}
+            type={["update", "delete"]}
+          >
             {(onDeleteClick || onEditClick) && (
               <CTableHeadCell width={10}></CTableHeadCell>
             )}
@@ -299,9 +303,15 @@ const DataTable = ({
               onRowClick(row, rowIndex);
             }}
           >
-            {onCheckboxChange && <CTableCell>
-              <Checkbox checked={checkboxValue === row.guid} onChange={(_, val) => onCheckboxChange(val, row)} onClick={e => e.stopPropagation()} />
-            </CTableCell>}
+            {onCheckboxChange && (
+              <CTableCell>
+                <Checkbox
+                  checked={checkboxValue === row.guid}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </CTableCell>
+            )}
             <CTableCell align="center">
               {(currentPage - 1) * 10 + rowIndex + 1}
             </CTableCell>
@@ -338,15 +348,20 @@ const DataTable = ({
                 <CellElementGenerator field={column} row={row} />
               </CTableCell>
             ))}
-            <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+            <PermissionWrapperV2
+              tabelSlug={tableSlug}
+              type={["update", "delete"]}
+            >
               {(onDeleteClick || onEditClick) && (
-                <CTableCell style={{ padding: "8px 12px 4px", verticalAlign: 'middle' }}>
+                <CTableCell
+                  style={{ padding: "8px 12px 4px", verticalAlign: "middle" }}
+                >
                   <div className="flex">
                     {onEditClick && (
                       <RectangleIconButton
                         color="success"
                         className="mr-1"
-                        size='small'
+                        size="small"
                         onClick={() => onEditClick(row, rowIndex)}
                       >
                         <Edit color="success" />
@@ -368,6 +383,22 @@ const DataTable = ({
             </PermissionWrapperV2>
           </CTableRow>
         ))}
+        {func && (
+          <CTableRow>
+            <CTableCell>Итог</CTableCell>
+            {columns?.map((col) => (
+              <CTableCell>
+                {col?.slug ===
+                func?.filter((item) => item?.field_name === col?.slug)?.[0]
+                  ?.field_name
+                  ? numberWithSpaces(
+                      data?.reduce((acc, curr) => acc + curr[col?.slug], 0)
+                    )
+                  : ""}
+              </CTableCell>
+            ))}
+          </CTableRow>
+        )}
 
         {additionalRow}
       </CTableBody>

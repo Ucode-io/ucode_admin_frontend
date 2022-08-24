@@ -97,6 +97,7 @@ const RelationTable = ({ relation }) => {
         loader={tableLoader}
         data={tableData}
         columns={columns}
+        func={relation?.summaries?.length > 0 ? relation?.summaries : null}
         pagesCount={pageCount}
         currentPage={currentPage}
         onRowClick={navigateToEditPage}

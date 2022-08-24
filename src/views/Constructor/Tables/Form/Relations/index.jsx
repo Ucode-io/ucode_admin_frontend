@@ -13,6 +13,7 @@ import constructorRelationService from "../../../../../services/constructorRelat
 import { generateGUID } from "../../../../../utils/generateID"
 import RelationCreateForm from "./RelationCreateForm"
 import styles from "../Fields/style.module.scss"
+import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/PermissionWrapperV2"
 
 const Relations = ({ mainForm, getRelationFields }) => {
   const [formLoader, setFormLoader] = useState(false)
@@ -25,7 +26,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
     keyName: "key",
   })
 
-  const { id } = useParams()
+  const { id, slug } = useParams()
 
   const updateRelations = async () => {
     setLoader(true)
@@ -116,6 +117,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
       <DataTable
         data={relations}
         removableHeight={false}
+        tableSlug={'app'}
         columns={columns}
         disablePagination
         loader={loader}
@@ -123,21 +125,22 @@ const Relations = ({ mainForm, getRelationFields }) => {
         onEditClick={openEditForm}
         dataLength={1}
         additionalRow={
-          <CTableRow>
-            <CTableCell colSpan={columns.length + 1}>
-              <div
-                className={styles.createButton}
-                onClick={() => setDrawerState("CREATE")}
-              >
-                <Add color="primary" />
-                <p>Добавить</p>
-              </div>
-            </CTableCell>
-          </CTableRow>
+          <PermissionWrapperV2 tabelSlug={slug} type="write">
+            <CTableRow>
+              <CTableCell colSpan={columns.length + 1}>
+                <div
+                  className={styles.createButton}
+                  onClick={() => setDrawerState("CREATE")}
+                >
+                  <Add color="primary" />
+                  <p>Добавить</p>
+                </div>
+              </CTableCell>
+            </CTableRow>
+          </PermissionWrapperV2>
         }
       />
 
-      
       <RelationCreateForm
         open={drawerState}
         initialValues={drawerState}
@@ -146,9 +149,8 @@ const Relations = ({ mainForm, getRelationFields }) => {
         onSubmit={onFormSubmit}
         isLoading={formLoader}
       />
-      
     </TableCard>
-  )
+  );
 }
 
 export default Relations

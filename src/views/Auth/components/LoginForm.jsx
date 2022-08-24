@@ -28,7 +28,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   const [loginStrategies, setLoginStrategies] = useState({});
   const [resData, setResData] = useState({});
 
-  const { control, handleSubmit, setValue, watch } = useForm({
+  const { control, handleSubmit, setValue, getValues, watch } = useForm({
     defaultValues: {
       client_type: "",
       recipient: "",
@@ -113,7 +113,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
         data: {
           ...resData.data,
         },
-        tables: [],
+        tables: getValues('tables'),
       })
       .then((res) => {
         dispatch(authActions.loginSuccess(res));
@@ -179,6 +179,12 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   };
 
   useEffect(() => {
+    if (Object.keys(loginStrategies)) {
+      setSelectedTab(0)
+    }
+  }, [loginStrategies])
+  
+  useEffect(() => {
     if (!clientTypeId) return;
     getConnections();
     getLoginStrategies();
@@ -216,7 +222,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
             {/* )} */}
 
             <TabList>
-              {loginStrategies["Login with password"] && <Tab>Логин</Tab>}
+              {(Object.keys(loginStrategies)?.length === 0 || loginStrategies["Login with password"]) && <Tab>Логин</Tab>}
               {loginStrategies["Phone OTP"] && <Tab>Телефон</Tab>}
               {loginStrategies["Email OTP"] && <Tab>E-mail</Tab>}
             </TabList>

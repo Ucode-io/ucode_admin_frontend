@@ -2,7 +2,7 @@
 import './index.scss'
 
 class TestInlinePlugin {
-  static title = 'Test plugin';
+  static title = 'Variables';
   fields = []
   isDropDownOpen = false;
   togglingCallback = null;

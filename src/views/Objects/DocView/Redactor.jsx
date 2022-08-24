@@ -1,12 +1,13 @@
-import { forwardRef, useCallback, useRef, useState } from "react"
+import { forwardRef, useCallback, useMemo, useRef } from "react"
 import { createReactEditorJS } from "react-editor-js"
 import styles from "./style.module.scss"
 import { EDITOR_JS_TOOLS } from "./tools"
 import DragDrop from 'editorjs-drag-drop';
 import "./redactorOverriders.scss"
 import { useWatch } from "react-hook-form";
+import TestInlinePlugin from "./RedactorPlugins/TestInlinePlugin";
 
-const Redactor = forwardRef(({ control }, ref) => {
+const Redactor = forwardRef(({ control, fields }, ref) => {
   const ReactEditorJS = createReactEditorJS()
   const editorCore = useRef(null)
   const value = useWatch({
@@ -24,6 +25,18 @@ const Redactor = forwardRef(({ control }, ref) => {
     // new Undo({ editor })
     new DragDrop(editor)
   }
+
+  const computedTools = useMemo(() => {
+    return {
+      ...EDITOR_JS_TOOLS,
+      testInline: {
+        class: TestInlinePlugin,
+        config: {
+          fields
+        }
+      },
+    }
+  }, [fields])
   
   return (
     <div className={styles.page}>
@@ -31,11 +44,12 @@ const Redactor = forwardRef(({ control }, ref) => {
         onInitialize={handleInitialize}
         onReady={handleReady}
         defaultValue={value}
-        tools={EDITOR_JS_TOOLS}
-        // onChange={setBlocks}
+        tools={computedTools}
         minHeight={1000}
+        config={{name: 'asdasd'}}
         holder="editorjs"
-      />
+      >
+      </ReactEditorJS>
     </div>
   )
 })

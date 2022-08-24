@@ -19,7 +19,8 @@ const RedactorBlock = forwardRef(
     setSelectedTemplate,
     updateTemplate,
     addNewTemplate,
-    tableViewIsActive
+    tableViewIsActive,
+    fields
   }, redactorRef) => {
     const { control, handleSubmit, reset } = useForm()
     const [loader, setLoader] = useState(false)
@@ -79,7 +80,7 @@ const RedactorBlock = forwardRef(
 
           <div className={styles.pageSize}>A4 (595 x 842)</div>
 
-          <Redactor ref={redactorRef} control={control} />
+          <Redactor ref={redactorRef} control={control} fields={fields} />
         </div>
 
         <Footer

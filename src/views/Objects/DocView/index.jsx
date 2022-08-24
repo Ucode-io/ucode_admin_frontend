@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
+import constructorObjectService from "../../../services/constructorObjectService"
 import documentTemplateService from "../../../services/documentTemplateService"
 import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSelector"
 
@@ -35,6 +36,28 @@ const DocView = ({
 
   const view = views.find((view) => view.type === "TABLE")
 
+  const { data: fields = [] } = useQuery(
+    ['GET_OBJECTS_LIST_WITH_RELATIONS', { tableSlug, limit: 0, offset: 0 }], 
+    () => {
+      return constructorObjectService.getList(tableSlug, {
+        data: { with_relations: true, limit: 0, offset: 0 },
+      })
+    },
+    {
+      select: (res) => {
+        const fields = res.data?.fields ?? []
+        const relationFields =
+          res?.data?.relation_fields?.map((el) => ({
+            ...el,
+            label: `${el.label} (${el.table_label})`,
+          })) ?? []
+
+          return [...fields, ...relationFields]?.filter(el => el.type !== "LOOKUP")
+      }
+    }
+  )
+  
+
   const { isLoading } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
@@ -55,7 +78,7 @@ const DocView = ({
       })
     })
   }
-
+ 
   const exportToHtml = async () => {
     if (!selectedTemplate) return
     setPdfLoader(true)
@@ -63,12 +86,24 @@ const DocView = ({
     try {
       const savedData = await redactorRef.current.save()
 
+    
+      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
+
+
+      let parsedHTML = parser.parse(savedData)
+
+
+      fields.forEach(field => {
+        parsedHTML = parsedHTML.replaceAll(`|| ${field.label} ||`, `<%= it.${field.path_slug ?? field.slug} %>`)
+      })
+
+
       const res = await documentTemplateService.exportToPDF({
         data: {
           table_slug: tableSlug,
           object_id: selectedObject,
         },
-        html: savedData ? parser.parse(savedData)?.replaceAll('&lt;', '<')?.replaceAll('&gt;', '>') : "",
+        html: meta + parsedHTML,
       })
 
       window.open(res.link, { target: "_blank" })
@@ -147,6 +182,7 @@ const DocView = ({
                 addNewTemplate={addNewTemplate}
                 ref={redactorRef}
                 tableViewIsActive={tableViewIsActive}
+                fields={fields}
               />
             ) : (
               <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`} />

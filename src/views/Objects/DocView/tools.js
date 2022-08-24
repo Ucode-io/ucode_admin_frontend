@@ -13,22 +13,32 @@ import FontSize from 'editorjs-inline-font-size-tool'
 import ColorPlugin from 'editorjs-text-color-plugin'
 import AlignmentTuneTool from 'editorjs-text-alignment-blocktune'
 import Paragraph from '@editorjs/paragraph'
+import TestImagePlugin from './RedactorPlugins/SimpleImagePlugin'
+import TestInlinePlugin from './RedactorPlugins/TestInlinePlugin'
 // import { Too } from "@editorjs/editorjs"
 
 
 export const EDITOR_JS_TOOLS = {
-  // NOTE: Paragraph is default tool. Declare only when you want to change paragraph option.
-  // paragraph: Paragraph,
   embed: Embed,
-  table: Table,
-  list: List,
+  table: {
+    class: Table,
+    inlineToolbar: true
+  },
+  list: {
+    class: List,
+    inlineToolbar: true
+  },
   // warning: Warning,
   code: Code,
   linkTool: LinkTool,
-  image: Image,
+  // image: {
+  //   class: TestImagePlugin,
+  //   inlineToolbar: true
+  // },
   // raw: Raw,
   header: {
     class: Header,
+    inlineToolbar: true,
     tunes: ['anyTuneName'],
   },
   paragraph: {

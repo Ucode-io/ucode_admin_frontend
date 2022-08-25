@@ -34,9 +34,7 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
         Math.ceil(
           differenceInMinutes(el.calendar?.elementToTime, el.calendar?.elementFromTime) / timeInterval
         ) *
-          40 -
-        10
-
+          40
 
       return {
         ...el,

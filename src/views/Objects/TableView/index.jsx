@@ -10,14 +10,14 @@ import useFilters from "../../../hooks/useFilters"
 const TableView = ({
   tab,
   view,
-  fieldsMap
+  fieldsMap,
+  isDocView,
+  ...props
 }) => {
   const { navigateToForm } = useTabRouter()
   const {tableSlug} = useParams()
   
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id)
-
-  console.log("FILTERSsss -->", filters)
 
   const [currentPage, setCurrentPage] = useState(1)
   const [deleteLoader, setDeleteLoader] = useState(false)
@@ -56,13 +56,10 @@ const TableView = ({
   const navigateToEditPage = (row) => {
     navigateToForm(tableSlug, "EDIT", row)
   }
-  // useEffect(() => {
-  //   getAllData()
-  // }, [])
   
   return (
       <DataTable
-        removableHeight={207}
+        removableHeight={isDocView ? 150 : 207}
         currentPage={currentPage}
         pagesCount={pageCount}
         columns={columns}
@@ -76,6 +73,7 @@ const TableView = ({
         tableSlug={tableSlug}
         tableStyle={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #E5E9EB' }}
         isResizeble={true}
+        {...props}
       />
   )
 }

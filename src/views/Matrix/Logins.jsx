@@ -1,133 +1,157 @@
-import { Save } from "@mui/icons-material"
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { useParams } from "react-router-dom"
-import { EditIcon, FilterIcon, PlusIcon } from "../../assets/icons/icon"
-import FormCard from "../../components/FormCard"
-import HFSelect from "../../components/FormElements/HFSelect"
-import HFTextField from "../../components/FormElements/HFTextField"
-import constructorObjectService from "../../services/constructorObjectService"
-import styles from "./styles.module.scss"
+import { Save } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import { EditIcon, FilterIcon, PlusIcon } from "../../assets/icons/icon";
+import FormCard from "../../components/FormCard";
+import HFSelect from "../../components/FormElements/HFSelect";
+import HFTextField from "../../components/FormElements/HFTextField";
+import constructorObjectService from "../../services/constructorObjectService";
+import styles from "./styles.module.scss";
 
 const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
-  const { typeId, platformId } = useParams()
-  const [isCreating, setIsCreating] = useState(false)
-  const [logins, setLogins] = useState([])
-  const [isEditing, setIsEditing] = useState(false)
-  const [selectedClient, setSelectedClient] = useState({})
+  const { typeId } = useParams();
+  const [isCreating, setIsCreating] = useState(false);
+  const [logins, setLogins] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedClient, setSelectedClient] = useState({});
   const loginOptions = [
     {
       value: "Login with password",
       label: "Login with Password",
+      translation: "Логин с паролем",
+      type: "SINGLE_LINE",
     },
     {
       value: "Phone OTP",
       label: "Phone OTP",
+      translation: "Логин с тел. номером",
+      type: "PHONE",
     },
     {
       value: "Email OTP",
       label: "Email OTP",
+      translation: "Логин с e-mail",
+      type: "EMAIL",
     },
-  ]
+  ];
 
   const getLogins = () => {
     constructorObjectService
-      .getList("login_table", {
+      .getList("test_login", {
         data: {
           client_type_id: typeId,
         },
       })
       .then((res) => {
-        setLogins(res?.data?.response || [])
+        console.log("res", res);
+        setLogins(res?.data?.response || []);
       })
       .catch((err) => {
-        console.log("err", err)
-      })
-  }
+        console.log("err", err);
+      });
+  };
 
   const handleSubmit = (type) => {
     const data = {
-      client_platform_id: platformId,
       client_type_id: clientType?.guid,
-      project_id: clientType?.project_id,
       login_strategy: loginForm.getValues().login_strategy,
       object_id: loginForm.getValues().login_table.object_id,
       table_slug: tables.find(
         (item) => item.id === loginForm.getValues().login_table.object_id
       )?.slug,
-      view_fields: loginForm.getValues("login_table.view_fields") || [],
-      login: loginForm.getValues().login,
-      password: loginForm.getValues().password || "",
+      login_label: loginForm.getValues().login_label,
+      password_label: loginForm.getValues().password_label || "",
+      login_view: loginForm.getValues().login_view || "",
+      password_view: loginForm.getValues().password_view || "",
       guid: loginForm.getValues().guid,
-    }
+    };
+    // return console.log("data", data);
     if (type === "update") {
       constructorObjectService
-        .update("login_table", {
+        .update("test_login", {
           data: {
             ...data,
           },
         })
         .then((res) => {
-          getLogins()
-          loginForm.reset()
+          getLogins();
+          loginForm.reset();
         })
         .catch((err) => {
-          console.log("err", err)
+          console.log("err", err);
         })
         .finally(() => {
-          setIsEditing("")
-        })
+          setIsEditing("");
+        });
     } else {
       constructorObjectService
-        .create("login_table", {
+        .create("test_login", {
           data: {
             ...data,
           },
         })
         .then((res) => {
-          setIsCreating(false)
-          loginForm.reset()
-          getLogins()
+          setIsCreating(false);
+          loginForm.reset();
+          getLogins();
         })
         .catch((err) => {
-          console.log("err", err)
-        })
+          console.log("err", err);
+        });
     }
-  }
+  };
 
   const loginForm = useForm({
     defaultValues: {
-      client_platform_id: "",
       client_type_id: "",
-      login_strategy: "Login with password",
+      login_strategy: "",
       guid: "",
       login_table: {
         object_id: "",
         table_slug: "",
-        view_fields: [],
       },
-      login: "",
-      password: "",
-      project_id: "",
+      login_label: "",
+      password_label: "",
+      login_view: "",
+      password_view: "",
     },
-  })
+  });
 
   const editingClient = (client) => {
-    setSelectedClient(client)
-    setIsEditing(client?.guid)
-    loginForm.setValue("login_strategy", client?.login_strategy)
-    loginForm.setValue("login_table.object_id", client?.object_id)
-    loginForm.setValue("login_table.table_slug")
-    loginForm.setValue("login_table.view_fields", client?.view_fields)
-    loginForm.setValue("login", client?.login)
-    loginForm.setValue("password", client?.password)
-    loginForm.setValue("guid", client?.guid)
-    getFields({ table_id: client?.object_id })
-  }
+    setIsCreating(false);
+    setSelectedClient(client);
+    setIsEditing(client?.guid);
+    loginForm.setValue("login_strategy", client?.login_strategy);
+    loginForm.setValue("login_table.object_id", client?.object_id);
+    loginForm.setValue("login_table.table_slug");
+    loginForm.setValue("login_label", client?.login_label);
+    loginForm.setValue("password_label", client?.password_label);
+    loginForm.setValue("login_view", client?.login_view);
+    loginForm.setValue("password_view", client?.password_view);
+    loginForm.setValue("guid", client?.guid);
+    getFields({ table_id: client?.object_id });
+  };
+
+  const handleCreate = () => {
+    setIsEditing("");
+    loginForm.reset();
+    setIsCreating(true);
+  };
 
   useEffect(() => {
-    getLogins()
-  }, [])
+    getLogins();
+  }, []);
+
+  const login_strategy = loginForm.watch("login_strategy");
+
+  const computedListOptions = (arr, arr2) => {
+    return arr.filter((item) => {
+      return !arr2.some((item2) => item2.login_strategy === item.value);
+    });
+  };
+
+  console.log("login_strategy", login_strategy);
 
   return (
     <FormCard title="Логин" icon="address-card.svg" maxWidth="100%">
@@ -137,7 +161,14 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
             <div className={styles.card_header}>
               <div className={styles.card_header_left}>
                 <div className={styles.card_header_title}>
-                  {login?.login_strategy}
+                  {/* {login?.login_strategy} */}
+                  {isEditing !== login?.guid
+                    ? loginOptions?.find(
+                        (item) => item?.value === login?.login_strategy
+                      )?.translation
+                    : loginOptions?.find(
+                        (item) => item?.value === login_strategy
+                      )?.translation}
                 </div>
                 {isEditing !== login?.guid ? (
                   <>
@@ -166,15 +197,16 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                       control={loginForm.control}
                       name="login_strategy"
                       onChange={(e) => {
-                        loginForm.setValue("login_strategy", e)
+                        loginForm.setValue("login_strategy", e);
                       }}
                       required
+                      disabled
                     />
                     <HFSelect
                       options={tables}
                       control={loginForm.control}
                       onChange={(e) => {
-                        getFields({ table_id: e })
+                        getFields({ table_id: e });
                       }}
                       name="login_table.object_id"
                       required
@@ -186,7 +218,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                 <div
                   className={styles.card_header_right}
                   onClick={() => {
-                    editingClient(login)
+                    editingClient(login);
                   }}
                 >
                   <EditIcon />
@@ -195,7 +227,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                 <div
                   className={styles.card_header_right}
                   onClick={() => {
-                    handleSubmit("update")
+                    handleSubmit("update");
                   }}
                 >
                   <Save />
@@ -220,17 +252,19 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                       <HFTextField
                         name=""
                         control={loginForm.control}
-                        value={login?.login}
+                        value={login?.login_label}
                         fullWidth
                         disabled
                       />
-                      <HFTextField
-                        name=""
-                        control={loginForm.control}
-                        fullWidth
-                        value={login?.password}
-                        disabled
-                      />
+                      {login.login_strategy === "Login with password" && (
+                        <HFTextField
+                          name=""
+                          control={loginForm.control}
+                          fullWidth
+                          value={login?.password_label}
+                          disabled
+                        />
+                      )}
                     </>
                   ) : (
                     <>
@@ -240,26 +274,31 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                         onChange={(e) => {
                           setSelectedClient({
                             ...selectedClient,
-                            login: e.target.value,
-                          })
-                          loginForm.setValue("login", e.target.value)
+                            login_label: e.target.value,
+                          });
+                          loginForm.setValue("login_label", e.target.value);
                         }}
                         control={loginForm.control}
                         fullWidth
                       />
-                      <HFTextField
-                        name=""
-                        value={selectedClient?.password}
-                        onChange={(e) => {
-                          setSelectedClient({
-                            ...selectedClient,
-                            password: e.target.value,
-                          })
-                          loginForm.setValue("password", e.target.value)
-                        }}
-                        control={loginForm.control}
-                        fullWidth
-                      />
+                      {login_strategy === "Login with password" && (
+                        <HFTextField
+                          name=""
+                          value={selectedClient?.password}
+                          onChange={(e) => {
+                            setSelectedClient({
+                              ...selectedClient,
+                              password_label: e.target.value,
+                            });
+                            loginForm.setValue(
+                              "password_label",
+                              e.target.value
+                            );
+                          }}
+                          control={loginForm.control}
+                          fullWidth
+                        />
+                      )}
                     </>
                   )}
                 </div>
@@ -269,48 +308,61 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                       <HFTextField
                         name=""
                         control={loginForm.control}
-                        value={login?.view_fields[0]}
+                        value={login?.login_view}
                         fullWidth
                         disabled
                       />
-                      <HFTextField
-                        name=""
-                        control={loginForm.control}
-                        value={login?.view_fields[1]}
-                        fullWidth
-                        disabled
-                      />
+                      {login.login_strategy === "Login with password" && (
+                        <HFTextField
+                          name=""
+                          control={loginForm.control}
+                          value={login?.password_view}
+                          fullWidth
+                          disabled
+                        />
+                      )}
                     </>
                   ) : (
                     <>
                       <HFSelect
-                        options={fields}
+                        options={fields.filter(
+                          (item) =>
+                            item.type ===
+                            loginOptions?.find(
+                              (loginOption) =>
+                                loginOption?.value === login.login_strategy
+                            ).type
+                        )}
                         control={loginForm.control}
-                        name="login_table.view_fields[0]"
+                        name="login_view"
                         onChange={(e) => {
-                          loginForm.setValue("login_table.view_fields[0]", e)
+                          loginForm.setValue("login_view", e);
                           setSelectedClient({
                             ...selectedClient,
-                            view_fields: [e, selectedClient?.view_fields[1]],
-                          })
+                            login_view: e,
+                          });
                         }}
-                        value={selectedClient?.view_fields[0]}
+                        value={selectedClient?.login_view}
                         required
                       />
-                      <HFSelect
-                        options={fields}
-                        control={loginForm.control}
-                        name="login_table.view_fields[1]"
-                        onChange={(e) => {
-                          loginForm.setValue("login_table.view_fields[1]", e)
-                          setSelectedClient({
-                            ...selectedClient,
-                            view_fields: [selectedClient?.view_fields[0], e],
-                          })
-                        }}
-                        value={selectedClient?.view_fields[1]}
-                        required
-                      />
+                      {login_strategy === "Login with password" && (
+                        <HFSelect
+                          options={fields.filter(
+                            (item) => item.type === "PASSWORD"
+                          )}
+                          control={loginForm.control}
+                          name="password_view"
+                          onChange={(e) => {
+                            loginForm.setValue("password_view", e);
+                            setSelectedClient({
+                              ...selectedClient,
+                              password_view: e,
+                            });
+                          }}
+                          value={selectedClient?.password_view}
+                          required
+                        />
+                      )}
                     </>
                   )}
                 </div>
@@ -327,14 +379,18 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                   style={{ flexGrow: 1 }}
                 >
                   <div className={styles.card_header_title}>
-                    Логин с паролем
+                    {
+                      loginOptions?.find(
+                        (item) => item?.value === login_strategy
+                      )?.translation
+                    }
                   </div>
                   <HFSelect
-                    options={loginOptions}
+                    options={computedListOptions(loginOptions, logins) || []}
                     control={loginForm.control}
                     name="login_strategy"
                     onChange={(e) => {
-                      loginForm.setValue("login_strategy", e)
+                      loginForm.setValue("login_strategy", e);
                     }}
                     required
                   />
@@ -342,7 +398,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                     options={tables}
                     control={loginForm.control}
                     onChange={(e) => {
-                      getFields({ table_id: e })
+                      getFields({ table_id: e });
                     }}
                     name="login_table.object_id"
                     required
@@ -363,43 +419,57 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                 <div className={styles.card_body_items}>
                   <div>
                     <HFTextField
-                      name="login"
+                      name="login_label"
                       onChange={(e) => {
-                        loginForm.setValue("login", e.target.value)
+                        loginForm.setValue("login_label", e.target.value);
                       }}
                       control={loginForm.control}
                       fullWidth
                     />
-                    <HFTextField
-                      name="password"
-                      onChange={(e) => {
-                        loginForm.setValue("password", e.target.value)
-                      }}
-                      control={loginForm.control}
-                      fullWidth
-                    />
+                    {login_strategy === "Login with password" && (
+                      <HFTextField
+                        name="password_label"
+                        onChange={(e) => {
+                          loginForm.setValue("password_label", e.target.value);
+                        }}
+                        control={loginForm.control}
+                        fullWidth
+                      />
+                    )}
                   </div>
                   <div>
                     <HFSelect
-                      options={fields}
+                      options={fields.filter(
+                        (item) =>
+                          item?.type ===
+                          loginOptions?.find(
+                            (el) =>
+                              el?.value === login_strategy
+                          )?.type
+                      )}
                       control={loginForm.control}
-                      name="login_table.view_fields[0]"
-                      value={loginForm.getValues().login_table.view_fields[0]}
+                      name="login_view"
+                      // value={loginForm.getValues().login_view}
                       onChange={(e) => {
-                        loginForm.setValue("login_table.view_fields[0]", e)
+                        console.log("e", e);
+                        loginForm.setValue("login_view", e);
                       }}
                       required
                     />
-                    <HFSelect
-                      options={fields}
-                      control={loginForm.control}
-                      value={loginForm.getValues().login_table.view_fields[1]}
-                      name="login_table.view_fields[1]"
-                      onChange={(e) => {
-                        loginForm.setValue("login_table.view_fields[1]", e)
-                      }}
-                      required
-                    />
+                    {login_strategy === "Login with password" && (
+                      <HFSelect
+                        options={fields.filter(
+                          (item) => item.type === "PASSWORD"
+                        )}
+                        control={loginForm.control}
+                        // value={loginForm.getValues().password_view}
+                        name="password_view"
+                        onChange={(e) => {
+                          loginForm.setValue("password_view", e);
+                        }}
+                        required
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -407,9 +477,8 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                 <button
                   className={styles.cancel_btn}
                   onClick={() => {
-                    // handleClose()
-                    setIsCreating(false)
-                    loginForm.reset()
+                    setIsCreating(false);
+                    loginForm.reset();
                   }}
                 >
                   Cancel
@@ -417,7 +486,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                 <button
                   className={styles.craete_btn}
                   onClick={() => {
-                    handleSubmit()
+                    handleSubmit();
                   }}
                 >
                   {isEditing ? "Update" : "Create"}
@@ -428,20 +497,14 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
         )}
 
         <div>
-          <button
-            className={styles.add_login_btn}
-            onClick={() => {
-              setIsCreating(true)
-              // setIsEditing(false)
-            }}
-          >
+          <button className={styles.add_login_btn} onClick={handleCreate}>
             <PlusIcon />
             Добавить
           </button>
         </div>
       </div>
     </FormCard>
-  )
-}
+  );
+};
 
-export default Logins
+export default Logins;

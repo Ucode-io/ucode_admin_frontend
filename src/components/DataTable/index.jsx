@@ -17,7 +17,10 @@ import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import { useLocation } from "react-router-dom";
 import "./style.scss";
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
-import useOnClickOutside from 'use-onclickoutside'
+import useOnClickOutside from "use-onclickoutside";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import { Checkbox } from "@mui/material";
+import { numberWithSpaces } from "../../utils/formatNumbers";
 
 const DataTable = ({
   data = [],
@@ -35,21 +38,26 @@ const DataTable = ({
   onRowClick = () => {},
   filterChangeHandler = () => {},
   filters,
+  func = [],
   disableFilters,
   tableStyle,
   wrapperStyle,
   tableSlug,
   isResizeble,
-  paginationExtraButton
+  paginationExtraButton,
+  checkboxValue,
+  onCheckboxChange,
 }) => {
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const [columnId, setColumnId] = useState("");
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
+  const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
+  console.log('func', func);
 
-  const popupRef = useRef(null)
-  useOnClickOutside(popupRef, () => setColumnId(""))
+  const popupRef = useRef(null);
+  useOnClickOutside(popupRef, () => setColumnId(""));
 
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
@@ -119,7 +127,7 @@ const DataTable = ({
     createResizableTable(document.getElementById("resizeMe"));
   }, []);
 
-  const handleAutoSize = (colID,colIdx) => {
+  const handleAutoSize = (colID, colIdx) => {
     dispatch(
       tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
     );
@@ -131,8 +139,8 @@ const DataTable = ({
         pageName,
         colID,
         colWidth: element.offsetWidth,
-        isStiky: 'ineffective',
-        colIdx
+        isStiky: "ineffective",
+        colIdx,
       })
     );
     setColumnId("");
@@ -166,12 +174,10 @@ const DataTable = ({
     ) {
       return 0;
     } else {
-      return (
-        tableSettings?.[pageName]
-          ?.filter((item) => item?.isStiky === true)
-          ?.slice(0, colIdx)
-          ?.reduce((acc, item) => acc + item?.colWidth, 0)
-      );
+      return tableSettings?.[pageName]
+        ?.filter((item) => item?.isStiky === true)
+        ?.slice(0, colIdx)
+        ?.reduce((acc, item) => acc + item?.colWidth, 0);
     }
   };
 
@@ -189,7 +195,8 @@ const DataTable = ({
     >
       <CTableHead>
         <CTableRow>
-          <CTableHeadCell width={10}>№</CTableHeadCell>
+          <CTableCell width={10} />
+          {onCheckboxChange && <CTableHeadCell width={10}>№</CTableHeadCell>}
           {columns.map((column, index) => (
             <CTableHeadCell
               id={column.id}
@@ -245,28 +252,28 @@ const DataTable = ({
                   />
                 )}
                 {columnId === column?.id && (
-                  <div className="cell-popup" ref={popupRef} >
+                  <div className="cell-popup" ref={popupRef}>
                     {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
-                      <div
-                        className="cell-popup-item"
-                        onClick={() => handlePin(column?.id, index)}
-                      >
-                        <PinIcon
-                          pinned={
-                            tableSettings?.[pageName]?.find(
-                              (item) => item?.id === column?.id
-                            )?.isStiky
-                          }
-                        />
-                        <span>Pin column</span>
-                      </div>
-                      <div
-                        className="cell-popup-item"
-                        onClick={() => handleAutoSize(column?.id, index)}
-                      >
-                        <ResizeIcon />
-                        <span>Autosize</span>
-                      </div>
+                    <div
+                      className="cell-popup-item"
+                      onClick={() => handlePin(column?.id, index)}
+                    >
+                      <PinIcon
+                        pinned={
+                          tableSettings?.[pageName]?.find(
+                            (item) => item?.id === column?.id
+                          )?.isStiky
+                        }
+                      />
+                      <span>Pin column</span>
+                    </div>
+                    <div
+                      className="cell-popup-item"
+                      onClick={() => handleAutoSize(column?.id, index)}
+                    >
+                      <ResizeIcon />
+                      <span>Autosize</span>
+                    </div>
                     {/* </OutsideClickHandler> */}
                   </div>
                 )}
@@ -274,9 +281,14 @@ const DataTable = ({
             </CTableHeadCell>
           ))}
 
-          {(onDeleteClick || onEditClick) && (
-            <CTableHeadCell width={10}></CTableHeadCell>
-          )}
+          <PermissionWrapperV2
+            tabelSlug={tableSlug}
+            type={["update", "delete"]}
+          >
+            {(onDeleteClick || onEditClick) && (
+              <CTableHeadCell width={10}></CTableHeadCell>
+            )}
+          </PermissionWrapperV2>
         </CTableRow>
       </CTableHead>
 
@@ -292,12 +304,42 @@ const DataTable = ({
               onRowClick(row, rowIndex);
             }}
           >
-            <CTableCell>{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
+            {onCheckboxChange && (
+              <CTableCell>
+                <Checkbox
+                  checked={checkboxValue === row.guid}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </CTableCell>
+            )}
+            <CTableCell align="center">
+              {(currentPage - 1) * 10 + rowIndex + 1}
+            </CTableCell>
             {columns.map((column, index) => (
               <CTableCell
                 key={column.id}
-                className="overflow-ellipsis"
+                className={`overflow-ellipsis ${tableHeight}`}
                 style={{
+                  // height:
+                  //   tableHeight === "large"
+                  //     ? "90px"
+                  //     : tableHeight === "medium"
+                  //     ? "60px"
+                  //     : "30px",
+                  // fontSize:
+                  //   tableHeight === "large"
+                  //     ? "18px"
+                  //     : tableHeight === "medium"
+                  //     ? "16px"
+                  //     : "14px",
+                  // lineHeight:
+                  //   tableHeight === "large"
+                  //     ? "20px"
+                  //     : tableHeight === "medium"
+                  //     ? "18px"
+                  //     : "16px",
+                  padding: "8px 12px 4px",
                   position: tableSettings?.[pageName]?.find(
                     (item) => item?.id === column?.id
                   )?.isStiky
@@ -319,34 +361,57 @@ const DataTable = ({
                 <CellElementGenerator field={column} row={row} />
               </CTableCell>
             ))}
-
-            {(onDeleteClick || onEditClick) && (
-              <CTableCell>
-                <div className="flex">
-                  {onEditClick && (
-                    <RectangleIconButton
-                      color="success"
-                      className="mr-1"
-                      onClick={() => onEditClick(row, rowIndex)}
-                    >
-                      <Edit color="success" />
-                    </RectangleIconButton>
-                  )}
-                  {onDeleteClick && (
-                    <DeleteWrapperModal
-                      id={row.guid}
-                      onDelete={() => onDeleteClick(row, rowIndex)}
-                    >
-                      <RectangleIconButton color="error">
-                        <Delete color="error" />
+            <PermissionWrapperV2
+              tabelSlug={tableSlug}
+              type={["update", "delete"]}
+            >
+              {(onDeleteClick || onEditClick) && (
+                <CTableCell
+                  style={{ padding: "8px 12px 4px", verticalAlign: "middle" }}
+                >
+                  <div className="flex">
+                    {onEditClick && (
+                      <RectangleIconButton
+                        color="success"
+                        className="mr-1"
+                        size="small"
+                        onClick={() => onEditClick(row, rowIndex)}
+                      >
+                        <Edit color="success" />
                       </RectangleIconButton>
-                    </DeleteWrapperModal>
-                  )}
-                </div>
-              </CTableCell>
-            )}
+                    )}
+                    {onDeleteClick && (
+                      <DeleteWrapperModal
+                        id={row.guid}
+                        onDelete={() => onDeleteClick(row, rowIndex)}
+                      >
+                        <RectangleIconButton color="error">
+                          <Delete color="error" />
+                        </RectangleIconButton>
+                      </DeleteWrapperModal>
+                    )}
+                  </div>
+                </CTableCell>
+              )}
+            </PermissionWrapperV2>
           </CTableRow>
         ))}
+        {func?.length ? (
+          <CTableRow>
+            <CTableCell>Итог</CTableCell>
+            {columns?.map((col) => (
+              <CTableCell>
+                {col?.slug ===
+                func?.filter((item) => item?.field_name === col?.slug)?.[0]
+                  ?.field_name
+                  ? numberWithSpaces(
+                      data?.reduce((acc, curr) => acc + curr[col?.slug], 0)
+                    )
+                  : ""}
+              </CTableCell>
+            ))}
+          </CTableRow>
+        ) : null}
 
         {additionalRow}
       </CTableBody>

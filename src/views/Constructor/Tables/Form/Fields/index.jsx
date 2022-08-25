@@ -8,6 +8,7 @@ import {
   CTableRow,
 } from "../../../../../components/CTable"
 import DataTable from "../../../../../components/DataTable"
+import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/PermissionWrapperV2"
 import TableCard from "../../../../../components/TableCard"
 import constructorFieldService from "../../../../../services/constructorFieldService"
 import { generateGUID } from "../../../../../utils/generateID"
@@ -15,7 +16,7 @@ import FieldCreateForm from "./FieldCreateForm"
 import styles from "./style.module.scss"
 
 const Fields = ({ mainForm }) => {
-  const { id } = useParams()
+  const { id, slug } = useParams()
   const [formLoader, setFormLoader] = useState(false)
   const [drawerState, setDrawerState] = useState(null)
 
@@ -109,24 +110,26 @@ const Fields = ({ mainForm }) => {
         columns={columns}
         disablePagination
         dataLength={1}
+        tableSlug={'app'} // talk with Backend
         // loader={loader}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
         additionalRow={
-          <CTableRow>
-            <CTableCell colSpan={columns.length + 1}>
-              <div
-                className={styles.createButton}
-                onClick={() => setDrawerState("CREATE")}
-              >
-                <Add color="primary" />
-                <p>Добавить</p>
-              </div>
-            </CTableCell>
-          </CTableRow>
+          <PermissionWrapperV2 tabelSlug={slug} type="write">
+            <CTableRow>
+              <CTableCell colSpan={columns.length + 1}>
+                <div
+                  className={styles.createButton}
+                  onClick={() => setDrawerState("CREATE")}
+                >
+                  <Add color="primary" />
+                  <p>Добавить</p>
+                </div>
+              </CTableCell>
+            </CTableRow>
+          </PermissionWrapperV2>
         }
       />
-
 
       <FieldCreateForm
         open={drawerState}
@@ -137,10 +140,8 @@ const Fields = ({ mainForm }) => {
         isLoading={formLoader}
         mainForm={mainForm}
       />
-
-
     </TableCard>
-  )
+  );
 
   // return (
   //   <TableCard>

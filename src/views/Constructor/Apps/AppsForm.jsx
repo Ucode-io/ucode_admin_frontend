@@ -14,6 +14,7 @@ import HFIconPicker from "../../../components/FormElements/HFIconPicker"
 import HFTextField from "../../../components/FormElements/HFTextField"
 import HeaderSettings from "../../../components/HeaderSettings"
 import PageFallback from "../../../components/PageFallback"
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2"
 import applicationService from "../../../services/applicationSercixe"
 import { fetchApplicationListActions } from "../../../store/application/application.thunk"
 import TablesList from "../Tables/TablesList"
@@ -160,12 +161,14 @@ const AppsForm = () => {
                 >
                   Закрыть
                 </SecondaryButton>
+                <PermissionWrapperV2 tabelSlug="app" type="update">
                 <PrimaryButton
                   loader={btnLoader}
                   onClick={mainForm.handleSubmit(onSubmit)}
                 >
                   <Save /> Сохранить
                 </PrimaryButton>
+                </PermissionWrapperV2>
               </>
             }
           />

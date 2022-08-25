@@ -52,8 +52,6 @@ const FieldCreateForm = ({
   }, {
     select: ({ fields }) => listToOptions(fields?.filter(field => field.type !== 'LOOKUP'), "label", "slug")
   })
-
-  console.log('layoutRelations --->', computedRelationFields)
   
   // const { data } = useQuery(['GET_TABLES_LIST'], () => {
   //   return constructorTableService.getList()
@@ -107,6 +105,7 @@ const FieldCreateForm = ({
       open={open}
       onSaveButtonClick={handleSubmit(submitHandler)}
       loader={isLoading}
+      
     >
       <form onSubmit={handleSubmit(submitHandler)}>
         <FRow label="Field Label" required>

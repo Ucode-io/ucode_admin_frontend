@@ -7,7 +7,6 @@ import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
 import { sortByOrder } from "../../utils/sortByOrder"
 import MainInfo from "./MainInfo"
-import constructorRelationService from "../../services/constructorRelationService"
 import RelationSection from "./RelationSection"
 import styles from "./style.module.scss"
 import Footer from "../../components/Footer"
@@ -18,6 +17,7 @@ import SecondaryButton from "../../components/Buttons/SecondaryButton"
 import { useQueryClient } from "react-query"
 import { sortSections } from "../../utils/sectionsOrderNumber"
 import constructorViewRelationService from "../../services/constructorViewRelationService"
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
@@ -59,20 +59,17 @@ const ObjectsFormPage = () => {
       table_slug: tableSlug,
     })
 
-
     try {
       const [{ sections = [] }, { data = {} }, { view_relations = [] }] =
         await Promise.all([getSections, getFormData, getRelations])
 
       setSections(sortSections(sections))
 
-      const relations = view_relations?.map(el => ({
-        ...el,
-        ...el.relation
-      })) ?? {}
-
-      console.log('view_relations', view_relations)
-
+      const relations =
+        view_relations?.map((el) => ({
+          ...el,
+          ...el.relation,
+        })) ?? {}
 
       setTableRelations(
         relations
@@ -95,15 +92,15 @@ const ObjectsFormPage = () => {
       )
 
       reset(data.response ?? {})
-    } catch(error) { console.error(error) } finally {
+    } catch (error) {
+      console.error(error)
+    } finally {
       setLoader(false)
     }
   }
 
   const getFields = async () => {
     try {
-      
-
       const getSections = constructorSectionService.getList({
         table_slug: tableSlug,
       })
@@ -117,12 +114,11 @@ const ObjectsFormPage = () => {
         getRelations,
       ])
 
-      
-
-      const relations = view_relations?.map(el => ({
-        ...el,
-        ...el.relation
-      })) ?? []
+      const relations =
+        view_relations?.map((el) => ({
+          ...el,
+          ...el.relation,
+        })) ?? []
 
       setSections(sortSections(sections))
 
@@ -135,7 +131,7 @@ const ObjectsFormPage = () => {
               (relation.type === "Many2One" &&
                 relation.table_to === tableSlug) ||
               (relation.type === "One2Many" &&
-                relation.table_from === tableSlug) 
+                relation.table_from === tableSlug)
           )
           .map((relation) => ({
             ...relation,
@@ -145,7 +141,9 @@ const ObjectsFormPage = () => {
                 : relation.table_from,
           }))
       )
-    } catch(error) { console.error(error) } finally {
+    } catch (error) {
+      console.error(error)
+    } finally {
       setLoader(false)
     }
   }
@@ -177,7 +175,8 @@ const ObjectsFormPage = () => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
         removeTab(pathname)
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
-        if(tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data)
+        if (tableRelations?.length)
+          navigateToForm(tableSlug, "EDIT", res.data?.data)
       })
       .catch(() => setBtnLoader(false))
   }
@@ -187,7 +186,12 @@ const ObjectsFormPage = () => {
     else create(data)
   }
 
-  const { handleSubmit, control, reset, setValue: setFormValue } = useForm({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    setValue: setFormValue,
+  } = useForm({
     defaultValues: state,
   })
 
@@ -196,21 +200,15 @@ const ObjectsFormPage = () => {
   return (
     <div className={styles.formPage}>
       <div className={styles.formArea}>
-        <MainInfo control={control} computedSections={computedSections} setFormValue={setFormValue} />
+        <MainInfo
+          control={control}
+          computedSections={computedSections}
+          setFormValue={setFormValue}
+        />
 
         <div className={styles.secondaryCardSide}>
-          {<RelationSection 
-            relations={tableRelations}
-            control={control}
-          />}
+          <RelationSection relations={tableRelations} control={control} />
 
-          {/* {tableRelations?.map((relation) => (
-            <RelationSection
-              key={relation.id}
-              relation={relation}
-              control={control}
-            />
-          ))} */}
         </div>
       </div>
 
@@ -220,9 +218,14 @@ const ObjectsFormPage = () => {
             <SecondaryButton onClick={() => removeTab(pathname)} color="error">
               Закрыть
             </SecondaryButton>
-            <PrimaryButton loader={btnLoader} onClick={handleSubmit(onSubmit)}>
-              <Save /> Сохранить
-            </PrimaryButton>
+            <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+              <PrimaryButton
+                loader={btnLoader}
+                onClick={handleSubmit(onSubmit)}
+              >
+                <Save /> Сохранить
+              </PrimaryButton>
+            </PermissionWrapperV2>
           </>
         }
       />

@@ -1,20 +1,23 @@
-import { Close } from "@mui/icons-material"
-import { Drawer, IconButton } from "@mui/material"
-import PrimaryButton from "../Buttons/PrimaryButton"
-import SecondaryButton from "../Buttons/SecondaryButton"
-import styles from "./style.module.scss"
+import { Close } from "@mui/icons-material";
+import { Drawer, IconButton } from "@mui/material";
+import PrimaryButton from "../Buttons/PrimaryButton";
+import styles from "./style.module.scss";
 
-const DrawerCard = ({ children, onClose = () => {}, title="", open, onSaveButtonClick = () => {}, loader }) => {
-
-  console.log("OPPPPP ENNN ===>", open)
-
+const DrawerCard = ({
+  children,
+  onClose = () => {},
+  title = "",
+  open,
+  onSaveButtonClick = () => {},
+  loader,
+  bodyStyle
+}) => {
   return (
     <Drawer
       open={open}
       anchor="right"
       classes={{ paperAnchorRight: styles.verticalDrawer }}
       onClose={onClose}
-      
     >
       <div className={styles.header}>
         <h2 className={styles.title}>{title}</h2>
@@ -23,17 +26,9 @@ const DrawerCard = ({ children, onClose = () => {}, title="", open, onSaveButton
           <Close className={styles.closeIcon} />
         </IconButton>
       </div>
-      
-      <div className={styles.body} >{ children }</div>
+      <div className={styles.body} style={bodyStyle}>{children}</div>
 
       <dir className={styles.footer}>
-        {/* <SecondaryButton
-          size="large"
-          className={styles.button}
-          onClick={onClose}
-        >
-          Отменить
-        </SecondaryButton> */}
         <PrimaryButton
           size="large"
           className={styles.button}
@@ -44,7 +39,7 @@ const DrawerCard = ({ children, onClose = () => {}, title="", open, onSaveButton
         </PrimaryButton>
       </dir>
     </Drawer>
-  )
-}
+  );
+};
 
-export default DrawerCard
+export default DrawerCard;

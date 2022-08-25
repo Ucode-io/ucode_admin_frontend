@@ -11,20 +11,27 @@ import { listToMap } from "../../utils/listToMap"
 import FiltersBlock from "../../components/FiltersBlock"
 import SettingsButton from "./components/ViewSettings/SettingsButton"
 import GanttView from "./GanttView"
+import ViewTabSelector from "./components/ViewTypeSelector"
+
+import DocView from "./DocView"
 
 const ObjectsPage = () => {
   const { tableSlug } = useParams()
-  
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
-  
 
-  const { data: { views, fieldsMap } = { views: [], fieldsMap: {} }, isLoading } = useQuery(
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+
+  const {
+    data: { views, fieldsMap } = { views: [], fieldsMap: {} },
+    isLoading,
+  } = useQuery(
     ["GET_VIEWS_AND_FIELDS", tableSlug],
     () => {
-      return constructorObjectService.getList(tableSlug, { data: { limit: 0, offset: 0 } })
+      return constructorObjectService.getList(tableSlug, {
+        data: { limit: 0, offset: 0 },
+      })
     },
     {
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           views: data?.views ?? [],
           fieldsMap: listToMap(data?.fields),
@@ -83,10 +90,25 @@ const ObjectsPage = () => {
               </TabPanel>
             )
           })}
+          <TabPanel>
+            <DocView
+              // view={view}
+              views={views}
+              fieldsMap={fieldsMap}
+              selectedTabIndex={selectedTabIndex}
+              setSelectedTabIndex={setSelectedTabIndex}
+            />
+          </TabPanel>
         </div>
       </Tabs>
 
-      {!views?.length && <FiltersBlock extra={<SettingsButton />} />}
+      {!views?.length && <FiltersBlock>
+        <ViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+        />
+      </FiltersBlock>}
 
     </>
   )

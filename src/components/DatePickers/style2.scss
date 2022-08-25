@@ -72,3 +72,23 @@ rmdp-day.rmdp-today.highlight span {
 
 
 }
+
+
+
+// =================CALENDAR======================
+
+
+.Calendar {
+  .rmdp-wrapper {
+    width: 100%;
+    margin-bottom: 10px;
+
+    .rmdp-calendar {
+      width: 100%;
+
+      .rmdp-day-picker > div {
+        width: 100%;
+      }
+    }
+  }
+}

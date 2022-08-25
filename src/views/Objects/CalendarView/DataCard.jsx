@@ -1,20 +1,35 @@
 import { format, setHours, setMinutes } from "date-fns"
 import { useEffect, useRef, useState } from "react"
-import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel"
 import styles from "./style.module.scss"
 import Moveable from "react-moveable"
-import { timesList } from "../../../utils/timesList"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { useParams } from "react-router-dom"
 import "./moveable.scss"
+import useTimeList from "../../../hooks/useTimeList"
+import InfoBlock from "./InfoBlock"
+import { Menu } from "@mui/material"
+import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel"
+import IconGenerator from "../../../components/IconPicker/IconGenerator"
+import CalendarStatusSelect from "../components/CalendarStatusSelect"
 
-const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage }) => {
+const DataCard = ({
+  date,
+  view,
+  fieldsMap,
+  data,
+  viewFields,
+  navigateToEditPage,
+}) => {
+  const [info, setInfo] = useState(data)
+  const [anchorEl, setAnchorEl] = useState(null)
   const ref = useRef()
   const [target, setTarget] = useState()
   const { tableSlug } = useParams()
+  const { timeList } = useTimeList()
+  const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40)
 
   const [frame, setFrame] = useState({
-    translate: [0, data.calendar?.startPosition ?? 0],
+    translate: [0, info.calendar?.startPosition ?? 0],
   })
 
   useEffect(() => {
@@ -22,45 +37,38 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
     setTarget(ref.current)
   }, [ref])
 
-
-  const onPositionChange = (position) => {
+  const onPositionChange = (position, height) => {
     if (!position || position.translate[1] < 0) return null
 
     const beginIndex = Math.floor((position.translate[1] + 2) / 40)
-    const endIndex = Math.ceil((position.translate[1] + position.height) / 40)
-    
-    
-
-
+    const endIndex = Math.ceil((position.translate[1] + height) / 40)
 
     const startTime = computeTime(beginIndex)
     const endTime = computeTime(endIndex)
-    
 
-    constructorObjectService.update(tableSlug, { data: {
-      ...data,
+    const computedData = {
+      ...info,
       [view.calendar_from_slug]: startTime,
       [view.calendar_to_slug]: endTime,
-    } })
+    }
 
+    constructorObjectService.update(tableSlug, {
+      data: computedData,
+    }).then(res => setInfo(computedData))
   }
 
   const computeTime = (index) => {
-    const startTime = timesList[index]?.split('-')?.[0]
-    const time = startTime?.split(':')
+    const computedTime = timeList[index]
 
-    const hour = Number(time?.[0])
-    const minute = Number(time?.[1])
-
-
+    const hour = Number(format(computedTime, "H"))
+    const minute = Number(format(computedTime, "m"))
 
     return setMinutes(setHours(date, hour), minute)
-
   }
 
-   // ---------DRAG ACTIONS------------
+  // ---------DRAG ACTIONS------------
 
-   const onDragStart = (e) => {
+  const onDragStart = (e) => {
     e.set([0, frame.translate[1] > 0 ? frame.translate[1] : 0])
   }
 
@@ -73,15 +81,16 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
   const onDragEnd = ({ lastEvent }) => {
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate
-      onPositionChange(lastEvent)
+      onPositionChange(lastEvent.drag, lastEvent.height)
     }
   }
 
-   // ----------RESIZE ACTIONS----------------------
+  // ----------RESIZE ACTIONS----------------------
 
-   const onResizeStart = (e) => {
+  const onResizeStart = (e) => {
     e.setOrigin(["%", "%"])
     e.dragStart && e.dragStart.set(frame.translate)
+    ref.current.classList.add(styles.resizing)
   }
 
   const onResize = ({ target, height, drag }) => {
@@ -89,60 +98,95 @@ const DataCard = ({ date, view, fieldsMap, data, viewFields, navigateToEditPage 
     if (beforeTranslate[1] < 0) return null
     target.style.height = `${height}px`
     target.style.transform = `translateY(${beforeTranslate[1]}px)`
+    if (height <= 40) setIsSingleLine(true)
+    else setIsSingleLine(false)
   }
 
   const onResizeEnd = ({ lastEvent }) => {
     if (lastEvent) {
       frame.translate = lastEvent.drag.beforeTranslate
-      onPositionChange(lastEvent.drag)
+      onPositionChange(lastEvent.drag, lastEvent.height)
+      ref.current.classList.remove(styles.resizing)
     }
+  }
+
+  const openMenu = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+  
+  const closeMenu = () => {
+    setAnchorEl(null)
   }
 
   return (
     <>
-    <div
-      key={data.guid}
-      className={styles.infoBlockWrapper}
-      style={{ top: 0, transform: `translateY(${data.calendar?.startPosition}px)`, height: data.calendar?.height }}
-      onClick={() => navigateToEditPage(data)}
-      ref={ref}
-    >
-      <div className={styles.infoBlock} style={{ height: '100%' }}>
+      <div
+        key={data.guid}
+        className={styles.infoBlockWrapper}
+        style={{
+          top: 0,
+          transform: `translateY(${info.calendar?.startPosition}px)`,
+          height: info.calendar?.height,
+        }}
+        onClick={openMenu}
+        ref={ref}
+      >
+        <div className={styles.infoCard} style={{ height: "100%" }}>
+          <InfoBlock
+            viewFields={viewFields}
+            data={info}
+            isSingleLine={isSingleLine}
+          />
+        </div>
+      </div>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={closeMenu}
+        classes={{ list: styles.menu, paper: styles.paper }}
+        transformOrigin={{ horizontal: "center", vertical: "top" }}
+        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+      >
+        <div className={styles.popupHeader} >
+          <p className={styles.time}>
+            {info.calendar?.elementFromTime ? format(info.calendar?.elementFromTime, "HH:mm") : ''} -
+            {info.calendar?.elementToTime ? format(info.calendar?.elementToTime, " HH:mm") : ''}
+          </p>
+
+          <IconGenerator onClick={() => navigateToEditPage(info)} className={styles.linkIcon} icon="arrow-up-right-from-square.svg" size={16} />
+
+        </div>
         {viewFields?.map((field) => (
           <div>
             <b>{field.label}: </b>
             {field.type === "LOOKUP"
-              ? getRelationFieldTableCellLabel(field, data, field.table_slug)
-              : data[field.slug]}
+              ? getRelationFieldTableCellLabel(field, info, field.table_slug)
+              : info[field.slug]}
           </div>
         ))}
 
-        <p className={styles.time}>
-          {data.calendar?.elementFromTime ? format(data.calendar?.elementFromTime, "HH:mm") : ''} -{" "}
-          {data.calendar?.elementToTime ? format(data.calendar?.elementToTime, "HH:mm") : ''}
-        </p>
-      </div>
-    </div>
+        <CalendarStatusSelect view={view} fieldsMap={fieldsMap} info={info} setInfo={setInfo} />
+      </Menu>
 
-        <Moveable
-          target={target}
-          // container={container}
-          draggable
-          resizable
-          // throttleDrag={40}
-          // throttleResize={40}
-          keepRatio={false}
-          origin={false}
-          renderDirections={["s", "n"]}
-          padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
-          onDragStart={onDragStart}
-          onDrag={onDrag}
-          onDragEnd={onDragEnd}
-          onResizeStart={onResizeStart}
-          onResize={onResize}
-          onResizeEnd={onResizeEnd}
-        />
-
+      <Moveable
+        target={target}
+        // container={container}
+        draggable
+        resizable
+        throttleDrag={40}
+        throttleResize={40}
+        keepRatio={false}
+        origin={false}
+        renderDirections={["s", "n"]}
+        padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
+        onDragStart={onDragStart}
+        onDrag={onDrag}
+        onDragEnd={onDragEnd}
+        onResizeStart={onResizeStart}
+        onResize={onResize}
+        onResizeEnd={onResizeEnd}
+      />
     </>
   )
 }

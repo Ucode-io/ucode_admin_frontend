@@ -6,11 +6,15 @@ export const { actions: tableSizeAction, reducer: tableSizeReducer } =
     initialState: {
       tableSize: {},
       tableSettings: {},
+      tableHeight: 'medium',
     },
     reducers: {
       setTableSize: (state, { payload: { pageName, colID, colWidth } }) => {
         state.tableSize[pageName] = state.tableSize[pageName] || {};
         state.tableSize[pageName][colID] = colWidth;
+      },
+      setTableHeight: (state, { payload: { tableHeight } }) => {
+        state.tableHeight = tableHeight;
       },
       setTableSettings: (
         state,

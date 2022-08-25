@@ -22,37 +22,31 @@
   }
 }
 
-.modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.card {
+  min-width: 1000px;
+  border: none;
 
-  .card {
-    min-width: 1000px;
-    border: none;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    box-shadow: inset 0px -1px 0px #e5e9eb;
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 16px;
-      box-shadow: inset 0px -1px 0px #e5e9eb;
-
-      .cardTitle {
-        font-weight: 700;
-        font-size: 14px;
-        line-height: 24px;
-      }
-
-      .closeIcon {
-        font-size: 20px;
-      }
+    .cardTitle {
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 24px;
     }
 
-    .body {
-      display: flex;
-      align-items: flex-start;
+    .closeIcon {
+      font-size: 20px;
     }
+  }
+
+  .body {
+    display: flex;
+    align-items: flex-start;
   }
 }
 

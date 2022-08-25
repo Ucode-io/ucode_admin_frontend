@@ -17,9 +17,9 @@ const RecursiveBlock = ({
       (el) => el[parentTab.slug] === parentTab.value
     )
   }, [parentTab, tabs, level])
-
+  
   const rowWidth = datesList?.length * 160 + 200
-
+  
   return (
     <div>
       {elements?.map((tab) => (

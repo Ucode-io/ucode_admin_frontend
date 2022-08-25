@@ -13,8 +13,6 @@ import styles from "./style.module.scss"
 
 const RelationSection = ({ relations }) => {
 
-  console.log("RELATION -->", relations)
-
   const { tableSlug } = useParams()
   const { navigateToForm } = useTabRouter()
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
@@ -47,7 +45,7 @@ const RelationSection = ({ relations }) => {
     else {
       if(relation.is_editable) setCreateFormVisible(relation.id, true)
 
-      navigateToForm(relation.relatedTable, "CREATE", null, {
+      else navigateToForm(relation.relatedTable, "CREATE", null, {
         [`${tableSlug}_id`]: id,
       })
     }

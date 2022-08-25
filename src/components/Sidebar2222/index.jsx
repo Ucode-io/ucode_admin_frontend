@@ -50,9 +50,9 @@ const Sidebar2222 = () => {
       <div className="nav-block" style={{ height: `calc(100vh - ${72}px)` }}>
         <div className="menu-element">
           {menuElements
-            ?.filter((el, idx) =>
-              idx === 1 ? permissions?.[el.slug]?.["read"] : true
-            )
+            // ?.filter((el, idx) =>
+            //   idx === 1 ? permissions?.[el.slug]?.["read"] : true
+            // )
             .map((element) => (
               <div className="parent-block" key={element.id}>
                 <NavLink

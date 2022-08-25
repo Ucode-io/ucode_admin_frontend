@@ -26,14 +26,14 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
 
 
       const startPosition =
-        Math.floor(
+        // Math.floor(
           differenceInMinutes(el.calendar?.elementFromTime, calendarStartedTime) / timeInterval
-        ) * 40
+         * 40
 
       const height =
-        Math.ceil(
+        // Math.ceil(
           differenceInMinutes(el.calendar?.elementToTime, el.calendar?.elementFromTime) / timeInterval
-        ) *
+         *
           40
 
       return {

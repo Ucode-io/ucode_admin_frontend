@@ -25,7 +25,7 @@ const DynamicFields = ({
   const getConnection = () => {
     axios
       .post(
-        `https://test.api.client.medion.uz/v1/object/get-list/${connection?.table_slug}`,
+        `${import.meta.env.VITE_BASE_URL}object/get-list/${connection?.table_slug}`,
         { data: {} }
       )
       .then((res) => {

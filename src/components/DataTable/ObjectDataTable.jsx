@@ -57,6 +57,8 @@ const ObjectDataTable = ({
   const tableHeight = useSelector((state) => state.tableSize.tableHeight)
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0)
 
+  console.log('tableSlug111', tableSlug)
+
   const popupRef = useRef(null)
   useOnClickOutside(popupRef, () => setColumnId(""))
 
@@ -313,7 +315,7 @@ const ObjectDataTable = ({
             tableSlug={tableSlug}
             onDeleteClick={onDeleteClick}
             onFormSubmit={onFormSubmit}
-              
+
           />
         ))}
         {func?.length ? (

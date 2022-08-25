@@ -28,14 +28,15 @@ const TableRowForm = ({
     defaultValues: row
   })
 
-  const { mutate } = useMutation((values) => {
+  const onSubmit = (values) => {
+    setLoader(true)
+    onFormSubmit(values).then(() => {
+      setFormVisible(false)
+    }).catch(() => setLoader(false))
+  }
 
-    return constructorObjectService.update(tableSlug, values)
-  }, {
-    onSuccess: () => {
-      onFormSubmit()
-    }
-  })
+
+  
 
   // const submitHandler = (values) => {
   //   setLoader(true)
@@ -90,7 +91,7 @@ const TableRowForm = ({
             color="success"
             className="mr-1"
             size="small"
-            onClick={handleSubmit(mutate)}
+            onClick={handleSubmit(onSubmit)}
           >
             <Save color="success" />
           </RectangleIconButton>

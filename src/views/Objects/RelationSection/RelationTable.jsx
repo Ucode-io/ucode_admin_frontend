@@ -91,11 +91,20 @@ const RelationTable = ({ relation }) => {
     })
   }
 
-  const onFormSubmit = () => {
-    queryClient.refetchQueries([
-      "GET_OBJECT_LIST",
-      relation.relatedTable,
-    ])
+  const { mutateAsync } = useMutation((values) => {
+
+    return constructorObjectService.update(relation.relatedTable, { data: values })
+  }, {
+    onSuccess: () => {
+      queryClient.refetchQueries([
+        "GET_OBJECT_LIST",
+        relation.relatedTable,
+      ])
+    }
+  })
+
+  const onFormSubmit = (values) => {
+    return mutateAsync(values)
   }
 
   return (

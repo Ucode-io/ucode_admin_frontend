@@ -48,6 +48,7 @@ const ObjectDataTable = ({
   paginationExtraButton,
   checkboxValue,
   onCheckboxChange,
+  onFormSubmit
 }) => {
   const location = useLocation()
   const tableSize = useSelector((state) => state.tableSize.tableSize)
@@ -311,6 +312,8 @@ const ObjectDataTable = ({
             calculateWidth={calculateWidth}
             tableSlug={tableSlug}
             onDeleteClick={onDeleteClick}
+            onFormSubmit={onFormSubmit}
+              
           />
         ))}
         {func?.length ? (

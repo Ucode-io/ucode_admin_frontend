@@ -23,8 +23,11 @@ const TableRow = ({
   tableSlug,
   onDeleteClick,
   onEditClick,
+  onFormSubmit,
 }) => {
   const [formVisible, setFormVisible] = useState(false)
+
+  console.log('tableSlug ===>', tableSlug)
 
   if (formVisible)
     return (
@@ -41,6 +44,7 @@ const TableRow = ({
         calculateWidth={calculateWidth}
         setFormVisible={setFormVisible}
         tableSlug={tableSlug}
+        onFormSubmit={onFormSubmit}
       />
     )
 

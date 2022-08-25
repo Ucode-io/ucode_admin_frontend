@@ -86,7 +86,7 @@ const LayoutRelationsBlock = ({ mainForm }) => {
 
 
           <div className={styles.cardBody} >
-            <LayoutRelationTable relation={viewRelations[selectedTabIndex]} />
+            <LayoutRelationTable relation={viewRelations[selectedTabIndex]} mainForm={mainForm} index={selectedTabIndex} />
           </div>
 
         </Tabs>

@@ -318,6 +318,7 @@ const ObjectDataTable = ({
             tableSlug={tableSlug}
             onDeleteClick={onDeleteClick}
             onFormSubmit={onFormSubmit}
+            
           />
         ))}
         {func?.length ? (

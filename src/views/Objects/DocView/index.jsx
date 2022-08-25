@@ -98,7 +98,6 @@ const DocView = ({
         parsedHTML = parsedHTML.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
       })
 
-
       const res = await documentTemplateService.exportToPDF({
         data: {
           table_slug: tableSlug,

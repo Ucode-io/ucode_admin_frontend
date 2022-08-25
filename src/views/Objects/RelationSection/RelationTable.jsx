@@ -122,7 +122,7 @@ const RelationTable = ({ relation, createFormVisible, setCreateFormVisible }) =>
         disableFilters
         onPaginationChange={setCurrentPage}
         paginationExtraButton={id && <SecondaryButton onClick={navigateToTablePage} >Все</SecondaryButton>}
-        onFormSubmit={onFormSubmit}
+        onFormSubmit={relation.is_editable && onFormSubmit}
         createFormVisible={createFormVisible[relation.id]}
         setCreateFormVisible={(val) => setCreateFormVisible(relation.id, val)}
       />

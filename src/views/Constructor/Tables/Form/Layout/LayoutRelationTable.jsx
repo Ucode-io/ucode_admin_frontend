@@ -2,9 +2,10 @@ import { useMemo } from "react"
 import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
 import DataTable from "../../../../../components/DataTable"
+import HFSwitch from "../../../../../components/FormElements/HFSwitch"
 import constructorObjectService from "../../../../../services/constructorObjectService"
 
-const LayoutRelationTable = ({ relation }) => {
+const LayoutRelationTable = ({ relation, mainForm, index }) => {
   const { slug } = useParams()
 
   const relatedTableSlug = useMemo(() => {
@@ -31,6 +32,9 @@ const LayoutRelationTable = ({ relation }) => {
   )
 
   return (
+    <div>
+      <HFSwitch label={'Editable'} control={mainForm.control} name={`view_relations[${index}].is_editable`} />
+
     <DataTable
       removableHeight={false}
       loader={dataFetchingLoading}
@@ -43,6 +47,7 @@ const LayoutRelationTable = ({ relation }) => {
       disableFilters
       // onPaginationChange={setCurrentPage}
     />
+    </div>
   )
 }
 

@@ -92,19 +92,19 @@ const TableRow = ({
         </CTableCell>
       ))}
       <PermissionWrapperV2 tabelSlug={tableSlug} type={["update", "delete"]}>
-        {onDeleteClick && (
+        {(onDeleteClick || onFormSubmit) && (
           <CTableCell
             style={{ padding: "8px 12px 4px", verticalAlign: "middle" }}
           >
             <div className="flex">
-              <RectangleIconButton
+              {onFormSubmit && <RectangleIconButton
                 color="success"
                 className="mr-1"
                 size="small"
                 onClick={() => setFormVisible(true)}
               >
                 <Edit color="primary" />
-              </RectangleIconButton>
+              </RectangleIconButton>}
               {onDeleteClick && (
                 <DeleteWrapperModal
                   id={row.guid}

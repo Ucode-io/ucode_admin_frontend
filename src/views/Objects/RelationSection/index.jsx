@@ -42,12 +42,11 @@ const RelationSection = ({ relations }) => {
     const relation = relations[selectedTabIndex]
     if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
     else {
+      if(relation.is_editable) setCreateFormVisible(relation.id, true)
 
-      setCreateFormVisible(relation.id, true)
-
-      // navigateToForm(relation.relatedTable, "CREATE", null, {
-      //   [`${tableSlug}_id`]: id,
-      // })
+      navigateToForm(relation.relatedTable, "CREATE", null, {
+        [`${tableSlug}_id`]: id,
+      })
     }
       
   }
@@ -90,6 +89,7 @@ const RelationSection = ({ relations }) => {
                 relation={relation}
                 createFormVisible={relationsCreateFormVisible}
                 setCreateFormVisible={setCreateFormVisible}
+                
               />
             </TabPanel>
           ))}

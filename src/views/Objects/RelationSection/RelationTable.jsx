@@ -2,7 +2,6 @@ import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
-import DataTable from "../../../components/DataTable"
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
@@ -10,7 +9,7 @@ import { objectToArray } from "../../../utils/objectToArray"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import styles from "./style.module.scss"
 
-const RelationTable = ({ relation }) => {
+const RelationTable = ({ relation, createFormVisible, setCreateFormVisible }) => {
   const { appId, tableSlug, id } = useParams()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
@@ -50,7 +49,7 @@ const RelationTable = ({ relation }) => {
       },
     }
   )
-
+  
   const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
     (row) => {
       if (relation.type === "Many2Many") {
@@ -92,10 +91,11 @@ const RelationTable = ({ relation }) => {
   }
 
   const { mutateAsync } = useMutation((values) => {
-
-    return constructorObjectService.update(relation.relatedTable, { data: values })
+    if(values.guid) return constructorObjectService.update(relation.relatedTable, { data: values })
+    else constructorObjectService.create(relation.relatedTable, { data: values })
   }, {
     onSuccess: () => {
+      setCreateFormVisible(false)
       queryClient.refetchQueries([
         "GET_OBJECT_LIST",
         relation.relatedTable,
@@ -123,6 +123,8 @@ const RelationTable = ({ relation }) => {
         onPaginationChange={setCurrentPage}
         paginationExtraButton={id && <SecondaryButton onClick={navigateToTablePage} >Все</SecondaryButton>}
         onFormSubmit={onFormSubmit}
+        createFormVisible={createFormVisible[relation.id]}
+        setCreateFormVisible={(val) => setCreateFormVisible(relation.id, val)}
       />
     </div>
   )

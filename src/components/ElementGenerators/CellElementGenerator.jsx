@@ -31,7 +31,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     case "NUMBER":
       return (
-        <span>{ numberWithSpaces(value) }</span>
+        <span className="text-nowrap" >{ numberWithSpaces(value) }</span>
       )
 
     case "DATE_TIME":

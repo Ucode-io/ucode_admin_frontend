@@ -12,6 +12,9 @@ import RelationTable from "./RelationTable"
 import styles from "./style.module.scss"
 
 const RelationSection = ({ relations }) => {
+
+  console.log("RELATION -->", relations)
+
   const { tableSlug } = useParams()
   const { navigateToForm } = useTabRouter()
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =

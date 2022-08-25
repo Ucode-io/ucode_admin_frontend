@@ -89,6 +89,7 @@ const ObjectsFormPage = () => {
                 ? relation.table_to
                 : relation.table_from,
           }))
+          .sort(sortByOrder)
       )
 
       reset(data.response ?? {})

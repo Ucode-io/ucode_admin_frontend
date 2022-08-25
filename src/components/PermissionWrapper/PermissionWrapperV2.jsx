@@ -4,6 +4,8 @@ const PermissionWrapperV2 = ({ children, tabelSlug = "", type }) => {
   const permissions = useSelector((state) => state.auth.permissions);
   // if (!tabelSlug) return children;
 
+  return children
+
   if (!tabelSlug) return null;
 
   if (typeof type === "object") {

@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
+import usePaperSize from "../../../hooks/usePaperSize"
 import constructorObjectService from "../../../services/constructorObjectService"
 import documentTemplateService from "../../../services/documentTemplateService"
 import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSelector"
@@ -35,8 +36,7 @@ const DocView = ({
   const [tableViewIsActive, setTableViewIsActive] = useState(false)
   const [selectedObject, setSelectedObject] = useState(null)
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0)
-
-  console.log("PARSER ===>", parser)
+  const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex)
 
   const view = views.find((view) => view.type === "TABLE")
 
@@ -92,9 +92,7 @@ const DocView = ({
     
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
 
-
       let parsedHTML = parser.parse(savedData)
-
 
       fields.forEach(field => {
         parsedHTML = parsedHTML.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
@@ -105,6 +103,7 @@ const DocView = ({
         data: {
           table_slug: tableSlug,
           object_id: selectedObject,
+          page_size: selectedPaperSize.name
         },
         html: meta + parsedHTML,
       })

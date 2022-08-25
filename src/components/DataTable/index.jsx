@@ -323,10 +323,16 @@ const DataTable = ({
                 style={{
                   height:
                     tableHeight === "large"
-                      ? "72px"
+                      ? "90px"
                       : tableHeight === "medium"
-                      ? "48px"
+                      ? "60px"
                       : "30px",
+                  fontSize:
+                    tableHeight === "large"
+                      ? "18px"
+                      : tableHeight === "medium"
+                      ? "16px"
+                      : "14px",
                   padding: "8px 12px 4px",
                   position: tableSettings?.[pageName]?.find(
                     (item) => item?.id === column?.id

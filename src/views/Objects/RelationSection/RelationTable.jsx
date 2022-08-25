@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
 import DataTable from "../../../components/DataTable"
+import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
@@ -90,9 +91,11 @@ const RelationTable = ({ relation }) => {
     })
   }
 
+  
+
   return (
     <div className={styles.cardBody} >
-      <DataTable
+      <ObjectDataTable
         removableHeight={false}
         loader={tableLoader}
         data={tableData}

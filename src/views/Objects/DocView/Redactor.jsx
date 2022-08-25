@@ -43,7 +43,7 @@ const Redactor = forwardRef(({ control, fields }, ref) => {
       <ReactEditorJS
         onInitialize={handleInitialize}
         onReady={handleReady}
-        defaultValue={value}
+        defaultValue={`<head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><p class="paragraph"> Test template address:&nbsp;<span><b><i>|| Фамилия || dfgdf kgdfm ldkfmg ldkfmgldkfmgldkfmg dfllkfmldgfd</i></b></span> </p><h2>dfgdd fgdfg <span>|| Имя ||</span>&nbsp;&nbsp;</h2>`}
         tools={computedTools}
         minHeight={1000}
         // style={{ width: 10 }}

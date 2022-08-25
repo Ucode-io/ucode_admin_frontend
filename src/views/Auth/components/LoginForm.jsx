@@ -68,7 +68,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   const getConnections = () => {
     axios
       .post(
-        `https://test.api.client.medion.uz/v1/object/get-list/connections`,
+        `${import.meta.env.VITE_BASE_URL}object/get-list/connections`,
         { data: { client_type_id: clientTypeId } }
       )
       .then((res) => {
@@ -81,7 +81,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
 
   const getLoginStrategies = () => {
     axios
-      .post(`https://test.api.client.medion.uz/v1/object/get-list/test_login`, {
+      .post(`${import.meta.env.VITE_BASE_URL}object/get-list/test_login`, {
         data: { client_type_id: clientTypeId },
       })
       .then((res) => {

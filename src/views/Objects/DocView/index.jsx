@@ -31,9 +31,12 @@ const DocView = ({
   const [selectedTemplate, setSelectedTemplate] = useState(null)
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0)
   const [pdfLoader, setPdfLoader] = useState(false)
+  const [htmlLoader, setHtmlLoader] = useState(false)
   const [tableViewIsActive, setTableViewIsActive] = useState(false)
   const [selectedObject, setSelectedObject] = useState(null)
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0)
+
+  console.log("PARSER ===>", parser)
 
   const view = views.find((view) => view.type === "TABLE")
 
@@ -80,13 +83,12 @@ const DocView = ({
     })
   }
  
-  const exportToHtml = async () => {
+  const exportToPDF = async () => {
     if (!selectedTemplate) return
     setPdfLoader(true)
 
     try {
       const savedData = await redactorRef.current.save()
-
     
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
 
@@ -110,6 +112,38 @@ const DocView = ({
       window.open(res.link, { target: "_blank" })
     } finally {
       setPdfLoader(false)
+    }
+  }
+
+  const exportToHTML = async () => {
+    if (!selectedTemplate) return
+    setHtmlLoader(true)
+
+    try {
+      const savedData = await redactorRef.current.save()
+    
+      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
+
+
+      let parsedHTML = parser.parse(savedData)
+
+
+      fields.forEach(field => {
+        parsedHTML = parsedHTML.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
+      })
+
+      const res = await documentTemplateService.exportToHTML({
+        data: {
+          table_slug: tableSlug,
+          object_id: selectedObject,
+        },
+        html: meta + parsedHTML,
+      })
+
+      console.log("RES ===>", res)
+      // window.open(res.link, { target: "_blank" })
+    } finally {
+      setHtmlLoader(false)
     }
   }
 
@@ -192,9 +226,11 @@ const DocView = ({
             )}
 
           <DocSettingsBlock
-            exportToHtml={exportToHtml}
-            selectedSettingsTab={selectedSettingsTab}
             pdfLoader={pdfLoader}
+            htmlLoader={htmlLoader}
+            exportToPDF={exportToPDF}
+            exportToHTML={exportToHTML}
+            selectedSettingsTab={selectedSettingsTab}
             selectedPaperSizeIndex={selectedPaperSizeIndex}
             setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
           />

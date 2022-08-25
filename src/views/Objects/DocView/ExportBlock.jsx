@@ -1,12 +1,12 @@
 import { CircularProgress } from "@mui/material"
-import documentTemplateService from "../../../services/documentTemplateService"
 import styles from "./style.module.scss"
 
-const ExportBlock = ({ selectedTemplate, pdfLoader, exportToHtml }) => {
-
-
-  
-
+const ExportBlock = ({
+  pdfLoader,
+  exportToPDF,
+  htmlLoader,
+  exportToHTML,
+}) => {
   return (
     <div className={styles.docListBlock}>
       <div className={styles.doclistHeader}>
@@ -14,11 +14,13 @@ const ExportBlock = ({ selectedTemplate, pdfLoader, exportToHtml }) => {
       </div>
 
       <div className={styles.docList}>
-        <div className={styles.pageSizeRow} onClick={exportToHtml} >
-         <div className={styles.documentIcon} >PDF</div> Export to PDF {pdfLoader && <CircularProgress size={14} />}
+        <div className={styles.pageSizeRow} onClick={exportToPDF}>
+          <div className={styles.documentIcon}>PDF</div> Export to PDF
+          {pdfLoader && <CircularProgress size={14} />}
         </div>
-        <div className={styles.pageSizeRow}>
-          <div className={styles.documentIcon} >HTML</div> Export to HTML
+        <div className={styles.pageSizeRow} onClick={exportToHTML} >
+          <div className={styles.documentIcon}>HTML</div> Export to HTML
+          {htmlLoader && <CircularProgress size={14} />}
         </div>
       </div>
     </div>

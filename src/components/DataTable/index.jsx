@@ -319,20 +319,26 @@ const DataTable = ({
             {columns.map((column, index) => (
               <CTableCell
                 key={column.id}
-                className="overflow-ellipsis"
+                className={`overflow-ellipsis ${tableHeight}`}
                 style={{
-                  height:
-                    tableHeight === "large"
-                      ? "90px"
-                      : tableHeight === "medium"
-                      ? "60px"
-                      : "30px",
-                  fontSize:
-                    tableHeight === "large"
-                      ? "18px"
-                      : tableHeight === "medium"
-                      ? "16px"
-                      : "14px",
+                  // height:
+                  //   tableHeight === "large"
+                  //     ? "90px"
+                  //     : tableHeight === "medium"
+                  //     ? "60px"
+                  //     : "30px",
+                  // fontSize:
+                  //   tableHeight === "large"
+                  //     ? "18px"
+                  //     : tableHeight === "medium"
+                  //     ? "16px"
+                  //     : "14px",
+                  // lineHeight:
+                  //   tableHeight === "large"
+                  //     ? "20px"
+                  //     : tableHeight === "medium"
+                  //     ? "18px"
+                  //     : "16px",
                   padding: "8px 12px 4px",
                   position: tableSettings?.[pageName]?.find(
                     (item) => item?.id === column?.id

@@ -4,11 +4,11 @@ const PermissionWrapper = ({ children, permission = "" }) => {
   
   return children
   
-  const permissions = useSelector((state) => state.auth.permissions)
+  // const permissions = useSelector((state) => state.auth.permissions)
 
-  if (!permissions[permission]) return null
+  // if (!permissions[permission]) return null
 
-  return children
+  // return children
 }
 
 export default PermissionWrapper

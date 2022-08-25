@@ -91,7 +91,12 @@ const RelationTable = ({ relation }) => {
     })
   }
 
-  
+  const onFormSubmit = () => {
+    queryClient.refetchQueries([
+      "GET_OBJECT_LIST",
+      relation.relatedTable,
+    ])
+  }
 
   return (
     <div className={styles.cardBody} >
@@ -108,6 +113,7 @@ const RelationTable = ({ relation }) => {
         disableFilters
         onPaginationChange={setCurrentPage}
         paginationExtraButton={id && <SecondaryButton onClick={navigateToTablePage} >Все</SecondaryButton>}
+        onFormSubmit={onFormSubmit}
       />
     </div>
   )

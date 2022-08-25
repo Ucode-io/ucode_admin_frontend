@@ -90,7 +90,7 @@ const TableRowForm = ({
             color="success"
             className="mr-1"
             size="small"
-            // onClick={handleSubmit(submitHandler)}
+            onClick={handleSubmit(mutate)}
           >
             <Save color="success" />
           </RectangleIconButton>

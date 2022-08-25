@@ -20,7 +20,7 @@ const useSidebarElements = () => {
       }))
 
     return [...computedConstructorElements, ...elements]
-  }, [constructorElements, permissions])
+  }, [constructorElements, permissions, appId])
 
   return { elements: computedElements ?? [] }
 }

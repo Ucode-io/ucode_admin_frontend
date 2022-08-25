@@ -46,7 +46,7 @@ const Redactor = forwardRef(({ control, fields }, ref) => {
         defaultValue={value}
         tools={computedTools}
         minHeight={1000}
-        style={{ width: 10 }}
+        // style={{ width: 10 }}
         config={{name: 'asdasd'}}
         holder="editorjs"
       >

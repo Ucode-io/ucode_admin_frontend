@@ -12,7 +12,7 @@ const useSidebarElements = () => {
 
   const computedElements = useMemo(() => {
     const computedConstructorElements = constructorElements
-      .filter((el) => el.is_visible && permissions?.[el.slug]?.["read"])
+      // .filter((el) => el.is_visible && permissions?.[el.slug]?.["read"])
       .map((el) => ({
         ...el,
         title: el.label,

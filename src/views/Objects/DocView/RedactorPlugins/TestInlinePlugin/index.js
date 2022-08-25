@@ -9,7 +9,7 @@ class TestInlinePlugin {
   emptyString = '&nbsp;&nbsp';
   fontSizeDropDown = 'font-size-dropdown';
 
-  constructor({config}){
+  constructor({config}){    
     this.fields = config.fields ?? []
   }
 

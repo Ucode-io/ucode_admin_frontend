@@ -27,8 +27,6 @@ const TableRow = ({
 }) => {
   const [formVisible, setFormVisible] = useState(false)
 
-  console.log('tableSlug ===>', tableSlug)
-
   if (formVisible)
     return (
       <TableRowForm

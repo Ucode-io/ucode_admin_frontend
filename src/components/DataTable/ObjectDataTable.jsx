@@ -321,10 +321,10 @@ const ObjectDataTable = ({
           />
         ))}
         {func?.length ? (
-          <CTableRow>
+          <CTableRow className="amountRow" >
             <CTableCell>Итог</CTableCell>
             {columns?.map((col) => (
-              <CTableCell>
+              <CTableCell className="text-nowrap" >
                 {col?.slug ===
                 func?.filter((item) => item?.field_name === col?.slug)?.[0]
                   ?.field_name
@@ -339,7 +339,6 @@ const ObjectDataTable = ({
 
         {additionalRow}
 
-        {/* <TableRowButton colSpan={columns?.length + 2} /> */}
 
         {createFormVisible && <TableRowForm
           row={null}

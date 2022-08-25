@@ -50,8 +50,8 @@ export const CTableBody = forwardRef(({ children, columnsCount, loader, dataLeng
   )
 })
 
-export const CTableRow = ({ children, ...props }) => {
-  return <tr className="CTableRow" {...props} >{children}</tr>
+export const CTableRow = ({ children, className, ...props }) => {
+  return <tr className={`CTableRow ${className}`} {...props} >{children}</tr>
 }
 
 export const CTableCell = ({ children, className="", buttonsCell=false, ...props }) => {

@@ -73,6 +73,7 @@
   .addButton {
     display: none;
     align-items: center;
+    
 
     &:hover {
       cursor: pointer;
@@ -80,9 +81,18 @@
     }
   }
 
+  .timePlaceholder {
+    opacity: .4;
+  }
+
+
   &:hover {
     .addButton {
       display: inline-flex;
+    }
+    
+    .timePlaceholder {
+      display: none;
     }
   }
 
@@ -92,6 +102,10 @@
     &:hover {
       .addButton {
         display: none;
+      }
+
+      .timePlaceholder {
+        display: block;
       }
     }
 

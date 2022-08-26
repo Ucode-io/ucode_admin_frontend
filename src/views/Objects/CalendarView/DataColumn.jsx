@@ -11,7 +11,7 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
   const { tableSlug } = useParams()
   const { navigateToForm } = useTabRouter()
   const { timeList, timeInterval } = useTimeList(view.time_interval)
-
+  
 
   const elements = useMemo(() => {
     if (!parentTab) return []
@@ -118,6 +118,11 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
           }`}
           style={{ overflow: "auto" }}
         >
+
+          <div className={styles.timePlaceholder} >
+            {format(time, 'HH:mm')}
+          </div>
+
           <div
             className={`${styles.addButton}`}
             onClick={() => navigateToCreatePage(time)}

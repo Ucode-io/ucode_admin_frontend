@@ -21,7 +21,7 @@ const RecursiveBlock = ({
     )
   }, [parentTab, tabs, level])
 
-  if(!elements?.length) return <MockColumn view={view} />
+  if(!elements?.length) return <MockColumn view={view} level={level} tabs={tabs} />
 
   return (
     <div className={styles.row}>
@@ -50,7 +50,6 @@ const RecursiveBlock = ({
               workingDays={workingDays}
             />
           )}
-          {/* {!el.child?.length ? <MockColumn groupColumns={groupColumns} level={1} workingDays={workingDays} date={date} view={view}  /> : <RecursiveBlock date={date} computedData={el?.child} groupColumns={groupColumns} level={1} view={view} workingDays={workingDays} />} */}
         </div>
       ))}
     </div>

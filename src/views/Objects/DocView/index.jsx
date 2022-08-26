@@ -1,7 +1,7 @@
 import { BackupTable } from "@mui/icons-material"
 import edjsParser from "editorjs-parser"
 import { useRef, useState } from "react"
-import { useQuery } from "react-query"
+import { useQuery, useQueryClient } from "react-query"
 import { useLocation, useParams } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import FiltersBlock from "../../../components/FiltersBlock"
@@ -41,6 +41,7 @@ const DocView = ({
   const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
   const [selectedTemplate, setSelectedTemplate] = useState(state?.template ?? null)
 
+  const queryClient = useQueryClient()
 
   console.log('selectedObject', selectedObject, selectedTemplate)
 
@@ -111,6 +112,8 @@ const DocView = ({
         },
         html: meta + parsedHTML,
       })
+
+      queryClient.refetchQueries(["GET_OBJECT_FILES", { tableSlug, selectedObject }])
 
       window.open(res.link, { target: "_blank" })
     } finally {

@@ -89,7 +89,6 @@ const FilesSection = () => {
     }
     
     closeCreateForm()
-
     navigate(`/main/${appId}/object/${tableSlug}`, { state })
   }
 

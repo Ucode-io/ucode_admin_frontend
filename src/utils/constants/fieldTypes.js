@@ -36,4 +36,5 @@ export const fieldTypes = [
   "PHONE",
   "ICON",
   "PASSWORD",
+  "FORMULA"
 ]

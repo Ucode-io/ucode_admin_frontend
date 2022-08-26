@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react"
 import CheckboxAttributes from "./CheckboxAttributes"
 import DateAttributes from "./DateAttributes"
+import FormulaAttributes from "./FormulaAttributes"
 import MultiLineAttributes from "./MultiLineAttributes"
 import NumberAttributes from "./NumberAttributes"
 import PickListAttributes from "./PickListAttributes"
 import SingleLineAttributes from "./SingleLineAttributes"
 
-const Attributes = ({ control, watch }) => {
+const Attributes = ({ control, watch, mainForm }) => {
 
   const fieldType = watch('type')
 
@@ -55,6 +56,11 @@ const Attributes = ({ control, watch }) => {
         <CheckboxAttributes
           control={control}
         />
+      )
+    
+    case "FORMULA":
+      return (
+        <FormulaAttributes control={control} mainForm={mainForm} />
       )
 
     default:

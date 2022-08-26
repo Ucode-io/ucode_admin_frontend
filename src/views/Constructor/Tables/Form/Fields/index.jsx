@@ -115,7 +115,7 @@ const Fields = ({ mainForm }) => {
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
         additionalRow={
-          <PermissionWrapperV2 tabelSlug={slug} type="write">
+          // <PermissionWrapperV2 tabelSlug={slug} type="write">
             <CTableRow>
               <CTableCell colSpan={columns.length + 1}>
                 <div
@@ -127,7 +127,7 @@ const Fields = ({ mainForm }) => {
                 </div>
               </CTableCell>
             </CTableRow>
-          </PermissionWrapperV2>
+          // </PermissionWrapperV2>
         }
       />
 

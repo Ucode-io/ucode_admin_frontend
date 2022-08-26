@@ -17,13 +17,13 @@ import RelationTable from "./RelationTable"
 import styles from "./style.module.scss"
 
 const RelationSection = ({ relations }) => {
+  const { id } = useParams()
+
+
   const { tableSlug } = useParams()
   const { navigateToForm } = useTabRouter()
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
-    useState(null)
-  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
-    {}
-  )
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null)
+  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({})
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
   useEffect(() => {
@@ -41,7 +41,6 @@ const RelationSection = ({ relations }) => {
     }))
   }
 
-  const { id } = useParams()
 
   const navigateToCreatePage = () => {
     const relation = relations[selectedTabIndex]

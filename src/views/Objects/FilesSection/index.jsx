@@ -1,5 +1,5 @@
 import { Delete, Download } from "@mui/icons-material"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { useMutation, useQuery } from "react-query"
 import { useParams } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
@@ -13,8 +13,9 @@ import FileIconGenerator from "./FileIconGenerator"
 const FilesSection = () => {
   const inputRef = useRef()
   const { tableSlug, id: objectId } = useParams()
-  const { download } = useDownloader()
-  
+  const { download, loader: downloadLoader } = useDownloader()
+  const [downLoadedFile, setDownLoadedFile] = useState(null)
+
 
   const {
     data: { documents = [], count = 1 } = { documents: [], count: 1 },
@@ -70,7 +71,11 @@ const FilesSection = () => {
       render: (row) => (
         <span className="flex align-center gap-1">
           <RectangleIconButton
-            onClick={() => download({link: 'https://' + row.file_link, fileName: row.name})}
+            loader={downloadLoader && downLoadedFile === row.id}
+            onClick={() => {
+              setDownLoadedFile(row.id)
+              download({link: row.file_link, fileName: row.name})
+            }}
           >
             <Download color="primary" />
           </RectangleIconButton>
@@ -81,8 +86,6 @@ const FilesSection = () => {
       ),
     },
   ]
-
-  console.log("DATA ==>", documents)
 
   return (
     <div className="p-1">

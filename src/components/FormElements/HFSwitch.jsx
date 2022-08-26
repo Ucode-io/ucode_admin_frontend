@@ -18,7 +18,6 @@ const HFSwitch = ({ control, name, label, disabledHelperText, onChange = () => {
               {...props}
               checked={value ?? false}
               onChange={(e, val) => {
-                debugger
                 formOnChange(val)
                 onChange(val)
               }}

@@ -1,7 +1,6 @@
 import {
   Add,
   InsertDriveFile,
-  InsertDriveFileOutlined,
 } from "@mui/icons-material"
 import { Card } from "@mui/material"
 import { useEffect } from "react"
@@ -18,7 +17,6 @@ import styles from "./style.module.scss"
 
 const RelationSection = ({ relations }) => {
   const { id } = useParams()
-
 
   const { tableSlug } = useParams()
   const { navigateToForm } = useTabRouter()
@@ -41,7 +39,6 @@ const RelationSection = ({ relations }) => {
     }))
   }
 
-
   const navigateToCreatePage = () => {
     const relation = relations[selectedTabIndex]
     if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
@@ -53,8 +50,6 @@ const RelationSection = ({ relations }) => {
         })
     }
   }
-
-  // if (!relations?.length) return null
 
   return (
     <>
@@ -82,7 +77,7 @@ const RelationSection = ({ relations }) => {
               ))}
 
               <Tab>
-                <InsertDriveFile /> Files
+                <InsertDriveFile /> Файлы
               </Tab>
             </TabList>
 

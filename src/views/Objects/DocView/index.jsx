@@ -2,7 +2,7 @@ import { BackupTable } from "@mui/icons-material"
 import edjsParser from "editorjs-parser"
 import { useRef, useState } from "react"
 import { useQuery } from "react-query"
-import { useParams } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
@@ -26,18 +26,23 @@ const DocView = ({
   setSelectedTabIndex,
   fieldsMap,
 }) => {
+  const {state} = useLocation()
   const redactorRef = useRef()
   const { tableSlug } = useParams()
   const [templates, setTemplates] = useState([])
-  const [selectedTemplate, setSelectedTemplate] = useState(null)
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0)
   const [pdfLoader, setPdfLoader] = useState(false)
   const [htmlLoader, setHtmlLoader] = useState(false)
   const [tableViewIsActive, setTableViewIsActive] = useState(false)
-  const [selectedObject, setSelectedObject] = useState(null)
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0)
   const [HTMLContent, setHTMLContent] = useState(null)
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex)
+
+  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
+  const [selectedTemplate, setSelectedTemplate] = useState(state?.template ?? null)
+
+
+  console.log('selectedObject', selectedObject, selectedTemplate)
 
   const view = views.find((view) => view.type === "TABLE")
 
@@ -61,7 +66,6 @@ const DocView = ({
       }
     }
   )
-  
 
   const { isLoading } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],

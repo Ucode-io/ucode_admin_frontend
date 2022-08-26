@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import { TabPanel, Tabs } from "react-tabs"
 import ViewsWithGroups from "./ViewsWithGroups"
 import BoardView from "./BoardView"
@@ -9,7 +9,6 @@ import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
 import { listToMap } from "../../utils/listToMap"
 import FiltersBlock from "../../components/FiltersBlock"
-import SettingsButton from "./components/ViewSettings/SettingsButton"
 import GanttView from "./GanttView"
 import ViewTabSelector from "./components/ViewTypeSelector"
 
@@ -17,7 +16,8 @@ import DocView from "./DocView"
 
 const ObjectsPage = () => {
   const { tableSlug } = useParams()
-
+  const { state } = useLocation()
+  
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
   const {
@@ -37,7 +37,10 @@ const ObjectsPage = () => {
           fieldsMap: listToMap(data?.fields),
         }
       },
-    }
+      onSuccess: ({views}) => {
+        if(state?.toDocsTab) setSelectedTabIndex(views?.length)
+      }
+    },
   )
 
   const setViews = () => {}
@@ -92,7 +95,6 @@ const ObjectsPage = () => {
           })}
           <TabPanel>
             <DocView
-              // view={view}
               views={views}
               fieldsMap={fieldsMap}
               selectedTabIndex={selectedTabIndex}

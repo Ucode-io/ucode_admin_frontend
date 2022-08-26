@@ -29,8 +29,13 @@ const CSelect = ({
         error={error}
         inputProps={{ placeholder }}
         fullWidth
-        onChange={onChange}
+        just
+        following
+        attributes
+        into
+        select
         displayEmpty
+        onChange={onChange}
         renderValue={value !== "" ? undefined : () => <span style={{ color: '#909EAB' }} >{placeholder}</span>}
         endAdornment={
           <IconButton

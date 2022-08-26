@@ -32,7 +32,6 @@ const RedactorBlock = forwardRef(
 
     useEffect(() => {
       setLoader(true)
-
       reset({
         ...selectedTemplate,
         html: selectedTemplate.html ? JSON.parse(selectedTemplate.html) : [],
@@ -43,7 +42,7 @@ const RedactorBlock = forwardRef(
 
       setTimeout(() => {
         setLoader(false)
-      })
+      }, 100)
     }, [selectedTemplate, reset])
 
     const onSubmit = async (values) => {

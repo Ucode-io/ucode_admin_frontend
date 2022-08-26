@@ -4,7 +4,6 @@ import useTimeList from "../../../hooks/useTimeList"
 import styles from "./style.module.scss"
 
 const MockColumn = ({ view, level, tabs }) => {
-  console.log("VIEW ==>", view, level, tabs)
 
   const mockTabBlocks = useMemo(() => {
     return new Array(tabs?.length - level)?.fill('')

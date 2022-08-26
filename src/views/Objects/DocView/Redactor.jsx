@@ -7,7 +7,7 @@ import "./redactorOverriders.scss"
 import { useWatch } from "react-hook-form";
 import TestInlinePlugin from "./RedactorPlugins/TestInlinePlugin";
 
-const Redactor = forwardRef(({ control, fields }, ref) => {
+const Redactor = forwardRef(({ control, fields, HTMLContent }, ref) => {
   const ReactEditorJS = createReactEditorJS()
   const editorCore = useRef(null)
   const value = useWatch({
@@ -22,6 +22,12 @@ const Redactor = forwardRef(({ control, fields }, ref) => {
 
   const handleReady = () => {
     const editor = editorCore.current._editorJS
+
+    if(HTMLContent) {
+      editor.blocks.renderFromHTML(HTMLContent)
+    }
+
+
     // new Undo({ editor })
     new DragDrop(editor)
   }
@@ -43,9 +49,9 @@ const Redactor = forwardRef(({ control, fields }, ref) => {
       <ReactEditorJS
         onInitialize={handleInitialize}
         onReady={handleReady}
-        defaultValue={`<head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><p class="paragraph"> Test template address:&nbsp;<span><b><i>|| Фамилия || dfgdf kgdfm ldkfmg ldkfmgldkfmgldkfmg dfllkfmldgfd</i></b></span> </p><h2>dfgdd fgdfg <span>|| Имя ||</span>&nbsp;&nbsp;</h2>`}
         tools={computedTools}
         minHeight={1000}
+        defaultValue={value}
         // style={{ width: 10 }}
         config={{name: 'asdasd'}}
         holder="editorjs"

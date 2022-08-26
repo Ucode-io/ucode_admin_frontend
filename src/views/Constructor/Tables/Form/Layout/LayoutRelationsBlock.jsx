@@ -26,9 +26,11 @@ const LayoutRelationsBlock = ({ mainForm }) => {
   })
 
   const addNewViewRelation = (option) => {
+    // debugger
     viewRelationsFieldArray.append({
       id: generateGUID(),
       label: option.label,
+      is_editable: false,
       relation: {
         ...option.relation,
         table_from: option.relation.table_from.slug,

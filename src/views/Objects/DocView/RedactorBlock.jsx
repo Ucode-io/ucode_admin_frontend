@@ -20,7 +20,10 @@ const RedactorBlock = forwardRef(
     tableViewIsActive,
     fields,
     selectedPaperSizeIndex,
-    setSelectedPaperSizeIndex
+    setSelectedPaperSizeIndex,
+    HTMLContent,
+    setHTMLContent,
+    htmlLoader
   }, redactorRef) => {
     const { control, handleSubmit, reset } = useForm()
     const [loader, setLoader] = useState(false)
@@ -35,6 +38,7 @@ const RedactorBlock = forwardRef(
         html: selectedTemplate.html ? JSON.parse(selectedTemplate.html) : [],
       })
 
+      setHTMLContent(null)
       setSelectedPaperSizeIndex(selectPaperIndexBySize(selectedTemplate.size))
 
       setTimeout(() => {
@@ -69,7 +73,7 @@ const RedactorBlock = forwardRef(
       }
     }
 
-    if (loader) return <div className={styles.redactorBlock} />
+    if (loader || htmlLoader) return <div className={styles.redactorBlock} />
 
     return (
       <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`}>
@@ -84,7 +88,7 @@ const RedactorBlock = forwardRef(
 
           <div className={styles.pageSize}>{selectedPaperSize.name} ({selectedPaperSize.width} x {selectedPaperSize.height})</div>
 
-          <Redactor ref={redactorRef} control={control} fields={fields} />
+          <Redactor ref={redactorRef} control={control} fields={fields} HTMLContent={HTMLContent} />
         </div>
 
         <Footer

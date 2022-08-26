@@ -1,4 +1,8 @@
-import { Add } from "@mui/icons-material"
+import {
+  Add,
+  InsertDriveFile,
+  InsertDriveFileOutlined,
+} from "@mui/icons-material"
 import { Card } from "@mui/material"
 import { useEffect } from "react"
 import { useState } from "react"
@@ -7,12 +11,12 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
 import IconGenerator from "../../../components/IconPicker/IconGenerator"
 import useTabRouter from "../../../hooks/useTabRouter"
+import FilesSection from "../FilesSection"
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal"
 import RelationTable from "./RelationTable"
 import styles from "./style.module.scss"
 
 const RelationSection = ({ relations }) => {
-
   const { tableSlug } = useParams()
   const { navigateToForm } = useTabRouter()
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
@@ -43,16 +47,15 @@ const RelationSection = ({ relations }) => {
     const relation = relations[selectedTabIndex]
     if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
     else {
-      if(relation.is_editable) setCreateFormVisible(relation.id, true)
-
-      else navigateToForm(relation.relatedTable, "CREATE", null, {
-        [`${tableSlug}_id`]: id,
-      })
+      if (relation.is_editable) setCreateFormVisible(relation.id, true)
+      else
+        navigateToForm(relation.relatedTable, "CREATE", null, {
+          [`${tableSlug}_id`]: id,
+        })
     }
-      
   }
 
-  if (!relations?.length) return null
+  // if (!relations?.length) return null
 
   return (
     <>
@@ -65,7 +68,7 @@ const RelationSection = ({ relations }) => {
       )}
       <Card className={styles.card}>
         <Tabs
-          forceRenderTabPanel
+          // forceRenderTabPanel
           selectedIndex={selectedTabIndex}
           onSelect={setSelectedTabIndex}
         >
@@ -73,9 +76,15 @@ const RelationSection = ({ relations }) => {
             <TabList className={styles.tabList}>
               {relations?.map((relation, index) => (
                 <Tab key={index}>
-                  <IconGenerator icon={relation?.icon} /> {relation.label}
+                  <div className="flex align-center gap-2 text-nowrap">
+                    <IconGenerator icon={relation?.icon} /> {relation.label}
+                  </div>
                 </Tab>
               ))}
+
+              <Tab>
+                <InsertDriveFile /> Files
+              </Tab>
             </TabList>
 
             <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
@@ -90,10 +99,13 @@ const RelationSection = ({ relations }) => {
                 relation={relation}
                 createFormVisible={relationsCreateFormVisible}
                 setCreateFormVisible={setCreateFormVisible}
-                
               />
             </TabPanel>
           ))}
+
+          <TabPanel>
+            <FilesSection />
+          </TabPanel>
         </Tabs>
       </Card>
     </>

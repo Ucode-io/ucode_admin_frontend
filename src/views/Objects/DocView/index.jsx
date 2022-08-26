@@ -36,6 +36,7 @@ const DocView = ({
   const [tableViewIsActive, setTableViewIsActive] = useState(false)
   const [selectedObject, setSelectedObject] = useState(null)
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0)
+  const [HTMLContent, setHTMLContent] = useState(null)
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex)
 
   const view = views.find((view) => view.type === "TABLE")
@@ -138,8 +139,7 @@ const DocView = ({
         html: meta + parsedHTML,
       })
 
-      console.log("RES ===>", res)
-      // window.open(res.link, { target: "_blank" })
+      setHTMLContent(res.html)
     } finally {
       setHtmlLoader(false)
     }
@@ -218,6 +218,9 @@ const DocView = ({
                 fields={fields}
                 selectedPaperSizeIndex={selectedPaperSizeIndex}
                 setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
+                HTMLContent={HTMLContent}
+                setHTMLContent={setHTMLContent}
+                htmlLoader={htmlLoader}
               />
             ) : (
               <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`} />

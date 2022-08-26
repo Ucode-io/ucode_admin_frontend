@@ -24,7 +24,6 @@ const DataColumn = ({ date, data, parentTab, fieldsMap, view, workingDays }) => 
 
     return elements?.map((el) => {
 
-
       const startPosition =
         Math.floor(
           differenceInMinutes(el.calendar?.elementFromTime, calendarStartedTime) / timeInterval

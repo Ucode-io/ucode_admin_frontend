@@ -6,6 +6,11 @@ const FileIconGenerator = ({ type }) => {
     case 'pdf':
       return <IconGenerator icon={'file-pdf.svg'} />
   
+    case 'png':
+     case 'jpg':
+       case 'jpeg':
+        return <IconGenerator icon={'image.svg'} />
+
     default:
       return <IconGenerator icon={'file.svg'} />
   }

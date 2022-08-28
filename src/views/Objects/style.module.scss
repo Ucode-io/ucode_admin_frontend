@@ -12,8 +12,9 @@
 .mainCardSide {
   min-width: 400px;
   width: 400px;
-  height: calc(100vh - 49px - 56px);
+  height: calc(100vh - 49px - 56px - 48px);
   padding: 8px;
+  padding-top: 0;
   overflow: auto;
   padding-right: 0px;
 }
@@ -21,9 +22,10 @@
 .secondaryCardSide {
   flex: 1;
   max-width: calc(100% - 400px);
-  height: calc(100vh - 49px - 56px);
+  height: calc(100vh - 49px - 56px - 48px);
   overflow: auto;
   padding: 8px;
+  padding-top: 0;
   padding-left: 0;
   
 }

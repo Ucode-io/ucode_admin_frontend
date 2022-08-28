@@ -127,10 +127,7 @@ const DocView = ({
 
     try {
       const savedData = await redactorRef.current.save()
-    
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
-
-
       let parsedHTML = parser.parse(savedData)
 
 

@@ -60,6 +60,7 @@ const RelationSection = ({ relations }) => {
           // onCreate={refetch}
         />
       )}
+      
       <Card className={styles.card}>
         <Tabs
           // forceRenderTabPanel

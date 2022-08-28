@@ -1,31 +1,21 @@
-import { Close, Delete, Download, Save } from "@mui/icons-material"
-import { useMemo, useRef, useState } from "react"
+import { Delete, Download } from "@mui/icons-material"
+import { useRef, useState } from "react"
 import { useMutation, useQuery } from "react-query"
-import { useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
-import CSelect from "../../../components/CSelect"
-import { CTableCell, CTableRow } from "../../../components/CTable"
 import DataTable from "../../../components/DataTable"
 import TableRowButton from "../../../components/TableRowButton"
 import useDownloader from "../../../hooks/useDownloader"
-import documentTemplateService from "../../../services/documentTemplateService"
 import objectDocumentService from "../../../services/objectDocumentService"
 import { bytesToSize } from "../../../utils/byteToSize"
-import listToOptions from "../../../utils/listToOptions"
 import FileIconGenerator from "./FileIconGenerator"
 
 const FilesSection = () => {
   const inputRef = useRef()
-  const { tableSlug, id: objectId, appId } = useParams()
-  const navigate = useNavigate()
+  const { tableSlug, id: objectId } = useParams()
   const { download, loader: downloadLoader } = useDownloader()
   const [downLoadedFile, setDownLoadedFile] = useState(null)
-  const [createFormVisibe, setCreateFormVisible] = useState(false)
-  const [selectedTemplate, setSelectedTemplate] = useState(null)
 
-  const closeCreateForm = () => {
-    setCreateFormVisible(false)
-  }
 
   const {
     data: { documents = [], count = 1 } = { documents: [], count: 1 },
@@ -35,22 +25,6 @@ const FilesSection = () => {
     return objectDocumentService.getList({ object_id: objectId })
   })
 
-  const { data: templates = [] } = useQuery(
-    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
-    () => {
-      return documentTemplateService.getList({ table_slug: tableSlug })
-    },
-    {
-      select: (res) => {
-        return res.htmlTemplates ?? []
-      },
-    }
-  )
-  
-
-  const templateOptions = useMemo(() => {
-    return listToOptions(templates) 
-  }, [ templates ])
 
   const { mutate: create, isLoading: createLoader } = useMutation(
     (e) => {
@@ -77,27 +51,14 @@ const FilesSection = () => {
     }
   )
 
-  const navigateToDocumentEditPage = () => {
 
-    const template = templates.find(el => el.id === selectedTemplate)
-
-
-    const state = {
-      toDocsTab: true,
-      template: template,
-      objectId: objectId
-    }
-    
-    closeCreateForm()
-    navigate(`/main/${appId}/object/${tableSlug}`, { state })
-  }
 
   const columns = [
     {
       id: "1",
-      slug: "extention",
+      slug: "type",
       label: "Type",
-      render: (val) => <FileIconGenerator type={val} />,
+      render: (val) => <span className="flex align-center justify-center" ><FileIconGenerator type={val} /></span>,
       width: 10,
     },
     {
@@ -148,6 +109,7 @@ const FilesSection = () => {
         removableHeight={false}
         currentPage={1}
         disableFilters
+        dataLength={1}
         additionalRow={
           <>
             <TableRowButton
@@ -155,42 +117,6 @@ const FilesSection = () => {
               colSpan={columns.length + 1}
               loader={createLoader}
             />
-
-            {!createFormVisibe ? (
-              <TableRowButton
-                onClick={() => setCreateFormVisible(true)}
-                colSpan={columns.length + 1}
-                loader={createLoader}
-                title="Создать"
-              />
-            ) : (
-              <CTableRow>
-                <CTableCell colSpan={4}>
-                  <CSelect
-                    disabledHelperText
-                    placeholder="Template"
-                    value={selectedTemplate ?? ''}
-                    onChange={e => setSelectedTemplate(e.target.value)}
-                    options={templateOptions}
-                  />
-                </CTableCell>
-                <CTableCell>
-                  <span className="flex align-center gap-1">
-                    <RectangleIconButton
-                      onClick={navigateToDocumentEditPage}
-                    >
-                      <Save color="primary" />
-                    </RectangleIconButton>
-                    <RectangleIconButton
-                      color="error"
-                      onClick={closeCreateForm}
-                    >
-                      <Close color="error" />
-                    </RectangleIconButton>
-                  </span>
-                </CTableCell>
-              </CTableRow>
-            )}
           </>
         }
         // onPaginationChange={setCurrentPage}

@@ -24,10 +24,11 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
       // state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
       state.permissions = payload?.permissions ? payload?.permissions?.reduce((acc, curr) => {
         acc[curr.table_slug] = {
-          read: curr.read === "Yes",
-          write: curr.write === "Yes",
-          update: curr.update === "Yes",
-          delete: curr.delete === "Yes",
+          // there is 3 case ['Yes', 'No', 'Dynamic (Connection name)']
+          read: curr.read !== "No",
+          write: curr.write !== "No",
+          update: curr.update !== "No",
+          delete: curr.delete !== "No",
         };
         return acc;
       }, {}) : [];

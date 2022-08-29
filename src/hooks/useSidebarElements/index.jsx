@@ -10,9 +10,11 @@ const useSidebarElements = () => {
   )
   const permissions = useSelector((state) => state.auth.permissions)
 
+  console.log('permissions', permissions);
+
   const computedElements = useMemo(() => {
     const computedConstructorElements = constructorElements
-      .filter((el) => el.is_visible && permissions?.[el.slug]?.["read"])
+      .filter((el) => el.is_visible && (permissions?.[el.slug]?.["read"] !== false))
       .map((el) => ({
         ...el,
         title: el.label,

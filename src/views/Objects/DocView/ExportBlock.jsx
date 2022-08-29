@@ -19,7 +19,7 @@ const ExportBlock = ({
           {pdfLoader && <CircularProgress size={14} />}
         </div>
         <div className={styles.pageSizeRow} onClick={exportToHTML} >
-          <div className={styles.documentIcon}>HTML</div> Export to HTML
+          <div className={styles.documentIcon}>Variable</div> Set variables
           {htmlLoader && <CircularProgress size={14} />}
         </div>
       </div>

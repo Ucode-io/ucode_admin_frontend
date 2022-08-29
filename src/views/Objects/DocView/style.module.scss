@@ -17,18 +17,22 @@
   // align-items: center;
 
   .pageBlock {
-    width: 800px;
+    // width: 800px;
     margin: 0 auto;
 
-    height: calc(100vh - 48px - 48px - 56px);
+    // height: calc(100vh - 48px - 48px - 56px);
     overflow: auto;
+
+    .templateName {
+      padding: 0 20px;
+    }
 
     .pageSize {
       font-weight: 400;
       font-size: 14px;
       line-height: 16px;
       color: #5b6871;
-      padding: 10px 0;
+      padding: 10px 20px;
     }
   }
 }
@@ -44,7 +48,7 @@
 .docListBlock {
   width: 280px;
   background-color: #fff;
-  height: calc(100vh - 48px - 48px);
+  height: calc(100vh - 48px - 50px);
   border-right: 1px solid #e5e9eb;
 
   .doclistHeader {
@@ -117,6 +121,26 @@
 .docSettingsBlock {
   width: 280px;
   background-color: #fff;
-  height: calc(100vh - 48px - 48px);
+  height: calc(100vh - 48px - 50px);
   border-left: 1px solid #e5e9eb;
+}
+
+
+.saveButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 8px 0;
+  transition-duration: .3s;
+  width: 80px;
+  background-color: colors.$primary;
+  gap: 5px;
+
+  &:hover {
+    background-color: colors.$primary-hover;
+  }
+
 }

@@ -47,13 +47,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   });
 
   const otpCode = watch("otp");
-
-  useEffect(() => {
-    setValue("username", "");
-    setValue("password", "");
-    setValue("recipient", "");
-    setIsCodeSent(false);
-  }, [selectedTab]);
+  const phone = watch('recipient')
 
   const { data: { data } = {} } = useQuery(["GET_CLIENT_TYPES"], () => {
     return clientTypeServiceV2.getList();
@@ -134,8 +128,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     const cashboxData = getCashboxData(data);
 
     setLoading(true);
-
-    if (selectedTab === 0) {
+    if (!phone?.length > 0) {
       dispatch(loginAction({ data: computedData, cashboxData }))
         .unwrap()
         .then(() => {
@@ -144,7 +137,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
           }
         })
         .catch(() => setLoading(false));
-    } else if (selectedTab === 1) {
+    } else {
       authService
         .sendCode({
           client_type: computedClientTypes?.find(
@@ -189,6 +182,13 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     getConnections();
     getLoginStrategies();
   }, [clientTypeId]);
+
+  useEffect(() => {
+    setValue("recipient", "");
+    setValue("username", "");
+    setValue("password", "");
+    setIsCodeSent(false);
+  }, [selectedTab, clientTypeId]);
 
   return (
     <form

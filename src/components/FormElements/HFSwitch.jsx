@@ -10,22 +10,24 @@ const HFSwitch = ({ control, name, label, disabledHelperText, onChange = () => {
       control={control}
       name={name}
       defaultValue={false}
-      render={({ field: { onChange: formOnChange, value }, fieldState: { error } }) => (
-        <div className={!disabledHelperText ? 'mb-1' : ''} >
-          <Switch
-            id={`switch-${id}`}
-            {...props}
-            checked={value ?? false}
-            onChange={(e, val) => {
-              formOnChange(val)
-              onChange(val)
-            }}
-          />
-          <label htmlFor={`switch-${id}`} {...labelProps}>
-            {label}
-          </label>
-        </div>
-      )}
+      render={({ field: { onChange: formOnChange, value }, fieldState: { error } }) => {
+        return (
+          <div className={!disabledHelperText ? 'mb-1' : ''} >
+            <Switch
+              id={`switch-${id}`}
+              {...props}
+              checked={value ?? false}
+              onChange={(e, val) => {
+                formOnChange(val)
+                onChange(val)
+              }}
+            />
+            <label htmlFor={`switch-${id}`} {...labelProps}>
+              {label}
+            </label>
+          </div>
+        )
+      }}
     ></Controller>
   )
 }

@@ -18,6 +18,8 @@ import { useQueryClient } from "react-query"
 import { sortSections } from "../../utils/sectionsOrderNumber"
 import constructorViewRelationService from "../../services/constructorViewRelationService"
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2"
+import FiltersBlock from "../../components/FiltersBlock"
+import DocumentGeneratorButton from "./components/DocumentGeneratorButton"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
@@ -89,6 +91,7 @@ const ObjectsFormPage = () => {
                 ? relation.table_to
                 : relation.table_from,
           }))
+          .sort(sortByOrder)
       )
 
       reset(data.response ?? {})
@@ -148,12 +151,6 @@ const ObjectsFormPage = () => {
     }
   }
 
-  useEffect(() => {
-    if (!tableInfo) return
-    if (id) getAllData()
-    else getFields()
-  }, [id, tableInfo])
-
   const update = (data) => {
     setBtnLoader(true)
 
@@ -186,6 +183,12 @@ const ObjectsFormPage = () => {
     else create(data)
   }
 
+  useEffect(() => {
+    if (!tableInfo) return
+    if (id) getAllData()
+    else getFields()
+  }, [id, tableInfo])
+
   const {
     handleSubmit,
     control,
@@ -199,6 +202,12 @@ const ObjectsFormPage = () => {
 
   return (
     <div className={styles.formPage}>
+      <FiltersBlock
+        extra={
+          <DocumentGeneratorButton />
+        }
+      />
+
       <div className={styles.formArea}>
         <MainInfo
           control={control}
@@ -208,7 +217,6 @@ const ObjectsFormPage = () => {
 
         <div className={styles.secondaryCardSide}>
           <RelationSection relations={tableRelations} control={control} />
-
         </div>
       </div>
 

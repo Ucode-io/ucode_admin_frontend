@@ -51,7 +51,7 @@ const Sidebar2222 = () => {
         <div className="menu-element">
           {menuElements
             ?.filter((el, idx) =>
-              idx === 1 ? permissions?.[el.slug]?.["read"] : true
+              idx === 1 ? (permissions?.[el.slug]?.["read"] !== false) : true
             )
             .map((element) => (
               <div className="parent-block" key={element.id}>

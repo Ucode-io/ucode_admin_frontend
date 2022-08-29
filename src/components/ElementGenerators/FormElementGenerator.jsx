@@ -14,7 +14,12 @@ import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 import HFTimePicker from "../FormElements/HFTimePicker"
 import RelationFormElement from "./RelationFormElement"
 
-const FormElementGenerator = ({ field = {}, control, setFormValue, ...props }) => {
+const FormElementGenerator = ({
+  field = {},
+  control,
+  setFormValue,
+  ...props
+}) => {
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
@@ -25,13 +30,19 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, ...props }) =
   }, [field.attributes?.options])
 
   const computedSlug = useMemo(() => {
-    if(field.id?.includes('@')) return `$${field.id.split("@")?.[0]}.${field.slug}`
+    if (field.id?.includes("@"))
+      return `$${field.id.split("@")?.[0]}.${field.slug}`
     return field.slug
   }, [field.id, field.slug])
 
   if (field.id?.includes("#"))
     return (
-      <RelationFormElement control={control} field={field} setFormValue={setFormValue} {...props} />
+      <RelationFormElement
+        control={control}
+        field={field}
+        setFormValue={setFormValue}
+        {...props}
+      />
     )
 
   switch (field.type) {
@@ -48,8 +59,6 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, ...props }) =
           />
         </FRow>
       )
-
-    
 
     case "PHONE":
       return (
@@ -112,31 +121,31 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, ...props }) =
         </FRow>
       )
 
-      case "DATE_TIME":
-        return (
-          <FRow label={field.label} required={field.required}>
-            <HFDateTimePicker
-              control={control}
-              name={computedSlug}
-              required={field.required}
-              placeholder={field.attributes?.placeholder}
-              {...props}
-            />
-          </FRow>
-        )
+    case "DATE_TIME":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFDateTimePicker
+            control={control}
+            name={computedSlug}
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            {...props}
+          />
+        </FRow>
+      )
 
-      case "TIME":
-        return (
-          <FRow label={field.label} required={field.required}>
-            <HFTimePicker
-              control={control}
-              name={computedSlug}
-              required={field.required}
-              placeholder={field.attributes?.placeholder}
-              {...props}
-            />
-          </FRow>
-        )
+    case "TIME":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFTimePicker
+            control={control}
+            name={computedSlug}
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            {...props}
+          />
+        </FRow>
+      )
 
     case "NUMBER":
       return (
@@ -224,11 +233,30 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, ...props }) =
 
     case "ICON":
       return (
-        <FRow label={field.label} required={field.required} >
+        <FRow label={field.label} required={field.required}>
           <HFIconPicker
             control={control}
             name={computedSlug}
             required={field.required}
+            {...props}
+          />
+        </FRow>
+      )
+
+    case "FORMULA":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFTextField
+            control={control}
+            name={field.slug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            InputProps={{
+              readOnly: true,
+              style: {
+                background: '#c0c0c039'              }
+            }}
             {...props}
           />
         </FRow>

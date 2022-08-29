@@ -12,7 +12,6 @@ const FormSelector = ({ tableSlug }) => {
 
   const tables = useSelector((state) => state.constructorTable.list)
 
-
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget)
   }

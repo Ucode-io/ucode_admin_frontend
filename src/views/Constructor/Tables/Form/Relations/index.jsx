@@ -125,7 +125,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
         onEditClick={openEditForm}
         dataLength={1}
         additionalRow={
-          <PermissionWrapperV2 tabelSlug={slug} type="write">
+          // <PermissionWrapperV2 tabelSlug={slug} type="write">
             <CTableRow>
               <CTableCell colSpan={columns.length + 1}>
                 <div
@@ -137,7 +137,6 @@ const Relations = ({ mainForm, getRelationFields }) => {
                 </div>
               </CTableCell>
             </CTableRow>
-          </PermissionWrapperV2>
         }
       />
 

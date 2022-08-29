@@ -22,6 +22,8 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2"
 import { Checkbox } from "@mui/material"
 import { numberWithSpaces } from "../../utils/formatNumbers"
 import TableRow from "./TableRow"
+import TableRowForm from "./TableRowForm"
+import TableRowButton from "../TableRowButton"
 
 const ObjectDataTable = ({
   data = [],
@@ -48,7 +50,9 @@ const ObjectDataTable = ({
   paginationExtraButton,
   checkboxValue,
   onCheckboxChange,
-  onFormSubmit
+  onFormSubmit,
+  createFormVisible,
+  setCreateFormVisible
 }) => {
   const location = useLocation()
   const tableSize = useSelector((state) => state.tableSize.tableSize)
@@ -56,6 +60,7 @@ const ObjectDataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings)
   const tableHeight = useSelector((state) => state.tableSize.tableHeight)
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0)
+
 
   const popupRef = useRef(null)
   useOnClickOutside(popupRef, () => setColumnId(""))
@@ -313,14 +318,14 @@ const ObjectDataTable = ({
             tableSlug={tableSlug}
             onDeleteClick={onDeleteClick}
             onFormSubmit={onFormSubmit}
-              
+            
           />
         ))}
         {func?.length ? (
-          <CTableRow>
+          <CTableRow className="amountRow" >
             <CTableCell>Итог</CTableCell>
             {columns?.map((col) => (
-              <CTableCell>
+              <CTableCell className="text-nowrap" >
                 {col?.slug ===
                 func?.filter((item) => item?.field_name === col?.slug)?.[0]
                   ?.field_name
@@ -334,6 +339,20 @@ const ObjectDataTable = ({
         ) : null}
 
         {additionalRow}
+
+
+        {createFormVisible && <TableRowForm
+          row={null}
+          currentPage={currentPage}
+          rowIndex={data?.length}
+          columns={columns}
+          tableHeight={tableHeight}
+          tableSettings={tableSettings}
+          pageName={pageName}
+          calculateWidth={calculateWidth}
+          setFormVisible={setCreateFormVisible}
+          onFormSubmit={onFormSubmit}
+        />}
       </CTableBody>
     </CTable>
   )

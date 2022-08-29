@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import {
   CTable,
   CTableBody,
@@ -15,6 +15,7 @@ import roleServiceV2 from "../../services/roleServiceV2"
 const MatrixRoles = ({ infoForm }) => {
   const navigate = useNavigate()
   const [roles, setRoles] = useState([])
+  const params = useParams()
 
   const getRoles = () => {
     roleServiceV2
@@ -52,7 +53,7 @@ const MatrixRoles = ({ infoForm }) => {
           </CTableHead>
           <CTableBody loader={false} columnsCount={1} dataLength={1}>
             {roles.map((role) => (
-              <CTableRow key={role.guid} onClick={() => navigate(`/settings/auth/matrix_v2/role/${role?.guid}`)}>
+              <CTableRow key={role.guid} onClick={() => navigate(`/settings/auth/matrix_v2/role/${role?.guid}/${params?.typeId}`)}>
                 <CTableCell>{role.name}</CTableCell>
               </CTableRow>
             ))}

@@ -1,12 +1,8 @@
 import { useMemo } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
-import FiltersBlock from "../../../../../components/FiltersBlock"
-import FieldsBlock from "./FieldsBlock"
-import LayoutRelationsBlock from "./LayoutRelationsBlock"
 import ObjectLayout from "./ObjectLayout"
 import RelationLayout from "./RelationLayout"
-import SectionsBlock from "./SectionsBlock"
 import styles from "./style.module.scss"
 
 const Layout = ({ mainForm }) => {

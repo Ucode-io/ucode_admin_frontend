@@ -3,6 +3,7 @@ import { Checkbox } from "@mui/material"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useMutation } from "react-query"
+import { useParams } from "react-router-dom"
 import constructorObjectService from "../../services/constructorObjectService"
 import RectangleIconButton from "../Buttons/RectangleIconButton"
 import { CTableCell, CTableRow } from "../CTable"
@@ -20,26 +21,23 @@ const TableRowForm = ({
   pageName,
   calculateWidth,
   setFormVisible,
-  tableSlug,
   onFormSubmit = () => {},
 }) => {
+  const {tableSlug, id} = useParams()
+
   const [loader, setLoader] = useState()
   const { control, handleSubmit } = useForm({
-    defaultValues: row
-  })
-
-  const { mutate } = useMutation((values) => {
-
-    return constructorObjectService.update(tableSlug, values)
-  }, {
-    onSuccess: () => {
-      onFormSubmit()
+    defaultValues: row ?? {
+      [`${tableSlug}_id`]: id
     }
   })
 
-  // const submitHandler = (values) => {
-  //   setLoader(true)
-  // }
+  const onSubmit = (values) => {
+    setLoader(true)
+    onFormSubmit(values).then(() => {
+      setFormVisible(false)
+    }).catch(() => setLoader(false))
+  }
 
   return (
     <CTableRow>
@@ -90,7 +88,8 @@ const TableRowForm = ({
             color="success"
             className="mr-1"
             size="small"
-            onClick={handleSubmit(mutate)}
+            onClick={handleSubmit(onSubmit)}
+            loader={loader}
           >
             <Save color="success" />
           </RectangleIconButton>

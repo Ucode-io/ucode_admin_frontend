@@ -263,7 +263,7 @@ const Router = () => {
           }
         />
         <Route
-          path="auth/matrix_v2/role/:roleId"
+          path="auth/matrix_v2/role/:roleId/:typeId"
           element={
             <Suspense fallback={<PageFallback />}>
               <MatrixRolePage />

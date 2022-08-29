@@ -145,6 +145,11 @@ const FieldCreateForm = ({
 
         <Divider style={{ margin: "20px 0" }} />
 
+        <Attributes control={control} watch={watch} mainForm={mainForm} />
+
+        <>
+        <Divider style={{ margin: "20px 0" }} />
+
         <FRow label="Autofill table">
           <HFSelect
             disabledHelperText
@@ -164,10 +169,7 @@ const FieldCreateForm = ({
             placeholder="Type"
           />
         </FRow>
-
-        <Divider style={{ margin: "20px 0" }} />
-
-        <Attributes control={control} watch={watch} />
+        </>
 
         {/* <FRow label="Fields">
           <HFMultipleSelect

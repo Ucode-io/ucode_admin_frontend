@@ -58,17 +58,17 @@
 
   &.small {
     height: 30px;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 16px;
   }
   &.medium {
     height: 60px;
-    font-size: 16px;
-    line-height: 16px;
+    font-size: 14px;
+    line-height: 18px;
   }
   &.large {
     height: 90px;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 20px;
   }
 
@@ -82,12 +82,23 @@
   cursor: pointer;
   transition-duration: 0.2s;
 
+  
+
   th {
     padding: 8px 16px;
   }
 
   &:hover td {
     background-color: rgba(#f5fbff, 1) !important;
+  }
+
+  &.amountRow {
+    background-color: #c0c0c03f;
+    font-weight: bold;
+    
+    &:hover td {
+      background-color: #c0c0c03f !important;
+    }
   }
 }
 

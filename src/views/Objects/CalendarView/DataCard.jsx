@@ -25,7 +25,7 @@ const DataCard = ({
   const ref = useRef()
   const [target, setTarget] = useState()
   const { tableSlug } = useParams()
-  const { timeList } = useTimeList()
+  const { timeList } = useTimeList(view.time_interval)
   const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40)
 
   const [frame, setFrame] = useState({
@@ -40,11 +40,15 @@ const DataCard = ({
   const onPositionChange = (position, height) => {
     if (!position || position.translate[1] < 0) return null
 
+
     const beginIndex = Math.floor((position.translate[1] + 2) / 40)
     const endIndex = Math.ceil((position.translate[1] + height) / 40)
+    
+    // debugger
 
     const startTime = computeTime(beginIndex)
     const endTime = computeTime(endIndex)
+
 
     const computedData = {
       ...info,
@@ -59,6 +63,7 @@ const DataCard = ({
 
   const computeTime = (index) => {
     const computedTime = timeList[index]
+
 
     const hour = Number(format(computedTime, "H"))
     const minute = Number(format(computedTime, "m"))
@@ -81,7 +86,7 @@ const DataCard = ({
   const onDragEnd = ({ lastEvent }) => {
     if (lastEvent) {
       frame.translate = lastEvent.beforeTranslate
-      onPositionChange(lastEvent.drag, lastEvent.height)
+      onPositionChange(lastEvent, lastEvent.height)
     }
   }
 

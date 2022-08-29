@@ -21,6 +21,7 @@ import useOnClickOutside from "use-onclickoutside";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import { Checkbox } from "@mui/material";
 import { numberWithSpaces } from "../../utils/formatNumbers";
+import { get } from "@ngard/tiny-get";
 
 const DataTable = ({
   data = [],
@@ -205,9 +206,9 @@ const DataTable = ({
                 minWidth: tableSize?.[pageName]?.[column.id]
                   ? tableSize?.[pageName]?.[column.id]
                   : "auto",
-                width: tableSize?.[pageName]?.[column.id]
+                width: column.width ?? (tableSize?.[pageName]?.[column.id]
                   ? tableSize?.[pageName]?.[column.id]
-                  : "auto",
+                  : "auto"),
                 position: tableSettings?.[pageName]?.find(
                   (item) => item?.id === column?.id
                 )?.isStiky
@@ -358,7 +359,9 @@ const DataTable = ({
                     : "",
                 }}
               >
-                <CellElementGenerator field={column} row={row} />
+                {
+                  column.render ? column.render(get(row, column.slug, ""), row, column) : <CellElementGenerator field={column} row={row} />
+                }
               </CTableCell>
             ))}
             <PermissionWrapperV2

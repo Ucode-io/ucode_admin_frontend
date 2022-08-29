@@ -22,7 +22,7 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
       state.roleInfo = payload.role;
 
       // state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
-      state.permissions = payload.permissions.reduce((acc, curr) => {
+      state.permissions = payload?.permissions ? payload?.permissions?.reduce((acc, curr) => {
         acc[curr.table_slug] = {
           read: curr.read === "Yes",
           write: curr.write === "Yes",
@@ -30,7 +30,7 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
           delete: curr.delete === "Yes",
         };
         return acc;
-      }, {});
+      }, {}) : [];
       state.loading = false;
     },
     setTokens(state, { payload }) {

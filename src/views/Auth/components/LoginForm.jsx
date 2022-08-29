@@ -49,13 +49,6 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   const otpCode = watch("otp");
   const phone = watch('recipient')
 
-  useEffect(() => {
-    setValue("recipient", "");
-    setValue("username", "");
-    setValue("password", "");
-    setIsCodeSent(false);
-  }, [selectedTab]);
-
   const { data: { data } = {} } = useQuery(["GET_CLIENT_TYPES"], () => {
     return clientTypeServiceV2.getList();
   });
@@ -189,6 +182,13 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     getConnections();
     getLoginStrategies();
   }, [clientTypeId]);
+
+  useEffect(() => {
+    setValue("recipient", "");
+    setValue("username", "");
+    setValue("password", "");
+    setIsCodeSent(false);
+  }, [selectedTab, clientTypeId]);
 
   return (
     <form

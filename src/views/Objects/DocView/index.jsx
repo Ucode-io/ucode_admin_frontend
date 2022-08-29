@@ -1,5 +1,4 @@
 import { BackupTable } from "@mui/icons-material"
-import edjsParser from "editorjs-parser"
 import { useRef, useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { useLocation, useParams } from "react-router-dom"
@@ -18,35 +17,35 @@ import RedactorBlock from "./RedactorBlock"
 import styles from "./style.module.scss"
 import TemplatesList from "./TemplatesList"
 
-const parser = new edjsParser()
-
 const DocView = ({
   views,
   selectedTabIndex,
   setSelectedTabIndex,
   fieldsMap,
 }) => {
-  const {state} = useLocation()
   const redactorRef = useRef()
+  const {state} = useLocation()
   const { tableSlug } = useParams()
+  const queryClient = useQueryClient()
+
+  const view = views.find((view) => view.type === "TABLE")
+
   const [templates, setTemplates] = useState([])
-  const [selectedSettingsTab, setSelectedSettingsTab] = useState(0)
+
+  // =====SETTINGS BLOCK=========
   const [pdfLoader, setPdfLoader] = useState(false)
   const [htmlLoader, setHtmlLoader] = useState(false)
+  const [selectedSettingsTab, setSelectedSettingsTab] = useState(0)
   const [tableViewIsActive, setTableViewIsActive] = useState(false)
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0)
-  const [HTMLContent, setHTMLContent] = useState(null)
+
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex)
 
   const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
   const [selectedTemplate, setSelectedTemplate] = useState(state?.template ?? null)
 
-  const queryClient = useQueryClient()
 
-  console.log('selectedObject', selectedObject, selectedTemplate)
-
-  const view = views.find((view) => view.type === "TABLE")
-
+  // ========FIELDS FOR RELATIONS=========
   const { data: fields = [] } = useQuery(
     ['GET_OBJECTS_LIST_WITH_RELATIONS', { tableSlug, limit: 0, offset: 0 }], 
     () => {
@@ -68,6 +67,7 @@ const DocView = ({
     }
   )
 
+  // ========GET TEMPLATES LIST===========
   const { isLoading } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
@@ -77,6 +77,10 @@ const DocView = ({
       onSuccess: (res) => setTemplates(res.htmlTemplates ?? []),
     }
   )
+
+
+
+  // ========UPDATE TEMPLATE===========
 
   const updateTemplate = (template) => {
     setTemplates((prev) => {
@@ -89,19 +93,34 @@ const DocView = ({
     })
   }
  
+  // ========ADD NEW TEMPLATE=========
+  const addNewTemplate = (template) => {
+    setTemplates((prev) => {
+      return [...prev, template]
+    })
+  }
+
+  // =========CHECKBOX CHANGE HANDLER=========
+  const onCheckboxChange = (val, row) => {
+    if (val) setSelectedObject(row.guid)
+    else setSelectedObject(null)
+  }
+
+  
+
+  // =======EXPORT TO PDF============
+
   const exportToPDF = async () => {
     if (!selectedTemplate) return
     setPdfLoader(true)
 
     try {
-      const savedData = await redactorRef.current.save()
+      let html = redactorRef.current.getData()
     
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
 
-      let parsedHTML = parser.parse(savedData)
-
       fields.forEach(field => {
-        parsedHTML = parsedHTML.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
+        html = html.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
       })
 
       const res = await documentTemplateService.exportToPDF({
@@ -110,7 +129,7 @@ const DocView = ({
           object_id: selectedObject,
           page_size: selectedPaperSize.name
         },
-        html: meta + parsedHTML,
+        html: meta + html,
       })
 
       queryClient.refetchQueries(["GET_OBJECT_FILES", { tableSlug, selectedObject }])
@@ -121,18 +140,19 @@ const DocView = ({
     }
   }
 
+  // ========EXPORT TO HTML===============
+
   const exportToHTML = async () => {
     if (!selectedTemplate) return
     setHtmlLoader(true)
 
     try {
-      const savedData = await redactorRef.current.save()
+      let html = redactorRef.current.getData()
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
-      let parsedHTML = parser.parse(savedData)
 
 
       fields.forEach(field => {
-        parsedHTML = parsedHTML.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
+        html = html.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
       })
 
       const res = await documentTemplateService.exportToHTML({
@@ -140,25 +160,22 @@ const DocView = ({
           table_slug: tableSlug,
           object_id: selectedObject,
         },
-        html: meta + parsedHTML,
+        html: meta + html,
       })
 
-      setHTMLContent(res.html)
+      setSelectedTemplate(prev => ({
+        ...prev,
+        html: res.html
+      }))
+
     } finally {
       setHtmlLoader(false)
     }
   }
 
-  const addNewTemplate = (template) => {
-    setTemplates((prev) => {
-      return [...prev, template]
-    })
-  }
 
-  const onCheckboxChange = (val, row) => {
-    if (val) setSelectedObject(row.guid)
-    else setSelectedObject(null)
-  }
+
+
 
   return (
     <div>
@@ -222,8 +239,6 @@ const DocView = ({
                 fields={fields}
                 selectedPaperSizeIndex={selectedPaperSizeIndex}
                 setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
-                HTMLContent={HTMLContent}
-                setHTMLContent={setHTMLContent}
                 htmlLoader={htmlLoader}
               />
             ) : (

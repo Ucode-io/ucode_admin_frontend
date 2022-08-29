@@ -8,6 +8,7 @@ const HFIconPicker = ({
   disabledHelperText = false,
   required=false,
   rules={},
+  clickItself = () => {},
   ...props
 }) => {
   return (
@@ -18,7 +19,7 @@ const HFIconPicker = ({
       rules={{ required: required ? 'This is required field' : false, ...rules }}
       render={({ field : { onChange, value }, fieldState : { error  } })  => (
         <div>
-          <IconPicker error={error} value={value} onChange={onChange} {...props} />
+          <IconPicker error={error} value={value} onChange={onChange} clickItself={clickItself} {...props} />
           {!disabledHelperText && (
             <FormHelperText error>{error?.message}</FormHelperText>
           )}

@@ -47,11 +47,12 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   });
 
   const otpCode = watch("otp");
+  const phone = watch('recipient')
 
   useEffect(() => {
+    setValue("recipient", "");
     setValue("username", "");
     setValue("password", "");
-    setValue("recipient", "");
     setIsCodeSent(false);
   }, [selectedTab]);
 
@@ -134,8 +135,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     const cashboxData = getCashboxData(data);
 
     setLoading(true);
-
-    if (selectedTab === 0) {
+    if (!phone?.length > 0) {
       dispatch(loginAction({ data: computedData, cashboxData }))
         .unwrap()
         .then(() => {
@@ -144,7 +144,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
           }
         })
         .catch(() => setLoading(false));
-    } else if (selectedTab === 1) {
+    } else {
       authService
         .sendCode({
           client_type: computedClientTypes?.find(

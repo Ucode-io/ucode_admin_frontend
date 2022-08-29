@@ -397,6 +397,7 @@ const MatrixRolePage = () => {
                             name=""
                             value={connection?.icon}
                             control={roleForm.control}
+                            customeClick={true}
                             clickItself={() => {
                               handleRecordPermission(
                                 recordPermissions?.find(
@@ -520,6 +521,7 @@ const MatrixRolePage = () => {
                             value={connection?.icon}
                             control={roleForm.control}
                             shape="rectangle"
+                            customeClick={true}
                             clickItself={() => {
                               handleRecordPermission(
                                 recordPermissions?.find(
@@ -642,6 +644,7 @@ const MatrixRolePage = () => {
                             value={connection?.icon}
                             control={roleForm.control}
                             shape="rectangle"
+                            customeClick={true}
                             clickItself={() => {
                               handleRecordPermission(
                                 recordPermissions?.find(
@@ -765,6 +768,7 @@ const MatrixRolePage = () => {
                             value={connection?.icon}
                             control={roleForm.control}
                             shape="rectangle"
+                            customeClick={true}
                             clickItself={() => {
                               handleRecordPermission(
                                 recordPermissions?.find(

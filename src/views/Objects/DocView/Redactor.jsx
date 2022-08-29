@@ -4,9 +4,12 @@ import Editor from "ckeditor5-custom-build"
 import { forwardRef } from "react"
 import { useWatch } from "react-hook-form"
 import { useMemo } from "react"
+import uploadPlugin from "./UploadAdapter"
 
 
 const Redactor = forwardRef(({ control, fields }, ref) => {
+
+  
 
   const value = useWatch({
     control,
@@ -19,7 +22,7 @@ const Redactor = forwardRef(({ control, fields }, ref) => {
       value: `{ ${field.label} }`
     })) ?? []
   }, [fields])
-  
+
 
   return (
     <>
@@ -30,13 +33,8 @@ const Redactor = forwardRef(({ control, fields }, ref) => {
             variables: {
               list: computedFields
             },
+            extraPlugins: [uploadPlugin]
           }}
-        //   config={{
-            
-        //     plugins: [Timestamp],
-        //     toolbar: ['timestamp'],
-        //     // variablePlugin: { sourceFile: 'defaultvars.json' }
-        // }}
           data={value ?? ''}
           onReady={(editor) => {
             editor.ui
@@ -60,9 +58,6 @@ const Redactor = forwardRef(({ control, fields }, ref) => {
               ref.current.ui.view.toolbar.element.remove()
             }
           }}
-          // onChange={(event, editor) => {
-          //   onChange(editor.getData())
-          // }}
         ></CKEditor>
       </div>
     </>

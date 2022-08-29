@@ -79,7 +79,7 @@ const RedactorBlock = forwardRef(
 
           <div className={styles.pageSize}>{selectedPaperSize.name} ({selectedPaperSize.width} x {selectedPaperSize.height})</div>
 
-          <Redactor ref={redactorRef} control={control} fields={fields} />
+          <Redactor ref={redactorRef} control={control} fields={fields} selectedPaperSizeIndex={selectedPaperSizeIndex} />
         </div>
 
         <Footer

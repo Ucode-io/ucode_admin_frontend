@@ -1,16 +1,16 @@
 import { CKEditor } from "@ckeditor/ckeditor5-react"
 import "./redactorOverriders.scss"
 import Editor from "ckeditor5-custom-build"
-import { forwardRef } from "react"
+import { forwardRef, useEffect } from "react"
 import { useWatch } from "react-hook-form"
 import { useMemo } from "react"
 import uploadPlugin from "./UploadAdapter"
+import usePaperSize from "../../../hooks/usePaperSize"
 
 
-const Redactor = forwardRef(({ control, fields }, ref) => {
-
+const Redactor = forwardRef(({ control, fields, selectedPaperSizeIndex }, ref) => {
+  const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex)
   
-
   const value = useWatch({
     control,
     name: "html",
@@ -23,6 +23,13 @@ const Redactor = forwardRef(({ control, fields }, ref) => {
     })) ?? []
   }, [fields])
 
+  // useEffect(() => {
+  //   if(!ref.current) return
+  //   const element = document.querySelector('.ck-editor__editable')
+  //   element.style.width = `${selectedPaperSize.width}px`
+  //   // ref.current.ui.getEditableElement().style.width = `${selectedPaperSize.width}pt`
+
+  // }, [selectedPaperSize])
 
   return (
     <>
@@ -33,7 +40,8 @@ const Redactor = forwardRef(({ control, fields }, ref) => {
             variables: {
               list: computedFields
             },
-            extraPlugins: [uploadPlugin]
+            extraPlugins: [uploadPlugin],
+            width: 300,
           }}
           data={value ?? ''}
           onReady={(editor) => {
@@ -43,10 +51,10 @@ const Redactor = forwardRef(({ control, fields }, ref) => {
                 editor.ui.view.toolbar.element,
                 editor.ui.getEditableElement()
               )
-
             const wrapper = document.createElement("div")
             wrapper.classList.add("ck-editor__editable-container")
             editor.ui.getEditableElement().parentNode.appendChild(wrapper)
+            // editor.ui.getEditableElement().style.width = `${selectedPaperSize.width}pt`
             wrapper.appendChild(editor.ui.getEditableElement())
             ref.current = editor
           }}

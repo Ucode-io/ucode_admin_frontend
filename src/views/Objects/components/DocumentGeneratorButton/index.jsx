@@ -22,12 +22,6 @@ const DocumentGeneratorButton = () => {
     setAnchorEl(null)
   }
 
-
-  // const templateOptions = useMemo(() => {
-  //   return listToOptions(templates) 
-  // }, [ templates ])
-
-
   const { data: templates = [] } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
@@ -78,7 +72,6 @@ const DocumentGeneratorButton = () => {
           ))}
         </div>
 
-        {/* <Form closeMenu={closeMenu} /> */}
       </Menu>
     </>
   )

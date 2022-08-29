@@ -124,3 +124,23 @@
   height: calc(100vh - 48px - 50px);
   border-left: 1px solid #e5e9eb;
 }
+
+
+.saveButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 8px 0;
+  transition-duration: .3s;
+  width: 80px;
+  background-color: colors.$primary;
+  gap: 5px;
+
+  &:hover {
+    background-color: colors.$primary-hover;
+  }
+
+}

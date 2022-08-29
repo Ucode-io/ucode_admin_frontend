@@ -1,12 +1,12 @@
+import { CircularProgress } from "@mui/material"
 import { forwardRef, useState } from "react"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
-import CancelButton from "../../../components/Buttons/CancelButton"
-import SaveButton from "../../../components/Buttons/SaveButton"
 import Footer from "../../../components/Footer"
 import HFAutoWidthInput from "../../../components/FormElements/HFAutoWidthInput"
 import usePaperSize from "../../../hooks/usePaperSize"
 import documentTemplateService from "../../../services/documentTemplateService"
+import DropdownButton from "../components/DropdownButton"
 import Redactor from "./Redactor"
 import styles from "./style.module.scss"
 
@@ -21,6 +21,10 @@ const RedactorBlock = forwardRef(
     fields,
     selectedPaperSizeIndex,
     setSelectedPaperSizeIndex,
+    exportToPDF,
+    exportToHTML,
+    htmlLoader,
+    pdfLoader
   }, redactorRef) => {
     const { control, handleSubmit, reset } = useForm()
     const [btnLoader, setBtnLoader] = useState(false)
@@ -85,11 +89,10 @@ const RedactorBlock = forwardRef(
         <Footer
           extra={
             <>
-              <CancelButton onClick={() => setSelectedTemplate(null)} />
-              <SaveButton
-                loading={btnLoader}
-                onClick={handleSubmit(onSubmit)}
-              />
+              {/* <CancelButton onClick={() => setSelectedTemplate(null)} /> */}
+
+              <div onClick={handleSubmit(onSubmit)} className={styles.saveButton} > {btnLoader && <CircularProgress color="secondary" size={15} />} Save</div>
+              <DropdownButton exportToHTML={exportToHTML} exportToPDF={exportToPDF} pdfLoader={pdfLoader} htmlLoader={htmlLoader} />
             </>
           }
         />

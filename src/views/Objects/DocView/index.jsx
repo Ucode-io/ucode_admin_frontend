@@ -240,6 +240,9 @@ const DocView = ({
                 selectedPaperSizeIndex={selectedPaperSizeIndex}
                 setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
                 htmlLoader={htmlLoader}
+                exportToHTML={exportToHTML}
+                exportToPDF={exportToPDF}
+                pdfLoader={pdfLoader}
               />
             ) : (
               <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`} />

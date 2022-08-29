@@ -17,6 +17,7 @@ import {
 } from "../../components/CTable";
 import FormCard from "../../components/FormCard";
 import FRow from "../../components/FormElements/FRow";
+import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
 import applicationService from "../../services/applicationSercixe";
@@ -28,17 +29,18 @@ const staticTables = [
     label: "APP",
     slug: "app",
     children: "true",
-  }
+  },
 ];
 
 const MatrixRolePage = () => {
-  const { roleId } = useParams();
+  const { roleId, typeId } = useParams();
   const [appId, setAppId] = useState(null);
   const [tableSlug, setTableSlug] = useState(null);
   const [role, setRole] = useState({});
   const [apps, setApps] = useState([{ name: "Settings", id: "settings" }]);
   const [roles, setRoles] = useState([{ name: "Settings", id: "settings" }]);
   const [recordPermissions, setRecordPermissions] = useState([]);
+  const [connections, setConnections] = useState([]);
 
   const roleForm = useForm({});
 
@@ -160,7 +162,17 @@ const MatrixRolePage = () => {
     }
   };
 
-  console.log("apps", apps);
+  const getConnections = () => {
+    constructorObjectService
+      .getList("connections", { data: { client_type_id: typeId } })
+      .then((res) => {
+        console.log("222", res);
+        setConnections(res?.data?.response || []);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     if (!appId) {
@@ -174,6 +186,7 @@ const MatrixRolePage = () => {
     getRecordPermissions();
     getRoleById();
     getApps();
+    getConnections();
   }, []);
 
   return (
@@ -300,12 +313,38 @@ const MatrixRolePage = () => {
                     }}
                     style={{ position: "relative" }}
                   >
-                    {recordPermissions?.find(
-                      (item) => item?.table_slug === app?.slug
-                    )?.read === "Yes" ? (
-                      <TwoUserIcon />
-                    ) : (
+                    {!app?.children ? (
                       <CrossPeson />
+                    ) : recordPermissions?.find(
+                        (item) => item?.table_slug === app?.slug
+                      )?.read === "Yes" ? (
+                      <TwoUserIcon />
+                    ) : recordPermissions?.find(
+                        (item) => item?.table_slug === app?.slug
+                      )?.read === "No" ? (
+                      <CrossPeson />
+                    ) : (
+                      <HFIconPicker
+                        name=""
+                        value={
+                          connections?.filter(
+                            (connection) =>
+                              connection?.name ===
+                              recordPermissions?.find(
+                                (item) => item?.table_slug === app?.slug
+                              )?.read
+                          )[0]?.icon
+                        }
+                        control={roleForm.control}
+                        shape="rectangle"
+                        onChange={(e) => {
+                          roleForm.setValue("icon", e);
+                          setConnections({
+                            ...connections,
+                            icon: e,
+                          });
+                        }}
+                      />
                     )}
                     {tableSlug === app?.slug + "read" ? (
                       <div
@@ -353,6 +392,31 @@ const MatrixRolePage = () => {
                         >
                           <CrossPeson />
                         </span>
+                        {connections?.map((connection) => (
+                          <HFIconPicker
+                            name=""
+                            value={connection?.icon}
+                            control={roleForm.control}
+                            clickItself={() => {
+                              handleRecordPermission(
+                                recordPermissions?.find(
+                                  (item) => item?.table_slug === app?.slug
+                                ),
+                                "read",
+                                connection?.name,
+                                app?.slug
+                              );
+                            }}
+                            shape="rectangle"
+                            onChange={(e) => {
+                              roleForm.setValue("icon", e);
+                              setConnections({
+                                ...connections,
+                                icon: e,
+                              });
+                            }}
+                          />
+                        ))}
                       </div>
                     ) : null}
                   </CTableCell>
@@ -371,12 +435,38 @@ const MatrixRolePage = () => {
                     }}
                     style={{ position: "relative" }}
                   >
-                    {recordPermissions?.find(
-                      (item) => item?.table_slug === app?.slug
-                    )?.write === "Yes" ? (
-                      <TwoUserIcon />
-                    ) : (
+                    {!app?.children ? (
                       <CrossPeson />
+                    ) : recordPermissions?.find(
+                        (item) => item?.table_slug === app?.slug
+                      )?.write === "Yes" ? (
+                      <TwoUserIcon />
+                    ) : recordPermissions?.find(
+                        (item) => item?.table_slug === app?.slug
+                      )?.write === "No" ? (
+                      <CrossPeson />
+                    ) : (
+                      <HFIconPicker
+                        name=""
+                        value={
+                          connections?.filter(
+                            (connection) =>
+                              connection?.name ===
+                              recordPermissions?.find(
+                                (item) => item?.table_slug === app?.slug
+                              )?.write
+                          )[0]?.icon
+                        }
+                        control={roleForm.control}
+                        shape="rectangle"
+                        onChange={(e) => {
+                          roleForm.setValue("icon", e);
+                          setConnections({
+                            ...connections,
+                            icon: e,
+                          });
+                        }}
+                      />
                     )}
                     {tableSlug === app?.slug + "write" ? (
                       <div
@@ -424,6 +514,31 @@ const MatrixRolePage = () => {
                         >
                           <CrossPeson />
                         </span>
+                        {connections?.map((connection) => (
+                          <HFIconPicker
+                            name=""
+                            value={connection?.icon}
+                            control={roleForm.control}
+                            shape="rectangle"
+                            clickItself={() => {
+                              handleRecordPermission(
+                                recordPermissions?.find(
+                                  (item) => item?.table_slug === app?.slug
+                                ),
+                                "write",
+                                connection?.name,
+                                app?.slug
+                              );
+                            }}
+                            onChange={(e) => {
+                              roleForm.setValue("icon", e);
+                              setConnections({
+                                ...connections,
+                                icon: e,
+                              });
+                            }}
+                          />
+                        ))}
                       </div>
                     ) : null}
                   </CTableCell>
@@ -442,12 +557,38 @@ const MatrixRolePage = () => {
                     }}
                     style={{ position: "relative" }}
                   >
-                    {recordPermissions?.find(
-                      (item) => item?.table_slug === app?.slug
-                    )?.update === "Yes" ? (
-                      <TwoUserIcon />
-                    ) : (
+                    {!app?.children ? (
                       <CrossPeson />
+                    ) : recordPermissions?.find(
+                        (item) => item?.table_slug === app?.slug
+                      )?.update === "Yes" ? (
+                      <TwoUserIcon />
+                    ) : recordPermissions?.find(
+                        (item) => item?.table_slug === app?.slug
+                      )?.update === "No" ? (
+                      <CrossPeson />
+                    ) : (
+                      <HFIconPicker
+                        name=""
+                        value={
+                          connections?.filter(
+                            (connection) =>
+                              connection?.name ===
+                              recordPermissions?.find(
+                                (item) => item?.table_slug === app?.slug
+                              )?.update
+                          )[0]?.icon
+                        }
+                        control={roleForm.control}
+                        shape="rectangle"
+                        onChange={(e) => {
+                          roleForm.setValue("icon", e);
+                          setConnections({
+                            ...connections,
+                            icon: e,
+                          });
+                        }}
+                      />
                     )}
                     {tableSlug === app?.slug + "update" ? (
                       <div
@@ -495,6 +636,31 @@ const MatrixRolePage = () => {
                         >
                           <CrossPeson />
                         </span>
+                        {connections?.map((connection) => (
+                          <HFIconPicker
+                            name=""
+                            value={connection?.icon}
+                            control={roleForm.control}
+                            shape="rectangle"
+                            clickItself={() => {
+                              handleRecordPermission(
+                                recordPermissions?.find(
+                                  (item) => item?.table_slug === app?.slug
+                                ),
+                                "update",
+                                connection?.name,
+                                app?.slug
+                              );
+                            }}
+                            onChange={(e) => {
+                              roleForm.setValue("icon", e);
+                              setConnections({
+                                ...connections,
+                                icon: e,
+                              });
+                            }}
+                          />
+                        ))}
                       </div>
                     ) : null}
                   </CTableCell>
@@ -513,12 +679,38 @@ const MatrixRolePage = () => {
                     }}
                     style={{ position: "relative" }}
                   >
-                    {recordPermissions?.find(
-                      (item) => item?.table_slug === app?.slug
-                    )?.delete === "Yes" ? (
-                      <TwoUserIcon />
-                    ) : (
+                    {!app?.children ? (
                       <CrossPeson />
+                    ) : recordPermissions?.find(
+                        (item) => item?.table_slug === app?.slug
+                      )?.delete === "Yes" ? (
+                      <TwoUserIcon />
+                    ) : recordPermissions?.find(
+                        (item) => item?.table_slug === app?.slug
+                      )?.delete === "No" ? (
+                      <CrossPeson />
+                    ) : (
+                      <HFIconPicker
+                        name=""
+                        value={
+                          connections?.filter(
+                            (connection) =>
+                              connection?.name ===
+                              recordPermissions?.find(
+                                (item) => item?.table_slug === app?.slug
+                              )?.delete
+                          )[0]?.icon
+                        }
+                        control={roleForm.control}
+                        shape="rectangle"
+                        onChange={(e) => {
+                          roleForm.setValue("icon", e);
+                          setConnections({
+                            ...connections,
+                            icon: e,
+                          });
+                        }}
+                      />
                     )}
                     {tableSlug === app?.slug + "delete" ? (
                       <div
@@ -566,6 +758,32 @@ const MatrixRolePage = () => {
                         >
                           <CrossPeson />
                         </span>
+                        {connections?.map((connection) => (
+                          <HFIconPicker
+                            disabledHelperText
+                            name=""
+                            value={connection?.icon}
+                            control={roleForm.control}
+                            shape="rectangle"
+                            clickItself={() => {
+                              handleRecordPermission(
+                                recordPermissions?.find(
+                                  (item) => item?.table_slug === app?.slug
+                                ),
+                                "delete",
+                                connection?.name,
+                                app?.slug
+                              );
+                            }}
+                            onChange={(e) => {
+                              roleForm.setValue("icon", e);
+                              setConnections({
+                                ...connections,
+                                icon: e,
+                              });
+                            }}
+                          />
+                        ))}
                       </div>
                     ) : null}
                   </CTableCell>

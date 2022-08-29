@@ -12,7 +12,7 @@ stats.html
 node_modules
 dist
 dist-ssr
-build
+/build
 
 yarn.lock
 *.local

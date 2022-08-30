@@ -47,7 +47,8 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   });
 
   const otpCode = watch("otp");
-  const phone = watch('recipient')
+  const phone = watch("recipient");
+  const email = watch("email");
 
   const { data: { data } = {} } = useQuery(["GET_CLIENT_TYPES"], () => {
     return clientTypeServiceV2.getList();
@@ -75,9 +76,12 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
 
   const getLoginStrategies = () => {
     axios
-      .post(`${import.meta.env.VITE_CLIENT_BASE_URL}object/get-list/test_login`, {
-        data: { client_type_id: clientTypeId },
-      })
+      .post(
+        `${import.meta.env.VITE_CLIENT_BASE_URL}object/get-list/test_login`,
+        {
+          data: { client_type_id: clientTypeId },
+        }
+      )
       .then((res) => {
         setLoginStrategies(
           res?.data?.data?.data?.response?.reduce(
@@ -102,16 +106,29 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
 
   const verifySmsCode = (e) => {
     e.preventDefault();
-    authService
+    if(phone?.length > 0) {
+      authService
       .verifyCode(resData?.sms_id, otpCode, {
         data: {
           ...resData.data,
         },
-        tables: getValues('tables'),
+        tables: getValues("tables"),
       })
       .then((res) => {
         dispatch(authActions.loginSuccess(res));
       });
+    } else {
+      authService
+      .verifyEmail(resData?.sms_id, otpCode, {
+        data: {
+          ...resData.data,
+        },
+        tables: getValues("tables"),
+      })
+      .then((res) => {
+        dispatch(authActions.loginSuccess(res));
+      });
+    }
   };
 
   const onSubmit = (data) => {
@@ -128,16 +145,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     const cashboxData = getCashboxData(data);
 
     setLoading(true);
-    if (!phone?.length > 0) {
-      dispatch(loginAction({ data: computedData, cashboxData }))
-        .unwrap()
-        .then(() => {
-          if (selectedClientType?.name === "CASHIER") {
-            navigate("/cashbox/opening");
-          }
-        })
-        .catch(() => setLoading(false));
-    } else {
+    if (phone?.length > 0) {
       authService
         .sendCode({
           client_type: computedClientTypes?.find(
@@ -156,6 +164,33 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
           console.log("err", err);
           setLoading(false);
         });
+    } else if (email?.length > 0) {
+      authService
+        .sendMessage({
+          client_type: computedClientTypes?.find(
+            (item) => item?.value === data?.client_type
+          )?.label,
+          email,
+        })
+        .then((res) => {
+          console.log("res", res);
+          setResData(res);
+          setIsCodeSent(true);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log("err", err);
+          setLoading(false);
+        });
+    } else {
+      dispatch(loginAction({ data: computedData, cashboxData }))
+        .unwrap()
+        .then(() => {
+          if (selectedClientType?.name === "CASHIER") {
+            navigate("/cashbox/opening");
+          }
+        })
+        .catch(() => setLoading(false));
     }
   };
 
@@ -173,10 +208,10 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
 
   useEffect(() => {
     if (Object.keys(loginStrategies)) {
-      setSelectedTab(0)
+      setSelectedTab(0);
     }
-  }, [loginStrategies])
-  
+  }, [loginStrategies]);
+
   useEffect(() => {
     if (!clientTypeId) return;
     getConnections();
@@ -187,6 +222,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
     setValue("recipient", "");
     setValue("username", "");
     setValue("password", "");
+    setValue("email", "");
     setIsCodeSent(false);
   }, [selectedTab, clientTypeId]);
 
@@ -222,7 +258,8 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
             {/* )} */}
 
             <TabList>
-              {(Object.keys(loginStrategies)?.length === 0 || loginStrategies["Login with password"]) && <Tab>Логин</Tab>}
+              {(Object.keys(loginStrategies)?.length === 0 ||
+                loginStrategies["Login with password"]) && <Tab>Логин</Tab>}
               {loginStrategies["Phone OTP"] && <Tab>Телефон</Tab>}
               {loginStrategies["Email OTP"] && <Tab>E-mail</Tab>}
             </TabList>
@@ -232,7 +269,8 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
               className={classes.formArea}
               style={{ marginTop: "10px" }}
             >
-              {(Object.keys(loginStrategies)?.length === 0 || loginStrategies["Login with password"]) && (
+              {(Object.keys(loginStrategies)?.length === 0 ||
+                loginStrategies["Login with password"]) && (
                 <TabPanel>
                   <div className={classes.formRow}>
                     <p className={classes.label}>Логин</p>
@@ -334,6 +372,20 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                       }}
                     />
                   </div>
+                  {isCodeSent && (
+                    <div className={classes.formRow}>
+                      <p className={classes.label}>Смс код *</p>
+                      <HFTextField
+                        required
+                        control={control}
+                        name="otp"
+                        size="large"
+                        fullWidth
+                        placeholder="Введите смс код"
+                        autoFocus
+                      />
+                    </div>
+                  )}
                 </TabPanel>
               )}
               {/* {connections?.length ? (

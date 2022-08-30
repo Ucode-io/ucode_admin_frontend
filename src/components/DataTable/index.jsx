@@ -55,7 +55,6 @@ const DataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
-  console.log('func', func);
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));

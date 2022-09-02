@@ -50,7 +50,8 @@ const FormulaAttributes = ({ control, mainForm }) => {
 
   
   return (
-    <>
+    <div className="p-2">
+
       <FRow label="Formula type">
         <HFSelect
           name="attributes.type"
@@ -83,7 +84,7 @@ const FormulaAttributes = ({ control, mainForm }) => {
         />
       </FRow> */}
 
-    </>
+    </div>
   )
 }
 

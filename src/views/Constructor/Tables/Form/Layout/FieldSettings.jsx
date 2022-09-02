@@ -7,10 +7,11 @@ import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton"
 import FRow from "../../../../../components/FormElements/FRow"
+import HFCheckbox from "../../../../../components/FormElements/HFCheckbox"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import constructorFieldService from "../../../../../services/constructorFieldService"
-import { fieldTypes } from "../../../../../utils/constants/fieldTypes"
+import { fieldTypes, fieldTypesOptions } from "../../../../../utils/constants/fieldTypes"
 import listToOptions from "../../../../../utils/listToOptions"
 import Attributes from "../Fields/Attributes"
 import styles from "./style.module.scss"
@@ -26,6 +27,11 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType }) => {
 
     mainForm.setValue(`fields[${index}]`, field)
   }
+
+  const showTooltip = useWatch({
+    control,
+    name: "attributes.showTooltip",
+  })
 
   const submitHandler = (values) => {
     if (!id) {
@@ -157,9 +163,11 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType }) => {
                 disabledHelperText
                 name="type"
                 control={control}
-                options={computedFieldTypes}
+                options={fieldTypesOptions}
+                optionType="GROUP"
                 placeholder="Type"
                 required
+                
               />
             </FRow>
           </div>
@@ -172,16 +180,67 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType }) => {
             </IconButton> */}
           </div>
 
+          {/* <div className="p-2"> */}
+          <Attributes control={control} watch={watch} mainForm={mainForm} />
+          {/* </div> */}
+
+          <div className={styles.settingsBlockHeader}>
+            <h2>Appearance</h2>
+          </div>
+
           <div className="p-2">
-            <Attributes control={control} watch={watch} mainForm={mainForm} />
+            <FRow label="Placeholder">
+              <HFTextField
+                autoFocus
+                fullWidth
+                name="attributes.placeholder"
+                control={control}
+              />
+            </FRow>
+
+            {/* <FRow label="Allowed number of characters">
+              <HFTextField
+                fullWidth
+                name="attributes.maxLength"
+                control={control}
+                type="number"
+                min={0}
+              />
+            </FRow> */}
+
+            <HFCheckbox
+              control={control}
+              name="attributes.showTooltip"
+              label="Show tooltip"
+              className="mb-1"
+            />
+
+            {showTooltip && (
+              <FRow label="Tooltip text">
+                <HFTextField
+                  fullWidth
+                  name="attributes.tooltipText"
+                  control={control}
+                />
+              </FRow>
+            )}
+          </div>
+
+          <div className={styles.settingsBlockHeader}>
+            <h2>Validation</h2>
+          </div>
+
+          <div className="p-2">
+            <HFCheckbox control={control} name="required" label="Required" />
+            <HFCheckbox
+              control={control}
+              name="unique"
+              label="Avoid duplicate values"
+            />
           </div>
 
           <div className={styles.settingsBlockHeader}>
             <h2>Autofill settings</h2>
-
-            {/* <IconButton onClick={closeSettingsBlock}>
-              <Close />
-            </IconButton> */}
           </div>
 
           <div className="p-2">

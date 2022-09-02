@@ -1,4 +1,4 @@
-import { Close, Delete, Edit, Save } from "@mui/icons-material"
+import { Delete, Edit } from "@mui/icons-material"
 import { Checkbox } from "@mui/material"
 import { useState } from "react"
 import RectangleIconButton from "../Buttons/RectangleIconButton"

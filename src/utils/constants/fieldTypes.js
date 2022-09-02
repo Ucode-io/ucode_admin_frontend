@@ -38,3 +38,106 @@ export const fieldTypes = [
   "PASSWORD",
   "FORMULA"
 ]
+
+export const fieldTypesOptions = [
+  {
+    label: 'Text',
+    options: [
+      {
+        label: "Single line",
+        value: "SINGLE_LINE"
+      },
+      {
+        label: "Multi line",
+        value: "MULTI_LINE"
+      },
+    ]
+  },
+  {
+    label: 'Date',
+    options: [
+      {
+        label: "Date",
+        value: "DATE"
+      },
+      {
+        label: "Time",
+        value: "TIME"
+      },
+      {
+        label: "Date time",
+        value: "DATE_TIME"
+      },
+    ]
+  },
+  {
+    label: 'Number',
+    options: [
+      {
+        label: "Number",
+        value: "NUMBER"
+      },
+    ]
+  },
+  {
+    label: 'Input',
+    options: [
+      {
+        label: "Checkbox",
+        value: "CHECKBOX"
+      },
+      {
+        label: "Switch",
+        value: "SWITCH"
+      },
+    ]
+  },
+  {
+    label: 'Select',
+    options: [
+      {
+        label: "Picklist",
+        value: "PICK_LIST"
+      },
+      {
+        label: "Multi select",
+        value: "MULTISELECT"
+      },
+    ]
+  },
+  {
+    label: 'File',
+    options: [
+      {
+        label: "Photo",
+        value: "PHOTO"
+      },
+    ]
+  },
+  {
+    label: 'Other',
+    options: [
+      {
+        label: "Phone",
+        value: "PHONE"
+      },
+      {
+        label: "Email",
+        value: "EMAIL"
+      },
+      {
+        label: "Icon",
+        value: "ICON"
+      },
+      {
+        label: "Formul",
+        value: "FORMULA"
+      },
+      {
+        label: "Password",
+        value: "PASSWORD"
+      },
+    ]
+  },
+
+]

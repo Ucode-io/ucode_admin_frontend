@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
 import DataTable from "../../../components/DataTable"
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
 import FRow from "../../../components/FormElements/FRow"
 import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
@@ -12,6 +11,9 @@ import { objectToArray } from "../../../utils/objectToArray"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import { Filter } from "../components/FilterGenerator"
 import styles from "./style.module.scss"
+import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
+
+
 
 const RelationTable = ({
   relation,
@@ -23,12 +25,9 @@ const RelationTable = ({
   const { navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
 
+
   const [filters, setFilters] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
-
-  // const computedFilters = useMemo(() => {
-
-  // }, [])
 
   const filterChangeHandler = (value, name) => {
     setFilters({
@@ -155,7 +154,7 @@ const RelationTable = ({
       </div>
 
       <div className={styles.tableBlock}>
-        <DataTable
+        <ObjectDataTable
           loader={dataFetchingLoading || deleteLoading}
           data={tableData}
           columns={columns}
@@ -165,6 +164,7 @@ const RelationTable = ({
           pagesCount={pageCount}
           currentPage={currentPage}
           onRowClick={navigateToEditPage}
+          
           onDeleteClick={deleteHandler}
           onPaginationChange={setCurrentPage}
           paginationExtraButton={id && <SecondaryButton onClick={navigateToTablePage} >Все</SecondaryButton>}

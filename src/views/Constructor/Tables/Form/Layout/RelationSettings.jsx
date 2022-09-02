@@ -18,6 +18,7 @@ import FRow from "../../../../../components/FormElements/FRow"
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox"
 import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
+import HFSwitch from "../../../../../components/FormElements/HFSwitch"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import RingLoaderWithWrapper from "../../../../../components/Loaders/RingLoader/RingLoaderWithWrapper"
 import applicationService from "../../../../../services/applicationSercixe"
@@ -347,6 +348,10 @@ const RelationSettings = ({
                 />
               </FRow>
             )}
+
+
+            <HFSwitch control={control} name="is_editable" label={"Editable"} />
+
           </div>
 
           <div className={styles.settingsBlockHeader}>

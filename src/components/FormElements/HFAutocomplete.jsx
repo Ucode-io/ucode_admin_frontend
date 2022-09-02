@@ -30,32 +30,6 @@ const HFAutocomplete = ({
       }) => (
         <FormControl style={{ width }}>
           <InputLabel size="small">{label}</InputLabel>
-          {/* <Select
-            value={value || ""}
-            label={label}
-            size="small"
-            error={error}
-            inputProps={{ placeholder }}
-            fullWidth
-            just
-            following
-            attributes
-            into
-            select
-            displayEmpty
-            renderValue={value !== "" ? undefined : () => <span style={{ color: '#909EAB' }} >{placeholder}</span>}
-            onChange={(e) => {
-              onChange(e.target.value)
-              onFormChange(e.target.value)
-            }}
-            {...props}
-          >
-            {options?.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select> */}
           <CAutoCompleteSelect
             value={value}
             onChange={(val) => {

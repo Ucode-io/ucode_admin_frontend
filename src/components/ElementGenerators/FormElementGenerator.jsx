@@ -6,6 +6,7 @@ import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
 import HFIconPicker from "../FormElements/HFIconPicker"
 import HFImageUpload from "../FormElements/HFImageUpload"
+import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete"
 import HFMultipleSelect from "../FormElements/HFMultipleSelect"
 import HFSwitch from "../FormElements/HFSwitch"
 import HFTextEditor from "../FormElements/HFTextEditor"
@@ -34,6 +35,7 @@ const FormElementGenerator = ({
       return `$${field.id.split("@")?.[0]}.${field.slug}`
     return field.slug
   }, [field.id, field.slug])
+
 
   if (field.id?.includes("#"))
     return (
@@ -176,12 +178,12 @@ const FormElementGenerator = ({
     case "MULTISELECT":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFMultipleSelect
+          <HFMultipleAutocomplete
             control={control}
             name={computedSlug}
             width="100%"
-            options={computedOptions}
             required={field.required}
+            field={field}
             placeholder={field.attributes?.placeholder}
             {...props}
           />

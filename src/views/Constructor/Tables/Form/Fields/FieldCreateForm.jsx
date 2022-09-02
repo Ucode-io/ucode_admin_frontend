@@ -89,13 +89,6 @@ const FieldCreateForm = ({
         table_id: id,
         type: "",
       })
-    // reset({
-    //   table_from: initialValues?.table_from?.slug ?? "",
-    //   table_to: initialValues?.table_to?.slug ?? "",
-    //   type: initialValues?.type ?? "",
-    //   id: initialValues?.id ?? "",
-    //   view_fields: initialValues?.view_fields?.map(field => field.id) ?? [],
-    // })
   }, [open])
 
   return (

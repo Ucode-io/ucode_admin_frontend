@@ -10,6 +10,12 @@ import { applicationReducer } from "./application/application.slice";
 import { cashboxReducer } from "./cashbox/cashbox.slice";
 import { filterReducer } from "./filter/filter.slice";
 import { tableSizeReducer } from "./tableSize/tableSizeSlice";
+import { mainReducer } from "./main/main.slice";
+
+const mainPersistConfig = {
+  key: "main",
+  storage
+}
 
 const authPersistConfig = {
   key: "auth",
@@ -56,6 +62,7 @@ const cashboxPersistConfig = {
 // }
 
 const rootReducer = combineReducers({
+  main: persistReducer(mainPersistConfig, mainReducer),
   auth: persistReducer(authPersistConfig, authReducer),
   constructorTable: persistReducer(constructorTablePersistConfig, constructorTableReducer),
   application: persistReducer(applicationPersistConfig, applicationReducer),

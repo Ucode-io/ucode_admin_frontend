@@ -1,0 +1,100 @@
+import { Add, Delete, Settings } from "@mui/icons-material"
+import { Card, IconButton } from "@mui/material"
+import { useMemo, useState } from "react"
+import { useFieldArray, useWatch } from "react-hook-form"
+import { Container, Draggable } from "react-smooth-dnd"
+import { Tabs } from "react-tabs"
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
+import ButtonsPopover from "../../../../../components/ButtonsPopover"
+import IconGenerator from "../../../../../components/IconPicker/IconGenerator"
+import { applyDrag } from "../../../../../utils/applyDrag"
+import RelationTable from "../../../components/RelationTable"
+import styles from "./style.module.scss"
+
+const RelationsBlock = ({
+  mainForm,
+  openFieldsBlock,
+  openRelationSettingsBlock,
+}) => {
+
+  const relationsMap = useWatch({
+    control: mainForm.control,
+    name: 'relationsMap'
+  })
+    
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+  
+  const { fields: viewRelations, ...viewRelationsFieldArray } = useFieldArray({
+    control: mainForm.control,
+    name: "view_relations",
+    keyName: "key",
+  })
+
+  const computedViewRelations = useMemo(() => {
+    return viewRelations?.map(({relation_id}) => relationsMap[relation_id])
+  }, [ viewRelations, relationsMap ])
+
+  const onDrop = (dropResult) => {
+    const result = applyDrag(computedViewRelations, dropResult)
+    if (result)
+      if (result.length > viewRelations?.length) {
+        const relation = dropResult.payload
+        viewRelationsFieldArray.insert(dropResult?.addedIndex, {relation_id: relation.id})
+      } else {
+        viewRelationsFieldArray.move(
+          dropResult.removedIndex,
+          dropResult.addedIndex
+        )
+      }
+  }
+
+  const removeViewRelation = (index, relation) => {
+    viewRelationsFieldArray.remove(index)
+  }
+
+  return (
+    <div className={styles.relationsBlock}>
+      <Card>
+          <div className={styles.cardHeader}>
+            <div className={styles.tabList}>
+              <Container
+                groupName="table_relation"
+                dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                orientation="horizontal"
+                onDrop={onDrop}
+              >
+                {computedViewRelations.map((relation, index) => (
+                  <Draggable key={relation.id}>
+                    <div
+                      className={`${styles.tab} ${
+                        selectedTabIndex === index ? styles.active : ""
+                      }`}
+                      onClick={() => setSelectedTabIndex(index)}
+                    >
+                      <IconGenerator icon={relation.icon} />
+                      {relation.title}
+                      <ButtonsPopover onEditClick={() => openRelationSettingsBlock(relation)} onDeleteClick={() => removeViewRelation(index, relation)} />
+                    </div>
+                  </Draggable>
+                ))}
+              </Container>
+              <IconButton onClick={() => openFieldsBlock("RELATION")}>
+                <Add />
+              </IconButton>
+            </div>
+          </div>
+
+          <RelationTable key={computedViewRelations[selectedTabIndex]?.id} relation={computedViewRelations[selectedTabIndex]} />
+
+
+          {/* {
+            computedViewRelations?.filter((_, index) => index !== )map()
+          } */}
+
+
+      </Card>
+    </div>
+  )
+}
+
+export default RelationsBlock

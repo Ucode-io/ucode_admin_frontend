@@ -16,6 +16,7 @@ const ButtonsPopover = ({
   loading,
   openModal = () => {},
   orientation = "vertical",
+  className
 }) => {
   const id = useId()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -41,7 +42,7 @@ const ButtonsPopover = ({
   // return null
 
   return (
-    <div onClick={e => e.stopPropagation()} >
+    <div onClick={e => e.stopPropagation()} className={className} >
       <IconButton color="primary" {...buttonProps} onClick={handleClick} >
         {orientation === "vertical" ? <MoreVertIcon /> : <MoreHorizIcon />}
       </IconButton>

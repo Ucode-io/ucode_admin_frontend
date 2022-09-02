@@ -1,17 +1,20 @@
 
 @use "/src/scss/colors";
 
+.wrapper {
+  border-bottom: 1px solid silver;
+}
+
 .block {
   padding: 8px 16px;
-  background-color: #F6F8F9;
   border-radius: 6px;
-
 
   .row {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+    min-height: 50px;
+    
 
     .input {
       background-color: #fff;
@@ -20,15 +23,14 @@
 }
 
 .createButton {
-  background-color: #F6F8F9;
   padding: 8px 16px;
   display: flex;
   align-items: center;
   cursor: pointer;
-  margin-top: 2px;
   border-radius: 6px;
   color: colors.$primary;
   transition-duration: .2s;
+
 
   &:hover {
     color: colors.$primary-hover;

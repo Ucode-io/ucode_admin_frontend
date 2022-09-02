@@ -22,6 +22,7 @@ import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
 import { Save } from "@mui/icons-material"
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
 import constructorViewRelationService from "../../../../services/constructorViewRelationService"
+import { listToMap } from "../../../../utils/listToMap"
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
@@ -54,16 +55,15 @@ const ConstructorTablesFormPage = () => {
     setLoader(true)
 
     const getTableData = constructorTableService.getById(id)
-    // const getFieldsData = constructorFieldService.getList({ table_id: id })
+    const getViewRelations = constructorViewRelationService.getList({ table_slug: slug })
 
     const getSectionsData = constructorSectionService.getList({ table_id: id })
-    const getViewRelationsData = constructorViewRelationService.getList({ table_slug: slug })
 
     try {
-      const [tableData, { sections = [] }, { view_relations = [] }] = await Promise.all([
+      const [tableData, { sections = [] }, { relations: viewRelations = [] }] = await Promise.all([
         getTableData,
         getSectionsData,
-        getViewRelationsData
+        getViewRelations
       ])
 
       const data = {
@@ -71,7 +71,7 @@ const ConstructorTablesFormPage = () => {
         ...tableData,
         fields: [],
         sections: computeSections(sections),
-        view_relations: computeViewRelations(view_relations, slug)
+        view_relations: computeViewRelations(viewRelations)
       }
 
       mainForm.reset(data)
@@ -88,6 +88,7 @@ const ConstructorTablesFormPage = () => {
 
       const getRelations = constructorRelationService.getList({
         table_slug: slug,
+        relation_table_slug: slug
       })
 
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
@@ -123,10 +124,19 @@ const ConstructorTablesFormPage = () => {
         },
         label: relation[relation.relatedTableSlug]?.label,
       }))
+      
 
       mainForm.setValue("relations", relations)
+      mainForm.setValue("relationsMap", listToMap(relations))
+
+
       mainForm.setValue("layoutRelations", layoutRelationsFields)
       mainForm.setValue("tableRelations", tableRelations)
+
+      // console.log("view_relations ===>", viewRelations)
+
+      // mainForm.setValue("view_relations", tableRelations?.filter(el => el.is_visible))
+      // debugger
 
       resolve()
     })
@@ -209,7 +219,7 @@ const ConstructorTablesFormPage = () => {
           </TabPanel>
 
           <TabPanel>
-            <Layout mainForm={mainForm} />
+            <Layout mainForm={mainForm} getRelationFields={getRelationFields} />
           </TabPanel>
 
           <TabPanel>

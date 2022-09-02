@@ -19,14 +19,12 @@ const LayoutRelationsBlock = ({ mainForm }) => {
     keyName: "key",
   })
 
-
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
   })
 
   const addNewViewRelation = (option) => {
-    // debugger
     viewRelationsFieldArray.append({
       id: generateGUID(),
       label: option.label,

@@ -1,4 +1,4 @@
-import { Delete, Settings } from "@mui/icons-material"
+import { Add, Delete, Settings } from "@mui/icons-material"
 import { Card } from "@mui/material"
 import { useFieldArray } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
@@ -17,6 +17,7 @@ const Section = ({
   fieldsMap,
   openFieldSettingsBlock,
   sectionsFieldArray,
+  openFieldsBlock,
 }) => {
   const sectionFields = useFieldArray({
     control: mainForm.control,
@@ -65,12 +66,17 @@ const Section = ({
           />
         </div>
 
-        <RectangleIconButton
-          color="error"
-          onClick={() => sectionsFieldArray.remove(index)}
-        >
-          <Delete color="error" />
-        </RectangleIconButton>
+        <div className="flex gap-1">
+          <RectangleIconButton onClick={() => openFieldsBlock("FIELD")} >
+            <Add />
+          </RectangleIconButton>
+          <RectangleIconButton
+            color="error"
+            onClick={() => sectionsFieldArray.remove(index)}
+          >
+            <Delete color="error" />
+          </RectangleIconButton>
+        </div>
 
         {/* <SectionSettingsDropdown
           columnType={columnType}

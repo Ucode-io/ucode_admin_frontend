@@ -28,6 +28,7 @@ const RelationTable = ({
 
   const [filters, setFilters] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
+  const [limit, setLimit] = useState(10)
 
   const filterChangeHandler = (value, name) => {
     setFilters({
@@ -52,19 +53,19 @@ const RelationTable = ({
     [
       "GET_OBJECT_LIST",
       relatedTableSlug,
-      { filters, offset: pageToOffset(currentPage), limit: 10 },
+      { filters, offset: pageToOffset(currentPage, limit), limit },
     ],
     () => {
       return constructorObjectService.getList(relatedTableSlug, { data:  {
-        offset: pageToOffset(currentPage),
-        limit: 10,
+        offset: pageToOffset(currentPage, limit),
+        limit,
         ...filters,
       } })
     },
     {
       select: ({ data }) => {
           const tableData = objectToArray(data.response ?? {})
-          const pageCount = isNaN(data.count) ? 1 : Math.ceil(data.count / 10)
+          const pageCount = isNaN(data.count) ? 1 : Math.ceil(data.count / limit)
 
           const fieldsMap = listToMap(data.fields)
 
@@ -171,6 +172,8 @@ const RelationTable = ({
           onFormSubmit={relation.is_editable && onFormSubmit}
           createFormVisible={createFormVisible[relation.id]}
           setCreateFormVisible={(val) => setCreateFormVisible(relation.id, val)}
+          limit={limit}
+          onLimitChange={setLimit}
         />
       </div>
     </div>

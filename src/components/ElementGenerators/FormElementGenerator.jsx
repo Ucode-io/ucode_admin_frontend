@@ -7,7 +7,6 @@ import HFDateTimePicker from "../FormElements/HFDateTimePicker"
 import HFIconPicker from "../FormElements/HFIconPicker"
 import HFImageUpload from "../FormElements/HFImageUpload"
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete"
-import HFMultipleSelect from "../FormElements/HFMultipleSelect"
 import HFSwitch from "../FormElements/HFSwitch"
 import HFTextEditor from "../FormElements/HFTextEditor"
 import HFTextField from "../FormElements/HFTextField"
@@ -21,14 +20,14 @@ const FormElementGenerator = ({
   setFormValue,
   ...props
 }) => {
-  const computedOptions = useMemo(() => {
-    if (!field.attributes?.options) return []
+  // const computedOptions = useMemo(() => {
+  //   if (!field.attributes?.options) return []
 
-    return field.attributes.options.map((option) => ({
-      value: option,
-      label: option,
-    }))
-  }, [field.attributes?.options])
+  //   return field.attributes.options.map((option) => ({
+  //     value: option,
+  //     label: option,
+  //   }))
+  // }, [field.attributes?.options])
 
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))

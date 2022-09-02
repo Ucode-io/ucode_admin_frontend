@@ -39,6 +39,17 @@ const options = [
   },
 ]
 
+const relationViewTypes = [
+  {
+    label: "Table",
+    value: "TABLE"
+  },
+  {
+    label: "Input",
+    value: "INPUT"
+  },
+]
+
 const RelationSettings = ({
   closeSettingsBlock = () => {},
   relation,
@@ -349,9 +360,16 @@ const RelationSettings = ({
               </FRow>
             )}
 
-
             <HFSwitch control={control} name="is_editable" label={"Editable"} />
 
+            <FRow label="Relate field type" required>
+              <HFSelect
+                name="view_type"
+                control={control}
+                placeholder="Relation field type"
+                options={relationViewTypes}
+              />
+            </FRow>
           </div>
 
           <div className={styles.settingsBlockHeader}>
@@ -416,7 +434,11 @@ const RelationSettings = ({
                     <HFCheckbox
                       control={control}
                       name={`filtersList[${index}].is_checked`}
-                      icon={<PushPinOutlined style={{ transform: "rotate(45deg)" }} />}
+                      icon={
+                        <PushPinOutlined
+                          style={{ transform: "rotate(45deg)" }}
+                        />
+                      }
                       checkedIcon={<PushPin />}
                     />
                   </div>

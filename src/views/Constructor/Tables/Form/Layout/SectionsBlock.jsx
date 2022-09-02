@@ -8,7 +8,7 @@ import { generateGUID } from "../../../../../utils/generateID"
 import Section from "./Section"
 import styles from "./style.module.scss"
 
-const SectionsBlock = ({ mainForm, layoutForm, openFieldSettingsBlock }) => {
+const SectionsBlock = ({ mainForm, layoutForm, openFieldSettingsBlock, openFieldsBlock }) => {
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "sections",
@@ -68,6 +68,7 @@ const SectionsBlock = ({ mainForm, layoutForm, openFieldSettingsBlock }) => {
                 fieldsMap={fieldsMap}
                 openFieldSettingsBlock={openFieldSettingsBlock}
                 sectionsFieldArray={sectionsFieldArray}
+                openFieldsBlock={openFieldsBlock}
               />
             </Draggable>
           ))}

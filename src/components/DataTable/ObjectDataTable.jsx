@@ -52,7 +52,9 @@ const ObjectDataTable = ({
   onCheckboxChange,
   onFormSubmit,
   createFormVisible,
-  setCreateFormVisible
+  setCreateFormVisible,
+  limit, 
+  onLimitChange
 }) => {
   const location = useLocation()
   const tableSize = useSelector((state) => state.tableSize.tableSize)
@@ -198,6 +200,8 @@ const ObjectDataTable = ({
       tableStyle={tableStyle}
       wrapperStyle={wrapperStyle}
       paginationExtraButton={paginationExtraButton}
+      limit={limit}
+      onLimitChange={onLimitChange}
     >
       <CTableHead>
         <CTableRow>
@@ -310,6 +314,7 @@ const ObjectDataTable = ({
             checkboxValue={checkboxValue}
             onCheckboxChange={onCheckboxChange}
             currentPage={currentPage}
+            limit={limit}
             columns={columns}
             tableHeight={tableHeight}
             tableSettings={tableSettings}

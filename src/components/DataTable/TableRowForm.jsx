@@ -21,6 +21,7 @@ const TableRowForm = ({
   pageName,
   calculateWidth,
   setFormVisible,
+  limit = 10,
   onFormSubmit = () => {},
 }) => {
   const {tableSlug, id} = useParams()
@@ -51,7 +52,7 @@ const TableRowForm = ({
         </CTableCell>
       )}
       <CTableCell align="center">
-        {(currentPage - 1) * 10 + rowIndex + 1}
+        {(currentPage - 1) * limit + rowIndex + 1}
       </CTableCell>
       {columns.map((column, index) => (
         <CTableCell

@@ -63,14 +63,14 @@ const RelationTable = ({ relation = {} }) => {
       {
         computedFilters?.map(field => (
          <FRow key={field.id} label={field.label} >
-           <Filter field={field} name={field.slug} tableSlug={relatedTableSlug} />
+           <Filter field={field} name={field.slug} tableSlug={relatedTableSlug} filters={filters} onChange={filterChangeHandler} />
          </FRow>
         ))
       }
     </div>
 
     <div className={styles.tableBlock} >
-      <DataTable data={[]} columns={computedColumns} removableHeight={255} disableFilters />
+      <DataTable loader={dataFetchingLoading} data={[]} columns={computedColumns} removableHeight={255} disableFilters />
     </div>
 
   </div> );

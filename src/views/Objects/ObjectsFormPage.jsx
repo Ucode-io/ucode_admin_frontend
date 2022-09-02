@@ -62,37 +62,38 @@ const ObjectsFormPage = () => {
     })
 
     try {
-      const [{ sections = [] }, { data = {} }, { view_relations = [] }] =
+      const [{ sections = [] }, { data = {} }, { relations = [] }] =
         await Promise.all([getSections, getFormData, getRelations])
 
       setSections(sortSections(sections))
 
-      const relations =
-        view_relations?.map((el) => ({
-          ...el,
-          ...el.relation,
-        })) ?? {}
+      setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? {}))
+      // const relations =
+      //   view_relations?.map((el) => ({
+      //     ...el,
+      //     ...el.relation,
+      //   })) ?? {}
 
-      setTableRelations(
-        relations
-          .filter(
-            (relation) =>
-              relation.type === "Many2Many" ||
-              relation.type === "Recursive" ||
-              (relation.type === "Many2One" &&
-                relation.table_to === tableSlug) ||
-              (relation.type === "One2Many" &&
-                relation.table_from === tableSlug)
-          )
-          .map((relation) => ({
-            ...relation,
-            relatedTable:
-              relation.table_from === tableSlug
-                ? relation.table_to
-                : relation.table_from,
-          }))
-          .sort(sortByOrder)
-      )
+      // setTableRelations(
+      //   relations
+      //     .filter(
+      //       (relation) =>
+      //         relation.type === "Many2Many" ||
+      //         relation.type === "Recursive" ||
+      //         (relation.type === "Many2One" &&
+      //           relation.table_to === tableSlug) ||
+      //         (relation.type === "One2Many" &&
+      //           relation.table_from === tableSlug)
+      //     )
+      //     .map((relation) => ({
+      //       ...relation,
+      //       relatedTable:
+      //         relation.table_from === tableSlug
+      //           ? relation.table_to
+      //           : relation.table_from,
+      //     }))
+      //     .sort(sortByOrder)
+      // )
 
       reset(data.response ?? {})
     } catch (error) {
@@ -101,6 +102,8 @@ const ObjectsFormPage = () => {
       setLoader(false)
     }
   }
+
+  console.log('RELATIONRELATIONRELATION', tableRelations)
 
   const getFields = async () => {
     try {
@@ -216,7 +219,7 @@ const ObjectsFormPage = () => {
         />
 
         <div className={styles.secondaryCardSide}>
-          <RelationSection relations={tableRelations} control={control} />
+          <RelationSection relations={tableRelations} control={control}  />
         </div>
       </div>
 

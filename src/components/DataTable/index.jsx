@@ -195,8 +195,8 @@ const DataTable = ({
     >
       <CTableHead>
         <CTableRow>
-          <CTableCell width={10} />
-          {onCheckboxChange && <CTableHeadCell width={10}>№</CTableHeadCell>}
+          {onCheckboxChange && <CTableCell width={10} />}
+          <CTableHeadCell width={10}>№</CTableHeadCell>
           {columns.map((column, index) => (
             <CTableHeadCell
               id={column.id}

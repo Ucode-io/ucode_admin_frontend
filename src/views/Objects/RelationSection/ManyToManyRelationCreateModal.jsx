@@ -18,6 +18,14 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const { navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
 
+  const relatedTableSlug = useMemo(() => {
+    const relatedTable =
+          relation.table_to?.slug === tableSlug
+            ? relation.table_from
+            : relation.table_to
+            return relatedTable.slug
+  })
+
 
   const [btnLoader, setBtnLoader] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
@@ -28,13 +36,13 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const { isLoading: loader, data: { tableData, pageCount, fields } = { tableData: [], pageCount: 1, fields: [] } } = useQuery([
     "GET_OBJECT_LIST",
     {
-      tableSlug: relation.relatedTable,
+      tableSlug: relatedTableSlug,
       limit: 10,
       offset: pageToOffset(currentPage),
       filters
     },
   ], () => {
-    return constructorObjectService.getList(relation.relatedTable, {
+    return constructorObjectService.getList(relatedTableSlug, {
       data: {
         offset: pageToOffset(currentPage),
         limit: 10,
@@ -91,12 +99,12 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
         id_from: id,
         id_to: checkedElements,
         table_from: tableSlug,
-        table_to: relation.relatedTable,
+        table_to: relatedTableSlug,
       }
 
       await constructorObjectService.updateManyToMany(data)
 
-      queryClient.invalidateQueries(["GET_OBJECT_LIST", relation.relatedTable])
+      queryClient.invalidateQueries(["GET_OBJECT_LIST", relatedTableSlug])
       closeModal()
     } catch (error) {
       setBtnLoader(false)

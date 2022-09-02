@@ -7,12 +7,12 @@ const PermissionWrapperV2 = ({ children, tabelSlug = "", type }) => {
   if (!tabelSlug) return null;
 
   if (typeof type === "object") {
-    if (permissions[tabelSlug][type[0]] && permissions[tabelSlug][type[1]])
+    if (permissions?.[tabelSlug]?.[type[0]] && permissions?.[tabelSlug]?.[type[1]])
       return children;
 
     return null;
   } else {
-    if (permissions[tabelSlug]?.[type]) return children;
+    if (permissions?.[tabelSlug]?.[type]) return children;
     return null;
   }
 };

@@ -1,4 +1,4 @@
-import { Add, Delete, Settings } from "@mui/icons-material"
+import { Add, Delete } from "@mui/icons-material"
 import { Card } from "@mui/material"
 import { useFieldArray } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
@@ -45,7 +45,6 @@ const Section = ({
     const result = applyDrag(fields, dropResult)
 
     if (!result) return
-    debugger
     if (result.length > fields.length) {
       insert(dropResult.addedIndex, { ...dropResult.payload })
     } else if (result.length < fields.length) {

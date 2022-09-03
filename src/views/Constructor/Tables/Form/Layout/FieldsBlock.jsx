@@ -13,7 +13,7 @@ const FieldsBlock = ({
   layoutForm,
   selectedSettingsTab,
   setSelectedSettingsTab,
-  closeSettingsBlock
+  closeSettingsBlock,
 }) => {
   const { fields } = useFieldArray({
     control: mainForm.control,
@@ -38,10 +38,9 @@ const FieldsBlock = ({
   })
 
   const viewRelations = useWatch({
-      control: mainForm.control,
-      name: 'view_relations'
+    control: mainForm.control,
+    name: "view_relations",
   })
-
 
   const usedFields = useMemo(() => {
     const list = []
@@ -65,15 +64,20 @@ const FieldsBlock = ({
   }, [usedFields, fields])
 
   const unusedTableRelations = useMemo(() => {
-    return tableRelations?.filter(relation => !viewRelations?.some(viewRelation => viewRelation.relation_id === relation.id))
-  }, [ tableRelations, viewRelations ])
+    return tableRelations?.filter(
+      (relation) =>
+        !viewRelations?.some(
+          (viewRelation) => viewRelation.relation_id === relation.id
+        )
+    )
+  }, [tableRelations, viewRelations])
 
   // debugger
 
   const unusedRelations = useMemo(() => {
     return relations?.filter((relation) => !usedFields.includes(relation.id))
   }, [relations, usedFields])
-  
+
   const onDrop = (dropResult, colNumber) => {
     const result = applyDrag(fields, dropResult)
     if (!result) return
@@ -86,7 +90,7 @@ const FieldsBlock = ({
       <div className={styles.settingsBlockHeader}>
         <h2>Add fields</h2>
 
-        <IconButton onClick={closeSettingsBlock} >
+        <IconButton onClick={closeSettingsBlock}>
           <Close />
         </IconButton>
       </div>
@@ -97,9 +101,9 @@ const FieldsBlock = ({
           onSelect={setSelectedSettingsTab}
         >
           <TabList>
-            <Tab>Fields</Tab>
-            <Tab>Input relation fields</Tab>
-            <Tab>Table relation fields</Tab>
+            <Tab>Form fields</Tab>
+            {/* <Tab>Input relation fields</Tab> */}
+            <Tab>Table fields</Tab>
           </TabList>
 
           <TabPanel>
@@ -125,11 +129,11 @@ const FieldsBlock = ({
                   </Draggable>
                 ))}
               </Container>
-            </div>
-          </TabPanel>
 
-          <TabPanel>
-            <div className={styles.fieldsBlock}>
+              {!!unusedRelations?.length && <div className={styles.settingsBlockHeader}>
+                <h2>Relation input fields</h2>
+              </div>}
+
               <Container
                 groupName="1"
                 onDrop={onDrop}
@@ -137,7 +141,7 @@ const FieldsBlock = ({
                 getChildPayload={(i) => ({
                   ...unusedRelations[i],
                   field_name: unusedRelations[i]?.label,
-                  relation_type: unusedRelations[i].type
+                  relation_type: unusedRelations[i].type,
                 })}
               >
                 {unusedRelations?.map((relation) => (
@@ -155,7 +159,6 @@ const FieldsBlock = ({
             </div>
           </TabPanel>
 
-
           <TabPanel>
             <div className={styles.fieldsBlock}>
               <Container
@@ -167,17 +170,21 @@ const FieldsBlock = ({
                 })}
               >
                 {unusedTableRelations?.map((relation) => (
-                  <Draggable key={relation.id} style={{ overflow: "visible", width: 'fit-content' }}>
-                    <div className={`${styles.sectionFieldRow} ${styles.relation}`}>
-                      {relation.title ?? relation[relation.relatedTableSlug]?.label}
+                  <Draggable
+                    key={relation.id}
+                    style={{ overflow: "visible", width: "fit-content" }}
+                  >
+                    <div
+                      className={`${styles.sectionFieldRow} ${styles.relation}`}
+                    >
+                      {relation.title ??
+                        relation[relation.relatedTableSlug]?.label}
                     </div>
                   </Draggable>
                 ))}
               </Container>
             </div>
           </TabPanel>
-
-
         </Tabs>
       </div>
     </div>

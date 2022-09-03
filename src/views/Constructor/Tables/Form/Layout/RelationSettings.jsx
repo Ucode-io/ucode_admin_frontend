@@ -57,7 +57,7 @@ const RelationSettings = ({
   height,
 }) => {
   const { appId, slug } = useParams()
-
+  
   // const [fieldOptions, setFieldOptions] = useState([])
   // const [openSumCreate, setOpenSumCreate] = useState(false)
   const [loader, setLoader] = useState(false)

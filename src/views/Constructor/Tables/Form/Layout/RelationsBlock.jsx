@@ -78,9 +78,9 @@ const RelationsBlock = ({
                   </Draggable>
                 ))}
               </Container>
-              <IconButton onClick={() => openFieldsBlock("RELATION")}>
+              <RectangleIconButton onClick={() => openFieldsBlock("RELATION")}>
                 <Add />
-              </IconButton>
+              </RectangleIconButton>
             </div>
           </div>
 

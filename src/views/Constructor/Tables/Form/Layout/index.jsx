@@ -25,7 +25,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
   const openFieldsBlock = (type) => {
     setSelectedField(null)
     setSelectedRelation(null)
-    setSelectedSettingsTab(type === "FIELD" ? 0 : 2)
+    setSelectedSettingsTab(type === "FIELD" ? 0 : 1)
     setSettingsBlockVisible(true)
   }
 

@@ -9,6 +9,7 @@ import SectionsBlock from "./SectionsBlock"
 import SettingsBlock from "./SettingsBlock"
 import styles from "./style.module.scss"
 
+
 const Layout = ({ mainForm, getRelationFields }) => {
   const dispatch = useDispatch()
   const layoutForm = useForm({ mode: "onChange" })
@@ -18,9 +19,6 @@ const Layout = ({ mainForm, getRelationFields }) => {
   const [selectedRelation, setSelectedRelation] = useState(null)
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0)
 
-  useEffect(() => {
-    console.log("MOUNTED ==>")
-  }, [])
 
   const openFieldsBlock = (type) => {
     setSelectedField(null)

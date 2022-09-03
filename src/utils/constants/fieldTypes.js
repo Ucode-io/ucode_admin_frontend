@@ -126,6 +126,21 @@ export const fieldTypesOptions = [
     ]
   },
   {
+    label: 'Formula',
+    options: [
+      {
+        icon: "square-root-variable.svg",
+        label: "Formula in frontend",
+        value: "FORMULA_FRONTEND"
+      },
+      {
+        icon: "plus-minus.svg",
+        label: "Formula in backend",
+        value: "FORMULA"
+      },
+    ]
+  },
+  {
     label: 'Other',
     options: [
       {
@@ -142,11 +157,6 @@ export const fieldTypesOptions = [
         icon: "icons.svg",
         label: "Icon",
         value: "ICON"
-      },
-      {
-        icon: "square-root-variable.svg",
-        label: "Formula",
-        value: "FORMULA"
       },
       {
         icon: "lock.svg",

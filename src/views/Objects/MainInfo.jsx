@@ -1,8 +1,22 @@
+import { useMemo } from 'react'
 import FormElementGenerator from '../../components/ElementGenerators/FormElementGenerator'
 import FormCard from './components/FormCard'
 import styles from './style.module.scss'
 
 const MainInfo = ({ computedSections, control, setFormValue }) => {
+  
+  const fieldsList = useMemo(() => {
+    const fields = []
+
+    computedSections?.forEach(section => {
+      section.fields?.forEach(field => {
+        fields.push(field)
+      })
+    })
+    return fields
+  }, [ computedSections ])
+
+
   return (
     
       <div className={styles.mainCardSide}>
@@ -21,6 +35,7 @@ const MainInfo = ({ computedSections, control, setFormValue }) => {
                   field={field}
                   control={control}
                   setFormValue={setFormValue}
+                  fieldsList={fieldsList}
                 />
               ))}
             </div>

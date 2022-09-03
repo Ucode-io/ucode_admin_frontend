@@ -103,8 +103,6 @@ const ObjectsFormPage = () => {
     }
   }
 
-  console.log('RELATIONRELATIONRELATION', tableRelations)
-
   const getFields = async () => {
     try {
       const getSections = constructorSectionService.getList({

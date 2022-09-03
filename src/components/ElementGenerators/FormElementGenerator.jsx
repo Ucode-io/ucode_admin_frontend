@@ -4,6 +4,7 @@ import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
+import HFFormulaField from "../FormElements/HFFormulaField"
 import HFIconPicker from "../FormElements/HFIconPicker"
 import HFImageUpload from "../FormElements/HFImageUpload"
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete"
@@ -19,6 +20,7 @@ const FormElementGenerator = ({
   field = {},
   control,
   setFormValue,
+  fieldsList,
   ...props
 }) => {
   // const computedOptions = useMemo(() => {
@@ -272,6 +274,21 @@ const FormElementGenerator = ({
               },
             }}
             {...props}
+          />
+        </FRow>
+      )
+
+    case "FORMULA_FRONTEND":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFFormulaField
+            setFormValue={setFormValue}
+            control={control}
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            name={field.slug}
+            fieldsList={fieldsList}
+            field={field}
           />
         </FRow>
       )

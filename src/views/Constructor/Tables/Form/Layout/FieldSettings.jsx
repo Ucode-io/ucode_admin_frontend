@@ -207,7 +207,6 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height }
             </FRow>
           </div>
 
-
           <Attributes control={control} watch={watch} mainForm={mainForm} />
 
           <div className={styles.settingsBlockHeader}>

@@ -59,6 +59,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
           layoutForm={layoutForm}
           openFieldsBlock={openFieldsBlock}
           openFieldSettingsBlock={openFieldSettingsBlock}
+          openRelationSettingsBlock={openRelationSettingsBlock}
         />
 
         <RelationsBlock

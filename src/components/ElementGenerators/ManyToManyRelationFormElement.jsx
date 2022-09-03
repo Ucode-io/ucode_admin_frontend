@@ -170,7 +170,6 @@ const AutoCompleteElement = ({
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
         renderInput={(params) => <TextField {...params} size="small" />}
         renderTags={(values, getTagProps) => {
-          console.log("VLAUEs--->", values)
           return (
             <>
               <div className={styles.valuesWrapper}>

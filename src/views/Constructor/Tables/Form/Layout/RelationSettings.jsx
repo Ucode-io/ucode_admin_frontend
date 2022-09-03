@@ -96,8 +96,8 @@ const RelationSettings = ({
   }, [values, slug])
 
   const isViewFieldsVisible = useMemo(() => {
-    return (values.type === "One2Many" && values.table_to === slug) || (values.type === "Many2Many" && values.view_type === "INPUT")
-  }, [values.type, values.table_to, values.view_type, slug])
+    return (values.type === "Many2One" && values.table_from === slug) || (values.type === "Many2Many" && values.view_type === "INPUT")
+  }, [values.type, values.table_from, values.view_type, slug])
 
   const computedColumnsList = useMemo(() => {
     if (!onlyCheckedColumnsVisible) return values.columnsList
@@ -357,14 +357,14 @@ const RelationSettings = ({
 
             <HFSwitch control={control} name="is_editable" label={"Editable"} />
 
-            <FRow label="Relate field type" required>
+            {values.type === "Many2Many" && <FRow label="Relate field type" required>
               <HFSelect
                 name="view_type"
                 control={control}
                 placeholder="Relation field type"
                 options={relationViewTypes}
               />
-            </FRow>
+            </FRow>}
 
             {isViewFieldsVisible && (
               <FRow label="View fields">

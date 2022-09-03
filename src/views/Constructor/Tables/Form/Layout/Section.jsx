@@ -18,12 +18,26 @@ const Section = ({
   openFieldSettingsBlock,
   sectionsFieldArray,
   openFieldsBlock,
+  openRelationSettingsBlock
 }) => {
   const sectionFields = useFieldArray({
     control: mainForm.control,
     name: `sections.${index}.fields`,
     keyName: "key",
   })
+
+  const openSettingsBlock = (field) => {
+    if(!field.id?.includes('#')) openFieldSettingsBlock(fieldsMap[field.id] ?? field)
+
+    const relationsMap = mainForm.getValues('relationsMap')
+
+
+    const relationId = field.id.split('#')[1]
+
+    const relation = relationsMap[relationId]
+
+    openRelationSettingsBlock(relation)
+  }
 
   const onDrop = (dropResult) => {
     const { fields, insert, move, remove } = sectionFields
@@ -110,7 +124,7 @@ const Section = ({
                 <ButtonsPopover
                   className={styles.deleteButton}
                   onEditClick={() =>
-                    openFieldSettingsBlock(fieldsMap[field.id] ?? field)
+                    openSettingsBlock(field)
                   }
                   onDeleteClick={() => removeField(fieldIndex, 1)}
                 />

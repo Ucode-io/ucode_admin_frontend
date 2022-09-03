@@ -69,12 +69,11 @@ const HFMultipleAutocomplete = ({
                     <div
                       key={el.value}
                       className={styles.multipleAutocompleteTags}
-                      onClick={getTagProps({ index })?.onDelete}
                       style={hasColor ? { color: el?.color, background: `${el?.color}30` } : {}}
                     >
                       {hasIcon && <IconGenerator icon={el?.icon} />}
                       <p className={styles.value} >{el?.value}</p>
-                      <Close fontSize="10" />
+                      <Close fontSize="10" onClick={getTagProps({ index })?.onDelete} />
 
                     </div>
                   ))}

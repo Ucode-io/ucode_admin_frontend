@@ -2,7 +2,10 @@ import { get } from "@ngard/tiny-get"
 import { format } from "date-fns"
 
 export const getRelationFieldLabel = (field, option) => {
+  if(!option) return ''
   let label = ""
+
+  console.log("FIELD -=-->", field, option)
 
   field.attributes?.view_fields?.forEach((el) => {
     let result = ""

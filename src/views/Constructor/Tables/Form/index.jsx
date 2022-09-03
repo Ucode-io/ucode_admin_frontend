@@ -107,8 +107,6 @@ const ConstructorTablesFormPage = () => {
       const layoutRelations = []
       const tableRelations = []
 
-      console.log('relationsWithRelatedTableSlug ===>', relationsWithRelatedTableSlug)
-
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
           (relation.type === "Many2One" &&
@@ -120,6 +118,7 @@ const ConstructorTablesFormPage = () => {
         else tableRelations.push(relation)
       })
       const layoutRelationsFields = layoutRelations.map((relation) => ({
+        ...relation,
         id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
         attributes: {
           fields: relation.view_fields ?? [],
@@ -127,18 +126,11 @@ const ConstructorTablesFormPage = () => {
         label: relation[relation.relatedTableSlug]?.label,
       }))
       
-
       mainForm.setValue("relations", relations)
       mainForm.setValue("relationsMap", listToMap(relations))
 
-
       mainForm.setValue("layoutRelations", layoutRelationsFields)
       mainForm.setValue("tableRelations", tableRelations)
-
-      // console.log("view_relations ===>", viewRelations)
-
-      // mainForm.setValue("view_relations", tableRelations?.filter(el => el.is_visible))
-      // debugger
 
       resolve()
     })

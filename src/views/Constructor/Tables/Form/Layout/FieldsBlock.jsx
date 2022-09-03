@@ -79,6 +79,8 @@ const FieldsBlock = ({
     if (!result) return
   }
 
+  console.log("unusedRelations===>", unusedRelations, relations)
+
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -135,6 +137,7 @@ const FieldsBlock = ({
                 getChildPayload={(i) => ({
                   ...unusedRelations[i],
                   field_name: unusedRelations[i]?.label,
+                  relation_type: unusedRelations[i].type
                 })}
               >
                 {unusedRelations?.map((relation) => (

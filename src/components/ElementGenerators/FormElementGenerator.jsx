@@ -12,6 +12,7 @@ import HFTextEditor from "../FormElements/HFTextEditor"
 import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 import HFTimePicker from "../FormElements/HFTimePicker"
+import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement"
 import RelationFormElement from "./RelationFormElement"
 
 const FormElementGenerator = ({
@@ -35,16 +36,27 @@ const FormElementGenerator = ({
     return field.slug
   }, [field.id, field.slug])
 
-
-  if (field.id?.includes("#"))
-    return (
-      <RelationFormElement
-        control={control}
-        field={field}
-        setFormValue={setFormValue}
-        {...props}
-      />
-    )
+  if (field.id?.includes("#")) {
+    if (field.relation_type !== "Many2Many") {
+      return (
+        <RelationFormElement
+          control={control}
+          field={field}
+          setFormValue={setFormValue}
+          {...props}
+        />
+      )
+    } else {
+      return (
+        <ManyToManyRelationFormElement
+          control={control}
+          field={field}
+          setFormValue={setFormValue}
+          {...props}
+        />
+      )
+    }
+  }
 
   switch (field.type) {
     case "SINGLE_LINE":
@@ -256,7 +268,8 @@ const FormElementGenerator = ({
             InputProps={{
               readOnly: true,
               style: {
-                background: '#c0c0c039'              }
+                background: "#c0c0c039",
+              },
             }}
             {...props}
           />

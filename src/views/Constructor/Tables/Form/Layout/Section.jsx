@@ -31,7 +31,7 @@ const Section = ({
     const result = applyDrag(fields, dropResult)
 
     if (!result) return
-
+    debugger
     if (result.length > fields.length) {
       insert(dropResult.addedIndex, { ...dropResult.payload })
     } else if (result.length < fields.length) {

@@ -4,7 +4,6 @@ import {
   PushPin,
   PushPinOutlined,
   RemoveRedEye,
-  RemoveRedEyeOutlined,
   VisibilityOff,
 } from "@mui/icons-material"
 import { Checkbox, IconButton } from "@mui/material"
@@ -97,8 +96,8 @@ const RelationSettings = ({
   }, [values, slug])
 
   const isViewFieldsVisible = useMemo(() => {
-    return values.type === "One2Many" && values.table_to === slug
-  }, [values.type, values.table_to, slug])
+    return (values.type === "One2Many" && values.table_to === slug) || (values.type === "Many2Many" && values.view_type === "INPUT")
+  }, [values.type, values.table_to, values.view_type, slug])
 
   const computedColumnsList = useMemo(() => {
     if (!onlyCheckedColumnsVisible) return values.columnsList
@@ -110,7 +109,7 @@ const RelationSettings = ({
     else return values.filtersList?.filter((column) => column.is_checked)
   }, [values.filtersList, onlyCheckedFiltersVisible])
 
-  const { data: relatedTableFields, isLoading: fieldsLoading } = useQuery(
+  const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug],
     () => {
       if (!relatedTableSlug) return []
@@ -166,6 +165,13 @@ const RelationSettings = ({
     }
   )
 
+  const computedFieldsListOptions = useMemo(() => {
+    return values.columnsList?.map(field => ({
+      label: field.label,
+      value: field.id
+    }))
+  }, [values.columnsList])
+
   // useEffect(() => {
   //   if (type === "Many2One") {
   //     getFieldOptions(values?.table_from)
@@ -219,6 +225,7 @@ const RelationSettings = ({
   const submitHandler = (values) => {
     const data = {
       ...values,
+      relation_table_slug: slug,
 
       // compute columns
       columns: values.columnsList
@@ -232,7 +239,7 @@ const RelationSettings = ({
           field_id: el.id,
           default_value: "",
         })),
-
+      
       // compute summaries
       // summaries: [
       //   ...values.summaries,
@@ -348,18 +355,6 @@ const RelationSettings = ({
               />
             </FRow>
 
-            {isViewFieldsVisible && (
-              <FRow label="View fields">
-                <HFMultipleSelect
-                  name="view_fields"
-                  control={control}
-                  options={relatedTableFields}
-                  placeholder="View fields"
-                  allowClear
-                />
-              </FRow>
-            )}
-
             <HFSwitch control={control} name="is_editable" label={"Editable"} />
 
             <FRow label="Relate field type" required>
@@ -370,6 +365,19 @@ const RelationSettings = ({
                 options={relationViewTypes}
               />
             </FRow>
+
+            {isViewFieldsVisible && (
+              <FRow label="View fields">
+                <HFMultipleSelect
+                  name="view_fields"
+                  control={control}
+                  options={computedFieldsListOptions}
+                  placeholder="View fields"
+                  allowClear
+                />
+              </FRow>
+            )}
+
           </div>
 
           <div className={styles.settingsBlockHeader}>

@@ -27,11 +27,12 @@ const Section = ({
   })
 
   const openSettingsBlock = (field) => {
-    if(!field.id?.includes('#')) openFieldSettingsBlock(fieldsMap[field.id] ?? field)
+    if(!field.id?.includes('#')) {
+      openFieldSettingsBlock(fieldsMap[field.id] ?? field)
+      return
+    }
 
     const relationsMap = mainForm.getValues('relationsMap')
-
-
     const relationId = field.id.split('#')[1]
 
     const relation = relationsMap[relationId]

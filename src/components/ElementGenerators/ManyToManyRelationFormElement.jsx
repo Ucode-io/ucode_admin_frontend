@@ -177,10 +177,6 @@ const AutoCompleteElement = ({
                 {values?.map((el, index) => (
                   <div key={el.value} className={styles.multipleAutocompleteTags}>
                     <p className={styles.value}>{getOptionLabel(values[index])}</p>
-                    <Close
-                      fontSize="10"
-                      onClick={getTagProps({ index })?.onDelete}
-                    />
                     <IconGenerator
                       icon="arrow-up-right-from-square.svg"
                       style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -191,6 +187,13 @@ const AutoCompleteElement = ({
                         navigateToForm(tableSlug, "EDIT", value[0])
                       }}
                     />
+
+                    <Close
+                      fontSize="12"
+                      onClick={getTagProps({ index })?.onDelete}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    
                   </div>
                 ))}
               </div>

@@ -184,7 +184,7 @@ const AutoCompleteElement = ({
                       onClick={(e) => {
                         e.stopPropagation()
                         e.preventDefault()
-                        navigateToForm(tableSlug, "EDIT", value[0])
+                        navigateToForm(tableSlug, "EDIT", values[index])
                       }}
                     />
 

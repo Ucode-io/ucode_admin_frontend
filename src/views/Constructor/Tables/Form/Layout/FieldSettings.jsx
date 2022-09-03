@@ -13,14 +13,16 @@ import HFSelect from "../../../../../components/FormElements/HFSelect"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import constructorFieldService from "../../../../../services/constructorFieldService"
 import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes"
+import { generateGUID } from "../../../../../utils/generateID"
 import listToOptions from "../../../../../utils/listToOptions"
 import Attributes from "../Fields/Attributes"
 import styles from "./style.module.scss"
 
-const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType }) => {
+const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height }) => {
   const { id } = useParams()
   const { handleSubmit, control, reset, watch } = useForm()
   const [formLoader, setFormLoader] = useState(false)
+  
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields")
@@ -29,25 +31,58 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType }) => {
     mainForm.setValue(`fields[${index}]`, field)
   }
 
+  const prepandFieldInForm = (field) => {
+
+    const fields = mainForm.getValues("fields") ?? []
+    mainForm.setValue(`fields`, [field, ...fields])
+  }
+
   const showTooltip = useWatch({
     control,
     name: "attributes.showTooltip",
   })
 
-  const submitHandler = (values) => {
+  const createField = (field) => {
+    const data = {
+      ...field,
+      id: generateGUID(),
+    }
+
     if (!id) {
-      updateFieldInform(values)
+      prepandFieldInForm(data)
       closeSettingsBlock()
     } else {
       setFormLoader(true)
       constructorFieldService
-        .update(values)
+        .create(data)
         .then((res) => {
-          updateFieldInform(values)
-          closeSettingsBlock()
+          prepandFieldInForm(res)
+          closeSettingsBlock(null)
         })
         .finally(() => setFormLoader(false))
     }
+  }
+
+  const updateField = (field) => {
+
+    if (!id) {
+      updateFieldInform(field)
+      closeSettingsBlock()
+    } else {
+      setFormLoader(true)
+      constructorFieldService
+        .update(field)
+        .then((res) => {
+          updateFieldInform(field)
+          closeSettingsBlock(null)
+        })
+        .finally(() => setFormLoader(false))
+    }
+  }
+
+  const submitHandler = (values) => {
+    if(formType === "CREATE") createField(values)
+    else updateField(values)
   }
 
   const selectedAutofillTableSlug = useWatch({
@@ -122,7 +157,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType }) => {
         </IconButton>
       </div>
 
-      <div className={styles.settingsBlockBody}>
+      <div className={styles.settingsBlockBody} style={{ height }}>
         <form
           onSubmit={handleSubmit(submitHandler)}
           className={styles.fieldSettingsForm}
@@ -172,17 +207,8 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType }) => {
             </FRow>
           </div>
 
-          <div className={styles.settingsBlockHeader}>
-            <h2>Attributes</h2>
 
-            {/* <IconButton onClick={closeSettingsBlock}>
-              <Close />
-            </IconButton> */}
-          </div>
-
-          {/* <div className="p-2"> */}
           <Attributes control={control} watch={watch} mainForm={mainForm} />
-          {/* </div> */}
 
           <div className={styles.settingsBlockHeader}>
             <h2>Appearance</h2>

@@ -144,6 +144,7 @@ const Fields = ({ mainForm }) => {
           field={drawerState}
           formType={drawerState}
           mainForm={mainForm}
+          height={`calc(100vh - 48px)`}
         />
       </Drawer>
 

@@ -5,8 +5,8 @@ import {
   MenuItem,
   Select,
 } from "@mui/material"
-import { Fragment } from "react"
 import { Controller } from "react-hook-form"
+import IconGenerator from "../IconPicker/IconGenerator"
 
 const HFSelect = ({
   control,
@@ -68,7 +68,10 @@ const HFSelect = ({
                   <MenuItem style={{ fontWeight: 600, color: '#000', fontSize: 15 }}>{group.label}</MenuItem>,
                   group.options?.map((option) => (
                     <MenuItem  key={option.value} value={option.value} style={{ paddingLeft: 30 }} >
+                      <div className="flex align-center gap-2" >
+                      <IconGenerator icon={option.icon} size={15} style={{ color: '#6E8BB7' }} />
                       {option.label}
+                      </div>
                     </MenuItem>
                   ))
                 ]

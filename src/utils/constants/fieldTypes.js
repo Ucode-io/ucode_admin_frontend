@@ -44,10 +44,12 @@ export const fieldTypesOptions = [
     label: 'Text',
     options: [
       {
+        icon: "minus.svg",
         label: "Single line",
         value: "SINGLE_LINE"
       },
       {
+        icon: "grip-lines.svg",
         label: "Multi line",
         value: "MULTI_LINE"
       },
@@ -57,14 +59,17 @@ export const fieldTypesOptions = [
     label: 'Date',
     options: [
       {
+        icon: "grip-lines.svg",
         label: "Date",
         value: "DATE"
       },
       {
+        icon: "clock.svg",
         label: "Time",
         value: "TIME"
       },
       {
+        icon: "calendar-clock.svg",
         label: "Date time",
         value: "DATE_TIME"
       },
@@ -74,6 +79,7 @@ export const fieldTypesOptions = [
     label: 'Number',
     options: [
       {
+        icon: "hashtag.svg",
         label: "Number",
         value: "NUMBER"
       },
@@ -83,10 +89,12 @@ export const fieldTypesOptions = [
     label: 'Input',
     options: [
       {
+        icon: "square-check.svg",
         label: "Checkbox",
         value: "CHECKBOX"
       },
       {
+        icon: "toggle-on.svg",
         label: "Switch",
         value: "SWITCH"
       },
@@ -96,10 +104,12 @@ export const fieldTypesOptions = [
     label: 'Select',
     options: [
       {
+        // icon: "square-check.svg",
         label: "Picklist",
         value: "PICK_LIST"
       },
       {
+        icon: "list-check.svg",
         label: "Multi select",
         value: "MULTISELECT"
       },
@@ -109,6 +119,7 @@ export const fieldTypesOptions = [
     label: 'File',
     options: [
       {
+        icon: "image.svg",
         label: "Photo",
         value: "PHOTO"
       },
@@ -118,22 +129,27 @@ export const fieldTypesOptions = [
     label: 'Other',
     options: [
       {
+        icon: "phone.svg",
         label: "Phone",
         value: "PHONE"
       },
       {
+        icon: "envelope.svg",
         label: "Email",
         value: "EMAIL"
       },
       {
+        icon: "icons.svg",
         label: "Icon",
         value: "ICON"
       },
       {
-        label: "Formul",
+        icon: "square-root-variable.svg",
+        label: "Formula",
         value: "FORMULA"
       },
       {
+        icon: "lock.svg",
         label: "Password",
         value: "PASSWORD"
       },

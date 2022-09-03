@@ -1,5 +1,5 @@
 import { Close } from "@mui/icons-material"
-import { Divider, IconButton } from "@mui/material"
+import { IconButton } from "@mui/material"
 import { useState } from "react"
 import { useEffect, useMemo } from "react"
 import { useForm, useWatch } from "react-hook-form"
@@ -11,7 +11,7 @@ import HFCheckbox from "../../../../../components/FormElements/HFCheckbox"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import constructorFieldService from "../../../../../services/constructorFieldService"
-import { fieldTypes, fieldTypesOptions } from "../../../../../utils/constants/fieldTypes"
+import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes"
 import listToOptions from "../../../../../utils/listToOptions"
 import Attributes from "../Fields/Attributes"
 import styles from "./style.module.scss"
@@ -83,13 +83,6 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType }) => {
         ),
     }
   )
-
-  const computedFieldTypes = useMemo(() => {
-    return fieldTypes.map((type) => ({
-      value: type,
-      label: type,
-    }))
-  }, [])
 
   useEffect(() => {
     if (formType !== "CREATE") {
@@ -167,7 +160,6 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType }) => {
                 optionType="GROUP"
                 placeholder="Type"
                 required
-                
               />
             </FRow>
           </div>

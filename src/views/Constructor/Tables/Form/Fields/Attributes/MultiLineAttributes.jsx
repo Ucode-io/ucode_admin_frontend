@@ -1,12 +1,9 @@
 
 
 const MultiLineAttributes = ({ control, onClose, onSaveButtonClick }) => {
-  
-
 
   return (
     <>
-
 
     </>
   )

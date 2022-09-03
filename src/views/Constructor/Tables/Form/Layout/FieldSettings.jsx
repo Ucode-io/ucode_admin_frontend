@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom"
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton"
 import FRow from "../../../../../components/FormElements/FRow"
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox"
+import HFIconPicker from "../../../../../components/FormElements/HFIconPicker"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import constructorFieldService from "../../../../../services/constructorFieldService"
@@ -127,16 +128,23 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType }) => {
           className={styles.fieldSettingsForm}
         >
           <div className="p-2">
-            <FRow label="Field Label" required>
-              <HFTextField
-                disabledHelperText
-                fullWidth
-                name="label"
-                control={control}
-                placeholder="Field Label"
-                autoFocus
-                required
-              />
+            <FRow label="Field Label and icon" required>
+              <div className="flex align-center gap-1" >
+                <HFIconPicker
+                  control={control}
+                  name="attributes.icon"
+                  shape="rectangle"
+                />
+                <HFTextField
+                  disabledHelperText
+                  fullWidth
+                  name="label"
+                  control={control}
+                  placeholder="Field Label"
+                  autoFocus
+                  required
+                />
+              </div>
             </FRow>
 
             <FRow label="Field SLUG" required>

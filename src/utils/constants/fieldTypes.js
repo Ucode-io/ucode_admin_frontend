@@ -59,7 +59,7 @@ export const fieldTypesOptions = [
     label: 'Date',
     options: [
       {
-        icon: "grip-lines.svg",
+        icon: "calendar.svg",
         label: "Date",
         value: "DATE"
       },
@@ -69,7 +69,7 @@ export const fieldTypesOptions = [
         value: "TIME"
       },
       {
-        icon: "calendar-clock.svg",
+        icon: "business-time.svg",
         label: "Date time",
         value: "DATE_TIME"
       },

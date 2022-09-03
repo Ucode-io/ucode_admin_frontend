@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMemo } from "react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -18,10 +19,12 @@ import {
 import FormCard from "../../components/FormCard";
 import FRow from "../../components/FormElements/FRow";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
+import HFSelect from "../../components/FormElements/HFSelect";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
 import applicationService from "../../services/applicationSercixe";
 import constructorObjectService from "../../services/constructorObjectService";
+import constructorRelationService from "../../services/constructorRelationService";
 import roleServiceV2 from "../../services/roleServiceV2";
 
 const staticTables = [
@@ -41,8 +44,20 @@ const MatrixRolePage = () => {
   const [roles, setRoles] = useState([{ name: "Settings", id: "settings" }]);
   const [recordPermissions, setRecordPermissions] = useState([]);
   const [connections, setConnections] = useState([]);
+  const [isCustomVisible, setIsCustomVisible] = useState(false);
+  const [relations, setRelations] = useState([]);
+  const [automaticFilters, setAutomaticFilters] = useState([]);
+  const [creatingAutoFilter, setCreatingAutoFilter] = useState(false);
 
   const roleForm = useForm({});
+
+  const autoFilterForm = useForm({
+    defaultValues: {
+      object_field: "",
+      custom_field: "",
+      tabSlug: "",
+    },
+  });
 
   const getRecordPermissions = () => {
     constructorObjectService
@@ -59,7 +74,27 @@ const MatrixRolePage = () => {
       });
   };
 
+  const getAutomaticFilters = (tSlug) => {
+    constructorObjectService
+      .getList("automatic_filter", {
+        data: {
+          role_id: roleId,
+          table_slug: tSlug,
+        },
+      })
+      .then((res) => {
+        console.log("automatic_filter", res?.data);
+        setAutomaticFilters(res?.data?.response);
+      });
+  };
+
   const handleRecordPermission = (record, type, value, tabSlug) => {
+    autoFilterForm.setValue("tabSlug", tabSlug);
+    if (value === "Yes") {
+      setIsCustomVisible(true);
+    } else {
+      setIsCustomVisible(false);
+    }
     const data = {
       role_id: roleId,
       update: record?.update ? record?.update : "No",
@@ -78,7 +113,26 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          setTableSlug(null);
+          setTableSlug((prev) => (value === "Yes" ? prev : null));
+          if (value === "Yes") {
+            console.log("11");
+            getAutomaticFilters(tabSlug);
+            constructorRelationService
+              .getList({ table_slug: tabSlug })
+              .then((res) => {
+                console.log(
+                  "res",
+                  res?.relations
+                    ?.filter((rel) => rel?.table_from?.slug === tabSlug)
+                    ?.map((el) => el?.table_to)
+                );
+                setRelations(
+                  res?.relations
+                    ?.filter((rel) => rel?.table_from?.slug === tabSlug)
+                    ?.map((el) => el?.table_to)
+                );
+              });
+          }
           getRecordPermissions();
         })
         .catch((err) => {
@@ -100,6 +154,27 @@ const MatrixRolePage = () => {
           console.log(err);
         });
     }
+  };
+
+  const handleAutoFilter = () => {
+    const data = {
+      object_field: autoFilterForm.getValues("object_field"),
+      custom_field: autoFilterForm.getValues("custom_field"),
+      role_id: roleId,
+      table_slug: autoFilterForm.getValues("tabSlug"),
+    };
+    // return console.log('ddddd', data)
+    constructorObjectService
+      .create("automatic_filter", {
+        data: {
+          ...data,
+        },
+      })
+      .then((res) => {
+        console.log("Autofilter", res);
+        setTableSlug(null);
+        setIsCustomVisible(false);
+      });
   };
 
   const getRoleById = () => {
@@ -173,6 +248,32 @@ const MatrixRolePage = () => {
         console.log(err);
       });
   };
+
+  const computedRelations = useMemo(() => {
+    return relations?.map((el) => ({
+      label: el?.label,
+      value: el?.slug,
+    }));
+  }, [relations]);
+
+  useEffect(() => {
+    setIsCustomVisible(false);
+    setAutomaticFilters([]);
+  }, [tableSlug]);
+
+  const computedCustomFields = useMemo(() => {
+    const data = [
+      {
+        view_label: "User ID",
+        table_slug: "user",
+      },
+      ...connections,
+    ];
+    return data?.map((el) => ({
+      label: el?.view_label,
+      value: el?.table_slug + "_id",
+    }));
+  }, [connections]);
 
   useEffect(() => {
     if (!appId) {
@@ -347,78 +448,235 @@ const MatrixRolePage = () => {
                       />
                     )}
                     {tableSlug === app?.slug + "read" ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          backgroundColor: "white",
-                          border: "1px solid #eee",
-                          padding: "12px 16px",
-                          borderRadius: "6px",
-                          position: "absolute",
-                          top: "40px",
-                          left: "30px",
-                          zIndex: "2",
-                        }}
-                      >
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRecordPermission(
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              ),
-                              "read",
-                              "Yes",
-                              app?.slug
-                            );
+                      <>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            backgroundColor: "white",
+                            border: "1px solid #eee",
+                            padding: "12px 16px",
+                            borderRadius: "6px",
+                            position: "absolute",
+                            top: "40px",
+                            left: "30px",
+                            zIndex: "2",
                           }}
                         >
-                          <TwoUserIcon />
-                        </span>
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRecordPermission(
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              ),
-                              "read",
-                              "No",
-                              app?.slug
-                            );
-                          }}
-                        >
-                          <CrossPeson />
-                        </span>
-                        {connections?.map((connection) => (
-                          <HFIconPicker
-                            name=""
-                            value={connection?.icon}
-                            control={roleForm.control}
-                            customeClick={true}
-                            clickItself={() => {
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleRecordPermission(
                                 recordPermissions?.find(
                                   (item) => item?.table_slug === app?.slug
                                 ),
                                 "read",
-                                connection?.name,
+                                "Yes",
                                 app?.slug
                               );
                             }}
-                            shape="rectangle"
-                            onChange={(e) => {
-                              roleForm.setValue("icon", e);
-                              setConnections({
-                                ...connections,
-                                icon: e,
-                              });
+                          >
+                            <TwoUserIcon />
+                          </span>
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRecordPermission(
+                                recordPermissions?.find(
+                                  (item) => item?.table_slug === app?.slug
+                                ),
+                                "read",
+                                "No",
+                                app?.slug
+                              );
                             }}
-                          />
-                        ))}
-                      </div>
+                          >
+                            <CrossPeson />
+                          </span>
+                          {connections?.map((connection) => (
+                            <HFIconPicker
+                              name=""
+                              value={connection?.icon}
+                              control={roleForm.control}
+                              customeClick={true}
+                              clickItself={() => {
+                                handleRecordPermission(
+                                  recordPermissions?.find(
+                                    (item) => item?.table_slug === app?.slug
+                                  ),
+                                  "read",
+                                  connection?.name,
+                                  app?.slug
+                                );
+                              }}
+                              shape="rectangle"
+                              onChange={(e) => {
+                                roleForm.setValue("icon", e);
+                                setConnections({
+                                  ...connections,
+                                  icon: e,
+                                });
+                              }}
+                            />
+                          ))}
+                        </div>
+                        {isCustomVisible && (
+                          <div
+                            style={{
+                              backgroundColor: "white",
+                              border: "1px solid #eee",
+                              padding: "12px 16px",
+                              borderRadius: "6px",
+                              position: "absolute",
+                              top: "120px",
+                              left: "60px",
+                              zIndex: "2",
+                              minWidth: "400px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                // alignItems: "center",
+                                gap: "8px",
+                                borderBottom: "1px solid #ccc",
+                                paddingBottom: "10px",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <div style={{ display: "flex" }}>
+                                <FRow
+                                  style={{ marginBottom: 0 }}
+                                  label="Поля объекта:"
+                                />
+                                <FRow
+                                  style={{ marginBottom: 0 }}
+                                  label="Пользовательские поля:
+"
+                                />
+                              </div>
+
+                              {automaticFilters?.map((auto) => (
+                                <div style={{ display: "flex", gap: "8px" }}>
+                                  <HFTextField
+                                    name=""
+                                    value={auto?.object_field}
+                                    // disabled={isEdit !== item?.guid}
+                                    disabled={true}
+                                    control={autoFilterForm.control}
+                                    fullWidth
+                                  />
+                                  <HFTextField
+                                    name=""
+                                    value={auto?.custom_field}
+                                    // disabled={isEdit !== item?.guid}
+                                    disabled={true}
+                                    control={autoFilterForm.control}
+                                    fullWidth
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                            {creatingAutoFilter && (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                  paddingBottom: "8px",
+                                }}
+                              >
+                                {/* <FRow label="Поля объекта"> */}
+                                <HFSelect
+                                  options={computedRelations}
+                                  control={autoFilterForm.control}
+                                  // onChange={(e) => {
+                                  //   console.log("e", e);
+                                  // }}
+                                  // value={auto?.object_field}
+                                  name="object_field"
+                                  required
+                                />
+                                {/* </FRow> */}
+                                {/* <FRow label="Пользовательские поля"> */}
+                                <HFSelect
+                                  options={computedCustomFields}
+                                  control={autoFilterForm.control}
+                                  // onChange={(e) => {
+                                  //   getFields({ table_id: e })
+                                  //   connectionForm.setValue("table_slug", e)
+                                  // }}
+                                  // value={auto?.custom_field}
+                                  name="custom_field"
+                                  required
+                                />
+                                {/* </FRow> */}
+                              </div>
+                            )}
+                            <div style={{ display: "flex", gap: "8px" }}>
+                              {creatingAutoFilter ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setCreatingAutoFilter(false);
+                                      autoFilterForm.reset("object_field", "");
+                                      autoFilterForm.reset("custom_field", "");
+                                    }}
+                                    style={{
+                                      flexGrow: 1,
+                                      cursor: "pointer",
+                                      padding: "8px",
+                                      border: "1px solid #e0e0e0",
+                                      backgroundColor: "inherit",
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      // setCreatingAutoFilter(
+                                      //   !creatingAutoFilter
+                                      // );
+                                      console.log("create");
+                                      handleAutoFilter();
+                                    }}
+                                    style={{
+                                      flexGrow: 1,
+                                      cursor: "pointer",
+                                      padding: "8px",
+                                      border: "1px solid #e0e0e0",
+                                      backgroundColor: "#0067F4",
+                                      color: "white",
+                                    }}
+                                  >
+                                    Create
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setCreatingAutoFilter(true);
+                                  }}
+                                  style={{
+                                    flexGrow: 1,
+                                    cursor: "pointer",
+                                    padding: "8px",
+                                    border: "1px solid #e0e0e0",
+                                    backgroundColor: "inherit",
+                                  }}
+                                >
+                                  Добавить новое условия
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : null}
                   </CTableCell>
                   <CTableCell
@@ -470,78 +728,235 @@ const MatrixRolePage = () => {
                       />
                     )}
                     {tableSlug === app?.slug + "write" ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          backgroundColor: "white",
-                          border: "1px solid #eee",
-                          padding: "12px 16px",
-                          borderRadius: "6px",
-                          position: "absolute",
-                          top: "40px",
-                          left: "30px",
-                          zIndex: "2",
-                        }}
-                      >
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRecordPermission(
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              ),
-                              "write",
-                              "Yes",
-                              app?.slug
-                            );
+                      <>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            backgroundColor: "white",
+                            border: "1px solid #eee",
+                            padding: "12px 16px",
+                            borderRadius: "6px",
+                            position: "absolute",
+                            top: "40px",
+                            left: "30px",
+                            zIndex: "2",
                           }}
                         >
-                          <TwoUserIcon />
-                        </span>
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRecordPermission(
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              ),
-                              "write",
-                              "No",
-                              app?.slug
-                            );
-                          }}
-                        >
-                          <CrossPeson />
-                        </span>
-                        {connections?.map((connection) => (
-                          <HFIconPicker
-                            name=""
-                            value={connection?.icon}
-                            control={roleForm.control}
-                            shape="rectangle"
-                            customeClick={true}
-                            clickItself={() => {
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleRecordPermission(
                                 recordPermissions?.find(
                                   (item) => item?.table_slug === app?.slug
                                 ),
                                 "write",
-                                connection?.name,
+                                "Yes",
                                 app?.slug
                               );
                             }}
-                            onChange={(e) => {
-                              roleForm.setValue("icon", e);
-                              setConnections({
-                                ...connections,
-                                icon: e,
-                              });
+                          >
+                            <TwoUserIcon />
+                          </span>
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRecordPermission(
+                                recordPermissions?.find(
+                                  (item) => item?.table_slug === app?.slug
+                                ),
+                                "write",
+                                "No",
+                                app?.slug
+                              );
                             }}
-                          />
-                        ))}
-                      </div>
+                          >
+                            <CrossPeson />
+                          </span>
+                          {connections?.map((connection) => (
+                            <HFIconPicker
+                              name=""
+                              value={connection?.icon}
+                              control={roleForm.control}
+                              customeClick={true}
+                              clickItself={() => {
+                                handleRecordPermission(
+                                  recordPermissions?.find(
+                                    (item) => item?.table_slug === app?.slug
+                                  ),
+                                  "write",
+                                  connection?.name,
+                                  app?.slug
+                                );
+                              }}
+                              shape="rectangle"
+                              onChange={(e) => {
+                                roleForm.setValue("icon", e);
+                                setConnections({
+                                  ...connections,
+                                  icon: e,
+                                });
+                              }}
+                            />
+                          ))}
+                        </div>
+                        {isCustomVisible && (
+                          <div
+                            style={{
+                              backgroundColor: "white",
+                              border: "1px solid #eee",
+                              padding: "12px 16px",
+                              borderRadius: "6px",
+                              position: "absolute",
+                              top: "120px",
+                              left: "60px",
+                              zIndex: "2",
+                              minWidth: "400px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                // alignItems: "center",
+                                gap: "8px",
+                                borderBottom: "1px solid #ccc",
+                                paddingBottom: "10px",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <div style={{ display: "flex" }}>
+                                <FRow
+                                  style={{ marginBottom: 0 }}
+                                  label="Поля объекта:"
+                                />
+                                <FRow
+                                  style={{ marginBottom: 0 }}
+                                  label="Пользовательские поля:
+"
+                                />
+                              </div>
+
+                              {automaticFilters?.map((auto) => (
+                                <div style={{ display: "flex", gap: "8px" }}>
+                                  <HFTextField
+                                    name=""
+                                    value={auto?.object_field}
+                                    // disabled={isEdit !== item?.guid}
+                                    disabled={true}
+                                    control={autoFilterForm.control}
+                                    fullWidth
+                                  />
+                                  <HFTextField
+                                    name=""
+                                    value={auto?.custom_field}
+                                    // disabled={isEdit !== item?.guid}
+                                    disabled={true}
+                                    control={autoFilterForm.control}
+                                    fullWidth
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                            {creatingAutoFilter && (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                  paddingBottom: "8px",
+                                }}
+                              >
+                                {/* <FRow label="Поля объекта"> */}
+                                <HFSelect
+                                  options={computedRelations}
+                                  control={autoFilterForm.control}
+                                  // onChange={(e) => {
+                                  //   console.log("e", e);
+                                  // }}
+                                  // value={auto?.object_field}
+                                  name="object_field"
+                                  required
+                                />
+                                {/* </FRow> */}
+                                {/* <FRow label="Пользовательские поля"> */}
+                                <HFSelect
+                                  options={computedCustomFields}
+                                  control={autoFilterForm.control}
+                                  // onChange={(e) => {
+                                  //   getFields({ table_id: e })
+                                  //   connectionForm.setValue("table_slug", e)
+                                  // }}
+                                  // value={auto?.custom_field}
+                                  name="custom_field"
+                                  required
+                                />
+                                {/* </FRow> */}
+                              </div>
+                            )}
+                            <div style={{ display: "flex", gap: "8px" }}>
+                              {creatingAutoFilter ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setCreatingAutoFilter(false);
+                                      autoFilterForm.reset("object_field", "");
+                                      autoFilterForm.reset("custom_field", "");
+                                    }}
+                                    style={{
+                                      flexGrow: 1,
+                                      cursor: "pointer",
+                                      padding: "8px",
+                                      border: "1px solid #e0e0e0",
+                                      backgroundColor: "inherit",
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      // setCreatingAutoFilter(
+                                      //   !creatingAutoFilter
+                                      // );
+                                      console.log("create");
+                                      handleAutoFilter();
+                                    }}
+                                    style={{
+                                      flexGrow: 1,
+                                      cursor: "pointer",
+                                      padding: "8px",
+                                      border: "1px solid #e0e0e0",
+                                      backgroundColor: "#0067F4",
+                                      color: "white",
+                                    }}
+                                  >
+                                    Create
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setCreatingAutoFilter(true);
+                                  }}
+                                  style={{
+                                    flexGrow: 1,
+                                    cursor: "pointer",
+                                    padding: "8px",
+                                    border: "1px solid #e0e0e0",
+                                    backgroundColor: "inherit",
+                                  }}
+                                >
+                                  Добавить новое условия
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : null}
                   </CTableCell>
                   <CTableCell
@@ -593,78 +1008,235 @@ const MatrixRolePage = () => {
                       />
                     )}
                     {tableSlug === app?.slug + "update" ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          backgroundColor: "white",
-                          border: "1px solid #eee",
-                          padding: "12px 16px",
-                          borderRadius: "6px",
-                          position: "absolute",
-                          top: "40px",
-                          left: "30px",
-                          zIndex: "2",
-                        }}
-                      >
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRecordPermission(
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              ),
-                              "update",
-                              "Yes",
-                              app?.slug
-                            );
+                      <>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            backgroundColor: "white",
+                            border: "1px solid #eee",
+                            padding: "12px 16px",
+                            borderRadius: "6px",
+                            position: "absolute",
+                            top: "40px",
+                            left: "30px",
+                            zIndex: "2",
                           }}
                         >
-                          <TwoUserIcon />
-                        </span>
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRecordPermission(
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              ),
-                              "update",
-                              "No",
-                              app?.slug
-                            );
-                          }}
-                        >
-                          <CrossPeson />
-                        </span>
-                        {connections?.map((connection) => (
-                          <HFIconPicker
-                            name=""
-                            value={connection?.icon}
-                            control={roleForm.control}
-                            shape="rectangle"
-                            customeClick={true}
-                            clickItself={() => {
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleRecordPermission(
                                 recordPermissions?.find(
                                   (item) => item?.table_slug === app?.slug
                                 ),
                                 "update",
-                                connection?.name,
+                                "Yes",
                                 app?.slug
                               );
                             }}
-                            onChange={(e) => {
-                              roleForm.setValue("icon", e);
-                              setConnections({
-                                ...connections,
-                                icon: e,
-                              });
+                          >
+                            <TwoUserIcon />
+                          </span>
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRecordPermission(
+                                recordPermissions?.find(
+                                  (item) => item?.table_slug === app?.slug
+                                ),
+                                "update",
+                                "No",
+                                app?.slug
+                              );
                             }}
-                          />
-                        ))}
-                      </div>
+                          >
+                            <CrossPeson />
+                          </span>
+                          {connections?.map((connection) => (
+                            <HFIconPicker
+                              name=""
+                              value={connection?.icon}
+                              control={roleForm.control}
+                              customeClick={true}
+                              clickItself={() => {
+                                handleRecordPermission(
+                                  recordPermissions?.find(
+                                    (item) => item?.table_slug === app?.slug
+                                  ),
+                                  "update",
+                                  connection?.name,
+                                  app?.slug
+                                );
+                              }}
+                              shape="rectangle"
+                              onChange={(e) => {
+                                roleForm.setValue("icon", e);
+                                setConnections({
+                                  ...connections,
+                                  icon: e,
+                                });
+                              }}
+                            />
+                          ))}
+                        </div>
+                        {isCustomVisible && (
+                          <div
+                            style={{
+                              backgroundColor: "white",
+                              border: "1px solid #eee",
+                              padding: "12px 16px",
+                              borderRadius: "6px",
+                              position: "absolute",
+                              top: "120px",
+                              left: "60px",
+                              zIndex: "2",
+                              minWidth: "400px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                // alignItems: "center",
+                                gap: "8px",
+                                borderBottom: "1px solid #ccc",
+                                paddingBottom: "10px",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <div style={{ display: "flex" }}>
+                                <FRow
+                                  style={{ marginBottom: 0 }}
+                                  label="Поля объекта:"
+                                />
+                                <FRow
+                                  style={{ marginBottom: 0 }}
+                                  label="Пользовательские поля:
+"
+                                />
+                              </div>
+
+                              {automaticFilters?.map((auto) => (
+                                <div style={{ display: "flex", gap: "8px" }}>
+                                  <HFTextField
+                                    name=""
+                                    value={auto?.object_field}
+                                    // disabled={isEdit !== item?.guid}
+                                    disabled={true}
+                                    control={autoFilterForm.control}
+                                    fullWidth
+                                  />
+                                  <HFTextField
+                                    name=""
+                                    value={auto?.custom_field}
+                                    // disabled={isEdit !== item?.guid}
+                                    disabled={true}
+                                    control={autoFilterForm.control}
+                                    fullWidth
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                            {creatingAutoFilter && (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                  paddingBottom: "8px",
+                                }}
+                              >
+                                {/* <FRow label="Поля объекта"> */}
+                                <HFSelect
+                                  options={computedRelations}
+                                  control={autoFilterForm.control}
+                                  // onChange={(e) => {
+                                  //   console.log("e", e);
+                                  // }}
+                                  // value={auto?.object_field}
+                                  name="object_field"
+                                  required
+                                />
+                                {/* </FRow> */}
+                                {/* <FRow label="Пользовательские поля"> */}
+                                <HFSelect
+                                  options={computedCustomFields}
+                                  control={autoFilterForm.control}
+                                  // onChange={(e) => {
+                                  //   getFields({ table_id: e })
+                                  //   connectionForm.setValue("table_slug", e)
+                                  // }}
+                                  // value={auto?.custom_field}
+                                  name="custom_field"
+                                  required
+                                />
+                                {/* </FRow> */}
+                              </div>
+                            )}
+                            <div style={{ display: "flex", gap: "8px" }}>
+                              {creatingAutoFilter ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setCreatingAutoFilter(false);
+                                      autoFilterForm.reset("object_field", "");
+                                      autoFilterForm.reset("custom_field", "");
+                                    }}
+                                    style={{
+                                      flexGrow: 1,
+                                      cursor: "pointer",
+                                      padding: "8px",
+                                      border: "1px solid #e0e0e0",
+                                      backgroundColor: "inherit",
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      // setCreatingAutoFilter(
+                                      //   !creatingAutoFilter
+                                      // );
+                                      console.log("create");
+                                      handleAutoFilter();
+                                    }}
+                                    style={{
+                                      flexGrow: 1,
+                                      cursor: "pointer",
+                                      padding: "8px",
+                                      border: "1px solid #e0e0e0",
+                                      backgroundColor: "#0067F4",
+                                      color: "white",
+                                    }}
+                                  >
+                                    Create
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setCreatingAutoFilter(true);
+                                  }}
+                                  style={{
+                                    flexGrow: 1,
+                                    cursor: "pointer",
+                                    padding: "8px",
+                                    border: "1px solid #e0e0e0",
+                                    backgroundColor: "inherit",
+                                  }}
+                                >
+                                  Добавить новое условия
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : null}
                   </CTableCell>
                   <CTableCell
@@ -716,79 +1288,235 @@ const MatrixRolePage = () => {
                       />
                     )}
                     {tableSlug === app?.slug + "delete" ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          backgroundColor: "white",
-                          border: "1px solid #eee",
-                          padding: "12px 16px",
-                          borderRadius: "6px",
-                          position: "absolute",
-                          top: "40px",
-                          left: "30px",
-                          zIndex: "2",
-                        }}
-                      >
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRecordPermission(
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              ),
-                              "delete",
-                              "Yes",
-                              app?.slug
-                            );
+                      <>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            backgroundColor: "white",
+                            border: "1px solid #eee",
+                            padding: "12px 16px",
+                            borderRadius: "6px",
+                            position: "absolute",
+                            top: "40px",
+                            left: "30px",
+                            zIndex: "2",
                           }}
                         >
-                          <TwoUserIcon />
-                        </span>
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRecordPermission(
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              ),
-                              "delete",
-                              "No",
-                              app?.slug
-                            );
-                          }}
-                        >
-                          <CrossPeson />
-                        </span>
-                        {connections?.map((connection) => (
-                          <HFIconPicker
-                            disabledHelperText
-                            name=""
-                            value={connection?.icon}
-                            control={roleForm.control}
-                            shape="rectangle"
-                            customeClick={true}
-                            clickItself={() => {
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleRecordPermission(
                                 recordPermissions?.find(
                                   (item) => item?.table_slug === app?.slug
                                 ),
                                 "delete",
-                                connection?.name,
+                                "Yes",
                                 app?.slug
                               );
                             }}
-                            onChange={(e) => {
-                              roleForm.setValue("icon", e);
-                              setConnections({
-                                ...connections,
-                                icon: e,
-                              });
+                          >
+                            <TwoUserIcon />
+                          </span>
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRecordPermission(
+                                recordPermissions?.find(
+                                  (item) => item?.table_slug === app?.slug
+                                ),
+                                "delete",
+                                "No",
+                                app?.slug
+                              );
                             }}
-                          />
-                        ))}
-                      </div>
+                          >
+                            <CrossPeson />
+                          </span>
+                          {connections?.map((connection) => (
+                            <HFIconPicker
+                              name=""
+                              value={connection?.icon}
+                              control={roleForm.control}
+                              customeClick={true}
+                              clickItself={() => {
+                                handleRecordPermission(
+                                  recordPermissions?.find(
+                                    (item) => item?.table_slug === app?.slug
+                                  ),
+                                  "delete",
+                                  connection?.name,
+                                  app?.slug
+                                );
+                              }}
+                              shape="rectangle"
+                              onChange={(e) => {
+                                roleForm.setValue("icon", e);
+                                setConnections({
+                                  ...connections,
+                                  icon: e,
+                                });
+                              }}
+                            />
+                          ))}
+                        </div>
+                        {isCustomVisible && (
+                          <div
+                            style={{
+                              backgroundColor: "white",
+                              border: "1px solid #eee",
+                              padding: "12px 16px",
+                              borderRadius: "6px",
+                              position: "absolute",
+                              top: "120px",
+                              left: "60px",
+                              zIndex: "2",
+                              minWidth: "400px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                // alignItems: "center",
+                                gap: "8px",
+                                borderBottom: "1px solid #ccc",
+                                paddingBottom: "10px",
+                                marginBottom: "10px",
+                              }}
+                            >
+                              <div style={{ display: "flex" }}>
+                                <FRow
+                                  style={{ marginBottom: 0 }}
+                                  label="Поля объекта:"
+                                />
+                                <FRow
+                                  style={{ marginBottom: 0 }}
+                                  label="Пользовательские поля:
+"
+                                />
+                              </div>
+
+                              {automaticFilters?.map((auto) => (
+                                <div style={{ display: "flex", gap: "8px" }}>
+                                  <HFTextField
+                                    name=""
+                                    value={auto?.object_field}
+                                    // disabled={isEdit !== item?.guid}
+                                    disabled={true}
+                                    control={autoFilterForm.control}
+                                    fullWidth
+                                  />
+                                  <HFTextField
+                                    name=""
+                                    value={auto?.custom_field}
+                                    // disabled={isEdit !== item?.guid}
+                                    disabled={true}
+                                    control={autoFilterForm.control}
+                                    fullWidth
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                            {creatingAutoFilter && (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                  paddingBottom: "8px",
+                                }}
+                              >
+                                {/* <FRow label="Поля объекта"> */}
+                                <HFSelect
+                                  options={computedRelations}
+                                  control={autoFilterForm.control}
+                                  // onChange={(e) => {
+                                  //   console.log("e", e);
+                                  // }}
+                                  // value={auto?.object_field}
+                                  name="object_field"
+                                  required
+                                />
+                                {/* </FRow> */}
+                                {/* <FRow label="Пользовательские поля"> */}
+                                <HFSelect
+                                  options={computedCustomFields}
+                                  control={autoFilterForm.control}
+                                  // onChange={(e) => {
+                                  //   getFields({ table_id: e })
+                                  //   connectionForm.setValue("table_slug", e)
+                                  // }}
+                                  // value={auto?.custom_field}
+                                  name="custom_field"
+                                  required
+                                />
+                                {/* </FRow> */}
+                              </div>
+                            )}
+                            <div style={{ display: "flex", gap: "8px" }}>
+                              {creatingAutoFilter ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setCreatingAutoFilter(false);
+                                      autoFilterForm.reset("object_field", "");
+                                      autoFilterForm.reset("custom_field", "");
+                                    }}
+                                    style={{
+                                      flexGrow: 1,
+                                      cursor: "pointer",
+                                      padding: "8px",
+                                      border: "1px solid #e0e0e0",
+                                      backgroundColor: "inherit",
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      // setCreatingAutoFilter(
+                                      //   !creatingAutoFilter
+                                      // );
+                                      console.log("create");
+                                      handleAutoFilter();
+                                    }}
+                                    style={{
+                                      flexGrow: 1,
+                                      cursor: "pointer",
+                                      padding: "8px",
+                                      border: "1px solid #e0e0e0",
+                                      backgroundColor: "#0067F4",
+                                      color: "white",
+                                    }}
+                                  >
+                                    Create
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setCreatingAutoFilter(true);
+                                  }}
+                                  style={{
+                                    flexGrow: 1,
+                                    cursor: "pointer",
+                                    padding: "8px",
+                                    border: "1px solid #e0e0e0",
+                                    backgroundColor: "inherit",
+                                  }}
+                                >
+                                  Добавить новое условия
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : null}
                   </CTableCell>
                 </CTableRow>

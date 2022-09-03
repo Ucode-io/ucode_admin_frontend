@@ -1,9 +1,14 @@
 import FRow from "../../../../../../components/FormElements/FRow"
 import HFSwitch from "../../../../../../components/FormElements/HFSwitch"
 import SelectOptionsCreator from "../../../../../../components/SelectOptionsCreator"
+import styles from "./style.module.scss"
 
 const PickListAttributes = ({ control, onClose, onSaveButtonClick }) => {
   return (
+    <>
+      <div className={styles.settingsBlockHeader}>
+        <h2>Settings</h2>
+      </div>
     <div className="p-2">
       <HFSwitch control={control} name="attributes.has_icon" label="Icon" />
 
@@ -19,6 +24,7 @@ const PickListAttributes = ({ control, onClose, onSaveButtonClick }) => {
         <SelectOptionsCreator control={control} name="attributes.options" />
       </FRow>
     </div>
+    </>
   )
 }
 

@@ -234,13 +234,13 @@ const RelationSettings = ({
         })),
 
       // compute summaries
-      summaries: [
-        ...values.summaries,
-        {
-          field_name: values.field_name,
-          formula_name: values.formula_name,
-        },
-      ],
+      // summaries: [
+      //   ...values.summaries,
+      //   {
+      //     field_name: values.field_name,
+      //     formula_name: values.formula_name,
+      //   },
+      // ],
     }
 
     delete data?.field_name

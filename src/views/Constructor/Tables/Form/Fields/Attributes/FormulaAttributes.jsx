@@ -5,7 +5,7 @@ import FRow from "../../../../../../components/FormElements/FRow"
 import HFSelect from "../../../../../../components/FormElements/HFSelect"
 import constructorFieldService from "../../../../../../services/constructorFieldService"
 import listToOptions from "../../../../../../utils/listToOptions"
-import styles from "../style.module.scss"
+import styles from "./style.module.scss"
 
 const formulaTypes = [{ label: "Сумма", value: "SUMM" }]
 

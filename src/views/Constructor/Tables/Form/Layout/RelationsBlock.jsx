@@ -31,15 +31,19 @@ const RelationsBlock = ({
   })
 
   const computedViewRelations = useMemo(() => {
-    return viewRelations?.map(({relation_id}) => relationsMap[relation_id])
+    console.log("COMPUTED VIEW 1111===>", viewRelations, relationsMap)
+
+    return viewRelations?.map(({relation_id}) => relationsMap[relation_id])?.filter(el => el)
   }, [ viewRelations, relationsMap ])
+
+  console.log("COMPUTED VIEW ===>", computedViewRelations)
 
   const onDrop = (dropResult) => {
     const result = applyDrag(computedViewRelations, dropResult)
     if (result)
-      if (result.length > viewRelations?.length) {
-        const relation = dropResult.payload
-        viewRelationsFieldArray.insert(dropResult?.addedIndex, {relation_id: relation.id})
+      if (result.length > computedViewRelations?.length) {
+        viewRelationsFieldArray.insert(dropResult?.addedIndex, {relation_id: dropResult.payload?.id})
+        debugger
       } else {
         viewRelationsFieldArray.move(
           dropResult.removedIndex,

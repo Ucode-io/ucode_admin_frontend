@@ -78,12 +78,14 @@ const FieldsBlock = ({
     return relations?.filter((relation) => !usedFields.includes(relation.id))
   }, [relations, usedFields])
 
+
+
   const onDrop = (dropResult, colNumber) => {
     const result = applyDrag(fields, dropResult)
     if (!result) return
   }
 
-  console.log("unusedRelations===>", unusedRelations, relations)
+  console.log("unusedRelations===>", unusedTableRelations, relations)
 
   return (
     <div className={styles.settingsBlock}>
@@ -165,9 +167,7 @@ const FieldsBlock = ({
                 groupName="table_relation"
                 onDrop={onDrop}
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
-                getChildPayload={(i) => ({
-                  ...unusedTableRelations[i],
-                })}
+                getChildPayload={(i) => unusedTableRelations[i]}
               >
                 {unusedTableRelations?.map((relation) => (
                   <Draggable

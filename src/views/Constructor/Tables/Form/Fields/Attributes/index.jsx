@@ -3,6 +3,7 @@ import CheckboxAttributes from "./CheckboxAttributes"
 import DateAttributes from "./DateAttributes"
 import FormulaAttributes from "./FormulaAttributes"
 import FrontendFormulaAttributes from "./FrontendFormulaAttributes"
+import IncrementIDAttributes from "./IncrementIDAttributes"
 import MultiLineAttributes from "./MultiLineAttributes"
 import NumberAttributes from "./NumberAttributes"
 import PickListAttributes from "./PickListAttributes"
@@ -67,6 +68,11 @@ const Attributes = ({ control, watch, mainForm }) => {
     case "FORMULA":
       return (
         <FormulaAttributes control={control} mainForm={mainForm} />
+      )
+
+    case "INCREMENT_ID":
+      return (
+        <IncrementIDAttributes control={control} />
       )
 
     default:

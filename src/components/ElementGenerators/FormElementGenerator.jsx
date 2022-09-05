@@ -259,6 +259,7 @@ const FormElementGenerator = ({
       )
 
     case "FORMULA":
+      case "INCREMENT_ID":
       return (
         <FRow label={field.label} required={field.required}>
           <HFTextField

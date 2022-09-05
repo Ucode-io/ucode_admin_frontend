@@ -144,6 +144,11 @@ export const fieldTypesOptions = [
     label: 'Other',
     options: [
       {
+        icon: "arrow-up-9-1.svg",
+        label: "Increment ID",
+        value: "INCREMENT_ID"
+      },
+      {
         icon: "phone.svg",
         label: "Phone",
         value: "PHONE"

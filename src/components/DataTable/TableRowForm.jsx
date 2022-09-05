@@ -27,7 +27,7 @@ const TableRowForm = ({
   const {tableSlug, id} = useParams()
 
   const [loader, setLoader] = useState()
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setValue: setFormValue } = useForm({
     defaultValues: row ?? {
       [`${tableSlug}_id`]: id
     }
@@ -80,7 +80,7 @@ const TableRowForm = ({
           }}
           
         >
-          <CellFormElementGenerator field={column} row={row} control={control} />
+          <CellFormElementGenerator fields={columns} field={column} row={row} control={control} setFormValue={setFormValue} />
         </CTableCell>
       ))}
       <CTableCell style={{ padding: "8px 12px 4px", verticalAlign: "middle" }}>

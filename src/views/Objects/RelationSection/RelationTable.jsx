@@ -47,19 +47,33 @@ const RelationTable = ({
     }
   }, [relation, tableSlug])
 
+
+  const computedFilters = useMemo(() => {
+    const relationFilter = {}
+
+    if(relation.type === "Many2Many") relationFilter[`${tableSlug}_ids`] = id
+    else relationFilter[`${tableSlug}_id`] = id
+
+    return {
+      ...filters,
+      ...relationFilter
+    }
+
+  }, [ filters, tableSlug, id, relation.type ])
+
   const relatedTableSlug = computedRelation?.relatedTable?.slug
 
   const { data: { tableData = [], pageCount = 1, columns = [], quickFilters = [] } = {}, isLoading: dataFetchingLoading } = useQuery(
     [
       "GET_OBJECT_LIST",
       relatedTableSlug,
-      { filters, offset: pageToOffset(currentPage, limit), limit },
+      { filters: computedFilters, offset: pageToOffset(currentPage, limit), limit },
     ],
     () => {
       return constructorObjectService.getList(relatedTableSlug, { data:  {
         offset: pageToOffset(currentPage, limit),
         limit,
-        ...filters,
+        ...computedFilters,
       } })
     },
     {

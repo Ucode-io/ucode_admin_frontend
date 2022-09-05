@@ -3,6 +3,7 @@ import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
+import HFFormulaField from "../FormElements/HFFormulaField"
 import HFIconPicker from "../FormElements/HFIconPicker"
 import HFSwitch from "../FormElements/HFSwitch"
 import HFTextField from "../FormElements/HFTextField"
@@ -12,7 +13,7 @@ import CellElementGenerator from "./CellElementGenerator"
 import CellRelationFormElement from "./CellRelationFormElement"
 
 
-const CellFormElementGenerator = ({ field, row, control, setFormValue, ...props }) => {
+const CellFormElementGenerator = ({ field, fields, row, control, setFormValue, ...props }) => {
 
   const computedSlug = useMemo(() => {
     return field.slug
@@ -64,6 +65,19 @@ const CellFormElementGenerator = ({ field, row, control, setFormValue, ...props 
             {...props}
           />
       )
+
+      case "FORMULA_FRONTEND":
+        return (
+            <HFFormulaField
+              setFormValue={setFormValue}
+              control={control}
+              required={field.required}
+              placeholder={field.attributes?.placeholder}
+              name={computedSlug}
+              fieldsList={fields}
+              field={field}
+            />
+        )
 
     // case "MULTI_LINE":
     //   return (

@@ -17,6 +17,7 @@ const HFFormulaField = ({ control, name, rules={}, setFormValue, required, disab
     () => {
       let computedFormula = formula
 
+      console.log('asdasd')
       fieldsList?.forEach((field) => {
         computedFormula = computedFormula.replaceAll(
           field.slug,

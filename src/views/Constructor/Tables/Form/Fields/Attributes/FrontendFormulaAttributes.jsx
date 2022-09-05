@@ -4,6 +4,7 @@ import FRow from "../../../../../../components/FormElements/FRow"
 import HFTextField from "../../../../../../components/FormElements/HFTextField"
 import styles from "./style.module.scss"
 
+
 const FrontendFormulaAttributes = ({ control, mainForm }) => {
 
   const fieldsList = useMemo(() => {
@@ -33,7 +34,7 @@ const FrontendFormulaAttributes = ({ control, mainForm }) => {
 
         {
           fieldsList.map(field => (
-            <div>{field.label} - {field.slug} </div>
+            <div>{field.label} - <strong>{field.slug}</strong> </div>
           ))
         }
 

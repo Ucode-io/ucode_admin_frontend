@@ -76,21 +76,23 @@ const AutoCompleteElement = ({
   isMultiSelect
 }) => {
   const computedValue = useMemo(() => {
-    if(!Array.isArray(value)) return []
+    if(!Array.isArray(value) || !value?.length) return []
 
     if(isMultiSelect) return value?.map((el) => options?.find((option) => option.value === el)) ?? []
     else return [options?.find(option => option.value === value[0])] ?? []
 
   }, [value, options, isMultiSelect])
 
-  const changeHandler = (e, values) => {
-    console.log('bbbb ===>', values[values?.length - 1])
+  console.log("computedValue ===>", computedValue, value)
 
+  const changeHandler = (e, values) => {
+    if(!values?.length) {
+      onFormChange([])
+      return
+    }
     if(isMultiSelect) onFormChange(values?.map((el) => el.value))
     else onFormChange([values[values?.length - 1]?.value] ?? [])
   }
-
-  console.log("COMPUTED VALUE ==>", computedValue, value)
 
   return (
     <FormControl style={{ width }}>
@@ -100,14 +102,14 @@ const AutoCompleteElement = ({
         value={computedValue}
         options={options}
         getOptionLabel={(option) => option?.value}
-        isOptionEqualToValue={(option, value) => option?.value === value.value}
+        isOptionEqualToValue={(option, value) => option?.value === value?.value}
         onChange={changeHandler}
         renderInput={(params) => <TextField {...params} size="small" />}
         renderTags={(values, getTagProps) => (
           <div className={styles.valuesWrapper}>
             {values?.map((el, index) => (
               <div
-                key={el.value}
+                key={el?.value}
                 className={styles.multipleAutocompleteTags}
                 style={
                   hasColor

@@ -23,12 +23,12 @@ const DataCard = ({
   const [info, setInfo] = useState(data)
   const [anchorEl, setAnchorEl] = useState(null)
   const ref = useRef()
-  const [target, setTarget] = useState()
   const { tableSlug } = useParams()
   const { timeList } = useTimeList(view.time_interval)
+  const [target, setTarget] = useState()
   const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40)
-
-  const [frame, setFrame] = useState({
+  
+  const [frame] = useState({
     translate: [0, info.calendar?.startPosition ?? 0],
   })
 

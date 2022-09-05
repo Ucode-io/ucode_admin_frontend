@@ -44,8 +44,6 @@ const DataCard = ({
     const beginIndex = Math.floor((position.translate[1] + 2) / 40)
     const endIndex = Math.ceil((position.translate[1] + height) / 40)
     
-    // debugger
-
     const startTime = computeTime(beginIndex)
     const endTime = computeTime(endIndex)
 

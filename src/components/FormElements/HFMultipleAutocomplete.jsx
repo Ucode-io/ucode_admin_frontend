@@ -83,8 +83,6 @@ const AutoCompleteElement = ({
 
   }, [value, options, isMultiSelect])
 
-  console.log("computedValue ===>", computedValue, value)
-
   const changeHandler = (e, values) => {
     if(!values?.length) {
       onFormChange([])

@@ -72,8 +72,6 @@ const FieldsBlock = ({
     )
   }, [tableRelations, viewRelations])
 
-  // debugger
-
   const unusedRelations = useMemo(() => {
     return relations?.filter((relation) => !usedFields.includes(relation.id))
   }, [relations, usedFields])

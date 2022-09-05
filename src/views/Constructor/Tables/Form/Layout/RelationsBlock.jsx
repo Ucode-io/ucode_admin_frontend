@@ -43,7 +43,6 @@ const RelationsBlock = ({
     if (result)
       if (result.length > computedViewRelations?.length) {
         viewRelationsFieldArray.insert(dropResult?.addedIndex, {relation_id: dropResult.payload?.id})
-        debugger
       } else {
         viewRelationsFieldArray.move(
           dropResult.removedIndex,

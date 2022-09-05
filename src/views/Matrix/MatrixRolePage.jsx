@@ -1,11 +1,14 @@
+import { Cancel, Delete } from "@mui/icons-material";
 import { useState } from "react";
 import { useMemo } from "react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import {
+  CheckIcon,
   ChevronDownIcon,
   CrossPeson,
+  EditIcon,
   TwoUserIcon,
 } from "../../assets/icons/icon";
 import {
@@ -47,7 +50,9 @@ const MatrixRolePage = () => {
   const [isCustomVisible, setIsCustomVisible] = useState(false);
   const [relations, setRelations] = useState([]);
   const [automaticFilters, setAutomaticFilters] = useState([]);
+  const [autoFilter, setAutoFilter] = useState({});
   const [creatingAutoFilter, setCreatingAutoFilter] = useState(false);
+  const [editingAutoFilter, setEditingAutoFilter] = useState("");
 
   const roleForm = useForm({});
 
@@ -89,6 +94,7 @@ const MatrixRolePage = () => {
   };
 
   const handleRecordPermission = (record, type, value, tabSlug) => {
+    // autoFilterForm.reset('tabSlug', '')
     autoFilterForm.setValue("tabSlug", tabSlug);
     if (value === "Yes") {
       setIsCustomVisible(true);
@@ -158,23 +164,51 @@ const MatrixRolePage = () => {
 
   const handleAutoFilter = () => {
     const data = {
+      ...autoFilter,
       object_field: autoFilterForm.getValues("object_field"),
-      custom_field: autoFilterForm.getValues("custom_field"),
+      custom_field: autoFilterForm.getValues("custom_field") ? autoFilterForm.getValues("custom_field") : 'user_id',
       role_id: roleId,
       table_slug: autoFilterForm.getValues("tabSlug"),
     };
     // return console.log('ddddd', data)
-    constructorObjectService
-      .create("automatic_filter", {
-        data: {
-          ...data,
-        },
-      })
-      .then((res) => {
-        console.log("Autofilter", res);
-        setTableSlug(null);
-        setIsCustomVisible(false);
-      });
+    if (data?.guid) {
+      constructorObjectService
+        .update("automatic_filter", {
+          data: {
+            ...data,
+          },
+        })
+        .then((res) => {
+          setTableSlug(null);
+          setIsCustomVisible(false);
+          setCreatingAutoFilter(false);
+          autoFilterForm.reset();
+          setAutoFilter({});
+          setEditingAutoFilter("");
+        });
+    } else {
+      constructorObjectService
+        .create("automatic_filter", {
+          data: {
+            ...data,
+          },
+        })
+        .then((res) => {
+          setTableSlug(null);
+          setIsCustomVisible(false);
+          setCreatingAutoFilter(false);
+          autoFilterForm.reset();
+        });
+    }
+  };
+
+  const deleteAutoFilter = (id) => {
+    constructorObjectService.delete("automatic_filter", id).then((res) => {
+      setTableSlug(null);
+      setIsCustomVisible(false);
+      setCreatingAutoFilter(false);
+      autoFilterForm.reset();
+    });
   };
 
   const getRoleById = () => {
@@ -259,6 +293,8 @@ const MatrixRolePage = () => {
   useEffect(() => {
     setIsCustomVisible(false);
     setAutomaticFilters([]);
+    setCreatingAutoFilter(false);
+    autoFilterForm.reset();
   }, [tableSlug]);
 
   const computedCustomFields = useMemo(() => {
@@ -553,29 +589,151 @@ const MatrixRolePage = () => {
                                 />
                                 <FRow
                                   style={{ marginBottom: 0 }}
-                                  label="Пользовательские поля:
-"
+                                  label="Пользовательские поля:"
                                 />
                               </div>
-
                               {automaticFilters?.map((auto) => (
                                 <div style={{ display: "flex", gap: "8px" }}>
-                                  <HFTextField
-                                    name=""
-                                    value={auto?.object_field}
-                                    // disabled={isEdit !== item?.guid}
-                                    disabled={true}
-                                    control={autoFilterForm.control}
-                                    fullWidth
-                                  />
-                                  <HFTextField
-                                    name=""
-                                    value={auto?.custom_field}
-                                    // disabled={isEdit !== item?.guid}
-                                    disabled={true}
-                                    control={autoFilterForm.control}
-                                    fullWidth
-                                  />
+                                  {editingAutoFilter === auto?.guid ? (
+                                    <>
+                                      <HFSelect
+                                        options={computedRelations}
+                                        control={autoFilterForm.control}
+                                        name="object_field"
+                                        value={autoFilter?.object_field}
+                                        onChange={(e) => {
+                                          autoFilterForm.setValue(
+                                            "object_field",
+                                            e
+                                          );
+                                          setAutoFilter({
+                                            ...autoFilter,
+                                            object_field: e,
+                                          });
+                                        }}
+                                        required
+                                      />
+
+                                      <HFSelect
+                                        options={computedCustomFields}
+                                        control={autoFilterForm.control}
+                                        name="custom_field"
+                                        value={autoFilter?.custom_field}
+                                        onChange={(e) => {
+                                          autoFilterForm.setValue(
+                                            "custom_field",
+                                            e
+                                          );
+                                          setAutoFilter({
+                                            ...autoFilter,
+                                            custom_field: e,
+                                          });
+                                        }}
+                                        required
+                                      />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <HFTextField
+                                        name=""
+                                        value={auto?.object_field}
+                                        // disabled={isEdit !== item?.guid}
+                                        disabled={true}
+                                        control={autoFilterForm.control}
+                                        fullWidth
+                                      />
+                                      <HFTextField
+                                        name=""
+                                        value={auto?.custom_field}
+                                        // disabled={isEdit !== item?.guid}
+                                        disabled={true}
+                                        control={autoFilterForm.control}
+                                        fullWidth
+                                      />
+                                    </>
+                                  )}
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                    }}
+                                  >
+                                    {editingAutoFilter === auto?.guid ? (
+                                      <button
+                                        style={{
+                                          border: "1px solid #ccc",
+                                          padding: "0 8px",
+                                          borderRadius: "4px",
+                                          cursor: "pointer",
+                                          backgroundColor: "transparent",
+                                        }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("Done", autoFilter);
+                                          handleAutoFilter();
+                                          setEditingAutoFilter((prev) =>
+                                            prev === auto?.guid
+                                              ? null
+                                              : auto?.guid
+                                          );
+                                          // setAutoFilter(auto);
+                                        }}
+                                      >
+                                        <CheckIcon />
+                                      </button>
+                                    ) : (
+                                      <button
+                                        style={{
+                                          border: "1px solid #ccc",
+                                          padding: "0 8px",
+                                          borderRadius: "4px",
+                                          cursor: "pointer",
+                                          backgroundColor: "transparent",
+                                        }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("Edit");
+                                          setEditingAutoFilter((prev) =>
+                                            prev === auto?.guid
+                                              ? null
+                                              : auto?.guid
+                                          );
+                                          setAutoFilter(auto);
+                                          autoFilterForm.setValue(
+                                            "object_field",
+                                            auto?.object_field
+                                          );
+                                          autoFilterForm.setValue(
+                                            "custom_field",
+                                            auto?.custom_field
+                                          );
+                                        }}
+                                      >
+                                        <EditIcon />
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                    }}
+                                  >
+                                    <button
+                                      style={{
+                                        border: "1px solid #ccc",
+                                        padding: "0 8px",
+                                        borderRadius: "4px",
+                                        cursor: "pointer",
+                                        backgroundColor: "transparent",
+                                      }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log("Delete");
+                                        deleteAutoFilter(auto?.guid);
+                                      }}
+                                    >
+                                      <Delete sx={{ color: "#F76659" }} />
+                                    </button>
+                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -588,31 +746,19 @@ const MatrixRolePage = () => {
                                   paddingBottom: "8px",
                                 }}
                               >
-                                {/* <FRow label="Поля объекта"> */}
                                 <HFSelect
                                   options={computedRelations}
                                   control={autoFilterForm.control}
-                                  // onChange={(e) => {
-                                  //   console.log("e", e);
-                                  // }}
-                                  // value={auto?.object_field}
                                   name="object_field"
                                   required
                                 />
-                                {/* </FRow> */}
-                                {/* <FRow label="Пользовательские поля"> */}
+
                                 <HFSelect
                                   options={computedCustomFields}
                                   control={autoFilterForm.control}
-                                  // onChange={(e) => {
-                                  //   getFields({ table_id: e })
-                                  //   connectionForm.setValue("table_slug", e)
-                                  // }}
-                                  // value={auto?.custom_field}
                                   name="custom_field"
                                   required
                                 />
-                                {/* </FRow> */}
                               </div>
                             )}
                             <div style={{ display: "flex", gap: "8px" }}>
@@ -840,22 +986,146 @@ const MatrixRolePage = () => {
 
                               {automaticFilters?.map((auto) => (
                                 <div style={{ display: "flex", gap: "8px" }}>
-                                  <HFTextField
-                                    name=""
-                                    value={auto?.object_field}
-                                    // disabled={isEdit !== item?.guid}
-                                    disabled={true}
-                                    control={autoFilterForm.control}
-                                    fullWidth
-                                  />
-                                  <HFTextField
-                                    name=""
-                                    value={auto?.custom_field}
-                                    // disabled={isEdit !== item?.guid}
-                                    disabled={true}
-                                    control={autoFilterForm.control}
-                                    fullWidth
-                                  />
+                                  {editingAutoFilter === auto?.guid ? (
+                                    <>
+                                      <HFSelect
+                                        options={computedRelations}
+                                        control={autoFilterForm.control}
+                                        name="object_field"
+                                        value={autoFilter?.object_field}
+                                        onChange={(e) => {
+                                          autoFilterForm.setValue(
+                                            "object_field",
+                                            e
+                                          );
+                                          setAutoFilter({
+                                            ...autoFilter,
+                                            object_field: e,
+                                          });
+                                        }}
+                                        required
+                                      />
+
+                                      <HFSelect
+                                        options={computedCustomFields}
+                                        control={autoFilterForm.control}
+                                        name="custom_field"
+                                        value={autoFilter?.custom_field}
+                                        onChange={(e) => {
+                                          autoFilterForm.setValue(
+                                            "custom_field",
+                                            e
+                                          );
+                                          setAutoFilter({
+                                            ...autoFilter,
+                                            custom_field: e,
+                                          });
+                                        }}
+                                        required
+                                      />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <HFTextField
+                                        name=""
+                                        value={auto?.object_field}
+                                        // disabled={isEdit !== item?.guid}
+                                        disabled={true}
+                                        control={autoFilterForm.control}
+                                        fullWidth
+                                      />
+                                      <HFTextField
+                                        name=""
+                                        value={auto?.custom_field}
+                                        // disabled={isEdit !== item?.guid}
+                                        disabled={true}
+                                        control={autoFilterForm.control}
+                                        fullWidth
+                                      />
+                                    </>
+                                  )}
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                    }}
+                                  >
+                                    {editingAutoFilter === auto?.guid ? (
+                                      <button
+                                        style={{
+                                          border: "1px solid #ccc",
+                                          padding: "0 8px",
+                                          borderRadius: "4px",
+                                          cursor: "pointer",
+                                          backgroundColor: "transparent",
+                                        }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("Done", autoFilter);
+                                          handleAutoFilter();
+                                          setEditingAutoFilter((prev) =>
+                                            prev === auto?.guid
+                                              ? null
+                                              : auto?.guid
+                                          );
+                                          // setAutoFilter(auto);
+                                        }}
+                                      >
+                                        <CheckIcon />
+                                      </button>
+                                    ) : (
+                                      <button
+                                        style={{
+                                          border: "1px solid #ccc",
+                                          padding: "0 8px",
+                                          borderRadius: "4px",
+                                          cursor: "pointer",
+                                          backgroundColor: "transparent",
+                                        }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("Edit");
+                                          setEditingAutoFilter((prev) =>
+                                            prev === auto?.guid
+                                              ? null
+                                              : auto?.guid
+                                          );
+                                          setAutoFilter(auto);
+                                          autoFilterForm.setValue(
+                                            "object_field",
+                                            auto?.object_field
+                                          );
+                                          autoFilterForm.setValue(
+                                            "custom_field",
+                                            auto?.custom_field
+                                          );
+                                        }}
+                                      >
+                                        <EditIcon />
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                    }}
+                                  >
+                                    <button
+                                      style={{
+                                        border: "1px solid #ccc",
+                                        padding: "0 8px",
+                                        borderRadius: "4px",
+                                        cursor: "pointer",
+                                        backgroundColor: "transparent",
+                                      }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log("Delete");
+                                        deleteAutoFilter(auto?.guid);
+                                      }}
+                                    >
+                                      <Delete sx={{ color: "#F76659" }} />
+                                    </button>
+                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -1120,22 +1390,146 @@ const MatrixRolePage = () => {
 
                               {automaticFilters?.map((auto) => (
                                 <div style={{ display: "flex", gap: "8px" }}>
-                                  <HFTextField
-                                    name=""
-                                    value={auto?.object_field}
-                                    // disabled={isEdit !== item?.guid}
-                                    disabled={true}
-                                    control={autoFilterForm.control}
-                                    fullWidth
-                                  />
-                                  <HFTextField
-                                    name=""
-                                    value={auto?.custom_field}
-                                    // disabled={isEdit !== item?.guid}
-                                    disabled={true}
-                                    control={autoFilterForm.control}
-                                    fullWidth
-                                  />
+                                  {editingAutoFilter === auto?.guid ? (
+                                    <>
+                                      <HFSelect
+                                        options={computedRelations}
+                                        control={autoFilterForm.control}
+                                        name="object_field"
+                                        value={autoFilter?.object_field}
+                                        onChange={(e) => {
+                                          autoFilterForm.setValue(
+                                            "object_field",
+                                            e
+                                          );
+                                          setAutoFilter({
+                                            ...autoFilter,
+                                            object_field: e,
+                                          });
+                                        }}
+                                        required
+                                      />
+
+                                      <HFSelect
+                                        options={computedCustomFields}
+                                        control={autoFilterForm.control}
+                                        name="custom_field"
+                                        value={autoFilter?.custom_field}
+                                        onChange={(e) => {
+                                          autoFilterForm.setValue(
+                                            "custom_field",
+                                            e
+                                          );
+                                          setAutoFilter({
+                                            ...autoFilter,
+                                            custom_field: e,
+                                          });
+                                        }}
+                                        required
+                                      />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <HFTextField
+                                        name=""
+                                        value={auto?.object_field}
+                                        // disabled={isEdit !== item?.guid}
+                                        disabled={true}
+                                        control={autoFilterForm.control}
+                                        fullWidth
+                                      />
+                                      <HFTextField
+                                        name=""
+                                        value={auto?.custom_field}
+                                        // disabled={isEdit !== item?.guid}
+                                        disabled={true}
+                                        control={autoFilterForm.control}
+                                        fullWidth
+                                      />
+                                    </>
+                                  )}
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                    }}
+                                  >
+                                    {editingAutoFilter === auto?.guid ? (
+                                      <button
+                                        style={{
+                                          border: "1px solid #ccc",
+                                          padding: "0 8px",
+                                          borderRadius: "4px",
+                                          cursor: "pointer",
+                                          backgroundColor: "transparent",
+                                        }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("Done", autoFilter);
+                                          handleAutoFilter();
+                                          setEditingAutoFilter((prev) =>
+                                            prev === auto?.guid
+                                              ? null
+                                              : auto?.guid
+                                          );
+                                          // setAutoFilter(auto);
+                                        }}
+                                      >
+                                        <CheckIcon />
+                                      </button>
+                                    ) : (
+                                      <button
+                                        style={{
+                                          border: "1px solid #ccc",
+                                          padding: "0 8px",
+                                          borderRadius: "4px",
+                                          cursor: "pointer",
+                                          backgroundColor: "transparent",
+                                        }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("Edit");
+                                          setEditingAutoFilter((prev) =>
+                                            prev === auto?.guid
+                                              ? null
+                                              : auto?.guid
+                                          );
+                                          setAutoFilter(auto);
+                                          autoFilterForm.setValue(
+                                            "object_field",
+                                            auto?.object_field
+                                          );
+                                          autoFilterForm.setValue(
+                                            "custom_field",
+                                            auto?.custom_field
+                                          );
+                                        }}
+                                      >
+                                        <EditIcon />
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                    }}
+                                  >
+                                    <button
+                                      style={{
+                                        border: "1px solid #ccc",
+                                        padding: "0 8px",
+                                        borderRadius: "4px",
+                                        cursor: "pointer",
+                                        backgroundColor: "transparent",
+                                      }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log("Delete");
+                                        deleteAutoFilter(auto?.guid);
+                                      }}
+                                    >
+                                      <Delete sx={{ color: "#F76659" }} />
+                                    </button>
+                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -1400,22 +1794,146 @@ const MatrixRolePage = () => {
 
                               {automaticFilters?.map((auto) => (
                                 <div style={{ display: "flex", gap: "8px" }}>
-                                  <HFTextField
-                                    name=""
-                                    value={auto?.object_field}
-                                    // disabled={isEdit !== item?.guid}
-                                    disabled={true}
-                                    control={autoFilterForm.control}
-                                    fullWidth
-                                  />
-                                  <HFTextField
-                                    name=""
-                                    value={auto?.custom_field}
-                                    // disabled={isEdit !== item?.guid}
-                                    disabled={true}
-                                    control={autoFilterForm.control}
-                                    fullWidth
-                                  />
+                                  {editingAutoFilter === auto?.guid ? (
+                                    <>
+                                      <HFSelect
+                                        options={computedRelations}
+                                        control={autoFilterForm.control}
+                                        name="object_field"
+                                        value={autoFilter?.object_field}
+                                        onChange={(e) => {
+                                          autoFilterForm.setValue(
+                                            "object_field",
+                                            e
+                                          );
+                                          setAutoFilter({
+                                            ...autoFilter,
+                                            object_field: e,
+                                          });
+                                        }}
+                                        required
+                                      />
+
+                                      <HFSelect
+                                        options={computedCustomFields}
+                                        control={autoFilterForm.control}
+                                        name="custom_field"
+                                        value={autoFilter?.custom_field}
+                                        onChange={(e) => {
+                                          autoFilterForm.setValue(
+                                            "custom_field",
+                                            e
+                                          );
+                                          setAutoFilter({
+                                            ...autoFilter,
+                                            custom_field: e,
+                                          });
+                                        }}
+                                        required
+                                      />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <HFTextField
+                                        name=""
+                                        value={auto?.object_field}
+                                        // disabled={isEdit !== item?.guid}
+                                        disabled={true}
+                                        control={autoFilterForm.control}
+                                        fullWidth
+                                      />
+                                      <HFTextField
+                                        name=""
+                                        value={auto?.custom_field}
+                                        // disabled={isEdit !== item?.guid}
+                                        disabled={true}
+                                        control={autoFilterForm.control}
+                                        fullWidth
+                                      />
+                                    </>
+                                  )}
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                    }}
+                                  >
+                                    {editingAutoFilter === auto?.guid ? (
+                                      <button
+                                        style={{
+                                          border: "1px solid #ccc",
+                                          padding: "0 8px",
+                                          borderRadius: "4px",
+                                          cursor: "pointer",
+                                          backgroundColor: "transparent",
+                                        }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("Done", autoFilter);
+                                          handleAutoFilter();
+                                          setEditingAutoFilter((prev) =>
+                                            prev === auto?.guid
+                                              ? null
+                                              : auto?.guid
+                                          );
+                                          // setAutoFilter(auto);
+                                        }}
+                                      >
+                                        <CheckIcon />
+                                      </button>
+                                    ) : (
+                                      <button
+                                        style={{
+                                          border: "1px solid #ccc",
+                                          padding: "0 8px",
+                                          borderRadius: "4px",
+                                          cursor: "pointer",
+                                          backgroundColor: "transparent",
+                                        }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          console.log("Edit");
+                                          setEditingAutoFilter((prev) =>
+                                            prev === auto?.guid
+                                              ? null
+                                              : auto?.guid
+                                          );
+                                          setAutoFilter(auto);
+                                          autoFilterForm.setValue(
+                                            "object_field",
+                                            auto?.object_field
+                                          );
+                                          autoFilterForm.setValue(
+                                            "custom_field",
+                                            auto?.custom_field
+                                          );
+                                        }}
+                                      >
+                                        <EditIcon />
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                    }}
+                                  >
+                                    <button
+                                      style={{
+                                        border: "1px solid #ccc",
+                                        padding: "0 8px",
+                                        borderRadius: "4px",
+                                        cursor: "pointer",
+                                        backgroundColor: "transparent",
+                                      }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log("Delete");
+                                        deleteAutoFilter(auto?.guid);
+                                      }}
+                                    >
+                                      <Delete sx={{ color: "#F76659" }} />
+                                    </button>
+                                  </div>
                                 </div>
                               ))}
                             </div>

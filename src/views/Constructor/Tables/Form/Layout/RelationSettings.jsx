@@ -26,17 +26,9 @@ import constructorRelationService from "../../../../../services/constructorRelat
 import { applyDrag } from "../../../../../utils/applyDrag"
 import { relationTyes } from "../../../../../utils/constants/relationTypes"
 import styles from "./style.module.scss"
+import SummaryBlock from "./SummaryBlock"
 
-const options = [
-  {
-    value: "sum",
-    label: "Sum ()",
-  },
-  {
-    value: "average",
-    label: "Avg ()",
-  },
-]
+
 
 const relationViewTypes = [
   {
@@ -239,15 +231,6 @@ const RelationSettings = ({
           field_id: el.id,
           default_value: "",
         })),
-      
-      // compute summaries
-      // summaries: [
-      //   ...values.summaries,
-      //   {
-      //     field_name: values.field_name,
-      //     formula_name: values.formula_name,
-      //   },
-      // ],
     }
 
     delete data?.field_name
@@ -379,6 +362,8 @@ const RelationSettings = ({
             )}
 
           </div>
+          
+          <SummaryBlock control={control} computedFieldsListOptions={computedFieldsListOptions} />
 
           <div className={styles.settingsBlockHeader}>
             <h2>Columns</h2>

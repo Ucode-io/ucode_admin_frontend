@@ -9,7 +9,6 @@ const IncrementIDAttributes = ({ control }) => {
       <div className={styles.settingsBlockHeader}>
         <h2>Settings</h2>
       </div>
-
       <div className="p-2">
         <FRow label="Prefix">
           <HFTextField

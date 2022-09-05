@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Delete, Edit } from "@mui/icons-material"
 import FilterGenerator from "../../views/Objects/components/FilterGenerator"
-import RectangleIconButton from "../Buttons/RectangleIconButton"
 import {
   CTable,
   CTableBody,
@@ -10,8 +8,6 @@ import {
   CTableHeadCell,
   CTableRow,
 } from "../CTable"
-import DeleteWrapperModal from "../DeleteWrapperModal"
-import CellElementGenerator from "../ElementGenerators/CellElementGenerator"
 import { useDispatch, useSelector } from "react-redux"
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice"
 import { useLocation } from "react-router-dom"
@@ -19,11 +15,10 @@ import "./style.scss"
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon"
 import useOnClickOutside from "use-onclickoutside"
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2"
-import { Checkbox } from "@mui/material"
 import { numberWithSpaces } from "../../utils/formatNumbers"
 import TableRow from "./TableRow"
 import TableRowForm from "./TableRowForm"
-import TableRowButton from "../TableRowButton"
+import SummaryRow from "./SummaryRow"
 
 const ObjectDataTable = ({
   data = [],
@@ -41,7 +36,6 @@ const ObjectDataTable = ({
   onRowClick = () => {},
   filterChangeHandler = () => {},
   filters,
-  func = [],
   disableFilters,
   tableStyle,
   wrapperStyle,
@@ -53,8 +47,9 @@ const ObjectDataTable = ({
   onFormSubmit,
   createFormVisible,
   setCreateFormVisible,
-  limit, 
-  onLimitChange
+  limit,
+  onLimitChange,
+  summaries
 }) => {
   const location = useLocation()
   const tableSize = useSelector((state) => state.tableSize.tableSize)
@@ -326,7 +321,11 @@ const ObjectDataTable = ({
             
           />
         ))}
-        {func?.length ? (
+
+       {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
+
+
+        {/* {func?.length ? (
           <CTableRow className="amountRow" >
             <CTableCell>Итог</CTableCell>
             {columns?.map((col) => (
@@ -341,7 +340,7 @@ const ObjectDataTable = ({
               </CTableCell>
             ))}
           </CTableRow>
-        ) : null}
+        ) : null} */}
 
         {additionalRow}
 

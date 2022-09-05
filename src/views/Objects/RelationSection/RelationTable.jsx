@@ -152,6 +152,8 @@ const RelationTable = ({
     return mutateAsync(values)
   }
 
+  console.log("SUMMARY ==>", relation)
+
   return (
     <div className={styles.relationTable}>
       <div className={styles.filtersBlock}>
@@ -188,6 +190,7 @@ const RelationTable = ({
           setCreateFormVisible={(val) => setCreateFormVisible(relation.id, val)}
           limit={limit}
           onLimitChange={setLimit}
+          summaries={relation.summaries}
         />
       </div>
     </div>

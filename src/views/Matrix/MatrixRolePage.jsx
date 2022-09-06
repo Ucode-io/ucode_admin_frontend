@@ -1,9 +1,7 @@
-import { Cancel, Delete } from "@mui/icons-material";
-import { useState } from "react";
-import { useMemo } from "react";
-import { useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
+import { Delete } from "@mui/icons-material";
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -21,7 +19,6 @@ import {
 } from "../../components/CTable";
 import FormCard from "../../components/FormCard";
 import FRow from "../../components/FormElements/FRow";
-import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFSelect from "../../components/FormElements/HFSelect";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
@@ -88,13 +85,11 @@ const MatrixRolePage = () => {
         },
       })
       .then((res) => {
-        console.log("automatic_filter", res?.data);
         setAutomaticFilters(res?.data?.response);
       });
   };
 
   const handleRecordPermission = (record, type, value, tabSlug) => {
-    // autoFilterForm.reset('tabSlug', '')
     autoFilterForm.setValue("tabSlug", tabSlug);
     if (value === "Yes") {
       setIsCustomVisible(true);
@@ -121,17 +116,10 @@ const MatrixRolePage = () => {
         .then((res) => {
           setTableSlug((prev) => (value === "Yes" ? prev : null));
           if (value === "Yes") {
-            console.log("11");
             getAutomaticFilters(tabSlug);
             constructorRelationService
               .getList({ table_slug: tabSlug })
               .then((res) => {
-                console.log(
-                  "res",
-                  res?.relations
-                    ?.filter((rel) => rel?.table_from?.slug === tabSlug)
-                    ?.map((el) => el?.table_to)
-                );
                 setRelations(
                   res?.relations
                     ?.filter((rel) => rel?.table_from?.slug === tabSlug)
@@ -166,7 +154,9 @@ const MatrixRolePage = () => {
     const data = {
       ...autoFilter,
       object_field: autoFilterForm.getValues("object_field"),
-      custom_field: autoFilterForm.getValues("custom_field") ? autoFilterForm.getValues("custom_field") : 'user_id',
+      custom_field: autoFilterForm.getValues("custom_field")
+        ? autoFilterForm.getValues("custom_field")
+        : "user_id",
       role_id: roleId,
       table_slug: autoFilterForm.getValues("tabSlug"),
     };
@@ -237,7 +227,6 @@ const MatrixRolePage = () => {
 
   const getAppChildren = (id) => {
     if (id === "settings") {
-      console.log("settings");
       const result = [];
       apps?.forEach((element) => {
         if (element?.id !== id) {
@@ -275,7 +264,6 @@ const MatrixRolePage = () => {
     constructorObjectService
       .getList("connections", { data: { client_type_id: typeId } })
       .then((res) => {
-        console.log("222", res);
         setConnections(res?.data?.response || []);
       })
       .catch((err) => {
@@ -446,7 +434,6 @@ const MatrixRolePage = () => {
                           ? app.slug + "read"
                           : ""
                       );
-                      console.log("Read");
                     }}
                     style={{ position: "relative" }}
                   >
@@ -456,32 +443,8 @@ const MatrixRolePage = () => {
                         (item) => item?.table_slug === app?.slug
                       )?.read === "Yes" ? (
                       <TwoUserIcon />
-                    ) : recordPermissions?.find(
-                        (item) => item?.table_slug === app?.slug
-                      )?.read === "No" ? (
-                      <CrossPeson />
                     ) : (
-                      <HFIconPicker
-                        name=""
-                        value={
-                          connections?.filter(
-                            (connection) =>
-                              connection?.name ===
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              )?.read
-                          )[0]?.icon
-                        }
-                        control={roleForm.control}
-                        shape="rectangle"
-                        onChange={(e) => {
-                          roleForm.setValue("icon", e);
-                          setConnections({
-                            ...connections,
-                            icon: e,
-                          });
-                        }}
-                      />
+                      <CrossPeson />
                     )}
                     {tableSlug === app?.slug + "read" ? (
                       <>
@@ -530,32 +493,6 @@ const MatrixRolePage = () => {
                           >
                             <CrossPeson />
                           </span>
-                          {connections?.map((connection) => (
-                            <HFIconPicker
-                              name=""
-                              value={connection?.icon}
-                              control={roleForm.control}
-                              customeClick={true}
-                              clickItself={() => {
-                                handleRecordPermission(
-                                  recordPermissions?.find(
-                                    (item) => item?.table_slug === app?.slug
-                                  ),
-                                  "read",
-                                  connection?.name,
-                                  app?.slug
-                                );
-                              }}
-                              shape="rectangle"
-                              onChange={(e) => {
-                                roleForm.setValue("icon", e);
-                                setConnections({
-                                  ...connections,
-                                  icon: e,
-                                });
-                              }}
-                            />
-                          ))}
                         </div>
                         {isCustomVisible && (
                           <div
@@ -565,7 +502,7 @@ const MatrixRolePage = () => {
                               padding: "12px 16px",
                               borderRadius: "6px",
                               position: "absolute",
-                              top: "120px",
+                              top: "110px",
                               left: "60px",
                               zIndex: "2",
                               minWidth: "400px",
@@ -575,7 +512,6 @@ const MatrixRolePage = () => {
                               style={{
                                 display: "flex",
                                 flexDirection: "column",
-                                // alignItems: "center",
                                 gap: "8px",
                                 borderBottom: "1px solid #ccc",
                                 paddingBottom: "10px",
@@ -637,7 +573,6 @@ const MatrixRolePage = () => {
                                       <HFTextField
                                         name=""
                                         value={auto?.object_field}
-                                        // disabled={isEdit !== item?.guid}
                                         disabled={true}
                                         control={autoFilterForm.control}
                                         fullWidth
@@ -645,7 +580,6 @@ const MatrixRolePage = () => {
                                       <HFTextField
                                         name=""
                                         value={auto?.custom_field}
-                                        // disabled={isEdit !== item?.guid}
                                         disabled={true}
                                         control={autoFilterForm.control}
                                         fullWidth
@@ -668,14 +602,12 @@ const MatrixRolePage = () => {
                                         }}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          console.log("Done", autoFilter);
                                           handleAutoFilter();
                                           setEditingAutoFilter((prev) =>
                                             prev === auto?.guid
                                               ? null
                                               : auto?.guid
                                           );
-                                          // setAutoFilter(auto);
                                         }}
                                       >
                                         <CheckIcon />
@@ -691,7 +623,6 @@ const MatrixRolePage = () => {
                                         }}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          console.log("Edit");
                                           setEditingAutoFilter((prev) =>
                                             prev === auto?.guid
                                               ? null
@@ -727,7 +658,6 @@ const MatrixRolePage = () => {
                                       }}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        console.log("Delete");
                                         deleteAutoFilter(auto?.guid);
                                       }}
                                     >
@@ -784,10 +714,6 @@ const MatrixRolePage = () => {
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      // setCreatingAutoFilter(
-                                      //   !creatingAutoFilter
-                                      // );
-                                      console.log("create");
                                       handleAutoFilter();
                                     }}
                                     style={{
@@ -836,7 +762,6 @@ const MatrixRolePage = () => {
                           ? app.slug + "write"
                           : ""
                       );
-                      console.log("Write");
                     }}
                     style={{ position: "relative" }}
                   >
@@ -846,32 +771,8 @@ const MatrixRolePage = () => {
                         (item) => item?.table_slug === app?.slug
                       )?.write === "Yes" ? (
                       <TwoUserIcon />
-                    ) : recordPermissions?.find(
-                        (item) => item?.table_slug === app?.slug
-                      )?.write === "No" ? (
-                      <CrossPeson />
                     ) : (
-                      <HFIconPicker
-                        name=""
-                        value={
-                          connections?.filter(
-                            (connection) =>
-                              connection?.name ===
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              )?.write
-                          )[0]?.icon
-                        }
-                        control={roleForm.control}
-                        shape="rectangle"
-                        onChange={(e) => {
-                          roleForm.setValue("icon", e);
-                          setConnections({
-                            ...connections,
-                            icon: e,
-                          });
-                        }}
-                      />
+                      <CrossPeson />
                     )}
                     {tableSlug === app?.slug + "write" ? (
                       <>
@@ -920,32 +821,6 @@ const MatrixRolePage = () => {
                           >
                             <CrossPeson />
                           </span>
-                          {connections?.map((connection) => (
-                            <HFIconPicker
-                              name=""
-                              value={connection?.icon}
-                              control={roleForm.control}
-                              customeClick={true}
-                              clickItself={() => {
-                                handleRecordPermission(
-                                  recordPermissions?.find(
-                                    (item) => item?.table_slug === app?.slug
-                                  ),
-                                  "write",
-                                  connection?.name,
-                                  app?.slug
-                                );
-                              }}
-                              shape="rectangle"
-                              onChange={(e) => {
-                                roleForm.setValue("icon", e);
-                                setConnections({
-                                  ...connections,
-                                  icon: e,
-                                });
-                              }}
-                            />
-                          ))}
                         </div>
                         {isCustomVisible && (
                           <div
@@ -955,7 +830,7 @@ const MatrixRolePage = () => {
                               padding: "12px 16px",
                               borderRadius: "6px",
                               position: "absolute",
-                              top: "120px",
+                              top: "110px",
                               left: "60px",
                               zIndex: "2",
                               minWidth: "400px",
@@ -965,7 +840,6 @@ const MatrixRolePage = () => {
                               style={{
                                 display: "flex",
                                 flexDirection: "column",
-                                // alignItems: "center",
                                 gap: "8px",
                                 borderBottom: "1px solid #ccc",
                                 paddingBottom: "10px",
@@ -1060,7 +934,6 @@ const MatrixRolePage = () => {
                                         }}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          console.log("Done", autoFilter);
                                           handleAutoFilter();
                                           setEditingAutoFilter((prev) =>
                                             prev === auto?.guid
@@ -1083,7 +956,6 @@ const MatrixRolePage = () => {
                                         }}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          console.log("Edit");
                                           setEditingAutoFilter((prev) =>
                                             prev === auto?.guid
                                               ? null
@@ -1119,7 +991,6 @@ const MatrixRolePage = () => {
                                       }}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        console.log("Delete");
                                         deleteAutoFilter(auto?.guid);
                                       }}
                                     >
@@ -1138,31 +1009,18 @@ const MatrixRolePage = () => {
                                   paddingBottom: "8px",
                                 }}
                               >
-                                {/* <FRow label="Поля объекта"> */}
                                 <HFSelect
                                   options={computedRelations}
                                   control={autoFilterForm.control}
-                                  // onChange={(e) => {
-                                  //   console.log("e", e);
-                                  // }}
-                                  // value={auto?.object_field}
                                   name="object_field"
                                   required
                                 />
-                                {/* </FRow> */}
-                                {/* <FRow label="Пользовательские поля"> */}
                                 <HFSelect
                                   options={computedCustomFields}
                                   control={autoFilterForm.control}
-                                  // onChange={(e) => {
-                                  //   getFields({ table_id: e })
-                                  //   connectionForm.setValue("table_slug", e)
-                                  // }}
-                                  // value={auto?.custom_field}
                                   name="custom_field"
                                   required
                                 />
-                                {/* </FRow> */}
                               </div>
                             )}
                             <div style={{ display: "flex", gap: "8px" }}>
@@ -1188,10 +1046,6 @@ const MatrixRolePage = () => {
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      // setCreatingAutoFilter(
-                                      //   !creatingAutoFilter
-                                      // );
-                                      console.log("create");
                                       handleAutoFilter();
                                     }}
                                     style={{
@@ -1240,7 +1094,6 @@ const MatrixRolePage = () => {
                           ? app.slug + "update"
                           : ""
                       );
-                      console.log("Update");
                     }}
                     style={{ position: "relative" }}
                   >
@@ -1250,32 +1103,8 @@ const MatrixRolePage = () => {
                         (item) => item?.table_slug === app?.slug
                       )?.update === "Yes" ? (
                       <TwoUserIcon />
-                    ) : recordPermissions?.find(
-                        (item) => item?.table_slug === app?.slug
-                      )?.update === "No" ? (
-                      <CrossPeson />
                     ) : (
-                      <HFIconPicker
-                        name=""
-                        value={
-                          connections?.filter(
-                            (connection) =>
-                              connection?.name ===
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              )?.update
-                          )[0]?.icon
-                        }
-                        control={roleForm.control}
-                        shape="rectangle"
-                        onChange={(e) => {
-                          roleForm.setValue("icon", e);
-                          setConnections({
-                            ...connections,
-                            icon: e,
-                          });
-                        }}
-                      />
+                      <CrossPeson />
                     )}
                     {tableSlug === app?.slug + "update" ? (
                       <>
@@ -1324,32 +1153,6 @@ const MatrixRolePage = () => {
                           >
                             <CrossPeson />
                           </span>
-                          {connections?.map((connection) => (
-                            <HFIconPicker
-                              name=""
-                              value={connection?.icon}
-                              control={roleForm.control}
-                              customeClick={true}
-                              clickItself={() => {
-                                handleRecordPermission(
-                                  recordPermissions?.find(
-                                    (item) => item?.table_slug === app?.slug
-                                  ),
-                                  "update",
-                                  connection?.name,
-                                  app?.slug
-                                );
-                              }}
-                              shape="rectangle"
-                              onChange={(e) => {
-                                roleForm.setValue("icon", e);
-                                setConnections({
-                                  ...connections,
-                                  icon: e,
-                                });
-                              }}
-                            />
-                          ))}
                         </div>
                         {isCustomVisible && (
                           <div
@@ -1359,7 +1162,7 @@ const MatrixRolePage = () => {
                               padding: "12px 16px",
                               borderRadius: "6px",
                               position: "absolute",
-                              top: "120px",
+                              top: "110px",
                               left: "60px",
                               zIndex: "2",
                               minWidth: "400px",
@@ -1369,7 +1172,6 @@ const MatrixRolePage = () => {
                               style={{
                                 display: "flex",
                                 flexDirection: "column",
-                                // alignItems: "center",
                                 gap: "8px",
                                 borderBottom: "1px solid #ccc",
                                 paddingBottom: "10px",
@@ -1464,7 +1266,6 @@ const MatrixRolePage = () => {
                                         }}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          console.log("Done", autoFilter);
                                           handleAutoFilter();
                                           setEditingAutoFilter((prev) =>
                                             prev === auto?.guid
@@ -1487,7 +1288,6 @@ const MatrixRolePage = () => {
                                         }}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          console.log("Edit");
                                           setEditingAutoFilter((prev) =>
                                             prev === auto?.guid
                                               ? null
@@ -1523,7 +1323,6 @@ const MatrixRolePage = () => {
                                       }}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        console.log("Delete");
                                         deleteAutoFilter(auto?.guid);
                                       }}
                                     >
@@ -1542,31 +1341,18 @@ const MatrixRolePage = () => {
                                   paddingBottom: "8px",
                                 }}
                               >
-                                {/* <FRow label="Поля объекта"> */}
                                 <HFSelect
                                   options={computedRelations}
                                   control={autoFilterForm.control}
-                                  // onChange={(e) => {
-                                  //   console.log("e", e);
-                                  // }}
-                                  // value={auto?.object_field}
                                   name="object_field"
                                   required
                                 />
-                                {/* </FRow> */}
-                                {/* <FRow label="Пользовательские поля"> */}
                                 <HFSelect
                                   options={computedCustomFields}
                                   control={autoFilterForm.control}
-                                  // onChange={(e) => {
-                                  //   getFields({ table_id: e })
-                                  //   connectionForm.setValue("table_slug", e)
-                                  // }}
-                                  // value={auto?.custom_field}
                                   name="custom_field"
                                   required
                                 />
-                                {/* </FRow> */}
                               </div>
                             )}
                             <div style={{ display: "flex", gap: "8px" }}>
@@ -1592,10 +1378,6 @@ const MatrixRolePage = () => {
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      // setCreatingAutoFilter(
-                                      //   !creatingAutoFilter
-                                      // );
-                                      console.log("create");
                                       handleAutoFilter();
                                     }}
                                     style={{
@@ -1644,7 +1426,6 @@ const MatrixRolePage = () => {
                           ? app.slug + "delete"
                           : ""
                       );
-                      console.log("Delete");
                     }}
                     style={{ position: "relative" }}
                   >
@@ -1654,32 +1435,8 @@ const MatrixRolePage = () => {
                         (item) => item?.table_slug === app?.slug
                       )?.delete === "Yes" ? (
                       <TwoUserIcon />
-                    ) : recordPermissions?.find(
-                        (item) => item?.table_slug === app?.slug
-                      )?.delete === "No" ? (
-                      <CrossPeson />
                     ) : (
-                      <HFIconPicker
-                        name=""
-                        value={
-                          connections?.filter(
-                            (connection) =>
-                              connection?.name ===
-                              recordPermissions?.find(
-                                (item) => item?.table_slug === app?.slug
-                              )?.delete
-                          )[0]?.icon
-                        }
-                        control={roleForm.control}
-                        shape="rectangle"
-                        onChange={(e) => {
-                          roleForm.setValue("icon", e);
-                          setConnections({
-                            ...connections,
-                            icon: e,
-                          });
-                        }}
-                      />
+                      <CrossPeson />
                     )}
                     {tableSlug === app?.slug + "delete" ? (
                       <>
@@ -1728,32 +1485,6 @@ const MatrixRolePage = () => {
                           >
                             <CrossPeson />
                           </span>
-                          {connections?.map((connection) => (
-                            <HFIconPicker
-                              name=""
-                              value={connection?.icon}
-                              control={roleForm.control}
-                              customeClick={true}
-                              clickItself={() => {
-                                handleRecordPermission(
-                                  recordPermissions?.find(
-                                    (item) => item?.table_slug === app?.slug
-                                  ),
-                                  "delete",
-                                  connection?.name,
-                                  app?.slug
-                                );
-                              }}
-                              shape="rectangle"
-                              onChange={(e) => {
-                                roleForm.setValue("icon", e);
-                                setConnections({
-                                  ...connections,
-                                  icon: e,
-                                });
-                              }}
-                            />
-                          ))}
                         </div>
                         {isCustomVisible && (
                           <div
@@ -1763,7 +1494,7 @@ const MatrixRolePage = () => {
                               padding: "12px 16px",
                               borderRadius: "6px",
                               position: "absolute",
-                              top: "120px",
+                              top: "110px",
                               left: "60px",
                               zIndex: "2",
                               minWidth: "400px",
@@ -1773,7 +1504,6 @@ const MatrixRolePage = () => {
                               style={{
                                 display: "flex",
                                 flexDirection: "column",
-                                // alignItems: "center",
                                 gap: "8px",
                                 borderBottom: "1px solid #ccc",
                                 paddingBottom: "10px",
@@ -1868,7 +1598,6 @@ const MatrixRolePage = () => {
                                         }}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          console.log("Done", autoFilter);
                                           handleAutoFilter();
                                           setEditingAutoFilter((prev) =>
                                             prev === auto?.guid
@@ -1891,7 +1620,6 @@ const MatrixRolePage = () => {
                                         }}
                                         onClick={(e) => {
                                           e.stopPropagation();
-                                          console.log("Edit");
                                           setEditingAutoFilter((prev) =>
                                             prev === auto?.guid
                                               ? null
@@ -1927,7 +1655,6 @@ const MatrixRolePage = () => {
                                       }}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        console.log("Delete");
                                         deleteAutoFilter(auto?.guid);
                                       }}
                                     >
@@ -1946,31 +1673,18 @@ const MatrixRolePage = () => {
                                   paddingBottom: "8px",
                                 }}
                               >
-                                {/* <FRow label="Поля объекта"> */}
                                 <HFSelect
                                   options={computedRelations}
                                   control={autoFilterForm.control}
-                                  // onChange={(e) => {
-                                  //   console.log("e", e);
-                                  // }}
-                                  // value={auto?.object_field}
                                   name="object_field"
                                   required
                                 />
-                                {/* </FRow> */}
-                                {/* <FRow label="Пользовательские поля"> */}
                                 <HFSelect
                                   options={computedCustomFields}
                                   control={autoFilterForm.control}
-                                  // onChange={(e) => {
-                                  //   getFields({ table_id: e })
-                                  //   connectionForm.setValue("table_slug", e)
-                                  // }}
-                                  // value={auto?.custom_field}
                                   name="custom_field"
                                   required
                                 />
-                                {/* </FRow> */}
                               </div>
                             )}
                             <div style={{ display: "flex", gap: "8px" }}>
@@ -1996,10 +1710,6 @@ const MatrixRolePage = () => {
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      // setCreatingAutoFilter(
-                                      //   !creatingAutoFilter
-                                      // );
-                                      console.log("create");
                                       handleAutoFilter();
                                     }}
                                     style={{

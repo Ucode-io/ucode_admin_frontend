@@ -83,14 +83,29 @@ const AppsForm = () => {
       .finally(() => setLoader(false))
   }
 
+  console.log("VALUES ===>", mainForm.watch())
+
   useEffect(() => {
     if (appId) getData()
     else setLoader(false)
   }, [])
 
   const onSubmit = (data) => {
-    if (appId) updateApp(data)
-    else createApp(data)
+
+    const tables = data?.tables?.map((table) => ({
+      table_id: table.id,
+      is_own_table: Boolean(table.is_own_table),
+      is_visible:  Boolean(table.is_visible),
+    }))
+
+    const computedData = {
+      ...data,
+      tables
+    }
+
+
+    if (appId) updateApp(computedData)
+    else createApp(computedData)
   }
 
   if (loader) return <PageFallback />
@@ -162,12 +177,12 @@ const AppsForm = () => {
                   Закрыть
                 </SecondaryButton>
                 <PermissionWrapperV2 tabelSlug="app" type="update">
-                <PrimaryButton
-                  loader={btnLoader}
-                  onClick={mainForm.handleSubmit(onSubmit)}
-                >
-                  <Save /> Сохранить
-                </PrimaryButton>
+                  <PrimaryButton
+                    loader={btnLoader}
+                    onClick={mainForm.handleSubmit(onSubmit)}
+                  >
+                    <Save /> Сохранить
+                  </PrimaryButton>
                 </PermissionWrapperV2>
               </>
             }

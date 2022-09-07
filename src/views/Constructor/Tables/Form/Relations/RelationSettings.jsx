@@ -29,7 +29,6 @@ import styles from "./style.module.scss"
 import SummaryBlock from "./SummaryBlock"
 
 
-
 const relationViewTypes = [
   {
     label: "Table",
@@ -163,15 +162,6 @@ const RelationSettings = ({
       value: field.id
     }))
   }, [values.columnsList])
-
-  // useEffect(() => {
-  //   if (type === "Many2One") {
-  //     getFieldOptions(values?.table_from)
-  //   } else {
-  //     getFieldOptions(values?.table_from)
-  //     getFieldOptions(values?.table_to)
-  //   }
-  // }, [type])
 
   const { data: app } = useQuery(["GET_TABLE_LIST", appId], () => {
     return applicationService.getById(appId)
@@ -363,6 +353,8 @@ const RelationSettings = ({
 
           </div>
           
+              
+
           <SummaryBlock control={control} computedFieldsListOptions={computedFieldsListOptions} />
 
           <div className={styles.settingsBlockHeader}>

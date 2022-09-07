@@ -43,10 +43,6 @@ const ConstructorTablesFormPage = () => {
       description: "",
       slug: "",
       icon: "",
-      increment_id: {
-        digit_number: 4,
-        with_increment_id: false,
-      },
     },
     mode: "all",
   })

@@ -171,37 +171,11 @@
   }
 }
 
-.fieldSettingsForm {
-  // padding: 8px 20px;
-}
-
 .settingsFooter {
   padding: 8px;
   position: sticky;
   bottom: 0;
   background-color: #fff;
-}
-
-.summaryButton {
-  display: flex;
-  
-  button {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    border: 1px dashed #6E8BB780;
-    padding: 8px 16px;
-    flex-grow: 1;
-    font-weight: 500;
-
-    &:hover {
-      border-color: colors.$primary;
-      color: colors.$primary;
-
-    }
-  }
 }
 
 

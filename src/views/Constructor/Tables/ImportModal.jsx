@@ -55,8 +55,7 @@ const ImportModal = ({ closeModal, btnLoader, importTable }) => {
 
   return (
     <LargeModalCard
-      
-      title={"TITLE"}
+      title={"Import Table"}
       btnLoader={btnLoader}
       oneColumn
       onSaveButtonClick={onSubmit}

@@ -83,8 +83,6 @@ const AppsForm = () => {
       .finally(() => setLoader(false))
   }
 
-  console.log("VALUES ===>", mainForm.watch())
-
   useEffect(() => {
     if (appId) getData()
     else setLoader(false)
@@ -102,7 +100,6 @@ const AppsForm = () => {
       ...data,
       tables
     }
-
 
     if (appId) updateApp(computedData)
     else createApp(computedData)

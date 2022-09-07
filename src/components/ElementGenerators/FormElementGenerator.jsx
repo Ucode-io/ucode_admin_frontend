@@ -13,6 +13,7 @@ import HFTextEditor from "../FormElements/HFTextEditor"
 import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 import HFTimePicker from "../FormElements/HFTimePicker"
+import DynamicRelationFormElement from "./DynamicRelationFormElement"
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement"
 import RelationFormElement from "./RelationFormElement"
 
@@ -42,6 +43,15 @@ const FormElementGenerator = ({
     if (field.relation_type !== "Many2Many") {
       return (
         <RelationFormElement
+          control={control}
+          field={field}
+          setFormValue={setFormValue}
+          {...props}
+        />
+      )
+    } else if (field.relation_type !== "Many2Dynamic") {
+      return (
+        <DynamicRelationFormElement
           control={control}
           field={field}
           setFormValue={setFormValue}
@@ -259,7 +269,7 @@ const FormElementGenerator = ({
       )
 
     case "FORMULA":
-      case "INCREMENT_ID":
+    case "INCREMENT_ID":
       return (
         <FRow label={field.label} required={field.required}>
           <HFTextField

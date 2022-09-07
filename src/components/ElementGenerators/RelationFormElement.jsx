@@ -1,7 +1,10 @@
 import { Autocomplete, TextField } from "@mui/material"
+import { useState } from "react"
 import { useMemo } from "react"
 import { Controller } from "react-hook-form"
 import { useQuery } from "react-query"
+
+import useDebounce from "../../hooks/useDebounce"
 import useTabRouter from "../../hooks/useTabRouter"
 import constructorObjectService from "../../services/constructorObjectService"
 import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
@@ -91,20 +94,26 @@ const AutoCompleteElement = ({
   disabledHelperText,
   setFormValue = () => {},
 }) => {
-  const { navigateToForm } = useTabRouter()
+  const [inputValue, setInputValue] = useState('')
+  const [debouncedValue, setDebouncedValue] = useState('')
 
+  const { navigateToForm } = useTabRouter()
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300)
+  
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug],
+    ["GET_OBJECT_LIST", tableSlug, debouncedValue],
     () => {
-      return constructorObjectService.getList(tableSlug, { data: {} })
+      return constructorObjectService.getList(tableSlug, { data: {
+        view_fields: field.attributes?.view_fields?.map(f => f.slug), search: debouncedValue, limit: 10
+      } })
     },
     {
       select: (res) => {
         return res?.data?.response ?? []
       },
     }
-  )
-
+    )
+    
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value)
     return findedOption ? [findedOption] : []
@@ -116,7 +125,7 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value) => {
     const val = value?.[value?.length - 1]
-
+    
     setValue(val?.guid ?? null)
 
     if (!field?.attributes?.autofill) return
@@ -127,15 +136,18 @@ const AutoCompleteElement = ({
   }
 
   return (
-    <div className={styles.autocompleteWrapper} >
-
-      <div className={styles.createButton} onClick={() => navigateToForm(tableSlug)} >
+    <div className={styles.autocompleteWrapper}>
+      <div
+        className={styles.createButton}
+        onClick={() => navigateToForm(tableSlug)}
+      >
         Создать новый
       </div>
 
       <Autocomplete
         options={options ?? []}
         value={computedValue}
+        freeSolo
         onChange={(event, newValue) => {
           changeHandler(newValue)
         }}
@@ -147,6 +159,11 @@ const AutoCompleteElement = ({
             Создать новый
           </span>
         }
+        inputValue={inputValue}
+        onInputChange={(e, newValue) => {
+          setInputValue(newValue)
+          inputChangeHandler(newValue)
+        } }
         disablePortal
         blurOnSelect
         openOnFocus

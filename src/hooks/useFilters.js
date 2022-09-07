@@ -27,7 +27,6 @@ const useFilters = (tableSlug, viewId) => {
     return Object.entries(filterObject).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {})
   }, [filtersFromRedux, filtersFromLocation])
 
-
   const dataFilters = useMemo(() => {
     
     const filterObject = { ...filtersFromLocation, ...filtersFromRedux }

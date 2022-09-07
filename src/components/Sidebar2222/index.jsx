@@ -7,21 +7,27 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import { NavLink } from "react-router-dom"
 import ChildBlock from "./ChildBlock"
 import { useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
+import { mainActions } from "../../store/main/main.slice"
 
 const Sidebar2222 = () => {
+  const sidebarIsOpen = useSelector(state => state.main.settingsSidebarIsOpen)
   const permissions = useSelector((state) => state.auth.permissions)
-  const [rightSideVisible, setRightSideVisible] = useState(true)
-
+  const dispatch = useDispatch()
   const [openedBlock, setOpenedBlock] = useState(null)
 
+  const setSidebarIsOpen = (val) => {
+    dispatch(mainActions.setSettingsSidebarIsOpen(val))
+  }
+
   const switchRightSideVisible = () => {
-    setRightSideVisible(!rightSideVisible)
+    setSidebarIsOpen(!sidebarIsOpen)
   }
 
   const parentClickHandler = (element) => {
     if (element.children) {
       switchChildBlockHandler(element.id)
-      if (!rightSideVisible) setRightSideVisible(true)
+      if (!sidebarIsOpen) setSidebarIsOpen(true)
     } else setOpenedBlock(null)
   }
 
@@ -30,11 +36,11 @@ const Sidebar2222 = () => {
   }
 
   useEffect(() => {
-    if (!rightSideVisible) setOpenedBlock(null)
-  }, [rightSideVisible])
+    if (!sidebarIsOpen) setOpenedBlock(null)
+  }, [sidebarIsOpen])
 
   return (
-    <div className={`Sidebar ${!rightSideVisible ? "right-side-closed" : ""}`}>
+    <div className={`Sidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}>
       <div className="header">
         <div className="brand">
           <div className="brand-logo" onClick={switchRightSideVisible}>

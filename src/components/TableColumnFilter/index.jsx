@@ -1,5 +1,4 @@
 import { FilterAltOutlined } from "@mui/icons-material"
-import FilterAltTwoToneIcon from "@mui/icons-material/FilterAltTwoTone"
 import { Menu } from "@mui/material"
 import { useState } from "react"
 import styles from "./style.module.scss"
@@ -11,7 +10,7 @@ const TableColumnFilter = ({ children }) => {
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget)
   }
-
+  
   const closeMenu = () => {
     setAnchorEl(null)
   }

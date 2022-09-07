@@ -6,6 +6,7 @@ import {
   Select,
 } from "@mui/material"
 import { Controller } from "react-hook-form"
+import IconGenerator from "../IconPicker/IconGenerator"
 
 const HFSelect = ({
   control,
@@ -17,6 +18,7 @@ const HFSelect = ({
   placeholder,
   required = false,
   onChange = () => {},
+  optionType,
   rules = {},
   ...props
 }) => {
@@ -48,18 +50,37 @@ const HFSelect = ({
             into
             select
             displayEmpty
-            renderValue={value !== "" ? undefined : () => <span style={{ color: '#909EAB' }} >{placeholder}</span>}
+            renderValue={
+              value !== ""
+                ? undefined
+                : () => <span style={{ color: "#909EAB" }}>{placeholder}</span>
+            }
             onChange={(e) => {
               onChange(e.target.value)
               onFormChange(e.target.value)
             }}
             {...props}
           >
-            {options?.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
+            {optionType === "GROUP"
+              ? options?.map((group, groupIndex) => (
+                
+                [
+                  <MenuItem style={{ fontWeight: 600, color: '#000', fontSize: 15 }}>{group.label}</MenuItem>,
+                  group.options?.map((option) => (
+                    <MenuItem  key={option.value} value={option.value} style={{ paddingLeft: 30 }} >
+                      <div className="flex align-center gap-2" >
+                      <IconGenerator icon={option.icon} size={15} style={{ color: '#6E8BB7' }} />
+                      {option.label}
+                      </div>
+                    </MenuItem>
+                  ))
+                ]
+              ))
+              : options?.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
           </Select>
           {!disabledHelperText && error?.message && (
             <FormHelperText error>{error?.message}</FormHelperText>

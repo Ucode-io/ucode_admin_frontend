@@ -55,7 +55,7 @@ const DataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
-  console.log('func', func);
+  const [limit, setLimit] = useState(10)
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -193,11 +193,13 @@ const DataTable = ({
       tableStyle={tableStyle}
       wrapperStyle={wrapperStyle}
       paginationExtraButton={paginationExtraButton}
+      limit={limit}
+      onLimitChange={setLimit}
     >
       <CTableHead>
         <CTableRow>
-          <CTableCell width={10} />
-          {onCheckboxChange && <CTableHeadCell width={10}>№</CTableHeadCell>}
+          {onCheckboxChange && <CTableCell width={10} />}
+          <CTableHeadCell width={10}>№</CTableHeadCell>
           {columns.map((column, index) => (
             <CTableHeadCell
               id={column.id}

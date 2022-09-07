@@ -1,16 +1,20 @@
-import { Card, Collapse, Typography } from "@mui/material"
-import { useFieldArray } from "react-hook-form"
+import { Close } from "@mui/icons-material"
+import { IconButton } from "@mui/material"
+import { useMemo } from "react"
+import { useFieldArray, useWatch } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
-import styles from "./style.module.scss"
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator"
 import { applyDrag } from "../../../../../utils/applyDrag"
-import { useMemo, useState } from "react"
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
-import { KeyboardArrowDown, KeyboardDoubleArrowLeft } from "@mui/icons-material"
+import styles from "./style.module.scss"
 
-const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
-  const [blockIsOpen, setBlockIsOpen] = useState(true)
-
+const FieldsBlock = ({
+  mainForm,
+  layoutForm,
+  selectedSettingsTab,
+  setSelectedSettingsTab,
+  closeSettingsBlock,
+}) => {
   const { fields } = useFieldArray({
     control: mainForm.control,
     name: "fields",
@@ -23,6 +27,33 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
     keyName: "key",
   })
 
+  const sections = useWatch({
+    control: mainForm.control,
+    name: `sections`,
+  })
+
+  const tableRelations = useWatch({
+    control: mainForm.control,
+    name: "tableRelations",
+  })
+
+  const viewRelations = useWatch({
+    control: mainForm.control,
+    name: "view_relations",
+  })
+
+  const usedFields = useMemo(() => {
+    const list = []
+
+    sections?.forEach((section) => {
+      section.fields?.forEach((field) => {
+        list.push(field.id)
+      })
+    })
+
+    return list
+  }, [sections])
+
   const unusedFields = useMemo(() => {
     return fields?.filter(
       (field) =>
@@ -32,38 +63,51 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
     )
   }, [usedFields, fields])
 
+  const unusedTableRelations = useMemo(() => {
+    return tableRelations?.filter(
+      (relation) =>
+        !viewRelations?.some(
+          (viewRelation) => viewRelation.relation_id === relation.id
+        )
+    )
+  }, [tableRelations, viewRelations])
+
   const unusedRelations = useMemo(() => {
     return relations?.filter((relation) => !usedFields.includes(relation.id))
   }, [relations, usedFields])
 
+
+
   const onDrop = (dropResult, colNumber) => {
     const result = applyDrag(fields, dropResult)
-
     if (!result) return
   }
 
+  console.log("unusedRelations===>", unusedTableRelations, relations)
+
   return (
-    <div>
+    <div className={styles.settingsBlock}>
+      <div className={styles.settingsBlockHeader}>
+        <h2>Add fields</h2>
 
-      {!blockIsOpen && <Card className={styles.collapseBlock} onClick={() => setBlockIsOpen(true)} >
-        
-        <div className={styles.collapseButton} > Fields <KeyboardArrowDown /> </div>
+        <IconButton onClick={closeSettingsBlock}>
+          <Close />
+        </IconButton>
+      </div>
 
-      </Card>}
+      <div className={styles.settingsBlockBody}>
+        <Tabs
+          selectedIndex={selectedSettingsTab}
+          onSelect={setSelectedSettingsTab}
+        >
+          <TabList>
+            <Tab>Form fields</Tab>
+            {/* <Tab>Input relation fields</Tab> */}
+            <Tab>Table fields</Tab>
+          </TabList>
 
-      <Collapse unmountOnExit orientation="horizontal" in={blockIsOpen}>
-        <div className={styles.fieldsBlock}>
-          <Card className={styles.fieldCard}>
-            <div className={styles.fieldCardHeader}>
-              <Typography variant="h4">Fields</Typography>
-
-              <RectangleIconButton onClick={() => setBlockIsOpen(false)} >
-                <KeyboardDoubleArrowLeft />
-              </RectangleIconButton>
-
-            </div>
-
-            <div className={styles.fieldsWrapperBlock}>
+          <TabPanel>
+            <div className={styles.fieldsBlock}>
               <Container
                 groupName="1"
                 onDrop={onDrop}
@@ -85,15 +129,11 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
                   </Draggable>
                 ))}
               </Container>
-            </div>
-          </Card>
 
-          <Card className={styles.fieldCard}>
-            <div className={styles.fieldCardHeader}>
-              <Typography variant="h4">Relation fields</Typography>
-            </div>
+              {!!unusedRelations?.length && <div className={styles.settingsBlockHeader}>
+                <h2>Relation input fields</h2>
+              </div>}
 
-            <div className={styles.fieldsWrapperBlock}>
               <Container
                 groupName="1"
                 onDrop={onDrop}
@@ -101,6 +141,7 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
                 getChildPayload={(i) => ({
                   ...unusedRelations[i],
                   field_name: unusedRelations[i]?.label,
+                  relation_type: unusedRelations[i].type,
                 })}
               >
                 {unusedRelations?.map((relation) => (
@@ -114,23 +155,36 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
                     </div>
                   </Draggable>
                 ))}
-
-                {/* {relation.fields?.map((field, index) => (
-                <Draggable key={field.id} style={{ overflow: "visible" }}>
-                  <div className={styles.sectionFieldRow}>
-                    <FormElementGenerator
-                      field={field}
-                      control={layoutForm.control}
-                      disabledHelperText
-                    />
-                  </div>
-                </Draggable>
-              ))} */}
               </Container>
             </div>
-          </Card>
-        </div>
-      </Collapse>
+          </TabPanel>
+
+          <TabPanel>
+            <div className={styles.fieldsBlock}>
+              <Container
+                groupName="table_relation"
+                onDrop={onDrop}
+                dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                getChildPayload={(i) => unusedTableRelations[i]}
+              >
+                {unusedTableRelations?.map((relation) => (
+                  <Draggable
+                    key={relation.id}
+                    style={{ overflow: "visible", width: "fit-content" }}
+                  >
+                    <div
+                      className={`${styles.sectionFieldRow} ${styles.relation}`}
+                    >
+                      {relation.title ??
+                        relation[relation.relatedTableSlug]?.label}
+                    </div>
+                  </Draggable>
+                ))}
+              </Container>
+            </div>
+          </TabPanel>
+        </Tabs>
+      </div>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { Close, Delete, Edit, Save } from "@mui/icons-material"
+import { Delete, Edit } from "@mui/icons-material"
 import { Checkbox } from "@mui/material"
 import { useState } from "react"
 import RectangleIconButton from "../Buttons/RectangleIconButton"
@@ -24,6 +24,7 @@ const TableRow = ({
   onDeleteClick,
   onEditClick,
   onFormSubmit,
+  limit = 10
 }) => {
   const [formVisible, setFormVisible] = useState(false)
 
@@ -34,6 +35,7 @@ const TableRow = ({
         checkboxValue={checkboxValue}
         row={row}
         currentPage={currentPage}
+        limit={limit}
         rowIndex={rowIndex}
         columns={columns}
         tableHeight={tableHeight}
@@ -62,7 +64,7 @@ const TableRow = ({
         </CTableCell>
       )}
       <CTableCell align="center">
-        {(currentPage - 1) * 10 + rowIndex + 1}
+        {(currentPage - 1) * limit + rowIndex + 1}
       </CTableCell>
       {columns.map((column, index) => (
         <CTableCell

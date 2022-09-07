@@ -16,6 +16,7 @@ const ButtonsPopover = ({
   loading,
   openModal = () => {},
   orientation = "vertical",
+  className
 }) => {
   const id = useId()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -41,7 +42,7 @@ const ButtonsPopover = ({
   // return null
 
   return (
-    <div onClick={e => e.stopPropagation()} >
+    <div onClick={e => e.stopPropagation()} className={className} >
       <IconButton color="primary" {...buttonProps} onClick={handleClick} >
         {orientation === "vertical" ? <MoreVertIcon /> : <MoreHorizIcon />}
       </IconButton>
@@ -81,45 +82,6 @@ const ButtonsPopover = ({
       </Popover>
     </div>
   )
-
-  // return (
-  //   <PopupState variant="popover" >
-  //     {(popupState) => (
-  //       <div className="ButtonsPopover" onClick={(e) => e.stopPropagation()}>
-  // <IconButton color="primary"  {...bindTrigger(popupState)} {...buttonProps} >
-  //   {
-  //     orientation === 'vertical' ? <MoreVertIcon /> : <MoreHorizIcon />
-  //   }
-  // </IconButton>
-  //         <Popover
-  //           {...bindPopover(popupState)}
-  //           anchorOrigin={{
-  //             vertical: "bottom",
-  //             horizontal: "center",
-  //           }}
-  //           transformOrigin={{
-  //             vertical: "top",
-  //             horizontal: "center",
-  //           }}
-  //         >
-  // <Card elevation={12} className="ButtonsPopover">
-  //   {activeEyeButton && (
-  //     <IconButton color="primary" onClick={(e) => openModal(e, id)}>
-  //       <RemoveRedEyeIcon />
-  //     </IconButton>
-  //   )}
-  //   {onEditClick && <IconButton color="success" onClick={(e) => onEditClick(e, id)}>
-  //     <EditIcon />
-  //   </IconButton>}
-  //   <IconButton color="error" onClick={(e) => onDeleteClick(e, id)}>
-  //     <DeleteIcon />
-  //   </IconButton>
-  // </Card>
-  //         </Popover>
-  //       </div>
-  //     )}
-  //   </PopupState>
-  // )
 }
 
 export default ButtonsPopover

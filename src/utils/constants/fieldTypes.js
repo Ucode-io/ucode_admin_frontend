@@ -38,3 +38,137 @@ export const fieldTypes = [
   "PASSWORD",
   "FORMULA"
 ]
+
+export const fieldTypesOptions = [
+  {
+    label: 'Text',
+    options: [
+      {
+        icon: "minus.svg",
+        label: "Single line",
+        value: "SINGLE_LINE"
+      },
+      {
+        icon: "grip-lines.svg",
+        label: "Multi line",
+        value: "MULTI_LINE"
+      },
+    ]
+  },
+  {
+    label: 'Date',
+    options: [
+      {
+        icon: "calendar.svg",
+        label: "Date",
+        value: "DATE"
+      },
+      {
+        icon: "clock.svg",
+        label: "Time",
+        value: "TIME"
+      },
+      {
+        icon: "business-time.svg",
+        label: "Date time",
+        value: "DATE_TIME"
+      },
+    ]
+  },
+  {
+    label: 'Number',
+    options: [
+      {
+        icon: "hashtag.svg",
+        label: "Number",
+        value: "NUMBER"
+      },
+    ]
+  },
+  {
+    label: 'Input',
+    options: [
+      {
+        icon: "square-check.svg",
+        label: "Checkbox",
+        value: "CHECKBOX"
+      },
+      {
+        icon: "toggle-on.svg",
+        label: "Switch",
+        value: "SWITCH"
+      },
+    ]
+  },
+  {
+    label: 'Select',
+    options: [
+      {
+        // icon: "square-check.svg",
+        label: "Picklist",
+        value: "PICK_LIST"
+      },
+      {
+        icon: "list-check.svg",
+        label: "Multi select",
+        value: "MULTISELECT"
+      },
+    ]
+  },
+  {
+    label: 'File',
+    options: [
+      {
+        icon: "image.svg",
+        label: "Photo",
+        value: "PHOTO"
+      },
+    ]
+  },
+  {
+    label: 'Formula',
+    options: [
+      {
+        icon: "square-root-variable.svg",
+        label: "Formula in frontend",
+        value: "FORMULA_FRONTEND"
+      },
+      {
+        icon: "plus-minus.svg",
+        label: "Formula in backend",
+        value: "FORMULA"
+      },
+    ]
+  },
+  {
+    label: 'Other',
+    options: [
+      {
+        icon: "arrow-up-9-1.svg",
+        label: "Increment ID",
+        value: "INCREMENT_ID"
+      },
+      {
+        icon: "phone.svg",
+        label: "Phone",
+        value: "PHONE"
+      },
+      {
+        icon: "envelope.svg",
+        label: "Email",
+        value: "EMAIL"
+      },
+      {
+        icon: "icons.svg",
+        label: "Icon",
+        value: "ICON"
+      },
+      {
+        icon: "lock.svg",
+        label: "Password",
+        value: "PASSWORD"
+      },
+    ]
+  },
+
+]

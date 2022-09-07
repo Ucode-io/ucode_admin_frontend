@@ -1,7 +1,4 @@
-import {
-  Add,
-  InsertDriveFile,
-} from "@mui/icons-material"
+import { Add, InsertDriveFile } from "@mui/icons-material"
 import { Card } from "@mui/material"
 import { useEffect } from "react"
 import { useState } from "react"
@@ -20,8 +17,11 @@ const RelationSection = ({ relations }) => {
 
   const { tableSlug } = useParams()
   const { navigateToForm } = useTabRouter()
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null)
-  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({})
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
+    useState(null)
+  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
+    {}
+  )
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
 
   useEffect(() => {
@@ -44,10 +44,16 @@ const RelationSection = ({ relations }) => {
     if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
     else {
       if (relation.is_editable) setCreateFormVisible(relation.id, true)
-      else
-        navigateToForm(relation.relatedTable, "CREATE", null, {
+      else {
+        const relatedTable =
+          relation.table_to?.slug === tableSlug
+            ? relation.table_from
+            : relation.table_to
+
+        navigateToForm(relatedTable.slug, "CREATE", null, {
           [`${tableSlug}_id`]: id,
         })
+      }
     }
   }
 
@@ -60,7 +66,7 @@ const RelationSection = ({ relations }) => {
           // onCreate={refetch}
         />
       )}
-      
+
       <Card className={styles.card}>
         <Tabs
           // forceRenderTabPanel
@@ -72,7 +78,7 @@ const RelationSection = ({ relations }) => {
               {relations?.map((relation, index) => (
                 <Tab key={index}>
                   <div className="flex align-center gap-2 text-nowrap">
-                    <IconGenerator icon={relation?.icon} /> {relation.label}
+                    <IconGenerator icon={relation?.icon} /> {relation.title}
                   </div>
                 </Tab>
               ))}

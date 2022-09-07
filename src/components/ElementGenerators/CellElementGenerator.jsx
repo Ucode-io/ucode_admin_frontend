@@ -7,6 +7,7 @@ import { parseBoolean } from "../../utils/parseBoolean"
 import IconGenerator from "../IconPicker/IconGenerator"
 import LogoDisplay from "../LogoDisplay"
 import TableTag from "../TableTag"
+import FormulaCell from "./FormulaCell"
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
@@ -58,6 +59,9 @@ const CellElementGenerator = ({ field = {}, row }) => {
           {field.attributes?.text_false ?? 'Нет'}
         </TableTag>
       )
+
+    // case "FORMULA_FRONTEND":
+    //   return <FormulaCell field={field} row={row} />
 
     case "ICO": 
       return <IconGenerator icon={value} />

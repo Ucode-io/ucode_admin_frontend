@@ -16,6 +16,7 @@ const CSelect = ({
   options = [],
   disabledHelperText,
   placeholder,
+  inputProps = {},
   onChange = () => {},
   ...props
 }) => {
@@ -27,7 +28,7 @@ const CSelect = ({
         label={label}
         size="small"
         error={error}
-        inputProps={{ placeholder }}
+        inputProps={{ placeholder, ...inputProps }}
         fullWidth
         just
         following

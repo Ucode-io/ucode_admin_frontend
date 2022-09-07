@@ -21,12 +21,13 @@ const TableRowForm = ({
   pageName,
   calculateWidth,
   setFormVisible,
+  limit = 10,
   onFormSubmit = () => {},
 }) => {
   const {tableSlug, id} = useParams()
 
   const [loader, setLoader] = useState()
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setValue: setFormValue } = useForm({
     defaultValues: row ?? {
       [`${tableSlug}_id`]: id
     }
@@ -51,7 +52,7 @@ const TableRowForm = ({
         </CTableCell>
       )}
       <CTableCell align="center">
-        {(currentPage - 1) * 10 + rowIndex + 1}
+        {(currentPage - 1) * limit + rowIndex + 1}
       </CTableCell>
       {columns.map((column, index) => (
         <CTableCell
@@ -79,7 +80,7 @@ const TableRowForm = ({
           }}
           
         >
-          <CellFormElementGenerator field={column} row={row} control={control} />
+          <CellFormElementGenerator fields={columns} field={column} row={row} control={control} setFormValue={setFormValue} />
         </CTableCell>
       ))}
       <CTableCell style={{ padding: "8px 12px 4px", verticalAlign: "middle" }}>

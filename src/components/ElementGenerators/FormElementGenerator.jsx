@@ -4,30 +4,33 @@ import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
+import HFFormulaField from "../FormElements/HFFormulaField"
 import HFIconPicker from "../FormElements/HFIconPicker"
 import HFImageUpload from "../FormElements/HFImageUpload"
-import HFMultipleSelect from "../FormElements/HFMultipleSelect"
+import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete"
 import HFSwitch from "../FormElements/HFSwitch"
 import HFTextEditor from "../FormElements/HFTextEditor"
 import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 import HFTimePicker from "../FormElements/HFTimePicker"
+import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement"
 import RelationFormElement from "./RelationFormElement"
 
 const FormElementGenerator = ({
   field = {},
   control,
   setFormValue,
+  fieldsList,
   ...props
 }) => {
-  const computedOptions = useMemo(() => {
-    if (!field.attributes?.options) return []
+  // const computedOptions = useMemo(() => {
+  //   if (!field.attributes?.options) return []
 
-    return field.attributes.options.map((option) => ({
-      value: option,
-      label: option,
-    }))
-  }, [field.attributes?.options])
+  //   return field.attributes.options.map((option) => ({
+  //     value: option,
+  //     label: option,
+  //   }))
+  // }, [field.attributes?.options])
 
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))
@@ -35,15 +38,27 @@ const FormElementGenerator = ({
     return field.slug
   }, [field.id, field.slug])
 
-  if (field.id?.includes("#"))
-    return (
-      <RelationFormElement
-        control={control}
-        field={field}
-        setFormValue={setFormValue}
-        {...props}
-      />
-    )
+  if (field.id?.includes("#")) {
+    if (field.relation_type !== "Many2Many") {
+      return (
+        <RelationFormElement
+          control={control}
+          field={field}
+          setFormValue={setFormValue}
+          {...props}
+        />
+      )
+    } else {
+      return (
+        <ManyToManyRelationFormElement
+          control={control}
+          field={field}
+          setFormValue={setFormValue}
+          {...props}
+        />
+      )
+    }
+  }
 
   switch (field.type) {
     case "SINGLE_LINE":
@@ -176,12 +191,12 @@ const FormElementGenerator = ({
     case "MULTISELECT":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFMultipleSelect
+          <HFMultipleAutocomplete
             control={control}
             name={computedSlug}
             width="100%"
-            options={computedOptions}
             required={field.required}
+            field={field}
             placeholder={field.attributes?.placeholder}
             {...props}
           />
@@ -244,6 +259,7 @@ const FormElementGenerator = ({
       )
 
     case "FORMULA":
+      case "INCREMENT_ID":
       return (
         <FRow label={field.label} required={field.required}>
           <HFTextField
@@ -255,9 +271,25 @@ const FormElementGenerator = ({
             InputProps={{
               readOnly: true,
               style: {
-                background: '#c0c0c039'              }
+                background: "#c0c0c039",
+              },
             }}
             {...props}
+          />
+        </FRow>
+      )
+
+    case "FORMULA_FRONTEND":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFFormulaField
+            setFormValue={setFormValue}
+            control={control}
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            name={field.slug}
+            fieldsList={fieldsList}
+            field={field}
           />
         </FRow>
       )

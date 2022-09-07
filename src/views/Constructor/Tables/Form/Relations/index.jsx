@@ -14,6 +14,8 @@ import { generateGUID } from "../../../../../utils/generateID"
 import RelationCreateForm from "./RelationCreateForm"
 import styles from "../Fields/style.module.scss"
 import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/PermissionWrapperV2"
+import { Collapse, Drawer } from "@mui/material"
+import RelationSettings from "../Layout/RelationSettings"
 
 const Relations = ({ mainForm, getRelationFields }) => {
   const [formLoader, setFormLoader] = useState(false)
@@ -127,7 +129,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
         additionalRow={
           // <PermissionWrapperV2 tabelSlug={slug} type="write">
             <CTableRow>
-              <CTableCell colSpan={columns.length + 1}>
+              <CTableCell colSpan={columns.length + 2}>
                 <div
                   className={styles.createButton}
                   onClick={() => setDrawerState("CREATE")}
@@ -140,14 +142,16 @@ const Relations = ({ mainForm, getRelationFields }) => {
         }
       />
 
-      <RelationCreateForm
-        open={drawerState}
-        initialValues={drawerState}
-        formIsVisible={drawerState}
-        closeDrawer={() => setDrawerState(null)}
-        onSubmit={onFormSubmit}
-        isLoading={formLoader}
-      />
+      <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal" >
+        <RelationSettings 
+          relation={drawerState}
+          closeSettingsBlock={() => setDrawerState(null)}
+          getRelationFields={getRelationFields}
+          formType={drawerState}
+          height={`calc(100vh - 48px)`}
+        />
+      </Drawer>
+
     </TableCard>
   );
 }

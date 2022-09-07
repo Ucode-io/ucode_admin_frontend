@@ -9,6 +9,8 @@ const authService = {
   refreshToken: (data) => requestAuthV2.put(`/refresh`, data),
   sendCode: (data) => requestAuth.post(`/send-code`, data),
   verifyCode: (sms_id, otp, data) => requestAuth.post(`/verify/${sms_id}/${otp}`, data),
+  sendMessage: (data) => requestAuth.post(`/send-message`, data),
+  verifyEmail: (sms_id, otp, data) => requestAuth.post(`/verify-email/${sms_id}/${otp}`, data),
 }
 
 export default authService

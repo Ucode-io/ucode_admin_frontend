@@ -4,6 +4,14 @@
   border-right: none !important;
 }
 
+.rmdp-range {
+  background-color: colors.$primary;
+
+  .highlight-red {
+    color: #fff !important;
+  }
+}
+
 .rmdp-day span {
   border-radius: 50%;
 }
@@ -43,14 +51,19 @@ rmdp-day.rmdp-today.highlight span {
   }
 }
 
+.rmdp-range.rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
 .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover {
-  background-color: #fff;
+  background-color: transparent;
   border: 1px solid colors.$primary;
   color: colors.$primary;
 }
 
 .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) .highlight-red:hover {
-  background-color: #fff;
+  background-color: transparent;
   border: 1px solid #CC0402;
   color: #CC0402;
 }

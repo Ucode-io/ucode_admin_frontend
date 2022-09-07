@@ -318,29 +318,10 @@ const ObjectDataTable = ({
             tableSlug={tableSlug}
             onDeleteClick={onDeleteClick}
             onFormSubmit={onFormSubmit}
-            
           />
         ))}
 
        {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
-
-
-        {/* {func?.length ? (
-          <CTableRow className="amountRow" >
-            <CTableCell>Итог</CTableCell>
-            {columns?.map((col) => (
-              <CTableCell className="text-nowrap" >
-                {col?.slug ===
-                func?.filter((item) => item?.field_name === col?.slug)?.[0]
-                  ?.field_name
-                  ? numberWithSpaces(
-                      data?.reduce((acc, curr) => acc + curr[col?.slug], 0)
-                    )
-                  : ""}
-              </CTableCell>
-            ))}
-          </CTableRow>
-        ) : null} */}
 
         {additionalRow}
 

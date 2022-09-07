@@ -4,10 +4,7 @@ import { numberWithSpaces } from "../../utils/formatNumbers";
 import { CTableCell, CTableRow } from "../CTable";
 
 
-
-
 const SummaryRow = ({summaries, columns, data}) => {
-  
   const computedSummaries = useMemo(() => {
     return columns?.map(column => {
       const summary = summaries?.find(el => el.field_name === column.id)
@@ -30,7 +27,6 @@ const SummaryRow = ({summaries, columns, data}) => {
         else return <CTableCell className="text-nowrap" >{ numberWithSpaces(column) }</CTableCell>
       })
     }
-
 
   </CTableRow> );
 }

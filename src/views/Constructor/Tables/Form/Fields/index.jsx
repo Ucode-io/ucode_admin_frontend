@@ -10,7 +10,7 @@ import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/Per
 import TableCard from "../../../../../components/TableCard"
 import constructorFieldService from "../../../../../services/constructorFieldService"
 import { generateGUID } from "../../../../../utils/generateID"
-import FieldSettings from "../Layout/FieldSettings"
+import FieldSettings from "./FieldSettings"
 import FieldCreateForm from "./FieldCreateForm"
 import styles from "./style.module.scss"
 

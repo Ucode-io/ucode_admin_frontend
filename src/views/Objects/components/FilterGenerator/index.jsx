@@ -7,6 +7,7 @@ import TableOrderingButton from "../../../../components/TableOrderingButton"
 import DefaultFilter from "./DefaultFilter"
 import RelationFilter from "./RelationFilter"
 import FilterAutoComplete from "./FilterAutocomplete"
+import DateFilter from "./DateFilter"
 
 const FilterGenerator = ({
   field,
@@ -102,21 +103,22 @@ export const Filter = ({
 
     case "DATE":
       return (
-        <DatePicker
-          inputFormat="dd.MM.yyyy"
-          mask="__.__.____"
-          toolbarFormat="dd.MM.yyyy"
-          value={filters[name] ?? ""}
-          onChange={(val) => onChange(val, name)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              error={false}
-              style={{ width: "100%" }}
-              size="small"
-            />
-          )}
-        />
+        <DateFilter value={filters[name]} onChange={(val) => onChange(val, name)} />
+        // <DatePicker
+        //   inputFormat="dd.MM.yyyy"
+        //   mask="__.__.____"
+        //   toolbarFormat="dd.MM.yyyy"
+        //   value={filters[name] ?? ""}
+        //   onChange={(val) => onChange(val, name)}
+        //   renderInput={(params) => (
+        //     <TextField
+        //       {...params}
+        //       error={false}
+        //       style={{ width: "100%" }}
+        //       size="small"
+        //     />
+        //   )}
+        // />
       )
 
     case "NUMBER":

@@ -18,7 +18,7 @@ const DynamicRelationRow = ({ control, index, deleteTable, computedTablesList })
     if (!selectedTableSlug) return []
     return constructorFieldService.getList({ table_slug: selectedTableSlug })
   }, {
-    select: ({ fields }) => listToOptions(fields?.filter(field => field.type !== 'LOOKUP'), "label", "slug")
+    select: ({ fields }) => listToOptions(fields?.filter(field => field.type !== 'LOOKUP'), "label", "id")
   })
   
   return (

@@ -61,3 +61,23 @@ export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {
 
   return label
 }
+
+export const getLabelWithViewFields = (viewFields, option) => {
+  let label = ''
+
+  viewFields?.forEach(field => {
+    let result = ""
+    const value = get(option, field.slug)
+
+
+    if (field?.type === "DATE")
+      result = value ? format(new Date(value), "dd.MM.yyyy") : ""
+    else if (field?.type === "DATE_TIME")
+      result = value ? format(new Date(value), "dd.MM.yyyy HH:mm") : ""
+    else result = value
+
+    label += `${result ?? ""} `
+  })
+
+  return label
+}

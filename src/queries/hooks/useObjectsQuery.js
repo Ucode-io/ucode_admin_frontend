@@ -11,6 +11,8 @@ const useObjectsQuery = ({ tableSlug, queryPayload = {}, data }) => {
     })
   })
 
+  sd
+
   const updateMutation = useMutation(() => {
     return constructorObjectService.update(tableSlug, data)
   })

@@ -40,16 +40,16 @@ const FormElementGenerator = ({
   }, [field.id, field.slug])
 
   if (field.id?.includes("#")) {
-    if (field.relation_type !== "Many2Many") {
+    if (field.relation_type === "Many2Many") {
       return (
-        <RelationFormElement
+        <ManyToManyRelationFormElement
           control={control}
           field={field}
           setFormValue={setFormValue}
           {...props}
         />
       )
-    } else if (field.relation_type !== "Many2Dynamic") {
+    } else if (field.relation_type === "Many2Dynamic") {
       return (
         <DynamicRelationFormElement
           control={control}
@@ -60,7 +60,7 @@ const FormElementGenerator = ({
       )
     } else {
       return (
-        <ManyToManyRelationFormElement
+        <RelationFormElement
           control={control}
           field={field}
           setFormValue={setFormValue}

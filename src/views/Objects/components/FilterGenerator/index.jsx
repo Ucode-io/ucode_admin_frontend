@@ -1,6 +1,6 @@
-import { DatePicker } from "@mui/x-date-pickers"
-import { FormControl, InputLabel, TextField } from "@mui/material"
-import { useMemo } from "react"
+import { TextField } from "@mui/material"
+import { useMemo, useState } from "react"
+
 import CSelect from "../../../../components/CSelect"
 import TableColumnFilter from "../../../../components/TableColumnFilter"
 import TableOrderingButton from "../../../../components/TableOrderingButton"
@@ -54,6 +54,8 @@ export const Filter = ({
   onChange,
   tableSlug,
 }) => {
+  const [debouncedValue, setDebouncedValue] = useState('')
+  
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
@@ -79,6 +81,8 @@ export const Filter = ({
       return (
 
         <FilterAutoComplete 
+          searchText={debouncedValue}
+          setSearchText={setDebouncedValue}
           options={computedOptions}
           value={filters[name] ?? []}
           onChange={(val) => onChange(val?.length ? val : null, name)}

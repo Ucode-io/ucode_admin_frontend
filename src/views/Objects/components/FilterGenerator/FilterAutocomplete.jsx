@@ -5,9 +5,7 @@ import SearchInput from "../../../../components/SearchInput"
 import useDebounce from "../../../../hooks/useDebounce"
 import styles from "./style.module.scss"
 
-const FilterAutoComplete = ({ options = [], value = [], onChange, label }) => {
-  const [searchText, setSearchText] = useState("")
-
+const FilterAutoComplete = ({ options = [], searchText, setSearchText, value = [], onChange, label }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const menuVisible = Boolean(anchorEl)
 

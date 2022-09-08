@@ -1,5 +1,5 @@
 import { Autocomplete, TextField } from "@mui/material"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useMemo } from "react"
 import { Controller } from "react-hook-form"
 import { useQuery } from "react-query"
@@ -92,31 +92,34 @@ const AutoCompleteElement = ({
   setValue,
   error,
   disabledHelperText,
-  setFormValue = () => {},
+  setFormValue = () => { },
 }) => {
   const [inputValue, setInputValue] = useState('')
   const [debouncedValue, setDebouncedValue] = useState('')
 
   const { navigateToForm } = useTabRouter()
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300)
-  
+
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue],
     () => {
-      return constructorObjectService.getList(tableSlug, { data: {
-        view_fields: field.attributes?.view_fields?.map(f => f.slug), search: debouncedValue, limit: 10
-      } })
+
+      return constructorObjectService.getList(tableSlug, {
+        data: {
+          view_fields: field.attributes?.view_fields?.map(f => f.slug), search: debouncedValue.trim(), limit: 10
+        }
+      })
     },
     {
       select: (res) => {
         return res?.data?.response ?? []
       },
     }
-    )
-    
+  )
+
   const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === value)
-    return findedOption ? [findedOption] : []
+    const foundOption = options?.find((el) => el?.guid === value)
+    return foundOption ? [foundOption] : []
   }, [options, value])
 
   const getOptionLabel = (option) => {
@@ -125,11 +128,10 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value) => {
     const val = value?.[value?.length - 1]
-    
     setValue(val?.guid ?? null)
-
+    
     if (!field?.attributes?.autofill) return
-
+    
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
       setFormValue(field_to, val?.[field_from])
     })
@@ -163,7 +165,7 @@ const AutoCompleteElement = ({
         onInputChange={(e, newValue) => {
           setInputValue(newValue)
           inputChangeHandler(newValue)
-        } }
+        }}
         disablePortal
         blurOnSelect
         openOnFocus

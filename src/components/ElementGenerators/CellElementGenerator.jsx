@@ -60,6 +60,9 @@ const CellElementGenerator = ({ field = {}, row }) => {
         </TableTag>
       )
 
+    case "DYNAMIC":
+      return null
+
     // case "FORMULA_FRONTEND":
     //   return <FormulaCell field={field} row={row} />
 

@@ -1,25 +1,27 @@
 import { ArrowBack, Close } from "@mui/icons-material"
 import { CircularProgress, IconButton } from "@mui/material"
+import { useEffect } from "react"
 import { useMemo, useState } from "react"
 import { useQuery } from "react-query"
+import useDebounce from "../../../hooks/useDebounce"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { getLabelWithViewFields } from "../../../utils/getRelationFieldLabel"
 import IconGenerator from "../../IconPicker/IconGenerator"
 import SearchInput from "../../SearchInput"
 import styles from "./style.module.scss"
 
-const Dropdown = ({ field, closeMenu }) => {
+const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
   const [selectedTable, setSelectedTable] = useState(null)
+  const [searchText, setSearchText] = useState('')
+  
+  const inputChangeHandler = useDebounce((val) => setSearchText(val), 300)
+  
+  const viewFields = useMemo(() => {
+    if(!selectedTable) return []
+    return selectedTable.view_fields?.map(field => field.slug)    
+  }, [ selectedTable ])
 
-  const tablesList = useMemo(() => {
-    return (
-      field.attributes?.dynamic_tables?.map((el) => {
-        return el.table ? { ...el.table, ...el } : el
-      }) ?? []
-    )
-  }, [field.attributes?.dynamic_tables])
-
-  const queryPayload = { limit: 10, offset: 0 }
+  const queryPayload = { limit: 10, offset: 0, view_fields: viewFields, search: searchText }
 
   const { data: objectsList = [], isLoading: loader } = useQuery(
     ["GET_OBJECT_LIST_QUERY", selectedTable?.slug, queryPayload],
@@ -40,6 +42,10 @@ const Dropdown = ({ field, closeMenu }) => {
       },
     }
   )
+
+  useEffect(() => {
+    setSearchText('')
+  }, [ selectedTable ])
 
   return (
     <>
@@ -62,7 +68,7 @@ const Dropdown = ({ field, closeMenu }) => {
       <div className={styles.menuBody}>
         {selectedTable && (
           <div className={styles.menuRow}>
-            <SearchInput size="small" fullWidth />
+            <SearchInput size="small" fullWidth onChange={inputChangeHandler}  />
           </div>
         )}
 
@@ -90,7 +96,7 @@ const Dropdown = ({ field, closeMenu }) => {
                 <div
                   key={object.id}
                   className={styles.menuRow}
-                  onClick={() => setSelectedTable(object)}
+                  onClick={() => onObjectSelect(object, selectedTable)}
                 >
                   {object.label}
                 </div>

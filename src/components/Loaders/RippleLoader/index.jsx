@@ -1,7 +1,7 @@
 import "./style.scss"
 
-const RippleLoader = () => {
-  return ( <div className="lds-dual-ring"></div> );
+const RippleLoader = ({ size = "" }) => {
+  return ( <div className={`lds-dual-ring ${size}`}></div> );
 }
  
 export default RippleLoader;

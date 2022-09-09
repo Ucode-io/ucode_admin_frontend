@@ -52,6 +52,7 @@ const RelationTable = ({
     const relationFilter = {}
 
     if(relation.type === "Many2Many") relationFilter[`${tableSlug}_ids`] = id
+    else if (relation.type === "Many2Dynamic") relationFilter[`${relation.relation_field_slug}.${tableSlug}_id`] = id
     else relationFilter[`${tableSlug}_id`] = id
 
     return {
@@ -59,7 +60,7 @@ const RelationTable = ({
       ...relationFilter
     }
 
-  }, [ filters, tableSlug, id, relation.type ])
+  }, [ filters, tableSlug, id, relation.type, relation.relation_field_slug ])
 
   const relatedTableSlug = computedRelation?.relatedTable?.slug
 
@@ -152,8 +153,6 @@ const RelationTable = ({
     return mutateAsync(values)
   }
 
-  console.log("SUMMARY ==>", relation)
-
   return (
     <div className={styles.relationTable}>
       <div className={styles.filtersBlock}>
@@ -177,7 +176,6 @@ const RelationTable = ({
           columns={columns}
           removableHeight={290}
           disableFilters
-          // func={relation?.summaries?.length > 0 ? relation?.summaries : null}
           pagesCount={pageCount}
           currentPage={currentPage}
           onRowClick={navigateToEditPage}

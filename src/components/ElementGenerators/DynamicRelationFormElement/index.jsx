@@ -1,4 +1,4 @@
-import { Menu, TextField } from "@mui/material"
+import { CircularProgress, InputAdornment, Menu, TextField } from "@mui/material"
 import { useState } from "react"
 import FRow from "../../FormElements/FRow"
 import styles from "./style.module.scss"
@@ -21,6 +21,7 @@ const DynamicRelationFormElement = ({ control, field, setFormValue }) => {
 
   const [anchorEl, setAnchorEl] = useState(null)
   const [localValue, setLocalValue] = useState(null)
+  const [inputLoader, setInputLoader] = useState(false)
 
   const tablesList = useMemo(() => {
     return (
@@ -45,16 +46,15 @@ const DynamicRelationFormElement = ({ control, field, setFormValue }) => {
 
   const getValueData = async () => {
     try {
+      setInputLoader(true)
       const id = value?.[`${tableInValue.slug}_id`]
       const res = await constructorObjectService.getById(tableInValue.slug, id)
       const data = res?.data?.response
       setLocalValue(data ? { value: data.id, label: getLabelWithViewFields(tableInValue.view_fields, data) } : null)
-    } catch (error) {
-      
+    } finally {
+      setInputLoader(false)
     }
   }
-
-  console.log("VALUE ==>", value, tableInValue, localValue)
 
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget)
@@ -85,6 +85,11 @@ const DynamicRelationFormElement = ({ control, field, setFormValue }) => {
           value={computedInputString}
           InputProps={{
             readOnly: true,
+            endAdornment: (
+              <InputAdornment>
+                {inputLoader && <CircularProgress size={14} />}
+              </InputAdornment>
+            ),
           }}
         />
       </FRow>

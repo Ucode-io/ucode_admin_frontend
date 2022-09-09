@@ -131,6 +131,9 @@
       .sectionHeader {
         padding: 16px 12px;
         box-shadow: inset 0px -1px 0px #EBEDEE;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
   
         .sectionTitle {
           font-weight: 700;

@@ -60,7 +60,6 @@ const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
       setBtnLoader(false)
     }
     
-    // console.log("VALUES ===>", values)
   }
 
   return (
@@ -94,7 +93,7 @@ const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
         )}
       </div>
 
-      <dir className={styles.footer}>
+      <div className={styles.footer}>
         <PrimaryButton
           size="large"
           className={styles.button}
@@ -103,7 +102,7 @@ const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
         >
           Сохранить
         </PrimaryButton>
-      </dir>
+      </div>
     </>
   )
 }

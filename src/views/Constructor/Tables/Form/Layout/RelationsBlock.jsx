@@ -31,12 +31,10 @@ const RelationsBlock = ({
   })
 
   const computedViewRelations = useMemo(() => {
-    console.log("COMPUTED VIEW 1111===>", viewRelations, relationsMap)
-
+ 
     return viewRelations?.map(({relation_id}) => relationsMap[relation_id])?.filter(el => el)
   }, [ viewRelations, relationsMap ])
 
-  console.log("COMPUTED VIEW ===>", computedViewRelations)
 
   const onDrop = (dropResult) => {
     const result = applyDrag(computedViewRelations, dropResult)

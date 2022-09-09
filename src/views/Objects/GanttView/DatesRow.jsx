@@ -45,20 +45,6 @@ const DatesRow = ({ datesList }) => {
       ))
     }
 
-    {/* {
-      Object.key(computedDatesList).map(month => ())
-    } */}
-
-
-    {/* <div className={`${styles.dateBlock} ${styles.mockBlock}`} />
-    {
-      datesList?.map((date) => (
-        <div key={date} className={styles.dateBlock}>
-          {format(date, "dd.MM")}
-        </div>
-      ))
-    } */}
-
   </div> );
 }
  

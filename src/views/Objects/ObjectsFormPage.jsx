@@ -111,6 +111,7 @@ const ObjectsFormPage = () => {
 
       const getRelations = constructorViewRelationService.getList({
         table_slug: tableSlug,
+        // relation_table_slug: tableSlug
       })
 
       const [{ sections = [] }, { view_relations = [] }] = await Promise.all([

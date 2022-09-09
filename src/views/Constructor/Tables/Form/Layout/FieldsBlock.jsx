@@ -83,7 +83,6 @@ const FieldsBlock = ({
     if (!result) return
   }
 
-  console.log("unusedRelations===>", unusedTableRelations, relations)
 
   return (
     <div className={styles.settingsBlock}>

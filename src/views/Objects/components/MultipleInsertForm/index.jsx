@@ -15,6 +15,8 @@ const MultipleInsertButton = ({ view, fieldsMap }) => {
     setDrawerIsOpen(false)
   }
 
+  if(!view?.multiple_insert) return null
+
   return (
     <>
       <CreateButton

@@ -7,6 +7,7 @@ import FilterAutoComplete from "./FilterAutocomplete"
 
 const RelationFilter = ({ field = {}, filters, name, onChange }) => {
   const [debouncedValue, setDebouncedValue] = useState('')
+  const [localCheckedValues, setLocalCheckedValues] = useState([])
 
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST_ALL", { tableSlug: field.table_slug, filters: {} }, debouncedValue],
@@ -29,12 +30,18 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
 
   return (
     <FilterAutoComplete
-      searchText={debouncedValue}
-      setSearchText={setDebouncedValue}
-      value={filters[name] ?? []}
-      onChange={(val) => onChange(val?.length ? val : null, name)}
-      options={options}
-      label={field.label}
+    searchText={debouncedValue}
+    setSearchText={setDebouncedValue}
+    value={filters[name] ?? []}
+    localCheckedValues={localCheckedValues}
+    onChange={(val, item) => {
+      onChange(val?.length ? val : null, name)
+      if (item) {
+        setLocalCheckedValues(p => p.find(i => i.value === item.value) ? p.filter(i => i.value !== item.value) : [...p, item])
+      }
+    }}
+    options={options}
+    label={field.label}
     />
   )
 }

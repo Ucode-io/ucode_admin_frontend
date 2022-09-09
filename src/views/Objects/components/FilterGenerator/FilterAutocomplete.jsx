@@ -5,7 +5,7 @@ import SearchInput from "../../../../components/SearchInput"
 import useDebounce from "../../../../hooks/useDebounce"
 import styles from "./style.module.scss"
 
-const FilterAutoComplete = ({ options = [], searchText, setSearchText, value = [], onChange, label }) => {
+const FilterAutoComplete = ({ options = [], searchText, setSearchText, localCheckedValues, value = [], onChange, label }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const menuVisible = Boolean(anchorEl)
 
@@ -22,11 +22,11 @@ const FilterAutoComplete = ({ options = [], searchText, setSearchText, value = [
     setSearchText("")
   }
 
-  const rowClickHandler = (optionValue) => {
-    if (value?.includes(optionValue)) {
-      onChange(value.filter((item) => item !== optionValue))
+  const rowClickHandler = (option) => {
+    if (value?.includes(option.value)) {
+      onChange(value.filter((item) => item !== option.value), option)
     } else {
-      onChange([...value, optionValue])
+      onChange([...value, option.value], option)
     }
   }
 
@@ -57,7 +57,7 @@ const FilterAutoComplete = ({ options = [], searchText, setSearchText, value = [
     <div className={styles.autocomplete}>
       <div className={styles.autocompleteButton} onClick={openMenu}>
         <div className={styles.autocompleteValue}>
-          {computedOptions.checkedOptions?.[0]?.label || (
+          {localCheckedValues?.[0]?.label || (
             <span className={styles.placeholder}>{label}</span>
           )}
         </div>
@@ -80,9 +80,9 @@ const FilterAutoComplete = ({ options = [], searchText, setSearchText, value = [
         <SearchInput fullWidth onChange={inputChangeHandler} placeholder={label} />
 
         <div className={styles.scrollBlock}>
-          {computedOptions?.checkedOptions.map((option) => (
+          {localCheckedValues?.map((option) => (
             <div
-              onClick={() => rowClickHandler(option.value)}
+              onClick={() => rowClickHandler(option)}
               key={option.value}
               className={styles.option}
             >
@@ -95,7 +95,7 @@ const FilterAutoComplete = ({ options = [], searchText, setSearchText, value = [
 
           {computedOptions?.uncheckedOptions.map((option) => (
             <div
-              onClick={() => rowClickHandler(option.value)}
+              onClick={() => rowClickHandler(option)}
               key={option.value}
               className={styles.option}
             >

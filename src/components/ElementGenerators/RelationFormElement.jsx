@@ -7,7 +7,7 @@ import { useQuery } from "react-query"
 import useDebounce from "../../hooks/useDebounce"
 import useTabRouter from "../../hooks/useTabRouter"
 import constructorObjectService from "../../services/constructorObjectService"
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
+import { getLabelWithViewFields, getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
 import FEditableRow from "../FormElements/FEditableRow"
 import FRow from "../FormElements/FRow"
 import IconGenerator from "../IconPicker/IconGenerator"
@@ -95,6 +95,7 @@ const AutoCompleteElement = ({
   setFormValue = () => { },
 }) => {
   const [inputValue, setInputValue] = useState('')
+  const [localValue, setLocalValue] = useState([])
   const [debouncedValue, setDebouncedValue] = useState('')
 
   const { navigateToForm } = useTabRouter()
@@ -117,10 +118,15 @@ const AutoCompleteElement = ({
     }
   )
 
-  const computedValue = useMemo(() => {
-    const foundOption = options?.find((el) => el?.guid === value)
-    return foundOption ? [foundOption] : []
-  }, [options, value])
+  const getValueData = async () => {
+    try {
+      const id = value
+      const res = await constructorObjectService.getById(tableSlug, id)
+      const data = res?.data?.response
+      setLocalValue(data ? [data] : null)
+    } catch (error) {
+    }
+  }
 
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option)
@@ -129,13 +135,18 @@ const AutoCompleteElement = ({
   const changeHandler = (value) => {
     const val = value?.[value?.length - 1]
     setValue(val?.guid ?? null)
-    
+    setLocalValue(val ? [val] : [])
+
     if (!field?.attributes?.autofill) return
     
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
       setFormValue(field_to, val?.[field_from])
     })
   }
+
+    useEffect(() => {
+      getValueData()
+  }, [])
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -148,7 +159,7 @@ const AutoCompleteElement = ({
 
       <Autocomplete
         options={options ?? []}
-        value={computedValue}
+        value={localValue}
         freeSolo
         onChange={(event, newValue) => {
           changeHandler(newValue)

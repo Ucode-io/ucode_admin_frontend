@@ -24,15 +24,6 @@ const FormElementGenerator = ({
   fieldsList,
   ...props
 }) => {
-  // const computedOptions = useMemo(() => {
-  //   if (!field.attributes?.options) return []
-
-  //   return field.attributes.options.map((option) => ({
-  //     value: option,
-  //     label: option,
-  //   }))
-  // }, [field.attributes?.options])
-
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))
       return `$${field.id.split("@")?.[0]}.${field.slug}`

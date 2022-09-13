@@ -41,7 +41,7 @@ const RelationSection = ({ relations }) => {
 
   const navigateToCreatePage = () => {
     const relation = relations[selectedTabIndex]
-    if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
+    if (relation.view_relation_type === "Many2Many") setSelectedManyToManyRelation(relation)
     else {
       if (relation.is_editable) setCreateFormVisible(relation.id, true)
       else {
@@ -66,7 +66,7 @@ const RelationSection = ({ relations }) => {
           // onCreate={refetch}
         />
       )}
-
+{console.log('relations - ',relations)}
       <Card className={styles.card}>
         <Tabs
           // forceRenderTabPanel
@@ -76,16 +76,18 @@ const RelationSection = ({ relations }) => {
           <div className={styles.cardHeader}>
             <TabList className={styles.tabList}>
               {relations?.map((relation, index) => (
+                relation?.view_relation_type === 'FILE'
+                ?
+                <Tab key={index}>
+                  <InsertDriveFile /> Файлы
+                </Tab>
+                :
                 <Tab key={index}>
                   <div className="flex align-center gap-2 text-nowrap">
                     <IconGenerator icon={relation?.icon} /> {relation.title}
                   </div>
                 </Tab>
               ))}
-
-              <Tab>
-                <InsertDriveFile /> Файлы
-              </Tab>
             </TabList>
 
             <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>

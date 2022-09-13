@@ -13,11 +13,20 @@ import constructorViewService from "../../../../services/constructorViewService"
 import { viewTypes } from "../../../../utils/constants/viewTypes"
 import CalendarSettings from "./CalendarSettings"
 import ColumnsTab from "./ColumnsTab"
+import GanttSettings from "./GanttSettings"
 import GroupsTab from "./GroupsTab"
+import MultipleInsertSettings from "./MultipleInsertSettings"
 import QuickFiltersTab from "./QuicFiltersTab"
 import styles from "./style.module.scss"
 
-const ViewForm = ({ initialValues, closeForm, refetchViews, setIsChanged, columns, relationColumns }) => {
+const ViewForm = ({
+  initialValues,
+  closeForm,
+  refetchViews,
+  setIsChanged,
+  columns,
+  relationColumns,
+}) => {
   const { tableSlug } = useParams()
 
   const [btnLoader, setBtnLoader] = useState(false)
@@ -30,37 +39,52 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, setIsChanged, column
   const type = form.watch("type")
 
   const computedColumns = useMemo(() => {
-    if(type !== "CALENDAR" && type !== "GANTT") {
+    if (type !== "CALENDAR" && type !== "GANTT") {
       return columns
-    }
-    else {
+    } else {
       return [...columns, ...relationColumns]
     }
   }, [columns, relationColumns, type])
 
   useEffect(() => {
-    form.reset(getInitialValues(initialValues, tableSlug, columns, relationColumns))
+    form.reset(
+      getInitialValues(initialValues, tableSlug, columns, relationColumns)
+    )
   }, [initialValues, tableSlug, form])
 
   useWatch(() => {
     // const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)
-    const formQuickFilters = form.getValues('quick_filters')?.filter(el => el?.is_checked)?.map(el => ({field_id: el.id}))
+    const formQuickFilters = form
+      .getValues("quick_filters")
+      ?.filter((el) => el?.is_checked)
+      ?.map((el) => ({ field_id: el.id }))
 
     // form.setValue('columns', computeColumns(formColumns, computedColumns))
-    form.setValue('quick_filters', computeQuickFilters(formQuickFilters, type === "CALENDAR" || type === "GANTT" ? [...columns, ...relationColumns] : columns))
+    form.setValue(
+      "quick_filters",
+      computeQuickFilters(
+        formQuickFilters,
+        type === "CALENDAR" || type === "GANTT"
+          ? [...columns, ...relationColumns]
+          : columns
+      )
+    )
   }, [type])
 
   const onSubmit = (values) => {
     setBtnLoader(true)
 
-
     const computedValues = {
       ...values,
-      columns: values.columns?.filter(el => el.is_checked).map(el => el.id) ?? [],
-      quick_filters: values.quick_filters?.filter(el => el.is_checked).map(el => ({
-        field_id: el.id,
-        default_value: el.default_value ?? '',
-      })) ?? [],
+      columns:
+        values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
+      quick_filters:
+        values.quick_filters
+          ?.filter((el) => el.is_checked)
+          .map((el) => ({
+            field_id: el.id,
+            default_value: el.default_value ?? "",
+          })) ?? [],
     }
 
     if (initialValues === "NEW") {
@@ -120,16 +144,30 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, setIsChanged, column
           </div>
         </div>
 
-        {(type === "CALENDAR" || type === "GANTT" ) && (
+        {(type === "CALENDAR" || type === "GANTT") && (
           <CalendarSettings form={form} columns={columns} />
         )}
+
+        {type === "GANTT" && <GanttSettings form={form} columns={columns} />}
+
+        <MultipleInsertSettings form={form} columns={columns} />
 
         <Tabs>
           <div className={styles.section}>
             <TabList>
-              <Tab> <FilterAlt /> Quick filters</Tab>
-              <Tab> <TableChart />Columns</Tab>
-              <Tab> <JoinInner /> Group by</Tab>
+              <Tab>
+                {" "}
+                <FilterAlt /> Quick filters
+              </Tab>
+              <Tab>
+                {" "}
+                <TableChart />
+                Columns
+              </Tab>
+              <Tab>
+                {" "}
+                <JoinInner /> Group by
+              </Tab>
             </TabList>
             <TabPanel>
               <QuickFiltersTab form={form} />
@@ -160,7 +198,12 @@ const ViewForm = ({ initialValues, closeForm, refetchViews, setIsChanged, column
   )
 }
 
-const getInitialValues = (initialValues, tableSlug, columns, relationColumns) => {
+const getInitialValues = (
+  initialValues,
+  tableSlug,
+  columns,
+  relationColumns
+) => {
   if (initialValues === "NEW")
     return {
       type: "TABLE",
@@ -175,10 +218,13 @@ const getInitialValues = (initialValues, tableSlug, columns, relationColumns) =>
         time_from_slug: "",
         time_to_slug: "",
       },
-      columns: columns?.map(el => ({...el, is_checked: true})) ?? [],
+      columns: columns?.map((el) => ({ ...el, is_checked: true })) ?? [],
       quick_filters: columns ?? [],
       group_fields: [],
       table_slug: tableSlug,
+      updated_fields: [],
+      multiple_insert: false,
+      multiple_insert_field: "",
     }
 
   return {
@@ -194,25 +240,51 @@ const getInitialValues = (initialValues, tableSlug, columns, relationColumns) =>
       time_to_slug: initialValues?.disable_dates?.time_to_slug ?? "",
     },
     columns: computeColumns(initialValues?.columns, columns),
-    quick_filters: computeQuickFilters(initialValues?.quick_filters, initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT" ? [...columns, ...relationColumns] : columns) ?? [],
+    quick_filters:
+      computeQuickFilters(
+        initialValues?.quick_filters,
+        initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT"
+          ? [...columns, ...relationColumns]
+          : columns
+      ) ?? [],
     group_fields: initialValues?.group_fields ?? [],
     table_slug: tableSlug,
     id: initialValues?.id,
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",
     calendar_to_slug: initialValues?.calendar_to_slug ?? "",
-    time_interval: initialValues?.time_interval ?? 60
+    time_interval: initialValues?.time_interval ?? 60,
+    updated_fields: initialValues?.updated_fields ?? [],
+    multiple_insert: initialValues?.multiple_insert ?? false,
+    multiple_insert_field: initialValues?.multiple_insert_field ?? "",
   }
 }
 
 const computeColumns = (checkedColumnsIds = [], columns) => {
-  const selectedColumns = checkedColumnsIds?.filter(id => columns.find(el => el.id === id))?.map(id => ({...columns.find(el => el.id === id), is_checked: true})) ?? []
-  const unselectedColumns = columns?.filter(el => !checkedColumnsIds?.includes(el.id)) ?? []
+  const selectedColumns =
+    checkedColumnsIds
+      ?.filter((id) => columns.find((el) => el.id === id))
+      ?.map((id) => ({
+        ...columns.find((el) => el.id === id),
+        is_checked: true,
+      })) ?? []
+  const unselectedColumns =
+    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? []
   return [...selectedColumns, ...unselectedColumns]
 }
 
 const computeQuickFilters = (quickFilters = [], columns) => {
-  const selectedQuickFilters = quickFilters?.filter(filter => columns.find(el => el.id === filter.field_id))?.map(filter => ({...columns.find(el => el.id === filter.field_id), ...filter, is_checked: true})) ?? []
-  const unselectedQuickFilters = columns?.filter(el => !quickFilters?.find(filter => filter.field_id === el.id)) ?? []
+  const selectedQuickFilters =
+    quickFilters
+      ?.filter((filter) => columns.find((el) => el.id === filter.field_id))
+      ?.map((filter) => ({
+        ...columns.find((el) => el.id === filter.field_id),
+        ...filter,
+        is_checked: true,
+      })) ?? []
+  const unselectedQuickFilters =
+    columns?.filter(
+      (el) => !quickFilters?.find((filter) => filter.field_id === el.id)
+    ) ?? []
   return [...selectedQuickFilters, ...unselectedQuickFilters]
 }
 

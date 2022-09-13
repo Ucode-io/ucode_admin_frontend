@@ -104,7 +104,7 @@ const AutoCompleteElement = ({
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue],
     () => {
-
+      if(!tableSlug) return null
       return constructorObjectService.getList(tableSlug, {
         data: {
           view_fields: field.attributes?.view_fields?.map(f => f.slug), search: debouncedValue.trim(), limit: 10
@@ -145,8 +145,8 @@ const AutoCompleteElement = ({
   }
 
     useEffect(() => {
-      getValueData()
-  }, [])
+      if(value) getValueData()
+    }, [])
 
   return (
     <div className={styles.autocompleteWrapper}>

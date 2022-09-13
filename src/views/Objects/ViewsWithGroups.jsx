@@ -24,6 +24,7 @@ import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import ExcelButtons from "./components/ExcelButtons";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
+import MultipleInsertButton from "./components/MultipleInsertForm";
 
 const ViewsWithGroups = ({
   views,
@@ -135,6 +136,7 @@ const ViewsWithGroups = ({
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tabelSlug={tableSlug} type="write">
                 <CreateButton type="secondary" onClick={navigateToCreatePage} />
+                <MultipleInsertButton view={view} fieldsMap={fieldsMap} />
               </PermissionWrapperV2>
             </div>
           </div>

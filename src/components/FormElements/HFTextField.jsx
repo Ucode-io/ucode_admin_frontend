@@ -9,6 +9,7 @@ const HFTextField = ({
   fullWidth = false,
   withTrim = false,
   rules = {},
+  type="",
   ...props
 }) => {
   return (
@@ -24,12 +25,14 @@ const HFTextField = ({
         <TextField
           size="small"
           value={value}
-          onChange={(e) =>
-            onChange(withTrim ? e.target.value?.trim() : e.target.value)
-          }
+          onChange={(e) =>{
+            if(type === "number") onChange(isNaN(Number(e.target.value)) || e.target.value === "" ? "" : Number(e.target.value))
+            else onChange(withTrim ? e.target.value?.trim() : e.target.value)
+          }}
           name={name}
           error={error}
           fullWidth={fullWidth}
+          type={type}
           helperText={!disabledHelperText && error?.message}
           {...props}
         />

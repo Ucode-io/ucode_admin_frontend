@@ -34,7 +34,6 @@ const DataBlock = ({ computedData, date, view, fieldsMap, tab }) => {
       [tab?.slug]: tab?.value,
     })
 
-
     // navigateToForm(tableSlug, "CREATE", null, {
     //   [startTimeStampSlug]: date,
     //   [tab?.slug]: tab?.value,
@@ -69,7 +68,13 @@ const DataBlock = ({ computedData, date, view, fieldsMap, tab }) => {
         anchor="right"
         classes={{ paperAnchorRight: styles.verticalDrawer }}
       >
-        <MultipleInserForm onClose={() => setDrawerState(null)} view={view} fieldsMap={fieldsMap} drawerState={drawerState} tab={tab} />
+        <MultipleInserForm
+          onClose={() => setDrawerState(null)}
+          view={view}
+          fieldsMap={fieldsMap}
+          drawerState={drawerState}
+          tab={tab}
+        />
       </Drawer>
     </div>
   )

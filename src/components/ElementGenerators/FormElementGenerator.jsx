@@ -24,6 +24,9 @@ const FormElementGenerator = ({
   fieldsList,
   ...props
 }) => {
+
+  console.log("FIEld =>", field)
+
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))
       return `$${field.id.split("@")?.[0]}.${field.slug}`

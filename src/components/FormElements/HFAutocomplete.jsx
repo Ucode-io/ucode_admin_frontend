@@ -1,4 +1,5 @@
 import { FormControl, FormHelperText, InputLabel } from "@mui/material"
+import { useMemo } from "react"
 import { Controller } from "react-hook-form"
 import CAutoCompleteSelect from "../CAutoCompleteSelect"
 
@@ -15,11 +16,20 @@ const HFAutocomplete = ({
   rules = {},
   ...props
 }) => {
+
+  const computedOptions = useMemo(() => {
+    return options?.map(option => ({
+      label: option.value,
+      value: option.value,
+    }))
+  }, [ options ])
+
   return (
+
     <Controller
       control={control}
       name={name}
-      defaultValue=""
+      defaultValue={null}
       rules={{
         required: required ? "This is required field" : false,
         ...rules,
@@ -27,22 +37,24 @@ const HFAutocomplete = ({
       render={({
         field: { onChange: onFormChange, value },
         fieldState: { error },
-      }) => (
-        <FormControl style={{ width }}>
-          <InputLabel size="small">{label}</InputLabel>
-          <CAutoCompleteSelect
-            value={value}
-            onChange={(val) => {
-              onChange(val)
-              onFormChange(val)
-            }}
-            options={options}
-          />
-          {!disabledHelperText && error?.message && (
-            <FormHelperText error>{error?.message}</FormHelperText>
-          )}
-        </FormControl>
-      )}
+      }) => {
+        return (
+          <FormControl style={{ width }}>
+            <InputLabel size="small">{label}</InputLabel>
+            <CAutoCompleteSelect
+              value={value}
+              onChange={(val) => {
+                onChange(val?.value)
+                onFormChange(val?.value)
+              }}
+              options={computedOptions}
+            />
+            {!disabledHelperText && error?.message && (
+              <FormHelperText error>{error?.message}</FormHelperText>
+            )}
+          </FormControl>
+        )
+      }}
     ></Controller>
   )
 }

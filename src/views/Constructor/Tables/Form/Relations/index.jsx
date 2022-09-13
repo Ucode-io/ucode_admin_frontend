@@ -1,8 +1,7 @@
-import { Add, Delete, Edit } from "@mui/icons-material"
+import { Add } from "@mui/icons-material"
 import { useMemo, useState } from "react"
 import { useFieldArray } from "react-hook-form"
 import { useParams } from "react-router-dom"
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
 import {
   CTableCell,
   CTableRow,
@@ -11,24 +10,21 @@ import DataTable from "../../../../../components/DataTable"
 import TableCard from "../../../../../components/TableCard"
 import constructorRelationService from "../../../../../services/constructorRelationService"
 import { generateGUID } from "../../../../../utils/generateID"
-import RelationCreateForm from "./RelationCreateForm"
 import styles from "../Fields/style.module.scss"
-import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/PermissionWrapperV2"
-import { Collapse, Drawer } from "@mui/material"
-import RelationSettings from "../Layout/RelationSettings"
+import { Drawer } from "@mui/material"
+import RelationSettings from "./RelationSettings"
 
 const Relations = ({ mainForm, getRelationFields }) => {
-  const [formLoader, setFormLoader] = useState(false)
   const [drawerState, setDrawerState] = useState(null)
   const [loader, setLoader] = useState(false)
 
-  const { fields: relations, update } = useFieldArray({
+  const { fields: relations } = useFieldArray({
     control: mainForm.control,
     name: "relations",
     keyName: "key",
   })
 
-  const { id, slug } = useParams()
+  const { id } = useParams()
 
   const updateRelations = async () => {
     setLoader(true)
@@ -39,41 +35,9 @@ const Relations = ({ mainForm, getRelationFields }) => {
     setLoader(false)
   }
 
-  const createField = (field) => {
-    const data = {
-      ...field,
-      id: generateGUID(),
-    }
-
-    if (!id) {
-      updateRelations()
-      setDrawerState(null)
-    } else {
-      setFormLoader(true)
-      constructorRelationService.create(data).then((res) => {
-        updateRelations(res)
-        setDrawerState(null)
-      }).finally(() => setFormLoader(false))
-    }
-  }
-
-  const updateField = (field, index) => {
-    if (!id) {
-      updateRelations()
-    } else {
-      setFormLoader(true)
-      constructorRelationService.update(field).then((res) => {
-        updateRelations()
-      }).finally(() => setFormLoader(false))
-    }
-  }
-
   const openEditForm = (field, index) => {
     setDrawerState(field)
-    // update(index, {
-    //   ...field,
-    //   editable: true,
-    // })
+
   }
 
   const deleteField = (field, index) => {
@@ -82,14 +46,6 @@ const Relations = ({ mainForm, getRelationFields }) => {
       constructorRelationService
         .delete(field.id)
         .then((res) => updateRelations())
-    }
-  }
-
-  const onFormSubmit = (values) => {
-    if (drawerState === "CREATE") {
-      createField(values)
-    } else {
-      updateField(values)
     }
   }
 

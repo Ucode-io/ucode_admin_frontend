@@ -1,6 +1,6 @@
 import FieldsBlock from "./FieldsBlock"
-import FieldSettings from "./FieldSettings"
-import RelationSettings from "./RelationSettings"
+import FieldSettings from "../Fields/FieldSettings"
+import RelationSettings from "../Relations/RelationSettings"
 
 const SettingsBlock = ({
   mainForm,

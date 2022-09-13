@@ -1,14 +1,14 @@
 
+import { useState } from "react"
 import { useQuery } from "react-query"
-import useDebounce from "../../../../hooks/useDebounce"
+
 import constructorObjectService from "../../../../services/constructorObjectService"
 import FilterAutoComplete from "./FilterAutocomplete"
 
 const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
-  // const { id } = useId()
-  // const [searchText, setSearchText] = useState("")
+   const [debouncedValue, setDebouncedValue] = useState('')
 
-  const { data: options, isLoading } = useQuery(
+  const { data: options } = useQuery(
     ["GET_OBJECT_LIST_ALL",  { tableSlug: tableSlug, filters: {} }],
     () => {
       if (!tableSlug) return null
@@ -30,45 +30,14 @@ const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
 
   return (
     <FilterAutoComplete
+      searchText={debouncedValue}
+      setSearchText={setDebouncedValue}
       options={options}
       value={filters[name] ?? []}
       onChange={(val) => onChange(val?.length ? val : null, name)}
       label={field.label}
     />
   )
-
-  // return (
-  //   <Autocomplete
-  //     id={id}
-  //     multiple
-  //     isOptionEqualToValue={(option, value) => option === value}
-  //     getOptionLabel={(option) => option}
-  //     options={options ?? []}
-  //     loading={isLoading}
-  //     size="small"
-  //     value={filters[name] ?? []}
-  //     onInputChange={search}
-  //     onChange={(e, val) => onChange(val?.length ? val : null, name)}
-  //     renderInput={(params) => (
-  //       <TextField
-  //         {...params}
-  //         placeholder={field.label}
-  //         // label="Asynchronous"
-  //         size="small"
-  //         InputProps={{
-  //           ...params.InputProps,
-  //           style: filters[name]?.length ? { paddingTop: 3, paddingBottom: 3 } : {},
-  //           endAdornment: (
-  //             <>
-  //               {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
-  //               {params.InputProps.endAdornment}
-  //             </>
-  //           ),
-  //         }}
-  //       />
-  //     )}
-  //   />
-  // )
 }
 
 export default DefaultFilter

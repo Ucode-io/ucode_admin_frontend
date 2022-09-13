@@ -13,6 +13,7 @@ import HFTextEditor from "../FormElements/HFTextEditor"
 import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 import HFTimePicker from "../FormElements/HFTimePicker"
+import DynamicRelationFormElement from "./DynamicRelationFormElement"
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement"
 import RelationFormElement from "./RelationFormElement"
 
@@ -23,14 +24,8 @@ const FormElementGenerator = ({
   fieldsList,
   ...props
 }) => {
-  // const computedOptions = useMemo(() => {
-  //   if (!field.attributes?.options) return []
 
-  //   return field.attributes.options.map((option) => ({
-  //     value: option,
-  //     label: option,
-  //   }))
-  // }, [field.attributes?.options])
+  console.log("FIEld =>", field)
 
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))
@@ -39,9 +34,18 @@ const FormElementGenerator = ({
   }, [field.id, field.slug])
 
   if (field.id?.includes("#")) {
-    if (field.relation_type !== "Many2Many") {
+    if (field.relation_type === "Many2Many") {
       return (
-        <RelationFormElement
+        <ManyToManyRelationFormElement
+          control={control}
+          field={field}
+          setFormValue={setFormValue}
+          {...props}
+        />
+      )
+    } else if (field.relation_type === "Many2Dynamic") {
+      return (
+        <DynamicRelationFormElement
           control={control}
           field={field}
           setFormValue={setFormValue}
@@ -50,7 +54,7 @@ const FormElementGenerator = ({
       )
     } else {
       return (
-        <ManyToManyRelationFormElement
+        <RelationFormElement
           control={control}
           field={field}
           setFormValue={setFormValue}
@@ -259,7 +263,7 @@ const FormElementGenerator = ({
       )
 
     case "FORMULA":
-      case "INCREMENT_ID":
+    case "INCREMENT_ID":
       return (
         <FRow label={field.label} required={field.required}>
           <HFTextField

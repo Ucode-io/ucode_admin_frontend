@@ -20,7 +20,6 @@ const AppSelector = () => {
   const dispatch = useDispatch()
   const { clear } = useAliveController()
 
-
   const applications = useSelector((state) => state.application.list)
 
   const computedList = useMemo(() => {

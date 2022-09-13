@@ -20,11 +20,11 @@ const ManyToManyRelationFormElement = ({
   column,
   mainForm,
   disabledHelperText,
-  setFormValue,
+  autocompleteProps = {},
   ...props
 }) => {
   const tableSlug = useMemo(() => {
-    return field.id.split("#")?.[0] ?? ""
+    return field.id?.split("#")?.[0] ?? ""
   }, [field.id])
 
   if (!isLayout)
@@ -34,6 +34,7 @@ const ManyToManyRelationFormElement = ({
           control={control}
           name={`${tableSlug}_ids`}
           defaultValue={null}
+          {...props}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <AutoCompleteElement
               value={value}
@@ -42,7 +43,7 @@ const ManyToManyRelationFormElement = ({
               tableSlug={tableSlug}
               error={error}
               disabledHelperText={disabledHelperText}
-              setFormValue={setFormValue}
+              {...autocompleteProps}
             />
           )}
         />
@@ -90,7 +91,6 @@ const AutoCompleteElement = ({
   setValue,
   error,
   disabledHelperText,
-  setFormValue = () => {},
 }) => {
   const { navigateToForm } = useTabRouter()
 

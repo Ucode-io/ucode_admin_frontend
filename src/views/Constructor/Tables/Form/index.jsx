@@ -14,7 +14,12 @@ import Layout from "./Layout"
 import MainInfo from "./MainInfo"
 import Relations from "./Relations"
 import constructorRelationService from "../../../../services/constructorRelationService"
-import { computeSections, computeSectionsOnSubmit, computeViewRelations, computeViewRelationsOnSubmit } from "../utils"
+import {
+  computeSections,
+  computeSectionsOnSubmit,
+  computeViewRelations,
+  computeViewRelationsOnSubmit,
+} from "../utils"
 import { addOrderNumberToSections } from "../../../../utils/sectionsOrderNumber"
 import HeaderSettings from "../../../../components/HeaderSettings"
 import Footer from "../../../../components/Footer"
@@ -43,10 +48,6 @@ const ConstructorTablesFormPage = () => {
       description: "",
       slug: "",
       icon: "",
-      increment_id: {
-        digit_number: 4,
-        with_increment_id: false,
-      },
     },
     mode: "all",
   })
@@ -55,23 +56,22 @@ const ConstructorTablesFormPage = () => {
     setLoader(true)
 
     const getTableData = constructorTableService.getById(id)
-    const getViewRelations = constructorViewRelationService.getList({ table_slug: slug })
+    const getViewRelations = constructorViewRelationService.getList({
+      table_slug: slug,
+    })
 
     const getSectionsData = constructorSectionService.getList({ table_id: id })
 
     try {
-      const [tableData, { sections = [] }, { relations: viewRelations = [] }] = await Promise.all([
-        getTableData,
-        getSectionsData,
-        getViewRelations
-      ])
+      const [tableData, { sections = [] }, { relations: viewRelations = [] }] =
+        await Promise.all([getTableData, getSectionsData, getViewRelations])
 
       const data = {
         ...mainForm.getValues(),
         ...tableData,
         fields: [],
         sections: computeSections(sections),
-        view_relations: computeViewRelations(viewRelations)
+        view_relations: computeViewRelations(viewRelations),
       }
 
       mainForm.reset(data)
@@ -88,7 +88,7 @@ const ConstructorTablesFormPage = () => {
 
       const getRelations = constructorRelationService.getList({
         table_slug: slug,
-        relation_table_slug: slug
+        relation_table_slug: slug,
       })
 
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
@@ -112,20 +112,23 @@ const ConstructorTablesFormPage = () => {
           (relation.type === "Many2One" &&
             relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
-          relation.type === "Recursive" || (relation.type === "Many2Many" && relation.view_type === 'INPUT')
+          relation.type === "Recursive" ||
+          (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
+          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
         )
           layoutRelations.push(relation)
         else tableRelations.push(relation)
       })
+
       const layoutRelationsFields = layoutRelations.map((relation) => ({
         ...relation,
-        id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
+        id: `${relation[relation.relatedTableSlug]?.slug ?? ''}#${relation.id}`,
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label: relation[relation.relatedTableSlug]?.label,
+        label: relation?.label ?? relation[relation.relatedTableSlug]?.label,
       }))
-      
+
       mainForm.setValue("relations", relations)
       mainForm.setValue("relationsMap", listToMap(relations))
 
@@ -178,6 +181,8 @@ const ConstructorTablesFormPage = () => {
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
     }
 
+    console.log('computedData - ', computedData)
+
     if (id) updateConstructorTable(computedData)
     else createConstructorTable(computedData)
   }
@@ -224,6 +229,7 @@ const ConstructorTablesFormPage = () => {
             <Relations
               mainForm={mainForm}
               getRelationFields={getRelationFields}
+              
             />
           </TabPanel>
         </Tabs>

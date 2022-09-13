@@ -15,7 +15,7 @@ import constructorFieldService from "../../../../../services/constructorFieldSer
 import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes"
 import { generateGUID } from "../../../../../utils/generateID"
 import listToOptions from "../../../../../utils/listToOptions"
-import Attributes from "../Fields/Attributes"
+import Attributes from "./Attributes"
 import styles from "./style.module.scss"
 
 const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height }) => {

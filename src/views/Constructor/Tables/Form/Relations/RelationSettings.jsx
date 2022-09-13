@@ -25,9 +25,9 @@ import constructorObjectService from "../../../../../services/constructorObjectS
 import constructorRelationService from "../../../../../services/constructorRelationService"
 import { applyDrag } from "../../../../../utils/applyDrag"
 import { relationTyes } from "../../../../../utils/constants/relationTypes"
+import DynamicRelationsBlock from "./DynamicRelationsBlock"
 import styles from "./style.module.scss"
 import SummaryBlock from "./SummaryBlock"
-
 
 
 const relationViewTypes = [
@@ -50,8 +50,6 @@ const RelationSettings = ({
 }) => {
   const { appId, slug } = useParams()
   
-  // const [fieldOptions, setFieldOptions] = useState([])
-  // const [openSumCreate, setOpenSumCreate] = useState(false)
   const [loader, setLoader] = useState(false)
   const [formLoader, setFormLoader] = useState(false)
   const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] =
@@ -66,20 +64,6 @@ const RelationSettings = ({
   })
 
   const values = watch()
-
-  // const getFieldOptions = (table_from) => {
-  //   if (!table_from) return null
-  //   constructorObjectService.getList(table_from, { data: {} }).then((res) => {
-  //     console.log("res", res)
-  //     setFieldOptions((prev) => [
-  //       ...prev,
-  //       ...res?.data?.fields?.map((item) => ({
-  //         label: item?.label,
-  //         value: item?.slug,
-  //       })),
-  //     ])
-  //   })
-  // }
 
   const relatedTableSlug = useMemo(() => {
     if (values.table_to === slug) return values.table_from
@@ -164,15 +148,6 @@ const RelationSettings = ({
     }))
   }, [values.columnsList])
 
-  // useEffect(() => {
-  //   if (type === "Many2One") {
-  //     getFieldOptions(values?.table_from)
-  //   } else {
-  //     getFieldOptions(values?.table_from)
-  //     getFieldOptions(values?.table_to)
-  //   }
-  // }, [type])
-
   const { data: app } = useQuery(["GET_TABLE_LIST", appId], () => {
     return applicationService.getById(appId)
   })
@@ -253,16 +228,6 @@ const RelationSettings = ({
         })
         .finally(() => setFormLoader(false))
     }
-
-    // return console.log('values', data);
-    // onSubmit({
-    //   // ...values,
-    //   ...data,
-    //   summaries: data?.summaries?.filter(sum => sum?.field_name?.length > 0),
-    //   table_to: isRecursiveRelation ? values.table_from : values.table_to,
-    // });
-    // setOpenSumCreate(false)
-    // setFieldOptions([])
   }
 
   useEffect(() => {
@@ -316,7 +281,7 @@ const RelationSettings = ({
               />
             </FRow>
 
-            {!isRecursiveRelation && (
+            {!isRecursiveRelation && values.type !== 'Many2Dynamic' && (
               <FRow label="Table to" required>
                 <HFSelect
                   name="table_to"
@@ -363,7 +328,10 @@ const RelationSettings = ({
 
           </div>
           
+          {values.type === 'Many2Dynamic' && <DynamicRelationsBlock control={control} computedTablesList={computedTablesList} />}
+
           <SummaryBlock control={control} computedFieldsListOptions={computedFieldsListOptions} />
+
 
           <div className={styles.settingsBlockHeader}>
             <h2>Columns</h2>

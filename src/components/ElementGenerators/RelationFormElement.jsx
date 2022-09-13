@@ -1,10 +1,13 @@
 import { Autocomplete, TextField } from "@mui/material"
+import { useEffect, useState } from "react"
 import { useMemo } from "react"
 import { Controller } from "react-hook-form"
 import { useQuery } from "react-query"
+
+import useDebounce from "../../hooks/useDebounce"
 import useTabRouter from "../../hooks/useTabRouter"
 import constructorObjectService from "../../services/constructorObjectService"
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
+import { getLabelWithViewFields, getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
 import FEditableRow from "../FormElements/FEditableRow"
 import FRow from "../FormElements/FRow"
 import IconGenerator from "../IconPicker/IconGenerator"
@@ -89,14 +92,24 @@ const AutoCompleteElement = ({
   setValue,
   error,
   disabledHelperText,
-  setFormValue = () => {},
+  setFormValue = () => { },
 }) => {
+  const [inputValue, setInputValue] = useState('')
+  const [localValue, setLocalValue] = useState([])
+  const [debouncedValue, setDebouncedValue] = useState('')
+
   const { navigateToForm } = useTabRouter()
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300)
 
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug],
+    ["GET_OBJECT_LIST", tableSlug, debouncedValue],
     () => {
-      return constructorObjectService.getList(tableSlug, { data: {} })
+      if(!tableSlug) return null
+      return constructorObjectService.getList(tableSlug, {
+        data: {
+          view_fields: field.attributes?.view_fields?.map(f => f.slug), search: debouncedValue.trim(), limit: 10
+        }
+      })
     },
     {
       select: (res) => {
@@ -105,10 +118,15 @@ const AutoCompleteElement = ({
     }
   )
 
-  const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === value)
-    return findedOption ? [findedOption] : []
-  }, [options, value])
+  const getValueData = async () => {
+    try {
+      const id = value
+      const res = await constructorObjectService.getById(tableSlug, id)
+      const data = res?.data?.response
+      setLocalValue(data ? [data] : null)
+    } catch (error) {
+    }
+  }
 
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option)
@@ -116,26 +134,33 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value) => {
     const val = value?.[value?.length - 1]
-
     setValue(val?.guid ?? null)
+    setLocalValue(val ? [val] : [])
 
     if (!field?.attributes?.autofill) return
-
+    
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
       setFormValue(field_to, val?.[field_from])
     })
   }
 
-  return (
-    <div className={styles.autocompleteWrapper} >
+    useEffect(() => {
+      if(value) getValueData()
+    }, [])
 
-      <div className={styles.createButton} onClick={() => navigateToForm(tableSlug)} >
+  return (
+    <div className={styles.autocompleteWrapper}>
+      <div
+        className={styles.createButton}
+        onClick={() => navigateToForm(tableSlug)}
+      >
         Создать новый
       </div>
 
       <Autocomplete
         options={options ?? []}
-        value={computedValue}
+        value={localValue}
+        freeSolo
         onChange={(event, newValue) => {
           changeHandler(newValue)
         }}
@@ -147,6 +172,11 @@ const AutoCompleteElement = ({
             Создать новый
           </span>
         }
+        inputValue={inputValue}
+        onInputChange={(e, newValue) => {
+          setInputValue(newValue)
+          inputChangeHandler(newValue)
+        }}
         disablePortal
         blurOnSelect
         openOnFocus

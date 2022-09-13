@@ -42,11 +42,11 @@ const AppsPage = () => {
       <HeaderSettings title={"Приложение"} />
 
       <FiltersBlock>
-        <SearchInput />
+        <div className="p-1" ><SearchInput /></div>
       </FiltersBlock>
 
       <TableCard>
-        <CTable disablePagination>
+        <CTable disablePagination removableHeight={140} >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>

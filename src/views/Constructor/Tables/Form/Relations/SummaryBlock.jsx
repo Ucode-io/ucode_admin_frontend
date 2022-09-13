@@ -25,8 +25,8 @@ const SummaryBlock = ({ control, computedFieldsListOptions }) => {
 
   const addNewSummary = () => {
     insert({
-      field_name: "string",
-      formula_name: "string",
+      field_name: "",
+      formula_name: "",
     })
   }
 

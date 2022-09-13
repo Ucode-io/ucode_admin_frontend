@@ -67,7 +67,7 @@ const ObjectsFormPage = () => {
 
       setSections(sortSections(sections))
 
-      setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? {}))
+      setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? el?.view_relation_type === 'FILE' ? el : {}))
       // const relations =
       //   view_relations?.map((el) => ({
       //     ...el,
@@ -111,6 +111,7 @@ const ObjectsFormPage = () => {
 
       const getRelations = constructorViewRelationService.getList({
         table_slug: tableSlug,
+        // relation_table_slug: tableSlug
       })
 
       const [{ sections = [] }, { view_relations = [] }] = await Promise.all([

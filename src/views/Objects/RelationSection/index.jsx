@@ -66,7 +66,6 @@ const RelationSection = ({ relations }) => {
           // onCreate={refetch}
         />
       )}
-{console.log('relations - ',relations)}
       <Card className={styles.card}>
         <Tabs
           // forceRenderTabPanel
@@ -76,16 +75,18 @@ const RelationSection = ({ relations }) => {
           <div className={styles.cardHeader}>
             <TabList className={styles.tabList}>
               {relations?.map((relation, index) => (
-                relation?.view_relation_type === 'FILE'
-                ?
                 <Tab key={index}>
-                  <InsertDriveFile /> Файлы
-                </Tab>
-                :
-                <Tab key={index}>
-                  <div className="flex align-center gap-2 text-nowrap">
-                    <IconGenerator icon={relation?.icon} /> {relation.title}
-                  </div>
+                  {
+                    relation?.view_relation_type === 'FILE'
+                      ?
+                          <>
+                            <InsertDriveFile /> Файлы
+                          </>
+                      :
+                        <div className="flex align-center gap-2 text-nowrap">
+                          <IconGenerator icon={relation?.icon} /> {relation.title}
+                        </div>
+                  }
                 </Tab>
               ))}
             </TabList>
@@ -97,18 +98,20 @@ const RelationSection = ({ relations }) => {
 
           {relations?.map((relation) => (
             <TabPanel key={relation.id}>
-              <RelationTable
-                key={relation.id}
-                relation={relation}
-                createFormVisible={relationsCreateFormVisible}
-                setCreateFormVisible={setCreateFormVisible}
-              />
+              {
+              relation?.view_relation_type === 'FILE'
+                ?
+                  <FilesSection />
+                :
+                  <RelationTable
+                    key={relation.id}
+                    relation={relation}
+                    createFormVisible={relationsCreateFormVisible}
+                    setCreateFormVisible={setCreateFormVisible}
+                  />
+              }
             </TabPanel>
           ))}
-
-          <TabPanel>
-            <FilesSection />
-          </TabPanel>
         </Tabs>
       </Card>
     </>

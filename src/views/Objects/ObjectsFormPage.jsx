@@ -67,7 +67,7 @@ const ObjectsFormPage = () => {
 
       setSections(sortSections(sections))
 
-      setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? {}))
+      setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? el?.view_relation_type === 'FILE' ? el : {}))
       // const relations =
       //   view_relations?.map((el) => ({
       //     ...el,

@@ -4,6 +4,7 @@ import { format } from "date-fns"
 import { useState } from "react"
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
+import IconGenerator from "../../../components/IconPicker/IconGenerator"
 import useTabRouter from "../../../hooks/useTabRouter"
 import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel"
 import MultipleInserForm from "./MultipleInserForm"
@@ -49,7 +50,14 @@ const DataBlock = ({ computedData, date, view, fieldsMap, tab }) => {
         <div>
           {viewFields?.map((field) => (
             <div>
-              <b>{field.label}: </b>
+              <b>{
+              field.attributes?.icon
+                ?
+                  <IconGenerator className={styles.linkIcon} icon={field.attributes?.icon} size={13} />
+                :
+                  field.label
+            }
+                : </b>
               {field.type === "LOOKUP"
                 ? getRelationFieldTableCellLabel(field, data, field.table_slug)
                 : data[field.slug]}

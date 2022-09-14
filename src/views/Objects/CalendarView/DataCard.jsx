@@ -1,5 +1,5 @@
 import { format, setHours, setMinutes } from "date-fns"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import styles from "./style.module.scss"
 import Moveable from "react-moveable"
 import constructorObjectService from "../../../services/constructorObjectService"
@@ -22,6 +22,7 @@ const DataCard = ({
 }) => {
   const [info, setInfo] = useState(data)
   const [anchorEl, setAnchorEl] = useState(null)
+  const [isHover, setIsHover] = useState(false);
   const ref = useRef()
   const { tableSlug } = useParams()
   const { timeList } = useTimeList(view.time_interval)
@@ -76,7 +77,6 @@ const DataCard = ({
   }
 
   const onDrag = ({ target, beforeTranslate }) => {
-    console.log(beforeTranslate)
     if (beforeTranslate[1] < 0) return null
     target.style.transform = `translateY(${beforeTranslate[1]}px)`
   }
@@ -93,7 +93,6 @@ const DataCard = ({
   const onResizeStart = (e) => {
     e.setOrigin(["%", "%"])
     e.dragStart && e.dragStart.set(frame.translate)
-    ref.current.classList.add(styles.resizing)
   }
 
   const onResize = ({ target, height, drag }) => {
@@ -109,7 +108,6 @@ const DataCard = ({
     if (lastEvent) {
       frame.translate = lastEvent.drag.beforeTranslate
       onPositionChange(lastEvent.drag, lastEvent.height)
-      ref.current.classList.remove(styles.resizing)
     }
   }
 
@@ -121,11 +119,29 @@ const DataCard = ({
     setAnchorEl(null)
   }
 
+  const infoBlockBg = useMemo(() => {
+    return fieldsMap[view.status_field_slug]?.attributes?.options?.map(opt => ({
+      ...opt,
+      // hoverColor: opt
+    }))?.find(opt => opt.value === info.status)?.color
+    // 
+  }, [fieldsMap[view.status_field_slug]])
+
+   const handleMouseEnter = () => {
+      setIsHover(true);
+   };
+
+   const handleMouseLeave = () => {
+      setIsHover(false);
+   };
+
   return (
     <>
       <div
         key={data.guid}
         className={styles.infoBlockWrapper}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         style={{
           top: 0,
           transform: `translateY(${info.calendar?.startPosition}px)`,
@@ -134,12 +150,15 @@ const DataCard = ({
         onClick={openMenu}
         ref={ref}
       >
-        <div className={styles.infoCard} style={{ height: "100%" }}>
+        <div className={styles.resizing} style={{background: infoBlockBg, height: "100%"}}>
+
+        <div className={styles.infoCard} style={{ height: "100%", background: infoBlockBg, filter: isHover ? "saturate(100%)" : "saturate(50%) brightness(125%)" }}>
           <InfoBlock
             viewFields={viewFields}
             data={info}
             isSingleLine={isSingleLine}
-          />
+            />
+            </div>
         </div>
       </div>
 
@@ -162,7 +181,13 @@ const DataCard = ({
         </div>
         {viewFields?.map((field) => (
           <div>
-            <b>{field.label}: </b>
+            <b>{
+              field.attributes?.icon
+                ?
+                  <IconGenerator className={styles.linkIcon} icon={field.attributes?.icon} size={16} />
+                :
+                  field.label
+            }: </b>
             {field.type === "LOOKUP"
               ? getRelationFieldTableCellLabel(field, info, field.table_slug)
               : info[field.slug]}

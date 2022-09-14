@@ -15,11 +15,10 @@ const CalendarStatusSelect = ({ view, fieldsMap, info, setInfo }) => {
 
   const [value, setValue] = useState(info[field.slug] ?? '')
 
-
   const options = useMemo(() => {
     return field.attributes?.options?.map((option) => ({
-      value: option,
-      label: option,
+      ...option,
+      label: option.value
     }))
   }, [field])
 
@@ -35,9 +34,7 @@ const CalendarStatusSelect = ({ view, fieldsMap, info, setInfo }) => {
     constructorObjectService.update(tableSlug, {
       data: computedData,
     }).then(res => setInfo(computedData))
-
   }
-
 
   return (
     <>

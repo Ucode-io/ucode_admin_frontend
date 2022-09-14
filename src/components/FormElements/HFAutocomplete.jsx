@@ -19,13 +19,14 @@ const HFAutocomplete = ({
 
   const computedOptions = useMemo(() => {
     return options?.map(option => ({
-      label: option.value,
-      value: option.value,
+      label: option,
+      value: option,
     }))
   }, [ options ])
 
-  return (
+  console.log('computedOptions - ', computedOptions)
 
+  return (
     <Controller
       control={control}
       name={name}

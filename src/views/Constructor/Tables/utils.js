@@ -19,8 +19,9 @@ export const computeSectionsOnSubmit = (sections) => {
 }
 
 export const computeViewRelations = (relations) => {
-  return relations?.sort(sortByOrder)?.map(({relation}) => ({
-    relation_id: relation?.id
+  return relations?.sort(sortByOrder)?.map(({relation, view_relation_type}) => ({
+    relation_id: relation?.id,
+    view_relation_type: view_relation_type
   })) ?? []
 }
 
@@ -28,5 +29,5 @@ export const computeViewRelationsOnSubmit = (relations) => {
   return relations.map((relation, relationIndex) => ({
     ...relation,
     order: relationIndex + 1,
-  }))
+  }))?.filter(el => el)
 }

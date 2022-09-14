@@ -26,6 +26,7 @@ const MenuProps = {
 
 const CMultipleSelect = ({
   name,
+  items = [],
   label,
   width = "100%",
   options = [],
@@ -37,7 +38,7 @@ const CMultipleSelect = ({
   error,
   ...props
 }) => {
-  const optionsMap = useMemo(() => {
+    const optionsMap = useMemo(() => {
     return listToMap(options, "value")
   }, [options])
 
@@ -60,7 +61,7 @@ const CMultipleSelect = ({
         endAdornment={
           <IconButton
             sx={{ display: value?.length ? "" : "none", transform: 'translateX(-5px)' }}
-            onClick={e => onChange({ ...e, target: { value: [] } })}
+            onClick={e => onChange({ ...e, target: { value: [] }})}
           >
             <Clear />
           </IconButton>

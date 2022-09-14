@@ -362,7 +362,7 @@ const DataTable = ({
                 }}
               >
                 {
-                  column.render ? column.render(get(row, column.slug, ""), row, column) : <CellElementGenerator field={column} row={row} />
+                  column.render ? column.render(get(row, column.slug, row), row, column) : <CellElementGenerator field={column} row={row} />
                 }
               </CTableCell>
             ))}

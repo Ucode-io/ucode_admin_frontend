@@ -31,14 +31,18 @@ const RelationsBlock = ({
   })
 
   const computedViewRelations = useMemo(() => {
-    return viewRelations?.map((r) => {
-      if (r.view_relation_type === 'FILE') {
-        return r
+    return viewRelations?.map((relation) => {
+      if (relation.view_relation_type === 'FILE') {
+        return {
+          relation,
+          title: "Файл"
+        }
       } else {
-        return relationsMap[r.relation_id]
+        return relationsMap[relation.relation_id]
       }
     })?.filter(el => el)
   }, [viewRelations, relationsMap])
+  
 
   const onDrop = (dropResult) => {
     const result = applyDrag(computedViewRelations, dropResult)

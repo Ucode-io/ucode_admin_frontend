@@ -41,7 +41,7 @@ const RelationSection = ({ relations }) => {
 
   const navigateToCreatePage = () => {
     const relation = relations[selectedTabIndex]
-    if (relation.view_relation_type === "Many2Many") setSelectedManyToManyRelation(relation)
+    if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
     else {
       if (relation.is_editable) setCreateFormVisible(relation.id, true)
       else {
@@ -56,6 +56,8 @@ const RelationSection = ({ relations }) => {
       }
     }
   }
+
+  if(!relations?.length) return null
 
   return (
     <>

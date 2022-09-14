@@ -64,11 +64,16 @@ const FieldsBlock = ({
   }, [usedFields, fields])
 
   const unusedTableRelations = useMemo(() => {
-    return tableRelations?.filter(
-      (relation) =>
-        !viewRelations?.some(
-          (viewRelation) => viewRelation.relation_id === relation.id
-        )
+    return [...tableRelations, {id: '', view_relation_type: 'FILE', title: "Файл"}]?.filter(
+      (relation) => {
+        if (relation.view_relation_type === 'FILE') {
+          return !viewRelations?.some(viewRelation => viewRelation.view_relation_type === 'FILE')
+        } else {
+          return !viewRelations?.some(
+            (viewRelation) => viewRelation.relation_id === relation.id
+          )
+        }
+      }
     )
   }, [tableRelations, viewRelations])
 
@@ -76,13 +81,10 @@ const FieldsBlock = ({
     return relations?.filter((relation) => !usedFields.includes(relation.id))
   }, [relations, usedFields])
 
-
-
   const onDrop = (dropResult, colNumber) => {
     const result = applyDrag(fields, dropResult)
     if (!result) return
   }
-
 
   return (
     <div className={styles.settingsBlock}>

@@ -31,22 +31,18 @@ const FilterAutoComplete = ({ options = [], searchText, setSearchText, localChec
   }
 
   const computedOptions = useMemo(() => {
-    const checkedOptions = []
     const uncheckedOptions = []
 
     options.forEach((option) => {
-      if (value?.includes(option.value)) {
-        checkedOptions.push(option)
-      } else if (option.label?.toLowerCase().includes(searchText)) {
+      if (option.label?.toLowerCase().includes(searchText)) {
         uncheckedOptions.push(option)
       }
     })
 
     return {
-      checkedOptions,
       uncheckedOptions,
     }
-  }, [options, value, searchText])
+  }, [options, searchText])
 
   const onClearButtonClick = (e) => {
     e.stopPropagation()

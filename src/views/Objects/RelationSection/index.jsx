@@ -41,7 +41,7 @@ const RelationSection = ({ relations }) => {
 
   const navigateToCreatePage = () => {
     const relation = relations[selectedTabIndex]
-    if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
+    if (relation.view_relation_type === "Many2Many") setSelectedManyToManyRelation(relation)
     else {
       if (relation.is_editable) setCreateFormVisible(relation.id, true)
       else {
@@ -66,7 +66,6 @@ const RelationSection = ({ relations }) => {
           // onCreate={refetch}
         />
       )}
-
       <Card className={styles.card}>
         <Tabs
           // forceRenderTabPanel
@@ -77,15 +76,19 @@ const RelationSection = ({ relations }) => {
             <TabList className={styles.tabList}>
               {relations?.map((relation, index) => (
                 <Tab key={index}>
-                  <div className="flex align-center gap-2 text-nowrap">
-                    <IconGenerator icon={relation?.icon} /> {relation.title}
-                  </div>
+                  {
+                    relation?.view_relation_type === 'FILE'
+                      ?
+                          <>
+                            <InsertDriveFile /> Файлы
+                          </>
+                      :
+                        <div className="flex align-center gap-2 text-nowrap">
+                          <IconGenerator icon={relation?.icon} /> {relation.title}
+                        </div>
+                  }
                 </Tab>
               ))}
-
-              <Tab>
-                <InsertDriveFile /> Файлы
-              </Tab>
             </TabList>
 
             <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
@@ -95,18 +98,20 @@ const RelationSection = ({ relations }) => {
 
           {relations?.map((relation) => (
             <TabPanel key={relation.id}>
-              <RelationTable
-                key={relation.id}
-                relation={relation}
-                createFormVisible={relationsCreateFormVisible}
-                setCreateFormVisible={setCreateFormVisible}
-              />
+              {
+              relation?.view_relation_type === 'FILE'
+                ?
+                  <FilesSection />
+                :
+                  <RelationTable
+                    key={relation.id}
+                    relation={relation}
+                    createFormVisible={relationsCreateFormVisible}
+                    setCreateFormVisible={setCreateFormVisible}
+                  />
+              }
             </TabPanel>
           ))}
-
-          <TabPanel>
-            <FilesSection />
-          </TabPanel>
         </Tabs>
       </Card>
     </>

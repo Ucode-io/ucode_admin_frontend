@@ -2,6 +2,7 @@ import { Delete, Download } from "@mui/icons-material"
 import { useRef, useState } from "react"
 import { useMutation, useQuery } from "react-query"
 import { useParams } from "react-router-dom"
+
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import DataTable from "../../../components/DataTable"
 import TableRowButton from "../../../components/TableRowButton"
@@ -9,13 +10,13 @@ import useDownloader from "../../../hooks/useDownloader"
 import objectDocumentService from "../../../services/objectDocumentService"
 import { bytesToSize } from "../../../utils/byteToSize"
 import FileIconGenerator from "./FileIconGenerator"
+import FileTagSelect from "./FileTagSelect"
 
 const FilesSection = () => {
   const inputRef = useRef()
   const { tableSlug, id: objectId } = useParams()
   const { download, loader: downloadLoader } = useDownloader()
   const [downLoadedFile, setDownLoadedFile] = useState(null)
-
 
   const {
     data: { documents = [], count = 1 } = { documents: [], count: 1 },
@@ -24,7 +25,6 @@ const FilesSection = () => {
   } = useQuery(["GET_OBJECT_FILES", { tableSlug, objectId }], () => {
     return objectDocumentService.getList({ object_id: objectId })
   })
-
 
   const { mutate: create, isLoading: createLoader } = useMutation(
     (e) => {
@@ -51,14 +51,12 @@ const FilesSection = () => {
     }
   )
 
-
-
   const columns = [
     {
       id: "1",
       slug: "type",
       label: "Type",
-      render: (val) => <span className="flex align-center justify-center" ><FileIconGenerator type={val} /></span>,
+      render: (val) => <span className="flex align-center justify-center"><FileIconGenerator type={val} /></span>,
       width: 10,
     },
     {
@@ -75,6 +73,13 @@ const FilesSection = () => {
     },
     {
       id: "4",
+      slug: "tags",
+      label: "Tags",
+      width: 120,
+      render: (tags, row) => <FileTagSelect tags={tags} row={row} />
+    },
+    {
+      id: "5",
       slug: "",
       width: 10,
       render: (row) => (

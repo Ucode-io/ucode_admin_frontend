@@ -181,6 +181,8 @@ const ConstructorTablesFormPage = () => {
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
     }
 
+    console.log('computedData - ', computedData)
+
     if (id) updateConstructorTable(computedData)
     else createConstructorTable(computedData)
   }

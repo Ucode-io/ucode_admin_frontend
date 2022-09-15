@@ -9,13 +9,14 @@ const HFNumberField = ({
   fullWidth = false,
   withTrim = false,
   rules = {},
+  defaultValue="",
   ...props
 }) => {
   return (
     <Controller
       control={control}
       name={name}
-      defaultValue=""
+      defaultValue={defaultValue}
       rules={{
         required: required ? "This is required field" : false,
         ...rules,

@@ -25,9 +25,6 @@ const Sidebar = ({ elements = [] }) => {
     return activeElement
   }, [location.pathname])
 
-  const logout = () => {
-    dispatch(authActions.logout())
-  }
 
   useEffect(() => {
     if (selectedMenuItem?.children) setRightBlockVisible(true)

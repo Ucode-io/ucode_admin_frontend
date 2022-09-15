@@ -6,12 +6,10 @@ import { useFieldArray } from "react-hook-form"
 import { useParams } from "react-router-dom"
 import { CTableCell, CTableRow } from "../../../../../components/CTable"
 import DataTable from "../../../../../components/DataTable"
-import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/PermissionWrapperV2"
 import TableCard from "../../../../../components/TableCard"
 import constructorFieldService from "../../../../../services/constructorFieldService"
 import { generateGUID } from "../../../../../utils/generateID"
 import FieldSettings from "./FieldSettings"
-import FieldCreateForm from "./FieldCreateForm"
 import styles from "./style.module.scss"
 
 const Fields = ({ mainForm }) => {
@@ -141,6 +139,7 @@ const Fields = ({ mainForm }) => {
       >
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
+          onSubmit={(index, field) => update(index, field)}
           field={drawerState}
           formType={drawerState}
           mainForm={mainForm}

@@ -14,6 +14,7 @@ const HFAutocomplete = ({
   required = false,
   onChange = () => {},
   rules = {},
+  defaultValue=null,
   ...props
 }) => {
 
@@ -30,7 +31,7 @@ const HFAutocomplete = ({
     <Controller
       control={control}
       name={name}
-      defaultValue={null}
+      defaultValue={defaultValue}
       rules={{
         required: required ? "This is required field" : false,
         ...rules,

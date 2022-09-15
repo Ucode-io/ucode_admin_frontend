@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 // ICONS
@@ -6,7 +6,7 @@ import { Delete } from "@mui/icons-material";
 import {
   CheckIcon,
   ChevronDownIcon,
-  CrossPeson,
+  CrossPerson,
   EditIcon,
   TwoUserIcon,
 } from "../../assets/icons/icon";
@@ -29,6 +29,9 @@ import applicationService from "../../services/applicationSercixe";
 import constructorObjectService from "../../services/constructorObjectService";
 import constructorRelationService from "../../services/constructorRelationService";
 import roleServiceV2 from "../../services/roleServiceV2";
+import styles from './styles.module.scss'
+import { useMutation } from "react-query";
+import roleService from "../../services/roleService";
 
 const staticTables = [
   {
@@ -47,6 +50,8 @@ const MatrixRolePage = () => {
     { key: "delete", name: "Удаление" },
   ];
   const [appId, setAppId] = useState(null);
+  const [parentPopupKey, setParentPopupKey] = useState('')
+  const [expandedAppId, setExpandedAppId] = useState('')
   const [tableSlug, setTableSlug] = useState(null);
   const [role, setRole] = useState({});
   const [apps, setApps] = useState([{ name: "Settings", id: "settings" }]);
@@ -169,7 +174,6 @@ const MatrixRolePage = () => {
       role_id: roleId,
       table_slug: autoFilterForm.getValues("tabSlug"),
     };
-    // return console.log('ddddd', data)
     if (data?.guid) {
       constructorObjectService
         .update("automatic_filter", {
@@ -280,6 +284,16 @@ const MatrixRolePage = () => {
       });
   };
 
+  const { mutate: updateAppPermission } = useMutation(
+    ({data, appId}) => roleService.updateAppPermission({data}, appId),
+    {
+      onSuccess: () => {
+        getRecordPermissions()
+        setParentPopupKey('')
+      }
+    }
+  )
+
   const computedRelations = useMemo(() => {
     return relations?.map((el) => ({
       label: el?.label,
@@ -322,6 +336,12 @@ const MatrixRolePage = () => {
     getApps();
     getConnections();
   }, []);
+
+  const isAppPermissionYes = useCallback((items, key) => {
+    return recordPermissions.filter(
+      i => items.find(j => j.slug === i.table_slug)
+    ).every(i => i[key] === 'Yes')
+  }, [recordPermissions])
 
   return (
     <div>
@@ -387,6 +407,7 @@ const MatrixRolePage = () => {
                         : () => {
                             setApps(roles);
                             setAppId((prev) => (prev === app.id ? "" : app.id));
+                            setExpandedAppId(app.id)
                           }
                     }
                   >
@@ -398,35 +419,84 @@ const MatrixRolePage = () => {
                         minWidth: "200px",
                       }}
                     >
-                      {app?.name || app?.label}
+                      {app?.children
+                        ? <span className={styles.app_child_title}>{app?.name || app?.label}</span>
+                        : <span>{app?.name || app?.label}</span>
+                      }
                       {!app?.children && <ChevronDownIcon />}
                     </div>
                   </CTableCell>
                   {TYPES?.map((type) => (
                     <CTableCell
-                      key={type?.key}
-                      align="center"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setTableSlug((prev) =>
-                          prev === app.slug
-                            ? ""
-                            : app.slug
-                            ? app.slug + type?.key
-                            : ""
+                    key={type?.key}
+                    align="center"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (app?.children) {
+                        setTableSlug(prev =>
+                          prev === app.slug + type?.key
+                          ? ''
+                          : app.slug + type?.key
                         );
+                        setParentPopupKey('')
+                      } else {
+                        setParentPopupKey(prev => 
+                          prev === app.id + type?.key
+                          ? ''
+                          : app.id + type?.key
+                        )
+                        setTableSlug('')
+                      }
                       }}
                       style={{ position: "relative" }}
                     >
                       {!app?.children ? (
-                        <CrossPeson />
+                        expandedAppId === app.id &&
+                        <span>
+                          {
+                            isAppPermissionYes(apps, type.key)
+                              ? <TwoUserIcon />
+                              : <CrossPerson />
+                          }
+                        </span>
                       ) : recordPermissions?.find(
                           (item) => item?.table_slug === app?.slug
                         )?.[type?.key] === "Yes" ? (
                         <TwoUserIcon />
                       ) : (
-                        <CrossPeson />
+                        <CrossPerson />
                       )}
+                      {
+                        parentPopupKey === app.id + type?.key && expandedAppId === app.id &&
+                        <div className={styles.app_permission_popup}>
+                          <span
+                            onClick={e => {
+                              e.preventDefault()
+                              updateAppPermission({
+                                data: {
+                                  role_id: roleId,
+                                  [type?.key]: 'Yes'
+                                },
+                                appId: app.id
+                              })
+                              setParentPopupKey('')
+                            }}
+                          ><TwoUserIcon /></span>
+                          <span
+                            onClick={e => {
+                              e.preventDefault()
+                              updateAppPermission({
+                                data: {
+                                  role_id: roleId,
+                                  [type?.key]: 'No'
+                                },
+                                appId: app.id
+                              }, app.id)
+                              setParentPopupKey('')
+                            }}
+                          ><CrossPerson /></span>
+                        </div>
+                      }
                       {tableSlug === app?.slug + type?.key ? (
                         <>
                           <div
@@ -442,6 +512,7 @@ const MatrixRolePage = () => {
                               top: "40px",
                               left: "30px",
                               zIndex: "2",
+                              boxShadow: "rgba(0, 0, 0, 0.1) 0px 1px 2px 0px"
                             }}
                           >
                             <span
@@ -472,7 +543,7 @@ const MatrixRolePage = () => {
                                 );
                               }}
                             >
-                              <CrossPeson />
+                              <CrossPerson />
                             </span>
                           </div>
                           {isCustomVisible && (

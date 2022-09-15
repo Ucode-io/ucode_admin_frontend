@@ -3,6 +3,7 @@ import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
 import DataTable from "../../../../../components/DataTable"
 import request from "../../../../../utils/request"
+import PanelViews from "../PanelViews"
 import styles from "./style.module.scss"
 
 const PanelPreview = ({ form, variablesValue = {} }) => {
@@ -38,22 +39,11 @@ const PanelPreview = ({ form, variablesValue = {} }) => {
     <div className={styles.panel}>
       <div className={styles.title}>{title}</div>
 
-      <DataTable
-        loader={isLoading}
-        data={data?.rows}
-        columns={columns}
-        disablePagination
-        removableHeight={"auto"}
-        disableFilters
-        wrapperStyle={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          padding: 10,
-          height: '100px'
-        }}
-        tableStyle={{ flex: 1 }}
-      />
+      <div className={styles.previewPanel} >
+        <PanelViews control={form.control} isLoading={isLoading} data={data} columns={columns} />
+      </div>
+
+     
     </div>
   )
 }

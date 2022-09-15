@@ -18,14 +18,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const { navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
 
-  const relatedTableSlug = useMemo(() => {
-    const relatedTable =
-          relation.table_to?.slug === tableSlug
-            ? relation.table_from
-            : relation.table_to
-            return relatedTable.slug
-  })
-
+  const relatedTableSlug = relation.relatedTable
 
   const [btnLoader, setBtnLoader] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)

@@ -28,6 +28,7 @@ import { Save } from "@mui/icons-material"
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
 import constructorViewRelationService from "../../../../services/constructorViewRelationService"
 import { listToMap } from "../../../../utils/listToMap"
+import Actions from "./Actions"
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
@@ -210,6 +211,7 @@ const ConstructorTablesFormPage = () => {
               <Tab>Layouts</Tab>
               <Tab>Fields</Tab>
               <Tab>Relations</Tab>
+              <Tab>Actions</Tab>
             </TabList>
           </HeaderSettings>
 
@@ -230,6 +232,9 @@ const ConstructorTablesFormPage = () => {
               mainForm={mainForm}
               getRelationFields={getRelationFields}
             />
+          </TabPanel>
+          <TabPanel>
+            <Actions />
           </TabPanel>
         </Tabs>
       </div>

@@ -64,7 +64,11 @@ const FieldsBlock = ({
   }, [usedFields, fields])
 
   const unusedTableRelations = useMemo(() => {
-    return [...tableRelations, {id: '', view_relation_type: 'FILE', title: "Файл"}]?.filter(
+
+    const fileRelation = {id: '', view_relation_type: 'FILE', title: "Файл"}
+    const relations = tableRelations ? [...tableRelations, fileRelation] : [fileRelation]
+
+    return [...relations]?.filter(
       (relation) => {
         if (relation.view_relation_type === 'FILE') {
           return !viewRelations?.some(viewRelation => viewRelation.view_relation_type === 'FILE')

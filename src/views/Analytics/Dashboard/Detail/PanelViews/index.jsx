@@ -23,7 +23,7 @@ const PanelViews = ({ control, isLoading, data, columns }) => {
           data={data?.rows}
           columns={columns}
           disablePagination
-          removableHeight={false}
+          removableHeight={420}
           disableFilters
           wrapperStyle={{
             flex: 1,
@@ -32,7 +32,7 @@ const PanelViews = ({ control, isLoading, data, columns }) => {
             padding: 10,
             // minHeight: "100px",
           }}
-          tableStyle={{ flex: 1 }}
+          // tableStyle={{ flex: 1 }}
         />
       )
   }

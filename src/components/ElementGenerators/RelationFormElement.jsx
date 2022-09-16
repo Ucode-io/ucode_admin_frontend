@@ -26,7 +26,6 @@ const RelationFormElement = ({
   ...props
 }) => {
   const tableSlug = useMemo(() => {
-    console.log("FIELD ==>", field)
     return field.id.split("#")?.[0] ?? ""
   }, [field.id])
 
@@ -35,7 +34,7 @@ const RelationFormElement = ({
       <FRow label={field.label} required={field.required}>
         <Controller
           control={control}
-          name={`${tableSlug}_id`}
+          name={field.slug ?? `${tableSlug}_id`}
           defaultValue={null}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <AutoCompleteElement

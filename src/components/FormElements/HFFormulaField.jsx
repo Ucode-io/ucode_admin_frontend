@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Controller, useWatch } from "react-hook-form"
 import useDebouncedWatch from "../../hooks/useDebouncedWatch"
 import { Parser } from "hot-formula-parser"
+import { useEffect } from "react"
 
 const parser = new Parser()
 
@@ -13,28 +14,35 @@ const HFFormulaField = ({ control, name, rules={}, setFormValue, required, disab
     control,
   })
 
+  const updateValue = () => {
+    let computedFormula = formula
+
+    const fieldsListSorted = fieldsList?.sort((a, b) => b.slug?.length - a.slug?.length)
+    fieldsListSorted?.forEach((field) => {
+      computedFormula = computedFormula.replaceAll(
+        `${field.slug}`,
+        values[field.slug]
+      )
+    })
+
+    const { error, result } = parser.parse(computedFormula)
+
+    let value = 0
+    if (error) value = error
+    else value = result
+    const prevValue = values[name]
+    if(value !== prevValue) setFormValue(name, value)
+  }
+
   useDebouncedWatch(
-    () => {
-      let computedFormula = formula
-
-      fieldsList?.forEach((field) => {
-        computedFormula = computedFormula.replaceAll(
-          field.slug,
-          values[field.slug]
-        )
-      })
-
-      const { error, result } = parser.parse(computedFormula)
-
-      let value = 0
-      if (error) value = error
-      else value = result
-      const prevValue = values[name]
-      if(value !== prevValue) setFormValue(name, value)
-    },
+    updateValue,
     [values],
     300
   )
+
+  useEffect(() => {
+    updateValue()
+  }, [])
 
   return (
     <Controller

@@ -10,6 +10,11 @@ export const dashboardPanelTypes = [
         label: "Table",
         value: "TABLE"
       },
+      {
+        icon: "square.svg",
+        label: "Card",
+        value: "CARD"
+      },
     ]
   },
   {
@@ -25,6 +30,12 @@ export const dashboardPanelTypes = [
         label: "Pie chart",
         value: "PIE_CHART"
       },
+      {
+        icon: "filter.svg",
+        label: "Funnel chart",
+        value: "FUNNEL_CHART"
+      },
+
     ]
   }
 ]

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useMutation, useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
@@ -13,6 +13,7 @@ import PanelPreview from "./PanelPreview"
 import QueryRedactor from "./QueryRedactor"
 import PanelSettings from "./PanelSettings"
 import styles from "./style.module.scss"
+import request from "../../../../../utils/request"
 
 const PanelCreateForm = () => {
   const { id, panelId } = useParams()
@@ -20,6 +21,8 @@ const PanelCreateForm = () => {
   const [variablesValue, setVariablesValue] = useState({})
 
   const form = useForm()
+
+  const panel = form.watch()
 
   const { isLoading } = useQuery(
     ["GET_PANEL_DATA", panelId],
@@ -41,6 +44,19 @@ const PanelCreateForm = () => {
     }
   )
 
+  const { data: previewData, isLoading: previewLoading } = useQuery(
+    ["GET_DATA_BY_QUERY_IN_PREVIEW", { panelID: panel.id, variablesValue }],
+    () => {
+      const query = form.getValues("query")
+
+      if (!query) return []
+      return request.post("/query", {
+        data: variablesValue,
+        query: query,
+      })
+    }
+  )
+
   const { data } = useQuery(["GET_VARIABLES_IN_DASHBOARD", id], () => {
     return variableService.getList({ dashboard_id: id })
   })
@@ -57,6 +73,17 @@ const PanelCreateForm = () => {
     }
   )
 
+
+  const columns = useMemo(() => {
+    if (!previewData?.rows?.length) return []
+    return Object.keys(previewData.rows[0])?.map((key) => ({
+      label: key,
+      value: key
+    }))
+  }, [previewData])
+
+
+  
   return (
     <div>
       <Header
@@ -74,12 +101,18 @@ const PanelCreateForm = () => {
               variablesValue={variablesValue}
               setVariablesValue={setVariablesValue}
             />
-            <PanelPreview form={form} variablesValue={variablesValue} />
+            <PanelPreview
+              form={form}
+              variablesValue={variablesValue}
+              panel={panel}
+              data={previewData}
+              isLoading={previewLoading}
+            />
 
             <QueryRedactor form={form} />
           </div>
 
-          <PanelSettings form={form} />
+          <PanelSettings form={form} columns={columns} />
         </div>
       )}
 

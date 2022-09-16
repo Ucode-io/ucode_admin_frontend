@@ -1,3 +1,4 @@
+import request from "../utils/request"
 import requestAuth from "../utils/requestAuth"
 
 const roleService = {
@@ -7,6 +8,7 @@ const roleService = {
   update: (data) => requestAuth.put('/role', data),
   delete: (id) => requestAuth.delete(`/role/${id}`),
   addPermissionToRole: (data) => requestAuth.post(`/role-permission/many`, data),
+  updateAppPermission: (data, appId) => request.post(`/permission-upsert/${appId}`, data)
 }
 
 export default roleService

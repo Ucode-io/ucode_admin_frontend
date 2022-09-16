@@ -37,6 +37,7 @@ const errorHandler = (error, hooks) => {
     return authService.refreshToken(params)
       .then((res) => {
         store.dispatch(authActions.setTokens(res))
+        store.dispatch(authActions.setPermission(res))
         return request(originalRequest);
       })
       .catch((err) => {

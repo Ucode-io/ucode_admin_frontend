@@ -36,10 +36,7 @@ const PanelCreateForm = () => {
     },
     {
       onSuccess: (data) => {
-        form.reset({
-          ...data,
-          attributes: {},
-        })
+        form.reset(data ?? {})
       },
     }
   )

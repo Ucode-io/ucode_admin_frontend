@@ -61,7 +61,7 @@ export const ChevronDownIcon = () => (
   </svg>
 )
 
-export const CrossPeson = () => (
+export const CrossPerson = () => (
   <svg
     width="35"
     height="34"

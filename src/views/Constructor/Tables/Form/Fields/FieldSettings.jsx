@@ -18,7 +18,7 @@ import listToOptions from "../../../../../utils/listToOptions"
 import Attributes from "./Attributes"
 import styles from "./style.module.scss"
 
-const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height }) => {
+const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, onSubmit=()=>{} }) => {
   const { id } = useParams()
   const { handleSubmit, control, reset, watch } = useForm()
   const [formLoader, setFormLoader] = useState(false)
@@ -28,7 +28,9 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height }
     const fields = mainForm.getValues("fields")
     const index = fields.findIndex((el) => el.id === field.id)
 
+
     mainForm.setValue(`fields[${index}]`, field)
+    onSubmit(index, field)
   }
 
   const prepandFieldInForm = (field) => {

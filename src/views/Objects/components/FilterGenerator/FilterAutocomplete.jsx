@@ -5,7 +5,16 @@ import SearchInput from "../../../../components/SearchInput"
 import useDebounce from "../../../../hooks/useDebounce"
 import styles from "./style.module.scss"
 
-const FilterAutoComplete = ({ options = [], searchText, setSearchText, localCheckedValues, value = [], onChange, label }) => {
+const FilterAutoComplete = ({
+  options = [],
+  searchText,
+  setSearchText,
+  localCheckedValues,
+  value = [],
+  onChange,
+  label,
+  field
+}) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const menuVisible = Boolean(anchorEl)
 
@@ -24,7 +33,10 @@ const FilterAutoComplete = ({ options = [], searchText, setSearchText, localChec
 
   const rowClickHandler = (option) => {
     if (value?.includes(option.value)) {
-      onChange(value.filter((item) => item !== option.value), option)
+      onChange(
+        value.filter((item) => item !== option.value),
+        option
+      )
     } else {
       onChange([...value, option.value], option)
     }
@@ -34,6 +46,9 @@ const FilterAutoComplete = ({ options = [], searchText, setSearchText, localChec
     const uncheckedOptions = []
 
     options.forEach((option) => {
+
+      console.log("sssss ==>", option)
+
       if (option.label?.toLowerCase().includes(searchText)) {
         uncheckedOptions.push(option)
       }
@@ -57,13 +72,13 @@ const FilterAutoComplete = ({ options = [], searchText, setSearchText, localChec
             <span className={styles.placeholder}>{label}</span>
           )}
         </div>
-          {
-            value?.length > 1 && `+${value.length - 1}`
-          }
-          {!!value?.length && <IconButton onClick={onClearButtonClick} >
+        {value?.length > 1 && `+${value.length - 1}`}
+        {!!value?.length && (
+          <IconButton onClick={onClearButtonClick}>
             <Close />
-          </IconButton>}
-          <ArrowDropDown />
+          </IconButton>
+        )}
+        <ArrowDropDown />
       </div>
 
       <Menu
@@ -73,7 +88,11 @@ const FilterAutoComplete = ({ options = [], searchText, setSearchText, localChec
         onClose={closeMenu}
         classes={{ list: styles.menu, paper: styles.paper }}
       >
-        <SearchInput fullWidth onChange={inputChangeHandler} placeholder={label} />
+        <SearchInput
+          fullWidth
+          onChange={inputChangeHandler}
+          placeholder={label}
+        />
 
         <div className={styles.scrollBlock}>
           {localCheckedValues?.map((option) => (

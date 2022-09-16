@@ -20,7 +20,7 @@ const CalendarSettings = ({ columns, form }) => {
 
   const computedPickListColumns = useMemo(() => {
 
-    const filteredColumns = columns.filter(({ type }) => type === 'PICK_LIST')
+    const filteredColumns = columns.filter(({ type }) => type === 'PICK_LIST' || type === 'MULTISELECT')
     return listToOptions(filteredColumns, 'label', 'id')
   }, [ columns ])
 

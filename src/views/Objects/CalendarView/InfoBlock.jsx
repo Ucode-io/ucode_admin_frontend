@@ -1,4 +1,5 @@
 import { format } from "date-fns"
+import { dateValidFormat } from "../../../utils/dateValidFormat"
 import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel"
 import styles from "./style.module.scss"
 
@@ -23,13 +24,8 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
   return (
     <div className={`${styles.infoBlock}`}>
       <div>
-        {data.calendar?.elementFromTime
-          ? format(data.calendar?.elementFromTime, "HH:mm")
-          : ""}
-        -{" "}
-        {data.calendar?.elementToTime
-          ? format(data.calendar?.elementToTime, " HH:mm")
-          : ""}
+        {dateValidFormat(data.calendar?.elementFromTime, "HH:mm")}-{" "}
+        {dateValidFormat(data.calendar?.elementToTime, " HH:mm")}
       </div>
 
       {viewFields?.map((field) => (

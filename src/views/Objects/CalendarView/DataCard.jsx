@@ -11,6 +11,7 @@ import { Menu } from "@mui/material"
 import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel"
 import IconGenerator from "../../../components/IconPicker/IconGenerator"
 import CalendarStatusSelect from "../components/CalendarStatusSelect"
+import { dateValidFormat } from "../../../utils/dateValidFormat"
 
 const DataCard = ({
   date,
@@ -172,8 +173,8 @@ const DataCard = ({
       >
         <div className={styles.popupHeader} >
           <p className={styles.time}>
-            {info.calendar?.elementFromTime ? format(info.calendar?.elementFromTime, "HH:mm") : ''} -
-            {info.calendar?.elementToTime ? format(info.calendar?.elementToTime, " HH:mm") : ''}
+            {dateValidFormat(info.calendar?.elementFromTime, "HH:mm")} -
+            {dateValidFormat(info.calendar?.elementToTime, " HH:mm")}
           </p>
 
           <IconGenerator onClick={() => navigateToEditPage(info)} className={styles.linkIcon} icon="arrow-up-right-from-square.svg" size={16} />

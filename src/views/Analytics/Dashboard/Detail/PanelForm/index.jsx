@@ -11,7 +11,7 @@ import variableService from "../../../../../services/analytics/variableService"
 import VariablesBar from "../../../components/VariablesBar"
 import PanelPreview from "./PanelPreview"
 import QueryRedactor from "./QueryRedactor"
-import SettingsPanel from "./SettingsPanel"
+import PanelSettings from "./PanelSettings"
 import styles from "./style.module.scss"
 
 const PanelCreateForm = () => {
@@ -79,7 +79,7 @@ const PanelCreateForm = () => {
             <QueryRedactor form={form} />
           </div>
 
-          <SettingsPanel form={form} />
+          <PanelSettings form={form} />
         </div>
       )}
 

@@ -15,6 +15,8 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
           <>
             {field.type === "LOOKUP"
               ? getRelationFieldTableCellLabel(field, data, field.table_slug)
+              : field.type === "DATE_TIME"
+              ? dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")
               : data[field.slug]}
           </>
         ))}
@@ -30,9 +32,11 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
 
       {viewFields?.map((field) => (
         <p>
-          {field.type === "LOOKUP"
-            ? getRelationFieldTableCellLabel(field, data, field.table_slug)
-            : data[field.slug]}
+       {field.type === "LOOKUP"
+              ? getRelationFieldTableCellLabel(field, data, field.table_slug)
+              : field.type === "DATE_TIME"
+              ? dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")
+              : data[field.slug]}
         </p>
       ))}
     </div>

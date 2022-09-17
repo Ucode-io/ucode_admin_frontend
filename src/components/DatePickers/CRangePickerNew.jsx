@@ -12,7 +12,6 @@ const CRangePickerNew = ({ value, onChange }) => {
     else {
 
       const computedValue = value?.map(el => new Date(el))
-      debugger
       onChange(computedValue)
     }
   }

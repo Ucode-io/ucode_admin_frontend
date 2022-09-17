@@ -4,27 +4,27 @@ import { useState } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CMultipleSelect from "../../../../../components/CMultipleSelect";
 
-import styles from './styles.module.scss'
+import styles from "./styles.module.scss";
 import SettingsTab from "./Tabs/SettingsTab";
 
-const ActionForm = ({isOpen, handleClose}) => {
-  const [selectedTab, setSelectedTab] = useState(0)
-   const [value, setValue] = useState([])
+const ActionForm = ({ isOpen, handleClose }) => {
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [value, setValue] = useState([]);
 
   const onSelectHandler = (e) => {
-    const computedValue = e.target.value
-    setValue(computedValue ?? [])
-  }
+    const computedValue = e.target.value;
+    setValue(computedValue ?? []);
+  };
 
   const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '60%',
-    bgcolor: '#fff',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "80%",
+    bgcolor: "#fff",
     boxShadow: 24,
-    borderRadius: '6px'
+    borderRadius: "6px",
     // pt: 2,
     // px: 4,
     // pb: 3,
@@ -51,13 +51,17 @@ const ActionForm = ({isOpen, handleClose}) => {
           >
             <div className={styles.modal_header}>
               <div>
-                <p>Automations</p>
+                <p
+                  style={{ fontWeight: 700, fontSize: 14, lineHeight: "24px" }}
+                >
+                  Automations
+                </p>
                 <TabList>
                   <Tab>Настройки</Tab>
                   <Tab>Событие</Tab>
                 </TabList>
               </div>
-              <span>
+              <span onClick={handleClose}>
                 <Close htmlColor="#6E8BB7" />
               </span>
             </div>
@@ -65,14 +69,12 @@ const ActionForm = ({isOpen, handleClose}) => {
             <TabPanel>
               <SettingsTab />
             </TabPanel>
-            <TabPanel>
-              22222
-            </TabPanel>
+            <TabPanel>22222</TabPanel>
           </Tabs>
         </Box>
       </Fade>
     </Modal>
-  )
-}
+  );
+};
 
-export default ActionForm
+export default ActionForm;

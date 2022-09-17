@@ -12,7 +12,8 @@ const QueryRedactor = ({ form }) => {
   const queryClient = useQueryClient()
 
   const updateTable = () => {
-    queryClient.refetchQueries(["GET_DATA_BY_QUERY_IN_PREVIEW"])
+    const id = form.getValues('id')
+    queryClient.refetchQueries(["GET_DATA_BY_QUERY_IN_PREVIEW", { panelID: id }])
   }
 
   return (

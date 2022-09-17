@@ -1,20 +1,26 @@
-import { useWatch } from "react-hook-form"
+import { useMemo } from "react"
 import DataTable from "../../../../../components/DataTable"
 import BarChart from "./BarChart"
 import PieChart from "./PieChart"
 
-const PanelViews = ({ control, isLoading, data, columns }) => {
-  const type = useWatch({
-    control,
-    name: "attributes.type",
-  })
-  
-  switch (type) {
+const PanelViews = ({ panel = {}, data={}, isLoading }) => {
+
+  const columns = useMemo(() => {
+    if (!data?.rows?.length) return []
+
+    return Object.keys(data.rows[0])?.map((key) => ({
+      id: key,
+      label: key,
+      slug: key,
+    }))
+  }, [data])
+
+  switch (panel.attributes?.type) {
     case "BAR_CHART":
-      return <BarChart />
+      return <BarChart data={data?.rows} panel={panel} />
 
     case "PIE_CHART":
-      return <PieChart />
+      return <PieChart data={data?.rows} panel={panel} />
 
     default:
       return (
@@ -23,14 +29,14 @@ const PanelViews = ({ control, isLoading, data, columns }) => {
           data={data?.rows}
           columns={columns}
           disablePagination
-          removableHeight={420}
+          // removableHeight={500}
           disableFilters
           wrapperStyle={{
             flex: 1,
             display: "flex",
             flexDirection: "column",
             padding: 10,
-            // minHeight: "100px",
+            minHeight: "100px",
           }}
           // tableStyle={{ flex: 1 }}
         />

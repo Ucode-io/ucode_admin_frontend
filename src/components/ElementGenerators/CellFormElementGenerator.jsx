@@ -5,6 +5,7 @@ import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
 import HFFormulaField from "../FormElements/HFFormulaField"
 import HFIconPicker from "../FormElements/HFIconPicker"
+import HFNumberField from "../FormElements/HFNumberField"
 import HFSwitch from "../FormElements/HFSwitch"
 import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
@@ -134,11 +135,10 @@ const CellFormElementGenerator = ({ field, fields, row, control, setFormValue, .
 
     case "NUMBER":
       return (
-          <HFTextField
+          <HFNumberField
             control={control}
             name={computedSlug}
             fullWidth
-            type="number"
             required={field.required}
             placeholder={field.attributes?.placeholder}
             {...props}

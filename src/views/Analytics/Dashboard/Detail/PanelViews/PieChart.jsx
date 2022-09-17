@@ -1,9 +1,22 @@
+import { get } from "@ngard/tiny-get"
 import { ResponsivePie } from "@nivo/pie"
+import { useMemo } from "react"
 
-const PieChart = () => {
+const PieChart = ({ panel = {}, data=[] }) => {
+
+  const chartAttributes = panel?.attributes?.['PIE_CHART'] ?? {}
+
+  const computedData = useMemo(() => {
+    return data?.map(row => ({
+      id: get(row, chartAttributes.label_field_slug, ''),
+      label: get(row, chartAttributes.label_field_slug, ''),
+      value: get(row, chartAttributes.value_field_slug, 0)
+    })) ?? []
+  }, [ data, chartAttributes.label_field_slug, chartAttributes.value_field_slug ])
+
   return (
     <ResponsivePie
-      data={data}
+      data={computedData}
       margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
       innerRadius={0.5}
       padAngle={0.7}
@@ -118,6 +131,7 @@ const PieChart = () => {
           ],
         },
       ]}
+      {...chartAttributes}
     />
   )
 }

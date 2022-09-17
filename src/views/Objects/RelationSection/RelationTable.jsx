@@ -52,7 +52,7 @@ const RelationTable = ({
   const relatedTableSlug = relation?.relatedTable
 
   const { data: { tableData = [], pageCount = 1, columns = [], quickFilters = [] } = {}, isLoading: dataFetchingLoading } = useQuery(
-    [
+    [ 
       "GET_OBJECT_LIST",
       relatedTableSlug,
       { filters: computedFilters, offset: pageToOffset(currentPage, limit), limit },
@@ -66,7 +66,7 @@ const RelationTable = ({
     },
     {
       select: ({ data }) => {
-          const tableData = objectToArray(data.response ?? {})
+          const tableData = id ? objectToArray(data.response ?? {}) : []
           const pageCount = isNaN(data.count) ? 1 : Math.ceil(data.count / limit)
 
           const fieldsMap = listToMap(data.fields)

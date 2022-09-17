@@ -36,12 +36,11 @@
     font-weight: 700;
     text-align: center;
   }
+}
 
-  .previewPanel {
-    height: calc(100vh - 460px);
-    overflow: auto;
-  }
-
+.previewPanel {
+  height: calc(100vh - 420px);
+  overflow: auto;
 }
 
 .redactorPanel {
@@ -65,7 +64,7 @@
   }
 }
 
-.settingsPanel {
+.panelSettings {
   width: 300px;
   min-width: 300px;
   background-color: #fff;

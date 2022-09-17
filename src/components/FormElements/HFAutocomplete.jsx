@@ -27,8 +27,6 @@ const HFAutocomplete = ({
     }));
   }, [options]);
 
-  console.log("computedOptions - ", computedOptions);
-
   return (
     <Controller
       control={control}

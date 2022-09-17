@@ -5,9 +5,9 @@ import { dashboardPanelTypes } from "../../../../../utils/constants/dashboardPan
 import PanelAttributes from "./PanelAttributes"
 import styles from "./style.module.scss"
 
-const SettingsPanel = ({ form }) => {
+const PanelSettings = ({ form, columns }) => {
   return (
-    <div className={styles.settingsPanel}>
+    <div className={styles.panelSettings}>
       <div className={styles.form}>
         <div className={styles.settingsSectionHeader}>Main info</div>
 
@@ -27,11 +27,11 @@ const SettingsPanel = ({ form }) => {
         </div>
 
 
-        <PanelAttributes form={form} />
+        <PanelAttributes form={form} columns={columns} />
 
       </div>
     </div>
   )
 }
 
-export default SettingsPanel
+export default PanelSettings

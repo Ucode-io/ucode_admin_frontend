@@ -1,10 +1,11 @@
 import { useMemo } from "react"
 import DataTable from "../../../../../components/DataTable"
 import BarChart from "./BarChart"
+import Card from "./Card"
+import FunnelChart from "./FunnelChart"
 import PieChart from "./PieChart"
 
-const PanelViews = ({ panel = {}, data={}, isLoading }) => {
-
+const PanelViews = ({ panel = {}, data = {}, isLoading }) => {
   const columns = useMemo(() => {
     if (!data?.rows?.length) return []
 
@@ -21,6 +22,12 @@ const PanelViews = ({ panel = {}, data={}, isLoading }) => {
 
     case "PIE_CHART":
       return <PieChart data={data?.rows} panel={panel} />
+
+    case "FUNNEL_CHART":
+      return <FunnelChart data={data?.rows} panel={panel} />
+
+    case "CARD":
+      return <Card data={data?.rows} panel={panel} />
 
     default:
       return (

@@ -1,16 +1,17 @@
 import { useFieldArray, useForm } from "react-hook-form";
 import { Add } from "@mui/icons-material";
+import { useMutation, useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+
 import cls from "../styles.module.scss";
 import SecondaryButton from "../../../../../../components/Buttons/SecondaryButton";
 import PrimaryButton from "../../../../../../components/Buttons/PrimaryButton";
 import SettingsFormRow from "./SettingsFormRow";
 import HFSelect from "../../../../../../components/FormElements/HFSelect";
-import { useMutation, useQuery } from "react-query";
 import eventsService from "../../../../../../services/eventsService";
-import { useParams } from "react-router-dom";
 import constructorTableService from "../../../../../../services/constructorTableService";
 
-const SettingsTab = () => {
+const SettingsTab = ({ eventLabel }) => {
   const { slug: table_slug } = useParams();
 
   const emptyFields = {
@@ -101,8 +102,9 @@ const SettingsTab = () => {
           <div className={cls.left}>
             <div className={cls.slug}>
               <span>Когда </span>
-              <span>Клиника/Запись</span>
+              <span>{eventLabel ?? ""}</span>
             </div>
+            <div className={cls.line}></div>
             <div className={cls.action}>
               <HFSelect
                 control={control}
@@ -116,8 +118,8 @@ const SettingsTab = () => {
                 placeholder="Действие"
               />
               <div className={cls.terms}>
-                <span>Условия</span>
-                {fields.map((outerField, index) => (
+                <p>Условия</p>
+                {fields.map((outerField, index, arr) => (
                   <div key={outerField.id}>
                     <SettingsFormRow
                       nestedFieldName="condition"
@@ -125,13 +127,15 @@ const SettingsTab = () => {
                       control={control}
                       removeField={remove}
                     />
-                    {fields.length > 0 && outerField.group.length > 0 && (
-                      <div className={cls.splitter}>
-                        <div></div>
-                        <div>OR</div>
-                        <div></div>
-                      </div>
-                    )}
+                    {fields.length > 0 &&
+                      outerField.group.length > 0 &&
+                      arr.length - 1 !== index && (
+                        <div className={cls.splitter}>
+                          <div></div>
+                          <div>OR</div>
+                          <div></div>
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>
@@ -159,47 +163,50 @@ const SettingsTab = () => {
             </div>
           </div>
           <div className={cls.right}>
-            <div className={cls.after}>После</div>
-            {fieldsAfter.map((field, index) => (
-              <div key={field.id} className={cls.after_item}>
-                <div style={{ display: "flex", marginBottom: 8, gap: 8 }}>
-                  <HFSelect
+            <div className={cls.after_title}>После</div>
+            <div className={cls.line}></div>
+            <div className={cls.action}>
+              {fieldsAfter.map((field, index) => (
+                <div key={field.id} className={cls.after_item}>
+                  <div style={{ display: "flex", marginBottom: 8, gap: 8 }}>
+                    <HFSelect
+                      control={control}
+                      options={[
+                        { label: "Объект создан", value: "create" },
+                        { label: "Объект изменен", value: "update" },
+                        { label: "Объект удален", value: "delete" },
+                      ]}
+                      name={`after.${index}.action`}
+                      placeholder="Действие"
+                    />
+                    <HFSelect
+                      control={control}
+                      options={tables}
+                      name={`after.${index}.table`}
+                      placeholder="Действие"
+                    />
+                  </div>
+                  <SettingsFormRow
+                    nestedFieldName="after"
+                    nestedIndex={index}
                     control={control}
-                    options={[
-                      { label: "Объект создан", value: "create" },
-                      { label: "Объект изменен", value: "update" },
-                      { label: "Объект удален", value: "delete" },
-                    ]}
-                    name={`after.${index}.action`}
-                    placeholder="Действие"
-                  />
-                  <HFSelect
-                    control={control}
-                    options={tables}
-                    name={`after.${index}.table`}
-                    placeholder="Действие"
+                    removeField={removeAfter}
                   />
                 </div>
-                <SettingsFormRow
-                  nestedFieldName="after"
-                  nestedIndex={index}
-                  control={control}
-                  removeField={removeAfter}
-                />
-              </div>
-            ))}
-            <SecondaryButton
-              type="button"
-              style={{ width: "100%" }}
-              onClick={() =>
-                appendAfter({
-                  group: [emptyFields],
-                })
-              }
-            >
-              <Add />
-              Добавить
-            </SecondaryButton>
+              ))}
+              <SecondaryButton
+                type="button"
+                style={{ width: "100%" }}
+                onClick={() =>
+                  appendAfter({
+                    group: [emptyFields],
+                  })
+                }
+              >
+                <Add />
+                Добавить
+              </SecondaryButton>
+            </div>
           </div>
         </div>
         <div className={cls.save_btn}>

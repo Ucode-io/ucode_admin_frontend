@@ -1,20 +1,14 @@
 import { Close } from "@mui/icons-material";
-import { Backdrop, Box, Card, Fade, Modal, Typography } from "@mui/material";
+import { Backdrop, Box, Fade, Modal } from "@mui/material";
 import { useState } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import CMultipleSelect from "../../../../../components/CMultipleSelect";
 
 import styles from "./styles.module.scss";
+import EventsTab from "./Tabs/EventsTab";
 import SettingsTab from "./Tabs/SettingsTab";
 
-const ActionForm = ({ isOpen, handleClose }) => {
+const ActionForm = ({ isOpen, handleClose, eventLabel }) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [value, setValue] = useState([]);
-
-  const onSelectHandler = (e) => {
-    const computedValue = e.target.value;
-    setValue(computedValue ?? []);
-  };
 
   const style = {
     position: "absolute",
@@ -25,9 +19,6 @@ const ActionForm = ({ isOpen, handleClose }) => {
     bgcolor: "#fff",
     boxShadow: 24,
     borderRadius: "6px",
-    // pt: 2,
-    // px: 4,
-    // pb: 3,
   };
 
   return (
@@ -67,9 +58,11 @@ const ActionForm = ({ isOpen, handleClose }) => {
             </div>
 
             <TabPanel>
-              <SettingsTab />
+              <SettingsTab eventLabel={eventLabel} />
             </TabPanel>
-            <TabPanel>22222</TabPanel>
+            <TabPanel>
+              <EventsTab />
+            </TabPanel>
           </Tabs>
         </Box>
       </Fade>

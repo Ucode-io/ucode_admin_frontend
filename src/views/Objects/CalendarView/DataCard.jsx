@@ -11,6 +11,7 @@ import { Menu } from "@mui/material"
 import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel"
 import IconGenerator from "../../../components/IconPicker/IconGenerator"
 import CalendarStatusSelect from "../components/CalendarStatusSelect"
+import { dateValidFormat } from "../../../utils/dateValidFormat"
 
 const DataCard = ({
   date,
@@ -22,13 +23,13 @@ const DataCard = ({
 }) => {
   const [info, setInfo] = useState(data)
   const [anchorEl, setAnchorEl] = useState(null)
-  const [isHover, setIsHover] = useState(false);
+  const [isHover, setIsHover] = useState(false)
   const ref = useRef()
   const { tableSlug } = useParams()
   const { timeList } = useTimeList(view.time_interval)
   const [target, setTarget] = useState()
   const [isSingleLine, setIsSingleLine] = useState(info.calendar?.height <= 40)
-  
+
   const [frame] = useState({
     translate: [0, info.calendar?.startPosition ?? 0],
   })
@@ -41,13 +42,11 @@ const DataCard = ({
   const onPositionChange = (position, height) => {
     if (!position || position.translate[1] < 0) return null
 
-
     const beginIndex = Math.floor((position.translate[1] + 2) / 40)
     const endIndex = Math.ceil((position.translate[1] + height) / 40)
-    
+
     const startTime = computeTime(beginIndex)
     const endTime = computeTime(endIndex)
-
 
     const computedData = {
       ...info,
@@ -55,14 +54,15 @@ const DataCard = ({
       [view.calendar_to_slug]: endTime,
     }
 
-    constructorObjectService.update(tableSlug, {
-      data: computedData,
-    }).then(res => setInfo(computedData))
+    constructorObjectService
+      .update(tableSlug, {
+        data: computedData,
+      })
+      .then((res) => setInfo(computedData))
   }
 
   const computeTime = (index) => {
     const computedTime = timeList[index]
-
 
     const hour = Number(format(computedTime, "H"))
     const minute = Number(format(computedTime, "m"))
@@ -114,26 +114,30 @@ const DataCard = ({
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget)
   }
-  
+
   const closeMenu = () => {
     setAnchorEl(null)
   }
 
   const infoBlockBg = useMemo(() => {
-    return fieldsMap[view.status_field_slug]?.attributes?.options?.map(opt => ({
-      ...opt,
-      // hoverColor: opt
-    }))?.find(opt => opt.value === info.status)?.color
-    // 
+    return (
+      fieldsMap[view.status_field_slug]?.attributes?.options
+        ?.map((opt) => ({
+          ...opt,
+          // hoverColor: opt
+        }))
+        ?.find((opt) => opt.value === info.status)?.color ?? "silver"
+    )
+    //
   }, [fieldsMap[view.status_field_slug]])
 
-   const handleMouseEnter = () => {
-      setIsHover(true);
-   };
+  const handleMouseEnter = () => {
+    setIsHover(true)
+  }
 
-   const handleMouseLeave = () => {
-      setIsHover(false);
-   };
+  const handleMouseLeave = () => {
+    setIsHover(false)
+  }
 
   return (
     <>
@@ -150,15 +154,26 @@ const DataCard = ({
         onClick={openMenu}
         ref={ref}
       >
-        <div className={styles.resizing} style={{background: infoBlockBg, height: "100%"}}>
-
-        <div className={styles.infoCard} style={{ height: "100%", background: infoBlockBg, filter: isHover ? "saturate(100%)" : "saturate(50%) brightness(125%)" }}>
-          <InfoBlock
-            viewFields={viewFields}
-            data={info}
-            isSingleLine={isSingleLine}
+        <div
+          className={styles.resizing}
+          style={{ background: infoBlockBg, height: "100%" }}
+        >
+          <div
+            className={styles.infoCard}
+            style={{
+              height: "100%",
+              background: infoBlockBg,
+              filter: isHover
+                ? "saturate(100%)"
+                : "saturate(50%) brightness(125%)",
+            }}
+          >
+            <InfoBlock
+              viewFields={viewFields}
+              data={info}
+              isSingleLine={isSingleLine}
             />
-            </div>
+          </div>
         </div>
       </div>
 
@@ -170,31 +185,47 @@ const DataCard = ({
         transformOrigin={{ horizontal: "center", vertical: "top" }}
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
       >
-        <div className={styles.popupHeader} >
+        <div className={styles.popupHeader}>
           <p className={styles.time}>
-            {info.calendar?.elementFromTime ? format(info.calendar?.elementFromTime, "HH:mm") : ''} -
-            {info.calendar?.elementToTime ? format(info.calendar?.elementToTime, " HH:mm") : ''}
+            {dateValidFormat(info.calendar?.elementFromTime, "HH:mm")} -
+            {dateValidFormat(info.calendar?.elementToTime, " HH:mm")}
           </p>
 
-          <IconGenerator onClick={() => navigateToEditPage(info)} className={styles.linkIcon} icon="arrow-up-right-from-square.svg" size={16} />
-
+          <IconGenerator
+            onClick={() => navigateToEditPage(info)}
+            className={styles.linkIcon}
+            icon="arrow-up-right-from-square.svg"
+            size={16}
+          />
         </div>
         {viewFields?.map((field) => (
           <div>
-            <b>{
-              field.attributes?.icon
-                ?
-                  <IconGenerator className={styles.linkIcon} icon={field.attributes?.icon} size={16} />
-                :
-                  field.label
-            }: </b>
+            <b>
+              {field.attributes?.icon ? (
+                <IconGenerator
+                  className={styles.linkIcon}
+                  icon={field.attributes?.icon}
+                  size={16}
+                />
+              ) : (
+                field.label
+              )}
+              :{" "}
+            </b>
             {field.type === "LOOKUP"
               ? getRelationFieldTableCellLabel(field, info, field.table_slug)
+              : field.type === "DATE_TIME"
+              ? dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
               : info[field.slug]}
           </div>
         ))}
 
-        <CalendarStatusSelect view={view} fieldsMap={fieldsMap} info={info} setInfo={setInfo} />
+        <CalendarStatusSelect
+          view={view}
+          fieldsMap={fieldsMap}
+          info={info}
+          setInfo={setInfo}
+        />
       </Menu>
 
       <Moveable

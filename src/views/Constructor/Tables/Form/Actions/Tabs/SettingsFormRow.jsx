@@ -1,15 +1,15 @@
 import { Add, Delete } from "@mui/icons-material";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray } from "react-hook-form";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
 
 import SecondaryButton from "../../../../../../components/Buttons/SecondaryButton";
 import HFSelect from "../../../../../../components/FormElements/HFSelect";
 import { FormulaIcon, XIcon } from "../../../../../../assets/icons/icon";
 import HFTextField from "../../../../../../components/FormElements/HFTextField";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
 import constructorFieldService from "../../../../../../services/constructorFieldService";
 
 const SettingsFormRow = ({

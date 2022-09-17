@@ -24,16 +24,29 @@
       width: 50%;
       padding: 8px 40px 8px 12px;
       border-right: 1px solid #e3e3e3;
+      align-items: center;
+      justify-content: space-between;
+      display: flex;
+      flex-direction: column;
       .slug {
-        display: inline-block;
+        width: fit-content;
+        margin-inline: auto;
         padding: 8px 12px;
         border-radius: 6px;
         border: 1px solid #e3e3e3;
+        span:last-child {
+          font-weight: 700;
+        }
+      }
+      .line {
+        width: 2px;
+        min-height: 16px;
+        background: #e5e9eb;
       }
       .action {
+        width: 100%;
         border: 1px solid #e3e3e3;
         padding: 8px;
-        margin-top: 24px;
         border-radius: 6px;
         .add_condition_btn {
           margin-top: 16px;
@@ -41,9 +54,9 @@
       }
       .terms {
         margin-top: 8px;
-
-        span {
-          margin-bottom: 1px;
+        p {
+          margin-bottom: 4px;
+          font-weight: 700;
         }
         .wrapper {
           display: flex;
@@ -84,6 +97,27 @@
     .right {
       width: 50%;
       padding: 8px 12px 8px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      .line {
+        width: 2px;
+        min-height: 16px;
+        background: #e5e9eb;
+        flex-grow: 1;
+      }
+      .action {
+        width: 100%;
+      }
+      .after_title {
+        font-weight: 700;
+        border: 1px solid #e5e9eb;
+        padding: 8px;
+        width: fit-content;
+        border-radius: 6px;
+        margin-inline: auto;
+      }
       .after_item {
         border: 1px solid #e5e9eb;
         padding: 8px;

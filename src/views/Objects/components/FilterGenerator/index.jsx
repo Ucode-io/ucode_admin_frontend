@@ -59,11 +59,18 @@ export const Filter = ({
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
-    return field.attributes.options.map((option) => ({
-      value: option,
-      label: option,
-    }))
-  }, [field.attributes?.options])
+    return field.attributes.options.map((option) => {
+
+      if(field.type === "PICK_LIST") return {
+        value: option,
+        label: option,
+      }
+      if(field.type === "MULTISELECT") return {
+        value: option.value,
+        label: option.value
+      }
+    })
+  }, [field.attributes?.options, field.type])
 
   if (field.type === "LOOKUP")
     return (
@@ -78,8 +85,8 @@ export const Filter = ({
 
   switch (field.type) {
     case "PICK_LIST":
+      case "MULTISELECT":
       return (
-
         <FilterAutoComplete 
           searchText={debouncedValue}
           setSearchText={setDebouncedValue}
@@ -87,6 +94,7 @@ export const Filter = ({
           value={filters[name] ?? []}
           onChange={(val) => onChange(val?.length ? val : null, name)}
           label={field.label}
+          field={field}
         />
 
         // <FormControl style={{ width: "100%" }}>

@@ -22,6 +22,7 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import { Checkbox } from "@mui/material";
 import { numberWithSpaces } from "../../utils/formatNumbers";
 import { get } from "@ngard/tiny-get";
+import NoItems from "../NoItems";
 
 const DataTable = ({
   data = [],
@@ -55,7 +56,7 @@ const DataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
-  const [limit, setLimit] = useState(10)
+  const [limit, setLimit] = useState(10);
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
@@ -208,9 +209,11 @@ const DataTable = ({
                 minWidth: tableSize?.[pageName]?.[column.id]
                   ? tableSize?.[pageName]?.[column.id]
                   : "auto",
-                width: column.width ?? (tableSize?.[pageName]?.[column.id]
-                  ? tableSize?.[pageName]?.[column.id]
-                  : "auto"),
+                width:
+                  column.width ??
+                  (tableSize?.[pageName]?.[column.id]
+                    ? tableSize?.[pageName]?.[column.id]
+                    : "auto"),
                 position: tableSettings?.[pageName]?.find(
                   (item) => item?.id === column?.id
                 )?.isStiky
@@ -294,7 +297,6 @@ const DataTable = ({
           </PermissionWrapperV2>
         </CTableRow>
       </CTableHead>
-
       <CTableBody
         loader={loader}
         columnsCount={columns.length}
@@ -361,9 +363,11 @@ const DataTable = ({
                     : "",
                 }}
               >
-                {
-                  column.render ? column.render(get(row, column.slug, row), row, column) : <CellElementGenerator field={column} row={row} />
-                }
+                {column.render ? (
+                  column.render(get(row, column.slug, row), row, column)
+                ) : (
+                  <CellElementGenerator field={column} row={row} />
+                )}
               </CTableCell>
             ))}
             <PermissionWrapperV2
@@ -372,7 +376,10 @@ const DataTable = ({
             >
               {(onDeleteClick || onEditClick) && (
                 <CTableCell
-                  style={{ padding: "8px 12px 4px", verticalAlign: "middle" }}
+                  style={{
+                    padding: "8px 12px 4px",
+                    verticalAlign: "middle",
+                  }}
                 >
                   <div className="flex">
                     {onEditClick && (

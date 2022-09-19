@@ -1,6 +1,6 @@
 import "./style.scss"
 import menuElements from "./elements"
-import brandLogo from "../../assets/icons/soliq-logo.svg"
+import brandLogo from "../../../builder_config/assets/company-logo.svg"
 import MenuOpenIcon from "@mui/icons-material/MenuOpen"
 import { useState, useEffect } from "react"
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
@@ -46,7 +46,7 @@ const Sidebar2222 = () => {
           <div className="brand-logo" onClick={switchRightSideVisible}>
             <img src={brandLogo} alt="logo" />
           </div>
-          <div className="brand-name">MEDION SETTINGS</div>
+          <div className="brand-name">SETTINGS</div>
         </div>
         <div className="cloes-btn" onClick={switchRightSideVisible}>
           <MenuOpenIcon />

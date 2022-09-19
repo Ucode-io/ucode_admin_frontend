@@ -142,8 +142,8 @@ const RelationTable = ({
 
   return (
     <div className={styles.relationTable}>
-      <div className={styles.filtersBlock}>
-        {quickFilters?.map((field) => (
+      {!!quickFilters?.length && <div className={styles.filtersBlock}>
+        {quickFilters.map((field) => (
           <FRow key={field.id} label={field.label}>
             <Filter
               field={field}
@@ -154,7 +154,7 @@ const RelationTable = ({
             />
           </FRow>
         ))}
-      </div>
+      </div>}
 
       <div className={styles.tableBlock}>
         <ObjectDataTable

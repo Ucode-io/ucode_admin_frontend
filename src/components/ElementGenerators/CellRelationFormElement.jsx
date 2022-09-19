@@ -81,6 +81,7 @@ const AutoCompleteElement = ({
 
     setValue(val?.guid ?? null)
 
+
     if (!field?.attributes?.autofill) return
 
     field.attributes.autofill.forEach(({ field_from, field_to }) => {

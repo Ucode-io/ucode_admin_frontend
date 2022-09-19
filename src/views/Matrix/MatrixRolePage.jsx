@@ -32,6 +32,7 @@ import roleServiceV2 from "../../services/roleServiceV2";
 import styles from './styles.module.scss'
 import { useMutation } from "react-query";
 import roleService from "../../services/roleService";
+import { useSelector } from "react-redux";
 
 const staticTables = [
   {
@@ -43,6 +44,7 @@ const staticTables = [
 
 const MatrixRolePage = () => {
   const { roleId, typeId } = useParams();
+  const {permissions} = useSelector(state => state.auth)
   const TYPES = [
     { key: "read", name: "Чтение" },
     { key: "write", name: "Добавление" },
@@ -66,6 +68,8 @@ const MatrixRolePage = () => {
   const [editingAutoFilter, setEditingAutoFilter] = useState("");
 
   const roleForm = useForm({});
+
+  console.log('permissions - ', permissions.filter(i => i.table_slug.startsWith('test')))
 
   const autoFilterForm = useForm({
     defaultValues: {

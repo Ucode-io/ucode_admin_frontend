@@ -1,5 +1,5 @@
 import styles from "./style.module.scss"
-import companyLogo from "../../assets/icons/soliq-logo.svg"
+import companyLogo from "../../../builder_config/assets/company-logo.svg"
 import { Collapse, Tooltip, Typography } from "@mui/material"
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft"
 import React, { useEffect, useMemo, useState } from "react"

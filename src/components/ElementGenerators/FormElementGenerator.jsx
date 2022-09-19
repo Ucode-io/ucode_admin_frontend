@@ -25,7 +25,6 @@ const FormElementGenerator = ({
   fieldsList,
   ...props
 }) => {
-
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))
       return `$${field.id.split("@")?.[0]}.${field.slug}`
@@ -309,6 +308,22 @@ const FormElementGenerator = ({
             fieldsList={fieldsList}
             field={field}
             defaultValue={field.defaultValue}
+          />
+        </FRow>
+      )
+
+    case "COLOR":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFTextField
+            control={control}
+            name={field.slug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={field.defaultValue}
+            type="color"
+            {...props}
           />
         </FRow>
       )

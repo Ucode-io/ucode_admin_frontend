@@ -7,7 +7,7 @@ import constructorFieldService from "../../../../../../services/constructorField
 import listToOptions from "../../../../../../utils/listToOptions"
 import styles from "./style.module.scss"
 
-const formulaTypes = [{ label: "Сумма", value: "SUMM" }]
+const formulaTypes = [{ label: "Сумма", value: "SUMM" }, { label: "Максимум", value: "MAX" }, { label: "Среднее", value: "AVG" }]
 
 const FormulaAttributes = ({ control, mainForm }) => {
   const tableRelations = useWatch({
@@ -66,7 +66,7 @@ const FormulaAttributes = ({ control, mainForm }) => {
           />
         </FRow>
 
-        {type === "SUMM" && (
+        {(type === "SUMM" || type === "MAX") && (
           <>
             <FRow label="Table from">
               <HFSelect

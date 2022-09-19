@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom"
 import styles from "./style.module.scss"
-import Logo from '../../assets/icons/soliq-logo.svg'
+import config from "../../../builder_config/config.json"
 
 const AuthLayout = () => {
   return (
@@ -8,12 +8,11 @@ const AuthLayout = () => {
       <div className={styles.leftSide}>
         <div></div>
         <div className={styles.logoBlock}>
-          {/* <img src={Logo} className={styles.logoIcon} alt="logo" /> */}
-          <h1 className={styles.logoTitle}>Medion</h1>
-          <p className={styles.logoSubtitle} >Family Hospital</p>
+          <h1 className={styles.logoTitle}>{config?.company_name}</h1>
+          <p className={styles.logoSubtitle} >{config?.company_subtitle}</p>
         </div>
 
-        <div className={styles.subtitleBlock}>© Medion. Все права защищены</div>
+        <div className={styles.subtitleBlock}>© {config?.company_name}. Все права защищены</div>
 
       </div>
       <div className={styles.rightSide}>

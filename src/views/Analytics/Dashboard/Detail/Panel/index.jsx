@@ -1,9 +1,7 @@
 import { Delete, Edit } from "@mui/icons-material"
-import { useMemo, useState } from "react"
 import { useMutation, useQuery } from "react-query"
 import { useLocation, useNavigate } from "react-router-dom"
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
-import DataTable from "../../../../../components/DataTable"
 import DeleteWrapperModal from "../../../../../components/DeleteWrapperModal"
 import panelService from "../../../../../services/analytics/panelService"
 import request from "../../../../../utils/request"
@@ -54,10 +52,10 @@ const Panel = ({
 
   return (
     <div className={styles.panel}>
-      <div className={styles.title}>
-        <div>{panel.title}</div>
+      {layoutIsEditable && (
+        <div className={styles.editableBlock}>
+          {/* <div>{panel.title}</div> */}
 
-        {layoutIsEditable && (
           <div className={styles.btnsBlock}>
             <RectangleIconButton
               className={styles.editButton}
@@ -77,12 +75,12 @@ const Panel = ({
               </RectangleIconButton>
             </DeleteWrapperModal>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      <div style={{ flex: 1, overflow: "hidden", padding: 10, paddingTop: 0 }}>
-        <PanelViews panel={panel} data={data} isLoading={isLoading} />
-      </div>
+      {/* <div style={{ flex: 1, overflow: "hidden", padding: 10, paddingTop: 0 }}> */}
+      <PanelViews panel={panel} data={data} isLoading={isLoading} />
+      {/* </div> */}
     </div>
   )
 }

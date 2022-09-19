@@ -1,7 +1,7 @@
-import { FormControl, FormHelperText, InputLabel } from "@mui/material"
-import { useMemo } from "react"
-import { Controller } from "react-hook-form"
-import CAutoCompleteSelect from "../CAutoCompleteSelect"
+import { FormControl, FormHelperText, InputLabel } from "@mui/material";
+import { useMemo } from "react";
+import { Controller } from "react-hook-form";
+import CAutoCompleteSelect from "../CAutoCompleteSelect";
 
 const HFAutocomplete = ({
   control,
@@ -14,18 +14,18 @@ const HFAutocomplete = ({
   required = false,
   onChange = () => {},
   rules = {},
-  defaultValue=null,
+  defaultValue = null,
   ...props
 }) => {
-
   const computedOptions = useMemo(() => {
-    return options?.map(option => ({
+    if (options[0]?.label) {
+      return options;
+    }
+    return options?.map((option) => ({
       label: option,
       value: option,
-    }))
-  }, [ options ])
-
-  console.log('computedOptions - ', computedOptions)
+    }));
+  }, [options]);
 
   return (
     <Controller
@@ -37,17 +37,18 @@ const HFAutocomplete = ({
         ...rules,
       }}
       render={({
-        field: { onChange: onFormChange, value },
+        field: { onChange: onFormChange, value, name },
         fieldState: { error },
       }) => {
+        console.log("name", name);
         return (
           <FormControl style={{ width }}>
             <InputLabel size="small">{label}</InputLabel>
             <CAutoCompleteSelect
               value={value}
               onChange={(val) => {
-                onChange(val?.value)
-                onFormChange(val?.value)
+                onChange(val?.value);
+                onFormChange(val?.value);
               }}
               options={computedOptions}
             />
@@ -55,10 +56,10 @@ const HFAutocomplete = ({
               <FormHelperText error>{error?.message}</FormHelperText>
             )}
           </FormControl>
-        )
+        );
       }}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFAutocomplete
+export default HFAutocomplete;

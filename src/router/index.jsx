@@ -5,7 +5,7 @@ import KeepAliveWrapper from "../components/KeepAliveWrapper"
 import PageFallback from "../components/PageFallback"
 import ReloadWrapper from "../components/ReloadWrapper"
 import AnalyticsLayout from "../layouts/AnalyticsLayout"
-import AuthLayout from "../layouts/AuthLayout"
+
 import CashboxLayout from "../layouts/CashboxLayout"
 import MainLayout from "../layouts/MainLayout"
 import SettingsLayout from "../layouts/SettingsLayout"
@@ -28,6 +28,9 @@ import AppsForm from "../views/Constructor/Apps/AppsForm"
 import ConstructorTablesFormPage from "../views/Constructor/Tables/Form"
 import ObjectsPage from "../views/Objects"
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage"
+
+const AuthLayout = lazy(() => import("../layouts/AuthLayout"))
+
 
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"))
 const ClientPlatform = lazy(() => import("../views/AuthMatrix/ClientPlatform"))

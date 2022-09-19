@@ -4,9 +4,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from "@mui/material"
-import { Controller } from "react-hook-form"
-import IconGenerator from "../IconPicker/IconGenerator"
+} from "@mui/material";
+import { Controller } from "react-hook-form";
+import IconGenerator from "../IconPicker/IconGenerator";
 
 const HFSelect = ({
   control,
@@ -56,26 +56,35 @@ const HFSelect = ({
                 : () => <span style={{ color: "#909EAB" }}>{placeholder}</span>
             }
             onChange={(e) => {
-              onChange(e.target.value)
-              onFormChange(e.target.value)
+              onChange(e.target.value);
+              onFormChange(e.target.value);
             }}
             {...props}
           >
             {optionType === "GROUP"
-              ? options?.map((group, groupIndex) => (
-                
-                [
-                  <MenuItem style={{ fontWeight: 600, color: '#000', fontSize: 15 }}>{group.label}</MenuItem>,
+              ? options?.map((group, groupIndex) => [
+                  <MenuItem
+                    style={{ fontWeight: 600, color: "#000", fontSize: 15 }}
+                  >
+                    {group.label}
+                  </MenuItem>,
                   group.options?.map((option) => (
-                    <MenuItem  key={option.value} value={option.value} style={{ paddingLeft: 30 }} >
-                      <div className="flex align-center gap-2" >
-                      <IconGenerator icon={option.icon} size={15} style={{ color: '#6E8BB7' }} />
-                      {option.label}
+                    <MenuItem
+                      key={option.value}
+                      value={option.value}
+                      style={{ paddingLeft: 30 }}
+                    >
+                      <div className="flex align-center gap-2">
+                        <IconGenerator
+                          icon={option.icon}
+                          size={15}
+                          style={{ color: "#6E8BB7" }}
+                        />
+                        {option.label}
                       </div>
                     </MenuItem>
-                  ))
-                ]
-              ))
+                  )),
+                ])
               : options?.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
@@ -88,7 +97,7 @@ const HFSelect = ({
         </FormControl>
       )}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFSelect
+export default HFSelect;

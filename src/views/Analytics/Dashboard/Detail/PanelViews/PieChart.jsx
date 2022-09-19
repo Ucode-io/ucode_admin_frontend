@@ -1,6 +1,8 @@
 import { get } from "@ngard/tiny-get"
 import { ResponsivePie } from "@nivo/pie"
 import { useMemo } from "react"
+import styles from "./style.module.scss"
+
 
 const PieChart = ({ panel = {}, data=[] }) => {
 
@@ -14,7 +16,11 @@ const PieChart = ({ panel = {}, data=[] }) => {
     })) ?? []
   }, [ data, chartAttributes.label_field_slug, chartAttributes.value_field_slug ])
 
+
   return (
+    <div className={styles.card} >
+    <div className={styles.title}>{panel?.title}</div>
+    <div className={styles.chartArea}>
     <ResponsivePie
       data={computedData}
       margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
@@ -133,41 +139,9 @@ const PieChart = ({ panel = {}, data=[] }) => {
       ]}
       {...chartAttributes}
     />
+    </div>
+  </div>
   )
 }
-
-
-const data = [
-  {
-    "id": "python",
-    "label": "python",
-    "value": 235,
-    "color": "hsl(296, 70%, 50%)"
-  },
-  {
-    "id": "sass",
-    "label": "sass",
-    "value": 552,
-    "color": "hsl(269, 70%, 50%)"
-  },
-  {
-    "id": "elixir",
-    "label": "elixir",
-    "value": 378,
-    "color": "hsl(80, 70%, 50%)"
-  },
-  {
-    "id": "javascript",
-    "label": "javascript",
-    "value": 333,
-    "color": "hsl(306, 70%, 50%)"
-  },
-  {
-    "id": "erlang",
-    "label": "erlang",
-    "value": 504,
-    "color": "hsl(9, 70%, 50%)"
-  }
-]
 
 export default PieChart

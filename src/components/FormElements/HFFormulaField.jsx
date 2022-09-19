@@ -19,7 +19,7 @@ const HFFormulaField = ({ control, name, rules={}, setFormValue = () => {}, requ
   const updateValue = () => {
     let computedFormula = formula
 
-    const fieldsListSorted = fieldsList?.sort((a, b) => b.slug?.length - a.slug?.length)
+    const fieldsListSorted = fieldsList ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length) : []
     
     fieldsListSorted?.forEach((field) => {
 

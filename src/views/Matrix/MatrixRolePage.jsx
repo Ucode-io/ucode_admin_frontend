@@ -69,8 +69,6 @@ const MatrixRolePage = () => {
 
   const roleForm = useForm({});
 
-  console.log('permissions - ', permissions.filter(i => i.table_slug.startsWith('test')))
-
   const autoFilterForm = useForm({
     defaultValues: {
       object_field: "",

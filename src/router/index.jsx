@@ -1,6 +1,7 @@
 import { lazy, Suspense, useMemo } from "react"
 import { useSelector } from "react-redux"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom"
+
 import KeepAliveWrapper from "../components/KeepAliveWrapper"
 import PageFallback from "../components/PageFallback"
 import ReloadWrapper from "../components/ReloadWrapper"
@@ -30,7 +31,6 @@ import ObjectsPage from "../views/Objects"
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage"
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"))
-
 
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"))
 const ClientPlatform = lazy(() => import("../views/AuthMatrix/ClientPlatform"))
@@ -67,15 +67,17 @@ const Router = () => {
 
   if (!isAuth)
     return (
-      <Routes>
-        <Route path="/" element={<AuthLayout />}>
-          <Route index element={<Navigate to="/login " />} />
-          <Route path="login" element={<Login />} />
-          <Route path="registration" element={<Registration />} />
+      <Suspense fallback={<p> Loading...</p>}>
+        <Routes>
+          <Route path="/" element={<AuthLayout />}>
+            <Route index element={<Navigate to="/login " />} />
+            <Route path="login" element={<Login />} />
+            <Route path="registration" element={<Registration />} />
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Route>
           <Route path="*" element={<Navigate to="/login" />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
+        </Routes>
+      </Suspense>
     )
 
   return (

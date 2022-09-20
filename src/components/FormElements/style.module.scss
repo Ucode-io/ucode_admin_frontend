@@ -1,0 +1,33 @@
+@use "/src/scss/colors";
+
+.tag {
+  padding: 0 10px;
+  background-color: colors.$borders;
+  border-radius: 6px;
+}
+
+.placeholder {
+  color: #909EAB;
+  font-weight: 400;
+}
+
+.multipleAutocompleteTags {
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: 4px;
+  color: #000;
+  background-color: rgba(192, 192, 192, 0.224);
+
+  .value {
+    margin-right: 4px;
+  }
+}
+
+.valuesWrapper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}

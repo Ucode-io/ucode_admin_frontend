@@ -1,0 +1,104 @@
+@use '/src/scss/colors';
+
+.button {
+  padding: 4px 16px;
+  outline: none;
+  border: 1px solid;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition-duration: .2s;
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+
+  &.large {
+    padding: 8px 20px;
+    font-size: 16px;
+  }
+  
+  &.primary {
+    background-color: colors.$primary;
+    border-color: colors.$primary;
+    color: #fff;
+
+    &.error {
+      background-color: colors.$error;
+      border-color: colors.$error;
+
+      &:hover {
+        background-color: colors.$error-hover;
+      }
+    }
+
+    &:hover {
+      background-color: colors.$primary-hover;
+    }
+  }
+
+  &.secondary {
+    background-color: #fff;
+    border-color: colors.$borders;
+    color: colors.$primary;
+
+    &:hover {
+      border-color: colors.$primary;
+      color: #fff;
+    }
+
+    &.error {
+      color: colors.$error;
+      border-color: colors.$error;
+
+      &:hover {
+        border-color: colors.$error-hover;
+        color: colors.$error-hover;
+      }
+    }    
+  }
+
+  &.filtersButton {
+    background: #F6F8F9;
+    border-color: #E5E9EB;
+    color: #000;
+
+    &:hover {
+      border-color: colors.$primary;
+      color: colors.$primary;
+    }
+  }
+}
+
+.tabButtonWrapper {
+  display: flex;
+  align-items: center;
+
+}
+
+.tabButton {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  color: #6E8BB7;
+  font-weight: 500;
+  border-radius: 4px;
+  padding: 4px 12px;
+  border: 1px solid #E5E9EB;
+  transition-duration: .3s;
+  cursor: pointer;
+  margin-left: 20px;
+
+  
+  &:hover {
+    color: colors.$primary;
+    border-color: colors.$primary;
+  }
+}
+
+.exitButton {
+  color: colors.$grey;
+}

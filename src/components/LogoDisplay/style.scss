@@ -1,0 +1,21 @@
+.LogoDisplay {
+  border-radius: 50%;
+  border: 1px solid silver;
+  width: 52px;
+  height: 52wwpx;
+
+  .logo-image {
+    min-width: 50px;
+    min-height: 50px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    background-color: #dfe1e6;
+  }
+}

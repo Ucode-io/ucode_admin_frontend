@@ -1,0 +1,193 @@
+
+
+
+
+.gantt {
+  overflow: auto;
+  background-color: #fff;
+  height: calc(100vh - 103px);
+  position: relative;
+}
+
+.datesRow {
+  display: flex;
+
+
+  .dateBlock {
+
+    .monthBlock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      height: 32px;
+      border: 1px solid #E5E9EB;
+      border-left: none;
+      margin: -1px -1px 0 0;
+    }
+
+    .daysRow {
+      display: flex;
+    }
+
+    .dayBlock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      min-width: 160px;
+      border: 1px solid #E5E9EB;
+      margin: -1px -1px 0 0;
+      
+
+      &:first-of-type {
+        border-left: none;
+      }
+    }
+  }
+
+  .mockBlock {
+    min-width: 200px;
+    width: 200px;
+    border-right: 1px solid #E5E9EB;
+    border-bottom: 1px solid #E5E9EB;
+
+  }
+
+  // .dateBlock {
+  //   height: 32px;
+  //   min-width: 160px;
+  //   width: 160px;
+  //   border-width: 0px 1px 1px 0px;
+  //   border-style: solid;
+  //   border-color: #E5E9EB;
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: center;
+  //   margin: -1px -1px 0 0;      
+
+
+  //   &.mockBlock {
+  //     min-width: 200px;
+  //     width: 200px;
+  //   }
+  // }
+}
+
+
+.row {
+  display: flex;
+  
+
+  .tabBlock {
+    min-width: 200px;
+    width: 200px;
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+    padding: 5px 10px;
+    margin: -1px -1px 0 0;      
+    border: 1px solid #E5E9EB;
+    border-left: none;
+    position: sticky;
+    left: 0;
+    background-color: #fff;
+    // border-right: 1px solid #E5E9EB;
+    
+    &.parent {
+      font-weight: bold;
+    }
+  }
+
+  
+  .dataBlock {
+    min-width: 160px;
+    width: 160px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    border: 1px solid #E5E9EB;
+    margin: -1px -1px 0 0;
+
+    &.hasData {
+      background-color: #E2F4E6;
+
+      &:hover {
+        background-color: #aad4b3;
+      }
+    }
+
+    .addButton {
+      display: none;
+    }
+
+    &:hover {
+      
+      .addButton {
+        display: inline-flex;
+      }
+    }
+  }
+
+}
+
+
+
+
+
+// ============ DRAWER ============
+
+
+.verticalDrawer {
+  width: 440px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  
+
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    box-shadow: inset 0px -1px 0px #EEEEEE;
+
+
+    .title {
+      font-size: 24px;
+      line-height: 32px;
+    }
+
+    .closeIcon {
+      font-size: 28px;
+    }
+  }
+
+  .body {
+    padding: 16px;
+    flex: 1;
+    overflow: auto;
+  
+  }
+
+  .footer {
+    padding: 16px;
+
+    .button {
+      width: 100%;
+    }
+  }
+
+  
+}
+.linkIcon {
+  transition-duration: .3s;
+  cursor: pointer;
+  line-height: 18px;
+  vertical-align: middle;
+  margin-right: 2px;
+}

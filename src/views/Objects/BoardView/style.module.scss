@@ -1,0 +1,58 @@
+.board {
+  display: flex;
+  padding: 0 16px;
+  gap: 24px;
+  width: 100%;
+  overflow: auto;
+
+  .column {
+    width: 300px;
+
+    .columnHeaderBlock {
+      background-color: #fff;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+
+      .title {
+        flex: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        line-height: 24px;
+        font-weight: 700;
+      }
+
+      .rightSide {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        .counter {
+          width: 24px;
+          height: 24px;
+          font-size: 14px;
+          background-color: #003175;
+          color: #fff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+}

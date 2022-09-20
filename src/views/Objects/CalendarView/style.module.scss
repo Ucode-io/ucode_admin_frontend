@@ -1,0 +1,169 @@
+
+
+
+@use "/src/scss/colors";
+
+
+
+.calendar {
+  display: flex;
+  align-content: center;
+  max-height: calc(100vh - 100px);
+  overflow: auto;
+  background-color: #fff;
+}
+
+.timesColumn {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+
+  .timeRow {
+    min-width: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    box-shadow: inset -1px -1px 0px #E5E9EB;
+    background-color: #fff;
+  }
+}
+
+.dateBlock {
+  min-width: 200px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  top: 0px;
+  box-shadow: inset -1px -1px 0px #E5E9EB;
+  background-color: #fff;
+  z-index: 2;
+}
+
+.row {
+  display: flex;
+
+}
+
+.block {
+  
+}
+
+.blockElement {
+  min-width: 200px;
+  box-shadow: inset -1px -1px 0px #E5E9EB;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 0 10px;
+}
+
+.timeBlock {
+  width: 100%;
+  box-shadow: inset -1px -1px 0px #E5E9EB;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .addButton {
+    display: none;
+    align-items: center;
+    
+
+    &:hover {
+      cursor: pointer;
+      color: #007AFF;
+    }
+  }
+
+  .timePlaceholder {
+    opacity: .4;
+  }
+
+
+  &:hover {
+    .addButton {
+      display: inline-flex;
+    }
+    
+    .timePlaceholder {
+      display: none;
+    }
+  }
+
+  &.disabled {
+    background-color: rgba(223, 223, 223, 0.276);
+
+    &:hover {
+      .addButton {
+        display: none;
+      }
+
+      .timePlaceholder {
+        display: block;
+      }
+    }
+
+  }
+}
+
+
+//  -------------------
+
+.objectColumn {
+  position: relative;
+
+  .infoBlockWrapper {
+    width: 100%;
+    padding: 5px 20px;
+    height: 40px;
+    position: absolute;
+
+    .infoCard {
+      padding: 5px;
+      // padding-top: 20px;
+      overflow: hidden;
+      height: 70px;
+      cursor: pointer;
+      transition-duration: .3s;
+    }
+
+    .infoBlock {
+      &.singleLine {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+  }
+}
+
+.time {
+  color: #84919A;
+  font-size: 12px;
+}
+
+.menu {
+  padding: 8px;
+  max-width: 200px;
+}
+
+.popupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.linkIcon {
+  transition-duration: .3s;
+  cursor: pointer;
+
+  &:hover {
+    color: colors.$primary;
+  }
+}

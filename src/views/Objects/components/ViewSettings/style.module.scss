@@ -1,0 +1,177 @@
+@use "/src/scss/colors";
+
+.paper {
+  margin-top: 5px;
+}
+
+.menu {
+  padding: 0 !important;
+
+  .menuItem {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px 8px 16px;
+    box-shadow: inset 0px -1px 0px #e5e9eb;
+    min-width: 300px;
+    background-color: #fff;
+    cursor: pointer;
+
+    &:hover {
+      background-color: colors.$hover-silver;
+    }
+  }
+}
+
+.card {
+  min-width: 1000px;
+  border: none;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    box-shadow: inset 0px -1px 0px #e5e9eb;
+
+    .cardTitle {
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 24px;
+    }
+
+    .closeIcon {
+      font-size: 20px;
+    }
+  }
+
+  .body {
+    display: flex;
+    align-items: flex-start;
+  }
+}
+
+.viewsWrapper {
+  height: calc(100vh - 157px);
+  overflow: auto;
+
+  .views {
+    width: 270px;
+    border-width: 0px 1px 1px 0px;
+    border-style: solid;
+    border-color: #e5e9eb;
+    border-radius: 0px 0px 6px 0px;
+    
+  
+    .viewRow {
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-bottom: 1px solid #e5e9eb;
+      cursor: pointer;
+  
+      &:hover {
+        background-color: colors.$hover-silver;
+      }
+  
+      &:last-of-type {
+        border: none;
+        border-radius: 0px 0px 6px 0px;
+      }
+
+      &.active {
+        background-color: colors.$primary;
+        color: #fff;
+
+        .icon {
+          color: #fff;
+        }
+      }
+  
+      .icon {
+        color: #6e8bb7;
+      }
+  
+      .viewName {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.formSection {
+  flex: 1;
+    
+  .formFooter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 5px;
+    border-top: 1px solid #E5E9EB;
+    border-left: 1px solid #E5E9EB;
+    border-radius: 6px;
+    gap: 5px;
+  }
+
+  .viewForm {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: calc(100vh - 200px);
+    overflow: auto;
+  
+    .section {
+      border: 1px solid #e5e9eb;
+      border-radius: 6px;
+  
+      .sectionHeader {
+        padding: 16px 12px;
+        box-shadow: inset 0px -1px 0px #EBEDEE;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+  
+        .sectionTitle {
+          font-weight: 700;
+          font-size: 18px;
+          line-height: 24px;
+        }
+  
+      }
+  
+      .sectionBody {
+        padding: 16px 12px;
+
+
+        .formRow {
+          display: flex;
+          align-items: center;
+          gap: 30px;
+        }
+      }
+    }
+  }
+}
+
+
+.table {
+  
+  .row {
+    display: flex;
+    background-color: #fff;
+    // align-items: center;
+
+    .cell {
+      border: 1px solid #e5e9eb;
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      margin: -1px -1px 0 0;      
+      // flex: 1;
+    }
+  }
+}

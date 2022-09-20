@@ -1,0 +1,29 @@
+
+
+.recursiveBlock {
+  box-shadow: inset 0px -1px 0px #E5E9EB;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+
+  .title {
+    flex: 1;
+  }
+
+  .extra {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+
+  &.level2 {
+    background-color: #EBF7FF;
+  }
+
+  &.level3 {
+    background-color: #FFFEEB;
+  }
+
+}

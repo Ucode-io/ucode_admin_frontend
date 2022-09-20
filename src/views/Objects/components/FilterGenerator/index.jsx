@@ -29,6 +29,10 @@ const FilterGenerator = ({
     onChange(data, "order")
   }
 
+  console.log('name - ', name)
+  console.log('field - ', field)
+  console.log('filters - ', filters)
+
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />

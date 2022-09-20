@@ -31,6 +31,8 @@ const FilterAutoComplete = ({
     setSearchText("")
   }
 
+  console.log('value - ', value)
+
   const rowClickHandler = (option) => {
     if (value?.includes(option.value)) {
       onChange(
@@ -68,16 +70,16 @@ const FilterAutoComplete = ({
     <div className={styles.autocomplete}>
       <div className={styles.autocompleteButton} onClick={openMenu}>
         <div className={styles.autocompleteValue}>
-          {localCheckedValues?.[0]?.label || (
-            <span className={styles.placeholder}>{label}</span>
+          {(localCheckedValues?.[0]?.label) || (
+            <span className={styles.placeholder} style={{color: !value?.length ? '#909EAB' : "#000" }}>{!value?.length ? label : value[0]}</span>
           )}
         </div>
-        {value?.length > 1 && `+${value.length - 1}`}
-        {!!value?.length && (
-          <IconButton onClick={onClearButtonClick}>
-            <Close />
-          </IconButton>
-        )}
+          {value?.length > 1 && `+${value.length - 1}`}
+          {!!value?.length && (
+            <IconButton onClick={onClearButtonClick}>
+              <Close />
+            </IconButton>
+          ) }
         <ArrowDropDown />
       </div>
 

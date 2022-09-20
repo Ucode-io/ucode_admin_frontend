@@ -22,11 +22,12 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import { Checkbox } from "@mui/material";
 import { numberWithSpaces } from "../../utils/formatNumbers";
 import { get } from "@ngard/tiny-get";
-import NoItems from "../NoItems";
 
 const DataTable = ({
   data = [],
   loader = false,
+  limit = 10,
+  setLimit = () => {},
   removableHeight,
   disablePagination,
   currentPage = 1,
@@ -56,8 +57,7 @@ const DataTable = ({
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
-  const [limit, setLimit] = useState(10);
-
+  
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
 

@@ -64,6 +64,7 @@ const BoardView = ({
 
   return (
     <div>
+       
       <FiltersBlock
         extra={
           <>
@@ -81,13 +82,22 @@ const BoardView = ({
           views={views}
           setViews={setViews}
         />
-        <FastFilter fieldsMap={fieldsMap} view={view} />
       </FiltersBlock>
-
+{/* <FastFilter fieldsMap={fieldsMap} view={view} /> */}
       {loader ? (
         <PageFallback />
       ) : (
+        <div className={styles.wrapper}>
+            {
+        view?.quick_filters?.length > 0 &&
+        <div className={styles.filters}>
+          <p>Фильтры</p>
+          <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+        </div>
+       }
+         
         <div className={styles.board}>
+        
           <Container
             lockAxis="x"
             onDrop={onDrop}
@@ -116,6 +126,7 @@ const BoardView = ({
             ))}
           </Container>
         </div>
+       </div>
       )}
     </div>
   )

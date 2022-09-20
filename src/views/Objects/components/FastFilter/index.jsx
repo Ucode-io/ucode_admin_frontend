@@ -6,7 +6,7 @@ import { filterActions } from "../../../../store/filter/filter.slice"
 import { Filter } from "../FilterGenerator"
 import styles from "./style.module.scss"
 
-const FastFilter = ({view, fieldsMap }) => {
+const FastFilter = ({view, fieldsMap, isVertical = false }) => {
   const { tableSlug } = useParams()
   const dispatch = useDispatch()
 
@@ -22,7 +22,7 @@ const FastFilter = ({view, fieldsMap }) => {
   }
 
   return (
-    <div className={styles.filtersBlock} >
+    <div className={styles.filtersBlock} style={{flexDirection: isVertical ? "column" : 'row' }} >
       {
         computedFields?.map(filter => (
           <div className={styles.filter} key={filter.id} >

@@ -1,6 +1,7 @@
 import { Add, Delete } from "@mui/icons-material"
 import { Card } from "@mui/material"
 import { useFieldArray } from "react-hook-form"
+import { useParams } from "react-router-dom"
 import { Container, Draggable } from "react-smooth-dnd"
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
 import ButtonsPopover from "../../../../../components/ButtonsPopover"
@@ -20,6 +21,7 @@ const Section = ({
   openFieldsBlock,
   openRelationSettingsBlock
 }) => {
+
   const sectionFields = useFieldArray({
     control: mainForm.control,
     name: `sections.${index}.fields`,

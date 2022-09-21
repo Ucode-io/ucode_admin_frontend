@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { useMemo } from "react"
 import { Controller } from "react-hook-form"
 import { useQuery } from "react-query"
+import { useParams } from "react-router-dom"
 
 import useDebounce from "../../hooks/useDebounce"
 import useTabRouter from "../../hooks/useTabRouter"
@@ -23,11 +24,15 @@ const RelationFormElement = ({
   mainForm,
   disabledHelperText,
   setFormValue,
+  formTableSlug,
   ...props
 }) => {
+  
   const tableSlug = useMemo(() => {
+    if(field.relation_type === "Recursive") return formTableSlug
     return field.id.split("#")?.[0] ?? ""
-  }, [field.id])
+  }, [field.id, formTableSlug, field.relation_type])
+
 
   if (!isLayout)
     return (

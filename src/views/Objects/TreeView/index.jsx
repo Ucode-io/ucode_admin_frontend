@@ -1,20 +1,18 @@
 import { useEffect, useMemo } from "react"
 import { useState } from "react"
+import { useParams } from "react-router-dom"
 import PageFallback from "../../../components/PageFallback"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { objectToArray } from "../../../utils/objectToArray"
 import RecursiveBlock from "./RecursiveBlock"
 
 const TreeView = ({
-  computedColumns,
-  tableSlug,
-  setViews,
-  filters,
-  filterChangeHandler,
   groupField,
   group,
-  view
+  view,
+  fieldsMap
 }) => {
+  const {tableSlug} = useParams()
   const [tableLoader, setTableLoader] = useState(true)
   const [data, setData] = useState([])
 
@@ -22,6 +20,7 @@ const TreeView = ({
     return data.filter((row) => !row[`${tableSlug}_id`])
   }, [data, tableSlug])
 
+  
   const getAllData = async () => {
     setTableLoader(true)
     try {
@@ -35,8 +34,8 @@ const TreeView = ({
         data: { offset: 0, limit: 10, [groupFieldName]: group?.value },
       })
 
-      setViews(data.views ?? [])
-      setData(objectToArray(data.response ?? {}))
+      setData(data.response ?? [])
+      
       // dispatch(
       //   tableColumnActions.setList({
       //     tableSlug: tableSlug,
@@ -66,6 +65,7 @@ const TreeView = ({
               view={view}
               data={data}
               setData={setData}
+              fieldsMap={fieldsMap}
             />
           ))}
         </>

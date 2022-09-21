@@ -1,5 +1,6 @@
 import { Add, Delete } from "@mui/icons-material"
 import { Collapse } from "@mui/material"
+import { get } from "@ngard/tiny-get"
 import { useState } from "react"
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
@@ -9,7 +10,7 @@ import useTabRouter from "../../../hooks/useTabRouter"
 import constructorObjectService from "../../../services/constructorObjectService"
 import style from "./style.module.scss"
 
-const RecursiveBlock = ({ row, view, data = [], setData, level = 1 }) => {
+const RecursiveBlock = ({ row, view, data = [], setData, level = 1, fieldsMap }) => {
   const { tableSlug } = useParams()
   const [childBlockVisible, setChildBlockVisible] = useState(false)
   const [deleteLoader, setDeleteLoader] = useState(false)
@@ -23,6 +24,9 @@ const RecursiveBlock = ({ row, view, data = [], setData, level = 1 }) => {
     e.stopPropagation()
     setChildBlockVisible(prev => !prev)
   }
+
+  console.log("VIEW ===>", view, fieldsMap)
+
 
   const navigateToCreatePage = () => {
     navigateToForm(tableSlug, "CREATE", null,  { [`${tableSlug}_id`]: row.guid})
@@ -54,7 +58,12 @@ const RecursiveBlock = ({ row, view, data = [], setData, level = 1 }) => {
           <ChevronRight />
         </IconButton> */}
 
-        <div className={style.title}>{row[view.main_field]}</div>
+        <div className={style.title}>{
+          view?.columns?.map(fieldId => {
+            const fieldSlug = fieldsMap?.[fieldId]?.slug
+            return `${get(row, fieldSlug, '')} `
+          })
+        }</div>
 
         <div className={style.extra}>
           <RectangleIconButton color="primary" onClick={navigateToCreatePage} >
@@ -75,6 +84,7 @@ const RecursiveBlock = ({ row, view, data = [], setData, level = 1 }) => {
             view={view}
             level={level + 1}
             setData={setData}
+            fieldsMap={fieldsMap}
           />
         ))}
       </Collapse>

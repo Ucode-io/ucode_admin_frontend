@@ -7,7 +7,13 @@ import styles from "./styles.module.scss";
 import EventsTab from "./Tabs/EventsTab";
 import SettingsTab from "./Tabs/SettingsTab";
 
-const ActionForm = ({ isOpen, handleClose, eventLabel }) => {
+const ActionForm = ({
+  isOpen,
+  handleClose,
+  eventLabel,
+  modalItemId,
+  eventsRefetch,
+}) => {
   const [selectedTab, setSelectedTab] = useState(0);
 
   const style = {
@@ -58,7 +64,12 @@ const ActionForm = ({ isOpen, handleClose, eventLabel }) => {
             </div>
 
             <TabPanel>
-              <SettingsTab eventLabel={eventLabel} />
+              <SettingsTab
+                eventsRefetch={eventsRefetch}
+                modalItemId={modalItemId}
+                eventLabel={eventLabel}
+                handleClose={handleClose}
+              />
             </TabPanel>
             <TabPanel>
               <EventsTab />

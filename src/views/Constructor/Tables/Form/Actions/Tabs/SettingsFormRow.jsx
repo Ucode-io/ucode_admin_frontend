@@ -13,6 +13,7 @@ import HFTextField from "../../../../../../components/FormElements/HFTextField";
 import constructorFieldService from "../../../../../../services/constructorFieldService";
 
 const SettingsFormRow = ({
+  watch,
   control,
   nestedIndex,
   nestedFieldName,
@@ -20,24 +21,59 @@ const SettingsFormRow = ({
 }) => {
   const { slug: table_slug } = useParams();
 
+  const table_slug_param =
+    nestedFieldName === "after"
+      ? watch(`after.${nestedIndex}.table`)
+      : table_slug;
+
   const { data: fieldList, isLoading: fieldListLoading } = useQuery(
-    ["GET_FIELD_LIST", table_slug],
-    () => constructorFieldService.getList({ table_slug }),
-    { enabled: !!table_slug }
+    [
+      "GET_FIELD_LIST",
+      table_slug,
+      watch(`after.${nestedIndex}.table`),
+      table_slug_param,
+    ],
+    () => {
+      console.log("nested field name - ", nestedFieldName);
+      return constructorFieldService.getList({
+        table_slug: table_slug_param || table_slug,
+      });
+    },
+    {
+      enabled: !!table_slug,
+      select: (data) => {
+        // if (
+        //   nestedFieldName === "after" &&
+        //   !data?.fields?.find((i) => i.slug === "drugoye")
+        // ) {
+        //   data?.fields?.push({ slug: "drugoye" });
+        //   return data;
+        // }
+        return data;
+      },
+    }
   );
+
+  // console.log("table_slug_param", table_slug_param);
+  // console.log("nestedFieldName", nestedFieldName);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: `${nestedFieldName}.${nestedIndex}.group`,
   });
 
+  console.log(
+    "watch(`after",
+    watch(`after.${nestedIndex}.group.${0}.left_field`)
+  );
+
   const attributeFields = [
     {
       defaultValue: "",
       slug: "left_field",
-      type: "select",
+      type: (val) => (val === "drugoye" ? "text" : "select"),
       options: fieldList?.fields?.map((i) => ({
-        label: i.label,
+        label: i.slug,
         value: i.slug,
       })),
       isLoading: fieldListLoading,
@@ -46,7 +82,7 @@ const SettingsFormRow = ({
     {
       defaultValue: "=",
       slug: "comparison_symbol",
-      type: "select",
+      type: () => "select",
       options: [
         {
           label: (
@@ -71,7 +107,7 @@ const SettingsFormRow = ({
     {
       defaultValue: "f",
       slug: "right_field_type",
-      type: "select",
+      type: () => "select",
       options: [
         {
           label: <FormulaIcon style={{ transform: "translateY(3px)" }} />,
@@ -88,7 +124,7 @@ const SettingsFormRow = ({
     {
       defaultValue: "middle",
       slug: "right_field",
-      type: "text",
+      type: () => "text",
       options: ["start", "middle", "end"],
       placeholder: "text",
     },
@@ -108,7 +144,11 @@ const SettingsFormRow = ({
             }}
           >
             {attributeFields.map((field) =>
-              field.type === "select" ? (
+              field.type(
+                watch(
+                  `${nestedFieldName}.${nestedIndex}.group.${index}.${field.slug}`
+                )
+              ) === "select" ? (
                 <HFSelect
                   key={field.id}
                   options={field.options}

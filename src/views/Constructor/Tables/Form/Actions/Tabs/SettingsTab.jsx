@@ -1,7 +1,8 @@
+import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { Add } from "@mui/icons-material";
 import { useMutation, useQuery } from "react-query";
 import { useParams } from "react-router-dom";
+import { Add } from "@mui/icons-material";
 
 import cls from "../styles.module.scss";
 import SecondaryButton from "../../../../../../components/Buttons/SecondaryButton";
@@ -10,8 +11,14 @@ import SettingsFormRow from "./SettingsFormRow";
 import HFSelect from "../../../../../../components/FormElements/HFSelect";
 import eventsService from "../../../../../../services/eventsService";
 import constructorTableService from "../../../../../../services/constructorTableService";
+import eventService from "../../../../../../services/eventsService";
 
-const SettingsTab = ({ eventLabel }) => {
+const SettingsTab = ({
+  eventLabel,
+  modalItemId,
+  handleClose,
+  eventsRefetch,
+}) => {
   const { slug: table_slug } = useParams();
 
   const emptyFields = {
@@ -21,7 +28,7 @@ const SettingsTab = ({ eventLabel }) => {
     right_field_type: "",
   };
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       action: "",
       condition: [
@@ -31,6 +38,8 @@ const SettingsTab = ({ eventLabel }) => {
       ],
       after: [
         {
+          table: "",
+          action: "",
           group: [emptyFields],
         },
       ],
@@ -50,6 +59,14 @@ const SettingsTab = ({ eventLabel }) => {
     }
   );
 
+  const { data: eventById } = useQuery(
+    ["GET_EVENT_ITEM", modalItemId],
+    () => eventService.getById({ id: modalItemId }),
+    {
+      enabled: !!modalItemId,
+    }
+  );
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "condition",
@@ -64,40 +81,80 @@ const SettingsTab = ({ eventLabel }) => {
     name: "after",
   });
 
-  const { mutate: createHandler } = useMutation((data) =>
-    eventsService.create(
-      {
-        does: data.after.map((i) => ({
-          fields: i.group.map((j) => ({
+  const { mutate: createHandler } = useMutation(
+    (data) => eventsService.create(data),
+    {
+      onSuccess: () => {
+        handleClose();
+        eventsRefetch();
+      },
+    }
+  );
+  const { mutate: updateHandler } = useMutation(
+    (data) => eventsService.update(data),
+    {
+      onSuccess: () => {
+        handleClose();
+        eventsRefetch();
+      },
+    }
+  );
+
+  const onSubmit = (data) => {
+    const collection = {
+      does: data.after.map((i) => ({
+        fields: i.group.map((j) => ({
+          ...j,
+          left_field: j.left_field,
+          right_field: j.right_field,
+        })),
+        opperation_type: i.action,
+        table_slug: i.table,
+      })),
+      table_slug,
+      id: modalItemId,
+      when: {
+        action: data.action,
+        app_slug: "",
+        conditions: data.condition.map((i) => ({
+          match_fields: i.group.map((j) => ({
             ...j,
             left_field: "current." + j.left_field,
             right_field: "previous." + j.right_field,
           })),
-          opperation_type: i.action,
-          table_slug: i.table,
         })),
-        table_slug,
-        when: {
-          action: data.action,
-          app_slug: "",
-          conditions: data.condition.map((i) => ({
-            match_fields: i.group.map((j) => ({
-              ...j,
-              left_field: "current." + j.left_field,
-              right_field: "previous." + j.right_field,
-            })),
-          })),
-        },
       },
-      {
-        onSuccess: () => console.log("EVENT CREATING WORKED!!!"),
-      }
-    )
-  );
+    };
+    if (modalItemId) {
+      updateHandler(collection);
+    } else {
+      createHandler(collection);
+    }
+  };
+
+  useEffect(() => {
+    if (modalItemId) {
+      reset({
+        action: eventById?.when?.action,
+        condition: eventById?.when?.conditions?.map((i) => ({
+          group: i.match_fields?.map((j) => ({
+            ...j,
+            left_field: j.left_field.split(".")[1],
+            right_field: j.right_field.split(".")[1],
+          })),
+        })),
+        after: eventById?.does?.map((i) => ({
+          table: i.table_slug,
+          action: i.opperation_type,
+          group: i.fields.map((j) => j),
+        })),
+      });
+    }
+  }, [modalItemId, eventById]);
 
   return (
     <div className={cls.modal_main}>
-      <form onSubmit={handleSubmit(createHandler)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className={cls.main_box}>
           <div className={cls.left}>
             <div className={cls.slug}>
@@ -109,9 +166,9 @@ const SettingsTab = ({ eventLabel }) => {
               <HFSelect
                 control={control}
                 options={[
-                  { label: "Создан", value: "create" },
-                  { label: "Изменен", value: "update" },
-                  { label: "Удален", value: "delete" },
+                  { label: "Создать", value: "create" },
+                  { label: "Изменить", value: "update" },
+                  { label: "Удалить", value: "delete" },
                 ]}
                 name="action"
                 style={{ width: "50%" }}
@@ -122,13 +179,14 @@ const SettingsTab = ({ eventLabel }) => {
                 {fields.map((outerField, index, arr) => (
                   <div key={outerField.id}>
                     <SettingsFormRow
+                      watch={watch}
                       nestedFieldName="condition"
                       nestedIndex={index}
                       control={control}
                       removeField={remove}
                     />
                     {fields.length > 0 &&
-                      outerField.group.length > 0 &&
+                      outerField.group?.length > 0 &&
                       arr.length - 1 !== index && (
                         <div className={cls.splitter}>
                           <div></div>
@@ -172,9 +230,9 @@ const SettingsTab = ({ eventLabel }) => {
                     <HFSelect
                       control={control}
                       options={[
-                        { label: "Объект создан", value: "create" },
-                        { label: "Объект изменен", value: "update" },
-                        { label: "Объект удален", value: "delete" },
+                        { label: "Создать объект", value: "create" },
+                        { label: "Изменить объект", value: "update" },
+                        { label: "Удалить объект", value: "delete" },
                       ]}
                       name={`after.${index}.action`}
                       placeholder="Действие"
@@ -187,6 +245,7 @@ const SettingsTab = ({ eventLabel }) => {
                     />
                   </div>
                   <SettingsFormRow
+                    watch={watch}
                     nestedFieldName="after"
                     nestedIndex={index}
                     control={control}

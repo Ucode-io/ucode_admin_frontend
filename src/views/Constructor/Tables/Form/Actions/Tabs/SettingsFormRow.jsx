@@ -33,39 +33,19 @@ const SettingsFormRow = ({
       watch(`after.${nestedIndex}.table`),
       table_slug_param,
     ],
-    () => {
-      console.log("nested field name - ", nestedFieldName);
-      return constructorFieldService.getList({
+    () =>
+      constructorFieldService.getList({
         table_slug: table_slug_param || table_slug,
-      });
-    },
+      }),
     {
       enabled: !!table_slug,
-      select: (data) => {
-        // if (
-        //   nestedFieldName === "after" &&
-        //   !data?.fields?.find((i) => i.slug === "drugoye")
-        // ) {
-        //   data?.fields?.push({ slug: "drugoye" });
-        //   return data;
-        // }
-        return data;
-      },
     }
   );
-
-  // console.log("table_slug_param", table_slug_param);
-  // console.log("nestedFieldName", nestedFieldName);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: `${nestedFieldName}.${nestedIndex}.group`,
   });
-
-  console.log(
-    "watch(`after",
-    watch(`after.${nestedIndex}.group.${0}.left_field`)
-  );
 
   const attributeFields = [
     {
@@ -165,7 +145,6 @@ const SettingsFormRow = ({
                   control={control}
                   name={`${nestedFieldName}.${nestedIndex}.group.${index}.${field.slug}`}
                   fullWidth
-                  withTrim
                   placeholder={field.placeholder}
                 />
               )

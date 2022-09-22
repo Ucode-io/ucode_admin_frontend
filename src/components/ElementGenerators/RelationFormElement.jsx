@@ -128,15 +128,6 @@ const AutoCompleteElement = ({
     return result
   }, [ autoFilters, filtersHandler ])
 
-
-  // const values = useWatch({
-  //   control,
-  //   name: 'date'
-  // })
-
-  // console.log("VALUES ===>", values)
-  
-
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
@@ -181,6 +172,8 @@ const AutoCompleteElement = ({
     })
   }
 
+  console.log("OPTIONS ===>", options)
+
     useEffect(() => {
       if(value) getValueData()
     }, [])
@@ -219,7 +212,10 @@ const AutoCompleteElement = ({
         openOnFocus
         getOptionLabel={(option) => getRelationFieldLabel(field, option)}
         multiple
-        isOptionEqualToValue={(option, value) => option.guid === value.guid}
+        isOptionEqualToValue={(option, value) => {
+          console.log("OPTION ==>", option, value)
+          return option.guid === value.guid
+        }}
         renderInput={(params) => <TextField {...params} size="small" />}
         renderTags={(value, index) => (
           <>

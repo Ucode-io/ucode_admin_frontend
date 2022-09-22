@@ -4,6 +4,9 @@ import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldL
 import styles from "./style.module.scss"
 
 const InfoBlock = ({ viewFields, data, isSingleLine }) => {
+  console.log("DATA ===>", data)
+
+
   if (isSingleLine)
     return (
       <div className={`${styles.infoBlock} ${styles.singleLine}`}>

@@ -52,13 +52,20 @@ const DataCard = ({
       ...info,
       [view.calendar_from_slug]: startTime,
       [view.calendar_to_slug]: endTime,
+      calendar: {
+        ...info.calendar,
+        elementFromTime: startTime,
+        elementToTime: endTime
+      }
     }
 
     constructorObjectService
       .update(tableSlug, {
         data: computedData,
       })
-      .then((res) => setInfo(computedData))
+      .then((res) => {
+        setInfo(computedData)
+      })
   }
 
   const computeTime = (index) => {
@@ -122,14 +129,10 @@ const DataCard = ({
   const infoBlockBg = useMemo(() => {
     return (
       fieldsMap[view.status_field_slug]?.attributes?.options
-        ?.map((opt) => ({
-          ...opt,
-          // hoverColor: opt
-        }))
         ?.find((opt) => opt.value === info.status)?.color ?? "silver"
     )
     //
-  }, [fieldsMap[view.status_field_slug]])
+  }, [view.status_field_slug, fieldsMap, info.status])
 
   const handleMouseEnter = () => {
     setIsHover(true)
@@ -138,6 +141,10 @@ const DataCard = ({
   const handleMouseLeave = () => {
     setIsHover(false)
   }
+
+  useEffect(() => {
+    console.log("INFO ==>", info)
+  }, [info])
 
   return (
     <>

@@ -45,6 +45,8 @@ const FilterAutoComplete = ({
   const computedOptions = useMemo(() => {
     const uncheckedOptions = []
 
+    console.log("OPTIONS ===>", options, localCheckedValues)
+
     options.forEach((option) => {
       if (option.label?.toLowerCase().includes(searchText)) {
         uncheckedOptions.push(option)
@@ -54,7 +56,7 @@ const FilterAutoComplete = ({
     return {
       uncheckedOptions,
     }
-  }, [options, searchText])
+  }, [options, value])
 
   const onClearButtonClick = (e) => {
     e.stopPropagation()

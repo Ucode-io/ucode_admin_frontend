@@ -2,16 +2,16 @@ import { useMutation, useQuery } from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 
 
-const useObjectsQuery = ({ tableSlug, queryPayload = {}, data }) => {
+const useObjectsQuery = ({ tableSlug, queryPayload = {}, queryParams = {}, data }) => {
   
   const query = useQuery(['GET_OBJECT_LIST_QUERY', tableSlug, queryPayload], () => {
-    if (!tableSlug) return null
     return constructorObjectService.getList(tableSlug, {
       data: queryPayload,
     })
+  }, {
+    enabled: !!tableSlug,
+    ...queryParams
   })
-
-  sd
 
   const updateMutation = useMutation(() => {
     return constructorObjectService.update(tableSlug, data)

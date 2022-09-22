@@ -122,7 +122,6 @@ const ViewsWithGroups = ({
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
         />
-        <FastFilter view={view} fieldsMap={fieldsMap} />
       </FiltersBlock>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
@@ -166,6 +165,7 @@ const ViewsWithGroups = ({
                 <TabPanel key={tab.value}>
                   {view.type === "TREE" ? (
                     <TreeView
+                      tableSlug={tableSlug}
                       filters={filters}
                       view={view}
                       fieldsMap={fieldsMap}
@@ -184,6 +184,7 @@ const ViewsWithGroups = ({
                 <>
                   {view.type === "TREE" ? (
                     <TreeView
+                      tableSlug={tableSlug}
                       filters={filters}
                       view={view}
                       fieldsMap={fieldsMap}
@@ -208,7 +209,7 @@ const ViewsWithGroups = ({
 const queryGenerator = (groupField, filters = {}) => {
   if (!groupField)
     return {
-      queryFn: () => {},
+      queryFn: () => { },
     };
 
   const filterValue = filters[groupField.slug];

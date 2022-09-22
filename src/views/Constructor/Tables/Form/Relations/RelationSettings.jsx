@@ -25,19 +25,19 @@ import constructorObjectService from "../../../../../services/constructorObjectS
 import constructorRelationService from "../../../../../services/constructorRelationService"
 import { applyDrag } from "../../../../../utils/applyDrag"
 import { relationTyes } from "../../../../../utils/constants/relationTypes"
+import AutoFiltersBlock from "./AutoFiltersBlock"
 import DynamicRelationsBlock from "./DynamicRelationsBlock"
 import styles from "./style.module.scss"
 import SummaryBlock from "./SummaryBlock"
 
-
 const relationViewTypes = [
   {
     label: "Table",
-    value: "TABLE"
+    value: "TABLE",
   },
   {
     label: "Input",
-    value: "INPUT"
+    value: "INPUT",
   },
 ]
 
@@ -49,7 +49,7 @@ const RelationSettings = ({
   height,
 }) => {
   const { appId, slug } = useParams()
-  
+
   const [loader, setLoader] = useState(false)
   const [formLoader, setFormLoader] = useState(false)
   const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] =
@@ -60,6 +60,7 @@ const RelationSettings = ({
   const { handleSubmit, control, reset, watch, setValue } = useForm({
     defaultValues: {
       table_from: slug,
+      auto_filters: [],
     },
   })
 
@@ -143,9 +144,9 @@ const RelationSettings = ({
   )
 
   const computedFieldsListOptions = useMemo(() => {
-    return values.columnsList?.map(field => ({
+    return values.columnsList?.map((field) => ({
       label: field.label,
-      value: field.id
+      value: field.id,
     }))
   }, [values.columnsList])
 
@@ -282,7 +283,7 @@ const RelationSettings = ({
               />
             </FRow>
 
-            {!isRecursiveRelation && values.type !== 'Many2Dynamic' && (
+            {!isRecursiveRelation && values.type !== "Many2Dynamic" && (
               <FRow label="Table to" required>
                 <HFSelect
                   name="table_to"
@@ -306,14 +307,16 @@ const RelationSettings = ({
 
             <HFSwitch control={control} name="is_editable" label={"Editable"} />
 
-            {values.type === "Many2Many" && <FRow label="Relate field type" required>
-              <HFSelect
-                name="view_type"
-                control={control}
-                placeholder="Relation field type"
-                options={relationViewTypes}
-              />
-            </FRow>}
+            {values.type === "Many2Many" && (
+              <FRow label="Relate field type" required>
+                <HFSelect
+                  name="view_type"
+                  control={control}
+                  placeholder="Relation field type"
+                  options={relationViewTypes}
+                />
+              </FRow>
+            )}
 
             {isViewFieldsVisible && (
               <FRow label="View fields">
@@ -326,13 +329,21 @@ const RelationSettings = ({
                 />
               </FRow>
             )}
-
           </div>
-          
-          {values.type === 'Many2Dynamic' && <DynamicRelationsBlock control={control} computedTablesList={computedTablesList} />}
 
-          <SummaryBlock control={control} computedFieldsListOptions={computedFieldsListOptions} />
+          {values.type === "Many2Dynamic" && (
+            <DynamicRelationsBlock
+              control={control}
+              computedTablesList={computedTablesList}
+            />
+          )}
 
+          <AutoFiltersBlock control={control} watch={watch} />
+
+          <SummaryBlock
+            control={control}
+            computedFieldsListOptions={computedFieldsListOptions}
+          />
 
           <div className={styles.settingsBlockHeader}>
             <h2>Columns</h2>

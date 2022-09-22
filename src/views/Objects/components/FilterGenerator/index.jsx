@@ -20,7 +20,7 @@ const FilterGenerator = ({
     () => filters.order?.[name],
     [filters.order, name]
   )
-  
+
   const onOrderingChange = (value) => {
     if (!value) return onChange(value, "order")
     const data = {
@@ -54,21 +54,22 @@ export const Filter = ({
   onChange,
   tableSlug,
 }) => {
-  const [debouncedValue, setDebouncedValue] = useState('')
-  
+  const [debouncedValue, setDebouncedValue] = useState("")
+
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 
     return field.attributes.options.map((option) => {
-
-      if(field.type === "PICK_LIST") return {
-        value: option,
-        label: option,
-      }
-      if(field.type === "MULTISELECT") return {
-        value: option.value,
-        label: option.value
-      }
+      if (field.type === "PICK_LIST")
+        return {
+          value: option.value,
+          label: option.value,
+        }
+      if (field.type === "MULTISELECT")
+        return {
+          value: option.value,
+          label: option.value,
+        }
     })
   }, [field.attributes?.options, field.type])
 
@@ -85,9 +86,9 @@ export const Filter = ({
 
   switch (field.type) {
     case "PICK_LIST":
-      case "MULTISELECT":
+    case "MULTISELECT":
       return (
-        <FilterAutoComplete 
+        <FilterAutoComplete
           searchText={debouncedValue}
           setSearchText={setDebouncedValue}
           options={computedOptions}
@@ -115,7 +116,10 @@ export const Filter = ({
 
     case "DATE":
       return (
-        <DateFilter value={filters[name]} onChange={(val) => onChange(val, name)} />
+        <DateFilter
+          value={filters[name]}
+          onChange={(val) => onChange(val, name)}
+        />
         // <DatePicker
         //   inputFormat="dd.MM.yyyy"
         //   mask="__.__.____"

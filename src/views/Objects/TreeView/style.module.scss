@@ -27,3 +27,17 @@
   }
 
 }
+
+.wrapper {
+  display: flex;
+
+  .filters {
+    padding: 8px;
+    border-right: 1px solid #e3e3e3;
+
+    p {
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+  }
+}

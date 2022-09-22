@@ -3,11 +3,13 @@ import { useState } from "react"
 import { useParams } from "react-router-dom"
 import PageFallback from "../../../components/PageFallback"
 import constructorObjectService from "../../../services/constructorObjectService"
-import { objectToArray } from "../../../utils/objectToArray"
+import FastFilter from "../components/FastFilter"
 import RecursiveBlock from "./RecursiveBlock"
+import styles from './style.module.scss'
 
 const TreeView = ({
   groupField,
+  fieldsMap,
   group,
   view,
   fieldsMap
@@ -53,7 +55,13 @@ const TreeView = ({
 
   return (
     <div>
-
+      {
+        view?.quick_filters?.length > 0 &&
+        <div className={styles.filters}>
+          <p>Фильтры</p>
+          <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+        </div>
+       }
       {tableLoader ? (
         <PageFallback />
       ) : (

@@ -13,7 +13,7 @@ const FilterAutoComplete = ({
   value = [],
   onChange,
   label,
-  field
+  field,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const menuVisible = Boolean(anchorEl)
@@ -45,10 +45,9 @@ const FilterAutoComplete = ({
   const computedOptions = useMemo(() => {
     const uncheckedOptions = []
 
+    console.log("OPTIONS ===>", options, localCheckedValues)
+
     options.forEach((option) => {
-
-      console.log("sssss ==>", option)
-
       if (option.label?.toLowerCase().includes(searchText)) {
         uncheckedOptions.push(option)
       }
@@ -57,7 +56,7 @@ const FilterAutoComplete = ({
     return {
       uncheckedOptions,
     }
-  }, [options, searchText])
+  }, [options, value])
 
   const onClearButtonClick = (e) => {
     e.stopPropagation()
@@ -69,7 +68,12 @@ const FilterAutoComplete = ({
       <div className={styles.autocompleteButton} onClick={openMenu}>
         <div className={styles.autocompleteValue}>
           {localCheckedValues?.[0]?.label || (
-            <span className={styles.placeholder}>{label}</span>
+            <span
+              className={styles.placeholder}
+              style={{ color: !value?.length ? "#909EAB" : "#000" }}
+            >
+              {!value?.length ? label : value[0]}
+            </span>
           )}
         </div>
         {value?.length > 1 && `+${value.length - 1}`}

@@ -1,11 +1,14 @@
 import { useMemo, useState } from "react"
+import { useParams } from "react-router-dom"
+import { useQuery } from "react-query"
+
 import constructorObjectService from "../../../services/constructorObjectService"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import useTabRouter from "../../../hooks/useTabRouter"
 import DataTable from "../../../components/DataTable"
-import { useParams } from "react-router-dom"
-import { useQuery } from "react-query"
 import useFilters from "../../../hooks/useFilters"
+import FastFilter from "../components/FastFilter"
+import styles from './styles.module.scss'
 
 const TableView = ({
   tab,
@@ -15,32 +18,32 @@ const TableView = ({
   ...props
 }) => {
   const { navigateToForm } = useTabRouter()
-  const {tableSlug} = useParams()
-  
+  const { tableSlug } = useParams()
+
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id)
 
   const [currentPage, setCurrentPage] = useState(1)
+  const [limit, setLimit] = useState(10)
   const [deleteLoader, setDeleteLoader] = useState(false)
 
   const columns = useMemo(() => {
     return view?.columns?.map(el => fieldsMap[el])?.filter(el => el)
   }, [view, fieldsMap])
 
-  const { data: { tableData, pageCount } = { tableData: [], pageCount: 1 } , refetch, isLoading: tableLoader } = useQuery({
-    queryKey: ["GET_OBJECTS_LIST", { tableSlug, currentPage, limit: 10, filters: { ...filters, [tab?.slug]: tab?.value } }],
+  const { data: { tableData, pageCount } = { tableData: [], pageCount: 1 }, refetch, isLoading: tableLoader } = useQuery({
+    queryKey: ["GET_OBJECTS_LIST", { tableSlug, currentPage, limit, filters: { ...filters, [tab?.slug]: tab?.value } }],
     queryFn: () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { offset: pageToOffset(currentPage), limit: 10, ...filters, [tab?.slug]: tab?.value },
+        data: { offset: pageToOffset(currentPage), limit, ...filters, [tab?.slug]: tab?.value },
       })
     },
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / 10)
+        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit)
       }
     },
   })
-
 
   const deleteHandler = async (row) => {
 
@@ -56,13 +59,23 @@ const TableView = ({
   const navigateToEditPage = (row) => {
     navigateToForm(tableSlug, "EDIT", row)
   }
-  
+
   return (
+    <div className={styles.wrapper}>
+      {
+        view?.quick_filters?.length > 0 &&
+        <div className={styles.filters}>
+          <p>Фильтры</p>
+          <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+        </div>
+       }
       <DataTable
-        removableHeight={isDocView ? 150 : 207}
+        removableHeight={isDocView ? 150 : 215}
         currentPage={currentPage}
         pagesCount={pageCount}
         columns={columns}
+        limit={limit}
+        setLimit={setLimit}
         onPaginationChange={setCurrentPage}
         loader={tableLoader || deleteLoader}
         data={tableData}
@@ -71,10 +84,15 @@ const TableView = ({
         onRowClick={navigateToEditPage}
         onDeleteClick={deleteHandler}
         tableSlug={tableSlug}
-        tableStyle={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #E5E9EB' }}
+        tableStyle={{ 
+          borderRadius: 0, border: 'none',
+          borderBottom: '1px solid #E5E9EB',
+          width: view?.quick_filters?.length ? 'calc(100vw - 254px)' : "100%"
+        }}
         isResizeble={true}
         {...props}
-      />
+        />
+    </div>
   )
 }
 

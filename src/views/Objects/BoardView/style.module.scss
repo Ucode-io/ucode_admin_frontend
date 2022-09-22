@@ -1,3 +1,19 @@
+
+.wrapper {
+  display: flex;
+  padding: 0 8px;
+  .filters {
+    border-radius: 6px;
+    padding: 16px;
+    background: #fff;
+    height: fit-content;
+    
+    p {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+  }
+
 .board {
   display: flex;
   padding: 0 16px;
@@ -55,4 +71,5 @@
       gap: 10px;
     }
   }
+}
 }

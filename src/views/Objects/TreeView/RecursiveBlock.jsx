@@ -4,6 +4,7 @@ import { get } from "@ngard/tiny-get"
 import { useState } from "react"
 import { useMemo } from "react"
 import { useParams } from "react-router-dom"
+
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import CollapseIcon from "../../../components/CollapseIcon"
 import useTabRouter from "../../../hooks/useTabRouter"
@@ -33,9 +34,6 @@ const RecursiveBlock = ({ row, view, data = [], setData, level = 1, fieldsMap })
   }
   
   const navigateToEditPage = () => {
-
-    console.log(row)
-
     navigateToForm(tableSlug, "EDIT", row)
   }
 
@@ -47,16 +45,15 @@ const RecursiveBlock = ({ row, view, data = [], setData, level = 1, fieldsMap })
     } catch {
       setDeleteLoader(false)
     }
-  } 
+  }
+
+  console.log('row - ', row)
+  console.log('view.main_field - ', view)
 
   return (
     <>
       <div onClick={navigateToEditPage} className={`${style.recursiveBlock} ${style[`level${level}`]}`} style={{ paddingLeft: 15 * level }} >
         {children?.length ? <CollapseIcon isOpen={childBlockVisible} onClick={switchChildBlock} /> : <div className="mr-2" ></div>}
-        
-        {/* <IconButton color="primary" onClick={switchChildBlock} >
-          <ChevronRight />
-        </IconButton> */}
 
         <div className={style.title}>{
           view?.columns?.map(fieldId => {
@@ -74,7 +71,7 @@ const RecursiveBlock = ({ row, view, data = [], setData, level = 1, fieldsMap })
           </RectangleIconButton>
         </div>
       </div>
-      
+
       <Collapse in={childBlockVisible} unmountOnExit >
         {children?.map((childRow) => (
           <RecursiveBlock

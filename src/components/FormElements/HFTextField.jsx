@@ -9,7 +9,7 @@ const HFTextField = ({
   fullWidth = false,
   withTrim = false,
   rules = {},
-  defaultValue='',
+  defaultValue = "",
   ...props
 }) => {
   return (
@@ -25,7 +25,7 @@ const HFTextField = ({
         <TextField
           size="small"
           value={value}
-          onChange={(e) =>{
+          onChange={(e) => {
             onChange(withTrim ? e.target.value?.trim() : e.target.value)
           }}
           name={name}

@@ -13,8 +13,8 @@ const AutoFiltersBlock = ({ control, watch }) => {
     name: "auto_filters",
   })
 
-  const addNewSummary = () => append({})
-  const deleteSummary = (index) => remove(index)
+  const addNewAutoFilter = () => append({ field_from: "", field_to: "" })
+  const deleteAutoFilter = (index) => remove(index)
 
   const { data: fieldFromList, isLoading: fieldFromListLoading } = useQuery(
     ["GET_FIELDS_LIST", watch("table_from")],
@@ -37,37 +37,39 @@ const AutoFiltersBlock = ({ control, watch }) => {
       enabled: !!watch("table_to"),
     }
   )
-
+ 
   const attributeFields = [
-    {
-      slug: "field_from",
-      isLoading: fieldFromListLoading,
-      placeholder: "Field From",
-      options: fieldFromList?.fields?.map((i) => ({
-        label: i.slug,
-        value: i.slug,
-      })),
-    },
     {
       slug: "field_to",
       isLoading: fieldToListLoading,
       placeholder: "Field to",
-      options: fieldsToList?.fields?.map((i) => ({
-        label: i.slug,
-        value: i.slug,
+      options: fieldsToList?.fields?.map((field) => ({
+        label: field.slug,
+        value: field.slug,
+      })),
+    },
+    {
+      slug: "field_from",
+      isLoading: fieldFromListLoading,
+      placeholder: "Field From",
+      options: fieldFromList?.fields?.map((field) => ({
+        label: field.slug,
+        value: field.slug,
       })),
     },
   ]
 
   return (
-    <div className={styles.autofiltersBlock}>
-      <div className={styles.title}>Autofilters</div>
-      <div className={styles.body}>
+    <>
+      <div className={styles.settingsBlockHeader}>
+        <h2>AutoFilters</h2>
+      </div>
+      <div className="p-2">
         {fields.map((field, index) => (
-          <div className={styles.inputsWrapper} key={field.id}>
-            {attributeFields.map((item) => (
+          <div className="flex align-center gap-2 mb-2" key={field.id}>
+            {attributeFields.map((item, fieldIndex) => (
               <HFSelect
-                key={field.id}
+                key={fieldIndex}
                 control={control}
                 options={item.options}
                 loading={item.isLoading}
@@ -77,17 +79,17 @@ const AutoFiltersBlock = ({ control, watch }) => {
             ))}
             <RectangleIconButton
               color="error"
-              onClick={() => deleteSummary(index)}
+              onClick={() => deleteAutoFilter(index)}
             >
               <Delete color="error" />
             </RectangleIconButton>
           </div>
         ))}
-        <div className={styles.summaryButton} onClick={addNewSummary}>
+        <div className={styles.summaryButton} onClick={addNewAutoFilter}>
           <button type="button">+ Создать новый</button>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

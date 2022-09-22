@@ -1,13 +1,13 @@
 import { Autocomplete, TextField } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useMemo } from "react"
-import { Controller } from "react-hook-form"
+import { Controller, useWatch } from "react-hook-form"
 import { useQuery } from "react-query"
 
 import useDebounce from "../../hooks/useDebounce"
 import useTabRouter from "../../hooks/useTabRouter"
 import constructorObjectService from "../../services/constructorObjectService"
-import { getLabelWithViewFields, getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
+import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
 import FEditableRow from "../FormElements/FEditableRow"
 import FRow from "../FormElements/FRow"
 import IconGenerator from "../IconPicker/IconGenerator"
@@ -25,9 +25,11 @@ const RelationFormElement = ({
   setFormValue,
   ...props
 }) => {
+
   const tableSlug = useMemo(() => {
     return field.id.split("#")?.[0] ?? ""
   }, [field.id])
+  
 
   if (!isLayout)
     return (
@@ -45,6 +47,7 @@ const RelationFormElement = ({
               error={error}
               disabledHelperText={disabledHelperText}
               setFormValue={setFormValue}
+              control={control}
             />
           )}
         />
@@ -74,6 +77,7 @@ const RelationFormElement = ({
                 tableSlug={tableSlug}
                 error={error}
                 disabledHelperText={disabledHelperText}
+                control={control}
               />
             )}
           />
@@ -85,6 +89,8 @@ const RelationFormElement = ({
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
+const slugs = ['date']
+
 const AutoCompleteElement = ({
   field,
   value,
@@ -92,6 +98,7 @@ const AutoCompleteElement = ({
   setValue,
   error,
   disabledHelperText,
+  control,
   setFormValue = () => { },
 }) => {
   const [inputValue, setInputValue] = useState('')
@@ -100,13 +107,43 @@ const AutoCompleteElement = ({
 
   const { navigateToForm } = useTabRouter()
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300)
+  
+  const autoFilters = field?.attributes?.auto_filters
+
+  const autoFiltersFieldFroms = useMemo(() => {
+    return autoFilters?.map(el => el.field_from) ?? []
+  }, [autoFilters])
+
+  const filtersHandler = useWatch({
+    control,
+    name: autoFiltersFieldFroms
+  })
+
+  const autoFiltersValue = useMemo(() => {
+    const result = {}
+    filtersHandler?.forEach((value, index) => {
+      const key = autoFilters?.[index]?.field_to
+      if(key) result[key] = value
+    })
+    return result
+  }, [ autoFilters, filtersHandler ])
+
+
+  // const values = useWatch({
+  //   control,
+  //   name: 'date'
+  // })
+
+  // console.log("VALUES ===>", values)
+  
 
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, debouncedValue],
+    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
       if(!tableSlug) return null
       return constructorObjectService.getList(tableSlug, {
         data: {
+          ...autoFiltersValue,
           view_fields: field.attributes?.view_fields?.map(f => f.slug), search: debouncedValue.trim(), limit: 10
         }
       })

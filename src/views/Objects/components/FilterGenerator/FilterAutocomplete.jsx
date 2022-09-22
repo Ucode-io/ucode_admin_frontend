@@ -13,7 +13,7 @@ const FilterAutoComplete = ({
   value = [],
   onChange,
   label,
-  field
+  field,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const menuVisible = Boolean(anchorEl)
@@ -31,8 +31,6 @@ const FilterAutoComplete = ({
     setSearchText("")
   }
 
-  console.log('value - ', value)
-
   const rowClickHandler = (option) => {
     if (value?.includes(option.value)) {
       onChange(
@@ -48,9 +46,6 @@ const FilterAutoComplete = ({
     const uncheckedOptions = []
 
     options.forEach((option) => {
-
-      console.log("sssss ==>", option)
-
       if (option.label?.toLowerCase().includes(searchText)) {
         uncheckedOptions.push(option)
       }
@@ -70,16 +65,21 @@ const FilterAutoComplete = ({
     <div className={styles.autocomplete}>
       <div className={styles.autocompleteButton} onClick={openMenu}>
         <div className={styles.autocompleteValue}>
-          {(localCheckedValues?.[0]?.label) || (
-            <span className={styles.placeholder} style={{color: !value?.length ? '#909EAB' : "#000" }}>{!value?.length ? label : value[0]}</span>
+          {localCheckedValues?.[0]?.label || (
+            <span
+              className={styles.placeholder}
+              style={{ color: !value?.length ? "#909EAB" : "#000" }}
+            >
+              {!value?.length ? label : value[0]}
+            </span>
           )}
         </div>
-          {value?.length > 1 && `+${value.length - 1}`}
-          {!!value?.length && (
-            <IconButton onClick={onClearButtonClick}>
-              <Close />
-            </IconButton>
-          ) }
+        {value?.length > 1 && `+${value.length - 1}`}
+        {!!value?.length && (
+          <IconButton onClick={onClearButtonClick}>
+            <Close />
+          </IconButton>
+        )}
         <ArrowDropDown />
       </div>
 

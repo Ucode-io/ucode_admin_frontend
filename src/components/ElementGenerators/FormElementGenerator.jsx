@@ -22,6 +22,7 @@ const FormElementGenerator = ({
   field = {},
   control,
   setFormValue,
+  formTableSlug,
   fieldsList,
   ...props
 }) => {
@@ -56,6 +57,7 @@ const FormElementGenerator = ({
           control={control}
           field={field}
           setFormValue={setFormValue}
+          formTableSlug={formTableSlug}
           {...props}
         />
       )

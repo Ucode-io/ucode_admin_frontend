@@ -40,7 +40,7 @@ const TableView = ({
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / 10)
+        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit)
       }
     },
   })
@@ -70,10 +70,11 @@ const TableView = ({
         </div>
        }
       <DataTable
-        removableHeight={isDocView ? 150 : 207}
+        removableHeight={isDocView ? 150 : 215}
         currentPage={currentPage}
         pagesCount={pageCount}
         columns={columns}
+        limit={limit}
         setLimit={setLimit}
         onPaginationChange={setCurrentPage}
         loader={tableLoader || deleteLoader}

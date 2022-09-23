@@ -19,12 +19,13 @@ const FilterAutoComplete = ({
   const menuVisible = Boolean(anchorEl)
 
   const computedValue = useMemo(() => {
-    return value?.map(el => options?.find(option => option.value === el)).filter(el => el)
-  }, [ value, options ])
+    return value
+      ?.map((el) => options?.find((option) => option.value === el))
+      .filter((el) => el)
+  }, [value, options])
 
   const computedOptions = useMemo(() => {
-
-    return options?.filter(option => !value?.includes(option.value))
+    return options?.filter((option) => !value?.includes(option.value))
   }, [options, value])
 
   const openMenu = (event) => {
@@ -42,9 +43,7 @@ const FilterAutoComplete = ({
 
   const rowClickHandler = (option) => {
     if (value?.includes(option.value)) {
-      onChange(
-        value.filter((item) => item !== option.value),
-      )
+      onChange(value.filter((item) => item !== option.value))
     } else {
       onChange([...value, option.value])
     }
@@ -54,8 +53,6 @@ const FilterAutoComplete = ({
     e.stopPropagation()
     onChange(null)
   }
-
-  
 
   return (
     <div className={styles.autocomplete}>

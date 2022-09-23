@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useState } from "react"
 import { useParams } from "react-router-dom"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
+
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
 import IconGenerator from "../../../components/IconPicker/IconGenerator"
 import useTabRouter from "../../../hooks/useTabRouter"
@@ -57,7 +58,7 @@ const RelationSection = ({ relations }) => {
     }
   }
 
-  if(!relations?.length) return null
+  if (!relations?.length) return null
 
   return (
     <>
@@ -68,59 +69,51 @@ const RelationSection = ({ relations }) => {
           // onCreate={refetch}
         />
       )}
-      {
-        relations.length ?
-          <Card className={styles.card}>
-            <Tabs
-              // forceRenderTabPanel
-              selectedIndex={selectedTabIndex}
-              onSelect={setSelectedTabIndex}
-            >
-              <div className={styles.cardHeader}>
-                <TabList className={styles.tabList}>
-                  {relations?.map((relation, index) => (
-                    <Tab key={index}>
-                      {
-                        relation?.view_relation_type === 'FILE'
-                          ?
-                              <>
-                                <InsertDriveFile /> Файлы
-                              </>
-                          :
-                            <div className="flex align-center gap-2 text-nowrap">
-                              <IconGenerator icon={relation?.icon} /> {relation.title}
-                            </div>
-                      }
-                    </Tab>
-                  ))}
-                </TabList>
+      {relations.length ? (
+        <Card className={styles.card}>
+          <Tabs
+            // forceRenderTabPanel
+            selectedIndex={selectedTabIndex}
+            onSelect={setSelectedTabIndex}
+          >
+            <div className={styles.cardHeader}>
+              <TabList className={styles.tabList}>
+                {relations?.map((relation, index) => (
+                  <Tab key={index}>
+                    {relation?.view_relation_type === "FILE" ? (
+                      <>
+                        <InsertDriveFile /> Файлы
+                      </>
+                    ) : (
+                      <div className="flex align-center gap-2 text-nowrap">
+                        <IconGenerator icon={relation?.icon} /> {relation.title}
+                      </div>
+                    )}
+                  </Tab>
+                ))}
+              </TabList>
+              <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
+                <Add /> Добавить
+              </SecondaryButton>
+            </div>
 
-                <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
-                  <Add /> Добавить
-                </SecondaryButton>
-              </div>
-
-              {relations?.map((relation) => (
-                <TabPanel key={relation.id}>
-                  {
-                  relation?.view_relation_type === 'FILE'
-                    ?
-                      <FilesSection />
-                    :
-                      <RelationTable
-                        key={relation.id}
-                        relation={relation}
-                        createFormVisible={relationsCreateFormVisible}
-                        setCreateFormVisible={setCreateFormVisible}
-                      />
-                  }
-                </TabPanel>
-              ))}
-            </Tabs>
-          </Card>
-        : 
-          null
-      }
+            {relations?.map((relation) => (
+              <TabPanel key={relation.id}>
+                {relation?.view_relation_type === "FILE" ? (
+                  <FilesSection />
+                ) : (
+                  <RelationTable
+                    key={relation.id}
+                    relation={relation}
+                    createFormVisible={relationsCreateFormVisible}
+                    setCreateFormVisible={setCreateFormVisible}
+                  />
+                )}
+              </TabPanel>
+            ))}
+          </Tabs>
+        </Card>
+      ) : null}
     </>
   )
 }

@@ -1,14 +1,14 @@
-
-
 .card {
-  
+  border-radius: 0;
+  border-left: 1px solid #e5e9eb;
+  height: 100%;
   .cardHeader {
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 12px;
-    border-bottom: 1px solid #E5E9EB;
-    
+    border-bottom: 1px solid #e5e9eb;
   }
 
   .cardBody {
@@ -16,13 +16,12 @@
   }
 }
 
-
 .relationTable {
   display: flex;
 
   .filtersBlock {
     padding: 12px;
-    border-right: 1px solid #E5E9EB;
+    border-right: 1px solid #e5e9eb;
     width: 210px;
   }
 
@@ -30,6 +29,5 @@
     padding: 12px;
     flex: 1;
     overflow: auto;
-
   }
 }

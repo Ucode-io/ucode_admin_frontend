@@ -8,7 +8,6 @@ import {
 } from "@mui/material"
 import { useMemo } from "react"
 import { Controller } from "react-hook-form"
-import CAutoCompleteSelect from "../CAutoCompleteSelect"
 import IconGenerator from "../IconPicker/IconGenerator"
 import styles from "./style.module.scss"
 
@@ -23,9 +22,10 @@ const HFMultipleAutocomplete = ({
   onChange = () => {},
   field,
   rules = {},
+  defaultValue="",
   ...props
 }) => {
-  const options = field.attributes.options ?? []
+  const options = field.attributes?.options ?? []
 
   const hasColor = field.attributes?.has_color
   const hasIcon = field.attributes?.has_icon
@@ -35,7 +35,7 @@ const HFMultipleAutocomplete = ({
     <Controller
       control={control}
       name={name}
-      defaultValue=""
+      defaultValue={defaultValue}
       rules={{
         required: required ? "This is required field" : false,
         ...rules,

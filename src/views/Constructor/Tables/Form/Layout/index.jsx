@@ -9,7 +9,6 @@ import SectionsBlock from "./SectionsBlock"
 import SettingsBlock from "./SettingsBlock"
 import styles from "./style.module.scss"
 
-
 const Layout = ({ mainForm, getRelationFields }) => {
   const dispatch = useDispatch()
   const layoutForm = useForm({ mode: "onChange" })
@@ -18,7 +17,6 @@ const Layout = ({ mainForm, getRelationFields }) => {
   const [selectedField, setSelectedField] = useState(null)
   const [selectedRelation, setSelectedRelation] = useState(null)
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0)
-
 
   const openFieldsBlock = (type) => {
     setSelectedField(null)
@@ -65,7 +63,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
           openFieldsBlock={openFieldsBlock}
           openRelationSettingsBlock={openRelationSettingsBlock}
         />
-
+        
         <Collapse
           in={settingsBlockVisible}
           unmountOnExit

@@ -92,15 +92,23 @@ const RelationSection = ({ relations }) => {
                   </Tab>
                 ))}
               </TabList>
-              <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
-                <Add /> Добавить
-              </SecondaryButton>
+
+              {relations[selectedTabIndex]?.relatedTable !== "file" && (
+                <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
+                  <Add /> Добавить
+                </SecondaryButton>
+              )}
             </div>
 
             {relations?.map((relation) => (
               <TabPanel key={relation.id}>
-                {relation?.view_relation_type === "FILE" ? (
-                  <FilesSection />
+                {relation?.relatedTable === "file" ? (
+                  <FilesSection
+                    relation={relation}
+                    key={relation.id}
+                    createFormVisible={relationsCreateFormVisible}
+                    setCreateFormVisible={setCreateFormVisible}
+                  />
                 ) : (
                   <RelationTable
                     key={relation.id}

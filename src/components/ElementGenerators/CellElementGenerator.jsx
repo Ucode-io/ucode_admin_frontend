@@ -41,7 +41,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       )
 
     case "MULTISELECT":
-      return <MultiselectCellColoredElement field={field} value={value[0]} />
+      return <MultiselectCellColoredElement field={field} value={value} />
 
     case "MULTI_LINE":
       return <span dangerouslySetInnerHTML={{ __html: value }}></span>

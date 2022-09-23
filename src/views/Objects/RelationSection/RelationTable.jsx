@@ -22,7 +22,6 @@ const RelationTable = ({
   const { navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
 
-
   const [filters, setFilters] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
   const [limit, setLimit] = useState(10)

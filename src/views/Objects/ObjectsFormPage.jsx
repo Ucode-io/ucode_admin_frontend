@@ -62,29 +62,30 @@ const ObjectsFormPage = () => {
     })
 
     try {
-      const [{ sections = [] }, { data = {} }, { relations: view_relations = [] }] =
-        await Promise.all([getSections, getFormData, getRelations])
+      const [
+        { sections = [] },
+        { data = {} },
+        { relations: view_relations = [] },
+      ] = await Promise.all([getSections, getFormData, getRelations])
 
       setSections(sortSections(sections))
 
       // setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? el?.view_relation_type === 'FILE' ? el : {}))
-     
-       const relations =
+
+      const relations =
         view_relations?.map((el) => ({
           ...el,
           ...el.relation,
         })) ?? []
 
-
       setTableRelations(
-        relations
-          .map((relation) => ({
-            ...relation,
-            relatedTable:
-              relation.table_from?.slug === tableSlug
-                ? relation.table_to?.slug
-                : relation.table_from?.slug,
-          }))
+        relations.map((relation) => ({
+          ...relation,
+          relatedTable:
+            relation.table_from?.slug === tableSlug
+              ? relation.table_to?.slug
+              : relation.table_from?.slug,
+        }))
       )
 
       reset(data.response ?? {})
@@ -106,13 +107,10 @@ const ObjectsFormPage = () => {
         // relation_table_slug: tableSlug
       })
 
-      const [{ sections = [] }, { relations: view_relations = [] }] = await Promise.all([
-        getSections,
-        getRelations,
-      ])
+      const [{ sections = [] }, { relations: view_relations = [] }] =
+        await Promise.all([getSections, getRelations])
 
       setSections(sortSections(sections))
-
 
       const relations =
         view_relations?.map((el) => ({
@@ -120,17 +118,14 @@ const ObjectsFormPage = () => {
           ...el.relation,
         })) ?? []
 
-
-
       setTableRelations(
-        relations
-          .map((relation) => ({
-            ...relation,
-            relatedTable:
-              relation.table_from?.slug === tableSlug
-                ? relation.table_to?.slug
-                : relation.table_from?.slug,
-          }))
+        relations.map((relation) => ({
+          ...relation,
+          relatedTable:
+            relation.table_from?.slug === tableSlug
+              ? relation.table_to?.slug
+              : relation.table_from?.slug,
+        }))
       )
     } catch (error) {
       console.error(error)
@@ -190,11 +185,7 @@ const ObjectsFormPage = () => {
 
   return (
     <div className={styles.formPage}>
-      <FiltersBlock
-        extra={
-          <DocumentGeneratorButton />
-        }
-      />
+      <FiltersBlock extra={<DocumentGeneratorButton />} />
 
       <div className={styles.formArea}>
         <MainInfo
@@ -202,9 +193,8 @@ const ObjectsFormPage = () => {
           computedSections={computedSections}
           setFormValue={setFormValue}
         />
-
         <div className={styles.secondaryCardSide}>
-          <RelationSection relations={tableRelations} control={control}  />
+          <RelationSection relations={tableRelations} control={control} />
         </div>
       </div>
 

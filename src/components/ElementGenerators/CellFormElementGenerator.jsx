@@ -5,6 +5,7 @@ import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
 import HFFormulaField from "../FormElements/HFFormulaField"
 import HFIconPicker from "../FormElements/HFIconPicker"
+import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete"
 import HFNumberField from "../FormElements/HFNumberField"
 import HFSwitch from "../FormElements/HFSwitch"
 import HFTextField from "../FormElements/HFTextField"
@@ -84,6 +85,20 @@ const CellFormElementGenerator = ({
           name={computedSlug}
           fieldsList={fields}
           field={field}
+        />
+      )
+
+    case "MULTISELECT":
+      return (
+        <HFMultipleAutocomplete
+          control={control}
+          name={computedSlug}
+          width="100%"
+          required={field.required}
+          field={field}
+          placeholder={field.attributes?.placeholder}
+          // defaultValue={defaultValue}
+          {...props}
         />
       )
 

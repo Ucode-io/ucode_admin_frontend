@@ -56,6 +56,8 @@ export const Filter = ({
 }) => {
   const [debouncedValue, setDebouncedValue] = useState("")
 
+  console.log("name ---- ", name)
+
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
 

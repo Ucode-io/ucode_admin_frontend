@@ -1,52 +1,38 @@
-
-import { get } from "@ngard/tiny-get"
+import { useMemo } from "react"
 import { useState } from "react"
-import { useQuery } from "react-query"
 import useObjectsQuery from "../../../../queries/hooks/useObjectsQuery"
 
-import constructorObjectService from "../../../../services/constructorObjectService"
 import FilterAutoComplete from "./FilterAutocomplete"
 
 const DefaultFilter = ({ field, filters, onChange, name, tableSlug }) => {
-   const [debouncedValue, setDebouncedValue] = useState('')
-   const [options, setOptions] = useState([])
+  const [debouncedValue, setDebouncedValue] = useState("")
+  const [data, setData] = useState([])
 
-   const value = filters[name]
-   
+  const value = filters[name]
 
-   const { query } = useObjectsQuery({
+  const options = useMemo(() => {
+    const result = [...new Set(data.map((el) => el[field.slug]) ?? [])]
+      .filter((el) => el)
+      ?.map((el) => ({
+        label: el,
+        value: el,
+      }))
+    return result
+  }, [field.slug, data])
+
+  const { query } = useObjectsQuery({
     tableSlug: tableSlug,
     queryPayload: {
       [name]: debouncedValue,
       limit: 10,
-      additional_ids: value
+      additional_ids: value,
     },
     queryParams: {
-      onSuccess: ({data}) => {
-        setOptions([...new Set(data.response?.map((el) => el[field.slug]) ?? [])]
-        .filter((el) => el)
-        ?.map((el) => ({
-          label: el,
-          value: el,
-        })))
+      onSuccess: (res) => {
+        setData(res?.data?.response ?? [])
       },
-    }  
+    },
   })
-
-  // const { data: options } = useQuery(
-  //   ["GET_OBJECT_LIST_ALL",  { tableSlug: tableSlug, filters: {} }],
-  //   () => {
-  //     if (!tableSlug) return null
-  //     return constructorObjectService.getList(tableSlug, {
-  //       data: { offset: 0, limit: 10 },
-  //     })
-  //   },
-  //   {
-  //     select: ({ data }) => {
-  //       return 
-  //     },
-  //   }
-  // )
 
   return (
     <FilterAutoComplete

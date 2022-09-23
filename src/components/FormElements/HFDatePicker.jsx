@@ -1,12 +1,23 @@
 import { Controller } from "react-hook-form"
 import CDatePicker from "../DatePickers/CDatePicker"
 
-const HFDatePicker = ({ control, className, name, label, width, inputProps, disabledHelperText, placeholder, ...props }) => {
+const HFDatePicker = ({
+  control,
+  className,
+  name,
+  label,
+  width,
+  inputProps,
+  disabledHelperText,
+  placeholder,
+  defaultValue="",
+  ...props
+}) => {
   return (
     <Controller
       control={control}
       name={name}
-      defaultValue=""
+      defaultValue={defaultValue}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={className}>
           <CDatePicker value={value} onChange={onChange} />

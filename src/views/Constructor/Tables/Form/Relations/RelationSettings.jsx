@@ -26,6 +26,7 @@ import constructorRelationService from "../../../../../services/constructorRelat
 import { applyDrag } from "../../../../../utils/applyDrag"
 import { relationTyes } from "../../../../../utils/constants/relationTypes"
 import AutoFiltersBlock from "./AutoFiltersBlock"
+import DefaultValueBlock from "./DefaultValueBlock"
 import DynamicRelationsBlock from "./DynamicRelationsBlock"
 import styles from "./style.module.scss"
 import SummaryBlock from "./SummaryBlock"
@@ -337,6 +338,8 @@ const RelationSettings = ({
               computedTablesList={computedTablesList}
             />
           )}
+
+          {/* <DefaultValueBlock control={control} watch={watch} /> */}
 
           <AutoFiltersBlock control={control} watch={watch} />
 

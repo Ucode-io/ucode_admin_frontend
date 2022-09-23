@@ -44,7 +44,7 @@ const FormElementGenerator = ({
     const { error, result } = parser.parse(defaultValue)
 
     return error ? undefined : result
-  }, [field.attributes])
+  }, [field.attributes, field.type])
 
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {

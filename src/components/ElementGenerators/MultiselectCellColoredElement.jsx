@@ -1,39 +1,49 @@
+import { useMemo } from "react"
 import IconGenerator from "../IconPicker/IconGenerator"
 
-const MultiselectCellColoredElement = ({ field, value, style, ...props }) => {
-  const color =
-    value && field?.attributes?.has_color
-      ? field?.attributes?.options?.find((i) => i.value === value[0])?.color
-      : ""
+const MultiselectCellColoredElement = ({
+  field,
+  value = [],
+  style,
+  ...props
+}) => {
+  const tags = useMemo(() => {
+    return value
+      ?.map((tagValue) =>
+        field.attributes?.options?.find((option) => option.value === tagValue)
+      )
+      ?.filter((el) => el)
+  }, [value, field?.attributes?.options])
 
-  const icon =
-    value && field?.attributes?.has_icon
-      ? field?.attributes?.options?.find((i) => i.value === value[0])?.icon
-      : ""
+  const hasColor = field?.attributes?.has_color
+  const hasIcon = field?.attributes?.has_icon
 
   return (
-    <div
-      style={{
-        color,
-        backgroundColor: color + 33,
-        padding: "5px 12px",
-        width: "fit-content",
-        borderRadius: 6,
-        ...style,
-      }}
-      {...props}
-    >
-      {icon && (
-        <>
-          <IconGenerator
-            icon={icon}
-            size="14"
-            style={{ transform: "translateY(2px)" }}
-          />
-          &nbsp;
-        </>
-      )}
-      {value}
+    <div className="flex align-center gap-1" style={{ flexWrap: "wrap" }}>
+      {tags?.map((tag) => (
+        <div
+          style={{
+            color: hasColor ? tag.color : "#000",
+            backgroundColor: hasColor ? tag.color + 33 : "#c0c0c039",
+            padding: "5px 12px",
+            width: "fit-content",
+            borderRadius: 6,
+            ...style,
+          }}
+          {...props}
+        >
+          {hasIcon && (
+            <IconGenerator
+              icon={tag.icon}
+              size={14}
+              className="mr-1"
+              style={{ transform: "translateY(2px)" }}
+            />
+          )}
+
+          {tag.value}
+        </div>
+      ))}
     </div>
   )
 }

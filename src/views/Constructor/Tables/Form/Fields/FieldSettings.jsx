@@ -7,9 +7,9 @@ import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton"
 import FRow from "../../../../../components/FormElements/FRow"
-import HFCheckbox from "../../../../../components/FormElements/HFCheckbox"
 import HFIconPicker from "../../../../../components/FormElements/HFIconPicker"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
+import HFSwitch from "../../../../../components/FormElements/HFSwitch"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import constructorFieldService from "../../../../../services/constructorFieldService"
 import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes"
@@ -235,7 +235,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
               />
             </FRow> */}
 
-            <HFCheckbox
+            <HFSwitch
               control={control}
               name="attributes.showTooltip"
               label="Show tooltip"
@@ -258,8 +258,8 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
           </div>
 
           <div className="p-2">
-            <HFCheckbox control={control} name="required" label="Required" />
-            <HFCheckbox
+            <HFSwitch control={control} name="required" label="Required" />
+            <HFSwitch
               control={control}
               name="unique"
               label="Avoid duplicate values"

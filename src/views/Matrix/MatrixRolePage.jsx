@@ -3,6 +3,9 @@ import { useFieldArray, useForm } from "react-hook-form"
 import { useParams } from "react-router-dom"
 // ICONS
 import { Delete } from "@mui/icons-material"
+import { useMutation } from "react-query"
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import { useDispatch } from "react-redux"
 import {
   ChevronDownIcon,
   CrossPerson,
@@ -28,14 +31,11 @@ import constructorObjectService from "../../services/constructorObjectService"
 import constructorRelationService from "../../services/constructorRelationService"
 import roleServiceV2 from "../../services/roleServiceV2"
 import styles from "./styles.module.scss"
-import { useMutation } from "react-query"
 import roleService from "../../services/roleService"
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import clientRelationService from "../../services/auth/clientRelationService"
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
 import SecondaryButton from "../../components/Buttons/SecondaryButton"
 import PrimaryButton from "../../components/Buttons/PrimaryButton"
-import { useDispatch } from "react-redux"
 import { showAlert } from "../../store/alert/alert.thunk"
 
 const staticTables = [

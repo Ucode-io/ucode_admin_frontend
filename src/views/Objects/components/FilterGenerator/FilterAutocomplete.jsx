@@ -18,6 +18,15 @@ const FilterAutoComplete = ({
   const [anchorEl, setAnchorEl] = useState(null)
   const menuVisible = Boolean(anchorEl)
 
+  const computedValue = useMemo(() => {
+    return value?.map(el => options?.find(option => option.value === el)).filter(el => el)
+  }, [ value, options ])
+
+  const computedOptions = useMemo(() => {
+
+    return options?.filter(option => !value?.includes(option.value))
+  }, [options, value])
+
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget)
   }
@@ -35,39 +44,24 @@ const FilterAutoComplete = ({
     if (value?.includes(option.value)) {
       onChange(
         value.filter((item) => item !== option.value),
-        option
       )
     } else {
-      onChange([...value, option.value], option)
+      onChange([...value, option.value])
     }
   }
-
-  const computedOptions = useMemo(() => {
-    const uncheckedOptions = []
-
-    console.log("OPTIONS ===>", options, localCheckedValues)
-
-    options.forEach((option) => {
-      if (option.label?.toLowerCase().includes(searchText)) {
-        uncheckedOptions.push(option)
-      }
-    })
-
-    return {
-      uncheckedOptions,
-    }
-  }, [options, value])
 
   const onClearButtonClick = (e) => {
     e.stopPropagation()
     onChange(null)
   }
 
+  
+
   return (
     <div className={styles.autocomplete}>
       <div className={styles.autocompleteButton} onClick={openMenu}>
         <div className={styles.autocompleteValue}>
-          {localCheckedValues?.[0]?.label || (
+          {computedValue?.[0]?.label || (
             <span
               className={styles.placeholder}
               style={{ color: !value?.length ? "#909EAB" : "#000" }}
@@ -76,8 +70,8 @@ const FilterAutoComplete = ({
             </span>
           )}
         </div>
-        {value?.length > 1 && `+${value.length - 1}`}
-        {!!value?.length && (
+        {computedValue?.length > 1 && `+${computedValue.length - 1}`}
+        {!!computedValue?.length && (
           <IconButton onClick={onClearButtonClick}>
             <Close />
           </IconButton>
@@ -99,7 +93,7 @@ const FilterAutoComplete = ({
         />
 
         <div className={styles.scrollBlock}>
-          {localCheckedValues?.map((option) => (
+          {computedValue?.map((option) => (
             <div
               onClick={() => rowClickHandler(option)}
               key={option.value}
@@ -112,7 +106,7 @@ const FilterAutoComplete = ({
 
           <Divider />
 
-          {computedOptions?.uncheckedOptions.map((option) => (
+          {computedOptions?.map((option) => (
             <div
               onClick={() => rowClickHandler(option)}
               key={option.value}

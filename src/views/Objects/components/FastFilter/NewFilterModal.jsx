@@ -48,8 +48,8 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
   })
 
   const computedOptions = useMemo(() => {
-    return Object.values(fieldsMap)?.map((i) => ({ ...i, value: i.id }))
-  }, [])
+    return Object.values(fieldsMap ?? {})?.map((i) => ({ ...i, value: i.id }))
+  }, [fieldsMap])
 
   const open = Boolean(anchorEl)
   const id = open ? "simple-popover" : undefined

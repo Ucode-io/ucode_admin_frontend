@@ -5,25 +5,39 @@ import { iconsList } from "../../utils/constants/iconsList"
 import IconGenerator from "./IconGenerator"
 import styles from "./style.module.scss"
 
-const IconPicker = ({ value = "", onChange, customeClick, clickItself, error, loading, shape="circle", ...props }) => {
+const IconPicker = ({
+  value = "",
+  onChange,
+  customeClick,
+  clickItself,
+  error,
+  loading,
+  shape = "circle",
+  disabled,
+  ...props
+}) => {
   const buttonRef = useRef()
   const id = useId()
 
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false)
   const [searchText, setSearchText] = useState("")
-  const [computedIconsList, setComputedIconsList] = useState(iconsList.slice(0, 40))
+  const [computedIconsList, setComputedIconsList] = useState(
+    iconsList.slice(0, 40)
+  )
 
   const handleClose = () => setDropdownIsOpen(false)
 
   const handleOpen = () => setDropdownIsOpen(true)
 
+  useDebouncedWatch(
+    () => {
+      const filteredList = iconsList.filter((icon) => icon.includes(searchText))
 
-  useDebouncedWatch(() => {
-    const filteredList = iconsList.filter((icon) => icon.includes(searchText))
-
-    setComputedIconsList(filteredList.slice(0, 40))
-  }, [searchText], 300)
-  
+      setComputedIconsList(filteredList.slice(0, 40))
+    },
+    [searchText],
+    300
+  )
 
   if (loading)
     return (
@@ -36,10 +50,12 @@ const IconPicker = ({ value = "", onChange, customeClick, clickItself, error, lo
     <div onClick={(e) => e.stopPropagation()} {...props}>
       <div
         ref={buttonRef}
-        className={`${styles.iconWrapper} ${error ? styles.error : ""} ${styles[shape]}`}
+        className={`${styles.iconWrapper} ${error ? styles.error : ""} ${
+          styles[shape]
+        }`}
         style={{ backgroundColor: value ?? "#fff" }}
         aria-describedby={id}
-        onClick={customeClick ? clickItself : handleOpen}
+        onClick={customeClick ? clickItself : !disabled && handleOpen}
       >
         <IconGenerator icon={value} />
       </div>

@@ -6,8 +6,9 @@ const HFIconPicker = ({
   control,
   name,
   disabledHelperText = false,
-  required=false,
-  rules={},
+  required = false,
+  rules = {},
+  disabled = false,
   customeClick = false,
   clickItself = () => {},
   ...props
@@ -17,17 +18,27 @@ const HFIconPicker = ({
       control={control}
       name={name}
       defaultValue=""
-      rules={{ required: required ? 'This is required field' : false, ...rules }}
-      render={({ field : { onChange, value }, fieldState : { error  } })  => (
+      rules={{
+        required: required ? "This is required field" : false,
+        ...rules,
+      }}
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div>
-          <IconPicker error={error} value={value} onChange={onChange} customeClick={customeClick} clickItself={clickItself} {...props} />
+          <IconPicker
+            disabled={disabled}
+            error={error}
+            value={value}
+            onChange={onChange}
+            customeClick={customeClick}
+            clickItself={clickItself}
+            {...props}
+          />
           {!disabledHelperText && (
             <FormHelperText error>{error?.message}</FormHelperText>
           )}
         </div>
       )}
-    >
-    </Controller>
+    ></Controller>
   )
 }
 

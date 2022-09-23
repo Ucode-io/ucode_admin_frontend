@@ -70,7 +70,7 @@ const ConstructorTablesFormPage = () => {
       table_slug: slug,
     })
 
-    const getSectionsData = constructorSectionService.getList({ table_id: id })
+    const getSectionsData = constructorSectionService.getList({ table_slug: slug })
 
     try {
       const [tableData, { sections = [] }, { relations: viewRelations = [] }] =

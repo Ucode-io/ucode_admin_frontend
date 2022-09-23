@@ -68,14 +68,18 @@ const RelationSettings = ({
   const values = watch()
 
   const relatedTableSlug = useMemo(() => {
-    if(values.type === 'Recursive') return values.table_from
+    if (values.type === "Recursive") return values.table_from
     if (values.table_to === slug) return values.table_from
     else if (values.table_from === slug) return values.table_to
     return null
   }, [values, slug])
 
   const isViewFieldsVisible = useMemo(() => {
-    return (values.type === "Many2One" && values.table_from === slug) || (values.type === "Many2Many" && values.view_type === "INPUT") || values.type === "Recursive"
+    return (
+      (values.type === "Many2One" && values.table_from === slug) ||
+      (values.type === "Many2Many" && values.view_type === "INPUT") ||
+      values.type === "Recursive"
+    )
   }, [values.type, values.table_from, values.view_type, slug])
 
   const computedColumnsList = useMemo(() => {
@@ -209,6 +213,13 @@ const RelationSettings = ({
           field_id: el.id,
           default_value: "",
         })),
+
+      // compute default value
+      default_values: values?.default_values
+        ? Array.isArray(values.default_values)
+          ? values.default_values
+          : [values.default_values]
+        : [],
     }
 
     delete data?.field_name
@@ -338,8 +349,12 @@ const RelationSettings = ({
               computedTablesList={computedTablesList}
             />
           )}
-          
-          {/* <DefaultValueBlock control={control} watch={watch} /> */}
+
+          <DefaultValueBlock
+            control={control}
+            watch={watch}
+            columnsList={values.columnsList}
+          />
 
           <AutoFiltersBlock control={control} watch={watch} />
 

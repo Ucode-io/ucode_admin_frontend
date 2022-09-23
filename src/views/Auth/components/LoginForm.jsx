@@ -37,12 +37,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
       email: "",
       username: "",
       password: "",
-      tables: [
-        {
-          object_id: "",
-          table_slug: "",
-        },
-      ],
+      tables: [],
     },
   });
 

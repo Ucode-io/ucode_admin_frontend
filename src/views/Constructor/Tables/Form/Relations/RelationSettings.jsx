@@ -338,7 +338,7 @@ const RelationSettings = ({
               computedTablesList={computedTablesList}
             />
           )}
-
+          
           {/* <DefaultValueBlock control={control} watch={watch} /> */}
 
           <AutoFiltersBlock control={control} watch={watch} />

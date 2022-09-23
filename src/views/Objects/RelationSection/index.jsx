@@ -92,9 +92,11 @@ const RelationSection = ({ relations }) => {
                 ))}
               </TabList>
 
-              <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
-                <Add /> Добавить
-              </SecondaryButton>
+              {relations[selectedTabIndex]?.relatedTable !== "file" && (
+                <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
+                  <Add /> Добавить
+                </SecondaryButton>
+              )}
             </div>
 
             {relations?.map((relation) => (

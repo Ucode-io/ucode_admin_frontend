@@ -54,12 +54,12 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
   const open = Boolean(anchorEl)
   const id = open ? "simple-popover" : undefined
 
-  const selectedField = useMemo(
-    () => fieldsMap[watch(`new.${0}.left_field`)],
-    [watch(`new.${0}.left_field`), fieldsMap]
-  )
+  // const selectedField = useMemo(
+  //   () => fieldsMap[watch(`new.${0}.left_field`)],
+  //   [watch(`new.${0}.left_field`), fieldsMap]
+  // )
 
-  console.log("watch", selectedField)
+  // console.log("watch", selectedField)
 
   return (
     <div>
@@ -98,7 +98,7 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
                     ? fieldsMap[watch(`new.${index}.left_field`)]
                     : ""
                 }
-                name={selectedField?.path_slug ?? selectedField?.slug}
+                // name={selectedField?.path_slug ?? selectedField?.slug}
                 onChange={onChange}
                 filters={filters}
                 tableSlug={tableSlug}

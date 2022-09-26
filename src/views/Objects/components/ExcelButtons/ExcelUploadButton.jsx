@@ -7,17 +7,24 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { CloseIcon, UploadIcon, PointerIcon } from '../../../../assets/icons/icon.jsx'
 import CSelect from '../../../../components/CSelect'
 
+<<<<<<< HEAD
 
 const ExcelUploadButton = ({fieldsMap}) => {
   const [open, setOpen] = useState(false)
   const handleClick = () => setOpen(true)
   const handleClose = () => setOpen(false)
   const fields = Object.values(fieldsMap)
+=======
+const ExcelUploadButton = () => {
+
+
+>>>>>>> b087780f7ef61679278592a9fe77d62424b380d4
   return (
     <>
     <RectangleIconButton color="white" onClick={() => handleClick()}>
       <Upload />
     </RectangleIconButton>
+<<<<<<< HEAD
     
       <Dialog
          open={open} onClose={handleClose}>
@@ -73,6 +80,11 @@ const ExcelUploadButton = ({fieldsMap}) => {
         </div>
       </Dialog>
     </>
+=======
+
+    
+
+>>>>>>> b087780f7ef61679278592a9fe77d62424b380d4
   )
 }
 

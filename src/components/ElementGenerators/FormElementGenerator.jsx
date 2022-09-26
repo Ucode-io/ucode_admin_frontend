@@ -40,11 +40,14 @@ const FormElementGenerator = ({
     
     if (!defaultValue) return undefined
 
+    if(field.relation_type === "Many2One") return defaultValue[0]
+
     if(field.type === "MULTISELECT" || field.id?.includes('#')) return defaultValue
+    
     const { error, result } = parser.parse(defaultValue)
 
     return error ? undefined : result
-  }, [field.attributes, field.type, field.id])
+  }, [field.attributes, field.type, field.id, field.relation_type])
 
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {

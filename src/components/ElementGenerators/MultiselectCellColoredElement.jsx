@@ -44,7 +44,7 @@ const MultiselectCellColoredElement = ({
             />
           )}
 
-          {tag.value}
+          {tag.label ?? tag.value}
         </div>
       ))}
     </div>

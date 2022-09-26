@@ -12,11 +12,28 @@ export const { actions: filterActions, reducer: filterReducer } = createSlice({
       if (!state.list[tableSlug][viewId]) state.list[tableSlug][viewId] = {}
       state.list[tableSlug][viewId][name] = value
     },
-    setNewFilter: (state, { payload: { tableSlug, viewId, name, value } }) => {
-      if (!state.new_list[tableSlug]) state.new_list[tableSlug] = {}
-      if (!state.new_list[tableSlug][viewId])
-        state.new_list[tableSlug][viewId] = {}
-      state.new_list[tableSlug][viewId][name] = value
+    setNewFilter: (state, { payload: { tableSlug, fieldId, checked } }) => {
+      if (!state.new_list[tableSlug]?.find((i) => i.id === fieldId)) {
+        state.new_list[tableSlug] = state.new_list?.[tableSlug]
+          ? [...state.new_list?.[tableSlug], { id: fieldId, checked }]
+          : [{ id: fieldId, checked }]
+      } else {
+        state.new_list[tableSlug] = state.new_list[tableSlug]?.map((i) => {
+          if (i.id === fieldId) {
+            return {
+              id: fieldId,
+              checked,
+            }
+          } else {
+            return i
+          }
+        })
+      }
+    },
+    clearNewFilter: (state, { payload: { tableSlug, fieldId } }) => {
+      state.new_list[tableSlug] = state.new_list[tableSlug]?.filter(
+        (i) => i.id !== fieldId
+      )
     },
     clearFilters: (state, { payload: { tableSlug, viewId } }) => {
       if (state.list[tableSlug]?.[viewId]?.order) {

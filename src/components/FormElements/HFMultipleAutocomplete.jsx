@@ -99,7 +99,7 @@ const AutoCompleteElement = ({
         multiple
         value={computedValue}
         options={options}
-        getOptionLabel={(option) => option?.value}
+        getOptionLabel={(option) => option?.label ?? option?.value}
         isOptionEqualToValue={(option, value) => option?.value === value?.value}
         onChange={changeHandler}
         renderInput={(params) => <TextField {...params} size="small" />}
@@ -116,7 +116,7 @@ const AutoCompleteElement = ({
                 }
               >
                 {hasIcon && <IconGenerator icon={el?.icon} />}
-                <p className={styles.value}>{el?.value}</p>
+                <p className={styles.value}>{el?.label ?? el?.value}</p>
                 <Close
                   fontSize="10"
                   onClick={getTagProps({ index })?.onDelete}

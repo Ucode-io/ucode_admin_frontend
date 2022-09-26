@@ -1,11 +1,12 @@
-NAMESPACE=microservices
+variables:
+  NAMESPACE: "microservices"
 
 before_script:
   - docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD
 
 stages:
   - build
-  - deploy
+  # - deploy
 
 build_image_staging:
   image: gitlab.udevs.io:5050/docker/helm:dind
@@ -24,7 +25,6 @@ build_image_prod:
     - make push-image-prod TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY
   only:
     - master
-
 # deploy_to_test:
 #   image: gitlab.udevs.io:5050/docker/helm:dind
 #   stage: deploy

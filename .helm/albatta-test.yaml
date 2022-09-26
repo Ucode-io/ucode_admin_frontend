@@ -15,20 +15,13 @@ image:
   repository: medion/ucode/ucode_admin_frontend
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "parfume-test"
-
-# image:
-#   registry: harbor.udevs.io/
-#   repository: medion/medion_go_admin_api_gateway
-#   pullPolicy: IfNotPresent
-#   # Overrides the image tag whose default is the chart appVersion.
-#   tag: "latest"
+  tag: "albatta-test"
 
 imagePullSecrets: "gitlab-registry"
 nameOverride: ""
 fullnameOverride: ""
 labels:
-  app: admin-frontend
+  app: react_admin
 # command: ["/bin/sh","-c"]
 # args: ["echo 'consuming a message'; sleep 5"]
 
@@ -41,22 +34,8 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: "vault"
 
-podAnnotations: {}
-#   vault.hashicorp.com/agent-inject: "true"
-#   vault.hashicorp.com/log-level: "debug"
-#   vault.hashicorp.com/auth-path: "auth/kubernetes-parfume"
-#   vault.hashicorp.com/agent-inject-secret-.env: "secret/data/k8s/parfume-test/node_object_builder_service"
-#   vault.hashicorp.com/secret-volume-path-.env: "/app"
-#   vault.hashicorp.com/role: "parfume"
-#   vault.hashicorp.com/agent-inject-template-.env: |
-#     {{- with secret "secret/data/k8s/parfume-test/node_object_builder_service" -}}
-#     {{- range $key, $value := .Data.data }}
-#     {{ $key }}: {{ $value }}
-#     {{- end }}
-#     {{ end -}}
-
 podLabels:
-  app: admin-frontend
+  app: react_admin
 
 podSecurityContext:
   {}
@@ -70,7 +49,12 @@ securityContext:
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-vault: {}
+vault:
+  enabled: false
+  secretName: vault-secrets
+  variables:
+    VAULT_TOKEN: vault_token
+    SECRETS_PATH: vault_admin_api_gateway_path
 
 environment: {}
 volumes:
@@ -101,13 +85,13 @@ ingress:
         cert-manager.io/cluster-issuer: letsencrypt-prod
       type: web
       hosts:
-        - host: "test.admin.parfumgallery.uz"
+        - host: "test.admin.albatta.udevs.io"
           path: /
           servicePort: 80
       tls:
         - secretName: react-admin-tls
           hosts:
-            - "test.admin.parfumgallery.uz"
+            - "test.admin.albatta.udevs.io"
 
 resources:
   {}

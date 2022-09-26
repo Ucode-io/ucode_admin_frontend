@@ -15,11 +15,11 @@ image:
   repository: medion/ucode/ucode_admin_frontend
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "parfume-test"
+  tag: "editory-test"
 
 # image:
 #   registry: harbor.udevs.io/
-#   repository: medion/medion_go_admin_api_gateway
+#   repository: editory/editory_go_admin_api_gateway
 #   pullPolicy: IfNotPresent
 #   # Overrides the image tag whose default is the chart appVersion.
 #   tag: "latest"
@@ -28,7 +28,7 @@ imagePullSecrets: "gitlab-registry"
 nameOverride: ""
 fullnameOverride: ""
 labels:
-  app: admin-frontend
+  app: react-admin
 # command: ["/bin/sh","-c"]
 # args: ["echo 'consuming a message'; sleep 5"]
 
@@ -56,7 +56,7 @@ podAnnotations: {}
 #     {{ end -}}
 
 podLabels:
-  app: admin-frontend
+  app: react-admin
 
 podSecurityContext:
   {}
@@ -101,13 +101,13 @@ ingress:
         cert-manager.io/cluster-issuer: letsencrypt-prod
       type: web
       hosts:
-        - host: "test.admin.parfumgallery.uz"
+        - host: "test.admin.editorypress.uz"
           path: /
           servicePort: 80
       tls:
         - secretName: react-admin-tls
           hosts:
-            - "test.admin.parfumgallery.uz"
+            - "test.admin.editorypress.uz"
 
 resources:
   {}

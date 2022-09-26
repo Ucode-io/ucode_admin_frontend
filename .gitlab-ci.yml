@@ -1,3 +1,5 @@
+NAMESPACE=microservices
+
 before_script:
   - docker login $CI_REGISTRY --username $CI_REGISTRY_USER --password $CI_REGISTRY_PASSWORD
 
@@ -5,62 +7,48 @@ stages:
   - build
   - deploy
 
-build_image_prod:
-  image: gitlab.udevs.io:5050/docker/helm:dind
-  stage: build
-  script:
-    - make build-image TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY
-    - make push-image TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY
-  only:
-    - master
-
 build_image_staging:
   image: gitlab.udevs.io:5050/docker/helm:dind
   stage: build
   script:
     - make build-image-staging TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY ENG_TAG=test
-    - make push-image TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY ENG_TAG=test
+    - make push-image-staging TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY ENG_TAG=test
   only:
     - staging
 
-build_image_parfume:
+build_image_prod:
   image: gitlab.udevs.io:5050/docker/helm:dind
   stage: build
   script:
-    - make build-image TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY ENV_TAG=parfume
-    - make push-image TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY ENV_TAG=parfume
-  only:
-    - parfume
-
-deploy_to_test:
-  image: gitlab.udevs.io:5050/docker/helm:dind
-  stage: deploy
-  script:
-    - cp $TEST_MEDION_KUBECONFIG ~/.kube/config
-    - DEPLOYMENT=$(echo $CI_PROJECT_NAME | sed s/_/-/g | sed s/$CI_PROJECT_NAMESPACE-//g)
-    - helm repo add --username $HELM_REGISTRY_USERNAME --password $HELM_REGISTRY_PASSWORD $HELM_REPO_NAME $HELM_REGISTRY_PATH
-    - helm upgrade --install $DEPLOYMENT $HELM_REPO_NAME/$HELM_REPO_NAME --set=image.tag=$CI_PIPELINE_IID --values .helm/values-test.yaml -n $NAMESPACE
-  only:
-    - staging
-
-deploy_to_parfume:
-  image: gitlab.udevs.io:5050/docker/helm:dind
-  stage: deploy
-  script:
-    - cp $TEST_PARFUME_KUBECONFIG ~/.kube/config
-    - DEPLOYMENT=$(echo $CI_PROJECT_NAME | sed s/_/-/g | sed s/$CI_PROJECT_NAMESPACE-//g)
-    - helm repo add --username $HELM_REGISTRY_USERNAME --password $HELM_REGISTRY_PASSWORD $HELM_REPO_NAME $HELM_REGISTRY_PATH
-    - helm upgrade --install $DEPLOYMENT $HELM_REPO_NAME/$HELM_REPO_NAME --set=image.tag=$CI_PIPELINE_IID --values .helm/parfume-test.yaml -n $NAMESPACE
-  only:
-    - parfume
-
-deploy_to_prod:
-  image: gitlab.udevs.io:5050/docker/helm:dind
-  stage: deploy
-  script:
-    - cp $PROD_MEDION_KUBECONFIG ~/.kube/config
-    - DEPLOYMENT=$(echo $CI_PROJECT_NAME | sed s/_/-/g | sed s/$CI_PROJECT_NAMESPACE-//g)
-    - helm repo add --username $HELM_REGISTRY_USERNAME --password $HELM_REGISTRY_PASSWORD $HELM_REPO_NAME $HELM_REGISTRY_PATH
-    - helm upgrade --install $DEPLOYMENT $HELM_REPO_NAME/$HELM_REPO_NAME --set=image.tag=$CI_PIPELINE_IID --values .helm/values-prod.yaml -n $NAMESPACE
+    - make build-image-prod TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY
+    - make push-image-prod TAG=$CI_PIPELINE_IID PROJECT_NAME=$CI_PROJECT_NAMESPACE REGISTRY=$CI_REGISTRY
   only:
     - master
+
+# deploy_to_test:
+#   image: gitlab.udevs.io:5050/docker/helm:dind
+#   stage: deploy
+#   script:
+#     - cp $TEST_ALBATTA_KUBECONFIG ~/.kube/config
+#     - DEPLOYMENT=$(echo $CI_PROJECT_NAME | sed s/_/-/g | sed s/$CI_PROJECT_NAMESPACE-//g)
+#     - helm repo add --username $HELM_REGISTRY_USERNAME --password $HELM_REGISTRY_PASSWORD $HELM_REPO_NAME $HELM_REGISTRY_PATH
+#     - helm upgrade --install $DEPLOYMENT $HELM_REPO_NAME/$HELM_REPO_NAME --set=image.tag=albatta-$CI_PIPELINE_IID --values .helm/albatta-test.yaml -n $NAMESPACE
+#     - rm ~/.kube/config && cp $TEST_EDITORY_KUBECONFIG ~/.kube/config
+#     - helm upgrade --install $DEPLOYMENT $HELM_REPO_NAME/$HELM_REPO_NAME --set=image.tag=editory-$CI_PIPELINE_IID --values .helm/editory-test.yaml -n $NAMESPACE
+#     - rm ~/.kube/config && cp $TEST_PARFUME_KUBECONFIG ~/.kube/config
+#     - helm upgrade --install $DEPLOYMENT $HELM_REPO_NAME/$HELM_REPO_NAME --set=image.tag=parfume-$CI_PIPELINE_IID --values .helm/parfume-test.yaml -n $NAMESPACE
+#     - rm ~/.kube/config && cp $TEST_MEDION_KUBECONFIG ~/.kube/config
+#     - helm upgrade --install $DEPLOYMENT $HELM_REPO_NAME/$HELM_REPO_NAME --set=image.tag=medion-$CI_PIPELINE_IID --values .helm/medion-test.yaml -n $NAMESPACE
+#   only:
+#     - staging
+
+# deploy_to_prod:
+#   image: gitlab.udevs.io:5050/docker/helm:dind
+#   stage: deploy
+#   script:
+#     - cp $PROD_MEDION_KUBECONFIG ~/.kube/config
+#     - DEPLOYMENT=$(echo $CI_PROJECT_NAME | sed s/_/-/g | sed s/$CI_PROJECT_NAMESPACE-//g)
+#     - helm repo add --username $HELM_REGISTRY_USERNAME --password $HELM_REGISTRY_PASSWORD $HELM_REPO_NAME $HELM_REGISTRY_PATH
+#     - helm upgrade --install $DEPLOYMENT $HELM_REPO_NAME/$HELM_REPO_NAME --set=image.tag=medion-$CI_PIPELINE_IID --values .helm/medion-prod.yaml -n $NAMESPACE
+#   only:
+#     - master

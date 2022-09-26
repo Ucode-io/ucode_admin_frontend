@@ -4,18 +4,18 @@
 global:                                                                                                                                    
   replicaCount: 1                                                                                                                          
   environment: {}
-   # list of key: value                                                                                                                    
-   # GLOBAL1: value                                                                                                                        
-                                                                                                                                           
+    # list of key: value                                                                                                                    
+    # GLOBAL1: value                                                                                                                        
+
 replicaCount: 1                                                                                                                            
-                                                                                                                                           
-image:                                                                                                                                     
-  registry: gitlab.udevs.io:5050/                                                                                                          
-  repository: medion/medion_react_admin
-  pullPolicy: IfNotPresent                                                                                                                 
-  # Overrides the image tag whose default is the chart appVersion.                                                                         
-  tag: "latest"                                                                                                                            
-                                                                                                                                           
+
+image:
+  registry: gitlab.udevs.io:5050/
+  repository: medion/ucode/ucode_admin_frontend
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "medion-test"                                                                                                                            
+
 imagePullSecrets: "gitlab-registry"                                                                                                        
 nameOverride: ""                                                                                                                           
 fullnameOverride: ""                                                                                                                       
@@ -23,7 +23,7 @@ labels:
   app: react_admin                                                                                                                                          
 # command: ["/bin/sh","-c"]                                                                                                                
 # args: ["echo 'consuming a message'; sleep 5"]                                                                                            
-                                                                                                                                                                                                                                                                                      
+
 serviceAccount:                                                                                                                            
   # Specifies whether a service account should be created                                                                                                                                                                                                                             
   create: true
@@ -38,7 +38,7 @@ podLabels:
 
 podSecurityContext: {}                                                                                  
   # fsGroup: 2000                                                                                                                                                                                               
-                                                                                                                                                                                                                
+
 securityContext: {}                                                                                                                                                                                             
   # capabilities:                                                                                                                                                                                               
   #   drop:                                                                                                                                
@@ -51,7 +51,7 @@ vault:
   secretName: vault-secrets                                                                                                                
   variables:                                                                                                                               
     VAULT_TOKEN: vault_token                                                                                                               
-    SECRETS_PATH: vault_admin_api_gateway_path                                                                                                            
+    SECRETS_PATH: vault_admin_api_gateway_path                                                                                                           
 
 environment: {}
 volumes:                                                                                                                                   
@@ -65,7 +65,7 @@ volumes:
     class:                                                                                              
     accessModes:                                                                                        
       - ReadWriteOnce                                                                                   
-                                                                                                        
+
 service:                                                                                                
   type: ClusterIP                                                                                       
   annotations: {}                                                                                       
@@ -82,13 +82,13 @@ ingress:
           cert-manager.io/cluster-issuer: letsencrypt-prod
         type: web
         hosts:                                                                                                                                   
-          - host: "admin.medion.uz"
+          - host: "test.admin.medion.uz"
             path: /                                                                                                                              
             servicePort: 80                                                                                                                 
         tls:                                                                                                                                     
           - secretName: react-admin-tls
             hosts:                                                                                                                               
-             - "admin.medion.uz"                                                                                                  
+              - "test.admin.medion.uz"                                                                                                  
 
 resources: {}                                                                                                    
   #  limits:                                                                                                                                

@@ -8,6 +8,7 @@ import IconGenerator from "../IconPicker/IconGenerator"
 import LogoDisplay from "../LogoDisplay"
 import TableTag from "../TableTag"
 import FormulaCell from "./FormulaCell"
+import MultiselectCellColoredElement from "./MultiselectCellColoredElement"
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
@@ -22,18 +23,14 @@ const CellElementGenerator = ({ field = {}, row }) => {
     return field.render(row)
   }
 
+  console.log("field - ", field)
+
   switch (field.type) {
     case "DATE":
-      return (
-        <span className="text-nowrap">
-          {formatDate(value)}
-        </span>
-      )
+      return <span className="text-nowrap">{formatDate(value)}</span>
 
     case "NUMBER":
-      return (
-        <span className="text-nowrap" >{ numberWithSpaces(value) }</span>
-      )
+      return <span className="text-nowrap">{numberWithSpaces(value)}</span>
 
     case "DATE_TIME":
       return (
@@ -43,20 +40,21 @@ const CellElementGenerator = ({ field = {}, row }) => {
         </span>
       )
 
+    case "MULTISELECT":
+      return <MultiselectCellColoredElement field={field} value={value} />
+
     case "MULTI_LINE":
-      return (
-        <span dangerouslySetInnerHTML={{ __html: value }} ></span>
-      )
+      return <span dangerouslySetInnerHTML={{ __html: value }}></span>
 
     case "CHECKBOX":
     case "SWITCH":
       return parseBoolean(value) ? (
         <TableTag color="success">
-          {field.attributes?.text_true ?? 'Да'}
+          {field.attributes?.text_true ?? "Да"}
         </TableTag>
       ) : (
         <TableTag color="error">
-          {field.attributes?.text_false ?? 'Нет'}
+          {field.attributes?.text_false ?? "Нет"}
         </TableTag>
       )
 
@@ -66,11 +64,21 @@ const CellElementGenerator = ({ field = {}, row }) => {
     // case "FORMULA_FRONTEND":
     //   return <FormulaCell field={field} row={row} />
 
-    case "ICO": 
+    case "ICO":
       return <IconGenerator icon={value} />
 
     case "PHOTO":
-      return <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} ><LogoDisplay url={value} /></span>
+      return (
+        <span
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <LogoDisplay url={value} />
+        </span>
+      )
 
     default:
       return value

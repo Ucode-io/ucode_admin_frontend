@@ -1,23 +1,31 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
+import { Add } from "@mui/icons-material";
 
+import { CTableCell, CTableRow } from "../../../../../components/CTable";
 import DataTable from "../../../../../components/DataTable";
 import TableCard from "../../../../../components/TableCard";
 import eventService from "../../../../../services/eventsService";
 import ActionForm from "./ActionForm";
+import styles from "./styles.module.scss";
 
 const Actions = ({ eventLabel }) => {
   const { slug } = useParams();
+  const [modalItemId, setModalItemId] = useState(undefined);
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
-  const { data: events, isLoading } = useQuery(
+  const {
+    data: events,
+    isLoading,
+    refetch: eventsRefetch,
+  } = useQuery(
     ["GET_EVENTS_LIST", slug],
-    () => eventService.getList({ table_slug: "string" }),
+    () => eventService.getList({ table_slug: slug }),
     {
       enabled: !!slug,
     }
@@ -31,6 +39,12 @@ const Actions = ({ eventLabel }) => {
     },
   ];
 
+  const deleteField = (state) => {
+    if (state?.id) {
+      eventService.delete(state.id).then(() => eventsRefetch());
+    }
+  };
+
   return (
     <TableCard>
       <DataTable
@@ -41,11 +55,33 @@ const Actions = ({ eventLabel }) => {
         disablePagination
         loader={isLoading}
         dataLength={1}
-        onRowClick={(id) => handleOpen()}
+        onDeleteClick={deleteField}
+        onEditClick={(e) => {
+          handleOpen();
+          setModalItemId(e?.id);
+        }}
+        additionalRow={
+          <CTableRow>
+            <CTableCell colSpan={columns.length + 2}>
+              <div
+                className={styles.createButton}
+                onClick={() => {
+                  handleOpen();
+                  setModalItemId("");
+                }}
+              >
+                <Add color="primary" />
+                <p>Добавить</p>
+              </div>
+            </CTableCell>
+          </CTableRow>
+        }
       />
       <ActionForm
+        modalItemId={modalItemId}
         eventLabel={eventLabel}
         isOpen={isOpen}
+        eventsRefetch={eventsRefetch}
         handleClose={handleClose}
       />
     </TableCard>

@@ -1,7 +1,7 @@
 import { Add } from "@mui/icons-material"
 import { IconButton } from "@mui/material"
 import { useMemo } from "react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useMutation } from "react-query"
 import { useParams } from "react-router-dom"
 import { Container, Draggable } from "react-smooth-dnd"
@@ -15,9 +15,9 @@ const BoardColumn = ({
   data = [],
   fieldsMap,
   view = [],
-  navigateToCreatePage
+  navigateToCreatePage,
 }) => {
-  const {tableSlug} = useParams()
+  const { tableSlug } = useParams()
   const [computedData, setComputedData] = useState(
     data.filter((el) => el[tab.slug] === tab.value)
   )
@@ -27,7 +27,7 @@ const BoardColumn = ({
       data: {
         ...data,
         [tab.slug]: tab.value,
-      }
+      },
     })
   })
 
@@ -40,11 +40,10 @@ const BoardColumn = ({
       mutate(dropResult.payload)
     }
   }
-  
-  const viewFields = useMemo(() => {
-    return view.columns?.map(id => fieldsMap[id]).filter(el => el) ?? []
-  }, [ view, fieldsMap ])
 
+  const viewFields = useMemo(() => {
+    return view.columns?.map((id) => fieldsMap[id]).filter((el) => el) ?? []
+  }, [view, fieldsMap])
 
   return (
     <div className={styles.column}>
@@ -52,7 +51,7 @@ const BoardColumn = ({
         <div className={styles.title}>{tab.label}</div>
         <div className={styles.rightSide}>
           <div className={styles.counter}>{computedData?.length ?? 0}</div>
-          <IconButton color="primary" onClick={navigateToCreatePage} >
+          <IconButton color="primary" onClick={navigateToCreatePage}>
             <Add />
           </IconButton>
         </div>
@@ -72,11 +71,9 @@ const BoardColumn = ({
         {computedData.map((el) => (
           <Draggable key={el.guid}>
             <div className={styles.card}>
-              {
-                viewFields.map(field => (
-                  <BoardCardRowGenerator key={field.id} field={field} el={el} />
-                ))
-              }
+              {viewFields.map((field) => (
+                <BoardCardRowGenerator key={field.id} field={field} el={el} />
+              ))}
             </div>
           </Draggable>
         ))}

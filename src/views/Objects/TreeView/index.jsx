@@ -1,20 +1,18 @@
 import { useEffect, useMemo } from "react"
 import { useState } from "react"
+import { useSelector } from "react-redux"
+import { useParams } from "react-router-dom"
+
 import PageFallback from "../../../components/PageFallback"
 import constructorObjectService from "../../../services/constructorObjectService"
-import { objectToArray } from "../../../utils/objectToArray"
+import FastFilter from "../components/FastFilter"
 import RecursiveBlock from "./RecursiveBlock"
+import styles from "./style.module.scss"
 
-const TreeView = ({
-  computedColumns,
-  tableSlug,
-  setViews,
-  filters,
-  filterChangeHandler,
-  groupField,
-  group,
-  view
-}) => {
+const TreeView = ({ groupField, fieldsMap, group, view }) => {
+  const { tableSlug } = useParams()
+  const { new_list } = useSelector((state) => state.filter)
+
   const [tableLoader, setTableLoader] = useState(true)
   const [data, setData] = useState([])
 
@@ -25,18 +23,18 @@ const TreeView = ({
   const getAllData = async () => {
     setTableLoader(true)
     try {
+      let groupFieldName = ""
 
-      let groupFieldName = ''
-
-      if(groupField?.id?.includes('#')) groupFieldName = `${groupField.id.split('#')[0]}_id`
-      if(groupField?.slug) groupFieldName = groupField?.slug
+      if (groupField?.id?.includes("#"))
+        groupFieldName = `${groupField.id.split("#")[0]}_id`
+      if (groupField?.slug) groupFieldName = groupField?.slug
 
       const { data } = await constructorObjectService.getList(tableSlug, {
         data: { offset: 0, limit: 10, [groupFieldName]: group?.value },
       })
 
-      setViews(data.views ?? [])
-      setData(objectToArray(data.response ?? {}))
+      setData(data.response ?? [])
+
       // dispatch(
       //   tableColumnActions.setList({
       //     tableSlug: tableSlug,
@@ -54,7 +52,14 @@ const TreeView = ({
 
   return (
     <div>
-
+      {(view?.quick_filters?.length > 0 ||
+        (new_list[tableSlug] &&
+          new_list[tableSlug].some((i) => i.checked))) && (
+        <div className={styles.filters}>
+          <p>Фильтры</p>
+          <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+        </div>
+      )}
       {tableLoader ? (
         <PageFallback />
       ) : (
@@ -66,6 +71,7 @@ const TreeView = ({
               view={view}
               data={data}
               setData={setData}
+              fieldsMap={fieldsMap}
             />
           ))}
         </>

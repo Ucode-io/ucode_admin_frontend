@@ -43,7 +43,16 @@ const SelectOptionsCreator = ({ control, name }) => {
               {hasColor && <HFColorPicker control={control} name={`${name}[${index}].color`} />}
               {hasIcon && <HFIconPicker shape="rectangle" control={control} name={`${name}[${index}].icon`} />}
               <HFTextField
-                placeholder={`Option ${index + 1}`}
+                placeholder={`Option ${index + 1} label`}
+                disabledHelperText
+                size="small"
+                fullWidth
+                control={control}
+                name={`${name}[${index}].label`}
+                className={styles.input}
+              />
+              <HFTextField
+                placeholder={`Option ${index + 1} value`}
                 disabledHelperText
                 size="small"
                 fullWidth

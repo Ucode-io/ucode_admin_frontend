@@ -22,7 +22,6 @@ const RelationTable = ({
   const { navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
 
-
   const [filters, setFilters] = useState({})
   const [currentPage, setCurrentPage] = useState(1)
   const [limit, setLimit] = useState(10)
@@ -166,7 +165,6 @@ const RelationTable = ({
           pagesCount={pageCount}
           currentPage={currentPage}
           onRowClick={navigateToEditPage}
-          
           onDeleteClick={deleteHandler}
           onPaginationChange={setCurrentPage}
           paginationExtraButton={id && <SecondaryButton onClick={navigateToTablePage} >Все</SecondaryButton>}
@@ -174,7 +172,7 @@ const RelationTable = ({
           createFormVisible={createFormVisible[relation.id]}
           setCreateFormVisible={(val) => setCreateFormVisible(relation.id, val)}
           limit={limit}
-          onLimitChange={setLimit}
+          setLimit={setLimit}
           summaries={relation.summaries}
         />
       </div>

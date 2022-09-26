@@ -4,9 +4,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from "@mui/material";
-import { Controller } from "react-hook-form";
-import IconGenerator from "../IconPicker/IconGenerator";
+} from "@mui/material"
+import { Controller } from "react-hook-form"
+import IconGenerator from "../IconPicker/IconGenerator"
 
 const HFSelect = ({
   control,
@@ -56,8 +56,8 @@ const HFSelect = ({
                 : () => <span style={{ color: "#909EAB" }}>{placeholder}</span>
             }
             onChange={(e) => {
-              onChange(e.target.value);
-              onFormChange(e.target.value);
+              onChange(e.target.value)
+              onFormChange(e.target.value)
             }}
             {...props}
           >
@@ -97,7 +97,7 @@ const HFSelect = ({
         </FormControl>
       )}
     ></Controller>
-  );
-};
+  )
+}
 
-export default HFSelect;
+export default HFSelect

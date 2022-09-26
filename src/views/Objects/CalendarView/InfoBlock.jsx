@@ -1,9 +1,12 @@
 import { format } from "date-fns"
+import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement"
 import { dateValidFormat } from "../../../utils/dateValidFormat"
 import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel"
 import styles from "./style.module.scss"
 
 const InfoBlock = ({ viewFields, data, isSingleLine }) => {
+  console.log("DATA ===>", data)
+
   if (isSingleLine)
     return (
       <div className={`${styles.infoBlock} ${styles.singleLine}`}>
@@ -32,11 +35,19 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
 
       {viewFields?.map((field) => (
         <p>
-       {field.type === "LOOKUP"
-              ? getRelationFieldTableCellLabel(field, data, field.table_slug)
-              : field.type === "DATE_TIME"
-              ? dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")
-              : data[field.slug]}
+          {field.type === "LOOKUP" ? (
+            getRelationFieldTableCellLabel(field, data, field.table_slug)
+          ) : field.type === "DATE_TIME" ? (
+            dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")
+          ) : field.type === "MULTISELECT" ? (
+            <MultiselectCellColoredElement
+              style={{ padding: "2px 5px", marginBottom: 4 }}
+              value={data[field.slug]}
+              field={field}
+            />
+          ) : (
+            data[field.slug]
+          )}
         </p>
       ))}
     </div>

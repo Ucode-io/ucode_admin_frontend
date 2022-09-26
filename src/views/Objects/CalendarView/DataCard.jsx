@@ -12,6 +12,7 @@ import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldL
 import IconGenerator from "../../../components/IconPicker/IconGenerator"
 import CalendarStatusSelect from "../components/CalendarStatusSelect"
 import { dateValidFormat } from "../../../utils/dateValidFormat"
+import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement"
 
 const DataCard = ({
   date,
@@ -52,13 +53,20 @@ const DataCard = ({
       ...info,
       [view.calendar_from_slug]: startTime,
       [view.calendar_to_slug]: endTime,
+      calendar: {
+        ...info.calendar,
+        elementFromTime: startTime,
+        elementToTime: endTime,
+      },
     }
 
     constructorObjectService
       .update(tableSlug, {
         data: computedData,
       })
-      .then((res) => setInfo(computedData))
+      .then((res) => {
+        setInfo(computedData)
+      })
   }
 
   const computeTime = (index) => {
@@ -121,15 +129,12 @@ const DataCard = ({
 
   const infoBlockBg = useMemo(() => {
     return (
-      fieldsMap[view.status_field_slug]?.attributes?.options
-        ?.map((opt) => ({
-          ...opt,
-          // hoverColor: opt
-        }))
-        ?.find((opt) => opt.value === info.status)?.color ?? "silver"
+      fieldsMap[view.status_field_slug]?.attributes?.options?.find(
+        (opt) => opt.value === info.status
+      )?.color ?? "silver"
     )
     //
-  }, [fieldsMap[view.status_field_slug]])
+  }, [view.status_field_slug, fieldsMap, info.status])
 
   const handleMouseEnter = () => {
     setIsHover(true)
@@ -138,6 +143,10 @@ const DataCard = ({
   const handleMouseLeave = () => {
     setIsHover(false)
   }
+
+  useEffect(() => {
+    console.log("INFO ==>", info)
+  }, [info])
 
   return (
     <>
@@ -212,14 +221,21 @@ const DataCard = ({
               )}
               :{" "}
             </b>
-            {field.type === "LOOKUP"
-              ? getRelationFieldTableCellLabel(field, info, field.table_slug)
-              : field.type === "DATE_TIME"
-              ? dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
-              : info[field.slug]}
+            {field.type === "LOOKUP" ? (
+              getRelationFieldTableCellLabel(field, info, field.table_slug)
+            ) : field.type === "DATE_TIME" ? (
+              dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
+            ) : field.type === "MULTISELECT" ? (
+              <MultiselectCellColoredElement
+                style={{ padding: "2px 5px", marginBottom: 4 }}
+                value={info[field.slug]}
+                field={field}
+              />
+            ) : (
+              info[field.slug]
+            )}
           </div>
         ))}
-
         <CalendarStatusSelect
           view={view}
           fieldsMap={fieldsMap}

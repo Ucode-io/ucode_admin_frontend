@@ -1,7 +1,7 @@
 import { Close } from "@mui/icons-material"
 import { Autocomplete, TextField } from "@mui/material"
 import { useMemo } from "react"
-import { Controller } from "react-hook-form"
+import { Controller, useWatch } from "react-hook-form"
 import { useQuery } from "react-query"
 import useTabRouter from "../../hooks/useTabRouter"
 import constructorObjectService from "../../services/constructorObjectService"
@@ -43,6 +43,7 @@ const ManyToManyRelationFormElement = ({
               tableSlug={tableSlug}
               error={error}
               disabledHelperText={disabledHelperText}
+              control={control}
               {...autocompleteProps}
             />
           )}
@@ -73,6 +74,7 @@ const ManyToManyRelationFormElement = ({
                 tableSlug={tableSlug}
                 error={error}
                 disabledHelperText={disabledHelperText}
+                control={control}
               />
             )}
           />
@@ -89,15 +91,36 @@ const AutoCompleteElement = ({
   value,
   tableSlug,
   setValue,
+  control,
   error,
   disabledHelperText,
 }) => {
   const { navigateToForm } = useTabRouter()
 
+  const autoFilters = field?.attributes?.auto_filters
+
+  const autoFiltersFieldFroms = useMemo(() => {
+    return autoFilters?.map(el => el.field_from) ?? []
+  }, [autoFilters])
+
+  const filtersHandler = useWatch({
+    control,
+    name: autoFiltersFieldFroms
+  })
+
+  const autoFiltersValue = useMemo(() => {
+    const result = {}
+    filtersHandler?.forEach((value, index) => {
+      const key = autoFilters?.[index]?.field_to
+      if(key) result[key] = value
+    })
+    return result
+  }, [ autoFilters, filtersHandler ])
+
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug],
+    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue],
     () => {
-      return constructorObjectService.getList(tableSlug, { data: {} })
+      return constructorObjectService.getList(tableSlug, { data: autoFiltersValue })
     },
     {
       select: (res) => {

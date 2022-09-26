@@ -17,11 +17,15 @@ import HFTimePicker from "../FormElements/HFTimePicker"
 import DynamicRelationFormElement from "./DynamicRelationFormElement"
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement"
 import RelationFormElement from "./RelationFormElement"
+import { Parser } from "hot-formula-parser"
+
+const parser = new Parser()
 
 const FormElementGenerator = ({
   field = {},
   control,
   setFormValue,
+  formTableSlug,
   fieldsList,
   ...props
 }) => {
@@ -31,6 +35,20 @@ const FormElementGenerator = ({
     return field.slug
   }, [field.id, field.slug])
 
+  const defaultValue = useMemo(() => {
+    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values
+    
+    if (!defaultValue) return undefined
+
+    if(field.relation_type === "Many2One") return defaultValue[0]
+
+    if(field.type === "MULTISELECT" || field.id?.includes('#')) return defaultValue
+    
+    const { error, result } = parser.parse(defaultValue)
+
+    return error ? undefined : result
+  }, [field.attributes, field.type, field.id, field.relation_type])
+
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {
       return (
@@ -38,6 +56,7 @@ const FormElementGenerator = ({
           control={control}
           field={field}
           setFormValue={setFormValue}
+          defaultValue={defaultValue}
           {...props}
         />
       )
@@ -47,6 +66,7 @@ const FormElementGenerator = ({
           control={control}
           field={field}
           setFormValue={setFormValue}
+          defaultValue={defaultValue}
           {...props}
         />
       )
@@ -56,6 +76,8 @@ const FormElementGenerator = ({
           control={control}
           field={field}
           setFormValue={setFormValue}
+          formTableSlug={formTableSlug}
+          defaultValue={defaultValue}
           {...props}
         />
       )
@@ -72,7 +94,7 @@ const FormElementGenerator = ({
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -88,7 +110,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             mask={"(99) 999-99-99"}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -104,7 +126,7 @@ const FormElementGenerator = ({
             options={field?.attributes?.options}
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -137,7 +159,7 @@ const FormElementGenerator = ({
             width={"100%"}
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -151,7 +173,7 @@ const FormElementGenerator = ({
             name={computedSlug}
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -165,7 +187,7 @@ const FormElementGenerator = ({
             name={computedSlug}
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -181,7 +203,7 @@ const FormElementGenerator = ({
             type="number"
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -194,7 +216,7 @@ const FormElementGenerator = ({
           name={computedSlug}
           label={field.label}
           required={field.required}
-          defaultValue={field.defaultValue}
+          defaultValue={defaultValue}
           {...props}
         />
       )
@@ -209,7 +231,7 @@ const FormElementGenerator = ({
             required={field.required}
             field={field}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -222,7 +244,7 @@ const FormElementGenerator = ({
           name={computedSlug}
           label={field.label}
           required={field.required}
-          defaultValue={field.defaultValue}
+          defaultValue={defaultValue}
           {...props}
         />
       )
@@ -242,7 +264,7 @@ const FormElementGenerator = ({
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -255,7 +277,7 @@ const FormElementGenerator = ({
             control={control}
             name={computedSlug}
             required={field.required}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -268,7 +290,7 @@ const FormElementGenerator = ({
             control={control}
             name={computedSlug}
             required={field.required}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>
@@ -284,7 +306,7 @@ const FormElementGenerator = ({
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             InputProps={{
               readOnly: true,
               style: {
@@ -307,7 +329,7 @@ const FormElementGenerator = ({
             name={field.slug}
             fieldsList={fieldsList}
             field={field}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
           />
         </FRow>
       )
@@ -321,7 +343,7 @@ const FormElementGenerator = ({
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
+            defaultValue={defaultValue}
             type="color"
             {...props}
           />
@@ -337,10 +359,7 @@ const FormElementGenerator = ({
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
-            defaultValue={field.defaultValue}
-            InputProps={{
-              readOnly: field.type === "INCREMENT_ID",
-            }}
+            defaultValue={defaultValue}
             {...props}
           />
         </FRow>

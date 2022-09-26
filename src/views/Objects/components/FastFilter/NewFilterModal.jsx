@@ -1,0 +1,192 @@
+import { useEffect, useMemo } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useFieldArray, useForm } from "react-hook-form"
+import { useParams } from "react-router-dom"
+import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined"
+import { Clear } from "@mui/icons-material"
+import { Checkbox, Popover } from "@mui/material"
+
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
+import { filterActions } from "../../../../store/filter/filter.slice"
+import { PinFilled, PlusIcon } from "../../../../assets/icons/icon"
+import HFSelect from "../../../../components/FormElements/HFSelect"
+import useFilters from "../../../../hooks/useFilters"
+import { Filter } from "../FilterGenerator"
+import styles from "./style.module.scss"
+ 
+const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
+  const { new_list } = useSelector((s) => s.filter)
+  const { tableSlug } = useParams()
+  const dispatch = useDispatch()
+  const { filters } = useFilters(tableSlug, view.id)
+  const { control, watch, reset } = useForm({
+    defaultValues: {
+      new: [
+        {
+          checked: false,
+          left_field: "",
+          right_field: "",
+        },
+      ],
+    },
+  })
+
+  const onChange = (value, name) => {
+    dispatch(
+      filterActions.setFilter({
+        tableSlug: tableSlug,
+        viewId: view.id,
+        name,
+        value,
+      })
+    )
+  }
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "new",
+  })
+
+  const computedOptions = useMemo(() => {
+    return Object.values(fieldsMap ?? {})
+      ?.filter((i) => !view?.quick_filters?.find((j) => i.id === j.field_id))
+      ?.map((i) => ({ ...i, value: i.id }))
+  }, [fieldsMap])
+
+  const isAddBtnDisabled = useMemo(() => {
+    return fields.length === computedOptions.length
+  }, [fields, computedOptions])
+
+  useEffect(() => {
+    reset({
+      new: new_list[tableSlug]?.map((i) => ({
+        checked: i.checked,
+        left_field: i.id,
+      })),
+    })
+  }, [new_list])
+
+  const open = Boolean(anchorEl)
+  const id = open ? "simple-popover" : undefined
+
+  return (
+    <div>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={() => {
+          handleClose()
+        }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        <div className={styles.new_modal}>
+          {fields.map((field, index) => (
+            <div key={field.id} className={styles.new_modal_item}>
+              <Checkbox
+                checked={watch(`new.${index}.checked`)}
+                checkedIcon={<PinFilled />}
+                icon={<PushPinOutlinedIcon />}
+                disabled={!watch(`new.${index}.left_field`)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    view?.quick_filters?.push({
+                      field_id: watch(`new.${index}.left_field`),
+                      default_value: "",
+                    })
+                  } else {
+                    view.quick_filters = view?.quick_filters?.filter(
+                      (i) => i.field_id !== watch(`new.${index}.left_field`)
+                    )
+                  }
+
+                  dispatch(
+                    filterActions.setNewFilter({
+                      tableSlug,
+                      fieldId: watch(`new.${index}.left_field`),
+                      checked: e.target.checked,
+                    })
+                  )
+                }}
+                name={`new.${index}.checked`}
+              />
+              <HFSelect
+                control={control}
+                options={computedOptions}
+                onChange={(e) => {
+                  if (e) {
+                    dispatch(
+                      filterActions.setNewFilter({
+                        tableSlug,
+                        fieldId: e,
+                        checked: watch(`new.${index}.checked`),
+                      })
+                    )
+                  }
+                }}
+                name={`new.${index}.left_field`}
+              />
+              <Filter
+                disabled
+                field={
+                  watch(`new.${index}.left_field`)
+                    ? fieldsMap[watch(`new.${index}.left_field`)]
+                    : ""
+                }
+                name={
+                  fieldsMap[watch(`new.${index}.left_field`)]?.path_slug ??
+                  fieldsMap[watch(`new.${index}.left_field`)]?.slug
+                }
+                onChange={onChange}
+                filters={filters}
+                tableSlug={tableSlug}
+              />
+              <RectangleIconButton
+                color="white"
+                onClick={() => {
+                  if (
+                    view?.quick_filters?.find((i) =>
+                      watch(`new.${index}.left_field`)
+                    )
+                  ) {
+                    view.quick_filters = view.quick_filters.filter(
+                      (i) => i.field_id !== watch(`new.${index}.left_field`)
+                    )
+                  }
+                  if (watch(`new.${index}.left_field`))
+                    dispatch(
+                      filterActions.clearNewFilter({
+                        tableSlug,
+                        fieldId: watch(`new.${index}.left_field`),
+                      })
+                    )
+                  remove(index)
+                }}
+              >
+                <Clear />
+              </RectangleIconButton>
+            </div>
+          ))}
+          <div
+            className={`${styles.add_btn} ${
+              isAddBtnDisabled ? styles.disabled : ""
+            }`}
+            onClick={() =>
+              isAddBtnDisabled
+                ? null
+                : append({ checked: false, left_field: "", right_field: "" })
+            }
+          >
+            <PlusIcon />
+            Добавить
+          </div>
+        </div>
+      </Popover>
+    </div>
+  )
+}
+
+export default NewFilterModal

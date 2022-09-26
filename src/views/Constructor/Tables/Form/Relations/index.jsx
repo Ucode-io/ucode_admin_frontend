@@ -37,7 +37,6 @@ const Relations = ({ mainForm, getRelationFields }) => {
 
   const openEditForm = (field, index) => {
     setDrawerState(field)
-
   }
 
   const deleteField = (field, index) => {

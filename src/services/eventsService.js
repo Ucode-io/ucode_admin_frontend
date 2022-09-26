@@ -6,7 +6,7 @@ const eventService = {
   update: (data) => request.put('/event', data),
   create: (data) => request.post('/event', data),
   delete: (id) => request.delete(`/event/${id}`),
-  getById: (id) => request.get(`/event/${id}`),
+  getById: ({id}) => request.get(`/event/${id}`),
 }
 
 export default eventService;

@@ -7,34 +7,39 @@ import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton"
 import FRow from "../../../../../components/FormElements/FRow"
-import HFCheckbox from "../../../../../components/FormElements/HFCheckbox"
 import HFIconPicker from "../../../../../components/FormElements/HFIconPicker"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
+import HFSwitch from "../../../../../components/FormElements/HFSwitch"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import constructorFieldService from "../../../../../services/constructorFieldService"
 import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes"
 import { generateGUID } from "../../../../../utils/generateID"
 import listToOptions from "../../../../../utils/listToOptions"
 import Attributes from "./Attributes"
+import DefaultValueBlock from "./Attributes/DefaultValueBlock"
 import styles from "./style.module.scss"
 
-const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, onSubmit=()=>{} }) => {
+const FieldSettings = ({
+  closeSettingsBlock,
+  mainForm,
+  field,
+  formType,
+  height,
+  onSubmit = () => {},
+}) => {
   const { id } = useParams()
   const { handleSubmit, control, reset, watch } = useForm()
   const [formLoader, setFormLoader] = useState(false)
-  
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields")
     const index = fields.findIndex((el) => el.id === field.id)
-
 
     mainForm.setValue(`fields[${index}]`, field)
     onSubmit(index, field)
   }
 
   const prepandFieldInForm = (field) => {
-
     const fields = mainForm.getValues("fields") ?? []
     mainForm.setValue(`fields`, [field, ...fields])
   }
@@ -66,7 +71,6 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
   }
 
   const updateField = (field) => {
-
     if (!id) {
       updateFieldInform(field)
       closeSettingsBlock()
@@ -83,7 +87,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
   }
 
   const submitHandler = (values) => {
-    if(formType === "CREATE") createField(values)
+    if (formType === "CREATE") createField(values)
     else updateField(values)
   }
 
@@ -123,31 +127,26 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
   )
 
   useEffect(() => {
+    const values = {
+      attributes: {},
+      default: "",
+      index: "string",
+      label: "",
+      required: false,
+      slug: "",
+      table_id: id,
+      type: "",
+    }
+
     if (formType !== "CREATE") {
       reset({
-        attributes: {},
-        default: "",
-        index: "string",
-        label: "",
-        required: false,
-        slug: "",
-        table_id: id,
-        type: "",
+        ...values,
         ...field,
       })
     } else {
-      reset({
-        attributes: {},
-        default: "",
-        index: "string",
-        label: "",
-        required: false,
-        slug: "",
-        table_id: id,
-        type: "",
-      })
+      reset(values)
     }
-  }, [field])
+  }, [field, formType, id, reset])
 
   return (
     <div className={styles.settingsBlock}>
@@ -166,7 +165,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
         >
           <div className="p-2">
             <FRow label="Field Label and icon" required>
-              <div className="flex align-center gap-1" >
+              <div className="flex align-center gap-1">
                 <HFIconPicker
                   control={control}
                   name="attributes.icon"
@@ -218,24 +217,15 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
           <div className="p-2">
             <FRow label="Placeholder">
               <HFTextField
-                autoFocus
                 fullWidth
                 name="attributes.placeholder"
                 control={control}
               />
             </FRow>
 
-            {/* <FRow label="Allowed number of characters">
-              <HFTextField
-                fullWidth
-                name="attributes.maxLength"
-                control={control}
-                type="number"
-                min={0}
-              />
-            </FRow> */}
+            <DefaultValueBlock control={control} />
 
-            <HFCheckbox
+            <HFSwitch
               control={control}
               name="attributes.showTooltip"
               label="Show tooltip"
@@ -258,8 +248,8 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
           </div>
 
           <div className="p-2">
-            <HFCheckbox control={control} name="required" label="Required" />
-            <HFCheckbox
+            <HFSwitch control={control} name="required" label="Required" />
+            <HFSwitch
               control={control}
               name="unique"
               label="Avoid duplicate values"

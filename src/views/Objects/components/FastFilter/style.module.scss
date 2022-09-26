@@ -1,9 +1,8 @@
-
 .filtersBlock {
   display: flex;
   align-items: center;
   gap: 10px;
-  
+
   .filter {
     min-width: 180px;
   }
@@ -26,12 +25,11 @@
     display: flex;
     align-items: center;
     padding: 5px 12px;
-    box-shadow: inset 0px -1px 0px #E5E9EB;
+    box-shadow: inset 0px -1px 0px #e5e9eb;
     min-width: 300px;
     gap: 8px;
     background-color: #fff;
-    
-    
+
     .dragIcon {
       cursor: grab;
     }
@@ -40,5 +38,31 @@
       flex: 1;
     }
   }
+}
 
+.new_modal {
+  min-width: 700px;
+  padding: 16px 24px;
+  &_item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .add_btn {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s ease;
+    width: fit-content;
+    cursor: pointer;
+    &:hover {
+      color: #0e73f6;
+    }
+    &.disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
 }

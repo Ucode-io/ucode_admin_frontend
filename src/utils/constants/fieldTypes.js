@@ -103,11 +103,10 @@ export const fieldTypesOptions = [
   {
     label: 'Select',
     options: [
-      {
-        // icon: "square-check.svg",
-        label: "Picklist",
-        value: "PICK_LIST"
-      },
+      // {
+      //   label: "Picklist",
+      //   value: "PICK_LIST"
+      // },
       {
         icon: "list-check.svg",
         label: "Multi select",

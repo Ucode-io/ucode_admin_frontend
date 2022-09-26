@@ -22,17 +22,17 @@ mark-as-production-image:
 
 build-image-staging:
 	docker build --rm -t ${REGISTRY}/${PROJECT_NAME}/${APP}:albatta-${TAG} . -f Dockerfile-albatta-test
-	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:albatta-${ENV_TAG}
+	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:albatta-${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:albatta-${ENV_TAG}
 	docker build --rm -t ${REGISTRY}/${PROJECT_NAME}/${APP}:editory-${TAG} . -f Dockerfile-editory-test
-	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:editory-${ENV_TAG}
+	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:editory-${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:editory-${ENV_TAG}
 	docker build --rm -t ${REGISTRY}/${PROJECT_NAME}/${APP}:parfume-${TAG} . -f Dockerfile-parfume-test
-	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:parfume-${ENV_TAG}
+	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:parfume-${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:parfume-${ENV_TAG}
 	docker build --rm -t ${REGISTRY}/${PROJECT_NAME}/${APP}:medion-${TAG} . -f Dockerfile-medion-test
-	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:medion-${ENV_TAG}
+	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:medion-${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:medion-${ENV_TAG}
 
 build-image-prod:
 	docker build --rm -t ${REGISTRY}/${PROJECT_NAME}/${APP}:medion-${TAG} . -f Dockerfile-medion-prod
-	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:medion-${ENV_TAG}
+	docker tag ${REGISTRY}/${PROJECT_NAME}/${APP}:medion-${TAG} ${REGISTRY}/${PROJECT_NAME}/${APP}:medion-${ENV_TAG}
 
 build-image:
 	docker build --rm -t ${REGISTRY}/${PROJECT_NAME}/${APP}:${TAG} .

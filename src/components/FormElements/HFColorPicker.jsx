@@ -1,4 +1,3 @@
-import { FormHelperText } from "@mui/material"
 import { Controller } from "react-hook-form"
 import ColorPicker from "../ColorPicker"
 

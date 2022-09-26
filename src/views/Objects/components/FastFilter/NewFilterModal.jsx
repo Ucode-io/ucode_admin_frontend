@@ -48,10 +48,10 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
   })
 
   const computedOptions = useMemo(() => {
-    return Object.values(fieldsMap)
+    return Object.values(fieldsMap ?? {})
       ?.filter((i) => !view?.quick_filters?.find((j) => i.id === j.field_id))
       ?.map((i) => ({ ...i, value: i.id }))
-  }, [])
+  }, [fieldsMap])
 
   const isAddBtnDisabled = useMemo(() => {
     return fields.length === computedOptions.length

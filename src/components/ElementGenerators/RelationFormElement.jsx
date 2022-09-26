@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"
 import { useMemo } from "react"
 import { Controller, useWatch } from "react-hook-form"
 import { useQuery } from "react-query"
-import { useParams } from "react-router-dom"
 
 import useDebounce from "../../hooks/useDebounce"
 import useTabRouter from "../../hooks/useTabRouter"
@@ -25,9 +24,10 @@ const RelationFormElement = ({
   disabledHelperText,
   setFormValue,
   formTableSlug,
+  defaultValue=null,
   ...props
 }) => {
-  
+
   const tableSlug = useMemo(() => {
     if(field.relation_type === "Recursive") return formTableSlug
     return field.id.split("#")?.[0] ?? ""
@@ -40,10 +40,10 @@ const RelationFormElement = ({
         <Controller
           control={control}
           name={field.slug ?? `${tableSlug}_id`}
-          defaultValue={null}
+          defaultValue={defaultValue}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <AutoCompleteElement
-              value={value}
+              value={Array.isArray(value) ? value[0] : value}
               setValue={onChange}
               field={field}
               tableSlug={tableSlug}
@@ -71,10 +71,10 @@ const RelationFormElement = ({
           <Controller
             control={control}
             name={`${tableSlug}_id`}
-            defaultValue={null}
+            defaultValue={defaultValue}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <AutoCompleteElement
-                value={value}
+                value={Array.isArray(value) ? value[0] : value}
                 setValue={onChange}
                 field={field}
                 tableSlug={tableSlug}
@@ -91,8 +91,6 @@ const RelationFormElement = ({
 }
 
 // ============== AUTOCOMPLETE ELEMENT =====================
-
-const slugs = ['date']
 
 const AutoCompleteElement = ({
   field,

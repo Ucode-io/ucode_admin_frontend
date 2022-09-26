@@ -80,7 +80,7 @@ const ViewsWithGroups = ({
         extra={
           <>
             <FastFilterButton view={view} fieldsMap={fieldsMap} />
-            <ExcelButtons />
+            <ExcelButtons fieldsMap={fieldsMap} />
             {view.type === "TABLE" && (
               <RectangleIconButton
                 color="white"

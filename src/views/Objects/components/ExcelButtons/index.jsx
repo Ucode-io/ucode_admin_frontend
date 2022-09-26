@@ -1,9 +1,9 @@
 import ExcelDownloadButton from "./ExcelDownloadButton";
 import ExcelUploadButton from "./ExcelUploadButton";
 
-const ExcelButtons = () => {
+const ExcelButtons = ({ fieldsMap }) => {
   return ( <>
-    <ExcelUploadButton />
+    <ExcelUploadButton fieldsMap={fieldsMap} />
     <ExcelDownloadButton />
   </>);
 }

@@ -5,6 +5,7 @@ WORKDIR /app
 
 COPY . ./
 RUN rm -rf builder_config && mv builder_config_albatta builder_config
+RUN ls -la
 RUN mv .env.staging.albatta .env
 RUN yarn install --network-timeout 1000000000
 

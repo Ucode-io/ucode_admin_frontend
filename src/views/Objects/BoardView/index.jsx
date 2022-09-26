@@ -2,6 +2,7 @@ import { Download, Upload } from "@mui/icons-material"
 import { useId } from "react"
 import { useState } from "react"
 import { useQuery } from "react-query"
+import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { Container, Draggable } from "react-smooth-dnd"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
@@ -29,7 +30,9 @@ const BoardView = ({
   fieldsMap,
 }) => {
   const { tableSlug } = useParams()
+  const { new_list } = useSelector((state) => state.filter)
   const id = useId()
+
   const [columns, setColumns] = useState([])
   const { navigateToForm } = useTabRouter()
   const { filters } = useFilters(tableSlug, view.id)
@@ -40,8 +43,9 @@ const BoardView = ({
       return constructorObjectService.getList(tableSlug, {
         data: filters ?? {},
       })
-    }, {
-      select: ({data}) => data.response ?? [],
+    },
+    {
+      select: ({ data }) => data.response ?? [],
     }
   )
 
@@ -64,7 +68,6 @@ const BoardView = ({
 
   return (
     <div>
-       
       <FiltersBlock
         extra={
           <>
@@ -83,50 +86,50 @@ const BoardView = ({
           setViews={setViews}
         />
       </FiltersBlock>
-{/* <FastFilter fieldsMap={fieldsMap} view={view} /> */}
+      {/* <FastFilter fieldsMap={fieldsMap} view={view} /> */}
       {loader ? (
         <PageFallback />
       ) : (
         <div className={styles.wrapper}>
-            {
-        view?.quick_filters?.length > 0 &&
-        <div className={styles.filters}>
-          <p>Фильтры</p>
-          <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+          {(view?.quick_filters?.length > 0 ||
+            (new_list[tableSlug] &&
+              new_list[tableSlug].some((i) => i.checked))) && (
+            <div className={styles.filters}>
+              <p>Фильтры</p>
+              <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+            </div>
+          )}
+
+          <div className={styles.board}>
+            <Container
+              lockAxis="x"
+              onDrop={onDrop}
+              orientation="horizontal"
+              dragHandleSelector=".column-header"
+              dragClass="drag-card-ghost"
+              dropClass="drag-card-ghost-drop"
+              dropPlaceholder={{
+                animationDuration: 150,
+                showOnTop: true,
+                className: "drag-cards-drop-preview",
+              }}
+              style={{ display: "flex", gap: 24 }}
+            >
+              {tabs?.map((tab) => (
+                <Draggable key={tab.value}>
+                  <BoardColumn
+                    key={tab.value}
+                    tab={tab}
+                    data={data}
+                    fieldsMap={fieldsMap}
+                    view={view}
+                    navigateToCreatePage={navigateToCreatePage}
+                  />
+                </Draggable>
+              ))}
+            </Container>
+          </div>
         </div>
-       }
-         
-        <div className={styles.board}>
-        
-          <Container
-            lockAxis="x"
-            onDrop={onDrop}
-            orientation="horizontal"
-            dragHandleSelector=".column-header"
-            dragClass="drag-card-ghost"
-            dropClass="drag-card-ghost-drop"
-            dropPlaceholder={{
-              animationDuration: 150,
-              showOnTop: true,
-              className: "drag-cards-drop-preview",
-            }}
-            style={{ display: "flex", gap: 24 }}
-          >
-            {tabs?.map((tab) => (
-              <Draggable key={tab.value}>
-                <BoardColumn
-                  key={tab.value}
-                  tab={tab}
-                  data={data}
-                  fieldsMap={fieldsMap}
-                  view={view}
-                  navigateToCreatePage={navigateToCreatePage}
-                />
-              </Draggable>
-            ))}
-          </Container>
-        </div>
-       </div>
       )}
     </div>
   )

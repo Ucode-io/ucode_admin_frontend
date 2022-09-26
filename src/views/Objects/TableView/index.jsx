@@ -9,10 +9,12 @@ import DataTable from "../../../components/DataTable"
 import useFilters from "../../../hooks/useFilters"
 import FastFilter from "../components/FastFilter"
 import styles from "./styles.module.scss"
+import { useSelector } from "react-redux"
 
 const TableView = ({ tab, view, fieldsMap, isDocView, ...props }) => {
   const { navigateToForm } = useTabRouter()
   const { tableSlug } = useParams()
+  const { new_list } = useSelector((state) => state.filter)
 
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id)
 
@@ -74,7 +76,9 @@ const TableView = ({ tab, view, fieldsMap, isDocView, ...props }) => {
 
   return (
     <div className={styles.wrapper}>
-      {view?.quick_filters?.length > 0 && (
+      {(view?.quick_filters?.length > 0 ||
+        (new_list[tableSlug] &&
+          new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>Фильтры</p>
           <FastFilter view={view} fieldsMap={fieldsMap} isVertical />

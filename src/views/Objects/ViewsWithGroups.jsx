@@ -74,6 +74,7 @@ const ViewsWithGroups = ({
     queryGenerator(groupField, filters)
   )
 
+
   return (
     <>
       <FiltersBlock
@@ -169,12 +170,14 @@ const ViewsWithGroups = ({
                       filters={filters}
                       view={view}
                       fieldsMap={fieldsMap}
+                      tab={tab}
                     />
                   ) : (
                     <TableView
                       filters={filters}
                       view={view}
                       fieldsMap={fieldsMap}
+                      tab={tab}
                     />
                   )}
                 </TabPanel>
@@ -207,6 +210,8 @@ const ViewsWithGroups = ({
 }
 
 const queryGenerator = (groupField, filters = {}) => {
+
+  
   if (!groupField)
     return {
       queryFn: () => {},
@@ -227,7 +232,7 @@ const queryGenerator = (groupField, filters = {}) => {
     }
   }
 
-  if (groupField?.type === "LOOKUP") {
+  if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
     const queryFn = () =>
       constructorObjectService.getList(groupField.table_slug, {
         data: computedFilters ?? {},

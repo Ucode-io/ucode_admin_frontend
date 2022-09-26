@@ -60,5 +60,9 @@
     &:hover {
       color: #0e73f6;
     }
+    &.disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
   }
 }

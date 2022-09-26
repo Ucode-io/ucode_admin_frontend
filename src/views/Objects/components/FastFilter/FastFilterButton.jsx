@@ -2,6 +2,7 @@ import { Close, FilterAlt } from "@mui/icons-material"
 import { Typography } from "@mui/material"
 import { useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
+
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
 import TableOrderingButton from "../../../../components/TableOrderingButton"
 import useFilters from "../../../../hooks/useFilters"
@@ -36,8 +37,7 @@ const FastFilterButton = ({ view, fieldsMap }) => {
         color="white"
         size={!!selectedFiltersNumber ? "long" : ""}
       >
-        {/* onClick={(e) => setAnchorEl(e.target)} */}
-        <span>
+        <span onClick={(e) => setAnchorEl(e.target)}>
           <FilterAlt
             style={{ marginTop: 5 }}
             color={!!selectedFiltersNumber ? "primary" : ""}

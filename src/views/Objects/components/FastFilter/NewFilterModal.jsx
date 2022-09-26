@@ -14,7 +14,7 @@ import { Filter } from "../FilterGenerator"
 import styles from "./style.module.scss"
 import { filterActions } from "../../../../store/filter/filter.slice"
 import HFCheckbox from "../../../../components/FormElements/HFCheckbox"
-
+ 
 const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
   const { tableSlug } = useParams()
   const dispatch = useDispatch()

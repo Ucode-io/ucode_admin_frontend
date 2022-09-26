@@ -165,7 +165,6 @@ const RelationTable = ({
           pagesCount={pageCount}
           currentPage={currentPage}
           onRowClick={navigateToEditPage}
-          
           onDeleteClick={deleteHandler}
           onPaginationChange={setCurrentPage}
           paginationExtraButton={id && <SecondaryButton onClick={navigateToTablePage} >Все</SecondaryButton>}
@@ -173,7 +172,7 @@ const RelationTable = ({
           createFormVisible={createFormVisible[relation.id]}
           setCreateFormVisible={(val) => setCreateFormVisible(relation.id, val)}
           limit={limit}
-          onLimitChange={setLimit}
+          setLimit={setLimit}
           summaries={relation.summaries}
         />
       </div>

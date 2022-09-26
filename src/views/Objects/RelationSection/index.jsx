@@ -66,13 +66,11 @@ const RelationSection = ({ relations }) => {
         <ManyToManyRelationCreateModal
           relation={selectedManyToManyRelation}
           closeModal={() => setSelectedManyToManyRelation(null)}
-          // onCreate={refetch}
         />
       )}
       {relations.length ? (
         <Card className={styles.card}>
           <Tabs
-            // forceRenderTabPanel
             selectedIndex={selectedTabIndex}
             onSelect={setSelectedTabIndex}
           >
@@ -80,15 +78,15 @@ const RelationSection = ({ relations }) => {
               <TabList className={styles.tabList}>
                 {relations?.map((relation, index) => (
                   <Tab key={index}>
-                    {relation?.view_relation_type === "FILE" ? (
+                    {/* {relation?.view_relation_type === "FILE" ? (
                       <>
                         <InsertDriveFile /> Файлы
                       </>
-                    ) : (
+                    ) : ( */}
                       <div className="flex align-center gap-2 text-nowrap">
                         <IconGenerator icon={relation?.icon} /> {relation.title}
                       </div>
-                    )}
+                    {/* )} */}
                   </Tab>
                 ))}
               </TabList>
@@ -102,21 +100,21 @@ const RelationSection = ({ relations }) => {
 
             {relations?.map((relation) => (
               <TabPanel key={relation.id}>
-                {relation?.relatedTable === "file" ? (
+                {/* {relation?.relatedTable === "file" ? (
                   <FilesSection
                     relation={relation}
                     key={relation.id}
                     createFormVisible={relationsCreateFormVisible}
                     setCreateFormVisible={setCreateFormVisible}
                   />
-                ) : (
+                ) : ( */}
                   <RelationTable
                     key={relation.id}
                     relation={relation}
                     createFormVisible={relationsCreateFormVisible}
                     setCreateFormVisible={setCreateFormVisible}
                   />
-                )}
+                {/* )} */}
               </TabPanel>
             ))}
           </Tabs>

@@ -199,7 +199,7 @@ const FilesSection = ({
           disableFilters
           dataLength={1}
           limit={limit}
-          onLimitChange={setLimit}
+          setLimit={setLimit}
           onPaginationChange={setCurrentPage}
           onDeleteClick={deleteMutation}
           onFormSubmit={relation.is_editable && onFormSubmit}

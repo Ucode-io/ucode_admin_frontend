@@ -5,14 +5,14 @@ import EmptyDataComponent from "../EmptyDataComponent"
 import TableLoader from "../TableLoader/index"
 import "./style.scss"
 
-export const CTable = ({ children, count, page, setCurrentPage, removableHeight = 186, disablePagination, loader, tableStyle={}, wrapperStyle={}, paginationExtraButton, limit, onLimitChange }) => {
+export const CTable = ({ children, count, page, setCurrentPage, removableHeight = 186, disablePagination, loader, tableStyle={}, wrapperStyle={}, paginationExtraButton, limit, setLimit }) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
       <div className="table" style={{ height: removableHeight ? `calc(100vh - ${removableHeight}px)` : 'auto', overflow: loader ? 'hidden' : 'auto', ...tableStyle}} >
         <table id="resizeMe">{children}</table>
       </div>
       
-      {!disablePagination && <CPagination count={count} page={page} setCurrentPage={setCurrentPage} paginationExtraButton={paginationExtraButton} limit={limit} onLimitChange={onLimitChange} />}
+      {!disablePagination && <CPagination count={count} page={page} setCurrentPage={setCurrentPage} paginationExtraButton={paginationExtraButton} limit={limit} setLimit={setLimit} />}
     </Paper>
   )
 }

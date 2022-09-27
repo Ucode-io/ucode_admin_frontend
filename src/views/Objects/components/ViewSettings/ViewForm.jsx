@@ -247,7 +247,7 @@ const getInitialValues = (
           ? [...columns, ...relationColumns]
           : columns
       ) ?? [],
-    group_fields: computeGroupFields(initialValues?.group_fields),
+    group_fields: computeGroupFields(initialValues?.group_fields, columns),
     table_slug: tableSlug,
     id: initialValues?.id,
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",

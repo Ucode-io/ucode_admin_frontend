@@ -1,4 +1,4 @@
-import { Close } from "@mui/icons-material"
+import { Close, Create } from "@mui/icons-material"
 import {
   Autocomplete,
   FormControl,
@@ -6,9 +6,14 @@ import {
   InputLabel,
   TextField,
 } from "@mui/material"
+import { useEffect } from "react"
 import { useMemo } from "react"
-import { Controller } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
+import CreateButton from "../Buttons/CreateButton"
+import SaveButton from "../Buttons/SaveButton"
 import IconGenerator from "../IconPicker/IconGenerator"
+import HFColorPicker from "./HFColorPicker"
+import HFIconPicker from "./HFIconPicker"
 import styles from "./style.module.scss"
 
 const HFMultipleAutocomplete = ({
@@ -22,10 +27,11 @@ const HFMultipleAutocomplete = ({
   onChange = () => {},
   field,
   rules = {},
-  defaultValue="",
+  defaultValue = "",
+  disabled,
   ...props
 }) => {
-  const options = field.attributes?.options ?? []
+  const options = [{label: 'zafar', value: 'zafar'}]
 
   const hasColor = field.attributes?.has_color
   const hasIcon = field.attributes?.has_icon
@@ -56,6 +62,7 @@ const HFMultipleAutocomplete = ({
             disabledHelperText={disabledHelperText}
             error={error}
             isMultiSelect={isMultiSelect}
+            disabled={disabled}
           />
         )
       }}
@@ -73,22 +80,25 @@ const AutoCompleteElement = ({
   onFormChange,
   disabledHelperText,
   error,
-  isMultiSelect
+  isMultiSelect,
+  disabled,
 }) => {
   const computedValue = useMemo(() => {
-    if(!Array.isArray(value) || !value?.length) return []
+    if (!Array.isArray(value) || !value?.length) return []
 
-    if(isMultiSelect) return value?.map((el) => options?.find((option) => option.value === el)) ?? []
-    else return [options?.find(option => option.value === value[0])] ?? []
-
+    if (isMultiSelect)
+      return (
+        value?.map((el) => options?.find((option) => option.value === el)) ?? []
+      )
+    else return [options?.find((option) => option.value === value[0])] ?? []
   }, [value, options, isMultiSelect])
 
   const changeHandler = (e, values) => {
-    if(!values?.length) {
+    if (!values?.length) {
       onFormChange([])
       return
     }
-    if(isMultiSelect) onFormChange(values?.map((el) => el.value))
+    if (isMultiSelect) onFormChange(values?.map((el) => el.value))
     else onFormChange([values[values?.length - 1]?.value] ?? [])
   }
 
@@ -99,10 +109,12 @@ const AutoCompleteElement = ({
         multiple
         value={computedValue}
         options={options}
-        getOptionLabel={(option) => option?.value}
+        getOptionLabel={(option) => option?.label ?? option?.value}
         isOptionEqualToValue={(option, value) => option?.value === value?.value}
         onChange={changeHandler}
         renderInput={(params) => <TextField {...params} size="small" />}
+        noOptionsText={'No options'}
+        disabled={disabled}
         renderTags={(values, getTagProps) => (
           <div className={styles.valuesWrapper}>
             {values?.map((el, index) => (
@@ -116,7 +128,7 @@ const AutoCompleteElement = ({
                 }
               >
                 {hasIcon && <IconGenerator icon={el?.icon} />}
-                <p className={styles.value}>{el?.value}</p>
+                <p className={styles.value}>{el?.label ?? el?.value}</p>
                 <Close
                   fontSize="10"
                   onClick={getTagProps({ index })?.onDelete}
@@ -130,6 +142,31 @@ const AutoCompleteElement = ({
         <FormHelperText error>{error?.message}</FormHelperText>
       )}
     </FormControl>
+  )
+}
+
+const AddOptionBlock = () => {
+  const { control } = useForm()
+
+  return (
+    <div
+      className="flex align-center gap-2"
+      onMouseDown={(event) => {
+        // Prevent blur
+        event.preventDefault()
+      }}
+    >
+      <HFColorPicker
+        control={control}
+        name="color"
+        onClick={(e) => {
+          e.stopPropagation()
+          e.preventDefault()
+        }}
+      />
+      <HFIconPicker shape="rectangle" control={control} name="icon" />
+      <CreateButton />
+    </div>
   )
 }
 

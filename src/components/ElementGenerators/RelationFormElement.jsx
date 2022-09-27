@@ -164,7 +164,7 @@ const AutoCompleteElement = ({
   const changeHandler = (value) => {
     const val = value?.[value?.length - 1]
     setValue(val?.guid ?? null)
-    setLocalValue(val ? [val] : [])
+    setLocalValue(val ? [val] : null)
 
     if (!field?.attributes?.autofill) return
     
@@ -172,8 +172,6 @@ const AutoCompleteElement = ({
       setFormValue(field_to, val?.[field_from])
     })
   }
-
-  console.log("OPTIONS ===>", options)
 
     useEffect(() => {
       if(value) getValueData()
@@ -190,7 +188,7 @@ const AutoCompleteElement = ({
 
       <Autocomplete
         options={options ?? []}
-        value={localValue}
+        value={localValue ?? []}
         freeSolo
         onChange={(event, newValue) => {
           changeHandler(newValue)
@@ -214,7 +212,6 @@ const AutoCompleteElement = ({
         getOptionLabel={(option) => getRelationFieldLabel(field, option)}
         multiple
         isOptionEqualToValue={(option, value) => {
-          console.log("OPTION ==>", option, value)
           return option.guid === value.guid
         }}
         renderInput={(params) => <TextField {...params} size="small" />}

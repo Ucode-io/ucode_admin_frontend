@@ -194,12 +194,12 @@ const FilesSection = ({
           columns={columns}
           pagesCount={pageCount}
           loader={isLoading || deleteLoading}
-          removableHeight={false}
+          removableHeight={290}
           currentPage={1}
           disableFilters
           dataLength={1}
           limit={limit}
-          onLimitChange={setLimit}
+          setLimit={setLimit}
           onPaginationChange={setCurrentPage}
           onDeleteClick={deleteMutation}
           onFormSubmit={relation.is_editable && onFormSubmit}

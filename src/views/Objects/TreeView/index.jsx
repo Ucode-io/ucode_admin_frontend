@@ -1,6 +1,8 @@
 import { useEffect, useMemo } from "react"
 import { useState } from "react"
+import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
+
 import PageFallback from "../../../components/PageFallback"
 import constructorObjectService from "../../../services/constructorObjectService"
 import FastFilter from "../components/FastFilter"
@@ -9,6 +11,8 @@ import styles from "./style.module.scss"
 
 const TreeView = ({ groupField, fieldsMap, group, view }) => {
   const { tableSlug } = useParams()
+  const { new_list } = useSelector((state) => state.filter)
+
   const [tableLoader, setTableLoader] = useState(true)
   const [data, setData] = useState([])
 
@@ -48,7 +52,9 @@ const TreeView = ({ groupField, fieldsMap, group, view }) => {
 
   return (
     <div>
-      {view?.quick_filters?.length > 0 && (
+      {(view?.quick_filters?.length > 0 ||
+        (new_list[tableSlug] &&
+          new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>Фильтры</p>
           <FastFilter view={view} fieldsMap={fieldsMap} isVertical />

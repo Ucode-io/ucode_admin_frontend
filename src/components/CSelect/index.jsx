@@ -21,7 +21,7 @@ const CSelect = ({
   ...props
 }) => {
   return (
-    <FormControl style={{ width }}>
+    <FormControl style={{ width, }}>
       <InputLabel size="small">{label}</InputLabel>
       <Select
         value={value || ""}

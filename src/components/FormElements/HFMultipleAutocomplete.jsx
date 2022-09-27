@@ -31,7 +31,7 @@ const HFMultipleAutocomplete = ({
   disabled,
   ...props
 }) => {
-  const options = [{label: 'zafar', value: 'zafar'}]
+  const options = field.attributes?.options ?? []
 
   const hasColor = field.attributes?.has_color
   const hasIcon = field.attributes?.has_icon

@@ -1,4 +1,4 @@
-import { Close } from "@mui/icons-material"
+import { Close, Create } from "@mui/icons-material"
 import {
   Autocomplete,
   FormControl,
@@ -6,9 +6,14 @@ import {
   InputLabel,
   TextField,
 } from "@mui/material"
+import { useEffect } from "react"
 import { useMemo } from "react"
-import { Controller } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
+import CreateButton from "../Buttons/CreateButton"
+import SaveButton from "../Buttons/SaveButton"
 import IconGenerator from "../IconPicker/IconGenerator"
+import HFColorPicker from "./HFColorPicker"
+import HFIconPicker from "./HFIconPicker"
 import styles from "./style.module.scss"
 
 const HFMultipleAutocomplete = ({
@@ -103,6 +108,7 @@ const AutoCompleteElement = ({
         isOptionEqualToValue={(option, value) => option?.value === value?.value}
         onChange={changeHandler}
         renderInput={(params) => <TextField {...params} size="small" />}
+        noOptionsText={<AddOptionBlock />}
         renderTags={(values, getTagProps) => (
           <div className={styles.valuesWrapper}>
             {values?.map((el, index) => (
@@ -131,6 +137,24 @@ const AutoCompleteElement = ({
       )}
     </FormControl>
   )
+}
+
+const AddOptionBlock = () => {
+  
+  const { control } = useForm()
+
+  useEffect(() => {
+    console.log("MOUNTERDDD ==>")
+  }, [])
+  
+  return <div className="flex align-center gap-2" >
+    <HFColorPicker control={control} name="color" onClick={(e) => {
+      e.stopPropagation()
+      e.preventDefault()
+    }}  />
+    <HFIconPicker shape="rectangle" control={control} name="icon" />
+    <CreateButton />
+  </div>
 }
 
 export default HFMultipleAutocomplete

@@ -144,7 +144,7 @@ const ViewForm = ({
           </div>
         </div>
 
-        {(type === "CALENDAR" || type === "GANTT") && (
+        {(type === "CALENDAR") && (
           <CalendarSettings form={form} columns={columns} />
         )}
 
@@ -247,7 +247,7 @@ const getInitialValues = (
           ? [...columns, ...relationColumns]
           : columns
       ) ?? [],
-    group_fields: initialValues?.group_fields ?? [],
+    group_fields: computeGroupFields(initialValues?.group_fields, columns),
     table_slug: tableSlug,
     id: initialValues?.id,
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",
@@ -286,6 +286,11 @@ const computeQuickFilters = (quickFilters = [], columns) => {
       (el) => !quickFilters?.find((filter) => filter.field_id === el.id)
     ) ?? []
   return [...selectedQuickFilters, ...unselectedQuickFilters]
+}
+
+
+const computeGroupFields = (groupFields = [], columns) => {
+  return groupFields?.filter(groupFieldID => columns?.some(column => column.id === groupFieldID)) ?? []
 }
 
 export default ViewForm

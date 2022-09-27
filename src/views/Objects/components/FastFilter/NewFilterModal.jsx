@@ -137,8 +137,8 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
                     : ""
                 }
                 name={
-                  fieldsMap[watch(`new.${index}.left_field`)]?.path_slug ??
-                  fieldsMap[watch(`new.${index}.left_field`)]?.slug
+                  fieldsMap?.[watch(`new.${index}.left_field`)]?.path_slug ??
+                  fieldsMap?.[watch(`new.${index}.left_field`)]?.slug
                 }
                 onChange={onChange}
                 filters={filters}

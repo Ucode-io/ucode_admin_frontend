@@ -215,6 +215,8 @@ const FieldSettings = ({
           </div>
 
           <div className="p-2">
+
+
             <FRow label="Placeholder">
               <HFTextField
                 fullWidth
@@ -248,6 +250,7 @@ const FieldSettings = ({
           </div>
 
           <div className="p-2">
+            <HFSwitch control={control} name="attributes.disabled" label="Disabled" />
             <HFSwitch control={control} name="required" label="Required" />
             <HFSwitch
               control={control}

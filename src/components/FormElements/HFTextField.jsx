@@ -10,6 +10,7 @@ const HFTextField = ({
   withTrim = false,
   rules = {},
   defaultValue = "",
+  disabled,
   ...props
 }) => {
   return (
@@ -31,6 +32,14 @@ const HFTextField = ({
           name={name}
           error={error}
           fullWidth={fullWidth}
+          InputProps={
+            disabled && {
+              readOnly: true,
+              style: {
+                background: "#c0c0c039",
+              },
+            }
+          }
           helperText={!disabledHelperText && error?.message}
           {...props}
         />

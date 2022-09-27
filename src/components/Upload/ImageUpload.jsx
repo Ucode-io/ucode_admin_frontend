@@ -7,7 +7,7 @@ import CancelIcon from "@mui/icons-material/Cancel"
 import "./Gallery/style.scss"
 import fileService from "../../services/fileService"
 
-const ImageUpload = ({ value, onChange, className = "" }) => {
+const ImageUpload = ({ value, onChange, className = "", disabled }) => {
   const inputRef = useRef(null)
   const [previewVisible, setPreviewVisible] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -76,6 +76,7 @@ const ImageUpload = ({ value, onChange, className = "" }) => {
             className="hidden"
             ref={inputRef}
             onChange={inputChangeHandler}
+            disabled={disabled}
           />
         </div>
       )}

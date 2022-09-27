@@ -11,16 +11,18 @@ const HFDatePicker = ({
   disabledHelperText,
   placeholder,
   defaultValue="",
+  disabled,
   ...props
 }) => {
   return (
     <Controller
       control={control}
       name={name}
+      disabled
       defaultValue={defaultValue}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={className}>
-          <CDatePicker value={value} onChange={onChange} />
+          <CDatePicker value={value} onChange={onChange} disabled={disabled} />
         </div>
       )}
     ></Controller>

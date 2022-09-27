@@ -8,7 +8,7 @@ import { locale } from "./Plugins/locale"
 import "./style2.scss"
 import CustomNavButton from "./Plugins/CustomNavButton"
 
-const CDateTimePicker = ({ value, onChange }) => {
+const CDateTimePicker = ({ value, onChange, disabled }) => {
   return (
     <DatePicker
       render={(value, openCalendar, handleChange) => {
@@ -21,6 +21,10 @@ const CDateTimePicker = ({ value, onChange }) => {
             fullWidth
             autoComplete="off"
             InputProps={{
+              readOnly: disabled,
+              style: disabled && {
+                background: "#c0c0c039",
+              },
               endAdornment: (
                 <InputAdornment position="end">
                   <DateRange />

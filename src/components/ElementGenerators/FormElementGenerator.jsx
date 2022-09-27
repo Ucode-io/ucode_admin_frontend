@@ -36,18 +36,16 @@ const FormElementGenerator = ({
   }, [field.id, field.slug])
 
   const defaultValue = useMemo(() => {
-    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values
-    
+    const defaultValue =
+      field.attributes?.defaultValue ?? field.attributes?.default_values
     if (!defaultValue) return undefined
-
-    if(field.relation_type === "Many2One") return defaultValue[0]
-
-    if(field.type === "MULTISELECT" || field.id?.includes('#')) return defaultValue
-    
+    if (field.relation_type === "Many2One") return defaultValue[0]
+    if (field.type === "MULTISELECT" || field.id?.includes("#"))
+      return defaultValue
     const { error, result } = parser.parse(defaultValue)
-
     return error ? undefined : result
   }, [field.attributes, field.type, field.id, field.relation_type])
+  
 
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {
@@ -95,6 +93,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>
@@ -111,6 +110,7 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             mask={"(99) 999-99-99"}
             defaultValue={defaultValue}
+            disabled={field.attributes}
             {...props}
           />
         </FRow>
@@ -127,6 +127,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={field.attributes}
             {...props}
           />
         </FRow>
@@ -144,6 +145,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={field.defaultValue}
+            disabled={field.attributes}
             {...props}
           />
         </FRow>
@@ -160,6 +162,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>
@@ -174,6 +177,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>
@@ -188,6 +192,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>
@@ -204,6 +209,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>
@@ -217,6 +223,7 @@ const FormElementGenerator = ({
           label={field.label}
           required={field.required}
           defaultValue={defaultValue}
+          disabled={field.attributes?.disabled}
           {...props}
         />
       )
@@ -232,6 +239,7 @@ const FormElementGenerator = ({
             field={field}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>
@@ -245,6 +253,7 @@ const FormElementGenerator = ({
           label={field.label}
           required={field.required}
           defaultValue={defaultValue}
+          disabled={field.attributes?.disabled}
           {...props}
         />
       )
@@ -265,6 +274,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>
@@ -278,6 +288,7 @@ const FormElementGenerator = ({
             name={computedSlug}
             required={field.required}
             defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>
@@ -291,6 +302,7 @@ const FormElementGenerator = ({
             name={computedSlug}
             required={field.required}
             defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>
@@ -345,6 +357,7 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             type="color"
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>
@@ -360,6 +373,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>

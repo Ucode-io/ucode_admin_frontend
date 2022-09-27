@@ -100,21 +100,21 @@ const RelationSection = ({ relations }) => {
 
             {relations?.map((relation) => (
               <TabPanel key={relation.id}>
-                {/* {relation?.relatedTable === "file" ? (
+                {relation?.relatedTable === "file" ? (
                   <FilesSection
                     relation={relation}
                     key={relation.id}
                     createFormVisible={relationsCreateFormVisible}
                     setCreateFormVisible={setCreateFormVisible}
                   />
-                ) : ( */}
+                ) : (
                   <RelationTable
                     key={relation.id}
                     relation={relation}
                     createFormVisible={relationsCreateFormVisible}
                     setCreateFormVisible={setCreateFormVisible}
                   />
-                {/* )} */}
+                 )}
               </TabPanel>
             ))}
           </Tabs>

@@ -194,7 +194,7 @@ const FilesSection = ({
           columns={columns}
           pagesCount={pageCount}
           loader={isLoading || deleteLoading}
-          removableHeight={false}
+          removableHeight={290}
           currentPage={1}
           disableFilters
           dataLength={1}

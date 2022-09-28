@@ -1,7 +1,7 @@
 import { Popover } from "@mui/material"
 import { CrossPerson, TwoUserIcon } from "../../assets/icons/icon"
 
-const PermissionYesOrNoPopup = ({ anchorEl, handleClose }) => {
+const PermissionYesOrNoPopup = ({ anchorEl, handleClose, changeHandler }) => {
   const open = Boolean(anchorEl)
   const id = open ? "simple-popover" : undefined
 
@@ -17,10 +17,10 @@ const PermissionYesOrNoPopup = ({ anchorEl, handleClose }) => {
       }}
     >
       <div style={{ display: "flex", gap: "8px", padding: 8 }}>
-        <div>
+        <div onClick={() => changeHandler("Yes")}>
           <TwoUserIcon />
         </div>
-        <div>
+        <div onClick={() => changeHandler("No")}>
           <CrossPerson />
         </div>
       </div>

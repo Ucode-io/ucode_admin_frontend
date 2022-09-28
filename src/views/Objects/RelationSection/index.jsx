@@ -8,6 +8,7 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
 import IconGenerator from "../../../components/IconPicker/IconGenerator"
 import useTabRouter from "../../../hooks/useTabRouter"
+import CustomActionsButton from "../components/CustomActionsButton"
 import FilesSection from "../FilesSection"
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal"
 import RelationTable from "./RelationTable"
@@ -24,6 +25,13 @@ const RelationSection = ({ relations }) => {
     {}
   )
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+  const [selectedObjects, setSelectedObjects] = useState([])
+
+  const selectedRelation = relations[selectedTabIndex]
+
+  useEffect(() => {
+    setSelectedObjects([])
+  }, [selectedTabIndex])
 
   useEffect(() => {
     const result = {}
@@ -70,10 +78,7 @@ const RelationSection = ({ relations }) => {
       )}
       {relations.length ? (
         <Card className={styles.card}>
-          <Tabs
-            selectedIndex={selectedTabIndex}
-            onSelect={setSelectedTabIndex}
-          >
+          <Tabs selectedIndex={selectedTabIndex} onSelect={setSelectedTabIndex}>
             <div className={styles.cardHeader}>
               <TabList className={styles.tabList}>
                 {relations?.map((relation, index) => (
@@ -83,18 +88,28 @@ const RelationSection = ({ relations }) => {
                         <InsertDriveFile /> Файлы
                       </>
                     ) : ( */}
-                      <div className="flex align-center gap-2 text-nowrap">
-                        <IconGenerator icon={relation?.icon} /> {relation.title}
-                      </div>
+                    <div className="flex align-center gap-2 text-nowrap">
+                      <IconGenerator icon={relation?.icon} /> {relation.title}
+                    </div>
                     {/* )} */}
                   </Tab>
                 ))}
               </TabList>
 
               {relations[selectedTabIndex]?.relatedTable !== "file" && (
-                <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
-                  <Add /> Добавить
-                </SecondaryButton>
+                <div className="flex gap-2">
+                  <SecondaryButton
+                    onClick={navigateToCreatePage}
+                    disabled={!id}
+                  >
+                    <Add /> Добавить
+                  </SecondaryButton>
+                  <CustomActionsButton
+                    tableSlug={selectedRelation?.relatedTable}
+                    selectedObjects={selectedObjects}
+                    setSelectedObjects={setSelectedObjects}
+                  />
+                </div>
               )}
             </div>
 
@@ -113,8 +128,10 @@ const RelationSection = ({ relations }) => {
                     relation={relation}
                     createFormVisible={relationsCreateFormVisible}
                     setCreateFormVisible={setCreateFormVisible}
+                    selectedObjects={selectedObjects}
+                    setSelectedObjects={setSelectedObjects}
                   />
-                 )}
+                )}
               </TabPanel>
             ))}
           </Tabs>

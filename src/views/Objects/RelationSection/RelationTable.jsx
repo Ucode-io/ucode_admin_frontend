@@ -11,11 +11,14 @@ import { pageToOffset } from "../../../utils/pageToOffset"
 import { Filter } from "../components/FilterGenerator"
 import styles from "./style.module.scss"
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
+import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
 
 const RelationTable = ({
   relation,
   createFormVisible,
   setCreateFormVisible,
+  selectedObjects,
+  setSelectedObjects
 }) => {
   const { appId, tableSlug, id } = useParams()
   const navigate = useNavigate()
@@ -33,6 +36,10 @@ const RelationTable = ({
     })
   }
 
+  const onCheckboxChange = (val, row) => {
+    if (val) setSelectedObjects(prev => [...prev, row.guid])
+    else setSelectedObjects(prev => prev.filter(id => id !== row.guid))
+  }
 
   const computedFilters = useMemo(() => {
     const relationFilter = {}
@@ -112,6 +119,10 @@ const RelationTable = ({
     }
   )
 
+  const { data: {custom_events: customEvents = []} = {} } = useCustomActionsQuery({
+    tableSlug: relatedTableSlug,
+  })
+
   const navigateToEditPage = (row) => {
     navigateToForm(relatedTableSlug, "EDIT", row)
   }
@@ -174,6 +185,8 @@ const RelationTable = ({
           limit={limit}
           setLimit={setLimit}
           summaries={relation.summaries}
+          isChecked={(row) => selectedObjects?.includes(row.guid)}
+          onCheckboxChange={!!customEvents?.length && onCheckboxChange}
         />
       </div>
     </div>

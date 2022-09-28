@@ -24,6 +24,7 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import ExcelButtons from "./components/ExcelButtons"
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing"
 import MultipleInsertButton from "./components/MultipleInsertForm"
+import CustomActionsButton from "./components/CustomActionsButton"
 
 const ViewsWithGroups = ({
   views,
@@ -38,6 +39,7 @@ const ViewsWithGroups = ({
   const tableHeight = useSelector((state) => state.tableSize.tableHeight)
   const [heightControl, setHeightControl] = useState(false)
   const { navigateToForm } = useTabRouter()
+  const [selectedObjects, setSelectedObjects] = useState([])
 
   const tableHeightOptions = [
     {
@@ -137,6 +139,7 @@ const ViewsWithGroups = ({
               <PermissionWrapperV2 tabelSlug={tableSlug} type="write">
                 <CreateButton type="secondary" onClick={navigateToCreatePage} />
                 <MultipleInsertButton view={view} fieldsMap={fieldsMap} />
+                <CustomActionsButton selectedObjects={selectedObjects} setSelectedObjects={setSelectedObjects} tableSlug={tableSlug} />
               </PermissionWrapperV2>
             </div>
           </div>
@@ -178,6 +181,8 @@ const ViewsWithGroups = ({
                       view={view}
                       fieldsMap={fieldsMap}
                       tab={tab}
+                      selectedObjects={selectedObjects}
+                      setSelectedObjects={setSelectedObjects}
                     />
                   )}
                 </TabPanel>
@@ -197,6 +202,8 @@ const ViewsWithGroups = ({
                       filters={filters}
                       view={view}
                       fieldsMap={fieldsMap}
+                      selectedObjects={selectedObjects}
+                      setSelectedObjects={setSelectedObjects}
                     />
                   )}
                 </>

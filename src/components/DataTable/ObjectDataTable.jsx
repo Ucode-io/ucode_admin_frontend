@@ -49,6 +49,7 @@ const ObjectDataTable = ({
   setCreateFormVisible,
   limit,
   setLimit,
+  isChecked,
   summaries
 }) => {
   const location = useLocation()
@@ -200,8 +201,7 @@ const ObjectDataTable = ({
     >
       <CTableHead>
         <CTableRow>
-          <CTableCell width={10} />
-          {onCheckboxChange && <CTableHeadCell width={10}>№</CTableHeadCell>}
+          <CTableHeadCell width={10}>№</CTableHeadCell>
           {columns.map((column, index) => (
             <CTableHeadCell
               id={column.id}
@@ -306,7 +306,7 @@ const ObjectDataTable = ({
             row={row}
             rowIndex={rowIndex}
             onRowClick={onRowClick}
-            checkboxValue={checkboxValue}
+            isChecked={isChecked}
             onCheckboxChange={onCheckboxChange}
             currentPage={currentPage}
             limit={limit}

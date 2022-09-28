@@ -373,6 +373,23 @@ const FormElementGenerator = ({
         </FRow>
       )
 
+    case "PASSWORD":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFTextField
+            control={control}
+            name={field.slug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
+            type="password"
+            {...props}
+          />
+        </FRow>
+      )
+
     default:
       return (
         <FRow label={field.label} required={field.required}>

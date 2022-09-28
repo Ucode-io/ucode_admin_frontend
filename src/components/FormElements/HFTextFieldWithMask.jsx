@@ -7,6 +7,7 @@ const HFTextFieldWithMask = ({
   name = "",
   disabledHelperText = false,
   required = false,
+  disabled = false,
   rules = {},
   mask,
   ...props
@@ -24,7 +25,8 @@ const HFTextFieldWithMask = ({
         <InputMask
           mask={mask}
           value={value ?? undefined}
-          onChange={e => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
         >
           {(inputProps) => (
             <TextField

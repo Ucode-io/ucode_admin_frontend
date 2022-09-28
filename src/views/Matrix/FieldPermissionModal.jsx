@@ -188,7 +188,11 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
         <div className={styles.fieldPermissionBox}>
           <div className={styles.head}>
             <p>View settings</p>
-            <Clear />
+            <Clear
+              htmlColor="#6E8BB7"
+              onClick={handleClose}
+              style={{ cursor: "pointer" }}
+            />
           </div>
           <div className={styles.body}>
             <DataTable

@@ -77,10 +77,10 @@ const RelationSettings = ({
   const isViewFieldsVisible = useMemo(() => {
     return (
       (values.type === "Many2One" && values.table_from === slug) ||
-      (values.type === "Many2Many" && values.view_type === "INPUT") ||
+      (values.type === "Many2Many") ||
       values.type === "Recursive"
     )
-  }, [values.type, values.table_from, values.view_type, slug])
+  }, [values.type, values.table_from, slug])
 
   const computedColumnsList = useMemo(() => {
     if (!onlyCheckedColumnsVisible) return values.columnsList

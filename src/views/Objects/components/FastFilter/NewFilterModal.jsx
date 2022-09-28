@@ -13,7 +13,7 @@ import HFSelect from "../../../../components/FormElements/HFSelect"
 import useFilters from "../../../../hooks/useFilters"
 import { Filter } from "../FilterGenerator"
 import styles from "./style.module.scss"
-
+ 
 const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
   const { new_list } = useSelector((s) => s.filter)
   const { tableSlug } = useParams()
@@ -137,8 +137,8 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
                     : ""
                 }
                 name={
-                  fieldsMap[watch(`new.${index}.left_field`)]?.path_slug ??
-                  fieldsMap[watch(`new.${index}.left_field`)]?.slug
+                  fieldsMap?.[watch(`new.${index}.left_field`)]?.path_slug ??
+                  fieldsMap?.[watch(`new.${index}.left_field`)]?.slug
                 }
                 onChange={onChange}
                 filters={filters}

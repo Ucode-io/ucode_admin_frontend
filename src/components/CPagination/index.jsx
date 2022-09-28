@@ -16,7 +16,7 @@ const CPagination = ({
   setCurrentPage = () => {},
   paginationExtraButton,
   limit,
-  onLimitChange = () => {},
+  setLimit = () => {},
   ...props
 }) => {
   return (
@@ -37,7 +37,7 @@ const CPagination = ({
               disabledHelperText
               size="small"
               value={limit}
-              onChange={e => onLimitChange(e.target.value)}
+              onChange={e => setLimit(e.target.value)}
               inputProps={{ style: { borderRadius: 50 } }}
               endAdornment={null}
               sx={null}

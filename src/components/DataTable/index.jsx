@@ -195,7 +195,7 @@ const DataTable = ({
       wrapperStyle={wrapperStyle}
       paginationExtraButton={paginationExtraButton}
       limit={limit}
-      onLimitChange={setLimit}
+      setLimit={setLimit}
     >
       <CTableHead>
         <CTableRow>

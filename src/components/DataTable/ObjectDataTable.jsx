@@ -48,7 +48,7 @@ const ObjectDataTable = ({
   createFormVisible,
   setCreateFormVisible,
   limit,
-  onLimitChange,
+  setLimit,
   summaries
 }) => {
   const location = useLocation()
@@ -196,7 +196,7 @@ const ObjectDataTable = ({
       wrapperStyle={wrapperStyle}
       paginationExtraButton={paginationExtraButton}
       limit={limit}
-      onLimitChange={onLimitChange}
+      setLimit={setLimit}
     >
       <CTableHead>
         <CTableRow>

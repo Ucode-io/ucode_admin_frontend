@@ -110,7 +110,7 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             mask={"(99) 999-99-99"}
             defaultValue={defaultValue}
-            disabled={field.attributes}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>

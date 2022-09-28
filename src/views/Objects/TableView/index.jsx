@@ -5,18 +5,19 @@ import { useQuery } from "react-query"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import useTabRouter from "../../../hooks/useTabRouter"
-import DataTable from "../../../components/DataTable"
 import useFilters from "../../../hooks/useFilters"
 import FastFilter from "../components/FastFilter"
 import styles from "./styles.module.scss"
 import { useSelector } from "react-redux"
+import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
+import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
 
-const TableView = ({ tab, view, fieldsMap, isDocView, ...props }) => {
+const TableView = ({ tab, view, fieldsMap, isDocView, selectedObjects, setSelectedObjects, ...props }) => {
   const { navigateToForm } = useTabRouter()
   const { tableSlug } = useParams()
   const { new_list } = useSelector((state) => state.filter)
 
-  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id)
+  const { filters } = useFilters(tableSlug, view.id)
 
   const [currentPage, setCurrentPage] = useState(1)
   const [limit, setLimit] = useState(10)
@@ -59,6 +60,15 @@ const TableView = ({ tab, view, fieldsMap, isDocView, ...props }) => {
       }
     },
   })
+  
+  const { data: {custom_events: customEvents = []} = {} } = useCustomActionsQuery({
+    tableSlug,
+  })
+
+  const onCheckboxChange = (val, row) => {
+    if (val) setSelectedObjects(prev => [...prev, row.guid])
+    else setSelectedObjects(prev => prev.filter(id => id !== row.guid))
+  }
 
   const deleteHandler = async (row) => {
     setDeleteLoader(true)
@@ -84,7 +94,7 @@ const TableView = ({ tab, view, fieldsMap, isDocView, ...props }) => {
           <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
         </div>
       )}
-      <DataTable
+      <ObjectDataTable
         removableHeight={isDocView ? 150 : 215}
         currentPage={currentPage}
         pagesCount={pageCount}
@@ -94,8 +104,11 @@ const TableView = ({ tab, view, fieldsMap, isDocView, ...props }) => {
         onPaginationChange={setCurrentPage}
         loader={tableLoader || deleteLoader}
         data={tableData}
-        filters={filters}
-        filterChangeHandler={filterChangeHandler}
+        disableFilters
+        isChecked={(row) => selectedObjects?.includes(row.guid)}
+        onCheckboxChange={!!customEvents?.length && onCheckboxChange}
+        // filters={filters}
+        // filterChangeHandler={filterChangeHandler}
         onRowClick={navigateToEditPage}
         onDeleteClick={deleteHandler}
         tableSlug={tableSlug}
@@ -106,6 +119,7 @@ const TableView = ({ tab, view, fieldsMap, isDocView, ...props }) => {
           width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "100%",
         }}
         isResizeble={true}
+
         {...props}
       />
     </div>

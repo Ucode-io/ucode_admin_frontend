@@ -45,7 +45,6 @@ const FormElementGenerator = ({
     const { error, result } = parser.parse(defaultValue)
     return error ? undefined : result
   }, [field.attributes, field.type, field.id, field.relation_type])
-  
 
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {
@@ -358,6 +357,23 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             type="color"
             disabled={field.attributes?.disabled}
+            {...props}
+          />
+        </FRow>
+      )
+
+    case "PASSWORD":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFTextField
+            control={control}
+            name={field.slug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
+            type="password"
             {...props}
           />
         </FRow>

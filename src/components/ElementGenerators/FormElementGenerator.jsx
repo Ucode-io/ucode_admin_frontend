@@ -53,9 +53,9 @@ const FormElementGenerator = ({
     )
   }, [field])
 
-  if (!field.attributes?.field_permission?.view_permission) {
-    return null
-  }
+  // if (!field.attributes?.field_permission?.view_permission) {
+  //   return null
+  // }
 
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {

@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux"
 import {
   ChevronDownIcon,
   CrossPerson,
+  FieldPermissionIcon,
   TwoUserIcon,
 } from "../../assets/icons/icon"
 // COMPONENTS
@@ -37,6 +38,7 @@ import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
 import SecondaryButton from "../../components/Buttons/SecondaryButton"
 import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import { showAlert } from "../../store/alert/alert.thunk"
+import FieldPermissionModal from "./FieldPermissionModal"
 
 const staticTables = [
   {
@@ -58,6 +60,7 @@ const MatrixRolePage = () => {
   const [appId, setAppId] = useState(null)
   const [parentPopupKey, setParentPopupKey] = useState("")
   const [expandedAppId, setExpandedAppId] = useState("")
+  const [tableSlugWithType, setTableSlugWithType] = useState(null)
   const [tableSlug, setTableSlug] = useState(null)
   const [apps, setApps] = useState([{ name: "Settings", id: "settings" }])
   const [roles, setRoles] = useState([{ name: "Settings", id: "settings" }])
@@ -65,8 +68,12 @@ const MatrixRolePage = () => {
   const [recordPermissions, setRecordPermissions] = useState([])
   const [connections, setConnections] = useState([])
   const [isCustomVisible, setIsCustomVisible] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const [relations, setRelations] = useState([])
   const [automaticFilters, setAutomaticFilters] = useState([])
+
+  const handleOpen = () => setIsOpen(true)
+  const handleClose = () => setIsOpen(false)
 
   const roleForm = useForm({})
 
@@ -113,7 +120,7 @@ const MatrixRolePage = () => {
       onSuccess: () => {
         dispatch(showAlert("Автофильтр успешно создан", "success"))
         setIsCustomVisible(false)
-        setTableSlug("")
+        setTableSlugWithType("")
       },
     }
   )
@@ -182,7 +189,7 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          setTableSlug((prev) => (value === "Yes" ? prev : null))
+          setTableSlugWithType((prev) => (value === "Yes" ? prev : null))
           if (value === "Yes") {
             constructorRelationService
               .getList({ table_slug: tabSlug })
@@ -208,7 +215,7 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          setTableSlug(null)
+          setTableSlugWithType(null)
           getRecordPermissions()
         })
         .catch((err) => {
@@ -310,7 +317,7 @@ const MatrixRolePage = () => {
       custom_field: "",
       tabSlug: "",
     })
-  }, [tableSlug])
+  }, [tableSlugWithType])
 
   const computedCustomFields = useMemo(() => {
     const data = [
@@ -416,6 +423,13 @@ const MatrixRolePage = () => {
                     </div>
                   </div>
                 </CTableHeadCell>
+                <CTableHeadCell
+                  style={{
+                    borderBottom: "1px solid #e5e9eb",
+                  }}
+                >
+                  Field permissions
+                </CTableHeadCell>
               </CTableRow>
             </CTableHead>
             <CTableBody loader={false} columnsCount={2} dataLength={1}>
@@ -457,10 +471,10 @@ const MatrixRolePage = () => {
                       onClick={(e) => {
                         e.stopPropagation()
                         if (app?.children) {
-                          setTableSlug((prev) =>
-                            prev === app.slug + type?.key
+                          setTableSlugWithType((prev) =>
+                            prev === app.slug + "#" + type?.key
                               ? ""
-                              : app.slug + type?.key
+                              : app.slug + "#" + type?.key
                           )
                           setParentPopupKey("")
                         } else {
@@ -469,7 +483,7 @@ const MatrixRolePage = () => {
                               ? ""
                               : app.id + type?.key
                           )
-                          setTableSlug("")
+                          setTableSlugWithType("")
                         }
                       }}
                       style={{ position: "relative" }}
@@ -529,7 +543,7 @@ const MatrixRolePage = () => {
                             </span>
                           </div>
                         )}
-                      {tableSlug === app?.slug + type?.key ? (
+                      {tableSlugWithType === app?.slug + "#" + type?.key ? (
                         <>
                           <div
                             style={{
@@ -697,12 +711,35 @@ const MatrixRolePage = () => {
                       ) : null}
                     </CTableCell>
                   ))}
+                  <CTableHeadCell
+                    style={{
+                      borderBottom: "1px solid #e5e9eb",
+                      borderRight: "1px solid #e5e9eb",
+                    }}
+                  >
+                    <div
+                      onClick={() => {
+                        if (app?.children) {
+                          console.log("app , ", app)
+                          handleOpen()
+                          setTableSlug(app?.slug)
+                        }
+                      }}
+                    >
+                      <FieldPermissionIcon />
+                    </div>
+                  </CTableHeadCell>
                 </CTableRow>
               ))}
             </CTableBody>
           </CTable>
         </div>
       </div>
+      <FieldPermissionModal
+        table_slug={tableSlug}
+        handleClose={handleClose}
+        isOpen={isOpen}
+      />
     </div>
   )
 }

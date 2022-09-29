@@ -8,7 +8,7 @@ import { locale } from "./Plugins/locale"
 import "./style2.scss"
 import CustomNavButton from "./Plugins/CustomNavButton"
 
-const CDateTimePicker = ({ value, onChange, disabled = false }) => {
+const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
   return (
     <DatePicker
       render={(value, openCalendar, handleChange) => {
@@ -54,4 +54,4 @@ const CDateTimePicker = ({ value, onChange, disabled = false }) => {
   )
 }
 
-export default CDateTimePicker
+export default CDateTimePickerLegacy

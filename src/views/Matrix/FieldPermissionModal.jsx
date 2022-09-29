@@ -1,17 +1,16 @@
+import { useCallback, useState } from "react"
+import { useMutation, useQuery } from "react-query"
+import { useParams } from "react-router-dom"
 import { Clear } from "@mui/icons-material"
 import { Modal } from "@mui/material"
-import { useMutation, useQuery } from "react-query"
-import { useState } from "react"
-import { useParams } from "react-router-dom"
 
 import constructorFieldService from "../../services/constructorFieldService"
 import PermissionYesOrNoPopup from "./PermissionYesOrNoPopup"
 import DataTable from "../../components/DataTable"
 import { CrossPerson, TwoUserIcon } from "../../assets/icons/icon"
-import styles from "./styles.module.scss"
 import PrimaryButton from "../../components/Buttons/PrimaryButton"
-import { useCallback } from "react"
 import constructorObjectService from "../../services/constructorObjectService"
+import styles from "./styles.module.scss"
 
 const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
   const { roleId } = useParams()

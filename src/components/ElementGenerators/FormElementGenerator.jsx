@@ -65,6 +65,7 @@ const FormElementGenerator = ({
           field={field}
           setFormValue={setFormValue}
           defaultValue={defaultValue}
+          disabled={isDisabled}
           {...props}
         />
       )
@@ -75,6 +76,7 @@ const FormElementGenerator = ({
           field={field}
           setFormValue={setFormValue}
           defaultValue={defaultValue}
+          disabled={isDisabled}
           {...props}
         />
       )
@@ -86,6 +88,7 @@ const FormElementGenerator = ({
           setFormValue={setFormValue}
           formTableSlug={formTableSlug}
           defaultValue={defaultValue}
+          disabled={isDisabled}
           {...props}
         />
       )

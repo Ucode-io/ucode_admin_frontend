@@ -21,6 +21,7 @@ const ManyToManyRelationFormElement = ({
   mainForm,
   disabledHelperText,
   autocompleteProps = {},
+  disabled = false,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -68,6 +69,7 @@ const ManyToManyRelationFormElement = ({
             defaultValue={null}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <AutoCompleteElement
+                disabled={disabled}
                 value={value}
                 setValue={onChange}
                 field={field}
@@ -93,6 +95,7 @@ const AutoCompleteElement = ({
   setValue,
   control,
   error,
+  disabled,
   disabledHelperText,
 }) => {
   const { navigateToForm } = useTabRouter()
@@ -100,27 +103,29 @@ const AutoCompleteElement = ({
   const autoFilters = field?.attributes?.auto_filters
 
   const autoFiltersFieldFroms = useMemo(() => {
-    return autoFilters?.map(el => el.field_from) ?? []
+    return autoFilters?.map((el) => el.field_from) ?? []
   }, [autoFilters])
 
   const filtersHandler = useWatch({
     control,
-    name: autoFiltersFieldFroms
+    name: autoFiltersFieldFroms,
   })
 
   const autoFiltersValue = useMemo(() => {
     const result = {}
     filtersHandler?.forEach((value, index) => {
       const key = autoFilters?.[index]?.field_to
-      if(key) result[key] = value
+      if (key) result[key] = value
     })
     return result
-  }, [ autoFilters, filtersHandler ])
+  }, [autoFilters, filtersHandler])
 
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, autoFiltersValue],
     () => {
-      return constructorObjectService.getList(tableSlug, { data: autoFiltersValue })
+      return constructorObjectService.getList(tableSlug, {
+        data: autoFiltersValue,
+      })
     },
     {
       select: (res) => {
@@ -132,15 +137,17 @@ const AutoCompleteElement = ({
   const computedValue = useMemo(() => {
     if (!value) return []
 
-    return value?.map((id) => {
-      const option = options?.find((el) => el?.guid === id)
-      
-      if(!option) return null
-      return {
-        ...option,
-        // label: getRelationFieldLabel(field, option)
-      }
-    })?.filter(el => el)
+    return value
+      ?.map((id) => {
+        const option = options?.find((el) => el?.guid === id)
+
+        if (!option) return null
+        return {
+          ...option,
+          // label: getRelationFieldLabel(field, option)
+        }
+      })
+      ?.filter((el) => el)
   }, [options, value])
 
   const getOptionLabel = (option) => {
@@ -172,6 +179,7 @@ const AutoCompleteElement = ({
       </div>
 
       <Autocomplete
+        disabled={disabled}
         options={options ?? []}
         value={computedValue}
         onChange={(event, newValue) => {
@@ -197,8 +205,13 @@ const AutoCompleteElement = ({
             <>
               <div className={styles.valuesWrapper}>
                 {values?.map((el, index) => (
-                  <div key={el.value} className={styles.multipleAutocompleteTags}>
-                    <p className={styles.value}>{getOptionLabel(values[index])}</p>
+                  <div
+                    key={el.value}
+                    className={styles.multipleAutocompleteTags}
+                  >
+                    <p className={styles.value}>
+                      {getOptionLabel(values[index])}
+                    </p>
                     <IconGenerator
                       icon="arrow-up-right-from-square.svg"
                       style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -213,13 +226,11 @@ const AutoCompleteElement = ({
                     <Close
                       fontSize="12"
                       onClick={getTagProps({ index })?.onDelete}
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: "pointer" }}
                     />
-                    
                   </div>
                 ))}
               </div>
-  
             </>
           )
         }}

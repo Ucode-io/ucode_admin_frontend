@@ -18,12 +18,13 @@ const FastFilter = ({ view, fieldsMap, isVertical = false }) => {
     return (
       [
         ...view?.quick_filters,
-        ...new_list[tableSlug]
+        ...(new_list[tableSlug] ?? [])
           ?.filter(
-            (i) =>
-              i.checked && !view.quick_filters.find((j) => j.field_id === i.id)
+            (fast) =>
+              fast.checked &&
+              !view.quick_filters.find((quick) => quick.field_id === fast.id)
           )
-          ?.map((i) => ({ field_id: i.id, default_value: "" })),
+          ?.map((fast) => ({ field_id: fast.id, default_value: "" })),
       ]
         ?.map((el) => fieldsMap[el?.field_id])
         ?.filter((el) => el) ?? []

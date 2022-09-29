@@ -2,6 +2,7 @@ import { KeyboardArrowDown } from "@mui/icons-material"
 import { CircularProgress, Menu, Tooltip } from "@mui/material"
 import { useState } from "react"
 import { useDispatch } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
 import IconGenerator from "../../../../components/IconPicker/IconGenerator"
 import useCustomActionsQuery from "../../../../queries/hooks/useCustomActionsQuery"
@@ -12,6 +13,7 @@ import styles from "./style.module.scss"
 const CustomActionsButton = ({ selectedObjects, setSelectedObjects = () => {}, tableSlug }) => {
   const [loader, setLoader] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null)
+  const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const openMenu = (event) => {
@@ -41,6 +43,18 @@ const CustomActionsButton = ({ selectedObjects, setSelectedObjects = () => {}, t
       .then(res => {
         dispatch(showAlert('Success', 'success'))
         setSelectedObjects([])
+
+        let url = event?.url ?? ""
+
+        if (url) {
+          Object.entries(res?.data ?? {}).forEach(([key, value]) => {
+            const computedKey = "${" + key + "}"
+            url = url.replaceAll(computedKey, value)
+          })
+        }
+
+        navigate(url)
+
       }).finally(() => setLoader(false))
   }
 

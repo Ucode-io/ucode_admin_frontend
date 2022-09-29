@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
-import { useLocation, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
@@ -31,6 +31,7 @@ const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
   const { pathname, state = {} } = useLocation()
   const { removeTab, navigateToForm } = useTabRouter()
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const queryClient = useQueryClient()
 
@@ -99,6 +100,8 @@ const ObjectsFormPage = () => {
     } catch (error) {
       console.error(error)
     } finally {
+      console.log("LOADER22222 ===>", loader)
+
       setLoader(false)
     }
   }
@@ -156,6 +159,10 @@ const ObjectsFormPage = () => {
   const { data: { custom_events: customEvents = [] } = {} } =
     useCustomActionsQuery({
       tableSlug,
+      queryPayload: { hasId: !!id },
+      queryParams: {
+        enabled: !!id,
+      },
     })
 
   const create = (data) => {
@@ -185,6 +192,17 @@ const ObjectsFormPage = () => {
       .post("/invoke_function", data)
       .then((res) => {
         dispatch(showAlert("Success", "success"))
+
+        let url = event?.url ?? ""
+
+        if (url) {
+          Object.entries(res?.data ?? {}).forEach(([key, value]) => {
+            const computedKey = "${" + key + "}"
+            url = url.replaceAll(computedKey, value)
+          })
+        }
+
+        navigate(url)
       })
       .finally(() => setBtnLoader(false))
   }
@@ -241,7 +259,10 @@ const ObjectsFormPage = () => {
                 onClick={handleSubmit(onSubmit)}
               >
                 {customEvents?.map((event) => (
-                  <DropdownButtonItem key={event.id} onClick={() => invokeFunction(event)}>
+                  <DropdownButtonItem
+                    key={event.id}
+                    onClick={() => invokeFunction(event)}
+                  >
                     <IconGenerator icon={event.icon} /> {event.label}
                   </DropdownButtonItem>
                 ))}

@@ -16,6 +16,8 @@ import DocSettingsBlock from "./DocSettingsBlock"
 import RedactorBlock from "./RedactorBlock"
 import styles from "./style.module.scss"
 import TemplatesList from "./TemplatesList"
+import printJS from 'print-js'
+
 
 const DocView = ({
   views,
@@ -163,10 +165,14 @@ const DocView = ({
         html: meta + html,
       })
 
+
       setSelectedTemplate(prev => ({
         ...prev,
-        html: res.html
+        html: res.html,
+        size: [selectedPaperSize.width, selectedPaperSize.height]
       }))
+
+      
 
     } finally {
       setHtmlLoader(false)
@@ -175,6 +181,32 @@ const DocView = ({
 
 
 
+   // =======PRINT============
+
+   const print = async () => {
+    if (!selectedTemplate) return
+    setPdfLoader(true)
+
+    try {
+      let html = redactorRef.current.getData()
+    
+      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
+
+      fields.forEach(field => {
+        html = html.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
+      })
+
+      const computedHTML = `${meta} ${html} `
+      
+      printJS({ printable: computedHTML, type: 'raw-html', style: [
+        `@page { size: ${selectedPaperSize.width}pt ${selectedPaperSize.height}pt; margin: 5mm;} body { margin: 0 }`
+      ],
+      targetStyles: ["*"] })
+
+    } finally {
+      setPdfLoader(false)
+    }
+  }
 
 
   return (
@@ -243,6 +275,7 @@ const DocView = ({
                 exportToHTML={exportToHTML}
                 exportToPDF={exportToPDF}
                 pdfLoader={pdfLoader}
+                print={print}
               />
             ) : (
               <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`} />

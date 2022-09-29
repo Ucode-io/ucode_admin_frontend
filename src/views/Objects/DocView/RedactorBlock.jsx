@@ -1,4 +1,4 @@
-import { PictureAsPdf } from "@mui/icons-material"
+import { PictureAsPdf, Print } from "@mui/icons-material"
 import { CircularProgress } from "@mui/material"
 import { forwardRef, useState } from "react"
 import { useEffect } from "react"
@@ -27,6 +27,7 @@ const RedactorBlock = forwardRef(
       exportToHTML,
       htmlLoader,
       pdfLoader,
+      print
     },
     redactorRef
   ) => {
@@ -130,6 +131,10 @@ const RedactorBlock = forwardRef(
                 <DropdownButtonItem onClick={exportToPDF} >
                   <PictureAsPdf />
                   Generate PDF
+                </DropdownButtonItem>
+                <DropdownButtonItem onClick={print} >
+                  <Print />
+                  Print
                 </DropdownButtonItem>
               </DropdownButton>
             </>

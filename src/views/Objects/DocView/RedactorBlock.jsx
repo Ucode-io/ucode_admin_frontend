@@ -40,8 +40,6 @@ const RedactorBlock = forwardRef(
 
     const onSubmit = async (values) => {
 
-      console.log("REE ", redactorRef.current)
-
       try {
         setBtnLoader(true)
 

@@ -1,7 +1,5 @@
 import { Controller } from "react-hook-form"
-import CDateTimePicker from "../DatePickers/CDateTimePicker"
-
-
+import CDateTimePickerLegacy from "../DatePickers/CDateTimePickerLegacy"
 
 const HFDateTimePicker = ({
   control,
@@ -15,7 +13,6 @@ const HFDateTimePicker = ({
   disabled,
   ...props
 }) => {
-
   return (
     <Controller
       control={control}
@@ -23,7 +20,11 @@ const HFDateTimePicker = ({
       defaultValue=""
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
-          <CDateTimePicker value={value} onChange={onChange} disabled={disabled} />
+          <CDateTimePickerLegacy
+            value={value}
+            onChange={onChange}
+            disabled={disabled}
+          />
         )
       }}
     ></Controller>

@@ -41,7 +41,7 @@ rmdp-day.rmdp-today.highlight span {
   color: colors.$primary-hover;
 }
 
-.rmdp-header-values span{
+.rmdp-header-values span {
   font-weight: 500;
   font-size: 24px;
   color: colors.$primary;
@@ -64,8 +64,8 @@ rmdp-day.rmdp-today.highlight span {
 
 .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) .highlight-red:hover {
   background-color: transparent;
-  border: 1px solid #CC0402;
-  color: #CC0402;
+  border: 1px solid #cc0402;
+  color: #cc0402;
 }
 
 .rmdp-calendar {
@@ -73,23 +73,16 @@ rmdp-day.rmdp-today.highlight span {
   padding-bottom: 0px !important;
 }
 
-
 // ===================DATE PICKER================
 
 .datePicker {
-
   .rmdp-calendar {
     padding: 15px 40px !important;
     // padding-bottom: 0px !important;
   }
-
-
 }
 
-
-
 // =================CALENDAR======================
-
 
 .Calendar {
   .rmdp-wrapper {
@@ -103,5 +96,17 @@ rmdp-day.rmdp-today.highlight span {
         width: 100%;
       }
     }
+  }
+}
+
+.main_wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .rmdp-container:first-child {
+    width: 70%;
+  }
+  .rmdp-container:last-child {
+    width: 30%;
   }
 }

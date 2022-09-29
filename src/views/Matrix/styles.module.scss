@@ -220,11 +220,13 @@
 }
 
 .fieldPermissionBox {
+  max-height: 90vh;
   outline: none;
   background: #fff;
   width: 80%;
   border-radius: 6px;
   padding: 8px;
+  overflow-y: auto;
   .head {
     display: flex;
     justify-content: space-between;

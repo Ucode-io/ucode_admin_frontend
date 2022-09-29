@@ -144,6 +144,18 @@ const TimePickerPlugin = (props) => {
       className={styles.timePicker}
       style={{ padding: !props.disablePreview ? 0 : 10 }}
     >
+      {!props.disablePreview && (
+        <div className={styles.previewBlock}>
+          <div className={styles.date}>
+            {availbleDate?.format("MMMM DD, ddd") ?? ""}
+          </div>
+
+          <div>
+            {hours[hourValue] ?? "00"} : {minutes[minuteValue] ?? "00"}
+          </div>
+        </div>
+      )}
+
       <div className={styles.timePickerBlock}>
         <div className={styles.scrollBlock} ref={hourBlockRef}>
           {hours.map((hour, index) => (

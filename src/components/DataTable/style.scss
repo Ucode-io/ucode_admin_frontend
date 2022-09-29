@@ -32,3 +32,33 @@
   }
 }
 
+
+
+.CTableRow {
+  .data_table__number_cell {
+    position: relative;
+
+    .data_table__row_checkbox {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      display: none;
+
+      &.checked {
+        display: flex !important;
+      }
+    }
+  }
+  
+  &:hover {
+    .data_table__row_checkbox {
+      display: flex;
+    }
+  }
+
+}

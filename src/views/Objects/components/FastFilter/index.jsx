@@ -1,6 +1,7 @@
 import { useMemo } from "react"
-import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
+
 import useFilters from "../../../../hooks/useFilters"
 import { filterActions } from "../../../../store/filter/filter.slice"
 import { Filter } from "../FilterGenerator"
@@ -14,19 +15,21 @@ const FastFilter = ({ view, fieldsMap, isVertical = false }) => {
   const { filters } = useFilters(tableSlug, view.id)
 
   const computedFields = useMemo(() => {
-    new_list[tableSlug]
-      ?.filter((i) => i.checked)
-      .forEach((i) => {
-        if (!view.quick_filters.find((j) => j.field_id === i.id)) {
-          view.quick_filters.push({ field_id: i.id, defaultValue: "" })
-        }
-      })
     return (
-      view?.quick_filters
+      [
+        ...view?.quick_filters,
+        ...(new_list[tableSlug] ?? [])
+          ?.filter(
+            (fast) =>
+              fast.checked &&
+              !view.quick_filters.find((quick) => quick.field_id === fast.id)
+          )
+          ?.map((fast) => ({ field_id: fast.id, default_value: "" })),
+      ]
         ?.map((el) => fieldsMap[el?.field_id])
         ?.filter((el) => el) ?? []
     )
-  }, [view?.quick_filters, fieldsMap, new_list])
+  }, [view?.quick_filters, fieldsMap, new_list, tableSlug])
 
   const onChange = (value, name) => {
     dispatch(

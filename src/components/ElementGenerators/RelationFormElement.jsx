@@ -24,15 +24,14 @@ const RelationFormElement = ({
   disabledHelperText,
   setFormValue,
   formTableSlug,
-  defaultValue=null,
+  disabled = false,
+  defaultValue = null,
   ...props
 }) => {
-
   const tableSlug = useMemo(() => {
-    if(field.relation_type === "Recursive") return formTableSlug
+    if (field.relation_type === "Recursive") return formTableSlug
     return field.id.split("#")?.[0] ?? ""
   }, [field.id, formTableSlug, field.relation_type])
-
 
   if (!isLayout)
     return (
@@ -46,6 +45,7 @@ const RelationFormElement = ({
               value={Array.isArray(value) ? value[0] : value}
               setValue={onChange}
               field={field}
+              disabled={disabled}
               tableSlug={tableSlug}
               error={error}
               disabledHelperText={disabledHelperText}
@@ -77,6 +77,7 @@ const RelationFormElement = ({
                 value={Array.isArray(value) ? value[0] : value}
                 setValue={onChange}
                 field={field}
+                disabled={disabled}
                 tableSlug={tableSlug}
                 error={error}
                 disabledHelperText={disabledHelperText}
@@ -98,46 +99,49 @@ const AutoCompleteElement = ({
   tableSlug,
   setValue,
   error,
+  disabled,
   disabledHelperText,
   control,
-  setFormValue = () => { },
+  setFormValue = () => {},
 }) => {
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState("")
   const [localValue, setLocalValue] = useState([])
-  const [debouncedValue, setDebouncedValue] = useState('')
+  const [debouncedValue, setDebouncedValue] = useState("")
 
   const { navigateToForm } = useTabRouter()
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300)
-  
+
   const autoFilters = field?.attributes?.auto_filters
 
   const autoFiltersFieldFroms = useMemo(() => {
-    return autoFilters?.map(el => el.field_from) ?? []
+    return autoFilters?.map((el) => el.field_from) ?? []
   }, [autoFilters])
 
   const filtersHandler = useWatch({
     control,
-    name: autoFiltersFieldFroms
+    name: autoFiltersFieldFroms,
   })
 
   const autoFiltersValue = useMemo(() => {
     const result = {}
     filtersHandler?.forEach((value, index) => {
       const key = autoFilters?.[index]?.field_to
-      if(key) result[key] = value
+      if (key) result[key] = value
     })
     return result
-  }, [ autoFilters, filtersHandler ])
+  }, [autoFilters, filtersHandler])
 
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
-      if(!tableSlug) return null
+      if (!tableSlug) return null
       return constructorObjectService.getList(tableSlug, {
         data: {
           ...autoFiltersValue,
-          view_fields: field.attributes?.view_fields?.map(f => f.slug), search: debouncedValue.trim(), limit: 10
-        }
+          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+          search: debouncedValue.trim(),
+          limit: 10,
+        },
       })
     },
     {
@@ -153,8 +157,7 @@ const AutoCompleteElement = ({
       const res = await constructorObjectService.getById(tableSlug, id)
       const data = res?.data?.response
       setLocalValue(data ? [data] : null)
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   const getOptionLabel = (option) => {
@@ -167,15 +170,15 @@ const AutoCompleteElement = ({
     setLocalValue(val ? [val] : null)
 
     if (!field?.attributes?.autofill) return
-    
+
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
       setFormValue(field_to, val?.[field_from])
     })
   }
 
-    useEffect(() => {
-      if(value) getValueData()
-    }, [])
+  useEffect(() => {
+    if (value) getValueData()
+  }, [])
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -187,6 +190,7 @@ const AutoCompleteElement = ({
       </div>
 
       <Autocomplete
+        disabled={disabled}
         options={options ?? []}
         value={localValue ?? []}
         freeSolo

@@ -45,7 +45,17 @@ const FormElementGenerator = ({
     const { error, result } = parser.parse(defaultValue)
     return error ? undefined : result
   }, [field.attributes, field.type, field.id, field.relation_type])
-  
+
+  const isDisabled = useMemo(() => {
+    return (
+      field.attributes?.disabled ||
+      !field.attributes?.field_permission?.edit_permission
+    )
+  }, [field])
+
+  // if (!field.attributes?.field_permission?.view_permission) {
+  //   return null
+  // }
 
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {
@@ -55,6 +65,7 @@ const FormElementGenerator = ({
           field={field}
           setFormValue={setFormValue}
           defaultValue={defaultValue}
+          disabled={isDisabled}
           {...props}
         />
       )
@@ -65,6 +76,7 @@ const FormElementGenerator = ({
           field={field}
           setFormValue={setFormValue}
           defaultValue={defaultValue}
+          disabled={isDisabled}
           {...props}
         />
       )
@@ -76,6 +88,7 @@ const FormElementGenerator = ({
           setFormValue={setFormValue}
           formTableSlug={formTableSlug}
           defaultValue={defaultValue}
+          disabled={isDisabled}
           {...props}
         />
       )
@@ -93,7 +106,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -110,7 +123,7 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             mask={"(99) 999-99-99"}
             defaultValue={defaultValue}
-            disabled={field.attributes}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -127,7 +140,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={field.attributes}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -145,7 +158,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={field.defaultValue}
-            disabled={field.attributes}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -162,7 +175,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -177,7 +190,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -192,7 +205,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -209,7 +222,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -223,7 +236,7 @@ const FormElementGenerator = ({
           label={field.label}
           required={field.required}
           defaultValue={defaultValue}
-          disabled={field.attributes?.disabled}
+          disabled={isDisabled}
           {...props}
         />
       )
@@ -239,7 +252,7 @@ const FormElementGenerator = ({
             field={field}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -253,7 +266,7 @@ const FormElementGenerator = ({
           label={field.label}
           required={field.required}
           defaultValue={defaultValue}
-          disabled={field.attributes?.disabled}
+          disabled={isDisabled}
           {...props}
         />
       )
@@ -274,7 +287,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -288,7 +301,7 @@ const FormElementGenerator = ({
             name={computedSlug}
             required={field.required}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -302,7 +315,7 @@ const FormElementGenerator = ({
             name={computedSlug}
             required={field.required}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>
@@ -357,7 +370,24 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             type="color"
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      )
+
+    case "PASSWORD":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFTextField
+            control={control}
+            name={field.slug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
             disabled={field.attributes?.disabled}
+            type="password"
             {...props}
           />
         </FRow>
@@ -373,7 +403,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={field.attributes?.disabled}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>

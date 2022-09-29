@@ -85,6 +85,7 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
       fields: Object.values(fieldsMap) ?? []
     })
   }, [fieldsMap, reset])
+  console.log('fields', fields)
     return ( <div className={styles.dialog_content}>
         <div className={styles.dialog_tabs_header}>
           <Tabs className={styles.tabs_head} selectedIndex={tabIndex}>
@@ -118,11 +119,11 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                             <h2 className={styles.excel_title}>Excel заголовка столбца</h2>
                           </div>
                          <div className={styles.select_body_content}>
-                         {fields?.map((item, index) => (
+                         {fields?.sort((first, second) => (second.required === true) - (first.required === true)).map((item, index) => (
                           <div key={index} className={styles.select_body_layer}>
                           <div className={styles.select_body}>
                                <div className={styles.select_body_item}>
-                                 <input type="text" value={item?.label} placeholder='' disabled className={styles.input_control}/>
+                                 <input type="text" value={`${item?.label}${item?.required ? '*' : ''}`} placeholder='' disabled className={styles.input_control}/>
                                  <div className={styles.select_pointer}><PointerIcon/></div>
                                  <div className={styles.select_options}>
                                    <HFSelect name={`fields[${index}].excelSlug`} control={control} options={excelFieldOptions} width={'264px'}/>

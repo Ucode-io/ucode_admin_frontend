@@ -24,7 +24,8 @@ const TableRow = ({
   onDeleteClick,
   onEditClick,
   onFormSubmit,
-  limit = 10
+  isChecked=()=>{},
+  limit = 10,
 }) => {
   const [formVisible, setFormVisible] = useState(false)
 
@@ -54,18 +55,19 @@ const TableRow = ({
         onRowClick(row, rowIndex)
       }}
     >
-      {onCheckboxChange && (
-        <CTableCell>
+      <CTableCell align="center" className="data_table__number_cell">
+        <span className="data_table__row_number">
+          {(currentPage - 1) * limit + rowIndex + 1}
+        </span>
+        {onCheckboxChange && <div className={`data_table__row_checkbox ${isChecked(row) ? 'checked' : ''}`}>
           <Checkbox
-            checked={checkboxValue === row.guid}
+            checked={isChecked(row)}
             onChange={(_, val) => onCheckboxChange(val, row)}
             onClick={(e) => e.stopPropagation()}
           />
-        </CTableCell>
-      )}
-      <CTableCell align="center">
-        {(currentPage - 1) * limit + rowIndex + 1}
+        </div>}
       </CTableCell>
+
       {columns.map((column, index) => (
         <CTableCell
           key={column.id}
@@ -99,14 +101,16 @@ const TableRow = ({
             style={{ padding: "8px 12px 4px", verticalAlign: "middle" }}
           >
             <div className="flex">
-              {onFormSubmit && <RectangleIconButton
-                color="success"
-                className="mr-1"
-                size="small"
-                onClick={() => setFormVisible(true)}
-              >
-                <Edit color="primary" />
-              </RectangleIconButton>}
+              {onFormSubmit && (
+                <RectangleIconButton
+                  color="success"
+                  className="mr-1"
+                  size="small"
+                  onClick={() => setFormVisible(true)}
+                >
+                  <Edit color="primary" />
+                </RectangleIconButton>
+              )}
               {onDeleteClick && (
                 <DeleteWrapperModal
                   id={row.guid}

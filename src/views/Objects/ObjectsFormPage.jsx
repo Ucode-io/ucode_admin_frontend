@@ -11,7 +11,6 @@ import RelationSection from "./RelationSection"
 import styles from "./style.module.scss"
 import Footer from "../../components/Footer"
 import useTabRouter from "../../hooks/useTabRouter"
-import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import { Save } from "@mui/icons-material"
 import SecondaryButton from "../../components/Buttons/SecondaryButton"
 import { useQueryClient } from "react-query"
@@ -20,11 +19,19 @@ import constructorViewRelationService from "../../services/constructorViewRelati
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2"
 import FiltersBlock from "../../components/FiltersBlock"
 import DocumentGeneratorButton from "./components/DocumentGeneratorButton"
+import DropdownButton from "./components/DropdownButton"
+import useCustomActionsQuery from "../../queries/hooks/useCustomActionsQuery"
+import DropdownButtonItem from "./components/DropdownButton/DropdownButtonItem"
+import IconGenerator from "../../components/IconPicker/IconGenerator"
+import request from "../../utils/request"
+import { showAlert } from "../../store/alert/alert.thunk"
+import { useDispatch } from "react-redux"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
   const { pathname, state = {} } = useLocation()
   const { removeTab, navigateToForm } = useTabRouter()
+  const dispatch = useDispatch()
   const queryClient = useQueryClient()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
@@ -146,6 +153,11 @@ const ObjectsFormPage = () => {
       .catch(() => setBtnLoader(false))
   }
 
+  const { data: { custom_events: customEvents = [] } = {} } =
+    useCustomActionsQuery({
+      tableSlug,
+    })
+
   const create = (data) => {
     setBtnLoader(true)
 
@@ -159,6 +171,22 @@ const ObjectsFormPage = () => {
           navigateToForm(tableSlug, "EDIT", res.data?.data)
       })
       .catch(() => setBtnLoader(false))
+  }
+
+  const invokeFunction = (event) => {
+    const data = {
+      function_id: event.event_path,
+      object_ids: [id],
+    }
+
+    setBtnLoader(true)
+
+    request
+      .post("/invoke_function", data)
+      .then((res) => {
+        dispatch(showAlert("Success", "success"))
+      })
+      .finally(() => setBtnLoader(false))
   }
 
   const onSubmit = (data) => {
@@ -204,13 +232,20 @@ const ObjectsFormPage = () => {
             <SecondaryButton onClick={() => removeTab(pathname)} color="error">
               Закрыть
             </SecondaryButton>
+
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
-              <PrimaryButton
+              <DropdownButton
+                text="Сохранить"
+                icon={<Save />}
                 loader={btnLoader}
                 onClick={handleSubmit(onSubmit)}
               >
-                <Save /> Сохранить
-              </PrimaryButton>
+                {customEvents?.map((event) => (
+                  <DropdownButtonItem key={event.id} onClick={() => invokeFunction(event)}>
+                    <IconGenerator icon={event.icon} /> {event.label}
+                  </DropdownButtonItem>
+                ))}
+              </DropdownButton>
             </PermissionWrapperV2>
           </>
         }

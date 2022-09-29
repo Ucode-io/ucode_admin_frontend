@@ -15,6 +15,7 @@ const Redactor = forwardRef(({ control, fields, selectedPaperSizeIndex }, ref) =
     control,
     name: "html",
   })
+  
   const computedFields = useMemo(() => {
     return fields?.map(field => ({
       label: field.label,
@@ -22,13 +23,14 @@ const Redactor = forwardRef(({ control, fields, selectedPaperSizeIndex }, ref) =
     })) ?? []
   }, [fields])
 
-  useEffect(() => {
-    if(!ref.current) return
-    const element = document.querySelector('.ck-editor__editable')
-    element.style.width = `${selectedPaperSize.width}px`
+  // useEffect(() => {
+  //   if(!ref.current) return
+  //   const element = document.querySelector('.ck-editor__editable')
+  //   element.style.width = `${selectedPaperSize.width}px`
   //   // ref.current.ui.getEditableElement().style.width = `${selectedPaperSize.width}pt`
-  }, [selectedPaperSize])
-  
+
+  // }, [selectedPaperSize])
+
   return (
     <>
       <div className="ck-editor">

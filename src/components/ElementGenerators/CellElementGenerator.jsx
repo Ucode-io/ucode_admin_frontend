@@ -7,7 +7,6 @@ import { parseBoolean } from "../../utils/parseBoolean"
 import IconGenerator from "../IconPicker/IconGenerator"
 import LogoDisplay from "../LogoDisplay"
 import TableTag from "../TableTag"
-import FormulaCell from "./FormulaCell"
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement"
 
 const CellElementGenerator = ({ field = {}, row }) => {
@@ -22,8 +21,6 @@ const CellElementGenerator = ({ field = {}, row }) => {
   if (field.render) {
     return field.render(row)
   }
-
-  console.log("field - ", field)
 
   switch (field.type) {
     case "DATE":

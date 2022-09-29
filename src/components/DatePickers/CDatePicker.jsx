@@ -23,9 +23,9 @@ const CDatePicker = ({ value, onChange, disabled }) => {
             autoComplete="off"
             InputProps={{
               readOnly: disabled,
-              style: disabled && {
+              style: disabled ? {
                 background: "#c0c0c039",
-              },
+              } : {},
               endAdornment: (
                 <InputAdornment position="end">
                   <Today />

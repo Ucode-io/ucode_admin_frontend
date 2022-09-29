@@ -9,7 +9,7 @@ const HFNumberField = ({
   fullWidth = false,
   withTrim = false,
   rules = {},
-  defaultValue="",
+  defaultValue = "",
   disabled,
   ...props
 }) => {
@@ -29,22 +29,21 @@ const HFNumberField = ({
           onChange={(e) => {
             const val = e.target.value
 
-            if(!val) onChange('')
+            if (!val) onChange("")
             else onChange(!isNaN(Number(val)) ? Number(val) : "")
-          }
-          }
+          }}
           name={name}
           error={error}
           fullWidth={fullWidth}
           helperText={!disabledHelperText && error?.message}
-          InputProps={
-            disabled && {
-              readOnly: true,
-              style: {
-                background: "#c0c0c039",
-              },
-            }
-          }
+          InputProps={{
+            readOnly: disabled,
+            style: disabled
+              ? {
+                  background: "#c0c0c039",
+                }
+              : {},
+          }}
           {...props}
         />
       )}

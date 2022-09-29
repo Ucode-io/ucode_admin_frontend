@@ -32,14 +32,14 @@ const HFTextField = ({
           name={name}
           error={error}
           fullWidth={fullWidth}
-          InputProps={
-            disabled && {
-              readOnly: true,
-              style: {
-                background: "#c0c0c039",
-              },
-            }
-          }
+          InputProps={{
+            readOnly: disabled,
+            style: disabled
+              ? {
+                  background: "#c0c0c039",
+                }
+              : {},
+          }}
           helperText={!disabledHelperText && error?.message}
           {...props}
         />

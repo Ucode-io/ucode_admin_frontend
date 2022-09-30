@@ -106,7 +106,6 @@ const MatrixRolePage = () => {
             table_slug: activeTable?.slug,
             custom_field: i.custom_field,
             object_field: i.object_field,
-            is_have_condition: true,
           })),
         },
         updated_fields: [
@@ -134,9 +133,6 @@ const MatrixRolePage = () => {
       },
     }
   )
-
-  console.log("table slug - ", tableSlug)
-  console.log("tableSlugWithType - ", tableSlugWithType)
 
   const getRecordPermissions = () => {
     constructorObjectService
@@ -376,12 +372,15 @@ const MatrixRolePage = () => {
     if (isCustomVisible) {
       autoFilterForm.reset({
         autoFilter: automaticFilters?.map((i) => ({
+          identifier: i.guid,
           object_field: i.object_field,
           custom_field: i.custom_field,
         })),
       })
     }
   }, [isCustomVisible, automaticFilters])
+
+  console.log("autoFilterFields", autoFilterFields)
 
   const isAppPermissionYes = useCallback(
     (items, key) => {
@@ -529,7 +528,6 @@ const MatrixRolePage = () => {
                       ) : (
                         <CrossPerson />
                       )}
-                      {console.log("app ", app)}
                       {parentPopupKey === app.id + type?.key &&
                         expandedAppId === app.id && (
                           <div className={styles.app_permission_popup}>
@@ -683,12 +681,14 @@ const MatrixRolePage = () => {
                                       style={{ display: "flex", gap: 8 }}
                                     >
                                       <HFSelect
+                                        required
                                         width="50%"
                                         options={relations}
                                         control={autoFilterForm.control}
                                         name={`autoFilter.${index}.object_field`}
                                       />
                                       <HFSelect
+                                        required
                                         width="50%"
                                         options={computedCustomFields}
                                         control={autoFilterForm.control}
@@ -696,7 +696,13 @@ const MatrixRolePage = () => {
                                       />
                                       <RectangleIconButton
                                         color="error"
-                                        onClick={() => remove(index)}
+                                        onClick={() => {
+                                          constructorObjectService.delete(
+                                            "automatic_filter",
+                                            field.identifier
+                                          )
+                                          remove(index)
+                                        }}
                                       >
                                         <Delete color="error" />
                                       </RectangleIconButton>
@@ -741,20 +747,19 @@ const MatrixRolePage = () => {
                     </CTableCell>
                   ))}
                   <CTableHeadCell
+                    onClick={() => {
+                      if (app?.children) {
+                        console.log("app , ", app)
+                        handleOpen()
+                        setTableSlug(app?.slug)
+                      }
+                    }}
                     style={{
                       borderBottom: "1px solid #e5e9eb",
                       borderRight: "1px solid #e5e9eb",
                     }}
                   >
-                    <div
-                      onClick={() => {
-                        if (app?.children) {
-                          console.log("app , ", app)
-                          handleOpen()
-                          setTableSlug(app?.slug)
-                        }
-                      }}
-                    >
+                    <div>
                       <FieldPermissionIcon />
                     </div>
                   </CTableHeadCell>

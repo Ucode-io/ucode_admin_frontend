@@ -34,6 +34,8 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
     setAnchorEditEl(null)
   }
 
+  console.log("finalData", finalData)
+
   const columns = [
     {
       id: 1,
@@ -54,7 +56,7 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
           }}
         >
           <div style={{ textAlign: "center" }}>
-            {finalData.find((i) => i.id === row.field_id) ? (
+            {finalData.find((i) => i.id === row.field_id)?.["view"] ? (
               finalData.find((i) => i.id === row.field_id)?.["view"] ===
               "Yes" ? (
                 <TwoUserIcon />
@@ -92,7 +94,7 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
           }}
         >
           <div style={{ textAlign: "center" }}>
-            {finalData.find((i) => i.id === row.field_id) ? (
+            {finalData.find((i) => i.id === row.field_id)?.["edit"] ? (
               finalData.find((i) => i.id === row.field_id)?.["edit"] ===
               "Yes" ? (
                 <TwoUserIcon />
@@ -199,6 +201,7 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
               columns={columns}
               data={fields?.data?.field_permissions ?? []}
               loader={isLoading}
+              disableFilters
               disablePagination
             />
           </div>

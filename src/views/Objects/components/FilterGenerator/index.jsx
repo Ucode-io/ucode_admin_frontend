@@ -56,11 +56,8 @@ export const Filter = ({
 }) => {
   const [debouncedValue, setDebouncedValue] = useState("")
 
-  console.log("name ---- ", name)
-
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return []
-
     return field.attributes.options.map((option) => {
       if (field.type === "PICK_LIST")
         return {
@@ -70,7 +67,7 @@ export const Filter = ({
       if (field.type === "MULTISELECT")
         return {
           value: option.value,
-          label: option.value,
+          label: option.label ?? option.value,
         }
     })
   }, [field.attributes?.options, field.type])

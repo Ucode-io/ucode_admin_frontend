@@ -1,3 +1,4 @@
+import { PictureAsPdf, Print } from "@mui/icons-material"
 import { CircularProgress } from "@mui/material"
 import { forwardRef, useState } from "react"
 import { useEffect } from "react"
@@ -7,28 +8,34 @@ import HFAutoWidthInput from "../../../components/FormElements/HFAutoWidthInput"
 import usePaperSize from "../../../hooks/usePaperSize"
 import documentTemplateService from "../../../services/documentTemplateService"
 import DropdownButton from "../components/DropdownButton"
+import DropdownButtonItem from "../components/DropdownButton/DropdownButtonItem"
 import Redactor from "./Redactor"
 import styles from "./style.module.scss"
 
-
 const RedactorBlock = forwardRef(
-  ({
-    selectedTemplate,
-    setSelectedTemplate,
-    updateTemplate,
-    addNewTemplate,
-    tableViewIsActive,
-    fields,
-    selectedPaperSizeIndex,
-    setSelectedPaperSizeIndex,
-    exportToPDF,
-    exportToHTML,
-    htmlLoader,
-    pdfLoader
-  }, redactorRef) => {
+  (
+    {
+      selectedTemplate,
+      setSelectedTemplate,
+      updateTemplate,
+      addNewTemplate,
+      tableViewIsActive,
+      fields,
+      selectedPaperSizeIndex,
+      setSelectedPaperSizeIndex,
+      exportToPDF,
+      exportToHTML,
+      htmlLoader,
+      pdfLoader,
+      print
+    },
+    redactorRef
+  ) => {
     const { control, handleSubmit, reset } = useForm()
     const [btnLoader, setBtnLoader] = useState(false)
-    const { selectedPaperSize, selectPaperIndexBySize } = usePaperSize(selectedPaperSizeIndex)
+    const { selectedPaperSize, selectPaperIndexBySize } = usePaperSize(
+      selectedPaperSizeIndex
+    )
 
     useEffect(() => {
       reset({
@@ -36,10 +43,14 @@ const RedactorBlock = forwardRef(
         html: selectedTemplate.html,
       })
       setSelectedPaperSizeIndex(selectPaperIndexBySize(selectedTemplate.size))
-    }, [selectedTemplate, reset, setSelectedPaperSizeIndex, selectPaperIndexBySize])
+    }, [
+      selectedTemplate,
+      reset,
+      setSelectedPaperSizeIndex,
+      selectPaperIndexBySize,
+    ])
 
     const onSubmit = async (values) => {
-
       try {
         setBtnLoader(true)
 
@@ -48,7 +59,10 @@ const RedactorBlock = forwardRef(
         const data = {
           ...values,
           html: savedData ?? "",
-          size: [selectedPaperSize.width?.toString(), selectedPaperSize.height?.toString()]
+          size: [
+            selectedPaperSize.width?.toString(),
+            selectedPaperSize.height?.toString(),
+          ],
         }
 
         if (values.type !== "CREATE") {
@@ -67,11 +81,16 @@ const RedactorBlock = forwardRef(
     }
 
     return (
-      <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`}>
-        <div className={styles.pageBlock} 
+      <div
+        className={`${styles.redactorBlock} ${
+          tableViewIsActive ? styles.hidden : ""
+        }`}
+      >
+        <div
+          className={styles.pageBlock}
           // style={{ width: selectedPaperSize.width + 'pt' }}
         >
-          <div className={styles.templateName} >
+          <div className={styles.templateName}>
             <HFAutoWidthInput
               control={control}
               name="title"
@@ -79,18 +98,45 @@ const RedactorBlock = forwardRef(
             />
           </div>
 
-          <div className={styles.pageSize}>{selectedPaperSize.name} ({selectedPaperSize.width} x {selectedPaperSize.height})</div>
+          <div className={styles.pageSize}>
+            {selectedPaperSize.name} ({selectedPaperSize.width} x{" "}
+            {selectedPaperSize.height})
+          </div>
 
-          <Redactor ref={redactorRef} control={control} fields={fields} selectedPaperSizeIndex={selectedPaperSizeIndex} />
+          <Redactor
+            ref={redactorRef}
+            control={control}
+            fields={fields}
+            selectedPaperSizeIndex={selectedPaperSizeIndex}
+          />
         </div>
 
         <Footer
           extra={
             <>
-              {/* <CancelButton onClick={() => setSelectedTemplate(null)} /> */}
-
-              <div onClick={handleSubmit(onSubmit)} className={styles.saveButton} > {btnLoader && <CircularProgress color="secondary" size={15} />} Save</div>
-              <DropdownButton exportToHTML={exportToHTML} exportToPDF={exportToPDF} pdfLoader={pdfLoader} htmlLoader={htmlLoader} />
+              <div
+                onClick={handleSubmit(onSubmit)}
+                className={styles.saveButton}
+              >
+                {btnLoader && (
+                  <CircularProgress color="secondary" size={15} />
+                )}
+                Save
+              </div>
+              <DropdownButton
+                onClick={exportToHTML}
+                loader={pdfLoader || htmlLoader}
+                text="Generate and edit"
+              >
+                <DropdownButtonItem onClick={exportToPDF} >
+                  <PictureAsPdf />
+                  Generate PDF
+                </DropdownButtonItem>
+                <DropdownButtonItem onClick={print} >
+                  <Print />
+                  Print
+                </DropdownButtonItem>
+              </DropdownButton>
             </>
           }
         />

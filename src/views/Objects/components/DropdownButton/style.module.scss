@@ -15,10 +15,13 @@
 
   .button {
     background-color: colors.$primary;
-    padding: 8px 0;
+    padding: 8px 20px;
     transition-duration: .3s;
-    width: 150px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
 
   .iconBlock {
@@ -70,9 +73,9 @@
       cursor: grab;
     }
 
-    .itemText {
-      flex: 1;
-    }
+    // .itemText {
+    //   flex: 1;
+    // }
 
     &:hover {
       background: #F6F8F9;

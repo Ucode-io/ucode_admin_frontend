@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
-import { useLocation, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
@@ -11,7 +11,6 @@ import RelationSection from "./RelationSection"
 import styles from "./style.module.scss"
 import Footer from "../../components/Footer"
 import useTabRouter from "../../hooks/useTabRouter"
-import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import { Save } from "@mui/icons-material"
 import SecondaryButton from "../../components/Buttons/SecondaryButton"
 import { useQueryClient } from "react-query"
@@ -20,11 +19,22 @@ import constructorViewRelationService from "../../services/constructorViewRelati
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2"
 import FiltersBlock from "../../components/FiltersBlock"
 import DocumentGeneratorButton from "./components/DocumentGeneratorButton"
+import DropdownButton from "./components/DropdownButton"
+import useCustomActionsQuery from "../../queries/hooks/useCustomActionsQuery"
+import DropdownButtonItem from "./components/DropdownButton/DropdownButtonItem"
+import IconGenerator from "../../components/IconPicker/IconGenerator"
+import request from "../../utils/request"
+import { showAlert } from "../../store/alert/alert.thunk"
+import { useDispatch } from "react-redux"
+import PrimaryButton from "../../components/Buttons/PrimaryButton"
+import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
   const { pathname, state = {} } = useLocation()
   const { removeTab, navigateToForm } = useTabRouter()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const queryClient = useQueryClient()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
@@ -92,6 +102,8 @@ const ObjectsFormPage = () => {
     } catch (error) {
       console.error(error)
     } finally {
+      console.log("LOADER22222 ===>", loader)
+
       setLoader(false)
     }
   }
@@ -145,6 +157,8 @@ const ObjectsFormPage = () => {
       })
       .catch(() => setBtnLoader(false))
   }
+
+
 
   const create = (data) => {
     setBtnLoader(true)
@@ -204,12 +218,26 @@ const ObjectsFormPage = () => {
             <SecondaryButton onClick={() => removeTab(pathname)} color="error">
               Закрыть
             </SecondaryButton>
+
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+
+              <FormCustomActionButton tableSlug={tableSlug} id={id} />
+
+              {/* {customEvents?.map((event) => (
+                <PrimaryButton
+                  key={event.id}
+                  onClick={() => invokeFunction(event)}
+                >
+                  <IconGenerator icon={event.icon} /> {event.label}
+                </PrimaryButton>
+              ))} */}
+
               <PrimaryButton
                 loader={btnLoader}
                 onClick={handleSubmit(onSubmit)}
               >
-                <Save /> Сохранить
+                <Save />
+                Сохранить
               </PrimaryButton>
             </PermissionWrapperV2>
           </>

@@ -118,14 +118,13 @@ const ActionSettings = ({
               />
             </FRow>
 
-            <FRow label="Redirect url" required>
+            <FRow label="Redirect url">
               <HFTextField
                 name="url"
                 control={control}
                 placeholder="Redirect url"
                 options={functions}
                 fullWidth
-                required
               />
             </FRow>
           </div>

@@ -25,8 +25,6 @@ const ExcelDownloadButton = () => {
     }
 
   }
-
-
   return (
     <RectangleIconButton loader={loader} color="white" onClick={onClick} >
       <Download />

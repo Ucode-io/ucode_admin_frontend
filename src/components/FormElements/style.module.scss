@@ -31,3 +31,52 @@
   flex-wrap: wrap;
   gap: 4px;
 }
+
+.dialog {
+  width: 500px;
+  height: 150px;
+  padding: 20px;
+  z-index: 666;
+  
+  h2 {
+    text-align: center;
+    font-size: 20px;
+  }
+  .dialog_content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+  .form_control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+  }
+  .color_picker {
+    margin-right: 10px;
+  }
+  .icon_picker {
+    margin-right: 10px;
+  }
+  .input_control {
+    width: 160px;
+    height: 30px;
+    margin: 0 10px 5px;
+    
+    &:nth-child(2) {
+      margin-right: 20px;
+    }
+  }
+  .submit_btn {
+    width: 120px;
+    height: 34px;
+    margin-left: auto;
+    margin-right: 20px;
+  }
+}
+.btn_loader {
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+}

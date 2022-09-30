@@ -85,7 +85,6 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
       fields: Object.values(fieldsMap) ?? []
     })
   }, [fieldsMap, reset])
-  console.log('fields', fields)
     return ( <div className={styles.dialog_content}>
         <div className={styles.dialog_tabs_header}>
           <Tabs className={styles.tabs_head} selectedIndex={tabIndex}>

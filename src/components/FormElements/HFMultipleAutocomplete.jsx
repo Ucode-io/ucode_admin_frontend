@@ -21,6 +21,7 @@ import AddIcon from '@mui/icons-material/Add';
 import constructorFieldService from '../../services/constructorFieldService'
 import { generateGUID } from "../../utils/generateID"
 import RippleLoader from '../Loaders/RippleLoader'
+import FRow from "./FRow"
 
 const filter = createFilterOptions()
 
@@ -231,7 +232,7 @@ const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
         <div className={styles.dialog_content}>
         <div className={styles.color_picker}>
           {hasColor &&  
-            <HFColorPicker
+                 <HFColorPicker
                 control={control}
                 name="color"
                 onClick={(e) => {
@@ -240,22 +241,30 @@ const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
                 }}
               />
               }
+              <h4>Color</h4>
             </div>
-            <div className={styles.icon_picker}>{hasIcon && <HFIconPicker shape="rectangle" control={control} name="icon" />}</div>
-            <form action="" className={styles.form_control}>
+            <div className={styles.icon_picker}>
+              {hasIcon && <HFIconPicker shape="rectangle" control={control} name="icon" />}
+              <h4>Icon</h4>
+              </div>
+        </div>
+        <form action="" className={styles.form_control}>
               <div className={styles.input_control}>
-              <HFTextField control={control} name='label' />
+                <FRow label='Label'>
+                  <HFTextField defaultValue="" control={control} name='label' />
+                </FRow>
               </div>
               <div className={styles.input_control}>
-              <HFTextField control={control} name='value' />
+              <FRow label='Value'>
+                <HFTextField defaultValue="" control={control} name='value' />
+              </FRow>
               </div>
             </form>
-        </div>
         <div className={styles.submit_btn}>
         <PrimaryButton onClick={handleSubmit(onSubmit)}>
-          Добавить
-          {loader ?  <span className={styles.btn_loader}><RippleLoader size="btn_size" height='20px'/></span> : <AddIcon/>}
-        </PrimaryButton>
+                Добавить
+                {loader ?  <span className={styles.btn_loader}><RippleLoader size="btn_size" height='20px'/></span> : <AddIcon/>}
+          </PrimaryButton>
         </div>
       
     </div>

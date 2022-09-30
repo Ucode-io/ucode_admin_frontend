@@ -167,6 +167,11 @@ export const fieldTypesOptions = [
         label: "Password",
         value: "PASSWORD"
       },
+      {
+        icon: 'barcode.svg',
+        label: 'Barcode',
+        value: 'BARCODE'
+      }
     ]
   },
 

@@ -26,6 +26,8 @@ import IconGenerator from "../../components/IconPicker/IconGenerator"
 import request from "../../utils/request"
 import { showAlert } from "../../store/alert/alert.thunk"
 import { useDispatch } from "react-redux"
+import PrimaryButton from "../../components/Buttons/PrimaryButton"
+import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
@@ -156,14 +158,7 @@ const ObjectsFormPage = () => {
       .catch(() => setBtnLoader(false))
   }
 
-  const { data: { custom_events: customEvents = [] } = {} } =
-    useCustomActionsQuery({
-      tableSlug,
-      queryPayload: { hasId: !!id },
-      queryParams: {
-        enabled: !!id,
-      },
-    })
+
 
   const create = (data) => {
     setBtnLoader(true)
@@ -178,33 +173,6 @@ const ObjectsFormPage = () => {
           navigateToForm(tableSlug, "EDIT", res.data?.data)
       })
       .catch(() => setBtnLoader(false))
-  }
-
-  const invokeFunction = (event) => {
-    const data = {
-      function_id: event.event_path,
-      object_ids: [id],
-    }
-
-    setBtnLoader(true)
-
-    request
-      .post("/invoke_function", data)
-      .then((res) => {
-        dispatch(showAlert("Success", "success"))
-
-        let url = event?.url ?? ""
-
-        if (url) {
-          Object.entries(res?.data ?? {}).forEach(([key, value]) => {
-            const computedKey = "${" + key + "}"
-            url = url.replaceAll(computedKey, value)
-          })
-        }
-
-        navigate(url)
-      })
-      .finally(() => setBtnLoader(false))
   }
 
   const onSubmit = (data) => {
@@ -252,21 +220,25 @@ const ObjectsFormPage = () => {
             </SecondaryButton>
 
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
-              <DropdownButton
-                text="Сохранить"
-                icon={<Save />}
+
+              <FormCustomActionButton tableSlug={tableSlug} id={id} />
+
+              {/* {customEvents?.map((event) => (
+                <PrimaryButton
+                  key={event.id}
+                  onClick={() => invokeFunction(event)}
+                >
+                  <IconGenerator icon={event.icon} /> {event.label}
+                </PrimaryButton>
+              ))} */}
+
+              <PrimaryButton
                 loader={btnLoader}
                 onClick={handleSubmit(onSubmit)}
               >
-                {customEvents?.map((event) => (
-                  <DropdownButtonItem
-                    key={event.id}
-                    onClick={() => invokeFunction(event)}
-                  >
-                    <IconGenerator icon={event.icon} /> {event.label}
-                  </DropdownButtonItem>
-                ))}
-              </DropdownButton>
+                <Save />
+                Сохранить
+              </PrimaryButton>
             </PermissionWrapperV2>
           </>
         }

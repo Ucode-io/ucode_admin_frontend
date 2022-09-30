@@ -5,16 +5,25 @@ import {
   FormHelperText,
   InputLabel,
   TextField,
+  Dialog,
+  createFilterOptions
 } from "@mui/material"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
-import CreateButton from "../Buttons/CreateButton"
-import SaveButton from "../Buttons/SaveButton"
 import IconGenerator from "../IconPicker/IconGenerator"
 import HFColorPicker from "./HFColorPicker"
 import HFIconPicker from "./HFIconPicker"
 import styles from "./style.module.scss"
+import HFTextField from "./HFTextField"
+import PrimaryButton from "../Buttons/PrimaryButton"
+import AddIcon from '@mui/icons-material/Add';
+import constructorFieldService from '../../services/constructorFieldService'
+import { generateGUID } from "../../utils/generateID"
+import RippleLoader from '../Loaders/RippleLoader'
+import FRow from "./FRow"
+
+const filter = createFilterOptions()
 
 const HFMultipleAutocomplete = ({
   control,
@@ -63,6 +72,7 @@ const HFMultipleAutocomplete = ({
             error={error}
             isMultiSelect={isMultiSelect}
             disabled={disabled}
+            field={field}
           />
         )
       }}
@@ -82,18 +92,38 @@ const AutoCompleteElement = ({
   error,
   isMultiSelect,
   disabled,
+  field
 }) => {
+  const [dialogState, setDialogState] = useState(null)
+  const handleOpen = (inputValue) => {
+    setDialogState(inputValue)
+  }
+  const handleClose = () => {
+    setDialogState(null)
+  }
+  const [localOptions, setLocalOptions] = useState(options ?? [])
+  
   const computedValue = useMemo(() => {
     if (!Array.isArray(value) || !value?.length) return []
 
     if (isMultiSelect)
       return (
-        value?.map((el) => options?.find((option) => option.value === el)) ?? []
+        value?.map((el) => localOptions?.find((option) => option.value === el)) ?? []
       )
-    else return [options?.find((option) => option.value === value[0])] ?? []
-  }, [value, options, isMultiSelect])
-
-  const changeHandler = (e, values) => {
+    else return [localOptions?.find((option) => option.value === value[0])] ?? []
+  }, [value, localOptions, isMultiSelect])
+  
+  const addNewOption = (newOption) => {
+    setLocalOptions(prev => [...prev, newOption])
+    changeHandler(null, [...computedValue, newOption])
+  }
+  
+  const changeHandler = (_, values) => {
+   if(values[values?.length - 1]?.value === 'NEW') {
+    handleOpen(values[values?.length - 1]?.inputValue)
+    return
+   }
+    
     if (!values?.length) {
       onFormChange([])
       return
@@ -101,18 +131,30 @@ const AutoCompleteElement = ({
     if (isMultiSelect) onFormChange(values?.map((el) => el.value))
     else onFormChange([values[values?.length - 1]?.value] ?? [])
   }
-
+  
   return (
     <FormControl style={{ width }}>
       <InputLabel size="small">{label}</InputLabel>
       <Autocomplete
         multiple
         value={computedValue}
-        options={options}
+        options={localOptions}
         getOptionLabel={(option) => option?.label ?? option?.value}
         isOptionEqualToValue={(option, value) => option?.value === value?.value}
         onChange={changeHandler}
-        renderInput={(params) => <TextField {...params} size="small" />}
+        filterOptions={(options, params) => {
+          const filtered = filter(options, params);
+          if (params.inputValue !== '') {
+            filtered.push({
+              value: 'NEW',
+              inputValue: params.inputValue,
+              label: `Add "${params.inputValue}"`,
+            });
+          }
+
+          return filtered;
+        }}
+        renderInput={(params) => <TextField  {...params} size="small" />}
         noOptionsText={'No options'}
         disabled={disabled}
         renderTags={(values, getTagProps) => (
@@ -141,31 +183,90 @@ const AutoCompleteElement = ({
       {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
       )}
+      <Dialog open={!!dialogState} onClose={handleClose}>
+        <AddOptionBlock dialogState={dialogState}  addNewOption={addNewOption} handleClose={handleClose} field={field}/>
+      </Dialog>
     </FormControl>
   )
 }
 
-const AddOptionBlock = () => {
-  const { control } = useForm()
+const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
+  const hasColor = field.attributes?.has_color
+  const hasIcon = field.attributes?.has_icon
+  const [loader, setLoader] = useState(false)
+  const { control, handleSubmit} = useForm({
+    defaultValues: {
+      label: dialogState,
+      value: dialogState,
+      id: generateGUID()
+    }
+  })
+  const onSubmit = (newOption) => {
+    setLoader(true)
+    const data = {
+      ...field,
+      attributes: {
+        ...field?.attributes,
+        options: [
+          ...field.attributes.options,
+          newOption
+        ]
+      }, 
 
+    }
+    
+    constructorFieldService.update({...data})
+    .then((res) => {
+      handleClose(false)
+      addNewOption(newOption)
+    }).catch((err) => {
+      console.log('err', err)
+      setLoader(false)
+    })
+    
+  }
   return (
-    <div
-      className="flex align-center gap-2"
-      onMouseDown={(event) => {
-        // Prevent blur
-        event.preventDefault()
-      }}
-    >
-      <HFColorPicker
-        control={control}
-        name="color"
-        onClick={(e) => {
-          e.stopPropagation()
-          e.preventDefault()
-        }}
-      />
-      <HFIconPicker shape="rectangle" control={control} name="icon" />
-      <CreateButton />
+      <div
+      className={`${styles.dialog}`}>
+        <h2>Add option</h2>
+        <div className={styles.dialog_content}>
+        <div className={styles.color_picker}>
+          {hasColor &&  
+                 <HFColorPicker
+                control={control}
+                name="color"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  e.preventDefault()
+                }}
+              />
+              }
+              <h4>Color</h4>
+            </div>
+            <div className={styles.icon_picker}>
+              {hasIcon && <HFIconPicker shape="rectangle" control={control} name="icon" />}
+              <h4>Icon</h4>
+              </div>
+        </div>
+        <form action="" className={styles.form_control}>
+              <div className={styles.input_control}>
+                <FRow label='Label'>
+                  <HFTextField defaultValue="" control={control} name='label' />
+                </FRow>
+              </div>
+              <div className={styles.input_control}>
+              <FRow label='Value'>
+                <HFTextField defaultValue="" control={control} name='value' />
+              </FRow>
+              </div>
+            </form>
+        <div className={styles.submit_btn}>
+        <PrimaryButton onClick={handleSubmit(onSubmit)}>
+                Добавить
+                {loader ?  <span className={styles.btn_loader}><RippleLoader size="btn_size" height='20px'/></span> : <AddIcon/>}
+          </PrimaryButton>
+        </div>
+      
     </div>
   )
 }

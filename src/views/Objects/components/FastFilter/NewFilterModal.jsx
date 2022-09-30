@@ -49,25 +49,34 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
   })
 
   const computedOptions = useMemo(() => {
-    return (
-      Object.values(fieldsMap ?? {})
-        // ?.filter((i) => !view?.quick_filters?.find((j) => i.id === j.field_id))
-        ?.map((i) => ({ ...i, value: i.id }))
-    )
+    return Object.values(fieldsMap ?? {})?.map((i) => ({ ...i, value: i.id }))
   }, [fieldsMap])
 
   const isAddBtnDisabled = useMemo(() => {
     return fields.length === computedOptions.length
   }, [fields, computedOptions])
 
+  const filtered = useMemo(() => {
+    return [
+      ...Object.values(fieldsMap).filter(
+        (i) =>
+          Object.keys(filters ?? {}).includes(i.slug) &&
+          !(new_list[tableSlug] ?? []).find((j) => i.id === j.id)
+      ),
+      ...(new_list[tableSlug] ?? []),
+    ]
+  }, [filters, fieldsMap, new_list, tableSlug])
+
   useEffect(() => {
-    reset({
-      new: new_list[tableSlug]?.map((i) => ({
-        checked: i.checked,
-        left_field: i.id,
-      })),
-    })
-  }, [new_list, tableSlug, reset])
+    if (filtered.length) {
+      reset({
+        new: filtered?.map((i) => ({
+          checked: i.checked,
+          left_field: i.id,
+        })),
+      })
+    }
+  }, [filtered, reset])
 
   const open = Boolean(anchorEl)
   const id = open ? "simple-popover" : undefined
@@ -150,6 +159,16 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
                     filterActions.clearNewFilter({
                       tableSlug,
                       fieldId: watch(`new.${index}.left_field`),
+                    })
+                  )
+                  dispatch(
+                    filterActions.removeFromList({
+                      tableSlug,
+                      viewId: view.id,
+                      name:
+                        fieldsMap?.[watch(`new.${index}.left_field`)]
+                          ?.path_slug ??
+                        fieldsMap?.[watch(`new.${index}.left_field`)]?.slug,
                     })
                   )
                   remove(index)

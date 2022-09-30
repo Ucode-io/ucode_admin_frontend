@@ -1,11 +1,13 @@
-import { FileOpen } from "@mui/icons-material"
+import { Add, FileOpen } from "@mui/icons-material"
 import { Menu, Tooltip } from "@mui/material"
 import { useMemo, useState } from "react"
 import { useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
 import CSelect from "../../../../components/CSelect"
+import constructorObjectService from "../../../../services/constructorObjectService"
 import documentTemplateService from "../../../../services/documentTemplateService"
+import { generateGUID } from "../../../../utils/generateID"
 import Form from "./Form"
 import styles from "./style.module.scss"
 
@@ -25,23 +27,37 @@ const DocumentGeneratorButton = () => {
   const { data: templates = [] } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
-      return documentTemplateService.getList({ table_slug: tableSlug })
+      return constructorObjectService.getList("template", {
+        data: { table_slug: tableSlug },
+      })
     },
     {
-      select: (res) => {
-        return res.htmlTemplates ?? []
-      },
+      select: (res) => res.data?.response ?? [],
     }
   )
 
   const navigateToDocumentEditPage = (template) => {
-
     const state = {
       toDocsTab: true,
       template: template,
-      objectId: objectId
+      objectId: objectId,
     }
-    
+
+    closeMenu()
+    navigate(`/main/${appId}/object/${tableSlug}`, { state })
+  }
+
+  const navigateToDocumentCreatePage = () => {
+    const state = {
+      toDocsTab: true,
+      template: {
+        id: generateGUID(),
+        title: "NEW",
+        type: "CREATE",
+        table_slug: tableSlug,
+        html: "",
+      },
+    }
     closeMenu()
     navigate(`/main/${appId}/object/${tableSlug}`, { state })
   }
@@ -70,8 +86,14 @@ const DocumentGeneratorButton = () => {
               <p className={styles.itemText}>{template.title}</p>
             </div>
           ))}
+          <div
+            className={`${styles.menuItem}`}
+            onClick={() => navigateToDocumentCreatePage()}
+          >
+            <Add color="primary" />
+            <p className={styles.itemText}> Create new</p>
+          </div>
         </div>
-
       </Menu>
     </>
   )

@@ -1,5 +1,6 @@
 import { Add, InsertDriveFile } from "@mui/icons-material"
 import { Card } from "@mui/material"
+import { useMemo } from "react"
 import { useEffect } from "react"
 import { useState } from "react"
 import { useParams } from "react-router-dom"
@@ -14,10 +15,18 @@ import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal"
 import RelationTable from "./RelationTable"
 import styles from "./style.module.scss"
 
-const RelationSection = ({ relations }) => {
-  const { id } = useParams()
+const RelationSection = ({ relations, tableSlug: tableSlugFromProps, id: idFromProps }) => {
+  console.log("RELATIONS ==>", relations)
 
-  const { tableSlug } = useParams()
+  const filteredRelations = useMemo(() => {
+    return relations?.filter(relation => relation?.relatedTable)
+  }, [relations])
+
+  const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams()
+
+  const tableSlug = tableSlugFromProps ?? tableSlugFromParams
+  const id = idFromProps ?? idFromParams 
+
   const { navigateToForm } = useTabRouter()
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null)
@@ -27,7 +36,7 @@ const RelationSection = ({ relations }) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
   const [selectedObjects, setSelectedObjects] = useState([])
 
-  const selectedRelation = relations[selectedTabIndex]
+  const selectedRelation = filteredRelations[selectedTabIndex]
 
   useEffect(() => {
     setSelectedObjects([])
@@ -36,10 +45,10 @@ const RelationSection = ({ relations }) => {
   useEffect(() => {
     const result = {}
 
-    relations?.forEach((relation) => (result[relation.id] = false))
+    filteredRelations?.forEach((relation) => (result[relation.id] = false))
 
     setRelationsCreateFormVisible(result)
-  }, [relations])
+  }, [filteredRelations])
 
   const setCreateFormVisible = (relationId, value) => {
     setRelationsCreateFormVisible((prev) => ({
@@ -49,7 +58,7 @@ const RelationSection = ({ relations }) => {
   }
 
   const navigateToCreatePage = () => {
-    const relation = relations[selectedTabIndex]
+    const relation = filteredRelations[selectedTabIndex]
     if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
     else {
       if (relation.is_editable) setCreateFormVisible(relation.id, true)
@@ -66,7 +75,7 @@ const RelationSection = ({ relations }) => {
     }
   }
 
-  if (!relations?.length) return null
+  if (!filteredRelations?.length) return null
 
   return (
     <>
@@ -76,12 +85,12 @@ const RelationSection = ({ relations }) => {
           closeModal={() => setSelectedManyToManyRelation(null)}
         />
       )}
-      {relations.length ? (
+      {filteredRelations.length ? (
         <Card className={styles.card}>
           <Tabs selectedIndex={selectedTabIndex} onSelect={setSelectedTabIndex}>
             <div className={styles.cardHeader}>
               <TabList className={styles.tabList}>
-                {relations?.map((relation, index) => (
+                {filteredRelations?.map((relation, index) => (
                   <Tab key={index}>
                     {/* {relation?.view_relation_type === "FILE" ? (
                       <>
@@ -96,7 +105,7 @@ const RelationSection = ({ relations }) => {
                 ))}
               </TabList>
 
-              {relations[selectedTabIndex]?.relatedTable !== "file" && (
+              {filteredRelations[selectedTabIndex]?.relatedTable !== "file" && (
                 <div className="flex gap-2">
                   <SecondaryButton
                     onClick={navigateToCreatePage}
@@ -113,7 +122,7 @@ const RelationSection = ({ relations }) => {
               )}
             </div>
 
-            {relations?.map((relation) => (
+            {filteredRelations?.map((relation) => (
               <TabPanel key={relation.id}>
                 {relation?.relatedTable === "file" ? (
                   <FilesSection
@@ -130,6 +139,8 @@ const RelationSection = ({ relations }) => {
                     setCreateFormVisible={setCreateFormVisible}
                     selectedObjects={selectedObjects}
                     setSelectedObjects={setSelectedObjects}
+                    tableSlug={tableSlug}
+                    id={id}
                   />
                 )}
               </TabPanel>

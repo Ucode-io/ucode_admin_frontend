@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
@@ -19,13 +19,6 @@ import constructorViewRelationService from "../../services/constructorViewRelati
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2"
 import FiltersBlock from "../../components/FiltersBlock"
 import DocumentGeneratorButton from "./components/DocumentGeneratorButton"
-import DropdownButton from "./components/DropdownButton"
-import useCustomActionsQuery from "../../queries/hooks/useCustomActionsQuery"
-import DropdownButtonItem from "./components/DropdownButton/DropdownButtonItem"
-import IconGenerator from "../../components/IconPicker/IconGenerator"
-import request from "../../utils/request"
-import { showAlert } from "../../store/alert/alert.thunk"
-import { useDispatch } from "react-redux"
 import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons"
 
@@ -33,8 +26,6 @@ const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
   const { pathname, state = {} } = useLocation()
   const { removeTab, navigateToForm } = useTabRouter()
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
   const queryClient = useQueryClient()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
@@ -102,8 +93,6 @@ const ObjectsFormPage = () => {
     } catch (error) {
       console.error(error)
     } finally {
-      console.log("LOADER22222 ===>", loader)
-
       setLoader(false)
     }
   }

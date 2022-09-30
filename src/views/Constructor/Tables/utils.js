@@ -22,7 +22,7 @@ export const computeViewRelations = (relations) => {
   return relations?.sort(sortByOrder)?.map(({relation, view_relation_type}) => ({
     relation_id: relation?.id,
     view_relation_type: view_relation_type
-  })) ?? []
+  }))?.filter(viewRelation => viewRelation?.relation_id) ?? []
 }
 
 export const computeViewRelationsOnSubmit = (relations) => {

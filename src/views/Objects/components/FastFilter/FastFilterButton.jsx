@@ -36,13 +36,12 @@ const FastFilterButton = ({ view, fieldsMap }) => {
       <RectangleIconButton
         color="white"
         size={!!selectedFiltersNumber ? "long" : ""}
+        onClick={(e) => setAnchorEl(e.target)}
       >
-        <span onClick={(e) => setAnchorEl(e.target)}>
-          <FilterAlt
-            style={{ marginTop: 5 }}
-            color={!!selectedFiltersNumber ? "primary" : ""}
-          />
-        </span>
+        <FilterAlt
+          style={{ marginTop: 5 }}
+          color={!!selectedFiltersNumber ? "primary" : ""}
+        />
         {!!selectedFiltersNumber && (
           <>
             <strong>
@@ -51,7 +50,12 @@ const FastFilterButton = ({ view, fieldsMap }) => {
               </Typography>
             </strong>
 
-            <Close onClick={clearFilters} />
+            <Close
+              onClick={(e) => {
+                e.preventDefault()
+                clearFilters()
+              }}
+            />
           </>
         )}
       </RectangleIconButton>
@@ -64,7 +68,12 @@ const FastFilterButton = ({ view, fieldsMap }) => {
               {selectedOrdersNumber}
             </Typography>
           </strong>
-          <Close onClick={clearOrders} />
+          <Close
+            onClick={(e) => {
+              e.preventDefault()
+              clearOrders()
+            }}
+          />
         </RectangleIconButton>
       )}
       <NewFilterModal

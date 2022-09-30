@@ -18,7 +18,7 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
   const dispatch = useDispatch()
   const { tableSlug } = useParams()
   const { new_list } = useSelector((s) => s.filter)
-  const { filters } = useFilters(tableSlug, view.id)
+  const { filters, clearFilters } = useFilters(tableSlug, view.id)
 
   const { control, watch, reset } = useForm({
     defaultValues: {
@@ -60,14 +60,24 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
     return fields.length === computedOptions.length
   }, [fields, computedOptions])
 
+  const filtered = useMemo(
+    () =>
+      Object.values(fieldsMap).filter(
+        (field) =>
+          !new_list[tableSlug]?.find((newItem) => newItem.id === field.id) &&
+          Object.entries(filters).find((filter) => filter[0] === field["slug"])
+      ),
+    [new_list, tableSlug, fieldsMap, filters]
+  )
+
   useEffect(() => {
     reset({
-      new: new_list[tableSlug]?.map((i) => ({
+      new: [...new_list[tableSlug], ...filtered]?.map((i) => ({
         checked: i.checked,
         left_field: i.id,
       })),
     })
-  }, [new_list, tableSlug, reset])
+  }, [new_list, tableSlug, reset, view?.quick_filters, fieldsMap, filtered])
 
   const open = Boolean(anchorEl)
   const id = open ? "simple-popover" : undefined
@@ -152,6 +162,7 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
                       fieldId: watch(`new.${index}.left_field`),
                     })
                   )
+                  clearFilters()
                   remove(index)
                 }}
               >

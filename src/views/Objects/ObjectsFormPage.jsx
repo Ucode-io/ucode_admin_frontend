@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
-import { useLocation, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
 import constructorSectionService from "../../services/constructorSectionService"
@@ -26,11 +26,14 @@ import IconGenerator from "../../components/IconPicker/IconGenerator"
 import request from "../../utils/request"
 import { showAlert } from "../../store/alert/alert.thunk"
 import { useDispatch } from "react-redux"
+import PrimaryButton from "../../components/Buttons/PrimaryButton"
+import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams()
   const { pathname, state = {} } = useLocation()
   const { removeTab, navigateToForm } = useTabRouter()
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const queryClient = useQueryClient()
 
@@ -99,6 +102,8 @@ const ObjectsFormPage = () => {
     } catch (error) {
       console.error(error)
     } finally {
+      console.log("LOADER22222 ===>", loader)
+
       setLoader(false)
     }
   }
@@ -153,10 +158,7 @@ const ObjectsFormPage = () => {
       .catch(() => setBtnLoader(false))
   }
 
-  const { data: { custom_events: customEvents = [] } = {} } =
-    useCustomActionsQuery({
-      tableSlug,
-    })
+
 
   const create = (data) => {
     setBtnLoader(true)
@@ -171,22 +173,6 @@ const ObjectsFormPage = () => {
           navigateToForm(tableSlug, "EDIT", res.data?.data)
       })
       .catch(() => setBtnLoader(false))
-  }
-
-  const invokeFunction = (event) => {
-    const data = {
-      function_id: event.event_path,
-      object_ids: [id],
-    }
-
-    setBtnLoader(true)
-
-    request
-      .post("/invoke_function", data)
-      .then((res) => {
-        dispatch(showAlert("Success", "success"))
-      })
-      .finally(() => setBtnLoader(false))
   }
 
   const onSubmit = (data) => {
@@ -234,18 +220,25 @@ const ObjectsFormPage = () => {
             </SecondaryButton>
 
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
-              <DropdownButton
-                text="Сохранить"
-                icon={<Save />}
+
+              <FormCustomActionButton tableSlug={tableSlug} id={id} />
+
+              {/* {customEvents?.map((event) => (
+                <PrimaryButton
+                  key={event.id}
+                  onClick={() => invokeFunction(event)}
+                >
+                  <IconGenerator icon={event.icon} /> {event.label}
+                </PrimaryButton>
+              ))} */}
+
+              <PrimaryButton
                 loader={btnLoader}
                 onClick={handleSubmit(onSubmit)}
               >
-                {customEvents?.map((event) => (
-                  <DropdownButtonItem key={event.id} onClick={() => invokeFunction(event)}>
-                    <IconGenerator icon={event.icon} /> {event.label}
-                  </DropdownButtonItem>
-                ))}
-              </DropdownButton>
+                <Save />
+                Сохранить
+              </PrimaryButton>
             </PermissionWrapperV2>
           </>
         }

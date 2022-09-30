@@ -7,8 +7,10 @@ import { InputAdornment, TextField } from "@mui/material"
 import "./style2.scss"
 import { locale } from "./Plugins/locale"
 import "react-multi-date-picker/styles/layouts/mobile.css"
+import CopyToClipboard from "../CopyToClipboard"
 
 const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
+  console.log("value -", value)
   return (
     <div className="main_wrapper">
       <DatePicker
@@ -84,6 +86,7 @@ const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
         value={new Date(value) || ""}
         onChange={(val) => onChange(val ? new Date(val) : "")}
       />
+      <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />
     </div>
   )
 }

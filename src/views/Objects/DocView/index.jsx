@@ -1,4 +1,4 @@
-import { BackupTable } from "@mui/icons-material"
+import { BackupTable, ImportExport } from "@mui/icons-material"
 import { useRef, useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { useLocation, useParams } from "react-router-dom"
@@ -7,17 +7,19 @@ import FiltersBlock from "../../../components/FiltersBlock"
 import PageFallback from "../../../components/PageFallback"
 import usePaperSize from "../../../hooks/usePaperSize"
 import constructorObjectService from "../../../services/constructorObjectService"
+import constructorRelationService from "../../../services/constructorRelationService"
+import constructorViewRelationService from "../../../services/constructorViewRelationService"
 import documentTemplateService from "../../../services/documentTemplateService"
 import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSelector"
 
 import ViewTabSelector from "../components/ViewTypeSelector"
+import RelationSection from "../RelationSection"
 import TableView from "../TableView"
+import DocRelationsSection from "./DocRelationsSection"
 import DocSettingsBlock from "./DocSettingsBlock"
 import RedactorBlock from "./RedactorBlock"
 import styles from "./style.module.scss"
 import TemplatesList from "./TemplatesList"
-import printJS from 'print-js'
-
 
 const DocView = ({
   views,
@@ -26,30 +28,30 @@ const DocView = ({
   fieldsMap,
 }) => {
   const redactorRef = useRef()
-  const {state} = useLocation()
+  const { state } = useLocation()
   const { tableSlug } = useParams()
   const queryClient = useQueryClient()
 
   const view = views.find((view) => view.type === "TABLE")
-
-  const [templates, setTemplates] = useState([])
 
   // =====SETTINGS BLOCK=========
   const [pdfLoader, setPdfLoader] = useState(false)
   const [htmlLoader, setHtmlLoader] = useState(false)
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0)
   const [tableViewIsActive, setTableViewIsActive] = useState(false)
+  const [relationViewIsActive, setRelationViewIsActive] = useState(false)
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0)
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex)
 
   const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
-  const [selectedTemplate, setSelectedTemplate] = useState(state?.template ?? null)
-
+  const [selectedTemplate, setSelectedTemplate] = useState(
+    state?.template ?? null
+  )
 
   // ========FIELDS FOR RELATIONS=========
   const { data: fields = [] } = useQuery(
-    ['GET_OBJECTS_LIST_WITH_RELATIONS', { tableSlug, limit: 0, offset: 0 }], 
+    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, limit: 0, offset: 0 }],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: { with_relations: true, limit: 0, offset: 0 },
@@ -64,42 +66,35 @@ const DocView = ({
             label: `${el.label} (${el.table_label})`,
           })) ?? []
 
-          return [...fields, ...relationFields]?.filter(el => el.type !== "LOOKUP")
-      }
+        return [...fields, ...relationFields]?.filter(
+          (el) => el.type !== "LOOKUP"
+        )
+      },
     }
   )
 
   // ========GET TEMPLATES LIST===========
-  const { isLoading } = useQuery(
+  const { data: templates = [], isLoading, refetch } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
-      return documentTemplateService.getList({ table_slug: tableSlug })
+      return constructorObjectService.getList('template', { data: {table_slug: tableSlug} })
     },
     {
-      onSuccess: (res) => setTemplates(res.htmlTemplates ?? []),
+      select: (res) => res.data?.response ?? [],
     }
   )
-
-
+    
+    console.log("SELECTED ", selectedTemplate)
 
   // ========UPDATE TEMPLATE===========
 
   const updateTemplate = (template) => {
-    setTemplates((prev) => {
-      return prev.map((t) => {
-        if (t.id === template.id) {
-          return template
-        }
-        return t
-      })
-    })
+    refetch()
   }
- 
+
   // ========ADD NEW TEMPLATE=========
   const addNewTemplate = (template) => {
-    setTemplates((prev) => {
-      return [...prev, template]
-    })
+    refetch()
   }
 
   // =========CHECKBOX CHANGE HANDLER=========
@@ -107,8 +102,6 @@ const DocView = ({
     if (val) setSelectedObject(row.guid)
     else setSelectedObject(null)
   }
-
-  
 
   // =======EXPORT TO PDF============
 
@@ -118,23 +111,29 @@ const DocView = ({
 
     try {
       let html = redactorRef.current.getData()
-    
+
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
 
-      fields.forEach(field => {
-        html = html.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
+      fields.forEach((field) => {
+        html = html.replaceAll(
+          `{ ${field.label} }`,
+          `<%= it.${field.path_slug ?? field.slug} %>`
+        )
       })
 
       const res = await documentTemplateService.exportToPDF({
         data: {
           table_slug: tableSlug,
           object_id: selectedObject,
-          page_size: selectedPaperSize.name
+          page_size: selectedPaperSize.name,
         },
         html: meta + html,
       })
 
-      queryClient.refetchQueries(["GET_OBJECT_FILES", { tableSlug, selectedObject }])
+      queryClient.refetchQueries([
+        "GET_OBJECT_FILES",
+        { tableSlug, selectedObject },
+      ])
 
       window.open(res.link, { target: "_blank" })
     } finally {
@@ -152,9 +151,11 @@ const DocView = ({
       let html = redactorRef.current.getData()
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
 
-
-      fields.forEach(field => {
-        html = html.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
+      fields.forEach((field) => {
+        html = html.replaceAll(
+          `{ ${field.label} }`,
+          `<%= it.${field.path_slug ?? field.slug} %>`
+        )
       })
 
       const res = await documentTemplateService.exportToHTML({
@@ -165,49 +166,44 @@ const DocView = ({
         html: meta + html,
       })
 
-
-      setSelectedTemplate(prev => ({
+      setSelectedTemplate((prev) => ({
         ...prev,
         html: res.html,
-        size: [selectedPaperSize.width, selectedPaperSize.height]
+        size: [selectedPaperSize?.name],
       }))
-
-      
-
     } finally {
       setHtmlLoader(false)
     }
   }
 
+  // =======PRINT============
 
-
-   // =======PRINT============
-
-   const print = async () => {
+  const print = async () => {
     if (!selectedTemplate) return
     setPdfLoader(true)
 
     try {
       let html = redactorRef.current.getData()
-    
+
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
 
-      fields.forEach(field => {
-        html = html.replaceAll(`{ ${field.label} }`, `<%= it.${field.path_slug ?? field.slug} %>`)
+      fields.forEach((field) => {
+        html = html.replaceAll(
+          `{ ${field.label} }`,
+          `<%= it.${field.path_slug ?? field.slug} %>`
+        )
       })
 
       const computedHTML = `${meta} ${html} `
-      
-      printJS({ printable: computedHTML, type: 'raw-html', style: [
-        `@page { size: ${selectedPaperSize.width}pt ${selectedPaperSize.height}pt; margin: 5mm;} body { margin: 0 }`
-      ],
-      targetStyles: ["*"] })
 
+      // printJS({ printable: computedHTML, type: 'raw-html', style: [
+      //   `@page { size: ${selectedPaperSize.width}pt ${selectedPaperSize.height}pt; margin: 5mm;} body { margin: 0 }`
+      // ],
+      // targetStyles: ["*"] })
     } finally {
       setPdfLoader(false)
     }
   }
-
 
   return (
     <div>
@@ -215,6 +211,17 @@ const DocView = ({
         style={{ padding: 0 }}
         extra={
           <>
+            <RectangleIconButton
+              color="white"
+              onClick={() => setRelationViewIsActive((prev) => !prev)}
+            >
+              <ImportExport
+                style={{ transform: "rotate(45deg)" }}
+                color={relationViewIsActive ? "primary" : ""}
+              />
+            </RectangleIconButton>
+
+            {/* <DocRelationsButton /> */}
             <RectangleIconButton
               color="white"
               onClick={() => setTableViewIsActive((prev) => !prev)}
@@ -249,7 +256,7 @@ const DocView = ({
           {tableViewIsActive && (
             <div className={styles.redactorBlock}>
               <TableView
-                checkboxValue={selectedObject}
+                isChecked={(row) => selectedObject === row.guid}
                 onCheckboxChange={onCheckboxChange}
                 isDocView
                 filters={{}}
@@ -259,27 +266,36 @@ const DocView = ({
             </div>
           )}
 
-            
-            {selectedTemplate ? (
-              <RedactorBlock
-                selectedTemplate={selectedTemplate}
-                setSelectedTemplate={setSelectedTemplate}
-                updateTemplate={updateTemplate}
-                addNewTemplate={addNewTemplate}
-                ref={redactorRef}
-                tableViewIsActive={tableViewIsActive}
-                fields={fields}
-                selectedPaperSizeIndex={selectedPaperSizeIndex}
-                setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
-                htmlLoader={htmlLoader}
-                exportToHTML={exportToHTML}
-                exportToPDF={exportToPDF}
-                pdfLoader={pdfLoader}
-                print={print}
-              />
-            ) : (
-              <div className={`${styles.redactorBlock} ${tableViewIsActive ? styles.hidden : ''}`} />
-            )}
+          {relationViewIsActive && <div className={styles.redactorBlock}>
+            <DocRelationsSection />
+          </div>}
+
+         {!relationViewIsActive &&  <>
+          {selectedTemplate ? (
+            <RedactorBlock
+              selectedTemplate={selectedTemplate}
+              setSelectedTemplate={setSelectedTemplate}
+              updateTemplate={updateTemplate}
+              addNewTemplate={addNewTemplate}
+              ref={redactorRef}
+              tableViewIsActive={tableViewIsActive}
+              fields={fields}
+              selectedPaperSizeIndex={selectedPaperSizeIndex}
+              setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
+              htmlLoader={htmlLoader}
+              exportToHTML={exportToHTML}
+              exportToPDF={exportToPDF}
+              pdfLoader={pdfLoader}
+              print={print}
+            />
+          ) : (
+            <div
+              className={`${styles.redactorBlock} ${
+                tableViewIsActive ? styles.hidden : ""
+              }`}
+            />
+          )}
+          </>}
 
           <DocSettingsBlock
             pdfLoader={pdfLoader}

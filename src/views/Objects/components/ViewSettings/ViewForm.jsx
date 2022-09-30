@@ -247,7 +247,9 @@ const getInitialValues = (
           ? [...columns, ...relationColumns]
           : columns
       ) ?? [],
-    group_fields: computeGroupFields(initialValues?.group_fields, columns),
+    group_fields: computeGroupFields(initialValues?.group_fields, initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT"
+    ? [...columns, ...relationColumns]
+    : columns),
     table_slug: tableSlug,
     id: initialValues?.id,
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",

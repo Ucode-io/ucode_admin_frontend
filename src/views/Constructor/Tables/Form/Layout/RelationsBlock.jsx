@@ -54,6 +54,7 @@ const RelationsBlock = ({
             : {relation_id: dropResult.payload?.id}
           )
       } else {
+        // viewRelationsFieldArray.replace(result)
         viewRelationsFieldArray.move(
           dropResult.removedIndex,
           dropResult.addedIndex

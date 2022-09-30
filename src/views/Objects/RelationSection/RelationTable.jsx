@@ -18,9 +18,11 @@ const RelationTable = ({
   createFormVisible,
   setCreateFormVisible,
   selectedObjects,
-  setSelectedObjects
+  setSelectedObjects,
+  tableSlug,
+  id,
 }) => {
-  const { appId, tableSlug, id } = useParams()
+  const { appId } = useParams()
   const navigate = useNavigate()
   const { navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()

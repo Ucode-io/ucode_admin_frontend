@@ -118,6 +118,15 @@ const MatrixRolePage = () => {
     },
     {
       onSuccess: () => {
+        handleRecordPermission(
+          recordPermissions?.find(
+            (item) => item?.table_slug === tableSlugWithType.split("#")[0]
+          ),
+          tableSlugWithType.split("#")[1],
+          "Yes",
+          tableSlugWithType.split("#")[0],
+          true
+        )
         dispatch(showAlert("Автофильтр успешно создан", "success"))
         setIsCustomVisible(false)
         setTableSlugWithType("")
@@ -169,7 +178,13 @@ const MatrixRolePage = () => {
       .catch((e) => console.log("err ", e))
   }
 
-  const handleRecordPermission = (record, type, value, tabSlug) => {
+  const handleRecordPermission = (
+    record,
+    type,
+    value,
+    tabSlug,
+    is_have_condition
+  ) => {
     autoFilterForm.setValue("tabSlug", tabSlug)
     const data = {
       role_id: roleId,
@@ -179,6 +194,7 @@ const MatrixRolePage = () => {
       write: record?.write ? record?.write : "No",
       table_slug: tabSlug,
       guid: record?.guid ? record?.guid : "",
+      is_have_condition,
     }
     if (record?.guid) {
       constructorObjectService
@@ -356,12 +372,15 @@ const MatrixRolePage = () => {
     if (isCustomVisible) {
       autoFilterForm.reset({
         autoFilter: automaticFilters?.map((i) => ({
+          identifier: i.guid,
           object_field: i.object_field,
           custom_field: i.custom_field,
         })),
       })
     }
   }, [isCustomVisible, automaticFilters])
+
+  console.log("autoFilterFields", autoFilterFields)
 
   const isAppPermissionYes = useCallback(
     (items, key) => {
@@ -500,6 +519,10 @@ const MatrixRolePage = () => {
                         )
                       ) : recordPermissions?.find(
                           (item) => item?.table_slug === app?.slug
+                        )?.is_have_condition && type?.key === "read" ? (
+                        <LockOutlinedIcon />
+                      ) : recordPermissions?.find(
+                          (item) => item?.table_slug === app?.slug
                         )?.[type?.key] === "Yes" ? (
                         <TwoUserIcon />
                       ) : (
@@ -570,7 +593,8 @@ const MatrixRolePage = () => {
                                   ),
                                   type?.key,
                                   "Yes",
-                                  app?.slug
+                                  app?.slug,
+                                  false
                                 )
                               }}
                             >
@@ -585,28 +609,31 @@ const MatrixRolePage = () => {
                                   ),
                                   type?.key,
                                   "No",
-                                  app?.slug
+                                  app?.slug,
+                                  false
                                 )
                               }}
                             >
                               <CrossPerson />
                             </span>
-                            <span
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setIsCustomVisible((p) => !p)
-                                getAutomaticFilters(app?.slug)
-                                getRelationsByTableSlug(app?.slug)
-                                setActiveTable(app)
-                              }}
-                              style={{
-                                border: "1px solid #e3e3e3",
-                                padding: 6,
-                                borderRadius: "50%",
-                              }}
-                            >
-                              <LockOutlinedIcon />
-                            </span>
+                            {type?.key === "read" && (
+                              <span
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setIsCustomVisible((p) => !p)
+                                  getAutomaticFilters(app?.slug)
+                                  getRelationsByTableSlug(app?.slug)
+                                  setActiveTable(app)
+                                }}
+                                style={{
+                                  border: "1px solid #e3e3e3",
+                                  padding: 6,
+                                  borderRadius: "50%",
+                                }}
+                              >
+                                <LockOutlinedIcon />
+                              </span>
+                            )}
                           </div>
                           <form
                             onSubmit={autoFilterForm.handleSubmit(
@@ -654,12 +681,14 @@ const MatrixRolePage = () => {
                                       style={{ display: "flex", gap: 8 }}
                                     >
                                       <HFSelect
+                                        required
                                         width="50%"
                                         options={relations}
                                         control={autoFilterForm.control}
                                         name={`autoFilter.${index}.object_field`}
                                       />
                                       <HFSelect
+                                        required
                                         width="50%"
                                         options={computedCustomFields}
                                         control={autoFilterForm.control}
@@ -667,7 +696,13 @@ const MatrixRolePage = () => {
                                       />
                                       <RectangleIconButton
                                         color="error"
-                                        onClick={() => remove(index)}
+                                        onClick={() => {
+                                          constructorObjectService.delete(
+                                            "automatic_filter",
+                                            field.identifier
+                                          )
+                                          remove(index)
+                                        }}
                                       >
                                         <Delete color="error" />
                                       </RectangleIconButton>
@@ -712,20 +747,19 @@ const MatrixRolePage = () => {
                     </CTableCell>
                   ))}
                   <CTableHeadCell
+                    onClick={() => {
+                      if (app?.children) {
+                        console.log("app , ", app)
+                        handleOpen()
+                        setTableSlug(app?.slug)
+                      }
+                    }}
                     style={{
                       borderBottom: "1px solid #e5e9eb",
                       borderRight: "1px solid #e5e9eb",
                     }}
                   >
-                    <div
-                      onClick={() => {
-                        if (app?.children) {
-                          console.log("app , ", app)
-                          handleOpen()
-                          setTableSlug(app?.slug)
-                        }
-                      }}
-                    >
+                    <div>
                       <FieldPermissionIcon />
                     </div>
                   </CTableHeadCell>

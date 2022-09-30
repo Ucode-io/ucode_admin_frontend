@@ -18,6 +18,7 @@ import DynamicRelationFormElement from "./DynamicRelationFormElement"
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement"
 import RelationFormElement from "./RelationFormElement"
 import { Parser } from "hot-formula-parser"
+import BarcodeGenerator from "./BarcodeGenerator"
 
 const parser = new Parser()
 
@@ -304,6 +305,13 @@ const FormElementGenerator = ({
             disabled={isDisabled}
             {...props}
           />
+        </FRow>
+      )
+      
+    case "BARCODE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <BarcodeGenerator/>
         </FRow>
       )
 

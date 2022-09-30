@@ -33,35 +33,47 @@
 }
 
 .dialog {
-  width: 500px;
-  height: 150px;
+  width: 350px;
+  height: 260px;
   padding: 20px;
   z-index: 666;
   
   h2 {
     text-align: center;
     font-size: 20px;
+    margin-bottom: 10px;
   }
   .dialog_content {
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
   }
-  .form_control {
+  .color_picker {
+    width: 90px;
+    margin-left: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 10px 0;
-  }
-  .color_picker {
-    margin-right: 10px;
   }
   .icon_picker {
-    margin-right: 10px;
+    width: 90px;
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .form_control {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 15px 0 10px;
   }
   .input_control {
-    width: 160px;
-    height: 30px;
+    width: 140px;
+    min-height: 30px;
     margin: 0 10px 5px;
     
     &:nth-child(2) {

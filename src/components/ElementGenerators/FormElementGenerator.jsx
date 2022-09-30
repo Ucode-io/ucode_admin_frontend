@@ -17,8 +17,8 @@ import HFTimePicker from "../FormElements/HFTimePicker"
 import DynamicRelationFormElement from "./DynamicRelationFormElement"
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement"
 import RelationFormElement from "./RelationFormElement"
-import Barcode from 'react-barcode';
 import { Parser } from "hot-formula-parser"
+import BarcodeGenerator from "./BarcodeGenerator"
 
 const parser = new Parser()
 
@@ -308,12 +308,12 @@ const FormElementGenerator = ({
         </FRow>
       )
       
-    // case "BARCODE":
-    //   return (
-    //     <FRow label={field.label} required={field.required}>
-    //       {/* <Barcode value='ddasd' width={2.5} height={50}/> */}
-    //     </FRow>
-    //   )
+    case "BARCODE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <BarcodeGenerator/>
+        </FRow>
+      )
 
     case "ICON":
       return (

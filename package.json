@@ -70,6 +70,7 @@
     "i18next-browser-languagedetector": "^6.1.4",
     "i18next-http-backend": "^1.4.0",
     "jodit-react": "^1.3.13",
+    "jsbarcode": "^3.9.0",
     "lodash.get": "^4.4.2",
     "lodash.merge": "^4.6.2",
     "material-ui-popup-state": "^2.0.0",

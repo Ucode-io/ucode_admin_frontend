@@ -12,6 +12,9 @@ export const { actions: filterActions, reducer: filterReducer } = createSlice({
       if (!state.list[tableSlug][viewId]) state.list[tableSlug][viewId] = {}
       state.list[tableSlug][viewId][name] = value
     },
+    removeFromList: (state, { payload: { tableSlug, viewId, name } }) => {
+      delete state.list[tableSlug][viewId][name]
+    },
     setNewFilter: (state, { payload: { tableSlug, fieldId, checked } }) => {
       if (!state.new_list[tableSlug]?.find((i) => i.id === fieldId)) {
         state.new_list[tableSlug] = state.new_list?.[tableSlug]

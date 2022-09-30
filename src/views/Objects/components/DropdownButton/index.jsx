@@ -14,6 +14,8 @@ const DropdownButton = ({ loader, children, onClick, text = "Save", icon }) => {
     setAnchorEl(null)
   }
 
+  const hasChildren = Array.isArray(children) ? !!children?.length : !!children
+
   return (
     <>
       <div className={styles.buttonWrapper}>
@@ -21,12 +23,12 @@ const DropdownButton = ({ loader, children, onClick, text = "Save", icon }) => {
           {icon}
           {text}
 
-          {!children && loader && (
+          {!hasChildren && loader && (
             <CircularProgress size={15} color="secondary" />
           )}
         </div>
 
-        {children && (
+        {hasChildren && (
           <div className={styles.iconBlock} onClick={openMenu}>
             {loader ? (
               <CircularProgress size={14} color="secondary" />
@@ -41,7 +43,7 @@ const DropdownButton = ({ loader, children, onClick, text = "Save", icon }) => {
 
       <Menu
         anchorEl={anchorEl}
-        open={!!anchorEl && children}
+        open={!!anchorEl && hasChildren}
         onClose={closeMenu}
         classes={{ list: styles.menu, paper: styles.paper }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}

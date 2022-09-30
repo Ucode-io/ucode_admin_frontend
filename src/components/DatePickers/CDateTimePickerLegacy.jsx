@@ -1,57 +1,34 @@
-import DatePicker from "react-multi-date-picker"
-import weekends from "react-multi-date-picker/plugins/highlight_weekends"
-import { InputAdornment, TextField } from "@mui/material"
-import TimePickerPlugin from "./Plugins/TimePickerPlugin"
-import "react-multi-date-picker/styles/layouts/mobile.css"
-import { DateRange } from "@mui/icons-material"
-import { locale } from "./Plugins/locale"
-import "./style2.scss"
-import CustomNavButton from "./Plugins/CustomNavButton"
+import { Controller } from "react-hook-form"
+import CDateTimePickerLegacy from "../DatePickers/CDateTimePickerLegacy"
 
-const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
+const HFDateTimePicker = ({
+  control,
+  className,
+  name,
+  label,
+  width,
+  inputProps,
+  disabledHelperText,
+  placeholder,
+  disabled,
+  ...props
+}) => {
   return (
-    <DatePicker
-      render={(value, openCalendar, handleChange) => {
+    <Controller
+      control={control}
+      name={name}
+      defaultValue=""
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
-          <TextField
+          <CDateTimePickerLegacy
             value={value}
-            onClick={openCalendar}
-            onChange={handleChange}
-            size="small"
-            fullWidth
-            autoComplete="off"
-            InputProps={{
-              readOnly: disabled,
-              style: disabled
-                ? {
-                    background: "#c0c0c039",
-                  }
-                : {},
-              endAdornment: (
-                <InputAdornment position="end">
-                  <DateRange />
-                </InputAdornment>
-              ),
-            }}
+            onChange={onChange}
+            disabled={disabled}
           />
         )
       }}
-      renderButton={<CustomNavButton />}
-      // animations={[opacity()]}
-      plugins={[weekends(), <TimePickerPlugin hideSeconds />]}
-      weekStartDayIndex={1}
-      portal
-      locale={locale}
-      format="DD.MM.YYYY HH:mm"
-      // currentDate={new Date()}
-      value={new Date(value) || ""}
-      className="rmdp-mobile"
-      // mobileLabels={{
-      //   OK: "sdfsdfsdfsdfsdfsdfsdfsd",
-      // }}
-      onChange={(val) => onChange(val ? new Date(val) : "")}
-    />
+    ></Controller>
   )
 }
 
-export default CDateTimePickerLegacy
+export default HFDateTimePicker

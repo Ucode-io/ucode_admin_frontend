@@ -5932,10 +5932,10 @@
   dependencies:
     "argparse" "^2.0.1"
 
-"jsbarcode@^3.8.0":
-  "integrity" "sha512-zv3KsH51zD00I/LrFzFSM6dst7rDn0vIMzaiZFL7qusTjPZiPtxg3zxetp0RR7obmjTw4f6NyGgbdkBCgZUIrA=="
-  "resolved" "https://registry.npmjs.org/jsbarcode/-/jsbarcode-3.11.5.tgz"
-  "version" "3.11.5"
+"jsbarcode@^3.8.0", "jsbarcode@^3.9.0":
+  "integrity" "sha512-FWuQ+XJTvtF8urAjJCYxb14cA1QzItGj8Cw8Wnwii6KluWuPmmRbeP5G5Utbn7gy6yA+4vaaUg7GLii/dzXTBA=="
+  "resolved" "https://registry.npmjs.org/jsbarcode/-/jsbarcode-3.9.0.tgz"
+  "version" "3.9.0"
 
 "jsesc@^2.5.1":
   "integrity" "sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA=="

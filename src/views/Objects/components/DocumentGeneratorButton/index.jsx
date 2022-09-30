@@ -1,14 +1,11 @@
 import { Add, FileOpen } from "@mui/icons-material"
 import { Menu, Tooltip } from "@mui/material"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
-import CSelect from "../../../../components/CSelect"
 import constructorObjectService from "../../../../services/constructorObjectService"
-import documentTemplateService from "../../../../services/documentTemplateService"
 import { generateGUID } from "../../../../utils/generateID"
-import Form from "./Form"
 import styles from "./style.module.scss"
 
 const DocumentGeneratorButton = () => {

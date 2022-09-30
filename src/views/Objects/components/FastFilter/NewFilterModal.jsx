@@ -14,7 +14,7 @@ import useFilters from "../../../../hooks/useFilters"
 import { Filter } from "../FilterGenerator"
 import styles from "./style.module.scss"
 
-const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
+const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
   const dispatch = useDispatch()
   const { tableSlug } = useParams()
   const { new_list } = useSelector((s) => s.filter)

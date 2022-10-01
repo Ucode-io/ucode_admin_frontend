@@ -1,13 +1,9 @@
-import { useState } from "react"
 import CRangePickerNew from "../../../../components/DatePickers/CRangePickerNew"
 
-const DateFilter = ({ onChange }) => {
-  const [value, setValue] = useState([])
-
-
+const DateFilter = ({ onChange, value }) => {
   return (
     <>
-      <CRangePickerNew value={value} onChange={setValue} />
+      <CRangePickerNew value={value} onChange={onChange} />
     </>
   )
 }

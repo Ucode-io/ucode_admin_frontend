@@ -40,13 +40,6 @@ const ObjectsFormPage = () => {
   const tableInfo = useMemo(() => {
     return tablesList.find((el) => el.slug === tableSlug)
   }, [tablesList, tableSlug])
-  
-  useEffect(() => {
-    console.log("TABS ==>", tabs)
-    const hasCurrentTab = tabs?.some(tab => tab.link === location.pathname)
-
-    if(!hasCurrentTab) addNewTab(appId, tableSlug, id)
-  }, [])
 
 
   const computedSections = useMemo(() => {
@@ -99,6 +92,11 @@ const ObjectsFormPage = () => {
       )
 
       reset(data.response ?? {})
+
+      const hasCurrentTab = tabs?.some(tab => tab.link === location.pathname)
+
+      if(!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response)
+
     } catch (error) {
       console.error(error)
     } finally {

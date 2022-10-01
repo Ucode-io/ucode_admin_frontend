@@ -5,14 +5,14 @@ import CustomNavButton from "./Plugins/CustomNavButton"
 import weekends from "react-multi-date-picker/plugins/highlight_weekends"
 import { locale } from "./Plugins/locale"
 
-const CRangePickerNew = ({ value, onChange }) => {
-
+const CRangePickerNew = ({ onChange, value }) => {
   const changeHander = (val) => {
-    if(!val?.length) onChange([])
+    if (!val?.length) onChange([])
     else {
-
-      const computedValue = value?.map(el => new Date(el))
-      onChange(computedValue)
+      onChange({
+        $gte: new Date(val[0]),
+        $lt: new Date(val[1]),
+      })
     }
   }
 
@@ -49,7 +49,7 @@ const CRangePickerNew = ({ value, onChange }) => {
       format="DD.MM.YYYY"
       numberOfMonths={2}
       onChange={changeHander}
-      // value={new Date(value) || ""}
+      value={Object.values(value ?? {})}
       // onChange={(val) => onChange(val ? new Date(val) : "")}
     />
   )

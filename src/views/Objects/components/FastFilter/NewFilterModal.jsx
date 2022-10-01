@@ -90,6 +90,9 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
         onClose={() => {
           handleClose()
         }}
+        sx={{
+          zIndex: 100,
+        }}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",

@@ -311,7 +311,16 @@ const FormElementGenerator = ({
     case "BARCODE":
       return (
         <FRow label={field.label} required={field.required}>
-          <BarcodeGenerator/>
+          <BarcodeGenerator
+          control={control}
+            name={field.slug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            // disabled={isDisabled}
+            {...props} 
+          />
         </FRow>
       )
 

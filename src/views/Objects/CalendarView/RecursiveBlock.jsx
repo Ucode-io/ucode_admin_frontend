@@ -12,16 +12,19 @@ const RecursiveBlock = ({
   tabs,
   level = 0,
   workingDays,
-}) => {
+}) => { 
   const elements = useMemo(() => {
     if (!parentTab) return tabs?.[level]?.list
 
-    return tabs?.[level]?.list?.filter(
-      (el) => el[parentTab.slug] === parentTab.value
-    )
+    return tabs?.[level]?.list?.filter((el) => {
+      return Array.isArray(el[parentTab.slug])
+        ? el[parentTab.slug]?.includes(parentTab.value)
+        : el[parentTab.slug] === parentTab.value
+    })
   }, [parentTab, tabs, level])
 
-  if(!elements?.length) return <MockColumn view={view} level={level} tabs={tabs} />
+  if (!elements?.length)
+    return <MockColumn view={view} level={level} tabs={tabs} />
 
   return (
     <div className={styles.row}>

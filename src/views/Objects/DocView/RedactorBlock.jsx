@@ -3,9 +3,12 @@ import { CircularProgress } from "@mui/material"
 import { forwardRef, useState } from "react"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
+import { useSelector } from "react-redux"
+import { useParams } from "react-router-dom"
 import Footer from "../../../components/Footer"
 import HFAutoWidthInput from "../../../components/FormElements/HFAutoWidthInput"
 import usePaperSize from "../../../hooks/usePaperSize"
+import constructorObjectService from "../../../services/constructorObjectService"
 import documentTemplateService from "../../../services/documentTemplateService"
 import DropdownButton from "../components/DropdownButton"
 import DropdownButtonItem from "../components/DropdownButton/DropdownButtonItem"
@@ -31,9 +34,12 @@ const RedactorBlock = forwardRef(
     },
     redactorRef
   ) => {
+    const {tableSlug} = useParams()
     const { control, handleSubmit, reset } = useForm()
     const [btnLoader, setBtnLoader] = useState(false)
-    const { selectedPaperSize, selectPaperIndexBySize } = usePaperSize(
+    const loginTableSlug = useSelector(state => state.auth.loginTableSlug)
+    const userId = useSelector(state => state.auth.userId)
+    const { selectedPaperSize, selectPaperIndexBySize, selectPaperIndexByName } = usePaperSize(
       selectedPaperSizeIndex
     )
 
@@ -42,12 +48,13 @@ const RedactorBlock = forwardRef(
         ...selectedTemplate,
         html: selectedTemplate.html,
       })
-      setSelectedPaperSizeIndex(selectPaperIndexBySize(selectedTemplate.size))
+      setSelectedPaperSizeIndex(selectPaperIndexByName(selectedTemplate.size?.[0]))
+
     }, [
       selectedTemplate,
       reset,
       setSelectedPaperSizeIndex,
-      selectPaperIndexBySize,
+      selectPaperIndexByName,
     ])
 
     const onSubmit = async (values) => {
@@ -59,17 +66,20 @@ const RedactorBlock = forwardRef(
         const data = {
           ...values,
           html: savedData ?? "",
-          size: [
-            selectedPaperSize.width?.toString(),
-            selectedPaperSize.height?.toString(),
-          ],
+          size: [selectedPaperSize.name],
+          title: values.title,
+          table_slug: tableSlug,
+        }
+
+        if(loginTableSlug && values.type === "CREATE") {
+          data[`${loginTableSlug}_ids`] = [userId]
         }
 
         if (values.type !== "CREATE") {
-          await documentTemplateService.update(data)
+          await constructorObjectService.update('template', { data })
           updateTemplate(data)
         } else {
-          const res = await documentTemplateService.create(data)
+          const res = await constructorObjectService.create('template', { data })
           addNewTemplate(res)
         }
 

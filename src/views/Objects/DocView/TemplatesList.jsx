@@ -35,17 +35,12 @@ const TemplatesList = ({
         {templates?.map((template) => (
           <div
             key={template.id}
-            className={`${styles.row} ${selectedTemplate?.id === template.id ? styles.active : ''}`}
+            className={`${styles.row} ${selectedTemplate?.guid === template.guid ? styles.active : ''}`}
             onClick={() => setSelectedTemplate(template)}
           >
             {template.title}
           </div>
         ))}
-
-
-
-        {/* <div className={styles.row}>Рецепты</div>
-        <div className={styles.row}>Выписка доктора</div> */}
       </div>
     </div>
   )

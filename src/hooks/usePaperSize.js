@@ -33,10 +33,16 @@ const usePaperSize = (selectedIndex) => {
     return index === -1 ? 0 : index
   }, [])
   
+  const selectPaperIndexByName = useCallback((name) => {
+    const index = paperSizes.findIndex(paper => paper.name === name) 
+    return index === -1 ? 0 : index
+  }, [])
+
   return {
     paperSizes,
     selectedPaperSize: paperSizes[selectedIndex] ?? {},
-    selectPaperIndexBySize
+    selectPaperIndexBySize,
+    selectPaperIndexByName
   }
 
 }

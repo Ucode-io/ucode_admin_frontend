@@ -58,6 +58,8 @@ const FormElementGenerator = ({
   //   return null
   // }
 
+  console.log("FIELD - ", field)
+
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {
       return (
@@ -307,7 +309,7 @@ const FormElementGenerator = ({
           />
         </FRow>
       )
-      
+
     case "BARCODE":
       return (
         <FRow label={field.label} required={field.required}>

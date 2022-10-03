@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Barcode from 'react-barcode';
 import styles from './style.module.scss'
 import { Controller, useForm } from 'react-hook-form'
 import { TextField } from '@mui/material';
 import BarcodeGenerateButton from './BarcodeGenerateButton'
 import printJS from 'print-js';
+import wkhtmltopdf from 'wkhtmltopdf'
 
 
 const BarcodeGenerator = ({
@@ -19,9 +20,27 @@ const BarcodeGenerator = ({
     disabled,
     ...props
   }) => {
-    
-    const printBarcode = () => {
-      printJS({ printable: 'barcode', type: 'html', header: 'PrintJS - Form Element Selection' })
+    // const printBarcode = () => {
+    //   printJS({ printable: 'barcodes' , type: 'html', header: 'PrintJS - Form Element Selection' })
+    // }
+    function printBarcode(elem) {
+      var mywindow = window.open("", "PRINT", "height=0,width=0");
+  
+      mywindow.document.write(
+        "<html><head><title>" + '' + "</title>"
+      );
+      mywindow.document.write("</head><body >");
+      mywindow.document.write("<h1>" + '' + "</h1>");
+      mywindow.document.write(document.getElementById(elem).innerHTML);
+      mywindow.document.write("</body></html>");
+  
+      mywindow.document.close(); // necessary for IE >= 10
+      mywindow.focus(); // necessary for IE >= 10*/
+  
+      mywindow.print();
+      // mywindow.close();
+  
+      return true;
     }
     return (
       <div className={styles.barcode_layer}>
@@ -60,10 +79,10 @@ const BarcodeGenerator = ({
             helperText={!disabledHelperText && error?.message}
             {...props}
           />
-         <div className="" id='barcode'>
+         <div className="" id='barcodes'>
           <Barcode value={value} width={2} height={50} format="EAN13" />
          </div>
-          <BarcodeGenerateButton printBarcode={printBarcode} onChange={onChange}/>
+          <BarcodeGenerateButton printBarcode={() => printBarcode('barcodes')} onChange={onChange}/>
           </>
         )}}
       ></Controller>

@@ -4876,6 +4876,11 @@ is-shared-array-buffer@^1.0.2:
   dependencies:
     call-bind "^1.0.2"
 
+is-stream@^1.0.1:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/is-stream/-/is-stream-1.1.0.tgz#12d4a3dd4e68e0b79ceb8dbc84173ae80d91ca44"
+  integrity sha512-uQPm8kcs47jx38atAcWTVxyltQYoPT68y9aWYdV6yWXSyW8mzSat0TL6CiWdZeCdF3KrAvpVtnHbTv4RN+rqdQ==
+
 is-string@^1.0.5, is-string@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/is-string/-/is-string-1.0.7.tgz#0dd12bf2006f255bb58f695110eff7491eebc0fd"
@@ -6328,6 +6333,11 @@ side-channel@^1.0.4:
     get-intrinsic "^1.0.2"
     object-inspect "^1.9.0"
 
+slang@>=0.2:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/slang/-/slang-0.3.0.tgz#13af75b4f0c018c6a8193d704f65b23be4fbabdc"
+  integrity sha512-kGj3TvxSDR1Enhig/aan5ucfWNDULTiWg3NrExUzO2ShXcYsm6k2oPxnav8GtslYvozxRAqL+E2O3P3QKtQYSg==
+
 slash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
@@ -6825,6 +6835,14 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+wkhtmltopdf@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/wkhtmltopdf/-/wkhtmltopdf-0.4.0.tgz#b5675b57c661a1a43b55d88e46fea7bb7ebdf608"
+  integrity sha512-PXvsPehsmP1HeUDPx5qofitc+TJ0+Gb4Xn11iPJnHrLgXwyzRUzn9/b2t+soE+fwBMqUPs4Wchd0CRW+52MkNQ==
+  dependencies:
+    is-stream "^1.0.1"
+    slang ">=0.2"
 
 word-wrap@^1.2.3:
   version "1.2.3"

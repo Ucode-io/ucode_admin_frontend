@@ -75,7 +75,6 @@ const RelationTable = ({
       pageCount = 1,
       columns = [],
       quickFilters = [],
-      newData = [],
     } = {},
     isLoading: dataFetchingLoading,
   } = useQuery(
@@ -111,13 +110,11 @@ const RelationTable = ({
         const quickFilters = relation.quick_filters
           ?.map(({ field_id }) => fieldsMap[field_id])
           ?.filter((el) => el)
-        const newData = Object.entries(tableData)
         return {
           tableData,
           pageCount,
           columns,
           quickFilters,
-          newData,
         }
       },
     }

@@ -57,7 +57,7 @@ const RelationSection = ({
     },
   })
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control,
     name: "multi",
   })

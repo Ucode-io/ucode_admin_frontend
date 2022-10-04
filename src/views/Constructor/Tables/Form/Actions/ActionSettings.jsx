@@ -9,6 +9,7 @@ import FRow from "../../../../../components/FormElements/FRow"
 import HFAutocomplete from "../../../../../components/FormElements/HFAutocomplete"
 import HFIconPicker from "../../../../../components/FormElements/HFIconPicker"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
+import HFSwitch from "../../../../../components/FormElements/HFSwitch"
 import constructorCustomEventService from "../../../../../services/constructorCustomEventService"
 import listToOptions from "../../../../../utils/listToOptions"
 import request from "../../../../../utils/request"
@@ -125,6 +126,13 @@ const ActionSettings = ({
                 placeholder="Redirect url"
                 options={functions}
                 fullWidth
+              />
+            </FRow>
+            
+            <FRow label="Disabled">
+              <HFSwitch
+              name="disabled"
+              control={control}
               />
             </FRow>
           </div>

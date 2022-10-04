@@ -1,16 +1,21 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
 import IconGenerator from "../../../../components/IconPicker/IconGenerator"
 import { showAlert } from "../../../../store/alert/alert.thunk"
 import request from "../../../../utils/request"
+import { useQueryClient } from "react-query";
+import {  useParams } from "react-router-dom"
 
-const ActionButton = ({ event, id }) => {
+const ActionButton = ({ event, id, control, disable }) => {
+  const { tableSlug } = useParams()
+  const queryClient = useQueryClient()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [btnLoader, setBtnLoader] = useState(false)
-
+  const [disabled, setDisabled] = useState()
+  
   const invokeFunction = () => {
     const data = {
       function_id: event.event_path,
@@ -23,7 +28,7 @@ const ActionButton = ({ event, id }) => {
       .post("/invoke_function", data)
       .then((res) => {
         dispatch(showAlert("Success", "success"))
-
+        queryClient.refetchQueries('GET_CUSTOM_ACTIONS', { tableSlug })
         let url = event?.url ?? ""
 
         if (url) {
@@ -37,9 +42,21 @@ const ActionButton = ({ event, id }) => {
       })
       .finally(() => setBtnLoader(false))
   }
-
+  useEffect(() => {
+    if(event?.disable === false || event?.disable === undefined) {
+      setDisabled(false)
+    } else if(event?.disable === true) {
+      const match = control[`${event.functions[0].path}_disable`]
+      setDisabled(match)
+    }
+  }, [control, event])
+  // if(Object.keys(control).some(key => key === `${event?.functions?.[0].path}_disable`) === true) {
+  //   setDisabled(true)
+  // } else if(Object.keys(control).some(key => key === `${event?.functions?.[0].path}_disable`) === false) {
+  //   setDisabled(false)
+  // }
   return (
-    <PrimaryButton loader={btnLoader} onClick={invokeFunction}>
+    <PrimaryButton disabled={disabled} loader={btnLoader} onClick={invokeFunction}>
       <IconGenerator icon={event.icon} /> {event.label}
     </PrimaryButton>
   )

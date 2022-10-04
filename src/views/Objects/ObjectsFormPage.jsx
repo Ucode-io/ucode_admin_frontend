@@ -23,9 +23,10 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons"
 
 const ObjectsFormPage = () => {
-  const { tableSlug, id } = useParams()
+  const { tableSlug, id, appId } = useParams()
   const { pathname, state = {} } = useLocation()
-  const { removeTab, navigateToForm } = useTabRouter()
+  const { removeTab, navigateToForm, tabs, addNewTab } = useTabRouter()
+  const location = useLocation()
   const queryClient = useQueryClient()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
@@ -39,6 +40,7 @@ const ObjectsFormPage = () => {
   const tableInfo = useMemo(() => {
     return tablesList.find((el) => el.slug === tableSlug)
   }, [tablesList, tableSlug])
+
 
   const computedSections = useMemo(() => {
     return (
@@ -90,6 +92,11 @@ const ObjectsFormPage = () => {
       )
 
       reset(data.response ?? {})
+
+      const hasCurrentTab = tabs?.some(tab => tab.link === location.pathname)
+
+      if(!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response)
+
     } catch (error) {
       console.error(error)
     } finally {
@@ -207,7 +214,8 @@ const ObjectsFormPage = () => {
             </SecondaryButton>
 
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
-              <FormCustomActionButton tableSlug={tableSlug} id={id} />
+
+              <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
 
               {/* {customEvents?.map((event) => (
                 <PrimaryButton

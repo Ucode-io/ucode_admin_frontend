@@ -3,6 +3,7 @@ import { CircularProgress } from "@mui/material"
 import { forwardRef, useState } from "react"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
+import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import Footer from "../../../components/Footer"
 import HFAutoWidthInput from "../../../components/FormElements/HFAutoWidthInput"
@@ -36,6 +37,8 @@ const RedactorBlock = forwardRef(
     const {tableSlug} = useParams()
     const { control, handleSubmit, reset } = useForm()
     const [btnLoader, setBtnLoader] = useState(false)
+    const loginTableSlug = useSelector(state => state.auth.loginTableSlug)
+    const userId = useSelector(state => state.auth.userId)
     const { selectedPaperSize, selectPaperIndexBySize, selectPaperIndexByName } = usePaperSize(
       selectedPaperSizeIndex
     )
@@ -65,7 +68,11 @@ const RedactorBlock = forwardRef(
           html: savedData ?? "",
           size: [selectedPaperSize.name],
           title: values.title,
-          table_slug: tableSlug
+          table_slug: tableSlug,
+        }
+
+        if(loginTableSlug && values.type === "CREATE") {
+          data[`${loginTableSlug}_ids`] = [userId]
         }
 
         if (values.type !== "CREATE") {

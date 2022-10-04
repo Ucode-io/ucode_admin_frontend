@@ -1,7 +1,8 @@
 import useCustomActionsQuery from "../../../../queries/hooks/useCustomActionsQuery"
 import ActionButton from "./ActionButton"
 
-const FormCustomActionButton = ({tableSlug, id}) => {
+const FormCustomActionButton = ({tableSlug, id, control}) => {
+
   const { data: { custom_events: customEvents = [] } = {} } =
     useCustomActionsQuery({
       tableSlug,
@@ -14,7 +15,7 @@ const FormCustomActionButton = ({tableSlug, id}) => {
   return (
     <>
       {customEvents?.map((event) => (
-        <ActionButton key={event.id} event={event} id={id} />
+        <ActionButton control={control} key={event.id} event={event} id={id} />
       ))}
     </>
   )

@@ -12,7 +12,7 @@ const RecursiveBlock = ({
   tabs,
   level = 0,
   workingDays,
-}) => {
+}) => { 
   const elements = useMemo(() => {
     if (!parentTab) return tabs?.[level]?.list
 

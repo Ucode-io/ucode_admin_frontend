@@ -1,31 +1,37 @@
-import { Add, InsertDriveFile } from "@mui/icons-material"
+import { Add, Clear, Edit, Save } from "@mui/icons-material"
 import { Card } from "@mui/material"
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { useEffect } from "react"
 import { useState } from "react"
+import { useFieldArray, useForm } from "react-hook-form"
+import { useMutation } from "react-query"
 import { useParams } from "react-router-dom"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
 import IconGenerator from "../../../components/IconPicker/IconGenerator"
 import useTabRouter from "../../../hooks/useTabRouter"
+import constructorObjectService from "../../../services/constructorObjectService"
 import CustomActionsButton from "../components/CustomActionsButton"
 import FilesSection from "../FilesSection"
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal"
 import RelationTable from "./RelationTable"
 import styles from "./style.module.scss"
 
-const RelationSection = ({ relations, tableSlug: tableSlugFromProps, id: idFromProps }) => {
-  console.log("RELATIONS ==>", relations)
-
+const RelationSection = ({
+  relations,
+  tableSlug: tableSlugFromProps,
+  id: idFromProps,
+}) => {
   const filteredRelations = useMemo(() => {
-    return relations?.filter(relation => relation?.relatedTable)
+    return relations?.filter((relation) => relation?.relatedTable)
   }, [relations])
 
   const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams()
 
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams
-  const id = idFromProps ?? idFromParams 
+  const id = idFromProps ?? idFromParams
 
   const { navigateToForm } = useTabRouter()
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
@@ -34,12 +40,33 @@ const RelationSection = ({ relations, tableSlug: tableSlugFromProps, id: idFromP
     {}
   )
   const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+  const [shouldGet, setShouldGet] = useState(false)
   const [selectedObjects, setSelectedObjects] = useState([])
+  const [formVisible, setFormVisible] = useState(false)
+
+  const {
+    control,
+    reset,
+    handleSubmit,
+    watch,
+    setValue: setFormValue,
+  } = useForm({
+    defaultValues: {
+      [`${tableSlug}_id`]: id,
+      multi: [],
+    },
+  })
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "multi",
+  })
 
   const selectedRelation = filteredRelations[selectedTabIndex]
 
   useEffect(() => {
     setSelectedObjects([])
+    setFormVisible(false)
   }, [selectedTabIndex])
 
   useEffect(() => {
@@ -73,6 +100,36 @@ const RelationSection = ({ relations, tableSlug: tableSlugFromProps, id: idFromP
         })
       }
     }
+  }
+
+  const getValue = useCallback((item, key) => {
+    return typeof item?.[key] === "object" ? item?.[key].value : item?.[key]
+  }, [])
+
+  const { mutate: updateMultipleObject } = useMutation(
+    (values) =>
+      constructorObjectService.updateMultipleObject(
+        relations[selectedTabIndex]?.relatedTable,
+        {
+          data: {
+            objects: values.multi.map((item) => ({
+              ...item,
+              doctors_id_2: getValue(item, "doctors_id_2"),
+              doctors_id_3: getValue(item, "doctors_id_3"),
+              specialities_id: getValue(item, "specialities_id"),
+            })),
+          },
+        }
+      ),
+    {
+      onSuccess: () => {
+        setShouldGet((p) => !p)
+      },
+    }
+  )
+
+  const onSubmit = (data) => {
+    updateMultipleObject(data)
   }
 
   if (!filteredRelations?.length) return null
@@ -113,6 +170,33 @@ const RelationSection = ({ relations, tableSlug: tableSlugFromProps, id: idFromP
                   >
                     <Add /> Добавить
                   </SecondaryButton>
+                  {formVisible ? (
+                    <>
+                      <RectangleIconButton
+                        color="success"
+                        size="small"
+                        onClick={handleSubmit(onSubmit)}
+                        // loader={loader}
+                      >
+                        <Save color="success" />
+                      </RectangleIconButton>
+                      <RectangleIconButton
+                        color="error"
+                        onClick={() => setFormVisible(false)}
+                      >
+                        <Clear color="error" />
+                      </RectangleIconButton>
+                    </>
+                  ) : (
+                    <RectangleIconButton
+                      color="success"
+                      className="mr-1"
+                      size="small"
+                      onClick={() => setFormVisible(true)}
+                    >
+                      <Edit color="primary" />
+                    </RectangleIconButton>
+                  )}
                   <CustomActionsButton
                     tableSlug={selectedRelation?.relatedTable}
                     selectedObjects={selectedObjects}
@@ -133,6 +217,15 @@ const RelationSection = ({ relations, tableSlug: tableSlugFromProps, id: idFromP
                   />
                 ) : (
                   <RelationTable
+                    shouldGet={shouldGet}
+                    remove={remove}
+                    reset={reset}
+                    watch={watch}
+                    control={control}
+                    setFormValue={setFormValue}
+                    fields={fields}
+                    setFormVisible={setFormVisible}
+                    formVisible={formVisible}
                     key={relation.id}
                     relation={relation}
                     createFormVisible={relationsCreateFormVisible}

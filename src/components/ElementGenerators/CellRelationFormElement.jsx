@@ -10,6 +10,8 @@ import styles from "./style.module.scss"
 
 const CellRelationFormElement = ({
   control,
+  watch,
+  name,
   field,
   isLayout,
   sectionIndex,
@@ -20,25 +22,24 @@ const CellRelationFormElement = ({
   setFormValue,
   ...props
 }) => {
-
   if (!isLayout)
     return (
-        <Controller
-          control={control}
-          name={field.slug}
-          defaultValue={null}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <AutoCompleteElement
-              value={value}
-              setValue={onChange}
-              field={field}
-              tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              setFormValue={setFormValue}
-            />
-          )}
-        />
+      <Controller
+        control={control}
+        name={name}
+        defaultValue={null}
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <AutoCompleteElement
+            value={value}
+            setValue={onChange}
+            field={field}
+            tableSlug={field.table_slug}
+            error={error}
+            disabledHelperText={disabledHelperText}
+            setFormValue={setFormValue}
+          />
+        )}
+      />
     )
 }
 
@@ -81,7 +82,6 @@ const AutoCompleteElement = ({
 
     setValue(val?.guid ?? null)
 
-
     if (!field?.attributes?.autofill) return
 
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
@@ -89,16 +89,16 @@ const AutoCompleteElement = ({
     })
   }
 
-  return (
-    <div className={styles.autocompleteWrapper} >
+  console.log("FOUND VALUE = ", computedValue)
 
+  return (
+    <div className={styles.autocompleteWrapper}>
       <Autocomplete
         options={options ?? []}
         value={computedValue}
         onChange={(event, newValue) => {
           changeHandler(newValue)
         }}
-        
         noOptionsText={
           <span
             onClick={() => navigateToForm(tableSlug)}

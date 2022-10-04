@@ -1,4 +1,10 @@
-import { useMemo } from "react"
+import { get } from "@ngard/tiny-get"
+import { getValueFormatter } from "@nivo/core"
+import { useEffect, useMemo } from "react"
+import {
+  getRelationFieldLabel,
+  getRelationFieldTableCellLabel,
+} from "../../utils/getRelationFieldLabel"
 import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
@@ -20,23 +26,54 @@ const CellFormElementGenerator = ({
   row,
   control,
   setFormValue,
+  index,
   ...props
 }) => {
   const computedSlug = useMemo(() => {
-    return field.slug
-  }, [field.slug])
+    return `multi.${index}.${field.slug}`
+  }, [field.slug, index])
+
+  console.log("row - ", row)
+
+  // const value = useMemo(() => {
+  //   if (field.type !== "LOOKUP") return get(row, field.slug, "")
+
+  //   const result = getRelationFieldTableCellLabel(
+  //     field,
+  //     row,
+  //     field.table_slug
+  //   )
+
+  //   return result
+  // }, [row, field])
+
+  // const value = useMemo(() => {
+  //   if (field.type !== "LOOKUP") return get(row, field.slug, "")
+  //   console.log(
+  //     "coldplay --- youre the sky - ",
+  //     getRelationFieldTableCellLabel(field, row, field.table_slug),
+  //     field.slug
+  //   )
+  //   return getRelationFieldTableCellLabel(field, row, field.table_slug)
+  // }, [field, row])
+
+  useEffect(() => {
+    if (!row?.[field.slug]) {
+      console.log("COLDPLAY ----- ", row?.[field.table_slug]?.guid, field.slug)
+      setFormValue(computedSlug, row?.[field.table_slug]?.guid || "")
+    }
+  }, [field, row, setFormValue, computedSlug])
 
   if (field.type === "LOOKUP")
     return (
       <CellRelationFormElement
+        name={computedSlug}
         control={control}
         field={field}
         setFormValue={setFormValue}
         {...props}
       />
     )
-
-    
 
   switch (field.type) {
     case "SINGLE_LINE":
@@ -87,6 +124,7 @@ const CellFormElementGenerator = ({
           name={computedSlug}
           fieldsList={fields}
           field={field}
+          {...props}
         />
       )
 

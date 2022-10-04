@@ -52,7 +52,7 @@ const FastFilterButton = ({ view, fieldsMap }) => {
 
             <Close
               onClick={(e) => {
-                e.preventDefault()
+                e.stopPropagation()
                 clearFilters()
               }}
             />
@@ -70,7 +70,7 @@ const FastFilterButton = ({ view, fieldsMap }) => {
           </strong>
           <Close
             onClick={(e) => {
-              e.preventDefault()
+              e.stopPropagation()
               clearOrders()
             }}
           />

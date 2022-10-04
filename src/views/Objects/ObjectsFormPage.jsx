@@ -147,8 +147,6 @@ const ObjectsFormPage = () => {
       .catch(() => setBtnLoader(false))
   }
 
-
-
   const create = (data) => {
     setBtnLoader(true)
 
@@ -209,7 +207,6 @@ const ObjectsFormPage = () => {
             </SecondaryButton>
 
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
-
               <FormCustomActionButton tableSlug={tableSlug} id={id} />
 
               {/* {customEvents?.map((event) => (

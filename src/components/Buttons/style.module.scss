@@ -33,6 +33,11 @@
         background-color: colors.$error-hover;
       }
     }
+    &.disabled {
+      background: '#cccc';
+      border-color: colors.$primary;
+      color: #fff;
+    }
 
     &:hover {
       background-color: colors.$primary-hover;

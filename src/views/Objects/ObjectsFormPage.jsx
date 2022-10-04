@@ -217,7 +217,7 @@ const ObjectsFormPage = () => {
 
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
 
-              <FormCustomActionButton tableSlug={tableSlug} id={id} />
+              <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
 
               {/* {customEvents?.map((event) => (
                 <PrimaryButton

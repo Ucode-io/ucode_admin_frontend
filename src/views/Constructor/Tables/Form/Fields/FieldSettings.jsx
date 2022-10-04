@@ -257,6 +257,7 @@ const FieldSettings = ({
               name="unique"
               label="Avoid duplicate values"
             />
+            <HFSwitch control={control} name="attributes.creatable" label="Option" />
           </div>
 
           <div className={styles.settingsBlockHeader}>

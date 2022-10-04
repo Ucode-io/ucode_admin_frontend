@@ -23,7 +23,7 @@ const BarcodeGenerator = ({
     // const printBarcode = () => {
     //   printJS({ printable: 'barcodes' , type: 'html', header: 'PrintJS - Form Element Selection' })
     // }
-    function printBarcode(elem) {
+    function printBarcode(elem) { 
       var mywindow = window.open("", "PRINT", "height=0,width=0");
   
       mywindow.document.write(
@@ -34,8 +34,8 @@ const BarcodeGenerator = ({
       mywindow.document.write(document.getElementById(elem).innerHTML);
       mywindow.document.write("</body></html>");
   
-      mywindow.document.close(); // necessary for IE >= 10
-      mywindow.focus(); // necessary for IE >= 10*/
+      mywindow.document.close(); 
+      mywindow.focus(); 
   
       mywindow.print();
       // mywindow.close();

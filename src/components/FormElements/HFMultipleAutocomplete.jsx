@@ -45,7 +45,7 @@ const HFMultipleAutocomplete = ({
   const hasColor = field.attributes?.has_color
   const hasIcon = field.attributes?.has_icon
   const isMultiSelect = field.attributes?.is_multiselect
-
+  console.log('Multi field', field?.attributes)
   return (
     <Controller
       control={control}
@@ -94,6 +94,7 @@ const AutoCompleteElement = ({
   disabled,
   field
 }) => {
+  console.log('field', field)
   const [dialogState, setDialogState] = useState(null)
   const handleOpen = (inputValue) => {
     setDialogState(inputValue)
@@ -144,7 +145,7 @@ const AutoCompleteElement = ({
         onChange={changeHandler}
         filterOptions={(options, params) => {
           const filtered = filter(options, params);
-          if (params.inputValue !== '') {
+          if (params.inputValue !== '' && field?.attributes?.creatable) {
             filtered.push({
               value: 'NEW',
               inputValue: params.inputValue,

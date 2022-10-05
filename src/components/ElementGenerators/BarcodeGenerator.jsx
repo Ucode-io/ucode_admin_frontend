@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Barcode from 'react-barcode';
 import styles from './style.module.scss'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller } from 'react-hook-form'
 import { TextField } from '@mui/material';
 import BarcodeGenerateButton from './BarcodeGenerateButton'
-import printJS from 'print-js';
-import wkhtmltopdf from 'wkhtmltopdf'
+import PrintIcon from '@mui/icons-material/Print';
 
 
 const BarcodeGenerator = ({
@@ -20,25 +19,18 @@ const BarcodeGenerator = ({
     disabled,
     ...props
   }) => {
-    // const printBarcode = () => {
-    //   printJS({ printable: 'barcodes' , type: 'html', header: 'PrintJS - Form Element Selection' })
-    // }
-    function printBarcode(elem) { 
-      var mywindow = window.open("", "PRINT", "height=0,width=0");
-  
-      mywindow.document.write(
-        "<html><head><title>" + '' + "</title>"
-      );
-      mywindow.document.write("</head><body >");
-      mywindow.document.write("<h1>" + '' + "</h1>");
-      mywindow.document.write(document.getElementById(elem).innerHTML);
-      mywindow.document.write("</body></html>");
-  
-      mywindow.document.close(); 
-      mywindow.focus(); 
-  
-      mywindow.print();
-      // mywindow.close();
+    const [count, setCount] = useState(1)
+    console.log('disabled', disabled)
+    function printBarcode() { 
+        let divContents = document.getElementById("barcodes").innerHTML;
+            let a = window.open('', '', 'height800, width=700');
+            a.document.write('<html>');
+            for (let i = 0; i < count; i++) {
+                <p>{a.document.write(divContents)}</p>
+            }
+            a.document.write('</body></html>');
+            a.document.close();
+            a.print();
   
       return true;
     }
@@ -54,13 +46,14 @@ const BarcodeGenerator = ({
         render={({ field: { onChange, value }, fieldState: { error } }) => {            
             return (
             <>
+          <div className={styles.input_control}>
           <TextField
             size="small"
             value={value}
             type='number'
+            label='13 numbers'
             onChange={(e) => {
                 const val = e.target.value
-
                 if (!val) onChange("")
                 else onChange(!isNaN(Number(val)) ? Number(val) : "")
             }}
@@ -79,8 +72,11 @@ const BarcodeGenerator = ({
             helperText={!disabledHelperText && error?.message}
             {...props}
           />
+            <button className={styles.barcode_print} onClick={printBarcode}><PrintIcon/></button>
+            { !value && <input type="number" value={count} placeholder='Count' className={styles.count_control} onChange={(e) => setCount(e.target.value)}/> }
+          </div>
          <div className="" id='barcodes'>
-          <Barcode value={value} width={2} height={50} format="EAN13" />
+          { value && <Barcode value={value} width={2} height={50} format="EAN13" />}
          </div>
           <BarcodeGenerateButton printBarcode={() => printBarcode('barcodes')} onChange={onChange}/>
           </>

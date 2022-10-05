@@ -1,6 +1,6 @@
 import { PictureAsPdf, Print } from "@mui/icons-material"
 import { CircularProgress } from "@mui/material"
-import { forwardRef, useState } from "react"
+import { forwardRef, useMemo, useState } from "react"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector } from "react-redux"
@@ -18,6 +18,8 @@ import styles from "./style.module.scss"
 const RedactorBlock = forwardRef(
   (
     {
+      templateFields,
+      selectedObject,
       selectedTemplate,
       setSelectedTemplate,
       updateTemplate,
@@ -42,6 +44,10 @@ const RedactorBlock = forwardRef(
     const { selectedPaperSize, selectPaperIndexBySize, selectPaperIndexByName } = usePaperSize(
       selectedPaperSizeIndex
     )
+    
+    const getFilteredData = useMemo(() => {
+      return templateFields.filter(i=> i.type === 'LOOKUP').find(i => i.table_slug === tableSlug)
+    }, [templateFields, tableSlug])
 
     useEffect(() => {
       reset({
@@ -69,6 +75,7 @@ const RedactorBlock = forwardRef(
           size: [selectedPaperSize.name],
           title: values.title,
           table_slug: tableSlug,
+          [getFilteredData?.slug]: selectedObject ?? undefined
         }
 
         if(loginTableSlug && values.type === "CREATE") {

@@ -1,6 +1,6 @@
 import { Add, FileOpen } from "@mui/icons-material"
 import { Menu, Tooltip } from "@mui/material"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
@@ -21,17 +21,27 @@ const DocumentGeneratorButton = () => {
     setAnchorEl(null)
   }
 
-  const { data: templates = [] } = useQuery(
+  const { data: {templates, templateFields} = {templates: [] , templateFields: []} } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
       return constructorObjectService.getList("template", {
-        data: { table_slug: tableSlug },
+        data: { table_slug: tableSlug,  [getFilteredData?.slug]: objectId ?? undefined},
       })
     },
     {
-      select: (res) => res.data?.response ?? [],
+      select: ({data}) =>{
+        const templates = data?.response ?? []
+        const templateFields = data?.fields ?? []
+        
+        return {
+          templates,templateFields
+        }
+      } ,
     }
   )
+  const getFilteredData = useMemo(() => {
+    return templateFields.filter((item) => item?.type === 'LOOKUP' || item?.type === 'LOOKUPS').find((i) => i.table_slug === tableSlug)
+  }, [templateFields, tableSlug])
 
   const navigateToDocumentEditPage = (template) => {
     const state = {
@@ -53,6 +63,7 @@ const DocumentGeneratorButton = () => {
         type: "CREATE",
         table_slug: tableSlug,
         html: "",
+        objectId
       },
     }
     closeMenu()
@@ -74,7 +85,7 @@ const DocumentGeneratorButton = () => {
         classes={{ list: styles.menu, paper: styles.paper }}
       >
         <div className={styles.scrollBlocksss}>
-          {templates.map((template, index) => (
+          {templates?.map((template, index) => (
             <div
               key={template.id}
               className={`${styles.menuItem}`}

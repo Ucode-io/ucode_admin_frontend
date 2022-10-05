@@ -8,6 +8,7 @@ const TemplatesList = ({
   templates,
   selectedTemplate,
   setSelectedTemplate,
+  templateFields
 }) => {
   const { tableSlug } = useParams()
 

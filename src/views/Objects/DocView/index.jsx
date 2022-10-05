@@ -43,11 +43,12 @@ const DocView = ({
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0)
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex)
-
-  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
+  
+  
+  const [selectedObject, setSelectedObject] = useState(state?.template?.objectId ?? null)
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
-  )
+    )
 
   // ========FIELDS FOR RELATIONS=========
   const { data: fields = [] } = useQuery(
@@ -74,17 +75,26 @@ const DocView = ({
   )
 
   // ========GET TEMPLATES LIST===========
-  const { data: templates = [], isLoading, refetch } = useQuery(
+  const { data: {templates , templateFields} = {templates: [] , templateFields: []}, isLoading, refetch } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
       return constructorObjectService.getList('template', { data: {table_slug: tableSlug} })
     },
     {
-      select: (res) => res.data?.response ?? [],
+      select: ({data}) =>{
+        const templates = data?.response ?? []
+        const templateFields = data?.fields ?? []
+        
+        return {
+          templates,templateFields
+        }
+      } ,
     }
   )
-    
-    console.log("SELECTED ", selectedTemplate)
+  
+  console.log(
+    'dataaaaaa -',templates, templateFields
+  )
 
   // ========UPDATE TEMPLATE===========
 
@@ -273,6 +283,8 @@ const DocView = ({
          {!relationViewIsActive &&  <>
           {selectedTemplate ? (
             <RedactorBlock
+            templateFields={templateFields}
+            selectedObject={selectedObject}
               selectedTemplate={selectedTemplate}
               setSelectedTemplate={setSelectedTemplate}
               updateTemplate={updateTemplate}

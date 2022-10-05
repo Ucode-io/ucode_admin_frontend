@@ -76,12 +76,21 @@ const ConstructorTablesFormPage = () => {
     })
 
     const getActions = constructorCustomEventService.getList({
-      table_slug: slug
+      table_slug: slug,
     })
 
     try {
-      const [tableData, { sections = [] }, { relations: viewRelations = [] }, { custom_events: actions = [] }] =
-        await Promise.all([getTableData, getSectionsData, getViewRelations, getActions])
+      const [
+        tableData,
+        { sections = [] },
+        { relations: viewRelations = [] },
+        { custom_events: actions = [] },
+      ] = await Promise.all([
+        getTableData,
+        getSectionsData,
+        getViewRelations,
+        getActions,
+      ])
 
       const data = {
         ...mainForm.getValues(),
@@ -89,7 +98,7 @@ const ConstructorTablesFormPage = () => {
         fields: [],
         sections: computeSections(sections),
         view_relations: computeViewRelations(viewRelations),
-        actions
+        actions,
       }
 
       mainForm.reset(data)
@@ -243,15 +252,19 @@ const ConstructorTablesFormPage = () => {
             <Fields mainForm={mainForm} />
           </TabPanel>
 
-          {id && <TabPanel>
-            <Relations
-              mainForm={mainForm}
-              getRelationFields={getRelationFields}
-            />
-          </TabPanel>}
-          {id && <TabPanel>
-            <Actions mainForm={mainForm} />
-          </TabPanel>}
+          {id && (
+            <TabPanel>
+              <Relations
+                mainForm={mainForm}
+                getRelationFields={getRelationFields}
+              />
+            </TabPanel>
+          )}
+          {id && (
+            <TabPanel>
+              <Actions mainForm={mainForm} />
+            </TabPanel>
+          )}
           {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
         </Tabs>
       </div>

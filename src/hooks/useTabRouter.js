@@ -8,13 +8,11 @@ export default function useTabRouter() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { appId } = useParams()
-  const tabs = useSelector(state => state.tabRouter.tabs)
+  const tabs = useSelector((state) => state.tabRouter.tabs)
   const { drop } = useAliveController()
 
   const navigateToForm = (tableSlug, type = "CREATE", row = {}, state) => {
-
-    if(type === 'CREATE') {
-
+    if (type === "CREATE") {
       const id = generateID()
 
       const link = `/main/${appId}/object/${tableSlug}/create/${id}`
@@ -32,9 +30,9 @@ export default function useTabRouter() {
 
     const link = `/main/${appId}/object/${tableSlug}/${row.guid}`
 
-    const tab = tabs.find(tab => tab.link === link)
+    const tab = tabs.find((tab) => tab.link === link)
 
-    if(tab) {
+    if (tab) {
       navigate(link)
       return
     }
@@ -43,7 +41,7 @@ export default function useTabRouter() {
       id: generateID(),
       link,
       tableSlug,
-      row
+      row,
     }
 
     dispatch(tabRouterActions.addTab(newTab))
@@ -51,12 +49,11 @@ export default function useTabRouter() {
   }
 
   const removeTab = (link) => {
-
-    const index = tabs.findIndex(tab => tab.link === link)
+    const index = tabs.findIndex((tab) => tab.link === link)
 
     let navigateLink = ""
 
-    if(tabs.length === 1) {
+    if (tabs.length === 1) {
       navigateLink = `/main/${appId}`
     } else {
       navigateLink = tabs[index - 1]?.link || tabs[index + 1]?.link

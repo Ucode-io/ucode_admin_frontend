@@ -1,13 +1,14 @@
 import { get } from "@ngard/tiny-get"
 import { memo, useMemo } from "react"
-import { formatDate } from "../../utils/dateFormatter"
-import { numberWithSpaces } from "../../utils/formatNumbers"
+
+import MultiselectCellColoredElement from "./MultiselectCellColoredElement"
 import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel"
+import { numberWithSpaces } from "../../utils/formatNumbers"
 import { parseBoolean } from "../../utils/parseBoolean"
 import IconGenerator from "../IconPicker/IconGenerator"
+import { formatDate } from "../../utils/dateFormatter"
 import LogoDisplay from "../LogoDisplay"
 import TableTag from "../TableTag"
-import MultiselectCellColoredElement from "./MultiselectCellColoredElement"
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
@@ -57,6 +58,9 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     case "DYNAMIC":
       return null
+
+    case "FORMULA":
+      return value ? numberWithSpaces(value) : ""
 
     // case "FORMULA_FRONTEND":
     //   return <FormulaCell field={field} row={row} />

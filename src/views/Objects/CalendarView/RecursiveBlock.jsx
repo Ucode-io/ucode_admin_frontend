@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+
 import DataColumn from "./DataColumn"
 import MockColumn from "./MockColumn"
 import styles from "./style.module.scss"
@@ -48,6 +49,7 @@ const RecursiveBlock = ({
               date={date}
               data={data}
               parentTab={tab}
+              categoriesTab={parentTab}
               fieldsMap={fieldsMap}
               view={view}
               workingDays={workingDays}

@@ -10,6 +10,7 @@ const TableRowForm = ({
   checkboxValue,
   watch = () => {},
   row,
+  onDelete = () => {},
   remove,
   control,
   currentPage,
@@ -22,6 +23,7 @@ const TableRowForm = ({
   calculateWidth,
   limit = 10,
 }) => {
+  console.log("row - ", row)
   return (
     <CTableRow>
       {onCheckboxChange && (
@@ -74,13 +76,7 @@ const TableRowForm = ({
         </CTableCell>
       ))}
       <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>
-        <RectangleIconButton
-          color="error"
-          onClick={() => {
-            console.log(remove)
-            remove(rowIndex)
-          }}
-        >
+        <RectangleIconButton color="error" onClick={onDelete}>
           <Delete color="error" />
         </RectangleIconButton>
       </CTableCell>

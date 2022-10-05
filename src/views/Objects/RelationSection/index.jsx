@@ -57,7 +57,7 @@ const RelationSection = ({
     },
   })
 
-  const { fields, remove } = useFieldArray({
+  const { fields, remove, append } = useFieldArray({
     control,
     name: "multi",
   })
@@ -85,21 +85,23 @@ const RelationSection = ({
   }
 
   const navigateToCreatePage = () => {
-    const relation = filteredRelations[selectedTabIndex]
-    if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
-    else {
-      if (relation.is_editable) setCreateFormVisible(relation.id, true)
-      else {
-        const relatedTable =
-          relation.table_to?.slug === tableSlug
-            ? relation.table_from
-            : relation.table_to
+    append()
+    setFormVisible(true)
+    // const relation = filteredRelations[selectedTabIndex]
+    // if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
+    // else {
+    //   if (relation.is_editable) setCreateFormVisible(relation.id, true)
+    //   else {
+    //     const relatedTable =
+    //       relation.table_to?.slug === tableSlug
+    //         ? relation.table_from
+    //         : relation.table_to
 
-        navigateToForm(relatedTable.slug, "CREATE", null, {
-          [`${tableSlug}_id`]: id,
-        })
-      }
-    }
+    //     navigateToForm(relatedTable.slug, "CREATE", null, {
+    //       [`${tableSlug}_id`]: id,
+    //     })
+    //   }
+    // }
   }
 
   const getValue = useCallback((item, key) => {
@@ -114,6 +116,7 @@ const RelationSection = ({
           data: {
             objects: values.multi.map((item) => ({
               ...item,
+              guid: item?.guid ?? "",
               doctors_id_2: getValue(item, "doctors_id_2"),
               doctors_id_3: getValue(item, "doctors_id_3"),
               specialities_id: getValue(item, "specialities_id"),

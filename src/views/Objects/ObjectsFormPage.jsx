@@ -28,6 +28,8 @@ const ObjectsFormPage = () => {
   const { removeTab, navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
 
+  console.log("DEFAULT VALUES - ", state)
+
   const tablesList = useSelector((state) => state.constructorTable.list)
 
   const [loader, setLoader] = useState(true)
@@ -181,6 +183,8 @@ const ObjectsFormPage = () => {
   } = useForm({
     defaultValues: state,
   })
+
+  console.log("computedSections", computedSections)
 
   if (loader) return <PageFallback />
 

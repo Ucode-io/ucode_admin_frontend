@@ -45,8 +45,10 @@ const DocView = ({
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
-  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null);
-
+  const [selectedObject, setSelectedObject] = useState(
+    state?.template?.object_id ?? null
+  );
+  console.log("state", state);
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
   );

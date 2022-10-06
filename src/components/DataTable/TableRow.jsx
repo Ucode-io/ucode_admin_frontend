@@ -1,10 +1,10 @@
-import { Checkbox } from "@mui/material"
-import { useMutation } from "react-query"
-import constructorObjectService from "../../services/constructorObjectService"
+import { Checkbox } from "@mui/material";
+import { useMutation } from "react-query";
+import constructorObjectService from "../../services/constructorObjectService";
 
-import { CTableCell, CTableRow } from "../CTable"
-import CellElementGenerator from "../ElementGenerators/CellElementGenerator"
-import TableRowForm from "./TableRowForm"
+import { CTableCell, CTableRow } from "../CTable";
+import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
+import TableRowForm from "./TableRowForm";
 
 const TableRow = ({
   row,
@@ -34,7 +34,7 @@ const TableRow = ({
     {
       onSuccess: () => remove(rowIndex),
     }
-  )
+  );
 
   if (formVisible)
     return (
@@ -60,12 +60,12 @@ const TableRow = ({
         calculateWidth={calculateWidth}
         tableSlug={tableSlug}
       />
-    )
+    );
 
   return (
     <CTableRow
       onClick={() => {
-        onRowClick(row, rowIndex)
+        onRowClick(row, rowIndex);
       }}
     >
       <CTableCell align="center" className="data_table__number_cell">
@@ -117,7 +117,7 @@ const TableRow = ({
       {/* <PermissionWrapperV2 tabelSlug={tableSlug} type={["update", "delete"]}>
       </PermissionWrapperV2> */}
     </CTableRow>
-  )
-}
+  );
+};
 
-export default TableRow
+export default TableRow;

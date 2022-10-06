@@ -1,23 +1,23 @@
-import { useMemo } from "react"
-import { useParams } from "react-router-dom"
+import { useMemo } from "react";
+import { useParams } from "react-router-dom";
 
-import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator"
-import FormCard from "./components/FormCard"
-import styles from "./style.module.scss"
+import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
+import FormCard from "./components/FormCard";
+import styles from "./style.module.scss";
 
 const MainInfo = ({ computedSections, control, setFormValue }) => {
-  const { tableSlug } = useParams()
+  const { tableSlug } = useParams();
 
   const fieldsList = useMemo(() => {
-    const fields = []
+    const fields = [];
 
     computedSections?.forEach((section) => {
       section.fields?.forEach((field) => {
-        fields.push(field)
-      })
-    })
-    return fields
-  }, [computedSections])
+        fields.push(field);
+      });
+    });
+    return fields;
+  }, [computedSections]);
 
   return (
     <div className={styles.mainCardSide}>
@@ -43,7 +43,7 @@ const MainInfo = ({ computedSections, control, setFormValue }) => {
         </FormCard>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default MainInfo
+export default MainInfo;

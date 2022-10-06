@@ -93,7 +93,6 @@ const TableView = ({
     navigateToForm(tableSlug, "EDIT", row)
   }
 
-  console.log("tableData", tableData)
 
   return (
     <div className={styles.wrapper}>

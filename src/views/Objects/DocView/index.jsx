@@ -1,5 +1,5 @@
 import { BackupTable, ImportExport } from "@mui/icons-material"
-import { useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { useLocation, useParams } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
@@ -37,7 +37,7 @@ const DocView = ({
   // =====SETTINGS BLOCK=========
   const [pdfLoader, setPdfLoader] = useState(false)
   const [htmlLoader, setHtmlLoader] = useState(false)
-  const [selectedSettingsTab, setSelectedSettingsTab] = useState(0)
+  const [selectedSettingsTab, setSelectedSettingsTab] = useState(1)
   const [tableViewIsActive, setTableViewIsActive] = useState(false)
   const [relationViewIsActive, setRelationViewIsActive] = useState(false)
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0)
@@ -78,7 +78,7 @@ const DocView = ({
   const { data: {templates , templateFields} = {templates: [] , templateFields: []}, isLoading, refetch } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
-      return constructorObjectService.getList('template', { data: {table_slug: tableSlug} })
+      return constructorObjectService.getList('template', { data: {table_slug: tableSlug, [getFilteredData?.slug]: selectedObject ?? undefined} })
     },
     {
       select: ({data}) =>{
@@ -91,10 +91,10 @@ const DocView = ({
       } ,
     }
   )
-  
-  console.log(
-    'dataaaaaa -',templates, templateFields
-  )
+  const getFilteredData = useMemo(() => {
+    return templateFields.filter((item) => item?.type === 'LOOKUP' || item?.type === 'LOOKUPS').find((i) => i.table_slug === tableSlug)
+  }, [templateFields, tableSlug])
+  console.log('getFilteredData', getFilteredData)
 
   // ========UPDATE TEMPLATE===========
 

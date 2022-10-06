@@ -43,6 +43,7 @@ const RelationSection = ({
   const [shouldGet, setShouldGet] = useState(false)
   const [selectedObjects, setSelectedObjects] = useState([])
   const [formVisible, setFormVisible] = useState(false)
+  const [dataLength, setDataLength] = useState(0)
 
   const {
     control,
@@ -85,7 +86,7 @@ const RelationSection = ({
   }
 
   const navigateToCreatePage = () => {
-    append()
+    append({ patients_id: idFromParams ?? "" })
     setFormVisible(true)
     // const relation = filteredRelations[selectedTabIndex]
     // if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
@@ -185,7 +186,16 @@ const RelationSection = ({
                       </RectangleIconButton>
                       <RectangleIconButton
                         color="error"
-                        onClick={() => setFormVisible(false)}
+                        onClick={() => {
+                          setFormVisible(false)
+                          if (fields.length > dataLength) {
+                            remove(
+                              Array(fields.length - dataLength)
+                                .fill("*")
+                                .map((i, index) => fields.length - (index + 1))
+                            )
+                          }
+                        }}
                       >
                         <Clear color="error" />
                       </RectangleIconButton>
@@ -220,6 +230,7 @@ const RelationSection = ({
                   />
                 ) : (
                   <RelationTable
+                    setDataLength={setDataLength}
                     shouldGet={shouldGet}
                     remove={remove}
                     reset={reset}

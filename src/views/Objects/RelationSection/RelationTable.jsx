@@ -15,6 +15,7 @@ import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
 
 const RelationTable = ({
+  setDataLength,
   relation,
   shouldGet,
   createFormVisible,
@@ -101,6 +102,7 @@ const RelationTable = ({
       select: ({ data }) => {
         const tableData = id ? objectToArray(data.response ?? {}) : []
         const pageCount = isNaN(data.count) ? 1 : Math.ceil(data.count / limit)
+        setDataLength(tableData.length)
 
         const fieldsMap = listToMap(data.fields)
 

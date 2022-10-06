@@ -17,12 +17,14 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2"
 import TableRow from "./TableRow"
 import TableRowForm from "./TableRowForm"
 import SummaryRow from "./SummaryRow"
+import MultipleUpdateRow from "./MultipleUpdateRow"
 import "./style.scss"
 
 const ObjectDataTable = ({
   data = [],
   loader = false,
   removableHeight,
+  additionalRow,
   remove,
   fields = [],
   isRelationTable,
@@ -32,7 +34,6 @@ const ObjectDataTable = ({
   pagesCount = 1,
   columns = [],
   watch,
-
   control,
   setFormValue,
   dataLength,
@@ -204,6 +205,16 @@ const ObjectDataTable = ({
       setLimit={setLimit}
     >
       <CTableHead>
+        {formVisible && (
+          <MultipleUpdateRow
+            watch={watch}
+            setFormValue={setFormValue}
+            control={control}
+            field={fields}
+            columns={columns}
+            row={{}}
+          />
+        )}
         <CTableRow>
           <CTableHeadCell width={10}>№</CTableHeadCell>
           {columns.map((column, index) => (
@@ -298,7 +309,6 @@ const ObjectDataTable = ({
           </PermissionWrapperV2>
         </CTableRow>
       </CTableHead>
-
       <CTableBody
         loader={loader}
         columnsCount={columns.length}
@@ -333,6 +343,8 @@ const ObjectDataTable = ({
         {!!summaries?.length && (
           <SummaryRow summaries={summaries} columns={columns} data={data} />
         )}
+
+        {additionalRow}
 
         {createFormVisible && (
           <TableRowForm

@@ -16,6 +16,7 @@ const CellRelationFormElement = ({
   disabledHelperText,
   setFormValue,
 }) => {
+  console.log("name - ", name)
   if (!isLayout)
     return (
       <Controller
@@ -48,10 +49,8 @@ const AutoCompleteElement = ({
 }) => {
   const { navigateToForm } = useTabRouter()
 
-  console.log("FIELD -  ", field.slug, value)
-
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug],
+    ["GET_OBJECT_LIST", tableSlug.includes("doctors_") ? "doctors" : tableSlug],
     () => {
       return constructorObjectService.getList(tableSlug, { data: {} })
     },
@@ -62,10 +61,14 @@ const AutoCompleteElement = ({
     }
   )
 
+  console.log("field", field.slug, value)
+
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value)
     return findedOption ? [findedOption] : []
   }, [options, value])
+
+  console.log("computedValue", computedValue)
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option)

@@ -59,7 +59,7 @@ const DocumentGeneratorButton = () => {
     const state = {
       toDocsTab: true,
       template: template,
-      objectId: objectId,
+      object_id: objectId,
     };
 
     closeMenu();
@@ -75,7 +75,7 @@ const DocumentGeneratorButton = () => {
         type: "CREATE",
         table_slug: tableSlug,
         html: "",
-        objectId,
+        object_id: objectId,
       },
     };
     closeMenu();

@@ -45,9 +45,8 @@ const DocView = ({
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
-  const [selectedObject, setSelectedObject] = useState(
-    state?.template?.objectId ?? null
-  );
+  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null);
+
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
   );
@@ -104,10 +103,6 @@ const DocView = ({
     }
   );
 
-  // const getFilteredData = useMemo(() => {
-  //   return templateFields.filter((item) => item?.type === 'LOOKUP' || item?.type === 'LOOKUPS').find((i) => i.table_slug === tableSlug)
-  // }, [templateFields, tableSlug])
-  // console.log('getFilteredData', getFilteredData)
   useEffect(() => {
     setFilteredData(
       templateFields

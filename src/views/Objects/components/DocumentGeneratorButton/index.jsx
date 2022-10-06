@@ -1,64 +1,72 @@
-import { Add, FileOpen } from "@mui/icons-material"
-import { Menu, Tooltip } from "@mui/material"
-import { useMemo, useState,useEffect } from "react"
-import { useQuery } from "react-query"
-import { useNavigate, useParams } from "react-router-dom"
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
-import constructorObjectService from "../../../../services/constructorObjectService"
-import { generateGUID } from "../../../../utils/generateID"
-import styles from "./style.module.scss"
+import { Add, FileOpen } from "@mui/icons-material";
+import { Menu, Tooltip } from "@mui/material";
+import { useMemo, useState, useEffect } from "react";
+import { useQuery } from "react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import { generateGUID } from "../../../../utils/generateID";
+import styles from "./style.module.scss";
 
 const DocumentGeneratorButton = () => {
-  const navigate = useNavigate()
-  const { appId, tableSlug, id: objectId } = useParams()
-  const [anchorEl, setAnchorEl] = useState(null)
-  const [filteredData, setFilteredData] = useState(null)
+  const navigate = useNavigate();
+  const { appId, tableSlug, id: objectId } = useParams();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [filteredData, setFilteredData] = useState(null);
 
   const openMenu = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const closeMenu = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
-  const { data: {templates, templateFields} = {templates: [] , templateFields: []} } = useQuery(
+  const {
+    data: { templates, templateFields } = { templates: [], templateFields: [] },
+  } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug, filteredData],
     () => {
-      return constructorObjectService.getList("template", {
-        data: { table_slug: tableSlug,  [filteredData?.slug]: objectId ?? undefined},
-      })
+      if (filteredData?.slug) {
+        return constructorObjectService.getList("template", {
+          data: {
+            table_slug: tableSlug,
+            [filteredData?.slug]: objectId ?? undefined,
+          },
+        });
+      } else return false;
     },
     {
-      select: ({data}) =>{
-        const templates = data?.response ?? []
-        const templateFields = data?.fields ?? []
-        
-        return {
-          templates,templateFields
-        }
-      } ,
-    }
-  )
-  
-  console.log('filteredData',filteredData)
+      select: ({ data }) => {
+        const templates = data?.response ?? [];
+        const templateFields = data?.fields ?? [];
 
-   useEffect(() => {
-      setFilteredData(templateFields.filter((item) => item?.type === 'LOOKUP' || item?.type === 'LOOKUPS').find((i) => i.table_slug === tableSlug))
-  }, [templateFields, tableSlug])
-  
-  console.log('templateFields 22222 ',templateFields)
+        return {
+          templates,
+          templateFields,
+        };
+      },
+    }
+  );
+
+  useEffect(() => {
+    setFilteredData(
+      templateFields
+        .filter((item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS")
+        .find((i) => i.table_slug === tableSlug)
+    );
+  }, [templateFields, tableSlug]);
 
   const navigateToDocumentEditPage = (template) => {
     const state = {
       toDocsTab: true,
       template: template,
       objectId: objectId,
-    }
+    };
 
-    closeMenu()
-    navigate(`/main/${appId}/object/${tableSlug}`, { state })
-  }
+    closeMenu();
+    navigate(`/main/${appId}/object/${tableSlug}`, { state });
+  };
 
   const navigateToDocumentCreatePage = () => {
     const state = {
@@ -69,12 +77,12 @@ const DocumentGeneratorButton = () => {
         type: "CREATE",
         table_slug: tableSlug,
         html: "",
-        objectId
+        objectId,
       },
-    }
-    closeMenu()
-    navigate(`/main/${appId}/object/${tableSlug}`, { state })
-  }
+    };
+    closeMenu();
+    navigate(`/main/${appId}/object/${tableSlug}`, { state });
+  };
 
   return (
     <>
@@ -110,7 +118,7 @@ const DocumentGeneratorButton = () => {
         </div>
       </Menu>
     </>
-  )
-}
+  );
+};
 
-export default DocumentGeneratorButton
+export default DocumentGeneratorButton;

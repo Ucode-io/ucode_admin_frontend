@@ -1,6 +1,6 @@
 import { Add, FileOpen } from "@mui/icons-material"
 import { Menu, Tooltip } from "@mui/material"
-import { useMemo, useState } from "react"
+import { useMemo, useState,useEffect } from "react"
 import { useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
@@ -12,6 +12,7 @@ const DocumentGeneratorButton = () => {
   const navigate = useNavigate()
   const { appId, tableSlug, id: objectId } = useParams()
   const [anchorEl, setAnchorEl] = useState(null)
+  const [filteredData, setFilteredData] = useState(null)
 
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget)
@@ -22,10 +23,10 @@ const DocumentGeneratorButton = () => {
   }
 
   const { data: {templates, templateFields} = {templates: [] , templateFields: []} } = useQuery(
-    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
+    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug, filteredData],
     () => {
       return constructorObjectService.getList("template", {
-        data: { table_slug: tableSlug,  [getFilteredData?.slug]: objectId ?? undefined},
+        data: { table_slug: tableSlug,  [filteredData?.slug]: objectId ?? undefined},
       })
     },
     {
@@ -39,9 +40,14 @@ const DocumentGeneratorButton = () => {
       } ,
     }
   )
-  const getFilteredData = useMemo(() => {
-    return templateFields.filter((item) => item?.type === 'LOOKUP' || item?.type === 'LOOKUPS').find((i) => i.table_slug === tableSlug)
+  
+  console.log('filteredData',filteredData)
+
+   useEffect(() => {
+      setFilteredData(templateFields.filter((item) => item?.type === 'LOOKUP' || item?.type === 'LOOKUPS').find((i) => i.table_slug === tableSlug))
   }, [templateFields, tableSlug])
+  
+  console.log('templateFields 22222 ',templateFields)
 
   const navigateToDocumentEditPage = (template) => {
     const state = {

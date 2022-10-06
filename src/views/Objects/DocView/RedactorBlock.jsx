@@ -14,6 +14,7 @@ import DropdownButton from "../components/DropdownButton";
 import DropdownButtonItem from "../components/DropdownButton/DropdownButtonItem";
 import Redactor from "./Redactor";
 import styles from "./style.module.scss";
+import { useQueryClient } from "react-query";
 
 const RedactorBlock = forwardRef(
   (
@@ -41,6 +42,7 @@ const RedactorBlock = forwardRef(
     const [btnLoader, setBtnLoader] = useState(false);
     const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
     const userId = useSelector((state) => state.auth.userId);
+    const queryClient = useQueryClient();
     const {
       selectedPaperSize,
       selectPaperIndexBySize,
@@ -74,7 +76,6 @@ const RedactorBlock = forwardRef(
         setBtnLoader(true);
 
         const savedData = redactorRef.current.getData();
-        console.log("values", values);
         const data = {
           ...values,
           object_id: values?.object_id ?? "",
@@ -100,12 +101,13 @@ const RedactorBlock = forwardRef(
         }
 
         setSelectedTemplate(null);
+        queryClient.refetchQueries("GET_OBJECT_LIST", { tableSlug });
       } catch (error) {
         console.log(error);
         setBtnLoader(false);
       }
     };
-    console.log("getFilteredData", getFilteredData?.slug);
+
     return (
       <div
         className={`${styles.redactorBlock} ${

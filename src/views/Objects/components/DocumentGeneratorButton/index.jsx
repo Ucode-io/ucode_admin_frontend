@@ -27,14 +27,12 @@ const DocumentGeneratorButton = () => {
   } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug, filteredData],
     () => {
-      if (filteredData?.slug) {
-        return constructorObjectService.getList("template", {
-          data: {
-            table_slug: tableSlug,
-            [filteredData?.slug]: objectId ?? undefined,
-          },
-        });
-      } else return false;
+      return constructorObjectService.getList("template", {
+        data: {
+          table_slug: tableSlug,
+          [filteredData?.slug]: objectId ?? undefined,
+        },
+      });
     },
     {
       select: ({ data }) => {

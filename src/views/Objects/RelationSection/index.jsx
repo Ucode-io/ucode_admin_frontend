@@ -86,23 +86,23 @@ const RelationSection = ({
   }
 
   const navigateToCreatePage = () => {
-    append({ patients_id: idFromParams ?? "" })
-    setFormVisible(true)
-    // const relation = filteredRelations[selectedTabIndex]
-    // if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
-    // else {
-    //   if (relation.is_editable) setCreateFormVisible(relation.id, true)
-    //   else {
-    //     const relatedTable =
-    //       relation.table_to?.slug === tableSlug
-    //         ? relation.table_from
-    //         : relation.table_to
+    // append({ patients_id: idFromParams ?? "" })
+    // setFormVisible(true)
+    const relation = filteredRelations[selectedTabIndex]
+    if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
+    else {
+      if (relation.is_editable) setCreateFormVisible(relation.id, true)
+      else {
+        const relatedTable =
+          relation.table_to?.slug === tableSlug
+            ? relation.table_from
+            : relation.table_to
 
-    //     navigateToForm(relatedTable.slug, "CREATE", null, {
-    //       [`${tableSlug}_id`]: id,
-    //     })
-    //   }
-    // }
+        navigateToForm(relatedTable.slug, "CREATE", null, {
+          [`${tableSlug}_id`]: id,
+        })
+      }
+    }
   }
 
   const getValue = useCallback((item, key) => {

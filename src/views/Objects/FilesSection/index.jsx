@@ -52,7 +52,7 @@ const FilesSection = ({
       limit,
       offset: pageToOffset(currentPage, limit),
       [`${tableSlug}_id`]: objectId,
-      ...filters
+      ...filters,
     },
     queryParams: {
       select: ({ data }) => {

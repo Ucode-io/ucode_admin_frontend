@@ -23,7 +23,6 @@ const TableRowForm = ({
   calculateWidth,
   limit = 10,
 }) => {
-  console.log("row - ", row)
   return (
     <CTableRow>
       {onCheckboxChange && (
@@ -76,7 +75,10 @@ const TableRowForm = ({
         </CTableCell>
       ))}
       <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>
-        <RectangleIconButton color="error" onClick={onDelete}>
+        <RectangleIconButton
+          color="error"
+          onClick={() => (row.guid ? onDelete() : remove(rowIndex))}
+        >
           <Delete color="error" />
         </RectangleIconButton>
       </CTableCell>

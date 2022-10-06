@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from "react"
-import { useWatch } from "react-hook-form"
 import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
@@ -15,15 +14,12 @@ import HFTimePicker from "../FormElements/HFTimePicker"
 import CellElementGenerator from "./CellElementGenerator"
 import CellRelationFormElement from "./CellRelationFormElement"
 
-const CellFormElementGenerator = ({
+const CellFormElementGeneratorMulti = ({
   field,
   fields,
-  watch,
-  columns = [],
   row,
-  control,
+  control = () => {},
   setFormValue,
-  shouldWork = false,
   index,
   ...props
 }) => {
@@ -31,24 +27,11 @@ const CellFormElementGenerator = ({
     return `multi.${index}.${field.slug}`
   }, [field.slug, index])
 
-  const changedValue = useWatch({
-    control,
-    name: computedSlug,
-  })
-
   useEffect(() => {
     if (!row?.[field.slug]) {
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || "")
     }
   }, [field, row, setFormValue, computedSlug])
-
-  useEffect(() => {
-    if (columns.length && changedValue) {
-      columns.forEach((i, index) =>
-        setFormValue(`multi.${index}.${field.slug}`, changedValue)
-      )
-    }
-  }, [changedValue, setFormValue, columns, field])
 
   switch (field.type) {
     case "LOOKUP":
@@ -271,4 +254,4 @@ const CellFormElementGenerator = ({
   }
 }
 
-export default CellFormElementGenerator
+export default CellFormElementGeneratorMulti

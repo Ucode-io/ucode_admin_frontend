@@ -1,8 +1,9 @@
 import { Checkbox } from "@mui/material"
+import { useMutation } from "react-query"
+import constructorObjectService from "../../services/constructorObjectService"
 
 import { CTableCell, CTableRow } from "../CTable"
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator"
-import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2"
 import TableRowForm from "./TableRowForm"
 
 const TableRow = ({
@@ -22,17 +23,23 @@ const TableRow = ({
   watch,
   setFormValue,
   tableSlug,
-  onDeleteClick,
-
   isChecked = () => {},
   formVisible,
   setFormVisible,
   remove,
   limit = 10,
 }) => {
+  const { mutate: deleteRow } = useMutation(
+    () => constructorObjectService.delete(tableSlug, row.guid),
+    {
+      onSuccess: () => remove(rowIndex),
+    }
+  )
+
   if (formVisible)
     return (
       <TableRowForm
+        onDelete={deleteRow}
         remove={remove}
         watch={watch}
         onCheckboxChange={onCheckboxChange}
@@ -107,37 +114,8 @@ const TableRow = ({
           <CellElementGenerator field={column} row={row} />
         </CTableCell>
       ))}
-      <PermissionWrapperV2 tabelSlug={tableSlug} type={["update", "delete"]}>
-        {onDeleteClick && (
-          <CTableCell
-            style={{ padding: "8px 12px 4px", verticalAlign: "middle" }}
-          >
-            <div className="flex">
-              {/* {onFormSubmit && (
-                <RectangleIconButton
-                  color="success"
-                  className="mr-1"
-                  size="small"
-                  onClick={() => setFormVisible(true)}
-                >
-                  <Edit color="primary" />
-                </RectangleIconButton>
-              )} */}
-              {/* {onDeleteClick && (
-                <DeleteWrapperModal
-                  id={row.guid}
-                  onDelete={() => onDeleteClick(row, rowIndex)}
-                >
-                  <RectangleIconButton color="error">
-                    <Delete color="error" />
-                    outside
-                  </RectangleIconButton>
-                </DeleteWrapperModal>
-              )} */}
-            </div>
-          </CTableCell>
-        )}
-      </PermissionWrapperV2>
+      {/* <PermissionWrapperV2 tabelSlug={tableSlug} type={["update", "delete"]}>
+      </PermissionWrapperV2> */}
     </CTableRow>
   )
 }

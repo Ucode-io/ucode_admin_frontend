@@ -27,49 +27,24 @@ const CellFormElementGenerator = ({
     return `multi.${index}.${field.slug}`
   }, [field.slug, index])
 
-  console.log("row - ", row)
-
-  // const value = useMemo(() => {
-  //   if (field.type !== "LOOKUP") return get(row, field.slug, "")
-
-  //   const result = getRelationFieldTableCellLabel(
-  //     field,
-  //     row,
-  //     field.table_slug
-  //   )
-
-  //   return result
-  // }, [row, field])
-
-  // const value = useMemo(() => {
-  //   if (field.type !== "LOOKUP") return get(row, field.slug, "")
-  //   console.log(
-  //     "coldplay --- youre the sky - ",
-  //     getRelationFieldTableCellLabel(field, row, field.table_slug),
-  //     field.slug
-  //   )
-  //   return getRelationFieldTableCellLabel(field, row, field.table_slug)
-  // }, [field, row])
-
   useEffect(() => {
     if (!row?.[field.slug]) {
-      console.log("COLDPLAY ----- ", row?.[field.table_slug]?.guid, field.slug)
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || "")
     }
   }, [field, row, setFormValue, computedSlug])
 
-  if (field.type === "LOOKUP")
-    return (
-      <CellRelationFormElement
-        name={computedSlug}
-        control={control}
-        field={field}
-        setFormValue={setFormValue}
-        {...props}
-      />
-    )
-
   switch (field.type) {
+    case "LOOKUP":
+      return (
+        <CellRelationFormElement
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          setFormValue={setFormValue}
+        />
+      )
+
     case "SINGLE_LINE":
       return (
         <HFTextField
@@ -275,20 +250,7 @@ const CellFormElementGenerator = ({
       )
 
     default:
-      return (
-        <CellElementGenerator field={field} row={row} />
-        // <HFTextField
-        //   control={control}
-        //   name={field.slug}
-        //   fullWidth
-        //   required={field.required}
-        //   placeholder={field.attributes?.placeholder}
-        //   InputProps={{
-        //     readOnly: field.type === "INCREMENT_ID",
-        //   }}
-        //   {...props}
-        // />
-      )
+      return <CellElementGenerator field={field} row={row} />
   }
 }
 

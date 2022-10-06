@@ -242,9 +242,13 @@ const promiseGenerator = (groupField, filters = {}) => {
     return {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
-        { tableSlug: groupField?.type === "LOOKUP"
-        ? groupField.slug?.slice(0, -3)
-        : groupField.slug?.slice(0, -4), filters: computedFilters },
+        {
+          tableSlug:
+            groupField?.type === "LOOKUP"
+              ? groupField.slug?.slice(0, -3)
+              : groupField.slug?.slice(0, -4),
+          filters: computedFilters,
+        },
       ],
       queryFn,
       select: (res) => ({

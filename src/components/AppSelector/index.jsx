@@ -46,7 +46,6 @@ const AppSelector = () => {
     if (table.type === "static") navigate(`/${table.id}`)
     else navigate(`/main/${table.id}`)
 
-    
     dispatch(tabRouterActions.clear())
     clear()
     closeMenu()

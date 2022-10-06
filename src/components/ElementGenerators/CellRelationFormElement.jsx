@@ -10,17 +10,11 @@ import styles from "./style.module.scss"
 
 const CellRelationFormElement = ({
   control,
-  watch,
   name,
   field,
   isLayout,
-  sectionIndex,
-  fieldIndex,
-  column,
-  mainForm,
   disabledHelperText,
   setFormValue,
-  ...props
 }) => {
   if (!isLayout)
     return (
@@ -50,11 +44,11 @@ const AutoCompleteElement = ({
   value,
   tableSlug,
   setValue,
-  error,
-  disabledHelperText,
   setFormValue = () => {},
 }) => {
   const { navigateToForm } = useTabRouter()
+
+  console.log("FIELD -  ", field.slug, value)
 
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug],
@@ -88,8 +82,6 @@ const AutoCompleteElement = ({
       setFormValue(field_to, val?.[field_from])
     })
   }
-
-  console.log("FOUND VALUE = ", computedValue)
 
   return (
     <div className={styles.autocompleteWrapper}>

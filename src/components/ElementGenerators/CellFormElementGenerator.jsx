@@ -4,7 +4,6 @@ import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
-import HFFormulaField from "../FormElements/HFFormulaField"
 import HFIconPicker from "../FormElements/HFIconPicker"
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete"
 import HFNumberField from "../FormElements/HFNumberField"
@@ -20,6 +19,7 @@ const CellFormElementGenerator = ({
   fields,
   watch,
   columns = [],
+  selected,
   row,
   control,
   setFormValue,
@@ -44,11 +44,13 @@ const CellFormElementGenerator = ({
 
   useEffect(() => {
     if (columns.length && changedValue) {
-      columns.forEach((i, index) =>
-        setFormValue(`multi.${index}.${field.slug}`, changedValue)
+      columns.forEach(
+        (i, index) =>
+          selected.includes(i.guid) &&
+          setFormValue(`multi.${index}.${field.slug}`, changedValue)
       )
     }
-  }, [changedValue, setFormValue, columns, field])
+  }, [changedValue, setFormValue, columns, field, selected])
 
   switch (field.type) {
     case "LOOKUP":
@@ -100,19 +102,19 @@ const CellFormElementGenerator = ({
         />
       )
 
-    case "FORMULA_FRONTEND":
-      return (
-        <HFFormulaField
-          setFormValue={setFormValue}
-          control={control}
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          name={computedSlug}
-          fieldsList={fields}
-          field={field}
-          {...props}
-        />
-      )
+    // case "FORMULA_FRONTEND":
+    //   return (
+    //     <HFFormulaField
+    //       setFormValue={setFormValue}
+    //       control={control}
+    //       required={field.required}
+    //       placeholder={field.attributes?.placeholder}
+    //       name={computedSlug}
+    //       fieldsList={fields}
+    //       field={field}
+    //       {...props}
+    //     />
+    //   )
 
     case "MULTISELECT":
       return (

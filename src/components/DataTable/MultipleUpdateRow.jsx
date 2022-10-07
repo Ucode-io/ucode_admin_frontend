@@ -1,33 +1,46 @@
 import { CTableCell, CTableRow } from "../CTable"
 import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator"
+import "./style.scss"
 
-const MultipleUpdateRow = ({ columns, watch, control, setFormValue }) => {
+const MultipleUpdateRow = ({
+  columns,
+  fields,
+  selected,
+  watch,
+  control,
+  setFormValue,
+}) => {
   return (
-    <CTableRow className="amountRow">
+    <CTableRow className="multipleRow">
       <CTableCell
         style={{
           padding: "10px 20px 4px",
-          backgroundColor: "#e3e3e3",
+        }}
+      ></CTableCell>
+      <CTableCell
+        style={{
+          padding: "10px 20px 4px",
+          color: "#fff",
         }}
       >
         *
       </CTableCell>
 
-      {columns.map((column, index) => (
+      {fields.map((field, index) => (
         <CTableCell
-          key={column.id}
+          key={field.id}
           style={{
             padding: 0,
-            backgroundColor: "#e3e3e3",
           }}
         >
           <CellFormElementGenerator
             columns={columns}
+            selected={selected}
             index="*"
             watch={watch}
             control={control}
             setFormValue={setFormValue}
-            field={column}
+            field={{ ...field, required: false }}
             row={{}}
           />
         </CTableCell>

@@ -54,7 +54,6 @@ const RedactorBlock = forwardRef(
         .filter((i) => i.type === "LOOKUP")
         .find((i) => i.table_slug === tableSlug);
     }, [templateFields, tableSlug]);
-    console.log("getFilteredData", getFilteredData);
 
     useEffect(() => {
       reset({

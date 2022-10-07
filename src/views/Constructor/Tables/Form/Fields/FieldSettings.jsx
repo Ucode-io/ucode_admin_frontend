@@ -1,23 +1,24 @@
-import { Close } from "@mui/icons-material"
-import { IconButton } from "@mui/material"
-import { useState } from "react"
-import { useEffect, useMemo } from "react"
-import { useForm, useWatch } from "react-hook-form"
-import { useQuery } from "react-query"
-import { useParams } from "react-router-dom"
-import PrimaryButton from "../../../../../components/Buttons/PrimaryButton"
-import FRow from "../../../../../components/FormElements/FRow"
-import HFIconPicker from "../../../../../components/FormElements/HFIconPicker"
-import HFSelect from "../../../../../components/FormElements/HFSelect"
-import HFSwitch from "../../../../../components/FormElements/HFSwitch"
-import HFTextField from "../../../../../components/FormElements/HFTextField"
-import constructorFieldService from "../../../../../services/constructorFieldService"
-import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes"
-import { generateGUID } from "../../../../../utils/generateID"
-import listToOptions from "../../../../../utils/listToOptions"
-import Attributes from "./Attributes"
-import DefaultValueBlock from "./Attributes/DefaultValueBlock"
-import styles from "./style.module.scss"
+import { Close } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
+import { useState } from "react";
+import { useEffect, useMemo } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
+import FRow from "../../../../../components/FormElements/FRow";
+import HFIconPicker from "../../../../../components/FormElements/HFIconPicker";
+import HFSelect from "../../../../../components/FormElements/HFSelect";
+import HFSwitch from "../../../../../components/FormElements/HFSwitch";
+import HFTextField from "../../../../../components/FormElements/HFTextField";
+import constructorFieldService from "../../../../../services/constructorFieldService";
+import constructorRelationService from "../../../../../services/constructorRelationService";
+import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes";
+import { generateGUID } from "../../../../../utils/generateID";
+import listToOptions from "../../../../../utils/listToOptions";
+import Attributes from "./Attributes";
+import DefaultValueBlock from "./Attributes/DefaultValueBlock";
+import styles from "./style.module.scss";
 
 const FieldSettings = ({
   closeSettingsBlock,
@@ -27,104 +28,150 @@ const FieldSettings = ({
   height,
   onSubmit = () => {},
 }) => {
-  const { id } = useParams()
-  const { handleSubmit, control, reset, watch } = useForm()
-  const [formLoader, setFormLoader] = useState(false)
+  const { id } = useParams();
+  const { handleSubmit, control, reset, watch } = useForm();
+  const [formLoader, setFormLoader] = useState(false);
+  const [chosenValue, setChosenValue] = useState();
+  const [relationData, setRelationData] = useState();
 
   const updateFieldInform = (field) => {
-    const fields = mainForm.getValues("fields")
-    const index = fields.findIndex((el) => el.id === field.id)
+    const fields = mainForm.getValues("fields");
+    const index = fields.findIndex((el) => el.id === field.id);
 
-    mainForm.setValue(`fields[${index}]`, field)
-    onSubmit(index, field)
-  }
+    mainForm.setValue(`fields[${index}]`, field);
+    onSubmit(index, field);
+  };
 
   const prepandFieldInForm = (field) => {
-    const fields = mainForm.getValues("fields") ?? []
-    mainForm.setValue(`fields`, [field, ...fields])
-  }
+    const fields = mainForm.getValues("fields") ?? [];
+    mainForm.setValue(`fields`, [field, ...fields]);
+  };
 
   const showTooltip = useWatch({
     control,
     name: "attributes.showTooltip",
-  })
+  });
 
   const createField = (field) => {
     const data = {
       ...field,
       id: generateGUID(),
-    }
+    };
 
     if (!id) {
-      prepandFieldInForm(data)
-      closeSettingsBlock()
+      prepandFieldInForm(data);
+      closeSettingsBlock();
     } else {
-      setFormLoader(true)
+      setFormLoader(true);
       constructorFieldService
         .create(data)
         .then((res) => {
-          prepandFieldInForm(res)
-          closeSettingsBlock(null)
+          prepandFieldInForm(res);
+          closeSettingsBlock(null);
         })
-        .finally(() => setFormLoader(false))
+        .finally(() => setFormLoader(false));
     }
-  }
+  };
 
   const updateField = (field) => {
     if (!id) {
-      updateFieldInform(field)
-      closeSettingsBlock()
+      updateFieldInform(field);
+      closeSettingsBlock();
     } else {
-      setFormLoader(true)
+      setFormLoader(true);
       constructorFieldService
         .update(field)
         .then((res) => {
-          updateFieldInform(field)
-          closeSettingsBlock(null)
+          updateFieldInform(field);
+          closeSettingsBlock(null);
         })
-        .finally(() => setFormLoader(false))
+        .finally(() => setFormLoader(false));
     }
-  }
+  };
 
   const submitHandler = (values) => {
-    if (formType === "CREATE") createField(values)
-    else updateField(values)
-  }
+    if (formType === "CREATE") createField(values);
+    else updateField(values);
+  };
 
   const selectedAutofillTableSlug = useWatch({
     control,
     name: "autofill_table",
-  })
+  });
 
   const layoutRelations = useWatch({
     control: mainForm.control,
     name: "layoutRelations",
-  })
+  });
+
+  const autofillField = useWatch({
+    control,
+    name: "autofill_field",
+  });
 
   const computedRelationTables = useMemo(() => {
     return layoutRelations?.map((table) => ({
       value: table.id?.split("#")?.[0],
       label: table.label,
-    }))
-  }, [layoutRelations])
-
+    }));
+  }, [layoutRelations]);
   const { data: computedRelationFields } = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillTableSlug],
     () => {
-      if (!selectedAutofillTableSlug) return []
+      if (!selectedAutofillTableSlug) return [];
       return constructorFieldService.getList({
         table_slug: selectedAutofillTableSlug,
-      })
+      });
     },
     {
       select: ({ fields }) =>
         listToOptions(
-          fields?.filter((field) => field.type !== "LOOKUP"),
+          fields?.filter((field) => field.type !== "LOOKUPS"),
           "label",
-          "slug"
+          "slug",
+          "type",
+          "relation_id"
         ),
     }
-  )
+  );
+
+  const getChoseItem = useMemo(() => {
+    return computedRelationFields?.filter(
+      (item) => item?.value === chosenValue
+    );
+  }, [computedRelationFields, chosenValue]);
+
+  const getRelation = () => {
+    if (
+      getChoseItem?.[0]?.type === "LOOKUP" ||
+      getChoseItem?.[0]?.type === "LOOKUPS"
+    ) {
+      constructorRelationService
+        .getList({
+          table_slug: computedRelationTables?.[0]?.value,
+        })
+        .then((res) => {
+          console.log("res", res);
+          let filteresData = res?.relations.find(
+            (item) =>
+              item?.id === getChoseItem?.[0]?.relation_id &&
+              item?.table_to?.slug !== computedRelationTables?.[0]?.value
+          );
+
+          constructorFieldService
+            .getList({
+              table_slug: filteresData?.table_to?.slug,
+            })
+            .then((res) => {
+              setRelationData(
+                res?.fields.filter((item) => {
+                  return item?.type !== "LOOKUP";
+                })
+              );
+            });
+        });
+    } else return false;
+  };
 
   useEffect(() => {
     const values = {
@@ -136,18 +183,26 @@ const FieldSettings = ({
       slug: "",
       table_id: id,
       type: "",
-    }
+    };
 
     if (formType !== "CREATE") {
       reset({
         ...values,
         ...field,
-      })
+      });
     } else {
-      reset(values)
+      reset(values);
     }
-  }, [field, formType, id, reset])
+  }, [field, formType, id, reset]);
 
+  useEffect(() => {
+    setChosenValue(autofillField);
+  }, [autofillField]);
+  useEffect(() => {
+    console.log("teeeeeest");
+    getRelation();
+  }, [chosenValue]);
+  console.log("relationData", relationData);
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -215,8 +270,6 @@ const FieldSettings = ({
           </div>
 
           <div className="p-2">
-
-
             <FRow label="Placeholder">
               <HFTextField
                 fullWidth
@@ -250,14 +303,22 @@ const FieldSettings = ({
           </div>
 
           <div className="p-2">
-            <HFSwitch control={control} name="attributes.disabled" label="Disabled" />
+            <HFSwitch
+              control={control}
+              name="attributes.disabled"
+              label="Disabled"
+            />
             <HFSwitch control={control} name="required" label="Required" />
             <HFSwitch
               control={control}
               name="unique"
               label="Avoid duplicate values"
             />
-            <HFSwitch control={control} name="attributes.creatable" label="Can create" />
+            <HFSwitch
+              control={control}
+              name="attributes.creatable"
+              label="Can create"
+            />
           </div>
 
           <div className={styles.settingsBlockHeader}>
@@ -280,7 +341,7 @@ const FieldSettings = ({
                 disabledHelperText
                 name="autofill_field"
                 control={control}
-                options={computedRelationFields}
+                options={relationData ? relationData : computedRelationFields}
                 placeholder="Type"
               />
             </FRow>
@@ -300,7 +361,7 @@ const FieldSettings = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FieldSettings
+export default FieldSettings;

@@ -3,12 +3,11 @@
 .autocompleteWrapper {
   position: relative;
 
-
   .createButton {
     position: absolute;
     right: 0;
     top: -28px;
-    color: #1990FF;
+    color: #1990ff;
     cursor: pointer;
     background-color: #c0c0c039;
   }
@@ -48,7 +47,7 @@
 }
 .barcode_layer {
   position: relative;
-  
+
   .barcode_generate {
     position: absolute;
     top: -25px;
@@ -56,17 +55,17 @@
     background: none;
     border: none;
     font-size: 13px;
-    color:#1990FF;
+    color: #1990ff;
     cursor: pointer;
   }
 }
 @media print {
   .myDivToPrint {
-      display: none !important;
+    display: none !important;
   }
 }
 .input_control {
-  width: 244px;
+  max-width: 230px;
   position: relative;
   .barcode_print {
     position: absolute;
@@ -75,7 +74,7 @@
     background: none;
     border: none;
     font-size: 13px;
-    color:#1990FF;
+    color: #1990ff;
     cursor: pointer;
   }
 }

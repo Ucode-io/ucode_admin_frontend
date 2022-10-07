@@ -1,10 +1,11 @@
-import { Checkbox } from "@mui/material";
-import { useMutation } from "react-query";
-import constructorObjectService from "../../services/constructorObjectService";
+import { Checkbox } from "@mui/material"
+import { Delete } from "@mui/icons-material"
 
-import { CTableCell, CTableRow } from "../CTable";
-import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
-import TableRowForm from "./TableRowForm";
+import { CTableCell, CTableRow } from "../CTable"
+import CellElementGenerator from "../ElementGenerators/CellElementGenerator"
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2"
+import TableRowForm from "./TableRowForm"
+import RectangleIconButton from "../Buttons/RectangleIconButton"
 
 const TableRow = ({
   row,
@@ -12,6 +13,9 @@ const TableRow = ({
   rowIndex,
   control,
   onRowClick,
+  onDeleteClick,
+  selected,
+  onSelectedRowChange,
   checkboxValue,
   onCheckboxChange,
   currentPage,
@@ -25,28 +29,21 @@ const TableRow = ({
   tableSlug,
   isChecked = () => {},
   formVisible,
-  setFormVisible,
   remove,
   limit = 10,
 }) => {
-  const { mutate: deleteRow } = useMutation(
-    () => constructorObjectService.delete(tableSlug, row.guid),
-    {
-      onSuccess: () => remove(rowIndex),
-    }
-  );
-
   if (formVisible)
     return (
       <TableRowForm
-        onDelete={deleteRow}
+        selected={selected}
+        onSelectedRowChange={onSelectedRowChange}
+        onDeleteClick={onDeleteClick}
         remove={remove}
         watch={watch}
         onCheckboxChange={onCheckboxChange}
         checkboxValue={checkboxValue}
         row={row}
         key={key}
-        setFormVisible={setFormVisible}
         formVisible={formVisible}
         currentPage={currentPage}
         limit={limit}
@@ -60,12 +57,12 @@ const TableRow = ({
         calculateWidth={calculateWidth}
         tableSlug={tableSlug}
       />
-    );
+    )
 
   return (
     <CTableRow
       onClick={() => {
-        onRowClick(row, rowIndex);
+        onRowClick(row, rowIndex)
       }}
     >
       <CTableCell align="center" className="data_table__number_cell">
@@ -114,10 +111,15 @@ const TableRow = ({
           <CellElementGenerator field={column} row={row} />
         </CTableCell>
       ))}
-      {/* <PermissionWrapperV2 tabelSlug={tableSlug} type={["update", "delete"]}>
-      </PermissionWrapperV2> */}
+      <PermissionWrapperV2 tabelSlug={tableSlug} type={["update", "delete"]}>
+        <CTableCell style={{ padding: "0 5px" }}>
+          <RectangleIconButton color="error" onClick={() => onDeleteClick(row)}>
+            <Delete color="error" />
+          </RectangleIconButton>
+        </CTableCell>
+      </PermissionWrapperV2>
     </CTableRow>
-  );
-};
+  )
+}
 
-export default TableRow;
+export default TableRow

@@ -7,10 +7,13 @@ import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenera
 
 const TableRowForm = ({
   onCheckboxChange,
+  selected,
+  onSelectedRowChange,
   checkboxValue,
   watch = () => {},
   row,
-  onDelete = () => {},
+  onDeleteClick = () => {},
+  formVisible,
   remove,
   control,
   currentPage,
@@ -25,7 +28,10 @@ const TableRowForm = ({
 }) => {
   return (
     <CTableRow>
-      {onCheckboxChange && (
+      <CTableCell style={{ padding: 0 }}>
+        <Checkbox onChange={(_, val) => onSelectedRowChange(val, row)} />
+      </CTableCell>
+      {onCheckboxChange && !formVisible && (
         <CTableCell>
           <Checkbox
             checked={checkboxValue === row.guid}
@@ -63,6 +69,7 @@ const TableRowForm = ({
           }}
         >
           <CellFormElementGenerator
+            selected={selected}
             tableSlug={tableSlug}
             watch={watch}
             fields={columns}
@@ -77,7 +84,9 @@ const TableRowForm = ({
       <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>
         <RectangleIconButton
           color="error"
-          onClick={() => (row.guid ? onDelete() : remove(rowIndex))}
+          onClick={() =>
+            row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+          }
         >
           <Delete color="error" />
         </RectangleIconButton>

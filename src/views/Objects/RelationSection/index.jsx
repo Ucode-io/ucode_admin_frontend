@@ -33,7 +33,6 @@ const RelationSection = ({
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
 
-  const { navigateToForm } = useTabRouter();
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
@@ -41,6 +40,7 @@ const RelationSection = ({
   );
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [shouldGet, setShouldGet] = useState(false);
+  const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
   const [dataLength, setDataLength] = useState(0);
@@ -86,22 +86,23 @@ const RelationSection = ({
   };
 
   const navigateToCreatePage = () => {
-    // append({ patients_id: idFromParams ?? "" })
-    // setFormVisible(true)
     const relation = filteredRelations[selectedTabIndex];
     if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation);
     else {
-      if (relation.is_editable) setCreateFormVisible(relation.id, true);
-      else {
-        const relatedTable =
-          relation.table_to?.slug === tableSlug
-            ? relation.table_from
-            : relation.table_to;
+      append({ patients_id: idFromParams ?? "" });
+      setFormVisible(true);
 
-        navigateToForm(relatedTable.slug, "CREATE", null, {
-          [`${tableSlug}_id`]: id,
-        });
-      }
+      // if (relation.is_editable) setCreateFormVisible(relation.id, true)
+      // else {
+      //   const relatedTable =
+      //     relation.table_to?.slug === tableSlug
+      //       ? relation.table_from
+      //       : relation.table_to
+
+      //   navigateToForm(relatedTable.slug, "CREATE", null, {
+      //     [`${tableSlug}_id`]: id,
+      //   })
+      // }
     }
   };
 
@@ -121,6 +122,7 @@ const RelationSection = ({
               doctors_id_2: getValue(item, "doctors_id_2"),
               doctors_id_3: getValue(item, "doctors_id_3"),
               specialities_id: getValue(item, "specialities_id"),
+              [fieldSlug]: id,
             })),
           },
         }
@@ -128,6 +130,7 @@ const RelationSection = ({
     {
       onSuccess: () => {
         setShouldGet((p) => !p);
+        setFormVisible(false);
       },
     }
   );
@@ -201,14 +204,19 @@ const RelationSection = ({
                       </RectangleIconButton>
                     </>
                   ) : (
-                    <RectangleIconButton
-                      color="success"
-                      className="mr-1"
-                      size="small"
-                      onClick={() => setFormVisible(true)}
-                    >
-                      <Edit color="primary" />
-                    </RectangleIconButton>
+                    fields.length > 0 && (
+                      <RectangleIconButton
+                        color="success"
+                        className="mr-1"
+                        size="small"
+                        onClick={() => {
+                          setFormVisible(true);
+                          reset();
+                        }}
+                      >
+                        <Edit color="primary" />
+                      </RectangleIconButton>
+                    )
                   )}
                   <CustomActionsButton
                     tableSlug={selectedRelation?.relatedTable}
@@ -230,6 +238,7 @@ const RelationSection = ({
                   />
                 ) : (
                   <RelationTable
+                    setFieldSlug={setFieldSlug}
                     setDataLength={setDataLength}
                     shouldGet={shouldGet}
                     remove={remove}

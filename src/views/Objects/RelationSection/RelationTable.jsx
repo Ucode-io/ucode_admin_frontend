@@ -83,6 +83,7 @@ const RelationTable = ({
       "GET_OBJECT_LIST",
       relatedTableSlug,
       shouldGet,
+      appId,
       {
         filters: computedFilters,
         offset: pageToOffset(currentPage, limit),
@@ -99,6 +100,7 @@ const RelationTable = ({
       });
     },
     {
+      enabled: !!appId,
       select: ({ data }) => {
         const tableData = id ? objectToArray(data.response ?? {}) : [];
         const pageCount = isNaN(data.count) ? 1 : Math.ceil(data.count / limit);

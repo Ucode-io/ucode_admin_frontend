@@ -1,23 +1,23 @@
-import { Add, Clear, Edit, Save } from "@mui/icons-material"
-import { Card } from "@mui/material"
-import { useCallback, useMemo } from "react"
-import { useEffect } from "react"
-import { useState } from "react"
-import { useFieldArray, useForm } from "react-hook-form"
-import { useMutation } from "react-query"
-import { useParams } from "react-router-dom"
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
+import { Add, Clear, Edit, Save } from "@mui/icons-material";
+import { Card } from "@mui/material";
+import { useCallback, useMemo } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import { useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
-import SecondaryButton from "../../../components/Buttons/SecondaryButton"
-import IconGenerator from "../../../components/IconPicker/IconGenerator"
-import useTabRouter from "../../../hooks/useTabRouter"
-import constructorObjectService from "../../../services/constructorObjectService"
-import CustomActionsButton from "../components/CustomActionsButton"
-import FilesSection from "../FilesSection"
-import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal"
-import RelationTable from "./RelationTable"
-import styles from "./style.module.scss"
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import SecondaryButton from "../../../components/Buttons/SecondaryButton";
+import IconGenerator from "../../../components/IconPicker/IconGenerator";
+import useTabRouter from "../../../hooks/useTabRouter";
+import constructorObjectService from "../../../services/constructorObjectService";
+import CustomActionsButton from "../components/CustomActionsButton";
+import FilesSection from "../FilesSection";
+import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
+import RelationTable from "./RelationTable";
+import styles from "./style.module.scss";
 
 const RelationSection = ({
   relations,
@@ -25,25 +25,25 @@ const RelationSection = ({
   id: idFromProps,
 }) => {
   const filteredRelations = useMemo(() => {
-    return relations?.filter((relation) => relation?.relatedTable)
-  }, [relations])
+    return relations?.filter((relation) => relation?.relatedTable);
+  }, [relations]);
 
-  const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams()
+  const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
 
-  const tableSlug = tableSlugFromProps ?? tableSlugFromParams
-  const id = idFromProps ?? idFromParams
+  const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
+  const id = idFromProps ?? idFromParams;
 
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
-    useState(null)
+    useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
-  )
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
-  const [shouldGet, setShouldGet] = useState(false)
-  const [fieldSlug, setFieldSlug] = useState("")
-  const [selectedObjects, setSelectedObjects] = useState([])
-  const [formVisible, setFormVisible] = useState(false)
-  const [dataLength, setDataLength] = useState(0)
+  );
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [shouldGet, setShouldGet] = useState(false);
+  const [fieldSlug, setFieldSlug] = useState("");
+  const [selectedObjects, setSelectedObjects] = useState([]);
+  const [formVisible, setFormVisible] = useState(false);
+  const [dataLength, setDataLength] = useState(0);
 
   const {
     control,
@@ -56,41 +56,41 @@ const RelationSection = ({
       [`${tableSlug}_id`]: id,
       multi: [],
     },
-  })
+  });
 
   const { fields, remove, append } = useFieldArray({
     control,
     name: "multi",
-  })
+  });
 
-  const selectedRelation = filteredRelations[selectedTabIndex]
-
-  useEffect(() => {
-    setSelectedObjects([])
-    setFormVisible(false)
-  }, [selectedTabIndex])
+  const selectedRelation = filteredRelations[selectedTabIndex];
 
   useEffect(() => {
-    const result = {}
+    setSelectedObjects([]);
+    setFormVisible(false);
+  }, [selectedTabIndex]);
 
-    filteredRelations?.forEach((relation) => (result[relation.id] = false))
+  useEffect(() => {
+    const result = {};
 
-    setRelationsCreateFormVisible(result)
-  }, [filteredRelations])
+    filteredRelations?.forEach((relation) => (result[relation.id] = false));
+
+    setRelationsCreateFormVisible(result);
+  }, [filteredRelations]);
 
   const setCreateFormVisible = (relationId, value) => {
     setRelationsCreateFormVisible((prev) => ({
       ...prev,
       [relationId]: value,
-    }))
-  }
+    }));
+  };
 
   const navigateToCreatePage = () => {
-    const relation = filteredRelations[selectedTabIndex]
-    if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
+    const relation = filteredRelations[selectedTabIndex];
+    if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation);
     else {
-      append({ patients_id: idFromParams ?? "" })
-      setFormVisible(true)
+      append({ patients_id: idFromParams ?? "" });
+      setFormVisible(true);
 
       // if (relation.is_editable) setCreateFormVisible(relation.id, true)
       // else {
@@ -104,11 +104,11 @@ const RelationSection = ({
       //   })
       // }
     }
-  }
+  };
 
   const getValue = useCallback((item, key) => {
-    return typeof item?.[key] === "object" ? item?.[key].value : item?.[key]
-  }, [])
+    return typeof item?.[key] === "object" ? item?.[key].value : item?.[key];
+  }, []);
 
   const { mutate: updateMultipleObject } = useMutation(
     (values) =>
@@ -129,17 +129,17 @@ const RelationSection = ({
       ),
     {
       onSuccess: () => {
-        setShouldGet((p) => !p)
-        setFormVisible(false)
+        setShouldGet((p) => !p);
+        setFormVisible(false);
       },
     }
-  )
+  );
 
   const onSubmit = (data) => {
-    updateMultipleObject(data)
-  }
+    updateMultipleObject(data);
+  };
 
-  if (!filteredRelations?.length) return null
+  if (!filteredRelations?.length) return null;
 
   return (
     <>
@@ -190,13 +190,13 @@ const RelationSection = ({
                       <RectangleIconButton
                         color="error"
                         onClick={() => {
-                          setFormVisible(false)
+                          setFormVisible(false);
                           if (fields.length > dataLength) {
                             remove(
                               Array(fields.length - dataLength)
                                 .fill("*")
                                 .map((i, index) => fields.length - (index + 1))
-                            )
+                            );
                           }
                         }}
                       >
@@ -210,8 +210,8 @@ const RelationSection = ({
                         className="mr-1"
                         size="small"
                         onClick={() => {
-                          setFormVisible(true)
-                          reset()
+                          setFormVisible(true);
+                          reset();
                         }}
                       >
                         <Edit color="primary" />
@@ -265,7 +265,7 @@ const RelationSection = ({
         </Card>
       ) : null}
     </>
-  )
-}
+  );
+};
 
-export default RelationSection
+export default RelationSection;

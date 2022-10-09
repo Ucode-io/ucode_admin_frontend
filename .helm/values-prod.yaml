@@ -109,12 +109,12 @@ nodeSelector: {}
 
 tolerations: []                                                                                                                            
 
-affinity:                                                                                                                                  
-  nodeAffinity:                                                                                                                            
-    requiredDuringSchedulingIgnoredDuringExecution:                                                                                        
-      nodeSelectorTerms:                                                                                                                   
-        - matchExpressions:                                                                                                                
-            - key: apps
-              operator: In                                                                                                                 
-              values:                                                                                                                      
-                - "true"  
+affinity:                                                                                                                                                                                
+  nodeAffinity:                                                                                                                                                                          
+    requiredDuringSchedulingIgnoredDuringExecution:                                                                                                                                      
+      nodeSelectorTerms:                                                                                                                                                                 
+        - matchExpressions:                                                                                                                                                              
+            - key: kubernetes.io/node-type                                                                                                                                               
+              operator: In                                                                                                                                                               
+              values:                                                                                                                                                                    
+                - "app"

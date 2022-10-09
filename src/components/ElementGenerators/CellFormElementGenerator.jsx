@@ -162,6 +162,7 @@ const CellFormElementGenerator = ({
     case "DATE_TIME":
       return (
         <HFDateTimePicker
+          showCopyBtn={false}
           control={control}
           name={computedSlug}
           required={field.required}

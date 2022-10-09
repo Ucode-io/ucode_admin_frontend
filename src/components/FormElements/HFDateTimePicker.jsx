@@ -7,11 +7,11 @@ const HFDateTimePicker = ({
   name,
   label,
   width,
+  showCopyBtn,
   inputProps,
   disabledHelperText,
   placeholder,
   disabled,
-  ...props
 }) => {
   return (
     <Controller
@@ -22,6 +22,7 @@ const HFDateTimePicker = ({
         return (
           <CDateTimePicker
             value={value}
+            showCopyBtn={showCopyBtn}
             onChange={onChange}
             disabled={disabled}
           />

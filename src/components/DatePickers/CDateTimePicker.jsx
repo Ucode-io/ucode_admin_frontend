@@ -9,7 +9,12 @@ import { locale } from "./Plugins/locale"
 import "react-multi-date-picker/styles/layouts/mobile.css"
 import CopyToClipboard from "../CopyToClipboard"
 
-const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
+const CDateTimePickerLegacy = ({
+  value,
+  onChange,
+  showCopyBtn = true,
+  disabled = false,
+}) => {
   console.log("value -", value)
   return (
     <div className="main_wrapper">
@@ -86,7 +91,9 @@ const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
         value={new Date(value) || ""}
         onChange={(val) => onChange(val ? new Date(val) : "")}
       />
-      <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />
+      {showCopyBtn && (
+        <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />
+      )}
     </div>
   )
 }

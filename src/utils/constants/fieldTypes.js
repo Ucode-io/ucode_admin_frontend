@@ -171,6 +171,11 @@ export const fieldTypesOptions = [
         icon: 'barcode.svg',
         label: 'Barcode',
         value: 'BARCODE'
+      },
+      {
+        icon: 'fill.svg',
+        label: 'Autofill',
+        value: 'AUTOFILL'
       }
     ]
   },

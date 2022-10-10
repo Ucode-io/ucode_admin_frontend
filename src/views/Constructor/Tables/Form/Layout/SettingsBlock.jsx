@@ -1,6 +1,6 @@
-import FieldsBlock from "./FieldsBlock"
-import FieldSettings from "../Fields/FieldSettings"
-import RelationSettings from "../Relations/RelationSettings"
+import FieldsBlock from "./FieldsBlock";
+import FieldSettings from "../Fields/FieldSettings";
+import RelationSettings from "../Relations/RelationSettings";
 
 const SettingsBlock = ({
   mainForm,
@@ -10,15 +10,26 @@ const SettingsBlock = ({
   closeSettingsBlock,
   selectedField,
   selectedRelation,
-  getRelationFields
+  getRelationFields,
 }) => {
-
-  if(selectedField) {
-    return <FieldSettings field={selectedField} mainForm={mainForm} closeSettingsBlock={closeSettingsBlock}  />
+  if (selectedField) {
+    return (
+      <FieldSettings
+        field={selectedField}
+        mainForm={mainForm}
+        closeSettingsBlock={closeSettingsBlock}
+      />
+    );
   }
 
-  if(selectedRelation) {
-    return <RelationSettings closeSettingsBlock={closeSettingsBlock} relation={selectedRelation} getRelationFields={getRelationFields}  />
+  if (selectedRelation) {
+    return (
+      <RelationSettings
+        closeSettingsBlock={closeSettingsBlock}
+        relation={selectedRelation}
+        getRelationFields={getRelationFields}
+      />
+    );
   }
 
   return (
@@ -29,7 +40,7 @@ const SettingsBlock = ({
       setSelectedSettingsTab={setSelectedSettingsTab}
       closeSettingsBlock={closeSettingsBlock}
     />
-  )
-}
+  );
+};
 
-export default SettingsBlock
+export default SettingsBlock;

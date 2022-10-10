@@ -1,23 +1,26 @@
-import { PictureAsPdf, Print } from "@mui/icons-material"
-import { CircularProgress } from "@mui/material"
-import { forwardRef, useState } from "react"
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { useSelector } from "react-redux"
-import { useParams } from "react-router-dom"
-import Footer from "../../../components/Footer"
-import HFAutoWidthInput from "../../../components/FormElements/HFAutoWidthInput"
-import usePaperSize from "../../../hooks/usePaperSize"
-import constructorObjectService from "../../../services/constructorObjectService"
-import documentTemplateService from "../../../services/documentTemplateService"
-import DropdownButton from "../components/DropdownButton"
-import DropdownButtonItem from "../components/DropdownButton/DropdownButtonItem"
-import Redactor from "./Redactor"
-import styles from "./style.module.scss"
+import { PictureAsPdf, Print } from "@mui/icons-material";
+import { CircularProgress } from "@mui/material";
+import { forwardRef, useMemo, useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import Footer from "../../../components/Footer";
+import HFAutoWidthInput from "../../../components/FormElements/HFAutoWidthInput";
+import usePaperSize from "../../../hooks/usePaperSize";
+import constructorObjectService from "../../../services/constructorObjectService";
+import documentTemplateService from "../../../services/documentTemplateService";
+import DropdownButton from "../components/DropdownButton";
+import DropdownButtonItem from "../components/DropdownButton/DropdownButtonItem";
+import Redactor from "./Redactor";
+import styles from "./style.module.scss";
+import { useQueryClient } from "react-query";
 
 const RedactorBlock = forwardRef(
   (
     {
+      templateFields,
+      selectedObject,
       selectedTemplate,
       setSelectedTemplate,
       updateTemplate,
@@ -30,65 +33,79 @@ const RedactorBlock = forwardRef(
       exportToHTML,
       htmlLoader,
       pdfLoader,
-      print
+      print,
     },
     redactorRef
   ) => {
-    const {tableSlug} = useParams()
-    const { control, handleSubmit, reset } = useForm()
-    const [btnLoader, setBtnLoader] = useState(false)
-    const loginTableSlug = useSelector(state => state.auth.loginTableSlug)
-    const userId = useSelector(state => state.auth.userId)
-    const { selectedPaperSize, selectPaperIndexBySize, selectPaperIndexByName } = usePaperSize(
-      selectedPaperSizeIndex
-    )
+    const { tableSlug } = useParams();
+    const { control, handleSubmit, reset } = useForm();
+    const [btnLoader, setBtnLoader] = useState(false);
+    const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
+    const userId = useSelector((state) => state.auth.userId);
+    const queryClient = useQueryClient();
+    const {
+      selectedPaperSize,
+      selectPaperIndexBySize,
+      selectPaperIndexByName,
+    } = usePaperSize(selectedPaperSizeIndex);
+
+    const getFilteredData = useMemo(() => {
+      return templateFields
+        .filter((i) => i.type === "LOOKUP")
+        .find((i) => i.table_slug === tableSlug);
+    }, [templateFields, tableSlug]);
 
     useEffect(() => {
       reset({
         ...selectedTemplate,
         html: selectedTemplate.html,
-      })
-      setSelectedPaperSizeIndex(selectPaperIndexByName(selectedTemplate.size?.[0]))
-
+      });
+      setSelectedPaperSizeIndex(
+        selectPaperIndexByName(selectedTemplate.size?.[0])
+      );
     }, [
       selectedTemplate,
       reset,
       setSelectedPaperSizeIndex,
       selectPaperIndexByName,
-    ])
+    ]);
 
     const onSubmit = async (values) => {
       try {
-        setBtnLoader(true)
+        setBtnLoader(true);
 
-        const savedData = redactorRef.current.getData()
-
+        const savedData = redactorRef.current.getData();
         const data = {
           ...values,
+          object_id: values?.object_id ?? "",
           html: savedData ?? "",
           size: [selectedPaperSize.name],
           title: values.title,
           table_slug: tableSlug,
-        }
+          [getFilteredData?.slug]: selectedObject ?? undefined,
+        };
 
-        if(loginTableSlug && values.type === "CREATE") {
-          data[`${loginTableSlug}_ids`] = [userId]
+        if (loginTableSlug && values.type === "CREATE") {
+          data[`${loginTableSlug}_ids`] = [userId];
         }
 
         if (values.type !== "CREATE") {
-          await constructorObjectService.update('template', { data })
-          updateTemplate(data)
+          await constructorObjectService.update("template", { data });
+          updateTemplate(data);
         } else {
-          const res = await constructorObjectService.create('template', { data })
-          addNewTemplate(res)
+          const res = await constructorObjectService.create("template", {
+            data,
+          });
+          addNewTemplate(res);
         }
 
-        setSelectedTemplate(null)
+        setSelectedTemplate(null);
+        queryClient.refetchQueries("GET_OBJECT_LIST", { tableSlug });
       } catch (error) {
-        console.log(error)
-        setBtnLoader(false)
+        console.log(error);
+        setBtnLoader(false);
       }
-    }
+    };
 
     return (
       <div
@@ -128,9 +145,7 @@ const RedactorBlock = forwardRef(
                 onClick={handleSubmit(onSubmit)}
                 className={styles.saveButton}
               >
-                {btnLoader && (
-                  <CircularProgress color="secondary" size={15} />
-                )}
+                {btnLoader && <CircularProgress color="secondary" size={15} />}
                 Save
               </div>
               <DropdownButton
@@ -138,11 +153,11 @@ const RedactorBlock = forwardRef(
                 loader={pdfLoader || htmlLoader}
                 text="Generate and edit"
               >
-                <DropdownButtonItem onClick={exportToPDF} >
+                <DropdownButtonItem onClick={exportToPDF}>
                   <PictureAsPdf />
                   Generate PDF
                 </DropdownButtonItem>
-                <DropdownButtonItem onClick={print} >
+                <DropdownButtonItem onClick={print}>
                   <Print />
                   Print
                 </DropdownButtonItem>
@@ -151,8 +166,8 @@ const RedactorBlock = forwardRef(
           }
         />
       </div>
-    )
+    );
   }
-)
+);
 
-export default RedactorBlock
+export default RedactorBlock;

@@ -1,47 +1,37 @@
-import { Close, Save } from "@mui/icons-material"
+import { Delete } from "@mui/icons-material"
 import { Checkbox } from "@mui/material"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { useParams } from "react-router-dom"
-import constructorObjectService from "../../services/constructorObjectService"
+
 import RectangleIconButton from "../Buttons/RectangleIconButton"
 import { CTableCell, CTableRow } from "../CTable"
 import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator"
 
 const TableRowForm = ({
   onCheckboxChange,
+  selected,
+  onSelectedRowChange,
   checkboxValue,
+  watch = () => {},
   row,
+  onDeleteClick = () => {},
+  formVisible,
+  remove,
+  control,
   currentPage,
   rowIndex,
   columns,
-  tableHeight,
   tableSettings,
+  tableSlug,
+  setFormValue,
   pageName,
   calculateWidth,
-  setFormVisible,
   limit = 10,
-  onFormSubmit = () => {},
 }) => {
-  const {tableSlug, id} = useParams()
-
-  const [loader, setLoader] = useState()
-  const { control, handleSubmit, setValue: setFormValue } = useForm({
-    defaultValues: row ?? {
-      [`${tableSlug}_id`]: id
-    }
-  })
-
-  const onSubmit = (values) => {
-    setLoader(true)
-    onFormSubmit(values).then(() => {
-      setFormVisible(false)
-    }).catch(() => setLoader(false))
-  }
-
   return (
     <CTableRow>
-      {onCheckboxChange && (
+      <CTableCell style={{ padding: 0 }}>
+        <Checkbox onChange={(_, val) => onSelectedRowChange(val, row)} />
+      </CTableCell>
+      {onCheckboxChange && !formVisible && (
         <CTableCell>
           <Checkbox
             checked={checkboxValue === row.guid}
@@ -56,9 +46,9 @@ const TableRowForm = ({
       {columns.map((column, index) => (
         <CTableCell
           key={column.id}
-          className={`overflow-ellipsis ${tableHeight}`}
+          className={`overflow-ellipsis`}
           style={{
-            padding: "8px 12px 4px",
+            padding: 0,
             position: tableSettings?.[pageName]?.find(
               (item) => item?.id === column?.id
             )?.isStiky
@@ -75,31 +65,31 @@ const TableRowForm = ({
             )?.isStiky
               ? "1"
               : "",
-              minWidth: 270,
+            minWidth: 270,
           }}
-          
         >
-          <CellFormElementGenerator fields={columns} field={column} row={row} control={control} setFormValue={setFormValue} />
+          <CellFormElementGenerator
+            selected={selected}
+            tableSlug={tableSlug}
+            watch={watch}
+            fields={columns}
+            field={column}
+            row={row}
+            index={rowIndex}
+            control={control}
+            setFormValue={setFormValue}
+          />
         </CTableCell>
       ))}
-      <CTableCell style={{ padding: "8px 12px 4px", verticalAlign: "middle" }}>
-        <div className="flex">
-          <RectangleIconButton
-            color="success"
-            className="mr-1"
-            size="small"
-            onClick={handleSubmit(onSubmit)}
-            loader={loader}
-          >
-            <Save color="success" />
-          </RectangleIconButton>
-          <RectangleIconButton
-            color="error"
-            onClick={() => setFormVisible(false)}
-          >
-            <Close color="error" />
-          </RectangleIconButton>
-        </div>
+      <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>
+        <RectangleIconButton
+          color="error"
+          onClick={() =>
+            row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+          }
+        >
+          <Delete color="error" />
+        </RectangleIconButton>
       </CTableCell>
     </CTableRow>
   )

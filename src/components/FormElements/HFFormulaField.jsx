@@ -16,6 +16,7 @@ const HFFormulaField = ({
   required,
   disabledHelperText,
   fieldsList,
+  disabled,
   field,
   ...props
 }) => {
@@ -66,15 +67,16 @@ const HFFormulaField = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
+          onChange={onChange}
           value={formulaIsVisible ? formula : value}
           name={name}
           error={error}
           fullWidth
           helperText={!disabledHelperText && error?.message}
           InputProps={{
-            readOnly: true,
+            readOnly: disabled,
             style: {
-              background: "#c0c0c039",
+              background: disabled ? "#c0c0c039" : "#fff",
             },
             endAdornment: (
               <InputAdornment position="end">

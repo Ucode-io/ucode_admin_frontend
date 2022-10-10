@@ -10,35 +10,31 @@ import styles from "./style.module.scss"
 
 const CellRelationFormElement = ({
   control,
+  name,
   field,
   isLayout,
-  sectionIndex,
-  fieldIndex,
-  column,
-  mainForm,
   disabledHelperText,
   setFormValue,
-  ...props
 }) => {
-
+  console.log("name - ", name)
   if (!isLayout)
     return (
-        <Controller
-          control={control}
-          name={field.slug}
-          defaultValue={null}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <AutoCompleteElement
-              value={value}
-              setValue={onChange}
-              field={field}
-              tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              setFormValue={setFormValue}
-            />
-          )}
-        />
+      <Controller
+        control={control}
+        name={name}
+        defaultValue={null}
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <AutoCompleteElement
+            value={value}
+            setValue={onChange}
+            field={field}
+            tableSlug={field.table_slug}
+            error={error}
+            disabledHelperText={disabledHelperText}
+            setFormValue={setFormValue}
+          />
+        )}
+      />
     )
 }
 
@@ -49,14 +45,12 @@ const AutoCompleteElement = ({
   value,
   tableSlug,
   setValue,
-  error,
-  disabledHelperText,
   setFormValue = () => {},
 }) => {
   const { navigateToForm } = useTabRouter()
 
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug],
+    ["GET_OBJECT_LIST", tableSlug.includes("doctors_") ? "doctors" : tableSlug],
     () => {
       return constructorObjectService.getList(tableSlug, { data: {} })
     },
@@ -67,10 +61,14 @@ const AutoCompleteElement = ({
     }
   )
 
+  console.log("field", field.slug, value)
+
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value)
     return findedOption ? [findedOption] : []
   }, [options, value])
+
+  console.log("computedValue", computedValue)
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option)
@@ -81,7 +79,6 @@ const AutoCompleteElement = ({
 
     setValue(val?.guid ?? null)
 
-
     if (!field?.attributes?.autofill) return
 
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
@@ -90,15 +87,13 @@ const AutoCompleteElement = ({
   }
 
   return (
-    <div className={styles.autocompleteWrapper} >
-
+    <div className={styles.autocompleteWrapper}>
       <Autocomplete
         options={options ?? []}
         value={computedValue}
         onChange={(event, newValue) => {
           changeHandler(newValue)
         }}
-        
         noOptionsText={
           <span
             onClick={() => navigateToForm(tableSlug)}

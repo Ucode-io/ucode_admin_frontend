@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from "react"
-import { useWatch } from "react-hook-form"
 import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
+import HFFormulaField from "../FormElements/HFFormulaField"
 import HFIconPicker from "../FormElements/HFIconPicker"
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete"
 import HFNumberField from "../FormElements/HFNumberField"
@@ -14,16 +14,12 @@ import HFTimePicker from "../FormElements/HFTimePicker"
 import CellElementGenerator from "./CellElementGenerator"
 import CellRelationFormElement from "./CellRelationFormElement"
 
-const CellFormElementGenerator = ({
+const CellFormElementGeneratorMulti = ({
   field,
   fields,
-  watch,
-  columns = [],
-  selected,
   row,
-  control,
+  control = () => {},
   setFormValue,
-  shouldWork = false,
   index,
   ...props
 }) => {
@@ -31,26 +27,11 @@ const CellFormElementGenerator = ({
     return `multi.${index}.${field.slug}`
   }, [field.slug, index])
 
-  const changedValue = useWatch({
-    control,
-    name: computedSlug,
-  })
-
   useEffect(() => {
     if (!row?.[field.slug]) {
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || "")
     }
   }, [field, row, setFormValue, computedSlug])
-
-  useEffect(() => {
-    if (columns.length && changedValue) {
-      columns.forEach(
-        (i, index) =>
-          selected.includes(i.guid) &&
-          setFormValue(`multi.${index}.${field.slug}`, changedValue)
-      )
-    }
-  }, [changedValue, setFormValue, columns, field, selected])
 
   switch (field.type) {
     case "LOOKUP":
@@ -102,19 +83,19 @@ const CellFormElementGenerator = ({
         />
       )
 
-    // case "FORMULA_FRONTEND":
-    //   return (
-    //     <HFFormulaField
-    //       setFormValue={setFormValue}
-    //       control={control}
-    //       required={field.required}
-    //       placeholder={field.attributes?.placeholder}
-    //       name={computedSlug}
-    //       fieldsList={fields}
-    //       field={field}
-    //       {...props}
-    //     />
-    //   )
+    case "FORMULA_FRONTEND":
+      return (
+        <HFFormulaField
+          setFormValue={setFormValue}
+          control={control}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          name={computedSlug}
+          fieldsList={fields}
+          field={field}
+          {...props}
+        />
+      )
 
     case "MULTISELECT":
       return (
@@ -162,7 +143,6 @@ const CellFormElementGenerator = ({
     case "DATE_TIME":
       return (
         <HFDateTimePicker
-          showCopyBtn={false}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -274,4 +254,4 @@ const CellFormElementGenerator = ({
   }
 }
 
-export default CellFormElementGenerator
+export default CellFormElementGeneratorMulti

@@ -227,13 +227,13 @@ const queryGenerator = (groupField, filters = {}) => {
   const filterValue = filters[groupField.slug]
   const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {}
 
-  if (groupField?.type === "PICK_LIST") {
+  if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
       queryKey: ["GET_GROUP_OPTIONS", groupField.id],
       queryFn: () =>
         groupField?.attributes?.options?.map((el) => ({
-          label: el,
-          value: el,
+          label: el?.label ?? el,
+          value: el?.value ?? el,
           slug: groupField?.slug,
         })),
     }

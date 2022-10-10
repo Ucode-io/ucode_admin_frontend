@@ -1,6 +1,7 @@
 import { BackupTable, ImportExport } from "@mui/icons-material";
 import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import FiltersBlock from "../../../components/FiltersBlock";
@@ -29,6 +30,9 @@ const DocView = ({
   const { tableSlug } = useParams();
   const queryClient = useQueryClient();
 
+  const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
+  const userId = useSelector((state) => state.auth.userId);
+
   const view = views.find((view) => view.type === "TABLE");
 
   // =====SETTINGS BLOCK=========
@@ -41,9 +45,8 @@ const DocView = ({
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
-  const [selectedObject, setSelectedObject] = useState(
-    (state?.template?.object_id || state?.template?.branch_test_id) ?? null
-  );
+  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
+
 
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
@@ -82,10 +85,15 @@ const DocView = ({
   } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug ],
     () => {
+
+      const data = {
+        table_slug: tableSlug
+      }
+
+      data[`${loginTableSlug}_ids`] = [userId]
+
       return constructorObjectService.getList("template", {
-        data: {
-          table_slug: tableSlug,
-        },
+        data
       });
     },
     {

@@ -59,7 +59,7 @@ const DocumentGeneratorButton = () => {
     const state = {
       toDocsTab: true,
       template: template,
-      object_id: objectId,
+      objectId,
     };
 
     closeMenu();

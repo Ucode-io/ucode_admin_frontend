@@ -38,7 +38,6 @@ const DocView = ({
   const [tableViewIsActive, setTableViewIsActive] = useState(false);
   const [relationViewIsActive, setRelationViewIsActive] = useState(false);
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0);
-  const [filteredData, setFilteredData] = useState(null);
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
@@ -81,12 +80,11 @@ const DocView = ({
     isLoading,
     refetch,
   } = useQuery(
-    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug, filteredData],
+    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug ],
     () => {
       return constructorObjectService.getList("template", {
         data: {
           table_slug: tableSlug,
-          [filteredData?.slug]: selectedObject ?? undefined,
         },
       });
     },
@@ -102,15 +100,6 @@ const DocView = ({
       },
     }
   );
-
-  useEffect(() => {
-    setFilteredData(
-      templateFields
-        .filter((item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS")
-        .find((i) => i.table_slug === tableSlug)
-    );
-  }, [templateFields, tableSlug]);
-
   // ========UPDATE TEMPLATE===========
 
   const updateTemplate = (template) => {

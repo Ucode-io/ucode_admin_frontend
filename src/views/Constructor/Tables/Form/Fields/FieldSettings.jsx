@@ -31,8 +31,6 @@ const FieldSettings = ({
   const { id } = useParams();
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
-  const [chosenValue, setChosenValue] = useState();
-  const [relationData, setRelationData] = useState();
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
@@ -104,11 +102,6 @@ const FieldSettings = ({
     name: "layoutRelations",
   });
 
-  const autofillField = useWatch({
-    control,
-    name: "autofill_field",
-  });
-
   const computedRelationTables = useMemo(() => {
     return layoutRelations?.map((table) => ({
       value: table.id?.split("#")?.[0],
@@ -121,57 +114,21 @@ const FieldSettings = ({
       if (!selectedAutofillTableSlug) return [];
       return constructorFieldService.getList({
         table_slug: selectedAutofillTableSlug,
+        with_one_relation: true,
       });
     },
     {
-      select: ({ fields }) =>
-        listToOptions(
-          fields?.filter((field) => field.type !== "LOOKUPS"),
-          "label",
-          "slug",
-          "type",
-          "relation_id"
-        ),
+      select: (res) =>
+        [...res?.fields, ...res?.data?.one_relation_fields]
+          ?.filter(
+            (field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP"
+          )
+          .map((el) => ({
+            value: el?.path_slug ? el?.path_slug : el?.slug,
+            label: el?.label,
+          })),
     }
   );
-
-  const getChoseItem = useMemo(() => {
-    return computedRelationFields?.filter(
-      (item) => item?.value === chosenValue
-    );
-  }, [computedRelationFields, chosenValue]);
-
-  const getRelation = () => {
-    if (
-      getChoseItem?.[0]?.type === "LOOKUP" ||
-      getChoseItem?.[0]?.type === "LOOKUPS"
-    ) {
-      constructorRelationService
-        .getList({
-          table_slug: computedRelationTables?.[0]?.value,
-        })
-        .then((res) => {
-          console.log("res", res);
-          let filteresData = res?.relations.find(
-            (item) =>
-              item?.id === getChoseItem?.[0]?.relation_id &&
-              item?.table_to?.slug !== computedRelationTables?.[0]?.value
-          );
-
-          constructorFieldService
-            .getList({
-              table_slug: filteresData?.table_to?.slug,
-            })
-            .then((res) => {
-              setRelationData(
-                res?.fields.filter((item) => {
-                  return item?.type !== "LOOKUP";
-                })
-              );
-            });
-        });
-    } else return false;
-  };
 
   useEffect(() => {
     const values = {
@@ -195,14 +152,6 @@ const FieldSettings = ({
     }
   }, [field, formType, id, reset]);
 
-  useEffect(() => {
-    setChosenValue(autofillField);
-  }, [autofillField]);
-  useEffect(() => {
-    console.log("teeeeeest");
-    getRelation();
-  }, [chosenValue]);
-  console.log("relationData", relationData);
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -341,7 +290,7 @@ const FieldSettings = ({
                 disabledHelperText
                 name="autofill_field"
                 control={control}
-                options={relationData ? relationData : computedRelationFields}
+                options={computedRelationFields}
                 placeholder="Type"
               />
             </FRow>

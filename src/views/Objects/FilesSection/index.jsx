@@ -1,6 +1,8 @@
-import { useRef, useState } from "react"
+import { Download } from "@mui/icons-material"
+import { useMemo, useRef, useState } from "react"
 import { useMutation } from "react-query"
 import { useParams } from "react-router-dom"
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
 import FRow from "../../../components/FormElements/FRow"
@@ -9,6 +11,7 @@ import useDownloader from "../../../hooks/useDownloader"
 import useObjectsQuery from "../../../queries/hooks/useObjectsQuery"
 import constructorObjectService from "../../../services/constructorObjectService"
 import objectDocumentService from "../../../services/objectDocumentService"
+import { generateID } from "../../../utils/generateID"
 import { listToMap } from "../../../utils/listToMap"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import { Filter } from "../components/FilterGenerator"
@@ -117,6 +120,25 @@ const FilesSection = ({
     return updateMutation(values)
   }
 
+  const computedColumns = useMemo(() => {
+    if(!columns?.length) return []
+
+    return [
+      ...columns,
+      {
+        id: generateID(),
+        render: row => (
+          <RectangleIconButton color="primary" onClick={() => download({ link: row.file_link, fileName: row.name })} >
+            <Download color="primary" />
+          </RectangleIconButton>
+        )
+      }
+    ]
+
+  }, [ columns ])
+
+  console.log("computedColumns ==>", computedColumns)
+
   // const columns = [
   //   {
   //     id: "1",
@@ -191,7 +213,7 @@ const FilesSection = ({
       <div className={styles.tableBlock}>
         <ObjectDataTable
           data={tableData}
-          columns={columns}
+          columns={computedColumns}
           pagesCount={pageCount}
           loader={isLoading || deleteLoading}
           removableHeight={290}
@@ -209,7 +231,7 @@ const FilesSection = ({
             <>
               <TableRowButton
                 onClick={() => inputRef.current.click()}
-                colSpan={columns.length + 2}
+                colSpan={columns.length + 3}
                 loader={createLoader}
               />
             </>

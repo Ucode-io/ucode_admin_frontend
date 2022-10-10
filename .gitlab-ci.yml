@@ -61,6 +61,6 @@ deploy_to_prod:
     - cp $PROD_MEDION_KUBECONFIG ~/.kube/config
     - DEPLOYMENT=$(echo $CI_PROJECT_NAME | sed s/_/-/g | sed s/$CI_PROJECT_NAMESPACE-//g)
     - helm repo add --username $HELM_REGISTRY_USERNAME --password $HELM_REGISTRY_PASSWORD $HELM_REPO_NAME $HELM_REGISTRY_PATH
-    - helm upgrade --install $DEPLOYMENT $HELM_REPO_NAME/$HELM_REPO_NAME --set=image.tag=$CI_PIPELINE_IID --values .helm/values-prod.yaml -n $NAMESPACE-PROD
+    - helm upgrade --install $DEPLOYMENT $HELM_REPO_NAME/$HELM_REPO_NAME --set=image.tag=$CI_PIPELINE_IID --values .helm/values-prod.yaml -n $NAMESPACE_PROD
   only:
     - master

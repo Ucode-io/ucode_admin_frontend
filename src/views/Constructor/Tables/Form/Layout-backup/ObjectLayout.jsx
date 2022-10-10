@@ -1,6 +1,6 @@
-import FieldsBlock from "./FieldsBlock"
-import SectionsBlock from "./SectionsBlock"
-import styles from "./style.module.scss"
+import FieldsBlock from "./FieldsBlock";
+import SectionsBlock from "./SectionsBlock";
+import styles from "./style.module.scss";
 
 const ObjectLayout = ({ usedFields, mainForm, layoutForm }) => {
   return (
@@ -12,7 +12,7 @@ const ObjectLayout = ({ usedFields, mainForm, layoutForm }) => {
       />
       <SectionsBlock mainForm={mainForm} layoutForm={layoutForm} />
     </div>
-  )
-}
+  );
+};
 
-export default ObjectLayout
+export default ObjectLayout;

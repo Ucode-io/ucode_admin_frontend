@@ -19,7 +19,10 @@ const CellElementGenerator = ({ field = {}, row }) => {
     return result
   }, [row, field])
 
+
+  
   if (field.render) {
+    console.log(" ==>", field)
     return field.render(row)
   }
 

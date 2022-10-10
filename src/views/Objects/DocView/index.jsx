@@ -47,7 +47,6 @@ const DocView = ({
 
   const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
 
-
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
   );

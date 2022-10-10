@@ -71,8 +71,6 @@ const RelationTable = ({
 
   const relatedTableSlug = relation?.relatedTable
 
-  console.log("relatedTableSlug ==>", relatedTableSlug)
-
   const {
     data: {
       tableData = [],
@@ -130,7 +128,6 @@ const RelationTable = ({
       },
     }
   )
-
 
   useEffect(() => {
     if (tableData?.length) {

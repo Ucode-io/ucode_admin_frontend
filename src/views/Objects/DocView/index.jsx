@@ -1,5 +1,5 @@
 import { BackupTable, ImportExport } from "@mui/icons-material";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useLocation, useParams } from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
@@ -50,7 +50,7 @@ const DocView = ({
   );
 
   // ========FIELDS FOR RELATIONS=========
-  const { data: fields = [] } = useQuery(
+  const { data: fields = [], isLoading: fieldsLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, limit: 0, offset: 0 }],
     () => {
       return constructorObjectService.getList(tableSlug, {
@@ -257,7 +257,7 @@ const DocView = ({
         />
       </FiltersBlock>
 
-      {isLoading ? (
+      {isLoading || fieldsLoading ? (
         <PageFallback />
       ) : (
         <div className={styles.mainBlock}>

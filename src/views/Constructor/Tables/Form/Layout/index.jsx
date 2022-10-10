@@ -7,6 +7,7 @@ import { mainActions } from "../../../../../store/main/main.slice";
 import RelationsBlock from "./RelationsBlock";
 import SectionsBlock from "./SectionsBlock";
 import SettingsBlock from "./SettingsBlock";
+import SummarySection from "./SummarySection.jsx";
 import styles from "./style.module.scss";
 
 const Layout = ({ mainForm, getRelationFields }) => {
@@ -49,6 +50,9 @@ const Layout = ({ mainForm, getRelationFields }) => {
 
   return (
     <>
+      <div className="">
+        <SummarySection mainForm={mainForm} />
+      </div>
       <div className={styles.page}>
         <SectionsBlock
           mainForm={mainForm}

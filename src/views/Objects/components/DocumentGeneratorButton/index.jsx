@@ -2,6 +2,7 @@ import { Add, FileOpen } from "@mui/icons-material";
 import { Menu, Tooltip } from "@mui/material";
 import { useMemo, useState, useEffect } from "react";
 import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import constructorObjectService from "../../../../services/constructorObjectService";
@@ -11,8 +12,11 @@ import styles from "./style.module.scss";
 const DocumentGeneratorButton = () => {
   const navigate = useNavigate();
   const { appId, tableSlug, id: objectId } = useParams();
+
+  const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
+  const userId = useSelector((state) => state.auth.userId);
+
   const [anchorEl, setAnchorEl] = useState(null);
-  const [filteredData, setFilteredData] = useState(null);
 
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -25,13 +29,18 @@ const DocumentGeneratorButton = () => {
   const {
     data: { templates, templateFields } = { templates: [], templateFields: [] },
   } = useQuery(
-    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug, filteredData],
+    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
+
+      const data = {
+        table_slug: tableSlug
+      }
+
+      data[`${loginTableSlug}_ids`] = [userId]
+
+      
       return constructorObjectService.getList("template", {
-        data: {
-          table_slug: tableSlug,
-          [filteredData?.slug]: objectId ?? undefined,
-        },
+        data
       });
     },
     {
@@ -47,19 +56,11 @@ const DocumentGeneratorButton = () => {
     }
   );
 
-  useEffect(() => {
-    setFilteredData(
-      templateFields
-        .filter((item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS")
-        .find((i) => i.table_slug === tableSlug)
-    );
-  }, [templateFields, tableSlug]);
-
   const navigateToDocumentEditPage = (template) => {
     const state = {
       toDocsTab: true,
       template: template,
-      object_id: objectId,
+      objectId,
     };
 
     closeMenu();
@@ -75,7 +76,7 @@ const DocumentGeneratorButton = () => {
         type: "CREATE",
         table_slug: tableSlug,
         html: "",
-        object_id: objectId,
+        objectId,
       },
     };
     closeMenu();

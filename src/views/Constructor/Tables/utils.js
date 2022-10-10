@@ -1,13 +1,33 @@
+import { generateGUID } from "../../../utils/generateID"
 import { sortByOrder } from "../../../utils/sortByOrder"
 
 export const computeSections = (sections) => {
   return sections
-    .map((section) => ({
+    ?.filter(section => !section.is_summary_section).map((section) => ({
       ...section,
       fields: section.fields?.map(field => ({...field, field_name: field.label}))
       .sort(sortByOrder) ?? [],
     }))
-    ?.sort(sortByOrder) ?? []
+    .sort(sortByOrder) ?? []
+}
+
+export const computeSummarySection = (sections) => {
+  const summarySection = sections?.find(section => !section.is_summary_section)
+  
+  if(!summarySection) return {
+    id: generateGUID(),
+    label: 'Summary',
+    fields: [],
+    icon: '',
+    order: 1,
+  }
+  
+  return {
+    ...summarySection,
+    fields: summarySection.fields?.map(field => ({...field, field_name: field.label}))
+      .sort(sortByOrder) ?? []
+  }
+  
 }
 
 export const computeSectionsOnSubmit = (sections) => {

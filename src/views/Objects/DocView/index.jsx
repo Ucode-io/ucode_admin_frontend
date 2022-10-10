@@ -1,6 +1,7 @@
 import { BackupTable, ImportExport } from "@mui/icons-material";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import FiltersBlock from "../../../components/FiltersBlock";
@@ -29,6 +30,9 @@ const DocView = ({
   const { tableSlug } = useParams();
   const queryClient = useQueryClient();
 
+  const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
+  const userId = useSelector((state) => state.auth.userId);
+
   const view = views.find((view) => view.type === "TABLE");
 
   // =====SETTINGS BLOCK=========
@@ -38,20 +42,17 @@ const DocView = ({
   const [tableViewIsActive, setTableViewIsActive] = useState(false);
   const [relationViewIsActive, setRelationViewIsActive] = useState(false);
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0);
-  const [filteredData, setFilteredData] = useState(null);
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
-  const [selectedObject, setSelectedObject] = useState(
-    (state?.template?.object_id || state?.template?.branch_test_id) ?? null
-  );
+  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
 
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
   );
 
   // ========FIELDS FOR RELATIONS=========
-  const { data: fields = [] } = useQuery(
+  const { data: fields = [], isLoading: fieldsLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, limit: 0, offset: 0 }],
     () => {
       return constructorObjectService.getList(tableSlug, {
@@ -81,13 +82,17 @@ const DocView = ({
     isLoading,
     refetch,
   } = useQuery(
-    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug, filteredData],
+    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug ],
     () => {
+
+      const data = {
+        table_slug: tableSlug
+      }
+
+      data[`${loginTableSlug}_ids`] = [userId]
+
       return constructorObjectService.getList("template", {
-        data: {
-          table_slug: tableSlug,
-          [filteredData?.slug]: selectedObject ?? undefined,
-        },
+        data
       });
     },
     {
@@ -102,15 +107,6 @@ const DocView = ({
       },
     }
   );
-
-  useEffect(() => {
-    setFilteredData(
-      templateFields
-        .filter((item) => item?.type === "LOOKUP" || item?.type === "LOOKUPS")
-        .find((i) => i.table_slug === tableSlug)
-    );
-  }, [templateFields, tableSlug]);
-
   // ========UPDATE TEMPLATE===========
 
   const updateTemplate = (template) => {
@@ -268,7 +264,7 @@ const DocView = ({
         />
       </FiltersBlock>
 
-      {isLoading ? (
+      {isLoading || fieldsLoading ? (
         <PageFallback />
       ) : (
         <div className={styles.mainBlock}>

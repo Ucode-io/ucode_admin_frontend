@@ -4,6 +4,7 @@ import { Controller } from "react-hook-form"
 const HFTextField = ({
   control,
   name = "",
+  isBlackBg = "",
   disabledHelperText = false,
   required = false,
   fullWidth = false,
@@ -38,12 +39,14 @@ const HFTextField = ({
               ? {
                   background: "#c0c0c039",
                 }
-              : {},
+              : {
+                  background: isBlackBg ? "#2A2D34" : "inherit",
+                  color: isBlackBg ? "#fff" : "inherit",
+                },
           }}
           helperText={!disabledHelperText && error?.message}
           {...props}
         />
-        
       )}
     ></Controller>
   )

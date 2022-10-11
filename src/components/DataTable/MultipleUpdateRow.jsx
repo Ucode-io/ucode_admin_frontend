@@ -1,4 +1,4 @@
-import { CTableCell, CTableRow } from "../CTable"
+import { CTableCell } from "../CTable"
 import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator"
 import "./style.scss"
 
@@ -11,7 +11,7 @@ const MultipleUpdateRow = ({
   setFormValue,
 }) => {
   return (
-    <CTableRow className="multipleRow">
+    <tr className="multipleRow">
       <CTableCell
         style={{
           padding: "10px 20px 4px",
@@ -34,6 +34,7 @@ const MultipleUpdateRow = ({
           }}
         >
           <CellFormElementGenerator
+            isBlackBg
             columns={columns}
             selected={selected}
             index="*"
@@ -45,7 +46,7 @@ const MultipleUpdateRow = ({
           />
         </CTableCell>
       ))}
-    </CTableRow>
+    </tr>
   )
 }
 

@@ -11,6 +11,7 @@ import CopyToClipboard from "../CopyToClipboard";
 
 const CDateTimePickerLegacy = ({
   value,
+  isBlackBg,
   onChange,
   showCopyBtn = true,
   disabled = false,
@@ -26,6 +27,7 @@ const CDateTimePickerLegacy = ({
               onClick={openCalendar}
               onChange={handleChange}
               size="small"
+              placeholder="01.01.0001"
               sx={{
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderRight: 0,
@@ -39,7 +41,10 @@ const CDateTimePickerLegacy = ({
                   ? {
                       background: "#c0c0c039",
                     }
-                  : {},
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                    },
               }}
             />
           );
@@ -62,6 +67,7 @@ const CDateTimePickerLegacy = ({
               onChange={handleChange}
               size="small"
               autoComplete="off"
+              placeholder="00:00"
               style={{ border: "none" }}
               fullWidth
               sx={{
@@ -75,7 +81,10 @@ const CDateTimePickerLegacy = ({
                   ? {
                       background: "#c0c0c039",
                     }
-                  : {},
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                    },
                 endAdornment: (
                   <InputAdornment position="end">
                     <DateRange />

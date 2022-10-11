@@ -10,6 +10,7 @@ import IconGenerator from "../IconPicker/IconGenerator";
 import styles from "./style.module.scss";
 
 const CellRelationFormElement = ({
+  isBlackBg,
   control,
   name,
   field,
@@ -17,7 +18,10 @@ const CellRelationFormElement = ({
   disabledHelperText,
   setFormValue,
 }) => {
+<<<<<<< HEAD
   console.log("name - ", name);
+=======
+>>>>>>> 5daac0561b5c17a17a5da777b7c02b1c33414094
   if (!isLayout)
     return (
       <Controller
@@ -26,6 +30,7 @@ const CellRelationFormElement = ({
         defaultValue={null}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <AutoCompleteElement
+            isBlackBg={isBlackBg}
             value={value}
             setValue={onChange}
             field={field}
@@ -45,6 +50,7 @@ const AutoCompleteElement = ({
   field,
   value,
   tableSlug,
+  isBlackBg,
   setValue,
   setFormValue = () => {},
 }) => {
@@ -62,15 +68,21 @@ const AutoCompleteElement = ({
     }
   );
 
+<<<<<<< HEAD
   console.log("field", field.slug, value);
 
+=======
+>>>>>>> 5daac0561b5c17a17a5da777b7c02b1c33414094
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
 
+<<<<<<< HEAD
   console.log("computedValue", computedValue);
 
+=======
+>>>>>>> 5daac0561b5c17a17a5da777b7c02b1c33414094
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
@@ -108,7 +120,19 @@ const AutoCompleteElement = ({
         getOptionLabel={(option) => getRelationFieldTabsLabel(field, option)}
         multiple
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
-        renderInput={(params) => <TextField {...params} size="small" />}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            InputProps={{
+              ...params.InputProps,
+              style: {
+                background: isBlackBg ? "#2A2D34" : "",
+                color: isBlackBg ? "#fff" : "",
+              },
+            }}
+            size="small"
+          />
+        )}
         renderTags={(value, index) => (
           <>
             {getOptionLabel(value[0])}

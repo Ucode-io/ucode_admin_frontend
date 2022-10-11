@@ -217,7 +217,7 @@ const ObjectDataTable = ({
       setLimit={setLimit}
     >
       <CTableHead>
-        {formVisible && (
+        {formVisible && selected.length > 0 && (
           <MultipleUpdateRow
             selected={selected}
             watch={watch}

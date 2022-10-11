@@ -18,10 +18,6 @@ const CellRelationFormElement = ({
   disabledHelperText,
   setFormValue,
 }) => {
-<<<<<<< HEAD
-  console.log("name - ", name);
-=======
->>>>>>> 5daac0561b5c17a17a5da777b7c02b1c33414094
   if (!isLayout)
     return (
       <Controller
@@ -68,21 +64,11 @@ const AutoCompleteElement = ({
     }
   );
 
-<<<<<<< HEAD
-  console.log("field", field.slug, value);
-
-=======
->>>>>>> 5daac0561b5c17a17a5da777b7c02b1c33414094
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
 
-<<<<<<< HEAD
-  console.log("computedValue", computedValue);
-
-=======
->>>>>>> 5daac0561b5c17a17a5da777b7c02b1c33414094
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };

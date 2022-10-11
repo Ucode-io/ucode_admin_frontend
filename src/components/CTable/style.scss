@@ -82,8 +82,6 @@
   cursor: pointer;
   transition-duration: 0.2s;
 
-  
-
   th {
     padding: 8px 16px;
   }
@@ -95,7 +93,7 @@
   &.amountRow {
     background-color: #c0c0c03f;
     font-weight: bold;
-    
+
     &:hover td {
       background-color: #c0c0c03f !important;
     }

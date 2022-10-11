@@ -17,6 +17,7 @@ import CellRelationFormElement from "./CellRelationFormElement"
 const CellFormElementGenerator = ({
   field,
   fields,
+  isBlackBg = false,
   watch,
   columns = [],
   selected,
@@ -56,6 +57,7 @@ const CellFormElementGenerator = ({
     case "LOOKUP":
       return (
         <CellRelationFormElement
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           field={field}
@@ -67,6 +69,7 @@ const CellFormElementGenerator = ({
     case "SINGLE_LINE":
       return (
         <HFTextField
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
@@ -79,6 +82,7 @@ const CellFormElementGenerator = ({
     case "PHONE":
       return (
         <HFTextFieldWithMask
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
@@ -126,6 +130,7 @@ const CellFormElementGenerator = ({
           field={field}
           placeholder={field.attributes?.placeholder}
           // defaultValue={defaultValue}
+          isBlackBg={isBlackBg}
           {...props}
         />
       )
@@ -162,6 +167,7 @@ const CellFormElementGenerator = ({
     case "DATE_TIME":
       return (
         <HFDateTimePicker
+          isBlackBg={isBlackBg}
           showCopyBtn={false}
           control={control}
           name={computedSlug}

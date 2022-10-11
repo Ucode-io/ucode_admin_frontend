@@ -9,6 +9,7 @@ import IconGenerator from "../IconPicker/IconGenerator"
 import styles from "./style.module.scss"
 
 const CellRelationFormElement = ({
+  isBlackBg,
   control,
   name,
   field,
@@ -16,7 +17,6 @@ const CellRelationFormElement = ({
   disabledHelperText,
   setFormValue,
 }) => {
-  console.log("name - ", name)
   if (!isLayout)
     return (
       <Controller
@@ -25,6 +25,7 @@ const CellRelationFormElement = ({
         defaultValue={null}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <AutoCompleteElement
+            isBlackBg={isBlackBg}
             value={value}
             setValue={onChange}
             field={field}
@@ -44,6 +45,7 @@ const AutoCompleteElement = ({
   field,
   value,
   tableSlug,
+  isBlackBg,
   setValue,
   setFormValue = () => {},
 }) => {
@@ -61,14 +63,10 @@ const AutoCompleteElement = ({
     }
   )
 
-  console.log("field", field.slug, value)
-
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value)
     return findedOption ? [findedOption] : []
   }, [options, value])
-
-  console.log("computedValue", computedValue)
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option)
@@ -107,7 +105,19 @@ const AutoCompleteElement = ({
         getOptionLabel={(option) => getRelationFieldTabsLabel(field, option)}
         multiple
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
-        renderInput={(params) => <TextField {...params} size="small" />}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            InputProps={{
+              ...params.InputProps,
+              style: {
+                background: isBlackBg ? "#2A2D34" : "",
+                color: isBlackBg ? "#fff" : "",
+              },
+            }}
+            size="small"
+          />
+        )}
         renderTags={(value, index) => (
           <>
             {getOptionLabel(value[0])}

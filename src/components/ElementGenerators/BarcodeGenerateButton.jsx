@@ -1,10 +1,13 @@
 import printJS from "print-js";
 import React from "react";
 import styles from "./style.module.scss";
+import barcodeService from "../../services/barcodeService";
 
-function BarcodeGenerateButton({ onChange, printBarcode }) {
+function BarcodeGenerateButton({ onChange, printBarcode, tableSlug }) {
   const generateBarcode = () => {
-    console.log("dasdsad", onChange(321321323123));
+    barcodeService.getNumber(tableSlug).then((res) => {
+      onChange(res?.number.slice(0, 12));
+    });
   };
 
   return (

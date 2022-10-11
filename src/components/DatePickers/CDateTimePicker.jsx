@@ -1,13 +1,13 @@
-import DatePicker from "react-multi-date-picker"
-import weekends from "react-multi-date-picker/plugins/highlight_weekends"
-import TimePicker from "react-multi-date-picker/plugins/time_picker"
-import { DateRange } from "@mui/icons-material"
-import { InputAdornment, TextField } from "@mui/material"
+import DatePicker from "react-multi-date-picker";
+import weekends from "react-multi-date-picker/plugins/highlight_weekends";
+import TimePicker from "react-multi-date-picker/plugins/time_picker";
+import { DateRange } from "@mui/icons-material";
+import { InputAdornment, TextField } from "@mui/material";
 
-import "./style2.scss"
-import { locale } from "./Plugins/locale"
-import "react-multi-date-picker/styles/layouts/mobile.css"
-import CopyToClipboard from "../CopyToClipboard"
+import "./style2.scss";
+import { locale } from "./Plugins/locale";
+import "react-multi-date-picker/styles/layouts/mobile.css";
+import CopyToClipboard from "../CopyToClipboard";
 
 const CDateTimePickerLegacy = ({
   value,
@@ -15,7 +15,7 @@ const CDateTimePickerLegacy = ({
   showCopyBtn = true,
   disabled = false,
 }) => {
-  console.log("value -", value)
+  console.log("value", value);
   return (
     <div className="main_wrapper">
       <DatePicker
@@ -42,7 +42,7 @@ const CDateTimePickerLegacy = ({
                   : {},
               }}
             />
-          )
+          );
         }}
         plugins={[weekends()]}
         weekStartDayIndex={1}
@@ -83,7 +83,7 @@ const CDateTimePickerLegacy = ({
                 ),
               }}
             />
-          )
+          );
         }}
         plugins={[<TimePicker hideSeconds />]}
         portal
@@ -95,7 +95,7 @@ const CDateTimePickerLegacy = ({
         <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default CDateTimePickerLegacy
+export default CDateTimePickerLegacy;

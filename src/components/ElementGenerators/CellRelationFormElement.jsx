@@ -1,12 +1,13 @@
-import { Autocomplete, TextField } from "@mui/material"
-import { useMemo } from "react"
-import { Controller } from "react-hook-form"
-import { useQuery } from "react-query"
-import useTabRouter from "../../hooks/useTabRouter"
-import constructorObjectService from "../../services/constructorObjectService"
-import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel"
-import IconGenerator from "../IconPicker/IconGenerator"
-import styles from "./style.module.scss"
+import { Autocomplete, TextField } from "@mui/material";
+import { get } from "@ngard/tiny-get";
+import { useMemo } from "react";
+import { Controller } from "react-hook-form";
+import { useQuery } from "react-query";
+import useTabRouter from "../../hooks/useTabRouter";
+import constructorObjectService from "../../services/constructorObjectService";
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
+import IconGenerator from "../IconPicker/IconGenerator";
+import styles from "./style.module.scss";
 
 const CellRelationFormElement = ({
   control,
@@ -16,7 +17,7 @@ const CellRelationFormElement = ({
   disabledHelperText,
   setFormValue,
 }) => {
-  console.log("name - ", name)
+  console.log("name - ", name);
   if (!isLayout)
     return (
       <Controller
@@ -35,8 +36,8 @@ const CellRelationFormElement = ({
           />
         )}
       />
-    )
-}
+    );
+};
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
@@ -47,44 +48,44 @@ const AutoCompleteElement = ({
   setValue,
   setFormValue = () => {},
 }) => {
-  const { navigateToForm } = useTabRouter()
+  const { navigateToForm } = useTabRouter();
 
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug.includes("doctors_") ? "doctors" : tableSlug],
     () => {
-      return constructorObjectService.getList(tableSlug, { data: {} })
+      return constructorObjectService.getList(tableSlug, { data: {} });
     },
     {
       select: (res) => {
-        return res?.data?.response ?? []
+        return res?.data?.response ?? [];
       },
     }
-  )
+  );
 
-  console.log("field", field.slug, value)
+  console.log("field", field.slug, value);
 
   const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === value)
-    return findedOption ? [findedOption] : []
-  }, [options, value])
+    const findedOption = options?.find((el) => el?.guid === value);
+    return findedOption ? [findedOption] : [];
+  }, [options, value]);
 
-  console.log("computedValue", computedValue)
+  console.log("computedValue", computedValue);
 
   const getOptionLabel = (option) => {
-    return getRelationFieldTabsLabel(field, option)
-  }
+    return getRelationFieldTabsLabel(field, option);
+  };
 
   const changeHandler = (value) => {
-    const val = value?.[value?.length - 1]
+    const val = value?.[value?.length - 1];
 
-    setValue(val?.guid ?? null)
+    setValue(val?.guid ?? null);
 
-    if (!field?.attributes?.autofill) return
+    if (!field?.attributes?.autofill) return;
 
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
-      setFormValue(field_to, val?.[field_from])
-    })
-  }
+      setFormValue(field_to, get(val, field_from));
+    });
+  };
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -92,7 +93,7 @@ const AutoCompleteElement = ({
         options={options ?? []}
         value={computedValue}
         onChange={(event, newValue) => {
-          changeHandler(newValue)
+          changeHandler(newValue);
         }}
         noOptionsText={
           <span
@@ -116,16 +117,16 @@ const AutoCompleteElement = ({
               style={{ marginLeft: "10px", cursor: "pointer" }}
               size={15}
               onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                navigateToForm(tableSlug, "EDIT", value[0])
+                e.stopPropagation();
+                e.preventDefault();
+                navigateToForm(tableSlug, "EDIT", value[0]);
               }}
             />
           </>
         )}
       />
     </div>
-  )
-}
+  );
+};
 
-export default CellRelationFormElement
+export default CellRelationFormElement;

@@ -86,7 +86,7 @@ const BarcodeGenerator = ({
                 </button>
                 <Dialog open={open} onClose={handleClose}>
                   <div className={styles.barcode_count}>
-                    <button className={styles.cancel_btn}>
+                    <button className={styles.cancel_btn} onClose={handleClose}>
                       <ClearIcon />
                     </button>
                     <div className={styles.barcode_input_layer}>

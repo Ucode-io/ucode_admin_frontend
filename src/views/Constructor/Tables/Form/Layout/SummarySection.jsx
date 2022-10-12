@@ -16,7 +16,6 @@ const SummarySection = ({
   openFieldSettingsBlock,
   openFieldsBlock,
   openRelationSettingsBlock,
-  openSettingsBlock,
 }) => {
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
     control: mainForm.control,
@@ -52,10 +51,23 @@ const SummarySection = ({
     sectionsFieldArray.remove(index);
   };
 
+  const openSettingsBlock = (field) => {
+    if (!field.id?.includes("#")) {
+      openFieldSettingsBlock(fieldsMap[field.id] ?? field);
+      return;
+    }
+
+    const relationsMap = mainForm.getValues("relationsMap");
+    const relationId = field.id.split("#")[1];
+
+    const relation = relationsMap[relationId];
+
+    openRelationSettingsBlock(relation);
+  };
   return (
     <div className={styles.summarySection}>
       <Container
-        style={{ minHeight: 10, width: "100%" }}
+        style={{ minHeight: 100, minWidth: "200px" }}
         groupName="1"
         dragClass="drag-row"
         orientation="horizontal"

@@ -192,17 +192,25 @@
 
 // <-- Summary Section --> //
 .summarySection {
-  .summary_fields {
-    // display: flex;
-    // flex-direction: row;
-    // justify-content: space-between;
+  height: 80px;
+  width: 100%;
+  min-width: 450px;
+  background: #fff;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  ::-webkit-scrollbar {
+    max-height: 10%;
+    height: 10%;
   }
   .field_summary {
     background-color: #fff;
+    max-height: 90px;
+    width: 200px;
     cursor: grab;
     display: flex;
     align-items: center;
     gap: 5px;
-    padding: 10px;
+    padding: 0 10px;
   }
 }

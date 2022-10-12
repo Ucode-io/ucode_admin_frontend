@@ -15,7 +15,6 @@ const HFTextField = ({
   placeholder,
   ...props
 }) => {
-  console.log("placeholder - ", placeholder)
   return (
     <Controller
       control={control}

@@ -3,14 +3,15 @@ import CDatePicker from "../DatePickers/CDatePicker"
 
 const HFDatePicker = ({
   control,
+  isBlackBg = false,
   className,
   name,
   label,
   width,
   inputProps,
   disabledHelperText,
-  placeholder,
-  defaultValue="",
+  placeholder = "",
+  defaultValue = "",
   disabled,
   ...props
 }) => {
@@ -22,7 +23,13 @@ const HFDatePicker = ({
       defaultValue={defaultValue}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={className}>
-          <CDatePicker value={value} onChange={onChange} disabled={disabled} />
+          <CDatePicker
+            placeholder={placeholder}
+            isBlackBg={isBlackBg}
+            value={value}
+            onChange={onChange}
+            disabled={disabled}
+          />
         </div>
       )}
     ></Controller>

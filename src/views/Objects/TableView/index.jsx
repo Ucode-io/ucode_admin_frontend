@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useQuery } from "react-query"
 
@@ -15,9 +15,14 @@ import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
 const TableView = ({
   tab,
   view,
+  shouldGet,
+  reset,
   fieldsMap,
   isDocView,
+  formVisible,
+  setFormVisible,
   selectedObjects,
+  setDataLength,
   setSelectedObjects,
   ...props
 }) => {
@@ -47,6 +52,7 @@ const TableView = ({
         currentPage,
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
+        shouldGet,
       },
     ],
     queryFn: () => {
@@ -60,6 +66,7 @@ const TableView = ({
       })
     },
     select: (res) => {
+      setDataLength(res.data?.response.length ?? 0)
       return {
         tableData: res.data?.response ?? [],
         pageCount: isNaN(res.data?.count)
@@ -68,6 +75,14 @@ const TableView = ({
       }
     },
   })
+
+  useEffect(() => {
+    if (tableData?.length) {
+      reset({
+        multi: tableData.map((i) => i),
+      })
+    }
+  }, [tableData, reset])
 
   const { data: { custom_events: customEvents = [] } = {} } =
     useCustomActionsQuery({
@@ -104,6 +119,8 @@ const TableView = ({
         </div>
       )}
       <ObjectDataTable
+        formVisible={formVisible}
+        setFormVisible={setFormVisible}
         isRelationTable={false}
         removableHeight={isDocView ? 150 : 215}
         currentPage={currentPage}

@@ -125,6 +125,7 @@ const CellFormElementGenerator = ({
     case "DATE":
       return (
         <HFDatePicker
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
@@ -162,6 +163,7 @@ const CellFormElementGenerator = ({
     case "NUMBER":
       return (
         <HFNumberField
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
@@ -180,21 +182,6 @@ const CellFormElementGenerator = ({
           {...props}
         />
       )
-
-    // case "MULTISELECT":
-    //   return (
-    //     <FRow label={field.label} required={field.required}>
-    //       <HFMultipleSelect
-    //         control={control}
-    //         name={computedSlug}
-    //         width="100%"
-    //         options={computedOptions}
-    //         required={field.required}
-    //         placeholder={field.attributes?.placeholder}
-    //         {...props}
-    //       />
-    //     </FRow>
-    //   )
 
     case "SWITCH":
       return (

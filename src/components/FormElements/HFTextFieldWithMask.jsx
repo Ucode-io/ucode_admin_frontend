@@ -5,6 +5,7 @@ import InputMask from "react-input-mask"
 const HFTextFieldWithMask = ({
   control,
   name = "",
+  isBlackBg = false,
   disabledHelperText = false,
   required = false,
   rules = {},
@@ -31,12 +32,19 @@ const HFTextFieldWithMask = ({
         >
           {(inputProps) => (
             <TextField
+              isBlackBg={isBlackBg}
               size="small"
               name={name}
               error={error}
               helperText={!disabledHelperText && error?.message}
               placeholder={placeholder}
-              {...inputProps}
+              InputProps={{
+                ...inputProps,
+                style: {
+                  background: isBlackBg ? "#2A2D34" : "",
+                  color: isBlackBg ? "#fff" : "",
+                },
+              }}
               {...props}
             />
           )}

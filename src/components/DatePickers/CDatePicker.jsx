@@ -7,13 +7,14 @@ import { locale } from "./Plugins/locale"
 import "./style2.scss"
 import CustomNavButton from "./Plugins/CustomNavButton"
 
-const CDatePicker = ({ value, onChange, disabled }) => {
+const CDatePicker = ({ value, onChange, disabled, isBlackBg, placeholder }) => {
   return (
     <DatePicker
       disabled={disabled}
       render={(value, openCalendar, handleChange) => {
         return (
           <TextField
+            placeholder={placeholder}
             value={value}
             onClick={openCalendar}
             onChange={handleChange}
@@ -26,7 +27,10 @@ const CDatePicker = ({ value, onChange, disabled }) => {
                 ? {
                     background: "#c0c0c039",
                   }
-                : {},
+                : {
+                    background: isBlackBg ? "#2A2D34" : "",
+                    color: isBlackBg ? "#fff" : "",
+                  },
               endAdornment: (
                 <InputAdornment position="end">
                   <Today />

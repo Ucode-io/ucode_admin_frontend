@@ -14,13 +14,16 @@ const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "")
 
-    const result = getRelationFieldTableCellLabel(field, row, field.table_slug)
+    const result = getRelationFieldTableCellLabel(
+      field,
+      row,
+      field.slug + "_data"
+    )
 
     return result
   }, [row, field])
 
   if (field.render) {
-    console.log(" ==>", field)
     return field.render(row)
   }
 
@@ -83,7 +86,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       )
 
     default:
-      return value
+      return <div style={{ padding: "0 8px" }}>{value}</div>
   }
 }
 

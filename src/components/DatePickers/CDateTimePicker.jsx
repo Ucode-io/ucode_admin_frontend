@@ -9,14 +9,14 @@ import { locale } from "./Plugins/locale"
 import "react-multi-date-picker/styles/layouts/mobile.css"
 import CopyToClipboard from "../CopyToClipboard"
 
-const CDateTimePickerLegacy = ({
+const CDateTimePicker = ({
   value,
+  placeholder,
   isBlackBg,
   onChange,
   showCopyBtn = true,
   disabled = false,
 }) => {
-  console.log("value -", value)
   return (
     <div className="main_wrapper">
       <DatePicker
@@ -27,7 +27,7 @@ const CDateTimePickerLegacy = ({
               onClick={openCalendar}
               onChange={handleChange}
               size="small"
-              placeholder="01.01.0001"
+              placeholder={placeholder.split("#")[0]}
               sx={{
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderRight: 0,
@@ -67,7 +67,7 @@ const CDateTimePickerLegacy = ({
               onChange={handleChange}
               size="small"
               autoComplete="off"
-              placeholder="00:00"
+              placeholder={placeholder.split("#")[1]}
               style={{ border: "none" }}
               fullWidth
               sx={{
@@ -107,4 +107,4 @@ const CDateTimePickerLegacy = ({
   )
 }
 
-export default CDateTimePickerLegacy
+export default CDateTimePicker

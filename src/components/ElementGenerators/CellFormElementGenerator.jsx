@@ -62,6 +62,7 @@ const CellFormElementGenerator = ({
           name={computedSlug}
           field={field}
           row={row}
+          placeholder={field.attributes?.placeholder}
           setFormValue={setFormValue}
         />
       )
@@ -106,20 +107,6 @@ const CellFormElementGenerator = ({
         />
       )
 
-    // case "FORMULA_FRONTEND":
-    //   return (
-    //     <HFFormulaField
-    //       setFormValue={setFormValue}
-    //       control={control}
-    //       required={field.required}
-    //       placeholder={field.attributes?.placeholder}
-    //       name={computedSlug}
-    //       fieldsList={fields}
-    //       field={field}
-    //       {...props}
-    //     />
-    //   )
-
     case "MULTISELECT":
       return (
         <HFMultipleAutocomplete
@@ -134,22 +121,6 @@ const CellFormElementGenerator = ({
           {...props}
         />
       )
-
-    // case "MULTI_LINE":
-    //   return (
-    //     <FRow label={field.label} required={field.required}>
-    //       <HFTextEditor
-    //         control={control}
-    //         name={computedSlug}
-    //         fullWidth
-    //         multiline
-    //         rows={4}
-    //         required={field.required}
-    //         placeholder={field.attributes?.placeholder}
-    //         {...props}
-    //       />
-    //     </FRow>
-    //   )
 
     case "DATE":
       return (

@@ -12,8 +12,10 @@ const HFTextField = ({
   rules = {},
   defaultValue = "",
   disabled,
+  placeholder,
   ...props
 }) => {
+  console.log("placeholder - ", placeholder)
   return (
     <Controller
       control={control}
@@ -33,6 +35,7 @@ const HFTextField = ({
           name={name}
           error={error}
           fullWidth={fullWidth}
+          placeholder={placeholder}
           InputProps={{
             readOnly: disabled,
             style: disabled

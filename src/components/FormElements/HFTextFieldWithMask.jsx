@@ -10,6 +10,7 @@ const HFTextFieldWithMask = ({
   rules = {},
   mask,
   disabled,
+  placeholder,
   ...props
 }) => {
   return (
@@ -25,7 +26,7 @@ const HFTextFieldWithMask = ({
         <InputMask
           mask={mask}
           value={value ?? undefined}
-          onChange={e => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
         >
           {(inputProps) => (
@@ -34,6 +35,7 @@ const HFTextFieldWithMask = ({
               name={name}
               error={error}
               helperText={!disabledHelperText && error?.message}
+              placeholder={placeholder}
               {...inputProps}
               {...props}
             />

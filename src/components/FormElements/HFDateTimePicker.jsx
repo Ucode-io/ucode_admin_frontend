@@ -4,14 +4,9 @@ import CDateTimePicker from "../DatePickers/CDateTimePicker";
 const HFDateTimePicker = ({
   control,
   isBlackBg = false,
-  className,
   name,
-  label,
-  width,
   showCopyBtn,
-  inputProps,
-  disabledHelperText,
-  placeholder,
+  placeholder = "",
   disabled,
 }) => {
   return (
@@ -22,6 +17,7 @@ const HFDateTimePicker = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <CDateTimePicker
+            placeholder={placeholder}
             isBlackBg={isBlackBg}
             value={value}
             showCopyBtn={showCopyBtn}

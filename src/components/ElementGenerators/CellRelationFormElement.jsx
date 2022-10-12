@@ -13,11 +13,13 @@ const CellRelationFormElement = ({
   isBlackBg,
   control,
   name,
+  placeholder,
   field,
   isLayout,
   disabledHelperText,
   setFormValue,
 }) => {
+  console.log("placeholder", placeholder, name)
   if (!isLayout)
     return (
       <Controller
@@ -26,6 +28,7 @@ const CellRelationFormElement = ({
         defaultValue={null}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <AutoCompleteElement
+            placeholder={placeholder}
             isBlackBg={isBlackBg}
             value={value}
             setValue={onChange}
@@ -45,6 +48,7 @@ const CellRelationFormElement = ({
 const AutoCompleteElement = ({
   field,
   value,
+  placeholder,
   tableSlug,
   isBlackBg,
   setValue,
@@ -108,6 +112,7 @@ const AutoCompleteElement = ({
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
         renderInput={(params) => (
           <TextField
+            placeholder={placeholder}
             {...params}
             InputProps={{
               ...params.InputProps,

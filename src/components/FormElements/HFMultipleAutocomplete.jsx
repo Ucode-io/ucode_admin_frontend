@@ -165,7 +165,7 @@ const AutoCompleteElement = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            placeholder={placeholder}
+            placeholder={computedValue.length ? "" : placeholder}
             InputProps={{
               ...params.InputProps,
               style: { background: isBlackBg ? "#2A2D34" : "" },

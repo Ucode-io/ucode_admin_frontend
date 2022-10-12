@@ -21,9 +21,9 @@ const BarcodeGenerator = ({
   rules = {},
   defaultValue = "",
   disabled,
+  formTableSlug,
   ...props
 }) => {
-  const { slug: table_slug } = useParams();
   const [count, setCount] = useState(1);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
@@ -117,7 +117,7 @@ const BarcodeGenerator = ({
               <BarcodeGenerateButton
                 printBarcode={() => printBarcode("barcodes")}
                 onChange={onChange}
-                tableSlug={table_slug}
+                tableSlug={formTableSlug}
               />
             </>
           );

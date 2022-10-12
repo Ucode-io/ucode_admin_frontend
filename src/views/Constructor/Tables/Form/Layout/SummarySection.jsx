@@ -3,6 +3,8 @@ import { Card } from "@mui/material";
 import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
+import ButtonsPopover from "../../../../../components/ButtonsPopover";
+import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import { generateGUID } from "../../../../../utils/generateID";
 import Section from "./Section";
@@ -14,6 +16,7 @@ const SummarySection = ({
   openFieldSettingsBlock,
   openFieldsBlock,
   openRelationSettingsBlock,
+  openSettingsBlock,
 }) => {
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
     control: mainForm.control,
@@ -45,8 +48,43 @@ const SummarySection = ({
       sectionsFieldArray.replace(result);
     }
   };
+  const removeField = (index, colNumber) => {
+    sectionsFieldArray.remove(index);
+  };
 
-  return <div className={styles.summarySection}></div>;
+  return (
+    <div className={styles.summarySection}>
+      <Container
+        style={{ minHeight: 10, width: "100%" }}
+        groupName="1"
+        dragClass="drag-row"
+        orientation="horizontal"
+        dropPlaceholder={{ className: "drag-row-drop-preview" }}
+        onDrop={(dragResults) => onDrop(dragResults, 1)}
+      >
+        {sections?.map((field, fieldIndex) => (
+          <Draggable key={field.key}>
+            <div className={styles.field_summary}>
+              <FormElementGenerator
+                control={layoutForm.control}
+                field={fieldsMap[field.id] ?? field}
+                isLayout={true}
+                sectionIndex={fieldIndex}
+                column={1}
+                fieldIndex={fieldIndex}
+                mainForm={mainForm}
+              />
+              <ButtonsPopover
+                className={styles.deleteButton}
+                onEditClick={() => openSettingsBlock(field)}
+                onDeleteClick={() => removeField(fieldIndex, 1)}
+              />
+            </div>
+          </Draggable>
+        ))}
+      </Container>
+    </div>
+  );
 };
 
 export default SummarySection;

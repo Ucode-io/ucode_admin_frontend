@@ -321,6 +321,7 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             // disabled={isDisabled}
+            formTableSlug={formTableSlug}
             {...props}
           />
         </FRow>

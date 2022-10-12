@@ -51,13 +51,13 @@ const Layout = ({ mainForm, getRelationFields }) => {
   return (
     <>
       <div className="">
-        {/* <SummarySection
+        <SummarySection
           mainForm={mainForm}
           layoutForm={layoutForm}
           openFieldsBlock={openFieldsBlock}
           openFieldSettingsBlock={openFieldSettingsBlock}
           openRelationSettingsBlock={openRelationSettingsBlock}
-        /> */}
+        />
       </div>
       <div className={styles.page}>
         <SectionsBlock

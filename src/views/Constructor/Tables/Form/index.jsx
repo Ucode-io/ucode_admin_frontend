@@ -205,12 +205,15 @@ const ConstructorTablesFormPage = () => {
   };
 
   const onSubmit = (data) => {
+    console.log("DATA ===>", data);
     const computedData = {
       ...data,
-      sections: computeSectionsOnSubmit(data.sections),
+      sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
     };
 
+    console.log("COMPUTED DATA ==>", computedData);
+    // return;
     if (id) updateConstructorTable(computedData);
     else createConstructorTable(computedData);
   };

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useParams } from "react-router-dom"
 import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
@@ -21,15 +21,15 @@ import FiltersBlock from "../../components/FiltersBlock"
 import DocumentGeneratorButton from "./components/DocumentGeneratorButton"
 import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons"
+import { showAlert } from "../../store/alert/alert.thunk"
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams()
   const { pathname, state = {} } = useLocation()
+  const dispatch = useDispatch()
   const { removeTab, navigateToForm, tabs, addNewTab } = useTabRouter()
   const location = useLocation()
   const queryClient = useQueryClient()
-
-  console.log("DEFAULT VALUES - ", state)
 
   const tablesList = useSelector((state) => state.constructorTable.list)
 
@@ -149,9 +149,10 @@ const ObjectsFormPage = () => {
       .update(tableSlug, { data })
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
-        removeTab(pathname)
+        dispatch(showAlert("Успешно обновлено", "success"))
       })
-      .catch(() => setBtnLoader(false))
+      .catch((e) => console.log("ERROR: ", e))
+      .finally(() => setBtnLoader(false))
   }
 
   const create = (data) => {
@@ -161,12 +162,13 @@ const ObjectsFormPage = () => {
       .create(tableSlug, { data })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
-        removeTab(pathname)
+        dispatch(showAlert("Успешно обновлено", "success"))
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
         if (tableRelations?.length)
           navigateToForm(tableSlug, "EDIT", res.data?.data)
       })
-      .catch(() => setBtnLoader(false))
+      .catch((e) => console.log("ERROR: ", e))
+      .finally(() => setBtnLoader(false))
   }
 
   const onSubmit = (data) => {

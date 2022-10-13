@@ -32,7 +32,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return <span className="text-nowrap">{formatDate(value)}</span>
 
     case "NUMBER":
-      return <span className="text-nowrap">{numberWithSpaces(value)}</span>
+      return numberWithSpaces(value)
 
     case "DATE_TIME":
       return (
@@ -86,7 +86,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       )
 
     default:
-      return <div style={{ padding: "0 8px" }}>{value}</div>
+      return value
   }
 }
 

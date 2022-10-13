@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import useOnClickOutside from "use-onclickoutside"
 import { useLocation } from "react-router-dom"
+import { Checkbox } from "@mui/material"
 
 import {
   CTable,
@@ -59,6 +60,7 @@ const ObjectDataTable = ({
   summaries,
 }) => {
   const location = useLocation()
+  const [showCheckbox, setShowCheckbox] = useState(false)
   const tableSize = useSelector((state) => state.tableSize.tableSize)
   const [columnId, setColumnId] = useState("")
   const tableSettings = useSelector((state) => state.tableSize.tableSettings)
@@ -161,6 +163,8 @@ const ObjectDataTable = ({
     setColumnId("")
   }
 
+  console.log("selected - ", selected)
+
   const handlePin = (colID, colIdx) => {
     dispatch(
       tableSizeAction.setTableSettings({
@@ -217,25 +221,42 @@ const ObjectDataTable = ({
       setLimit={setLimit}
     >
       <CTableHead>
-        {formVisible && selected.length > 0 && (
-          <MultipleUpdateRow
-            selected={selected}
-            watch={watch}
-            setFormValue={setFormValue}
-            control={control}
-            fields={columns}
-            columns={data}
-            row={{}}
-          />
-        )}
+        <MultipleUpdateRow
+          isCollapsed={formVisible && selected.length > 0}
+          selected={selected}
+          setSelected={setSelected}
+          watch={watch}
+          setFormValue={setFormValue}
+          control={control}
+          fields={columns}
+          columns={data}
+          row={{}}
+        />
         <CTableRow>
-          {formVisible && <CTableHeadCell></CTableHeadCell>}
-          <CTableHeadCell width={10}>№</CTableHeadCell>
+          {formVisible && (
+            <CTableHeadCell
+              onMouseEnter={() => setShowCheckbox(true)}
+              onMouseLeave={() => setShowCheckbox(false)}
+              style={{ padding: "2px 0", minWidth: "40px" }}
+            >
+              {showCheckbox || data.length === selected.length ? (
+                <Checkbox
+                  onChange={(e, val) =>
+                    setSelected(val ? data.map((i) => i.guid) : [])
+                  }
+                />
+              ) : (
+                "№"
+              )}
+            </CTableHeadCell>
+          )}
+          {!formVisible && <CTableHeadCell width={10}>№</CTableHeadCell>}
           {columns.map((column, index) => (
             <CTableHeadCell
               id={column.id}
               key={index}
               style={{
+                padding: "10px 4px",
                 minWidth: tableSize?.[pageName]?.[column.id]
                   ? tableSize?.[pageName]?.[column.id]
                   : "auto",

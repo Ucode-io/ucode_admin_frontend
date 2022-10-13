@@ -2,7 +2,14 @@ import { Checkbox } from "@mui/material"
 import { useId } from "react"
 import { Controller } from "react-hook-form"
 
-const HFCheckbox = ({ control, name, label, className, ...props }) => {
+const HFCheckbox = ({
+  control,
+  isBlackBg,
+  name,
+  label,
+  className,
+  ...props
+}) => {
   const id = useId()
 
   return (
@@ -11,7 +18,13 @@ const HFCheckbox = ({ control, name, label, className, ...props }) => {
       name={name}
       defaultValue={false}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <div className={className} >
+        <div
+          className={className}
+          style={{
+            background: isBlackBg ? "#2A2D34" : "",
+            color: isBlackBg ? "#fff" : "",
+          }}
+        >
           <Checkbox
             id={`checkbox-${id}`}
             style={{ transform: "translatey(-1px)" }}

@@ -152,6 +152,7 @@ const CellFormElementGenerator = ({
     case "TIME":
       return (
         <HFTimePicker
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -176,6 +177,7 @@ const CellFormElementGenerator = ({
     case "CHECKBOX":
       return (
         <HFCheckbox
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -186,6 +188,7 @@ const CellFormElementGenerator = ({
     case "SWITCH":
       return (
         <HFSwitch
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -196,6 +199,7 @@ const CellFormElementGenerator = ({
     case "EMAIL":
       return (
         <HFTextField
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           rules={{
@@ -234,7 +238,11 @@ const CellFormElementGenerator = ({
       )
 
     default:
-      return <CellElementGenerator field={field} row={row} />
+      return (
+        <div style={{ padding: "0 4px" }}>
+          <CellElementGenerator field={field} row={row} />
+        </div>
+      )
   }
 }
 

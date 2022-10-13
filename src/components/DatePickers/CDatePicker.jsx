@@ -7,7 +7,14 @@ import { locale } from "./Plugins/locale"
 import "./style2.scss"
 import CustomNavButton from "./Plugins/CustomNavButton"
 
-const CDatePicker = ({ value, onChange, disabled, isBlackBg, placeholder }) => {
+const CDatePicker = ({
+  value,
+  onChange,
+  disabled,
+  isBlackBg,
+  classes,
+  placeholder,
+}) => {
   return (
     <DatePicker
       disabled={disabled}
@@ -23,6 +30,9 @@ const CDatePicker = ({ value, onChange, disabled, isBlackBg, placeholder }) => {
             autoComplete="off"
             InputProps={{
               readOnly: disabled,
+              classes: {
+                input: isBlackBg ? classes.input : "",
+              },
               style: disabled
                 ? {
                     background: "#c0c0c039",

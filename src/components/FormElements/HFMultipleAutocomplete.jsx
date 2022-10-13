@@ -1,4 +1,4 @@
-import { Close, Create } from "@mui/icons-material"
+import { Close } from "@mui/icons-material"
 import {
   Autocomplete,
   FormControl,
@@ -8,7 +8,7 @@ import {
   Dialog,
   createFilterOptions,
 } from "@mui/material"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useMemo } from "react"
 import { Controller, useForm } from "react-hook-form"
 import IconGenerator from "../IconPicker/IconGenerator"
@@ -22,8 +22,17 @@ import constructorFieldService from "../../services/constructorFieldService"
 import { generateGUID } from "../../utils/generateID"
 import RippleLoader from "../Loaders/RippleLoader"
 import FRow from "./FRow"
+import { makeStyles } from "@mui/styles"
 
 const filter = createFilterOptions()
+
+const useStyles = makeStyles((theme) => ({
+  input: {
+    "&::placeholder": {
+      color: "#fff",
+    },
+  },
+}))
 
 const HFMultipleAutocomplete = ({
   control,
@@ -41,6 +50,7 @@ const HFMultipleAutocomplete = ({
   disabled,
   ...props
 }) => {
+  const classes = useStyles()
   const options = field.attributes?.options ?? []
 
   const hasColor = field.attributes?.has_color
@@ -63,6 +73,7 @@ const HFMultipleAutocomplete = ({
         return (
           <AutoCompleteElement
             value={value}
+            classes={classes}
             isBlackBg={isBlackBg}
             options={options}
             placeholder={placeholder}
@@ -90,6 +101,7 @@ const AutoCompleteElement = ({
   label,
   hasColor,
   hasIcon,
+  classes,
   placeholder,
   onFormChange,
   disabledHelperText,
@@ -167,6 +179,9 @@ const AutoCompleteElement = ({
             placeholder={computedValue.length ? "" : placeholder}
             InputProps={{
               ...params.InputProps,
+              classes: {
+                input: isBlackBg ? classes.input : "",
+              },
               style: { background: isBlackBg ? "#2A2D34" : "" },
             }}
             size="small"

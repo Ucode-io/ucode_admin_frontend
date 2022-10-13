@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -22,27 +23,52 @@ import DocumentGeneratorButton from "./components/DocumentGeneratorButton";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import SummarySection from "./SummarySection/SummarySection";
+=======
+import { useEffect, useMemo, useState } from "react"
+import { useForm } from "react-hook-form"
+import { useDispatch, useSelector } from "react-redux"
+import { useLocation, useParams } from "react-router-dom"
+import PageFallback from "../../components/PageFallback"
+import constructorObjectService from "../../services/constructorObjectService"
+import constructorSectionService from "../../services/constructorSectionService"
+import { sortByOrder } from "../../utils/sortByOrder"
+import MainInfo from "./MainInfo"
+import RelationSection from "./RelationSection"
+import styles from "./style.module.scss"
+import Footer from "../../components/Footer"
+import useTabRouter from "../../hooks/useTabRouter"
+import { Save } from "@mui/icons-material"
+import SecondaryButton from "../../components/Buttons/SecondaryButton"
+import { useQueryClient } from "react-query"
+import { sortSections } from "../../utils/sectionsOrderNumber"
+import constructorViewRelationService from "../../services/constructorViewRelationService"
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2"
+import FiltersBlock from "../../components/FiltersBlock"
+import DocumentGeneratorButton from "./components/DocumentGeneratorButton"
+import PrimaryButton from "../../components/Buttons/PrimaryButton"
+import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons"
+import { showAlert } from "../../store/alert/alert.thunk"
+>>>>>>> 7170abdff7672835d5dce2a8bd60852ff14bbe68
 
 const ObjectsFormPage = () => {
-  const { tableSlug, id, appId } = useParams();
-  const { pathname, state = {} } = useLocation();
-  const { removeTab, navigateToForm, tabs, addNewTab } = useTabRouter();
-  const location = useLocation();
-  const queryClient = useQueryClient();
+  const { tableSlug, id, appId } = useParams()
+  const { pathname, state = {} } = useLocation()
+  const dispatch = useDispatch()
+  const { removeTab, navigateToForm, tabs, addNewTab } = useTabRouter()
+  const location = useLocation()
+  const queryClient = useQueryClient()
 
-  console.log("DEFAULT VALUES - ", state);
+  const tablesList = useSelector((state) => state.constructorTable.list)
 
-  const tablesList = useSelector((state) => state.constructorTable.list);
+  const [loader, setLoader] = useState(true)
+  const [btnLoader, setBtnLoader] = useState(false)
 
-  const [loader, setLoader] = useState(true);
-  const [btnLoader, setBtnLoader] = useState(false);
-
-  const [sections, setSections] = useState([]);
-  const [tableRelations, setTableRelations] = useState([]);
+  const [sections, setSections] = useState([])
+  const [tableRelations, setTableRelations] = useState([])
 
   const tableInfo = useMemo(() => {
-    return tablesList.find((el) => el.slug === tableSlug);
-  }, [tablesList, tableSlug]);
+    return tablesList.find((el) => el.slug === tableSlug)
+  }, [tablesList, tableSlug])
 
   const computedSections = useMemo(() => {
     return (
@@ -53,8 +79,8 @@ const ObjectsFormPage = () => {
         }))
         .filter((section) => !section.is_summary_section)
         .sort(sortByOrder) ?? []
-    );
-  }, [sections]);
+    )
+  }, [sections])
 
   const computedSummary = useMemo(() => {
     return sections.find((item) => item.is_summary_section);
@@ -62,22 +88,22 @@ const ObjectsFormPage = () => {
   const getAllData = async () => {
     const getSections = constructorSectionService.getList({
       table_slug: tableSlug,
-    });
+    })
 
-    const getFormData = constructorObjectService.getById(tableSlug, id);
+    const getFormData = constructorObjectService.getById(tableSlug, id)
 
     const getRelations = constructorViewRelationService.getList({
       table_slug: tableSlug,
-    });
+    })
 
     try {
       const [
         { sections = [] },
         { data = {} },
         { relations: view_relations = [] },
-      ] = await Promise.all([getSections, getFormData, getRelations]);
+      ] = await Promise.all([getSections, getFormData, getRelations])
 
-      setSections(sortSections(sections));
+      setSections(sortSections(sections))
 
       // setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? el?.view_relation_type === 'FILE' ? el : {}))
 
@@ -85,7 +111,7 @@ const ObjectsFormPage = () => {
         view_relations?.map((el) => ({
           ...el,
           ...el.relation,
-        })) ?? [];
+        })) ?? []
 
       setTableRelations(
         relations.map((relation) => ({
@@ -95,41 +121,41 @@ const ObjectsFormPage = () => {
               ? relation.table_to?.slug
               : relation.table_from?.slug,
         }))
-      );
+      )
 
-      reset(data.response ?? {});
+      reset(data.response ?? {})
 
-      const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname);
+      const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)
 
-      if (!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response);
+      if (!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response)
     } catch (error) {
-      console.error(error);
+      console.error(error)
     } finally {
-      setLoader(false);
+      setLoader(false)
     }
-  };
+  }
 
   const getFields = async () => {
     try {
       const getSections = constructorSectionService.getList({
         table_slug: tableSlug,
-      });
+      })
 
       const getRelations = constructorViewRelationService.getList({
         table_slug: tableSlug,
         // relation_table_slug: tableSlug
-      });
+      })
 
       const [{ sections = [] }, { relations: view_relations = [] }] =
-        await Promise.all([getSections, getRelations]);
+        await Promise.all([getSections, getRelations])
 
-      setSections(sortSections(sections));
+      setSections(sortSections(sections))
 
       const relations =
         view_relations?.map((el) => ({
           ...el,
           ...el.relation,
-        })) ?? [];
+        })) ?? []
 
       setTableRelations(
         relations.map((relation) => ({
@@ -139,51 +165,53 @@ const ObjectsFormPage = () => {
               ? relation.table_to?.slug
               : relation.table_from?.slug,
         }))
-      );
+      )
     } catch (error) {
-      console.error(error);
+      console.error(error)
     } finally {
-      setLoader(false);
+      setLoader(false)
     }
-  };
+  }
 
   const update = (data) => {
-    setBtnLoader(true);
+    setBtnLoader(true)
 
     constructorObjectService
       .update(tableSlug, { data })
       .then(() => {
-        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
-        removeTab(pathname);
+        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
+        dispatch(showAlert("Успешно обновлено", "success"))
       })
-      .catch(() => setBtnLoader(false));
-  };
+      .catch((e) => console.log("ERROR: ", e))
+      .finally(() => setBtnLoader(false))
+  }
 
   const create = (data) => {
-    setBtnLoader(true);
+    setBtnLoader(true)
 
     constructorObjectService
       .create(tableSlug, { data })
       .then((res) => {
-        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
-        removeTab(pathname);
+        queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
+        dispatch(showAlert("Успешно обновлено", "success"))
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
         if (tableRelations?.length)
-          navigateToForm(tableSlug, "EDIT", res.data?.data);
+          navigateToForm(tableSlug, "EDIT", res.data?.data)
       })
-      .catch(() => setBtnLoader(false));
-  };
+      .catch((e) => console.log("ERROR: ", e))
+      .finally(() => setBtnLoader(false))
+  }
 
   const onSubmit = (data) => {
-    if (id) update(data);
-    else create(data);
-  };
+    if (id) update(data)
+    else create(data)
+  }
 
   useEffect(() => {
-    if (!tableInfo) return;
-    if (id) getAllData();
-    else getFields();
-  }, [id, tableInfo]);
+    if (!tableInfo) return
+    if (id) getAllData()
+    else getFields()
+  }, [id, tableInfo])
 
   const {
     handleSubmit,
@@ -192,9 +220,15 @@ const ObjectsFormPage = () => {
     setValue: setFormValue,
   } = useForm({
     defaultValues: state,
+<<<<<<< HEAD
   });
 
   if (loader) return <PageFallback />;
+=======
+  })
+
+  if (loader) return <PageFallback />
+>>>>>>> 7170abdff7672835d5dce2a8bd60852ff14bbe68
 
   return (
     <div className={styles.formPage}>
@@ -254,7 +288,7 @@ const ObjectsFormPage = () => {
         }
       />
     </div>
-  );
-};
+  )
+}
 
-export default ObjectsFormPage;
+export default ObjectsFormPage

@@ -1,10 +1,19 @@
 import { TextField } from "@mui/material"
+import { makeStyles } from "@mui/styles"
 import { Controller } from "react-hook-form"
+
+const useStyles = makeStyles((theme) => ({
+  input: {
+    "&::placeholder": {
+      color: "#fff",
+    },
+  },
+}))
 
 const HFTextField = ({
   control,
   name = "",
-  isBlackBg = "",
+  isBlackBg,
   disabledHelperText = false,
   required = false,
   fullWidth = false,
@@ -15,7 +24,7 @@ const HFTextField = ({
   placeholder,
   ...props
 }) => {
-  console.log("placeholder - ", placeholder)
+  const classes = useStyles()
   return (
     <Controller
       control={control}
@@ -38,6 +47,9 @@ const HFTextField = ({
           placeholder={placeholder}
           InputProps={{
             readOnly: disabled,
+            classes: {
+              input: isBlackBg ? classes.input : "",
+            },
             style: disabled
               ? {
                   background: "#c0c0c039",

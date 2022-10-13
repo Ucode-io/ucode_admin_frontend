@@ -1,10 +1,20 @@
 import { TextField } from "@mui/material"
+import { makeStyles } from "@mui/styles"
 import { Controller } from "react-hook-form"
 import InputMask from "react-input-mask"
+
+const useStyles = makeStyles((theme) => ({
+  input: {
+    "&::placeholder": {
+      color: "#fff",
+    },
+  },
+}))
 
 const HFTextFieldWithMask = ({
   control,
   name = "",
+  isBlackBg = false,
   disabledHelperText = false,
   required = false,
   rules = {},
@@ -13,6 +23,7 @@ const HFTextFieldWithMask = ({
   placeholder,
   ...props
 }) => {
+  const classes = useStyles()
   return (
     <Controller
       control={control}
@@ -36,8 +47,17 @@ const HFTextFieldWithMask = ({
               error={error}
               helperText={!disabledHelperText && error?.message}
               placeholder={placeholder}
-              {...inputProps}
               {...props}
+              InputProps={{
+                ...inputProps,
+                classes: {
+                  input: isBlackBg ? classes.input : "",
+                },
+                style: {
+                  background: isBlackBg ? "#2A2D34" : "",
+                  color: isBlackBg ? "#fff" : "",
+                },
+              }}
             />
           )}
         </InputMask>

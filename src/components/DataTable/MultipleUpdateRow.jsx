@@ -1,9 +1,11 @@
 import { CTableCell } from "../CTable"
 import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator"
 import "./style.scss"
+import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined"
 
 const MultipleUpdateRow = ({
   columns,
+  isCollapsed,
   fields,
   selected,
   watch,
@@ -11,19 +13,21 @@ const MultipleUpdateRow = ({
   setFormValue,
 }) => {
   return (
-    <tr className="multipleRow">
+    <tr
+      className="multipleRow"
+      style={{
+        height: isCollapsed ? "100%" : "0",
+      }}
+    >
       <CTableCell
         style={{
-          padding: "10px 20px 4px",
-        }}
-      ></CTableCell>
-      <CTableCell
-        style={{
-          padding: "10px 20px 4px",
+          padding: 0,
           color: "#fff",
+          textAlign: "center",
+          display: isCollapsed ? "" : "none",
         }}
       >
-        *
+        <BorderColorOutlinedIcon style={{ paddingBottom: 3 }} />
       </CTableCell>
 
       {fields.map((field, index) => (
@@ -31,6 +35,7 @@ const MultipleUpdateRow = ({
           key={field.id}
           style={{
             padding: 0,
+            display: isCollapsed ? "" : "none",
           }}
         >
           <CellFormElementGenerator

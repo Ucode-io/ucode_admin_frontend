@@ -13,6 +13,7 @@ const CDateTimePicker = ({
   value,
   placeholder,
   isBlackBg,
+  classes,
   onChange,
   showCopyBtn = true,
   disabled = false,
@@ -37,6 +38,9 @@ const CDateTimePicker = ({
               autoComplete="off"
               InputProps={{
                 readOnly: disabled,
+                classes: {
+                  input: isBlackBg ? classes.input : "",
+                },
                 style: disabled
                   ? {
                       background: "#c0c0c039",
@@ -77,6 +81,9 @@ const CDateTimePicker = ({
               }}
               InputProps={{
                 readOnly: disabled,
+                classes: {
+                  input: isBlackBg ? classes.input : "",
+                },
                 style: disabled
                   ? {
                       background: "#c0c0c039",

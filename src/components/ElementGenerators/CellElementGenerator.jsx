@@ -14,13 +14,16 @@ const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "")
 
-    const result = getRelationFieldTableCellLabel(field, row, field.table_slug)
+    const result = getRelationFieldTableCellLabel(
+      field,
+      row,
+      field.slug + "_data"
+    )
 
     return result
   }, [row, field])
 
   if (field.render) {
-    console.log(" ==>", field)
     return field.render(row)
   }
 
@@ -29,7 +32,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return <span className="text-nowrap">{formatDate(value)}</span>
 
     case "NUMBER":
-      return <span className="text-nowrap">{numberWithSpaces(value)}</span>
+      return numberWithSpaces(value)
 
     case "DATE_TIME":
       return (

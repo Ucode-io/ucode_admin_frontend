@@ -125,6 +125,7 @@ const CellFormElementGenerator = ({
     case "DATE":
       return (
         <HFDatePicker
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
@@ -151,6 +152,7 @@ const CellFormElementGenerator = ({
     case "TIME":
       return (
         <HFTimePicker
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -162,6 +164,7 @@ const CellFormElementGenerator = ({
     case "NUMBER":
       return (
         <HFNumberField
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
@@ -174,6 +177,7 @@ const CellFormElementGenerator = ({
     case "CHECKBOX":
       return (
         <HFCheckbox
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -181,24 +185,10 @@ const CellFormElementGenerator = ({
         />
       )
 
-    // case "MULTISELECT":
-    //   return (
-    //     <FRow label={field.label} required={field.required}>
-    //       <HFMultipleSelect
-    //         control={control}
-    //         name={computedSlug}
-    //         width="100%"
-    //         options={computedOptions}
-    //         required={field.required}
-    //         placeholder={field.attributes?.placeholder}
-    //         {...props}
-    //       />
-    //     </FRow>
-    //   )
-
     case "SWITCH":
       return (
         <HFSwitch
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -209,6 +199,7 @@ const CellFormElementGenerator = ({
     case "EMAIL":
       return (
         <HFTextField
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           rules={{
@@ -247,7 +238,11 @@ const CellFormElementGenerator = ({
       )
 
     default:
-      return <CellElementGenerator field={field} row={row} />
+      return (
+        <div style={{ padding: "0 4px" }}>
+          <CellElementGenerator field={field} row={row} />
+        </div>
+      )
   }
 }
 

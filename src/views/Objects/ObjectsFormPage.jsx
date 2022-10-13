@@ -21,6 +21,7 @@ import FiltersBlock from "../../components/FiltersBlock";
 import DocumentGeneratorButton from "./components/DocumentGeneratorButton";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
+import SummarySection from "./SummarySection/SummarySection";
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
@@ -50,10 +51,14 @@ const ObjectsFormPage = () => {
           ...section,
           fields: section.fields?.sort(sortByOrder) ?? [],
         }))
+        .filter((section) => !section.is_summary_section)
         .sort(sortByOrder) ?? []
     );
   }, [sections]);
 
+  const computedSummary = useMemo(() => {
+    return sections.find((item) => item.is_summary_section);
+  }, [sections]);
   const getAllData = async () => {
     const getSections = constructorSectionService.getList({
       table_slug: tableSlug,
@@ -189,14 +194,21 @@ const ObjectsFormPage = () => {
     defaultValues: state,
   });
 
-  console.log("computedSections", computedSections);
-
   if (loader) return <PageFallback />;
 
   return (
     <div className={styles.formPage}>
-      <FiltersBlock extra={<DocumentGeneratorButton />} />
-
+      <FiltersBlock
+        summary={true}
+        sections={sections}
+        extra={<DocumentGeneratorButton />}
+      >
+        <SummarySection
+          computedSummary={computedSummary}
+          control={control}
+          sections={sections}
+        />
+      </FiltersBlock>
       <div className={styles.formArea}>
         <MainInfo
           control={control}
@@ -207,7 +219,6 @@ const ObjectsFormPage = () => {
           <RelationSection relations={tableRelations} control={control} />
         </div>
       </div>
-
       <Footer
         extra={
           <>

@@ -192,10 +192,9 @@
 
 // <-- Summary Section --> //
 .summarySection {
-  height: 80px;
+  height: 65px;
   width: 100%;
-  min-width: 450px;
-  background: #fff;
+  min-width: 350px;
   overflow-x: auto;
   overflow-y: hidden;
 
@@ -204,9 +203,9 @@
     height: 10%;
   }
   .field_summary {
-    background-color: #fff;
-    max-height: 90px;
-    width: 200px;
+    max-height: 80px;
+    min-width: 200px;
+    max-width: 350px;
     cursor: grab;
     display: flex;
     align-items: center;

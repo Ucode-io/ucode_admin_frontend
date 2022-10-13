@@ -5,7 +5,6 @@ import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined"
 
 const MultipleUpdateRow = ({
   columns,
-  isCollapsed,
   fields,
   selected,
   watch,
@@ -13,18 +12,12 @@ const MultipleUpdateRow = ({
   setFormValue,
 }) => {
   return (
-    <tr
-      className="multipleRow"
-      style={{
-        height: isCollapsed ? "100%" : "0",
-      }}
-    >
+    <tr className="multipleRow">
       <CTableCell
         style={{
           padding: 0,
           color: "#fff",
           textAlign: "center",
-          display: isCollapsed ? "" : "none",
         }}
       >
         <BorderColorOutlinedIcon style={{ paddingBottom: 3 }} />
@@ -35,7 +28,6 @@ const MultipleUpdateRow = ({
           key={field.id}
           style={{
             padding: 0,
-            display: isCollapsed ? "" : "none",
           }}
         >
           <CellFormElementGenerator

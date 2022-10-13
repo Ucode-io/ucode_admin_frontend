@@ -221,17 +221,18 @@ const ObjectDataTable = ({
       setLimit={setLimit}
     >
       <CTableHead>
-        <MultipleUpdateRow
-          isCollapsed={formVisible && selected.length > 0}
-          selected={selected}
-          setSelected={setSelected}
-          watch={watch}
-          setFormValue={setFormValue}
-          control={control}
-          fields={columns}
-          columns={data}
-          row={{}}
-        />
+        {formVisible && selected.length > 0 && (
+          <MultipleUpdateRow
+            selected={selected}
+            setSelected={setSelected}
+            watch={watch}
+            setFormValue={setFormValue}
+            control={control}
+            fields={columns}
+            columns={data}
+            row={{}}
+          />
+        )}
         <CTableRow>
           {formVisible && (
             <CTableHeadCell
@@ -375,13 +376,10 @@ const ObjectDataTable = ({
             onDeleteClick={onDeleteClick}
           />
         ))}
-
         {!!summaries?.length && (
           <SummaryRow summaries={summaries} columns={columns} data={data} />
         )}
-
         {additionalRow}
-
         {createFormVisible && (
           <TableRowForm
             remove={remove}

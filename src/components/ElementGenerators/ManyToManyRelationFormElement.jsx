@@ -17,6 +17,7 @@ const ManyToManyRelationFormElement = ({
   isLayout,
   sectionIndex,
   fieldIndex,
+  name = "",
   column,
   mainForm,
   disabledHelperText,
@@ -33,7 +34,7 @@ const ManyToManyRelationFormElement = ({
       <FRow label={field.label} required={field.required}>
         <Controller
           control={control}
-          name={`${tableSlug}_ids`}
+          name={name || `${tableSlug}_ids`}
           defaultValue={null}
           {...props}
           render={({ field: { onChange, value }, fieldState: { error } }) => (

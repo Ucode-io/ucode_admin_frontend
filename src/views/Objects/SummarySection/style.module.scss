@@ -1,24 +1,21 @@
 // <-- Summary Section --> //
 .summarySection {
-  height: 80px;
-  max-height: 150px;
   width: 100%;
   min-width: 350px;
+  padding-top: 5px;
   overflow-x: auto;
   overflow-y: hidden;
   display: flex;
-  align-items: center;
 
   ::-webkit-scrollbar {
     max-height: 10%;
     height: 10%;
   }
   .field_summary {
-    max-height: 80px;
     min-width: 200px;
     max-width: 350px;
+    cursor: grab;
     display: flex;
-    align-items: center;
     gap: 5px;
     padding: 0 10px;
   }

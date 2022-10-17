@@ -8,7 +8,7 @@ import RouterTabsBlock from "./RouterTabsBlock"
 import styles from "./style.module.scss"
 
 const MainLayout = () => {
-  const {appId} = useParams()
+  const { appId } = useParams()
   const dispatch = useDispatch()
 
   const { elements } = useSidebarElements()
@@ -21,7 +21,6 @@ const MainLayout = () => {
     <div className={styles.layout}>
       <Sidebar elements={elements} />
       <div className={styles.content}>
-
         <RouterTabsBlock />
 
         <Outlet />

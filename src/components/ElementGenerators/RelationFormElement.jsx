@@ -1,18 +1,18 @@
-import { Autocomplete, TextField } from "@mui/material";
-import { get } from "@ngard/tiny-get";
-import { useEffect, useState } from "react";
-import { useMemo } from "react";
-import { Controller, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
+import { Autocomplete, TextField } from "@mui/material"
+import { get } from "@ngard/tiny-get"
+import { useEffect, useState } from "react"
+import { useMemo } from "react"
+import { Controller, useWatch } from "react-hook-form"
+import { useQuery } from "react-query"
 
-import useDebounce from "../../hooks/useDebounce";
-import useTabRouter from "../../hooks/useTabRouter";
-import constructorObjectService from "../../services/constructorObjectService";
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
-import FEditableRow from "../FormElements/FEditableRow";
-import FRow from "../FormElements/FRow";
-import IconGenerator from "../IconPicker/IconGenerator";
-import styles from "./style.module.scss";
+import useDebounce from "../../hooks/useDebounce"
+import useTabRouter from "../../hooks/useTabRouter"
+import constructorObjectService from "../../services/constructorObjectService"
+import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
+import FEditableRow from "../FormElements/FEditableRow"
+import FRow from "../FormElements/FRow"
+import IconGenerator from "../IconPicker/IconGenerator"
+import styles from "./style.module.scss"
 
 const RelationFormElement = ({
   control,
@@ -21,6 +21,7 @@ const RelationFormElement = ({
   sectionIndex,
   fieldIndex,
   column,
+  name = "",
   mainForm,
   disabledHelperText,
   setFormValue,
@@ -30,16 +31,16 @@ const RelationFormElement = ({
   ...props
 }) => {
   const tableSlug = useMemo(() => {
-    if (field.relation_type === "Recursive") return formTableSlug;
-    return field.id.split("#")?.[0] ?? "";
-  }, [field.id, formTableSlug, field.relation_type]);
+    if (field.relation_type === "Recursive") return formTableSlug
+    return field.id.split("#")?.[0] ?? ""
+  }, [field.id, formTableSlug, field.relation_type])
 
   if (!isLayout)
     return (
       <FRow label={field.label} required={field.required}>
         <Controller
           control={control}
-          name={field.slug ?? `${tableSlug}_id`}
+          name={(name || field.slug) ?? `${tableSlug}_id`}
           defaultValue={defaultValue}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <AutoCompleteElement
@@ -56,7 +57,7 @@ const RelationFormElement = ({
           )}
         />
       </FRow>
-    );
+    )
 
   return (
     <Controller
@@ -89,8 +90,8 @@ const RelationFormElement = ({
         </FEditableRow>
       )}
     ></Controller>
-  );
-};
+  )
+}
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
@@ -105,37 +106,37 @@ const AutoCompleteElement = ({
   control,
   setFormValue = () => {},
 }) => {
-  const [inputValue, setInputValue] = useState("");
-  const [localValue, setLocalValue] = useState([]);
-  const [debouncedValue, setDebouncedValue] = useState("");
+  const [inputValue, setInputValue] = useState("")
+  const [localValue, setLocalValue] = useState([])
+  const [debouncedValue, setDebouncedValue] = useState("")
 
-  const { navigateToForm } = useTabRouter();
-  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+  const { navigateToForm } = useTabRouter()
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300)
 
-  const autoFilters = field?.attributes?.auto_filters;
+  const autoFilters = field?.attributes?.auto_filters
 
   const autoFiltersFieldFroms = useMemo(() => {
-    return autoFilters?.map((el) => el.field_from) ?? [];
-  }, [autoFilters]);
+    return autoFilters?.map((el) => el.field_from) ?? []
+  }, [autoFilters])
 
   const filtersHandler = useWatch({
     control,
     name: autoFiltersFieldFroms,
-  });
+  })
 
   const autoFiltersValue = useMemo(() => {
-    const result = {};
+    const result = {}
     filtersHandler?.forEach((value, index) => {
-      const key = autoFilters?.[index]?.field_to;
-      if (key) result[key] = value;
-    });
-    return result;
-  }, [autoFilters, filtersHandler]);
+      const key = autoFilters?.[index]?.field_to
+      if (key) result[key] = value
+    })
+    return result
+  }, [autoFilters, filtersHandler])
 
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
-      if (!tableSlug) return null;
+      if (!tableSlug) return null
       return constructorObjectService.getList(tableSlug, {
         data: {
           ...autoFiltersValue,
@@ -143,43 +144,43 @@ const AutoCompleteElement = ({
           search: debouncedValue.trim(),
           limit: 10,
         },
-      });
+      })
     },
     {
       select: (res) => {
-        return res?.data?.response ?? [];
+        return res?.data?.response ?? []
       },
     }
-  );
+  )
 
   const getValueData = async () => {
     try {
-      const id = value;
-      const res = await constructorObjectService.getById(tableSlug, id);
-      const data = res?.data?.response;
-      setLocalValue(data ? [data] : null);
+      const id = value
+      const res = await constructorObjectService.getById(tableSlug, id)
+      const data = res?.data?.response
+      setLocalValue(data ? [data] : null)
     } catch (error) {}
-  };
+  }
 
   const getOptionLabel = (option) => {
-    return getRelationFieldLabel(field, option);
-  };
+    return getRelationFieldLabel(field, option)
+  }
 
   const changeHandler = (value) => {
-    const val = value?.[value?.length - 1];
-    setValue(val?.guid ?? null);
-    setLocalValue(val ? [val] : null);
+    const val = value?.[value?.length - 1]
+    setValue(val?.guid ?? null)
+    setLocalValue(val ? [val] : null)
 
-    if (!field?.attributes?.autofill) return;
+    if (!field?.attributes?.autofill) return
 
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
-      setFormValue(field_to, get(val, field_from));
-    });
-  };
+      setFormValue(field_to, get(val, field_from))
+    })
+  }
 
   useEffect(() => {
-    if (value) getValueData();
-  }, []);
+    if (value) getValueData()
+  }, [])
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -196,7 +197,7 @@ const AutoCompleteElement = ({
         value={localValue ?? []}
         freeSolo
         onChange={(event, newValue) => {
-          changeHandler(newValue);
+          changeHandler(newValue)
         }}
         noOptionsText={
           <span
@@ -208,8 +209,8 @@ const AutoCompleteElement = ({
         }
         inputValue={inputValue}
         onInputChange={(e, newValue) => {
-          setInputValue(newValue);
-          inputChangeHandler(newValue);
+          setInputValue(newValue)
+          inputChangeHandler(newValue)
         }}
         disablePortal
         blurOnSelect
@@ -217,7 +218,7 @@ const AutoCompleteElement = ({
         getOptionLabel={(option) => getRelationFieldLabel(field, option)}
         multiple
         isOptionEqualToValue={(option, value) => {
-          return option.guid === value.guid;
+          return option.guid === value.guid
         }}
         renderInput={(params) => <TextField {...params} size="small" />}
         renderTags={(value, index) => (
@@ -228,16 +229,16 @@ const AutoCompleteElement = ({
               style={{ marginLeft: "10px", cursor: "pointer" }}
               size={15}
               onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                navigateToForm(tableSlug, "EDIT", value[0]);
+                e.stopPropagation()
+                e.preventDefault()
+                navigateToForm(tableSlug, "EDIT", value[0])
               }}
             />
           </>
         )}
       />
     </div>
-  );
-};
+  )
+}
 
-export default RelationFormElement;
+export default RelationFormElement

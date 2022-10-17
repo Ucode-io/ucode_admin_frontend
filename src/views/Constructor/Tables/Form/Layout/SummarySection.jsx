@@ -67,7 +67,7 @@ const SummarySection = ({
   return (
     <div className={styles.summarySection}>
       <Container
-        style={{ minHeight: 70, minWidth: "400px" }}
+        style={{ minHeight: 50, minWidth: "400px" }}
         groupName="1"
         dragClass="drag-row"
         orientation="horizontal"

@@ -42,6 +42,7 @@ const CellRelationFormElement = ({
             isBlackBg={isBlackBg}
             value={value}
             classes={classes}
+            name={name}
             setValue={onChange}
             field={field}
             tableSlug={field.table_slug}
@@ -61,6 +62,7 @@ const AutoCompleteElement = ({
   value,
   placeholder,
   tableSlug,
+  name,
   classes,
   isBlackBg,
   setValue,
@@ -97,7 +99,10 @@ const AutoCompleteElement = ({
     if (!field?.attributes?.autofill) return
 
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
-      setFormValue(field_to, get(val, field_from))
+      const setName = name.split(".")
+      setName.pop()
+      setName.push(field_to)
+      setFormValue(setName.join("."), get(val, field_from))
     })
   }
 

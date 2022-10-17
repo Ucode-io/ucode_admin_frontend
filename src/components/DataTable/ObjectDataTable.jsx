@@ -163,8 +163,6 @@ const ObjectDataTable = ({
     setColumnId("")
   }
 
-  console.log("selected - ", selected)
-
   const handlePin = (colID, colIdx) => {
     dispatch(
       tableSizeAction.setTableSettings({

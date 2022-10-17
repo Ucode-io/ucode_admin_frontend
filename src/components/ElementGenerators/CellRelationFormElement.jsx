@@ -1,4 +1,6 @@
 import { Autocomplete, TextField } from "@mui/material"
+import { makeStyles } from "@mui/styles"
+import { get } from "@ngard/tiny-get"
 import { useMemo } from "react"
 import { Controller } from "react-hook-form"
 import { useQuery } from "react-query"
@@ -8,15 +10,26 @@ import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel"
 import IconGenerator from "../IconPicker/IconGenerator"
 import styles from "./style.module.scss"
 
+const useStyles = makeStyles((theme) => ({
+  input: {
+    "&::placeholder": {
+      color: "#fff",
+    },
+  },
+}))
+
 const CellRelationFormElement = ({
+  isBlackBg,
   control,
   name,
+  placeholder,
   field,
   isLayout,
   disabledHelperText,
   setFormValue,
 }) => {
-  console.log("name - ", name)
+  const classes = useStyles()
+
   if (!isLayout)
     return (
       <Controller
@@ -25,7 +38,10 @@ const CellRelationFormElement = ({
         defaultValue={null}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <AutoCompleteElement
+            placeholder={placeholder}
+            isBlackBg={isBlackBg}
             value={value}
+            classes={classes}
             setValue={onChange}
             field={field}
             tableSlug={field.table_slug}
@@ -43,7 +59,10 @@ const CellRelationFormElement = ({
 const AutoCompleteElement = ({
   field,
   value,
+  placeholder,
   tableSlug,
+  classes,
+  isBlackBg,
   setValue,
   setFormValue = () => {},
 }) => {
@@ -61,14 +80,10 @@ const AutoCompleteElement = ({
     }
   )
 
-  console.log("field", field.slug, value)
-
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value)
     return findedOption ? [findedOption] : []
   }, [options, value])
-
-  console.log("computedValue", computedValue)
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option)
@@ -82,7 +97,7 @@ const AutoCompleteElement = ({
     if (!field?.attributes?.autofill) return
 
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
-      setFormValue(field_to, val?.[field_from])
+      setFormValue(field_to, get(val, field_from))
     })
   }
 
@@ -107,7 +122,23 @@ const AutoCompleteElement = ({
         getOptionLabel={(option) => getRelationFieldTabsLabel(field, option)}
         multiple
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
-        renderInput={(params) => <TextField {...params} size="small" />}
+        renderInput={(params) => (
+          <TextField
+            placeholder={!computedValue.length ? placeholder : ""}
+            {...params}
+            InputProps={{
+              ...params.InputProps,
+              classes: {
+                input: isBlackBg ? classes.input : "",
+              },
+              style: {
+                background: isBlackBg ? "#2A2D34" : "",
+                color: isBlackBg ? "#fff" : "",
+              },
+            }}
+            size="small"
+          />
+        )}
         renderTags={(value, index) => (
           <>
             {getOptionLabel(value[0])}

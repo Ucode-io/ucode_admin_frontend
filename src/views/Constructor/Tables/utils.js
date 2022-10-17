@@ -12,7 +12,7 @@ export const computeSections = (sections) => {
 }
 
 export const computeSummarySection = (sections) => {
-  const summarySection = sections?.find(section => !section.is_summary_section)
+  const summarySection = sections?.find(section => section.is_summary_section)
   
   if(!summarySection) return {
     id: generateGUID(),
@@ -20,6 +20,8 @@ export const computeSummarySection = (sections) => {
     fields: [],
     icon: '',
     order: 1,
+    column: "SINGLE",
+    is_summary_section: true
   }
   
   return {
@@ -30,8 +32,8 @@ export const computeSummarySection = (sections) => {
   
 }
 
-export const computeSectionsOnSubmit = (sections) => {
-  return sections.map((section, sectionIndex) => ({
+export const computeSectionsOnSubmit = (sections = [], summarySection = {}) => {
+return [...sections, summarySection].map((section, sectionIndex) => ({
     ...section,
     order: sectionIndex + 1,
     fields: section.fields

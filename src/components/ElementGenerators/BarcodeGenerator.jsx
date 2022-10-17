@@ -9,6 +9,7 @@ import Dialog from "@mui/material/Dialog";
 import FRow from "../FormElements/FRow";
 import ClearIcon from "@mui/icons-material/Clear";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import { useParams } from "react-router-dom";
 
 const BarcodeGenerator = ({
   control,
@@ -20,6 +21,7 @@ const BarcodeGenerator = ({
   rules = {},
   defaultValue = "",
   disabled,
+  formTableSlug,
   ...props
 }) => {
   const [count, setCount] = useState(1);
@@ -84,7 +86,7 @@ const BarcodeGenerator = ({
                 </button>
                 <Dialog open={open} onClose={handleClose}>
                   <div className={styles.barcode_count}>
-                    <button className={styles.cancel_btn}>
+                    <button className={styles.cancel_btn} onClose={handleClose}>
                       <ClearIcon />
                     </button>
                     <div className={styles.barcode_input_layer}>
@@ -115,6 +117,7 @@ const BarcodeGenerator = ({
               <BarcodeGenerateButton
                 printBarcode={() => printBarcode("barcodes")}
                 onChange={onChange}
+                tableSlug={formTableSlug}
               />
             </>
           );

@@ -1,5 +1,6 @@
 import { Delete } from "@mui/icons-material"
 import { Checkbox } from "@mui/material"
+import { useState } from "react"
 
 import RectangleIconButton from "../Buttons/RectangleIconButton"
 import { CTableCell, CTableRow } from "../CTable"
@@ -26,10 +27,23 @@ const TableRowForm = ({
   calculateWidth,
   limit = 10,
 }) => {
+  const [showCheckbox, setShowCheckbox] = useState(false)
+
   return (
     <CTableRow>
-      <CTableCell style={{ padding: 0 }}>
-        <Checkbox onChange={(_, val) => onSelectedRowChange(val, row)} />
+      <CTableCell
+        onMouseEnter={() => setShowCheckbox(true)}
+        onMouseLeave={() => setShowCheckbox(false)}
+        style={{ padding: 0, textAlign: "center" }}
+      >
+        {showCheckbox || !!selected.find((i) => i === row.guid) ? (
+          <Checkbox
+            onChange={(_, val) => onSelectedRowChange(val, row)}
+            checked={!!selected.find((i) => i === row.guid)}
+          />
+        ) : (
+          (currentPage - 1) * limit + rowIndex + 1
+        )}
       </CTableCell>
       {onCheckboxChange && !formVisible && (
         <CTableCell>
@@ -40,9 +54,11 @@ const TableRowForm = ({
           />
         </CTableCell>
       )}
-      <CTableCell align="center">
-        {(currentPage - 1) * limit + rowIndex + 1}
-      </CTableCell>
+      {!formVisible && (
+        <CTableCell align="center">
+          {(currentPage - 1) * limit + rowIndex + 1}
+        </CTableCell>
+      )}
       {columns.map((column, index) => (
         <CTableCell
           key={column.id}

@@ -2,10 +2,8 @@ import { get } from "@ngard/tiny-get"
 import { format } from "date-fns"
 
 export const getRelationFieldLabel = (field, option) => {
-  if(!option) return ''
+  if (!option) return ""
   let label = ""
-
-  console.log("FIELD -=-->", field, option)
 
   field.attributes?.view_fields?.forEach((el) => {
     let result = ""
@@ -22,8 +20,7 @@ export const getRelationFieldLabel = (field, option) => {
 }
 
 export const getRelationFieldTabsLabel = (field, option) => {
-
-  if(!Array.isArray(field?.view_fields)) return ""
+  if (!Array.isArray(field?.view_fields)) return ""
 
   let label = ""
 
@@ -42,7 +39,6 @@ export const getRelationFieldTabsLabel = (field, option) => {
 }
 
 export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {
-
   let label = ""
 
   field.view_fields?.forEach((el) => {
@@ -63,12 +59,11 @@ export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {
 }
 
 export const getLabelWithViewFields = (viewFields, option) => {
-  let label = ''
+  let label = ""
 
-  viewFields?.forEach(field => {
+  viewFields?.forEach((field) => {
     let result = ""
     const value = get(option, field.slug)
-
 
     if (field?.type === "DATE")
       result = value ? format(new Date(value), "dd.MM.yyyy") : ""

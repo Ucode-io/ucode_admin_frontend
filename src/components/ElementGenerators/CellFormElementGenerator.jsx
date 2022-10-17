@@ -116,7 +116,6 @@ const CellFormElementGenerator = ({
           required={field.required}
           field={field}
           placeholder={field.attributes?.placeholder}
-          // defaultValue={defaultValue}
           isBlackBg={isBlackBg}
           {...props}
         />
@@ -164,12 +163,12 @@ const CellFormElementGenerator = ({
     case "NUMBER":
       return (
         <HFNumberField
-          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
           required={field.required}
           placeholder={field.attributes?.placeholder}
+          isBlackBg={isBlackBg}
           {...props}
         />
       )

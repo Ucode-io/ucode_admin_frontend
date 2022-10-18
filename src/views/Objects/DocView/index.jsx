@@ -45,12 +45,11 @@ const DocView = ({
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
-  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
+  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null);
 
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
   );
-
   // ========FIELDS FOR RELATIONS=========
   const { data: fields = [], isLoading: fieldsLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, limit: 0, offset: 0 }],
@@ -82,17 +81,16 @@ const DocView = ({
     isLoading,
     refetch,
   } = useQuery(
-    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug ],
+    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
-
       const data = {
-        table_slug: tableSlug
-      }
+        table_slug: tableSlug,
+      };
 
-      data[`${loginTableSlug}_ids`] = [userId]
+      data[`${loginTableSlug}_ids`] = [userId];
 
       return constructorObjectService.getList("template", {
-        data
+        data,
       });
     },
     {

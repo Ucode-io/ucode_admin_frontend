@@ -79,16 +79,12 @@ ingress:
     rules:
       - annotations:
           kubernetes.io/ingress.class: nginx
-          cert-manager.io/cluster-issuer: letsencrypt-prod
         type: web
         hosts:                                                                                                                                   
           - host: "admin.medion.uz"
             path: /                                                                                                                              
             servicePort: 80                                                                                                                 
-        tls:                                                                                                                                     
-          - secretName: react-admin-tls
-            hosts:                                                                                                                               
-             - "admin.medion.uz"                                                                                                  
+        tls: {}                                                                                                                                 
 
 resources: {}                                                                                                    
   #  limits:                                                                                                                                
@@ -109,12 +105,12 @@ nodeSelector: {}
 
 tolerations: []                                                                                                                            
 
-affinity:                                                                                                                                  
-  nodeAffinity:                                                                                                                            
-    requiredDuringSchedulingIgnoredDuringExecution:                                                                                        
-      nodeSelectorTerms:                                                                                                                   
-        - matchExpressions:                                                                                                                
-            - key: apps
-              operator: In                                                                                                                 
-              values:                                                                                                                      
-                - "true"  
+affinity:                                                                                                                                                                                
+  nodeAffinity:                                                                                                                                                                          
+    requiredDuringSchedulingIgnoredDuringExecution:                                                                                                                                      
+      nodeSelectorTerms:                                                                                                                                                                 
+        - matchExpressions:                                                                                                                                                              
+            - key: kubernetes.io/node-type                                                                                                                                               
+              operator: In                                                                                                                                                               
+              values:                                                                                                                                                                    
+                - "app"

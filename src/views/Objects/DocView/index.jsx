@@ -1,5 +1,6 @@
 import { BackupTable, ImportExport } from "@mui/icons-material";
 import { useRef, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
@@ -34,6 +35,13 @@ const DocView = ({
   const userId = useSelector((state) => state.auth.userId);
 
   const view = views.find((view) => view.type === "TABLE");
+
+  const { control, reset } = useForm();
+
+  const { append } = useFieldArray({
+    control: control,
+    name: "multi",
+  });
 
   // =====SETTINGS BLOCK=========
   const [pdfLoader, setPdfLoader] = useState(false);
@@ -275,6 +283,8 @@ const DocView = ({
           {tableViewIsActive && (
             <div className={styles.redactorBlock}>
               <TableView
+                formVisible={false}
+                reset={reset}
                 isChecked={(row) => selectedObject === row.guid}
                 onCheckboxChange={onCheckboxChange}
                 isDocView

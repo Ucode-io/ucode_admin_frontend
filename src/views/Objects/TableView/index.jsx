@@ -66,7 +66,7 @@ const TableView = ({
       })
     },
     select: (res) => {
-      setDataLength(res.data?.response.length ?? 0)
+      // setDataLength(res.data?.response.length ?? 0)
       return {
         tableData: res.data?.response ?? [],
         pageCount: isNaN(res.data?.count)

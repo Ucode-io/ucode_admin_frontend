@@ -55,7 +55,6 @@ const ObjectDataTable = ({
   limit,
   setLimit,
   isChecked,
-  setFormVisible,
   formVisible,
   summaries,
 }) => {
@@ -232,7 +231,7 @@ const ObjectDataTable = ({
           />
         )}
         <CTableRow>
-          {formVisible && (
+          {formVisible ? (
             <CTableHeadCell
               onMouseEnter={() => setShowCheckbox(true)}
               onMouseLeave={() => setShowCheckbox(false)}
@@ -248,8 +247,9 @@ const ObjectDataTable = ({
                 "№"
               )}
             </CTableHeadCell>
+          ) : (
+            <CTableHeadCell width={10}>№</CTableHeadCell>
           )}
-          {!formVisible && <CTableHeadCell width={10}>№</CTableHeadCell>}
           {columns.map((column, index) => (
             <CTableHeadCell
               id={column.id}

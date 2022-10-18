@@ -32,6 +32,11 @@ const FieldsBlock = ({
     name: `sections`,
   });
 
+  const summarySectionFields = useWatch({
+    control: mainForm.control,
+    name: "summary_section.fields",
+  });
+
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
@@ -54,14 +59,20 @@ const FieldsBlock = ({
     return list;
   }, [sections]);
 
+  const usedSummarySectionFields = useMemo(() => {
+    return summarySectionFields?.map((field) => field.id) ?? [];
+  }, [summarySectionFields]);
+
   const unusedFields = useMemo(() => {
+    console.log("ss =>", usedFields, usedSummarySectionFields, fields);
     return fields?.filter(
       (field) =>
         field.type !== "LOOKUP" &&
         field.type !== "LOOKUPS" &&
-        !usedFields.includes(field.id)
+        (!usedFields.includes(field.id) ||
+          !usedSummarySectionFields.includes(field.id))
     );
-  }, [usedFields, fields]);
+  }, [usedFields, fields, usedSummarySectionFields]);
 
   const unusedTableRelations = useMemo(() => {
     const fileRelation = { id: "", view_relation_type: "FILE", title: "Файл" };

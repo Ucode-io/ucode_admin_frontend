@@ -65,8 +65,9 @@
   }
 }
 .input_control {
-  max-width: 230px;
+  max-width: 340px;
   position: relative;
+  margin-right: 10px;
   .barcode_print {
     position: absolute;
     top: 10px;
@@ -76,17 +77,43 @@
     font-size: 13px;
     color: #1990ff;
     cursor: pointer;
+    margin-right: 0px;
   }
 }
-.count_control {
-  width: 50px;
-  height: 25px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 4px;
-  margin: 5px 0 0 0;
-  margin-right: auto;
-  &:focus {
-    outline: none;
+.barcode_count {
+  width: 250px;
+  height: 100px;
+  padding: 15px;
+  position: relative;
+
+  .cancel_btn {
+    position: absolute;
+    right: 15px;
+    background: none;
+    border: none;
+  }
+
+  .count_control {
+    width: 155px;
+    height: 25px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px;
+    margin: 5px 0 0 0;
+    margin-right: auto;
+    &:focus {
+      outline: none;
+    }
+  }
+  .barcode_print {
+    position: absolute;
+    right: 0px;
+    height: 25px;
+    top: 34px;
+  }
+  .barcode_input_layer {
+    display: flex;
+    align-items: center;
+    position: relative;
   }
 }

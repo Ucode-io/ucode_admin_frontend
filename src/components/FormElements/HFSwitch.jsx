@@ -7,6 +7,7 @@ const HFSwitch = ({
   name,
   label,
   disabledHelperText,
+  isBlackBg,
   onChange = () => {},
   labelProps,
   ...props
@@ -23,7 +24,13 @@ const HFSwitch = ({
         fieldState: { error },
       }) => {
         return (
-          <div className={!disabledHelperText ? "mb-1" : ""}>
+          <div
+            className={!disabledHelperText ? "mb-1" : ""}
+            style={{
+              background: isBlackBg ? "#2A2D34" : "",
+              color: isBlackBg ? "#fff" : "",
+            }}
+          >
             <Switch
               id={`switch-${id}`}
               {...props}

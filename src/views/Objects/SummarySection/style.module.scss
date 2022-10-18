@@ -1,0 +1,21 @@
+// <-- Summary Section --> //
+.summarySection {
+  width: 100%;
+  min-width: 350px;
+  padding-top: 5px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+
+  ::-webkit-scrollbar {
+    max-height: 10%;
+    height: 10%;
+  }
+  .field_summary {
+    min-width: 200px;
+    max-width: 350px;
+    display: flex;
+    gap: 5px;
+    padding: 0 10px;
+  }
+}

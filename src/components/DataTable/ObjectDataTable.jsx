@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import useOnClickOutside from "use-onclickoutside"
 import { useLocation } from "react-router-dom"
+import { Checkbox } from "@mui/material"
 
 import {
   CTable,
@@ -54,11 +55,11 @@ const ObjectDataTable = ({
   limit,
   setLimit,
   isChecked,
-  setFormVisible,
   formVisible,
   summaries,
 }) => {
   const location = useLocation()
+  const [showCheckbox, setShowCheckbox] = useState(false)
   const tableSize = useSelector((state) => state.tableSize.tableSize)
   const [columnId, setColumnId] = useState("")
   const tableSettings = useSelector((state) => state.tableSize.tableSettings)
@@ -217,9 +218,10 @@ const ObjectDataTable = ({
       setLimit={setLimit}
     >
       <CTableHead>
-        {formVisible && (
+        {formVisible && selected.length > 0 && (
           <MultipleUpdateRow
             selected={selected}
+            setSelected={setSelected}
             watch={watch}
             setFormValue={setFormValue}
             control={control}
@@ -229,13 +231,31 @@ const ObjectDataTable = ({
           />
         )}
         <CTableRow>
-          {formVisible && <CTableHeadCell></CTableHeadCell>}
-          <CTableHeadCell width={10}>№</CTableHeadCell>
+          {formVisible ? (
+            <CTableHeadCell
+              onMouseEnter={() => setShowCheckbox(true)}
+              onMouseLeave={() => setShowCheckbox(false)}
+              style={{ padding: "2px 0", minWidth: "40px" }}
+            >
+              {showCheckbox || data.length === selected.length ? (
+                <Checkbox
+                  onChange={(e, val) =>
+                    setSelected(val ? data.map((i) => i.guid) : [])
+                  }
+                />
+              ) : (
+                "№"
+              )}
+            </CTableHeadCell>
+          ) : (
+            <CTableHeadCell width={10}>№</CTableHeadCell>
+          )}
           {columns.map((column, index) => (
             <CTableHeadCell
               id={column.id}
               key={index}
               style={{
+                padding: "10px 4px",
                 minWidth: tableSize?.[pageName]?.[column.id]
                   ? tableSize?.[pageName]?.[column.id]
                   : "auto",
@@ -354,13 +374,10 @@ const ObjectDataTable = ({
             onDeleteClick={onDeleteClick}
           />
         ))}
-
         {!!summaries?.length && (
           <SummaryRow summaries={summaries} columns={columns} data={data} />
         )}
-
         {additionalRow}
-
         {createFormVisible && (
           <TableRowForm
             remove={remove}

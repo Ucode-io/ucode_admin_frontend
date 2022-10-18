@@ -9,13 +9,15 @@ import { locale } from "./Plugins/locale"
 import "react-multi-date-picker/styles/layouts/mobile.css"
 import CopyToClipboard from "../CopyToClipboard"
 
-const CDateTimePickerLegacy = ({
+const CDateTimePicker = ({
   value,
+  placeholder,
+  isBlackBg,
+  classes,
   onChange,
   showCopyBtn = true,
   disabled = false,
 }) => {
-  console.log("value -", value)
   return (
     <div className="main_wrapper">
       <DatePicker
@@ -26,6 +28,7 @@ const CDateTimePickerLegacy = ({
               onClick={openCalendar}
               onChange={handleChange}
               size="small"
+              placeholder={placeholder.split("#")[0]}
               sx={{
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderRight: 0,
@@ -35,11 +38,17 @@ const CDateTimePickerLegacy = ({
               autoComplete="off"
               InputProps={{
                 readOnly: disabled,
+                classes: {
+                  input: isBlackBg ? classes.input : "",
+                },
                 style: disabled
                   ? {
                       background: "#c0c0c039",
                     }
-                  : {},
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                    },
               }}
             />
           )
@@ -62,6 +71,7 @@ const CDateTimePickerLegacy = ({
               onChange={handleChange}
               size="small"
               autoComplete="off"
+              placeholder={placeholder.split("#")[1]}
               style={{ border: "none" }}
               fullWidth
               sx={{
@@ -71,11 +81,17 @@ const CDateTimePickerLegacy = ({
               }}
               InputProps={{
                 readOnly: disabled,
+                classes: {
+                  input: isBlackBg ? classes.input : "",
+                },
                 style: disabled
                   ? {
                       background: "#c0c0c039",
                     }
-                  : {},
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                    },
                 endAdornment: (
                   <InputAdornment position="end">
                     <DateRange />
@@ -98,4 +114,4 @@ const CDateTimePickerLegacy = ({
   )
 }
 
-export default CDateTimePickerLegacy
+export default CDateTimePicker

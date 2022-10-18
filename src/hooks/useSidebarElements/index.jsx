@@ -9,11 +9,15 @@ const useSidebarElements = () => {
     (state) => state.constructorTable.list
   )
   const permissions = useSelector((state) => state.auth.permissions)
-  const role = useSelector(state => state.auth.roleInfo)
+  const role = useSelector((state) => state.auth.roleInfo)
 
   const computedElements = useMemo(() => {
     const computedConstructorElements = constructorElements
-      .filter((el) => el.is_visible && (permissions?.[el.slug]?.["read"] || role?.name === "DEFAULT ADMIN"))
+      .filter(
+        (el) =>
+          el.is_visible &&
+          (permissions?.[el.slug]?.["read"] || role?.name === "DEFAULT ADMIN")
+      )
       .map((el) => ({
         ...el,
         title: el.label,

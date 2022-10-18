@@ -1,15 +1,15 @@
-import { Add, Delete } from "@mui/icons-material"
-import { Card } from "@mui/material"
-import { useFieldArray } from "react-hook-form"
-import { useParams } from "react-router-dom"
-import { Container, Draggable } from "react-smooth-dnd"
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
-import ButtonsPopover from "../../../../../components/ButtonsPopover"
-import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator"
-import HFIconPicker from "../../../../../components/FormElements/HFIconPicker"
-import HFTextField from "../../../../../components/FormElements/HFTextField"
-import { applyDrag } from "../../../../../utils/applyDrag"
-import styles from "./style.module.scss"
+import { Add, Delete } from "@mui/icons-material";
+import { Card } from "@mui/material";
+import { useFieldArray } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
+import ButtonsPopover from "../../../../../components/ButtonsPopover";
+import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
+import HFIconPicker from "../../../../../components/FormElements/HFIconPicker";
+import HFTextField from "../../../../../components/FormElements/HFTextField";
+import { applyDrag } from "../../../../../utils/applyDrag";
+import styles from "./style.module.scss";
 
 const Section = ({
   mainForm,
@@ -19,48 +19,47 @@ const Section = ({
   openFieldSettingsBlock,
   sectionsFieldArray,
   openFieldsBlock,
-  openRelationSettingsBlock
+  openRelationSettingsBlock,
 }) => {
-
   const sectionFields = useFieldArray({
     control: mainForm.control,
     name: `sections.${index}.fields`,
     keyName: "key",
-  })
+  });
 
   const openSettingsBlock = (field) => {
-    if(!field.id?.includes('#')) {
-      openFieldSettingsBlock(fieldsMap[field.id] ?? field)
-      return
+    if (!field.id?.includes("#")) {
+      openFieldSettingsBlock(fieldsMap[field.id] ?? field);
+      return;
     }
 
-    const relationsMap = mainForm.getValues('relationsMap')
-    const relationId = field.id.split('#')[1]
+    const relationsMap = mainForm.getValues("relationsMap");
+    const relationId = field.id.split("#")[1];
 
-    const relation = relationsMap[relationId]
+    const relation = relationsMap[relationId];
 
-    openRelationSettingsBlock(relation)
-  }
+    openRelationSettingsBlock(relation);
+  };
 
   const onDrop = (dropResult) => {
-    const { fields, insert, move, remove } = sectionFields
+    const { fields, insert, move, remove } = sectionFields;
 
-    const result = applyDrag(fields, dropResult)
+    const result = applyDrag(fields, dropResult);
 
-    if (!result) return
+    if (!result) return;
     if (result.length > fields.length) {
-      insert(dropResult.addedIndex, { ...dropResult.payload })
+      insert(dropResult.addedIndex, { ...dropResult.payload });
     } else if (result.length < fields.length) {
-      remove(dropResult.removedIndex)
+      remove(dropResult.removedIndex);
     } else {
-      move(dropResult.removedIndex, dropResult.addedIndex)
+      move(dropResult.removedIndex, dropResult.addedIndex);
     }
-  }
+  };
 
   const removeField = (index, colNumber) => {
-    const { remove } = sectionFields
-    remove(index)
-  }
+    const { remove } = sectionFields;
+    remove(index);
+  };
 
   return (
     <Card className={`${styles.sectionCard}`}>
@@ -83,7 +82,7 @@ const Section = ({
         </div>
 
         <div className="flex gap-1">
-          <RectangleIconButton onClick={() => openFieldsBlock("FIELD")} >
+          <RectangleIconButton onClick={() => openFieldsBlock("FIELD")}>
             <Add />
           </RectangleIconButton>
           <RectangleIconButton
@@ -125,9 +124,7 @@ const Section = ({
                 />
                 <ButtonsPopover
                   className={styles.deleteButton}
-                  onEditClick={() =>
-                    openSettingsBlock(field)
-                  }
+                  onEditClick={() => openSettingsBlock(field)}
                   onDeleteClick={() => removeField(fieldIndex, 1)}
                 />
                 {/* <RectangleIconButton
@@ -150,7 +147,7 @@ const Section = ({
         </Container>
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default Section
+export default Section;

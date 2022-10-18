@@ -89,7 +89,8 @@ const TableRow = ({
           key={column.id}
           className={`overflow-ellipsis ${tableHeight}`}
           style={{
-            padding: "8px 12px 4px",
+            minWidth: "270px",
+            padding: "0 4px",
             position: tableSettings?.[pageName]?.find(
               (item) => item?.id === column?.id
             )?.isStiky

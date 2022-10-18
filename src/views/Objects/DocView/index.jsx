@@ -1,5 +1,6 @@
 import { BackupTable, ImportExport } from "@mui/icons-material";
 import { useRef, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router-dom";
@@ -35,6 +36,13 @@ const DocView = ({
 
   const view = views.find((view) => view.type === "TABLE");
 
+  const { control, reset } = useForm();
+
+  const { append } = useFieldArray({
+    control: control,
+    name: "multi",
+  });
+
   // =====SETTINGS BLOCK=========
   const [pdfLoader, setPdfLoader] = useState(false);
   const [htmlLoader, setHtmlLoader] = useState(false);
@@ -45,12 +53,11 @@ const DocView = ({
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
-  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
+  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null);
 
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
   );
-
   // ========FIELDS FOR RELATIONS=========
   const { data: fields = [], isLoading: fieldsLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, limit: 0, offset: 0 }],
@@ -82,17 +89,16 @@ const DocView = ({
     isLoading,
     refetch,
   } = useQuery(
-    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug ],
+    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
-
       const data = {
-        table_slug: tableSlug
-      }
+        table_slug: tableSlug,
+      };
 
-      data[`${loginTableSlug}_ids`] = [userId]
+      data[`${loginTableSlug}_ids`] = [userId];
 
       return constructorObjectService.getList("template", {
-        data
+        data,
       });
     },
     {
@@ -277,6 +283,8 @@ const DocView = ({
           {tableViewIsActive && (
             <div className={styles.redactorBlock}>
               <TableView
+                formVisible={false}
+                reset={reset}
                 isChecked={(row) => selectedObject === row.guid}
                 onCheckboxChange={onCheckboxChange}
                 isDocView

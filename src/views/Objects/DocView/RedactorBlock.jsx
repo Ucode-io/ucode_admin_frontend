@@ -77,7 +77,7 @@ const RedactorBlock = forwardRef(
         const savedData = redactorRef.current.getData();
         const data = {
           ...values,
-          object_id: values?.object_id ?? "",
+          object_id: values?.objectId ?? "",
           html: savedData ?? "",
           size: [selectedPaperSize.name],
           title: values.title,

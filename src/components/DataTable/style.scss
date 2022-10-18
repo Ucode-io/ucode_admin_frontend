@@ -58,8 +58,8 @@
       display: flex;
     }
   }
-
-  &.multipleRow {
-    background-color: #303940;
-  }
+}
+.multipleRow {
+  background-color: #2a2d34;
+  transition: all 1s ease;
 }

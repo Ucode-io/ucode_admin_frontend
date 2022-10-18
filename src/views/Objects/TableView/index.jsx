@@ -1,39 +1,44 @@
-import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useEffect, useMemo, useState } from "react"
+import { useParams } from "react-router-dom"
+import { useQuery } from "react-query"
 
-import constructorObjectService from "../../../services/constructorObjectService";
-import { pageToOffset } from "../../../utils/pageToOffset";
-import useTabRouter from "../../../hooks/useTabRouter";
-import useFilters from "../../../hooks/useFilters";
-import FastFilter from "../components/FastFilter";
-import styles from "./styles.module.scss";
-import { useSelector } from "react-redux";
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
-import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
+import constructorObjectService from "../../../services/constructorObjectService"
+import { pageToOffset } from "../../../utils/pageToOffset"
+import useTabRouter from "../../../hooks/useTabRouter"
+import useFilters from "../../../hooks/useFilters"
+import FastFilter from "../components/FastFilter"
+import styles from "./styles.module.scss"
+import { useSelector } from "react-redux"
+import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
+import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
 
 const TableView = ({
   tab,
   view,
+  shouldGet,
+  reset,
   fieldsMap,
   isDocView,
+  formVisible,
+  setFormVisible,
   selectedObjects,
+  setDataLength,
   setSelectedObjects,
   ...props
 }) => {
-  const { navigateToForm } = useTabRouter();
-  const { tableSlug } = useParams();
-  const { new_list } = useSelector((state) => state.filter);
+  const { navigateToForm } = useTabRouter()
+  const { tableSlug } = useParams()
+  const { new_list } = useSelector((state) => state.filter)
 
-  const { filters } = useFilters(tableSlug, view.id);
+  const { filters } = useFilters(tableSlug, view.id)
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [deleteLoader, setDeleteLoader] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+  const [deleteLoader, setDeleteLoader] = useState(false)
 
   const columns = useMemo(() => {
-    return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
-  }, [view, fieldsMap]);
+    return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el)
+  }, [view, fieldsMap])
 
   const {
     data: { tableData, pageCount } = { tableData: [], pageCount: 1 },
@@ -47,6 +52,7 @@ const TableView = ({
         currentPage,
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
+        shouldGet,
       },
     ],
     queryFn: () => {
@@ -57,41 +63,50 @@ const TableView = ({
           ...filters,
           [tab?.slug]: tab?.value,
         },
-      });
+      })
     },
     select: (res) => {
+      // setDataLength(res.data?.response.length ?? 0)
       return {
         tableData: res.data?.response ?? [],
         pageCount: isNaN(res.data?.count)
           ? 1
           : Math.ceil(res.data?.count / limit),
-      };
+      }
     },
-  });
+  })
+
+  useEffect(() => {
+    if (tableData?.length) {
+      reset({
+        multi: tableData.map((i) => i),
+      })
+    }
+  }, [tableData, reset])
 
   const { data: { custom_events: customEvents = [] } = {} } =
     useCustomActionsQuery({
       tableSlug,
-    });
+    })
 
   const onCheckboxChange = (val, row) => {
-    if (val) setSelectedObjects((prev) => [...prev, row.guid]);
-    else setSelectedObjects((prev) => prev.filter((id) => id !== row.guid));
-  };
+    if (val) setSelectedObjects((prev) => [...prev, row.guid])
+    else setSelectedObjects((prev) => prev.filter((id) => id !== row.guid))
+  }
 
   const deleteHandler = async (row) => {
-    setDeleteLoader(true);
+    setDeleteLoader(true)
     try {
-      await constructorObjectService.delete(tableSlug, row.guid);
-      refetch();
+      await constructorObjectService.delete(tableSlug, row.guid)
+      refetch()
     } finally {
-      setDeleteLoader(false);
+      setDeleteLoader(false)
     }
-  };
+  }
 
   const navigateToEditPage = (row) => {
-    navigateToForm(tableSlug, "EDIT", row);
-  };
+    navigateToForm(tableSlug, "EDIT", row)
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -104,6 +119,8 @@ const TableView = ({
         </div>
       )}
       <ObjectDataTable
+        formVisible={formVisible}
+        setFormVisible={setFormVisible}
         isRelationTable={false}
         removableHeight={isDocView ? 150 : 215}
         currentPage={currentPage}
@@ -132,7 +149,7 @@ const TableView = ({
         {...props}
       />
     </div>
-  );
-};
+  )
+}
 
-export default TableView;
+export default TableView

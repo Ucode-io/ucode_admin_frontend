@@ -22,7 +22,6 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
   
   if (field.render) {
-    console.log(" ==>", field)
     return field.render(row)
   }
 
@@ -85,6 +84,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       )
 
     default:
+      if(typeof(value) === 'object') return JSON.stringify(value)
       return value
   }
 }

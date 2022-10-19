@@ -15,6 +15,7 @@ const HFTextFieldWithMask = ({
   control,
   name = "",
   isBlackBg = false,
+  isFormEdit = false,
   disabledHelperText = false,
   required = false,
   rules = {},
@@ -47,6 +48,7 @@ const HFTextFieldWithMask = ({
               error={error}
               helperText={!disabledHelperText && error?.message}
               placeholder={placeholder}
+              className={isFormEdit ? "custom_textfield" : ""}
               {...props}
               InputProps={{
                 ...inputProps,

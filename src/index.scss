@@ -271,6 +271,21 @@ html {
   }
 }
 
+.custom_textfield {
+  div fieldset {
+    border: none;
+  }
+}
+.editable_col {
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  &:focus,
+  &:hover {
+    border: 1px solid #212b36 !important;
+  }
+}
+
 .MuiAutocomplete-inputRoot {
   padding-right: 45px !important;
 }

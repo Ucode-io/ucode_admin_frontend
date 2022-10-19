@@ -15,6 +15,7 @@ const CDateTimePicker = ({
   isBlackBg,
   classes,
   onChange,
+  isFormEdit,
   showCopyBtn = true,
   disabled = false,
 }) => {
@@ -35,6 +36,7 @@ const CDateTimePicker = ({
                 },
               }}
               fullWidth
+              className={`${isFormEdit ? "custom_textfield" : ""}`}
               autoComplete="off"
               InputProps={{
                 readOnly: disabled,
@@ -72,6 +74,7 @@ const CDateTimePicker = ({
               size="small"
               autoComplete="off"
               placeholder={placeholder.split("#")[1]}
+              className={`${isFormEdit ? "custom_textfield" : ""}`}
               style={{ border: "none" }}
               fullWidth
               sx={{

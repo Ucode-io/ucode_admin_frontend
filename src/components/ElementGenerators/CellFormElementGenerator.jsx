@@ -57,6 +57,7 @@ const CellFormElementGenerator = ({
     case "LOOKUP":
       return (
         <CellRelationFormElement
+          isFormEdit
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -70,6 +71,7 @@ const CellFormElementGenerator = ({
     case "SINGLE_LINE":
       return (
         <HFTextField
+          isFormEdit
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -83,6 +85,7 @@ const CellFormElementGenerator = ({
     case "PHONE":
       return (
         <HFTextFieldWithMask
+          isFormEdit
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -97,6 +100,7 @@ const CellFormElementGenerator = ({
     case "PICK_LIST":
       return (
         <HFAutocomplete
+          isFormEdit
           control={control}
           name={computedSlug}
           width="100%"
@@ -110,6 +114,7 @@ const CellFormElementGenerator = ({
     case "MULTISELECT":
       return (
         <HFMultipleAutocomplete
+          isFormEdit
           control={control}
           name={computedSlug}
           width="100%"
@@ -124,6 +129,7 @@ const CellFormElementGenerator = ({
     case "DATE":
       return (
         <HFDatePicker
+          isFormEdit
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -138,6 +144,7 @@ const CellFormElementGenerator = ({
     case "DATE_TIME":
       return (
         <HFDateTimePicker
+          isFormEdit
           isBlackBg={isBlackBg}
           showCopyBtn={false}
           control={control}
@@ -151,6 +158,7 @@ const CellFormElementGenerator = ({
     case "TIME":
       return (
         <HFTimePicker
+          isFormEdit
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -163,6 +171,7 @@ const CellFormElementGenerator = ({
     case "NUMBER":
       return (
         <HFNumberField
+          isFormEdit
           control={control}
           name={computedSlug}
           fullWidth
@@ -176,6 +185,7 @@ const CellFormElementGenerator = ({
     case "CHECKBOX":
       return (
         <HFCheckbox
+          isFormEdit
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -187,6 +197,7 @@ const CellFormElementGenerator = ({
     case "SWITCH":
       return (
         <HFSwitch
+          isFormEdit
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -198,6 +209,7 @@ const CellFormElementGenerator = ({
     case "EMAIL":
       return (
         <HFTextField
+          isFormEdit
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -229,6 +241,7 @@ const CellFormElementGenerator = ({
     case "ICON":
       return (
         <HFIconPicker
+          isFormEdit
           control={control}
           name={computedSlug}
           required={field.required}

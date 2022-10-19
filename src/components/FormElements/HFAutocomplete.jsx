@@ -6,6 +6,7 @@ import CAutoCompleteSelect from "../CAutoCompleteSelect"
 const HFAutocomplete = ({
   control,
   name,
+
   label,
   width = "100%",
   options = [],

@@ -137,8 +137,6 @@ const FilesSection = ({
 
   }, [ columns ])
 
-  console.log("computedColumns ==>", computedColumns)
-
   // const columns = [
   //   {
   //     id: "1",

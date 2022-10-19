@@ -2,6 +2,7 @@ import { useWatch } from "react-hook-form"
 import BarChartAttributes from "./BarChartAttributes"
 import CardAttributes from "./CardAttributes"
 import FunnelChartAttributes from "./FunnelChartAttributes"
+import LineChartAttributes from "./LineChartAttributes"
 import PieChartAttributes from "./PieChartAttributes"
 import TableAttributes from "./TableAttributes"
 
@@ -20,6 +21,9 @@ const PanelAttributes = ({ form, columns }) => {
 
     case "FUNNEL_CHART":
       return <FunnelChartAttributes control={form.control} columns={columns} />
+
+    case "LINE_CHART":
+      return <LineChartAttributes control={form.control} columns={columns} />
 
     case "CARD":
       return <CardAttributes control={form.control} columns={columns} />

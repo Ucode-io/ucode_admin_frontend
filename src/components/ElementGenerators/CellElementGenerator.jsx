@@ -86,6 +86,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       )
 
     default:
+      if(typeof(value) === 'object') return JSON.stringify(value)
       return value
   }
 }

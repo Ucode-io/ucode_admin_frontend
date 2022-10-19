@@ -6,7 +6,14 @@ global:
   environment: {}
    # list of key: value                                                                                                                    
    # GLOBAL1: value                                                                                                                        
-                                                                                                                                           
+hostAliases:
+  - ip: "172.20.20.13"
+    hostnames:
+    - "api-client.medion.uz"
+    - "api-auth.medion.uz"
+    - "api-admin.medion.uz"
+    - "settings-admin.medion.uz"
+    - "cdn.medion.uz"                                                                                                                                           
 replicaCount: 1                                                                                                                            
                                                                                                                                            
 image:                                                                                                                                     

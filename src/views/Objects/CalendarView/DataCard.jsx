@@ -222,7 +222,7 @@ const DataCard = ({
               :{" "}
             </b>
             {field.type === "LOOKUP" ? (
-              getRelationFieldTableCellLabel(field, info, field.table_slug)
+              getRelationFieldTableCellLabel(field, info, field.slug + "_data")
             ) : field.type === "DATE_TIME" ? (
               dateValidFormat(info[field.slug], "dd.MM.yyyy HH:mm")
             ) : field.type === "MULTISELECT" ? (

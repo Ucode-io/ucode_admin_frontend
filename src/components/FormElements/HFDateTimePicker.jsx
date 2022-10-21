@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
 const HFDateTimePicker = ({
   control,
   isBlackBg = false,
+  isFormEdit = false,
   name,
   showCopyBtn,
   placeholder = "",
@@ -27,6 +28,7 @@ const HFDateTimePicker = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <CDateTimePicker
+            isFormEdit={isFormEdit}
             classes={classes}
             placeholder={placeholder}
             isBlackBg={isBlackBg}

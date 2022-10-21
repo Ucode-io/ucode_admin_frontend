@@ -23,6 +23,8 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import { showAlert } from "../../store/alert/alert.thunk";
 import SummarySection from "./SummarySection/SummarySection";
+import BackButton from "../../components/BackButton";
+import FormPageBackButton from "./components/FormPageBackButton";
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();

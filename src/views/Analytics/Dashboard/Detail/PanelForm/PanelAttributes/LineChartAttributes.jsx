@@ -5,55 +5,55 @@ import styles from "./style.module.scss"
 
 
 
-const BarChartAttributes = ({ control, columns }) => {
+const LineChartAttributes = ({ control, columns }) => {
 
   const attributeSections = useMemo(() => (
     [
-      {
-        label: 'Bar chart attributes',
-        fields: [
-          {
-            label: 'Key field slug',
-            slug: 'attributes.BAR_CHART.label_field_slug',
-            type: "PICK_LIST",
-            attributes: { options: columns }
-          },
-          {
-            label: 'Value field slug',
-            slug: 'attributes.BAR_CHART.value_field_slug',
-            type: "PICK_LIST",
-            attributes: { options: columns }
-          }
-        ]
-      },
+      // {
+      //   label: 'Line chart attributes',
+      //   fields: [
+      //     {
+      //       label: 'Key field slug',
+      //       slug: 'attributes.LINE_CHART.label_field_slug',
+      //       type: "PICK_LIST",
+      //       attributes: { options: columns }
+      //     },
+      //     {
+      //       label: 'Value field slug',
+      //       slug: 'attributes.LINE_CHART.value_field_slug',
+      //       type: "PICK_LIST",
+      //       attributes: { options: columns }
+      //     }
+      //   ]
+      // },
       {
         label: 'Bottom axis',
         fields: [
           {
             label: 'Tick size',
-            slug: 'attributes.BAR_CHART.axisBottom.tickSize',
+            slug: 'attributes.LINE_CHART.axisBottom.tickSize',
             type: "NUMBER",
             defaultValue: 5
           },
           {
             label: 'Tick padding',
-            slug: 'attributes.BAR_CHART.axisBottom.tickPadding',
+            slug: 'attributes.LINE_CHART.axisBottom.tickPadding',
             type: "NUMBER",
             defaultValue: 0
           },
           {
             label: 'Tick rotation',
-            slug: 'attributes.BAR_CHART.axisBottom.tickRotation',
+            slug: 'attributes.LINE_CHART.axisBottom.tickRotation',
             type: "NUMBER",
             defaultValue: 0
           },
           {
             label: 'Legend',
-            slug: 'attributes.BAR_CHART.axisBottom.legend',
+            slug: 'attributes.LINE_CHART.axisBottom.legend',
           },
           {
             label: 'Legend position',
-            slug: 'attributes.BAR_CHART.axisBottom.legendPosition',
+            slug: 'attributes.LINE_CHART.axisBottom.legendPosition',
             type: "PICK_LIST",
             attributes: {
               options: ['start', 'middle', 'end']
@@ -62,7 +62,7 @@ const BarChartAttributes = ({ control, columns }) => {
           },
           {
             label: 'Legend offsett',
-            slug: 'attributes.BAR_CHART.axisBottom.legendOffset',
+            slug: 'attributes.LINE_CHART.axisBottom.legendOffset',
             type: "NUMBER",
             defaultValue: 32
           }
@@ -73,29 +73,29 @@ const BarChartAttributes = ({ control, columns }) => {
         fields: [
           {
             label: 'Tick size',
-            slug: 'attributes.BAR_CHART.axisLeft.tickSize',
+            slug: 'attributes.LINE_CHART.axisLeft.tickSize',
             type: "NUMBER",
             defaultValue: 5
           },
           {
             label: 'Tick padding',
-            slug: 'attributes.BAR_CHART.axisLeft.tickPadding',
+            slug: 'attributes.LINE_CHART.axisLeft.tickPadding',
             type: "NUMBER",
             defaultValue: 0
           },
           {
             label: 'Tick rotation',
-            slug: 'attributes.BAR_CHART.axisLeft.tickRotation',
+            slug: 'attributes.LINE_CHART.axisLeft.tickRotation',
             type: "NUMBER",
             defaultValue: 0
           },
           {
             label: 'Legend',
-            slug: 'attributes.BAR_CHART.axisLeft.legend',
+            slug: 'attributes.LINE_CHART.axisLeft.legend',
           },
           {
             label: 'Legend position',
-            slug: 'attributes.BAR_CHART.axisLeft.legendPosition',
+            slug: 'attributes.LINE_CHART.axisLeft.legendPosition',
             type: "PICK_LIST",
             attributes: {
               options: ['start', 'middle', 'end']
@@ -104,7 +104,7 @@ const BarChartAttributes = ({ control, columns }) => {
           },
           {
             label: 'Legend offsett',
-            slug: 'attributes.BAR_CHART.axisLeft.legendOffset',
+            slug: 'attributes.LINE_CHART.axisLeft.legendOffset',
             type: "NUMBER",
             defaultValue: -40
           }
@@ -136,4 +136,4 @@ const BarChartAttributes = ({ control, columns }) => {
   )
 }
 
-export default BarChartAttributes
+export default LineChartAttributes

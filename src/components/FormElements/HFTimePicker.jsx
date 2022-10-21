@@ -16,6 +16,7 @@ const HFTimePicker = ({
   isBlackBg,
   name,
   label,
+  isFormEdit = false,
   width,
   inputProps,
   disabledHelperText,
@@ -31,6 +32,7 @@ const HFTimePicker = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={className}>
           <CTimePicker
+            isFormEdit={isFormEdit}
             classes={classes}
             isBlackBg={isBlackBg}
             value={value}

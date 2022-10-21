@@ -8,7 +8,6 @@ import styles from "./style.module.scss"
 const BoardCardRowGenerator = ({ field, el }) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(el, field.slug, "")
-
     return getRelationFieldTableCellLabel(field, el, field.table_slug)
   }, [field, el])
 

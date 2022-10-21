@@ -5,7 +5,7 @@ import "./style2.scss"
 import { InputAdornment, TextField } from "@mui/material"
 import { DateRange } from "@mui/icons-material"
 
-const CTimePicker = ({ value, onChange, classes, isBlackBg }) => {
+const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit }) => {
   const getValue = () => {
     if (!value) return ""
 
@@ -42,6 +42,7 @@ const CTimePicker = ({ value, onChange, classes, isBlackBg }) => {
                 </InputAdornment>
               ),
             }}
+            className={`${isFormEdit ? "custom_textfield" : ""}`}
           />
         )
       }}

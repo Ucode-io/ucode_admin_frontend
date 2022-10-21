@@ -38,6 +38,7 @@ const HFMultipleAutocomplete = ({
   control,
   name,
   label,
+  isFormEdit = false,
   isBlackBg = false,
   width = "100%",
   disabledHelperText,
@@ -80,6 +81,7 @@ const HFMultipleAutocomplete = ({
             width={width}
             label={label}
             hasColor={hasColor}
+            isFormEdit={isFormEdit}
             hasIcon={hasIcon}
             onFormChange={onFormChange}
             disabledHelperText={disabledHelperText}
@@ -105,6 +107,7 @@ const AutoCompleteElement = ({
   placeholder,
   onFormChange,
   disabledHelperText,
+  isFormEdit,
   error,
   isMultiSelect,
   disabled,
@@ -184,6 +187,7 @@ const AutoCompleteElement = ({
               },
               style: { background: isBlackBg ? "#2A2D34" : "" },
             }}
+            className={isFormEdit ? "custom_textfield" : ""}
             size="small"
           />
         )}

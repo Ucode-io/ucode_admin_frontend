@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
 const HFTextField = ({
   control,
   name = "",
+  isFormEdit = false,
   isBlackBg,
   disabledHelperText = false,
   required = false,
@@ -60,6 +61,7 @@ const HFTextField = ({
                 },
           }}
           helperText={!disabledHelperText && error?.message}
+          className={isFormEdit ? "custom_textfield" : ""}
           {...props}
         />
       )}

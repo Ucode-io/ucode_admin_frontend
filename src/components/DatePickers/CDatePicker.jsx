@@ -12,6 +12,7 @@ const CDatePicker = ({
   onChange,
   disabled,
   isBlackBg,
+  isFormEdit,
   classes,
   placeholder,
 }) => {
@@ -47,6 +48,7 @@ const CDatePicker = ({
                 </InputAdornment>
               ),
             }}
+            className={isFormEdit ? "custom_textfield" : ""}
           />
         )
       }}

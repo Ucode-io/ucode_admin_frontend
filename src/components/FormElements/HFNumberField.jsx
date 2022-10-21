@@ -6,6 +6,7 @@ const HFNumberField = ({
   name = "",
   disabledHelperText = false,
   isBlackBg = false,
+  isFormEdit = false,
   required = false,
   fullWidth = false,
   withTrim = false,
@@ -33,6 +34,7 @@ const HFNumberField = ({
             if (!val) onChange("")
             else onChange(!isNaN(Number(val)) ? Number(val) : "")
           }}
+          className={`${isFormEdit ? "custom_textfield" : ""}`}
           name={name}
           error={error}
           fullWidth={fullWidth}

@@ -64,5 +64,11 @@ export default function useTabRouter() {
     dispatch(tabRouterActions.removeTab(link))
   }
 
-  return { navigateToForm, removeTab }
+  const deleteTab = (link) => {
+    const index = tabs.findIndex((tab) => tab.link === link)
+    drop(link)
+    dispatch(tabRouterActions.removeTab(link))
+  }
+
+  return { navigateToForm, removeTab, deleteTab }
 }

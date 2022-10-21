@@ -26,7 +26,7 @@ const CDateTimePicker = ({
           return (
             <TextField
               value={value}
-              onClick={openCalendar}
+              onClick={() => (disabled ? null : openCalendar())}
               onChange={handleChange}
               size="small"
               placeholder={placeholder.split("#")[0]}
@@ -69,7 +69,7 @@ const CDateTimePicker = ({
           return (
             <TextField
               value={value}
-              onClick={openCalendar}
+              onClick={() => (disabled ? null : openCalendar())}
               onChange={handleChange}
               size="small"
               autoComplete="off"

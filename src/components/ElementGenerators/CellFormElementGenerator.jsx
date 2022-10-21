@@ -37,6 +37,13 @@ const CellFormElementGenerator = ({
     name: computedSlug,
   })
 
+  const isDisabled = useMemo(() => {
+    return (
+      field.attributes?.disabled ||
+      !field.attributes?.field_permission?.edit_permission
+    )
+  }, [field])
+
   useEffect(() => {
     if (!row?.[field.slug]) {
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || "")
@@ -57,6 +64,7 @@ const CellFormElementGenerator = ({
     case "LOOKUP":
       return (
         <CellRelationFormElement
+          disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
           control={control}
@@ -71,6 +79,7 @@ const CellFormElementGenerator = ({
     case "SINGLE_LINE":
       return (
         <HFTextField
+          disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
           control={control}
@@ -85,6 +94,7 @@ const CellFormElementGenerator = ({
     case "PHONE":
       return (
         <HFTextFieldWithMask
+          disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
           control={control}
@@ -100,6 +110,7 @@ const CellFormElementGenerator = ({
     case "PICK_LIST":
       return (
         <HFAutocomplete
+          disabled={isDisabled}
           isFormEdit
           control={control}
           name={computedSlug}
@@ -114,6 +125,7 @@ const CellFormElementGenerator = ({
     case "MULTISELECT":
       return (
         <HFMultipleAutocomplete
+          disabled={isDisabled}
           isFormEdit
           control={control}
           name={computedSlug}
@@ -129,6 +141,7 @@ const CellFormElementGenerator = ({
     case "DATE":
       return (
         <HFDatePicker
+          disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
           control={control}
@@ -144,6 +157,7 @@ const CellFormElementGenerator = ({
     case "DATE_TIME":
       return (
         <HFDateTimePicker
+          disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
           showCopyBtn={false}
@@ -158,6 +172,7 @@ const CellFormElementGenerator = ({
     case "TIME":
       return (
         <HFTimePicker
+          disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
           control={control}
@@ -171,6 +186,7 @@ const CellFormElementGenerator = ({
     case "NUMBER":
       return (
         <HFNumberField
+          disabled={isDisabled}
           isFormEdit
           control={control}
           name={computedSlug}
@@ -185,6 +201,7 @@ const CellFormElementGenerator = ({
     case "CHECKBOX":
       return (
         <HFCheckbox
+          disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
           control={control}
@@ -197,6 +214,7 @@ const CellFormElementGenerator = ({
     case "SWITCH":
       return (
         <HFSwitch
+          disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
           control={control}
@@ -209,6 +227,7 @@ const CellFormElementGenerator = ({
     case "EMAIL":
       return (
         <HFTextField
+          disabled={isDisabled}
           isFormEdit
           isBlackBg={isBlackBg}
           control={control}

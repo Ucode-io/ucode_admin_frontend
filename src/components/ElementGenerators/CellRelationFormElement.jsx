@@ -23,6 +23,7 @@ const CellRelationFormElement = ({
   isFormEdit,
   control,
   name,
+  disabled,
   placeholder,
   field,
   isLayout,
@@ -39,6 +40,7 @@ const CellRelationFormElement = ({
         defaultValue={null}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <AutoCompleteElement
+            disabled={disabled}
             isFormEdit={isFormEdit}
             placeholder={placeholder}
             isBlackBg={isBlackBg}
@@ -66,6 +68,7 @@ const AutoCompleteElement = ({
   placeholder,
   tableSlug,
   name,
+  disabled,
   classes,
   isBlackBg,
   setValue,
@@ -112,6 +115,7 @@ const AutoCompleteElement = ({
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
+        disabled={disabled}
         options={options ?? []}
         value={computedValue}
         onChange={(event, newValue) => {

@@ -23,15 +23,13 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons"
 import { showAlert } from "../../store/alert/alert.thunk"
 import SummarySection from "./SummarySection/SummarySection"
-import BackButton from "../../components/BackButton"
 import FormPageBackButton from "./components/FormPageBackButton"
 
 const ObjectsFormPage = () => {
-  const { tableSlug, id, appId } = useParams()
+  const { tableSlug, id } = useParams()
   const { pathname, state = {} } = useLocation()
   const dispatch = useDispatch()
-  const { removeTab, navigateToForm, tabs, addNewTab } = useTabRouter()
-  const location = useLocation()
+  const { removeTab, navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
 
   const tablesList = useSelector((state) => state.constructorTable.list)
@@ -101,9 +99,9 @@ const ObjectsFormPage = () => {
 
       reset(data.response ?? {})
 
-      const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)
+      // const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)
 
-      if (!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response)
+      // if (!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response)
     } catch (error) {
       console.error(error)
     } finally {
@@ -193,7 +191,6 @@ const ObjectsFormPage = () => {
     handleSubmit,
     control,
     reset,
-    watch,
     setValue: setFormValue,
   } = useForm({
     defaultValues: state,

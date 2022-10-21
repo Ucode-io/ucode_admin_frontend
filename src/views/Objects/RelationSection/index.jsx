@@ -168,68 +168,70 @@ const RelationSection = ({
                 ))}
               </TabList>
 
-              {filteredRelations[selectedTabIndex]?.relatedTable !== "file" && (
-                <div className="flex gap-2">
-                  <SecondaryButton
-                    onClick={navigateToCreatePage}
-                    disabled={!id}
-                  >
-                    <Add /> Добавить
-                  </SecondaryButton>
-                  {formVisible ? (
-                    <>
-                      <RectangleIconButton
-                        color="success"
-                        size="small"
-                        onClick={handleSubmit(onSubmit)}
-                        // loader={loader}
-                      >
-                        <Save color="success" />
-                      </RectangleIconButton>
-                      <RectangleIconButton
-                        color="error"
-                        onClick={() => {
-                          setFormVisible(false)
-                          if (fields.length > dataLength) {
-                            remove(
-                              Array(fields.length - dataLength)
-                                .fill("*")
-                                .map((i, index) => fields.length - (index + 1))
-                            )
-                          }
-                        }}
-                      >
-                        <Clear color="error" />
-                      </RectangleIconButton>
-                    </>
-                  ) : (
-                    fields.length > 0 && (
-                      <RectangleIconButton
-                        color="success"
-                        className="mr-1"
-                        size="small"
-                        onClick={() => {
-                          setFormVisible(true)
-                          reset()
-                        }}
-                      >
-                        <Edit color="primary" />
-                      </RectangleIconButton>
-                    )
-                  )}
-                  <CustomActionsButton
-                    tableSlug={selectedRelation?.relatedTable}
-                    selectedObjects={selectedObjects}
-                    setSelectedObjects={setSelectedObjects}
-                  />
-                </div>
-              )}
+              <div className="flex gap-2">
+                <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
+                  <Add /> Добавить
+                </SecondaryButton>
+                {formVisible ? (
+                  <>
+                    <RectangleIconButton
+                      color="success"
+                      size="small"
+                      onClick={handleSubmit(onSubmit)}
+                      // loader={loader}
+                    >
+                      <Save color="success" />
+                    </RectangleIconButton>
+                    <RectangleIconButton
+                      color="error"
+                      onClick={() => {
+                        setFormVisible(false)
+                        if (fields.length > dataLength) {
+                          remove(
+                            Array(fields.length - dataLength)
+                              .fill("*")
+                              .map((i, index) => fields.length - (index + 1))
+                          )
+                        }
+                      }}
+                    >
+                      <Clear color="error" />
+                    </RectangleIconButton>
+                  </>
+                ) : (
+                  fields.length > 0 && (
+                    <RectangleIconButton
+                      color="success"
+                      className="mr-1"
+                      size="small"
+                      onClick={() => {
+                        setFormVisible(true)
+                        reset()
+                      }}
+                    >
+                      <Edit color="primary" />
+                    </RectangleIconButton>
+                  )
+                )}
+                <CustomActionsButton
+                  tableSlug={selectedRelation?.relatedTable}
+                  selectedObjects={selectedObjects}
+                  setSelectedObjects={setSelectedObjects}
+                />
+              </div>
             </div>
 
             {filteredRelations?.map((relation) => (
               <TabPanel key={relation.id}>
                 {relation?.relatedTable === "file" ? (
                   <FilesSection
+                    shouldGet={shouldGet}
+                    setFormValue={setFormValue}
+                    remove={remove}
+                    reset={reset}
+                    watch={watch}
+                    control={control}
+                    formVisible={formVisible}
                     relation={relation}
                     key={relation.id}
                     createFormVisible={relationsCreateFormVisible}

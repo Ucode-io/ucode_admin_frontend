@@ -38,7 +38,7 @@ const ChildBlock = ({ element, isVisible }) => {
     >
       <div className="child-block">
         {element.children
-          .filter((item) => item?.id !== "matrix_v2")
+          .filter((item) => item?.id !== "matrix")
           .map((childElement) => (
             // <PermissionWrapper permission={childElement.permission}>
             <NavLink

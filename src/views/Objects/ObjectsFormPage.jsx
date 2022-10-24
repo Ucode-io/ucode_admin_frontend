@@ -189,9 +189,11 @@ const ObjectsFormPage = () => {
   }, [id, tableInfo]);
 
   const {
+    getValues,
     handleSubmit,
     control,
     reset,
+    register,
     setValue: setFormValue,
   } = useForm({
     defaultValues: state,
@@ -207,11 +209,13 @@ const ObjectsFormPage = () => {
         extra={<DocumentGeneratorButton />}
       >
         <FormPageBackButton />
-        {/* <SummarySection
-          computedSummary={computedSummary}
+        <SummarySection
+          getValues={getValues}
+          register={register}
+          computedSections={computedSections}
           control={control}
           sections={sections}
-        /> */}
+        />
       </FiltersBlock>
       <div className={styles.formArea}>
         <MainInfo

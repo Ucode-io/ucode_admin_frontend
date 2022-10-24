@@ -66,35 +66,30 @@ const SummarySection = ({
   };
   return (
     <div className={styles.summarySection}>
-      <Container
-        style={{ minHeight: 50, minWidth: "400px" }}
-        groupName="1"
-        dragClass="drag-row"
-        orientation="horizontal"
-        dropPlaceholder={{ className: "drag-row-drop-preview" }}
-        onDrop={(dragResults) => onDrop(dragResults, 1)}
-      >
-        {sections?.map((field, fieldIndex) => (
-          <Draggable key={field.key}>
-            <div className={styles.field_summary}>
-              <FormElementGenerator
-                control={layoutForm.control}
-                field={fieldsMap[field.id] ?? field}
-                isLayout={true}
-                sectionIndex={fieldIndex}
-                column={1}
-                fieldIndex={fieldIndex}
-                mainForm={mainForm}
-              />
-              <ButtonsPopover
-                className={styles.deleteButton}
-                onEditClick={() => openSettingsBlock(field)}
-                onDeleteClick={() => removeField(fieldIndex, 1)}
-              />
-            </div>
-          </Draggable>
-        ))}
-      </Container>
+      {/* {fields?.map((field, fieldIndex) => ( */}
+      <div className={styles.field_summary}>
+        <div className={styles.field_summary_item}>
+          Id
+          <span>123456</span>
+        </div>
+        <div className={styles.field_summary_item}>
+          Id
+          <span>123456</span>
+        </div>
+        <div className={styles.field_summary_item}>
+          Id
+          <span>123456</span>
+        </div>
+        <div className={styles.field_summary_item}>
+          Id
+          <span>123456</span>
+        </div>
+        <div className={styles.field_summary_item}>
+          Id
+          <span>123456</span>
+        </div>
+      </div>
+      {/* ))} */}
     </div>
   );
 };

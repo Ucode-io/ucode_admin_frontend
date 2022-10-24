@@ -27,7 +27,6 @@ const ChildBlock = ({ element, isVisible }) => {
   //       </animated.div>
   //     )
   // )
-  console.log("element", element);
   return (
     <Collapse
       in={isVisible}

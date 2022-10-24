@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import useOnClickOutside from "use-onclickoutside"
-import { useLocation } from "react-router-dom"
-import { Checkbox } from "@mui/material"
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import useOnClickOutside from "use-onclickoutside";
+import { useLocation } from "react-router-dom";
+import { Checkbox } from "@mui/material";
 
 import {
   CTable,
@@ -10,16 +10,16 @@ import {
   CTableHead,
   CTableHeadCell,
   CTableRow,
-} from "../CTable"
-import FilterGenerator from "../../views/Objects/components/FilterGenerator"
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice"
-import { PinIcon, ResizeIcon } from "../../assets/icons/icon"
-import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2"
-import TableRow from "./TableRow"
-import TableRowForm from "./TableRowForm"
-import SummaryRow from "./SummaryRow"
-import MultipleUpdateRow from "./MultipleUpdateRow"
-import "./style.scss"
+} from "../CTable";
+import FilterGenerator from "../../views/Objects/components/FilterGenerator";
+import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import TableRow from "./TableRow";
+import TableRowForm from "./TableRowForm";
+import SummaryRow from "./SummaryRow";
+import MultipleUpdateRow from "./MultipleUpdateRow";
+import "./style.scss";
 
 const ObjectDataTable = ({
   data = [],
@@ -58,67 +58,67 @@ const ObjectDataTable = ({
   formVisible,
   summaries,
 }) => {
-  const location = useLocation()
-  const [showCheckbox, setShowCheckbox] = useState(false)
-  const tableSize = useSelector((state) => state.tableSize.tableSize)
-  const [columnId, setColumnId] = useState("")
-  const tableSettings = useSelector((state) => state.tableSize.tableSettings)
-  const tableHeight = useSelector((state) => state.tableSize.tableHeight)
-  const [currentColumnWidth, setCurrentColumnWidth] = useState(0)
-  const [selected, setSelected] = useState([])
+  const location = useLocation();
+  const [showCheckbox, setShowCheckbox] = useState(false);
+  const tableSize = useSelector((state) => state.tableSize.tableSize);
+  const [columnId, setColumnId] = useState("");
+  const tableSettings = useSelector((state) => state.tableSize.tableSettings);
+  const tableHeight = useSelector((state) => state.tableSize.tableHeight);
+  const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
+  const [selected, setSelected] = useState([]);
 
   const onSelectedRowChange = (val, row) => {
-    if (val) setSelected((prev) => [...prev, row.guid])
-    else setSelected((prev) => prev.filter((id) => id !== row.guid))
-  }
+    if (val) setSelected((prev) => [...prev, row.guid]);
+    else setSelected((prev) => prev.filter((id) => id !== row.guid));
+  };
 
-  const popupRef = useRef(null)
-  useOnClickOutside(popupRef, () => setColumnId(""))
+  const popupRef = useRef(null);
+  useOnClickOutside(popupRef, () => setColumnId(""));
 
   const pageName =
-    location?.pathname.split("/")[location.pathname.split("/").length - 1]
-  const dispatch = useDispatch()
+    location?.pathname.split("/")[location.pathname.split("/").length - 1];
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isResizeble) return
+    if (!isResizeble) return;
     const createResizableTable = function (table) {
-      if (!table) return
-      const cols = table.querySelectorAll("th")
-      ;[].forEach.call(cols, function (col, idx) {
+      if (!table) return;
+      const cols = table.querySelectorAll("th");
+      [].forEach.call(cols, function (col, idx) {
         // Add a resizer element to the column
-        const resizer = document.createElement("span")
-        resizer.classList.add("resizer")
+        const resizer = document.createElement("span");
+        resizer.classList.add("resizer");
 
         // Set the height
-        resizer.style.height = `${table.offsetHeight}px`
+        resizer.style.height = `${table.offsetHeight}px`;
 
-        col.appendChild(resizer)
+        col.appendChild(resizer);
 
-        createResizableColumn(col, resizer, idx)
-      })
-    }
+        createResizableColumn(col, resizer, idx);
+      });
+    };
 
     const createResizableColumn = function (col, resizer, idx) {
-      let x = 0
-      let w = 0
+      let x = 0;
+      let w = 0;
 
       const mouseDownHandler = function (e) {
-        x = e.clientX
+        x = e.clientX;
 
-        const styles = window.getComputedStyle(col)
-        w = parseInt(styles.width, 10)
+        const styles = window.getComputedStyle(col);
+        w = parseInt(styles.width, 10);
 
-        document.addEventListener("mousemove", mouseMoveHandler)
-        document.addEventListener("mouseup", mouseUpHandler)
+        document.addEventListener("mousemove", mouseMoveHandler);
+        document.addEventListener("mouseup", mouseUpHandler);
 
-        resizer.classList.add("resizing")
-      }
+        resizer.classList.add("resizing");
+      };
 
       const mouseMoveHandler = function (e) {
-        const dx = e.clientX - x
-        const colID = col.getAttribute("id")
-        const colWidth = w + dx
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }))
+        const dx = e.clientX - x;
+        const colID = col.getAttribute("id");
+        const colWidth = w + dx;
+        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -127,29 +127,29 @@ const ObjectDataTable = ({
             isStiky: "ineffective",
             colIdx: idx - 1,
           })
-        )
-        col.style.width = `${colWidth}px`
-      }
+        );
+        col.style.width = `${colWidth}px`;
+      };
 
       const mouseUpHandler = function () {
-        resizer.classList.remove("resizing")
-        document.removeEventListener("mousemove", mouseMoveHandler)
-        document.removeEventListener("mouseup", mouseUpHandler)
-      }
+        resizer.classList.remove("resizing");
+        document.removeEventListener("mousemove", mouseMoveHandler);
+        document.removeEventListener("mouseup", mouseUpHandler);
+      };
 
-      resizer.addEventListener("mousedown", mouseDownHandler)
-    }
+      resizer.addEventListener("mousedown", mouseDownHandler);
+    };
 
-    createResizableTable(document.getElementById("resizeMe"))
-  }, [])
+    createResizableTable(document.getElementById("resizeMe"));
+  }, []);
 
   const handleAutoSize = (colID, colIdx) => {
     dispatch(
       tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
-    )
-    const element = document.getElementById(colID)
-    element.style.width = "auto"
-    element.style.minWidth = "auto"
+    );
+    const element = document.getElementById(colID);
+    element.style.width = "auto";
+    element.style.minWidth = "auto";
     dispatch(
       tableSizeAction.setTableSettings({
         pageName,
@@ -158,9 +158,9 @@ const ObjectDataTable = ({
         isStiky: "ineffective",
         colIdx,
       })
-    )
-    setColumnId("")
-  }
+    );
+    setColumnId("");
+  };
 
   const handlePin = (colID, colIdx) => {
     dispatch(
@@ -171,37 +171,37 @@ const ObjectDataTable = ({
         isStiky: true,
         colIdx,
       })
-    )
-    setColumnId("")
-  }
+    );
+    setColumnId("");
+  };
 
   const calculateWidth = (colId, index) => {
     const colIdx = tableSettings?.[pageName]
       ?.filter((item) => item?.isStiky === true)
-      ?.findIndex((item) => item?.id === colId)
+      ?.findIndex((item) => item?.id === colId);
 
     if (index === 0) {
-      return 0
+      return 0;
     } else if (colIdx === 0) {
-      return 0
+      return 0;
     } else if (
       tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
         .length === 1
     ) {
-      return 0
+      return 0;
     } else {
       return tableSettings?.[pageName]
         ?.filter((item) => item?.isStiky === true)
         ?.slice(0, colIdx)
-        ?.reduce((acc, item) => acc + item?.colWidth, 0)
+        ?.reduce((acc, item) => acc + item?.colWidth, 0);
     }
-  }
+  };
 
   useEffect(() => {
     if (!formVisible) {
-      setSelected([])
+      setSelected([]);
     }
-  }, [formVisible])
+  }, [formVisible]);
 
   return (
     <CTable
@@ -283,13 +283,15 @@ const ObjectDataTable = ({
               <div
                 className="table-filter-cell cell-data"
                 onMouseEnter={(e) => {
-                  setCurrentColumnWidth(e.relatedTarget.offsetWidth)
+                  setCurrentColumnWidth(e.relatedTarget.offsetWidth);
                 }}
               >
                 <span
                   onClick={(e) => {
-                    e.stopPropagation()
-                    setColumnId((prev) => (prev === column.id ? "" : column.id))
+                    e.stopPropagation();
+                    setColumnId((prev) =>
+                      prev === column.id ? "" : column.id
+                    );
                   }}
                 >
                   {column.label}
@@ -398,7 +400,7 @@ const ObjectDataTable = ({
         )}
       </CTableBody>
     </CTable>
-  )
-}
+  );
+};
 
-export default ObjectDataTable
+export default ObjectDataTable;

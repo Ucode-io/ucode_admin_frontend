@@ -7,15 +7,8 @@ const SummarySection = ({ mainForm, control, computedSummary }) => {
     <div className={styles.summarySection}>
       {fields?.map((field, fieldIndex) => (
         <div className={styles.field_summary}>
-          <FormElementGenerator
-            control={control}
-            field={field}
-            isLayout={true}
-            sectionIndex={fieldIndex}
-            column={1}
-            fieldIndex={fieldIndex}
-            mainForm={mainForm}
-          />
+          <h2>{field?.label}</h2>
+          <div className={styles.field_summary_item}>{field?.slug}</div>
         </div>
       ))}
     </div>

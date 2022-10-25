@@ -1,8 +1,9 @@
 // <-- Summary Section --> //
 .summarySection {
-  min-height: 20px !important;
-  max-height: 92px;
+  // min-height: 20px !important;
+  height: 92px;
   min-width: 234px;
+  max-width: 800px;
   border-radius: 4px;
   overflow-y: hidden;
   display: flex;
@@ -13,8 +14,8 @@
     height: 10%;
   }
   .field_summary {
-    min-width: 238px;
-    height: 100%;
+    width: 238px;
+    height: 92px;
     display: flex;
     overflow: hidden;
     border-radius: 4px;
@@ -27,14 +28,14 @@
     max-height: 92px;
     margin-top: 8px;
     background: #fff;
-    padding: 16px 10px 16px 16px;
+    padding: 5px 10px 16px 16px;
     font-size: 12px;
     line-height: 16px;
     font-weight: 700;
     color: #000;
     text-transform: uppercase;
     position: relative;
-
+    overflow: hidden;
     input {
       display: block;
       font-size: 16px;
@@ -44,19 +45,8 @@
       background: none;
       text-transform: initial;
       width: 100%;
-      border: none;
+      border: none !important;
       outline: none;
-    }
-    &:not(:last-child) {
-      &::after {
-        content: "";
-        height: 60px;
-        width: 1px;
-        background: #e5e9eb;
-        position: absolute;
-        right: 0;
-        top: 3px;
-      }
     }
   }
 }

@@ -77,20 +77,22 @@ const SummarySection = ({
         {sections?.map((field, fieldIndex) => (
           <Draggable key={field.key}>
             <div className={styles.field_summary}>
-              <FormElementGenerator
-                control={layoutForm.control}
-                field={fieldsMap[field.id] ?? field}
-                isLayout={true}
-                sectionIndex={fieldIndex}
-                column={1}
-                fieldIndex={fieldIndex}
-                mainForm={mainForm}
-              />
-              {/* <ButtonsPopover
+              <div className={styles.field_summary_item}>
+                <FormElementGenerator
+                  control={layoutForm.control}
+                  field={fieldsMap[field.id] ?? field}
+                  isLayout={true}
+                  sectionIndex={fieldIndex}
+                  column={1}
+                  fieldIndex={fieldIndex}
+                  mainForm={mainForm}
+                />
+              </div>
+              <ButtonsPopover
                 className={styles.deleteButton}
                 onEditClick={() => openSettingsBlock(field)}
                 onDeleteClick={() => removeField(fieldIndex, 1)}
-              /> */}
+              />
             </div>
           </Draggable>
         ))}

@@ -7,8 +7,10 @@ const SummarySection = ({ mainForm, control, computedSummary }) => {
     <div className={styles.summarySection}>
       {fields?.map((field, fieldIndex) => (
         <div className={styles.field_summary}>
-          <h2>{field?.label}</h2>
-          <div className={styles.field_summary_item}>{field?.slug}</div>
+          <div className={styles.field_summary_item}>
+            <span>{field?.label}</span>
+            <p>{field?.slug}</p>
+          </div>
         </div>
       ))}
     </div>

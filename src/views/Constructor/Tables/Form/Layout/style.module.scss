@@ -192,18 +192,16 @@
 
 // <-- Summary Section --> //
 .summarySection {
-  min-height: 20px;
+  height: 20px;
   max-height: 92px;
   min-width: 234px;
-  max-width: 800px;
+  max-width: 100%;
   border-radius: 4px;
-  overflow-y: hidden;
+  overflow: hidden;
   display: flex;
-  margin: 8px;
-
+  margin: 8px 0;
   ::-webkit-scrollbar {
-    max-height: 10%;
-    height: 10%;
+    display: none !important;
   }
   .field_summary {
     width: 238px;

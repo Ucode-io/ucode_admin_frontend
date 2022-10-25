@@ -125,7 +125,7 @@ const FunnelChartAttributes = ({ control, columns }) => {
              <div className="p-2">
               {
                 section.fields?.map(field => (
-                  <FormElementGenerator control={control} field={field} />
+                  <FormElementGenerator control={control} field={field} disabledPermissions />
                 ))
               }
              </div>

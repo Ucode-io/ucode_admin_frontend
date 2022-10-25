@@ -1,24 +1,24 @@
-import { BackupTable, ImportExport } from "@mui/icons-material"
-import { useRef, useState } from "react"
-import { useFieldArray, useForm } from "react-hook-form"
-import { useQuery, useQueryClient } from "react-query"
-import { useSelector } from "react-redux"
-import { useLocation, useParams } from "react-router-dom"
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
-import FiltersBlock from "../../../components/FiltersBlock"
-import PageFallback from "../../../components/PageFallback"
-import usePaperSize from "../../../hooks/usePaperSize"
-import constructorObjectService from "../../../services/constructorObjectService"
-import documentTemplateService from "../../../services/documentTemplateService"
-import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSelector"
+import { BackupTable, ImportExport } from "@mui/icons-material";
+import { useRef, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { useLocation, useParams } from "react-router-dom";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import FiltersBlock from "../../../components/FiltersBlock";
+import PageFallback from "../../../components/PageFallback";
+import usePaperSize from "../../../hooks/usePaperSize";
+import constructorObjectService from "../../../services/constructorObjectService";
+import documentTemplateService from "../../../services/documentTemplateService";
+import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSelector";
 
-import ViewTabSelector from "../components/ViewTypeSelector"
-import TableView from "../TableView"
-import DocRelationsSection from "./DocRelationsSection"
-import DocSettingsBlock from "./DocSettingsBlock"
-import RedactorBlock from "./RedactorBlock"
-import styles from "./style.module.scss"
-import TemplatesList from "./TemplatesList"
+import ViewTabSelector from "../components/ViewTypeSelector";
+import TableView from "../TableView";
+import DocRelationsSection from "./DocRelationsSection";
+import DocSettingsBlock from "./DocSettingsBlock";
+import RedactorBlock from "./RedactorBlock";
+import styles from "./style.module.scss";
+import TemplatesList from "./TemplatesList";
 
 const DocView = ({
   views,
@@ -26,62 +26,61 @@ const DocView = ({
   setSelectedTabIndex,
   fieldsMap,
 }) => {
-  const redactorRef = useRef()
-  const { state } = useLocation()
-  const { tableSlug } = useParams()
-  const queryClient = useQueryClient()
+  const redactorRef = useRef();
+  const { state } = useLocation();
+  const { tableSlug } = useParams();
+  const queryClient = useQueryClient();
 
-  const loginTableSlug = useSelector((state) => state.auth.loginTableSlug)
-  const userId = useSelector((state) => state.auth.userId)
+  const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
+  const userId = useSelector((state) => state.auth.userId);
 
-  const view = views.find((view) => view.type === "TABLE")
+  const view = views.find((view) => view.type === "TABLE");
 
-  const { control, reset } = useForm()
+  const { control, reset } = useForm();
 
   const { append } = useFieldArray({
     control: control,
     name: "multi",
-  })
+  });
 
   // =====SETTINGS BLOCK=========
-  const [pdfLoader, setPdfLoader] = useState(false)
-  const [htmlLoader, setHtmlLoader] = useState(false)
-  const [selectedSettingsTab, setSelectedSettingsTab] = useState(1)
-  const [tableViewIsActive, setTableViewIsActive] = useState(false)
-  const [relationViewIsActive, setRelationViewIsActive] = useState(false)
-  const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0)
+  const [pdfLoader, setPdfLoader] = useState(false);
+  const [htmlLoader, setHtmlLoader] = useState(false);
+  const [selectedSettingsTab, setSelectedSettingsTab] = useState(1);
+  const [tableViewIsActive, setTableViewIsActive] = useState(false);
+  const [relationViewIsActive, setRelationViewIsActive] = useState(false);
+  const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0);
 
-  const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex)
+  const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
-  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null)
+  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null);
 
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
-  )
-
+  );
   // ========FIELDS FOR RELATIONS=========
   const { data: fields = [], isLoading: fieldsLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, limit: 0, offset: 0 }],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: { with_relations: true, limit: 0, offset: 0 },
-      })
+      });
     },
     {
       select: (res) => {
-        const fields = res.data?.fields ?? []
+        const fields = res.data?.fields ?? [];
         const relationFields =
           res?.data?.relation_fields?.map((el) => ({
             ...el,
             label: `${el.label} (${el.table_label})`,
-          })) ?? []
+          })) ?? [];
 
         return [...fields, ...relationFields]?.filter(
           (el) => el.type !== "LOOKUP"
-        )
+        );
       },
     }
-  )
+  );
 
   // ========GET TEMPLATES LIST===========
 
@@ -94,60 +93,60 @@ const DocView = ({
     () => {
       const data = {
         table_slug: tableSlug,
-      }
+      };
 
-      data[`${loginTableSlug}_ids`] = [userId]
+      data[`${loginTableSlug}_ids`] = [userId];
 
       return constructorObjectService.getList("template", {
         data,
-      })
+      });
     },
     {
       select: ({ data }) => {
-        const templates = data?.response ?? []
-        const templateFields = data?.fields ?? []
+        const templates = data?.response ?? [];
+        const templateFields = data?.fields ?? [];
 
         return {
           templates,
           templateFields,
-        }
+        };
       },
     }
-  )
+  );
   // ========UPDATE TEMPLATE===========
 
   const updateTemplate = (template) => {
-    refetch()
-  }
+    refetch();
+  };
 
   // ========ADD NEW TEMPLATE=========
   const addNewTemplate = (template) => {
-    refetch()
-  }
+    refetch();
+  };
 
   // =========CHECKBOX CHANGE HANDLER=========
   const onCheckboxChange = (val, row) => {
-    if (val) setSelectedObject(row.guid)
-    else setSelectedObject(null)
-  }
+    if (val) setSelectedObject(row.guid);
+    else setSelectedObject(null);
+  };
 
   // =======EXPORT TO PDF============
 
   const exportToPDF = async () => {
-    if (!selectedTemplate) return
-    setPdfLoader(true)
+    if (!selectedTemplate) return;
+    setPdfLoader(true);
 
     try {
-      let html = redactorRef.current.getData()
+      let html = redactorRef.current.getData();
 
-      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
+      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`;
 
       fields.forEach((field) => {
         html = html.replaceAll(
           `{ ${field.label} }`,
           `<%= it.${field.path_slug ?? field.slug} %>`
-        )
-      })
+        );
+      });
 
       const res = await documentTemplateService.exportToPDF({
         data: {
@@ -156,35 +155,35 @@ const DocView = ({
           page_size: selectedPaperSize.name,
         },
         html: meta + html,
-      })
+      });
 
       queryClient.refetchQueries([
         "GET_OBJECT_FILES",
         { tableSlug, selectedObject },
-      ])
+      ]);
 
-      window.open(res.link, { target: "_blank" })
+      window.open(res.link, { target: "_blank" });
     } finally {
-      setPdfLoader(false)
+      setPdfLoader(false);
     }
-  }
+  };
 
   // ========EXPORT TO HTML===============
 
   const exportToHTML = async () => {
-    if (!selectedTemplate) return
-    setHtmlLoader(true)
+    if (!selectedTemplate) return;
+    setHtmlLoader(true);
 
     try {
-      let html = redactorRef.current.getData()
-      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
+      let html = redactorRef.current.getData();
+      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`;
 
       fields.forEach((field) => {
         html = html.replaceAll(
           `{ ${field.label} }`,
           `<%= it.${field.path_slug ?? field.slug} %>`
-        )
-      })
+        );
+      });
 
       const res = await documentTemplateService.exportToHTML({
         data: {
@@ -192,46 +191,46 @@ const DocView = ({
           object_id: selectedObject,
         },
         html: meta + html,
-      })
+      });
 
       setSelectedTemplate((prev) => ({
         ...prev,
         html: res.html,
         size: [selectedPaperSize?.name],
-      }))
+      }));
     } finally {
-      setHtmlLoader(false)
+      setHtmlLoader(false);
     }
-  }
+  };
 
   // =======PRINT============
 
   const print = async () => {
-    if (!selectedTemplate) return
-    setPdfLoader(true)
+    if (!selectedTemplate) return;
+    setPdfLoader(true);
 
     try {
-      let html = redactorRef.current.getData()
+      let html = redactorRef.current.getData();
 
-      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`
+      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`;
 
       fields.forEach((field) => {
         html = html.replaceAll(
           `{ ${field.label} }`,
           `<%= it.${field.path_slug ?? field.slug} %>`
-        )
-      })
+        );
+      });
 
-      const computedHTML = `${meta} ${html} `
+      const computedHTML = `${meta} ${html} `;
 
       // printJS({ printable: computedHTML, type: 'raw-html', style: [
       //   `@page { size: ${selectedPaperSize.width}pt ${selectedPaperSize.height}pt; margin: 5mm;} body { margin: 0 }`
       // ],
       // targetStyles: ["*"] })
     } finally {
-      setPdfLoader(false)
+      setPdfLoader(false);
     }
-  }
+  };
 
   return (
     <div>
@@ -345,7 +344,7 @@ const DocView = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default DocView
+export default DocView;

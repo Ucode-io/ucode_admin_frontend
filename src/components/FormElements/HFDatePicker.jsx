@@ -20,6 +20,7 @@ const HFDatePicker = ({
   inputProps,
   disabledHelperText,
   placeholder = "",
+  isFormEdit = false,
   defaultValue = "",
   disabled,
   ...props
@@ -34,6 +35,7 @@ const HFDatePicker = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={className}>
           <CDatePicker
+            isFormEdit={isFormEdit}
             classes={classes}
             placeholder={placeholder}
             isBlackBg={isBlackBg}

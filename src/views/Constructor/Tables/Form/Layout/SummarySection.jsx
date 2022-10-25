@@ -67,7 +67,7 @@ const SummarySection = ({
   return (
     <div className={styles.summarySection}>
       <Container
-        style={{ minHeight: 50, minWidth: "400px" }}
+        style={{ minHeight: 100, minWidth: "400px" }}
         groupName="1"
         dragClass="drag-row"
         orientation="horizontal"
@@ -86,11 +86,11 @@ const SummarySection = ({
                 fieldIndex={fieldIndex}
                 mainForm={mainForm}
               />
-              <ButtonsPopover
+              {/* <ButtonsPopover
                 className={styles.deleteButton}
                 onEditClick={() => openSettingsBlock(field)}
                 onDeleteClick={() => removeField(fieldIndex, 1)}
-              />
+              /> */}
             </div>
           </Draggable>
         ))}

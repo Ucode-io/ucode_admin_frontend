@@ -1,11 +1,11 @@
-import { Checkbox } from "@mui/material"
-import { Delete } from "@mui/icons-material"
+import { Checkbox } from "@mui/material";
+import { Delete } from "@mui/icons-material";
 
-import { CTableCell, CTableRow } from "../CTable"
-import CellElementGenerator from "../ElementGenerators/CellElementGenerator"
-import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2"
-import TableRowForm from "./TableRowForm"
-import RectangleIconButton from "../Buttons/RectangleIconButton"
+import { CTableCell, CTableRow } from "../CTable";
+import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import TableRowForm from "./TableRowForm";
+import RectangleIconButton from "../Buttons/RectangleIconButton";
 
 const TableRow = ({
   row,
@@ -57,12 +57,12 @@ const TableRow = ({
         calculateWidth={calculateWidth}
         tableSlug={tableSlug}
       />
-    )
+    );
 
   return (
     <CTableRow
       onClick={() => {
-        onRowClick(row, rowIndex)
+        onRowClick(row, rowIndex);
       }}
     >
       <CTableCell align="center" className="data_table__number_cell">
@@ -112,15 +112,12 @@ const TableRow = ({
           <CellElementGenerator field={column} row={row} />
         </CTableCell>
       ))}
-      <PermissionWrapperV2 tabelSlug={tableSlug} type={["update", "delete"]}>
-        <CTableCell style={{ padding: "0 5px" }}>
-          <RectangleIconButton color="error" onClick={() => onDeleteClick(row)}>
-            <Delete color="error" />
-          </RectangleIconButton>
-        </CTableCell>
-      </PermissionWrapperV2>
+      <PermissionWrapperV2
+        tabelSlug={tableSlug}
+        type={["update", "delete"]}
+      ></PermissionWrapperV2>
     </CTableRow>
-  )
-}
+  );
+};
 
-export default TableRow
+export default TableRow;

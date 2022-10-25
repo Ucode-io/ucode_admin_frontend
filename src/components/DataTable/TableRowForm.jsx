@@ -62,7 +62,7 @@ const TableRowForm = ({
       {columns.map((column, index) => (
         <CTableCell
           key={column.id}
-          className={`overflow-ellipsis`}
+          className={`overflow-ellipsis editable_col`}
           style={{
             padding: 0,
             position: tableSettings?.[pageName]?.find(

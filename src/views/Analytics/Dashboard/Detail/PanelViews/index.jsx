@@ -3,6 +3,7 @@ import DataTable from "../../../../../components/DataTable"
 import BarChart from "./BarChart"
 import Card from "./Card"
 import FunnelChart from "./FunnelChart"
+import LineChart from "./LineChart"
 import PieChart from "./PieChart"
 
 const PanelViews = ({ panel = {}, data = {}, isLoading }) => {
@@ -25,6 +26,9 @@ const PanelViews = ({ panel = {}, data = {}, isLoading }) => {
 
     case "FUNNEL_CHART":
       return <FunnelChart data={data?.rows} panel={panel} />
+
+    case "LINE_CHART":
+      return <LineChart data={data?.rows} panel={panel} />
 
     case "CARD":
       return <Card data={data?.rows} panel={panel} />

@@ -35,7 +35,11 @@ export const dashboardPanelTypes = [
         label: "Funnel chart",
         value: "FUNNEL_CHART"
       },
-
+      {
+        icon: 'chart-line.svg',
+        label: "Line chart",
+        value: "LINE_CHART"
+      }
     ]
   }
 ]

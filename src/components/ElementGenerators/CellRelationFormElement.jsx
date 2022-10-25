@@ -20,8 +20,10 @@ const useStyles = makeStyles((theme) => ({
 
 const CellRelationFormElement = ({
   isBlackBg,
+  isFormEdit,
   control,
   name,
+  disabled,
   placeholder,
   field,
   isLayout,
@@ -38,6 +40,8 @@ const CellRelationFormElement = ({
         defaultValue={null}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <AutoCompleteElement
+            disabled={disabled}
+            isFormEdit={isFormEdit}
             placeholder={placeholder}
             isBlackBg={isBlackBg}
             value={value}
@@ -60,9 +64,11 @@ const CellRelationFormElement = ({
 const AutoCompleteElement = ({
   field,
   value,
+  isFormEdit,
   placeholder,
   tableSlug,
   name,
+  disabled,
   classes,
   isBlackBg,
   setValue,
@@ -109,6 +115,7 @@ const AutoCompleteElement = ({
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
+        disabled={disabled}
         options={options ?? []}
         value={computedValue}
         onChange={(event, newValue) => {
@@ -129,6 +136,7 @@ const AutoCompleteElement = ({
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
         renderInput={(params) => (
           <TextField
+            className={`${isFormEdit ? "custom_textfield" : ""}`}
             placeholder={!computedValue.length ? placeholder : ""}
             {...params}
             InputProps={{

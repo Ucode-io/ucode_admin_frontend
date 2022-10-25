@@ -1,4 +1,3 @@
-
 import { Collapse } from "@mui/material"
 import { useState } from "react"
 import RowLinearLoader from "../../../components/RowLinearLoader"
@@ -11,7 +10,6 @@ import RelationsRow from "./RelationsRow"
 const RelationsSection = ({ relationsList, setRelationsList, loader }) => {
   const { typeId } = useParams()
 
-
   const [createFormVisible, setCreateFormVisible] = useState(false)
   const [createLoader, setCreateLoader] = useState(false)
 
@@ -20,7 +18,7 @@ const RelationsSection = ({ relationsList, setRelationsList, loader }) => {
       ...values,
       client_type_id: typeId,
     }
-    
+
     setCreateLoader(true)
     clientRelationService
       .create(data)

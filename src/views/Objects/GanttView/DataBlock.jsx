@@ -50,16 +50,24 @@ const DataBlock = ({ computedData, date, view, fieldsMap, tab }) => {
         <div>
           {viewFields?.map((field) => (
             <div>
-              <b>{
-              field.attributes?.icon
-                ?
-                  <IconGenerator className={styles.linkIcon} icon={field.attributes?.icon} size={13} />
-                :
+              <b>
+                {field.attributes?.icon ? (
+                  <IconGenerator
+                    className={styles.linkIcon}
+                    icon={field.attributes?.icon}
+                    size={13}
+                  />
+                ) : (
                   field.label
-            }
-                : </b>
+                )}
+                :{" "}
+              </b>
               {field.type === "LOOKUP"
-                ? getRelationFieldTableCellLabel(field, data, field.table_slug)
+                ? getRelationFieldTableCellLabel(
+                    field,
+                    data,
+                    field.slug + "_data"
+                  )
                 : data[field.slug]}
             </div>
           ))}

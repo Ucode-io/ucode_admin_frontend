@@ -1,9 +1,9 @@
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
+import { useWatch } from "react-hook-form"
 import HFAutocomplete from "../FormElements/HFAutocomplete"
 import HFCheckbox from "../FormElements/HFCheckbox"
 import HFDatePicker from "../FormElements/HFDatePicker"
 import HFDateTimePicker from "../FormElements/HFDateTimePicker"
-import HFFormulaField from "../FormElements/HFFormulaField"
 import HFIconPicker from "../FormElements/HFIconPicker"
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete"
 import HFNumberField from "../FormElements/HFNumberField"
@@ -17,31 +17,71 @@ import CellRelationFormElement from "./CellRelationFormElement"
 const CellFormElementGenerator = ({
   field,
   fields,
+  isBlackBg = false,
+  watch,
+  columns = [],
+  selected,
   row,
   control,
   setFormValue,
+  shouldWork = false,
+  index,
   ...props
 }) => {
   const computedSlug = useMemo(() => {
-    return field.slug
-  }, [field.slug])
+    return `multi.${index}.${field.slug}`
+  }, [field.slug, index])
 
-  if (field.type === "LOOKUP")
+  const changedValue = useWatch({
+    control,
+    name: computedSlug,
+  })
+
+  const isDisabled = useMemo(() => {
     return (
-      <CellRelationFormElement
-        control={control}
-        field={field}
-        setFormValue={setFormValue}
-        {...props}
-      />
+      field.attributes?.disabled ||
+      !field.attributes?.field_permission?.edit_permission
     )
+  }, [field])
 
-    
+  useEffect(() => {
+    if (!row?.[field.slug]) {
+      setFormValue(computedSlug, row?.[field.table_slug]?.guid || "")
+    }
+  }, [field, row, setFormValue, computedSlug])
+
+  useEffect(() => {
+    if (columns.length && changedValue) {
+      columns.forEach(
+        (i, index) =>
+          selected.includes(i.guid) &&
+          setFormValue(`multi.${index}.${field.slug}`, changedValue)
+      )
+    }
+  }, [changedValue, setFormValue, columns, field, selected])
 
   switch (field.type) {
+    case "LOOKUP":
+      return (
+        <CellRelationFormElement
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          placeholder={field.attributes?.placeholder}
+          setFormValue={setFormValue}
+        />
+      )
+
     case "SINGLE_LINE":
       return (
         <HFTextField
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
@@ -54,6 +94,9 @@ const CellFormElementGenerator = ({
     case "PHONE":
       return (
         <HFTextFieldWithMask
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
@@ -67,6 +110,8 @@ const CellFormElementGenerator = ({
     case "PICK_LIST":
       return (
         <HFAutocomplete
+          disabled={isDisabled}
+          isFormEdit
           control={control}
           name={computedSlug}
           width="100%"
@@ -77,52 +122,28 @@ const CellFormElementGenerator = ({
         />
       )
 
-    case "FORMULA_FRONTEND":
-      return (
-        <HFFormulaField
-          setFormValue={setFormValue}
-          control={control}
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
-          name={computedSlug}
-          fieldsList={fields}
-          field={field}
-        />
-      )
-
     case "MULTISELECT":
       return (
         <HFMultipleAutocomplete
+          disabled={isDisabled}
+          isFormEdit
           control={control}
           name={computedSlug}
           width="100%"
           required={field.required}
           field={field}
           placeholder={field.attributes?.placeholder}
-          // defaultValue={defaultValue}
+          isBlackBg={isBlackBg}
           {...props}
         />
       )
 
-    // case "MULTI_LINE":
-    //   return (
-    //     <FRow label={field.label} required={field.required}>
-    //       <HFTextEditor
-    //         control={control}
-    //         name={computedSlug}
-    //         fullWidth
-    //         multiline
-    //         rows={4}
-    //         required={field.required}
-    //         placeholder={field.attributes?.placeholder}
-    //         {...props}
-    //       />
-    //     </FRow>
-    //   )
-
     case "DATE":
       return (
         <HFDatePicker
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
@@ -136,6 +157,10 @@ const CellFormElementGenerator = ({
     case "DATE_TIME":
       return (
         <HFDateTimePicker
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          showCopyBtn={false}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -147,6 +172,9 @@ const CellFormElementGenerator = ({
     case "TIME":
       return (
         <HFTimePicker
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -158,11 +186,14 @@ const CellFormElementGenerator = ({
     case "NUMBER":
       return (
         <HFNumberField
+          disabled={isDisabled}
+          isFormEdit
           control={control}
           name={computedSlug}
           fullWidth
           required={field.required}
           placeholder={field.attributes?.placeholder}
+          isBlackBg={isBlackBg}
           {...props}
         />
       )
@@ -170,6 +201,9 @@ const CellFormElementGenerator = ({
     case "CHECKBOX":
       return (
         <HFCheckbox
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -177,24 +211,12 @@ const CellFormElementGenerator = ({
         />
       )
 
-    // case "MULTISELECT":
-    //   return (
-    //     <FRow label={field.label} required={field.required}>
-    //       <HFMultipleSelect
-    //         control={control}
-    //         name={computedSlug}
-    //         width="100%"
-    //         options={computedOptions}
-    //         required={field.required}
-    //         placeholder={field.attributes?.placeholder}
-    //         {...props}
-    //       />
-    //     </FRow>
-    //   )
-
     case "SWITCH":
       return (
         <HFSwitch
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -205,6 +227,9 @@ const CellFormElementGenerator = ({
     case "EMAIL":
       return (
         <HFTextField
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           rules={{
@@ -235,6 +260,7 @@ const CellFormElementGenerator = ({
     case "ICON":
       return (
         <HFIconPicker
+          isFormEdit
           control={control}
           name={computedSlug}
           required={field.required}
@@ -244,18 +270,9 @@ const CellFormElementGenerator = ({
 
     default:
       return (
-        <CellElementGenerator field={field} row={row} />
-        // <HFTextField
-        //   control={control}
-        //   name={field.slug}
-        //   fullWidth
-        //   required={field.required}
-        //   placeholder={field.attributes?.placeholder}
-        //   InputProps={{
-        //     readOnly: field.type === "INCREMENT_ID",
-        //   }}
-        //   {...props}
-        // />
+        <div style={{ padding: "0 4px" }}>
+          <CellElementGenerator field={field} row={row} />
+        </div>
       )
   }
 }

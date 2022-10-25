@@ -9,8 +9,16 @@ import { locale } from "./Plugins/locale"
 import "react-multi-date-picker/styles/layouts/mobile.css"
 import CopyToClipboard from "../CopyToClipboard"
 
-const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
-  console.log("value -", value)
+const CDateTimePicker = ({
+  value,
+  placeholder,
+  isBlackBg,
+  classes,
+  onChange,
+  isFormEdit,
+  showCopyBtn = true,
+  disabled = false,
+}) => {
   return (
     <div className="main_wrapper">
       <DatePicker
@@ -18,23 +26,31 @@ const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
           return (
             <TextField
               value={value}
-              onClick={openCalendar}
+              onClick={() => (disabled ? null : openCalendar())}
               onChange={handleChange}
               size="small"
+              placeholder={placeholder.split("#")[0]}
               sx={{
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderRight: 0,
                 },
               }}
               fullWidth
+              className={`${isFormEdit ? "custom_textfield" : ""}`}
               autoComplete="off"
               InputProps={{
                 readOnly: disabled,
+                classes: {
+                  input: isBlackBg ? classes.input : "",
+                },
                 style: disabled
                   ? {
                       background: "#c0c0c039",
                     }
-                  : {},
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                    },
               }}
             />
           )
@@ -53,10 +69,12 @@ const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
           return (
             <TextField
               value={value}
-              onClick={openCalendar}
+              onClick={() => (disabled ? null : openCalendar())}
               onChange={handleChange}
               size="small"
               autoComplete="off"
+              placeholder={placeholder.split("#")[1]}
+              className={`${isFormEdit ? "custom_textfield" : ""}`}
               style={{ border: "none" }}
               fullWidth
               sx={{
@@ -66,11 +84,17 @@ const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
               }}
               InputProps={{
                 readOnly: disabled,
+                classes: {
+                  input: isBlackBg ? classes.input : "",
+                },
                 style: disabled
                   ? {
                       background: "#c0c0c039",
                     }
-                  : {},
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                    },
                 endAdornment: (
                   <InputAdornment position="end">
                     <DateRange />
@@ -86,9 +110,11 @@ const CDateTimePickerLegacy = ({ value, onChange, disabled = false }) => {
         value={new Date(value) || ""}
         onChange={(val) => onChange(val ? new Date(val) : "")}
       />
-      <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />
+      {showCopyBtn && (
+        <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />
+      )}
     </div>
   )
 }
 
-export default CDateTimePickerLegacy
+export default CDateTimePicker

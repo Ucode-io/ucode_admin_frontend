@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useQuery } from "react-query"
 
@@ -12,7 +12,20 @@ import { useSelector } from "react-redux"
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
 
-const TableView = ({ tab, view, fieldsMap, isDocView, selectedObjects, setSelectedObjects, ...props }) => {
+const TableView = ({
+  tab,
+  view,
+  shouldGet,
+  reset,
+  fieldsMap,
+  isDocView,
+  formVisible,
+  setFormVisible,
+  selectedObjects,
+  setDataLength,
+  setSelectedObjects,
+  ...props
+}) => {
   const { navigateToForm } = useTabRouter()
   const { tableSlug } = useParams()
   const { new_list } = useSelector((state) => state.filter)
@@ -39,6 +52,7 @@ const TableView = ({ tab, view, fieldsMap, isDocView, selectedObjects, setSelect
         currentPage,
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
+        shouldGet,
       },
     ],
     queryFn: () => {
@@ -52,6 +66,7 @@ const TableView = ({ tab, view, fieldsMap, isDocView, selectedObjects, setSelect
       })
     },
     select: (res) => {
+      // setDataLength(res.data?.response.length ?? 0)
       return {
         tableData: res.data?.response ?? [],
         pageCount: isNaN(res.data?.count)
@@ -60,14 +75,23 @@ const TableView = ({ tab, view, fieldsMap, isDocView, selectedObjects, setSelect
       }
     },
   })
-  
-  const { data: {custom_events: customEvents = []} = {} } = useCustomActionsQuery({
-    tableSlug,
-  })
+
+  useEffect(() => {
+    if (tableData?.length) {
+      reset({
+        multi: tableData.map((i) => i),
+      })
+    }
+  }, [tableData, reset])
+
+  const { data: { custom_events: customEvents = [] } = {} } =
+    useCustomActionsQuery({
+      tableSlug,
+    })
 
   const onCheckboxChange = (val, row) => {
-    if (val) setSelectedObjects(prev => [...prev, row.guid])
-    else setSelectedObjects(prev => prev.filter(id => id !== row.guid))
+    if (val) setSelectedObjects((prev) => [...prev, row.guid])
+    else setSelectedObjects((prev) => prev.filter((id) => id !== row.guid))
   }
 
   const deleteHandler = async (row) => {
@@ -95,6 +119,9 @@ const TableView = ({ tab, view, fieldsMap, isDocView, selectedObjects, setSelect
         </div>
       )}
       <ObjectDataTable
+        formVisible={formVisible}
+        setFormVisible={setFormVisible}
+        isRelationTable={false}
         removableHeight={isDocView ? 150 : 215}
         currentPage={currentPage}
         pagesCount={pageCount}
@@ -119,7 +146,6 @@ const TableView = ({ tab, view, fieldsMap, isDocView, selectedObjects, setSelect
           width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "100%",
         }}
         isResizeble={true}
-
         {...props}
       />
     </div>

@@ -1,4 +1,5 @@
 import { Autocomplete, TextField } from "@mui/material"
+import { get } from "@ngard/tiny-get"
 import { useEffect, useState } from "react"
 import { useMemo } from "react"
 import { Controller, useWatch } from "react-hook-form"
@@ -20,6 +21,7 @@ const RelationFormElement = ({
   sectionIndex,
   fieldIndex,
   column,
+  name = "",
   mainForm,
   disabledHelperText,
   setFormValue,
@@ -38,7 +40,7 @@ const RelationFormElement = ({
       <FRow label={field.label} required={field.required}>
         <Controller
           control={control}
-          name={field.slug ?? `${tableSlug}_id`}
+          name={(name || field.slug) ?? `${tableSlug}_id`}
           defaultValue={defaultValue}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <AutoCompleteElement
@@ -172,7 +174,7 @@ const AutoCompleteElement = ({
     if (!field?.attributes?.autofill) return
 
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
-      setFormValue(field_to, val?.[field_from])
+      setFormValue(field_to, get(val, field_from))
     })
   }
 

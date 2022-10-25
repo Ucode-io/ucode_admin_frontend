@@ -1,15 +1,15 @@
-import { Close } from "@mui/icons-material"
-import { Autocomplete, TextField } from "@mui/material"
-import { useMemo } from "react"
-import { Controller, useWatch } from "react-hook-form"
-import { useQuery } from "react-query"
-import useTabRouter from "../../hooks/useTabRouter"
-import constructorObjectService from "../../services/constructorObjectService"
-import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel"
-import FEditableRow from "../FormElements/FEditableRow"
-import FRow from "../FormElements/FRow"
-import IconGenerator from "../IconPicker/IconGenerator"
-import styles from "./style.module.scss"
+import { Close } from "@mui/icons-material";
+import { Autocomplete, TextField } from "@mui/material";
+import { useMemo } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useQuery } from "react-query";
+import useTabRouter from "../../hooks/useTabRouter";
+import constructorObjectService from "../../services/constructorObjectService";
+import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
+import FEditableRow from "../FormElements/FEditableRow";
+import FRow from "../FormElements/FRow";
+import IconGenerator from "../IconPicker/IconGenerator";
+import styles from "./style.module.scss";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -17,6 +17,7 @@ const ManyToManyRelationFormElement = ({
   isLayout,
   sectionIndex,
   fieldIndex,
+  name = "",
   column,
   mainForm,
   disabledHelperText,
@@ -25,15 +26,15 @@ const ManyToManyRelationFormElement = ({
   ...props
 }) => {
   const tableSlug = useMemo(() => {
-    return field.id?.split("#")?.[0] ?? ""
-  }, [field.id])
+    return field.id?.split("#")?.[0] ?? "";
+  }, [field.id]);
 
   if (!isLayout)
     return (
       <FRow label={field.label} required={field.required}>
         <Controller
           control={control}
-          name={`${tableSlug}_ids`}
+          name={name || `${tableSlug}_ids`}
           defaultValue={null}
           {...props}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
@@ -50,7 +51,7 @@ const ManyToManyRelationFormElement = ({
           )}
         />
       </FRow>
-    )
+    );
 
   return (
     <Controller
@@ -83,8 +84,8 @@ const ManyToManyRelationFormElement = ({
         </FEditableRow>
       )}
     ></Controller>
-  )
-}
+  );
+};
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
@@ -98,76 +99,76 @@ const AutoCompleteElement = ({
   disabled,
   disabledHelperText,
 }) => {
-  const { navigateToForm } = useTabRouter()
+  const { navigateToForm } = useTabRouter();
 
-  const autoFilters = field?.attributes?.auto_filters
+  const autoFilters = field?.attributes?.auto_filters;
 
   const autoFiltersFieldFroms = useMemo(() => {
-    return autoFilters?.map((el) => el.field_from) ?? []
-  }, [autoFilters])
+    return autoFilters?.map((el) => el.field_from) ?? [];
+  }, [autoFilters]);
 
   const filtersHandler = useWatch({
     control,
     name: autoFiltersFieldFroms,
-  })
+  });
 
   const autoFiltersValue = useMemo(() => {
-    const result = {}
+    const result = {};
     filtersHandler?.forEach((value, index) => {
-      const key = autoFilters?.[index]?.field_to
-      if (key) result[key] = value
-    })
-    return result
-  }, [autoFilters, filtersHandler])
+      const key = autoFilters?.[index]?.field_to;
+      if (key) result[key] = value;
+    });
+    return result;
+  }, [autoFilters, filtersHandler]);
 
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, autoFiltersValue],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: autoFiltersValue,
-      })
+      });
     },
     {
       select: (res) => {
-        return res?.data?.response ?? []
+        return res?.data?.response ?? [];
       },
     }
-  )
+  );
 
   const computedValue = useMemo(() => {
-    if (!value) return []
+    if (!value) return [];
 
     return value
       ?.map((id) => {
-        const option = options?.find((el) => el?.guid === id)
+        const option = options?.find((el) => el?.guid === id);
 
-        if (!option) return null
+        if (!option) return null;
         return {
           ...option,
           // label: getRelationFieldLabel(field, option)
-        }
+        };
       })
-      ?.filter((el) => el)
-  }, [options, value])
+      ?.filter((el) => el);
+  }, [options, value]);
 
   const getOptionLabel = (option) => {
     // return ''
-    return getRelationFieldLabel(field, option)
-  }
+    return getRelationFieldLabel(field, option);
+  };
 
   const changeHandler = (value) => {
-    if (!value) setValue(null)
+    if (!value) setValue(null);
 
-    const val = value?.map((el) => el.guid)
+    const val = value?.map((el) => el.guid);
 
-    setValue(val ?? null)
+    setValue(val ?? null);
 
     // if (!field?.attributes?.autofill) return
 
     // field.attributes.autofill.forEach(({ field_from, field_to }) => {
     //   setFormValue(field_to, val?.[field_from])
     // })
-  }
+  };
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -183,7 +184,7 @@ const AutoCompleteElement = ({
         options={options ?? []}
         value={computedValue}
         onChange={(event, newValue) => {
-          changeHandler(newValue)
+          changeHandler(newValue);
         }}
         noOptionsText={
           <span
@@ -217,9 +218,9 @@ const AutoCompleteElement = ({
                       style={{ marginLeft: "10px", cursor: "pointer" }}
                       size={15}
                       onClick={(e) => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                        navigateToForm(tableSlug, "EDIT", values[index])
+                        e.stopPropagation();
+                        e.preventDefault();
+                        navigateToForm(tableSlug, "EDIT", values[index]);
                       }}
                     />
 
@@ -232,11 +233,11 @@ const AutoCompleteElement = ({
                 ))}
               </div>
             </>
-          )
+          );
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default ManyToManyRelationFormElement
+export default ManyToManyRelationFormElement;

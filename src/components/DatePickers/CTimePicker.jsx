@@ -5,18 +5,16 @@ import "./style2.scss"
 import { InputAdornment, TextField } from "@mui/material"
 import { DateRange } from "@mui/icons-material"
 
-const CTimePicker = ({ value, onChange }) => {
+const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit }) => {
   const getValue = () => {
-
-    if(!value) return ""
+    if (!value) return ""
 
     const result = new Date()
 
-    result.setHours(value.split(':')?.[0])
-    result.setMinutes(value.split(':')?.[1])
+    result.setHours(value.split(":")?.[0])
+    result.setMinutes(value.split(":")?.[1])
 
     return result
-    // value ?  : new Date()
   }
 
   return (
@@ -31,32 +29,30 @@ const CTimePicker = ({ value, onChange }) => {
             fullWidth
             autoComplete="off"
             InputProps={{
+              classes: {
+                input: isBlackBg ? classes.input : "",
+              },
+              style: {
+                background: isBlackBg ? "#2A2D34" : "",
+                color: isBlackBg ? "#fff" : "",
+              },
               endAdornment: (
                 <InputAdornment position="end">
                   <DateRange />
                 </InputAdornment>
               ),
             }}
+            className={`${isFormEdit ? "custom_textfield" : ""}`}
           />
         )
       }}
-      // renderButton={<CustomNavButton />}
       disableDayPicker
-      // animations={[opacity()]}
-      plugins={[ <TimePickerPlugin disablePreview />]}
-      // weekStartDayIndex={1}
-      // portal
-      // locale={locale}
+      plugins={[<TimePickerPlugin disablePreview />]}
       format="HH:mm"
       value={getValue()}
-      // currentDate={new DateObject()}
-      // value={value}
-      // mobileLabels={{
-      //   OK: "sdfsdfsdfsdfsdfsdfsdfsd",
-      // }}
       onChange={(date) => {
         console.log("DATE ===>", date)
-        onChange(date?.isValid ? date.format('HH:mm') : "");
+        onChange(date?.isValid ? date.format("HH:mm") : "")
       }}
     />
   )

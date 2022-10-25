@@ -64,20 +64,11 @@ export default function useTabRouter() {
     dispatch(tabRouterActions.removeTab(link))
   }
 
-  const addNewTab = (appId, tableSlug, id, data) => {
-    let link = ""
-    if (id) link = `/main/${appId}/object/${tableSlug}/${id}`
-    else link = `/main/${appId}/object/${tableSlug}/create/${generateGUID()}`
-
-    const newTab = {
-      id: generateID(),
-      link,
-      tableSlug,
-      row: data
-    }
-
-    dispatch(tabRouterActions.addTab(newTab))
+  const deleteTab = (link) => {
+    const index = tabs.findIndex((tab) => tab.link === link)
+    drop(link)
+    dispatch(tabRouterActions.removeTab(link))
   }
 
-  return { navigateToForm, removeTab, tabs, addNewTab }
+  return { navigateToForm, removeTab, deleteTab }
 }

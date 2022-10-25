@@ -1,52 +1,74 @@
-import { Add, FileOpen } from "@mui/icons-material"
-import { Menu, Tooltip } from "@mui/material"
-import { useState } from "react"
-import { useQuery } from "react-query"
-import { useNavigate, useParams } from "react-router-dom"
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
-import constructorObjectService from "../../../../services/constructorObjectService"
-import { generateGUID } from "../../../../utils/generateID"
-import styles from "./style.module.scss"
+import { Add, FileOpen } from "@mui/icons-material";
+import { Menu, Tooltip } from "@mui/material";
+import { useMemo, useState, useEffect } from "react";
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import { generateGUID } from "../../../../utils/generateID";
+import styles from "./style.module.scss";
 
 const DocumentGeneratorButton = () => {
-  const navigate = useNavigate()
-  const { appId, tableSlug, id: objectId } = useParams()
-  const [anchorEl, setAnchorEl] = useState(null)
+  const navigate = useNavigate();
+  const { appId, tableSlug, id: objectId } = useParams();
+
+  const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
+  const userId = useSelector((state) => state.auth.userId);
+
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const openMenu = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const closeMenu = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
-  const { data: templates = [] } = useQuery(
+  const {
+    data: { templates, templateFields } = { templates: [], templateFields: [] },
+  } = useQuery(
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
+      const data = {
+        table_slug: tableSlug,
+      };
+
+      data[`${loginTableSlug}_ids`] = [userId];
+
       return constructorObjectService.getList("template", {
-        data: { table_slug: tableSlug },
-      })
+        data,
+      });
     },
     {
-      select: (res) => res.data?.response ?? [],
+      select: ({ data }) => {
+        const templates = data?.response ?? [];
+        const templateFields = data?.fields ?? [];
+
+        return {
+          templates,
+          templateFields,
+        };
+      },
     }
-  )
+  );
 
   const navigateToDocumentEditPage = (template) => {
     const state = {
       toDocsTab: true,
       template: template,
-      objectId: objectId,
-    }
+      objectId,
+    };
 
-    closeMenu()
-    navigate(`/main/${appId}/object/${tableSlug}`, { state })
-  }
+    closeMenu();
+    navigate(`/main/${appId}/object/${tableSlug}`, { state });
+  };
 
   const navigateToDocumentCreatePage = () => {
     const state = {
       toDocsTab: true,
+      objectId,
       template: {
         id: generateGUID(),
         title: "NEW",
@@ -54,10 +76,10 @@ const DocumentGeneratorButton = () => {
         table_slug: tableSlug,
         html: "",
       },
-    }
-    closeMenu()
-    navigate(`/main/${appId}/object/${tableSlug}`, { state })
-  }
+    };
+    closeMenu();
+    navigate(`/main/${appId}/object/${tableSlug}`, { state });
+  };
 
   return (
     <>
@@ -74,7 +96,7 @@ const DocumentGeneratorButton = () => {
         classes={{ list: styles.menu, paper: styles.paper }}
       >
         <div className={styles.scrollBlocksss}>
-          {templates.map((template, index) => (
+          {templates?.map((template, index) => (
             <div
               key={template.id}
               className={`${styles.menuItem}`}
@@ -93,7 +115,7 @@ const DocumentGeneratorButton = () => {
         </div>
       </Menu>
     </>
-  )
-}
+  );
+};
 
-export default DocumentGeneratorButton
+export default DocumentGeneratorButton;

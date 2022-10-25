@@ -9,7 +9,7 @@
     min-width: 180px;
     background-color: #fff;
     border: 1px solid #e5e5e5;
-    box-shadow: inset 0px -1px 0px #E5E9EB;
+    box-shadow: inset 0px -1px 0px #e5e9eb;
     border-radius: 6px;
     display: flex;
     flex-direction: column;
@@ -32,8 +32,6 @@
   }
 }
 
-
-
 .CTableRow {
   .data_table__number_cell {
     position: relative;
@@ -54,11 +52,14 @@
       }
     }
   }
-  
+
   &:hover {
     .data_table__row_checkbox {
       display: flex;
     }
   }
-
+}
+.multipleRow {
+  background-color: #2a2d34;
+  transition: all 1s ease;
 }

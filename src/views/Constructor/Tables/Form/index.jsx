@@ -17,6 +17,7 @@ import constructorRelationService from "../../../../services/constructorRelation
 import {
   computeSections,
   computeSectionsOnSubmit,
+  computeSummarySection,
   computeViewRelations,
   computeViewRelationsOnSubmit,
 } from "../utils"
@@ -76,20 +77,30 @@ const ConstructorTablesFormPage = () => {
     })
 
     const getActions = constructorCustomEventService.getList({
-      table_slug: slug
+      table_slug: slug,
     })
 
     try {
-      const [tableData, { sections = [] }, { relations: viewRelations = [] }, { custom_events: actions = [] }] =
-        await Promise.all([getTableData, getSectionsData, getViewRelations, getActions])
+      const [
+        tableData,
+        { sections = [] },
+        { relations: viewRelations = [] },
+        { custom_events: actions = [] },
+      ] = await Promise.all([
+        getTableData,
+        getSectionsData,
+        getViewRelations,
+        getActions,
+      ])
 
       const data = {
         ...mainForm.getValues(),
         ...tableData,
         fields: [],
         sections: computeSections(sections),
+        summary_section: computeSummarySection(sections),
         view_relations: computeViewRelations(viewRelations),
-        actions
+        actions,
       }
 
       mainForm.reset(data)
@@ -194,12 +205,15 @@ const ConstructorTablesFormPage = () => {
   }
 
   const onSubmit = (data) => {
+    console.log("DATA ===>", data)
     const computedData = {
       ...data,
-      sections: computeSectionsOnSubmit(data.sections),
+      sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
     }
 
+    console.log("COMPUTED DATA ==>", computedData)
+    // return;
     if (id) updateConstructorTable(computedData)
     else createConstructorTable(computedData)
   }
@@ -243,15 +257,19 @@ const ConstructorTablesFormPage = () => {
             <Fields mainForm={mainForm} />
           </TabPanel>
 
-          {id && <TabPanel>
-            <Relations
-              mainForm={mainForm}
-              getRelationFields={getRelationFields}
-            />
-          </TabPanel>}
-          {id && <TabPanel>
-            <Actions mainForm={mainForm} />
-          </TabPanel>}
+          {id && (
+            <TabPanel>
+              <Relations
+                mainForm={mainForm}
+                getRelationFields={getRelationFields}
+              />
+            </TabPanel>
+          )}
+          {id && (
+            <TabPanel>
+              <Actions mainForm={mainForm} />
+            </TabPanel>
+          )}
           {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
         </Tabs>
       </div>

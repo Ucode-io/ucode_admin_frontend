@@ -122,6 +122,11 @@ export const fieldTypesOptions = [
         label: "Photo",
         value: "PHOTO"
       },
+      {
+        icon: "video.svg",
+        label: "Video",
+        value: "VIDEO"
+      },
     ]
   },
   {
@@ -171,6 +176,11 @@ export const fieldTypesOptions = [
         icon: 'barcode.svg',
         label: 'Barcode',
         value: 'BARCODE'
+      },
+      {
+        icon: 'fill.svg',
+        label: 'Autofill',
+        value: 'AUTOFILL'
       }
     ]
   },

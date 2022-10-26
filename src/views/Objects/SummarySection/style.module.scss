@@ -1,20 +1,20 @@
 // <-- Summary Section --> //
 .summarySection {
   min-height: 20px;
-  max-height: 20px;
-  min-width: 234px;
-  max-width: 1200px;
+  width: 1200px;
   border-radius: 4px;
-  overflow: hidden;
+  overflow-x: scroll;
+  overflow-y: hidden;
   display: flex;
   margin: 8px 0;
-  ::-webkit-scrollbar {
-    display: none !important;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 
   .field_summary {
-    width: 238px;
-    height: 92px;
+    min-width: 238px;
+    max-height: 92px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,7 +36,7 @@
   .field_summary_item {
     width: 238px;
     // min-height: 20px !important;
-    height: 60px;
+    min-height: 60px;
     margin-top: 8px;
     background: #fff;
     padding: 5px 10px 10px 10px;

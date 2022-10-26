@@ -6,9 +6,10 @@ import { CircularProgress } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "./Gallery/style.scss";
 import fileService from "../../services/fileService";
+import DownloadIcon from "@mui/icons-material/Download";
 
-const ImageUpload = ({ value, onChange, className = "", disabled }) => {
-  const inputRef = useRef(null);
+const FileUpload = ({ value, onChange, className = "", disabled }) => {
+  const inputRef = useRef("");
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -39,7 +40,7 @@ const ImageUpload = ({ value, onChange, className = "", disabled }) => {
     e.stopPropagation();
     deleteImage();
   };
-
+  console.log("value", value);
   return (
     <div className={`Gallery ${className}`}>
       {value && (
@@ -51,7 +52,17 @@ const ImageUpload = ({ value, onChange, className = "", disabled }) => {
           >
             <CancelIcon />
           </button>
-          <img src={value} className="img" alt="" />
+          <a
+            href={value}
+            className=""
+            download
+            target="_blank"
+            rel="noreferrer"
+          >
+            <DownloadIcon
+              style={{ width: "25px", height: "25px", fontSize: "30px" }}
+            />
+          </a>
         </div>
       )}
 
@@ -81,17 +92,9 @@ const ImageUpload = ({ value, onChange, className = "", disabled }) => {
         </div>
       )}
 
-      {previewVisible && (
-        <ImageViewer
-          src={[value]}
-          currentIndex={0}
-          disableScroll={true}
-          closeOnClickOutside={true}
-          onClose={() => setPreviewVisible(false)}
-        />
-      )}
+      {previewVisible && ""}
     </div>
   );
 };
 
-export default ImageUpload;
+export default FileUpload;

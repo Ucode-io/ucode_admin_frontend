@@ -30,7 +30,7 @@ const ObjectsPage = () => {
     ["GET_VIEWS_AND_FIELDS", tableSlug],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 0, offset: 0 },
+        data: { limit: 0, offset: 0, app_id: appId },
       });
     },
     {

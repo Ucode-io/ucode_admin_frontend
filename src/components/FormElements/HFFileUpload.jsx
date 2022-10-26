@@ -1,7 +1,6 @@
 import { FormHelperText } from "@mui/material";
 import { Controller } from "react-hook-form";
-import ImageUpload from "../Upload/ImageUpload";
-import VideoUpload from "../Upload/VideoUpload";
+import FileUpload from "../Upload/FileUpload.jsx";
 
 const HFFileUpload = ({
   control,
@@ -23,7 +22,7 @@ const HFFileUpload = ({
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
-          <VideoUpload
+          <FileUpload
             name={name}
             value={value}
             onChange={onChange}

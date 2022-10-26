@@ -28,7 +28,7 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true },
+        data: { limit: 10, offset: 0, with_relations: true, app_id: appId },
       });
     },
     {

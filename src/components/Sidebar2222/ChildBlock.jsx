@@ -36,27 +36,25 @@ const ChildBlock = ({ element, isVisible }) => {
       }}
     >
       <div className="child-block">
-        {element.children
-          .filter((item) => item?.id !== "matrix_v2")
-          .map((childElement) => (
-            // <PermissionWrapper permission={childElement.permission}>
-            <NavLink
-              key={childElement.id}
-              to={childElement.path}
-              className="nav-element"
-            >
-              <div className="child-element-dot">
-                <FiberManualRecordIcon
-                  className="icon"
-                  fontSize="1"
-                  style={{ fontSize: "7px", margin: 0 }}
-                />
-              </div>
+        {element.children.map((childElement) => (
+          // <PermissionWrapper permission={childElement.permission}>
+          <NavLink
+            key={childElement.id}
+            to={childElement.path}
+            className="nav-element"
+          >
+            <div className="child-element-dot">
+              <FiberManualRecordIcon
+                className="icon"
+                fontSize="1"
+                style={{ fontSize: "7px", margin: 0 }}
+              />
+            </div>
 
-              <div className="label"> {childElement.title}</div>
-            </NavLink>
-            // </PermissionWrapper>
-          ))}
+            <div className="label"> {childElement.title}</div>
+          </NavLink>
+          // </PermissionWrapper>
+        ))}
       </div>
     </Collapse>
   );

@@ -15,7 +15,7 @@ import ViewTabSelector from "./components/ViewTypeSelector";
 import DocView from "./DocView";
 
 const ObjectsPage = () => {
-  const { tableSlug } = useParams();
+  const { tableSlug, appId } = useParams();
   const { state } = useLocation();
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);

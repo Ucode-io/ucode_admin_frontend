@@ -11,7 +11,6 @@ const SummarySection = ({ control, computedSummary }) => {
         <div className={styles.field_summary}>
           <div className={styles.field_summary_item}>
             <span>{field?.label}</span>
-            {/* <p>{field?.slug}</p> */}
             <p>
               <ValueGenerator field={field} control={control} />
             </p>

@@ -199,7 +199,7 @@
   min-height: 20px;
   // max-height: 140px;
   min-width: 234px;
-  max-width: 100%;
+  // max-width: 100%;
   border-radius: 4px;
   overflow-y: hidden;
   overflow-x: scroll;
@@ -212,7 +212,7 @@
 
   .field_summary {
     width: 238px;
-    height: 100%;
+    height: 100% !important;
     display: flex;
     overflow: hidden;
     border-radius: 4px;
@@ -221,7 +221,7 @@
   }
   .field_summary_item {
     width: 238px;
-    min-height: 20px !important;
+    height: 135px !important;
     // max-height: 140px;
     margin-top: 8px;
     background: #fff;

@@ -324,6 +324,19 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
+    case "FILE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFVideoUpload
+            control={control}
+            name={computedSlug}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
 
     case "BARCODE":
       return (

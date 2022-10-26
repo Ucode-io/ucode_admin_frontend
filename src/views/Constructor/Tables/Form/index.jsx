@@ -17,6 +17,7 @@ import constructorRelationService from "../../../../services/constructorRelation
 import {
   computeSections,
   computeSectionsOnSubmit,
+  computeSummarySection,
   computeViewRelations,
   computeViewRelationsOnSubmit,
 } from "../utils"
@@ -30,11 +31,14 @@ import constructorViewRelationService from "../../../../services/constructorView
 import { listToMap } from "../../../../utils/listToMap"
 import Actions from "./Actions"
 import { generateGUID } from "../../../../utils/generateID"
+import constructorCustomEventService from "../../../../services/constructorCustomEventService"
+import { useTranslation } from "react-i18next"
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { id, slug, appId } = useParams()
+  const { t } = useTranslation()
 
   const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
@@ -48,7 +52,7 @@ const ConstructorTablesFormPage = () => {
         {
           column: "SINGLE",
           fields: [],
-          label: "Детали",
+          label: t("details"),
           id: generateGUID(),
           icon: "circle-info.svg",
         },
@@ -70,18 +74,35 @@ const ConstructorTablesFormPage = () => {
       table_slug: slug,
     })
 
-    const getSectionsData = constructorSectionService.getList({ table_slug: slug })
+    const getSectionsData = constructorSectionService.getList({
+      table_slug: slug,
+    })
+
+    const getActions = constructorCustomEventService.getList({
+      table_slug: slug,
+    })
 
     try {
-      const [tableData, { sections = [] }, { relations: viewRelations = [] }] =
-        await Promise.all([getTableData, getSectionsData, getViewRelations])
+      const [
+        tableData,
+        { sections = [] },
+        { relations: viewRelations = [] },
+        { custom_events: actions = [] },
+      ] = await Promise.all([
+        getTableData,
+        getSectionsData,
+        getViewRelations,
+        getActions,
+      ])
 
       const data = {
         ...mainForm.getValues(),
         ...tableData,
         fields: [],
         sections: computeSections(sections),
+        summary_section: computeSummarySection(sections),
         view_relations: computeViewRelations(viewRelations),
+        actions,
       }
 
       mainForm.reset(data)
@@ -186,12 +207,15 @@ const ConstructorTablesFormPage = () => {
   }
 
   const onSubmit = (data) => {
+    console.log("DATA ===>", data)
     const computedData = {
       ...data,
-      sections: computeSectionsOnSubmit(data.sections),
+      sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
     }
 
+    console.log("COMPUTED DATA ==>", computedData)
+    // return;
     if (id) updateConstructorTable(computedData)
     else createConstructorTable(computedData)
   }
@@ -215,11 +239,11 @@ const ConstructorTablesFormPage = () => {
             sticky
           >
             <TabList>
-              <Tab>Details</Tab>
-              <Tab>Layouts</Tab>
-              <Tab>Fields</Tab>
-              <Tab>Relations</Tab>
-              <Tab>Actions</Tab>
+              <Tab>{t("details")}</Tab>
+              <Tab>{t("layouts")}</Tab>
+              <Tab>{t("fields")}</Tab>
+              {id && <Tab>{t("relations")}</Tab>}
+              {id && <Tab>{t("actions")}</Tab>}
             </TabList>
           </HeaderSettings>
 
@@ -235,29 +259,34 @@ const ConstructorTablesFormPage = () => {
             <Fields mainForm={mainForm} />
           </TabPanel>
 
-          <TabPanel>
-            <Relations
-              mainForm={mainForm}
-              getRelationFields={getRelationFields}
-            />
-          </TabPanel>
-          <TabPanel>
-            <Actions eventLabel={mainForm.getValues("label")} />
-          </TabPanel>
+          {id && (
+            <TabPanel>
+              <Relations
+                mainForm={mainForm}
+                getRelationFields={getRelationFields}
+              />
+            </TabPanel>
+          )}
+          {id && (
+            <TabPanel>
+              <Actions mainForm={mainForm} />
+            </TabPanel>
+          )}
+          {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
         </Tabs>
       </div>
       <Footer
         extra={
           <>
             <SecondaryButton onClick={() => navigate(-1)} color="error">
-              Закрыть
+              {t("close")}
             </SecondaryButton>
             <PrimaryButton
               loader={btnLoader}
               onClick={mainForm.handleSubmit(onSubmit)}
               loading={btnLoader}
             >
-              <Save /> Сохранить
+              <Save /> {t("save")}
             </PrimaryButton>
           </>
         }

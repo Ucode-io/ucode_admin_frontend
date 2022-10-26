@@ -16,7 +16,7 @@ const GroupsTab = ({ columns, form }) => {
 
   const computedColumns = useMemo(() => {
     return columns?.filter(
-      (column) => column.type === "LOOKUP" || column.type === "PICK_LIST"
+      (column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT"
     )
   }, [columns])
 

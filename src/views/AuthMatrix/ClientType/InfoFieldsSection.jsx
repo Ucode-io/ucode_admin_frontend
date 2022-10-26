@@ -1,5 +1,5 @@
 import { Collapse } from "@mui/material"
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import RowLinearLoader from "../../../components/RowLinearLoader"
 import CreateRowButton from "../../../components/CreateRowButton"
 import { useParams } from "react-router-dom"
@@ -10,6 +10,7 @@ import InfoFieldsRow from "./InfoFieldsRow"
 
 const InfoFieldsSection = ({ fieldsList, setFieldsList }) => {
   const { typeId } = useParams()
+  const { t } = useTransition()
 
   // const loader = useSelector((state) => state.version.loader)
 
@@ -55,7 +56,7 @@ const InfoFieldsSection = ({ fieldsList, setFieldsList }) => {
             setLoader={setCreateLoader}
             visible={createFormVisible}
             setVisible={setCreateFormVisible}
-            placeholder="Role title"
+            placeholder={t("role.title")}
           />
         </Collapse>
 

@@ -6,23 +6,22 @@ const PermissionsBlock = ({
   permissions,
   selectedPermission,
   setSelectedPermission,
-  setPermissions
+  setPermissions,
 }) => {
-
   const computedPermissions = useMemo(() => {
     return permissions.filter((permission) => !permission.parent_id)
   }, [permissions])
 
   const addPermission = (data) => {
-    setPermissions(prev => [...prev, data])
+    setPermissions((prev) => [...prev, data])
   }
 
   const deletePermission = (id) => {
-    setPermissions(prev => prev.filter(el => el.id !== id))
+    setPermissions((prev) => prev.filter((el) => el.id !== id))
   }
 
   const updatePermission = (data) => {
-    setPermissions(prev => prev.map(el => (el.id === data.id ? data : el)))
+    setPermissions((prev) => prev.map((el) => (el.id === data.id ? data : el)))
   }
 
   return (

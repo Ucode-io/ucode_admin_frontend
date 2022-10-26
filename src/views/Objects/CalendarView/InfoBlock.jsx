@@ -17,7 +17,11 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
         {viewFields?.map((field) => (
           <>
             {field.type === "LOOKUP"
-              ? getRelationFieldTableCellLabel(field, data, field.table_slug)
+              ? getRelationFieldTableCellLabel(
+                  field,
+                  data,
+                  field._slug + "_data"
+                )
               : field.type === "DATE_TIME"
               ? dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")
               : data[field.slug]}
@@ -36,7 +40,7 @@ const InfoBlock = ({ viewFields, data, isSingleLine }) => {
       {viewFields?.map((field) => (
         <p>
           {field.type === "LOOKUP" ? (
-            getRelationFieldTableCellLabel(field, data, field.table_slug)
+            getRelationFieldTableCellLabel(field, data, field.slug + "_data")
           ) : field.type === "DATE_TIME" ? (
             dateValidFormat(data[field.slug], "dd.MM.yyyy HH:mm")
           ) : field.type === "MULTISELECT" ? (

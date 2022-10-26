@@ -1,6 +1,7 @@
 import { add } from "date-fns/esm"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useNavigate, useParams } from "react-router-dom"
 import CancelButton from "../../../../components/Buttons/CancelButton"
 import SaveButton from "../../../../components/Buttons/SaveButton"
@@ -19,6 +20,7 @@ import listToOptions from "../../../../utils/listToOptions"
 import "./style.scss"
 
 const IntegrationsForm = () => {
+  const { t } = useTranslation()
   const { platformId, typeId, integrationId, projectId } = useParams()
   const navigate = useNavigate()
 
@@ -28,10 +30,10 @@ const IntegrationsForm = () => {
 
   const breadCrumbItems = [
     {
-      label: "Integrations",
+      label: t("integrations"),
     },
     {
-      label: "Create",
+      label: t("create"),
     },
   ]
 
@@ -68,7 +70,6 @@ const IntegrationsForm = () => {
       })
       .finally(() => setBtnLoader(false))
   }
-  
 
   const update = async (data) => {
     setBtnLoader(true)
@@ -107,7 +108,8 @@ const IntegrationsForm = () => {
       ip_whitelist: "",
       role_id: "",
       secret_key: generateSecretKey(),
-    } })
+    },
+  })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -125,12 +127,16 @@ const IntegrationsForm = () => {
       </Header>
 
       <div className="IntegrationsForm p-2">
-        <FormCard visible={!loader} title="Main info" className="form-card">
+        <FormCard
+          visible={!loader}
+          title={t("main.info")}
+          className="form-card"
+        >
           <div className="side">
-            <FRow label="Title">
+            <FRow label={t("title")}>
               <HFTextField autoFocus fullWidth control={control} name="title" />
             </FRow>
-            <FRow label="Role">
+            <FRow label={t("role")}>
               <HFSelect
                 options={rolesList}
                 fullWidth
@@ -138,17 +144,17 @@ const IntegrationsForm = () => {
                 name="role_id"
               />
             </FRow>
-            <FRow label="Secret key">
+            <FRow label={t("secret.key")}>
               <HFTextField fullWidth control={control} name="secret_key" />
             </FRow>
           </div>
 
           <div className="side">
-            <FRow label="Whitelist">
+            <FRow label={t("whitelist")}>
               <HFTextField fullWidth control={control} name="ip_whitelist" />
             </FRow>
 
-            <FRow label="Expires date">
+            <FRow label={t("expires.date")}>
               <HFDatePicker
                 width="100%"
                 fullWidth

@@ -2,6 +2,7 @@ import { Close } from "@mui/icons-material"
 import { CircularProgress, Divider, IconButton } from "@mui/material"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
 import PrimaryButton from "../../../components/Buttons/PrimaryButton"
@@ -15,6 +16,7 @@ import styles from "./style.module.scss"
 
 const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
   const { tableSlug } = useParams()
+  const { t } = useTranslation()
   const [btnLoader, setBtnLoader] = useState(false)
   const queryClient = useQueryClient()
 
@@ -38,11 +40,11 @@ const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
     setBtnLoader(true)
 
     try {
-      const computedData = values?.multiple_dates?.map(date => ({
+      const computedData = values?.multiple_dates?.map((date) => ({
         ...values,
-        [view.calendar_from_slug]: date
+        [view.calendar_from_slug]: date,
       }))
-  
+
       const updatedFields = [tab.slug, view.calendar_from_slug]
 
       const data = {
@@ -54,18 +56,19 @@ const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
 
       onClose()
 
-      queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug }])
-
+      queryClient.refetchQueries([
+        "GET_OBJECTS_LIST_WITH_RELATIONS",
+        { tableSlug },
+      ])
     } catch (error) {
       setBtnLoader(false)
     }
-    
   }
 
   return (
     <>
       <div className={styles.header}>
-        <h2 className={styles.title}>Расписание</h2>
+        <h2 className={styles.title}>{t("schedule")}</h2>
 
         <IconButton className={styles.closeButton} onClick={onClose}>
           <Close className={styles.closeIcon} />
@@ -100,7 +103,7 @@ const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
           onClick={handleSubmit(onSubmit)}
           loader={btnLoader}
         >
-          Сохранить
+          {t("save")}
         </PrimaryButton>
       </div>
     </>

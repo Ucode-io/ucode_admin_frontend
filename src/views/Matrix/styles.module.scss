@@ -218,3 +218,31 @@
     cursor: not-allowed;
   }
 }
+
+.fieldPermissionBox {
+  max-height: 90vh;
+  outline: none;
+  background: #fff;
+  width: 80%;
+  border-radius: 6px;
+  padding: 8px;
+  overflow-y: auto;
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    p {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 700;
+    }
+  }
+  .submit_btn {
+    margin-top: 8px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}

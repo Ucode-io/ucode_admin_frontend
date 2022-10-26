@@ -1,5 +1,4 @@
-
-@use '/src/scss/colors';
+@use "/src/scss/colors";
 
 .page {
   display: flex;
@@ -130,7 +129,7 @@
   width: 450px;
   min-width: 450px;
   background-color: #fff;
-  border-left: 1px solid #E5E9EB;
+  border-left: 1px solid #e5e9eb;
 
   .settingsBlockHeader {
     display: flex;
@@ -138,10 +137,9 @@
     justify-content: space-between;
     height: 48px;
     padding: 0 16px;
-    border-bottom: 1px solid #E5E9EB;
-    border-top: 1px solid #E5E9EB;
-    background-color: #F6F8F9;;
-
+    border-bottom: 1px solid #e5e9eb;
+    border-top: 1px solid #e5e9eb;
+    background-color: #f6f8f9;
   }
 
   .settingsBlockBody {
@@ -150,11 +148,10 @@
   }
 }
 
- .fieldsBlock {
+.fieldsBlock {
   height: calc(100vh - 215px);
   overflow: auto;
   padding: 8px;
-  
 
   .sectionFieldRow {
     width: 100%;
@@ -178,9 +175,8 @@
   background-color: #fff;
 }
 
-
 .draggableRow {
-  border-bottom: 1px solid #E5E9EB;
+  border-bottom: 1px solid #e5e9eb;
   padding: 0px 16px;
   display: flex;
   align-items: center;
@@ -191,5 +187,27 @@
 
   .label {
     flex: 1;
+  }
+}
+
+// <-- Summary Section --> //
+.summarySection {
+  width: 100%;
+  min-width: 350px;
+  padding-top: 5px;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  ::-webkit-scrollbar {
+    max-height: 10%;
+    height: 10%;
+  }
+  .field_summary {
+    min-width: 200px;
+    max-width: 350px;
+    cursor: grab;
+    display: flex;
+    gap: 5px;
+    padding: 0 10px;
   }
 }

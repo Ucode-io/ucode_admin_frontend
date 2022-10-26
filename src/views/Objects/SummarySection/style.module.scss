@@ -1,0 +1,46 @@
+// <-- Summary Section --> //
+.summarySection {
+  height: 32px;
+  min-width: 32px;
+  border-radius: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  margin: 0 0 0 20px;
+  border: 1px solid #d5dadd;
+
+  ::-webkit-scrollbar {
+    max-height: 10%;
+    height: 10%;
+  }
+  .field_summary {
+    min-width: 32px;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+    border-radius: 4px;
+    // gap: 5px;
+    background: #fff;
+    // padding: 0 10px;
+
+    .object_btns {
+      background: none;
+      border: none;
+      width: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 10px !important;
+      border-right: 1px solid #d5dadd;
+      &:first-child {
+        // border-left: 1px solid #d5dadd;
+        border-right: 1px solid #d5dadd;
+      }
+      &:last-child {
+        border-left: none;
+        // border-right: none;
+      }
+    }
+  }
+}

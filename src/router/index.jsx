@@ -1,4 +1,5 @@
 import { lazy, Suspense, useMemo } from "react"
+import { useTranslation } from "react-i18next"
 import { useSelector } from "react-redux"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 
@@ -50,6 +51,7 @@ const MatrixDetail = lazy(() => import("../views/Matrix/MatrixDetail"))
 const MatrixRolePage = lazy(() => import("../views/Matrix/MatrixRolePage"))
 
 const Router = () => {
+  const { t } = useTranslation()
   const location = useLocation()
   const isAuth = useSelector((state) => state.auth.isAuth)
   const applications = useSelector((state) => state.application.list)
@@ -67,7 +69,7 @@ const Router = () => {
 
   if (!isAuth)
     return (
-      <Suspense fallback={<p> Loading...</p>}>
+      <Suspense fallback={<p> {t("loading")}...</p>}>
         <Routes>
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Navigate to="/login " />} />

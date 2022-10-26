@@ -1,20 +1,25 @@
+import { makeStyles } from "@mui/styles"
 import { Controller } from "react-hook-form"
 import CDateTimePicker from "../DatePickers/CDateTimePicker"
 
-
+const useStyles = makeStyles((theme) => ({
+  input: {
+    "&::placeholder": {
+      color: "#fff",
+    },
+  },
+}))
 
 const HFDateTimePicker = ({
   control,
-  className,
+  isBlackBg = false,
+  isFormEdit = false,
   name,
-  label,
-  width,
-  inputProps,
-  disabledHelperText,
-  placeholder,
-  ...props
+  showCopyBtn,
+  placeholder = "",
+  disabled,
 }) => {
-
+  const classes = useStyles()
   return (
     <Controller
       control={control}
@@ -22,32 +27,16 @@ const HFDateTimePicker = ({
       defaultValue=""
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
-          // <div className={className}>
-          //   <DateTimePicker
-          //     inputFormat="dd.MM.yyyy HH:mm"
-          //     mask="__.__.____ __:__"
-          //     toolbarFormat="dd.MM.yyyy HH:mm"
-          //     value={value}
-          //     name={name}
-          //     onChange={onChange}
-          //     {...props}
-          //     renderInput={(params) => (
-          //       <TextField
-          //         {...params}
-          //         style={{ width }}
-          //         size="small"
-          //         error={error  }
-          //         helperText={!disabledHelperText && error?.message}
-          //         label={label}
-          //         inputProps={{
-          //           ...params.inputProps,
-          //           placeholder
-          //         }}
-          //       />
-          //     )}
-          //   />
-          // </div>
-          <CDateTimePicker value={value} onChange={onChange} />
+          <CDateTimePicker
+            isFormEdit={isFormEdit}
+            classes={classes}
+            placeholder={placeholder}
+            isBlackBg={isBlackBg}
+            value={value}
+            showCopyBtn={showCopyBtn}
+            onChange={onChange}
+            disabled={disabled}
+          />
         )
       }}
     ></Controller>

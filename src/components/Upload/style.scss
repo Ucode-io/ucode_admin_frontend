@@ -1,5 +1,3 @@
-
-
 .FileUploadWithDrag {
   box-sizing: border-box;
   position: relative;
@@ -12,7 +10,7 @@
     height: 164px;
     left: 0px;
     top: 0px;
-    border: 1px dashed #D5DADD;
+    border: 1px dashed #d5dadd;
     box-sizing: border-box;
     border-radius: 0px;
     display: flex;
@@ -49,4 +47,7 @@
       }
     }
   }
+}
+.close-btn {
+  z-index: 1;
 }

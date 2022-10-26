@@ -1,9 +1,11 @@
 import { Calculate, Tune } from "@mui/icons-material"
+import { useTranslation } from "react-i18next"
 import { NavLink, useParams } from "react-router-dom"
 import styles from "./style.module.scss"
 
 const SettingsSidebar = () => {
   const { id } = useParams()
+  const { t } = useTranslation()
 
   return (
     <div className={styles.sidebar}>
@@ -15,7 +17,7 @@ const SettingsSidebar = () => {
       >
         <Tune className={styles.icon} />
 
-        <div className={styles.title}>Общие</div>
+        <div className={styles.title}>{t("generals")}</div>
       </NavLink>
 
       <NavLink
@@ -25,8 +27,8 @@ const SettingsSidebar = () => {
         }
       >
         <Calculate className={styles.icon} />
-        
-        <div className={styles.title}>Переменные</div>
+
+        <div className={styles.title}>{t("variables")}</div>
       </NavLink>
     </div>
   )

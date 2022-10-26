@@ -1,4 +1,9 @@
-import { CircularProgress, InputAdornment, Menu, TextField } from "@mui/material"
+import {
+  CircularProgress,
+  InputAdornment,
+  Menu,
+  TextField,
+} from "@mui/material"
 import { useState } from "react"
 import FRow from "../../FormElements/FRow"
 import styles from "./style.module.scss"
@@ -9,7 +14,12 @@ import { useEffect } from "react"
 import constructorObjectService from "../../../services/constructorObjectService"
 import { getLabelWithViewFields } from "../../../utils/getRelationFieldLabel"
 
-const DynamicRelationFormElement = ({ control, field, setFormValue }) => {
+const DynamicRelationFormElement = ({
+  control,
+  field,
+  setFormValue,
+  disabled = false,
+}) => {
   const {
     field: { onChange, value },
     fieldState: { error },
@@ -32,12 +42,12 @@ const DynamicRelationFormElement = ({ control, field, setFormValue }) => {
   }, [field.attributes?.dynamic_tables])
 
   const tableInValue = useMemo(() => {
-    return tablesList?.find(table => value?.[`${table.slug}_id`]) ?? ''
-  }, [ tablesList, value ])
-  
+    return tablesList?.find((table) => value?.[`${table.slug}_id`]) ?? ""
+  }, [tablesList, value])
+
   const onObjectSelect = (object, selectedTable) => {
     const data = {
-      [`${selectedTable.slug}_id`]: object.value
+      [`${selectedTable.slug}_id`]: object.value,
     }
     setLocalValue(object)
     onChange(data)
@@ -50,7 +60,14 @@ const DynamicRelationFormElement = ({ control, field, setFormValue }) => {
       const id = value?.[`${tableInValue.slug}_id`]
       const res = await constructorObjectService.getById(tableInValue.slug, id)
       const data = res?.data?.response
-      setLocalValue(data ? { value: data.id, label: getLabelWithViewFields(tableInValue.view_fields, data) } : null)
+      setLocalValue(
+        data
+          ? {
+              value: data.id,
+              label: getLabelWithViewFields(tableInValue.view_fields, data),
+            }
+          : null
+      )
     } finally {
       setInputLoader(false)
     }
@@ -65,20 +82,21 @@ const DynamicRelationFormElement = ({ control, field, setFormValue }) => {
   }
 
   useEffect(() => {
-    if(tableInValue) {
+    if (tableInValue) {
       getValueData()
     }
   }, [])
 
   const computedInputString = useMemo(() => {
-    if(!tableInValue || !localValue) return ''
+    if (!tableInValue || !localValue) return ""
     return `${tableInValue.label} / ${localValue.label}`
-  }, [ tableInValue, localValue ])
+  }, [tableInValue, localValue])
 
   return (
     <>
       <FRow label={field.label} required={field.required}>
         <TextField
+          disabled={disabled}
           size="small"
           fullWidth
           onClick={openMenu}
@@ -99,7 +117,12 @@ const DynamicRelationFormElement = ({ control, field, setFormValue }) => {
         onClose={closeMenu}
         classes={{ list: styles.menu, paper: styles.paper }}
       >
-        <Dropdown field={field} closeMenu={closeMenu} onObjectSelect={onObjectSelect} tablesList={tablesList} />
+        <Dropdown
+          field={field}
+          closeMenu={closeMenu}
+          onObjectSelect={onObjectSelect}
+          tablesList={tablesList}
+        />
       </Menu>
     </>
   )

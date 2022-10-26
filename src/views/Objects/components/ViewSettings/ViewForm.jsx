@@ -1,6 +1,7 @@
 import { Delete, FilterAlt, JoinInner, TableChart } from "@mui/icons-material"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 import { Tab, TabList, Tabs, TabPanel } from "react-tabs"
 import CancelButton from "../../../../components/Buttons/CancelButton"
@@ -27,6 +28,7 @@ const ViewForm = ({
   columns,
   relationColumns,
 }) => {
+  const { t } = useTranslation()
   const { tableSlug } = useParams()
 
   const [btnLoader, setBtnLoader] = useState(false)
@@ -124,15 +126,15 @@ const ViewForm = ({
       <div className={styles.viewForm}>
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <div className={styles.sectionTitle}>Main info</div>
+            <div className={styles.sectionTitle}>{t("main.info")}</div>
           </div>
 
           <div className={styles.sectionBody}>
             <div className={styles.formRow}>
-              <FRow label="Название">
+              <FRow label={t("title")}>
                 <HFTextField control={form.control} name="name" fullWidth />
               </FRow>
-              <FRow label="Тип">
+              <FRow label={t("type")}>
                 <HFSelect
                   options={computedViewTypes}
                   control={form.control}
@@ -144,7 +146,7 @@ const ViewForm = ({
           </div>
         </div>
 
-        {(type === "CALENDAR" || type === "GANTT") && (
+        {type === "CALENDAR" && (
           <CalendarSettings form={form} columns={columns} />
         )}
 
@@ -157,16 +159,16 @@ const ViewForm = ({
             <TabList>
               <Tab>
                 {" "}
-                <FilterAlt /> Quick filters
+                <FilterAlt /> {t("quick.filters")}
               </Tab>
               <Tab>
                 {" "}
                 <TableChart />
-                Columns
+                {t("columns")}
               </Tab>
               <Tab>
                 {" "}
-                <JoinInner /> Group by
+                <JoinInner /> {t("group.by")}
               </Tab>
             </TabList>
             <TabPanel>
@@ -187,7 +189,7 @@ const ViewForm = ({
           <CancelButton
             loading={deleteBtnLoader}
             onClick={deleteView}
-            title={"Delete"}
+            title={t("delete")}
             icon={<Delete />}
           />
         )}
@@ -247,7 +249,12 @@ const getInitialValues = (
           ? [...columns, ...relationColumns]
           : columns
       ) ?? [],
-    group_fields: initialValues?.group_fields ?? [],
+    group_fields: computeGroupFields(
+      initialValues?.group_fields,
+      initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT"
+        ? [...columns, ...relationColumns]
+        : columns
+    ),
     table_slug: tableSlug,
     id: initialValues?.id,
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",
@@ -286,6 +293,14 @@ const computeQuickFilters = (quickFilters = [], columns) => {
       (el) => !quickFilters?.find((filter) => filter.field_id === el.id)
     ) ?? []
   return [...selectedQuickFilters, ...unselectedQuickFilters]
+}
+
+const computeGroupFields = (groupFields = [], columns) => {
+  return (
+    groupFields?.filter((groupFieldID) =>
+      columns?.some((column) => column.id === groupFieldID)
+    ) ?? []
+  )
 }
 
 export default ViewForm

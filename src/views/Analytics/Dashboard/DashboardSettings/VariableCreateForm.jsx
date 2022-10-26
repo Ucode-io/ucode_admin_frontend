@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useMutation, useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import SaveButton from "../../../../components/Buttons/SaveButton"
@@ -23,6 +24,7 @@ const variableTypes = [
 ]
 
 const VariableCreateForm = () => {
+  const { t } = useTranslation()
   const { id, variableId } = useParams()
   const { control, reset, handleSubmit, watch } = useForm()
   const navigate = useNavigate()
@@ -66,18 +68,18 @@ const VariableCreateForm = () => {
 
   return (
     <div className={styles.formCard}>
-      <h2 className={styles.title}>Общие сведение</h2>
+      <h2 className={styles.title}>{t("general.info")}</h2>
 
       {isLoading ? (
         <PageFallback />
       ) : (
         <div className={styles.mainBlock}>
           <div className={styles.row}>
-            <FRow label="Названия">
+            <FRow label={t("title")}>
               <HFTextField control={control} name="label" fullWidth required />
             </FRow>
 
-            <FRow label="Тип">
+            <FRow label={t("type")}>
               <HFSelect
                 options={variableTypes}
                 control={control}
@@ -88,18 +90,18 @@ const VariableCreateForm = () => {
           </div>
 
           <div className={styles.row}>
-            <FRow label="Slug">
+            <FRow label={t("slug")}>
               <HFTextField control={control} name="slug" fullWidth required />
             </FRow>
 
             {variableType === "CUSTOM" && (
-              <FRow label="Options">
+              <FRow label={t("options")}>
                 <SelectOptionsCreator control={control} name="options" />
               </FRow>
             )}
 
             {variableType === "QUERY" && (
-              <FRow label="Query">
+              <FRow label={t("query")}>
                 <HFTextField control={control} name="query" fullWidth />
               </FRow>
             )}
@@ -107,12 +109,16 @@ const VariableCreateForm = () => {
 
           {variableType === "QUERY" && (
             <div className={styles.row}>
-              <FRow label="Field slug">
+              <FRow label={t("field.slug")}>
                 <HFTextField control={control} name="field_slug" fullWidth />
               </FRow>
 
-              <FRow label="View field slug">
-                <HFTextField control={control} name="view_field_slug" fullWidth />
+              <FRow label={t("view.field.slug")}>
+                <HFTextField
+                  control={control}
+                  name="view_field_slug"
+                  fullWidth
+                />
               </FRow>
             </div>
           )}

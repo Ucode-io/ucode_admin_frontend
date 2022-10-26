@@ -5,14 +5,45 @@ import EmptyDataComponent from "../EmptyDataComponent"
 import TableLoader from "../TableLoader/index"
 import "./style.scss"
 
-export const CTable = ({ children, count, page, setCurrentPage, removableHeight = 186, disablePagination, loader, tableStyle={}, wrapperStyle={}, paginationExtraButton, limit, setLimit }) => {
+export const CTable = ({
+  children,
+  count,
+  page,
+  setCurrentPage,
+  removableHeight = 186,
+  disablePagination,
+  loader,
+  tableStyle = {},
+  wrapperStyle = {},
+  paginationExtraButton,
+  limit,
+  setLimit,
+}) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
-      <div className="table" style={{ height: removableHeight ? `calc(100vh - ${removableHeight}px)` : 'auto', overflow: loader ? 'hidden' : 'auto', ...tableStyle}} >
+      <div
+        className="table"
+        style={{
+          height: removableHeight
+            ? `calc(100vh - ${removableHeight}px)`
+            : "auto",
+          overflow: loader ? "hidden" : "auto",
+          ...tableStyle,
+        }}
+      >
         <table id="resizeMe">{children}</table>
       </div>
-      
-      {!disablePagination && <CPagination count={count} page={page} setCurrentPage={setCurrentPage} paginationExtraButton={paginationExtraButton} limit={limit} setLimit={setLimit} />}
+
+      {!disablePagination && (
+        <CPagination
+          count={count}
+          page={page}
+          setCurrentPage={setCurrentPage}
+          paginationExtraButton={paginationExtraButton}
+          limit={limit}
+          setLimit={setLimit}
+        />
+      )}
     </Paper>
   )
 }
@@ -25,38 +56,56 @@ export const CTableHeadRow = ({ children }) => {
   return <tr className="CTableHeadRow">{children}</tr>
 }
 
-
-export const CTableHeadCell = ({ children, className="", buttonsCell=false, ...props }) => {
-  return (
-    <th {...props}>
-      {children}
-    </th>
-  )
+export const CTableHeadCell = ({
+  children,
+  className = "",
+  buttonsCell = false,
+  ...props
+}) => {
+  return <th {...props}>{children}</th>
 }
 
+export const CTableBody = forwardRef(
+  ({ children, columnsCount, loader, dataLength, ...props }, ref) => {
+    return (
+      <>
+        <TableLoader
+          isVisible={loader}
+          columnsCount={columnsCount}
+          rowsCount={dataLength || 3}
+        />
 
-
-export const CTableBody = forwardRef(({ children, columnsCount, loader, dataLength, ...props }, ref) => {
-
-  return (
-    <>
-    <TableLoader isVisible={loader} columnsCount={columnsCount} rowsCount={dataLength || 3}  />
-
-    <tbody className="CTableBody" {...props} ref={ref} >
-      {children}
-      <EmptyDataComponent columnsCount={columnsCount} isVisible={!dataLength}  />
-    </tbody>
-    </>
-  )
-})
+        <tbody className="CTableBody" {...props} ref={ref}>
+          {children}
+          <EmptyDataComponent
+            columnsCount={columnsCount}
+            isVisible={!dataLength}
+          />
+        </tbody>
+      </>
+    )
+  }
+)
 
 export const CTableRow = ({ children, className, ...props }) => {
-  return <tr className={`CTableRow ${className}`} {...props} >{children}</tr>
+  return (
+    <tr className={`CTableRow ${className}`} {...props}>
+      {children}
+    </tr>
+  )
 }
 
-export const CTableCell = ({ children, className="", buttonsCell=false, ...props }) => {
+export const CTableCell = ({
+  children,
+  className = "",
+  buttonsCell = false,
+  ...props
+}) => {
   return (
-    <td className={`CTableCell ${className} ${buttonsCell ? 'buttonsCell' : ''}`} {...props} {...props}>
+    <td
+      className={`CTableCell ${className} ${buttonsCell ? "buttonsCell" : ""}`}
+      {...props}
+    >
       {children}
     </td>
   )

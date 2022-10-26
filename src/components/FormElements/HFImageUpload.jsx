@@ -8,6 +8,7 @@ const HFImageUpload = ({
   required,
   rules,
   disabledHelperText = false,
+  disabled,
   ...props
 }) => {
 
@@ -26,6 +27,7 @@ const HFImageUpload = ({
             name={name}
             value={value}
             onChange={onChange}
+            disabled={disabled}
             // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
             {...props}
           />

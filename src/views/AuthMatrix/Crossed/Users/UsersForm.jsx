@@ -3,7 +3,6 @@ import { useMemo } from "react"
 import { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
-import CancelButton from "../../../../components/Buttons/CancelButton"
 import SaveButton from "../../../../components/Buttons/SaveButton"
 import CBreadcrumbs from "../../../../components/CBreadcrumbs"
 import FormCard from "../../../../components/FormCard"
@@ -16,10 +15,12 @@ import FTextField from "../../../../components/FormElements/FTextField"
 import Header from "../../../../components/Header"
 import clientTypeService from "../../../../services/clientTypeService"
 import userService from "../../../../services/auth/userService"
+import { useTranslation } from "react-i18next"
 
 const UsersForm = () => {
   const { platformId, typeId, userId, projectId } = useParams()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const dispatch = useDispatch()
 
   const [btnLoader, setBtnLoader] = useState(false)
@@ -28,20 +29,20 @@ const UsersForm = () => {
 
   const breadCrumbItems = [
     {
-      label: "Users",
+      label: t("users"),
     },
     {
-      label: "Create",
+      label: t("create"),
     },
   ]
 
   const computedRolesList = useMemo(() => {
-    return rolesList.map(role => ({
+    return rolesList.map((role) => ({
       label: role.name,
-      value: role.id
+      value: role.id,
     }))
   }, [rolesList])
-  
+
   const fetchData = () => {
     if (!userId) return setLoader(false)
 
@@ -54,10 +55,9 @@ const UsersForm = () => {
   }
 
   const fetchRolesList = () => {
-
-    clientTypeService.getById(typeId)
-      .then(res => setRolesList(res.roles ?? []))
-
+    clientTypeService
+      .getById(typeId)
+      .then((res) => setRolesList(res.roles ?? []))
   }
 
   const create = (data) => {
@@ -65,7 +65,9 @@ const UsersForm = () => {
     userService
       .create(data)
       .then((res) => {
-        navigate(`/settings/auth/matrix/${projectId}/${platformId}/${typeId}/user`)
+        navigate(
+          `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/user`
+        )
       })
       .finally(() => setBtnLoader(false))
   }
@@ -78,22 +80,22 @@ const UsersForm = () => {
         id: userId,
       })
       .then((res) => {
-        navigate(`/settings/auth/matrix/${projectId}/${platformId}/${typeId}/user`)
+        navigate(
+          `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/user`
+        )
       })
       .finally(() => setBtnLoader(false))
   }
 
   const onSubmit = (values) => {
-
     const data = {
       ...values,
-      active: values.active ? 1 : 0
+      active: values.active ? 1 : 0,
     }
 
     if (userId) return update(data)
     create(data)
   }
-
 
   useEffect(() => {
     fetchRolesList()
@@ -131,34 +133,45 @@ const UsersForm = () => {
       >
         <CBreadcrumbs withDefautlIcon items={breadCrumbItems} />
       </Header>
-      <FormCard visible={!loader} title="Main info">
-        
-        <FRow label="Active">
+      <FormCard visible={!loader} title={t("main.info")}>
+        <FRow label={t("active")}>
           <FSwitch fullWidth formik={formik} name="active" />
         </FRow>
-        <FRow label="Photo">
+        <FRow label={t("photo")}>
           <FImageUpload fullWidth formik={formik} name="photo_url" />
         </FRow>
-        <FRow label="Name">
+        <FRow label={t("name")}>
           <FTextField fullWidth formik={formik} name="name" />
         </FRow>
-        <FRow label="Email">
+        <FRow label={t("email")}>
           <FTextField fullWidth formik={formik} name="email" />
         </FRow>
-        <FRow label="Phone">
+        <FRow label={t("phone")}>
           <FTextField fullWidth formik={formik} name="phone" />
         </FRow>
-        <FRow label="Login">
+        <FRow label={t("login")}>
           <FTextField fullWidth formik={formik} name="login" />
         </FRow>
-        {!userId && <FRow label="Password">
-          <FTextField type="password" fullWidth formik={formik} name="password" />
-        </FRow>}
-        <FRow label="Expires date">
+        {!userId && (
+          <FRow label={t("password")}>
+            <FTextField
+              type="password"
+              fullWidth
+              formik={formik}
+              name="password"
+            />
+          </FRow>
+        )}
+        <FRow label={t("expires.date")}>
           <FDatePicker width="100%" formik={formik} name="expires_at" />
         </FRow>
-        <FRow label="Role">
-          <FSelect options={computedRolesList} fullWidth formik={formik} name="role_id" />
+        <FRow label={t("role")}>
+          <FSelect
+            options={computedRolesList}
+            fullWidth
+            formik={formik}
+            name="role_id"
+          />
         </FRow>
       </FormCard>
     </form>

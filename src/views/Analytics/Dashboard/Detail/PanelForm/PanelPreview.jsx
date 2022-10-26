@@ -1,24 +1,23 @@
-import { useQuery } from "react-query"
-import request from "../../../../../utils/request"
 import PanelViews from "../PanelViews"
 import styles from "./style.module.scss"
 
-const PanelPreview = ({ form, variablesValue = {}, panel, data, isLoading }) => {
-  const title = form.watch('title')
-
-
-  
-  
-
+const PanelPreview = ({
+  form,
+  variablesValue = {},
+  panel,
+  data,
+  isLoading,
+}) => {
   return (
     <div className={styles.panel}>
-      
-
-      <div className={styles.previewPanel} >
-        <PanelViews panel={panel} variablesValue={variablesValue} data={data} isLoading={isLoading} />
+      <div className={styles.previewPanel}>
+        <PanelViews
+          panel={panel}
+          variablesValue={variablesValue}
+          data={data}
+          isLoading={isLoading}
+        />
       </div>
-
-     
     </div>
   )
 }

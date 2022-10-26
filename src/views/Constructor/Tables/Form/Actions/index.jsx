@@ -1,91 +1,97 @@
-import { useState } from "react";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import { Add } from "@mui/icons-material";
+import { Drawer } from "@mui/material"
+import { useMemo, useState } from "react"
+import { useFieldArray } from "react-hook-form"
+import DataTable from "../../../../../components/DataTable"
+import TableCard from "../../../../../components/TableCard"
+import TableRowButton from "../../../../../components/TableRowButton"
+import constructorCustomEventService from "../../../../../services/constructorCustomEventService"
+import ActionSettings from "./ActionSettings"
 
-import { CTableCell, CTableRow } from "../../../../../components/CTable";
-import DataTable from "../../../../../components/DataTable";
-import TableCard from "../../../../../components/TableCard";
-import eventService from "../../../../../services/eventsService";
-import ActionForm from "./ActionForm";
-import styles from "./styles.module.scss";
+const Actions = ({ mainForm }) => {
 
-const Actions = ({ eventLabel }) => {
-  const { slug } = useParams();
-  const [modalItemId, setModalItemId] = useState(undefined);
+  const [drawerState, setDrawerState] = useState(null)
+  const [loader, setLoader] = useState(false)
 
-  const [isOpen, setIsOpen] = useState(false);
+  const openEditForm = (row, index) => {
+    setDrawerState(row)
+  }
 
-  const handleOpen = () => setIsOpen(true);
-  const handleClose = () => setIsOpen(false);
+  const { fields: actions, remove, append, update } = useFieldArray({
+    control: mainForm.control,
+    name: "actions",
+    keyName: "key",
+  })
 
-  const {
-    data: events,
-    isLoading,
-    refetch: eventsRefetch,
-  } = useQuery(
-    ["GET_EVENTS_LIST", slug],
-    () => eventService.getList({ table_slug: slug }),
-    {
-      enabled: !!slug,
-    }
-  );
+  const onCreate = (data) => {
+    append(data)
+  }
 
-  const columns = [
-    {
-      id: 1,
-      label: "Событие",
-      slug: "when.action",
-    },
-  ];
+  const onUpdate = (data) => {
+    const index = actions?.findIndex(action => action.id === data.id )
+    update(index, data)
+  }
 
-  const deleteField = (state) => {
-    if (state?.id) {
-      eventService.delete(state.id).then(() => eventsRefetch());
-    }
-  };
+  const deleteAction = (row, index) => {
+    setLoader(true)
+    constructorCustomEventService.delete(row.id)
+      .then((res) => remove(index))
+      .finally(() => setLoader(false))
+  }
+
+  const columns = useMemo(
+    () => [
+      {
+        id: 1,
+        label: "Label",
+        slug: "label",
+      },
+      // {
+      //   id: 2,
+      //   label: "Event path",
+      //   slug: "event_path",
+      // },
+    ],
+    []
+  )
 
   return (
     <TableCard>
       <DataTable
-        data={events?.events}
+        data={actions}
         removableHeight={false}
         tableSlug={"app"}
         columns={columns}
         disablePagination
-        loader={isLoading}
+        loader={loader}
+        onDeleteClick={deleteAction}
+        onEditClick={openEditForm}
         dataLength={1}
-        onDeleteClick={deleteField}
-        onEditClick={(e) => {
-          handleOpen();
-          setModalItemId(e?.id);
-        }}
+        disableFilters
         additionalRow={
-          <CTableRow>
-            <CTableCell colSpan={columns.length + 2}>
-              <div
-                className={styles.createButton}
-                onClick={() => {
-                  handleOpen();
-                  setModalItemId("");
-                }}
-              >
-                <Add color="primary" />
-                <p>Добавить</p>
-              </div>
-            </CTableCell>
-          </CTableRow>
+          <TableRowButton
+            colSpan={columns.length + 2}
+            onClick={() => setDrawerState("CREATE")}
+          />
         }
       />
-      <ActionForm
-        modalItemId={modalItemId}
-        eventLabel={eventLabel}
-        isOpen={isOpen}
-        eventsRefetch={eventsRefetch}
-        handleClose={handleClose}
-      />
-    </TableCard>
-  );
-};
 
-export default Actions;
+      <Drawer
+        open={!!drawerState}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal"
+      >
+        <ActionSettings 
+          action={drawerState}
+          closeSettingsBlock={() => setDrawerState(null)}
+          formType={drawerState}
+          height={`calc(100vh - 48px)`}
+          onCreate={onCreate}
+          onUpdate={onUpdate}
+        />
+      </Drawer>
+    </TableCard>
+  )
+}
+
+export default Actions

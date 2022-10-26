@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from "react"
+import { useState, useMemo, useEffect, useCallback, useTransition } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { useParams } from "react-router-dom"
 // ICONS
@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux"
 import {
   ChevronDownIcon,
   CrossPerson,
+  FieldPermissionIcon,
   TwoUserIcon,
 } from "../../assets/icons/icon"
 // COMPONENTS
@@ -37,6 +38,7 @@ import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
 import SecondaryButton from "../../components/Buttons/SecondaryButton"
 import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import { showAlert } from "../../store/alert/alert.thunk"
+import FieldPermissionModal from "./FieldPermissionModal"
 
 const staticTables = [
   {
@@ -47,6 +49,7 @@ const staticTables = [
 ]
 
 const MatrixRolePage = () => {
+  const { t } = useTransition()
   const { roleId, typeId } = useParams()
   const TYPES = [
     { key: "read", name: "Чтение" },
@@ -58,6 +61,7 @@ const MatrixRolePage = () => {
   const [appId, setAppId] = useState(null)
   const [parentPopupKey, setParentPopupKey] = useState("")
   const [expandedAppId, setExpandedAppId] = useState("")
+  const [tableSlugWithType, setTableSlugWithType] = useState(null)
   const [tableSlug, setTableSlug] = useState(null)
   const [apps, setApps] = useState([{ name: "Settings", id: "settings" }])
   const [roles, setRoles] = useState([{ name: "Settings", id: "settings" }])
@@ -65,8 +69,12 @@ const MatrixRolePage = () => {
   const [recordPermissions, setRecordPermissions] = useState([])
   const [connections, setConnections] = useState([])
   const [isCustomVisible, setIsCustomVisible] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const [relations, setRelations] = useState([])
   const [automaticFilters, setAutomaticFilters] = useState([])
+
+  const handleOpen = () => setIsOpen(true)
+  const handleClose = () => setIsOpen(false)
 
   const roleForm = useForm({})
 
@@ -111,9 +119,18 @@ const MatrixRolePage = () => {
     },
     {
       onSuccess: () => {
+        handleRecordPermission(
+          recordPermissions?.find(
+            (item) => item?.table_slug === tableSlugWithType.split("#")[0]
+          ),
+          tableSlugWithType.split("#")[1],
+          "Yes",
+          tableSlugWithType.split("#")[0],
+          true
+        )
         dispatch(showAlert("Автофильтр успешно создан", "success"))
         setIsCustomVisible(false)
-        setTableSlug("")
+        setTableSlugWithType("")
       },
     }
   )
@@ -162,7 +179,13 @@ const MatrixRolePage = () => {
       .catch((e) => console.log("err ", e))
   }
 
-  const handleRecordPermission = (record, type, value, tabSlug) => {
+  const handleRecordPermission = (
+    record,
+    type,
+    value,
+    tabSlug,
+    is_have_condition
+  ) => {
     autoFilterForm.setValue("tabSlug", tabSlug)
     const data = {
       role_id: roleId,
@@ -172,6 +195,7 @@ const MatrixRolePage = () => {
       write: record?.write ? record?.write : "No",
       table_slug: tabSlug,
       guid: record?.guid ? record?.guid : "",
+      is_have_condition,
     }
     if (record?.guid) {
       constructorObjectService
@@ -182,7 +206,7 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          setTableSlug((prev) => (value === "Yes" ? prev : null))
+          setTableSlugWithType((prev) => (value === "Yes" ? prev : null))
           if (value === "Yes") {
             constructorRelationService
               .getList({ table_slug: tabSlug })
@@ -208,7 +232,7 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          setTableSlug(null)
+          setTableSlugWithType(null)
           getRecordPermissions()
         })
         .catch((err) => {
@@ -310,7 +334,7 @@ const MatrixRolePage = () => {
       custom_field: "",
       tabSlug: "",
     })
-  }, [tableSlug])
+  }, [tableSlugWithType])
 
   const computedCustomFields = useMemo(() => {
     const data = [
@@ -349,12 +373,15 @@ const MatrixRolePage = () => {
     if (isCustomVisible) {
       autoFilterForm.reset({
         autoFilter: automaticFilters?.map((i) => ({
+          identifier: i.guid,
           object_field: i.object_field,
           custom_field: i.custom_field,
         })),
       })
     }
   }, [isCustomVisible, automaticFilters])
+
+  console.log("autoFilterFields", autoFilterFields)
 
   const isAppPermissionYes = useCallback(
     (items, key) => {
@@ -416,6 +443,13 @@ const MatrixRolePage = () => {
                     </div>
                   </div>
                 </CTableHeadCell>
+                <CTableHeadCell
+                  style={{
+                    borderBottom: "1px solid #e5e9eb",
+                  }}
+                >
+                  Field permissions
+                </CTableHeadCell>
               </CTableRow>
             </CTableHead>
             <CTableBody loader={false} columnsCount={2} dataLength={1}>
@@ -457,10 +491,10 @@ const MatrixRolePage = () => {
                       onClick={(e) => {
                         e.stopPropagation()
                         if (app?.children) {
-                          setTableSlug((prev) =>
-                            prev === app.slug + type?.key
+                          setTableSlugWithType((prev) =>
+                            prev === app.slug + "#" + type?.key
                               ? ""
-                              : app.slug + type?.key
+                              : app.slug + "#" + type?.key
                           )
                           setParentPopupKey("")
                         } else {
@@ -469,7 +503,7 @@ const MatrixRolePage = () => {
                               ? ""
                               : app.id + type?.key
                           )
-                          setTableSlug("")
+                          setTableSlugWithType("")
                         }
                       }}
                       style={{ position: "relative" }}
@@ -484,6 +518,10 @@ const MatrixRolePage = () => {
                             )}
                           </span>
                         )
+                      ) : recordPermissions?.find(
+                          (item) => item?.table_slug === app?.slug
+                        )?.is_have_condition && type?.key === "read" ? (
+                        <LockOutlinedIcon />
                       ) : recordPermissions?.find(
                           (item) => item?.table_slug === app?.slug
                         )?.[type?.key] === "Yes" ? (
@@ -529,7 +567,7 @@ const MatrixRolePage = () => {
                             </span>
                           </div>
                         )}
-                      {tableSlug === app?.slug + type?.key ? (
+                      {tableSlugWithType === app?.slug + "#" + type?.key ? (
                         <>
                           <div
                             style={{
@@ -556,7 +594,8 @@ const MatrixRolePage = () => {
                                   ),
                                   type?.key,
                                   "Yes",
-                                  app?.slug
+                                  app?.slug,
+                                  false
                                 )
                               }}
                             >
@@ -571,28 +610,31 @@ const MatrixRolePage = () => {
                                   ),
                                   type?.key,
                                   "No",
-                                  app?.slug
+                                  app?.slug,
+                                  false
                                 )
                               }}
                             >
                               <CrossPerson />
                             </span>
-                            <span
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setIsCustomVisible((p) => !p)
-                                getAutomaticFilters(app?.slug)
-                                getRelationsByTableSlug(app?.slug)
-                                setActiveTable(app)
-                              }}
-                              style={{
-                                border: "1px solid #e3e3e3",
-                                padding: 6,
-                                borderRadius: "50%",
-                              }}
-                            >
-                              <LockOutlinedIcon />
-                            </span>
+                            {type?.key === "read" && (
+                              <span
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setIsCustomVisible((p) => !p)
+                                  getAutomaticFilters(app?.slug)
+                                  getRelationsByTableSlug(app?.slug)
+                                  setActiveTable(app)
+                                }}
+                                style={{
+                                  border: "1px solid #e3e3e3",
+                                  padding: 6,
+                                  borderRadius: "50%",
+                                }}
+                              >
+                                <LockOutlinedIcon />
+                              </span>
+                            )}
                           </div>
                           <form
                             onSubmit={autoFilterForm.handleSubmit(
@@ -640,12 +682,14 @@ const MatrixRolePage = () => {
                                       style={{ display: "flex", gap: 8 }}
                                     >
                                       <HFSelect
+                                        required
                                         width="50%"
                                         options={relations}
                                         control={autoFilterForm.control}
                                         name={`autoFilter.${index}.object_field`}
                                       />
                                       <HFSelect
+                                        required
                                         width="50%"
                                         options={computedCustomFields}
                                         control={autoFilterForm.control}
@@ -653,7 +697,13 @@ const MatrixRolePage = () => {
                                       />
                                       <RectangleIconButton
                                         color="error"
-                                        onClick={() => remove(index)}
+                                        onClick={() => {
+                                          constructorObjectService.delete(
+                                            "automatic_filter",
+                                            field.identifier
+                                          )
+                                          remove(index)
+                                        }}
                                       >
                                         <Delete color="error" />
                                       </RectangleIconButton>
@@ -680,14 +730,14 @@ const MatrixRolePage = () => {
                                           })
                                     }
                                   >
-                                    Добавить новое условия
+                                    {t("add.new.condition")}
                                   </SecondaryButton>
                                   <PrimaryButton
                                     disabled={!autoFilterFields.length}
                                     style={{ width: "50%" }}
                                     type="submit"
                                   >
-                                    Сохранить
+                                    {t("save")}
                                   </PrimaryButton>
                                 </div>
                               </div>
@@ -697,12 +747,34 @@ const MatrixRolePage = () => {
                       ) : null}
                     </CTableCell>
                   ))}
+                  <CTableHeadCell
+                    onClick={() => {
+                      if (app?.children) {
+                        console.log("app , ", app)
+                        handleOpen()
+                        setTableSlug(app?.slug)
+                      }
+                    }}
+                    style={{
+                      borderBottom: "1px solid #e5e9eb",
+                      borderRight: "1px solid #e5e9eb",
+                    }}
+                  >
+                    <div>
+                      <FieldPermissionIcon />
+                    </div>
+                  </CTableHeadCell>
                 </CTableRow>
               ))}
             </CTableBody>
           </CTable>
         </div>
       </div>
+      <FieldPermissionModal
+        table_slug={tableSlug}
+        handleClose={handleClose}
+        isOpen={isOpen}
+      />
     </div>
   )
 }

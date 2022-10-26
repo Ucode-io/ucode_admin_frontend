@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
+
 import SecondaryButton from "../../../components/Buttons/SecondaryButton"
 import FRow from "../../../components/FormElements/FRow"
 import useTabRouter from "../../../hooks/useTabRouter"
@@ -11,13 +12,31 @@ import { pageToOffset } from "../../../utils/pageToOffset"
 import { Filter } from "../components/FilterGenerator"
 import styles from "./style.module.scss"
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
+import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
+import { useTranslation } from "react-i18next"
 
 const RelationTable = ({
+  setDataLength,
   relation,
+  shouldGet,
   createFormVisible,
+  remove,
   setCreateFormVisible,
+  watch,
+  selectedObjects,
+  setSelectedObjects,
+  tableSlug,
+  setFieldSlug,
+  id,
+  reset,
+  control,
+  setFormValue,
+  fields,
+  setFormVisible,
+  formVisible,
 }) => {
-  const { appId, tableSlug, id } = useParams()
+  const { t } = useTranslation()
+  const { appId } = useParams()
   const navigate = useNavigate()
   const { navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
@@ -33,56 +52,92 @@ const RelationTable = ({
     })
   }
 
+  const onCheckboxChange = (val, row) => {
+    if (val) setSelectedObjects((prev) => [...prev, row.guid])
+    else setSelectedObjects((prev) => prev.filter((id) => id !== row.guid))
+  }
 
   const computedFilters = useMemo(() => {
     const relationFilter = {}
 
-    if(relation.type === "Many2Many") relationFilter[`${tableSlug}_ids`] = id
-    else if (relation.type === "Many2Dynamic") relationFilter[`${relation.relatedTable}.${tableSlug}_id`] = id
+    if (relation.type === "Many2Many") relationFilter[`${tableSlug}_ids`] = id
+    else if (relation.type === "Many2Dynamic")
+      relationFilter[`${relation.relatedTable}.${tableSlug}_id`] = id
     else relationFilter[`${tableSlug}_id`] = id
 
     return {
       ...filters,
-      ...relationFilter
+      ...relationFilter,
     }
-
-  }, [ filters, tableSlug, id, relation.type, relation.relatedTable ])
+  }, [filters, tableSlug, id, relation.type, relation.relatedTable])
 
   const relatedTableSlug = relation?.relatedTable
 
-  const { data: { tableData = [], pageCount = 1, columns = [], quickFilters = [] } = {}, isLoading: dataFetchingLoading } = useQuery(
-    [ 
+  const {
+    data: {
+      tableData = [],
+      pageCount = 1,
+      columns = [],
+      quickFilters = [],
+    } = {},
+    isLoading: dataFetchingLoading,
+  } = useQuery(
+    [
       "GET_OBJECT_LIST",
       relatedTableSlug,
-      { filters: computedFilters, offset: pageToOffset(currentPage, limit), limit },
+      shouldGet,
+      appId,
+      {
+        filters: computedFilters,
+        offset: pageToOffset(currentPage, limit),
+        limit,
+      },
     ],
     () => {
-      return constructorObjectService.getList(relatedTableSlug, { data:  {
-        offset: pageToOffset(currentPage, limit),
-        limit: id ? limit : 0,
-        ...computedFilters,
-      } })
+      return constructorObjectService.getList(relatedTableSlug, {
+        data: {
+          offset: pageToOffset(currentPage, limit),
+          limit: id ? limit : 0,
+          ...computedFilters,
+        },
+      })
     },
     {
+      enabled: !!appId,
       select: ({ data }) => {
-          const tableData = id ? objectToArray(data.response ?? {}) : []
-          const pageCount = isNaN(data.count) ? 1 : Math.ceil(data.count / limit)
+        const tableData = id ? objectToArray(data.response ?? {}) : []
+        const pageCount = isNaN(data.count) ? 1 : Math.ceil(data.count / limit)
+        setDataLength(tableData.length)
 
-          const fieldsMap = listToMap(data.fields)
+        const fieldsMap = listToMap(data.fields)
 
-          const columns = relation.columns?.map((id) => fieldsMap[id])?.filter((el) => el)
-          const quickFilters = relation.quick_filters
+        setFieldSlug(
+          Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)?.slug
+        )
+
+        const columns = relation.columns
+          ?.map((id, index) => fieldsMap[id])
+          ?.filter((el) => el)
+        const quickFilters = relation.quick_filters
           ?.map(({ field_id }) => fieldsMap[field_id])
           ?.filter((el) => el)
-          return {
-            tableData,
-            pageCount,
-            columns,
-            quickFilters
-          }
+        return {
+          tableData,
+          pageCount,
+          columns,
+          quickFilters,
+        }
       },
     }
   )
+
+  useEffect(() => {
+    if (tableData?.length) {
+      reset({
+        multi: tableData.map((i) => i),
+      })
+    }
+  }, [tableData, reset])
 
   const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
     (row) => {
@@ -96,21 +151,21 @@ const RelationTable = ({
 
         return constructorObjectService.deleteManyToMany(data)
       } else {
-        return constructorObjectService.delete(
-          relatedTableSlug,
-          row.guid
-        )
+        return constructorObjectService.delete(relatedTableSlug, row.guid)
       }
     },
     {
-      onSuccess: () => {
-        queryClient.refetchQueries([
-          "GET_OBJECT_LIST",
-          relatedTableSlug,
-        ])
+      onSuccess: (a, b) => {
+        remove(tableData.findIndex((i) => i.guid === b.guid))
+        queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTableSlug])
       },
     }
   )
+
+  const { data: { custom_events: customEvents = [] } = {} } =
+    useCustomActionsQuery({
+      tableSlug: relatedTableSlug,
+    })
 
   const navigateToEditPage = (row) => {
     navigateToForm(relatedTableSlug, "EDIT", row)
@@ -118,48 +173,59 @@ const RelationTable = ({
 
   const navigateToTablePage = () => {
     navigate(`/main/${appId}/object/${relatedTableSlug}`, {
-      state: { [`${tableSlug}_${relation.type === "Many2Many" ? "ids" : "id"}`]: id }
+      state: {
+        [`${tableSlug}_${relation.type === "Many2Many" ? "ids" : "id"}`]: id,
+      },
     })
   }
 
-  const { mutateAsync } = useMutation((values) => {
-    if(values.guid) return constructorObjectService.update(relatedTableSlug, { data: values })
-    else constructorObjectService.create(relatedTableSlug, { data: values })
-  }, {
-    onSuccess: () => {
-      setCreateFormVisible(false)
-      queryClient.refetchQueries([
-        "GET_OBJECT_LIST",
-        relatedTableSlug,
-      ])
-    }
-  })
-
-  const onFormSubmit = (values) => {
-    return mutateAsync(values)
-  }
+  // const { mutateAsync } = useMutation(
+  //   (values) => {
+  //     if (values.guid)
+  //       return constructorObjectService.update(relatedTableSlug, {
+  //         data: values,
+  //       })
+  //     else constructorObjectService.create(relatedTableSlug, { data: values })
+  //   },
+  //   {
+  //     onSuccess: () => {
+  //       setCreateFormVisible(false)
+  //       queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTableSlug])
+  //     },
+  //   }
+  // )
 
   return (
     <div className={styles.relationTable}>
-      {!!quickFilters?.length && <div className={styles.filtersBlock}>
-        {quickFilters.map((field) => (
-          <FRow key={field.id} label={field.label}>
-            <Filter
-              field={field}
-              name={field.slug}
-              tableSlug={relatedTableSlug}
-              filters={filters}
-              onChange={filterChangeHandler}
-            />
-          </FRow>
-        ))}
-      </div>}
+      {!!quickFilters?.length && (
+        <div className={styles.filtersBlock}>
+          {quickFilters.map((field) => (
+            <FRow key={field.id} label={field.label}>
+              <Filter
+                field={field}
+                name={field.slug}
+                tableSlug={relatedTableSlug}
+                filters={filters}
+                onChange={filterChangeHandler}
+              />
+            </FRow>
+          ))}
+        </div>
+      )}
 
       <div className={styles.tableBlock}>
         <ObjectDataTable
+          remove={remove}
+          watch={watch}
+          isRelationTable={true}
+          setFormVisible={setFormVisible}
+          formVisible={formVisible}
           loader={dataFetchingLoading || deleteLoading}
           data={tableData}
+          fields={fields}
           columns={columns}
+          setFormValue={setFormValue}
+          control={control}
           removableHeight={290}
           disableFilters
           pagesCount={pageCount}
@@ -167,13 +233,20 @@ const RelationTable = ({
           onRowClick={navigateToEditPage}
           onDeleteClick={deleteHandler}
           onPaginationChange={setCurrentPage}
-          paginationExtraButton={id && <SecondaryButton onClick={navigateToTablePage} >Все</SecondaryButton>}
-          onFormSubmit={relation.is_editable && onFormSubmit}
+          paginationExtraButton={
+            id && (
+              <SecondaryButton onClick={navigateToTablePage}>
+                {t("all")}
+              </SecondaryButton>
+            )
+          }
           createFormVisible={createFormVisible[relation.id]}
           setCreateFormVisible={(val) => setCreateFormVisible(relation.id, val)}
           limit={limit}
           setLimit={setLimit}
           summaries={relation.summaries}
+          isChecked={(row) => selectedObjects?.includes(row.guid)}
+          onCheckboxChange={!!customEvents?.length && onCheckboxChange}
         />
       </div>
     </div>

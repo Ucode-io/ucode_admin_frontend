@@ -1,6 +1,6 @@
 import { Close } from "@mui/icons-material"
 import { IconButton } from "@mui/material"
-import { useMemo } from "react"
+import { useMemo, useTransition } from "react"
 import { useFieldArray, useWatch } from "react-hook-form"
 import { Container, Draggable } from "react-smooth-dnd"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
@@ -15,6 +15,7 @@ const FieldsBlock = ({
   setSelectedSettingsTab,
   closeSettingsBlock,
 }) => {
+  const { t } = useTransition()
   const { fields } = useFieldArray({
     control: mainForm.control,
     name: "fields",
@@ -30,6 +31,11 @@ const FieldsBlock = ({
   const sections = useWatch({
     control: mainForm.control,
     name: `sections`,
+  })
+
+  const summarySectionFields = useWatch({
+    control: mainForm.control,
+    name: "summary_section.fields",
   })
 
   const tableRelations = useWatch({
@@ -54,33 +60,37 @@ const FieldsBlock = ({
     return list
   }, [sections])
 
+  const usedSummarySectionFields = useMemo(() => {
+    return summarySectionFields?.map((field) => field.id) ?? []
+  }, [summarySectionFields])
+
   const unusedFields = useMemo(() => {
+    console.log("ss =>", usedFields, usedSummarySectionFields, fields)
     return fields?.filter(
       (field) =>
         field.type !== "LOOKUP" &&
         field.type !== "LOOKUPS" &&
-        !usedFields.includes(field.id)
+        (!usedFields.includes(field.id) ||
+          !usedSummarySectionFields.includes(field.id))
     )
-  }, [usedFields, fields])
+  }, [usedFields, fields, usedSummarySectionFields])
 
   const unusedTableRelations = useMemo(() => {
+    const fileRelation = { id: "", view_relation_type: "FILE", title: "Файл" }
+    const relations = tableRelations ? [...tableRelations] : [fileRelation]
 
-    const fileRelation = {id: '', view_relation_type: 'FILE', title: "Файл"}
-    const relations = tableRelations ? [...tableRelations, fileRelation] : [fileRelation]
-
-    return [...relations]?.filter(
-      (relation) => {
-        if (relation.view_relation_type === 'FILE') {
-          return !viewRelations?.some(viewRelation => viewRelation.view_relation_type === 'FILE')
-        } else {
-          return !viewRelations?.some(
-            (viewRelation) => viewRelation.relation_id === relation.id
-          )
-        }
+    return [...relations]?.filter((relation) => {
+      if (relation.view_relation_type === "FILE") {
+        return !viewRelations?.some(
+          (viewRelation) => viewRelation.view_relation_type === "FILE"
+        )
+      } else {
+        return !viewRelations?.some(
+          (viewRelation) => viewRelation.relation_id === relation.id
+        )
       }
-    )
+    })
   }, [tableRelations, viewRelations])
-
   const unusedRelations = useMemo(() => {
     return relations?.filter((relation) => !usedFields.includes(relation.id))
   }, [relations, usedFields])
@@ -93,7 +103,7 @@ const FieldsBlock = ({
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
-        <h2>Add fields</h2>
+        <h2>{t("add.fields")}</h2>
 
         <IconButton onClick={closeSettingsBlock}>
           <Close />
@@ -106,9 +116,9 @@ const FieldsBlock = ({
           onSelect={setSelectedSettingsTab}
         >
           <TabList>
-            <Tab>Form fields</Tab>
+            <Tab>{t("form.fields")}</Tab>
             {/* <Tab>Input relation fields</Tab> */}
-            <Tab>Table fields</Tab>
+            <Tab>{t("table.fields")}</Tab>
           </TabList>
 
           <TabPanel>
@@ -135,9 +145,11 @@ const FieldsBlock = ({
                 ))}
               </Container>
 
-              {!!unusedRelations?.length && <div className={styles.settingsBlockHeader}>
-                <h2>Relation input fields</h2>
-              </div>}
+              {!!unusedRelations?.length && (
+                <div className={styles.settingsBlockHeader}>
+                  <h2>{t("relation.input.fields")}</h2>
+                </div>
+              )}
 
               <Container
                 groupName="1"

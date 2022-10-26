@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from "react"
+import { useParams } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { useFieldArray, useForm } from "react-hook-form"
-import { useParams } from "react-router-dom"
-import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined"
-import { Clear } from "@mui/icons-material"
 import { Checkbox, Popover } from "@mui/material"
+import { Clear } from "@mui/icons-material"
+import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined"
 
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
 import { filterActions } from "../../../../store/filter/filter.slice"
@@ -13,12 +13,13 @@ import HFSelect from "../../../../components/FormElements/HFSelect"
 import useFilters from "../../../../hooks/useFilters"
 import { Filter } from "../FilterGenerator"
 import styles from "./style.module.scss"
- 
-const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
-  const { new_list } = useSelector((s) => s.filter)
-  const { tableSlug } = useParams()
+
+const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
   const dispatch = useDispatch()
+  const { tableSlug } = useParams()
+  const { new_list } = useSelector((s) => s.filter)
   const { filters } = useFilters(tableSlug, view.id)
+
   const { control, watch, reset } = useForm({
     defaultValues: {
       new: [
@@ -48,23 +49,34 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
   })
 
   const computedOptions = useMemo(() => {
-    return Object.values(fieldsMap ?? {})
-      ?.filter((i) => !view?.quick_filters?.find((j) => i.id === j.field_id))
-      ?.map((i) => ({ ...i, value: i.id }))
+    return Object.values(fieldsMap ?? {})?.map((i) => ({ ...i, value: i.id }))
   }, [fieldsMap])
 
   const isAddBtnDisabled = useMemo(() => {
     return fields.length === computedOptions.length
   }, [fields, computedOptions])
 
+  const filtered = useMemo(() => {
+    return [
+      ...Object.values(fieldsMap).filter(
+        (i) =>
+          Object.keys(filters ?? {}).includes(i.slug) &&
+          !(new_list[tableSlug] ?? []).find((j) => i.id === j.id)
+      ),
+      ...(new_list[tableSlug] ?? []),
+    ]
+  }, [filters, fieldsMap, new_list, tableSlug])
+
   useEffect(() => {
-    reset({
-      new: new_list[tableSlug]?.map((i) => ({
-        checked: i.checked,
-        left_field: i.id,
-      })),
-    })
-  }, [new_list])
+    if (filtered.length) {
+      reset({
+        new: filtered?.map((i) => ({
+          checked: i.checked,
+          left_field: i.id,
+        })),
+      })
+    }
+  }, [filtered, reset])
 
   const open = Boolean(anchorEl)
   const id = open ? "simple-popover" : undefined
@@ -78,6 +90,9 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
         onClose={() => {
           handleClose()
         }}
+        sx={{
+          zIndex: 100,
+        }}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
@@ -90,19 +105,15 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
                 checked={watch(`new.${index}.checked`)}
                 checkedIcon={<PinFilled />}
                 icon={<PushPinOutlinedIcon />}
-                disabled={!watch(`new.${index}.left_field`)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    view?.quick_filters?.push({
-                      field_id: watch(`new.${index}.left_field`),
-                      default_value: "",
-                    })
-                  } else {
-                    view.quick_filters = view?.quick_filters?.filter(
-                      (i) => i.field_id !== watch(`new.${index}.left_field`)
+                disabled={
+                  !(
+                    watch(`new.${index}.left_field`) &&
+                    !view?.quick_filters?.find(
+                      (i) => i.field_id === watch(`new.${index}.left_field`)
                     )
-                  }
-
+                  )
+                }
+                onChange={(e) =>
                   dispatch(
                     filterActions.setNewFilter({
                       tableSlug,
@@ -110,7 +121,7 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
                       checked: e.target.checked,
                     })
                   )
-                }}
+                }
                 name={`new.${index}.checked`}
               />
               <HFSelect
@@ -137,8 +148,8 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
                     : ""
                 }
                 name={
-                  fieldsMap[watch(`new.${index}.left_field`)]?.path_slug ??
-                  fieldsMap[watch(`new.${index}.left_field`)]?.slug
+                  fieldsMap?.[watch(`new.${index}.left_field`)]?.path_slug ??
+                  fieldsMap?.[watch(`new.${index}.left_field`)]?.slug
                 }
                 onChange={onChange}
                 filters={filters}
@@ -147,22 +158,22 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap, view }) => {
               <RectangleIconButton
                 color="white"
                 onClick={() => {
-                  if (
-                    view?.quick_filters?.find((i) =>
-                      watch(`new.${index}.left_field`)
-                    )
-                  ) {
-                    view.quick_filters = view.quick_filters.filter(
-                      (i) => i.field_id !== watch(`new.${index}.left_field`)
-                    )
-                  }
-                  if (watch(`new.${index}.left_field`))
-                    dispatch(
-                      filterActions.clearNewFilter({
-                        tableSlug,
-                        fieldId: watch(`new.${index}.left_field`),
-                      })
-                    )
+                  dispatch(
+                    filterActions.clearNewFilter({
+                      tableSlug,
+                      fieldId: watch(`new.${index}.left_field`),
+                    })
+                  )
+                  dispatch(
+                    filterActions.removeFromList({
+                      tableSlug,
+                      viewId: view.id,
+                      name:
+                        fieldsMap?.[watch(`new.${index}.left_field`)]
+                          ?.path_slug ??
+                        fieldsMap?.[watch(`new.${index}.left_field`)]?.slug,
+                    })
+                  )
                   remove(index)
                 }}
               >

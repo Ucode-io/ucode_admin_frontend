@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useParams } from "react-router-dom"
 import PageFallback from "../../components/PageFallback"
 import constructorObjectService from "../../services/constructorObjectService"
@@ -11,7 +11,6 @@ import RelationSection from "./RelationSection"
 import styles from "./style.module.scss"
 import Footer from "../../components/Footer"
 import useTabRouter from "../../hooks/useTabRouter"
-import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import { Save } from "@mui/icons-material"
 import SecondaryButton from "../../components/Buttons/SecondaryButton"
 import { useQueryClient } from "react-query"
@@ -20,10 +19,16 @@ import constructorViewRelationService from "../../services/constructorViewRelati
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2"
 import FiltersBlock from "../../components/FiltersBlock"
 import DocumentGeneratorButton from "./components/DocumentGeneratorButton"
+import PrimaryButton from "../../components/Buttons/PrimaryButton"
+import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons"
+import { showAlert } from "../../store/alert/alert.thunk"
+import { useTranslation } from "react-i18next"
 
 const ObjectsFormPage = () => {
+  const { t } = useTranslation()
   const { tableSlug, id } = useParams()
   const { pathname, state = {} } = useLocation()
+  const dispatch = useDispatch()
   const { removeTab, navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
 
@@ -46,6 +51,7 @@ const ObjectsFormPage = () => {
           ...section,
           fields: section.fields?.sort(sortByOrder) ?? [],
         }))
+        .filter((section) => !section.is_summary_section)
         .sort(sortByOrder) ?? []
     )
   }, [sections])
@@ -89,6 +95,10 @@ const ObjectsFormPage = () => {
       )
 
       reset(data.response ?? {})
+
+      // const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)
+
+      // if (!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response)
     } catch (error) {
       console.error(error)
     } finally {
@@ -141,9 +151,10 @@ const ObjectsFormPage = () => {
       .update(tableSlug, { data })
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
-        removeTab(pathname)
+        dispatch(showAlert(t("successfully.updated"), "success"))
       })
-      .catch(() => setBtnLoader(false))
+      .catch((e) => console.log("ERROR: ", e))
+      .finally(() => setBtnLoader(false))
   }
 
   const create = (data) => {
@@ -153,12 +164,13 @@ const ObjectsFormPage = () => {
       .create(tableSlug, { data })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug])
-        removeTab(pathname)
+        dispatch(showAlert(t("successfully.updated"), "success"))
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
         if (tableRelations?.length)
           navigateToForm(tableSlug, "EDIT", res.data?.data)
       })
-      .catch(() => setBtnLoader(false))
+      .catch((e) => console.log("ERROR: ", e))
+      .finally(() => setBtnLoader(false))
   }
 
   const onSubmit = (data) => {
@@ -185,8 +197,17 @@ const ObjectsFormPage = () => {
 
   return (
     <div className={styles.formPage}>
-      <FiltersBlock extra={<DocumentGeneratorButton />} />
-
+      <FiltersBlock
+        summary={true}
+        sections={sections}
+        extra={<DocumentGeneratorButton />}
+      >
+        {/* <SummarySection
+          computedSummary={computedSummary}
+          control={control}
+          sections={sections}
+        /> */}
+      </FiltersBlock>
       <div className={styles.formArea}>
         <MainInfo
           control={control}
@@ -197,19 +218,35 @@ const ObjectsFormPage = () => {
           <RelationSection relations={tableRelations} control={control} />
         </div>
       </div>
-
       <Footer
         extra={
           <>
             <SecondaryButton onClick={() => removeTab(pathname)} color="error">
-              Закрыть
+              {t("close")}
             </SecondaryButton>
+
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+              <FormCustomActionButton
+                control={control?._formValues}
+                tableSlug={tableSlug}
+                id={id}
+              />
+
+              {/* {customEvents?.map((event) => (
+                <PrimaryButton
+                  key={event.id}
+                  onClick={() => invokeFunction(event)}
+                >
+                  <IconGenerator icon={event.icon} /> {event.label}
+                </PrimaryButton>
+              ))} */}
+
               <PrimaryButton
                 loader={btnLoader}
                 onClick={handleSubmit(onSubmit)}
               >
-                <Save /> Сохранить
+                <Save />
+                {t("save")}
               </PrimaryButton>
             </PermissionWrapperV2>
           </>

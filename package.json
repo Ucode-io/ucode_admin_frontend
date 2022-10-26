@@ -47,6 +47,7 @@
     "@nivo/bar": "^0.80.0",
     "@nivo/core": "^0.80.0",
     "@nivo/funnel": "^0.80.0",
+    "@nivo/line": "^0.80.0",
     "@nivo/pie": "^0.80.0",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@reduxjs/toolkit": "^1.7.1",
@@ -70,12 +71,15 @@
     "i18next-browser-languagedetector": "^6.1.4",
     "i18next-http-backend": "^1.4.0",
     "jodit-react": "^1.3.13",
+    "jsbarcode": "^3.9.0",
     "lodash.get": "^4.4.2",
     "lodash.merge": "^4.6.2",
     "material-ui-popup-state": "^2.0.0",
+    "print-js": "^1.6.0",
     "prismjs": "^1.28.0",
     "react": "^18.0.0",
     "react-activation": "^0.11.2",
+    "react-barcode": "^1.4.5",
     "react-codemirror2": "^7.2.1",
     "react-currency-format": "^1.1.0",
     "react-datepicker": "^4.8.0",
@@ -106,7 +110,8 @@
     "redux": "^4.1.2",
     "redux-persist": "^6.0.0",
     "reselect": "^4.1.5",
-    "use-onclickoutside": "^0.4.1"
+    "use-onclickoutside": "^0.4.1",
+    "wkhtmltopdf": "^0.4.0"
   },
   "devDependencies": {
     "@originjs/vite-plugin-federation": "1.1.7",

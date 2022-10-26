@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+
 import DataColumn from "./DataColumn"
 import MockColumn from "./MockColumn"
 import styles from "./style.module.scss"
@@ -12,16 +13,19 @@ const RecursiveBlock = ({
   tabs,
   level = 0,
   workingDays,
-}) => {
+}) => { 
   const elements = useMemo(() => {
     if (!parentTab) return tabs?.[level]?.list
 
-    return tabs?.[level]?.list?.filter(
-      (el) => el[parentTab.slug] === parentTab.value
-    )
+    return tabs?.[level]?.list?.filter((el) => {
+      return Array.isArray(el[parentTab.slug])
+        ? el[parentTab.slug]?.includes(parentTab.value)
+        : el[parentTab.slug] === parentTab.value
+    })
   }, [parentTab, tabs, level])
 
-  if(!elements?.length) return <MockColumn view={view} level={level} tabs={tabs} />
+  if (!elements?.length)
+    return <MockColumn view={view} level={level} tabs={tabs} />
 
   return (
     <div className={styles.row}>
@@ -45,6 +49,7 @@ const RecursiveBlock = ({
               date={date}
               data={data}
               parentTab={tab}
+              categoriesTab={parentTab}
               fieldsMap={fieldsMap}
               view={view}
               workingDays={workingDays}

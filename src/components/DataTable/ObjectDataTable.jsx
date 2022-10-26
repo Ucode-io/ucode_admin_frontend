@@ -1,35 +1,42 @@
 import { useEffect, useRef, useState } from "react"
-import FilterGenerator from "../../views/Objects/components/FilterGenerator"
+import { useDispatch, useSelector } from "react-redux"
+import useOnClickOutside from "use-onclickoutside"
+import { useLocation } from "react-router-dom"
+import { Checkbox } from "@mui/material"
+
 import {
   CTable,
   CTableBody,
-  CTableCell,
   CTableHead,
   CTableHeadCell,
   CTableRow,
 } from "../CTable"
-import { useDispatch, useSelector } from "react-redux"
+import FilterGenerator from "../../views/Objects/components/FilterGenerator"
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice"
-import { useLocation } from "react-router-dom"
-import "./style.scss"
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon"
-import useOnClickOutside from "use-onclickoutside"
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2"
-import { numberWithSpaces } from "../../utils/formatNumbers"
 import TableRow from "./TableRow"
 import TableRowForm from "./TableRowForm"
 import SummaryRow from "./SummaryRow"
+import MultipleUpdateRow from "./MultipleUpdateRow"
+import "./style.scss"
 
 const ObjectDataTable = ({
   data = [],
   loader = false,
   removableHeight,
+  additionalRow,
+  remove,
+  fields = [],
+  isRelationTable,
   disablePagination,
   currentPage = 1,
   onPaginationChange = () => {},
   pagesCount = 1,
   columns = [],
-  additionalRow,
+  watch,
+  control,
+  setFormValue,
   dataLength,
   onDeleteClick,
   onEditClick,
@@ -42,22 +49,28 @@ const ObjectDataTable = ({
   tableSlug,
   isResizeble,
   paginationExtraButton,
-  checkboxValue,
   onCheckboxChange,
-  onFormSubmit,
   createFormVisible,
   setCreateFormVisible,
   limit,
   setLimit,
-  summaries
+  isChecked,
+  formVisible,
+  summaries,
 }) => {
   const location = useLocation()
+  const [showCheckbox, setShowCheckbox] = useState(false)
   const tableSize = useSelector((state) => state.tableSize.tableSize)
   const [columnId, setColumnId] = useState("")
   const tableSettings = useSelector((state) => state.tableSize.tableSettings)
   const tableHeight = useSelector((state) => state.tableSize.tableHeight)
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0)
+  const [selected, setSelected] = useState([])
 
+  const onSelectedRowChange = (val, row) => {
+    if (val) setSelected((prev) => [...prev, row.guid])
+    else setSelected((prev) => prev.filter((id) => id !== row.guid))
+  }
 
   const popupRef = useRef(null)
   useOnClickOutside(popupRef, () => setColumnId(""))
@@ -184,6 +197,12 @@ const ObjectDataTable = ({
     }
   }
 
+  useEffect(() => {
+    if (!formVisible) {
+      setSelected([])
+    }
+  }, [formVisible])
+
   return (
     <CTable
       disablePagination={disablePagination}
@@ -199,14 +218,44 @@ const ObjectDataTable = ({
       setLimit={setLimit}
     >
       <CTableHead>
+        {formVisible && selected.length > 0 && (
+          <MultipleUpdateRow
+            selected={selected}
+            setSelected={setSelected}
+            watch={watch}
+            setFormValue={setFormValue}
+            control={control}
+            fields={columns}
+            columns={data}
+            row={{}}
+          />
+        )}
         <CTableRow>
-          <CTableCell width={10} />
-          {onCheckboxChange && <CTableHeadCell width={10}>№</CTableHeadCell>}
+          {formVisible ? (
+            <CTableHeadCell
+              onMouseEnter={() => setShowCheckbox(true)}
+              onMouseLeave={() => setShowCheckbox(false)}
+              style={{ padding: "2px 0", minWidth: "40px" }}
+            >
+              {showCheckbox || data.length === selected.length ? (
+                <Checkbox
+                  onChange={(e, val) =>
+                    setSelected(val ? data.map((i) => i.guid) : [])
+                  }
+                />
+              ) : (
+                "№"
+              )}
+            </CTableHeadCell>
+          ) : (
+            <CTableHeadCell width={10}>№</CTableHeadCell>
+          )}
           {columns.map((column, index) => (
             <CTableHeadCell
               id={column.id}
               key={index}
               style={{
+                padding: "10px 4px",
                 minWidth: tableSize?.[pageName]?.[column.id]
                   ? tableSize?.[pageName]?.[column.id]
                   : "auto",
@@ -245,15 +294,15 @@ const ObjectDataTable = ({
                 >
                   {column.label}
                 </span>
-                {!disableFilters && (
-                  <FilterGenerator
-                    field={column}
-                    name={column.slug}
-                    onChange={filterChangeHandler}
-                    filters={filters}
-                    tableSlug={tableSlug}
-                  />
-                )}
+                {/* {!disableFilters && (
+                  )} */}
+                <FilterGenerator
+                  field={column}
+                  name={column.slug}
+                  onChange={filterChangeHandler}
+                  filters={filters}
+                  tableSlug={tableSlug}
+                />
                 {columnId === column?.id && (
                   <div className="cell-popup" ref={popupRef}>
                     {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
@@ -294,22 +343,28 @@ const ObjectDataTable = ({
           </PermissionWrapperV2>
         </CTableRow>
       </CTableHead>
-
       <CTableBody
         loader={loader}
         columnsCount={columns.length}
         dataLength={dataLength || data?.length}
       >
-        {data?.map((row, rowIndex) => (
+        {(isRelationTable ? fields : data)?.map((row, rowIndex) => (
           <TableRow
-            key={row.guid || row.id}
+            remove={remove}
+            selected={selected}
+            onSelectedRowChange={onSelectedRowChange}
+            watch={watch}
+            control={control}
+            key={row.id}
             row={row}
+            formVisible={formVisible}
             rowIndex={rowIndex}
             onRowClick={onRowClick}
-            checkboxValue={checkboxValue}
+            isChecked={isChecked}
             onCheckboxChange={onCheckboxChange}
             currentPage={currentPage}
             limit={limit}
+            setFormValue={setFormValue}
             columns={columns}
             tableHeight={tableHeight}
             tableSettings={tableSettings}
@@ -317,27 +372,30 @@ const ObjectDataTable = ({
             calculateWidth={calculateWidth}
             tableSlug={tableSlug}
             onDeleteClick={onDeleteClick}
-            onFormSubmit={onFormSubmit}
           />
         ))}
-
-       {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
-
+        {!!summaries?.length && (
+          <SummaryRow summaries={summaries} columns={columns} data={data} />
+        )}
         {additionalRow}
-
-
-        {createFormVisible && <TableRowForm
-          row={null}
-          currentPage={currentPage}
-          rowIndex={data?.length}
-          columns={columns}
-          tableHeight={tableHeight}
-          tableSettings={tableSettings}
-          pageName={pageName}
-          calculateWidth={calculateWidth}
-          setFormVisible={setCreateFormVisible}
-          onFormSubmit={onFormSubmit}
-        />}
+        {createFormVisible && (
+          <TableRowForm
+            remove={remove}
+            control={control}
+            setFormValue={setFormValue}
+            fields={fields}
+            formVisible={formVisible}
+            row={null}
+            currentPage={currentPage}
+            rowIndex={data?.length}
+            columns={columns}
+            tableHeight={tableHeight}
+            tableSettings={tableSettings}
+            pageName={pageName}
+            calculateWidth={calculateWidth}
+            setFormVisible={setCreateFormVisible}
+          />
+        )}
       </CTableBody>
     </CTable>
   )

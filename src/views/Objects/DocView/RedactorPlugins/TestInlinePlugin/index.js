@@ -1,15 +1,15 @@
 // require('./index.scss').toString();
-import './index.scss'
+import "./index.scss"
 
 class TestInlinePlugin {
-  static title = 'Variables';
+  static title = "Variables"
   fields = []
-  isDropDownOpen = false;
-  togglingCallback = null;
-  emptyString = '&nbsp;&nbsp';
-  fontSizeDropDown = 'font-size-dropdown';
+  isDropDownOpen = false
+  togglingCallback = null
+  emptyString = "&nbsp;&nbsp"
+  fontSizeDropDown = "font-size-dropdown"
 
-  constructor({config}){    
+  constructor({ config }) {
     this.fields = config.fields ?? []
   }
 
@@ -17,60 +17,62 @@ class TestInlinePlugin {
     return {
       font: {
         size: true,
-        face: true
+        face: true,
       },
-    };
+    }
   }
   static get isInline() {
-    return true;
+    return true
   }
 
-  commandName = 'fontSize';
-  
+  commandName = "fontSize"
 
   CSS = {
-    button: 'ce-inline-tool',
-    buttonActive: 'ce-font-size-tool--active',
-    buttonModifier: 'ce-inline-tool--font',
+    button: "ce-inline-tool",
+    buttonActive: "ce-font-size-tool--active",
+    buttonModifier: "ce-inline-tool--font",
   }
 
   nodes = {
-    button: undefined
+    button: undefined,
   }
-  selectedFontSize = null;
+  selectedFontSize = null
 
-  selectionList = undefined;
+  selectionList = undefined
 
-  buttonWrapperText = undefined;
+  buttonWrapperText = undefined
 
-  createSvg = undefined;
+  createSvg = undefined
 
   make(tagName, classNames = null) {
-    const el = document.createElement(tagName);
+    const el = document.createElement(tagName)
 
     if (Array.isArray(classNames)) {
-      el.classList.add(...classNames);
+      el.classList.add(...classNames)
     } else if (classNames) {
-      el.classList.add(classNames);
+      el.classList.add(classNames)
     }
-    return el;
+    return el
   }
 
   createButton() {
-    this.nodes.button = this.make('button', [this.CSS.button, this.CSS.buttonModifier]);
-    this.nodes.button.type = 'button';
-    this.nodes.button.setAttribute('id', 'fontSizeBtn');
-    this.getFontSizeForButton();
-    this.createSvg = this.svg('toggler-down', 13, 13);
-    this.nodes.button.appendChild(this.createSvg);
+    this.nodes.button = this.make("button", [
+      this.CSS.button,
+      this.CSS.buttonModifier,
+    ])
+    this.nodes.button.type = "button"
+    this.nodes.button.setAttribute("id", "fontSizeBtn")
+    this.getFontSizeForButton()
+    this.createSvg = this.svg("toggler-down", 13, 13)
+    this.nodes.button.appendChild(this.createSvg)
   }
   getFontSizeForButton() {
-    this.buttonWrapperText = this.make('div', 'button-wrapper-text');
-    const displaySelectedFontSize = this.make('div');
-    displaySelectedFontSize.setAttribute('id', this.fontSizeDropDown)
-    displaySelectedFontSize.innerHTML = this.emptyString;
-    this.buttonWrapperText.append(displaySelectedFontSize);
-    this.nodes.button.append(this.buttonWrapperText);
+    this.buttonWrapperText = this.make("div", "button-wrapper-text")
+    const displaySelectedFontSize = this.make("div")
+    displaySelectedFontSize.setAttribute("id", this.fontSizeDropDown)
+    displaySelectedFontSize.innerHTML = this.emptyString
+    this.buttonWrapperText.append(displaySelectedFontSize)
+    this.nodes.button.append(this.buttonWrapperText)
   }
   // ========  GENERATE OPTIONS ===============
   addFontSizeOptions() {
@@ -82,62 +84,70 @@ class TestInlinePlugin {
     //   { label: 'Address', value: '4' },
     // ];
 
-    const fontSizeList = this.fields.map(field => ({
+    const fontSizeList = this.fields.map((field) => ({
       label: field.label,
-      value: field.label
+      value: field.label,
     }))
-    
-    this.selectionList = this.make('div', 'selectionList');
-    const selectionListWrapper = this.make('div', 'selection-list-wrapper');
+
+    this.selectionList = this.make("div", "selectionList")
+    const selectionListWrapper = this.make("div", "selection-list-wrapper")
 
     for (const fontSize of fontSizeList) {
-      const option = this.make('div');
-      option.setAttribute('value', fontSize.value);
-      option.setAttribute('id', fontSize.value);
-      option.classList.add('selection-list-option');
-      if ((document.getElementById(this.fontSizeDropDown).innerHTML === fontSize.label) || (this.selectedFontSize === fontSize.value)) {
-        option.classList.add('selection-list-option-active');
+      const option = this.make("div")
+      option.setAttribute("value", fontSize.value)
+      option.setAttribute("id", fontSize.value)
+      option.classList.add("selection-list-option")
+      if (
+        document.getElementById(this.fontSizeDropDown).innerHTML ===
+          fontSize.label ||
+        this.selectedFontSize === fontSize.value
+      ) {
+        option.classList.add("selection-list-option-active")
       }
-      option.innerHTML = fontSize.label;
-      selectionListWrapper.append(option);
+      option.innerHTML = fontSize.label
+      selectionListWrapper.append(option)
     }
-    this.selectionList.append(selectionListWrapper);
-    this.nodes.button.append(this.selectionList);
-    this.selectionList.addEventListener('click', this.toggleFontSizeSelector);
+    this.selectionList.append(selectionListWrapper)
+    this.nodes.button.append(this.selectionList)
+    this.selectionList.addEventListener("click", this.toggleFontSizeSelector)
 
     setTimeout(() => {
-      if (typeof this.togglingCallback === 'function') {
-        this.togglingCallback(true);
+      if (typeof this.togglingCallback === "function") {
+        this.togglingCallback(true)
       }
-    }, 50);
-  };
+    }, 50)
+  }
 
   toggleFontSizeSelector = (event) => {
-    this.selectedFontSize = event.target.id;
-    this.toggle();
+    this.selectedFontSize = event.target.id
+    this.toggle()
   }
 
   removeFontSizeOptions() {
     if (this.selectionList) {
-      this.isDropDownOpen = false;
-      this.selectionList = this.selectionList.remove();
+      this.isDropDownOpen = false
+      this.selectionList = this.selectionList.remove()
     }
-    if (typeof this.togglingCallback === 'function') {
-      this.togglingCallback(false);
+    if (typeof this.togglingCallback === "function") {
+      this.togglingCallback(false)
     }
   }
 
   render() {
-    this.createButton();
-    this.nodes.button.addEventListener('click', this.toggleDropDown);
-    return this.nodes.button;
+    this.createButton()
+    this.nodes.button.addEventListener("click", this.toggleDropDown)
+    return this.nodes.button
   }
 
   toggleDropDown = ($event) => {
-    if ((($event.target).id === this.fontSizeDropDown || $event.target.parentNode.id === 'fontSizeBtn' || $event.target.id === 'fontSizeBtn')) {
+    if (
+      $event.target.id === this.fontSizeDropDown ||
+      $event.target.parentNode.id === "fontSizeBtn" ||
+      $event.target.id === "fontSizeBtn"
+    ) {
       this.toggle((toolbarOpened) => {
         if (toolbarOpened) {
-          this.isDropDownOpen = true;
+          this.isDropDownOpen = true
         }
       })
     }
@@ -145,25 +155,23 @@ class TestInlinePlugin {
 
   toggle(togglingCallback) {
     if (!this.isDropDownOpen && togglingCallback) {
-      this.addFontSizeOptions();
+      this.addFontSizeOptions()
     } else {
-      this.removeFontSizeOptions();
+      this.removeFontSizeOptions()
     }
-    if (typeof togglingCallback === 'function') {
-      this.togglingCallback = togglingCallback;
+    if (typeof togglingCallback === "function") {
+      this.togglingCallback = togglingCallback
     }
   }
 
   surround(range) {
     if (this.selectedFontSize) {
       // document.execCommand('fontSize', false, this.selectedFontSize);
-      
+
       // const selectedText = range.extractContents();
 
-      // console.log("SELECTED TEXT ===>", selectedText)
+      const element = document.createElement("span")
 
-      const element = document.createElement('span')
-      
       element.innerHTML = `{ ${this.selectedFontSize} }`
       range.deleteContents()
       range.insertNode(element)
@@ -171,9 +179,11 @@ class TestInlinePlugin {
   }
 
   getComputedFontStyle(node) {
-    return window.getComputedStyle(node.parentElement, null).getPropertyValue('font-size');
-  };
-  
+    return window
+      .getComputedStyle(node.parentElement, null)
+      .getPropertyValue("font-size")
+  }
+
   checkState(selection) {
     // const isActive = document.queryCommandState('fontSize');
     // let anchoredElementFontSize = this.getComputedFontStyle(selection.anchorNode);
@@ -195,24 +205,26 @@ class TestInlinePlugin {
   }
 
   replaceFontSizeInWrapper(size) {
-    const displaySelectedFontSize = document.getElementById(this.fontSizeDropDown);
-    displaySelectedFontSize.innerHTML = size;
+    const displaySelectedFontSize = document.getElementById(
+      this.fontSizeDropDown
+    )
+    displaySelectedFontSize.innerHTML = size
   }
 
   clear() {
-    this.toggle();
-    this.selectedFontSize = null;
+    this.toggle()
+    this.selectedFontSize = null
   }
 
   svg(name, width = 14, height = 14) {
-    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg")
 
-    icon.classList.add('icon', 'icon--' + name);
-    icon.setAttribute('width', width + 'px');
-    icon.setAttribute('height', height + 'px');
-    icon.innerHTML = `<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#${name}"></use>`;
+    icon.classList.add("icon", "icon--" + name)
+    icon.setAttribute("width", width + "px")
+    icon.setAttribute("height", height + "px")
+    icon.innerHTML = `<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#${name}"></use>`
 
-    return icon;
+    return icon
   }
 }
 

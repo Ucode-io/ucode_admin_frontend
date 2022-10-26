@@ -2,10 +2,7 @@ import { Add } from "@mui/icons-material"
 import { useMemo, useState } from "react"
 import { useFieldArray } from "react-hook-form"
 import { useParams } from "react-router-dom"
-import {
-  CTableCell,
-  CTableRow,
-} from "../../../../../components/CTable"
+import { CTableCell, CTableRow } from "../../../../../components/CTable"
 import DataTable from "../../../../../components/DataTable"
 import TableCard from "../../../../../components/TableCard"
 import constructorRelationService from "../../../../../services/constructorRelationService"
@@ -13,6 +10,7 @@ import { generateGUID } from "../../../../../utils/generateID"
 import styles from "../Fields/style.module.scss"
 import { Drawer } from "@mui/material"
 import RelationSettings from "./RelationSettings"
+import TableRowButton from "../../../../../components/TableRowButton"
 
 const Relations = ({ mainForm, getRelationFields }) => {
   const [drawerState, setDrawerState] = useState(null)
@@ -26,6 +24,10 @@ const Relations = ({ mainForm, getRelationFields }) => {
 
   const { id } = useParams()
 
+  const openEditForm = (field, index) => {
+    setDrawerState(field)
+  }
+
   const updateRelations = async () => {
     setLoader(true)
 
@@ -33,10 +35,6 @@ const Relations = ({ mainForm, getRelationFields }) => {
 
     setDrawerState(null)
     setLoader(false)
-  }
-
-  const openEditForm = (field, index) => {
-    setDrawerState(field)
   }
 
   const deleteField = (field, index) => {
@@ -74,7 +72,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
       <DataTable
         data={relations}
         removableHeight={false}
-        tableSlug={'app'}
+        tableSlug={"app"}
         columns={columns}
         disablePagination
         loader={loader}
@@ -82,23 +80,20 @@ const Relations = ({ mainForm, getRelationFields }) => {
         onEditClick={openEditForm}
         dataLength={1}
         additionalRow={
-          // <PermissionWrapperV2 tabelSlug={slug} type="write">
-            <CTableRow>
-              <CTableCell colSpan={columns.length + 2}>
-                <div
-                  className={styles.createButton}
-                  onClick={() => setDrawerState("CREATE")}
-                >
-                  <Add color="primary" />
-                  <p>Добавить</p>
-                </div>
-              </CTableCell>
-            </CTableRow>
+          <TableRowButton
+            colSpan={columns.length + 2}
+            onClick={() => setDrawerState("CREATE")}
+          />
         }
       />
 
-      <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal" >
-        <RelationSettings 
+      <Drawer
+        open={!!drawerState}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal"
+      >
+        <RelationSettings
           relation={drawerState}
           closeSettingsBlock={() => setDrawerState(null)}
           getRelationFields={getRelationFields}
@@ -106,9 +101,8 @@ const Relations = ({ mainForm, getRelationFields }) => {
           height={`calc(100vh - 48px)`}
         />
       </Drawer>
-
     </TableCard>
-  );
+  )
 }
 
 export default Relations

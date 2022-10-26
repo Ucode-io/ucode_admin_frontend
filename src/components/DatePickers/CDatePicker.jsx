@@ -1,6 +1,3 @@
-
-
-
 import DatePicker from "react-multi-date-picker"
 import weekends from "react-multi-date-picker/plugins/highlight_weekends"
 import { InputAdornment, TextField } from "@mui/material"
@@ -10,12 +7,22 @@ import { locale } from "./Plugins/locale"
 import "./style2.scss"
 import CustomNavButton from "./Plugins/CustomNavButton"
 
-const CDatePicker = ({ value, onChange }) => {
+const CDatePicker = ({
+  value,
+  onChange,
+  disabled,
+  isBlackBg,
+  isFormEdit,
+  classes,
+  placeholder,
+}) => {
   return (
     <DatePicker
+      disabled={disabled}
       render={(value, openCalendar, handleChange) => {
         return (
           <TextField
+            placeholder={placeholder}
             value={value}
             onClick={openCalendar}
             onChange={handleChange}
@@ -23,12 +30,25 @@ const CDatePicker = ({ value, onChange }) => {
             fullWidth
             autoComplete="off"
             InputProps={{
+              readOnly: disabled,
+              classes: {
+                input: isBlackBg ? classes.input : "",
+              },
+              style: disabled
+                ? {
+                    background: "#c0c0c039",
+                  }
+                : {
+                    background: isBlackBg ? "#2A2D34" : "",
+                    color: isBlackBg ? "#fff" : "",
+                  },
               endAdornment: (
                 <InputAdornment position="end">
                   <Today />
                 </InputAdornment>
               ),
             }}
+            className={isFormEdit ? "custom_textfield" : ""}
           />
         )
       }}

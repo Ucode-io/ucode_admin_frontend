@@ -6,14 +6,19 @@ import Editor from "@monaco-editor/react"
 import { Tooltip } from "@mui/material"
 import { Controller } from "react-hook-form"
 import { useQueryClient } from "react-query"
+import { useTranslation } from "react-i18next"
 
 const QueryRedactor = ({ form }) => {
+  const { t } = useTranslation()
 
   const queryClient = useQueryClient()
 
   const updateTable = () => {
-    const id = form.getValues('id')
-    queryClient.refetchQueries(["GET_DATA_BY_QUERY_IN_PREVIEW", { panelID: id }])
+    const id = form.getValues("id")
+    queryClient.refetchQueries([
+      "GET_DATA_BY_QUERY_IN_PREVIEW",
+      { panelID: id },
+    ])
   }
 
   return (
@@ -45,12 +50,12 @@ const QueryRedactor = ({ form }) => {
         />
       </div>
       <div className={styles.toolbar}>
-        <Tooltip title="Update table" placement="left">
-          <RectangleIconButton onClick={updateTable} >
+        <Tooltip title={t("update.table")} placement="left">
+          <RectangleIconButton onClick={updateTable}>
             <PlayArrow color="primary" />
           </RectangleIconButton>
         </Tooltip>
-        <Tooltip title="Copy" placement="left">
+        <Tooltip title={t("copy")} placement="left">
           <RectangleIconButton>
             <CopyAll color="primary" />
           </RectangleIconButton>

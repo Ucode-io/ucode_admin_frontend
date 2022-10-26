@@ -1,6 +1,7 @@
 import { Checkbox } from "@mui/material"
 import { useMemo } from "react"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
 import CreateButton from "../../../components/Buttons/CreateButton"
@@ -15,6 +16,7 @@ import { pageToOffset } from "../../../utils/pageToOffset"
 
 const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const { tableSlug, id } = useParams()
+  const { t } = useTranslation()
   const { navigateToForm } = useTabRouter()
   const queryClient = useQueryClient()
 
@@ -26,45 +28,58 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const [searchText, setSearchText] = useState("")
   const [filters, setFilters] = useState({})
 
-  const { isLoading: loader, data: { tableData, pageCount, fields } = { tableData: [], pageCount: 1, fields: [] } } = useQuery([
-    "GET_OBJECT_LIST",
-    {
-      tableSlug: relatedTableSlug,
-      limit: 10,
-      offset: pageToOffset(currentPage),
-      filters
+  const {
+    isLoading: loader,
+    data: { tableData, pageCount, fields } = {
+      tableData: [],
+      pageCount: 1,
+      fields: [],
     },
-  ], () => {
-    return constructorObjectService.getList(relatedTableSlug, {
-      data: {
-        offset: pageToOffset(currentPage),
+  } = useQuery(
+    [
+      "GET_OBJECT_LIST",
+      {
+        tableSlug: relatedTableSlug,
         limit: 10,
-        search: searchText,
-        ...filters
+        offset: pageToOffset(currentPage),
+        filters,
       },
-    })
-  }, {
-    select: ({data}) => {
-      const pageCount = Math.ceil(data?.count / 10)
+    ],
+    () => {
+      return constructorObjectService.getList(relatedTableSlug, {
+        data: {
+          offset: pageToOffset(currentPage),
+          limit: 10,
+          search: searchText,
+          ...filters,
+        },
+      })
+    },
+    {
+      select: ({ data }) => {
+        const pageCount = Math.ceil(data?.count / 10)
 
-
-      return {
-        fields: data?.fields ?? [],
-        tableData: objectToArray(data?.response ?? {}),
-        pageCount: isNaN(pageCount) ? 1 : pageCount,
-      }
-
+        return {
+          fields: data?.fields ?? [],
+          tableData: objectToArray(data?.response ?? {}),
+          pageCount: isNaN(pageCount) ? 1 : pageCount,
+        }
+      },
     }
-  })
+  )
 
   const computedFields = useMemo(() => {
-    const staticFields = [{
-      id: generateID(),
-      render: (row) => <Checkbox
-      onChange={(e) => onCheck(e, row.guid)}
-      checked={checkedElements.includes(row.guid)}
-    />
-    }]
+    const staticFields = [
+      {
+        id: generateID(),
+        render: (row) => (
+          <Checkbox
+            onChange={(e) => onCheck(e, row.guid)}
+            checked={checkedElements.includes(row.guid)}
+          />
+        ),
+      },
+    ]
 
     return [...staticFields, ...fields]
   }, [fields, checkedElements])
@@ -116,7 +131,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
       <div className="flex align-center gap-2 mb-2">
         <SearchInput style={{ flex: 1 }} autoFocus onChange={setSearchText} />
         <CreateButton
-          title="Создать новый"
+          title={t("create.new")}
           onClick={() => {
             navigateToForm(relation.relatedTable, "CREATE", null, {})
             closeModal()

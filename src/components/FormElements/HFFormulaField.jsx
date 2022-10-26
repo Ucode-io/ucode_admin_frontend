@@ -8,7 +8,18 @@ import { useState } from "react"
 
 const parser = new Parser()
 
-const HFFormulaField = ({ control, name, rules={}, setFormValue = () => {}, required, disabledHelperText, fieldsList, field, ...props }) => {
+const HFFormulaField = ({
+  control,
+  name,
+  rules = {},
+  setFormValue = () => {},
+  required,
+  disabledHelperText,
+  fieldsList,
+  disabled,
+  field,
+  ...props
+}) => {
   const [formulaIsVisible, setFormulaIsVisible] = useState(false)
   const formula = field?.attributes?.formula ?? ""
 
@@ -19,32 +30,26 @@ const HFFormulaField = ({ control, name, rules={}, setFormValue = () => {}, requ
   const updateValue = () => {
     let computedFormula = formula
 
-    const fieldsListSorted = fieldsList ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length) : []
-    
-    fieldsListSorted?.forEach((field) => {
+    const fieldsListSorted = fieldsList
+      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
+      : []
 
+    fieldsListSorted?.forEach((field) => {
       let value = values[field.slug] ?? 0
 
-      if(typeof(value) === 'string') value = `'${value}'`
+      if (typeof value === "string") value = `'${value}'`
 
-      computedFormula = computedFormula.replaceAll(
-        `${field.slug}`,
-        value
-      )
+      computedFormula = computedFormula.replaceAll(`${field.slug}`, value)
     })
 
     const { error, result } = parser.parse(computedFormula)
 
     let newValue = error ?? result
     const prevValue = values[name]
-    if(newValue !== prevValue) setFormValue(name, newValue)
+    if (newValue !== prevValue) setFormValue(name, newValue)
   }
 
-  useDebouncedWatch(
-    updateValue,
-    [values],
-    300
-  )
+  useDebouncedWatch(updateValue, [values], 300)
 
   useEffect(() => {
     updateValue()
@@ -62,29 +67,32 @@ const HFFormulaField = ({ control, name, rules={}, setFormValue = () => {}, requ
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
+          onChange={onChange}
           value={formulaIsVisible ? formula : value}
           name={name}
           error={error}
           fullWidth
           helperText={!disabledHelperText && error?.message}
           InputProps={{
-            readOnly: true,
+            readOnly: disabled,
             style: {
-              background: "#c0c0c039",
+              background: disabled ? "#c0c0c039" : "#fff",
             },
             endAdornment: (
               <InputAdornment position="end">
-                <Tooltip title={formulaIsVisible ? 'Hide formula' : 'Show formula'} >
-                <IconButton
-                  edge="end"
-                  color={formulaIsVisible ? 'primary' : 'default'}
-                  onClick={() => setFormulaIsVisible(prev => !prev)}
+                <Tooltip
+                  title={formulaIsVisible ? "Hide formula" : "Show formula"}
                 >
-                  <IconGenerator icon="square-root-variable.svg" size={15} />
-                </IconButton>
+                  <IconButton
+                    edge="end"
+                    color={formulaIsVisible ? "primary" : "default"}
+                    onClick={() => setFormulaIsVisible((prev) => !prev)}
+                  >
+                    <IconGenerator icon="square-root-variable.svg" size={15} />
+                  </IconButton>
                 </Tooltip>
               </InputAdornment>
-            )
+            ),
           }}
           {...props}
         />

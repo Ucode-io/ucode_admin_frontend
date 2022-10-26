@@ -1,20 +1,24 @@
 import { get } from "@ngard/tiny-get"
 import { memo, useMemo } from "react"
-import { formatDate } from "../../utils/dateFormatter"
-import { numberWithSpaces } from "../../utils/formatNumbers"
+
+import MultiselectCellColoredElement from "./MultiselectCellColoredElement"
 import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel"
+import { numberWithSpaces } from "../../utils/formatNumbers"
 import { parseBoolean } from "../../utils/parseBoolean"
 import IconGenerator from "../IconPicker/IconGenerator"
+import { formatDate } from "../../utils/dateFormatter"
 import LogoDisplay from "../LogoDisplay"
 import TableTag from "../TableTag"
-import FormulaCell from "./FormulaCell"
-import MultiselectCellColoredElement from "./MultiselectCellColoredElement"
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "")
 
-    const result = getRelationFieldTableCellLabel(field, row, field.table_slug)
+    const result = getRelationFieldTableCellLabel(
+      field,
+      row,
+      field.slug + "_data"
+    )
 
     return result
   }, [row, field])
@@ -23,14 +27,12 @@ const CellElementGenerator = ({ field = {}, row }) => {
     return field.render(row)
   }
 
-  console.log("field - ", field)
-
   switch (field.type) {
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>
 
     case "NUMBER":
-      return <span className="text-nowrap">{numberWithSpaces(value)}</span>
+      return numberWithSpaces(value)
 
     case "DATE_TIME":
       return (
@@ -61,6 +63,9 @@ const CellElementGenerator = ({ field = {}, row }) => {
     case "DYNAMIC":
       return null
 
+    case "FORMULA":
+      return value ? numberWithSpaces(value) : ""
+
     // case "FORMULA_FRONTEND":
     //   return <FormulaCell field={field} row={row} />
 
@@ -81,6 +86,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       )
 
     default:
+      if(typeof(value) === 'object') return JSON.stringify(value)
       return value
   }
 }

@@ -14,8 +14,10 @@ import QueryRedactor from "./QueryRedactor"
 import PanelSettings from "./PanelSettings"
 import styles from "./style.module.scss"
 import request from "../../../../../utils/request"
+import { useTranslation } from "react-i18next"
 
 const PanelCreateForm = () => {
+  const { t } = useTranslation()
   const { id, panelId } = useParams()
   const navigate = useNavigate()
   const [variablesValue, setVariablesValue] = useState({})
@@ -73,21 +75,18 @@ const PanelCreateForm = () => {
     }
   )
 
-
   const columns = useMemo(() => {
     if (!previewData?.rows?.length) return []
     return Object.keys(previewData.rows[0])?.map((key) => ({
       label: key,
-      value: key
+      value: key,
     }))
   }, [previewData])
 
-
-  
   return (
     <div>
       <Header
-        title="Дешборд / Панель"
+        title={`${t("dashboard")} / ${t("panel")}`}
         backButtonLink={`/analytics/dashboard/${id}`}
       />
 

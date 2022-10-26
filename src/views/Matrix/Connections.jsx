@@ -1,6 +1,7 @@
 import { Delete, Save } from "@mui/icons-material"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 import { EditIcon, PlusIcon } from "../../assets/icons/icon"
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
@@ -13,6 +14,7 @@ import styles from "./styles.module.scss"
 
 const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
   const { typeId } = useParams()
+  const { t } = useTranslation()
   const [connections, setConnections] = useState([])
   const [isEdit, setIsEdit] = useState("")
   const [isCreating, setIsCreating] = useState(false)
@@ -114,7 +116,7 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
   }, [])
 
   return (
-    <FormCard title=" Связи" maxWidth="100%">
+    <FormCard title={t("connections")} maxWidth="100%">
       <div className={styles.login_card}>
         <div>
           {connections.map((item) => (
@@ -313,7 +315,7 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
                   connectionForm.reset()
                 }}
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 className={styles.craete_btn}
@@ -332,7 +334,7 @@ const Connections = ({ clientType, tables, fields, getFields = () => {} }) => {
             onClick={() => setIsCreating(true)}
           >
             <PlusIcon />
-            Добавить
+            {t("create")}
           </button>
         </div>
       </div>

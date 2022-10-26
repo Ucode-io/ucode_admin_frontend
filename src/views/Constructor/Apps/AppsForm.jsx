@@ -2,6 +2,7 @@ import { Save } from "@mui/icons-material"
 import { useEffect } from "react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useDispatch } from "react-redux"
 import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
@@ -22,6 +23,7 @@ import TablesList from "../Tables/TablesList"
 const applicationListPageLink = "/settings/constructor/apps"
 
 const AppsForm = () => {
+  const { t } = useTranslation()
   const { appId } = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -45,7 +47,6 @@ const AppsForm = () => {
     applicationService
       .create(data)
       .then(() => {
-        console.log("sdasdasdadadas")
         navigate(applicationListPageLink)
         dispatch(fetchApplicationListActions())
       })
@@ -89,16 +90,15 @@ const AppsForm = () => {
   }, [])
 
   const onSubmit = (data) => {
-
     const tables = data?.tables?.map((table) => ({
       table_id: table.id,
       is_own_table: Boolean(table.is_own_table),
-      is_visible:  Boolean(table.is_visible),
+      is_visible: Boolean(table.is_visible),
     }))
 
     const computedData = {
       ...data,
-      tables
+      tables,
     }
 
     if (appId) updateApp(computedData)
@@ -116,13 +116,13 @@ const AppsForm = () => {
         style={{ height: "100vh", position: "relative" }}
       >
         <HeaderSettings
-          title="Приложение"
+          title={t("application")}
           backButtonLink={applicationListPageLink}
-          subtitle={appId ? mainForm.watch("name") : "Новый"}
+          subtitle={appId ? mainForm.watch("name") : t("new")}
         >
           <TabList>
-            <Tab>Details</Tab>
-            {appId && <Tab>Objects</Tab>}
+            <Tab>{t("details")}</Tab>
+            {appId && <Tab>{t("objects")}</Tab>}
           </TabList>
         </HeaderSettings>
 
@@ -132,9 +132,9 @@ const AppsForm = () => {
             className="p-2"
             style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
           >
-            <FormCard title="Детали" maxWidth={500}>
+            <FormCard title={t("details")} maxWidth={500}>
               <FRow
-                label={"Названия"}
+                label={t("title")}
                 componentClassName="flex gap-2 align-center"
                 required
               >
@@ -152,9 +152,9 @@ const AppsForm = () => {
                 />
               </FRow>
 
-              <FRow label="Описания">
+              <FRow label={t("")}>
                 <HFTextField
-                  name="description"
+                  name={t("description")}
                   control={mainForm.control}
                   multiline
                   rows={4}
@@ -171,14 +171,14 @@ const AppsForm = () => {
                   onClick={() => navigate(applicationListPageLink)}
                   color="error"
                 >
-                  Закрыть
+                  {t("close")}
                 </SecondaryButton>
                 <PermissionWrapperV2 tabelSlug="app" type="update">
                   <PrimaryButton
                     loader={btnLoader}
                     onClick={mainForm.handleSubmit(onSubmit)}
                   >
-                    <Save /> Сохранить
+                    <Save /> {t("save")}
                   </PrimaryButton>
                 </PermissionWrapperV2>
               </>

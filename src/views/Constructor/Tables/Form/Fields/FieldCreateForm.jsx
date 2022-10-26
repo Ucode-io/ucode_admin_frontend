@@ -26,10 +26,10 @@ const FieldCreateForm = ({
   const submitHandler = (values) => {
     onSubmit(values)
   }
-  
+
   const selectedAutofillTableSlug = useWatch({
     control,
-    name: 'autofill_table'
+    name: "autofill_table",
   })
 
   const layoutRelations = useWatch({
@@ -37,26 +37,34 @@ const FieldCreateForm = ({
     name: "layoutRelations",
   })
 
-
   const computedRelationTables = useMemo(() => {
-    return layoutRelations?.map(table => ({
-      value: table.id?.split('#')?.[0],
+    return layoutRelations?.map((table) => ({
+      value: table.id?.split("#")?.[0],
       label: table.label,
     }))
   }, [layoutRelations])
 
+  const { data: computedRelationFields } = useQuery(
+    ["GET_TABLE_FIELDS", selectedAutofillTableSlug],
+    () => {
+      if (!selectedAutofillTableSlug) return []
+      return constructorFieldService.getList({
+        table_slug: selectedAutofillTableSlug,
+      })
+    },
+    {
+      select: ({ fields }) =>
+        listToOptions(
+          fields?.filter((field) => field.type !== "LOOKUP"),
+          "label",
+          "slug"
+        ),
+    }
+  )
 
-  const { data: computedRelationFields } = useQuery(['GET_TABLE_FIELDS', selectedAutofillTableSlug], () => {
-    if (!selectedAutofillTableSlug) return []
-    return constructorFieldService.getList({ table_slug: selectedAutofillTableSlug })
-  }, {
-    select: ({ fields }) => listToOptions(fields?.filter(field => field.type !== 'LOOKUP'), "label", "slug")
-  })
-  
   // const { data } = useQuery(['GET_TABLES_LIST'], () => {
   //   return constructorTableService.getList()
   // }, { select: (res) => res?.data ?? [] })
-  
 
   const computedFieldTypes = useMemo(() => {
     return fieldTypes.map((type) => ({
@@ -98,7 +106,6 @@ const FieldCreateForm = ({
       open={open}
       onSaveButtonClick={handleSubmit(submitHandler)}
       loader={isLoading}
-      
     >
       <form onSubmit={handleSubmit(submitHandler)}>
         <FRow label="Field Label" required>
@@ -141,27 +148,27 @@ const FieldCreateForm = ({
         <Attributes control={control} watch={watch} mainForm={mainForm} />
 
         <>
-        <Divider style={{ margin: "20px 0" }} />
+          <Divider style={{ margin: "20px 0" }} />
 
-        <FRow label="Autofill table">
-          <HFSelect
-            disabledHelperText
-            name="autofill_table"
-            control={control}
-            options={computedRelationTables}
-            placeholder="Type"
-          />
-        </FRow>
+          <FRow label="Autofill table">
+            <HFSelect
+              disabledHelperText
+              name="autofill_table"
+              control={control}
+              options={computedRelationTables}
+              placeholder="Type"
+            />
+          </FRow>
 
-        <FRow label="Autofill field">
-          <HFSelect
-            disabledHelperText
-            name="autofill_field"
-            control={control}
-            options={computedRelationFields}
-            placeholder="Type"
-          />
-        </FRow>
+          <FRow label="Autofill field">
+            <HFSelect
+              disabledHelperText
+              name="autofill_field"
+              control={control}
+              options={computedRelationFields}
+              placeholder="Type"
+            />
+          </FRow>
         </>
 
         {/* <FRow label="Fields">

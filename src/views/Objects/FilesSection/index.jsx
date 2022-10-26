@@ -1,6 +1,8 @@
-import { useRef, useState } from "react"
+import { Download } from "@mui/icons-material"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useMutation } from "react-query"
 import { useParams } from "react-router-dom"
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
 import FRow from "../../../components/FormElements/FRow"
@@ -9,21 +11,27 @@ import useDownloader from "../../../hooks/useDownloader"
 import useObjectsQuery from "../../../queries/hooks/useObjectsQuery"
 import constructorObjectService from "../../../services/constructorObjectService"
 import objectDocumentService from "../../../services/objectDocumentService"
+import { generateID } from "../../../utils/generateID"
 import { listToMap } from "../../../utils/listToMap"
 import { pageToOffset } from "../../../utils/pageToOffset"
 import { Filter } from "../components/FilterGenerator"
 import styles from "./style.module.scss"
 
 const FilesSection = ({
+  setFormValue,
+  shouldGet,
+  remove,
+  reset,
+  watch,
+  formVisible,
+  control,
   relation,
   createFormVisible,
   setCreateFormVisible,
 }) => {
   const inputRef = useRef()
   const { tableSlug, id: objectId } = useParams()
-  const { download, loader: downloadLoader } = useDownloader()
-
-  const [downLoadedFile, setDownLoadedFile] = useState(null)
+  const { download } = useDownloader()
   const [limit, setLimit] = useState(10)
   const [currentPage, setCurrentPage] = useState(1)
   const [filters, setFilters] = useState({})
@@ -49,10 +57,11 @@ const FilesSection = ({
   } = useObjectsQuery({
     tableSlug: "file",
     queryPayload: {
+      shouldGet,
       limit,
       offset: pageToOffset(currentPage, limit),
       [`${tableSlug}_id`]: objectId,
-      ...filters
+      ...filters,
     },
     queryParams: {
       select: ({ data }) => {
@@ -117,6 +126,27 @@ const FilesSection = ({
     return updateMutation(values)
   }
 
+  const computedColumns = useMemo(() => {
+    if (!columns?.length) return []
+
+    return [
+      ...columns,
+      {
+        id: generateID(),
+        render: (row) => (
+          <RectangleIconButton
+            color="primary"
+            onClick={() =>
+              download({ link: row.file_link, fileName: row.name })
+            }
+          >
+            <Download color="primary" />
+          </RectangleIconButton>
+        ),
+      },
+    ]
+  }, [columns])
+
   // const columns = [
   //   {
   //     id: "1",
@@ -170,6 +200,14 @@ const FilesSection = ({
   //   },
   // ]
 
+  useEffect(() => {
+    if (tableData?.length) {
+      reset({
+        multi: tableData.map((i) => i),
+      })
+    }
+  }, [tableData, reset])
+
   return (
     <div className={styles.relationTable}>
       {!!quickFilters?.length && (
@@ -185,16 +223,23 @@ const FilesSection = ({
               />
             </FRow>
           ))}
+          1234
         </div>
       )}
 
       <div className={styles.tableBlock}>
         <ObjectDataTable
+          setFormValue={setFormValue}
+          remove={remove}
+          reset={reset}
+          watch={watch}
+          control={control}
+          formVisible={formVisible}
           data={tableData}
-          columns={columns}
+          columns={computedColumns}
           pagesCount={pageCount}
           loader={isLoading || deleteLoading}
-          removableHeight={false}
+          removableHeight={290}
           currentPage={1}
           disableFilters
           dataLength={1}
@@ -209,7 +254,7 @@ const FilesSection = ({
             <>
               <TableRowButton
                 onClick={() => inputRef.current.click()}
-                colSpan={columns.length + 2}
+                colSpan={columns.length + 3}
                 loader={createLoader}
               />
             </>

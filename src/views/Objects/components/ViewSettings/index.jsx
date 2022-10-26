@@ -1,6 +1,7 @@
 import { Close } from "@mui/icons-material"
 import { Card, IconButton } from "@mui/material"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
 import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper"
@@ -11,19 +12,24 @@ import ViewsList from "./ViewsList"
 
 const ViewSettings = ({ closeModal, setIsChanged }) => {
   const { tableSlug } = useParams()
+  const { t } = useTranslation()
   const [selectedView, setSelectedView] = useState(null)
 
   const closeForm = () => setSelectedView(null)
 
   const {
-    data: { views, columns, relationColumns } = { views: [], columns: [], relationColumns: [] },
+    data: { views, columns, relationColumns } = {
+      views: [],
+      columns: [],
+      relationColumns: [],
+    },
     isLoading,
     refetch: refetchViews,
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true},
+        data: { limit: 10, offset: 0, with_relations: true },
       })
     },
     {
@@ -31,7 +37,11 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],
-          relationColumns: data?.relation_fields?.map(el => ({...el, label: `${el.label} (${el.table_label})`})) ?? [],
+          relationColumns:
+            data?.relation_fields?.map((el) => ({
+              ...el,
+              label: `${el.label} (${el.table_label})`,
+            })) ?? [],
         }
       },
     }
@@ -40,7 +50,7 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
   return (
     <Card className={styles.card}>
       <div className={styles.header}>
-        <div className={styles.cardTitle}>View settings</div>
+        <div className={styles.cardTitle}>{t("view.settings")}</div>
         <IconButton className={styles.closeButton} onClick={closeModal}>
           <Close className={styles.closeIcon} />
         </IconButton>

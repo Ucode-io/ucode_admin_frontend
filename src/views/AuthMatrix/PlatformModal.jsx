@@ -6,6 +6,7 @@ import SaveButton from "../../components/Buttons/SaveButton"
 import { useParams } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import HFTextField from "../../components/FormElements/HFTextField"
+import { useTranslation } from "react-i18next"
 
 const PlatformModal = ({
   closeModal,
@@ -16,6 +17,7 @@ const PlatformModal = ({
   selectedPlatform,
 }) => {
   const { projectId } = useParams()
+  const { t } = useTranslation()
 
   const onSubmit = (data) => {
     if (modalType === "platformCreate") return createPlatform(data)
@@ -31,9 +33,8 @@ const PlatformModal = ({
       name: selectedPlatform?.name ?? "",
       subdomain: selectedPlatform?.subdomain ?? "",
       project_id: projectId,
-    }
+    },
   })
-
 
   return (
     <div>
@@ -55,14 +56,14 @@ const PlatformModal = ({
               <HFTextField
                 autoFocus
                 fullWidth
-                label="Name"
+                label={t("name")}
                 control={control}
                 name="name"
               />
 
               <HFTextField
                 fullWidth
-                label="Subdomain"
+                label={t("subdomen")}
                 control={control}
                 name="subdomain"
               />

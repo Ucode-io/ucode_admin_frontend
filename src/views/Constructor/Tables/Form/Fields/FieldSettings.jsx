@@ -1,6 +1,6 @@
 import { Close } from "@mui/icons-material"
 import { IconButton } from "@mui/material"
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { useEffect, useMemo } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { useQuery } from "react-query"
@@ -12,6 +12,7 @@ import HFSelect from "../../../../../components/FormElements/HFSelect"
 import HFSwitch from "../../../../../components/FormElements/HFSwitch"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import constructorFieldService from "../../../../../services/constructorFieldService"
+import constructorRelationService from "../../../../../services/constructorRelationService"
 import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes"
 import { generateGUID } from "../../../../../utils/generateID"
 import listToOptions from "../../../../../utils/listToOptions"
@@ -27,6 +28,7 @@ const FieldSettings = ({
   height,
   onSubmit = () => {},
 }) => {
+  const { t } = useTransition()
   const { id } = useParams()
   const { handleSubmit, control, reset, watch } = useForm()
   const [formLoader, setFormLoader] = useState(false)
@@ -107,22 +109,25 @@ const FieldSettings = ({
       label: table.label,
     }))
   }, [layoutRelations])
-
   const { data: computedRelationFields } = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillTableSlug],
     () => {
       if (!selectedAutofillTableSlug) return []
       return constructorFieldService.getList({
         table_slug: selectedAutofillTableSlug,
+        with_one_relation: true,
       })
     },
     {
-      select: ({ fields }) =>
-        listToOptions(
-          fields?.filter((field) => field.type !== "LOOKUP"),
-          "label",
-          "slug"
-        ),
+      select: (res) =>
+        [...res?.fields, ...res?.data?.one_relation_fields]
+          ?.filter(
+            (field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP"
+          )
+          .map((el) => ({
+            value: el?.path_slug ? el?.path_slug : el?.slug,
+            label: el?.label,
+          })),
     }
   )
 
@@ -248,16 +253,26 @@ const FieldSettings = ({
           </div>
 
           <div className="p-2">
+            <HFSwitch
+              control={control}
+              name="attributes.disabled"
+              label="Disabled"
+            />
             <HFSwitch control={control} name="required" label="Required" />
             <HFSwitch
               control={control}
               name="unique"
               label="Avoid duplicate values"
             />
+            <HFSwitch
+              control={control}
+              name="attributes.creatable"
+              label="Can create"
+            />
           </div>
 
           <div className={styles.settingsBlockHeader}>
-            <h2>Autofill settings</h2>
+            <h2>{t("autofill.settings")}</h2>
           </div>
 
           <div className="p-2">
@@ -291,7 +306,7 @@ const FieldSettings = ({
             onClick={handleSubmit(submitHandler)}
             loader={formLoader}
           >
-            Сохранить
+            {t("save")}
           </PrimaryButton>
         </div>
       </div>

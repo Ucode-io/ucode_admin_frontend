@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import CreateButton from "../../components/Buttons/CreateButton"
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
@@ -14,7 +14,7 @@ import { useParams } from "react-router-dom"
 import constructorObjectService from "../../services/constructorObjectService"
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel"
 import { CircularProgress } from "@mui/material"
-import { useQuery } from "react-query"
+import { useMutation, useQuery } from "react-query"
 import useFilters from "../../hooks/useFilters"
 import FastFilterButton from "./components/FastFilter/FastFilterButton"
 import { useDispatch, useSelector } from "react-redux"
@@ -24,6 +24,9 @@ import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWr
 import ExcelButtons from "./components/ExcelButtons"
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing"
 import MultipleInsertButton from "./components/MultipleInsertForm"
+import CustomActionsButton from "./components/CustomActionsButton"
+import { Clear, Edit, Save } from "@mui/icons-material"
+import { useFieldArray, useForm } from "react-hook-form"
 
 const ViewsWithGroups = ({
   views,
@@ -36,8 +39,12 @@ const ViewsWithGroups = ({
   const dispatch = useDispatch()
   const { filters } = useFilters(tableSlug, view.id)
   const tableHeight = useSelector((state) => state.tableSize.tableHeight)
+  const [shouldGet, setShouldGet] = useState(false)
   const [heightControl, setHeightControl] = useState(false)
   const { navigateToForm } = useTabRouter()
+  const [dataLength, setDataLength] = useState(null)
+  const [formVisible, setFormVisible] = useState(false)
+  const [selectedObjects, setSelectedObjects] = useState([])
 
   const tableHeightOptions = [
     {
@@ -53,6 +60,51 @@ const ViewsWithGroups = ({
       value: "large",
     },
   ]
+
+  const {
+    control,
+    reset,
+    handleSubmit,
+    setValue: setFormValue,
+  } = useForm({
+    defaultValues: {
+      multi: [],
+    },
+  })
+
+  const { fields, remove } = useFieldArray({
+    control,
+    name: "multi",
+  })
+
+  const getValue = useCallback((item, key) => {
+    return typeof item?.[key] === "object" ? item?.[key].value : item?.[key]
+  }, [])
+
+  const { mutate: updateMultipleObject, isLoading } = useMutation(
+    (values) =>
+      constructorObjectService.updateMultipleObject(tableSlug, {
+        data: {
+          objects: values.multi.map((item) => ({
+            ...item,
+            guid: item?.guid ?? "",
+            doctors_id_2: getValue(item, "doctors_id_2"),
+            doctors_id_3: getValue(item, "doctors_id_3"),
+            specialities_id: getValue(item, "specialities_id"),
+          })),
+        },
+      }),
+    {
+      onSuccess: () => {
+        setShouldGet((p) => !p)
+        setFormVisible(false)
+      },
+    }
+  )
+
+  const onSubmit = (data) => {
+    updateMultipleObject(data)
+  }
 
   const handleHeightControl = (val) => {
     dispatch(
@@ -80,7 +132,7 @@ const ViewsWithGroups = ({
         extra={
           <>
             <FastFilterButton view={view} fieldsMap={fieldsMap} />
-            <ExcelButtons />
+            <ExcelButtons fieldsMap={fieldsMap} />
             {view.type === "TABLE" && (
               <RectangleIconButton
                 color="white"
@@ -135,7 +187,51 @@ const ViewsWithGroups = ({
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tabelSlug={tableSlug} type="write">
                 <CreateButton type="secondary" onClick={navigateToCreatePage} />
+                {formVisible ? (
+                  <>
+                    <RectangleIconButton
+                      color="success"
+                      size="small"
+                      onClick={handleSubmit(onSubmit)}
+                      loader={isLoading}
+                    >
+                      <Save color="success" />
+                    </RectangleIconButton>
+                    <RectangleIconButton
+                      color="error"
+                      onClick={() => {
+                        setFormVisible(false)
+                        if (fields.length > dataLength) {
+                          remove(
+                            Array(fields.length - dataLength)
+                              .fill("*")
+                              .map((i, index) => fields.length - (index + 1))
+                          )
+                        }
+                      }}
+                    >
+                      <Clear color="error" />
+                    </RectangleIconButton>
+                  </>
+                ) : (
+                  <RectangleIconButton
+                    color="success"
+                    className="mr-1"
+                    size="small"
+                    onClick={() => {
+                      setFormVisible(true)
+                      // reset()
+                    }}
+                  >
+                    <Edit color="primary" />
+                  </RectangleIconButton>
+                )}
                 <MultipleInsertButton view={view} fieldsMap={fieldsMap} />
+                <CustomActionsButton
+                  selectedObjects={selectedObjects}
+                  setSelectedObjects={setSelectedObjects}
+                  tableSlug={tableSlug}
+                />
               </PermissionWrapperV2>
             </div>
           </div>
@@ -169,12 +265,19 @@ const ViewsWithGroups = ({
                       filters={filters}
                       view={view}
                       fieldsMap={fieldsMap}
+                      tab={tab}
                     />
                   ) : (
                     <TableView
+                      control={control}
+                      setFormVisible={setFormVisible}
+                      formVisible={formVisible}
                       filters={filters}
                       view={view}
                       fieldsMap={fieldsMap}
+                      tab={tab}
+                      selectedObjects={selectedObjects}
+                      setSelectedObjects={setSelectedObjects}
                     />
                   )}
                 </TabPanel>
@@ -191,9 +294,19 @@ const ViewsWithGroups = ({
                     />
                   ) : (
                     <TableView
+                      setDataLength={setDataLength}
+                      shouldGet={shouldGet}
+                      reset={reset}
+                      fields={fields}
+                      setFormValue={setFormValue}
+                      control={control}
+                      setFormVisible={setFormVisible}
+                      formVisible={formVisible}
                       filters={filters}
                       view={view}
                       fieldsMap={fieldsMap}
+                      selectedObjects={selectedObjects}
+                      setSelectedObjects={setSelectedObjects}
                     />
                   )}
                 </>
@@ -215,19 +328,19 @@ const queryGenerator = (groupField, filters = {}) => {
   const filterValue = filters[groupField.slug]
   const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {}
 
-  if (groupField?.type === "PICK_LIST") {
+  if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
       queryKey: ["GET_GROUP_OPTIONS", groupField.id],
       queryFn: () =>
         groupField?.attributes?.options?.map((el) => ({
-          label: el,
-          value: el,
+          label: el?.label ?? el,
+          value: el?.value ?? el,
           slug: groupField?.slug,
         })),
     }
   }
 
-  if (groupField?.type === "LOOKUP") {
+  if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
     const queryFn = () =>
       constructorObjectService.getList(groupField.table_slug, {
         data: computedFilters ?? {},

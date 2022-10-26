@@ -1,19 +1,25 @@
+import { useTranslation } from "react-i18next"
 import ButtonsPopover from "../../../../../components/ButtonsPopover"
-import { CTable, CTableBody, CTableCell, CTableHead, CTableHeadRow, CTableRow } from "../../../../../components/CTable"
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableHeadRow,
+  CTableRow,
+} from "../../../../../components/CTable"
 
 const SessionsTable = ({ loader, tableData }) => {
-  
-  return <CTable
-      loader={loader}
-      removableHeight={340}
-      disablePagination
-    >
+  const { t } = useTranslation()
+
+  return (
+    <CTable loader={loader} removableHeight={340} disablePagination>
       <CTableHead>
         <CTableHeadRow>
           <CTableCell width={20}>No</CTableCell>
-          <CTableCell>FIO</CTableCell>
-          <CTableCell>Email</CTableCell>
-          <CTableCell>Login</CTableCell>
+          <CTableCell>{t("fio")}</CTableCell>
+          <CTableCell>{t("email")}</CTableCell>
+          <CTableCell>{t("login")}</CTableCell>
           <CTableCell width={30}></CTableCell>
         </CTableHeadRow>
       </CTableHead>
@@ -43,6 +49,7 @@ const SessionsTable = ({ loader, tableData }) => {
         </CTableBody>
       }
     </CTable>
+  )
 }
 
 export default SessionsTable

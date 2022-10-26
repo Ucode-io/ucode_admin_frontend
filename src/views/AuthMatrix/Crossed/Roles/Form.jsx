@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useNavigate, useParams } from "react-router-dom"
 import CancelButton from "../../../../components/Buttons/CancelButton"
 import SaveButton from "../../../../components/Buttons/SaveButton"
@@ -16,6 +17,7 @@ import "./style.scss"
 const RolesForm = () => {
   const { platformId, typeId, roleId, projectId } = useParams()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const [btnLoader, setBtnLoader] = useState(false)
   const [loader, setLoader] = useState(true)
@@ -25,10 +27,10 @@ const RolesForm = () => {
 
   const breadCrumbItems = [
     {
-      label: "Roles",
+      label: t("roles"),
     },
     {
-      label: "Create",
+      label: t("create"),
     },
   ]
 
@@ -42,8 +44,10 @@ const RolesForm = () => {
     roleService
       .getById(roleId)
       .then((res) => {
-        setValue('name', res.name)
-        setSelectedPermissions(res.permissions?.map((permission) => permission.id) ?? [])
+        setValue("name", res.name)
+        setSelectedPermissions(
+          res.permissions?.map((permission) => permission.id) ?? []
+        )
       })
       .finally(() => setLoader(false))
   }
@@ -73,7 +77,6 @@ const RolesForm = () => {
   const update = async (data) => {
     setBtnLoader(true)
     try {
-      
       await roleService.update({
         ...data,
         id: roleId,
@@ -89,28 +92,24 @@ const RolesForm = () => {
       navigate(
         `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/crossed`
       )
-
     } finally {
       setBtnLoader(false)
     }
   }
 
   const onSwitchChange = (id, val) => {
-    
-    if(val) addSelectedPermission(id)
+    if (val) addSelectedPermission(id)
     else removeSelectedPermission(id)
 
-    
     const childs = permissions.filter((item) => item.parent_id === id)
 
-    childs.forEach(child => {
+    childs.forEach((child) => {
       onSwitchChange(child.id, val)
     })
-
   }
-  
+
   const addSelectedPermission = (id) => {
-    if(selectedPermissions.includes(id)) return
+    if (selectedPermissions.includes(id)) return
     setSelectedPermissions((prevState) => {
       return [...prevState, id]
     })
@@ -138,7 +137,7 @@ const RolesForm = () => {
       client_platform_id: platformId,
       client_type_id: typeId,
       name: "",
-    }
+    },
   })
 
   return (
@@ -157,13 +156,21 @@ const RolesForm = () => {
       </Header>
 
       <div className="RolesForm p-2">
-        <FormCard visible={!loader} title="Main info" className="form-card">
-          <FRow label="Name">
+        <FormCard
+          visible={!loader}
+          title={t("main.info")}
+          className="form-card"
+        >
+          <FRow label={t("name")}>
             <HFTextField autoFocus fullWidth control={control} name="name" />
           </FRow>
         </FormCard>
         {roleId && (
-          <FormCard visible={!loader} title="Permissions" className="form-card">
+          <FormCard
+            visible={!loader}
+            title={t("permissions")}
+            className="form-card"
+          >
             <div className="permissions-list">
               {computedPermissions?.map((permission) => (
                 <PermissionsRecursiveBlock

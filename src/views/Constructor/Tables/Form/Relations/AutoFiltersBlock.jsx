@@ -1,5 +1,6 @@
 import { Delete } from "@mui/icons-material"
 import { useFieldArray } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useQuery } from "react-query"
 
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
@@ -8,6 +9,7 @@ import constructorFieldService from "../../../../../services/constructorFieldSer
 import styles from "./style.module.scss"
 
 const AutoFiltersBlock = ({ control, watch }) => {
+  const { t } = useTranslation()
   const { fields, append, remove } = useFieldArray({
     control,
     name: "auto_filters",
@@ -37,7 +39,7 @@ const AutoFiltersBlock = ({ control, watch }) => {
       enabled: !!watch("table_to"),
     }
   )
- 
+
   const attributeFields = [
     {
       slug: "field_to",
@@ -86,7 +88,7 @@ const AutoFiltersBlock = ({ control, watch }) => {
           </div>
         ))}
         <div className={styles.summaryButton} onClick={addNewAutoFilter}>
-          <button type="button">+ Создать новый</button>
+          <button type="button">+ {t("create.new")}</button>
         </div>
       </div>
     </>

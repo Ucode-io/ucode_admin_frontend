@@ -9,27 +9,37 @@ const RecursiveBlock = ({
   view,
   tabs,
   level = 0,
-  datesList
+  datesList,
 }) => {
   const elements = useMemo(() => {
     if (!parentTab) return tabs?.[level]?.list
-    return tabs?.[level]?.list?.filter(
-      (el) => el[parentTab.slug] === parentTab.value
-    )
+    return tabs?.[level]?.list?.filter((el) => {
+      return Array.isArray(el[parentTab.slug])
+        ? el[parentTab.slug]?.includes(parentTab.value)
+        : el[parentTab.slug] === parentTab.value
+    })
   }, [parentTab, tabs, level])
-  
+
   const rowWidth = datesList?.length * 160 + 200
-  
+
   return (
     <div>
       {elements?.map((tab) => (
-        <Fragment key={tab.id} >
+        <Fragment key={tab.id}>
           {tabs?.[level + 1] ? (
-            <div className={styles.row} style={{ width: rowWidth }} >
-              <div className={`${styles.tabBlock} ${styles.parent}`} >{tab.label}</div>
+            <div className={styles.row} style={{ width: rowWidth }}>
+              <div className={`${styles.tabBlock} ${styles.parent}`}>
+                {tab.label}
+              </div>
             </div>
           ) : (
-            <DataRow tab={tab} datesList={datesList} view={view} fieldsMap={fieldsMap} data={data} />
+            <DataRow
+              tab={tab}
+              datesList={datesList}
+              view={view}
+              fieldsMap={fieldsMap}
+              data={data}
+            />
           )}
 
           {tabs?.[level + 1] && (

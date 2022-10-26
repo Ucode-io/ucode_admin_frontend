@@ -25,7 +25,7 @@ import Gantt from "./Gantt"
 
 const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   const { tableSlug } = useParams()
-  const {filters} = useFilters(tableSlug, view.id)
+  const { filters } = useFilters(tableSlug, view.id)
 
   const [dateFilters, setDateFilters] = useState([
     startOfMonth(new Date()),
@@ -88,9 +88,12 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   )
 
   const tabResponses = useQueries(queryGenerator(groupFields, filters))
+
   const tabs = tabResponses?.map((response) => response?.data)
   const tabLoading = tabResponses?.some((response) => response?.isLoading)
-  
+
+  console.log("TAB REsPONSES ==>", tabs)
+
   return (
     <div>
       <FiltersBlock
@@ -108,7 +111,11 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
         />
-        <CRangePicker interval={'months'} value={dateFilters} onChange={setDateFilters} />
+        <CRangePicker
+          interval={"months"}
+          value={dateFilters}
+          onChange={setDateFilters}
+        />
         <FastFilter view={view} fieldsMap={fieldsMap} />
       </FiltersBlock>
 
@@ -124,9 +131,6 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
           // workingDays={workingDays}
         />
       )}
-
-
-
     </div>
   )
 }
@@ -142,13 +146,11 @@ const promiseGenerator = (groupField, filters = {}) => {
   const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {}
 
   const relationFilters = {}
-  console.log('groupField.relation_fields =>', groupField)
 
   Object.entries(filters)?.forEach(([key, value]) => {
-
     if (!key?.includes(".")) return
 
-    if(key.split(".")?.pop() === groupField.slug) {
+    if (key.split(".")?.pop() === groupField.slug) {
       relationFilters[key.split(".")?.pop()] = value
       return
     }
@@ -182,27 +184,40 @@ const promiseGenerator = (groupField, filters = {}) => {
     }
   }
 
-  if (groupField?.type === "LOOKUP") {
+  if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
     const queryFn = () =>
-      constructorObjectService.getList(groupField.table_slug, {
-        data: computedFilters ?? {},
-      })
+      constructorObjectService.getList(
+        groupField?.type === "LOOKUP"
+          ? groupField.slug?.slice(0, -3)
+          : groupField.slug?.slice(0, -4),
+        {
+          data: computedFilters ?? {},
+        }
+      )
 
     return {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
-        { tableSlug: groupField.slug?.slice(0, -3), filters: computedFilters },
+        {
+          tableSlug:
+            groupField?.type === "LOOKUP"
+              ? groupField.slug?.slice(0, -3)
+              : groupField.slug?.slice(0, -4),
+          filters: computedFilters,
+        },
       ],
       queryFn,
-      select: (res) => ({
-        id: groupField.id,
-        list: res.data?.response?.map((el) => ({
-          ...el,
-          label: getRelationFieldTabsLabel(groupField, el),
-          value: el.guid,
-          slug: groupField?.slug,
-        })),
-      }),
+      select: (res) => {
+        return {
+          id: groupField.id,
+          list: res.data?.response?.map((el) => ({
+            ...el,
+            label: getRelationFieldTabsLabel(groupField, el),
+            value: el.guid,
+            slug: groupField?.slug,
+          })),
+        }
+      },
     }
   }
 }

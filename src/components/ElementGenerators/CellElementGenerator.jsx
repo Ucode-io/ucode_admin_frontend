@@ -87,15 +87,22 @@ const CellElementGenerator = ({ field = {}, row }) => {
       );
 
     case "FILE":
-      return (
-        value ? (
-          <a href={value} className="" download target="_blank" rel="noreferrer">
-            <DownloadIcon
-              style={{ width: "25px", height: "25px", fontSize: "30px" }}
-            />
-          </a>
-        ) : ''
-      )
+      return value ? (
+        <a
+          href={value}
+          className=""
+          download
+          target="_blank"
+          onClick={(e) => e.stopPropagation()}
+          rel="noreferrer"
+        >
+          <DownloadIcon
+            style={{ width: "25px", height: "25px", fontSize: "30px" }}
+          />
+        </a>
+      ) : (
+        ""
+      );
 
     default:
       if (typeof value === "object") return JSON.stringify(value);

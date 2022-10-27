@@ -40,7 +40,6 @@ const FileUpload = ({ value, onChange, className = "", disabled }) => {
     e.stopPropagation();
     deleteImage();
   };
-  console.log("value", value);
   return (
     <div className={`Gallery ${className}`}>
       {value && (

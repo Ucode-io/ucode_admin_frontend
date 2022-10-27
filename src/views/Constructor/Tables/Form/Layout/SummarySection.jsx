@@ -86,6 +86,7 @@ const SummarySection = ({
                   column={1}
                   fieldIndex={fieldIndex}
                   mainForm={mainForm}
+                  maxWidth={true}
                 />
               </div>
               <ButtonsPopover

@@ -221,7 +221,8 @@
   }
   .field_summary_item {
     width: 238px;
-    height: 100px !important;
+    height: 100px;
+    max-height: 130px !important;
     // max-height: 140px;
     margin-top: 8px;
     background: #fff;

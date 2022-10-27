@@ -4,7 +4,6 @@ import ValueGenerator from "./ValueGenerator.jsx";
 
 const SummarySection = ({ control, computedSummary }) => {
   const fields = computedSummary?.fields ?? [];
-  console.log("fields", fields);
   return (
     <div className={styles.summarySection}>
       {fields?.map((field, fieldIndex) => (

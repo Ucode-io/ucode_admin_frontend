@@ -8,6 +8,7 @@ import HFFormulaField from "../FormElements/HFFormulaField";
 import HFIconPicker from "../FormElements/HFIconPicker";
 import HFImageUpload from "../FormElements/HFImageUpload";
 import HFVideoUpload from "../FormElements/HFVideoUpload";
+import HFFileUpload from "../FormElements/HFFileUpload";
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
 import HFNumberField from "../FormElements/HFNumberField";
 import HFSwitch from "../FormElements/HFSwitch";
@@ -315,6 +316,19 @@ const FormElementGenerator = ({
       return (
         <FRow label={field.label} required={field.required}>
           <HFVideoUpload
+            control={control}
+            name={computedSlug}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
+    case "FILE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFFileUpload
             control={control}
             name={computedSlug}
             required={field.required}

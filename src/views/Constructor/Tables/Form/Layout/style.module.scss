@@ -191,21 +191,28 @@
 }
 
 // <-- Summary Section --> //
+.summary_section_layer {
+  min-height: 10px !important;
+}
+
 .summarySection {
-  height: 20px;
-  max-height: 92px;
+  min-height: 20px;
+  // max-height: 140px;
   min-width: 234px;
-  max-width: 100%;
+  // max-width: 100%;
   border-radius: 4px;
-  overflow: hidden;
+  overflow-y: hidden;
+  overflow-x: scroll;
   display: flex;
   margin: 8px 0;
-  ::-webkit-scrollbar {
-    display: none !important;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
+
   .field_summary {
     width: 238px;
-    height: 100%;
+    height: 100% !important;
     display: flex;
     overflow: hidden;
     border-radius: 4px;
@@ -214,8 +221,8 @@
   }
   .field_summary_item {
     width: 238px;
-    min-height: 20px !important;
-    max-height: 92px;
+    height: 100px !important;
+    // max-height: 140px;
     margin-top: 8px;
     background: #fff;
     padding: 5px 10px 16px 16px;

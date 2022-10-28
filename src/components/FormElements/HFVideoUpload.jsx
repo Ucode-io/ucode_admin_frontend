@@ -1,7 +1,7 @@
-import { FormHelperText } from "@mui/material"
-import { Controller } from "react-hook-form"
-import ImageUpload from "../Upload/ImageUpload"
-import VideoUpload from "../Upload/VideoUpload"
+import { FormHelperText } from "@mui/material";
+import { Controller } from "react-hook-form";
+import ImageUpload from "../Upload/ImageUpload";
+import VideoUpload from "../Upload/VideoUpload";
 
 const HFVideoUpload = ({
   control,
@@ -37,7 +37,7 @@ const HFVideoUpload = ({
         </>
       )}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFVideoUpload
+export default HFVideoUpload;

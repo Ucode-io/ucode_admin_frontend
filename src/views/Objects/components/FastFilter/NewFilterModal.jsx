@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
 import { useFieldArray, useForm } from "react-hook-form"
@@ -17,18 +17,13 @@ import styles from "./style.module.scss"
 const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
   const dispatch = useDispatch()
   const { tableSlug } = useParams()
+  const [didUpdate, setDidUpdate] = useState(false)
   const { new_list } = useSelector((s) => s.filter)
   const { filters } = useFilters(tableSlug, view.id)
 
   const { control, watch, reset } = useForm({
     defaultValues: {
-      new: [
-        {
-          checked: false,
-          left_field: "",
-          right_field: "",
-        },
-      ],
+      new: [],
     },
   })
 
@@ -68,7 +63,8 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
   }, [filters, fieldsMap, new_list, tableSlug])
 
   useEffect(() => {
-    if (filtered.length) {
+    if (filtered.length && !didUpdate) {
+      setDidUpdate(true)
       reset({
         new: filtered?.map((i) => ({
           checked: i.checked,
@@ -76,7 +72,7 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
         })),
       })
     }
-  }, [filtered, reset])
+  }, [filtered, didUpdate])
 
   const open = Boolean(anchorEl)
   const id = open ? "simple-popover" : undefined
@@ -102,7 +98,11 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
           {fields.map((field, index) => (
             <div key={field.id} className={styles.new_modal_item}>
               <Checkbox
-                checked={watch(`new.${index}.checked`)}
+                checked={
+                  new_list[tableSlug]?.find(
+                    (i) => i.id === watch(`new.${index}.left_field`)
+                  )?.checked
+                }
                 checkedIcon={<PinFilled />}
                 icon={<PushPinOutlinedIcon />}
                 disabled={
@@ -186,9 +186,8 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
               isAddBtnDisabled ? styles.disabled : ""
             }`}
             onClick={() =>
-              isAddBtnDisabled
-                ? null
-                : append({ checked: false, left_field: "", right_field: "" })
+              !isAddBtnDisabled &&
+              append({ checked: false, left_field: "", right_field: "" })
             }
           >
             <PlusIcon />

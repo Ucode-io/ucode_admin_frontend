@@ -1,21 +1,19 @@
 import FormElementGenerator from "../../../components/ElementGenerators/FormElementGenerator";
 import styles from "./style.module.scss";
+import ValueGenerator from "./ValueGenerator.jsx";
 
-const SummarySection = ({ mainForm, control, computedSummary }) => {
+const SummarySection = ({ control, computedSummary }) => {
   const fields = computedSummary?.fields ?? [];
   return (
     <div className={styles.summarySection}>
       {fields?.map((field, fieldIndex) => (
         <div className={styles.field_summary}>
-          <FormElementGenerator
-            control={control}
-            field={field}
-            isLayout={true}
-            sectionIndex={fieldIndex}
-            column={1}
-            fieldIndex={fieldIndex}
-            mainForm={mainForm}
-          />
+          <div className={styles.field_summary_item}>
+            <span>{field?.label}</span>
+            <p>
+              <ValueGenerator field={field} control={control} />
+            </p>
+          </div>
         </div>
       ))}
     </div>

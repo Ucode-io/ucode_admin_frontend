@@ -1,33 +1,21 @@
 import { get } from "@ngard/tiny-get";
-import { memo, useMemo } from "react";
+import React, { memo, useMemo } from "react";
+import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
+import { numberWithSpaces } from "../../../utils/formatNumbers";
+import { parseBoolean } from "../../../utils/parseBoolean";
+import { formatDate } from "../../../utils/dateFormatter";
+import TableTag from "../../../components/TableTag";
+import MultiselectCellColoredElement from "../../../components/ElementGenerators/MultiselectCellColoredElement.jsx";
+import IconGenerator from "../../../components/IconPicker";
+import LogoDisplay from "../../../components/LogoDisplay";
+import { useWatch } from "react-hook-form";
 
-import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
-import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
-import { numberWithSpaces } from "../../utils/formatNumbers";
-import { parseBoolean } from "../../utils/parseBoolean";
-import IconGenerator from "../IconPicker/IconGenerator";
-import { formatDate } from "../../utils/dateFormatter";
-import LogoDisplay from "../LogoDisplay";
-import TableTag from "../TableTag";
-import DownloadIcon from "@mui/icons-material/Download";
-
-const CellElementGenerator = ({ field = {}, row }) => {
-  const value = useMemo(() => {
-    if (field.type !== "LOOKUP") return get(row, field.slug, "");
-
-    const result = getRelationFieldTableCellLabel(
-      field,
-      row,
-      field.slug + "_data"
-    );
-
-    return result;
-  }, [row, field]);
-
-  if (field.render) {
-    return field.render(row);
-  }
-
+function ValueGenerator({ field, control }) {
+  const value = useWatch({
+    control,
+    name: field.slug,
+  });
+  console.log("teeest", value);
   switch (field.type) {
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;
@@ -68,7 +56,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return value ? numberWithSpaces(value) : "";
 
     // case "FORMULA_FRONTEND":
-    //   return <FormulaCell field={field} row={row} />
+    //   return <FormulaCell field={field} row={row} />;
 
     case "ICO":
       return <IconGenerator icon={value} />;
@@ -86,28 +74,10 @@ const CellElementGenerator = ({ field = {}, row }) => {
         </span>
       );
 
-    case "FILE":
-      return value ? (
-        <a
-          href={value}
-          className=""
-          download
-          target="_blank"
-          onClick={(e) => e.stopPropagation()}
-          rel="noreferrer"
-        >
-          <DownloadIcon
-            style={{ width: "25px", height: "25px", fontSize: "30px" }}
-          />
-        </a>
-      ) : (
-        ""
-      );
-
     default:
       if (typeof value === "object") return JSON.stringify(value);
       return value;
   }
-};
+}
 
-export default memo(CellElementGenerator);
+export default ValueGenerator;

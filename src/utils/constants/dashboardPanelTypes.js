@@ -39,7 +39,7 @@ export const dashboardPanelTypes = [
         icon: 'chart-line.svg',
         label: "Line chart",
         value: "LINE_CHART"
-      // },
+      },
       // {
       //   icon: 'table.svg',
       //   label: "Pivot table",

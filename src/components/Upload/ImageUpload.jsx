@@ -26,7 +26,7 @@ const ImageUpload = ({ value, onChange, className = "", disabled }) => {
     fileService
       .upload(data)
       .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + res.filename);
+        onChange(import.meta.env.VITE_CDN_BASE_URL + "medion/" + res.filename);
       })
       .finally(() => setLoading(false));
   };

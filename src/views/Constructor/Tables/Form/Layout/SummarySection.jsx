@@ -67,7 +67,7 @@ const SummarySection = ({
   return (
     <div className={styles.summarySection}>
       <Container
-        style={{ minHeight: 100, minWidth: "400px" }}
+        style={{ minHeight: 20, minWidth: "400px" }}
         groupName="1"
         dragClass="drag-row"
         orientation="horizontal"
@@ -77,20 +77,23 @@ const SummarySection = ({
         {sections?.map((field, fieldIndex) => (
           <Draggable key={field.key}>
             <div className={styles.field_summary}>
-              <FormElementGenerator
-                control={layoutForm.control}
-                field={fieldsMap[field.id] ?? field}
-                isLayout={true}
-                sectionIndex={fieldIndex}
-                column={1}
-                fieldIndex={fieldIndex}
-                mainForm={mainForm}
-              />
-              {/* <ButtonsPopover
+              <div className={styles.field_summary_item}>
+                <FormElementGenerator
+                  control={layoutForm.control}
+                  field={fieldsMap[field.id] ?? field}
+                  isLayout={true}
+                  sectionIndex={fieldIndex}
+                  column={1}
+                  fieldIndex={fieldIndex}
+                  mainForm={mainForm}
+                  maxWidth={true}
+                />
+              </div>
+              <ButtonsPopover
                 className={styles.deleteButton}
                 onEditClick={() => openSettingsBlock(field)}
                 onDeleteClick={() => removeField(fieldIndex, 1)}
-              /> */}
+              />
             </div>
           </Draggable>
         ))}

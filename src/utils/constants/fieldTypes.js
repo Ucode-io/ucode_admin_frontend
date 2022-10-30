@@ -127,6 +127,11 @@ export const fieldTypesOptions = [
         label: "Video",
         value: "VIDEO"
       },
+      {
+        icon: "file.svg",
+        label: "File",
+        value: "FILE"
+      },
     ]
   },
   {

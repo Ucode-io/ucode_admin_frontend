@@ -207,11 +207,11 @@ const ObjectsFormPage = () => {
         extra={<DocumentGeneratorButton />}
       >
         <FormPageBackButton />
-        {/* <SummarySection
+        <SummarySection
           computedSummary={computedSummary}
           control={control}
           sections={sections}
-        /> */}
+        />
       </FiltersBlock>
       <div className={styles.formArea}>
         <MainInfo

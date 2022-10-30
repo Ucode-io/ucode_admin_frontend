@@ -1,44 +1,44 @@
-import AddCircleOutlineIcon from "@mui/icons-material/Upload"
-import { useState } from "react"
-import { useRef } from "react"
-import ImageViewer from "react-simple-image-viewer"
-import { CircularProgress } from "@mui/material"
-import CancelIcon from "@mui/icons-material/Cancel"
-import "./Gallery/style.scss"
-import fileService from "../../services/fileService"
+import AddCircleOutlineIcon from "@mui/icons-material/Upload";
+import { useState } from "react";
+import { useRef } from "react";
+import ImageViewer from "react-simple-image-viewer";
+import { CircularProgress } from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
+import "./Gallery/style.scss";
+import fileService from "../../services/fileService";
 
 const ImageUpload = ({ value, onChange, className = "", disabled }) => {
-  const inputRef = useRef(null)
-  const [previewVisible, setPreviewVisible] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const inputRef = useRef(null);
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const imageClickHandler = (index) => {
-    setPreviewVisible(true)
-  }
+    setPreviewVisible(true);
+  };
 
   const inputChangeHandler = (e) => {
-    setLoading(true)
-    const file = e.target.files[0]
+    setLoading(true);
+    const file = e.target.files[0];
 
-    const data = new FormData()
-    data.append("file", file)
+    const data = new FormData();
+    data.append("file", file);
 
     fileService
       .upload(data)
       .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + res.filename)
+        onChange(import.meta.env.VITE_CDN_BASE_URL + "medion/" + res.filename);
       })
-      .finally(() => setLoading(false))
-  }
+      .finally(() => setLoading(false));
+  };
 
   const deleteImage = (id) => {
-    onChange(null)
-  }
+    onChange(null);
+  };
 
   const closeButtonHandler = (e) => {
-    e.stopPropagation()
-    deleteImage()
-  }
+    e.stopPropagation();
+    deleteImage();
+  };
 
   return (
     <div className={`Gallery ${className}`}>
@@ -91,7 +91,7 @@ const ImageUpload = ({ value, onChange, className = "", disabled }) => {
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ImageUpload
+export default ImageUpload;

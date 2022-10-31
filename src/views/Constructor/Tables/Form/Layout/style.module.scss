@@ -126,10 +126,14 @@
 }
 
 .settingsBlock {
-  width: 450px;
+  width: 475px;
   min-width: 450px;
   background-color: #fff;
   border-left: 1px solid #e5e9eb;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 4;
 
   .settingsBlockHeader {
     display: flex;
@@ -143,13 +147,17 @@
   }
 
   .settingsBlockBody {
-    height: calc(100vh - 56px - 56px - 48px);
+    height: calc(100vh);
     overflow: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 
 .fieldsBlock {
-  height: calc(100vh - 215px);
+  height: calc(100vh);
   overflow: auto;
   padding: 8px;
 
@@ -199,7 +207,7 @@
   min-height: 20px;
   // max-height: 140px;
   min-width: 234px;
-  // max-width: 100%;
+  max-width: 470px;
   border-radius: 4px;
   overflow-y: hidden;
   overflow-x: scroll;

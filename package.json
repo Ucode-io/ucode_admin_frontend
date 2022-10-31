@@ -95,6 +95,7 @@
     "react-moveable": "^0.38.0",
     "react-multi-date-picker": "^3.3.0",
     "react-outside-click-handler": "^1.3.0",
+    "react-pivottable": "^0.11.0",
     "react-preloaders": "^3.0.3",
     "react-prism-editor": "^1.1.2",
     "react-query": "^3.39.1",

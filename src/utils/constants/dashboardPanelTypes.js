@@ -40,11 +40,11 @@ export const dashboardPanelTypes = [
         label: "Line chart",
         value: "LINE_CHART"
       },
-      // {
-      //   icon: 'table.svg',
-      //   label: "Pivot table",
-      //   value: "PIVOT_TABLE"
-      // }
+      {
+        icon: 'table.svg',
+        label: "Pivot table",
+        value: "PIVOT_TABLE"
+      }
     ]
   }
 ]

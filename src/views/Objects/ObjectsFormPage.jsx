@@ -25,6 +25,7 @@ import { showAlert } from "../../store/alert/alert.thunk";
 import SummarySection from "./SummarySection/SummarySection";
 import BackButton from "../../components/BackButton";
 import FormPageBackButton from "./components/FormPageBackButton";
+import { addMinutes } from "date-fns";
 
 const ObjectsFormPage = () => {
   const { tableSlug, id } = useParams();
@@ -193,9 +194,20 @@ const ObjectsFormPage = () => {
     control,
     reset,
     setValue: setFormValue,
+    watch,
   } = useForm({
     defaultValues: state,
   });
+
+  // Automatic setValue for End of Session
+
+  const addedTime = watch("time");
+  const startTimeTime = watch("date_start");
+  useEffect(() => {
+    if (addedTime?.length !== 0 && addedTime !== undefined) {
+      setFormValue("time_end", addMinutes(new Date(startTimeTime), addedTime));
+    }
+  }, [addedTime, startTimeTime]);
 
   if (loader) return <PageFallback />;
 

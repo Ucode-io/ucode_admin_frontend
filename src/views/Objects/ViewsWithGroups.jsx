@@ -127,6 +127,7 @@ const ViewsWithGroups = ({
     queryGenerator(groupField, filters)
   )
 
+
   return (
     <>
       <FiltersBlock
@@ -334,8 +335,8 @@ const queryGenerator = (groupField, filters = {}) => {
       queryKey: ["GET_GROUP_OPTIONS", groupField.id],
       queryFn: () =>
         groupField?.attributes?.options?.map((el) => ({
-          label: el?.label ?? el,
-          value: el?.value ?? el,
+          label: el?.label ?? el.value,
+          value: el?.value,
           slug: groupField?.slug,
         })),
     }

@@ -23,6 +23,7 @@ import { generateGUID } from "../../utils/generateID";
 import RippleLoader from "../Loaders/RippleLoader";
 import FRow from "./FRow";
 import { makeStyles } from "@mui/styles";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 const filter = createFilterOptions();
 
@@ -160,6 +161,13 @@ const AutoCompleteElement = ({
         multiple
         value={computedValue}
         options={localOptions}
+        popupIcon={
+          isBlackBg ? (
+            <ArrowDropDownIcon style={{ color: "#fff" }} />
+          ) : (
+            <ArrowDropDownIcon />
+          )
+        }
         getOptionLabel={(option) => option?.label ?? option?.value}
         isOptionEqualToValue={(option, value) => option?.value === value?.value}
         onChange={changeHandler}

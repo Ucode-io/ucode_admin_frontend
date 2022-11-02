@@ -1,11 +1,11 @@
-import DatePicker from "react-multi-date-picker"
-import weekends from "react-multi-date-picker/plugins/highlight_weekends"
-import { InputAdornment, TextField } from "@mui/material"
-import "react-multi-date-picker/styles/layouts/mobile.css"
-import { Today } from "@mui/icons-material"
-import { locale } from "./Plugins/locale"
-import "./style2.scss"
-import CustomNavButton from "./Plugins/CustomNavButton"
+import DatePicker from "react-multi-date-picker";
+import weekends from "react-multi-date-picker/plugins/highlight_weekends";
+import { InputAdornment, TextField } from "@mui/material";
+import "react-multi-date-picker/styles/layouts/mobile.css";
+import { Today } from "@mui/icons-material";
+import { locale } from "./Plugins/locale";
+import "./style2.scss";
+import CustomNavButton from "./Plugins/CustomNavButton";
 
 const CDatePicker = ({
   value,
@@ -44,13 +44,13 @@ const CDatePicker = ({
                   },
               endAdornment: (
                 <InputAdornment position="end">
-                  <Today />
+                  <Today style={{ color: isBlackBg ? "#fff" : "" }} />
                 </InputAdornment>
               ),
             }}
             className={isFormEdit ? "custom_textfield" : ""}
           />
-        )
+        );
       }}
       renderButton={<CustomNavButton />}
       // animations={[opacity()]}
@@ -63,7 +63,7 @@ const CDatePicker = ({
       value={new Date(value) || ""}
       onChange={(val) => onChange(val ? new Date(val) : "")}
     />
-  )
-}
+  );
+};
 
-export default CDatePicker
+export default CDatePicker;

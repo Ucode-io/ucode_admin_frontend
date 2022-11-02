@@ -205,12 +205,14 @@
 
 .summarySection {
   min-height: 20px;
-  min-width: 800px;
-  max-width: 470px;
+  min-width: 100%;
+  // max-width: 470px;
   border-radius: 4px;
   overflow-y: hidden;
   overflow-x: scroll;
+  background: #fff;
   display: flex;
+  border-bottom: 1px solid #eee;
   // margin: 8px 0;
 
   &::-webkit-scrollbar {

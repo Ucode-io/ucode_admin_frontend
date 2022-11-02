@@ -1,18 +1,18 @@
-import { useEffect, useMemo } from "react"
-import { useWatch } from "react-hook-form"
-import HFAutocomplete from "../FormElements/HFAutocomplete"
-import HFCheckbox from "../FormElements/HFCheckbox"
-import HFDatePicker from "../FormElements/HFDatePicker"
-import HFDateTimePicker from "../FormElements/HFDateTimePicker"
-import HFIconPicker from "../FormElements/HFIconPicker"
-import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete"
-import HFNumberField from "../FormElements/HFNumberField"
-import HFSwitch from "../FormElements/HFSwitch"
-import HFTextField from "../FormElements/HFTextField"
-import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
-import HFTimePicker from "../FormElements/HFTimePicker"
-import CellElementGenerator from "./CellElementGenerator"
-import CellRelationFormElement from "./CellRelationFormElement"
+import { useEffect, useMemo } from "react";
+import { useWatch } from "react-hook-form";
+import HFAutocomplete from "../FormElements/HFAutocomplete";
+import HFCheckbox from "../FormElements/HFCheckbox";
+import HFDatePicker from "../FormElements/HFDatePicker";
+import HFDateTimePicker from "../FormElements/HFDateTimePicker";
+import HFIconPicker from "../FormElements/HFIconPicker";
+import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
+import HFNumberField from "../FormElements/HFNumberField";
+import HFSwitch from "../FormElements/HFSwitch";
+import HFTextField from "../FormElements/HFTextField";
+import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
+import HFTimePicker from "../FormElements/HFTimePicker";
+import CellElementGenerator from "./CellElementGenerator";
+import CellRelationFormElement from "./CellRelationFormElement";
 
 const CellFormElementGenerator = ({
   field,
@@ -29,26 +29,26 @@ const CellFormElementGenerator = ({
   ...props
 }) => {
   const computedSlug = useMemo(() => {
-    return `multi.${index}.${field.slug}`
-  }, [field.slug, index])
+    return `multi.${index}.${field.slug}`;
+  }, [field.slug, index]);
 
   const changedValue = useWatch({
     control,
     name: computedSlug,
-  })
+  });
 
   const isDisabled = useMemo(() => {
     return (
       field.attributes?.disabled ||
       !field.attributes?.field_permission?.edit_permission
-    )
-  }, [field])
+    );
+  }, [field]);
 
   useEffect(() => {
     if (!row?.[field.slug]) {
-      setFormValue(computedSlug, row?.[field.table_slug]?.guid || "")
+      setFormValue(computedSlug, row?.[field.table_slug]?.guid || "");
     }
-  }, [field, row, setFormValue, computedSlug])
+  }, [field, row, setFormValue, computedSlug]);
 
   useEffect(() => {
     if (columns.length && changedValue) {
@@ -56,9 +56,9 @@ const CellFormElementGenerator = ({
         (i, index) =>
           selected.includes(i.guid) &&
           setFormValue(`multi.${index}.${field.slug}`, changedValue)
-      )
+      );
     }
-  }, [changedValue, setFormValue, columns, field, selected])
+  }, [changedValue, setFormValue, columns, field, selected]);
 
   switch (field.type) {
     case "LOOKUP":
@@ -74,7 +74,7 @@ const CellFormElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           setFormValue={setFormValue}
         />
-      )
+      );
 
     case "SINGLE_LINE":
       return (
@@ -89,7 +89,7 @@ const CellFormElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           {...props}
         />
-      )
+      );
 
     case "PHONE":
       return (
@@ -105,12 +105,13 @@ const CellFormElementGenerator = ({
           mask={"(99) 999-99-99"}
           {...props}
         />
-      )
+      );
 
     case "PICK_LIST":
       return (
         <HFAutocomplete
           disabled={isDisabled}
+          isBlackBg={isBlackBg}
           isFormEdit
           control={control}
           name={computedSlug}
@@ -120,7 +121,7 @@ const CellFormElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           {...props}
         />
-      )
+      );
 
     case "MULTISELECT":
       return (
@@ -136,7 +137,7 @@ const CellFormElementGenerator = ({
           isBlackBg={isBlackBg}
           {...props}
         />
-      )
+      );
 
     case "DATE":
       return (
@@ -152,7 +153,7 @@ const CellFormElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           {...props}
         />
-      )
+      );
 
     case "DATE_TIME":
       return (
@@ -167,7 +168,7 @@ const CellFormElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           {...props}
         />
-      )
+      );
 
     case "TIME":
       return (
@@ -181,7 +182,7 @@ const CellFormElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           {...props}
         />
-      )
+      );
 
     case "NUMBER":
       return (
@@ -196,7 +197,7 @@ const CellFormElementGenerator = ({
           isBlackBg={isBlackBg}
           {...props}
         />
-      )
+      );
 
     case "CHECKBOX":
       return (
@@ -209,7 +210,7 @@ const CellFormElementGenerator = ({
           required={field.required}
           {...props}
         />
-      )
+      );
 
     case "SWITCH":
       return (
@@ -222,7 +223,7 @@ const CellFormElementGenerator = ({
           required={field.required}
           {...props}
         />
-      )
+      );
 
     case "EMAIL":
       return (
@@ -243,7 +244,7 @@ const CellFormElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           {...props}
         />
-      )
+      );
 
     // case "PHOTO":
     //   return (
@@ -266,15 +267,15 @@ const CellFormElementGenerator = ({
           required={field.required}
           {...props}
         />
-      )
+      );
 
     default:
       return (
         <div style={{ padding: "0 4px" }}>
           <CellElementGenerator field={field} row={row} />
         </div>
-      )
+      );
   }
-}
+};
 
-export default CellFormElementGenerator
+export default CellFormElementGenerator;

@@ -1,12 +1,12 @@
-import { useWatch } from "react-hook-form"
-import FRow from "../../../../../../components/FormElements/FRow"
-import HFMultipleAutocomplete from "../../../../../../components/FormElements/HFMultipleAutocomplete"
-import HFTextField from "../../../../../../components/FormElements/HFTextField"
+import { useWatch } from "react-hook-form";
+import FRow from "../../../../../../components/FormElements/FRow";
+import HFMultipleAutocomplete from "../../../../../../components/FormElements/HFMultipleAutocomplete";
+import HFTextField from "../../../../../../components/FormElements/HFTextField";
 
 const DefaultValueBlock = ({ control }) => {
   const field = useWatch({
     control,
-  })
+  });
 
   return (
     <FRow label="Default value">
@@ -26,7 +26,7 @@ const DefaultValueBlock = ({ control }) => {
         />
       )}
     </FRow>
-  )
-}
+  );
+};
 
-export default DefaultValueBlock
+export default DefaultValueBlock;

@@ -1,6 +1,6 @@
-import { makeStyles } from "@mui/styles"
-import { Controller } from "react-hook-form"
-import CDateTimePicker from "../DatePickers/CDateTimePicker"
+import { makeStyles } from "@mui/styles";
+import { Controller } from "react-hook-form";
+import CDateTimePicker from "../DatePickers/CDateTimePicker";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
     },
   },
-}))
+}));
 
 const HFDateTimePicker = ({
   control,
@@ -18,13 +18,15 @@ const HFDateTimePicker = ({
   showCopyBtn,
   placeholder = "",
   disabled,
+  defaultValue,
 }) => {
-  const classes = useStyles()
+  console.log("defaultValue", defaultValue);
+  const classes = useStyles();
   return (
     <Controller
       control={control}
       name={name}
-      defaultValue=""
+      defaultValue={defaultValue}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <CDateTimePicker
@@ -37,10 +39,10 @@ const HFDateTimePicker = ({
             onChange={onChange}
             disabled={disabled}
           />
-        )
+        );
       }}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFDateTimePicker
+export default HFDateTimePicker;

@@ -51,13 +51,17 @@
     overflow: hidden;
 
     span {
-      font-size: 10px;
+      font-size: 12px;
       text-transform: uppercase;
       line-height: 16px;
       font-weight: 700;
+      height: 42px;
     }
     p {
-      font-size: 14px;
+      min-width: 70px;
+      max-width: 100px;
+      height: 42px;
+      font-size: 12px;
       line-height: 24px;
       font-weight: 600;
       color: #9aa6ac;

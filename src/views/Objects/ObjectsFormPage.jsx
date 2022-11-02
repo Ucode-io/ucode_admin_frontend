@@ -217,6 +217,7 @@ const ObjectsFormPage = () => {
         summary={true}
         sections={sections}
         extra={<DocumentGeneratorButton />}
+        hasBackground={true}
       >
         <FormPageBackButton />
         <SummarySection

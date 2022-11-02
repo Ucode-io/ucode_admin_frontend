@@ -9,7 +9,7 @@
   overflow: auto;
   min-width: 350px;
   width: 350px;
-  padding: 8px;
+  padding: 0px 8px 8px 0px;
 
   .sectionCard {
     border-radius: 6px;
@@ -81,7 +81,7 @@
 
 .relationsBlock {
   overflow: hidden;
-  padding: 8px;
+  padding: 0px 8px 8px 8px;
   flex: 1;
 
   .cardHeader {
@@ -205,14 +205,13 @@
 
 .summarySection {
   min-height: 20px;
-  // max-height: 140px;
-  min-width: 234px;
+  min-width: 800px;
   max-width: 470px;
   border-radius: 4px;
   overflow-y: hidden;
   overflow-x: scroll;
   display: flex;
-  margin: 8px 0;
+  // margin: 8px 0;
 
   &::-webkit-scrollbar {
     display: none;
@@ -229,12 +228,12 @@
   }
   .field_summary_item {
     width: 238px;
-    height: 100px;
+    height: 80px;
     max-height: 130px !important;
     // max-height: 140px;
     margin-top: 8px;
     background: #fff;
-    padding: 5px 10px 16px 16px;
+    padding: 0px 10px 16px 10px;
     font-size: 12px;
     line-height: 16px;
     font-weight: 700;

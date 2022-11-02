@@ -7,7 +7,8 @@
   overflow-x: scroll;
   overflow-y: hidden;
   display: flex;
-  margin: 8px 0;
+  // margin: 8px 0;
+  padding: 5px;
 
   &::-webkit-scrollbar {
     display: none;
@@ -15,7 +16,7 @@
 
   .field_summary {
     min-width: 238px;
-    max-height: 92px;
+    max-height: 62px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,7 +24,7 @@
     border-radius: 4px;
     // gap: 5px;
     background: #fff;
-    padding: 16px 0px 16px 16px;
+    padding: 10px 0px 10px 16px;
 
     &:not(:last-child) {
       &::after {
@@ -35,7 +36,7 @@
     }
   }
   .field_summary_item {
-    width: 238px;
+    width: 200px;
     // min-height: 20px !important;
     min-height: 60px;
     margin-top: 8px;
@@ -50,13 +51,13 @@
     overflow: hidden;
 
     span {
-      font-size: 12px;
+      font-size: 10px;
       text-transform: uppercase;
       line-height: 16px;
       font-weight: 700;
     }
     p {
-      font-size: 16px;
+      font-size: 14px;
       line-height: 24px;
       font-weight: 600;
       color: #9aa6ac;

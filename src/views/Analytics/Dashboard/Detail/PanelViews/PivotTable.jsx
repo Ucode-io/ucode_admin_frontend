@@ -15,14 +15,14 @@ const PivotTable = ({ panel = {}, data = [] }) => {
         data={data}
         onChange={(s) => setPivotData(s)}
         aggregatorName="Integer Sum"
-        cols={[
-          chartAttributes.value_field_slug,
-          chartAttributes.value_field_slug2,
-        ]}
-        rows={[
-          chartAttributes.label_field_slug,
-          chartAttributes.label_field_slug2,
-        ]}
+        // cols={[
+        //   chartAttributes.value_field_slug,
+        //   chartAttributes.value_field_slug2,
+        // ]}
+        // rows={[
+        //   chartAttributes.label_field_slug,
+        //   chartAttributes.label_field_slug2,
+        // ]}
         vals={["amount"]}
         {...pivotData}
         hiddenAttributes={[

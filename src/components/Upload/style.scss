@@ -1,53 +1,53 @@
-.FileUploadWithDrag {
-  box-sizing: border-box;
-  position: relative;
-  width: 500px;
-
-  .dropzone {
-    width: 100%;
-    cursor: pointer;
-    position: static;
-    height: 164px;
-    left: 0px;
-    top: 0px;
-    border: 1px dashed #d5dadd;
-    box-sizing: border-box;
-    border-radius: 0px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    &.error {
-      border: 1px dashed rgba(247, 102, 89, 1);
+.video_wrapper {
+  display: flex;
+  flex-direction: column;
+  .video_block {
+    position: relative;
+    video {
+      border-radius: 3px;
     }
-
-    .dropzone-icon {
-      color: #6b6966;
-      font-size: 50px;
+    div {
+      border: 1px solid #333;
+      width: 30px;
+      height: 30px;
+      background: #fff;
+      border-radius: 3px;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      top: 0;
+      left: 0;
+      cursor: pointer;
     }
-
-    .dropzone-title {
-      font-size: 16px;
-      line-height: 24px;
-      text-align: center;
-      margin: 8px 0;
-      color: #6b6966;
-    }
-
-    .button {
-      .btn-title {
-        font-family: Inter;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 24px;
-        letter-spacing: -0.006em;
+  }
+  .uploading_status {
+    font-size: 12px;
+    .progress {
+      height: 18px;
+      width: 140px;
+      border-radius: 3px;
+      background-color: #89cff0;
+      position: relative;
+      color: #fff;
+      div {
+        border-radius: 3px;
+        height: 100%;
+        width: 0%;
+        transition: all 0.3s ease;
+        background-color: #034694;
+      }
+      &::after {
+        content: attr(percent);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        width: 70px;
         text-align: center;
       }
     }
   }
-}
-.close-btn {
-  z-index: 1;
 }

@@ -23,7 +23,7 @@ const VideoUpload = ({ value, onChange, className = "", disabled }) => {
 
     // Create a new tus upload
     var upload = new tus.Upload(file, {
-      endpoint: "https://test.api.admin.editorypress.uz/v1/upload-videos/", // api must changed despite on project
+      endpoint: "https://test.api.admin.editorypress.uz/v1/upload-videos/", // api must be changed based on project
       retryDelays: [0, 3000, 5000, 10000, 20000],
       headers: {
         authorization: `Bearer ${token}`, // token should be taken from project which is using
@@ -43,7 +43,7 @@ const VideoUpload = ({ value, onChange, className = "", disabled }) => {
       onSuccess: function () {
         setIsUploading(false);
         onChange(
-          "https://test.cdn.editorypress.uz/videos-temp/" +
+          "https://test.cdn.editorypress.uz/videos-temp/" + // api must be changed based on project
             upload.url.split("/")[5].split("+")[0]
         );
       },

@@ -21,6 +21,7 @@ import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import RelationFormElement from "./RelationFormElement";
 import { Parser } from "hot-formula-parser";
 import BarcodeGenerator from "./BarcodeGenerator";
+import HFMoneyField from "../FormElements/HFMoneyField";
 
 const parser = new Parser();
 
@@ -60,7 +61,6 @@ const FormElementGenerator = ({
   //   return null
   // }
 
-  console.log("FIELD - ", field);
 
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {
@@ -228,6 +228,22 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
+
+    case "MONEY":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFMoneyField
+            control={control}
+            name={computedSlug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>

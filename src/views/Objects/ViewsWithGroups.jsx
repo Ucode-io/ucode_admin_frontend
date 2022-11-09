@@ -127,7 +127,6 @@ const ViewsWithGroups = ({
     queryGenerator(groupField, filters)
   )
 
-
   return (
     <>
       <FiltersBlock

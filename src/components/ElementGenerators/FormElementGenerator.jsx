@@ -1,28 +1,28 @@
-import { useMemo } from "react";
-import FRow from "../FormElements/FRow";
-import HFAutocomplete from "../FormElements/HFAutocomplete";
-import HFCheckbox from "../FormElements/HFCheckbox";
-import HFDatePicker from "../FormElements/HFDatePicker";
-import HFDateTimePicker from "../FormElements/HFDateTimePicker";
-import HFFormulaField from "../FormElements/HFFormulaField";
-import HFIconPicker from "../FormElements/HFIconPicker";
-import HFImageUpload from "../FormElements/HFImageUpload";
-import HFVideoUpload from "../FormElements/HFVideoUpload";
-import HFFileUpload from "../FormElements/HFFileUpload";
-import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
-import HFNumberField from "../FormElements/HFNumberField";
-import HFSwitch from "../FormElements/HFSwitch";
-import HFTextEditor from "../FormElements/HFTextEditor";
-import HFTextField from "../FormElements/HFTextField";
-import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
-import HFTimePicker from "../FormElements/HFTimePicker";
-import DynamicRelationFormElement from "./DynamicRelationFormElement";
-import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
-import RelationFormElement from "./RelationFormElement";
-import { Parser } from "hot-formula-parser";
-import BarcodeGenerator from "./BarcodeGenerator";
+import { useMemo } from "react"
+import FRow from "../FormElements/FRow"
+import HFAutocomplete from "../FormElements/HFAutocomplete"
+import HFCheckbox from "../FormElements/HFCheckbox"
+import HFDatePicker from "../FormElements/HFDatePicker"
+import HFDateTimePicker from "../FormElements/HFDateTimePicker"
+import HFFormulaField from "../FormElements/HFFormulaField"
+import HFIconPicker from "../FormElements/HFIconPicker"
+import HFImageUpload from "../FormElements/HFImageUpload"
+import HFVideoUpload from "../FormElements/HFVideoUpload"
+import HFFileUpload from "../FormElements/HFFileUpload"
+import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete"
+import HFNumberField from "../FormElements/HFNumberField"
+import HFSwitch from "../FormElements/HFSwitch"
+import HFTextEditor from "../FormElements/HFTextEditor"
+import HFTextField from "../FormElements/HFTextField"
+import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
+import HFTimePicker from "../FormElements/HFTimePicker"
+import DynamicRelationFormElement from "./DynamicRelationFormElement"
+import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement"
+import RelationFormElement from "./RelationFormElement"
+import { Parser } from "hot-formula-parser"
+import BarcodeGenerator from "./BarcodeGenerator"
 
-const parser = new Parser();
+const parser = new Parser()
 
 const FormElementGenerator = ({
   field = {},
@@ -34,33 +34,33 @@ const FormElementGenerator = ({
 }) => {
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))
-      return `$${field.id.split("@")?.[0]}.${field.slug}`;
-    return field.slug;
-  }, [field.id, field.slug]);
+      return `$${field.id.split("@")?.[0]}.${field.slug}`
+    return field.slug
+  }, [field.id, field.slug])
 
   const defaultValue = useMemo(() => {
     const defaultValue =
-      field.attributes?.defaultValue ?? field.attributes?.default_values;
-    if (!defaultValue) return undefined;
-    if (field.relation_type === "Many2One") return defaultValue[0];
+      field.attributes?.defaultValue ?? field.attributes?.default_values
+    if (!defaultValue) return undefined
+    if (field.relation_type === "Many2One") return defaultValue[0]
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
-      return defaultValue;
-    const { error, result } = parser.parse(defaultValue);
-    return error ? undefined : result;
-  }, [field.attributes, field.type, field.id, field.relation_type]);
+      return defaultValue
+    const { error, result } = parser.parse(defaultValue)
+    return error ? undefined : result
+  }, [field.attributes, field.type, field.id, field.relation_type])
 
   const isDisabled = useMemo(() => {
     return (
       field.attributes?.disabled ||
       !field.attributes?.field_permission?.edit_permission
-    );
-  }, [field]);
+    )
+  }, [field])
 
   // if (!field.attributes?.field_permission?.view_permission) {
   //   return null
   // }
 
-  console.log("FIELD - ", field);
+  console.log("FIELD - ", field)
 
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {
@@ -73,7 +73,7 @@ const FormElementGenerator = ({
           disabled={isDisabled}
           {...props}
         />
-      );
+      )
     } else if (field.relation_type === "Many2Dynamic") {
       return (
         <DynamicRelationFormElement
@@ -84,7 +84,7 @@ const FormElementGenerator = ({
           disabled={isDisabled}
           {...props}
         />
-      );
+      )
     } else {
       return (
         <RelationFormElement
@@ -96,7 +96,7 @@ const FormElementGenerator = ({
           disabled={isDisabled}
           {...props}
         />
-      );
+      )
     }
   }
 
@@ -115,7 +115,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "PHONE":
       return (
@@ -132,7 +132,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "PICK_LIST":
       return (
@@ -149,7 +149,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "MULTI_LINE":
       return (
@@ -167,7 +167,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "DATE":
       return (
@@ -184,7 +184,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "DATE_TIME":
       return (
@@ -199,7 +199,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "TIME":
       return (
@@ -214,7 +214,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "NUMBER":
       return (
@@ -231,7 +231,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "CHECKBOX":
       return (
@@ -244,7 +244,7 @@ const FormElementGenerator = ({
           disabled={isDisabled}
           {...props}
         />
-      );
+      )
 
     case "MULTISELECT":
       return (
@@ -261,7 +261,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "SWITCH":
       return (
@@ -274,7 +274,7 @@ const FormElementGenerator = ({
           disabled={isDisabled}
           {...props}
         />
-      );
+      )
 
     case "EMAIL":
       return (
@@ -296,7 +296,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "PHOTO":
       return (
@@ -310,7 +310,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "VIDEO":
       return (
@@ -324,7 +324,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
     case "FILE":
       return (
         <FRow label={field.label} required={field.required}>
@@ -337,7 +337,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "BARCODE":
       return (
@@ -354,7 +354,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "ICON":
       return (
@@ -368,7 +368,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "FORMULA":
     case "INCREMENT_ID":
@@ -390,7 +390,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "FORMULA_FRONTEND":
       return (
@@ -406,7 +406,7 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
           />
         </FRow>
-      );
+      )
 
     case "COLOR":
       return (
@@ -423,7 +423,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     case "PASSWORD":
       return (
@@ -440,7 +440,7 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
 
     default:
       return (
@@ -456,8 +456,8 @@ const FormElementGenerator = ({
             {...props}
           />
         </FRow>
-      );
+      )
   }
-};
+}
 
-export default FormElementGenerator;
+export default FormElementGenerator

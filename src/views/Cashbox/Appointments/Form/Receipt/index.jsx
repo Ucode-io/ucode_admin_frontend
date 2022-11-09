@@ -34,7 +34,8 @@ const Receipt = ({ form }) => {
         </div>
 
         <div className={style.row}>
-          <b style={{ paddingRight: 5 }} >Дата: </b>{format(new Date(), 'dd.MM.yyyy HH:mm:ss')}
+          <b style={{ paddingRight: 5 }}>Дата: </b>
+          {format(new Date(), "dd.MM.yyyy HH:mm:ss")}
         </div>
       </div>
 

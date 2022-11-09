@@ -10,6 +10,12 @@ const initialState = {
   permissions: {},
   loginTableSlug: "",
   userId: "",
+  profileSettings: {
+    lang: "ru",
+    time_frame: "+5",
+    time_format: "24",
+    date_format: "dd/mm/yyyy",
+  },
 }
 
 export const { actions: authActions, reducer: authReducer } = createSlice({
@@ -58,5 +64,14 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
         }, {}) || []
     },
     logout: (state) => initialState,
+    setProfileSettings(state, { payload }) {
+      state.profileSettings = {
+        lang: "ru",
+        time_frame: "+5",
+        time_format: "24",
+        date_format: "24",
+        ...payload,
+      }
+    },
   },
 })

@@ -34,6 +34,7 @@ export const fieldTypes = [
   "SWITCH",
   "PHOTO",
   "PHONE",
+  "MONEY",
   "ICON",
   "PASSWORD",
   "FORMULA"
@@ -82,6 +83,11 @@ export const fieldTypesOptions = [
         icon: "hashtag.svg",
         label: "Number",
         value: "NUMBER"
+      },
+      {
+        icon: "money-bill-wave.svg",
+        label: "Money",
+        value: "MONEY",
       },
     ]
   },

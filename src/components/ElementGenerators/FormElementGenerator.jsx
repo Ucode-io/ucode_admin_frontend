@@ -16,6 +16,7 @@ import HFTextEditor from "../FormElements/HFTextEditor"
 import HFTextField from "../FormElements/HFTextField"
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask"
 import HFTimePicker from "../FormElements/HFTimePicker"
+import HFMoneyField from "../FormElements/HFMoneyField"
 import DynamicRelationFormElement from "./DynamicRelationFormElement"
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement"
 import RelationFormElement from "./RelationFormElement"
@@ -59,8 +60,6 @@ const FormElementGenerator = ({
   // if (!field.attributes?.field_permission?.view_permission) {
   //   return null
   // }
-
-  console.log("FIELD - ", field)
 
   if (field.id?.includes("#")) {
     if (field.relation_type === "Many2Many") {
@@ -228,6 +227,22 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      )
+
+    case "MONEY":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFMoneyField
+            control={control}
+            name={computedSlug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            disabled={field.attributes?.disabled}
             {...props}
           />
         </FRow>

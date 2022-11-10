@@ -4,7 +4,9 @@ import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
 import HFDatePicker from "../FormElements/HFDatePicker";
 import HFDateTimePicker from "../FormElements/HFDateTimePicker";
+import HFFileUpload from "../FormElements/HFFileUpload";
 import HFIconPicker from "../FormElements/HFIconPicker";
+import HFImageUpload from "../FormElements/HFImageUpload copy";
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
 import HFNumberField from "../FormElements/HFNumberField";
 import HFSwitch from "../FormElements/HFSwitch";
@@ -251,17 +253,31 @@ const CellFormElementGenerator = ({
         />
       );
 
-    // case "PHOTO":
-    //   return (
-    //     <FRow label={field.label} required={field.required}>
-    //       <HFImageUpload
-    //         control={control}
-    //         name={computedSlug}
-    //         required={field.required}
-    //         {...props}
-    //       />
-    //     </FRow>
-    //   )
+      case "PHOTO":
+      return (
+     
+          <HFImageUpload
+            control={control}
+            name={computedSlug}
+            required={field.required}
+            {...props}
+          />
+      
+      )
+
+      case "FILE":
+        return (
+          
+            <HFFileUpload
+              control={control}
+              name={computedSlug}
+              required={field.required}
+              // defaultValue={defaultValue}
+              disabled={isDisabled}
+              {...props}
+            />
+          
+        )
 
     case "ICON":
       return (

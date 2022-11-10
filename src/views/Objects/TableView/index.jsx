@@ -16,7 +16,7 @@ const TableView = ({
   tab,
   view,
   shouldGet,
-  reset=()=>{},
+  reset = () => {},
   fieldsMap,
   isDocView,
   formVisible,

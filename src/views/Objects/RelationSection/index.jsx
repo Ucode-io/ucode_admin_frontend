@@ -62,6 +62,9 @@ const RelationSection = ({
     name: "multi",
   })
 
+  console.log("fields length - ", fields) //8
+  console.log("dataLength - ", dataLength) //2
+
   const selectedRelation = filteredRelations[selectedTabIndex]
 
   useEffect(() => {
@@ -88,7 +91,7 @@ const RelationSection = ({
     const relation = filteredRelations[selectedTabIndex]
     if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
     else {
-      append({ patients_id: idFromParams ?? "" })
+      append({ [`${tableSlug}_id`]: idFromParams ?? "" })
       setFormVisible(true)
 
       // if (relation.is_editable) setCreateFormVisible(relation.id, true)

@@ -4,7 +4,7 @@ include:
 stages:
   - build
   - deploy
-  # - rollback
+  - rollback
 
 build-staging:
   stage: build
@@ -19,13 +19,15 @@ deploy-staging:
   extends: .deploy_template
   variables:
     NAMESPACE: test
-    KUBECONFIGJSON: $KUBECONFIG
+    VALUES_FILE: .helm/values-test.yml
+    K8SCONFIGJSON: $UCODE_KUBECONFIG
   only:
     - staging
-# rollback-staging:
-#   stage: rollback
-#   extends: .rollback_template
-#   variables:
-#     NAMESPACE: test
-#     KUBECONFIGJSON: $KUBECONFIG
-#   when: manual
+
+rollback-staging:
+  stage: rollback
+  extends: .rollback_template
+  variables:
+    NAMESPACE: test
+    K8SCONFIGJSON: $UCODE_KUBECONFIG
+  when: manual

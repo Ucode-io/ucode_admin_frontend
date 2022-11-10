@@ -60,6 +60,11 @@ const CellFormElementGenerator = ({
     }
   }, [changedValue, setFormValue, columns, field, selected]);
 
+  // const defaultValue = useMemo(() => {
+  //   return field.attributes?.defaultValue ?? "";
+  // }, []);
+
+
   switch (field.type) {
     case "LOOKUP":
       return (

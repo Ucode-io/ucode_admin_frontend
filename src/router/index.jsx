@@ -29,6 +29,7 @@ import AppsForm from "../views/Constructor/Apps/AppsForm"
 import ConstructorTablesFormPage from "../views/Constructor/Tables/Form"
 import ObjectsPage from "../views/Objects"
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage"
+import ProfileSettings from "../views/ProfileSettings"
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"))
 
@@ -119,6 +120,7 @@ const Router = () => {
       <Route path="settings" element={<SettingsLayout />}>
         <Route index element={<Navigate to={"/settings/constructor/apps"} />} />
 
+        <Route path="profile" element={<ProfileSettings />} />
         <Route path="constructor/apps" element={<AppsPage />} />
         <Route path="constructor/apps/create" element={<AppsForm />} />
         <Route path="constructor/apps/:appId" element={<AppsForm />} />

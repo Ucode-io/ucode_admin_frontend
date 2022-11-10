@@ -186,7 +186,12 @@ export const fieldTypesOptions = [
         icon: 'fill.svg',
         label: 'Autofill',
         value: 'AUTOFILL'
-      }
+      },
+      {
+        icon: "dice.svg",
+        label: "Random Numbers",
+        value: "RANDOM_NUMBERS"
+      },
     ]
   },
 

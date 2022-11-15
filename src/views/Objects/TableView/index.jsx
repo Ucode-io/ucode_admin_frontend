@@ -32,6 +32,8 @@ const TableView = ({
 
   const { filters } = useFilters(tableSlug, view.id)
 
+  
+
   const [currentPage, setCurrentPage] = useState(1)
   const [limit, setLimit] = useState(10)
   const [deleteLoader, setDeleteLoader] = useState(false)

@@ -62,9 +62,6 @@ const RelationSection = ({
     name: "multi",
   })
 
-  console.log("fields length - ", fields) //8
-  console.log("dataLength - ", dataLength) //2
-
   const selectedRelation = filteredRelations[selectedTabIndex]
 
   useEffect(() => {

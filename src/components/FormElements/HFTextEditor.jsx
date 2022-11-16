@@ -36,17 +36,16 @@ const HFTextEditor = ({
       }}
       render={({ field: { onChange, ref }, fieldState: { error } }) => (
         <Suspense fallback={<RingLoaderWithWrapper />}>
-          <QuillToolbar />
+          {/* <QuillToolbar /> */}
           <ReactQuill
             theme="snow"
             defaultValue={value}
             onChange={onChange}
             autoFocus={false}
-            formats={formats}
-            modules={modules}
+            // formats={formats}
+            // modules={modules}
           />
-             
-        
+               
         </Suspense>
         // <TextField
         //   size="small"

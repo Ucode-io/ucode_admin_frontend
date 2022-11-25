@@ -15,7 +15,7 @@ build-staging:
   only:
     - staging
 
-deploy-staging:
+deploy-demo:
   stage: deploy
   extends: .deploy_template
   variables:

@@ -15,6 +15,15 @@ build-staging:
   only:
     - staging
 
+build-demo:
+  stage: build
+  extends: .build_template
+  variables:
+    ENV_TAG: demo
+    DOCKERFILE: Dockerfile-demo
+  only:
+    - staging
+
 deploy-demo:
   stage: deploy
   extends: .deploy_template

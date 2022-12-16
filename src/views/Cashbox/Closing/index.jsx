@@ -17,8 +17,10 @@ import Footer from "../../../components/Footer"
 import { useNavigate } from "react-router-dom"
 import { cashboxActions } from "../../../store/cashbox/cashbox.slice"
 import { useDispatch } from "react-redux"
+import { useTranslation } from "react-i18next"
 
 const CashboxClosing = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { control, reset, watch, handleSubmit } = useForm({
@@ -95,7 +97,7 @@ const CashboxClosing = () => {
         <TableCard>
           <div className={styles.row}>
             <div className={styles.section}>
-              <p className={styles.label}>Общая сумма</p>
+              <p className={styles.label}>{t("total.sum")}</p>
 
               <div className={styles.value}>
                 {numberWithSpaces(total.amount)}
@@ -103,7 +105,7 @@ const CashboxClosing = () => {
             </div>
 
             <div className={styles.section}>
-              <p className={styles.label}>Расход</p>
+              <p className={styles.label}>{t("consumption")}</p>
 
               <div className={styles.value}>
                 {numberWithSpaces(total.summ - total.amount)}
@@ -116,12 +118,12 @@ const CashboxClosing = () => {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Тип</th>
-                <th>Факт</th>
+                <th>{t("type")}</th>
+                <th>{t("fact")}</th>
                 <th></th>
-                <th>План</th>
+                <th>{t("plan")}</th>
                 <th></th>
-                <th>Разница</th>
+                <th>{t("difference")}</th>
               </tr>
             </thead>
 
@@ -181,14 +183,14 @@ const CashboxClosing = () => {
 
           <Divider className={styles.divider} />
 
-          <FRow label="Комментария">
+          <FRow label={t("commentary")}>
             <HFTextField
               fullWidth
               control={control}
               name="comment"
               multiline
               rows={4}
-              placeholder="Enter a comment"
+              placeholder={t("enter.comment")}
             />
           </FRow>
         </TableCard>

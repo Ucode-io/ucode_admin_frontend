@@ -1,16 +1,17 @@
-import { Add, Delete } from "@mui/icons-material";
-import { useFieldArray } from "react-hook-form";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import DragHandleIcon from "@mui/icons-material/DragHandle";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { Add, Delete } from "@mui/icons-material"
+import { useFieldArray } from "react-hook-form"
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft"
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight"
+import DragHandleIcon from "@mui/icons-material/DragHandle"
+import { useQuery } from "react-query"
+import { useParams } from "react-router-dom"
 
-import SecondaryButton from "../../../../../../components/Buttons/SecondaryButton";
-import HFSelect from "../../../../../../components/FormElements/HFSelect";
-import { FormulaIcon, XIcon } from "../../../../../../assets/icons/icon";
-import HFTextField from "../../../../../../components/FormElements/HFTextField";
-import constructorFieldService from "../../../../../../services/constructorFieldService";
+import SecondaryButton from "../../../../../../components/Buttons/SecondaryButton"
+import HFSelect from "../../../../../../components/FormElements/HFSelect"
+import { FormulaIcon, XIcon } from "../../../../../../assets/icons/icon"
+import HFTextField from "../../../../../../components/FormElements/HFTextField"
+import constructorFieldService from "../../../../../../services/constructorFieldService"
+import { useTranslation } from "react-i18next"
 
 const SettingsFormRow = ({
   watch,
@@ -19,12 +20,13 @@ const SettingsFormRow = ({
   nestedFieldName,
   removeField,
 }) => {
-  const { slug: table_slug } = useParams();
+  const { slug: table_slug } = useParams()
+  const { t } = useTranslation()
 
   const table_slug_param =
     nestedFieldName === "after"
       ? watch(`after.${nestedIndex}.table`)
-      : table_slug;
+      : table_slug
 
   const { data: fieldList, isLoading: fieldListLoading } = useQuery(
     [
@@ -40,12 +42,12 @@ const SettingsFormRow = ({
     {
       enabled: !!table_slug,
     }
-  );
+  )
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: `${nestedFieldName}.${nestedIndex}.group`,
-  });
+  })
 
   const attributeFields = [
     {
@@ -108,7 +110,7 @@ const SettingsFormRow = ({
       options: ["start", "middle", "end"],
       placeholder: "text",
     },
-  ];
+  ]
 
   return (
     fields.length > 0 && (
@@ -179,7 +181,7 @@ const SettingsFormRow = ({
             }
           >
             <Add />
-            Добавить группу
+            {t("add.group")}
           </SecondaryButton>
           <SecondaryButton
             type="button"
@@ -187,12 +189,12 @@ const SettingsFormRow = ({
             onClick={() => removeField(nestedIndex)}
           >
             <Delete />
-            Удалить
+            {t("add.group")}
           </SecondaryButton>
         </div>
       </div>
     )
-  );
-};
+  )
+}
 
-export default SettingsFormRow;
+export default SettingsFormRow

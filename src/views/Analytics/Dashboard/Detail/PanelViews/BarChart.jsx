@@ -1,15 +1,17 @@
-import { ResponsiveBar } from "@nivo/bar";
-import styles from "./style.module.scss";
+import { ResponsiveBar } from "@nivo/bar"
+import styles from "./style.module.scss"
 
 const BarChart = ({ panel = {}, data = [] }) => {
-  const chartAttributes = panel?.attributes?.["BAR_CHART"] ?? {};
-  console.log("chartAttributes", chartAttributes);
+  const chartAttributes = panel?.attributes?.["BAR_CHART"] ?? {}
+
   return (
-    <div className={styles.card}>
+    <div className={styles.card} >
       <div className={styles.title}>{panel?.title}</div>
       <div className={styles.chartArea}>
         <ResponsiveBar
           data={data}
+          keys={[chartAttributes.value_field_slug]}
+          indexBy={chartAttributes.label_field_slug}
           margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
           padding={0.3}
           valueScale={{ type: "linear" }}
@@ -111,7 +113,7 @@ const BarChart = ({ panel = {}, data = [] }) => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BarChart;
+export default BarChart

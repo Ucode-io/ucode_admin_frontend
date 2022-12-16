@@ -1,11 +1,13 @@
 import { useMemo } from "react"
 import { useForm, useWatch } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import ObjectLayout from "./ObjectLayout"
 import RelationLayout from "./RelationLayout"
 import styles from "./style.module.scss"
 
 const Layout = ({ mainForm }) => {
+  const { t } = useTranslation()
   const sections = useWatch({
     control: mainForm.control,
     name: `sections`,
@@ -28,22 +30,24 @@ const Layout = ({ mainForm }) => {
   return (
     <div>
       <Tabs>
-        <div className={styles.layoutTabsBlock} >
+        <div className={styles.layoutTabsBlock}>
           <TabList>
-            <Tab>Objects</Tab>
-            <Tab>Relations</Tab>
+            <Tab>{t("objects")}</Tab>
+            <Tab>{t("relations")}</Tab>
           </TabList>
         </div>
-        
+
         <TabPanel>
-          <ObjectLayout mainForm={mainForm} usedFields={usedFields} layoutForm={layoutForm} />
+          <ObjectLayout
+            mainForm={mainForm}
+            usedFields={usedFields}
+            layoutForm={layoutForm}
+          />
         </TabPanel>
 
         <TabPanel>
           <RelationLayout mainForm={mainForm} layoutForm={layoutForm} />
         </TabPanel>
-
-
 
         {/* <div className={styles.page}>
           <FieldsBlock

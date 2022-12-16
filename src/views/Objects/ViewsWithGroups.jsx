@@ -65,7 +65,6 @@ const ViewsWithGroups = ({
     control,
     reset,
     handleSubmit,
-    watch,
     setValue: setFormValue,
   } = useForm({
     defaultValues: {
@@ -73,7 +72,7 @@ const ViewsWithGroups = ({
     },
   })
 
-  const { fields, remove, append } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control,
     name: "multi",
   })
@@ -334,8 +333,8 @@ const queryGenerator = (groupField, filters = {}) => {
       queryKey: ["GET_GROUP_OPTIONS", groupField.id],
       queryFn: () =>
         groupField?.attributes?.options?.map((el) => ({
-          label: el?.label ?? el.value,
-          value: el?.value,
+          label: el?.label ?? el,
+          value: el?.value ?? el,
           slug: groupField?.slug,
         })),
     }

@@ -5,6 +5,7 @@ import HFSelect from "../../components/FormElements/HFSelect"
 import HFTextField from "../../components/FormElements/HFTextField"
 import styles from "./styles.module.scss"
 import HFIconPicker from "../../components/FormElements/HFIconPicker"
+import { useTranslation } from "react-i18next"
 
 const style = {
   position: "absolute",
@@ -29,6 +30,7 @@ const ConnectionCreateModal = ({
   handleSubmit = () => {},
   isEdit = false,
 }) => {
+  const { t } = useTranslation()
   const handleClose = () => {
     setOpen(false)
     connectionForm.reset()
@@ -112,7 +114,7 @@ const ConnectionCreateModal = ({
                 connectionForm.reset()
               }}
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               className={styles.craete_btn}

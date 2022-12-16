@@ -10,29 +10,31 @@ import "./i18next"
 import { Suspense } from "react"
 import { QueryClientProvider } from "react-query"
 import queryClient from "./queries"
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { ReactQueryDevtools } from "react-query/devtools"
 import { AliveScope } from "react-activation"
+import { useTranslation } from "react-i18next"
 
 function App() {
+  const { t } = useTranslation()
   return (
-    <Suspense fallback="Loading..." >
+    <Suspense fallback={`${t("loading")}...`}>
       <div className="App">
-        <QueryClientProvider client={queryClient} >
-        <ReactQueryDevtools initialIsOpen={false} />
-        <Provider store={store}>
-          <PersistGate persistor={persistor}>
-            <MaterialUIProvider>
-              <AlertProvider>
-                <GlobalFunctionsProvider />
-                <BrowserRouter>
-                  <AliveScope>
-                    <Router />
-                  </AliveScope>
-                </BrowserRouter>
-              </AlertProvider>
-            </MaterialUIProvider>
-          </PersistGate>
-        </Provider>
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <Provider store={store}>
+            <PersistGate persistor={persistor}>
+              <MaterialUIProvider>
+                <AlertProvider>
+                  <GlobalFunctionsProvider />
+                  <BrowserRouter>
+                    <AliveScope>
+                      <Router />
+                    </AliveScope>
+                  </BrowserRouter>
+                </AlertProvider>
+              </MaterialUIProvider>
+            </PersistGate>
+          </Provider>
         </QueryClientProvider>
       </div>
     </Suspense>

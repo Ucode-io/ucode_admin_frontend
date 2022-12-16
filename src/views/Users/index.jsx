@@ -3,15 +3,15 @@ import FiltersBlock from "../../components/FiltersBlock"
 import { useState } from "react"
 import SearchInput from "../../components/SearchInput"
 import HeaderSettings from "../../components/HeaderSettings"
+import { useTranslation } from "react-i18next"
 
 const UsersPage = () => {
-  const [searchText, setSearchText] = useState('')
+  const [searchText, setSearchText] = useState("")
+  const { t } = useTranslation()
 
   return (
     <div className="UsersPage">
-      <HeaderSettings
-        title='Пользователи'
-      />
+      <HeaderSettings title={t("users")} />
       <FiltersBlock>
         <SearchInput value={searchText} onChange={setSearchText} />
       </FiltersBlock>

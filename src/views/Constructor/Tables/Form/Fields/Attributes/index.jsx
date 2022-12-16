@@ -7,7 +7,6 @@ import IncrementIDAttributes from "./IncrementIDAttributes"
 import MultiLineAttributes from "./MultiLineAttributes"
 import NumberAttributes from "./NumberAttributes"
 import PickListAttributes from "./PickListAttributes"
-import RandomNumberAttribute from "./RandomNumberAttribute"
 import SingleLineAttributes from "./SingleLineAttributes"
 
 const Attributes = ({ control, watch, mainForm }) => {
@@ -75,11 +74,6 @@ const Attributes = ({ control, watch, mainForm }) => {
       return (
         <IncrementIDAttributes control={control} />
       )
-
-      case "RANDOM_NUMBERS":
-        return (
-          <RandomNumberAttribute control={control} />
-        )
 
     default:
       return (

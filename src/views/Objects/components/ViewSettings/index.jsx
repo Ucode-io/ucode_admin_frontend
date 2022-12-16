@@ -1,20 +1,21 @@
-import { Close } from "@mui/icons-material";
-import { Card, IconButton } from "@mui/material";
-import { useState } from "react";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
-import constructorObjectService from "../../../../services/constructorObjectService";
-import styles from "./style.module.scss";
-import ViewForm from "./ViewForm";
-import ViewsList from "./ViewsList";
+import { Close } from "@mui/icons-material"
+import { Card, IconButton } from "@mui/material"
+import { useState } from "react"
+import { useTranslation } from "react-i18next"
+import { useQuery } from "react-query"
+import { useParams } from "react-router-dom"
+import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper"
+import constructorObjectService from "../../../../services/constructorObjectService"
+import styles from "./style.module.scss"
+import ViewForm from "./ViewForm"
+import ViewsList from "./ViewsList"
 
 const ViewSettings = ({ closeModal, setIsChanged }) => {
-  const { tableSlug, appId } = useParams();
+  const { tableSlug } = useParams()
+  const { t } = useTranslation()
+  const [selectedView, setSelectedView] = useState(null)
 
-  const [selectedView, setSelectedView] = useState(null);
-
-  const closeForm = () => setSelectedView(null);
+  const closeForm = () => setSelectedView(null)
 
   const {
     data: { views, columns, relationColumns } = {
@@ -28,8 +29,8 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true, app_id: appId },
-      });
+        data: { limit: 10, offset: 0, with_relations: true },
+      })
     },
     {
       select: ({ data }) => {
@@ -41,15 +42,15 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
               ...el,
               label: `${el.label} (${el.table_label})`,
             })) ?? [],
-        };
+        }
       },
     }
-  );
+  )
 
   return (
     <Card className={styles.card}>
       <div className={styles.header}>
-        <div className={styles.cardTitle}>View settings</div>
+        <div className={styles.cardTitle}>{t("view.settings")}</div>
         <IconButton className={styles.closeButton} onClick={closeModal}>
           <Close className={styles.closeIcon} />
         </IconButton>
@@ -79,7 +80,7 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
         </div>
       )}
     </Card>
-  );
-};
+  )
+}
 
-export default ViewSettings;
+export default ViewSettings

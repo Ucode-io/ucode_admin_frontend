@@ -3,13 +3,15 @@ import { useState } from "react"
 import RowLinearLoader from "../../../components/RowLinearLoader"
 import CreateRowButton from "../../../components/CreateRowButton"
 import { useParams } from "react-router-dom"
-import {  useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import RolesRow from "./RolesRow"
 import roleService from "../../../services/roleService"
 import CreateRow from "../../../components/CreateRow"
+import { useTranslation } from "react-i18next"
 
 const RolesBlock = ({ rolesList, setRolesList }) => {
   const { typeId } = useParams()
+  const { t } = useTranslation()
 
   const loader = useSelector((state) => state.version.loader)
 
@@ -27,7 +29,7 @@ const RolesBlock = ({ rolesList, setRolesList }) => {
       .create(data)
       .then((res) => {
         setCreateFormVisible(false)
-        setRolesList(prev => [...prev, res])
+        setRolesList((prev) => [...prev, res])
       })
       .catch(() => setCreateLoader(false))
   }
@@ -53,12 +55,17 @@ const RolesBlock = ({ rolesList, setRolesList }) => {
             setLoader={setCreateLoader}
             visible={createFormVisible}
             setVisible={setCreateFormVisible}
-            placeholder="Role title"
+            placeholder={t("role.title")}
           />
         </Collapse>
 
         {rolesList?.map((role, index) => (
-          <RolesRow setRolesList={setRolesList} key={role.id} role={role} index={index} />
+          <RolesRow
+            setRolesList={setRolesList}
+            key={role.id}
+            role={role}
+            index={index}
+          />
         ))}
       </div>
     </>

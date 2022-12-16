@@ -11,9 +11,11 @@ import { CrossPerson, TwoUserIcon } from "../../assets/icons/icon"
 import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import constructorObjectService from "../../services/constructorObjectService"
 import styles from "./styles.module.scss"
+import { useTranslation } from "react-i18next"
 
 const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
   const { roleId } = useParams()
+  const { t } = useTranslation()
 
   const [anchorViewEl, setAnchorViewEl] = useState(null)
   const [anchorEditEl, setAnchorEditEl] = useState(null)
@@ -33,8 +35,6 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
   const handleCloseEditPopup = () => {
     setAnchorEditEl(null)
   }
-
-  console.log("finalData", finalData)
 
   const columns = [
     {
@@ -188,7 +188,7 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
       >
         <div className={styles.fieldPermissionBox}>
           <div className={styles.head}>
-            <p>View settings</p>
+            <p>{t("view.settings")}</p>
             <Clear
               htmlColor="#6E8BB7"
               onClick={handleClose}
@@ -207,7 +207,7 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
           </div>
           <div className={styles.submit_btn}>
             <PrimaryButton onClick={() => mutate(finalData)}>
-              Сохранить
+              {t("save")}
             </PrimaryButton>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { useFieldArray } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import FormCard from "../../../../components/FormCard"
 import FRow from "../../../../components/FormElements/FRow"
 import HFIconPicker from "../../../../components/FormElements/HFIconPicker"
@@ -9,6 +10,7 @@ import HFTextField from "../../../../components/FormElements/HFTextField"
 import listToOptions from "../../../../utils/listToOptions"
 
 const MainInfo = ({ control }) => {
+  const { t } = useTranslation()
 
   const { fields } = useFieldArray({
     control,
@@ -43,31 +45,31 @@ const MainInfo = ({ control }) => {
 
   return (
     <div className="p-2">
-      <FormCard title="Общие сведение">
+      <FormCard title={t("main.info")}>
         <div className="flex">
-          <FRow label="Иконка">
+          <FRow label={t("icon")}>
             <HFIconPicker control={control} name="icon" required />
           </FRow>
-          <FRow label="Показать в меню">
+          <FRow label={t("show.in.menu")}>
             <HFSwitch control={control} name="show_in_menu" required />
           </FRow>
         </div>
 
-        <FRow label="Название">
+        <FRow label={t("title")}>
           <HFTextField
             control={control}
             name="label"
             fullWidth
-            placeholder="Название"
+            placeholder={t("title")}
             required
           />
         </FRow>
-        <FRow label="Описание">
+        <FRow label={t("description")}>
           <HFTextField
             control={control}
             name="description"
             fullWidth
-            placeholder="Описание"
+            placeholder={t("description")}
             multiline
             required
             rows={4}

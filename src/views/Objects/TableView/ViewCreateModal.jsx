@@ -1,6 +1,7 @@
 import { Divider } from "@mui/material"
 import { useMemo } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useQuery } from "react-query"
 import FRow from "../../../components/FormElements/FRow"
 import HFMultipleSelect from "../../../components/FormElements/HFMultipleSelect"
@@ -20,6 +21,7 @@ const ViewCreateModal = ({
   initialValues = {},
   setViews,
 }) => {
+  const { t } = useTranslation()
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
       group_fields: [
@@ -54,7 +56,6 @@ const ViewCreateModal = ({
 
   const computedFields = useMemo(() => {
     const newFields = fields?.map((field) => {
-
       let slug = field.slug
 
       if (field.id.includes("#")) {
@@ -72,21 +73,33 @@ const ViewCreateModal = ({
     return listToOptions(newFields, "label", "slug")
   }, [fields])
 
+  const { data: tablesList = [] } = useQuery(
+    ["GET_TABLES_LIST"],
+    () => {
+      return constructorTableService.getList()
+    },
+    {
+      select: (data) => listToOptions(data?.tables, "label", "slug"),
+    }
+  )
 
-  const { data: tablesList = [] } = useQuery(["GET_TABLES_LIST"], () => {
-    return constructorTableService.getList()
-  }, {
-    select: (data) => listToOptions(data?.tables, 'label', 'slug')
-  })
-
-  console.log("TABLES LIST ===>", tablesList)
-
-  const { data: disabledDateFieldsList = [] } = useQuery(['GET_TABLE_FIELDS', selectedDisableDatesTableSlug], () => {
-    if (!selectedDisableDatesTableSlug) return []
-    return constructorFieldService.getList({ table_slug: selectedDisableDatesTableSlug })
-  }, {
-    select: ({ fields }) => listToOptions(fields?.filter(field => field.type !== 'LOOKUP'), "label", "slug")
-  })
+  const { data: disabledDateFieldsList = [] } = useQuery(
+    ["GET_TABLE_FIELDS", selectedDisableDatesTableSlug],
+    () => {
+      if (!selectedDisableDatesTableSlug) return []
+      return constructorFieldService.getList({
+        table_slug: selectedDisableDatesTableSlug,
+      })
+    },
+    {
+      select: ({ fields }) =>
+        listToOptions(
+          fields?.filter((field) => field.type !== "LOOKUP"),
+          "label",
+          "slug"
+        ),
+    }
+  )
   const submitHandler = async (values) => {
     try {
       let res
@@ -105,12 +118,12 @@ const ViewCreateModal = ({
 
   return (
     <ModalCard
-      title="Create view"
+      title={t("create.view")}
       onClose={closeModal}
       onSaveButtonClick={handleSubmit(submitHandler)}
     >
       <form>
-        <FRow label="View type">
+        <FRow label={t("view.type")}>
           <HFSelect
             autoFocus
             fullWidth
@@ -120,7 +133,7 @@ const ViewCreateModal = ({
           />
         </FRow>
 
-        <FRow label="Main field">
+        <FRow label={t("main.field")}>
           <HFSelect
             fullWidth
             options={computedFields}
@@ -131,7 +144,7 @@ const ViewCreateModal = ({
 
         {type === "CALENDAR" && (
           <>
-            <FRow label="Start timestamp">
+            <FRow label={t("start.timestamp")}>
               <HFSelect
                 fullWidth
                 options={computedFields}
@@ -139,7 +152,7 @@ const ViewCreateModal = ({
                 name="group_fields[0].field_slug"
               />
             </FRow>
-            <FRow label="End timestamp">
+            <FRow label={t("start.timestamp")}>
               <HFSelect
                 fullWidth
                 options={computedFields}
@@ -147,7 +160,7 @@ const ViewCreateModal = ({
                 name="group_fields[1].field_slug"
               />
             </FRow>
-            <FRow label="View fields">
+            <FRow label={t("view.fields")}>
               <HFMultipleSelect
                 fullWidth
                 options={computedFields}
@@ -156,16 +169,15 @@ const ViewCreateModal = ({
               />
             </FRow>
 
-
             {/* ============== DISABLES DATES =============== */}
 
             <Divider className="my-2" />
 
-            <h3>Enabled dates</h3>
+            <h3>{t("enables.dates")}</h3>
 
             <Divider className="my-1" />
 
-            <FRow label="Table">
+            <FRow label={t("table")}>
               <HFSelect
                 fullWidth
                 options={tablesList}
@@ -174,7 +186,7 @@ const ViewCreateModal = ({
               />
             </FRow>
 
-            <FRow label="Week day field">
+            <FRow label={t("week.day.field")}>
               <HFSelect
                 fullWidth
                 options={disabledDateFieldsList}
@@ -183,7 +195,7 @@ const ViewCreateModal = ({
               />
             </FRow>
 
-            <FRow label="Start time field">
+            <FRow label={t("start.time.field")}>
               <HFSelect
                 fullWidth
                 options={disabledDateFieldsList}
@@ -192,7 +204,7 @@ const ViewCreateModal = ({
               />
             </FRow>
 
-            <FRow label="End time field">
+            <FRow label={t("end.time.field")}>
               <HFSelect
                 fullWidth
                 options={disabledDateFieldsList}

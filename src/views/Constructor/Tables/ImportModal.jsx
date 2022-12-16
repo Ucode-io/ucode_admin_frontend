@@ -1,8 +1,8 @@
 import { Checkbox } from "@mui/material"
 import { useMemo } from "react"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useSelector } from "react-redux"
-import { useParams } from "react-router-dom"
 import CSelect from "../../../components/CSelect"
 import {
   CTable,
@@ -18,6 +18,7 @@ import applicationService from "../../../services/applicationSercixe"
 import listToOptions from "../../../utils/listToOptions"
 
 const ImportModal = ({ closeModal, btnLoader, importTable }) => {
+  const { t } = useTranslation()
   const [loader, setLoader] = useState(false)
 
   const applications = useSelector((state) => state.application.list)
@@ -51,23 +52,25 @@ const ImportModal = ({ closeModal, btnLoader, importTable }) => {
     }
   }
 
-  const onSubmit = () => {importTable(checkedElements)}
+  const onSubmit = () => {
+    importTable(checkedElements)
+  }
 
   return (
     <LargeModalCard
-      title={"Import Table"}
+      title={t("import.table")}
       btnLoader={btnLoader}
       oneColumn
       onSaveButtonClick={onSubmit}
       onClose={closeModal}
     >
       <div className="flex align-center gap-2 mb-2">
-        <FRow label={"Application"}>
+        <FRow label={t("application")}>
           <CSelect
             value={selectedApplication}
             onChange={(e) => setSelectedApplication(e.target.value)}
             options={computedApplicationsList}
-            placeholder="Select app"
+            placeholder={t("select.app")}
             disabledHelperText
           />
         </FRow>
@@ -77,11 +80,11 @@ const ImportModal = ({ closeModal, btnLoader, importTable }) => {
         <CTableHead>
           <CTableCell width={70}></CTableCell>
           <CTableCell width={10}>№</CTableCell>
-          <CTableCell>Label</CTableCell>
-          <CTableCell>Description</CTableCell>
+          <CTableCell>{t("label")}</CTableCell>
+          <CTableCell>{t("description")}</CTableCell>
         </CTableHead>
 
-        <CTableBody columnsCount={4} dataLength={tables.length} loader={loader} >
+        <CTableBody columnsCount={4} dataLength={tables.length} loader={loader}>
           {tables.map((row, rowIndex) => (
             <CTableRow
               key={row.id}

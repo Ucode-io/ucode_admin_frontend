@@ -14,6 +14,7 @@ import constructorCustomEventService from "../../../../../services/constructorCu
 import listToOptions from "../../../../../utils/listToOptions"
 import request from "../../../../../utils/request"
 import styles from "./style.module.scss"
+import { useTranslation } from "react-i18next"
 
 const ActionSettings = ({
   closeSettingsBlock = () => {},
@@ -24,13 +25,14 @@ const ActionSettings = ({
   height,
 }) => {
   const { slug } = useParams()
+  const { t } = useTranslation()
 
   const [loader, setLoader] = useState(false)
 
   const { handleSubmit, control, reset } = useForm({
     defaultValues: {
       table_slug: slug,
-    }
+    },
   })
 
   const { data: functions = [] } = useQuery(
@@ -82,7 +84,7 @@ const ActionSettings = ({
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
-        <h2>{formType === "CREATE" ? "Create" : "Edit"} relation</h2>
+        <h2>{formType === "CREATE" ? "Create" : "Edit"}</h2>
 
         <IconButton onClick={closeSettingsBlock}>
           <Close />
@@ -128,12 +130,9 @@ const ActionSettings = ({
                 fullWidth
               />
             </FRow>
-            
+
             <FRow label="Disabled">
-              <HFSwitch
-              name="disabled"
-              control={control}
-              />
+              <HFSwitch name="disabled" control={control} />
             </FRow>
           </div>
 
@@ -145,7 +144,7 @@ const ActionSettings = ({
               onClick={handleSubmit(submitHandler)}
               loader={loader}
             >
-              Сохранить
+              {t("save")}
             </PrimaryButton>
           </div>
         </form>

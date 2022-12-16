@@ -1,20 +1,22 @@
-import { Delete } from "@mui/icons-material";
-import { useFieldArray } from "react-hook-form";
-import { useQuery } from "react-query";
+import { Delete } from "@mui/icons-material"
+import { useFieldArray } from "react-hook-form"
+import { useTranslation } from "react-i18next"
+import { useQuery } from "react-query"
 
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
-import HFSelect from "../../../../../components/FormElements/HFSelect";
-import constructorFieldService from "../../../../../services/constructorFieldService";
-import styles from "./style.module.scss";
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
+import HFSelect from "../../../../../components/FormElements/HFSelect"
+import constructorFieldService from "../../../../../services/constructorFieldService"
+import styles from "./style.module.scss"
 
 const AutoFiltersBlock = ({ control, watch }) => {
+  const { t } = useTranslation()
   const { fields, append, remove } = useFieldArray({
     control,
     name: "auto_filters",
-  });
+  })
 
-  const addNewAutoFilter = () => append({ field_from: "", field_to: "" });
-  const deleteAutoFilter = (index) => remove(index);
+  const addNewAutoFilter = () => append({ field_from: "", field_to: "" })
+  const deleteAutoFilter = (index) => remove(index)
 
   const { data: fieldFromList, isLoading: fieldFromListLoading } = useQuery(
     ["GET_FIELDS_LIST", watch("table_from")],
@@ -25,7 +27,7 @@ const AutoFiltersBlock = ({ control, watch }) => {
     {
       enabled: !!watch("table_from"),
     }
-  );
+  )
 
   const { data: fieldsToList, isLoading: fieldToListLoading } = useQuery(
     ["GET_FIELDS_LIST", watch("table_to")],
@@ -36,7 +38,7 @@ const AutoFiltersBlock = ({ control, watch }) => {
     {
       enabled: !!watch("table_to"),
     }
-  );
+  )
 
   const attributeFields = [
     {
@@ -57,7 +59,7 @@ const AutoFiltersBlock = ({ control, watch }) => {
         value: field.slug,
       })),
     },
-  ];
+  ]
 
   return (
     <>
@@ -86,11 +88,11 @@ const AutoFiltersBlock = ({ control, watch }) => {
           </div>
         ))}
         <div className={styles.summaryButton} onClick={addNewAutoFilter}>
-          <button type="button">+ Создать новый</button>
+          <button type="button">+ {t("create.new")}</button>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default AutoFiltersBlock;
+export default AutoFiltersBlock

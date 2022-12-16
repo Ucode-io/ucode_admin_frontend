@@ -1,17 +1,18 @@
-import { useEffect } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useMutation, useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import { Add } from "@mui/icons-material";
+import { useEffect } from "react"
+import { useFieldArray, useForm } from "react-hook-form"
+import { useMutation, useQuery } from "react-query"
+import { useParams } from "react-router-dom"
+import { Add } from "@mui/icons-material"
 
-import cls from "../styles.module.scss";
-import SecondaryButton from "../../../../../../components/Buttons/SecondaryButton";
-import PrimaryButton from "../../../../../../components/Buttons/PrimaryButton";
-import SettingsFormRow from "./SettingsFormRow";
-import HFSelect from "../../../../../../components/FormElements/HFSelect";
-import eventsService from "../../../../../../services/eventsService";
-import constructorTableService from "../../../../../../services/constructorTableService";
-import eventService from "../../../../../../services/eventsService";
+import cls from "../styles.module.scss"
+import SecondaryButton from "../../../../../../components/Buttons/SecondaryButton"
+import PrimaryButton from "../../../../../../components/Buttons/PrimaryButton"
+import SettingsFormRow from "./SettingsFormRow"
+import HFSelect from "../../../../../../components/FormElements/HFSelect"
+import eventsService from "../../../../../../services/eventsService"
+import constructorTableService from "../../../../../../services/constructorTableService"
+import eventService from "../../../../../../services/eventsService"
+import { useTranslation } from "react-i18next"
 
 const SettingsTab = ({
   eventLabel,
@@ -19,14 +20,15 @@ const SettingsTab = ({
   handleClose,
   eventsRefetch,
 }) => {
-  const { slug: table_slug } = useParams();
+  const { slug: table_slug } = useParams()
+  const { t } = useTranslation()
 
   const emptyFields = {
     left_field: "",
     right_field: "",
     comparison_symbol: "",
     right_field_type: "",
-  };
+  }
 
   const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
@@ -44,7 +46,7 @@ const SettingsTab = ({
         },
       ],
     },
-  });
+  })
 
   const { data: tables } = useQuery(
     ["GET_TABLE_LIST"],
@@ -54,10 +56,10 @@ const SettingsTab = ({
         return data?.tables?.map((i) => ({
           label: i.label,
           value: i.slug,
-        }));
+        }))
       },
     }
-  );
+  )
 
   const { data: eventById } = useQuery(
     ["GET_EVENT_ITEM", modalItemId],
@@ -65,12 +67,12 @@ const SettingsTab = ({
     {
       enabled: !!modalItemId,
     }
-  );
+  )
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "condition",
-  });
+  })
 
   const {
     fields: fieldsAfter,
@@ -79,26 +81,26 @@ const SettingsTab = ({
   } = useFieldArray({
     control,
     name: "after",
-  });
+  })
 
   const { mutate: createHandler } = useMutation(
     (data) => eventsService.create(data),
     {
       onSuccess: () => {
-        handleClose();
-        eventsRefetch();
+        handleClose()
+        eventsRefetch()
       },
     }
-  );
+  )
   const { mutate: updateHandler } = useMutation(
     (data) => eventsService.update(data),
     {
       onSuccess: () => {
-        handleClose();
-        eventsRefetch();
+        handleClose()
+        eventsRefetch()
       },
     }
-  );
+  )
 
   const onSubmit = (data) => {
     const collection = {
@@ -124,13 +126,13 @@ const SettingsTab = ({
           })),
         })),
       },
-    };
-    if (modalItemId) {
-      updateHandler(collection);
-    } else {
-      createHandler(collection);
     }
-  };
+    if (modalItemId) {
+      updateHandler(collection)
+    } else {
+      createHandler(collection)
+    }
+  }
 
   useEffect(() => {
     if (modalItemId) {
@@ -148,9 +150,9 @@ const SettingsTab = ({
           action: i.opperation_type,
           group: i.fields.map((j) => j),
         })),
-      });
+      })
     }
-  }, [modalItemId, eventById]);
+  }, [modalItemId, eventById])
 
   return (
     <div className={cls.modal_main}>
@@ -166,16 +168,16 @@ const SettingsTab = ({
               <HFSelect
                 control={control}
                 options={[
-                  { label: "Создать", value: "create" },
-                  { label: "Изменить", value: "update" },
-                  { label: "Удалить", value: "delete" },
+                  { label: t("create"), value: "create" },
+                  { label: t("edit"), value: "update" },
+                  { label: t("delete"), value: "delete" },
                 ]}
                 name="action"
                 style={{ width: "50%" }}
-                placeholder="Действие"
+                placeholder={t("action")}
               />
               <div className={cls.terms}>
-                <p>Условия</p>
+                <p>{t("condition")}</p>
                 {fields.map((outerField, index, arr) => (
                   <div key={outerField.id}>
                     <SettingsFormRow
@@ -215,13 +217,13 @@ const SettingsTab = ({
                   }
                 >
                   <Add />
-                  Добавить условия
+                  {t("add.condition")}
                 </SecondaryButton>
               </div>
             </div>
           </div>
           <div className={cls.right}>
-            <div className={cls.after_title}>После</div>
+            <div className={cls.after_title}>{t("after")}</div>
             <div className={cls.line}></div>
             <div className={cls.action}>
               {fieldsAfter.map((field, index) => (
@@ -230,18 +232,18 @@ const SettingsTab = ({
                     <HFSelect
                       control={control}
                       options={[
-                        { label: "Создать объект", value: "create" },
-                        { label: "Изменить объект", value: "update" },
-                        { label: "Удалить объект", value: "delete" },
+                        { label: t("create.object"), value: "create" },
+                        { label: t("edit.object"), value: "update" },
+                        { label: t("delete.object"), value: "delete" },
                       ]}
                       name={`after.${index}.action`}
-                      placeholder="Действие"
+                      placeholder={t("action")}
                     />
                     <HFSelect
                       control={control}
                       options={tables}
                       name={`after.${index}.table`}
-                      placeholder="Действие"
+                      placeholder={t("action")}
                     />
                   </div>
                   <SettingsFormRow
@@ -263,17 +265,17 @@ const SettingsTab = ({
                 }
               >
                 <Add />
-                Добавить
+                {t("create")}
               </SecondaryButton>
             </div>
           </div>
         </div>
         <div className={cls.save_btn}>
-          <PrimaryButton type="submit">Сохранить</PrimaryButton>
+          <PrimaryButton type="submit">{t("save")}</PrimaryButton>
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default SettingsTab;
+export default SettingsTab

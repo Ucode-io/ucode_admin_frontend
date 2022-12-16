@@ -1,5 +1,5 @@
-import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
-import LockIcon from '@mui/icons-material/Lock';
+import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize"
+import LockIcon from "@mui/icons-material/Lock"
 
 const routes = [
   {
@@ -8,12 +8,12 @@ const routes = [
     path: "/settings/auth",
     icon: LockIcon,
     children: [
-      {
-        id: 'users',
-        title: 'Пользователи',
-        path: '/settings/auth/users',
-        isChild: true
-      },
+      // {
+      //   id: 'users',
+      //   title: 'Пользователи',
+      //   path: '/settings/auth/users',
+      //   isChild: true
+      // },
       // {
       //   id: 'matrix',
       //   title: 'Матрица',
@@ -21,12 +21,12 @@ const routes = [
       //   isChild: true
       // },
       {
-        id: 'matrix_v2',
-        title: 'Матрица',
+        id: "matrix_v2",
+        title: "Матрица V2",
         path: `/settings/auth/matrix_v2`,
-        isChild: true
-      }
-    ]
+        isChild: true,
+      },
+    ],
   },
   {
     id: "constructor",
@@ -40,7 +40,7 @@ const routes = [
         title: "Приложение",
         path: `/settings/constructor/apps`,
         isChild: true,
-        slug: 'app'
+        slug: "app",
       },
       // {
       //   id: "objects",
@@ -48,7 +48,7 @@ const routes = [
       //   path: `/settings/constructor/objects`,
       //   isChild: true,
       // }
-    ]
+    ],
   },
 ]
 

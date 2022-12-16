@@ -34,7 +34,6 @@ export const fieldTypes = [
   "SWITCH",
   "PHOTO",
   "PHONE",
-  "MONEY",
   "ICON",
   "PASSWORD",
   "FORMULA"
@@ -84,11 +83,6 @@ export const fieldTypesOptions = [
         label: "Number",
         value: "NUMBER"
       },
-      {
-        icon: "money-bill-wave.svg",
-        label: "Money",
-        value: "MONEY",
-      },
     ]
   },
   {
@@ -132,11 +126,6 @@ export const fieldTypesOptions = [
         icon: "video.svg",
         label: "Video",
         value: "VIDEO"
-      },
-      {
-        icon: "file.svg",
-        label: "File",
-        value: "FILE"
       },
     ]
   },
@@ -192,12 +181,7 @@ export const fieldTypesOptions = [
         icon: 'fill.svg',
         label: 'Autofill',
         value: 'AUTOFILL'
-      },
-      {
-        icon: "dice.svg",
-        label: "Random Numbers",
-        value: "RANDOM_NUMBERS"
-      },
+      }
     ]
   },
 

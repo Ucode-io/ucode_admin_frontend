@@ -1,47 +1,42 @@
-import { Drawer } from "@mui/material";
-import { useMemo, useState } from "react";
-import { useFieldArray } from "react-hook-form";
-import DataTable from "../../../../../components/DataTable";
-import TableCard from "../../../../../components/TableCard";
-import TableRowButton from "../../../../../components/TableRowButton";
-import constructorCustomEventService from "../../../../../services/constructorCustomEventService";
-import ActionSettings from "./ActionSettings";
+import { Drawer } from "@mui/material"
+import { useMemo, useState } from "react"
+import { useFieldArray } from "react-hook-form"
+import DataTable from "../../../../../components/DataTable"
+import TableCard from "../../../../../components/TableCard"
+import TableRowButton from "../../../../../components/TableRowButton"
+import constructorCustomEventService from "../../../../../services/constructorCustomEventService"
+import ActionSettings from "./ActionSettings"
 
 const Actions = ({ mainForm }) => {
-  const [drawerState, setDrawerState] = useState(null);
-  const [loader, setLoader] = useState(false);
+
+  const [drawerState, setDrawerState] = useState(null)
+  const [loader, setLoader] = useState(false)
 
   const openEditForm = (row, index) => {
-    setDrawerState(row);
-  };
+    setDrawerState(row)
+  }
 
-  const {
-    fields: actions,
-    remove,
-    append,
-    update,
-  } = useFieldArray({
+  const { fields: actions, remove, append, update } = useFieldArray({
     control: mainForm.control,
     name: "actions",
     keyName: "key",
-  });
+  })
 
   const onCreate = (data) => {
-    append(data);
-  };
+    append(data)
+  }
 
   const onUpdate = (data) => {
-    const index = actions?.findIndex((action) => action.id === data.id);
-    update(index, data);
-  };
+    const index = actions?.findIndex(action => action.id === data.id )
+    update(index, data)
+  }
 
   const deleteAction = (row, index) => {
-    setLoader(true);
-    constructorCustomEventService
-      .delete(row.id)
+    setLoader(true)
+    constructorCustomEventService.delete(row.id)
       .then((res) => remove(index))
-      .finally(() => setLoader(false));
-  };
+      .finally(() => setLoader(false))
+  }
 
   const columns = useMemo(
     () => [
@@ -57,7 +52,7 @@ const Actions = ({ mainForm }) => {
       // },
     ],
     []
-  );
+  )
 
   return (
     <TableCard>
@@ -86,7 +81,7 @@ const Actions = ({ mainForm }) => {
         onClose={() => setDrawerState(null)}
         orientation="horizontal"
       >
-        <ActionSettings
+        <ActionSettings 
           action={drawerState}
           closeSettingsBlock={() => setDrawerState(null)}
           formType={drawerState}
@@ -96,7 +91,7 @@ const Actions = ({ mainForm }) => {
         />
       </Drawer>
     </TableCard>
-  );
-};
+  )
+}
 
-export default Actions;
+export default Actions

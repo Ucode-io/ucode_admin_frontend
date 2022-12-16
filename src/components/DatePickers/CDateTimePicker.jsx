@@ -61,10 +61,7 @@ const CDateTimePicker = ({
         locale={locale}
         format="DD.MM.YYYY"
         value={new Date(value) || ""}
-        onChange={(val) => {
-          onChange(val ? new Date(val) : "")
-          console.log("val ", new Date(val))
-        }}
+        onChange={(val) => onChange(val ? new Date(val) : "")}
       />
       <DatePicker
         disableDayPicker
@@ -111,10 +108,7 @@ const CDateTimePicker = ({
         portal
         format="HH:mm"
         value={new Date(value) || ""}
-        onChange={(val) => {
-          onChange(val ? new Date(val) : "")
-          console.log("val ", new Date(val))
-        }}
+        onChange={(val) => onChange(val ? new Date(val) : "")}
       />
       {showCopyBtn && (
         <CopyToClipboard copyText={value} style={{ marginLeft: 8 }} />

@@ -7,6 +7,7 @@ import {
   setMinutes,
 } from "date-fns"
 import { useMemo } from "react"
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 import useTabRouter from "../../../hooks/useTabRouter"
 import useTimeList from "../../../hooks/useTimeList"
@@ -23,6 +24,7 @@ const DataColumn = ({
   workingDays,
 }) => {
   const { tableSlug } = useParams()
+  const { t } = useTranslation()
   const { navigateToForm } = useTabRouter()
   const { timeList, timeInterval } = useTimeList(view.time_interval)
 
@@ -147,7 +149,7 @@ const DataColumn = ({
             onClick={() => navigateToCreatePage(time)}
           >
             <Add color="" />
-            Создат
+            {t("new")}
           </div>
         </div>
       ))}

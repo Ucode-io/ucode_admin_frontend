@@ -1,12 +1,8 @@
 import "./style.scss";
 
-const FiltersBlock = ({ children, extra, hasBackground, ...props }) => {
+const FiltersBlock = ({ children, extra, ...props }) => {
   return (
-    <div
-      className="FiltersBlock"
-      style={{ background: hasBackground ? "#fff" : "" }}
-      {...props}
-    >
+    <div className="FiltersBlock" {...props}>
       <div className="side">{children}</div>
       <div className="side"> {extra}</div>
     </div>

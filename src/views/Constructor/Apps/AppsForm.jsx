@@ -1,34 +1,36 @@
-import { Save } from "@mui/icons-material";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import PrimaryButton from "../../../components/Buttons/PrimaryButton";
-import SecondaryButton from "../../../components/Buttons/SecondaryButton";
-import Footer from "../../../components/Footer";
-import FormCard from "../../../components/FormCard";
-import FRow from "../../../components/FormElements/FRow";
-import HFIconPicker from "../../../components/FormElements/HFIconPicker";
-import HFTextField from "../../../components/FormElements/HFTextField";
-import HeaderSettings from "../../../components/HeaderSettings";
-import PageFallback from "../../../components/PageFallback";
-import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
-import applicationService from "../../../services/applicationSercixe";
-import { fetchApplicationListActions } from "../../../store/application/application.thunk";
-import TablesList from "../Tables/TablesList";
+import { Save } from "@mui/icons-material"
+import { useEffect } from "react"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
+import { useDispatch } from "react-redux"
+import { useNavigate, useParams, useSearchParams } from "react-router-dom"
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
+import PrimaryButton from "../../../components/Buttons/PrimaryButton"
+import SecondaryButton from "../../../components/Buttons/SecondaryButton"
+import Footer from "../../../components/Footer"
+import FormCard from "../../../components/FormCard"
+import FRow from "../../../components/FormElements/FRow"
+import HFIconPicker from "../../../components/FormElements/HFIconPicker"
+import HFTextField from "../../../components/FormElements/HFTextField"
+import HeaderSettings from "../../../components/HeaderSettings"
+import PageFallback from "../../../components/PageFallback"
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2"
+import applicationService from "../../../services/applicationSercixe"
+import { fetchApplicationListActions } from "../../../store/application/application.thunk"
+import TablesList from "../Tables/TablesList"
 
-const applicationListPageLink = "/settings/constructor/apps";
+const applicationListPageLink = "/settings/constructor/apps"
 
 const AppsForm = () => {
-  const { appId } = useParams();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [search, setSearch] = useSearchParams();
-  const [btnLoader, setBtnLoader] = useState();
-  const [loader, setLoader] = useState(true);
-  const [appData, setAppData] = useState({});
+  const { t } = useTranslation()
+  const { appId } = useParams()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const [search, setSearch] = useSearchParams()
+  const [btnLoader, setBtnLoader] = useState()
+  const [loader, setLoader] = useState(true)
+  const [appData, setAppData] = useState({})
 
   const mainForm = useForm({
     defaultValues: {
@@ -37,37 +39,36 @@ const AppsForm = () => {
       name: "",
       table_ids: [],
     },
-  });
+  })
 
   const createApp = (data) => {
-    setBtnLoader(true);
+    setBtnLoader(true)
 
     applicationService
       .create(data)
       .then(() => {
-        console.log("sdasdasdadadas");
-        navigate(applicationListPageLink);
-        dispatch(fetchApplicationListActions());
+        navigate(applicationListPageLink)
+        dispatch(fetchApplicationListActions())
       })
-      .catch(() => setBtnLoader(false));
-  };
+      .catch(() => setBtnLoader(false))
+  }
 
   const updateApp = (data) => {
-    setBtnLoader(true);
+    setBtnLoader(true)
 
     applicationService
       .update({
         ...data,
       })
       .then(() => {
-        navigate(applicationListPageLink);
-        dispatch(fetchApplicationListActions());
+        navigate(applicationListPageLink)
+        dispatch(fetchApplicationListActions())
       })
-      .catch(() => setBtnLoader(false));
-  };
+      .catch(() => setBtnLoader(false))
+  }
 
   const getData = () => {
-    setLoader(true);
+    setLoader(true)
 
     applicationService
       .getById(appId)
@@ -76,35 +77,35 @@ const AppsForm = () => {
           ...mainForm.getValues(),
           ...res,
           table_ids: res.tables?.map((table) => table.id) ?? [],
-        };
-        mainForm.reset(computedData);
-        setAppData(computedData);
+        }
+        mainForm.reset(computedData)
+        setAppData(computedData)
       })
-      .finally(() => setLoader(false));
-  };
+      .finally(() => setLoader(false))
+  }
 
   useEffect(() => {
-    if (appId) getData();
-    else setLoader(false);
-  }, []);
+    if (appId) getData()
+    else setLoader(false)
+  }, [])
 
   const onSubmit = (data) => {
     const tables = data?.tables?.map((table) => ({
       table_id: table.id,
       is_own_table: Boolean(table.is_own_table),
       is_visible: Boolean(table.is_visible),
-    }));
+    }))
 
     const computedData = {
       ...data,
       tables,
-    };
+    }
 
-    if (appId) updateApp(computedData);
-    else createApp(computedData);
-  };
+    if (appId) updateApp(computedData)
+    else createApp(computedData)
+  }
 
-  if (loader) return <PageFallback />;
+  if (loader) return <PageFallback />
 
   return (
     <div>
@@ -115,13 +116,13 @@ const AppsForm = () => {
         style={{ height: "100vh", position: "relative" }}
       >
         <HeaderSettings
-          title="Приложение"
+          title={t("application")}
           backButtonLink={applicationListPageLink}
-          subtitle={appId ? mainForm.watch("name") : "Новый"}
+          subtitle={appId ? mainForm.watch("name") : t("new")}
         >
           <TabList>
-            <Tab>Details</Tab>
-            {appId && <Tab>Objects</Tab>}
+            <Tab>{t("details")}</Tab>
+            {appId && <Tab>{t("objects")}</Tab>}
           </TabList>
         </HeaderSettings>
 
@@ -131,9 +132,9 @@ const AppsForm = () => {
             className="p-2"
             style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
           >
-            <FormCard title="Детали" maxWidth={500}>
+            <FormCard title={t("details")} maxWidth={500}>
               <FRow
-                label={"Названия"}
+                label={t("title")}
                 componentClassName="flex gap-2 align-center"
                 required
               >
@@ -151,9 +152,9 @@ const AppsForm = () => {
                 />
               </FRow>
 
-              <FRow label="Описания">
+              <FRow label={t("")}>
                 <HFTextField
-                  name="description"
+                  name={t("description")}
                   control={mainForm.control}
                   multiline
                   rows={4}
@@ -170,14 +171,14 @@ const AppsForm = () => {
                   onClick={() => navigate(applicationListPageLink)}
                   color="error"
                 >
-                  Закрыть
+                  {t("close")}
                 </SecondaryButton>
                 <PermissionWrapperV2 tabelSlug="app" type="update">
                   <PrimaryButton
                     loader={btnLoader}
                     onClick={mainForm.handleSubmit(onSubmit)}
                   >
-                    <Save /> Сохранить
+                    <Save /> {t("save")}
                   </PrimaryButton>
                 </PermissionWrapperV2>
               </>
@@ -196,7 +197,7 @@ const AppsForm = () => {
         )}
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
-export default AppsForm;
+export default AppsForm

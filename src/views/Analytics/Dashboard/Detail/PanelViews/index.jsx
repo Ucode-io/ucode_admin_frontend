@@ -1,40 +1,37 @@
-import { useMemo } from "react";
-import DataTable from "../../../../../components/DataTable";
-import BarChart from "./BarChart";
-import Card from "./Card";
-import FunnelChart from "./FunnelChart";
-import LineChart from "./LineChart";
-import PieChart from "./PieChart";
-import PivotTable from "./PivotTable";
+import { useMemo } from "react"
+import DataTable from "../../../../../components/DataTable"
+import BarChart from "./BarChart"
+import Card from "./Card"
+import FunnelChart from "./FunnelChart"
+import LineChart from "./LineChart"
+import PieChart from "./PieChart"
 
 const PanelViews = ({ panel = {}, data = {}, isLoading }) => {
   const columns = useMemo(() => {
-    if (!data?.rows?.length) return [];
+    if (!data?.rows?.length) return []
 
     return Object.keys(data.rows[0])?.map((key) => ({
       id: key,
       label: key,
       slug: key,
-    }));
-  }, [data]);
+    }))
+  }, [data])
 
   switch (panel.attributes?.type) {
     case "BAR_CHART":
-      return <BarChart data={data?.rows} panel={panel} />;
+      return <BarChart data={data?.rows} panel={panel} />
 
     case "PIE_CHART":
-      return <PieChart data={data?.rows} panel={panel} />;
+      return <PieChart data={data?.rows} panel={panel} />
 
     case "FUNNEL_CHART":
-      return <FunnelChart data={data?.rows} panel={panel} />;
+      return <FunnelChart data={data?.rows} panel={panel} />
 
     case "LINE_CHART":
-      return <LineChart data={data?.rows} panel={panel} />;
+      return <LineChart data={data?.rows} panel={panel} />
 
     case "CARD":
-      return <Card data={data?.rows} panel={panel} />;
-    case "PIVOT_TABLE":
-      return <PivotTable data={data?.rows} panel={panel} />;
+      return <Card data={data?.rows} panel={panel} />
 
     default:
       return (
@@ -54,8 +51,8 @@ const PanelViews = ({ panel = {}, data = {}, isLoading }) => {
           }}
           // tableStyle={{ flex: 1 }}
         />
-      );
+      )
   }
-};
+}
 
-export default PanelViews;
+export default PanelViews

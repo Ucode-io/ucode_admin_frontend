@@ -22,6 +22,7 @@ const FilterGenerator = ({
   )
 
   const onOrderingChange = (value) => {
+    console.log("clicked")
     if (!value) return onChange(value, "order")
     const data = {
       [name]: value,

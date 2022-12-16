@@ -2,13 +2,21 @@ import { Add } from "@mui/icons-material"
 import { Card } from "@mui/material"
 import { useMemo } from "react"
 import { useFieldArray, useWatch } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { Container, Draggable } from "react-smooth-dnd"
 import { applyDrag } from "../../../../../utils/applyDrag"
 import { generateGUID } from "../../../../../utils/generateID"
 import Section from "./Section"
 import styles from "./style.module.scss"
 
-const SectionsBlock = ({ mainForm, layoutForm, openFieldSettingsBlock, openFieldsBlock, openRelationSettingsBlock }) => {
+const SectionsBlock = ({
+  mainForm,
+  layoutForm,
+  openFieldSettingsBlock,
+  openFieldsBlock,
+  openRelationSettingsBlock,
+}) => {
+  const { t } = useTranslation()
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "sections",
@@ -79,7 +87,7 @@ const SectionsBlock = ({ mainForm, layoutForm, openFieldSettingsBlock, openField
       <Card className={styles.sectionCreateCard}>
         <div className={styles.sectionCreateButton} onClick={addNewSection}>
           <Add color="primary" />
-          <p>Add section</p>
+          <p>{t("add.section")}</p>
         </div>
       </Card>
     </div>

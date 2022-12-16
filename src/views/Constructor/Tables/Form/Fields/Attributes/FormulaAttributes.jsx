@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { useWatch } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useQuery } from "react-query"
 import FRow from "../../../../../../components/FormElements/FRow"
 import HFSelect from "../../../../../../components/FormElements/HFSelect"
@@ -7,13 +8,21 @@ import constructorFieldService from "../../../../../../services/constructorField
 import listToOptions from "../../../../../../utils/listToOptions"
 import styles from "./style.module.scss"
 
-const formulaTypes = [{ label: "Сумма", value: "SUMM" }, { label: "Максимум", value: "MAX" }, { label: "Среднее", value: "AVG" }]
-
 const FormulaAttributes = ({ control, mainForm }) => {
+  const { t } = useTranslation()
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
   })
+
+  const formulaTypes = useMemo(
+    () => [
+      { label: t("sum"), value: "SUMM" },
+      { label: t("max"), value: "MAX" },
+      { label: t("average"), value: "AVG" },
+    ],
+    []
+  )
 
   const selectedTableSlug = useWatch({
     control,
@@ -55,10 +64,10 @@ const FormulaAttributes = ({ control, mainForm }) => {
   return (
     <>
       <div className={styles.settingsBlockHeader}>
-        <h2>Settings</h2>
+        <h2>{t("settings")}</h2>
       </div>
       <div className="p-2">
-        <FRow label="Formula type">
+        <FRow label={t("formula.type")}>
           <HFSelect
             name="attributes.type"
             control={control}
@@ -68,7 +77,7 @@ const FormulaAttributes = ({ control, mainForm }) => {
 
         {(type === "SUMM" || type === "MAX") && (
           <>
-            <FRow label="Table from">
+            <FRow label={t("table.from")}>
               <HFSelect
                 name="attributes.table_from"
                 control={control}
@@ -76,7 +85,7 @@ const FormulaAttributes = ({ control, mainForm }) => {
               />
             </FRow>
 
-            <FRow label="Field from">
+            <FRow label={t("field.from")}>
               <HFSelect
                 name="attributes.sum_field"
                 control={control}

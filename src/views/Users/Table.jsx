@@ -1,9 +1,9 @@
 import { Delete } from "@mui/icons-material"
 import { Card } from "@mui/material"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
-import ButtonsPopover from "../../components/ButtonsPopover"
 import {
   CTable,
   CTableBody,
@@ -19,8 +19,9 @@ import userService from "../../services/auth/userService"
 import { pageToOffset } from "../../utils/pageToOffset"
 
 const UsersTable = ({ searchText }) => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
-  
+
   const [tableData, setTableData] = useState(null)
   const [loader, setLoader] = useState(true)
   const [pageCount, setPageCount] = useState(1)
@@ -32,7 +33,7 @@ const UsersTable = ({ searchText }) => {
       .getList({
         limit: 10,
         offset: pageToOffset(currentPage),
-        search: searchText
+        search: searchText,
       })
       .then((res) => {
         setTableData(res.users)
@@ -56,60 +57,76 @@ const UsersTable = ({ searchText }) => {
     navigate(`/settings/auth/users/${id}`)
   }
 
-  useDebouncedWatch(() => {
-    if(currentPage === 1) fetchTableData()
-    else setCurrentPage(1)
-  }, [searchText], 400)
-
+  useDebouncedWatch(
+    () => {
+      if (currentPage === 1) fetchTableData()
+      else setCurrentPage(1)
+    },
+    [searchText],
+    400
+  )
 
   useEffect(() => {
     fetchTableData()
   }, [currentPage])
 
   return (
-    <Card className="p-2" >
+    <Card className="p-2">
       <CTable
-      count={pageCount}
-      page={currentPage}
-      setCurrentPage={setCurrentPage}
-      loader={loader}
-      removableHeight={225}
-    >
-      <CTableHead>
-        <CTableHeadRow>
-          <CTableCell width={20}>No</CTableCell>
-          <CTableCell>FIO</CTableCell>
-          <CTableCell>Email</CTableCell>
-          <CTableCell>Login</CTableCell>
-          <CTableCell width={30}></CTableCell>
-        </CTableHeadRow>
-      </CTableHead>
-      {
-        <CTableBody
-          loader={loader}
-          columnsCount={5}
-          dataLength={tableData?.length}
-        >
-          {tableData?.map((data, index) => (
-            <CTableRow
-              key={data.id}
-              onClick={() => navigateToEditForm(data.id)}
-            >
-              <CTableCell>{index + 1}</CTableCell>
-              <CTableCell> <UserInfoBlock img={data.photo_url} title={data.name} subtitle={data.phone} /> </CTableCell>
-              <CTableCell>{data.email}</CTableCell>
-              <CTableCell>{data.login}</CTableCell>
-              <CTableCell>
-                <RectangleIconButton color="error" onClick={() => deleteTableData(data.id)} >
-                  <Delete color="error" />
-                </RectangleIconButton>
-              </CTableCell>
-            </CTableRow>
-          ))}
-          <TableRowButton colSpan={5} onClick={() => navigate(`/settings/auth/users/create`)} />
-        </CTableBody>
-      }
-    </CTable>
+        count={pageCount}
+        page={currentPage}
+        setCurrentPage={setCurrentPage}
+        loader={loader}
+        removableHeight={225}
+      >
+        <CTableHead>
+          <CTableHeadRow>
+            <CTableCell width={20}>No</CTableCell>
+            <CTableCell>{t("fio")}</CTableCell>
+            <CTableCell>{t("email")}</CTableCell>
+            <CTableCell>{t("login")}</CTableCell>
+            <CTableCell width={30}></CTableCell>
+          </CTableHeadRow>
+        </CTableHead>
+        {
+          <CTableBody
+            loader={loader}
+            columnsCount={5}
+            dataLength={tableData?.length}
+          >
+            {tableData?.map((data, index) => (
+              <CTableRow
+                key={data.id}
+                onClick={() => navigateToEditForm(data.id)}
+              >
+                <CTableCell>{index + 1}</CTableCell>
+                <CTableCell>
+                  {" "}
+                  <UserInfoBlock
+                    img={data.photo_url}
+                    title={data.name}
+                    subtitle={data.phone}
+                  />{" "}
+                </CTableCell>
+                <CTableCell>{data.email}</CTableCell>
+                <CTableCell>{data.login}</CTableCell>
+                <CTableCell>
+                  <RectangleIconButton
+                    color="error"
+                    onClick={() => deleteTableData(data.id)}
+                  >
+                    <Delete color="error" />
+                  </RectangleIconButton>
+                </CTableCell>
+              </CTableRow>
+            ))}
+            <TableRowButton
+              colSpan={5}
+              onClick={() => navigate(`/settings/auth/users/create`)}
+            />
+          </CTableBody>
+        }
+      </CTable>
     </Card>
   )
 }

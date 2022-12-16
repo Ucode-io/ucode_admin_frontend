@@ -9,6 +9,7 @@ import {
 import { Checkbox, IconButton } from "@mui/material"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useQuery } from "react-query"
 import { useParams } from "react-router-dom"
 import { Container, Draggable } from "react-smooth-dnd"
@@ -50,6 +51,7 @@ const RelationSettings = ({
   height,
 }) => {
   const { appId, slug } = useParams()
+  const { t } = useTranslation()
 
   const [loader, setLoader] = useState(false)
   const [formLoader, setFormLoader] = useState(false)
@@ -77,7 +79,7 @@ const RelationSettings = ({
   const isViewFieldsVisible = useMemo(() => {
     return (
       (values.type === "Many2One" && values.table_from === slug) ||
-      (values.type === "Many2Many") ||
+      values.type === "Many2Many" ||
       values.type === "Recursive"
     )
   }, [values.type, values.table_from, slug])
@@ -457,7 +459,7 @@ const RelationSettings = ({
               onClick={handleSubmit(submitHandler)}
               loader={formLoader || loader}
             >
-              Сохранить
+              {t("save")}
             </PrimaryButton>
           </div>
         </form>

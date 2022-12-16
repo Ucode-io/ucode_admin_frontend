@@ -1,4 +1,4 @@
-import { Close } from "@mui/icons-material";
+import { Close } from "@mui/icons-material"
 import {
   Autocomplete,
   FormControl,
@@ -7,25 +7,24 @@ import {
   TextField,
   Dialog,
   createFilterOptions,
-} from "@mui/material";
-import { useState } from "react";
-import { useMemo } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import IconGenerator from "../IconPicker/IconGenerator";
-import HFColorPicker from "./HFColorPicker";
-import HFIconPicker from "./HFIconPicker";
-import styles from "./style.module.scss";
-import HFTextField from "./HFTextField";
-import PrimaryButton from "../Buttons/PrimaryButton";
-import AddIcon from "@mui/icons-material/Add";
-import constructorFieldService from "../../services/constructorFieldService";
-import { generateGUID } from "../../utils/generateID";
-import RippleLoader from "../Loaders/RippleLoader";
-import FRow from "./FRow";
-import { makeStyles } from "@mui/styles";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+} from "@mui/material"
+import { useState } from "react"
+import { useMemo } from "react"
+import { Controller, useForm } from "react-hook-form"
+import IconGenerator from "../IconPicker/IconGenerator"
+import HFColorPicker from "./HFColorPicker"
+import HFIconPicker from "./HFIconPicker"
+import styles from "./style.module.scss"
+import HFTextField from "./HFTextField"
+import PrimaryButton from "../Buttons/PrimaryButton"
+import AddIcon from "@mui/icons-material/Add"
+import constructorFieldService from "../../services/constructorFieldService"
+import { generateGUID } from "../../utils/generateID"
+import RippleLoader from "../Loaders/RippleLoader"
+import FRow from "./FRow"
+import { makeStyles } from "@mui/styles"
 
-const filter = createFilterOptions();
+const filter = createFilterOptions()
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -33,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
     },
   },
-}));
+}))
 
 const HFMultipleAutocomplete = ({
   control,
@@ -52,11 +51,12 @@ const HFMultipleAutocomplete = ({
   disabled,
   ...props
 }) => {
-  const classes = useStyles();
-  const options = field.attributes?.options ?? [];
-  const hasColor = field.attributes?.has_color;
-  const hasIcon = field.attributes?.has_icon;
-  const isMultiSelect = field.attributes?.is_multiselect;
+  const classes = useStyles()
+  const options = field.attributes?.options ?? []
+
+  const hasColor = field.attributes?.has_color
+  const hasIcon = field.attributes?.has_icon
+  const isMultiSelect = field.attributes?.is_multiselect
 
   return (
     <Controller
@@ -90,11 +90,11 @@ const HFMultipleAutocomplete = ({
             disabled={disabled}
             field={field}
           />
-        );
+        )
       }}
     ></Controller>
-  );
-};
+  )
+}
 
 const AutoCompleteElement = ({
   value,
@@ -114,45 +114,45 @@ const AutoCompleteElement = ({
   field,
   isBlackBg,
 }) => {
-  const [dialogState, setDialogState] = useState(null);
+  const [dialogState, setDialogState] = useState(null)
   const handleOpen = (inputValue) => {
-    setDialogState(inputValue);
-  };
+    setDialogState(inputValue)
+  }
   const handleClose = () => {
-    setDialogState(null);
-  };
-  const [localOptions, setLocalOptions] = useState(options ?? []);
+    setDialogState(null)
+  }
+  const [localOptions, setLocalOptions] = useState(options ?? [])
 
   const computedValue = useMemo(() => {
-    if (!value?.length) return [];
+    if (!value?.length) return []
 
     if (isMultiSelect)
       return (
         value?.map((el) =>
           localOptions?.find((option) => option.value === el)
         ) ?? []
-      );
-    else return [localOptions?.find((option) => option.value === value[0])];
-  }, [value, localOptions, isMultiSelect]);
+      )
+    else return [localOptions?.find((option) => option.value === value[0])]
+  }, [value, localOptions, isMultiSelect])
 
   const addNewOption = (newOption) => {
-    setLocalOptions((prev) => [...prev, newOption]);
-    changeHandler(null, [...computedValue, newOption]);
-  };
+    setLocalOptions((prev) => [...prev, newOption])
+    changeHandler(null, [...computedValue, newOption])
+  }
 
   const changeHandler = (_, values) => {
     if (values[values?.length - 1]?.value === "NEW") {
-      handleOpen(values[values?.length - 1]?.inputValue);
-      return;
+      handleOpen(values[values?.length - 1]?.inputValue)
+      return
     }
 
     if (!values?.length) {
-      onFormChange([]);
-      return;
+      onFormChange([])
+      return
     }
-    if (isMultiSelect) onFormChange(values?.map((el) => el.value));
-    else onFormChange([values[values?.length - 1]?.value] ?? []);
-  };
+    if (isMultiSelect) onFormChange(values?.map((el) => el.value))
+    else onFormChange([values[values?.length - 1]?.value] ?? [])
+  }
 
   return (
     <FormControl style={{ width }}>
@@ -161,27 +161,20 @@ const AutoCompleteElement = ({
         multiple
         value={computedValue}
         options={localOptions}
-        popupIcon={
-          isBlackBg ? (
-            <ArrowDropDownIcon style={{ color: "#fff" }} />
-          ) : (
-            <ArrowDropDownIcon />
-          )
-        }
         getOptionLabel={(option) => option?.label ?? option?.value}
         isOptionEqualToValue={(option, value) => option?.value === value?.value}
         onChange={changeHandler}
         filterOptions={(options, params) => {
-          const filtered = filter(options, params);
+          const filtered = filter(options, params)
           if (params.inputValue !== "" && field?.attributes?.creatable) {
             filtered.push({
               value: "NEW",
               inputValue: params.inputValue,
               label: `Add "${params.inputValue}"`,
-            });
+            })
           }
 
-          return filtered;
+          return filtered
         }}
         renderInput={(params) => (
           <TextField
@@ -235,40 +228,40 @@ const AutoCompleteElement = ({
         />
       </Dialog>
     </FormControl>
-  );
-};
+  )
+}
 
 const AddOptionBlock = ({ field, dialogState, handleClose, addNewOption }) => {
-  const hasColor = field.attributes?.has_color;
-  const hasIcon = field.attributes?.has_icon;
-  const [loader, setLoader] = useState(false);
+  const hasColor = field.attributes?.has_color
+  const hasIcon = field.attributes?.has_icon
+  const [loader, setLoader] = useState(false)
   const { control, handleSubmit } = useForm({
     defaultValues: {
       label: dialogState,
       value: dialogState,
       id: generateGUID(),
     },
-  });
+  })
   const onSubmit = (newOption) => {
-    setLoader(true);
+    setLoader(true)
     const data = {
       ...field,
       attributes: {
         ...field?.attributes,
         options: [...field.attributes.options, newOption],
       },
-    };
+    }
 
     constructorFieldService
       .update({ ...data })
       .then((res) => {
-        handleClose(false);
-        addNewOption(newOption);
+        handleClose(false)
+        addNewOption(newOption)
       })
       .catch((err) => {
-        setLoader(false);
-      });
-  };
+        setLoader(false)
+      })
+  }
   return (
     <div className={`${styles.dialog}`}>
       <h2>Add option</h2>
@@ -279,8 +272,8 @@ const AddOptionBlock = ({ field, dialogState, handleClose, addNewOption }) => {
               control={control}
               name="color"
               onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
+                e.stopPropagation()
+                e.preventDefault()
               }}
             />
           )}
@@ -318,7 +311,7 @@ const AddOptionBlock = ({ field, dialogState, handleClose, addNewOption }) => {
         </PrimaryButton>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default HFMultipleAutocomplete;
+export default HFMultipleAutocomplete

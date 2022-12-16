@@ -1,19 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import HFSelect from "../../../../../components/FormElements/HFSelect";
-import { relationTyes } from "../../../../../utils/constants/relationTypes";
-import DrawerCard from "../../../../../components/DrawerCard";
-import FRow from "../../../../../components/FormElements/FRow";
-import { useQuery } from "react-query";
-import constructorFieldService from "../../../../../services/constructorFieldService";
-import listToOptions from "../../../../../utils/listToOptions";
-import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
-import { useParams } from "react-router-dom";
-import applicationService from "../../../../../services/applicationSercixe";
-import style from "./style.module.scss";
-import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
-import constructorObjectService from "../../../../../services/constructorObjectService";
-import { PlusIcon } from "../../../../../assets/icons/icon";
+import { useEffect, useMemo, useState } from "react"
+import { useForm } from "react-hook-form"
+import HFSelect from "../../../../../components/FormElements/HFSelect"
+import { relationTyes } from "../../../../../utils/constants/relationTypes"
+import DrawerCard from "../../../../../components/DrawerCard"
+import FRow from "../../../../../components/FormElements/FRow"
+import { useQuery } from "react-query"
+import constructorFieldService from "../../../../../services/constructorFieldService"
+import listToOptions from "../../../../../utils/listToOptions"
+import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect"
+import { useParams } from "react-router-dom"
+import applicationService from "../../../../../services/applicationSercixe"
+import style from "./style.module.scss"
+import HFCheckbox from "../../../../../components/FormElements/HFCheckbox"
+import constructorObjectService from "../../../../../services/constructorObjectService"
+import { PlusIcon } from "../../../../../assets/icons/icon"
+import { useTranslation } from "react-i18next"
 
 const options = [
   {
@@ -24,7 +25,7 @@ const options = [
     value: "average",
     label: "Avg ()",
   },
-];
+]
 
 const RelationCreateForm = ({
   onSubmit,
@@ -33,83 +34,85 @@ const RelationCreateForm = ({
   open,
   isLoading = false,
 }) => {
-  const { appId } = useParams();
-  const [fieldOptions, setFieldOptions] = useState([]);
-  const [openSumCreate, setOpenSumCreate] = useState(false);
+  const { t } = useTranslation()
+  const { appId } = useParams()
+  const [fieldOptions, setFieldOptions] = useState([])
+  const [openSumCreate, setOpenSumCreate] = useState(false)
 
-  const { handleSubmit, control, reset, watch } = useForm();
+  const { handleSubmit, control, reset, watch } = useForm()
 
-  const values = watch();
-  const type = watch("type");
+  const values = watch()
+  const type = watch("type")
 
   const relatedTableSlug = useMemo(() => {
-    if (values.type === "Many2One") return values.table_to;
+    if (values.type === "Many2One") return values.table_to
     if (values.type === "One2Many" || values.type === "Recursive")
-      return values.table_from;
-    return null;
-  }, [values]);
+      return values.table_from
+    return null
+  }, [values])
 
   const getFieldOptions = (table_from) => {
-    if (!table_from) return null;
+    if (!table_from) return null
     constructorObjectService.getList(table_from, { data: {} }).then((res) => {
-      console.log("res", res);
-      setFieldOptions(
-        prev => ([...prev, ...res?.data?.fields?.map((item) => ({
+      console.log("res", res)
+      setFieldOptions((prev) => [
+        ...prev,
+        ...res?.data?.fields?.map((item) => ({
           label: item?.label,
           value: item?.slug,
-        }))])
-      );
-    });
-  };
+        })),
+      ])
+    })
+  }
 
   const { data: relatedTableFields } = useQuery(
     ["GET_TABLE_FIELDS", relatedTableSlug],
     () => {
-      if (!relatedTableSlug) return [];
-      return constructorFieldService.getList({ table_slug: relatedTableSlug });
+      if (!relatedTableSlug) return []
+      return constructorFieldService.getList({ table_slug: relatedTableSlug })
     },
     {
       select: ({ fields }) => {
-        console.log("FIELDS ====>", fields);
+        console.log("FIELDS ====>", fields)
         return listToOptions(
           fields?.filter((field) => field.type !== "LOOKUP"),
           "label",
           "id"
-        );
+        )
       },
     }
-  );
+  )
 
   useEffect(() => {
-    if (type === 'Many2One') {
-      getFieldOptions(values?.table_from);
+    if (type === "Many2One") {
+      getFieldOptions(values?.table_from)
     } else {
-      getFieldOptions(values?.table_from);
-      getFieldOptions(values?.table_to);
+      getFieldOptions(values?.table_from)
+      getFieldOptions(values?.table_to)
     }
-  }, [type]);
+  }, [type])
 
   const { data: app } = useQuery(["GET_TABLE_LIST", appId], () => {
-    return applicationService.getById(appId);
-  });
+    return applicationService.getById(appId)
+  })
 
   const computedTablesList = useMemo(() => {
     return app?.tables?.map((table) => ({
       value: table.slug,
       label: table.label,
-    }));
-  }, [app]);
+    }))
+  }, [app])
 
   const isRecursiveRelation = useMemo(() => {
-    return values.type === "Recursive";
-  }, [values.type]);
+    return values.type === "Recursive"
+  }, [values.type])
 
   const computedRelationsTypesList = useMemo(() => {
     return relationTyes.map((type) => ({
       value: type,
       label: type,
-    }));
-  }, []);
+    }))
+  }, [])
 
   const submitHandler = (values) => {
     const data = {
@@ -121,20 +124,20 @@ const RelationCreateForm = ({
           formula_name: values.formula_name,
         },
       ],
-    };
+    }
 
-    delete data?.field_name;
-    delete data?.formula_name;
+    delete data?.field_name
+    delete data?.formula_name
     // return console.log('values', data);
     onSubmit({
       // ...values,
       ...data,
-      summaries: data?.summaries?.filter(sum => sum?.field_name?.length > 0),
+      summaries: data?.summaries?.filter((sum) => sum?.field_name?.length > 0),
       table_to: isRecursiveRelation ? values.table_from : values.table_to,
-    });
-    setOpenSumCreate(false);
+    })
+    setOpenSumCreate(false)
     setFieldOptions([])
-  };
+  }
 
   useEffect(() => {
     reset({
@@ -145,15 +148,15 @@ const RelationCreateForm = ({
       editable: initialValues?.editable ?? false,
       summaries: initialValues?.summaries ?? [],
       view_fields: initialValues?.view_fields?.map((field) => field.id) ?? [],
-    });
-  }, [open]);
+    })
+  }, [open])
 
   return (
     <DrawerCard
       title={initialValues === "CREATE" ? "Create relation" : "Edit relation"}
       onClose={() => {
-        closeDrawer();
-        setOpenSumCreate(false);
+        closeDrawer()
+        setOpenSumCreate(false)
         setFieldOptions([])
       }}
       open={open}
@@ -226,7 +229,7 @@ const RelationCreateForm = ({
                 // value={el?.field_name}
                 required
                 onChange={(e) => {
-                  console.log(e);
+                  console.log(e)
                 }}
               />
               <HFSelect
@@ -258,20 +261,24 @@ const RelationCreateForm = ({
             {!openSumCreate ? (
               <button type="button" onClick={() => setOpenSumCreate(true)}>
                 <PlusIcon />
-                Создать новый
+                {t("create.new")}
               </button>
             ) : (
-              <button type="button" onClick={() => {
-                setOpenSumCreate(false)
-              }} style={{borderColor: 'red'}}>
-                Отмена
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenSumCreate(false)
+                }}
+                style={{ borderColor: "red" }}
+              >
+                {t("create.new")}
               </button>
             )}
           </div>
         </div>
       </form>
     </DrawerCard>
-  );
-};
+  )
+}
 
-export default RelationCreateForm;
+export default RelationCreateForm

@@ -18,14 +18,13 @@ const HFDateTimePicker = ({
   showCopyBtn,
   placeholder = "",
   disabled,
-  defaultValue,
 }) => {
   const classes = useStyles()
   return (
     <Controller
       control={control}
       name={name}
-      defaultValue={defaultValue}
+      defaultValue=""
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <CDateTimePicker

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import CancelButton from "../../components/Buttons/CancelButton"
 import SaveButton from "../../components/Buttons/SaveButton"
-import CBreadcrumbs from "../../components/CBreadcrumbs"
 import FormCard from "../../components/FormCard"
 import FRow from "../../components/FormElements/FRow"
 import Header from "../../components/Header"
@@ -16,6 +15,7 @@ import HFDatePicker from "../../components/FormElements/HFDatePicker"
 import HFSelect from "../../components/FormElements/HFSelect"
 import clientTypeService from "../../services/auth/clientTypeService"
 import HFAvatarUpload from "../../components/FormElements/HFAvatarUpload"
+import { useTranslation } from "react-i18next"
 
 // const validationSchema = Yup.object().shape({
 //   name: Yup.string().required('Name is required'),
@@ -39,6 +39,7 @@ import HFAvatarUpload from "../../components/FormElements/HFAvatarUpload"
 // })
 
 const UsersForm = () => {
+  const { t } = useTranslation()
   const { userId, platformId, typeId } = useParams()
   const navigate = useNavigate()
 
@@ -46,16 +47,6 @@ const UsersForm = () => {
   const [loader, setLoader] = useState(true)
   const [rolesList, setRolesList] = useState([])
   const [userTypesList, setUserTypesList] = useState([])
-
-  const breadCrumbItems = [
-    {
-      label: "Users",
-      link: -1,
-    },
-    {
-      label: "Create",
-    },
-  ]
 
   const fetchUserTypesList = () => {
     clientTypeService
@@ -78,13 +69,11 @@ const UsersForm = () => {
       .then((res) => {
         reset({
           ...getValues,
-          ...res
+          ...res,
         })
       })
       .finally(() => setLoader(false))
-
   }
-
 
   const onSubmit = (values) => {
     if (userId) return update(values)
@@ -111,7 +100,7 @@ const UsersForm = () => {
       .catch(() => setBtnLoader(false))
   }
 
-  const { control, watch, handleSubmit, setValue, reset, getValues} = useForm({
+  const { control, watch, handleSubmit, setValue, reset, getValues } = useForm({
     defaultValues: {
       client_platform_id: platformId ?? import.meta.env.VITE_AUTH_PLATFORM_ID,
       project_id: import.meta.env.VITE_AUTH_PROJECT_ID,
@@ -125,9 +114,8 @@ const UsersForm = () => {
       expires_at: add(new Date(), { years: 1 }),
       photo_url: "",
       role_id: "",
-    }
+    },
   })
-
 
   useEffect(() => {
     fetchData()
@@ -135,28 +123,25 @@ const UsersForm = () => {
   }, [])
 
   useEffect(() => {
-    if(loader) return
-    if(userId) fetchRolesList(getValues('client_type_id'))
+    if (loader) return
+    if (userId) fetchRolesList(getValues("client_type_id"))
   }, [loader])
-
 
   useEffect(() => {
     const subscription = watch((values, { name, type }) => {
-
-      if(name === 'client_type_id' && values.client_type_id) {
+      if (name === "client_type_id" && values.client_type_id) {
         fetchRolesList(values.client_type_id)
       }
-
-    });
-    return () => subscription.unsubscribe();
+    })
+    return () => subscription.unsubscribe()
   }, [watch])
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Header
-        title="Пользователи"
+        title={t("users")}
         backButtonLink={-1}
-        subtitle={userId ? watch('name') : "Новый"}
+        subtitle={userId ? watch("name") : t("new")}
         loader={loader}
         extra={
           <>
@@ -168,15 +153,19 @@ const UsersForm = () => {
         {/* <CBreadcrumbs withDefautlIcon items={breadCrumbItems} type="link" /> */}
       </Header>
 
-      <FormCard visible={!loader} title="Main info" className="UsersForm p-2">
+      <FormCard
+        visible={!loader}
+        title={t("main.info")}
+        className="UsersForm p-2"
+      >
         <div>
           <HFAvatarUpload control={control} name="photo_url" />
         </div>
 
         <div className="side">
-          <FRow label="Fullname">
+          <FRow label={t("fio")}>
             <HFTextField
-              placeholder="Enter fullname"
+              placeholder={t("enter.fio")}
               fullWidth
               control={control}
               autoFocus
@@ -184,59 +173,60 @@ const UsersForm = () => {
             />
           </FRow>
 
-          <FRow label="Email">
+          <FRow label={t("email")}>
             <HFTextField
-              placeholder="Enter email"
+              placeholder={t("enter.email")}
               fullWidth
               control={control}
               name="email"
             />
           </FRow>
 
-          <FRow label="Phone">
+          <FRow label={t("phone")}>
             <HFTextField
-              placeholder="Enter phone"
+              placeholder={t("enter.phone")}
               fullWidth
               control={control}
               name="phone"
             />
           </FRow>
 
-          <FRow label="Login">
+          <FRow label={t("login")}>
             <HFTextField
-              placeholder="Enter login"
+              placeholder={t("enter.login")}
               fullWidth
               control={control}
               name="login"
             />
           </FRow>
 
-          {!userId && <FRow label="Password">
-            <HFTextField
-              type="password"
-              fullWidth
-              control={control}
-              name="password"
-              placeholder="Enter password"
-            />
-          </FRow>}
+          {!userId && (
+            <FRow label={t("password")}>
+              <HFTextField
+                type="password"
+                fullWidth
+                control={control}
+                name="password"
+                placeholder={t("enter.password")}
+              />
+            </FRow>
+          )}
 
-          <FRow label="Expires date">
+          <FRow label={t("expires.date")}>
             <HFDatePicker width="100%" control={control} name="expires_at" />
           </FRow>
 
-          <FRow label="Type">
+          <FRow label={t("type")}>
             <HFSelect
               options={userTypesList}
               fullWidth
               control={control}
-              onChange={() => setValue('role_id', '')}
+              onChange={() => setValue("role_id", "")}
               name="client_type_id"
-
             />
           </FRow>
 
-          <FRow label="Role">
+          <FRow label={t("role")}>
             <HFSelect
               options={rolesList}
               fullWidth

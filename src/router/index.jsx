@@ -1,4 +1,5 @@
 import { lazy, Suspense, useMemo } from "react"
+import { useTranslation } from "react-i18next"
 import { useSelector } from "react-redux"
 import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 
@@ -29,7 +30,6 @@ import AppsForm from "../views/Constructor/Apps/AppsForm"
 import ConstructorTablesFormPage from "../views/Constructor/Tables/Form"
 import ObjectsPage from "../views/Objects"
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage"
-import ProfileSettings from "../views/ProfileSettings"
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"))
 
@@ -51,6 +51,7 @@ const MatrixDetail = lazy(() => import("../views/Matrix/MatrixDetail"))
 const MatrixRolePage = lazy(() => import("../views/Matrix/MatrixRolePage"))
 
 const Router = () => {
+  const { t } = useTranslation()
   const location = useLocation()
   const isAuth = useSelector((state) => state.auth.isAuth)
   const applications = useSelector((state) => state.application.list)
@@ -68,7 +69,7 @@ const Router = () => {
 
   if (!isAuth)
     return (
-      <Suspense fallback={<p> Loading...</p>}>
+      <Suspense fallback={<p> {t("loading")}...</p>}>
         <Routes>
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Navigate to="/login " />} />
@@ -120,7 +121,6 @@ const Router = () => {
       <Route path="settings" element={<SettingsLayout />}>
         <Route index element={<Navigate to={"/settings/constructor/apps"} />} />
 
-        <Route path="profile" element={<ProfileSettings />} />
         <Route path="constructor/apps" element={<AppsPage />} />
         <Route path="constructor/apps/create" element={<AppsForm />} />
         <Route path="constructor/apps/:appId" element={<AppsForm />} />

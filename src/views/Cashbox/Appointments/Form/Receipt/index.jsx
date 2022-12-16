@@ -6,8 +6,10 @@ import { useWatch } from "react-hook-form"
 import { Fragment, useMemo } from "react"
 import { numberWithSpaces } from "../../../../../utils/formatNumbers"
 import { format } from "date-fns"
+import { useTranslation } from "react-i18next"
 
 const Receipt = ({ form }) => {
+  const { t } = useTranslation()
   const services = useWatch({
     control: form.control,
     name: "services",
@@ -34,7 +36,7 @@ const Receipt = ({ form }) => {
         </div>
 
         <div className={style.row}>
-          <b style={{ paddingRight: 5 }}>Дата: </b>
+          <b style={{ paddingRight: 5 }}>{t("date")}: </b>
           {format(new Date(), "dd.MM.yyyy HH:mm:ss")}
         </div>
       </div>

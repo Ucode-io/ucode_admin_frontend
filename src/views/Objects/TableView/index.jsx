@@ -11,12 +11,13 @@ import styles from "./styles.module.scss"
 import { useSelector } from "react-redux"
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
+import { useTranslation } from "react-i18next"
 
 const TableView = ({
   tab,
   view,
   shouldGet,
-  reset = () => {},
+  reset,
   fieldsMap,
   isDocView,
   formVisible,
@@ -26,13 +27,12 @@ const TableView = ({
   setSelectedObjects,
   ...props
 }) => {
+  const { t } = useTranslation()
   const { navigateToForm } = useTabRouter()
   const { tableSlug } = useParams()
   const { new_list } = useSelector((state) => state.filter)
 
   const { filters } = useFilters(tableSlug, view.id)
-
-  
 
   const [currentPage, setCurrentPage] = useState(1)
   const [limit, setLimit] = useState(10)
@@ -78,6 +78,13 @@ const TableView = ({
     },
   })
 
+  // const filterChangeHandler = (value, name) => {
+  //   setFilters({
+  //     ...filters,
+  //     [name]: value,
+  //   })
+  // }
+
   useEffect(() => {
     if (tableData?.length) {
       reset({
@@ -116,7 +123,7 @@ const TableView = ({
         (new_list[tableSlug] &&
           new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
-          <p>Фильтры</p>
+          <p>{t("filters")}</p>
           <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
         </div>
       )}

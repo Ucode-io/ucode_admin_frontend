@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useMutation, useQuery } from "react-query"
 import { useLocation, useNavigate } from "react-router-dom"
 import DataTable from "../../../../components/DataTable"
@@ -19,6 +20,7 @@ const columns = [
 ]
 
 const Variables = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
@@ -26,18 +28,21 @@ const Variables = () => {
     return variableService.getList()
   })
 
-  const { mutate: deleteVariable, isLoading: deleteLoading } = useMutation((row) => {
-    return variableService.delete(row.id)
-  }, {
-    onSuccess: () => refetch()
-  })
+  const { mutate: deleteVariable, isLoading: deleteLoading } = useMutation(
+    (row) => {
+      return variableService.delete(row.id)
+    },
+    {
+      onSuccess: () => refetch(),
+    }
+  )
 
   const navigateToCreateForm = () => navigate(`${pathname}/create`)
   const navigateToEditForm = (row) => navigate(`${pathname}/${row.id}`)
 
   return (
     <div className={styles.formCard}>
-      <h2 className={styles.title}>Переменные</h2>
+      <h2 className={styles.title}>{t("variables")}</h2>
 
       <div className={styles.mainBlock}>
         <DataTable

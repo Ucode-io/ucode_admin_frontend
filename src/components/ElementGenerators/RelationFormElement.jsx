@@ -142,7 +142,7 @@ const AutoCompleteElement = ({
           ...autoFiltersValue,
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
-          limit: 1000,
+          limit: 10,
         },
       })
     },

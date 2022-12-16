@@ -1,13 +1,18 @@
-import LoadingButton from '@mui/lab/LoadingButton';
+import LoadingButton from "@mui/lab/LoadingButton"
 import AddIcon from "@mui/icons-material/Add"
-import SecondaryButton from './SecondaryButton';
+import SecondaryButton from "./SecondaryButton"
+import { useTranslation } from "react-i18next"
 
-const CreateButton = ({ children, title = "Добавить", type, ...props }) => {
+const CreateButton = ({ children, title = "add", type, ...props }) => {
+  const { t } = useTranslation()
 
-  if(type === 'secondary') return <SecondaryButton {...props} >
-    <AddIcon />
-    {title}
-  </SecondaryButton>
+  if (type === "secondary")
+    return (
+      <SecondaryButton {...props}>
+        <AddIcon />
+        {t(title)}
+      </SecondaryButton>
+    )
 
   return (
     <LoadingButton
@@ -16,7 +21,7 @@ const CreateButton = ({ children, title = "Добавить", type, ...props }) 
       loadingPosition="start"
       {...props}
     >
-      {title}
+      {t(title)}
     </LoadingButton>
   )
 }

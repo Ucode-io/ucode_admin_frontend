@@ -4,6 +4,7 @@ import { useCallback, useMemo } from "react"
 import { useEffect } from "react"
 import { useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useMutation } from "react-query"
 import { useParams } from "react-router-dom"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
@@ -23,6 +24,7 @@ const RelationSection = ({
   tableSlug: tableSlugFromProps,
   id: idFromProps,
 }) => {
+  const { t } = useTranslation()
   const filteredRelations = useMemo(() => {
     return relations?.filter((relation) => relation?.relatedTable)
   }, [relations])
@@ -88,7 +90,7 @@ const RelationSection = ({
     const relation = filteredRelations[selectedTabIndex]
     if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation)
     else {
-      append({ [`${tableSlug}_id`]: idFromParams ?? "" })
+      append({ patients_id: idFromParams ?? "" })
       setFormVisible(true)
 
       // if (relation.is_editable) setCreateFormVisible(relation.id, true)
@@ -170,7 +172,7 @@ const RelationSection = ({
 
               <div className="flex gap-2">
                 <SecondaryButton onClick={navigateToCreatePage} disabled={!id}>
-                  <Add /> Добавить
+                  <Add /> {t("save")}
                 </SecondaryButton>
                 {formVisible ? (
                   <>

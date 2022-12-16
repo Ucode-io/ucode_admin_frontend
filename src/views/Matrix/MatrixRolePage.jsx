@@ -1,17 +1,17 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useState, useMemo, useEffect, useCallback, useTransition } from "react"
+import { useFieldArray, useForm } from "react-hook-form"
+import { useParams } from "react-router-dom"
 // ICONS
-import { Delete } from "@mui/icons-material";
-import { useMutation } from "react-query";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useDispatch } from "react-redux";
+import { Delete } from "@mui/icons-material"
+import { useMutation } from "react-query"
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import { useDispatch } from "react-redux"
 import {
   ChevronDownIcon,
   CrossPerson,
   FieldPermissionIcon,
   TwoUserIcon,
-} from "../../assets/icons/icon";
+} from "../../assets/icons/icon"
 // COMPONENTS
 import {
   CTable,
@@ -20,27 +20,25 @@ import {
   CTableHead,
   CTableHeadCell,
   CTableRow,
-} from "../../components/CTable";
-import FormCard from "../../components/FormCard";
-import FRow from "../../components/FormElements/FRow";
-import HFSelect from "../../components/FormElements/HFSelect";
-import HFTextField from "../../components/FormElements/HFTextField";
-import HeaderSettings from "../../components/HeaderSettings";
+} from "../../components/CTable"
+import FormCard from "../../components/FormCard"
+import FRow from "../../components/FormElements/FRow"
+import HFSelect from "../../components/FormElements/HFSelect"
+import HFTextField from "../../components/FormElements/HFTextField"
+import HeaderSettings from "../../components/HeaderSettings"
 // SERVICES
-import applicationService from "../../services/applicationSercixe";
-import constructorObjectService from "../../services/constructorObjectService";
-import constructorRelationService from "../../services/constructorRelationService";
-import roleServiceV2 from "../../services/roleServiceV2";
-import styles from "./styles.module.scss";
-import roleService from "../../services/roleService";
-import clientRelationService from "../../services/auth/clientRelationService";
-import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
-import SecondaryButton from "../../components/Buttons/SecondaryButton";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import { showAlert } from "../../store/alert/alert.thunk";
-import FieldPermissionModal from "./FieldPermissionModal";
-import ActionPermissionModal from "./ActionPermissionModal";
-import PermIdentityIcon from "@mui/icons-material/PermIdentity";
+import applicationService from "../../services/applicationSercixe"
+import constructorObjectService from "../../services/constructorObjectService"
+import constructorRelationService from "../../services/constructorRelationService"
+import roleServiceV2 from "../../services/roleServiceV2"
+import styles from "./styles.module.scss"
+import roleService from "../../services/roleService"
+import clientRelationService from "../../services/auth/clientRelationService"
+import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
+import SecondaryButton from "../../components/Buttons/SecondaryButton"
+import PrimaryButton from "../../components/Buttons/PrimaryButton"
+import { showAlert } from "../../store/alert/alert.thunk"
+import FieldPermissionModal from "./FieldPermissionModal"
 
 const staticTables = [
   {
@@ -48,39 +46,37 @@ const staticTables = [
     slug: "app",
     children: "true",
   },
-];
+]
 
 const MatrixRolePage = () => {
-  const { roleId, typeId } = useParams();
+  const { t } = useTransition()
+  const { roleId, typeId } = useParams()
   const TYPES = [
     { key: "read", name: "Чтение" },
     { key: "write", name: "Добавление" },
     { key: "update", name: "Изменение" },
     { key: "delete", name: "Удаление" },
-  ];
-  const dispatch = useDispatch();
-  const [appId, setAppId] = useState(null);
-  const [parentPopupKey, setParentPopupKey] = useState("");
-  const [expandedAppId, setExpandedAppId] = useState("");
-  const [tableSlugWithType, setTableSlugWithType] = useState(null);
-  const [tableSlug, setTableSlug] = useState(null);
-  const [apps, setApps] = useState([{ name: "Settings", id: "settings" }]);
-  const [roles, setRoles] = useState([{ name: "Settings", id: "settings" }]);
-  const [activeTable, setActiveTable] = useState({});
-  const [recordPermissions, setRecordPermissions] = useState([]);
-  const [connections, setConnections] = useState([]);
-  const [isCustomVisible, setIsCustomVisible] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isActionOpen, setIsActionOpen] = useState(false);
-  const [relations, setRelations] = useState([]);
-  const [automaticFilters, setAutomaticFilters] = useState([]);
+  ]
+  const dispatch = useDispatch()
+  const [appId, setAppId] = useState(null)
+  const [parentPopupKey, setParentPopupKey] = useState("")
+  const [expandedAppId, setExpandedAppId] = useState("")
+  const [tableSlugWithType, setTableSlugWithType] = useState(null)
+  const [tableSlug, setTableSlug] = useState(null)
+  const [apps, setApps] = useState([{ name: "Settings", id: "settings" }])
+  const [roles, setRoles] = useState([{ name: "Settings", id: "settings" }])
+  const [activeTable, setActiveTable] = useState({})
+  const [recordPermissions, setRecordPermissions] = useState([])
+  const [connections, setConnections] = useState([])
+  const [isCustomVisible, setIsCustomVisible] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [relations, setRelations] = useState([])
+  const [automaticFilters, setAutomaticFilters] = useState([])
 
-  const handleOpen = () => setIsOpen(true);
-  const handleClose = () => setIsOpen(false);
-  const actionOpen = () => setIsActionOpen(true);
-  const actionClose = () => setIsActionOpen(false);
+  const handleOpen = () => setIsOpen(true)
+  const handleClose = () => setIsOpen(false)
 
-  const roleForm = useForm({});
+  const roleForm = useForm({})
 
   const autoFilterForm = useForm({
     defaultValues: {
@@ -91,7 +87,7 @@ const MatrixRolePage = () => {
         },
       ],
     },
-  });
+  })
 
   const {
     fields: autoFilterFields,
@@ -100,7 +96,7 @@ const MatrixRolePage = () => {
   } = useFieldArray({
     control: autoFilterForm.control,
     name: "autoFilter",
-  });
+  })
 
   const { mutate: createAutoField } = useMutation(
     (data) => {
@@ -119,7 +115,7 @@ const MatrixRolePage = () => {
           "custom_field",
           "object_field",
         ],
-      });
+      })
     },
     {
       onSuccess: () => {
@@ -131,13 +127,13 @@ const MatrixRolePage = () => {
           "Yes",
           tableSlugWithType.split("#")[0],
           true
-        );
-        dispatch(showAlert("Автофильтр успешно создан", "success"));
-        setIsCustomVisible(false);
-        setTableSlugWithType("");
+        )
+        dispatch(showAlert("Автофильтр успешно создан", "success"))
+        setIsCustomVisible(false)
+        setTableSlugWithType("")
       },
     }
-  );
+  )
 
   const getRecordPermissions = () => {
     constructorObjectService
@@ -147,12 +143,12 @@ const MatrixRolePage = () => {
         },
       })
       .then((res) => {
-        setRecordPermissions(res?.data?.response || []);
+        setRecordPermissions(res?.data?.response || [])
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   const getAutomaticFilters = (tSlug) => {
     constructorObjectService
@@ -163,9 +159,9 @@ const MatrixRolePage = () => {
         },
       })
       .then((res) => {
-        setAutomaticFilters(res?.data?.response);
-      });
-  };
+        setAutomaticFilters(res?.data?.response)
+      })
+  }
 
   const getRelationsByTableSlug = (table_slug) => {
     clientRelationService
@@ -178,10 +174,10 @@ const MatrixRolePage = () => {
               label: i.table_to.label,
               value: i.table_to.slug,
             }))
-        );
+        )
       })
-      .catch((e) => console.log("err ", e));
-  };
+      .catch((e) => console.log("err ", e))
+  }
 
   const handleRecordPermission = (
     record,
@@ -190,7 +186,7 @@ const MatrixRolePage = () => {
     tabSlug,
     is_have_condition
   ) => {
-    autoFilterForm.setValue("tabSlug", tabSlug);
+    autoFilterForm.setValue("tabSlug", tabSlug)
     const data = {
       role_id: roleId,
       update: record?.update ? record?.update : "No",
@@ -200,7 +196,7 @@ const MatrixRolePage = () => {
       table_slug: tabSlug,
       guid: record?.guid ? record?.guid : "",
       is_have_condition,
-    };
+    }
     if (record?.guid) {
       constructorObjectService
         .update("record_permission", {
@@ -210,7 +206,7 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          setTableSlugWithType((prev) => (value === "Yes" ? prev : null));
+          setTableSlugWithType((prev) => (value === "Yes" ? prev : null))
           if (value === "Yes") {
             constructorRelationService
               .getList({ table_slug: tabSlug })
@@ -219,14 +215,14 @@ const MatrixRolePage = () => {
                   res?.relations
                     ?.filter((rel) => rel?.table_from?.slug === tabSlug)
                     ?.map((el) => el?.table_to)
-                );
-              });
+                )
+              })
           }
-          getRecordPermissions();
+          getRecordPermissions()
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     } else {
       constructorObjectService
         .create("record_permission", {
@@ -236,109 +232,109 @@ const MatrixRolePage = () => {
           },
         })
         .then((res) => {
-          setTableSlugWithType(null);
-          getRecordPermissions();
+          setTableSlugWithType(null)
+          getRecordPermissions()
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     }
-  };
+  }
 
   const getRoleById = () => {
     roleServiceV2
       .getById(roleId)
       .then((res) => {
-        roleForm.setValue("name", res?.data?.response?.name || "");
+        roleForm.setValue("name", res?.data?.response?.name || "")
       })
       .catch((err) => {
-        console.log("err", err);
-      });
-  };
+        console.log("err", err)
+      })
+  }
 
   const getApps = () => {
     applicationService
       .getList()
       .then((res) => {
-        setApps((prev) => [...prev, ...(res?.apps || [])]);
-        setRoles((prev) => [...prev, ...(res?.apps || [])]);
+        setApps((prev) => [...prev, ...(res?.apps || [])])
+        setRoles((prev) => [...prev, ...(res?.apps || [])])
       })
       .catch((err) => {
-        console.log("err", err);
-      });
-  };
+        console.log("err", err)
+      })
+  }
 
   const getAppChildren = (id) => {
     if (id === "settings") {
-      const result = [];
+      const result = []
       apps?.forEach((element) => {
         if (element?.id !== id) {
-          result.push(element);
+          result.push(element)
         } else {
-          result.push(element);
-          result.push(...staticTables);
+          result.push(element)
+          result.push(...staticTables)
         }
-      });
-      setApps(result);
+      })
+      setApps(result)
     } else {
       applicationService
         .getById(id)
         .then((res) => {
-          const result = [];
+          const result = []
           apps?.forEach((element) => {
             if (element?.id !== id) {
-              result.push(element);
+              result.push(element)
             } else {
-              result.push(element);
+              result.push(element)
               result.push(
                 ...res?.tables.map((table) => ({ ...table, children: "true" }))
-              );
+              )
             }
-          });
-          setApps(result);
+          })
+          setApps(result)
         })
         .catch((err) => {
-          console.log("err", err);
-        });
+          console.log("err", err)
+        })
     }
-  };
+  }
 
   const getConnections = () => {
     constructorObjectService
       .getList("connections", { data: { client_type_id: typeId } })
       .then((res) => {
-        setConnections(res?.data?.response || []);
+        setConnections(res?.data?.response || [])
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   const { mutate: updateAppPermission } = useMutation(
     ({ data, appId }) => roleService.updateAppPermission({ data }, appId),
     {
       onSuccess: () => {
-        getRecordPermissions();
-        setParentPopupKey("");
+        getRecordPermissions()
+        setParentPopupKey("")
       },
     }
-  );
+  )
 
   const isAddBtnDisabled = useMemo(() => {
     return (
       automaticFilters?.length === relations?.length &&
       autoFilterFields.length === relations?.length
-    );
-  }, [relations, automaticFilters, autoFilterFields]);
+    )
+  }, [relations, automaticFilters, autoFilterFields])
 
   useEffect(() => {
-    setIsCustomVisible(false);
+    setIsCustomVisible(false)
     autoFilterForm.reset({
       object_field: "",
       custom_field: "",
       tabSlug: "",
-    });
-  }, [tableSlugWithType]);
+    })
+  }, [tableSlugWithType])
 
   const computedCustomFields = useMemo(() => {
     const data = [
@@ -347,31 +343,31 @@ const MatrixRolePage = () => {
         table_slug: "user",
       },
       ...connections,
-    ];
+    ]
     return data?.map((el) => ({
       label: el?.table_slug,
       value: el?.table_slug + "_id",
-    }));
-  }, [connections]);
+    }))
+  }, [connections])
 
   useEffect(() => {
     if (!appId) {
-      setApps(roles);
+      setApps(roles)
     } else {
-      getAppChildren(appId);
+      getAppChildren(appId)
     }
-  }, [appId]);
+  }, [appId])
 
   useEffect(() => {
-    getRecordPermissions();
-    getRoleById();
-    getApps();
-    getConnections();
+    getRecordPermissions()
+    getRoleById()
+    getApps()
+    getConnections()
     autoFilterForm.reset({
       object_field: "",
       custom_field: "",
-    });
-  }, []);
+    })
+  }, [])
 
   useEffect(() => {
     if (isCustomVisible) {
@@ -381,20 +377,20 @@ const MatrixRolePage = () => {
           object_field: i.object_field,
           custom_field: i.custom_field,
         })),
-      });
+      })
     }
-  }, [isCustomVisible, automaticFilters]);
+  }, [isCustomVisible, automaticFilters])
 
-  console.log("autoFilterFields", autoFilterFields);
+  console.log("autoFilterFields", autoFilterFields)
 
   const isAppPermissionYes = useCallback(
     (items, key) => {
       return recordPermissions
         .filter((i) => items.find((j) => j.slug === i.table_slug))
-        .every((i) => i[key] === "Yes");
+        .every((i) => i[key] === "Yes")
     },
     [recordPermissions]
-  );
+  )
 
   return (
     <div>
@@ -454,13 +450,6 @@ const MatrixRolePage = () => {
                 >
                   Field permissions
                 </CTableHeadCell>
-                <CTableHeadCell
-                  style={{
-                    borderBottom: "1px solid #e5e9eb",
-                  }}
-                >
-                  Action Permission
-                </CTableHeadCell>
               </CTableRow>
             </CTableHead>
             <CTableBody loader={false} columnsCount={2} dataLength={1}>
@@ -469,11 +458,11 @@ const MatrixRolePage = () => {
                   <CTableCell
                     key={app.id}
                     onClick={() => {
-                      setIsCustomVisible(false);
+                      setIsCustomVisible(false)
                       if (!app.children) {
-                        setApps(roles);
-                        setAppId((prev) => (prev === app.id ? "" : app.id));
-                        setExpandedAppId(app.id);
+                        setApps(roles)
+                        setAppId((prev) => (prev === app.id ? "" : app.id))
+                        setExpandedAppId(app.id)
                       }
                     }}
                   >
@@ -500,21 +489,21 @@ const MatrixRolePage = () => {
                       key={type?.key}
                       align="center"
                       onClick={(e) => {
-                        e.stopPropagation();
+                        e.stopPropagation()
                         if (app?.children) {
                           setTableSlugWithType((prev) =>
                             prev === app.slug + "#" + type?.key
                               ? ""
                               : app.slug + "#" + type?.key
-                          );
-                          setParentPopupKey("");
+                          )
+                          setParentPopupKey("")
                         } else {
                           setParentPopupKey((prev) =>
                             prev === app.id + type?.key
                               ? ""
                               : app.id + type?.key
-                          );
-                          setTableSlugWithType("");
+                          )
+                          setTableSlugWithType("")
                         }
                       }}
                       style={{ position: "relative" }}
@@ -545,22 +534,22 @@ const MatrixRolePage = () => {
                           <div className={styles.app_permission_popup}>
                             <span
                               onClick={(e) => {
-                                e.preventDefault();
+                                e.preventDefault()
                                 updateAppPermission({
                                   data: {
                                     role_id: roleId,
                                     [type?.key]: "Yes",
                                   },
                                   appId: app.id,
-                                });
-                                setParentPopupKey("");
+                                })
+                                setParentPopupKey("")
                               }}
                             >
                               <TwoUserIcon />
                             </span>
                             <span
                               onClick={(e) => {
-                                e.preventDefault();
+                                e.preventDefault()
                                 updateAppPermission(
                                   {
                                     data: {
@@ -570,8 +559,8 @@ const MatrixRolePage = () => {
                                     appId: app.id,
                                   },
                                   app.id
-                                );
-                                setParentPopupKey("");
+                                )
+                                setParentPopupKey("")
                               }}
                             >
                               <CrossPerson />
@@ -598,7 +587,7 @@ const MatrixRolePage = () => {
                           >
                             <span
                               onClick={(e) => {
-                                e.stopPropagation();
+                                e.stopPropagation()
                                 handleRecordPermission(
                                   recordPermissions?.find(
                                     (item) => item?.table_slug === app?.slug
@@ -607,14 +596,14 @@ const MatrixRolePage = () => {
                                   "Yes",
                                   app?.slug,
                                   false
-                                );
+                                )
                               }}
                             >
                               <TwoUserIcon />
                             </span>
                             <span
                               onClick={(e) => {
-                                e.stopPropagation();
+                                e.stopPropagation()
                                 handleRecordPermission(
                                   recordPermissions?.find(
                                     (item) => item?.table_slug === app?.slug
@@ -623,7 +612,7 @@ const MatrixRolePage = () => {
                                   "No",
                                   app?.slug,
                                   false
-                                );
+                                )
                               }}
                             >
                               <CrossPerson />
@@ -631,11 +620,11 @@ const MatrixRolePage = () => {
                             {type?.key === "read" && (
                               <span
                                 onClick={(e) => {
-                                  e.stopPropagation();
-                                  setIsCustomVisible((p) => !p);
-                                  getAutomaticFilters(app?.slug);
-                                  getRelationsByTableSlug(app?.slug);
-                                  setActiveTable(app);
+                                  e.stopPropagation()
+                                  setIsCustomVisible((p) => !p)
+                                  getAutomaticFilters(app?.slug)
+                                  getRelationsByTableSlug(app?.slug)
+                                  setActiveTable(app)
                                 }}
                                 style={{
                                   border: "1px solid #e3e3e3",
@@ -712,8 +701,8 @@ const MatrixRolePage = () => {
                                           constructorObjectService.delete(
                                             "automatic_filter",
                                             field.identifier
-                                          );
-                                          remove(index);
+                                          )
+                                          remove(index)
                                         }}
                                       >
                                         <Delete color="error" />
@@ -741,14 +730,14 @@ const MatrixRolePage = () => {
                                           })
                                     }
                                   >
-                                    Добавить новое условия
+                                    {t("add.new.condition")}
                                   </SecondaryButton>
                                   <PrimaryButton
                                     disabled={!autoFilterFields.length}
                                     style={{ width: "50%" }}
                                     type="submit"
                                   >
-                                    Сохранить
+                                    {t("save")}
                                   </PrimaryButton>
                                 </div>
                               </div>
@@ -761,9 +750,9 @@ const MatrixRolePage = () => {
                   <CTableHeadCell
                     onClick={() => {
                       if (app?.children) {
-                        console.log("app , ", app);
-                        handleOpen();
-                        setTableSlug(app?.slug);
+                        console.log("app , ", app)
+                        handleOpen()
+                        setTableSlug(app?.slug)
                       }
                     }}
                     style={{
@@ -773,23 +762,6 @@ const MatrixRolePage = () => {
                   >
                     <div>
                       <FieldPermissionIcon />
-                    </div>
-                  </CTableHeadCell>
-                  <CTableHeadCell
-                    onClick={() => {
-                      if (app?.children) {
-                        console.log("action permission , ", app);
-                        actionOpen();
-                        setTableSlug(app?.slug);
-                      }
-                    }}
-                    style={{
-                      borderBottom: "1px solid #e5e9eb",
-                      borderRight: "1px solid #e5e9eb",
-                    }}
-                  >
-                    <div>
-                      <PermIdentityIcon />
                     </div>
                   </CTableHeadCell>
                 </CTableRow>
@@ -803,13 +775,8 @@ const MatrixRolePage = () => {
         handleClose={handleClose}
         isOpen={isOpen}
       />
-      <ActionPermissionModal
-        table_slug={tableSlug}
-        handleClose={actionClose}
-        isOpen={isActionOpen}
-      />
     </div>
-  );
-};
+  )
+}
 
-export default MatrixRolePage;
+export default MatrixRolePage

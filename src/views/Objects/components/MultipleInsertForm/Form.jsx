@@ -3,6 +3,7 @@ import { Divider, IconButton } from "@mui/material"
 import { useMemo } from "react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
@@ -16,6 +17,7 @@ import { sortSections } from "../../../../utils/sectionsOrderNumber"
 import styles from "./style.module.scss"
 
 const Form = ({ view = {}, onClose, fieldsMap = {} }) => {
+  const { t } = useTranslation()
   const { tableSlug } = useParams()
   const [btnLoader, setBtnLoader] = useState(false)
   const queryClient = useQueryClient()
@@ -59,7 +61,7 @@ const Form = ({ view = {}, onClose, fieldsMap = {} }) => {
 
   const onSubmit = async (values) => {
     setBtnLoader(true)
-    
+
     try {
       const computedData = values?.multiple_values?.map((el) => ({
         ...values,
@@ -79,10 +81,7 @@ const Form = ({ view = {}, onClose, fieldsMap = {} }) => {
         "GET_OBJECTS_LIST_WITH_RELATIONS",
         { tableSlug },
       ])
-      queryClient.refetchQueries([
-        "GET_OBJECTS_LIST",
-        { tableSlug },
-      ])
+      queryClient.refetchQueries(["GET_OBJECTS_LIST", { tableSlug }])
     } catch (error) {
       setBtnLoader(false)
     }
@@ -133,7 +132,7 @@ const Form = ({ view = {}, onClose, fieldsMap = {} }) => {
           onClick={handleSubmit(onSubmit)}
           loader={btnLoader}
         >
-          Сохранить
+          {t("save")}
         </PrimaryButton>
       </div>
     </>

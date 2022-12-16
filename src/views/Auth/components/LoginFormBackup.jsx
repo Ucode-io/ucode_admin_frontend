@@ -3,6 +3,7 @@ import { InputAdornment } from "@mui/material"
 import axios from "axios"
 import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useQuery } from "react-query"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
@@ -19,6 +20,8 @@ import classes from "../style.module.scss"
 import DynamicFields from "./DynamicFields"
 
 const LoginForm = ({ navigateToRegistrationForm }) => {
+  const { t } = useTranslation()
+
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -27,7 +30,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
   const [isCodeSent, setIsCodeSent] = useState(false)
   const [loginStrategies, setLoginStrategies] = useState({})
   const [resData, setResData] = useState({})
-  
+
   const { control, handleSubmit, setValue, getValues, watch } = useForm({
     defaultValues: {
       client_type: "",
@@ -235,14 +238,14 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
           <div style={{ padding: "10px" }}>
             {/* {!isCodeSent && ( */}
             <div className={classes.formRow}>
-              <p className={classes.label}>Тип пользователя</p>
+              <p className={classes.label}>{t("user.type")}</p>
               <HFSelect
                 control={control}
                 name="client_type"
                 size="large"
                 fullWidth
                 options={computedClientTypes}
-                placeholder="Выберите тип пользователя"
+                placeholder={t("choose.user.type")}
                 startAdornment={
                   <InputAdornment position="start">
                     <SupervisedUserCircle style={{ fontSize: "30px" }} />
@@ -254,13 +257,14 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
 
             <TabList>
               {(Object.keys(loginStrategies)?.length === 0 ||
-                loginStrategies["Login with password"]) && <Tab>Логин</Tab>}
-              {loginStrategies["Phone OTP"] && <Tab>Телефон</Tab>}
-              {loginStrategies["Email OTP"] && <Tab>E-mail</Tab>}
+                loginStrategies["Login with password"]) && (
+                <Tab>{t("login")}</Tab>
+              )}
+              {loginStrategies["Phone OTP"] && <Tab>{t("phone")}</Tab>}
+              {loginStrategies["Email OTP"] && <Tab>{t("E-mail")}</Tab>}
             </TabList>
 
             <div
-              onSubmit={handleSubmit}
               className={classes.formArea}
               style={{ marginTop: "10px" }}
             >
@@ -268,14 +272,14 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                 loginStrategies["Login with password"]) && (
                 <TabPanel>
                   <div className={classes.formRow}>
-                    <p className={classes.label}>Логин</p>
+                    <p className={classes.label}>{t("login")}</p>
                     <HFTextField
                       required
                       control={control}
                       name="username"
                       size="large"
                       fullWidth
-                      placeholder="Введите логин"
+                      placeholder={t("enter.login")}
                       autoFocus
                       InputProps={{
                         startAdornment: (
@@ -287,7 +291,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                     />
                   </div>
                   <div className={classes.formRow}>
-                    <p className={classes.label}>Пароль</p>
+                    <p className={classes.label}>{t("password")}</p>
                     <HFTextField
                       required
                       control={control}
@@ -295,7 +299,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                       type="password"
                       size="large"
                       fullWidth
-                      placeholder="Введите пароль"
+                      placeholder={t("enter.password")}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
@@ -311,14 +315,14 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
               {loginStrategies["Phone OTP"] && (
                 <TabPanel>
                   <div className={classes.formRow}>
-                    <p className={classes.label}>Телефон</p>
+                    <p className={classes.label}>{t("phone")}</p>
                     <HFTextField
                       required
                       control={control}
                       name="recipient"
                       size="large"
                       fullWidth
-                      placeholder="Введите телефон"
+                      placeholder={t("enter.phone")}
                       autoFocus
                       InputProps={{
                         startAdornment: (
@@ -331,14 +335,14 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                   </div>
                   {isCodeSent && (
                     <div className={classes.formRow}>
-                      <p className={classes.label}>Смс код *</p>
+                      <p className={classes.label}>{t("sms.code")} *</p>
                       <HFTextField
                         required
                         control={control}
                         name="otp"
                         size="large"
                         fullWidth
-                        placeholder="Введите смс код"
+                        placeholder={t("enter.sms.code")}
                         autoFocus
                       />
                     </div>
@@ -349,14 +353,14 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
               {loginStrategies["Email OTP"] && (
                 <TabPanel>
                   <div className={classes.formRow}>
-                    <p className={classes.label}>Эл. адрес</p>
+                    <p className={classes.label}>{t("email")}</p>
                     <HFTextField
                       required
                       control={control}
                       name="email"
                       size="large"
                       fullWidth
-                      placeholder="Введите Эл. адрес"
+                      placeholder={t("enter.email")}
                       autoFocus
                       InputProps={{
                         startAdornment: (
@@ -369,14 +373,14 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
                   </div>
                   {isCodeSent && (
                     <div className={classes.formRow}>
-                      <p className={classes.label}>Смс код *</p>
+                      <p className={classes.label}>{t("sms.code")} *</p>
                       <HFTextField
                         required
                         control={control}
                         name="otp"
                         size="large"
                         fullWidth
-                        placeholder="Введите смс код"
+                        placeholder={t("enter.sms.code")}
                         autoFocus
                       />
                     </div>
@@ -409,7 +413,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
 
       <div className={classes.buttonsArea}>
         <PrimaryButton size="large" loader={loading}>
-          Войти
+          {t("enter")}
         </PrimaryButton>
       </div>
     </form>

@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useMutation } from "react-query"
 import { useLocation } from "react-router-dom"
 import CancelButton from "../../../components/Buttons/CancelButton"
@@ -12,6 +13,7 @@ import useAnalyticsTabRouter from "../../../hooks/useAnalyticsTabRouter"
 import dashboardService from "../../../services/analytics/dashboardService"
 
 const DashboardCreatePage = () => {
+  const { t } = useTranslation()
   const { pathname } = useLocation()
   const { removeTab } = useAnalyticsTabRouter()
 
@@ -40,12 +42,12 @@ const DashboardCreatePage = () => {
   return (
     <div>
       <div className="p-2" style={{ minHeight: "calc(100vh - 112px)" }}>
-        <FormCard title="Основное">
-          <FRow label="Названия дешборда">
+        <FormCard title={t("main")}>
+          <FRow label={t("dashboard.name")}>
             <HFTextField control={control} name="name" fullWidth required />
           </FRow>
 
-          <FRow label="Иконка">
+          <FRow label={t("icon")}>
             <HFIconPicker control={control} name="icon" required />
           </FRow>
         </FormCard>

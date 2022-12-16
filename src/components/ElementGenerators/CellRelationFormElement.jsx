@@ -1,15 +1,14 @@
-import { Autocomplete, TextField } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { get } from "@ngard/tiny-get";
-import { useMemo } from "react";
-import { Controller } from "react-hook-form";
-import { useQuery } from "react-query";
-import useTabRouter from "../../hooks/useTabRouter";
-import constructorObjectService from "../../services/constructorObjectService";
-import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
-import IconGenerator from "../IconPicker/IconGenerator";
-import styles from "./style.module.scss";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { Autocomplete, TextField } from "@mui/material"
+import { makeStyles } from "@mui/styles"
+import { get } from "@ngard/tiny-get"
+import { useMemo } from "react"
+import { Controller } from "react-hook-form"
+import { useQuery } from "react-query"
+import useTabRouter from "../../hooks/useTabRouter"
+import constructorObjectService from "../../services/constructorObjectService"
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel"
+import IconGenerator from "../IconPicker/IconGenerator"
+import styles from "./style.module.scss"
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -17,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
     },
   },
-}));
+}))
 
 const CellRelationFormElement = ({
   isBlackBg,
@@ -31,7 +30,7 @@ const CellRelationFormElement = ({
   disabledHelperText,
   setFormValue,
 }) => {
-  const classes = useStyles();
+  const classes = useStyles()
 
   if (!isLayout)
     return (
@@ -57,8 +56,8 @@ const CellRelationFormElement = ({
           />
         )}
       />
-    );
-};
+    )
+}
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
@@ -75,43 +74,43 @@ const AutoCompleteElement = ({
   setValue,
   setFormValue = () => {},
 }) => {
-  const { navigateToForm } = useTabRouter();
+  const { navigateToForm } = useTabRouter()
 
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug.includes("doctors_") ? "doctors" : tableSlug],
     () => {
-      return constructorObjectService.getList(tableSlug, { data: {} });
+      return constructorObjectService.getList(tableSlug, { data: {} })
     },
     {
       select: (res) => {
-        return res?.data?.response ?? [];
+        return res?.data?.response ?? []
       },
     }
-  );
+  )
 
   const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === value);
-    return findedOption ? [findedOption] : [];
-  }, [options, value]);
+    const findedOption = options?.find((el) => el?.guid === value)
+    return findedOption ? [findedOption] : []
+  }, [options, value])
 
   const getOptionLabel = (option) => {
-    return getRelationFieldTabsLabel(field, option);
-  };
+    return getRelationFieldTabsLabel(field, option)
+  }
 
   const changeHandler = (value) => {
-    const val = value?.[value?.length - 1];
+    const val = value?.[value?.length - 1]
 
-    setValue(val?.guid ?? null);
+    setValue(val?.guid ?? null)
 
-    if (!field?.attributes?.autofill) return;
+    if (!field?.attributes?.autofill) return
 
     field.attributes.autofill.forEach(({ field_from, field_to }) => {
-      const setName = name.split(".");
-      setName.pop();
-      setName.push(field_to);
-      setFormValue(setName.join("."), get(val, field_from));
-    });
-  };
+      const setName = name.split(".")
+      setName.pop()
+      setName.push(field_to)
+      setFormValue(setName.join("."), get(val, field_from))
+    })
+  }
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -119,15 +118,8 @@ const AutoCompleteElement = ({
         disabled={disabled}
         options={options ?? []}
         value={computedValue}
-        popupIcon={
-          isBlackBg ? (
-            <ArrowDropDownIcon style={{ color: "#fff" }} />
-          ) : (
-            <ArrowDropDownIcon />
-          )
-        }
         onChange={(event, newValue) => {
-          changeHandler(newValue);
+          changeHandler(newValue)
         }}
         noOptionsText={
           <span
@@ -168,16 +160,16 @@ const AutoCompleteElement = ({
               style={{ marginLeft: "10px", cursor: "pointer" }}
               size={15}
               onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                navigateToForm(tableSlug, "EDIT", value[0]);
+                e.stopPropagation()
+                e.preventDefault()
+                navigateToForm(tableSlug, "EDIT", value[0])
               }}
             />
           </>
         )}
       />
     </div>
-  );
-};
+  )
+}
 
-export default CellRelationFormElement;
+export default CellRelationFormElement

@@ -1,4 +1,5 @@
 import { Delete } from "@mui/icons-material"
+import { useTranslation } from "react-i18next"
 import { useDispatch, useSelector } from "react-redux"
 import { useLocation, useNavigate } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
@@ -7,7 +8,7 @@ import {
   CTableBody,
   CTableCell,
   CTableHead,
-  CTableRow
+  CTableRow,
 } from "../../../components/CTable"
 import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
 import FiltersBlock from "../../../components/FiltersBlock"
@@ -19,6 +20,7 @@ import TableRowButton from "../../../components/TableRowButton"
 import { deleteApplicationAction } from "../../../store/application/application.thunk"
 
 const AppsPage = () => {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
@@ -39,18 +41,20 @@ const AppsPage = () => {
 
   return (
     <div>
-      <HeaderSettings title={"Приложение"} />
+      <HeaderSettings title={t("application")} />
 
       <FiltersBlock>
-        <div className="p-1" ><SearchInput /></div>
+        <div className="p-1">
+          <SearchInput />
+        </div>
       </FiltersBlock>
 
       <TableCard>
-        <CTable disablePagination removableHeight={140} >
+        <CTable disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Название</CTableCell>
-            <CTableCell>Описание</CTableCell>
+            <CTableCell>{t("title")}</CTableCell>
+            <CTableCell>{t("description")}</CTableCell>
             <PermissionWrapperV2 tabelSlug="app" type="delete">
               <CTableCell width={60} />
             </PermissionWrapperV2>

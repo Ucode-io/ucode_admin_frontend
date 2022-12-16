@@ -20,7 +20,7 @@
     font-size: 18px;
     text-align: center;
     line-height: 24px;
-    margin-bottom: 48px;
+    margin-bottom: 20px;
   }
 
   .typeSwitchRow {
@@ -63,6 +63,7 @@
 
     .formArea {
       flex: 1;
+      overflow: auto;
 
       .formRow {
         .label {

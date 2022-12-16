@@ -1,84 +1,46 @@
 // <-- Summary Section --> //
 .summarySection {
-  min-height: 20px;
-  min-width: 300px;
-  max-width: 1200px;
+  height: 32px;
+  min-width: 32px;
   border-radius: 4px;
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
   display: flex;
-  // margin: 8px 0;
-  padding: 5px;
+  margin: 0 0 0 20px;
+  border: 1px solid #d5dadd;
 
-  &::-webkit-scrollbar {
-    display: none;
+  ::-webkit-scrollbar {
+    max-height: 10%;
+    height: 10%;
   }
-
   .field_summary {
-    min-width: 238px;
-    max-height: 62px;
+    min-width: 32px;
+    height: 100%;
     display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
     border-radius: 4px;
     // gap: 5px;
     background: #fff;
-    padding: 10px 0px 10px 16px;
+    // padding: 0 10px;
 
-    &:not(:last-child) {
-      &::after {
-        content: "";
-        width: 1px;
-        height: 60px;
-        background: #e5e9eb;
-      }
-    }
-  }
-  .field_summary_item {
-    width: 200px;
-    // min-height: 20px !important;
-    min-height: 60px;
-    margin-top: 8px;
-    background: #fff;
-    padding: 5px 10px 10px 10px;
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: 700;
-    color: #000;
-    text-transform: uppercase;
-    position: relative;
-    overflow: hidden;
-
-    span {
-      font-size: 12px;
-      text-transform: uppercase;
-      line-height: 16px;
-      font-weight: 700;
-      height: 42px;
-    }
-    p {
-      min-width: 70px;
-      max-width: 100px;
-      height: 42px;
-      font-size: 12px;
-      line-height: 24px;
-      font-weight: 600;
-      color: #9aa6ac;
-      text-transform: initial;
-    }
-
-    input {
-      display: block;
-      font-size: 16px;
-      line-height: 24px;
-      font-weight: 600;
-      color: #9aa6ac;
+    .object_btns {
       background: none;
-      text-transform: initial;
-      width: 100%;
-      border: none !important;
-      outline: none;
+      border: none;
+      width: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 10px !important;
+      border-right: 1px solid #d5dadd;
+      &:first-child {
+        // border-left: 1px solid #d5dadd;
+        border-right: 1px solid #d5dadd;
+      }
+      &:last-child {
+        border-left: none;
+        // border-right: none;
+      }
     }
   }
 }

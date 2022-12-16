@@ -13,6 +13,7 @@ import { Filter } from "../components/FilterGenerator"
 import styles from "./style.module.scss"
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery"
+import { useTranslation } from "react-i18next"
 
 const RelationTable = ({
   setDataLength,
@@ -34,6 +35,7 @@ const RelationTable = ({
   setFormVisible,
   formVisible,
 }) => {
+  const { t } = useTranslation()
   const { appId } = useParams()
   const navigate = useNavigate()
   const { navigateToForm } = useTabRouter()
@@ -234,7 +236,7 @@ const RelationTable = ({
           paginationExtraButton={
             id && (
               <SecondaryButton onClick={navigateToTablePage}>
-                Все
+                {t("all")}
               </SecondaryButton>
             )
           }

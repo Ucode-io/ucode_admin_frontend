@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 
@@ -10,6 +11,7 @@ import RecursiveBlock from "./RecursiveBlock"
 import styles from "./style.module.scss"
 
 const TreeView = ({ groupField, fieldsMap, group, view }) => {
+  const { t } = useTranslation()
   const { tableSlug } = useParams()
   const { new_list } = useSelector((state) => state.filter)
 
@@ -56,7 +58,7 @@ const TreeView = ({ groupField, fieldsMap, group, view }) => {
         (new_list[tableSlug] &&
           new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
-          <p>Фильтры</p>
+          <p>{t("filters")}</p>
           <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
         </div>
       )}

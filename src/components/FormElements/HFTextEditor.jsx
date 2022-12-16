@@ -3,12 +3,9 @@ import { Controller, useWatch } from "react-hook-form"
 
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper"
 import "react-quill/dist/quill.snow.css"
-import QuillToolbar, { formats, modules } from "./TextEditorToolbar"
 
 
 const ReactQuill = lazy(() => import("react-quill"))
-
-
 
 const HFTextEditor = ({
   control,
@@ -36,16 +33,12 @@ const HFTextEditor = ({
       }}
       render={({ field: { onChange, ref }, fieldState: { error } }) => (
         <Suspense fallback={<RingLoaderWithWrapper />}>
-          {/* <QuillToolbar /> */}
           <ReactQuill
             theme="snow"
             defaultValue={value}
             onChange={onChange}
             autoFocus={false}
-            // formats={formats}
-            // modules={modules}
           />
-               
         </Suspense>
         // <TextField
         //   size="small"
@@ -61,7 +54,7 @@ const HFTextEditor = ({
         // />
       )}
     ></Controller>
-  );
+  )
 }
 
 export default HFTextEditor

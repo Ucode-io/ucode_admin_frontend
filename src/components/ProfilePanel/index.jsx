@@ -3,6 +3,7 @@ import { Menu } from "@mui/material"
 import { useState } from "react"
 import { useAliveController } from "react-activation"
 import { useDispatch } from "react-redux"
+import { applicationActions } from "../../store/application/application.slice"
 import { authActions } from "../../store/auth/auth.slice"
 import UserAvatar from "../UserAvatar"
 import styles from "./style.module.scss"
@@ -23,6 +24,7 @@ const ProfilePanel = () => {
 
   const logoutClickHandler = () => {
     dispatch(authActions.logout())
+    dispatch(applicationActions.setList([]))
     closeMenu()
   }
 

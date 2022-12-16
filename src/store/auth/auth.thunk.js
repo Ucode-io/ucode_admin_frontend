@@ -8,7 +8,7 @@ import { authActions } from "./auth.slice";
 export const loginAction = createAsyncThunk(
   'auth/login',
   async ({ data, cashboxData }, { dispatch }) => {
-
+    
     try {
       const res = await authService.login(data)
       dispatch(authActions.loginSuccess(res))
@@ -17,6 +17,5 @@ export const loginAction = createAsyncThunk(
       throw new Error(error)
       // dispatch(showAlert('Username or password is incorrect'))
     }
-
   }
 )

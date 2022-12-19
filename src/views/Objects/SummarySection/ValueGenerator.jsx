@@ -15,7 +15,6 @@ function ValueGenerator({ field, control }) {
     control,
     name: field.slug,
   });
-  console.log("teeest", value);
   switch (field.type) {
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;
@@ -32,7 +31,13 @@ function ValueGenerator({ field, control }) {
       );
 
     case "MULTISELECT":
-      return <MultiselectCellColoredElement field={field} value={value} />;
+      return (
+        <MultiselectCellColoredElement
+          resize={true}
+          field={field}
+          value={value}
+        />
+      );
 
     case "MULTI_LINE":
       return <span dangerouslySetInnerHTML={{ __html: value }}></span>;

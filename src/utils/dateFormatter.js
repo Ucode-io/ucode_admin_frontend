@@ -9,10 +9,12 @@ const dateFormats = {
 }
 
 export const formatDate = (value, type = "DATE") => {
+if(!value) {
+  return ''
+} else {
   const parsedDate = parseISO(value);
 
   const isValidDate = isValid(parsedDate);
-
   if(isValidDate) return format(parsedDate, dateFormats[type])
-  return ""
+}
 }

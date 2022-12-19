@@ -1,65 +1,67 @@
-import { IconButton, InputAdornment, TextField, Tooltip } from "@mui/material"
-import { Controller, useWatch } from "react-hook-form"
-import useDebouncedWatch from "../../hooks/useDebouncedWatch"
-import { Parser } from "hot-formula-parser"
-import { useEffect } from "react"
-import IconGenerator from "../IconPicker/IconGenerator"
-import { useState } from "react"
+import { IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
+import { Controller, useWatch } from "react-hook-form";
+import useDebouncedWatch from "../../hooks/useDebouncedWatch";
+import { Parser } from "hot-formula-parser";
+import { useEffect } from "react";
+import IconGenerator from "../IconPicker/IconGenerator";
+import { useState } from "react";
 
-const parser = new Parser()
+const parser = new Parser();
 
 const HFFormulaField = ({
   control,
   name,
+    tabIndex,
   rules = {},
   setFormValue = () => {},
   required,
   disabledHelperText,
   fieldsList,
   disabled,
+  defaultValue,
   field,
   ...props
 }) => {
-  const [formulaIsVisible, setFormulaIsVisible] = useState(false)
-  const formula = field?.attributes?.formula ?? ""
+  const [formulaIsVisible, setFormulaIsVisible] = useState(false);
+  const formula = field?.attributes?.formula ?? "";
 
   const values = useWatch({
     control,
-  })
+  });
 
   const updateValue = () => {
-    let computedFormula = formula
+    let computedFormula = formula;
 
     const fieldsListSorted = fieldsList
       ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
-      : []
+      : [];
 
     fieldsListSorted?.forEach((field) => {
-      let value = values[field.slug] ?? 0
+      let value = values[field.slug] ?? 0;
 
-      if (typeof value === "string") value = `'${value}'`
+      if (typeof value === "string") value = `'${value}'`;
 
-      computedFormula = computedFormula.replaceAll(`${field.slug}`, value)
-    })
+      computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
+    });
 
-    const { error, result } = parser.parse(computedFormula)
+    const { error, result } = parser.parse(computedFormula);
 
-    let newValue = error ?? result
-    const prevValue = values[name]
-    if (newValue !== prevValue) setFormValue(name, newValue)
-  }
+    let newValue = error ?? result;
+    const prevValue = values[name];
+    if (newValue !== prevValue) setFormValue(name, newValue);
+  };
 
-  useDebouncedWatch(updateValue, [values], 300)
+  useDebouncedWatch(updateValue, [values], 300);
 
   useEffect(() => {
-    updateValue()
-  }, [])
+    updateValue();
+  }, []);
 
   return (
     <Controller
       control={control}
       name={name}
-      defaultValue=""
+      defaultValue={defaultValue}
       rules={{
         required: required ? "This is required field" : false,
         ...rules,
@@ -72,8 +74,10 @@ const HFFormulaField = ({
           name={name}
           error={error}
           fullWidth
+          autoFocus={tabIndex === 1}
           helperText={!disabledHelperText && error?.message}
           InputProps={{
+            inputProps: { tabIndex },
             readOnly: disabled,
             style: {
               background: disabled ? "#c0c0c039" : "#fff",
@@ -98,7 +102,7 @@ const HFFormulaField = ({
         />
       )}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFFormulaField
+export default HFFormulaField;

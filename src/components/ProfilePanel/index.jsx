@@ -1,32 +1,32 @@
-import { Logout, Settings } from "@mui/icons-material"
-import { Menu } from "@mui/material"
-import { useState } from "react"
-import { useAliveController } from "react-activation"
-import { useDispatch } from "react-redux"
-import { useNavigate } from "react-router-dom"
-import { authActions } from "../../store/auth/auth.slice"
-import UserAvatar from "../UserAvatar"
-import styles from "./style.module.scss"
+import { Logout, Settings } from "@mui/icons-material";
+import { Menu } from "@mui/material";
+import { useState } from "react";
+import { useAliveController } from "react-activation";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { authActions } from "../../store/auth/auth.slice";
+import UserAvatar from "../UserAvatar";
+import styles from "./style.module.scss";
 
 const ProfilePanel = () => {
-  const [anchorEl, setAnchorEl] = useState(null)
-  const menuVisible = Boolean(anchorEl)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const { clear } = useAliveController()
+  const [anchorEl, setAnchorEl] = useState(null);
+  const menuVisible = Boolean(anchorEl);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { clear } = useAliveController();
 
   const openMenu = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const closeMenu = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   const logoutClickHandler = () => {
-    dispatch(authActions.logout())
-    closeMenu()
-  }
+    dispatch(authActions.logout());
+    closeMenu();
+  };
 
   return (
     <div>
@@ -48,7 +48,9 @@ const ProfilePanel = () => {
         <div className={styles.scrollBlocksss}>
           <div
             className={styles.menuItem}
-            // onClick={() => navigate("/settings/profile")}
+            onClick={() => {
+              navigate(`/settings/auth/matrix/profile/crossed`);
+            }}
           >
             <Settings className={styles.dragIcon} />
 
@@ -63,7 +65,7 @@ const ProfilePanel = () => {
         </div>
       </Menu>
     </div>
-  )
-}
+  );
+};
 
-export default ProfilePanel
+export default ProfilePanel;

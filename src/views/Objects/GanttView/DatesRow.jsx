@@ -1,51 +1,69 @@
-
 import { format } from "date-fns";
 import { useMemo } from "react";
-import styles from "./style.module.scss"
+import {
+  calculateGantCalendarMonths,
+  calculateGantCalendarWeeks,
+  calculateGantCalendarYears,
+} from "../../../utils/calculateGantCalendar";
+import styles from "./style.module.scss";
 
-const DatesRow = ({ datesList }) => {
+const DatesRow = ({ datesList, tabs, period }) => {
+  const blocksCount = useMemo(() => {
+    return tabs.reduce((acc, cur) => acc + cur.list.length, 0);
+  }, [tabs]);
 
   const computedDatesList = useMemo(() => {
+    return period === "years"
+      ? calculateGantCalendarYears(datesList)
+      : period === "months"
+      ? calculateGantCalendarMonths(datesList)
+      : calculateGantCalendarWeeks(datesList);
+  }, [datesList, period]);
 
-    const result = {}
-    datesList.forEach(date => {
+  const isWeekend = (date) => {
+    return new Date(date).getDay() === 0 || new Date(date).getDay() === 6;
+  };
 
-      const month = format(date, 'MMMM yyyy')
+  return (
+    <div className={styles.datesRow}>
+      <div className={styles.mockBlock} />
 
-      const day = format(date, 'dd')
-
-      if(result[month]) result[month].days.push(day)
-      else result[month] = {
-        month,
-        days: [day]
-      }
-    })
-    
-    return Object.values(result)
-  }, [datesList])
-
-  console.log('computedDatesList --->', computedDatesList)
-
-
-  return ( <div className={styles.datesRow}>
-
-    <div className={styles.mockBlock} />
-
-    {
-      computedDatesList.map(({ month, days}) => (
-        <div className={styles.dateBlock} >
-          <div className={styles.monthBlock} ><span className={styles.monthText} >{ month }</span></div>
+      {computedDatesList.map((dateItem) => (
+        <div className={styles.dateBlock}>
+          <div className={styles.monthBlock}>
+            <span className={styles.monthText}>{dateItem[0]}</span>
+          </div>
 
           <div className={styles.daysRow}>
-            {
-              days?.map(day => <div className={styles.dayBlock} >{ day }</div> )
-            }
+            {dateItem[1]?.map((date) => (
+              <div
+                className={`${styles.dayBlock} }`}
+                style={{
+                  width: "160px",
+                  backgroundColor: isWeekend(date) ? "#ffccbb" : "",
+                }}
+              >
+                <div
+                  className={`${
+                    date.toDateString() === new Date().toDateString()
+                      ? styles.today
+                      : ""
+                  }`}
+                >
+                  <div
+                    className={styles.line}
+                    blocksCount={"100"}
+                    style={{ height: `${blocksCount * 48}px` }}
+                  ></div>
+                </div>
+                <div>{format(date, period === "years" ? "MMMM" : "dd")}</div>
+              </div>
+            ))}
           </div>
         </div>
-      ))
-    }
+      ))}
+    </div>
+  );
+};
 
-  </div> );
-}
- 
 export default DatesRow;

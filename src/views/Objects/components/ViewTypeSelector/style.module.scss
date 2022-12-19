@@ -8,7 +8,7 @@
   // border: 1px solid #D5DADD;
 
   .element {
-    width: 40px;
+    width: max-content;
     height: 48px;
     min-width: 32px;
     // background: #fff;
@@ -18,7 +18,7 @@
     justify-content: center;
     color: #6E8BB7;
     cursor: pointer;
-
+    padding: 0 10px;
     &.active {
       color: colors.$primary;
       background-color: #fff;
@@ -27,9 +27,37 @@
 
     }
 
+    .icon{
+      margin-right: 6px;
+    }
+
+    span{
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 24px;
+      letter-spacing: 0px;
+    }
+
     &:hover .icon {
       transform: scale(1.2);
       // border: 1px solid #D5DADD;
+    }
+
+    button{
+      border: none;
+      margin-left: 5px;
+      background: none;
+      color: #0E73F6;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:hover{
+        background-color: #E5E9EB;
+        cursor: pointer;
+      }
     }
   }
 }
@@ -38,4 +66,31 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.viewTypes{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 12px;
+  button{
+    background-color: #fff;
+    border: 0;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 24px;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    svg{
+      margin-right: 8px;
+      color: #6E8BB7;
+    }
+
+    &:hover{
+      background-color: #F6F8F9;
+    }
+  }
 }

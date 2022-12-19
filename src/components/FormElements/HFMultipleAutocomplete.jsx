@@ -44,13 +44,13 @@ const HFMultipleAutocomplete = ({
   width = "100%",
   disabledHelperText,
   placeholder,
+  tabIndex,
   required = false,
   onChange = () => {},
   field,
   rules = {},
   defaultValue = "",
   disabled,
-  ...props
 }) => {
   const classes = useStyles();
   const options = field.attributes?.options ?? [];
@@ -80,6 +80,7 @@ const HFMultipleAutocomplete = ({
             placeholder={placeholder}
             width={width}
             label={label}
+            // tabIndex={tabIndex}
             hasColor={hasColor}
             isFormEdit={isFormEdit}
             hasIcon={hasIcon}
@@ -102,6 +103,7 @@ const AutoCompleteElement = ({
   width,
   label,
   hasColor,
+  // tabIndex,
   hasIcon,
   classes,
   placeholder,
@@ -187,7 +189,9 @@ const AutoCompleteElement = ({
           <TextField
             {...params}
             placeholder={computedValue.length ? "" : placeholder}
+            // autoFocus={tabIndex === 1}
             InputProps={{
+              // inputProps: { tabIndex },
               ...params.InputProps,
               classes: {
                 input: isBlackBg ? classes.input : "",

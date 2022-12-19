@@ -11,6 +11,12 @@ import LogoDisplay from "../LogoDisplay";
 import TableTag from "../TableTag";
 import DownloadIcon from "@mui/icons-material/Download";
 
+const capitalizeFirstLowercaseRest = (str) => {
+  if (typeof str === "string") {
+    return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
+  } else return str;
+};
+
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
@@ -23,7 +29,6 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     return result;
   }, [row, field]);
-
   if (field.render) {
     return field.render(row);
   }

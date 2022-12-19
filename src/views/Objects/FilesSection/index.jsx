@@ -1,21 +1,21 @@
-import { Download } from "@mui/icons-material"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { useMutation } from "react-query"
-import { useParams } from "react-router-dom"
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
+import { Download } from "@mui/icons-material";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useMutation } from "react-query";
+import { useParams } from "react-router-dom";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable"
-import FRow from "../../../components/FormElements/FRow"
-import TableRowButton from "../../../components/TableRowButton"
-import useDownloader from "../../../hooks/useDownloader"
-import useObjectsQuery from "../../../queries/hooks/useObjectsQuery"
-import constructorObjectService from "../../../services/constructorObjectService"
-import objectDocumentService from "../../../services/objectDocumentService"
-import { generateID } from "../../../utils/generateID"
-import { listToMap } from "../../../utils/listToMap"
-import { pageToOffset } from "../../../utils/pageToOffset"
-import { Filter } from "../components/FilterGenerator"
-import styles from "./style.module.scss"
+import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
+import FRow from "../../../components/FormElements/FRow";
+import TableRowButton from "../../../components/TableRowButton";
+import useDownloader from "../../../hooks/useDownloader";
+import useObjectsQuery from "../../../queries/hooks/useObjectsQuery";
+import constructorObjectService from "../../../services/constructorObjectService";
+import objectDocumentService from "../../../services/objectDocumentService";
+import { generateID } from "../../../utils/generateID";
+import { listToMap } from "../../../utils/listToMap";
+import { pageToOffset } from "../../../utils/pageToOffset";
+import { Filter } from "../components/FilterGenerator";
+import styles from "./style.module.scss";
 
 const FilesSection = ({
   setFormValue,
@@ -29,19 +29,19 @@ const FilesSection = ({
   createFormVisible,
   setCreateFormVisible,
 }) => {
-  const inputRef = useRef()
-  const { tableSlug, id: objectId } = useParams()
-  const { download } = useDownloader()
-  const [limit, setLimit] = useState(10)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [filters, setFilters] = useState({})
+  const inputRef = useRef();
+  const { tableSlug, id: objectId } = useParams();
+  const { download } = useDownloader();
+  const [limit, setLimit] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({});
 
   const filterChangeHandler = (value, name) => {
     setFilters({
       ...filters,
       [name]: value ?? undefined,
-    })
-  }
+    });
+  };
 
   const {
     query: {
@@ -65,69 +65,69 @@ const FilesSection = ({
     },
     queryParams: {
       select: ({ data }) => {
-        const tableData = objectId ? data.response : []
-        const pageCount = isNaN(data.count) ? 1 : Math.ceil(data.count / limit)
+        const tableData = objectId ? data.response : [];
+        const pageCount = isNaN(data.count) ? 1 : Math.ceil(data.count / limit);
 
-        const fieldsMap = listToMap(data.fields)
+        const fieldsMap = listToMap(data.fields);
 
         const columns = relation.columns
           ?.map((id) => fieldsMap[id])
-          ?.filter((el) => el)
+          ?.filter((el) => el);
         const quickFilters = relation.quick_filters
           ?.map(({ field_id }) => fieldsMap[field_id])
-          ?.filter((el) => el)
+          ?.filter((el) => el);
         return {
           tableData,
           pageCount,
           columns,
           quickFilters,
-        }
+        };
       },
     },
-  })
+  });
 
   const { mutate: create, isLoading: createLoader } = useMutation(
     (e) => {
-      const file = e.target.files[0]
+      const file = e.target.files[0];
 
-      const data = new FormData()
-      data.append("file", file)
+      const data = new FormData();
+      data.append("file", file);
 
-      return objectDocumentService.upload(tableSlug, objectId, data)
+      return objectDocumentService.upload(tableSlug, objectId, data);
     },
     {
       onSuccess: () => {
-        refetch()
+        refetch();
       },
     }
-  )
+  );
 
   const { mutateAsync: updateMutation } = useMutation(
     (values) => {
-      return constructorObjectService.update("file", { data: values })
+      return constructorObjectService.update("file", { data: values });
     },
     {
       onSuccess: () => {
-        refetch()
+        refetch();
       },
     }
-  )
+  );
 
   const { mutate: deleteMutation, isLoading: deleteLoading } = useMutation(
     (row) => {
-      return constructorObjectService.delete("file", row.guid)
+      return constructorObjectService.delete("file", row.guid);
     },
     {
       onSuccess: () => refetch(),
     }
-  )
+  );
 
   const onFormSubmit = (values) => {
-    return updateMutation(values)
-  }
+    return updateMutation(values);
+  };
 
   const computedColumns = useMemo(() => {
-    if (!columns?.length) return []
+    if (!columns?.length) return [];
 
     return [
       ...columns,
@@ -144,8 +144,8 @@ const FilesSection = ({
           </RectangleIconButton>
         ),
       },
-    ]
-  }, [columns])
+    ];
+  }, [columns]);
 
   // const columns = [
   //   {
@@ -204,9 +204,9 @@ const FilesSection = ({
     if (tableData?.length) {
       reset({
         multi: tableData.map((i) => i),
-      })
+      });
     }
-  }, [tableData, reset])
+  }, [tableData, reset]);
 
   return (
     <div className={styles.relationTable}>
@@ -269,7 +269,7 @@ const FilesSection = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FilesSection
+export default FilesSection;

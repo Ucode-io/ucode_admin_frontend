@@ -1,7 +1,3 @@
-
-
-
-
 .gantt {
   overflow: auto;
   background-color: #fff;
@@ -12,16 +8,13 @@
 .datesRow {
   display: flex;
 
-
   .dateBlock {
-
     .monthBlock {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 20px;
       height: 32px;
-      border: 1px solid #E5E9EB;
+      border: 1px solid #e5e9eb;
       border-left: none;
       margin: -1px -1px 0 0;
     }
@@ -31,54 +24,69 @@
     }
 
     .dayBlock {
+      transition: all 0.5s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       height: 32px;
-      min-width: 160px;
-      border: 1px solid #E5E9EB;
+      border: 1px solid #e5e9eb;
       margin: -1px -1px 0 0;
-      
-
       &:first-of-type {
         border-left: none;
+      }
+    }
+    & .today {
+      position: relative;
+      & .line {
+        width: 1px;
+        background-color: red;
+        position: absolute;
+        top: 23px;
+        left: 5px;
+        z-index: 2;
+      }
+      &::after {
+        content: "Today";
+        position: absolute;
+        left: -18px;
+        top: 7px;
+        background-color: red;
+        padding: 0 5px;
+        color: #fff;
+        border-radius: 2px;
       }
     }
   }
 
   .mockBlock {
-    min-width: 200px;
     width: 200px;
-    border-right: 1px solid #E5E9EB;
-    border-bottom: 1px solid #E5E9EB;
-
+    min-width: 200px;
+    position: sticky;
+    left: 0;
+    background-color: #fff;
+    border-right: 1px solid #e5e9eb;
+    border-bottom: 1px solid #e5e9eb;
   }
-
-  // .dateBlock {
-  //   height: 32px;
-  //   min-width: 160px;
-  //   width: 160px;
-  //   border-width: 0px 1px 1px 0px;
-  //   border-style: solid;
-  //   border-color: #E5E9EB;
-  //   display: flex;
-  //   align-items: center;
-  //   justify-content: center;
-  //   margin: -1px -1px 0 0;      
-
-
-  //   &.mockBlock {
-  //     min-width: 200px;
-  //     width: 200px;
-  //   }
-  // }
 }
-
 
 .row {
   display: flex;
-  
-
+  position: relative;
+  z-index: 1;
+  .ganttFrame {
+    position: absolute;
+    text-align: center;
+    font-weight: 600;
+    z-index: 0;
+    border-radius: 2px;
+    height: 100%;
+    background: #e2f4e6;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+      background-color: #aad4b3;
+    }
+  }
   .tabBlock {
     min-width: 200px;
     width: 200px;
@@ -86,20 +94,19 @@
     align-items: center;
     min-height: 50px;
     padding: 5px 10px;
-    margin: -1px -1px 0 0;      
-    border: 1px solid #E5E9EB;
+    margin: -1px -1px 0 0;
+    border: 1px solid #e5e9eb;
     border-left: none;
     position: sticky;
     left: 0;
     background-color: #fff;
     // border-right: 1px solid #E5E9EB;
-    
+
     &.parent {
       font-weight: bold;
     }
   }
 
-  
   .dataBlock {
     min-width: 160px;
     width: 160px;
@@ -108,12 +115,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 5px 10px;
-    border: 1px solid #E5E9EB;
+    border: 1px solid #e5e9eb;
     margin: -1px -1px 0 0;
+    cursor: pointer;
+
+    svg {
+      opacity: 0;
+    }
+
+    &:hover svg {
+      opacity: 1;
+    }
 
     &.hasData {
-      background-color: #E2F4E6;
+      background-color: #e2f4e6;
 
       &:hover {
         background-color: #aad4b3;
@@ -125,37 +140,27 @@
     }
 
     &:hover {
-      
       .addButton {
         display: inline-flex;
       }
     }
   }
-
 }
 
-
-
-
-
 // ============ DRAWER ============
-
 
 .verticalDrawer {
   width: 440px;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  
-
 
   .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 16px;
-    box-shadow: inset 0px -1px 0px #EEEEEE;
-
+    box-shadow: inset 0px -1px 0px #eeeeee;
 
     .title {
       font-size: 24px;
@@ -171,7 +176,6 @@
     padding: 16px;
     flex: 1;
     overflow: auto;
-  
   }
 
   .footer {
@@ -181,13 +185,16 @@
       width: 100%;
     }
   }
-
-  
 }
+
 .linkIcon {
-  transition-duration: .3s;
+  transition-duration: 0.3s;
   cursor: pointer;
   line-height: 18px;
   vertical-align: middle;
   margin-right: 2px;
+}
+
+.title {
+  padding: 12px;
 }

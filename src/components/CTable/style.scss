@@ -17,6 +17,10 @@
       td {
         border-bottom: 1px solid #e5e9eb;
         border-right: 1px solid #e5e9eb;
+        p,
+        span {
+          overflow: hidden;
+        }
       }
 
       // tr td:first-child {

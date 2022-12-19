@@ -1,66 +1,67 @@
-import { Close } from "@mui/icons-material"
-import { CircularProgress, Divider, IconButton } from "@mui/material"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { useQuery, useQueryClient } from "react-query"
-import { useParams } from "react-router-dom"
-import PrimaryButton from "../../../components/Buttons/PrimaryButton"
-import FormElementGenerator from "../../../components/ElementGenerators/FormElementGenerator"
-import HFMultipleCalendar from "../../../components/FormElements/HFMultipleCalendar"
-import RingLoaderWithWrapper from "../../../components/Loaders/RingLoader/RingLoaderWithWrapper"
-import constructorObjectService from "../../../services/constructorObjectService"
-import constructorSectionService from "../../../services/constructorSectionService"
-import { sortSections } from "../../../utils/sectionsOrderNumber"
-import styles from "./style.module.scss"
+import { Close } from "@mui/icons-material";
+import { CircularProgress, Divider, IconButton } from "@mui/material";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useQuery, useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+import PrimaryButton from "../../../components/Buttons/PrimaryButton";
+import FormElementGenerator from "../../../components/ElementGenerators/FormElementGenerator";
+import HFMultipleCalendar from "../../../components/FormElements/HFMultipleCalendar";
+import RingLoaderWithWrapper from "../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
+import constructorObjectService from "../../../services/constructorObjectService";
+import constructorSectionService from "../../../services/constructorSectionService";
+import { sortSections } from "../../../utils/sectionsOrderNumber";
+import styles from "./style.module.scss";
 
 const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
-  const { tableSlug } = useParams()
-  const [btnLoader, setBtnLoader] = useState(false)
-  const queryClient = useQueryClient()
+  const { tableSlug } = useParams();
+  const [btnLoader, setBtnLoader] = useState(false);
+  const queryClient = useQueryClient();
 
   const { isLoading, data: sections = [] } = useQuery(
     ["GET_SECTIONS", tableSlug],
     () => {
       return constructorSectionService.getList({
         table_slug: tableSlug,
-      })
+      });
     },
     {
       select: ({ sections }) => sortSections(sections),
     }
-  )
+  );
 
   const { handleSubmit, control } = useForm({
     defaultValues: drawerState,
-  })
+  });
 
   const onSubmit = async (values) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
 
     try {
-      const computedData = values?.multiple_dates?.map(date => ({
+      const computedData = values?.multiple_dates?.map((date) => ({
         ...values,
-        [view.calendar_from_slug]: date
-      }))
-  
-      const updatedFields = [tab.slug, view.calendar_from_slug]
+        [view.calendar_from_slug]: date,
+      }));
+
+      const updatedFields = [tab.slug, view.calendar_from_slug];
 
       const data = {
         data: { objects: computedData },
         updated_fields: updatedFields,
-      }
+      };
 
-      await constructorObjectService.updateMultiple(tableSlug, data)
+      await constructorObjectService.updateMultiple(tableSlug, data);
 
-      onClose()
+      onClose();
 
-      queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug }])
-
+      queryClient.refetchQueries([
+        "GET_OBJECTS_LIST_WITH_RELATIONS",
+        { tableSlug },
+      ]);
     } catch (error) {
-      setBtnLoader(false)
+      setBtnLoader(false);
     }
-    
-  }
+  };
 
   return (
     <>
@@ -104,7 +105,7 @@ const MultipleInserForm = ({ view, setView, drawerState, onClose, tab }) => {
         </PrimaryButton>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default MultipleInserForm
+export default MultipleInserForm;

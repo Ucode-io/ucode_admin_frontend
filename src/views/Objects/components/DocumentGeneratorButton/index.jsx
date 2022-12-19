@@ -8,7 +8,7 @@ import RectangleIconButton from "../../../../components/Buttons/RectangleIconBut
 import constructorObjectService from "../../../../services/constructorObjectService";
 import { generateGUID } from "../../../../utils/generateID";
 import styles from "./style.module.scss";
-
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 const DocumentGeneratorButton = () => {
   const navigate = useNavigate();
   const { appId, tableSlug, id: objectId } = useParams();
@@ -85,7 +85,7 @@ const DocumentGeneratorButton = () => {
     <>
       <Tooltip title="Generate document">
         <RectangleIconButton color="white" onClick={openMenu}>
-          <FileOpen />
+          <UploadFileIcon color="primary"/>
         </RectangleIconButton>
       </Tooltip>
 

@@ -25,7 +25,7 @@ export const PinIcon = ({ pinned }) =>
         fill="#0E73F6"
       />
     </svg>
-  )
+  );
 
 export const ResizeIcon = () => (
   <svg
@@ -42,7 +42,7 @@ export const ResizeIcon = () => (
       fill="#6E8BB7"
     />
   </svg>
-)
+);
 
 export const ChevronDownIcon = () => (
   <svg
@@ -59,7 +59,7 @@ export const ChevronDownIcon = () => (
       fill="#252C32"
     />
   </svg>
-)
+);
 
 export const CrossPerson = () => (
   <svg
@@ -109,7 +109,7 @@ export const CrossPerson = () => (
       stroke="#E5E9EB"
     />
   </svg>
-)
+);
 
 export const TwoUserIcon = () => (
   <svg
@@ -162,7 +162,7 @@ export const TwoUserIcon = () => (
       </clipPath>
     </defs>
   </svg>
-)
+);
 
 export const CheckIcon = () => (
   <svg
@@ -180,7 +180,7 @@ export const CheckIcon = () => (
       strokeLinejoin="round"
     />
   </svg>
-)
+);
 
 export const CrossIcon = () => (
   <svg
@@ -205,7 +205,7 @@ export const CrossIcon = () => (
       strokeLinejoin="round"
     />
   </svg>
-)
+);
 
 export const PlusIcon = () => (
   <svg
@@ -230,7 +230,7 @@ export const PlusIcon = () => (
       strokeLinejoin="round"
     />
   </svg>
-)
+);
 
 export const EditIcon = () => (
   <svg
@@ -245,7 +245,7 @@ export const EditIcon = () => (
       fill="#6E8BB7"
     />
   </svg>
-)
+);
 export const FilterIcon = () => (
   <svg
     width="16"
@@ -267,7 +267,7 @@ export const FilterIcon = () => (
       strokeLinejoin="round"
     />
   </svg>
-)
+);
 
 export const FormulaIcon = ({ style }) => (
   <svg
@@ -287,7 +287,7 @@ export const FormulaIcon = ({ style }) => (
       fill="#5B6871"
     />
   </svg>
-)
+);
 
 export const XIcon = ({ style }) => (
   <svg
@@ -310,7 +310,7 @@ export const XIcon = ({ style }) => (
       </clipPath>
     </defs>
   </svg>
-)
+);
 
 export const PinOutlined = () => (
   <svg
@@ -325,7 +325,7 @@ export const PinOutlined = () => (
       fill="#6E8BB7"
     />
   </svg>
-)
+);
 
 export const PinFilled = () => (
   <svg
@@ -340,7 +340,7 @@ export const PinFilled = () => (
       fill="#0E73F6"
     />
   </svg>
-)
+);
 
 export const FieldPermissionIcon = () => (
   <svg
@@ -364,7 +364,7 @@ export const FieldPermissionIcon = () => (
       stroke="white"
     />
   </svg>
-)
+);
 export const CloseIcon = () => (
   <svg
     width="16"
@@ -388,7 +388,7 @@ export const CloseIcon = () => (
       stroke-linejoin="round"
     />
   </svg>
-)
+);
 
 export const UploadIcon = () => (
   <svg
@@ -405,7 +405,7 @@ export const UploadIcon = () => (
       fill="#B0BABF"
     />
   </svg>
-)
+);
 
 export const PointerIcon = () => (
   <svg
@@ -423,4 +423,19 @@ export const PointerIcon = () => (
       stroke-linejoin="round"
     />
   </svg>
-)
+);
+
+export const SearchIcon = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M19.4697 20.5303C19.7626 20.8232 20.2374 20.8232 20.5303 20.5303C20.8232 20.2374 20.8232 19.7626 20.5303 19.4697L19.4697 20.5303ZM18.9303 17.8697C18.6375 17.5768 18.1626 17.5768 17.8697 17.8697C17.5768 18.1626 17.5768 18.6375 17.8697 18.9303L18.9303 17.8697ZM4.75 11.6C4.75 7.81685 7.81685 4.75 11.6 4.75V3.25C6.98842 3.25 3.25 6.98843 3.25 11.6H4.75ZM11.6 4.75C15.3831 4.75 18.45 7.81685 18.45 11.6H19.95C19.95 6.98843 16.2116 3.25 11.6 3.25V4.75ZM18.45 11.6C18.45 15.3832 15.3831 18.45 11.6 18.45V19.95C16.2116 19.95 19.95 16.2116 19.95 11.6H18.45ZM11.6 18.45C7.81685 18.45 4.75 15.3832 4.75 11.6H3.25C3.25 16.2116 6.98842 19.95 11.6 19.95V18.45ZM20.5303 19.4697L18.9303 17.8697L17.8697 18.9303L19.4697 20.5303L20.5303 19.4697Z"
+      fill="#5B6871"
+    />
+  </svg>
+);

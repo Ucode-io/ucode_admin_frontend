@@ -9,13 +9,11 @@ import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
 import ViewsList from "./ViewsList";
 
-const ViewSettings = ({ closeModal, setIsChanged }) => {
+const ViewSettings = ({ closeModal, setIsChanged, viewData, typeNewView }) => {
   const { tableSlug, appId } = useParams();
-
-  const [selectedView, setSelectedView] = useState(null);
+  const [selectedView, setSelectedView] = useState(viewData);
 
   const closeForm = () => setSelectedView(null);
-
   const {
     data: { views, columns, relationColumns } = {
       views: [],
@@ -59,15 +57,16 @@ const ViewSettings = ({ closeModal, setIsChanged }) => {
         <RingLoaderWithWrapper />
       ) : (
         <div className={styles.body}>
-          <ViewsList
+          {/* <ViewsList
             views={views}
             selectedView={selectedView}
             setSelectedView={setSelectedView}
-          />
+          /> */}
 
           {selectedView && (
             <ViewForm
               initialValues={selectedView}
+              typeNewView={typeNewView}
               closeForm={closeForm}
               refetchViews={refetchViews}
               closeModal={closeModal}

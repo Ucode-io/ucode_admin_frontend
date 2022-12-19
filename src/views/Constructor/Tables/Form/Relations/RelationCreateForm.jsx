@@ -53,12 +53,13 @@ const RelationCreateForm = ({
     if (!table_from) return null;
     constructorObjectService.getList(table_from, { data: {} }).then((res) => {
       console.log("res", res);
-      setFieldOptions(
-        prev => ([...prev, ...res?.data?.fields?.map((item) => ({
+      setFieldOptions((prev) => [
+        ...prev,
+        ...res?.data?.fields?.map((item) => ({
           label: item?.label,
           value: item?.slug,
-        }))])
-      );
+        })),
+      ]);
     });
   };
 
@@ -81,7 +82,7 @@ const RelationCreateForm = ({
   );
 
   useEffect(() => {
-    if (type === 'Many2One') {
+    if (type === "Many2One") {
       getFieldOptions(values?.table_from);
     } else {
       getFieldOptions(values?.table_from);
@@ -129,11 +130,11 @@ const RelationCreateForm = ({
     onSubmit({
       // ...values,
       ...data,
-      summaries: data?.summaries?.filter(sum => sum?.field_name?.length > 0),
+      summaries: data?.summaries?.filter((sum) => sum?.field_name?.length > 0),
       table_to: isRecursiveRelation ? values.table_from : values.table_to,
     });
     setOpenSumCreate(false);
-    setFieldOptions([])
+    setFieldOptions([]);
   };
 
   useEffect(() => {
@@ -154,7 +155,7 @@ const RelationCreateForm = ({
       onClose={() => {
         closeDrawer();
         setOpenSumCreate(false);
-        setFieldOptions([])
+        setFieldOptions([]);
       }}
       open={open}
       onSaveButtonClick={handleSubmit(submitHandler)}
@@ -261,9 +262,13 @@ const RelationCreateForm = ({
                 Создать новый
               </button>
             ) : (
-              <button type="button" onClick={() => {
-                setOpenSumCreate(false)
-              }} style={{borderColor: 'red'}}>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenSumCreate(false);
+                }}
+                style={{ borderColor: "red" }}
+              >
                 Отмена
               </button>
             )}

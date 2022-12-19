@@ -59,8 +59,6 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
   };
 
   const onSubmit = (values) => {
-    console.log("VALUES ==>", values);
-
     setBtnLoader(true);
     const computedData = {};
     values?.fields?.forEach((field) => {
@@ -110,8 +108,6 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
     );
   };
 
-  console.log("fields", fields);
-  console.log("excelFieldOptions", excelFieldOptions);
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_tabs_header}>

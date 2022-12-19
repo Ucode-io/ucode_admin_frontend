@@ -57,6 +57,9 @@ const ObjectDataTable = ({
   isChecked,
   formVisible,
   summaries,
+  relationAction,
+  onChecked,
+  defaultLimit,
 }) => {
   const location = useLocation();
   const [showCheckbox, setShowCheckbox] = useState(false);
@@ -141,7 +144,7 @@ const ObjectDataTable = ({
     };
 
     createResizableTable(document.getElementById("resizeMe"));
-  }, []);
+  }, [data]);
 
   const handleAutoSize = (colID, colIdx) => {
     dispatch(
@@ -216,6 +219,7 @@ const ObjectDataTable = ({
       paginationExtraButton={paginationExtraButton}
       limit={limit}
       setLimit={setLimit}
+      defaultLimit={defaultLimit}
     >
       <CTableHead>
         {formVisible && selected.length > 0 && (
@@ -296,7 +300,7 @@ const ObjectDataTable = ({
                 >
                   {column.label}
                 </span>
-                {!disableFilters && (
+                {disableFilters && (
                   <FilterGenerator
                     field={column}
                     name={column.slug}
@@ -374,6 +378,8 @@ const ObjectDataTable = ({
             calculateWidth={calculateWidth}
             tableSlug={tableSlug}
             onDeleteClick={onDeleteClick}
+            relationAction={relationAction}
+            onChecked={onChecked}
           />
         ))}
         {!!summaries?.length && (

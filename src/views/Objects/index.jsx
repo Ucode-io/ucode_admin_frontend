@@ -1,5 +1,5 @@
-import { Fragment, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Fragment, useEffect, useState } from "react";
+import { useLocation, useParams, useSearchParams } from "react-router-dom";
 import { TabPanel, Tabs } from "react-tabs";
 import ViewsWithGroups from "./ViewsWithGroups";
 import BoardView from "./BoardView";
@@ -9,14 +9,17 @@ import PageFallback from "../../components/PageFallback";
 import constructorObjectService from "../../services/constructorObjectService";
 import { listToMap } from "../../utils/listToMap";
 import FiltersBlock from "../../components/FiltersBlock";
-import GanttView from "./GanttView";
+import CalendarHourView from "./CalendarHourView";
 import ViewTabSelector from "./components/ViewTypeSelector";
-
+import styles from "./style.module.scss";
 import DocView from "./DocView";
+import GanttView from "./GanttView";
 
 const ObjectsPage = () => {
   const { tableSlug, appId } = useParams();
   const { state } = useLocation();
+  const [searchParams] = useSearchParams();
+  const queryTab = searchParams.get("view");
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
@@ -45,11 +48,14 @@ const ObjectsPage = () => {
       },
     }
   );
+  useEffect(() => {
+    queryTab
+      ? setSelectedTabIndex(parseInt(queryTab - 1))
+      : setSelectedTabIndex(0);
+  }, [queryTab]);
 
   const setViews = () => {};
-
   if (isLoading) return <PageFallback />;
-
   return (
     <>
       <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
@@ -58,40 +64,59 @@ const ObjectsPage = () => {
             return (
               <TabPanel key={view.id}>
                 {view.type === "BOARD" ? (
-                  <BoardView
-                    view={view}
-                    setViews={setViews}
-                    selectedTabIndex={selectedTabIndex}
-                    setSelectedTabIndex={setSelectedTabIndex}
-                    views={views}
-                    fieldsMap={fieldsMap}
-                  />
+                  <>
+                    <BoardView
+                      view={view}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                    />
+                  </>
                 ) : view.type === "CALENDAR" ? (
-                  <CalendarView
-                    view={view}
-                    setViews={setViews}
-                    selectedTabIndex={selectedTabIndex}
-                    setSelectedTabIndex={setSelectedTabIndex}
-                    views={views}
-                    fieldsMap={fieldsMap}
-                  />
+                  <>
+                    <CalendarView
+                      view={view}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                    />
+                  </>
+                ) : view.type === "CALENDAR HOUR" ? (
+                  <>
+                    <CalendarHourView
+                      view={view}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                    />
+                  </>
                 ) : view.type === "GANTT" ? (
-                  <GanttView
-                    view={view}
-                    setViews={setViews}
-                    selectedTabIndex={selectedTabIndex}
-                    setSelectedTabIndex={setSelectedTabIndex}
-                    views={views}
-                    fieldsMap={fieldsMap}
-                  />
+                  <>
+                    <GanttView
+                      view={view}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                    />
+                  </>
                 ) : (
-                  <ViewsWithGroups
-                    selectedTabIndex={selectedTabIndex}
-                    setSelectedTabIndex={setSelectedTabIndex}
-                    views={views}
-                    view={view}
-                    fieldsMap={fieldsMap}
-                  />
+                  <>
+                    <ViewsWithGroups
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      view={view}
+                      fieldsMap={fieldsMap}
+                    />
+                  </>
                 )}
               </TabPanel>
             );

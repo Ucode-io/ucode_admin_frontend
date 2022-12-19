@@ -1,12 +1,14 @@
+import { Parser } from "hot-formula-parser";
 import { useEffect, useMemo } from "react";
 import { useWatch } from "react-hook-form";
+import { useSelector } from "react-redux";
+import CHFFormulaField from "../FormElements/CHFFormulaField";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
 import HFDatePicker from "../FormElements/HFDatePicker";
 import HFDateTimePicker from "../FormElements/HFDateTimePicker";
-import HFFileUpload from "../FormElements/HFFileUpload";
+import HFFormulaField from "../FormElements/HFFormulaField";
 import HFIconPicker from "../FormElements/HFIconPicker";
-import HFImageUpload from "../FormElements/HFImageUpload copy";
 import HFMultipleAutocomplete from "../FormElements/HFMultipleAutocomplete";
 import HFNumberField from "../FormElements/HFNumberField";
 import HFSwitch from "../FormElements/HFSwitch";
@@ -14,7 +16,10 @@ import HFTextField from "../FormElements/HFTextField";
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
 import HFTimePicker from "../FormElements/HFTimePicker";
 import CellElementGenerator from "./CellElementGenerator";
+import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import CellRelationFormElement from "./CellRelationFormElement";
+
+const parser = new Parser();
 
 const CellFormElementGenerator = ({
   field,
@@ -30,6 +35,20 @@ const CellFormElementGenerator = ({
   index,
   ...props
 }) => {
+  const userId = useSelector((state) => state.auth.userId);
+  const tables = useSelector((state) => state.auth.tables);
+  let relationTableSlug = "";
+  let objectIdFromJWT = "";
+
+  if (field?.id.includes("#")) {
+    relationTableSlug = field?.id.split("#")[0];
+  }
+
+  tables.forEach((table) => {
+    if (table.table_slug === relationTableSlug) {
+      objectIdFromJWT = table.object_id;
+    }
+  });
   const computedSlug = useMemo(() => {
     return `multi.${index}.${field.slug}`;
   }, [field.slug, index]);
@@ -46,9 +65,22 @@ const CellFormElementGenerator = ({
     );
   }, [field]);
 
+  const defaultValue = useMemo(() => {
+    const defaultValue =
+      field.attributes?.defaultValue ?? field.attributes?.default_values;
+    if (!defaultValue) return undefined;
+    if (field?.attributes?.is_user_id_default === true) return userId;
+    if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
+    if (field.relation_type === "Many2One") return defaultValue[0];
+    if (field.type === "MULTISELECT" || field.id?.includes("#"))
+      return defaultValue;
+    const { error, result } = parser.parse(defaultValue);
+    return error ? undefined : result;
+  }, [field.attributes, field.type, field.id, field.relation_type]);
+
   useEffect(() => {
     if (!row?.[field.slug]) {
-      setFormValue(computedSlug, row?.[field.table_slug]?.guid || "");
+      setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [field, row, setFormValue, computedSlug]);
 
@@ -61,11 +93,6 @@ const CellFormElementGenerator = ({
       );
     }
   }, [changedValue, setFormValue, columns, field, selected]);
-
-  // const defaultValue = useMemo(() => {
-  //   return field.attributes?.defaultValue ?? "";
-  // }, []);
-
 
   switch (field.type) {
     case "LOOKUP":
@@ -80,6 +107,25 @@ const CellFormElementGenerator = ({
           row={row}
           placeholder={field.attributes?.placeholder}
           setFormValue={setFormValue}
+          index={index}
+          defaultValue={defaultValue}
+        />
+      );
+
+    case "LOOKUPS":
+      return (
+        <CellManyToManyRelationElement
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          field={field}
+          row={row}
+          placeholder={field.attributes?.placeholder}
+          setFormValue={setFormValue}
+          index={index}
+          defaultValue={defaultValue}
         />
       );
 
@@ -95,6 +141,7 @@ const CellFormElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           {...props}
+          defaultValue={defaultValue}
         />
       );
 
@@ -110,7 +157,41 @@ const CellFormElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           mask={"(99) 999-99-99"}
+          defaultValue={defaultValue}
           {...props}
+        />
+      );
+
+    case "FORMULA":
+      return (
+        <HFFormulaField
+          disabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          mask={"(99) 999-99-99"}
+          defaultValue={defaultValue}
+          {...props}
+        />
+      );
+    case "FORMULA_FRONTEND":
+      return (
+        <CHFFormulaField
+          setFormValue={setFormValue}
+          control={control}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          name={computedSlug}
+          fieldsList={fields}
+          disabled={!isDisabled}
+          field={field}
+          index={index}
+          {...props}
+          defaultValue={defaultValue}
         />
       );
 
@@ -126,6 +207,7 @@ const CellFormElementGenerator = ({
           options={field?.attributes?.options}
           required={field.required}
           placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
           {...props}
         />
       );
@@ -142,6 +224,7 @@ const CellFormElementGenerator = ({
           field={field}
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
+          defaultValue={defaultValue}
           {...props}
         />
       );
@@ -158,6 +241,7 @@ const CellFormElementGenerator = ({
           width={"100%"}
           required={field.required}
           placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
           {...props}
         />
       );
@@ -173,6 +257,7 @@ const CellFormElementGenerator = ({
           name={computedSlug}
           required={field.required}
           placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
           {...props}
         />
       );
@@ -187,6 +272,7 @@ const CellFormElementGenerator = ({
           name={computedSlug}
           required={field.required}
           placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
           {...props}
         />
       );
@@ -202,6 +288,7 @@ const CellFormElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
+          defaultValue={defaultValue}
           {...props}
         />
       );
@@ -215,6 +302,7 @@ const CellFormElementGenerator = ({
           control={control}
           name={computedSlug}
           required={field.required}
+          defaultValue={defaultValue}
           {...props}
         />
       );
@@ -228,6 +316,7 @@ const CellFormElementGenerator = ({
           control={control}
           name={computedSlug}
           required={field.required}
+          defaultValue={defaultValue}
           {...props}
         />
       );
@@ -249,35 +338,22 @@ const CellFormElementGenerator = ({
           fullWidth
           required={field.required}
           placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
           {...props}
         />
       );
 
-      case "PHOTO":
-      return (
-     
-          <HFImageUpload
-            control={control}
-            name={computedSlug}
-            required={field.required}
-            {...props}
-          />
-      
-      )
-
-      case "FILE":
-        return (
-          
-            <HFFileUpload
-              control={control}
-              name={computedSlug}
-              required={field.required}
-              // defaultValue={defaultValue}
-              disabled={isDisabled}
-              {...props}
-            />
-          
-        )
+    // case "PHOTO":
+    //   return (
+    //     <FRow label={field.label} required={field.required}>
+    //       <HFImageUpload
+    //         control={control}
+    //         name={computedSlug}
+    //         required={field.required}
+    //         {...props}
+    //       />
+    //     </FRow>
+    //   )
 
     case "ICON":
       return (
@@ -286,6 +362,7 @@ const CellFormElementGenerator = ({
           control={control}
           name={computedSlug}
           required={field.required}
+          defaultValue={defaultValue}
           {...props}
         />
       );

@@ -294,6 +294,9 @@ const FieldSettings = ({
                 placeholder="Type"
               />
             </FRow>
+            <FRow label="Automatic">
+              <HFSwitch control={control} name="automatic" label="automatic" />
+            </FRow>
           </div>
         </form>
 

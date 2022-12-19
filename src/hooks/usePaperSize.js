@@ -20,7 +20,7 @@ const paperSizes = [
   },
   {
     name: 'Сash receipt',
-    width: 226,
+    width: 220,
     height: 1000
   }
 ]

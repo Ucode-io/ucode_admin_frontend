@@ -1,5 +1,5 @@
-import { TextField } from "@mui/material"
-import { Controller } from "react-hook-form"
+import { TextField } from "@mui/material";
+import { Controller, useWatch } from "react-hook-form";
 
 const HFNumberField = ({
   control,
@@ -12,9 +12,15 @@ const HFNumberField = ({
   withTrim = false,
   rules = {},
   defaultValue = "",
+    tabIndex,
   disabled,
   ...props
 }) => {
+  const value = useWatch({
+    control,
+    // name,
+  });
+
   return (
     <Controller
       control={control}
@@ -29,17 +35,19 @@ const HFNumberField = ({
           size="small"
           value={value}
           onChange={(e) => {
-            const val = e.target.value
+            const val = e.target.value;
 
-            if (!val) onChange("")
-            else onChange(!isNaN(Number(val)) ? Number(val) : "")
+            if (!val) onChange("");
+            else onChange(!isNaN(Number(val)) ? Number(val) : "");
           }}
           className={`${isFormEdit ? "custom_textfield" : ""}`}
           name={name}
           error={error}
           fullWidth={fullWidth}
           helperText={!disabledHelperText && error?.message}
+          autoFocus={tabIndex === 1}
           InputProps={{
+            inputProps: { tabIndex },
             readOnly: disabled,
             style: disabled
               ? {
@@ -54,7 +62,7 @@ const HFNumberField = ({
         />
       )}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFNumberField
+export default HFNumberField;

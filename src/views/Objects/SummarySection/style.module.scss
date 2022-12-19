@@ -8,15 +8,15 @@
   overflow-y: hidden;
   display: flex;
   // margin: 8px 0;
-  padding: 5px;
+  padding: 2px;
 
   &::-webkit-scrollbar {
     display: none;
   }
 
   .field_summary {
-    min-width: 238px;
-    max-height: 62px;
+    min-width: 50px;
+    max-height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -24,7 +24,7 @@
     border-radius: 4px;
     // gap: 5px;
     background: #fff;
-    padding: 10px 0px 10px 16px;
+    padding: 5px 0px 0px 0px;
 
     &:not(:last-child) {
       &::after {
@@ -36,13 +36,14 @@
     }
   }
   .field_summary_item {
-    width: 200px;
+    // width: 200px;
     // min-height: 20px !important;
-    min-height: 60px;
-    margin-top: 8px;
+    min-width: 50px;
+    min-height: 45px;
+    margin-top: 0px;
     background: #fff;
-    padding: 5px 10px 10px 10px;
-    font-size: 12px;
+    padding: 0px 10px 0px 10px;
+    font-size: 0px;
     line-height: 16px;
     font-weight: 700;
     color: #000;
@@ -51,16 +52,16 @@
     overflow: hidden;
 
     span {
-      font-size: 12px;
+      font-size: 12px !important;
       text-transform: uppercase;
-      line-height: 16px;
-      font-weight: 700;
+      line-height: 10px;
+      font-weight: 500;
       height: 42px;
     }
     p {
       min-width: 70px;
       max-width: 100px;
-      height: 42px;
+      height: 16px;
       font-size: 12px;
       line-height: 24px;
       font-weight: 600;
@@ -70,7 +71,7 @@
 
     input {
       display: block;
-      font-size: 16px;
+      font-size: 12px;
       line-height: 24px;
       font-weight: 600;
       color: #9aa6ac;

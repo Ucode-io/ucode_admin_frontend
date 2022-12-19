@@ -1,4 +1,5 @@
 import { Delete, FilterAlt, JoinInner, TableChart } from "@mui/icons-material";
+import InfoIcon from '@mui/icons-material/Info';
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -11,6 +12,7 @@ import HFTextField from "../../../../components/FormElements/HFTextField";
 import useWatch from "../../../../hooks/useWatch";
 import constructorViewService from "../../../../services/constructorViewService";
 import { viewTypes } from "../../../../utils/constants/viewTypes";
+import CalendarHourSettings from "./CalendarHourSettings";
 import CalendarSettings from "./CalendarSettings";
 import ColumnsTab from "./ColumnsTab";
 import GanttSettings from "./GanttSettings";
@@ -18,9 +20,12 @@ import GroupsTab from "./GroupsTab";
 import MultipleInsertSettings from "./MultipleInsertSettings";
 import QuickFiltersTab from "./QuicFiltersTab";
 import styles from "./style.module.scss";
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import ChartAccounts from "./ChartAccounts";
 
 const ViewForm = ({
   initialValues,
+  typeNewView,
   closeForm,
   refetchViews,
   setIsChanged,
@@ -122,39 +127,13 @@ const ViewForm = ({
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
-        <div className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionTitle}>Main info</div>
-          </div>
-
-          <div className={styles.sectionBody}>
-            <div className={styles.formRow}>
-              <FRow label="Название">
-                <HFTextField control={form.control} name="name" fullWidth />
-              </FRow>
-              <FRow label="Тип">
-                <HFSelect
-                  options={computedViewTypes}
-                  control={form.control}
-                  name="type"
-                  fullWidth
-                />
-              </FRow>
-            </div>
-          </div>
-        </div>
-
-        {type === "CALENDAR" && (
-          <CalendarSettings form={form} columns={columns} />
-        )}
-
-        {type === "GANTT" && <GanttSettings form={form} columns={columns} />}
-
-        <MultipleInsertSettings form={form} columns={columns} />
-
         <Tabs>
           <div className={styles.section}>
             <TabList>
+              <Tab>
+                {" "}
+                <InfoIcon /> Info
+              </Tab>
               <Tab>
                 {" "}
                 <FilterAlt /> Quick filters
@@ -168,7 +147,53 @@ const ViewForm = ({
                 {" "}
                 <JoinInner /> Group by
               </Tab>
+              {
+                type === 'FINANCE CALENDAR' && <Tab>
+                {" "}
+                <MonetizationOnIcon /> Chart of accaunts
+              </Tab>
+              }
             </TabList>
+            <TabPanel>
+            <div className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <div className={styles.sectionTitle}>Main info</div>
+              </div>
+
+              <div className={styles.sectionBody}>
+                <div className={styles.formRow}>
+                  <FRow label="Название">
+                    <HFTextField control={form.control} name="name" fullWidth />
+                  </FRow>
+                  <FRow label="Тип">
+                    <HFSelect
+                      options={computedViewTypes}
+                      defaultValue={typeNewView}
+                      control={form.control}
+                      name="type"
+                      fullWidth
+                    />
+                  </FRow>
+                </div>
+                <FRow label="Default limit">
+                  <HFTextField control={form.control} name="default_limit" />
+                </FRow>
+              </div>
+            </div>
+
+            <MultipleInsertSettings form={form} columns={columns} />
+
+            {type === "CALENDAR" && (
+          <CalendarSettings form={form} columns={columns} />
+        )}
+
+        {type === "CALENDAR HOUR" && (
+          <CalendarHourSettings form={form} columns={columns} />
+        )}
+
+        {type === "GANTT" && <GanttSettings form={form} columns={columns} />}
+
+            </TabPanel>
             <TabPanel>
               <QuickFiltersTab form={form} />
             </TabPanel>
@@ -177,6 +202,9 @@ const ViewForm = ({
             </TabPanel>
             <TabPanel>
               <GroupsTab columns={computedColumns} form={form} />
+            </TabPanel>
+            <TabPanel>
+              <ChartAccounts />
             </TabPanel>
           </div>
         </Tabs>
@@ -209,6 +237,7 @@ const getInitialValues = (
       type: "TABLE",
       users: [],
       name: "",
+      default_limit: "",
       main_field: "",
       time_interval: 60,
       status_field_slug: "",
@@ -231,6 +260,7 @@ const getInitialValues = (
     type: initialValues?.type ?? "TABLE",
     users: initialValues?.users ?? [],
     name: initialValues?.name ?? "",
+    default_limit: initialValues?.default_limit ?? "",
     main_field: initialValues?.main_field ?? "",
     status_field_slug: initialValues?.status_field_slug ?? "",
     disable_dates: {

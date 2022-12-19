@@ -6,6 +6,7 @@ const HFFileUpload = ({
   control,
   name,
   required,
+    tabIndex,
   rules,
   disabledHelperText = false,
   disabled,
@@ -25,6 +26,7 @@ const HFFileUpload = ({
           <FileUpload
             name={name}
             value={value}
+            tabIndex={tabIndex}
             onChange={onChange}
             disabled={disabled}
             // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}

@@ -1,46 +1,46 @@
-import { useCallback, useState } from "react"
-import { useMutation, useQuery } from "react-query"
-import { useParams } from "react-router-dom"
-import { Clear } from "@mui/icons-material"
-import { Modal } from "@mui/material"
+import { useCallback, useState } from "react";
+import { useMutation, useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import { Clear } from "@mui/icons-material";
+import { Modal } from "@mui/material";
 
-import constructorFieldService from "../../services/constructorFieldService"
-import PermissionYesOrNoPopup from "./PermissionYesOrNoPopup"
-import DataTable from "../../components/DataTable"
-import { CrossPerson, TwoUserIcon } from "../../assets/icons/icon"
-import PrimaryButton from "../../components/Buttons/PrimaryButton"
-import constructorObjectService from "../../services/constructorObjectService"
-import styles from "./styles.module.scss"
+import constructorFieldService from "../../services/constructorFieldService";
+import PermissionYesOrNoPopup from "./PermissionYesOrNoPopup";
+import DataTable from "../../components/DataTable";
+import { CrossPerson, TwoUserIcon } from "../../assets/icons/icon";
+import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import constructorObjectService from "../../services/constructorObjectService";
+import styles from "./styles.module.scss";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import ViewPermission from "./ViewPermission";
 
 const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
-  const { roleId } = useParams()
+  const { roleId } = useParams();
 
-  const [anchorViewEl, setAnchorViewEl] = useState(null)
-  const [anchorEditEl, setAnchorEditEl] = useState(null)
-  const [popupId, setPopupId] = useState("")
-  const [finalData, setFinalData] = useState([])
+  const [anchorViewEl, setAnchorViewEl] = useState(null);
+  const [anchorEditEl, setAnchorEditEl] = useState(null);
+  const [popupId, setPopupId] = useState("");
+  const [finalData, setFinalData] = useState([]);
 
   const handleOpenViewPopup = (event) => {
-    setAnchorViewEl(event.currentTarget)
-  }
+    setAnchorViewEl(event.currentTarget);
+  };
   const handleCloseViewPopup = () => {
-    setAnchorViewEl(null)
-  }
+    setAnchorViewEl(null);
+  };
 
   const handleOpenEditPopup = (event) => {
-    setAnchorEditEl(event.currentTarget)
-  }
+    setAnchorEditEl(event.currentTarget);
+  };
   const handleCloseEditPopup = () => {
-    setAnchorEditEl(null)
-  }
-
-  console.log("finalData", finalData)
+    setAnchorEditEl(null);
+  };
 
   const columns = [
     {
       id: 1,
       label: "Field name",
-      slug: "field_label",
+      slug: "label",
       type: "SINGLE_LINE",
     },
     {
@@ -51,8 +51,8 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
       render: (val, row) => (
         <div
           onClick={(e) => {
-            anchorViewEl ? handleCloseViewPopup() : handleOpenViewPopup(e)
-            setPopupId(row.field_id)
+            anchorViewEl ? handleCloseViewPopup() : handleOpenViewPopup(e);
+            setPopupId(row.field_id);
           }}
         >
           <div style={{ textAlign: "center" }}>
@@ -89,8 +89,8 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
       render: (val, row) => (
         <div
           onClick={(e) => {
-            anchorEditEl ? handleCloseEditPopup() : handleOpenEditPopup(e)
-            setPopupId(row.field_id)
+            anchorEditEl ? handleCloseEditPopup() : handleOpenEditPopup(e);
+            setPopupId(row.field_id);
           }}
         >
           <div style={{ textAlign: "center" }}>
@@ -119,7 +119,7 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
         </div>
       ),
     },
-  ]
+  ];
 
   const { data: fields, isLoading } = useQuery(
     ["GET_FIELDS_BY_TABLE_SLUG", table_slug, isOpen],
@@ -129,17 +129,17 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
         role_id: roleId,
       }),
     { enabled: !!table_slug }
-  )
+  );
 
   const { mutate } = useMutation(
     (data) =>
       constructorObjectService.updateMultiple("field_permission", {
         data: {
           objects: data.map((i) => ({
-            view_permission: i?.view === "Yes",
-            edit_permission: i?.edit === "Yes",
+            view_permission: i?.view && i?.view === "Yes",
+            edit_permission: i?.edit && i?.edit === "Yes",
             field_id: i.id,
-            field_label: i.label,
+            // field_label: i.label,
             table_slug,
             role_id: roleId,
           })),
@@ -148,11 +148,11 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
       }),
     {
       onSuccess: () => {
-        handleClose()
-        setFinalData([])
+        handleClose();
+        setFinalData([]);
       },
     }
-  )
+  );
 
   const changeHandler = useCallback(
     (key, id, type, label) =>
@@ -165,13 +165,13 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
                   id,
                   [type]: key,
                   label,
-                }
-              } else return i
+                };
+              } else return i;
             })
           )
         : setFinalData((p) => [...p, { [type]: key, id, label }]),
     [finalData]
-  )
+  );
 
   return (
     <div>
@@ -195,25 +195,40 @@ const FieldPermissionModal = ({ isOpen, handleClose, table_slug }) => {
               style={{ cursor: "pointer" }}
             />
           </div>
-          <div className={styles.body}>
-            <DataTable
-              removableHeight={"auto"}
-              columns={columns}
-              data={fields?.data?.field_permissions ?? []}
-              loader={isLoading}
-              disableFilters
-              disablePagination
-            />
-          </div>
-          <div className={styles.submit_btn}>
-            <PrimaryButton onClick={() => mutate(finalData)}>
-              Сохранить
-            </PrimaryButton>
-          </div>
+          <Tabs>
+            <TabList>
+              <Tab>Field Permission</Tab>
+              <Tab>View Permission</Tab>
+            </TabList>
+            <TabPanel>
+              <div className={styles.body}>
+                <DataTable
+                  removableHeight={"auto"}
+                  columns={columns}
+                  data={fields?.data?.field_permissions ?? []}
+                  loader={isLoading}
+                  disableFilters
+                  disablePagination
+                />
+              </div>
+              <div className={styles.submit_btn}>
+                <PrimaryButton onClick={() => mutate(finalData)}>
+                  Сохранить
+                </PrimaryButton>
+              </div>
+            </TabPanel>
+            <TabPanel>
+              <ViewPermission
+                isOpen={isOpen}
+                handleClose={handleClose}
+                table_slug={table_slug}
+              />
+            </TabPanel>
+          </Tabs>
         </div>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default FieldPermissionModal
+export default FieldPermissionModal;

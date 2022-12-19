@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import PageFallback from "../../components/PageFallback";
 import constructorObjectService from "../../services/constructorObjectService";
 import constructorSectionService from "../../services/constructorSectionService";
@@ -33,25 +33,25 @@ const ObjectsFormPage = () => {
   const dispatch = useDispatch();
   const { removeTab, navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
-  const navigate = useNavigate()
   const tablesList = useSelector((state) => state.constructorTable.list);
-
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
-
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
-
   const tableInfo = useMemo(() => {
     return tablesList.find((el) => el.slug === tableSlug);
   }, [tablesList, tableSlug]);
-
   const computedSections = useMemo(() => {
+    let tabIndex = 1;
     return (
       sections
         ?.map((section) => ({
           ...section,
-          fields: section.fields?.sort(sortByOrder) ?? [],
+          fields:
+            section.fields?.sort(sortByOrder).map((field) => ({
+              ...field,
+              tabIndex: field?.required ? tabIndex++ : -1,
+            })) ?? [],
         }))
         .filter((section) => !section.is_summary_section)
         .sort(sortByOrder) ?? []
@@ -171,7 +171,6 @@ const ObjectsFormPage = () => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
-        navigate(-1)
         if (tableRelations?.length)
           navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
@@ -202,13 +201,15 @@ const ObjectsFormPage = () => {
 
   // Automatic setValue for End of Session
 
-  const addedTime = watch("time");
-  const startTimeTime = watch("date_start");
+  const serviceTime = watch("service_time");
+  const startTime = watch("date_start");
+
   useEffect(() => {
-    if (addedTime?.length !== 0 && addedTime !== undefined) {
-      setFormValue("time_end", addMinutes(new Date(startTimeTime), addedTime));
-    }
-  }, [addedTime, startTimeTime]);
+    setFormValue(
+      "time_end",
+      addMinutes(new Date(startTime), parseInt(serviceTime))
+    );
+  }, [serviceTime, startTime]);
 
   if (loader) return <PageFallback />;
 
@@ -217,7 +218,7 @@ const ObjectsFormPage = () => {
       <FiltersBlock
         summary={true}
         sections={sections}
-        extra={<DocumentGeneratorButton />}
+        // extra={<DocumentGeneratorButton />}
         hasBackground={true}
       >
         <FormPageBackButton />
@@ -262,6 +263,7 @@ const ObjectsFormPage = () => {
 
               <PrimaryButton
                 loader={btnLoader}
+                id="submit"
                 onClick={handleSubmit(onSubmit)}
               >
                 <Save />

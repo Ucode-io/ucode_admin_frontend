@@ -5,6 +5,7 @@ import ImageUpload from "../Upload/ImageUpload"
 const HFImageUpload = ({
   control,
   name,
+  tabIndex,
   required,
   rules,
   disabledHelperText = false,
@@ -26,6 +27,7 @@ const HFImageUpload = ({
           <ImageUpload
             name={name}
             value={value}
+            tabIndex={tabIndex}
             onChange={onChange}
             disabled={disabled}
             // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}

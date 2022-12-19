@@ -1,9 +1,4 @@
-
-
-
 @use "/src/scss/colors";
-
-
 
 .calendar {
   display: flex;
@@ -19,13 +14,15 @@
   z-index: 1;
 
   .timeRow {
-    min-width: 130px;
+    min-width: max-content;
+    padding: 0 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 40px;
-    box-shadow: inset -1px -1px 0px #E5E9EB;
+    box-shadow: inset -1px -1px 0px #e5e9eb;
     background-color: #fff;
+    font-size: 10px;
   }
 }
 
@@ -37,34 +34,36 @@
   justify-content: center;
   position: sticky;
   top: 0px;
-  box-shadow: inset -1px -1px 0px #E5E9EB;
+  box-shadow: inset -1px -1px 0px #e5e9eb;
   background-color: #fff;
   z-index: 2;
+  font-size: 10px;
 }
 
 .row {
   display: flex;
-
 }
 
 .block {
-  
+  width: 100%;
 }
 
 .blockElement {
-  min-width: 200px;
-  box-shadow: inset -1px -1px 0px #E5E9EB;
+  width: 100%;
+  box-shadow: inset -1px -1px 0px #e5e9eb;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  white-space: nowrap;
+  //white-space: nowrap;
   padding: 0 10px;
+  font-size: 10px;
+  text-align: center;
 }
 
 .timeBlock {
-  width: 100%;
-  box-shadow: inset -1px -1px 0px #E5E9EB;
+  width: 130px;
+  box-shadow: inset -1px -1px 0px #e5e9eb;
   height: 40px;
   display: flex;
   align-items: center;
@@ -73,24 +72,23 @@
   .addButton {
     display: none;
     align-items: center;
-    
 
     &:hover {
       cursor: pointer;
-      color: #007AFF;
+      color: #007aff;
     }
   }
 
   .timePlaceholder {
-    opacity: .4;
+    opacity: 0.4;
+    font-size: 10px;
   }
-
 
   &:hover {
     .addButton {
       display: inline-flex;
     }
-    
+
     .timePlaceholder {
       display: none;
     }
@@ -108,19 +106,16 @@
         display: block;
       }
     }
-
   }
 }
-
 
 //  -------------------
 
 .objectColumn {
   position: relative;
-
   .infoBlockWrapper {
     width: 100%;
-    padding: 5px 20px;
+    padding: 5px;
     height: 40px;
     position: absolute;
 
@@ -130,7 +125,7 @@
       overflow: hidden;
       height: 70px;
       cursor: pointer;
-      transition-duration: .3s;
+      transition-duration: 0.3s;
     }
 
     .infoBlock {
@@ -138,13 +133,14 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        font-size: 10px;
       }
     }
   }
 }
 
 .time {
-  color: #84919A;
+  color: #84919a;
   font-size: 12px;
 }
 
@@ -160,10 +156,18 @@
 }
 
 .linkIcon {
-  transition-duration: .3s;
+  transition-duration: 0.3s;
   cursor: pointer;
 
   &:hover {
     color: colors.$primary;
+  }
+}
+
+.oneElement {
+  .objectColumn {
+    .timeBlock {
+      width: 100%;
+    }
   }
 }

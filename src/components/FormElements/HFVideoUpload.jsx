@@ -7,6 +7,7 @@ const HFVideoUpload = ({
   control,
   name,
   required,
+  tabIndex,
   rules,
   disabledHelperText = false,
   disabled,
@@ -27,6 +28,7 @@ const HFVideoUpload = ({
             name={name}
             value={value}
             onChange={onChange}
+            tabIndex={tabIndex}
             disabled={disabled}
             // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}
             {...props}

@@ -19,9 +19,12 @@ const BoardColumn = ({
 }) => {
   const { tableSlug } = useParams()
   const [computedData, setComputedData] = useState(
-    data.filter((el) => el[tab.slug] === tab.value)
+    data.filter((el) => {
+      if(Array.isArray(el[tab.slug])) return el[tab.slug].includes(tab.value)
+      return el[tab.slug] === tab.value
+    })
   )
-
+    
   const { mutate } = useMutation((data) => {
     return constructorObjectService.update(tableSlug, {
       data: {

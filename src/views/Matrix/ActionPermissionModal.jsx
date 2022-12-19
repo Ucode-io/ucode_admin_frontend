@@ -32,7 +32,7 @@ const ActionPermissionModal = ({ isOpen, handleClose, table_slug }) => {
     {
       id: 1,
       label: "Action name",
-      slug: "custom_event_label",
+      slug: "label",
       type: "SINGLE_LINE",
     },
     {
@@ -93,7 +93,7 @@ const ActionPermissionModal = ({ isOpen, handleClose, table_slug }) => {
       constructorObjectService.updateMultiple("action_permission", {
         data: {
           objects: data.map((i) => ({
-            permission: i?.view === "Yes",
+            permission: i?.view && i?.view === "Yes",
             custom_event_id: i.id,
             table_slug,
             role_id: roleId,

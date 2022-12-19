@@ -1,4 +1,4 @@
-import { KeyboardArrowDown } from "@mui/icons-material";
+import { KeyboardArrowDown, WindowSharp } from "@mui/icons-material";
 import { CircularProgress, Menu, Tooltip } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -9,6 +9,7 @@ import useCustomActionsQuery from "../../../../queries/hooks/useCustomActionsQue
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import request from "../../../../utils/request";
 import styles from "./style.module.scss";
+import router from "@/router";
 
 const CustomActionsButton = ({
   selectedObjects,
@@ -50,14 +51,33 @@ const CustomActionsButton = ({
 
         let url = event?.url ?? "";
 
-        if (url) {
-          Object.entries(res?.data ?? {}).forEach(([key, value]) => {
-            const computedKey = "${" + key + "}";
-            url = url.replaceAll(computedKey, value);
-          });
+        if (res?.data?.status === "error") {
+          dispatch(showAlert(/*res?.data?.message,*/ "error"));
+        } else {
+          if (url) {
+            Object.entries(res?.data ?? {}).forEach(([key, value]) => {
+              const computedKey = "${" + key + "}";
+              url = url.replaceAll(computedKey, value);
+            });
+          }
+          if (url.includes("reload:")) {
+            navigate("/reload", {
+              state: {
+                redirectUrl: url,
+              },
+            });
+          } else if (url === "" || url === "reload") {
+            navigate("/reload", {
+              state: {
+                redirectUrl: window.location.pathname,
+              },
+            });
+          } else if (url === "schedule") {
+            navigate(url);
+          } else {
+            navigate(url);
+          }
         }
-
-        navigate(url);
       })
       .finally(() => setLoader(false));
   };

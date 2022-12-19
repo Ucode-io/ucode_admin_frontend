@@ -85,13 +85,13 @@ ingress:
         cert-manager.io/cluster-issuer: letsencrypt-prod
       type: web
       hosts:
-        - host: "demo.admin.u-code.io"
+        - host: "demo.app.u-code.io"
           path: /
           servicePort: 80
       tls:
-        - secretName: react-admin-tls
+        - secretName: react-app-tls
           hosts:
-            - "demo.admin.u-code.io"
+            - "demo.app.u-code.io"
 
 resources:
   {}

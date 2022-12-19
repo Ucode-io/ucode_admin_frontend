@@ -12,12 +12,10 @@ import ClientTypeModal from "./ClientTypeModal"
 import ButtonsPopover from "../../components/ButtonsPopover"
 import ClientBlock from "./ClientBlock"
 import { LOGIN_STRATEGIES } from "../../utils/constants/authMatrix"
-import { useTranslation } from "react-i18next"
 
 const AuthMatrix = () => {
   const { projectId } = useParams()
   const navigate = useNavigate()
-  const { t } = useTranslation()
 
   const [clientPlatformList, setClientPlatformList] = useState([])
   const [clientTypeList, setClientTypeList] = useState([])
@@ -220,9 +218,9 @@ const AuthMatrix = () => {
   return (
     <>
       <div className="AuthMatrix">
-        <Header title={t("auth.matrix")} />
+        <Header title="Auth matrix" />
 
-        <div className="p-2">
+        <div className="p-2" >
           <div className="main-area">
             {loading ? (
               <RingLoaderWithWrapper />

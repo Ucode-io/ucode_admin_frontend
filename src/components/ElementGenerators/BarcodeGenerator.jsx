@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Barcode from "react-barcode";
 import styles from "./style.module.scss";
 import { Controller } from "react-hook-form";
@@ -9,10 +9,27 @@ import Dialog from "@mui/material/Dialog";
 import FRow from "../FormElements/FRow";
 import ClearIcon from "@mui/icons-material/Clear";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import { useParams } from "react-router-dom";
+import ReactToPrint from "react-to-print";
+const pageStyle = `
+  @page {
+    size: 30mm 20mm;
+  }
 
+  @media all {
+    .pagebreak {
+      display: none;
+    }
+  }
+
+  @media print {
+    .pagebreak {
+      page-break-before: always;
+    }
+  }
+`;
 const BarcodeGenerator = ({
   control,
+  tabIndex,
   name = "",
   disabledHelperText = false,
   required = false,
@@ -25,25 +42,11 @@ const BarcodeGenerator = ({
   ...props
 }) => {
   const [count, setCount] = useState(1);
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  const [open, setOpen] = useState(false);
+  const ref = useRef();
+
   const handleClose = () => setOpen(false);
 
-  function printBarcode() {
-    let divContents = document.getElementById("barcodes").innerHTML;
-    let a = window.open("", "", "height800, width=700");
-    a.document.write("<html>");
-    for (let i = 0; i < count; i++) {
-      <p>{a.document.write(divContents)}</p>;
-    }
-    a.document.write("</body></html>");
-    a.document.close();
-    a.print();
-    handleClose();
-    return true;
-  }
   return (
     <div className={styles.barcode_layer}>
       <Controller
@@ -68,8 +71,10 @@ const BarcodeGenerator = ({
                   }}
                   name={name}
                   error={error}
+                  autoFocus={tabIndex === 1}
                   fullWidth={fullWidth}
                   InputProps={{
+                    inputProps: { tabIndex },
                     readOnly: disabled,
                     max: 13,
                     style: disabled
@@ -81,9 +86,15 @@ const BarcodeGenerator = ({
                   helperText={!disabledHelperText && error?.message}
                   {...props}
                 />
-                <button className={styles.barcode_print} onClick={handleOpen}>
-                  <PrintIcon />
-                </button>
+                <ReactToPrint
+                  trigger={() => (
+                    <button className={styles.barcode_print}>
+                      <PrintIcon />
+                    </button>
+                  )}
+                  content={() => ref.current}
+                  pageStyle={pageStyle}
+                />
                 <Dialog open={open} onClose={handleClose}>
                   <div className={styles.barcode_count}>
                     <button className={styles.cancel_btn} onClose={handleClose}>
@@ -99,23 +110,27 @@ const BarcodeGenerator = ({
                           onChange={(e) => setCount(e.target.value)}
                         />
                       </FRow>
-                      <PrimaryButton
-                        className={styles.barcode_print}
-                        onClick={() => printBarcode("barcodes")}
-                      >
+                      <PrimaryButton className={styles.barcode_print}>
                         Print
                       </PrimaryButton>
                     </div>
                   </div>
                 </Dialog>
               </div>
+
               <div className="" id="barcodes">
                 {value && (
-                  <Barcode value={value} width={2} height={50} format="EAN13" />
+                  <Barcode
+                    ref={ref}
+                    value={value}
+                    width={1}
+                    height={40}
+                    // format="EAN13"
+                  />
                 )}
               </div>
+
               <BarcodeGenerateButton
-                printBarcode={() => printBarcode("barcodes")}
                 onChange={onChange}
                 tableSlug={formTableSlug}
               />
@@ -128,3 +143,20 @@ const BarcodeGenerator = ({
 };
 
 export default BarcodeGenerator;
+
+// let divContents = document.getElementById("barcodes").innerHTML;
+// const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><style></style>`;
+
+// await documentTemplateService
+//   .exportToPDF({
+//     data: {
+//       table_slug: tableSlug,
+//       object_id: id,
+//       page_height: 20,
+//       page_width: 30,
+//     },
+//     html: `${meta} <div class="ck-content" style="width: ${30}mm" >${divContents}</div>`,
+//   })
+//   .then((res) => {
+//     console.log("RES", res);
+//   });

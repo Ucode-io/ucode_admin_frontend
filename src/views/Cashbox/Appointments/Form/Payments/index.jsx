@@ -2,14 +2,12 @@ import { Close } from "@mui/icons-material"
 import { Divider, IconButton } from "@mui/material"
 import { useMemo } from "react"
 import { Controller, useFieldArray, useWatch } from "react-hook-form"
-import { useTranslation } from "react-i18next"
 import FormCard from "../../../../../components/FormCard"
 import { numberWithSpaces } from "../../../../../utils/formatNumbers"
 import PaymentTypeSelector from "../../components/PaymentTypeSelector"
 import style from "./style.module.scss"
 
 const Payments = ({ form, isUpdated }) => {
-  const { t } = useTranslation()
   const services = useWatch({
     control: form.control,
     name: "services",
@@ -44,8 +42,11 @@ const Payments = ({ form, isUpdated }) => {
 
   const paymentsTotalPrice = useMemo(() => {
     let result = 0
-    computedPayments?.forEach((payment) => (result += Number(payment.amount)))
+    computedPayments?.forEach(
+      (payment) => (result += Number(payment.amount))
+    )
     return result
+    
   }, [computedPayments])
 
   const difference = Number(paymentsTotalPrice) - Number(totalPrice)
@@ -58,27 +59,22 @@ const Payments = ({ form, isUpdated }) => {
   }
 
   return (
-    <FormCard title={t("payment.type")} maxWidth="auto">
+    <FormCard title="Оплата услуги" maxWidth="auto">
       <div className={style.row}>
         <div className={style.card}>
-          <div className={style.label}>{t("total")}</div>
+          <div className={style.label}>Итого</div>
           <div className={style.value}>{numberWithSpaces(totalPrice)}</div>
         </div>
 
         <div className={style.card}>
-          <div className={style.label}>{t("to.pay")}:</div>
-          <div className={style.value}>
-            {numberWithSpaces(paymentsTotalPrice)}
-          </div>
+          <div className={style.label}>К оплате:</div>
+          <div className={style.value}>{numberWithSpaces(paymentsTotalPrice)}</div>
         </div>
 
         <div className={style.card}>
-          <div className={style.label}>{t("debt")}:</div>
-          <div
-            className={style.value}
-            style={{ color: difference > 0 ? "#1AC19D" : "#F2271C" }}
-          >
-            {numberWithSpaces(difference)}
+          <div className={style.label}>Долг:</div>
+          <div className={style.value} style={{ color: difference > 0 ? "#1AC19D" : "#F2271C" }}>
+            { numberWithSpaces(difference) }
           </div>
         </div>
       </div>
@@ -93,11 +89,9 @@ const Payments = ({ form, isUpdated }) => {
             <div className={style.header}>
               <div>{payment.payment_type}</div>
 
-              {!isUpdated && (
-                <IconButton onClick={() => remove(index)}>
-                  <Close />
-                </IconButton>
-              )}
+              {!isUpdated && <IconButton onClick={() => remove(index)}>
+                <Close />
+              </IconButton>}
             </div>
 
             <div className={style.body}>
@@ -106,27 +100,18 @@ const Payments = ({ form, isUpdated }) => {
                 name={`payments[${index}].amount`}
                 defaultValue={0}
                 render={({ field: { onChange, value } }) => (
-                  <input
-                    readOnly={isUpdated}
-                    type="number"
-                    min={0}
-                    value={value == 0 ? "" : value}
-                    onChange={onChange}
-                    autofocus
-                  />
+                  <input readOnly={isUpdated} type="number" min={0} value={value == 0 ? '' : value} onChange={onChange} autofocus />
                 )}
               />
             </div>
           </div>
         ))}
 
-        {!isUpdated && (
-          <div className={style.paymentCard}>
-            <div className={style.createBody}>
-              <PaymentTypeSelector onSelect={addNewPayment} />
-            </div>
+        {!isUpdated && <div className={style.paymentCard}>
+          <div className={style.createBody}>
+            <PaymentTypeSelector onSelect={addNewPayment} />
           </div>
-        )}
+        </div>}
       </div>
     </FormCard>
   )

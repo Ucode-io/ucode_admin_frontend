@@ -1,7 +1,6 @@
 import { Check, Delete, Settings } from "@mui/icons-material"
 import { IconButton, Menu, MenuItem } from "@mui/material"
 import { useRef, useState } from "react"
-import { useTranslation } from "react-i18next"
 import styles from "./style.module.scss"
 
 const SectionSettingsDropdown = ({
@@ -10,7 +9,6 @@ const SectionSettingsDropdown = ({
   setColumnType,
 }) => {
   const buttonRef = useRef()
-  const { t } = useTranslation()
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false)
 
   const handleClose = () => setDropdownIsOpen(false)
@@ -38,10 +36,10 @@ const SectionSettingsDropdown = ({
         >
           <div className={styles.menuItemIcon}>
             {/* {columnType !== "DOUBLE" && ( */}
-            <Check color="success" fontSize="small" />
+              <Check color="success" fontSize="small" />
             {/* )} */}
           </div>
-          {t("single.column")}
+          Single column
         </MenuItem>
         {/* <MenuItem
           onClick={() => {
@@ -60,7 +58,7 @@ const SectionSettingsDropdown = ({
           <div className={styles.menuItemIcon}>
             <Delete color="error" fontSize="small" />
           </div>
-          {t("delete")}
+          Delete
         </MenuItem>
       </Menu>
     </>

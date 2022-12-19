@@ -1,14 +1,17 @@
-import { Autocomplete, TextField } from "@mui/material"
-import { makeStyles } from "@mui/styles"
-import { get } from "@ngard/tiny-get"
-import { useMemo } from "react"
-import { Controller } from "react-hook-form"
-import { useQuery } from "react-query"
-import useTabRouter from "../../hooks/useTabRouter"
-import constructorObjectService from "../../services/constructorObjectService"
-import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel"
-import IconGenerator from "../IconPicker/IconGenerator"
-import styles from "./style.module.scss"
+import { Autocomplete, TextField } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { get } from "@ngard/tiny-get";
+import { useEffect, useMemo } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useQuery } from "react-query";
+import useTabRouter from "../../hooks/useTabRouter";
+import constructorObjectService from "../../services/constructorObjectService";
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
+import IconGenerator from "../IconPicker/IconGenerator";
+import styles from "./style.module.scss";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import CascadingElement from "./CascadingElement";
+import GroupCascadingViews from "./GroupCascadingView/index";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -16,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
     },
   },
-}))
+}));
 
 const CellRelationFormElement = ({
   isBlackBg,
@@ -29,35 +32,67 @@ const CellRelationFormElement = ({
   isLayout,
   disabledHelperText,
   setFormValue,
+  index,
+  defaultValue,
+  row,
 }) => {
-  const classes = useStyles()
+  const classes = useStyles();
 
   if (!isLayout)
     return (
       <Controller
         control={control}
         name={name}
-        defaultValue={null}
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <AutoCompleteElement
-            disabled={disabled}
-            isFormEdit={isFormEdit}
-            placeholder={placeholder}
-            isBlackBg={isBlackBg}
-            value={value}
-            classes={classes}
-            name={name}
-            setValue={onChange}
-            field={field}
-            tableSlug={field.table_slug}
-            error={error}
-            disabledHelperText={disabledHelperText}
-            setFormValue={setFormValue}
-          />
-        )}
+        defaultValue={defaultValue}
+        render={({ field: { onChange, value }, fieldState: { error } }) => {
+          return field?.attributes?.cascadings?.length === 4 ? (
+            <CascadingElement
+              field={field}
+              tableSlug={field.table_slug}
+              error={error}
+              disabledHelperText={disabledHelperText}
+              control={control}
+              setValue={onChange}
+              value={value}
+              setFormValue={setFormValue}
+              row={row}
+              index={index}
+            />
+          ) : field?.attributes?.cascading_tree ? (
+            <GroupCascadingViews
+              field={field}
+              tableSlug={field.table_slug}
+              error={error}
+              disabledHelperText={disabledHelperText}
+              value={value}
+              setFormValue={setFormValue}
+              setValue={onChange}
+              index={index}
+              row={row}
+            />
+          ) : (
+            <AutoCompleteElement
+              disabled={disabled}
+              isFormEdit={isFormEdit}
+              placeholder={placeholder}
+              isBlackBg={isBlackBg}
+              value={value}
+              classes={classes}
+              name={name}
+              setValue={onChange}
+              field={field}
+              tableSlug={field.table_slug}
+              error={error}
+              disabledHelperText={disabledHelperText}
+              setFormValue={setFormValue}
+              control={control}
+              index={index}
+            />
+          );
+        }}
       />
-    )
-}
+    );
+};
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
@@ -72,45 +107,86 @@ const AutoCompleteElement = ({
   classes,
   isBlackBg,
   setValue,
+  index,
+  control,
   setFormValue = () => {},
 }) => {
-  const { navigateToForm } = useTabRouter()
+  const { navigateToForm } = useTabRouter();
+
+  const getOptionLabel = (option) => {
+    return getRelationFieldTabsLabel(field, option);
+  };
+
+  const autoFilters = field?.attributes?.auto_filters;
+
+  const autoFiltersFieldFroms = useMemo(() => {
+    return autoFilters?.map((el) => `multi.${index}.${el.field_from}`) ?? [];
+  }, [autoFilters, index]);
+
+  const filtersHandler = useWatch({
+    control,
+    name: autoFiltersFieldFroms,
+  });
+
+  const autoFiltersValue = useMemo(() => {
+    const result = {};
+    filtersHandler?.forEach((value, index) => {
+      const key = autoFilters?.[index]?.field_to;
+      if (key) result[key] = value;
+    });
+    return result;
+  }, [autoFilters, filtersHandler]);
 
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug.includes("doctors_") ? "doctors" : tableSlug],
+    [
+      "GET_OBJECT_LIST",
+      tableSlug.includes("doctors_") ? "doctors" : tableSlug,
+      autoFiltersValue,
+    ],
     () => {
-      return constructorObjectService.getList(tableSlug, { data: {} })
+      return constructorObjectService.getList(tableSlug, {
+        data: autoFiltersValue,
+      });
     },
     {
       select: (res) => {
-        return res?.data?.response ?? []
+        return res?.data?.response ?? [];
       },
     }
-  )
-
+  );
   const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === value)
-    return findedOption ? [findedOption] : []
-  }, [options, value])
-
-  const getOptionLabel = (option) => {
-    return getRelationFieldTabsLabel(field, option)
-  }
+    const findedOption = options?.find((el) => el?.guid === value);
+    return findedOption ? [findedOption] : [];
+  }, [options, value]);
 
   const changeHandler = (value) => {
-    const val = value?.[value?.length - 1]
+    const val = value?.[value?.length - 1];
 
-    setValue(val?.guid ?? null)
+    setValue(val?.guid ?? null);
 
-    if (!field?.attributes?.autofill) return
+    // if (!field?.attributes?.autofill) return;
 
-    field.attributes.autofill.forEach(({ field_from, field_to }) => {
-      const setName = name.split(".")
-      setName.pop()
-      setName.push(field_to)
-      setFormValue(setName.join("."), get(val, field_from))
-    })
-  }
+    // field.attributes.autofill.forEach(({ field_from, field_to }) => {
+    //   const setName = name.split(".");
+    //   setName.pop();
+    //   setName.push(field_to);
+    //   setFormValue(setName.join("."), get(val, field_from));
+    // });
+  };
+  console.log("field", field);
+  useEffect(() => {
+    const val = computedValue[computedValue.length - 1];
+    if (!field?.attributes?.autofill || !val) return;
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+      const setName = name.split(".");
+      setName.pop();
+      setName.push(field_to);
+      automatic &&
+        setTimeout(() => {
+          setFormValue(setName.join("."), get(val, field_from));
+        }, []);
+    });
+  }, [computedValue]);
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -118,8 +194,15 @@ const AutoCompleteElement = ({
         disabled={disabled}
         options={options ?? []}
         value={computedValue}
+        popupIcon={
+          isBlackBg ? (
+            <ArrowDropDownIcon style={{ color: "#fff" }} />
+          ) : (
+            <ArrowDropDownIcon />
+          )
+        }
         onChange={(event, newValue) => {
-          changeHandler(newValue)
+          changeHandler(newValue);
         }}
         noOptionsText={
           <span
@@ -160,16 +243,16 @@ const AutoCompleteElement = ({
               style={{ marginLeft: "10px", cursor: "pointer" }}
               size={15}
               onClick={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                navigateToForm(tableSlug, "EDIT", value[0])
+                e.stopPropagation();
+                e.preventDefault();
+                navigateToForm(tableSlug, "EDIT", value[0]);
               }}
             />
           </>
         )}
       />
     </div>
-  )
-}
+  );
+};
 
-export default CellRelationFormElement
+export default CellRelationFormElement;

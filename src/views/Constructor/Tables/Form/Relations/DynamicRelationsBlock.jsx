@@ -1,12 +1,10 @@
 import { useFieldArray } from "react-hook-form"
-import { useTranslation } from "react-i18next"
 import FRow from "../../../../../components/FormElements/FRow"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
 import DynamicRelationRow from "./DynamicRelationRow"
 import styles from "./style.module.scss"
 
 const DynamicRelationsBlock = ({ control, computedTablesList }) => {
-  const { t } = useTranslation()
   const {
     fields: dynamicTables,
     insert,
@@ -31,11 +29,11 @@ const DynamicRelationsBlock = ({ control, computedTablesList }) => {
   return (
     <>
       <div className={styles.settingsBlockHeader}>
-        <h2>{t("dynamic.tables")}</h2>
+        <h2>Dynamic tables</h2>
       </div>
 
       <div className="p-2">
-        <FRow label="Field slug">
+        <FRow label="Field slug" >
           <HFTextField fullWidth name="relation_field_slug" control={control} />
         </FRow>
 
@@ -50,7 +48,7 @@ const DynamicRelationsBlock = ({ control, computedTablesList }) => {
         ))}
 
         <div className={styles.summaryButton} onClick={addNewTable}>
-          <button type="button">+ {t("create.new")}</button>
+          <button type="button">+ Создать новый</button>
         </div>
       </div>
     </>

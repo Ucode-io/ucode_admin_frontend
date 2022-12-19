@@ -1,135 +1,133 @@
-import { useEffect, useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
-import { useTranslation } from "react-i18next"
-import { useNavigate, useParams } from "react-router-dom"
-import CancelButton from "../../../../components/Buttons/CancelButton"
-import SaveButton from "../../../../components/Buttons/SaveButton"
-import CBreadcrumbs from "../../../../components/CBreadcrumbs"
-import FormCard from "../../../../components/FormCard"
-import FRow from "../../../../components/FormElements/FRow"
-import HFTextField from "../../../../components/FormElements/HFTextField"
-import Header from "../../../../components/Header"
-import clientPlatformService from "../../../../services/auth/clientPlatformService"
-import roleService from "../../../../services/roleService"
-import PermissionsRecursiveBlock from "../../ClientPlatform/PermissionsBlock/PermissionsRecursiveBlock"
-import "./style.scss"
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import CancelButton from "../../../../components/Buttons/CancelButton";
+import SaveButton from "../../../../components/Buttons/SaveButton";
+import CBreadcrumbs from "../../../../components/CBreadcrumbs";
+import FormCard from "../../../../components/FormCard";
+import FRow from "../../../../components/FormElements/FRow";
+import HFTextField from "../../../../components/FormElements/HFTextField";
+import Header from "../../../../components/Header";
+import clientPlatformService from "../../../../services/auth/clientPlatformService";
+import roleService from "../../../../services/roleService";
+import PermissionsRecursiveBlock from "../../ClientPlatform/PermissionsBlock/PermissionsRecursiveBlock";
+import "./style.scss";
 
 const RolesForm = () => {
-  const { platformId, typeId, roleId, projectId } = useParams()
-  const navigate = useNavigate()
-  const { t } = useTranslation()
+  const { platformId, typeId, roleId, projectId } = useParams();
+  const navigate = useNavigate();
 
-  const [btnLoader, setBtnLoader] = useState(false)
-  const [loader, setLoader] = useState(true)
-  const [permissions, setPermissions] = useState([])
-  const [permissionLoader, setPermissionLoader] = useState(true)
-  const [selectedPermissions, setSelectedPermissions] = useState([])
+  const [btnLoader, setBtnLoader] = useState(false);
+  const [loader, setLoader] = useState(true);
+  const [permissions, setPermissions] = useState([]);
+  const [permissionLoader, setPermissionLoader] = useState(true);
+  const [selectedPermissions, setSelectedPermissions] = useState([]);
 
   const breadCrumbItems = [
     {
-      label: t("roles"),
+      label: "Roles",
     },
     {
-      label: t("create"),
+      label: "Create",
     },
-  ]
+  ];
 
   const computedPermissions = useMemo(() => {
-    return permissions.filter((permission) => !permission.parent_id)
-  }, [permissions])
+    return permissions.filter((permission) => !permission.parent_id);
+  }, [permissions]);
 
   const fetchData = () => {
-    if (!roleId) return setLoader(false)
+    if (!roleId) return setLoader(false);
 
     roleService
       .getById(roleId)
       .then((res) => {
-        setValue("name", res.name)
+        setValue("name", res.name);
         setSelectedPermissions(
           res.permissions?.map((permission) => permission.id) ?? []
-        )
+        );
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const fetchPermissionsList = () => {
-    if (!roleId) return setPermissionLoader(false)
+    if (!roleId) return setPermissionLoader(false);
     clientPlatformService
       .getDetail(platformId)
       .then((res) => {
-        setPermissions(res.permissions ?? [])
+        setPermissions(res.permissions ?? []);
       })
-      .finally(() => setPermissionLoader(false))
-  }
+      .finally(() => setPermissionLoader(false));
+  };
 
   const create = (data) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
     roleService
       .create(data)
       .then((res) => {
         navigate(
           `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/crossed`
-        )
+        );
       })
-      .finally(() => setBtnLoader(false))
-  }
+      .finally(() => setBtnLoader(false));
+  };
 
   const update = async (data) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
     try {
       await roleService.update({
         ...data,
         id: roleId,
-      })
+      });
 
       const permissions = selectedPermissions.map((permission) => ({
         permission_id: permission,
         role_id: roleId,
-      }))
+      }));
 
-      await roleService.addPermissionToRole({ permissions })
+      await roleService.addPermissionToRole({ permissions });
 
       navigate(
         `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/crossed`
-      )
+      );
     } finally {
-      setBtnLoader(false)
+      setBtnLoader(false);
     }
-  }
+  };
 
   const onSwitchChange = (id, val) => {
-    if (val) addSelectedPermission(id)
-    else removeSelectedPermission(id)
+    if (val) addSelectedPermission(id);
+    else removeSelectedPermission(id);
 
-    const childs = permissions.filter((item) => item.parent_id === id)
+    const childs = permissions.filter((item) => item.parent_id === id);
 
     childs.forEach((child) => {
-      onSwitchChange(child.id, val)
-    })
-  }
+      onSwitchChange(child.id, val);
+    });
+  };
 
   const addSelectedPermission = (id) => {
-    if (selectedPermissions.includes(id)) return
+    if (selectedPermissions.includes(id)) return;
     setSelectedPermissions((prevState) => {
-      return [...prevState, id]
-    })
-  }
+      return [...prevState, id];
+    });
+  };
 
   const removeSelectedPermission = (id) => {
     setSelectedPermissions((prevState) => {
-      return prevState.filter((item) => item !== id)
-    })
-  }
+      return prevState.filter((item) => item !== id);
+    });
+  };
 
   const onSubmit = (values) => {
-    if (roleId) return update(values)
-    create(values)
-  }
+    if (roleId) return update(values);
+    create(values);
+  };
 
   useEffect(() => {
-    fetchData()
-    fetchPermissionsList()
-  }, [])
+    fetchData();
+    fetchPermissionsList();
+  }, []);
 
   const { control, handleSubmit, reset, setValue } = useForm({
     defaultValues: {
@@ -138,7 +136,7 @@ const RolesForm = () => {
       client_type_id: typeId,
       name: "",
     },
-  })
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -156,21 +154,13 @@ const RolesForm = () => {
       </Header>
 
       <div className="RolesForm p-2">
-        <FormCard
-          visible={!loader}
-          title={t("main.info")}
-          className="form-card"
-        >
-          <FRow label={t("name")}>
+        <FormCard visible={!loader} title="Main info" className="form-card">
+          <FRow label="Name">
             <HFTextField autoFocus fullWidth control={control} name="name" />
           </FRow>
         </FormCard>
         {roleId && (
-          <FormCard
-            visible={!loader}
-            title={t("permissions")}
-            className="form-card"
-          >
+          <FormCard visible={!loader} title="Permissions" className="form-card">
             <div className="permissions-list">
               {computedPermissions?.map((permission) => (
                 <PermissionsRecursiveBlock
@@ -186,7 +176,7 @@ const RolesForm = () => {
         )}
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default RolesForm
+export default RolesForm;

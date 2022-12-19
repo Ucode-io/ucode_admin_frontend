@@ -1,6 +1,5 @@
 import { Add } from "@mui/icons-material"
 import { useState } from "react"
-import { useTranslation } from "react-i18next"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
 
@@ -17,7 +16,6 @@ import RelationCreateModal from "./RelationCreateModal"
 
 const RelationSection = ({ relation }) => {
   const { tableSlug, id } = useParams()
-  const { t } = useTranslation()
   const { navigateToForm } = useTabRouter()
 
   // const [tableLoader, setTableLoader] = useState(true)
@@ -28,79 +26,66 @@ const RelationSection = ({ relation }) => {
   const [modalVisible, setModalVisible] = useState(false)
 
   const queryClient = useQueryClient()
-
-  const { isLoading: dataFetchingLoading, refetch } = useQuery(
-    [
-      "GET_OBJECT_LIST",
+  
+  const { isLoading: dataFetchingLoading, refetch } = useQuery(["GET_OBJECT_LIST", relation.relatedTable?.slug, tableSlug, relation.type, currentPage, id], () => {
+    return constructorObjectService.getList(
       relation.relatedTable?.slug,
-      tableSlug,
-      relation.type,
-      currentPage,
-      id,
-    ],
-    () => {
-      return constructorObjectService.getList(relation.relatedTable?.slug, {
+      {
         data: {
           offset: pageToOffset(currentPage, 5),
           limit: 5,
-          [`${tableSlug}_${relation.type === "Many2Many" ? "ids" : "id"}`]: id,
+          [`${tableSlug}_${relation.type === "Many2Many" ? "ids" : "id"}`]:
+            id,
         },
-      })
-    },
-    {
-      onSuccess: ({ data }) => {
-        if (id) {
-          setTableData(objectToArray(data.response ?? {}))
-          setPageCount(isNaN(data.count) ? 1 : Math.ceil(data.count / 5))
-        }
-
-        setColumns(data.fields ?? [])
-      },
-    }
-  )
-
-  const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
-    "DELETE_OBJECT",
-    (elementId) => {
-      if (relation.type === "Many2Many") {
-        const data = {
-          id_from: id,
-          id_to: [elementId],
-          table_from: tableSlug,
-          table_to: relation.relatedTable?.slug,
-        }
-
-        return constructorObjectService.deleteManyToMany(data)
-      } else {
-        return constructorObjectService.delete(
-          relation.relatedTable?.slug,
-          elementId
-        )
       }
-    },
-    {
-      onSettled: () => {
-        queryClient.refetchQueries([
-          "GET_OBJECT_LIST",
-          relation.relatedTable?.slug,
-        ])
-      },
+    )
+  }, {
+    onSuccess: ({data}) => {
+      if (id) {
+        setTableData(objectToArray(data.response ?? {}))
+        setPageCount(isNaN(data.count) ? 1 : Math.ceil(data.count / 5))
+      }
+
+      setColumns(data.fields ?? [])
     }
-  )
+  })
+
+  const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation("DELETE_OBJECT", (elementId) => {
+    if (relation.type === "Many2Many") {
+      const data = {
+        id_from: id,
+        id_to: [elementId],
+        table_from: tableSlug,
+        table_to: relation.relatedTable?.slug,
+      }
+
+      return constructorObjectService.deleteManyToMany(data)
+  }
+
+  else {
+    return constructorObjectService.delete(
+      relation.relatedTable?.slug,
+      elementId
+    )
+  }
+
+}, {
+  onSettled: () => {
+    queryClient.refetchQueries(["GET_OBJECT_LIST", relation.relatedTable?.slug])
+  }
+})
 
   const tableLoader = deleteLoading || dataFetchingLoading
 
+ 
   const navigateToEditPage = (row) => {
     navigateToForm(relation.relatedTable?.slug, "EDIT", row)
     // navigate(`/object/${relation.relatedTable?.slug}/${id}`)
   }
 
   const navigateToCreatePage = () => {
-    if (relation.type === "Many2Many") setModalVisible(true)
-    else
-      navigateToForm(relation.relatedTable?.slug, "CREATE", null, {
-        [`${tableSlug}_id`]: id,
-      })
+    if(relation.type === "Many2Many") setModalVisible(true)
+    else navigateToForm(relation.relatedTable?.slug, "CREATE", null, { [`${tableSlug}_id`]: id })
   }
 
   return (
@@ -123,13 +108,11 @@ const RelationSection = ({ relation }) => {
         title={relation.relatedTable?.label}
         maxWidth="100%"
         extra={
-          <SecondaryButton disabled={!id} onClick={navigateToCreatePage}>
-            {" "}
-            <Add /> {t("save")}
-          </SecondaryButton>
+          <SecondaryButton disabled={!id} onClick={navigateToCreatePage} > <Add /> Добавить</SecondaryButton>
         }
       >
-        <DataTable
+
+        <DataTable 
           removableHeight={false}
           loader={tableLoader}
           data={tableData}

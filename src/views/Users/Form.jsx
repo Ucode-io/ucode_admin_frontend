@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import CancelButton from "../../components/Buttons/CancelButton"
-import SaveButton from "../../components/Buttons/SaveButton"
-import FormCard from "../../components/FormCard"
-import FRow from "../../components/FormElements/FRow"
-import Header from "../../components/Header"
-import userService from "../../services/auth/userService"
-import listToOptions from "../../utils/listToOptions"
-import "./style.scss"
-import { add } from "date-fns"
-import { useForm } from "react-hook-form"
-import HFTextField from "../../components/FormElements/HFTextField"
-import HFDatePicker from "../../components/FormElements/HFDatePicker"
-import HFSelect from "../../components/FormElements/HFSelect"
-import clientTypeService from "../../services/auth/clientTypeService"
-import HFAvatarUpload from "../../components/FormElements/HFAvatarUpload"
-import { useTranslation } from "react-i18next"
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import CancelButton from "../../components/Buttons/CancelButton";
+import SaveButton from "../../components/Buttons/SaveButton";
+import CBreadcrumbs from "../../components/CBreadcrumbs";
+import FormCard from "../../components/FormCard";
+import FRow from "../../components/FormElements/FRow";
+import Header from "../../components/Header";
+import userService from "../../services/auth/userService";
+import listToOptions from "../../utils/listToOptions";
+import "./style.scss";
+import { add } from "date-fns";
+import { useForm } from "react-hook-form";
+import HFTextField from "../../components/FormElements/HFTextField";
+import HFDatePicker from "../../components/FormElements/HFDatePicker";
+import HFSelect from "../../components/FormElements/HFSelect";
+import clientTypeService from "../../services/auth/clientTypeService";
+import HFAvatarUpload from "../../components/FormElements/HFAvatarUpload";
 
 // const validationSchema = Yup.object().shape({
 //   name: Yup.string().required('Name is required'),
@@ -39,30 +39,39 @@ import { useTranslation } from "react-i18next"
 // })
 
 const UsersForm = () => {
-  const { t } = useTranslation()
-  const { userId, platformId, typeId } = useParams()
-  const navigate = useNavigate()
+  const { userId, platformId, typeId } = useParams();
+  const navigate = useNavigate();
 
-  const [btnLoader, setBtnLoader] = useState(false)
-  const [loader, setLoader] = useState(true)
-  const [rolesList, setRolesList] = useState([])
-  const [userTypesList, setUserTypesList] = useState([])
+  const [btnLoader, setBtnLoader] = useState(false);
+  const [loader, setLoader] = useState(true);
+  const [rolesList, setRolesList] = useState([]);
+  const [userTypesList, setUserTypesList] = useState([]);
+
+  const breadCrumbItems = [
+    {
+      label: "Users",
+      link: -1,
+    },
+    {
+      label: "Create",
+    },
+  ];
 
   const fetchUserTypesList = () => {
     clientTypeService
       .getList()
-      .then((res) => setUserTypesList(listToOptions(res.client_types, "name")))
-  }
+      .then((res) => setUserTypesList(listToOptions(res.client_types, "name")));
+  };
 
   const fetchRolesList = (typeID) => {
-    setRolesList([])
+    setRolesList([]);
     clientTypeService
       .getById(typeID)
-      .then((res) => setRolesList(listToOptions(res.roles, "name")))
-  }
+      .then((res) => setRolesList(listToOptions(res.roles, "name")));
+  };
 
   const fetchData = () => {
-    if (!userId) return setLoader(false)
+    if (!userId) return setLoader(false);
 
     userService
       .getById(userId)
@@ -70,35 +79,35 @@ const UsersForm = () => {
         reset({
           ...getValues,
           ...res,
-        })
+        });
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const onSubmit = (values) => {
-    if (userId) return update(values)
-    create(values)
-  }
+    if (userId) return update(values);
+    create(values);
+  };
 
   const create = (data) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
     userService
       .create(data)
       .then((res) => {
-        navigate(-1)
+        navigate(-1);
       })
-      .catch(() => setBtnLoader(false))
-  }
+      .catch(() => setBtnLoader(false));
+  };
 
   const update = (data) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
     userService
       .update(data)
       .then((res) => {
-        navigate(-1)
+        navigate(-1);
       })
-      .catch(() => setBtnLoader(false))
-  }
+      .catch(() => setBtnLoader(false));
+  };
 
   const { control, watch, handleSubmit, setValue, reset, getValues } = useForm({
     defaultValues: {
@@ -115,33 +124,33 @@ const UsersForm = () => {
       photo_url: "",
       role_id: "",
     },
-  })
+  });
 
   useEffect(() => {
-    fetchData()
-    fetchUserTypesList()
-  }, [])
+    fetchData();
+    fetchUserTypesList();
+  }, []);
 
   useEffect(() => {
-    if (loader) return
-    if (userId) fetchRolesList(getValues("client_type_id"))
-  }, [loader])
+    if (loader) return;
+    if (userId) fetchRolesList(getValues("client_type_id"));
+  }, [loader]);
 
-  useEffect(() => {
-    const subscription = watch((values, { name, type }) => {
-      if (name === "client_type_id" && values.client_type_id) {
-        fetchRolesList(values.client_type_id)
-      }
-    })
-    return () => subscription.unsubscribe()
-  }, [watch])
+  // useEffect(() => {
+  //   const subscription = watch((values, { name, type }) => {
+  //     if (name === "client_type_id" && values.client_type_id) {
+  //       fetchRolesList(values.client_type_id);
+  //     }
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, [watch]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Header
-        title={t("users")}
+        title="Пользователи"
         backButtonLink={-1}
-        subtitle={userId ? watch("name") : t("new")}
+        subtitle={userId ? watch("name") : "Новый"}
         loader={loader}
         extra={
           <>
@@ -153,19 +162,15 @@ const UsersForm = () => {
         {/* <CBreadcrumbs withDefautlIcon items={breadCrumbItems} type="link" /> */}
       </Header>
 
-      <FormCard
-        visible={!loader}
-        title={t("main.info")}
-        className="UsersForm p-2"
-      >
+      <FormCard visible={!loader} title="Main info" className="UsersForm p-2">
         <div>
           <HFAvatarUpload control={control} name="photo_url" />
         </div>
 
         <div className="side">
-          <FRow label={t("fio")}>
+          <FRow label="Fullname">
             <HFTextField
-              placeholder={t("enter.fio")}
+              placeholder="Enter fullname"
               fullWidth
               control={control}
               autoFocus
@@ -173,27 +178,27 @@ const UsersForm = () => {
             />
           </FRow>
 
-          <FRow label={t("email")}>
+          <FRow label="Email">
             <HFTextField
-              placeholder={t("enter.email")}
+              placeholder="Enter email"
               fullWidth
               control={control}
               name="email"
             />
           </FRow>
 
-          <FRow label={t("phone")}>
+          <FRow label="Phone">
             <HFTextField
-              placeholder={t("enter.phone")}
+              placeholder="Enter phone"
               fullWidth
               control={control}
               name="phone"
             />
           </FRow>
 
-          <FRow label={t("login")}>
+          <FRow label="Login">
             <HFTextField
-              placeholder={t("enter.login")}
+              placeholder="Enter login"
               fullWidth
               control={control}
               name="login"
@@ -201,22 +206,22 @@ const UsersForm = () => {
           </FRow>
 
           {!userId && (
-            <FRow label={t("password")}>
+            <FRow label="Password">
               <HFTextField
                 type="password"
                 fullWidth
                 control={control}
                 name="password"
-                placeholder={t("enter.password")}
+                placeholder="Enter password"
               />
             </FRow>
           )}
 
-          <FRow label={t("expires.date")}>
+          <FRow label="Expires date">
             <HFDatePicker width="100%" control={control} name="expires_at" />
           </FRow>
 
-          <FRow label={t("type")}>
+          <FRow label="Type">
             <HFSelect
               options={userTypesList}
               fullWidth
@@ -226,7 +231,7 @@ const UsersForm = () => {
             />
           </FRow>
 
-          <FRow label={t("role")}>
+          <FRow label="Role">
             <HFSelect
               options={rolesList}
               fullWidth
@@ -237,7 +242,7 @@ const UsersForm = () => {
         </div>
       </FormCard>
     </form>
-  )
-}
+  );
+};
 
-export default UsersForm
+export default UsersForm;

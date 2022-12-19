@@ -1,7 +1,6 @@
 import { DragHandle, Remove } from "@mui/icons-material"
 import { Divider, TextField } from "@mui/material"
 import { useForm } from "react-hook-form"
-import { useTranslation } from "react-i18next"
 import { useMutation, useQuery } from "react-query"
 import { useDispatch } from "react-redux"
 import SaveButton from "../../../components/Buttons/SaveButton"
@@ -16,7 +15,6 @@ import PaymentTypeIconGenerator from "../components/PaymentTypeIconGenerator"
 import styles from "./style.module.scss"
 
 const CashboxOpening = () => {
-  const { t } = useTranslation()
   const dispatch = useDispatch()
   const { control, reset, watch, handleSubmit } = useForm({
     mode: "all",
@@ -78,12 +76,12 @@ const CashboxOpening = () => {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>{t("type")}</th>
-                <th>{t("fact")}</th>
+                <th>Тип</th>
+                <th>Факт</th>
                 <th></th>
-                <th>{t("type")}</th>
+                <th>План</th>
                 <th></th>
-                <th>{t("difference")}</th>
+                <th>Разница</th>
               </tr>
             </thead>
 
@@ -141,14 +139,14 @@ const CashboxOpening = () => {
 
           <Divider className={styles.divider} />
 
-          <FRow label={t("commentary")}>
+          <FRow label="Комментария">
             <HFTextField
               fullWidth
               control={control}
               name="comment"
               multiline
               rows={4}
-              placeholder={t("enter.comment")}
+              placeholder="Enter a comment"
               readOnly
             />
           </FRow>

@@ -1,10 +1,10 @@
-import { Delete } from "@mui/icons-material"
-import { Checkbox } from "@mui/material"
-import { useState } from "react"
+import { Delete } from "@mui/icons-material";
+import { Checkbox } from "@mui/material";
+import { useState } from "react";
 
-import RectangleIconButton from "../Buttons/RectangleIconButton"
-import { CTableCell, CTableRow } from "../CTable"
-import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator"
+import RectangleIconButton from "../Buttons/RectangleIconButton";
+import { CTableCell, CTableRow } from "../CTable";
+import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
 
 const TableRowForm = ({
   onCheckboxChange,
@@ -27,7 +27,7 @@ const TableRowForm = ({
   calculateWidth,
   limit = 10,
 }) => {
-  const [showCheckbox, setShowCheckbox] = useState(false)
+  const [showCheckbox, setShowCheckbox] = useState(false);
 
   return (
     <CTableRow>
@@ -81,7 +81,7 @@ const TableRowForm = ({
             )?.isStiky
               ? "1"
               : "",
-            minWidth: 270,
+            minWidth: "max-content",
           }}
         >
           <CellFormElementGenerator
@@ -108,7 +108,7 @@ const TableRowForm = ({
         </RectangleIconButton>
       </CTableCell>
     </CTableRow>
-  )
-}
+  );
+};
 
-export default TableRowForm
+export default TableRowForm;

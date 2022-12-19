@@ -1,41 +1,44 @@
-import { useEffect, useMemo } from "react"
-import { useState } from "react"
-import { useTranslation } from "react-i18next"
-import { useSelector } from "react-redux"
-import { useParams } from "react-router-dom"
+import { useEffect, useMemo } from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
-import PageFallback from "../../../components/PageFallback"
-import constructorObjectService from "../../../services/constructorObjectService"
-import FastFilter from "../components/FastFilter"
-import RecursiveBlock from "./RecursiveBlock"
-import styles from "./style.module.scss"
+import PageFallback from "../../../components/PageFallback";
+import constructorObjectService from "../../../services/constructorObjectService";
+import FastFilter from "../components/FastFilter";
+import RecursiveBlock from "./RecursiveBlock";
+import styles from "./style.module.scss";
+import {pageToOffset} from "@/utils/pageToOffset";
 
-const TreeView = ({ groupField, fieldsMap, group, view }) => {
-  const { t } = useTranslation()
-  const { tableSlug } = useParams()
-  const { new_list } = useSelector((state) => state.filter)
+const TreeView = ({ groupField, fieldsMap, group, view, tab, filters }) => {
+  const { tableSlug } = useParams();
+  const { new_list } = useSelector((state) => state.filter);
 
-  const [tableLoader, setTableLoader] = useState(true)
-  const [data, setData] = useState([])
+  const [tableLoader, setTableLoader] = useState(true);
+  const [data, setData] = useState([]);
 
   const parentElements = useMemo(() => {
-    return data.filter((row) => !row[`${tableSlug}_id`])
-  }, [data, tableSlug])
+    return data.filter((row) => !row[`${tableSlug}_id`]);
+  }, [data, tableSlug]);
 
   const getAllData = async () => {
-    setTableLoader(true)
+    setTableLoader(true);
     try {
-      let groupFieldName = ""
+      let groupFieldName = "";
 
       if (groupField?.id?.includes("#"))
-        groupFieldName = `${groupField.id.split("#")[0]}_id`
-      if (groupField?.slug) groupFieldName = groupField?.slug
+        groupFieldName = `${groupField.id.split("#")[0]}_id`;
+      if (groupField?.slug) groupFieldName = groupField?.slug;
 
       const { data } = await constructorObjectService.getList(tableSlug, {
-        data: { offset: 0, limit: 10, [groupFieldName]: group?.value },
-      })
+        data: {
+          offset: 0,
+          ...filters,
+          [tab?.slug]: tab?.value,
+        },
+      });
 
-      setData(data.response ?? [])
+      setData(data.response ?? []);
 
       // dispatch(
       //   tableColumnActions.setList({
@@ -44,13 +47,13 @@ const TreeView = ({ groupField, fieldsMap, group, view }) => {
       //   })
       // )
     } finally {
-      setTableLoader(false)
+      setTableLoader(false);
     }
-  }
+  };
 
   useEffect(() => {
-    getAllData()
-  }, [])
+    getAllData();
+  }, []);
 
   return (
     <div>
@@ -58,7 +61,7 @@ const TreeView = ({ groupField, fieldsMap, group, view }) => {
         (new_list[tableSlug] &&
           new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
-          <p>{t("filters")}</p>
+          <p>Фильтры</p>
           <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
         </div>
       )}
@@ -79,7 +82,7 @@ const TreeView = ({ groupField, fieldsMap, group, view }) => {
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default TreeView
+export default TreeView;

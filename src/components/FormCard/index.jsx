@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material"
 import IconGenerator from "../IconPicker/IconGenerator"
 import "./style.scss"
 
@@ -18,9 +19,11 @@ const FormCard = ({
       <div className="card" {...props}>
         {title && (
           <div className="header">
-            <div className="left-side">
+            <div className="left-side" >
               <IconGenerator icon={icon} />
-              <h4 className="title">{title}</h4>
+              <h4 className="title">
+                {title}
+              </h4>
             </div>
 
             <div className="extra">{extra}</div>

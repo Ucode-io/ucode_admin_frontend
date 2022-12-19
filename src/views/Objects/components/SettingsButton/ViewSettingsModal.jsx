@@ -1,9 +1,8 @@
-import * as React from "react"
-import Box from "@mui/material/Box"
-import Modal from "@mui/material/Modal"
-import { Close, Add } from "@mui/icons-material"
-import "./settingsButton.scss"
-import { useTranslation } from "react-i18next"
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import { Close, Add } from "@mui/icons-material";
+import "./settingsButton.scss";
 
 const style = {
   position: "absolute",
@@ -16,7 +15,7 @@ const style = {
   border: "2px solid #000",
   borderRadius: "6px",
   boxShadow: 24,
-}
+};
 
 const leftSide = [
   {
@@ -44,11 +43,10 @@ const leftSide = [
     title: "Tree",
     icon: "",
   },
-]
+];
 
 export default function ViewSettingsModal({ open, setOpen, children }) {
-  const handleClose = () => setOpen(false)
-  const { t } = useTranslation()
+  const handleClose = () => setOpen(false);
 
   return (
     <div>
@@ -60,7 +58,7 @@ export default function ViewSettingsModal({ open, setOpen, children }) {
       >
         <Box sx={style}>
           <div className="modalHeader">
-            <div className="title">{t("view.settings")}</div>
+            <div className="title">View settings</div>
             <Close />
           </div>
           <div className="modalBody">
@@ -71,7 +69,7 @@ export default function ViewSettingsModal({ open, setOpen, children }) {
                 </div>
               ))}
               <div className="addViewOption">
-                <Add sx={{ color: "#6E8BB7" }} />
+                <Add sx={{color: '#6E8BB7'}} />
               </div>
             </div>
             <div className="right"></div>
@@ -79,5 +77,5 @@ export default function ViewSettingsModal({ open, setOpen, children }) {
         </Box>
       </Modal>
     </div>
-  )
+  );
 }

@@ -1,13 +1,14 @@
-import { FormControl, FormHelperText, InputLabel } from "@mui/material"
-import { useMemo } from "react"
-import { Controller } from "react-hook-form"
-import CAutoCompleteSelect from "../CAutoCompleteSelect"
+import { FormControl, FormHelperText, InputLabel } from "@mui/material";
+import { useMemo } from "react";
+import { Controller } from "react-hook-form";
+import CAutoCompleteSelect from "../CAutoCompleteSelect";
 
 const HFAutocomplete = ({
   control,
   name,
-
+  isBlackBg,
   label,
+  tabIndex,
   width = "100%",
   options = [],
   disabledHelperText,
@@ -20,13 +21,13 @@ const HFAutocomplete = ({
 }) => {
   const computedOptions = useMemo(() => {
     if (Object.keys(options[0] ?? {}).includes("label")) {
-      return options
+      return options;
     }
     return options?.map((option) => ({
       label: option,
       value: option,
-    }))
-  }, [options])
+    }));
+  }, [options]);
 
   return (
     <Controller
@@ -46,9 +47,11 @@ const HFAutocomplete = ({
             <InputLabel size="small">{label}</InputLabel>
             <CAutoCompleteSelect
               value={value}
+              tabIndex={tabIndex}
+              isBlackBg={isBlackBg}
               onChange={(val) => {
-                onChange(val?.value)
-                onFormChange(val?.value)
+                onChange(val?.value);
+                onFormChange(val?.value);
               }}
               options={computedOptions}
             />
@@ -56,10 +59,10 @@ const HFAutocomplete = ({
               <FormHelperText error>{error?.message}</FormHelperText>
             )}
           </FormControl>
-        )
+        );
       }}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFAutocomplete
+export default HFAutocomplete;

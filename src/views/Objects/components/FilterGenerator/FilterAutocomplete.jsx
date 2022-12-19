@@ -1,9 +1,9 @@
-import { ArrowDropDown, Close } from "@mui/icons-material"
-import { Checkbox, Divider, Fade, IconButton, Menu } from "@mui/material"
-import { useMemo, useState } from "react"
-import SearchInput from "../../../../components/SearchInput"
-import useDebounce from "../../../../hooks/useDebounce"
-import styles from "./style.module.scss"
+import { ArrowDropDown, Close } from "@mui/icons-material";
+import { Checkbox, Divider, Fade, IconButton, Menu } from "@mui/material";
+import { useMemo, useState } from "react";
+import SearchInput from "../../../../components/SearchInput";
+import useDebounce from "../../../../hooks/useDebounce";
+import styles from "./style.module.scss";
 
 const FilterAutoComplete = ({
   options = [],
@@ -15,44 +15,44 @@ const FilterAutoComplete = ({
   label,
   field,
 }) => {
-  const [anchorEl, setAnchorEl] = useState(null)
-  const menuVisible = Boolean(anchorEl)
+  const [anchorEl, setAnchorEl] = useState(null);
+  const menuVisible = Boolean(anchorEl);
 
   const computedValue = useMemo(() => {
     return value
       ?.map((el) => options?.find((option) => option.value === el))
-      .filter((el) => el)
-  }, [value, options])
+      .filter((el) => el);
+  }, [value, options]);
 
   const computedOptions = useMemo(() => {
-    return options?.filter((option) => !value?.includes(option.value))
-  }, [options, value])
+    return options?.filter((option) => !value?.includes(option.value));
+  }, [options, value]);
 
   const openMenu = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const inputChangeHandler = useDebounce((val) => {
-    setSearchText(val)
-  }, 300)
+    setSearchText(val);
+  }, 300);
 
   const closeMenu = () => {
-    setAnchorEl(null)
-    setSearchText("")
-  }
+    setAnchorEl(null);
+    setSearchText("");
+  };
 
   const rowClickHandler = (option) => {
     if (value?.includes(option.value)) {
-      onChange(value.filter((item) => item !== option.value))
+      onChange(value.filter((item) => item !== option.value));
     } else {
-      onChange([...value, option.value])
+      onChange([...value, option.value]);
     }
-  }
+  };
 
   const onClearButtonClick = (e) => {
-    e.stopPropagation()
-    onChange(null)
-  }
+    e.stopPropagation();
+    onChange(null);
+  };
 
   return (
     <div className={styles.autocomplete}>
@@ -116,7 +116,7 @@ const FilterAutoComplete = ({
         </div>
       </Menu>
     </div>
-  )
-}
+  );
+};
 
-export default FilterAutoComplete
+export default FilterAutoComplete;

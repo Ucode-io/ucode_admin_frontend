@@ -4,6 +4,7 @@ import styles from "./style.module.scss"
 
 const RecursiveBlock = ({
   data,
+  period,
   fieldsMap,
   parentTab,
   view,
@@ -34,6 +35,7 @@ const RecursiveBlock = ({
             </div>
           ) : (
             <DataRow
+              period={period}
               tab={tab}
               datesList={datesList}
               view={view}
@@ -44,6 +46,7 @@ const RecursiveBlock = ({
 
           {tabs?.[level + 1] && (
             <RecursiveBlock
+              period={period}
               data={data}
               tabs={tabs}
               parentTab={tab}

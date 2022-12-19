@@ -15,11 +15,12 @@
   padding-top: 0;
   overflow: auto;
   padding-right: 0px;
+  border-right: 1px solid #b3b0b0;
 }
 
 .secondaryCardSide {
   flex: 1;
-  max-width: calc(100% - 400px);
+  //max-width: calc(100% - 400px);
   height: calc(100vh - 153px);
   overflow: auto;
   // padding: 8px;
@@ -51,7 +52,7 @@
 .heightControl {
   position: absolute;
   top: 35px;
-  right: 0;
+  right: -7px;
   min-width: 120px;
   border: 1px solid #e5e9eb;
   display: flex;
@@ -59,6 +60,7 @@
   background-color: #fff;
   z-index: 5;
   border-radius: 6px;
+
   .heightControl_item {
     display: flex;
     align-items: center;
@@ -67,11 +69,88 @@
     border-radius: 6px 6px 0 0;
     border-bottom: 1px solid #e5e9eb;
     cursor: pointer;
+
     &:hover {
       background-color: #f5f7f9;
     }
+
     &:last-child {
       border-bottom: none;
     }
+
+    div{
+      width: 100%;
+      border: 0;
+      &:hover {
+        background-color: #f5f7f9;
+      }
+
+      svg{
+        margin-left: 5px;
+      }
+    }
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-right: 1px solid #e5e9eb;
+  position: relative;
+
+  .header {
+    width: 100%;
+    position: absolute;
+    display: flex;
+    justify-content: end;
+    right: 30px;
+    top: 15px;
+    z-index: 3;
+
+    button {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: none;
+      background: none;
+      //color: #007AFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transform: rotate(180deg);
+    }
+  }
+
+  .hideSideCard {
+    display: flex;
+    flex-direction: column;
+
+    button {
+      min-height: 53px;
+      min-width: 36px;
+      border-radius: 6px;
+      color: #6E8BB7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 0;
+      background: none;
+      position: absolute;
+      z-index: 3;
+
+    }
+  }
+}
+
+.title {
+  background-color: #fff;
+  padding: 12px 0 12px 7px;
+  h3{
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 24px;
   }
 }

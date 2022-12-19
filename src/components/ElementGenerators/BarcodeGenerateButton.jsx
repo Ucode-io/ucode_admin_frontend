@@ -1,4 +1,3 @@
-import printJS from "print-js";
 import React from "react";
 import styles from "./style.module.scss";
 import barcodeService from "../../services/barcodeService";

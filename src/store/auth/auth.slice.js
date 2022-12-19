@@ -10,6 +10,7 @@ const initialState = {
   permissions: {},
   loginTableSlug: "",
   userId: "",
+  tables: []
 }
 
 export const { actions: authActions, reducer: authReducer } = createSlice({
@@ -21,10 +22,11 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
       state.token = payload.token.access_token
       state.refreshToken = payload.token.refresh_token
       state.userInfo = payload.user
+      state.clientType = payload.client_type
       state.roleInfo = payload.role
       state.loginTableSlug = payload.login_table_slug
       state.userId = payload.user_id
-
+      state.tables = payload.tables
       // state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
       state.permissions = payload?.permissions
         ? payload?.permissions?.reduce((acc, curr) => {

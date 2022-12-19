@@ -1,6 +1,5 @@
 import { Delete } from "@mui/icons-material"
 import { useFieldArray } from "react-hook-form"
-import { useTranslation } from "react-i18next"
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
@@ -18,12 +17,7 @@ const formulaTypes = [
 ]
 
 const SummaryBlock = ({ control, computedFieldsListOptions }) => {
-  const { t } = useTranslation()
-  const {
-    fields: summaries,
-    insert,
-    remove,
-  } = useFieldArray({
+  const { fields: summaries, insert, remove } = useFieldArray({
     control,
     name: "summaries",
     keyName: "key",
@@ -63,17 +57,14 @@ const SummaryBlock = ({ control, computedFieldsListOptions }) => {
               name={`summaries[${index}].formula_name`}
               options={formulaTypes}
             />
-            <RectangleIconButton
-              color="error"
-              onClick={() => deleteSummary(index)}
-            >
+            <RectangleIconButton color="error" onClick={() => deleteSummary(index)} >
               <Delete color="error" />
             </RectangleIconButton>
           </div>
         ))}
 
-        <div className={styles.summaryButton} onClick={addNewSummary}>
-          <button type="button">+ {t("create.new")}</button>
+        <div className={styles.summaryButton} onClick={addNewSummary} >
+          <button type="button" >+ Создать новый</button>
         </div>
       </div>
     </>

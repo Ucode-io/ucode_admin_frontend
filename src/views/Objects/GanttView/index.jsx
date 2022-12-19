@@ -4,69 +4,93 @@ import {
   endOfMonth,
   format,
   startOfMonth,
-} from "date-fns"
-import { useMemo, useState } from "react"
-import { useQueries, useQuery } from "react-query"
-import { useParams } from "react-router-dom"
-import CRangePicker from "../../../components/DatePickers/CRangePicker"
-import FiltersBlock from "../../../components/FiltersBlock"
-import PageFallback from "../../../components/PageFallback"
-import useFilters from "../../../hooks/useFilters"
-import constructorObjectService from "../../../services/constructorObjectService"
-import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel"
-import { listToMap } from "../../../utils/listToMap"
-import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd"
-import ExcelButtons from "../components/ExcelButtons"
-import FastFilter from "../components/FastFilter"
-import FastFilterButton from "../components/FastFilter/FastFilterButton"
-import SettingsButton from "../components/ViewSettings/SettingsButton"
-import ViewTabSelector from "../components/ViewTypeSelector"
-import Gantt from "./Gantt"
+} from "date-fns";
+import { useMemo, useState } from "react";
+import { useQueries, useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+
+import CRangePicker from "../../../components/DatePickers/CRangePicker";
+import FiltersBlock from "../../../components/FiltersBlock";
+import PageFallback from "../../../components/PageFallback";
+import useFilters from "../../../hooks/useFilters";
+import constructorObjectService from "../../../services/constructorObjectService";
+import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
+import { listToMap } from "../../../utils/listToMap";
+import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd";
+import ExcelButtons from "../components/ExcelButtons";
+import FastFilter from "../components/FastFilter";
+import FastFilterButton from "../components/FastFilter/FastFilterButton";
+import SettingsButton from "../components/ViewSettings/SettingsButton";
+import ViewTabSelector from "../components/ViewTypeSelector";
+import styles from "@/views/Objects/TableView/styles.module.scss";
+import HFSelect from "../../../components/FormElements/HFSelect";
+import Gantt from "./Gantt";
+
+const variableTypes = [
+  {
+    label: "Years / Months",
+    value: "years",
+  },
+  {
+    label: "Months / Days",
+    value: "months",
+  },
+  {
+    label: "Weeks / Days",
+    value: "weeks",
+  },
+];
 
 const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
-  const { tableSlug } = useParams()
-  const { filters } = useFilters(tableSlug, view.id)
+  const { control, watch, setValue } = useForm({
+    defaultValues: {
+      period: "months",
+    },
+  });
+  const { tableSlug } = useParams();
+  const { filters } = useFilters(tableSlug, view.id);
 
   const [dateFilters, setDateFilters] = useState([
     startOfMonth(new Date()),
     endOfMonth(new Date()),
-  ])
-  const [fieldsMap, setFieldsMap] = useState({})
+  ]);
+  const [fieldsMap, setFieldsMap] = useState({});
 
-  const groupFieldIds = view.group_fields
+  const groupFieldIds = view.group_fields;
   const groupFields = groupFieldIds
     .map((id) => fieldsMap[id])
-    .filter((el) => el)
+    .filter((el) => el);
 
   const datesList = useMemo(() => {
-    if (!dateFilters?.[0] || !dateFilters?.[1]) return []
+    if (!dateFilters?.[0] || !dateFilters?.[1]) return [];
 
-    const differenceDays = differenceInDays(dateFilters[1], dateFilters[0])
+    const differenceDays = differenceInDays(dateFilters[1], dateFilters[0]);
 
-    const result = []
+    const result = [];
     for (let i = 0; i <= differenceDays; i++) {
-      result.push(add(dateFilters[0], { days: i }))
+      result.push(add(dateFilters[0], { days: i }));
     }
-    return result
-  }, [dateFilters])
+    return result;
+  }, [dateFilters]);
 
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters }],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: { with_relations: true, ...filters },
-      })
+      });
     },
     {
       cacheTime: 10,
       select: (res) => {
-        const fields = res.data?.fields ?? []
+        const fields = res.data?.fields ?? [];
         const relationFields =
           res?.data?.relation_fields?.map((el) => ({
             ...el,
             label: `${el.label} (${el.table_label})`,
-          })) ?? []
-        const fieldsMap = listToMap([...fields, ...relationFields])
+          })) ?? [];
+        const fieldsMap = listToMap([...fields, ...relationFields]);
         const data = res.data?.response?.map((row) => ({
           ...row,
           calendar: {
@@ -74,25 +98,23 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
               ? format(new Date(row[view.calendar_from_slug]), "dd.MM.yyyy")
               : null,
           },
-        }))
+        }));
         return {
           fieldsMap,
           data,
-        }
+        };
       },
       onSuccess: (res) => {
-        if (Object.keys(fieldsMap)?.length) return
-        setFieldsMap(res.fieldsMap)
+        if (Object.keys(fieldsMap)?.length) return;
+        setFieldsMap(res.fieldsMap);
       },
     }
-  )
+  );
 
-  const tabResponses = useQueries(queryGenerator(groupFields, filters))
+  const tabResponses = useQueries(queryGenerator(groupFields, filters));
 
-  const tabs = tabResponses?.map((response) => response?.data)
-  const tabLoading = tabResponses?.some((response) => response?.isLoading)
-
-  console.log("TAB REsPONSES ==>", tabs)
+  const tabs = tabResponses?.map((response) => response?.data);
+  const tabLoading = tabResponses?.some((response) => response?.isLoading);
 
   return (
     <div>
@@ -116,58 +138,88 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
           value={dateFilters}
           onChange={setDateFilters}
         />
-        <FastFilter view={view} fieldsMap={fieldsMap} />
+        <HFSelect
+          defaultValue={{
+            label: "Months / Days",
+            value: "months",
+          }}
+          watch={watch}
+          setFormValue={setValue}
+          options={variableTypes}
+          placeholder="Период"
+          control={control}
+          name="period"
+          required
+        />
       </FiltersBlock>
+
+      <div
+        className="title"
+        style={{
+          padding: "10px",
+          background: "#fff",
+          borderBottom: "1px solid #E5E9EB",
+        }}
+      >
+        <h3>{view.table_label}</h3>
+      </div>
 
       {isLoading || tabLoading ? (
         <PageFallback />
       ) : (
-        <Gantt
-          data={data}
-          fieldsMap={fieldsMap}
-          datesList={datesList}
-          view={view}
-          tabs={tabs}
-          // workingDays={workingDays}
-        />
+        <div className={styles.wrapper}>
+          {/* <div className={styles.filters}>
+            <p>Фильтры</p>
+            <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+          </div> */}
+          <Gantt
+            data={data}
+            period={watch("period")}
+            fieldsMap={fieldsMap}
+            datesList={datesList}
+            view={view}
+            tabs={tabs}
+            // workingDays={workingDays}
+          />
+        </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 // ========== UTILS ==========
 
 const queryGenerator = (groupFields, filters = {}) => {
-  return groupFields?.map((field) => promiseGenerator(field, filters))
-}
+  return groupFields?.map((field) => promiseGenerator(field, filters));
+};
 
 const promiseGenerator = (groupField, filters = {}) => {
-  const filterValue = filters[groupField.slug]
-  const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {}
+  const filterValue = filters[groupField.slug];
+  const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {};
 
-  const relationFilters = {}
+  const relationFilters = {};
 
   Object.entries(filters)?.forEach(([key, value]) => {
-    if (!key?.includes(".")) return
+    if (!key?.includes(".")) return;
 
     if (key.split(".")?.pop() === groupField.slug) {
-      relationFilters[key.split(".")?.pop()] = value
-      return
+      relationFilters[key.split(".")?.pop()] = value;
+      return;
     }
 
     const filterTableSlug = selectElementFromEndOfString({
       string: key,
       separator: ".",
       index: 2,
-    })
+    });
 
     if (filterTableSlug === groupField.table_slug) {
-      const slug = key.split(".")?.pop()
+      const slug = key.split(".")?.pop();
 
-      relationFilters[slug] = value
+      relationFilters[slug] = value;
     }
-  })
-  const computedFilters = { ...defaultFilters, ...relationFilters }
+  });
+  const computedFilters = { ...defaultFilters, ...relationFilters };
 
   if (groupField?.type === "PICK_LIST") {
     return {
@@ -181,7 +233,7 @@ const promiseGenerator = (groupField, filters = {}) => {
           slug: groupField?.slug,
         })),
       }),
-    }
+    };
   }
 
   if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
@@ -193,7 +245,7 @@ const promiseGenerator = (groupField, filters = {}) => {
         {
           data: computedFilters ?? {},
         }
-      )
+      );
 
     return {
       queryKey: [
@@ -216,10 +268,10 @@ const promiseGenerator = (groupField, filters = {}) => {
             value: el.guid,
             slug: groupField?.slug,
           })),
-        }
+        };
       },
-    }
+    };
   }
-}
+};
 
-export default GanttView
+export default GanttView;

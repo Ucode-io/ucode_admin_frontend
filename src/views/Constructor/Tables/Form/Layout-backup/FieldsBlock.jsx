@@ -7,11 +7,9 @@ import { applyDrag } from "../../../../../utils/applyDrag"
 import { useMemo, useState } from "react"
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
 import { KeyboardArrowDown, KeyboardDoubleArrowLeft } from "@mui/icons-material"
-import { useTranslation } from "react-i18next"
 
 const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
   const [blockIsOpen, setBlockIsOpen] = useState(true)
-  const { t } = useTranslation()
 
   const { fields } = useFieldArray({
     control: mainForm.control,
@@ -46,27 +44,23 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
 
   return (
     <div>
-      {!blockIsOpen && (
-        <Card
-          className={styles.collapseBlock}
-          onClick={() => setBlockIsOpen(true)}
-        >
-          <div className={styles.collapseButton}>
-            {" "}
-            {t("fields")} <KeyboardArrowDown />{" "}
-          </div>
-        </Card>
-      )}
+
+      {!blockIsOpen && <Card className={styles.collapseBlock} onClick={() => setBlockIsOpen(true)} >
+        
+        <div className={styles.collapseButton} > Fields <KeyboardArrowDown /> </div>
+
+      </Card>}
 
       <Collapse unmountOnExit orientation="horizontal" in={blockIsOpen}>
         <div className={styles.fieldsBlock}>
           <Card className={styles.fieldCard}>
             <div className={styles.fieldCardHeader}>
-              <Typography variant="h4">{t("fields")}</Typography>
+              <Typography variant="h4">Fields</Typography>
 
-              <RectangleIconButton onClick={() => setBlockIsOpen(false)}>
+              <RectangleIconButton onClick={() => setBlockIsOpen(false)} >
                 <KeyboardDoubleArrowLeft />
               </RectangleIconButton>
+
             </div>
 
             <div className={styles.fieldsWrapperBlock}>
@@ -96,7 +90,7 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
 
           <Card className={styles.fieldCard}>
             <div className={styles.fieldCardHeader}>
-              <Typography variant="h4">{t("relation.fields")}</Typography>
+              <Typography variant="h4">Relation fields</Typography>
             </div>
 
             <div className={styles.fieldsWrapperBlock}>

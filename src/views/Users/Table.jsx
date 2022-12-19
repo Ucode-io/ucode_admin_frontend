@@ -1,9 +1,9 @@
-import { Delete } from "@mui/icons-material"
-import { Card } from "@mui/material"
-import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
-import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
+import { Delete } from "@mui/icons-material";
+import { Card } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
+import ButtonsPopover from "../../components/ButtonsPopover";
 import {
   CTable,
   CTableBody,
@@ -11,24 +11,23 @@ import {
   CTableHead,
   CTableHeadRow,
   CTableRow,
-} from "../../components/CTable"
-import TableRowButton from "../../components/TableRowButton"
-import UserInfoBlock from "../../components/UserInfoBlock"
-import useDebouncedWatch from "../../hooks/useDebouncedWatch"
-import userService from "../../services/auth/userService"
-import { pageToOffset } from "../../utils/pageToOffset"
+} from "../../components/CTable";
+import TableRowButton from "../../components/TableRowButton";
+import UserInfoBlock from "../../components/UserInfoBlock";
+import useDebouncedWatch from "../../hooks/useDebouncedWatch";
+import userService from "../../services/auth/userService";
+import { pageToOffset } from "../../utils/pageToOffset";
 
 const UsersTable = ({ searchText }) => {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [tableData, setTableData] = useState(null)
-  const [loader, setLoader] = useState(true)
-  const [pageCount, setPageCount] = useState(1)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [tableData, setTableData] = useState(null);
+  const [loader, setLoader] = useState(true);
+  const [pageCount, setPageCount] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchTableData = () => {
-    setLoader(true)
+    setLoader(true);
     userService
       .getList({
         limit: 10,
@@ -36,39 +35,39 @@ const UsersTable = ({ searchText }) => {
         search: searchText,
       })
       .then((res) => {
-        setTableData(res.users)
-        setPageCount(Math.ceil(res?.count / 10))
+        setTableData(res.users);
+        setPageCount(Math.ceil(res?.count / 10));
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const deleteTableData = (e, id) => {
-    setLoader(true)
+    setLoader(true);
 
     userService
       .delete(id)
       .then((res) => {
-        fetchTableData()
+        fetchTableData();
       })
-      .catch(() => setLoader(false))
-  }
+      .catch(() => setLoader(false));
+  };
 
   const navigateToEditForm = (id) => {
-    navigate(`/settings/auth/users/${id}`)
-  }
+    navigate(`/settings/auth/users/${id}`);
+  };
 
   useDebouncedWatch(
     () => {
-      if (currentPage === 1) fetchTableData()
-      else setCurrentPage(1)
+      if (currentPage === 1) fetchTableData();
+      else setCurrentPage(1);
     },
     [searchText],
     400
-  )
+  );
 
   useEffect(() => {
-    fetchTableData()
-  }, [currentPage])
+    fetchTableData();
+  }, [currentPage]);
 
   return (
     <Card className="p-2">
@@ -82,9 +81,9 @@ const UsersTable = ({ searchText }) => {
         <CTableHead>
           <CTableHeadRow>
             <CTableCell width={20}>No</CTableCell>
-            <CTableCell>{t("fio")}</CTableCell>
-            <CTableCell>{t("email")}</CTableCell>
-            <CTableCell>{t("login")}</CTableCell>
+            <CTableCell>FIO</CTableCell>
+            <CTableCell>Email</CTableCell>
+            <CTableCell>Login</CTableCell>
             <CTableCell width={30}></CTableCell>
           </CTableHeadRow>
         </CTableHead>
@@ -128,7 +127,7 @@ const UsersTable = ({ searchText }) => {
         }
       </CTable>
     </Card>
-  )
-}
+  );
+};
 
-export default UsersTable
+export default UsersTable;

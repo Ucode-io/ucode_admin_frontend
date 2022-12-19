@@ -6,7 +6,6 @@ import HFTextField from "../../components/FormElements/HFTextField"
 import { FilterIcon } from "../../assets/icons/icon"
 import styles from "./styles.module.scss"
 import { useState } from "react"
-import { useTranslation } from "react-i18next"
 
 const style = {
   position: "absolute",
@@ -32,7 +31,6 @@ const CreateLoginModal = ({
   handleSubmit = () => {},
   isEditing = false,
 }) => {
-  const { t } = useTranslation()
   const handleClose = () => {
     setOpen(false)
     loginForm.reset()
@@ -53,10 +51,10 @@ const CreateLoginModal = ({
               <div className={styles.card_header_left} style={{ flexGrow: 1 }}>
                 <div className={styles.card_header_title}>
                   {strategyType === "3"
-                    ? t("login.with.email")
+                    ? "Логин с e-mail"
                     : strategyType === "2"
-                    ? t("login.with.number")
-                    : t("login.with.number")}
+                    ? "Логин с тел. номером"
+                    : "Логин с паролем"}
                 </div>
                 <HFSelect
                   options={loginOptions}
@@ -83,11 +81,11 @@ const CreateLoginModal = ({
             <div className={styles.card_body}>
               <div className={styles.card_body_head}>
                 <div>
-                  {t("title")}
+                  Название
                   <FilterIcon />
                 </div>
                 <div>
-                  {t("view.field")}
+                  View field
                   <FilterIcon />
                 </div>
               </div>
@@ -141,7 +139,7 @@ const CreateLoginModal = ({
                 loginForm.reset()
               }}
             >
-              {t("cancel")}
+              Cancel
             </button>
             <button
               className={styles.craete_btn}
@@ -150,7 +148,7 @@ const CreateLoginModal = ({
                 handleClose()
               }}
             >
-              {isEditing ? "Update" : "Create"}
+              {isEditing ? 'Update' : 'Create'}
             </button>
           </div>
         </Box>

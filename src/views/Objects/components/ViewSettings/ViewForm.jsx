@@ -1,65 +1,67 @@
-import { Delete, FilterAlt, JoinInner, TableChart } from "@mui/icons-material"
-import { useEffect, useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
-import { useTranslation } from "react-i18next"
-import { useParams } from "react-router-dom"
-import { Tab, TabList, Tabs, TabPanel } from "react-tabs"
-import CancelButton from "../../../../components/Buttons/CancelButton"
-import SaveButton from "../../../../components/Buttons/SaveButton"
-import FRow from "../../../../components/FormElements/FRow"
-import HFSelect from "../../../../components/FormElements/HFSelect"
-import HFTextField from "../../../../components/FormElements/HFTextField"
-import useWatch from "../../../../hooks/useWatch"
-import constructorViewService from "../../../../services/constructorViewService"
-import { viewTypes } from "../../../../utils/constants/viewTypes"
-import CalendarSettings from "./CalendarSettings"
-import ColumnsTab from "./ColumnsTab"
-import GanttSettings from "./GanttSettings"
-import GroupsTab from "./GroupsTab"
-import MultipleInsertSettings from "./MultipleInsertSettings"
-import QuickFiltersTab from "./QuicFiltersTab"
-import styles from "./style.module.scss"
+import { Delete, FilterAlt, JoinInner, TableChart } from "@mui/icons-material";
+import InfoIcon from '@mui/icons-material/Info';
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import { Tab, TabList, Tabs, TabPanel } from "react-tabs";
+import CancelButton from "../../../../components/Buttons/CancelButton";
+import SaveButton from "../../../../components/Buttons/SaveButton";
+import FRow from "../../../../components/FormElements/FRow";
+import HFSelect from "../../../../components/FormElements/HFSelect";
+import HFTextField from "../../../../components/FormElements/HFTextField";
+import useWatch from "../../../../hooks/useWatch";
+import constructorViewService from "../../../../services/constructorViewService";
+import { viewTypes } from "../../../../utils/constants/viewTypes";
+import CalendarHourSettings from "./CalendarHourSettings";
+import CalendarSettings from "./CalendarSettings";
+import ColumnsTab from "./ColumnsTab";
+import GanttSettings from "./GanttSettings";
+import GroupsTab from "./GroupsTab";
+import MultipleInsertSettings from "./MultipleInsertSettings";
+import QuickFiltersTab from "./QuicFiltersTab";
+import styles from "./style.module.scss";
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import ChartAccounts from "./ChartAccounts";
 
 const ViewForm = ({
   initialValues,
+  typeNewView,
   closeForm,
   refetchViews,
   setIsChanged,
   columns,
   relationColumns,
 }) => {
-  const { t } = useTranslation()
-  const { tableSlug } = useParams()
+  const { tableSlug, appId } = useParams();
+  const [btnLoader, setBtnLoader] = useState(false);
+  const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
 
-  const [btnLoader, setBtnLoader] = useState(false)
-  const [deleteBtnLoader, setDeleteBtnLoader] = useState(false)
+  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
 
-  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }))
+  const form = useForm();
 
-  const form = useForm()
-
-  const type = form.watch("type")
+  const type = form.watch("type");
 
   const computedColumns = useMemo(() => {
     if (type !== "CALENDAR" && type !== "GANTT") {
-      return columns
+      return columns;
     } else {
-      return [...columns, ...relationColumns]
+      return [...columns, ...relationColumns];
     }
-  }, [columns, relationColumns, type])
+  }, [columns, relationColumns, type]);
 
   useEffect(() => {
     form.reset(
       getInitialValues(initialValues, tableSlug, columns, relationColumns)
-    )
-  }, [initialValues, tableSlug, form])
+    );
+  }, [initialValues, tableSlug, form]);
 
   useWatch(() => {
     // const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)
     const formQuickFilters = form
       .getValues("quick_filters")
       ?.filter((el) => el?.is_checked)
-      ?.map((el) => ({ field_id: el.id }))
+      ?.map((el) => ({ field_id: el.id }));
 
     // form.setValue('columns', computeColumns(formColumns, computedColumns))
     form.setValue(
@@ -70,11 +72,11 @@ const ViewForm = ({
           ? [...columns, ...relationColumns]
           : columns
       )
-    )
-  }, [type])
+    );
+  }, [type]);
 
   const onSubmit = (values) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
 
     const computedValues = {
       ...values,
@@ -87,90 +89,111 @@ const ViewForm = ({
             field_id: el.id,
             default_value: el.default_value ?? "",
           })) ?? [],
-    }
+      app_id: appId,
+    };
 
     if (initialValues === "NEW") {
       constructorViewService
         .create(computedValues)
         .then(() => {
-          closeForm()
-          refetchViews()
-          setIsChanged(true)
+          closeForm();
+          refetchViews();
+          setIsChanged(true);
         })
-        .finally(() => setBtnLoader(false))
+        .finally(() => setBtnLoader(false));
     } else {
       constructorViewService
         .update(computedValues)
         .then(() => {
-          closeForm()
-          refetchViews()
-          setIsChanged(true)
+          closeForm();
+          refetchViews();
+          setIsChanged(true);
         })
-        .finally(() => setBtnLoader(false))
+        .finally(() => setBtnLoader(false));
     }
-  }
+  };
 
   const deleteView = () => {
-    setDeleteBtnLoader(true)
+    setDeleteBtnLoader(true);
     constructorViewService
       .delete(initialValues.id)
       .then(() => {
-        closeForm()
-        refetchViews()
+        closeForm();
+        refetchViews();
       })
-      .catch(() => setDeleteBtnLoader(false))
-  }
+      .catch(() => setDeleteBtnLoader(false));
+  };
 
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
-        <div className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.sectionTitle}>{t("main.info")}</div>
-          </div>
-
-          <div className={styles.sectionBody}>
-            <div className={styles.formRow}>
-              <FRow label={t("title")}>
-                <HFTextField control={form.control} name="name" fullWidth />
-              </FRow>
-              <FRow label={t("type")}>
-                <HFSelect
-                  options={computedViewTypes}
-                  control={form.control}
-                  name="type"
-                  fullWidth
-                />
-              </FRow>
-            </div>
-          </div>
-        </div>
-
-        {type === "CALENDAR" && (
-          <CalendarSettings form={form} columns={columns} />
-        )}
-
-        {type === "GANTT" && <GanttSettings form={form} columns={columns} />}
-
-        <MultipleInsertSettings form={form} columns={columns} />
-
         <Tabs>
           <div className={styles.section}>
             <TabList>
               <Tab>
                 {" "}
-                <FilterAlt /> {t("quick.filters")}
+                <InfoIcon /> Info
+              </Tab>
+              <Tab>
+                {" "}
+                <FilterAlt /> Quick filters
               </Tab>
               <Tab>
                 {" "}
                 <TableChart />
-                {t("columns")}
+                Columns
               </Tab>
               <Tab>
                 {" "}
-                <JoinInner /> {t("group.by")}
+                <JoinInner /> Group by
               </Tab>
+              {
+                type === 'FINANCE CALENDAR' && <Tab>
+                {" "}
+                <MonetizationOnIcon /> Chart of accaunts
+              </Tab>
+              }
             </TabList>
+            <TabPanel>
+            <div className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <div className={styles.sectionTitle}>Main info</div>
+              </div>
+
+              <div className={styles.sectionBody}>
+                <div className={styles.formRow}>
+                  <FRow label="Название">
+                    <HFTextField control={form.control} name="name" fullWidth />
+                  </FRow>
+                  <FRow label="Тип">
+                    <HFSelect
+                      options={computedViewTypes}
+                      defaultValue={typeNewView}
+                      control={form.control}
+                      name="type"
+                      fullWidth
+                    />
+                  </FRow>
+                </div>
+                <FRow label="Default limit">
+                  <HFTextField control={form.control} name="default_limit" />
+                </FRow>
+              </div>
+            </div>
+
+            <MultipleInsertSettings form={form} columns={columns} />
+
+            {type === "CALENDAR" && (
+          <CalendarSettings form={form} columns={columns} />
+        )}
+
+        {type === "CALENDAR HOUR" && (
+          <CalendarHourSettings form={form} columns={columns} />
+        )}
+
+        {type === "GANTT" && <GanttSettings form={form} columns={columns} />}
+
+            </TabPanel>
             <TabPanel>
               <QuickFiltersTab form={form} />
             </TabPanel>
@@ -179,6 +202,9 @@ const ViewForm = ({
             </TabPanel>
             <TabPanel>
               <GroupsTab columns={computedColumns} form={form} />
+            </TabPanel>
+            <TabPanel>
+              <ChartAccounts />
             </TabPanel>
           </div>
         </Tabs>
@@ -189,7 +215,7 @@ const ViewForm = ({
           <CancelButton
             loading={deleteBtnLoader}
             onClick={deleteView}
-            title={t("delete")}
+            title={"Delete"}
             icon={<Delete />}
           />
         )}
@@ -197,8 +223,8 @@ const ViewForm = ({
         <SaveButton onClick={form.handleSubmit(onSubmit)} loading={btnLoader} />
       </div>
     </div>
-  )
-}
+  );
+};
 
 const getInitialValues = (
   initialValues,
@@ -211,6 +237,7 @@ const getInitialValues = (
       type: "TABLE",
       users: [],
       name: "",
+      default_limit: "",
       main_field: "",
       time_interval: 60,
       status_field_slug: "",
@@ -227,12 +254,13 @@ const getInitialValues = (
       updated_fields: [],
       multiple_insert: false,
       multiple_insert_field: "",
-    }
+    };
 
   return {
     type: initialValues?.type ?? "TABLE",
     users: initialValues?.users ?? [],
     name: initialValues?.name ?? "",
+    default_limit: initialValues?.default_limit ?? "",
     main_field: initialValues?.main_field ?? "",
     status_field_slug: initialValues?.status_field_slug ?? "",
     disable_dates: {
@@ -263,8 +291,8 @@ const getInitialValues = (
     updated_fields: initialValues?.updated_fields ?? [],
     multiple_insert: initialValues?.multiple_insert ?? false,
     multiple_insert_field: initialValues?.multiple_insert_field ?? "",
-  }
-}
+  };
+};
 
 const computeColumns = (checkedColumnsIds = [], columns) => {
   const selectedColumns =
@@ -273,11 +301,11 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
       ?.map((id) => ({
         ...columns.find((el) => el.id === id),
         is_checked: true,
-      })) ?? []
+      })) ?? [];
   const unselectedColumns =
-    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? []
-  return [...selectedColumns, ...unselectedColumns]
-}
+    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+  return [...selectedColumns, ...unselectedColumns];
+};
 
 const computeQuickFilters = (quickFilters = [], columns) => {
   const selectedQuickFilters =
@@ -287,20 +315,20 @@ const computeQuickFilters = (quickFilters = [], columns) => {
         ...columns.find((el) => el.id === filter.field_id),
         ...filter,
         is_checked: true,
-      })) ?? []
+      })) ?? [];
   const unselectedQuickFilters =
     columns?.filter(
       (el) => !quickFilters?.find((filter) => filter.field_id === el.id)
-    ) ?? []
-  return [...selectedQuickFilters, ...unselectedQuickFilters]
-}
+    ) ?? [];
+  return [...selectedQuickFilters, ...unselectedQuickFilters];
+};
 
 const computeGroupFields = (groupFields = [], columns) => {
   return (
     groupFields?.filter((groupFieldID) =>
       columns?.some((column) => column.id === groupFieldID)
     ) ?? []
-  )
-}
+  );
+};
 
-export default ViewForm
+export default ViewForm;

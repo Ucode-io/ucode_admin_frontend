@@ -5,16 +5,17 @@ import HumoIcon from "../../../assets/icons/humo-icon.svg"
 import ClickIcon from "../../../assets/icons/click-icon.svg"
 import SVG from "react-inlinesvg"
 
+
 const icons = {
-  UzCard: UzCardIcon,
-  Humo: HumoIcon,
-  Payme: PaymeIcon,
-  Наличними: CashIcon,
-  Click: ClickIcon,
+  "UzCard": UzCardIcon,
+  "Humo": HumoIcon,
+  "Payme": PaymeIcon,
+  "Наличними": CashIcon,
+  "Click": ClickIcon,
 }
 
-const PaymentTypeIconGenerator = ({ type }) => {
+const PaymentTypeIconGenerator = ({type}) => {
   return <SVG src={icons[type]} />
 }
-
-export default PaymentTypeIconGenerator
+ 
+export default PaymentTypeIconGenerator;

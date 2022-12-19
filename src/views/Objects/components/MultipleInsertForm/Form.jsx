@@ -1,46 +1,44 @@
-import { Close } from "@mui/icons-material"
-import { Divider, IconButton } from "@mui/material"
-import { useMemo } from "react"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { useTranslation } from "react-i18next"
-import { useQuery, useQueryClient } from "react-query"
-import { useParams } from "react-router-dom"
-import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
-import FormElementGenerator from "../../../../components/ElementGenerators/FormElementGenerator"
-import ManyToManyRelationFormElement from "../../../../components/ElementGenerators/ManyToManyRelationFormElement"
-import HFMultipleCalendar from "../../../../components/FormElements/HFMultipleCalendar"
-import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper"
-import constructorObjectService from "../../../../services/constructorObjectService"
-import constructorSectionService from "../../../../services/constructorSectionService"
-import { sortSections } from "../../../../utils/sectionsOrderNumber"
-import styles from "./style.module.scss"
+import { Close } from "@mui/icons-material";
+import { Divider, IconButton } from "@mui/material";
+import { useMemo } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useQuery, useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
+import FormElementGenerator from "../../../../components/ElementGenerators/FormElementGenerator";
+import ManyToManyRelationFormElement from "../../../../components/ElementGenerators/ManyToManyRelationFormElement";
+import HFMultipleCalendar from "../../../../components/FormElements/HFMultipleCalendar";
+import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
+import constructorObjectService from "../../../../services/constructorObjectService";
+import constructorSectionService from "../../../../services/constructorSectionService";
+import { sortSections } from "../../../../utils/sectionsOrderNumber";
+import styles from "./style.module.scss";
 
-const Form = ({ view = {}, onClose, fieldsMap = {} }) => {
-  const { t } = useTranslation()
-  const { tableSlug } = useParams()
-  const [btnLoader, setBtnLoader] = useState(false)
-  const queryClient = useQueryClient()
+const Form = ({ view = {}, onClose, tableSlug }) => {
+  const [btnLoader, setBtnLoader] = useState(false);
+  const queryClient = useQueryClient();
 
   const { handleSubmit, control } = useForm({
     defaultValues: {},
-  })
+  });
 
   const { isLoading, data: sections = [] } = useQuery(
     ["GET_SECTIONS", tableSlug],
     () => {
       return constructorSectionService.getList({
         table_slug: tableSlug,
-      })
+      });
     },
     {
       select: ({ sections }) => sortSections(sections),
+      enabled: !!tableSlug,
     }
-  )
+  );
 
   const { fields = [], multipleInsertField = {} } = useMemo(() => {
-    const fields = []
-    let multipleInsertField = {}
+    const fields = [];
+    let multipleInsertField = {};
 
     sections?.forEach((section) =>
       section.fields?.forEach((field) => {
@@ -48,44 +46,44 @@ const Form = ({ view = {}, onClose, fieldsMap = {} }) => {
           field.slug === view.multiple_insert_field ||
           `${field.id?.split("#")[0]}_id` === view.multiple_insert_field
         )
-          multipleInsertField = field
-        else fields.push(field)
+          multipleInsertField = field;
+        else fields.push(field);
       })
-    )
+    );
 
     return {
       fields,
       multipleInsertField,
-    }
-  }, [sections, view])
+    };
+  }, [sections, view]);
 
   const onSubmit = async (values) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
 
     try {
       const computedData = values?.multiple_values?.map((el) => ({
         ...values,
         [view.multiple_insert_field]: el,
-      }))
+      }));
 
       const data = {
         data: { objects: computedData },
         updated_fields: view.updated_fields,
-      }
+      };
 
-      await constructorObjectService.updateMultiple(tableSlug, data)
+      await constructorObjectService.updateMultiple(tableSlug, data);
 
-      onClose()
+      onClose();
 
       queryClient.refetchQueries([
         "GET_OBJECTS_LIST_WITH_RELATIONS",
         { tableSlug },
-      ])
-      queryClient.refetchQueries(["GET_OBJECTS_LIST", { tableSlug }])
+      ]);
+      queryClient.refetchQueries(["GET_OBJECTS_LIST", { tableSlug }]);
     } catch (error) {
-      setBtnLoader(false)
+      setBtnLoader(false);
     }
-  }
+  };
 
   return (
     <>
@@ -132,11 +130,11 @@ const Form = ({ view = {}, onClose, fieldsMap = {} }) => {
           onClick={handleSubmit(onSubmit)}
           loader={btnLoader}
         >
-          {t("save")}
+          Сохранить
         </PrimaryButton>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Form
+export default Form;

@@ -1,75 +1,77 @@
-import { lazy, Suspense, useMemo } from "react"
-import { useTranslation } from "react-i18next"
-import { useSelector } from "react-redux"
-import { Navigate, Route, Routes, useLocation } from "react-router-dom"
+import { lazy, Suspense, useMemo } from "react";
+import { useSelector } from "react-redux";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
-import KeepAliveWrapper from "../components/KeepAliveWrapper"
-import PageFallback from "../components/PageFallback"
-import ReloadWrapper from "../components/ReloadWrapper"
-import AnalyticsLayout from "../layouts/AnalyticsLayout"
+import KeepAliveWrapper from "../components/KeepAliveWrapper";
+import PageFallback from "../components/PageFallback";
+import ReloadWrapper from "../components/ReloadWrapper";
+import AnalyticsLayout from "../layouts/AnalyticsLayout";
 
-import CashboxLayout from "../layouts/CashboxLayout"
-import MainLayout from "../layouts/MainLayout"
-import SettingsLayout from "../layouts/SettingsLayout"
-import DashboardList from "../views/Analytics/Dashboard"
-import DashboardCreatePage from "../views/Analytics/Dashboard/DashboardCreatePage"
-import DashboardSettings from "../views/Analytics/Dashboard/DashboardSettings"
-import DashboardMainInfo from "../views/Analytics/Dashboard/DashboardSettings/DashboardMainInfo"
-import VariableCreateForm from "../views/Analytics/Dashboard/DashboardSettings/VariableCreateForm"
-import Variables from "../views/Analytics/Dashboard/DashboardSettings/Variables"
-import DashboardDetailPage from "../views/Analytics/Dashboard/Detail"
-import PanelCreateForm from "../views/Analytics/Dashboard/Detail/PanelForm"
-import Login from "../views/Auth/Login"
-import Registration from "../views/Auth/Registration"
-import CashboxAppointments from "../views/Cashbox/Appointments"
-import AppointmentsForm from "../views/Cashbox/Appointments/Form"
-import CashboxClosing from "../views/Cashbox/Closing"
-import CashboxOpening from "../views/Cashbox/Opening"
-import AppsPage from "../views/Constructor/Apps"
-import AppsForm from "../views/Constructor/Apps/AppsForm"
-import ConstructorTablesFormPage from "../views/Constructor/Tables/Form"
-import ObjectsPage from "../views/Objects"
-import ObjectsFormPage from "../views/Objects/ObjectsFormPage"
+import CashboxLayout from "../layouts/CashboxLayout";
+import MainLayout from "../layouts/MainLayout";
+import SettingsLayout from "../layouts/SettingsLayout";
+import DashboardList from "../views/Analytics/Dashboard";
+import DashboardCreatePage from "../views/Analytics/Dashboard/DashboardCreatePage";
+import DashboardSettings from "../views/Analytics/Dashboard/DashboardSettings";
+import DashboardMainInfo from "../views/Analytics/Dashboard/DashboardSettings/DashboardMainInfo";
+import VariableCreateForm from "../views/Analytics/Dashboard/DashboardSettings/VariableCreateForm";
+import Variables from "../views/Analytics/Dashboard/DashboardSettings/Variables";
+import DashboardDetailPage from "../views/Analytics/Dashboard/Detail";
+import PanelCreateForm from "../views/Analytics/Dashboard/Detail/PanelForm";
+import Login from "../views/Auth/Login";
+import Registration from "../views/Auth/Registration";
+import CashboxAppointments from "../views/Cashbox/Appointments";
+import AppointmentsForm from "../views/Cashbox/Appointments/Form";
+import CashboxClosing from "../views/Cashbox/Closing";
+import CashboxOpening from "../views/Cashbox/Opening";
+import AppsPage from "../views/Constructor/Apps";
+import AppsForm from "../views/Constructor/Apps/AppsForm";
+import ConstructorTablesFormPage from "../views/Constructor/Tables/Form";
+import ObjectsPage from "../views/Objects";
+import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
+import ReloadPage from "../components/ReloadComponent/index";
+import routes from "@/components/Sidebar2222/elements";
 
-const AuthLayout = lazy(() => import("../layouts/AuthLayout"))
+const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
-const AuthMatrix = lazy(() => import("../views/AuthMatrix"))
-const ClientPlatform = lazy(() => import("../views/AuthMatrix/ClientPlatform"))
-const ClientType = lazy(() => import("../views/AuthMatrix/ClientType"))
-const CrossedPage = lazy(() => import("../views/AuthMatrix/Crossed"))
-const RolesForm = lazy(() => import("../views/AuthMatrix/Crossed/Roles/Form"))
+const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
+const ClientPlatform = lazy(() => import("../views/AuthMatrix/ClientPlatform"));
+const ClientType = lazy(() => import("../views/AuthMatrix/ClientType"));
+const CrossedPage = lazy(() => import("../views/AuthMatrix/Crossed"));
+const RolesForm = lazy(() => import("../views/AuthMatrix/Crossed/Roles/Form"));
+const Profile = lazy(() => import("../views/AuthMatrix/Crossed/Profile/index"));
+
 const IntegrationsForm = lazy(() =>
   import("../views/AuthMatrix/Crossed/Integrations/Form")
-)
+);
 const SessionsPage = lazy(() =>
   import("../views/AuthMatrix/Crossed/Integrations/Sessions")
-)
-const UsersForm = lazy(() => import("../views/Users/Form"))
-const UsersPage = lazy(() => import("../views/Users/index"))
-const MatrixPage = lazy(() => import("../views/Matrix"))
-const MatrixDetail = lazy(() => import("../views/Matrix/MatrixDetail"))
-const MatrixRolePage = lazy(() => import("../views/Matrix/MatrixRolePage"))
+);
+const UsersForm = lazy(() => import("../views/Users/Form"));
+const UsersPage = lazy(() => import("../views/Users/index"));
+const MatrixPage = lazy(() => import("../views/Matrix"));
+const MatrixDetail = lazy(() => import("../views/Matrix/MatrixDetail"));
+const MatrixRolePage = lazy(() => import("../views/Matrix/MatrixRolePage"));
 
 const Router = () => {
-  const { t } = useTranslation()
-  const location = useLocation()
-  const isAuth = useSelector((state) => state.auth.isAuth)
-  const applications = useSelector((state) => state.application.list)
-  const cashbox = useSelector((state) => state.cashbox.data)
+  const location = useLocation();
+  const isAuth = useSelector((state) => state.auth.isAuth);
+  const applications = useSelector((state) => state.application.list);
+  const cashbox = useSelector((state) => state.cashbox.data);
 
-  const cashboxIsOpen = cashbox.is_open === "Открыто"
+  const cashboxIsOpen = cashbox.is_open === "Открыто";
 
   const redirectLink = useMemo(() => {
     if (location.pathname.includes("settings"))
-      return "/settings/constructor/apps"
-    if (location.pathname.includes("cashbox")) return "/cashbox/appointments"
-    if (!applications.length) return "/settings/constructor/apps"
-    return `/main/${applications[0].id}`
-  }, [location.pathname, applications])
+      return "/settings/constructor/apps";
+    if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
+    if (!applications.length) return "/settings/constructor/apps";
+    return `/main/${applications[0].id}`;
+  }, [location.pathname, applications]);
 
   if (!isAuth)
     return (
-      <Suspense fallback={<p> {t("loading")}...</p>}>
+      <Suspense fallback={<p> Loading...</p>}>
         <Routes>
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Navigate to="/login " />} />
@@ -80,7 +82,7 @@ const Router = () => {
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </Suspense>
-    )
+    );
 
   return (
     <Routes>
@@ -147,7 +149,7 @@ const Router = () => {
           path="auth/users/create"
           element={
             <Suspense fallback={<PageFallback />}>
-              <UsersForm />
+              {/* <UsersForm /> */}
             </Suspense>
           }
         />
@@ -161,6 +163,15 @@ const Router = () => {
         />
 
         {/* -------------AUTH MATRIX------------ */}
+
+        <Route
+          path="auth/matrix/profile/crossed"
+          element={
+            <Suspense fallback={<PageFallback />}>
+              <Profile />
+            </Suspense>
+          }
+        />
 
         <Route
           path="auth/matrix/:projectId"
@@ -353,8 +364,9 @@ const Router = () => {
       </Route>
 
       <Route path="*" element={<Navigate to={redirectLink} />} />
+      <Route path="reload" element={<ReloadPage />} />
     </Routes>
-  )
-}
+  );
+};
 
-export default Router
+export default Router;

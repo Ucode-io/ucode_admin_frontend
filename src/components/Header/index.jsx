@@ -1,6 +1,7 @@
-import BackButton from "../BackButton"
-import IconGenerator from "../IconPicker/IconGenerator"
-import styles from "./style.module.scss"
+import BackButton from "../BackButton";
+import IconGenerator from "../IconPicker/IconGenerator";
+import styles from "./style.module.scss";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({
   title = "",
@@ -13,10 +14,19 @@ const Header = ({
   sticky,
   ...props
 }) => {
+  const navigate = useNavigate();
   return (
-    <div className={`${styles.header} ${sticky ? styles.sticky : ''}`}  {...props}>
+    <div
+      className={`${styles.header} ${sticky ? styles.sticky : ""}`}
+      {...props}
+    >
       <div className={styles.leftSide}>
-        {backButtonLink && <BackButton link={backButtonLink} />}
+        {backButtonLink && (
+          <BackButton
+            link={backButtonLink}
+            onClick={() => navigate(backButtonLink)}
+          />
+        )}
 
         {icon && <IconGenerator className={styles.icon} icon={icon} />}
 
@@ -32,7 +42,7 @@ const Header = ({
 
       <div className={styles.rightSide}>{extra}</div>
     </div>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

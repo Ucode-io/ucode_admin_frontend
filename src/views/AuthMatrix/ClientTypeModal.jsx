@@ -7,7 +7,6 @@ import { useParams } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import HFTextField from "../../components/FormElements/HFTextField"
 import HFCheckbox from "../../components/FormElements/HFCheckbox"
-import { useTranslation } from "react-i18next"
 
 const ClientTypeModal = ({
   closeModal,
@@ -17,7 +16,6 @@ const ClientTypeModal = ({
   modalType,
   selectedType,
 }) => {
-  const { t } = useTranslation()
   const { projectId } = useParams()
 
   const onSubmit = (data) => {
@@ -29,14 +27,14 @@ const ClientTypeModal = ({
     })
   }
 
-  const { control, handleSubmit } = useForm({
+  const {control, handleSubmit} = useForm({
     defaultValues: {
       confirm_by: 1,
       name: selectedType?.name ?? "",
       self_recover: selectedType?.self_recover ?? false,
       self_register: selectedType?.self_register ?? false,
       project_id: projectId,
-    },
+    }
   })
 
   return (
@@ -46,8 +44,8 @@ const ClientTypeModal = ({
           <div className="modal-header silver-bottom-border">
             <Typography variant="h4">
               {modalType === "typeCreate"
-                ? t("create.client.type")
-                : t("edit.client.type")}
+                ? "Create client type"
+                : "Edit client type"}
             </Typography>
             <IconButton color="primary" onClick={closeModal}>
               <HighlightOffIcon fontSize="large" />
@@ -59,19 +57,19 @@ const ClientTypeModal = ({
               <HFTextField
                 autoFocus
                 fullWidth
-                label={t("name")}
+                label="Name"
                 control={control}
                 name="name"
               />
 
               <HFCheckbox
-                label={t("self.recovery")}
+                label="Self recover"
                 control={control}
                 name="self_recover"
               />
 
               <HFCheckbox
-                label={t("self.register")}
+                label="Self register"
                 control={control}
                 name="self_register"
               />

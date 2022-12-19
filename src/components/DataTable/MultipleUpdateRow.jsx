@@ -1,7 +1,7 @@
-import { CTableCell } from "../CTable"
-import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator"
-import "./style.scss"
-import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined"
+import { CTableCell } from "../CTable";
+import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
+import "./style.scss";
+import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 
 const MultipleUpdateRow = ({
   columns,
@@ -34,7 +34,7 @@ const MultipleUpdateRow = ({
             isBlackBg
             columns={columns}
             selected={selected}
-            index="*"
+            index={index}
             watch={watch}
             control={control}
             setFormValue={setFormValue}
@@ -44,7 +44,7 @@ const MultipleUpdateRow = ({
         </CTableCell>
       ))}
     </tr>
-  )
-}
+  );
+};
 
-export default MultipleUpdateRow
+export default MultipleUpdateRow;

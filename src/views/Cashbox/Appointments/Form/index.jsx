@@ -1,28 +1,28 @@
 import style from "./style.module.scss"
 
+import ServicesList from "./ServicesList"
+import Payments from "./Payments"
 import { useForm } from "react-hook-form"
 import { useEffect } from "react"
 import { useState } from "react"
 import { useLocation, useParams } from "react-router-dom"
-import { Save } from "@mui/icons-material"
-
-import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
-import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
-import PageFallback from "../../../../components/PageFallback"
-import Footer from "../../../../components/Footer"
 import onlineAppointmentsService from "../../../../services/cashbox/onlineAppointmentsService"
 import offlineAppointmentsService from "../../../../services/cashbox/offlineAppointmentsService"
-import useCashboxTabRouter from "../../../../hooks/useCashboxTabRouter"
-import ServicesList from "./ServicesList"
-import Payments from "./Payments"
+import PageFallback from "../../../../components/PageFallback"
 import Receipt from "./Receipt"
-import { useTranslation } from "react-i18next"
+import Footer from "../../../../components/Footer"
+import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
+import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
+import { Save } from "@mui/icons-material"
+import useCashboxTabRouter from "../../../../hooks/useCashboxTabRouter"
+import { useDispatch } from "react-redux"
+import { showAlert } from "../../../../store/alert/alert.thunk"
 
 const AppointmentsForm = () => {
-  const { t } = useTranslation()
   const { id, type } = useParams()
   const { pathname } = useLocation()
   const { removeTab } = useCashboxTabRouter()
+  const dispatch = useDispatch()
 
   const [loader, setLoader] = useState(true)
   const [btnLoader, setBtnLoader] = useState(false)
@@ -64,7 +64,7 @@ const AppointmentsForm = () => {
   }
 
   const onSubmit = (data) => {
-    const computedServices = data.services?.filter(({ checked }) => checked)
+    const computedServices = data.services?.filter(({checked}) => checked)
 
     let totalPrice = 0
 
@@ -124,14 +124,14 @@ const AppointmentsForm = () => {
         extra={
           <>
             <SecondaryButton onClick={() => removeTab(pathname)} color="error">
-              {t("close")}
+              Закрыть
             </SecondaryButton>
             {!isUpdated && (
               <PrimaryButton
                 loader={btnLoader}
                 onClick={form.handleSubmit(onSubmit)}
               >
-                <Save /> {t("save")}
+                <Save /> Сохранить
               </PrimaryButton>
             )}
           </>

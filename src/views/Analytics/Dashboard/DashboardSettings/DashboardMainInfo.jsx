@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form"
-import { useTranslation } from "react-i18next"
 import { useMutation, useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import SaveButton from "../../../../components/Buttons/SaveButton"
@@ -14,52 +13,41 @@ const DashboardMainInfo = () => {
   const { id } = useParams()
   const { control, reset, handleSubmit } = useForm()
   const navigate = useNavigate()
-  const { t } = useTranslation()
 
-  const { isLoading } = useQuery(
-    ["GET_DASHBOARD_DATA", id],
-    () => {
-      return dashboardService.getById(id)
-    },
-    {
-      onSuccess: (data) => {
-        reset(data)
-      },
+  const { isLoading } = useQuery(["GET_DASHBOARD_DATA", id], () => {
+    return dashboardService.getById(id)
+  }, {
+    onSuccess: (data) => {
+      reset(data)
     }
-  )
-
-  const { mutate, isLoading: btnLoading } = useMutation(
-    (data) => {
-      return dashboardService.update(data)
-    },
-    {
-      onSuccess: () => {
-        navigate(`/analytics/dashboard/${id}`)
-      },
+  })
+  
+  const { mutate, isLoading: btnLoading } = useMutation((data) => {
+    return dashboardService.update(data)
+  }, {
+    onSuccess: () => {
+      navigate(`/analytics/dashboard/${id}`)
     }
-  )
-
+  })
+  
   return (
     <div className={styles.formCard}>
-      <h2 className={styles.title}>{t("main")}</h2>
+      <h2 className={styles.title}>Основное</h2>
 
       <div className={styles.mainBlock}>
         <div className={styles.row}>
-          <FRow label={t("main")}>
+          <FRow label="Названия дешборда">
             <HFTextField control={control} name="name" fullWidth />
           </FRow>
 
-          <FRow label={t("icon")}>
+          <FRow label="Иконка">
             <HFIconPicker control={control} name="icon" />
           </FRow>
         </div>
       </div>
 
-      <Footer
-        extra={
-          <SaveButton loading={btnLoading} onClick={handleSubmit(mutate)} />
-        }
-      />
+      <Footer extra={<SaveButton loading={btnLoading} onClick={handleSubmit(mutate)}  />} />
+
     </div>
   )
 }

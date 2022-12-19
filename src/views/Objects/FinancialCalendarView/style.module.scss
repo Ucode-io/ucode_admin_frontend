@@ -1,0 +1,33 @@
+.financial_view {
+  overflow: auto;
+  background-color: #fff;
+  height: calc(100vh - 103px);
+  position: relative;
+}
+
+.datesRow {
+  display: flex;
+
+  .dateBlock {
+    .monthBlock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      border: 1px solid #e5e9eb;
+      border-left: none;
+      margin: -1px -1px 0 0;
+      width: 150px;
+    }
+  }
+
+  .mockBlock {
+    width: 300px;
+    min-width: 250px;
+    position: sticky;
+    left: 0;
+    background-color: #fff;
+    border-right: 1px solid #e5e9eb;
+    border-bottom: 1px solid #e5e9eb;
+  }
+}

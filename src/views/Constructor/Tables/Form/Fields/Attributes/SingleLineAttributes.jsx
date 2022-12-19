@@ -1,5 +1,16 @@
+
+
 const SingleLineAttributes = ({ control, onClose, onSaveButtonClick }) => {
-  return <></>
+
+
+  return (
+    <>
+
+
+      
+     
+    </>
+  )
 }
 
 export default SingleLineAttributes

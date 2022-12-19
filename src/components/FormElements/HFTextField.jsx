@@ -1,6 +1,6 @@
-import { TextField } from "@mui/material"
-import { makeStyles } from "@mui/styles"
-import { Controller } from "react-hook-form"
+import { TextField } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { Controller } from "react-hook-form";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
     },
   },
-}))
+}));
 
 const HFTextField = ({
   control,
@@ -22,10 +22,11 @@ const HFTextField = ({
   rules = {},
   defaultValue = "",
   disabled,
+  tabIndex,
   placeholder,
   ...props
 }) => {
-  const classes = useStyles()
+  const classes = useStyles();
   return (
     <Controller
       control={control}
@@ -40,14 +41,16 @@ const HFTextField = ({
           size="small"
           value={value}
           onChange={(e) => {
-            onChange(withTrim ? e.target.value?.trim() : e.target.value)
+            onChange(withTrim ? e.target.value?.trim() : e.target.value);
           }}
           name={name}
           error={error}
           fullWidth={fullWidth}
           placeholder={placeholder}
+          autoFocus={tabIndex === 1}
           InputProps={{
             readOnly: disabled,
+            inputProps: { tabIndex },
             classes: {
               input: isBlackBg ? classes.input : "",
             },
@@ -66,7 +69,7 @@ const HFTextField = ({
         />
       )}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFTextField
+export default HFTextField;

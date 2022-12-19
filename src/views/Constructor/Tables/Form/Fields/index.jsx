@@ -3,7 +3,6 @@ import { Add } from "@mui/icons-material"
 import { Drawer } from "@mui/material"
 import { useMemo, useState } from "react"
 import { useFieldArray } from "react-hook-form"
-import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 import { CTableCell, CTableRow } from "../../../../../components/CTable"
 import DataTable from "../../../../../components/DataTable"
@@ -14,8 +13,7 @@ import FieldSettings from "./FieldSettings"
 import styles from "./style.module.scss"
 
 const Fields = ({ mainForm }) => {
-  const { t } = useTranslation()
-  const { id } = useParams()
+  const { id, slug } = useParams()
   const [formLoader, setFormLoader] = useState(false)
   const [drawerState, setDrawerState] = useState(null)
 
@@ -125,7 +123,7 @@ const Fields = ({ mainForm }) => {
                 onClick={() => setDrawerState("CREATE")}
               >
                 <Add color="primary" />
-                <p>{t("add")}</p>
+                <p>Добавить</p>
               </div>
             </CTableCell>
           </CTableRow>

@@ -9,11 +9,9 @@ import HFTextField from "../../components/FormElements/HFTextField"
 import constructorObjectService from "../../services/constructorObjectService"
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton"
 import styles from "./styles.module.scss"
-import { useTranslation } from "react-i18next"
 
 const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
   const { typeId } = useParams()
-  const { t } = useTranslation()
   const [isCreating, setIsCreating] = useState(false)
   const [logins, setLogins] = useState([])
   const [isEditing, setIsEditing] = useState(false)
@@ -419,7 +417,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
               <div className={styles.card_body}>
                 <div className={styles.card_body_head}>
                   <div>
-                    {t("title")}
+                    Название
                     <FilterIcon />
                   </div>
                   <div>
@@ -490,7 +488,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
                     loginForm.reset()
                   }}
                 >
-                  {t("cancel")}
+                  Cancel
                 </button>
                 <button
                   className={styles.craete_btn}
@@ -508,7 +506,7 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
         <div>
           <button className={styles.add_login_btn} onClick={handleCreate}>
             <PlusIcon />
-            {t("save")}
+            Добавить
           </button>
         </div>
       </div>

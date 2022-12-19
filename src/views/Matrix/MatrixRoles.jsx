@@ -1,5 +1,5 @@
 import { Delete } from "@mui/icons-material"
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { useMutation } from "react-query"
@@ -21,7 +21,6 @@ import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import SecondaryButton from "../../components/Buttons/SecondaryButton"
 
 const MatrixRoles = ({ infoForm }) => {
-  const { t } = useTransition()
   const { control, handleSubmit, reset } = useForm({})
   const navigate = useNavigate()
   const params = useParams()
@@ -74,7 +73,7 @@ const MatrixRoles = ({ infoForm }) => {
   return (
     <div>
       <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
-        <FRow label={t("title")}>
+        <FRow label="Название">
           <HFTextField name="userType" control={infoForm.control} fullWidth />
         </FRow>
       </FormCard>
@@ -84,7 +83,7 @@ const MatrixRoles = ({ infoForm }) => {
             <CTableHead>
               <CTableRow>
                 <CTableCell style={{ padding: "12px 20px" }}>
-                  {t("title")}
+                  Название
                 </CTableCell>
               </CTableRow>
             </CTableHead>
@@ -122,7 +121,7 @@ const MatrixRoles = ({ infoForm }) => {
                 <div className={styles.action}>
                   <HFTextField
                     required
-                    label={t("title")}
+                    label="Название"
                     name="name"
                     control={control}
                     fullWidth
@@ -135,10 +134,10 @@ const MatrixRoles = ({ infoForm }) => {
                       reset({ name: "" })
                     }}
                   >
-                    {t("cancel")}
+                    Отменить
                   </SecondaryButton>
                   <PrimaryButton disabled={isLoading} type="submit">
-                    {t("save")}
+                    Сохранить
                   </PrimaryButton>
                 </div>
               )}
@@ -149,7 +148,7 @@ const MatrixRoles = ({ infoForm }) => {
                 }`}
                 onClick={() => (showAddBlock ? null : setShowAddBlock(true))}
               >
-                {t("add")}
+                Добавить
               </button>
             </div>
           </CTable>

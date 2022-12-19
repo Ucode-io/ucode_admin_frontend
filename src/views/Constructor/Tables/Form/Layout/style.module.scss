@@ -9,7 +9,7 @@
   overflow: auto;
   min-width: 350px;
   width: 350px;
-  padding: 8px;
+  padding: 0px 8px 8px 0px;
 
   .sectionCard {
     border-radius: 6px;
@@ -81,7 +81,7 @@
 
 .relationsBlock {
   overflow: hidden;
-  padding: 8px;
+  padding: 0px 8px 8px 8px;
   flex: 1;
 
   .cardHeader {
@@ -126,10 +126,14 @@
 }
 
 .settingsBlock {
-  width: 450px;
+  width: 475px;
   min-width: 450px;
   background-color: #fff;
   border-left: 1px solid #e5e9eb;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 4;
 
   .settingsBlockHeader {
     display: flex;
@@ -143,13 +147,17 @@
   }
 
   .settingsBlockBody {
-    height: calc(100vh - 56px - 56px - 48px);
+    height: calc(100vh);
     overflow: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 
 .fieldsBlock {
-  height: calc(100vh - 215px);
+  height: calc(100vh);
   overflow: auto;
   padding: 8px;
 
@@ -191,23 +199,61 @@
 }
 
 // <-- Summary Section --> //
-.summarySection {
-  width: 100%;
-  min-width: 350px;
-  padding-top: 5px;
-  overflow-x: auto;
-  overflow-y: hidden;
+.summary_section_layer {
+  min-height: 10px !important;
+}
 
-  ::-webkit-scrollbar {
-    max-height: 10%;
-    height: 10%;
+.summarySection {
+  min-height: 20px;
+  min-width: 100%;
+  // max-width: 470px;
+  border-radius: 4px;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  background: #fff;
+  display: flex;
+  border-bottom: 1px solid #eee;
+  // margin: 8px 0;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
+
   .field_summary {
-    min-width: 200px;
-    max-width: 350px;
-    cursor: grab;
+    width: 238px;
+    height: 100% !important;
     display: flex;
-    gap: 5px;
-    padding: 0 10px;
+    overflow: hidden;
+    border-radius: 4px;
+    // gap: 5px;
+    background: #fff;
+  }
+  .field_summary_item {
+    width: 238px;
+    height: 80px;
+    max-height: 130px !important;
+    // max-height: 140px;
+    margin-top: 8px;
+    background: #fff;
+    padding: 0px 10px 16px 10px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+    position: relative;
+
+    input {
+      display: block;
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 600;
+      color: #9aa6ac;
+      background: none;
+      text-transform: initial;
+      width: 100%;
+      border: none !important;
+      outline: none;
+    }
   }
 }

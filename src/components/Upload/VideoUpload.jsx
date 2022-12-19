@@ -7,7 +7,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import "./style.scss";
 import fileService from "../../services/fileService";
 
-const VideoUpload = ({ value, onChange, className = "", disabled }) => {
+const VideoUpload = ({ value, onChange, className = "", disabled, tabIndex }) => {
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ const VideoUpload = ({ value, onChange, className = "", disabled }) => {
     fileService
       .upload(data)
       .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + res.filename);
+        onChange(import.meta.env.VITE_CDN_BASE_URL + "medion/" + res.filename);
       })
       .finally(() => setLoading(false));
   };
@@ -76,6 +76,8 @@ const VideoUpload = ({ value, onChange, className = "", disabled }) => {
             type="file"
             className="hidden"
             ref={inputRef}
+            tabIndex={tabIndex}
+            autoFocus={tabIndex === 1}
             onChange={inputChangeHandler}
             disabled={disabled}
           />

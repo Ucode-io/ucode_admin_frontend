@@ -1,34 +1,33 @@
-import { Add } from "@mui/icons-material"
-import { Card } from "@mui/material"
-import { useMemo, useState, useTransition } from "react"
-import { useFieldArray, useWatch } from "react-hook-form"
-import { Container, Draggable } from "react-smooth-dnd"
+import { Add } from "@mui/icons-material";
+import { Card } from "@mui/material";
+import { useMemo, useState } from "react";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { Container, Draggable } from "react-smooth-dnd";
 
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
-import ButtonsPopover from "../../../../../components/ButtonsPopover"
-import IconGenerator from "../../../../../components/IconPicker/IconGenerator"
-import { applyDrag } from "../../../../../utils/applyDrag"
-import RelationTable from "../../../components/RelationTable"
-import styles from "./style.module.scss"
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
+import ButtonsPopover from "../../../../../components/ButtonsPopover";
+import IconGenerator from "../../../../../components/IconPicker/IconGenerator";
+import { applyDrag } from "../../../../../utils/applyDrag";
+import RelationTable from "../../../components/RelationTable";
+import styles from "./style.module.scss";
 
 const RelationsBlock = ({
   mainForm,
   openFieldsBlock,
   openRelationSettingsBlock,
 }) => {
-  const { t } = useTransition()
   const relationsMap = useWatch({
     control: mainForm.control,
     name: "relationsMap",
-  })
+  });
 
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0)
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   const { fields: viewRelations, ...viewRelationsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "view_relations",
     keyName: "key",
-  })
+  });
 
   const computedViewRelations = useMemo(() => {
     return viewRelations
@@ -36,17 +35,17 @@ const RelationsBlock = ({
         if (relation.view_relation_type === "FILE") {
           return {
             relation,
-            title: t("file"),
-          }
+            title: "Файл",
+          };
         } else {
-          return relationsMap[relation.relation_id]
+          return relationsMap[relation.relation_id];
         }
       })
-      ?.filter((el) => el)
-  }, [viewRelations, relationsMap])
+      ?.filter((el) => el);
+  }, [viewRelations, relationsMap]);
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(computedViewRelations, dropResult)
+    const result = applyDrag(computedViewRelations, dropResult);
     if (result)
       if (result.length > computedViewRelations?.length) {
         viewRelationsFieldArray.insert(
@@ -54,19 +53,19 @@ const RelationsBlock = ({
           dropResult.payload.view_relation_type === "FILE"
             ? { ...dropResult.payload, relation_id: dropResult.payload?.id }
             : { relation_id: dropResult.payload?.id }
-        )
+        );
       } else {
         // viewRelationsFieldArray.replace(result)
         viewRelationsFieldArray.move(
           dropResult.removedIndex,
           dropResult.addedIndex
-        )
+        );
       }
-  }
+  };
 
   const removeViewRelation = (index, relation) => {
-    viewRelationsFieldArray.remove(index)
-  }
+    viewRelationsFieldArray.remove(index);
+  };
 
   return (
     <div className={styles.relationsBlock}>
@@ -108,7 +107,7 @@ const RelationsBlock = ({
         />
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default RelationsBlock
+export default RelationsBlock;

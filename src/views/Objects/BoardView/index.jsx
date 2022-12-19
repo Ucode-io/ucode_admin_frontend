@@ -86,6 +86,11 @@ const BoardView = ({
           setViews={setViews}
         />
       </FiltersBlock>
+
+      <div className="title" style={{ padding: '10px', background: '#fff', borderBottom: '1px solid #E5E9EB', marginBottom: '10px' }}>
+        <h3>{view.table_label}</h3>
+      </div>
+
       {/* <FastFilter fieldsMap={fieldsMap} view={view} /> */}
       {loader ? (
         <PageFallback />
@@ -144,13 +149,13 @@ const queryGenerator = (groupField, filters = {}) => {
   const filterValue = filters[groupField.slug]
   const computedFilters = filterValue ? { [groupField.slug]: filterValue } : {}
 
-  if (groupField?.type === "PICK_LIST") {
+  if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
       queryKey: ["GET_GROUP_OPTIONS", groupField.id],
       queryFn: () =>
         groupField?.attributes?.options?.map((el) => ({
-          label: el,
-          value: el,
+          label: el.label,
+          value: el.value,
           slug: groupField?.slug,
         })),
     }

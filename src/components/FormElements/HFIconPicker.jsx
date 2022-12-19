@@ -4,6 +4,7 @@ import IconPicker from "../IconPicker"
 
 const HFIconPicker = ({
   control,
+    tabIndex,
   name,
   disabledHelperText = false,
   required = false,
@@ -28,6 +29,7 @@ const HFIconPicker = ({
             disabled={disabled}
             error={error}
             value={value}
+            tabIndex={tabIndex}
             onChange={onChange}
             customeClick={customeClick}
             clickItself={clickItself}

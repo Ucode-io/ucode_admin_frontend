@@ -1,47 +1,45 @@
-import { Delete } from "@mui/icons-material"
-import { useTranslation } from "react-i18next"
-import { useDispatch, useSelector } from "react-redux"
-import { useLocation, useNavigate } from "react-router-dom"
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
+import { Delete } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import {
   CTable,
   CTableBody,
   CTableCell,
   CTableHead,
   CTableRow,
-} from "../../../components/CTable"
-import DeleteWrapperModal from "../../../components/DeleteWrapperModal"
-import FiltersBlock from "../../../components/FiltersBlock"
-import HeaderSettings from "../../../components/HeaderSettings"
-import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2"
-import SearchInput from "../../../components/SearchInput"
-import TableCard from "../../../components/TableCard"
-import TableRowButton from "../../../components/TableRowButton"
-import { deleteApplicationAction } from "../../../store/application/application.thunk"
+} from "../../../components/CTable";
+import DeleteWrapperModal from "../../../components/DeleteWrapperModal";
+import FiltersBlock from "../../../components/FiltersBlock";
+import HeaderSettings from "../../../components/HeaderSettings";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
+import SearchInput from "../../../components/SearchInput";
+import TableCard from "../../../components/TableCard";
+import TableRowButton from "../../../components/TableRowButton";
+import { deleteApplicationAction } from "../../../store/application/application.thunk";
 
 const AppsPage = () => {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const dispatch = useDispatch()
-  const list = useSelector((state) => state.application.list)
-  const loader = useSelector((state) => state.application.loader)
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const list = useSelector((state) => state.application.list);
+  const loader = useSelector((state) => state.application.loader);
 
   const navigateToEditForm = (id) => {
-    navigate(`${location.pathname}/${id}`)
-  }
+    navigate(`${location.pathname}/${id}`);
+  };
 
   const navigateToCreateForm = () => {
-    navigate(`${location.pathname}/create`)
-  }
+    navigate(`${location.pathname}/create`);
+  };
 
   const deleteTable = (id) => {
-    dispatch(deleteApplicationAction(id))
-  }
+    dispatch(deleteApplicationAction(id));
+  };
 
   return (
     <div>
-      <HeaderSettings title={t("application")} />
+      <HeaderSettings title={"Приложение"} />
 
       <FiltersBlock>
         <div className="p-1">
@@ -53,8 +51,8 @@ const AppsPage = () => {
         <CTable disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>{t("title")}</CTableCell>
-            <CTableCell>{t("description")}</CTableCell>
+            <CTableCell>Название</CTableCell>
+            <CTableCell>Описание</CTableCell>
             <PermissionWrapperV2 tabelSlug="app" type="delete">
               <CTableCell width={60} />
             </PermissionWrapperV2>
@@ -87,7 +85,7 @@ const AppsPage = () => {
         </CTable>
       </TableCard>
     </div>
-  )
-}
+  );
+};
 
-export default AppsPage
+export default AppsPage;

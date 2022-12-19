@@ -1,6 +1,6 @@
-import { format } from "date-fns"
-import RecursiveBlock from "./RecursiveBlock"
-import styles from "./style.module.scss"
+import { format } from "date-fns";
+import RecursiveBlock from "./RecursiveBlock";
+import styles from "./style.module.scss";
 
 const CalendarColumn = ({ date, data, fieldsMap, view, tabs, workingDays }) => {
   return (
@@ -16,7 +16,7 @@ const CalendarColumn = ({ date, data, fieldsMap, view, tabs, workingDays }) => {
         workingDays={workingDays}
       />
     </div>
-  )
-}
+  );
+};
 
-export default CalendarColumn
+export default CalendarColumn;

@@ -1,33 +1,33 @@
-import { Collapse } from "@mui/material"
-import { useState } from "react"
-import RowLinearLoader from "../../../components/RowLinearLoader"
-import CreateRowButton from "../../../components/CreateRowButton"
-import { useParams } from "react-router-dom"
-import clientRelationService from "../../../services/auth/clientRelationService"
-import RelationCreateRow from "./RelationCreateRow"
-import RelationsRow from "./RelationsRow"
+import { Collapse } from "@mui/material";
+import { useState } from "react";
+import RowLinearLoader from "../../../components/RowLinearLoader";
+import CreateRowButton from "../../../components/CreateRowButton";
+import { useParams } from "react-router-dom";
+import clientRelationService from "../../../services/auth/clientRelationService";
+import RelationCreateRow from "./RelationCreateRow";
+import RelationsRow from "./RelationsRow";
 
 const RelationsSection = ({ relationsList, setRelationsList, loader }) => {
-  const { typeId } = useParams()
+  const { typeId } = useParams();
 
-  const [createFormVisible, setCreateFormVisible] = useState(false)
-  const [createLoader, setCreateLoader] = useState(false)
+  const [createFormVisible, setCreateFormVisible] = useState(false);
+  const [createLoader, setCreateLoader] = useState(false);
 
   const createNewRelation = (values) => {
     const data = {
       ...values,
       client_type_id: typeId,
-    }
+    };
 
-    setCreateLoader(true)
+    setCreateLoader(true);
     clientRelationService
       .create(data)
       .then((res) => {
-        setCreateFormVisible(false)
-        setRelationsList((prev) => [...prev, res])
+        setCreateFormVisible(false);
+        setRelationsList((prev) => [...prev, res]);
       })
-      .catch(() => setCreateLoader(false))
-  }
+      .catch(() => setCreateLoader(false));
+  };
 
   return (
     <>
@@ -43,16 +43,6 @@ const RelationsSection = ({ relationsList, setRelationsList, loader }) => {
           <RowLinearLoader visible={loader} />
         </div>
 
-        <Collapse in={createFormVisible} className="silver-bottom-border">
-          <RelationCreateRow
-            onSubmit={createNewRelation}
-            loader={createLoader}
-            setLoader={setCreateLoader}
-            visible={createFormVisible}
-            setVisible={setCreateFormVisible}
-          />
-        </Collapse>
-
         {relationsList?.map((relation, index) => (
           <RelationsRow
             setRelationsList={setRelationsList}
@@ -63,7 +53,7 @@ const RelationsSection = ({ relationsList, setRelationsList, loader }) => {
         ))}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default RelationsSection
+export default RelationsSection;

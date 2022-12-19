@@ -1,10 +1,11 @@
-import { useMemo } from "react"
-import IconGenerator from "../IconPicker/IconGenerator"
+import { useMemo } from "react";
+import IconGenerator from "../IconPicker/IconGenerator";
 
 const MultiselectCellColoredElement = ({
   field,
   value = [],
   style,
+  resize,
   ...props
 }) => {
   const tags = useMemo(() => {
@@ -13,18 +14,18 @@ const MultiselectCellColoredElement = ({
         {
           value,
         },
-      ]
+      ];
     return value
       ?.map((tagValue) =>
         field.attributes?.options?.find((option) => option.value === tagValue)
       )
-      ?.filter((el) => el)
-  }, [value, field?.attributes?.options])
+      ?.filter((el) => el);
+  }, [value, field?.attributes?.options]);
 
-  const hasColor = field?.attributes?.has_color
-  const hasIcon = field?.attributes?.has_icon
+  const hasColor = field?.attributes?.has_color;
+  const hasIcon = field?.attributes?.has_icon;
 
-  if (!value.length) return ""
+  if (!value?.length) return "";
   return (
     <div className="flex align-center gap-1" style={{ flexWrap: "wrap" }}>
       {tags?.map((tag) => (
@@ -32,7 +33,7 @@ const MultiselectCellColoredElement = ({
           style={{
             color: hasColor ? tag.color : "#000",
             backgroundColor: hasColor ? tag.color + 33 : "#c0c0c039",
-            padding: "5px 12px",
+            padding: resize ? "0px 5px" : "5px 12px",
             width: "fit-content",
             borderRadius: 6,
             display: "flex",
@@ -53,7 +54,7 @@ const MultiselectCellColoredElement = ({
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default MultiselectCellColoredElement
+export default MultiselectCellColoredElement;

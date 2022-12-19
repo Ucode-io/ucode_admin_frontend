@@ -1,47 +1,45 @@
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { useDispatch } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
-import { Tab, TabList, Tabs, TabPanel } from "react-tabs"
-import PageFallback from "../../../../components/PageFallback"
-import constructorSectionService from "../../../../services/constructorSectionService"
-import constructorFieldService from "../../../../services/constructorFieldService"
-import constructorTableService from "../../../../services/constructorTableService"
-import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice"
-import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk"
-import Fields from "./Fields"
-import Layout from "./Layout"
-import MainInfo from "./MainInfo"
-import Relations from "./Relations"
-import constructorRelationService from "../../../../services/constructorRelationService"
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { Tab, TabList, Tabs, TabPanel } from "react-tabs";
+import PageFallback from "../../../../components/PageFallback";
+import constructorSectionService from "../../../../services/constructorSectionService";
+import constructorFieldService from "../../../../services/constructorFieldService";
+import constructorTableService from "../../../../services/constructorTableService";
+import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice";
+import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk";
+import Fields from "./Fields";
+import Layout from "./Layout";
+import MainInfo from "./MainInfo";
+import Relations from "./Relations";
+import constructorRelationService from "../../../../services/constructorRelationService";
 import {
   computeSections,
   computeSectionsOnSubmit,
   computeSummarySection,
   computeViewRelations,
   computeViewRelationsOnSubmit,
-} from "../utils"
-import { addOrderNumberToSections } from "../../../../utils/sectionsOrderNumber"
-import HeaderSettings from "../../../../components/HeaderSettings"
-import Footer from "../../../../components/Footer"
-import PrimaryButton from "../../../../components/Buttons/PrimaryButton"
-import { Save } from "@mui/icons-material"
-import SecondaryButton from "../../../../components/Buttons/SecondaryButton"
-import constructorViewRelationService from "../../../../services/constructorViewRelationService"
-import { listToMap } from "../../../../utils/listToMap"
-import Actions from "./Actions"
-import { generateGUID } from "../../../../utils/generateID"
-import constructorCustomEventService from "../../../../services/constructorCustomEventService"
-import { useTranslation } from "react-i18next"
+} from "../utils";
+import { addOrderNumberToSections } from "../../../../utils/sectionsOrderNumber";
+import HeaderSettings from "../../../../components/HeaderSettings";
+import Footer from "../../../../components/Footer";
+import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
+import { Save } from "@mui/icons-material";
+import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
+import constructorViewRelationService from "../../../../services/constructorViewRelationService";
+import { listToMap } from "../../../../utils/listToMap";
+import Actions from "./Actions";
+import { generateGUID } from "../../../../utils/generateID";
+import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 
 const ConstructorTablesFormPage = () => {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const { id, slug, appId } = useParams()
-  const { t } = useTranslation()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { id, slug, appId } = useParams();
 
-  const [loader, setLoader] = useState(true)
-  const [btnLoader, setBtnLoader] = useState(false)
+  const [loader, setLoader] = useState(true);
+  const [btnLoader, setBtnLoader] = useState(false);
 
   const mainForm = useForm({
     defaultValues: {
@@ -52,11 +50,20 @@ const ConstructorTablesFormPage = () => {
         {
           column: "SINGLE",
           fields: [],
-          label: t("details"),
+          label: "Детали",
           id: generateGUID(),
           icon: "circle-info.svg",
         },
       ],
+      summary_section: {
+        id: generateGUID(),
+        label: "Summary",
+        fields: [],
+        icon: "",
+        order: 1,
+        column: "SINGLE",
+        is_summary_section: true,
+      },
       view_relations: [],
       label: "",
       description: "",
@@ -64,23 +71,23 @@ const ConstructorTablesFormPage = () => {
       icon: "",
     },
     mode: "all",
-  })
+  });
 
   const getData = async () => {
-    setLoader(true)
+    setLoader(true);
 
-    const getTableData = constructorTableService.getById(id)
+    const getTableData = constructorTableService.getById(id);
     const getViewRelations = constructorViewRelationService.getList({
       table_slug: slug,
-    })
+    });
 
     const getSectionsData = constructorSectionService.getList({
       table_slug: slug,
-    })
+    });
 
     const getActions = constructorCustomEventService.getList({
       table_slug: slug,
-    })
+    });
 
     try {
       const [
@@ -93,7 +100,7 @@ const ConstructorTablesFormPage = () => {
         getSectionsData,
         getViewRelations,
         getActions,
-      ])
+      ]);
 
       const data = {
         ...mainForm.getValues(),
@@ -103,40 +110,40 @@ const ConstructorTablesFormPage = () => {
         summary_section: computeSummarySection(sections),
         view_relations: computeViewRelations(viewRelations),
         actions,
-      }
+      };
 
-      mainForm.reset(data)
+      mainForm.reset(data);
 
-      await getRelationFields()
+      await getRelationFields();
     } finally {
-      setLoader(false)
+      setLoader(false);
     }
-  }
+  };
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
-      const getFieldsData = constructorFieldService.getList({ table_id: id })
+      const getFieldsData = constructorFieldService.getList({ table_id: id });
 
       const getRelations = constructorRelationService.getList({
         table_slug: slug,
         relation_table_slug: slug,
-      })
+      });
 
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
-      ])
+      ]);
 
-      mainForm.setValue("fields", fields)
+      mainForm.setValue("fields", fields);
 
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
         relatedTableSlug:
           relation.table_to?.slug === slug ? "table_from" : "table_to",
-      }))
+      }));
 
-      const layoutRelations = []
-      const tableRelations = []
+      const layoutRelations = [];
+      const tableRelations = [];
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
@@ -148,9 +155,9 @@ const ConstructorTablesFormPage = () => {
           (relation.type === "Many2Dynamic" &&
             relation.table_from?.slug === slug)
         )
-          layoutRelations.push(relation)
-        else tableRelations.push(relation)
-      })
+          layoutRelations.push(relation);
+        else tableRelations.push(relation);
+      });
 
       const layoutRelationsFields = layoutRelations.map((relation) => ({
         ...relation,
@@ -159,73 +166,73 @@ const ConstructorTablesFormPage = () => {
           fields: relation.view_fields ?? [],
         },
         label: relation?.label ?? relation[relation.relatedTableSlug]?.label,
-      }))
+      }));
 
-      mainForm.setValue("relations", relations)
-      mainForm.setValue("relationsMap", listToMap(relations))
+      mainForm.setValue("relations", relations);
+      mainForm.setValue("relationsMap", listToMap(relations));
 
-      mainForm.setValue("layoutRelations", layoutRelationsFields)
-      mainForm.setValue("tableRelations", tableRelations)
+      mainForm.setValue("layoutRelations", layoutRelationsFields);
+      mainForm.setValue("tableRelations", tableRelations);
 
-      resolve()
-    })
-  }
+      resolve();
+    });
+  };
 
   const createConstructorTable = (data) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
 
     dispatch(createConstructorTableAction(data))
       .unwrap()
       .then((res) => {
-        navigate(-1)
+        navigate(-1);
       })
-      .catch(() => setBtnLoader(false))
-  }
+      .catch(() => setBtnLoader(false));
+  };
 
   const updateConstructorTable = (data) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
 
-    const updateTableData = constructorTableService.update(data)
+    const updateTableData = constructorTableService.update(data);
 
     const updateSectionData = constructorSectionService.update({
       sections: addOrderNumberToSections(data.sections),
       table_slug: data.slug,
       table_id: id,
-    })
+    });
 
     const updateViewRelationsData = constructorViewRelationService.update({
       view_relations: data.view_relations,
       table_slug: data.slug,
-    })
+    });
 
     Promise.all([updateTableData, updateSectionData, updateViewRelationsData])
       .then(() => {
-        dispatch(constructorTableActions.setDataById(data))
-        navigate(-1)
+        dispatch(constructorTableActions.setDataById(data));
+        navigate(-1);
       })
-      .catch(() => setBtnLoader(false))
-  }
+      .catch(() => setBtnLoader(false));
+  };
 
   const onSubmit = (data) => {
-    console.log("DATA ===>", data)
+    console.log("DATA ===>", data);
     const computedData = {
       ...data,
       sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
-    }
+    };
 
-    console.log("COMPUTED DATA ==>", computedData)
+    console.log("COMPUTED DATA ==>", computedData);
     // return;
-    if (id) updateConstructorTable(computedData)
-    else createConstructorTable(computedData)
-  }
+    if (id) updateConstructorTable(computedData);
+    else createConstructorTable(computedData);
+  };
 
   useEffect(() => {
-    if (!id) setLoader(false)
-    else getData()
-  }, [id])
+    if (!id) setLoader(false);
+    else getData();
+  }, [id]);
 
-  if (loader) return <PageFallback />
+  if (loader) return <PageFallback />;
 
   return (
     <>
@@ -239,11 +246,11 @@ const ConstructorTablesFormPage = () => {
             sticky
           >
             <TabList>
-              <Tab>{t("details")}</Tab>
-              <Tab>{t("layouts")}</Tab>
-              <Tab>{t("fields")}</Tab>
-              {id && <Tab>{t("relations")}</Tab>}
-              {id && <Tab>{t("actions")}</Tab>}
+              <Tab>Details</Tab>
+              <Tab>Layouts</Tab>
+              <Tab>Fields</Tab>
+              {id && <Tab>Relations</Tab>}
+              {id && <Tab>Actions</Tab>}
             </TabList>
           </HeaderSettings>
 
@@ -279,20 +286,20 @@ const ConstructorTablesFormPage = () => {
         extra={
           <>
             <SecondaryButton onClick={() => navigate(-1)} color="error">
-              {t("close")}
+              Закрыть
             </SecondaryButton>
             <PrimaryButton
               loader={btnLoader}
               onClick={mainForm.handleSubmit(onSubmit)}
               loading={btnLoader}
             >
-              <Save /> {t("save")}
+              <Save /> Сохранить
             </PrimaryButton>
           </>
         }
       />
     </>
-  )
-}
+  );
+};
 
-export default ConstructorTablesFormPage
+export default ConstructorTablesFormPage;

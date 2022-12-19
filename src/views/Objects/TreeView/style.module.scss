@@ -1,7 +1,5 @@
-
-
 .recursiveBlock {
-  box-shadow: inset 0px -1px 0px #E5E9EB;
+  box-shadow: inset 0px -1px 0px #e5e9eb;
   display: flex;
   align-items: center;
   padding: 8px 12px;
@@ -14,18 +12,17 @@
   .extra {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
   }
 
-
   &.level2 {
-    background-color: #EBF7FF;
+    // background-color: #EBF7FF;
   }
 
   &.level3 {
-    background-color: #FFFEEB;
+    // background-color: #FFFEEB;
   }
-
 }
 
 .wrapper {

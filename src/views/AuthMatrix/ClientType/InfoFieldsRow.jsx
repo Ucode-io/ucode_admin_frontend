@@ -1,6 +1,9 @@
+
+
+
+
 import { CircularProgress, MenuItem } from "@mui/material"
 import { useState } from "react"
-import { useTranslation } from "react-i18next"
 import { useDispatch } from "react-redux"
 import { useParams } from "react-router-dom"
 import ButtonsPopover from "../../../components/ButtonsPopover"
@@ -10,33 +13,30 @@ import InfoFieldCreateRow from "./InfoFieldCreateRow"
 
 const InfoFieldsRow = ({ field, index, setFieldsList }) => {
   const { typeId } = useParams()
-  const { t } = useTranslation()
   const dispatch = useDispatch()
 
   const [loader, setLoader] = useState(false)
   const [textFieldVisible, setTextFieldVisible] = useState(false)
 
-  const deleteField = () => {
-    setLoader(true)
-    clientInfoFieldService
-      .delete(field.id)
-      .then((res) => {
-        setFieldsList((prev) => prev.filter((el) => el.id !== field.id))
-      })
-      .catch(() => setLoader(false))
-  }
+    const deleteField = () => {
+      setLoader(true)
+      clientInfoFieldService
+        .delete(field.id)
+        .then((res) => {
+          setFieldsList(prev => prev.filter(el => el.id !== field.id))
+        })
+        .catch(() => setLoader(false))
+    }
 
   const updateField = (values) => {
     const data = {
       ...values,
       client_type_id: typeId,
-      id: field.id,
+      id: field.id
     }
 
     clientInfoFieldService.update(data).then((res) => {
-      setFieldsList((prev) =>
-        prev.map((el) => (el.id !== field.id ? el : data))
-      )
+      setFieldsList(prev => prev.map(el => el.id !== field.id ? el : data))
       setTextFieldVisible(false)
     })
   }
@@ -56,7 +56,7 @@ const InfoFieldsRow = ({ field, index, setFieldsList }) => {
           color="primary"
           initialValues={field}
           onSubmit={updateField}
-          btnText={t("save")}
+          btnText="SAVE"
         />
       ) : (
         <>

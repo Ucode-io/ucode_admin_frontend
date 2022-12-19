@@ -26,6 +26,6 @@ export const {
     },
     setLoader: (state, { payload }) => {
       state.loader = payload
-    },
+    }
   },
 })

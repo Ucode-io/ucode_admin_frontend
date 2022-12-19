@@ -1,20 +1,20 @@
-import { ArrowDropDown, ArrowDropUp, PictureAsPdf } from "@mui/icons-material"
-import { CircularProgress, Menu } from "@mui/material"
-import { useState } from "react"
-import styles from "./style.module.scss"
+import { ArrowDropDown, ArrowDropUp, PictureAsPdf } from "@mui/icons-material";
+import { CircularProgress, Menu } from "@mui/material";
+import { useState } from "react";
+import styles from "./style.module.scss";
 
 const DropdownButton = ({ loader, children, onClick, text = "Save", icon }) => {
-  const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const openMenu = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const closeMenu = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
-  const hasChildren = Array.isArray(children) ? !!children?.length : !!children
+  const hasChildren = Array.isArray(children) ? !!children?.length : !!children;
 
   return (
     <>
@@ -54,7 +54,7 @@ const DropdownButton = ({ loader, children, onClick, text = "Save", icon }) => {
         </div>
       </Menu>
     </>
-  )
-}
+  );
+};
 
-export default DropdownButton
+export default DropdownButton;

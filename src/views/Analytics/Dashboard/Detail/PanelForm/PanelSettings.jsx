@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next"
 import FRow from "../../../../../components/FormElements/FRow"
 import HFSelect from "../../../../../components/FormElements/HFSelect"
 import HFTextField from "../../../../../components/FormElements/HFTextField"
@@ -7,18 +6,17 @@ import PanelAttributes from "./PanelAttributes"
 import styles from "./style.module.scss"
 
 const PanelSettings = ({ form, columns }) => {
-  const { t } = useTranslation()
   return (
     <div className={styles.panelSettings}>
       <div className={styles.form}>
-        <div className={styles.settingsSectionHeader}>{t("main.info")}</div>
+        <div className={styles.settingsSectionHeader}>Main info</div>
 
         <div className="p-2">
-          <FRow label={t("title")}>
+          <FRow label={"Title"}>
             <HFTextField control={form.control} name="title" fullWidth />
           </FRow>
 
-          <FRow label={t("type")}>
+          <FRow label={"Type"}>
             <HFSelect
               control={form.control}
               name="attributes.type"
@@ -28,7 +26,9 @@ const PanelSettings = ({ form, columns }) => {
           </FRow>
         </div>
 
+
         <PanelAttributes form={form} columns={columns} />
+
       </div>
     </div>
   )

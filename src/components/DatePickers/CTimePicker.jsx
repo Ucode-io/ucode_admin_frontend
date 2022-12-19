@@ -5,7 +5,7 @@ import "./style2.scss"
 import { InputAdornment, TextField } from "@mui/material"
 import { DateRange } from "@mui/icons-material"
 
-const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit }) => {
+const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit, tabIndex }) => {
   const getValue = () => {
     if (!value) return ""
 
@@ -27,8 +27,10 @@ const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit }) => {
             onChange={handleChange}
             size="small"
             fullWidth
+            autoFocus={tabIndex === 1}
             autoComplete="off"
             InputProps={{
+                inputProps: { tabIndex },
               classes: {
                 input: isBlackBg ? classes.input : "",
               },

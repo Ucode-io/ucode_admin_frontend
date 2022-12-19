@@ -1,6 +1,6 @@
-import { makeStyles } from "@mui/styles"
-import { Controller } from "react-hook-form"
-import CTimePicker from "../DatePickers/CTimePicker"
+import { makeStyles } from "@mui/styles";
+import { Controller } from "react-hook-form";
+import CTimePicker from "../DatePickers/CTimePicker";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
     },
   },
-}))
+}));
 
 const HFTimePicker = ({
   control,
@@ -16,14 +16,16 @@ const HFTimePicker = ({
   isBlackBg,
   name,
   label,
+    tabIndex,
   isFormEdit = false,
   width,
   inputProps,
   disabledHelperText,
   placeholder,
+  defaultValue = "",
   ...props
 }) => {
-  const classes = useStyles()
+  const classes = useStyles();
   return (
     <Controller
       control={control}
@@ -34,6 +36,7 @@ const HFTimePicker = ({
           <CTimePicker
             isFormEdit={isFormEdit}
             classes={classes}
+            tabIndex={tabIndex}
             isBlackBg={isBlackBg}
             value={value}
             onChange={onChange}
@@ -41,7 +44,7 @@ const HFTimePicker = ({
         </div>
       )}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFTimePicker
+export default HFTimePicker;

@@ -1,5 +1,6 @@
 import { get } from "@ngard/tiny-get"
 import { format } from "date-fns"
+import {numberWithSpaces} from "@/utils/formatNumbers";
 
 export const getRelationFieldLabel = (field, option) => {
   if (!option) return ""
@@ -11,6 +12,8 @@ export const getRelationFieldLabel = (field, option) => {
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy")
     else if (el?.type === "DATE_TIME")
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm")
+    else if (el?.type === "NUMBER")
+        result = numberWithSpaces(option[el?.slug])
     else result = option[el?.slug]
 
     label += `${result ?? ""} `
@@ -30,6 +33,8 @@ export const getRelationFieldTabsLabel = (field, option) => {
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy")
     else if (el?.type === "DATE_TIME")
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm")
+    else if (el?.type === "NUMBER")
+      result = numberWithSpaces(option[el?.slug])
     else result = option[el?.slug]
 
     label += `${result ?? ""} `
@@ -50,6 +55,8 @@ export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {
       result = value ? format(new Date(value), "dd.MM.yyyy") : ""
     else if (el?.type === "DATE_TIME")
       result = value ? format(new Date(value), "dd.MM.yyyy HH:mm") : ""
+    else if (el?.type === "NUMBER")
+        result = numberWithSpaces(value)
     else result = value
 
     label += `${result ?? ""} `
@@ -69,6 +76,8 @@ export const getLabelWithViewFields = (viewFields, option) => {
       result = value ? format(new Date(value), "dd.MM.yyyy") : ""
     else if (field?.type === "DATE_TIME")
       result = value ? format(new Date(value), "dd.MM.yyyy HH:mm") : ""
+    else if (field?.type === "NUMBER")
+        result = numberWithSpaces(value)
     else result = value
 
     label += `${result ?? ""} `

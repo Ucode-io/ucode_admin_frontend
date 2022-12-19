@@ -10,6 +10,7 @@ const IconPicker = ({
   onChange,
   customeClick,
   clickItself,
+    tabIndex,
   error,
   loading,
   shape = "circle",
@@ -72,6 +73,8 @@ const IconPicker = ({
           size="small"
           fullWidth
           value={searchText}
+          autoFocus={tabIndex === 1}
+          inputProps={{ tabIndex }}
           onChange={(e) => setSearchText(e.target.value)}
         />
 

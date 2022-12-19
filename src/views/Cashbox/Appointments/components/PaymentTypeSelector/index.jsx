@@ -1,12 +1,17 @@
-import { Add, Contactless, Payment, Payments } from "@mui/icons-material"
+import {
+  AccountBalanceWallet,
+  Add,
+  Contactless,
+  Payment,
+  Payments,
+  Settings,
+} from "@mui/icons-material"
 import { IconButton, Menu, MenuItem } from "@mui/material"
 import { useId } from "react"
 import { useState } from "react"
-import { useTranslation } from "react-i18next"
 import style from "./style.module.scss"
 
 const PaymentTypeSelector = ({ onSelect = () => {} }) => {
-  const { t } = useTranslation()
   const id = useId()
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
@@ -39,17 +44,17 @@ const PaymentTypeSelector = ({ onSelect = () => {} }) => {
       >
         <MenuItem
           onClick={() => {
-            onSelect(t("cash"))
+            onSelect('Наличними')
             handleClose()
           }}
           className={style.menuItem}
         >
           <Payments color="success" className={style.icon} />
-          {t("cash")}
+          Наличними
         </MenuItem>
         <MenuItem
           onClick={() => {
-            onSelect("UzCard")
+            onSelect('UzCard')
             handleClose()
           }}
           className={style.menuItem}
@@ -59,7 +64,7 @@ const PaymentTypeSelector = ({ onSelect = () => {} }) => {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            onSelect("Humo")
+            onSelect('Humo')
             handleClose()
           }}
           className={style.menuItem}
@@ -69,7 +74,7 @@ const PaymentTypeSelector = ({ onSelect = () => {} }) => {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            onSelect("Payme")
+            onSelect('Payme')
             handleClose()
           }}
           className={style.menuItem}

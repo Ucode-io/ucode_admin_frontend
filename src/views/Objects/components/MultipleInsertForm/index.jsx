@@ -1,39 +1,44 @@
-import { Drawer } from "@mui/material"
-import { useState } from "react"
-import CreateButton from "../../../../components/Buttons/CreateButton"
-import Form from "./Form"
-import styles from "./style.module.scss"
+import { Drawer } from "@mui/material";
+import { useState } from "react";
+import CreateButton from "../../../../components/Buttons/CreateButton";
+import Form from "./Form";
+import styles from "./style.module.scss";
+import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
+import QueueIcon from "@mui/icons-material/Queue";
 
-const MultipleInsertButton = ({ view, fieldsMap }) => {
-  const [drawerIsOpen, setDrawerIsOpen] = useState()
+const MultipleInsertButton = ({ view, tableSlug, fieldsMap }) => {
+  const [drawerIsOpen, setDrawerIsOpen] = useState();
 
   const openDrawer = () => {
-    setDrawerIsOpen(true)
-  }
+    setDrawerIsOpen(true);
+  };
 
   const closeDrawer = () => {
-    setDrawerIsOpen(false)
-  }
+    setDrawerIsOpen(false);
+  };
 
-  if(!view?.multiple_insert) return null
+  if (!view?.multiple_insert) return null;
 
   return (
     <>
-      <CreateButton
-        type="secondary"
-        title="Множественное добавление"
-        onClick={openDrawer}
-      />
+      <RectangleIconButton onClick={openDrawer}>
+        <QueueIcon color="primary" />
+      </RectangleIconButton>
       <Drawer
         open={drawerIsOpen}
         onClose={closeDrawer}
         anchor="right"
         classes={{ paperAnchorRight: styles.verticalDrawer }}
       >
-        <Form view={view} fieldsMap={fieldsMap} onClose={closeDrawer} />
+        <Form
+          view={view}
+          tableSlug={tableSlug}
+          fieldsMap={fieldsMap}
+          onClose={closeDrawer}
+        />
       </Drawer>
     </>
-  )
-}
+  );
+};
 
-export default MultipleInsertButton
+export default MultipleInsertButton;

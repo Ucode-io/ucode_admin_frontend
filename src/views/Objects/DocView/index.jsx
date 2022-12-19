@@ -10,12 +10,14 @@ import PageFallback from "../../../components/PageFallback";
 import usePaperSize from "../../../hooks/usePaperSize";
 import constructorObjectService from "../../../services/constructorObjectService";
 import documentTemplateService from "../../../services/documentTemplateService";
+import { pixelToMillimeter, pointToMillimeter } from "../../../utils/SizeConverters";
 import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSelector";
 
 import ViewTabSelector from "../components/ViewTypeSelector";
 import TableView from "../TableView";
 import DocRelationsSection from "./DocRelationsSection";
 import DocSettingsBlock from "./DocSettingsBlock";
+import { contentStyles } from "./editorContentStyles";
 import RedactorBlock from "./RedactorBlock";
 import styles from "./style.module.scss";
 import TemplatesList from "./TemplatesList";
@@ -139,7 +141,7 @@ const DocView = ({
     try {
       let html = redactorRef.current.getData();
 
-      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`;
+      const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><style>${contentStyles}</style>`;
 
       fields.forEach((field) => {
         html = html.replaceAll(
@@ -147,14 +149,23 @@ const DocView = ({
           `<%= it.${field.path_slug ?? field.slug} %>`
         );
       });
+      
+
+      let pageSize = pointToMillimeter(selectedPaperSize.height)
+
+      if(selectedPaperSize.height === 1000) {
+        pageSize = pixelToMillimeter(document.querySelector('.ck-content').offsetHeight - 37)
+      }
 
       const res = await documentTemplateService.exportToPDF({
         data: {
           table_slug: tableSlug,
           object_id: selectedObject,
           page_size: selectedPaperSize.name,
+          page_height: pageSize,
+          page_width: pointToMillimeter(selectedPaperSize.width)
         },
-        html: meta + html,
+        html: `${meta} <div class="ck-content" style="width: ${pointToMillimeter(selectedPaperSize.width) + 10}mm" >${html}</div>`,
       });
 
       queryClient.refetchQueries([
@@ -195,7 +206,7 @@ const DocView = ({
 
       setSelectedTemplate((prev) => ({
         ...prev,
-        html: res.html,
+        html: res.html.replaceAll('<p></p>', ""),
         size: [selectedPaperSize?.name],
       }));
     } finally {

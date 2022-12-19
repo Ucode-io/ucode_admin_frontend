@@ -1,15 +1,13 @@
-import { useMemo } from "react"
-import FRow from "../../../../components/FormElements/FRow"
-import HFSelect from "../../../../components/FormElements/HFSelect"
-import listToOptions from "../../../../utils/listToOptions"
-import styles from "./style.module.scss"
-
+import { useMemo } from "react";
+import FRow from "../../../../components/FormElements/FRow";
+import HFSelect from "../../../../components/FormElements/HFSelect";
+import listToOptions from "../../../../utils/listToOptions";
+import styles from "./style.module.scss";
 
 const GanttSettings = ({ columns, form }) => {
-
   const computedColumns = useMemo(() => {
-    return listToOptions(columns, 'label', 'slug')
-  }, [ columns ])
+    return listToOptions(columns, "label", "slug");
+  }, [columns]);
 
   return (
     <div className={styles.section}>
@@ -18,16 +16,25 @@ const GanttSettings = ({ columns, form }) => {
       </div>
 
       <div className={styles.sectionBody}>
-        
         <div className={styles.formRow}>
-          <FRow label="Date field">
-            <HFSelect options={computedColumns} control={form.control} name="calendar_from_slug" />
+          <FRow label="Date from field">
+            <HFSelect
+              options={computedColumns}
+              control={form.control}
+              name="calendar_from_slug"
+            />
           </FRow>
-          <div style={{minWidth: '50%' }} ></div>
+          <FRow label="Date to field">
+            <HFSelect
+              options={computedColumns}
+              control={form.control}
+              name="calendar_to_slug"
+            />
+          </FRow>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default GanttSettings
+export default GanttSettings;

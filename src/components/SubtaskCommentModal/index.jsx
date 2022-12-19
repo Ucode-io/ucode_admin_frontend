@@ -1,27 +1,26 @@
-import { Card, IconButton, Modal, Typography } from "@mui/material"
-import HighlightOffIcon from "@mui/icons-material/HighlightOff"
-import { useFormik } from "formik"
-import FTextField from "../FormElements/FTextField"
-import CancelButton from "../Buttons/CancelButton"
-import CreateButton from "../Buttons/CreateButton"
-import SaveButton from "../Buttons/SaveButton"
-import "./style.scss"
+import { Card, IconButton, Modal, Typography } from "@mui/material";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { useFormik } from "formik";
+import FTextField from "../FormElements/FTextField";
+import CancelButton from "../Buttons/CancelButton";
+import CreateButton from "../Buttons/CreateButton";
+import SaveButton from "../Buttons/SaveButton";
+import "./style.scss";
 
 const SubtaskCommentModal = ({
   closeModal,
   updateStatus,
   loading,
-  selectedStatus
+  selectedStatus,
 }) => {
   const onSubmit = ({ comment }) => {
-
-    updateStatus(selectedStatus, comment)
-  }
+    updateStatus(selectedStatus, comment);
+  };
 
   const formik = useFormik({
-    initialValues: { comment: '' },
+    initialValues: { comment: "" },
     onSubmit,
-  })
+  });
 
   return (
     <div onKeyDown={(e) => e.stopPropagation()}>
@@ -57,7 +56,7 @@ const SubtaskCommentModal = ({
         </Card>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default SubtaskCommentModal
+export default SubtaskCommentModal;

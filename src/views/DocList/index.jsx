@@ -8,17 +8,15 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import { useState } from "react"
 import TabCounter from "../../components/TabCounter"
 import DocsTable from "./Table"
-import { useTranslation } from "react-i18next"
 
 const DocListPage = () => {
   const [selectedTab, setSelectedTab] = useState(0)
-  const { t } = useTranslation()
 
   return (
     <div>
       <Header
-        title={t("incoming.docs")}
-        extra={<CreateButton title={t("create")} />}
+        title="Входящие документы"
+        extra={<CreateButton title="Создать" />}
       />
       <FiltersBlock>
         <SearchInput />
@@ -27,7 +25,7 @@ const DocListPage = () => {
           variant="contained"
           color="primary"
         >
-          {t("filter")}
+          Фильтр
         </Button>
       </FiltersBlock>
 
@@ -40,23 +38,22 @@ const DocListPage = () => {
           <Card style={{ padding: "10px" }}>
             <TabList>
               <Tab>
-                {t("invoices")} <TabCounter count={20} />
+                Счета-фактуры <TabCounter count={20} />
               </Tab>
               <Tab>
-                {t("powers.of.attorney")} <TabCounter count={45} />
+                Доверенности <TabCounter count={45} />
               </Tab>
               <Tab>
-                {t("ttn")}
-                <TabCounter count={59} />
+                ТТН <TabCounter count={59} />
               </Tab>
               <Tab>
-                {t("acts")} <TabCounter count={12} />
+                Акты <TabCounter count={12} />
               </Tab>
               <Tab>
-                {t("contracts")} <TabCounter count={34} />
+                Договоры <TabCounter count={34} />
               </Tab>
               <Tab>
-                {t("reconciliation.acts")} <TabCounter count={12} />
+                Акты сверки <TabCounter count={12} />
               </Tab>
             </TabList>
 
@@ -78,6 +75,8 @@ const DocListPage = () => {
             <TabPanel>
               <DocsTable />
             </TabPanel>
+
+
           </Card>
         </div>
       </Tabs>

@@ -60,8 +60,8 @@
     border-style: solid;
     border-color: #e5e9eb;
     border-radius: 0px 0px 6px 0px;
-    
-  
+
+
     .viewRow {
       padding: 12px;
       display: flex;
@@ -70,11 +70,11 @@
       gap: 8px;
       border-bottom: 1px solid #e5e9eb;
       cursor: pointer;
-  
+
       &:hover {
         background-color: colors.$hover-silver;
       }
-  
+
       &:last-of-type {
         border: none;
         border-radius: 0px 0px 6px 0px;
@@ -88,11 +88,11 @@
           color: #fff;
         }
       }
-  
+
       .icon {
         color: #6e8bb7;
       }
-  
+
       .viewName {
         flex: 1;
         font-size: 14px;
@@ -104,7 +104,7 @@
 
 .formSection {
   flex: 1;
-    
+
   .formFooter {
     display: flex;
     align-items: center;
@@ -123,26 +123,26 @@
     gap: 16px;
     height: calc(100vh - 200px);
     overflow: auto;
-  
+
     .section {
       border: 1px solid #e5e9eb;
       border-radius: 6px;
-  
+
       .sectionHeader {
         padding: 16px 12px;
         box-shadow: inset 0px -1px 0px #EBEDEE;
         display: flex;
         align-items: center;
         justify-content: space-between;
-  
+
         .sectionTitle {
           font-weight: 700;
           font-size: 18px;
           line-height: 24px;
         }
-  
+
       }
-  
+
       .sectionBody {
         padding: 16px 12px;
 
@@ -157,9 +157,39 @@
   }
 }
 
+.section {
+  border: 1px solid #e5e9eb;
+  border-radius: 6px;
+
+  .sectionHeader {
+    padding: 16px 12px;
+    box-shadow: inset 0px -1px 0px #EBEDEE;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .sectionTitle {
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 24px;
+    }
+
+  }
+
+  .sectionBody {
+    padding: 16px 12px;
+
+
+    .formRow {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+  }
+}
 
 .table {
-  
+
   .row {
     display: flex;
     background-color: #fff;
@@ -170,8 +200,12 @@
       display: flex;
       align-items: center;
       padding: 8px 16px;
-      margin: -1px -1px 0 0;      
+      margin: -1px -1px 0 0;
       // flex: 1;
     }
   }
+}
+
+.chartAccounts{
+  
 }

@@ -4,7 +4,6 @@ import { store } from "../store/index";
 import { showAlert } from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
 import { authActions } from "../store/auth/auth.slice";
-import { applicationActions } from "../store/application/application.slice";
 export const baseURL = import.meta.env.VITE_BASE_URL
 
 const request = axios.create({
@@ -54,7 +53,6 @@ const errorHandler = (error, hooks) => {
       }
       if (error?.response?.status === 403) {
         store.dispatch(authActions.logout())
-        store.dispatch(applicationActions.setList([]))
         // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }
     }

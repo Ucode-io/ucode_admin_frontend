@@ -1,12 +1,11 @@
-import { Close } from "@mui/icons-material"
-import { Backdrop, Box, Fade, Modal } from "@mui/material"
-import { useState } from "react"
-import { useTranslation } from "react-i18next"
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
+import { Close } from "@mui/icons-material";
+import { Backdrop, Box, Fade, Modal } from "@mui/material";
+import { useState } from "react";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 
-import styles from "./styles.module.scss"
-import EventsTab from "./Tabs/EventsTab"
-import SettingsTab from "./Tabs/SettingsTab"
+import styles from "./styles.module.scss";
+import EventsTab from "./Tabs/EventsTab";
+import SettingsTab from "./Tabs/SettingsTab";
 
 const ActionForm = ({
   isOpen,
@@ -15,8 +14,7 @@ const ActionForm = ({
   modalItemId,
   eventsRefetch,
 }) => {
-  const [selectedTab, setSelectedTab] = useState(0)
-  const { t } = useTranslation()
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const style = {
     position: "absolute",
@@ -27,7 +25,7 @@ const ActionForm = ({
     bgcolor: "#fff",
     boxShadow: 24,
     borderRadius: "6px",
-  }
+  };
 
   return (
     <Modal
@@ -53,11 +51,11 @@ const ActionForm = ({
                 <p
                   style={{ fontWeight: 700, fontSize: 14, lineHeight: "24px" }}
                 >
-                  {t("automations")}
+                  Automations
                 </p>
                 <TabList>
-                  <Tab>{t("settings")}</Tab>
-                  <Tab>{t("event")}</Tab>
+                  <Tab>Настройки</Tab>
+                  <Tab>Событие</Tab>
                 </TabList>
               </div>
               <span onClick={handleClose}>
@@ -80,7 +78,7 @@ const ActionForm = ({
         </Box>
       </Fade>
     </Modal>
-  )
-}
+  );
+};
 
-export default ActionForm
+export default ActionForm;

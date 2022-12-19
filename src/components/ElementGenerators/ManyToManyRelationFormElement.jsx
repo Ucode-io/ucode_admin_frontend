@@ -1,14 +1,16 @@
 import { Close } from "@mui/icons-material";
 import { Autocomplete, TextField } from "@mui/material";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
+import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
+import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
 
 const ManyToManyRelationFormElement = ({
@@ -37,18 +39,32 @@ const ManyToManyRelationFormElement = ({
           name={name || `${tableSlug}_ids`}
           defaultValue={null}
           {...props}
-          render={({ field: { onChange, value }, fieldState: { error } }) => (
-            <AutoCompleteElement
-              value={value}
-              setValue={onChange}
-              field={field}
-              tableSlug={tableSlug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              control={control}
-              {...autocompleteProps}
-            />
-          )}
+          render={({ field: { onChange, value }, fieldState: { error } }) =>
+            field?.attributes?.cascadings?.length > 1 ? (
+              <CascadingSection
+                value={value}
+                setValue={onChange}
+                field={field}
+                tableSlug={tableSlug}
+                error={error}
+                disabledHelperText={disabledHelperText}
+                control={control}
+                {...autocompleteProps}
+                name={name}
+              />
+            ) : (
+              <AutoCompleteElement
+                value={value}
+                setValue={onChange}
+                field={field}
+                tableSlug={tableSlug}
+                error={error}
+                disabledHelperText={disabledHelperText}
+                control={control}
+                {...autocompleteProps}
+              />
+            )
+          }
         />
       </FRow>
     );
@@ -68,18 +84,31 @@ const ManyToManyRelationFormElement = ({
             control={control}
             name={`${tableSlug}_id`}
             defaultValue={null}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <AutoCompleteElement
-                disabled={disabled}
-                value={value}
-                setValue={onChange}
-                field={field}
-                tableSlug={tableSlug}
-                error={error}
-                disabledHelperText={disabledHelperText}
-                control={control}
-              />
-            )}
+            render={({ field: { onChange, value }, fieldState: { error } }) =>
+              field?.attributes?.cascadings?.length > 1 ? (
+                <CascadingSection
+                  disabled={disabled}
+                  value={value}
+                  setValue={onChange}
+                  field={field}
+                  tableSlug={tableSlug}
+                  error={error}
+                  disabledHelperText={disabledHelperText}
+                  control={control}
+                />
+              ) : (
+                <AutoCompleteElement
+                  disabled={disabled}
+                  value={value}
+                  setValue={onChange}
+                  field={field}
+                  tableSlug={tableSlug}
+                  error={error}
+                  disabledHelperText={disabledHelperText}
+                  control={control}
+                />
+              )
+            }
           />
         </FEditableRow>
       )}
@@ -100,6 +129,8 @@ const AutoCompleteElement = ({
   disabledHelperText,
 }) => {
   const { navigateToForm } = useTabRouter();
+  const [debouncedValue, setDebouncedValue] = useState("");
+  const [inputValue, setInputValue] = useState("");
 
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -122,10 +153,22 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler]);
 
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue],
+    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: autoFiltersValue,
+        data: {
+          ...autoFiltersValue,
+          view_fields:
+            field?.view_fields?.map((field) => field.slug) ??
+            field?.attributes?.view_fields?.map((field) => field.slug),
+          additional_request: {
+            additional_field: "guid",
+            additional_values: value,
+          },
+          // additional_ids: value,
+          search: debouncedValue,
+          limit: 10,
+        },
       });
     },
     {
@@ -136,7 +179,7 @@ const AutoCompleteElement = ({
   );
 
   const computedValue = useMemo(() => {
-    if (!value) return [];
+    if (!value) return undefined;
 
     return value
       ?.map((id) => {
@@ -170,6 +213,10 @@ const AutoCompleteElement = ({
     // })
   };
 
+  const inputChangeHandler = useDebounce((val) => {
+    setDebouncedValue(val);
+  }, 300);
+
   return (
     <div className={styles.autocompleteWrapper}>
       <div
@@ -194,6 +241,12 @@ const AutoCompleteElement = ({
             Создать новый
           </span>
         }
+        inputValue={inputValue}
+        // inputValue={inputValue}
+        onInputChange={(_, val) => {
+          setInputValue(val);
+          inputChangeHandler(val);
+        }}
         disablePortal
         blurOnSelect
         openOnFocus

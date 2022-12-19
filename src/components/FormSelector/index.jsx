@@ -1,13 +1,11 @@
 import { Menu } from "@mui/material"
 import { useState } from "react"
-import { useTranslation } from "react-i18next"
 import { useSelector } from "react-redux"
 import useTabRouter from "../../hooks/useTabRouter"
 import IconGenerator from "../IconPicker/IconGenerator"
 import styles from "./style.module.scss"
 
-const FormSelector = () => {
-  const { t } = useTranslation()
+const FormSelector = ({ tableSlug }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const menuVisible = Boolean(anchorEl)
   const { navigateToForm } = useTabRouter()
@@ -27,15 +25,13 @@ const FormSelector = () => {
     closeMenu()
   }
 
+
+
   return (
     <div>
       <div onClick={openMenu} className={`${styles.addButton}`}>
-        <IconGenerator
-          icon={"plus.svg"}
-          className={styles.buttonIcon}
-          size={14}
-        />
-        <div className={styles.buttonTitle}>{t("add")}</div>
+        <IconGenerator icon={"plus.svg"} className={styles.buttonIcon} size={14} />
+        <div className={styles.buttonTitle}>Добавить</div>
       </div>
 
       <Menu
@@ -47,11 +43,7 @@ const FormSelector = () => {
       >
         <div className={styles.scrollBlocksss}>
           {tables.map((table, index) => (
-            <div
-              key={table.id}
-              className={styles.menuItem}
-              onClick={() => rowClickHandler(table)}
-            >
+            <div key={table.id} className={styles.menuItem} onClick={() => rowClickHandler(table)} >
               <IconGenerator
                 icon={table.icon}
                 className={`${styles.dragIcon} drag-handle`}

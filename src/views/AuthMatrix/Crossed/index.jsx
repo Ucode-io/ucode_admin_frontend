@@ -1,49 +1,47 @@
-import { Card } from "@mui/material"
-import { useState } from "react"
-import { useTranslation } from "react-i18next"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
-import CreateButton from "../../../components/Buttons/CreateButton"
-import Header from "../../../components/Header"
-import IntegrationsTable from "./Integrations/Table"
-import RolesTable from "./Roles/Table"
-import UsersTable from "./Users/Table"
+import { Card } from "@mui/material";
+import { useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import CreateButton from "../../../components/Buttons/CreateButton";
+import Header from "../../../components/Header";
+import IntegrationsTable from "./Integrations/Table";
+import RolesTable from "./Roles/Table";
+import UsersTable from "./Users/Table";
 
 const CrossedPage = () => {
-  const { projectId } = useParams()
-  const navigate = useNavigate()
-  const { t } = useTranslation()
-  const { pathname } = useLocation()
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
-  const [selectedTab, setSelectedTab] = useState(0)
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const tabs = [
     {
-      title: "roles",
-      btnTitle: "create.role",
+      title: "Roles",
+      btnTitle: "Create role",
       createPageLink: `${pathname}/role/create`,
     },
     {
-      title: "users",
-      btnTitle: "create.user",
+      title: "Users",
+      btnTitle: "Create user",
       createPageLink: `${pathname}/user/create`,
     },
     {
-      title: "integrations",
-      btnTitle: "create.integrations",
+      title: "Integrations",
+      btnTitle: "Create integration",
       createPageLink: `${pathname}/integration/create`,
     },
-  ]
+  ];
 
   return (
     <div className="UsersPage">
       <Header
-        title={t(tabs[selectedTab]?.title)}
+        title={tabs[selectedTab]?.title}
         backButtonLink={`/settings/auth/matrix/${projectId}`}
         extra={
           <CreateButton
             onClick={() => navigate(tabs[selectedTab]?.createPageLink)}
-            title={t(tabs[selectedTab]?.btnTitle)}
+            title={tabs[selectedTab]?.btnTitle}
           />
         }
       />
@@ -56,9 +54,9 @@ const CrossedPage = () => {
         <div style={{ padding: "20px" }}>
           <Card style={{ padding: "10px" }}>
             <TabList>
-              <Tab>{t("roles")}</Tab>
-              <Tab>{t("users")}</Tab>
-              <Tab>{t("integrations")}</Tab>
+              <Tab>Roles</Tab>
+              <Tab>Users</Tab>
+              <Tab>Integrations</Tab>
             </TabList>
 
             <TabPanel>
@@ -74,7 +72,7 @@ const CrossedPage = () => {
         </div>
       </Tabs>
     </div>
-  )
-}
+  );
+};
 
-export default CrossedPage
+export default CrossedPage;

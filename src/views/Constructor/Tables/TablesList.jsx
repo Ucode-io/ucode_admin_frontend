@@ -1,7 +1,6 @@
 import { Delete } from "@mui/icons-material"
 import { useState } from "react"
 import { useFieldArray } from "react-hook-form"
-import { useTranslation } from "react-i18next"
 import { useLocation, useNavigate } from "react-router-dom"
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton"
 import {
@@ -20,14 +19,16 @@ import constructorTableService from "../../../services/constructorTableService"
 import ImportModal from "./ImportModal"
 
 const TablesList = ({ mainForm, appData, getData }) => {
-  const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
   const [loader, setLoader] = useState(false)
   const [importModalVisible, setImportModalVisible] = useState(false)
   const [modalLoader, setModalLoader] = useState()
 
-  const { fields: list, remove } = useFieldArray({
+  const {
+    fields: list,
+    remove,
+  } = useFieldArray({
     control: mainForm.control,
     name: "tables",
     keyName: "key",
@@ -53,16 +54,8 @@ const TablesList = ({ mainForm, appData, getData }) => {
     setModalLoader()
 
     const computedTables = [
-      ...list.map((el) => ({
-        table_id: el.id,
-        is_visible: Boolean(el.is_visible),
-        is_own_table: Boolean(el.is_own_table),
-      })),
-      ...checkedElements.map((el) => ({
-        table_id: el,
-        is_visible: true,
-        is_own_table: false,
-      })),
+      ...list.map((el) => ({ table_id: el.id, is_visible: Boolean(el.is_visible), is_own_table: Boolean(el.is_own_table) })),
+      ...checkedElements.map((el) => ({ table_id: el, is_visible: true, is_own_table: false })),
     ]
 
     applicationService
@@ -83,21 +76,17 @@ const TablesList = ({ mainForm, appData, getData }) => {
     const index = list?.findIndex((table) => table.id === id)
 
     const computedTableIds =
-      list
-        ?.filter((table) => table.id !== id)
-        .map((table) => ({
-          table_id: table.id,
-          is_visible: Boolean(table.is_visible),
-          is_own_table: Boolean(table.is_own_table),
-        })) ?? []
+      list?.filter((table) => table.id !== id).map((table) => ({table_id: table.id, is_visible: Boolean(table.is_visible), is_own_table: Boolean(table.is_own_table)})) ?? []
 
     try {
-      if (list[index]?.is_own_table) await constructorTableService.delete(id)
+
+      if(list[index]?.is_own_table) await constructorTableService.delete(id)
+
       else {
         await applicationService.update({
           ...appData,
           tables: computedTableIds,
-        })
+        }) 
       }
       remove(index)
     } finally {
@@ -106,21 +95,19 @@ const TablesList = ({ mainForm, appData, getData }) => {
   }
 
   const switchChangeHandler = (val, index) => {
-    const computedTableIds = mainForm
-      .getValues("tables")
-      ?.map((table, tableIndex) => {
-        return {
-          table_id: table.id,
-          is_visible: tableIndex !== index ? Boolean(table.is_visible) : val,
-          is_own_table: Boolean(table.is_own_table),
-        }
-      })
+    const computedTableIds = mainForm.getValues('tables')?.map((table, tableIndex) => {
+      return {
+        table_id: table.id,
+        is_visible: tableIndex !== index ? Boolean(table.is_visible) : val,
+        is_own_table: Boolean(table.is_own_table)
+      }
+    })
     applicationService.update({
       ...appData,
       tables: computedTableIds,
     })
   }
-
+  
   return (
     <>
       {importModalVisible && (
@@ -134,9 +121,9 @@ const TablesList = ({ mainForm, appData, getData }) => {
         <CTable disablePagination removableHeight={120}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>{t("title")}</CTableCell>
-            <CTableCell>{t("description")}</CTableCell>
-            <CTableCell width={60}>{}</CTableCell>
+            <CTableCell>Название</CTableCell>
+            <CTableCell>Описание</CTableCell>
+            <CTableCell width={60}>Показать в меню</CTableCell>
             <CTableCell width={60} />
           </CTableHead>
           <CTableBody columnsCount={4} dataLength={1} loader={loader}>
@@ -169,12 +156,12 @@ const TablesList = ({ mainForm, appData, getData }) => {
             <TableRowButton
               colSpan={5}
               onClick={openImportModal}
-              title={t("import.from.other.applications")}
+              title="Импортировать из других приложений"
             />
             <TableRowButton
               colSpan={5}
               onClick={navigateToCreateForm}
-              title={t("create.new")}
+              title="Создать новый"
             />
           </CTableBody>
         </CTable>

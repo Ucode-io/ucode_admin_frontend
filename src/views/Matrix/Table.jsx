@@ -19,10 +19,8 @@ import clientPlatformServiceV2 from "../../services/auth/clientPlatformServiceV2
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2"
 import styles from "./styles.module.scss"
 import { useNavigate } from "react-router-dom"
-import { useTranslation } from "react-i18next"
 
 const MatrixTable = () => {
-  const { t } = useTranslation()
   const [clientTypes, setClientTypes] = useState([])
   const [clientPlatforms, setClientPlatforms] = useState([])
   const [platformId, setPlatformId] = useState(null)
@@ -128,7 +126,7 @@ const MatrixTable = () => {
       <CTable disablePagination={true}>
         <CTableHead>
           <CTableHeadRow>
-            <CTableCell>{t("matrix")}</CTableCell>
+            <CTableCell>Matrix</CTableCell>
             {clientPlatforms.map((clientPlatform) => (
               <CTableCell>
                 <div>

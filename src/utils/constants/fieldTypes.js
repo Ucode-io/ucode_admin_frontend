@@ -127,6 +127,11 @@ export const fieldTypesOptions = [
         label: "Video",
         value: "VIDEO"
       },
+      {
+        icon: "file.svg",
+        label: "File",
+        value: "FILE"
+      },
     ]
   },
   {
@@ -151,6 +156,11 @@ export const fieldTypesOptions = [
         icon: "arrow-up-9-1.svg",
         label: "Increment ID",
         value: "INCREMENT_ID"
+      },
+      {
+        icon: "arrow-up-a-z.svg",
+        label: "Increment number",
+        value: "INCREMENT_NUMBER"
       },
       {
         icon: "phone.svg",

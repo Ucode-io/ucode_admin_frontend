@@ -1,13 +1,13 @@
-import { TextField } from "@mui/material"
-import { useMemo, useState } from "react"
+import { TextField } from "@mui/material";
+import { useMemo, useState } from "react";
 
-import CSelect from "../../../../components/CSelect"
-import TableColumnFilter from "../../../../components/TableColumnFilter"
-import TableOrderingButton from "../../../../components/TableOrderingButton"
-import DefaultFilter from "./DefaultFilter"
-import RelationFilter from "./RelationFilter"
-import FilterAutoComplete from "./FilterAutocomplete"
-import DateFilter from "./DateFilter"
+import CSelect from "../../../../components/CSelect";
+import TableColumnFilter from "../../../../components/TableColumnFilter";
+import TableOrderingButton from "../../../../components/TableOrderingButton";
+import DefaultFilter from "./DefaultFilter";
+import RelationFilter from "./RelationFilter";
+import FilterAutoComplete from "./FilterAutocomplete";
+import DateFilter from "./DateFilter";
 
 const FilterGenerator = ({
   field,
@@ -19,21 +19,20 @@ const FilterGenerator = ({
   const orderingType = useMemo(
     () => filters.order?.[name],
     [filters.order, name]
-  )
+  );
 
   const onOrderingChange = (value) => {
-    console.log("clicked")
-    if (!value) return onChange(value, "order")
+    if (!value) return onChange(value, "order");
     const data = {
       [name]: value,
-    }
-    onChange(data, "order")
-  }
+    };
+    onChange(data, "order");
+  };
 
   return (
     <div style={{ display: "flex", alignItems: "center" }}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
-      <TableColumnFilter>
+      {/* <TableColumnFilter>
         <Filter
           field={field}
           name={name}
@@ -41,12 +40,12 @@ const FilterGenerator = ({
           onChange={onChange}
           tableSlug={tableSlug}
         />
-      </TableColumnFilter>
+      </TableColumnFilter> */}
     </div>
-  )
-}
+  );
+};
 
-export default FilterGenerator
+export default FilterGenerator;
 
 export const Filter = ({
   field = {},
@@ -55,25 +54,24 @@ export const Filter = ({
   onChange,
   tableSlug,
 }) => {
-  const [debouncedValue, setDebouncedValue] = useState("")
-
+  const [debouncedValue, setDebouncedValue] = useState("");
   const computedOptions = useMemo(() => {
-    if (!field.attributes?.options) return []
+    if (!field.attributes?.options) return [];
     return field.attributes.options.map((option) => {
       if (field.type === "PICK_LIST")
         return {
           value: option.value,
           label: option.value,
-        }
+        };
       if (field.type === "MULTISELECT")
         return {
           value: option.value,
           label: option.label ?? option.value,
-        }
-    })
-  }, [field.attributes?.options, field.type])
+        };
+    });
+  }, [field.attributes?.options, field.type]);
 
-  if (field.type === "LOOKUP")
+  if (field.type === "LOOKUP" || field.type === "LOOKUPS")
     return (
       <RelationFilter
         field={field}
@@ -82,7 +80,7 @@ export const Filter = ({
         name={name}
         tableSlug={tableSlug}
       />
-    )
+    );
 
   switch (field.type) {
     case "PICK_LIST":
@@ -109,10 +107,10 @@ export const Filter = ({
         //     placeholder={field.label}
         //   />
         // </FormControl>
-      )
+      );
 
     case "PHOTO":
-      return null
+      return null;
 
     case "DATE":
       return (
@@ -135,7 +133,7 @@ export const Filter = ({
         //     />
         //   )}
         // />
-      )
+      );
 
     case "NUMBER":
       return (
@@ -147,7 +145,7 @@ export const Filter = ({
           value={filters[name] ?? ""}
           onChange={(e) => onChange(Number(e.target.value) || undefined, name)}
         />
-      )
+      );
 
     case "SWITCH":
       return (
@@ -168,7 +166,7 @@ export const Filter = ({
           ]}
           onChange={(e) => onChange(e.target.value, name)}
         />
-      )
+      );
 
     default:
       return (
@@ -179,6 +177,6 @@ export const Filter = ({
           name={name}
           tableSlug={tableSlug}
         />
-      )
+      );
   }
-}
+};

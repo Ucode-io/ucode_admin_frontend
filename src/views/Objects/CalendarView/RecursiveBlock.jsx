@@ -1,8 +1,8 @@
-import { useMemo } from "react"
+import { useMemo } from "react";
 
-import DataColumn from "./DataColumn"
-import MockColumn from "./MockColumn"
-import styles from "./style.module.scss"
+import DataColumn from "./DataColumn";
+import MockColumn from "./MockColumn";
+import styles from "./style.module.scss";
 
 const RecursiveBlock = ({
   date,
@@ -13,25 +13,29 @@ const RecursiveBlock = ({
   tabs,
   level = 0,
   workingDays,
-}) => { 
+}) => {
   const elements = useMemo(() => {
-    if (!parentTab) return tabs?.[level]?.list
+    if (!parentTab) return tabs?.[level]?.list;
 
     return tabs?.[level]?.list?.filter((el) => {
       return Array.isArray(el[parentTab.slug])
         ? el[parentTab.slug]?.includes(parentTab.value)
-        : el[parentTab.slug] === parentTab.value
-    })
-  }, [parentTab, tabs, level])
+        : el[parentTab.slug] === parentTab.value;
+    });
+  }, [parentTab, tabs, level]);
 
   if (!elements?.length)
-    return <MockColumn view={view} level={level} tabs={tabs} />
+    return <MockColumn view={view} level={level} tabs={tabs} />;
 
   return (
     <div className={styles.row}>
       {elements?.map((tab) => (
-        <div className={styles.block}>
-          <div className={styles.blockElement}>{tab.label}</div>
+        <div
+          className={`${styles.block} ${
+            elements?.length === 1 && level === 1 ? styles.oneElement : ""
+          }`}
+        >
+          <div className={`${styles.blockElement}`}>{tab.label}</div>
 
           {tabs?.[level + 1] ? (
             <RecursiveBlock
@@ -58,7 +62,7 @@ const RecursiveBlock = ({
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default RecursiveBlock
+export default RecursiveBlock;

@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom";
 import RingLoader from "../../../../components/Loaders/RingLoader";
 import RippleLoader from "../../../../components/Loaders/RippleLoader";
 import { useQueryClient } from "react-query";
+import listToOptions from "../../../../utils/listToOptions";
 
 const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
   const inputFIle = useRef();
@@ -61,7 +62,11 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
     setBtnLoader(true);
     const computedData = {};
     values?.fields?.forEach((field) => {
-      if (field.excelSlug) computedData[field.excelSlug] = field.id;
+      if (field.excelSlug) {
+        if (field.viewFieldSlug) {
+          computedData[field.excelSlug] = `${field.id},${field.viewFieldSlug}`;
+        } else computedData[field.excelSlug] = field.id;
+      }
     });
 
     excelService
@@ -93,6 +98,16 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
       fields: Object.values(fieldsMap) ?? [],
     });
   }, [fieldsMap, reset]);
+
+  const viewFieldsToOptions = (options, field) => {
+    return (
+      options?.map((el) => ({
+        value: el.id,
+        label: `${field.label} (${el.label})`,
+      })) ?? []
+    );
+  };
+
   return (
     <div className={styles.dialog_content}>
       <div className={styles.dialog_tabs_header}>
@@ -147,18 +162,32 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                         (second.required === true) - (first.required === true)
                     )
                     .map((item, index) => (
-                      <div key={index} className={styles.select_body_layer}>
+                      <div key={item} className={styles.select_body_layer}>
                         <div className={styles.select_body}>
                           <div className={styles.select_body_item}>
-                            <input
-                              type="text"
-                              value={`${item?.label}${
-                                item?.required ? "*" : ""
-                              }`}
-                              placeholder=""
-                              disabled
-                              className={styles.input_control}
-                            />
+                            {item?.type === "LOOKUP" ||
+                            item?.type === "LOOKUPS" ? (
+                              <HFSelect
+                                name={`fields[${index}].viewFieldSlug`}
+                                placeholder={item.label}
+                                control={control}
+                                options={viewFieldsToOptions(
+                                  item?.view_fields,
+                                  item
+                                )}
+                                width={"250px"}
+                              />
+                            ) : (
+                              <input
+                                type="text"
+                                value={`${item?.label}${
+                                  item?.required ? "*" : ""
+                                }`}
+                                placeholder=""
+                                disabled
+                                className={styles.input_control}
+                              />
+                            )}
                             <div className={styles.select_pointer}>
                               <PointerIcon />
                             </div>

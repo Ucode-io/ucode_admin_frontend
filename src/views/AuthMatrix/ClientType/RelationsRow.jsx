@@ -1,6 +1,9 @@
+
+
+
+
 import { CircularProgress, MenuItem } from "@mui/material"
 import { useState } from "react"
-import { useTranslation } from "react-i18next"
 import { useDispatch } from "react-redux"
 import { useParams } from "react-router-dom"
 import ButtonsPopover from "../../../components/ButtonsPopover"
@@ -10,45 +13,44 @@ import RelationCreateRow from "./RelationCreateRow"
 const RelationsRow = ({ relation, index, setRelationsList }) => {
   const { typeId } = useParams()
   const dispatch = useDispatch()
-  const { t } = useTranslation()
 
   const [loader, setLoader] = useState(false)
   const [textFieldVisible, setTextFieldVisible] = useState(false)
 
-  const deleteRelation = () => {
-    setLoader(true)
-    clientRelationService
-      .delete(relation.id)
-      .then((res) => {
-        setRelationsList((prev) => prev.filter((el) => el.id !== relation.id))
-      })
-      .catch(() => setLoader(false))
-  }
+    const deleteRelation = () => {
+      setLoader(true)
+      clientRelationService
+        .delete(relation.id)
+        .then((res) => {
+          setRelationsList(prev => prev.filter(el => el.id !== relation.id))
+        })
+        .catch(() => setLoader(false))
+    }
 
   const updateRelation = (values) => {
     const data = {
       ...values,
       client_type_id: typeId,
-      id: relation.id,
+      id: relation.id
     }
 
     clientRelationService.update(data).then((res) => {
-      setRelationsList((prev) =>
-        prev.map((el) => (el.id !== relation.id ? el : data))
-      )
+      setRelationsList(prev => prev.map(el => el.id !== relation.id ? el : data))
       setTextFieldVisible(false)
     })
   }
 
   return (
-    <MenuItem className={`row silver-bottom-border pointer`}>
+    <MenuItem
+      className={`row silver-bottom-border pointer`}
+    >
       <div className="row-index">{index + 1}</div>
       {textFieldVisible ? (
         <RelationCreateRow
           color="primary"
           initialValues={relation}
           onSubmit={updateRelation}
-          btnText={t("save")}
+          btnText="SAVE"
         />
       ) : (
         <>

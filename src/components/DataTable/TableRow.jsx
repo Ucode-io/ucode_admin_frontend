@@ -1,11 +1,11 @@
-import { Checkbox } from "@mui/material"
-import { Delete } from "@mui/icons-material"
+import { Checkbox } from "@mui/material";
+import { Delete } from "@mui/icons-material";
 
-import { CTableCell, CTableRow } from "../CTable"
-import CellElementGenerator from "../ElementGenerators/CellElementGenerator"
-import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2"
-import TableRowForm from "./TableRowForm"
-import RectangleIconButton from "../Buttons/RectangleIconButton"
+import { CTableCell, CTableRow } from "../CTable";
+import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import TableRowForm from "./TableRowForm";
+import RectangleIconButton from "../Buttons/RectangleIconButton";
 
 const TableRow = ({
   row,
@@ -31,6 +31,8 @@ const TableRow = ({
   formVisible,
   remove,
   limit = 10,
+  relationAction,
+  onChecked,
 }) => {
   if (formVisible)
     return (
@@ -57,70 +59,212 @@ const TableRow = ({
         calculateWidth={calculateWidth}
         tableSlug={tableSlug}
       />
-    )
+    );
 
   return (
-    <CTableRow
-      onClick={() => {
-        onRowClick(row, rowIndex)
-      }}
-    >
-      <CTableCell align="center" className="data_table__number_cell">
-        <span className="data_table__row_number">
-          {(currentPage - 1) * limit + rowIndex + 1}
-        </span>
-        {onCheckboxChange && (
-          <div
-            className={`data_table__row_checkbox ${
-              isChecked(row) ? "checked" : ""
-            }`}
-          >
-            <Checkbox
-              checked={isChecked(row)}
-              onChange={(_, val) => onCheckboxChange(val, row)}
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
-        )}
-      </CTableCell>
-
-      {columns.map((column, index) => (
-        <CTableCell
-          key={column.id}
-          className={`overflow-ellipsis ${tableHeight}`}
-          style={{
-            minWidth: "270px",
-            padding: "0 4px",
-            position: tableSettings?.[pageName]?.find(
-              (item) => item?.id === column?.id
-            )?.isStiky
-              ? "sticky"
-              : "relative",
-            left: tableSettings?.[pageName]?.find(
-              (item) => item?.id === column?.id
-            )?.isStiky
-              ? calculateWidth(column?.id, index)
-              : "0",
-            backgroundColor: "#fff",
-            zIndex: tableSettings?.[pageName]?.find(
-              (item) => item?.id === column?.id
-            )?.isStiky
-              ? "1"
-              : "",
+    <>
+      {relationAction === undefined ? (
+        <CTableRow
+          onClick={() => {
+            onRowClick(row, rowIndex);
           }}
         >
-          <CellElementGenerator field={column} row={row} />
-        </CTableCell>
-      ))}
-      <PermissionWrapperV2 tabelSlug={tableSlug} type={["update", "delete"]}>
-        <CTableCell style={{ padding: "0 5px" }}>
-          <RectangleIconButton color="error" onClick={() => onDeleteClick(row)}>
+          <CTableCell align="center" className="data_table__number_cell">
+            <span className="data_table__row_number">
+              {(currentPage - 1) * limit + rowIndex + 1}
+            </span>
+            {onCheckboxChange && (
+              <div
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
+              >
+                <Checkbox
+                  checked={isChecked(row)}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            )}
+          </CTableCell>
+
+          {columns.map((column, index) => (
+            <CTableCell
+              key={column.id}
+              className={`overflow-ellipsis ${tableHeight}`}
+              style={{
+                minWidth: "max-content",
+                padding: "0 4px",
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? calculateWidth(column?.id, index)
+                  : "0",
+                backgroundColor: "#fff",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
+              }}
+            >
+              <CellElementGenerator field={column} row={row} />
+            </CTableCell>
+          ))}
+          <PermissionWrapperV2
+            tabelSlug={tableSlug}
+            type={["update", "delete"]}
+          ></PermissionWrapperV2>
+          <RectangleIconButton
+            color="error"
+            onClick={() =>
+              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+            }
+          >
             <Delete color="error" />
           </RectangleIconButton>
-        </CTableCell>
-      </PermissionWrapperV2>
-    </CTableRow>
-  )
-}
+        </CTableRow>
+      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
+        !relationAction?.action_relations ? (
+        <CTableRow
+          onClick={() => {
+            onRowClick(row, rowIndex);
+          }}
+        >
+          <CTableCell align="center" className="data_table__number_cell">
+            <span className="data_table__row_number">
+              {(currentPage - 1) * limit + rowIndex + 1}
+            </span>
+            {onCheckboxChange && (
+              <div
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
+              >
+                <Checkbox
+                  checked={isChecked(row)}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            )}
+          </CTableCell>
 
-export default TableRow
+          {columns.map((column, index) => (
+            <CTableCell
+              key={column.id}
+              className={`overflow-ellipsis ${tableHeight}`}
+              style={{
+                minWidth: "max-content",
+                padding: "0 4px",
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? calculateWidth(column?.id, index)
+                  : "0",
+                backgroundColor: "#fff",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
+              }}
+            >
+              <CellElementGenerator field={column} row={row} />
+            </CTableCell>
+          ))}
+          <PermissionWrapperV2
+            tabelSlug={tableSlug}
+            type={["update", "delete"]}
+          ></PermissionWrapperV2>
+          <RectangleIconButton
+            color="error"
+            onClick={() =>
+              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+            }
+          >
+            <Delete color="error" />
+          </RectangleIconButton>
+        </CTableRow>
+      ) : (
+        <CTableRow
+          onClick={() => {
+            onChecked(row?.guid);
+          }}
+        >
+          <CTableCell align="center" className="data_table__number_cell">
+            <span className="data_table__row_number">
+              {(currentPage - 1) * limit + rowIndex + 1}
+            </span>
+            {onCheckboxChange && (
+              <div
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
+              >
+                <Checkbox
+                  checked={isChecked(row)}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            )}
+          </CTableCell>
+
+          {columns.map((column, index) => (
+            <CTableCell
+              key={column.id}
+              className={`overflow-ellipsis ${tableHeight}`}
+              style={{
+                minWidth: "max-content",
+                padding: "0 4px",
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? calculateWidth(column?.id, index)
+                  : "0",
+                backgroundColor: "#fff",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
+              }}
+            >
+              <CellElementGenerator field={column} row={row} />
+            </CTableCell>
+          ))}
+          <PermissionWrapperV2
+            tabelSlug={tableSlug}
+            type={["update", "delete"]}
+          ></PermissionWrapperV2>
+          <RectangleIconButton
+            color="error"
+            onClick={() =>
+              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+            }
+          >
+            <Delete color="error" />
+          </RectangleIconButton>
+        </CTableRow>
+      )}
+    </>
+  );
+};
+
+export default TableRow;

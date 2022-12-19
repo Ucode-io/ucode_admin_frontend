@@ -14,6 +14,7 @@ const HFTextEditor = ({
   required = false,
   fullWidth = false,
   withTrim = false,
+  tabIndex,
   rules = {},
   ...props
 }) => {
@@ -37,6 +38,7 @@ const HFTextEditor = ({
             theme="snow"
             defaultValue={value}
             onChange={onChange}
+            tabIndex={tabIndex}
             autoFocus={false}
           />
         </Suspense>

@@ -1,23 +1,23 @@
-import { useState } from "react"
-import { useQuery } from "react-query"
-import { useParams } from "react-router-dom"
-import { Add } from "@mui/icons-material"
+import { useState } from "react";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import { Add } from "@mui/icons-material";
 
-import { CTableCell, CTableRow } from "../../../../../components/CTable"
-import DataTable from "../../../../../components/DataTable"
-import TableCard from "../../../../../components/TableCard"
-import eventService from "../../../../../services/eventsService"
-import ActionForm from "./ActionForm"
-import styles from "./styles.module.scss"
+import { CTableCell, CTableRow } from "../../../../../components/CTable";
+import DataTable from "../../../../../components/DataTable";
+import TableCard from "../../../../../components/TableCard";
+import eventService from "../../../../../services/eventsService";
+import ActionForm from "./ActionForm";
+import styles from "./styles.module.scss";
 
 const Actions = ({ eventLabel }) => {
-  const { slug } = useParams()
-  const [modalItemId, setModalItemId] = useState(undefined)
+  const { slug } = useParams();
+  const [modalItemId, setModalItemId] = useState(undefined);
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleOpen = () => setIsOpen(true)
-  const handleClose = () => setIsOpen(false)
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
 
   const {
     data: events,
@@ -29,7 +29,7 @@ const Actions = ({ eventLabel }) => {
     {
       enabled: !!slug,
     }
-  )
+  );
 
   const columns = [
     {
@@ -37,13 +37,13 @@ const Actions = ({ eventLabel }) => {
       label: "Событие",
       slug: "when.action",
     },
-  ]
+  ];
 
   const deleteField = (state) => {
     if (state?.id) {
-      eventService.delete(state.id).then(() => eventsRefetch())
+      eventService.delete(state.id).then(() => eventsRefetch());
     }
-  }
+  };
 
   return (
     <TableCard>
@@ -57,8 +57,8 @@ const Actions = ({ eventLabel }) => {
         dataLength={1}
         onDeleteClick={deleteField}
         onEditClick={(e) => {
-          handleOpen()
-          setModalItemId(e?.id)
+          handleOpen();
+          setModalItemId(e?.id);
         }}
         additionalRow={
           <CTableRow>
@@ -66,8 +66,8 @@ const Actions = ({ eventLabel }) => {
               <div
                 className={styles.createButton}
                 onClick={() => {
-                  handleOpen()
-                  setModalItemId("")
+                  handleOpen();
+                  setModalItemId("");
                 }}
               >
                 <Add color="primary" />
@@ -85,7 +85,7 @@ const Actions = ({ eventLabel }) => {
         handleClose={handleClose}
       />
     </TableCard>
-  )
-}
+  );
+};
 
-export default Actions
+export default Actions;

@@ -1,79 +1,78 @@
-import { useFormik } from "formik"
-import { useMemo } from "react"
-import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
-import SaveButton from "../../../../components/Buttons/SaveButton"
-import CBreadcrumbs from "../../../../components/CBreadcrumbs"
-import FormCard from "../../../../components/FormCard"
-import FDatePicker from "../../../../components/FormElements/FDatePicker"
-import FImageUpload from "../../../../components/FormElements/FImageUpload"
-import FRow from "../../../../components/FormElements/FRow"
-import FSelect from "../../../../components/FormElements/FSelect"
-import FSwitch from "../../../../components/FormElements/FSwitch"
-import FTextField from "../../../../components/FormElements/FTextField"
-import Header from "../../../../components/Header"
-import clientTypeService from "../../../../services/clientTypeService"
-import userService from "../../../../services/auth/userService"
-import { useTranslation } from "react-i18next"
+import { useFormik } from "formik";
+import { useMemo } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import CancelButton from "../../../../components/Buttons/CancelButton";
+import SaveButton from "../../../../components/Buttons/SaveButton";
+import CBreadcrumbs from "../../../../components/CBreadcrumbs";
+import FormCard from "../../../../components/FormCard";
+import FDatePicker from "../../../../components/FormElements/FDatePicker";
+import FImageUpload from "../../../../components/FormElements/FImageUpload";
+import FRow from "../../../../components/FormElements/FRow";
+import FSelect from "../../../../components/FormElements/FSelect";
+import FSwitch from "../../../../components/FormElements/FSwitch";
+import FTextField from "../../../../components/FormElements/FTextField";
+import Header from "../../../../components/Header";
+import clientTypeService from "../../../../services/clientTypeService";
+import userService from "../../../../services/auth/userService";
 
 const UsersForm = () => {
-  const { platformId, typeId, userId, projectId } = useParams()
-  const navigate = useNavigate()
-  const { t } = useTranslation()
-  const dispatch = useDispatch()
+  const { platformId, typeId, userId, projectId } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const [btnLoader, setBtnLoader] = useState(false)
-  const [loader, setLoader] = useState(true)
-  const [rolesList, setRolesList] = useState([])
+  const [btnLoader, setBtnLoader] = useState(false);
+  const [loader, setLoader] = useState(true);
+  const [rolesList, setRolesList] = useState([]);
 
   const breadCrumbItems = [
     {
-      label: t("users"),
+      label: "Users",
     },
     {
-      label: t("create"),
+      label: "Create",
     },
-  ]
+  ];
 
   const computedRolesList = useMemo(() => {
     return rolesList.map((role) => ({
       label: role.name,
       value: role.id,
-    }))
-  }, [rolesList])
+    }));
+  }, [rolesList]);
 
   const fetchData = () => {
-    if (!userId) return setLoader(false)
+    if (!userId) return setLoader(false);
 
     userService
       .getById(userId)
       .then((res) => {
-        formik.setValues(res)
+        formik.setValues(res);
       })
-      .finally(() => setLoader(false))
-  }
+      .finally(() => setLoader(false));
+  };
 
   const fetchRolesList = () => {
     clientTypeService
       .getById(typeId)
-      .then((res) => setRolesList(res.roles ?? []))
-  }
+      .then((res) => setRolesList(res.roles ?? []));
+  };
 
   const create = (data) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
     userService
       .create(data)
       .then((res) => {
         navigate(
           `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/user`
-        )
+        );
       })
-      .finally(() => setBtnLoader(false))
-  }
+      .finally(() => setBtnLoader(false));
+  };
 
   const update = (data) => {
-    setBtnLoader(true)
+    setBtnLoader(true);
     userService
       .update({
         ...data,
@@ -82,25 +81,25 @@ const UsersForm = () => {
       .then((res) => {
         navigate(
           `/settings/auth/matrix/${projectId}/${platformId}/${typeId}/user`
-        )
+        );
       })
-      .finally(() => setBtnLoader(false))
-  }
+      .finally(() => setBtnLoader(false));
+  };
 
   const onSubmit = (values) => {
     const data = {
       ...values,
       active: values.active ? 1 : 0,
-    }
+    };
 
-    if (userId) return update(data)
-    create(data)
-  }
+    if (userId) return update(data);
+    create(data);
+  };
 
   useEffect(() => {
-    fetchRolesList()
-    fetchData()
-  }, [])
+    fetchRolesList();
+    fetchData();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -118,7 +117,7 @@ const UsersForm = () => {
       role_id: "",
     },
     onSubmit,
-  })
+  });
 
   return (
     <form onSubmit={formik.handleSubmit}>
@@ -133,27 +132,27 @@ const UsersForm = () => {
       >
         <CBreadcrumbs withDefautlIcon items={breadCrumbItems} />
       </Header>
-      <FormCard visible={!loader} title={t("main.info")}>
-        <FRow label={t("active")}>
+      <FormCard visible={!loader} title="Main info">
+        <FRow label="Active">
           <FSwitch fullWidth formik={formik} name="active" />
         </FRow>
-        <FRow label={t("photo")}>
+        <FRow label="Photo">
           <FImageUpload fullWidth formik={formik} name="photo_url" />
         </FRow>
-        <FRow label={t("name")}>
+        <FRow label="Name">
           <FTextField fullWidth formik={formik} name="name" />
         </FRow>
-        <FRow label={t("email")}>
+        <FRow label="Email">
           <FTextField fullWidth formik={formik} name="email" />
         </FRow>
-        <FRow label={t("phone")}>
+        <FRow label="Phone">
           <FTextField fullWidth formik={formik} name="phone" />
         </FRow>
-        <FRow label={t("login")}>
+        <FRow label="Login">
           <FTextField fullWidth formik={formik} name="login" />
         </FRow>
         {!userId && (
-          <FRow label={t("password")}>
+          <FRow label="Password">
             <FTextField
               type="password"
               fullWidth
@@ -162,10 +161,10 @@ const UsersForm = () => {
             />
           </FRow>
         )}
-        <FRow label={t("expires.date")}>
+        <FRow label="Expires date">
           <FDatePicker width="100%" formik={formik} name="expires_at" />
         </FRow>
-        <FRow label={t("role")}>
+        <FRow label="Role">
           <FSelect
             options={computedRolesList}
             fullWidth
@@ -175,7 +174,7 @@ const UsersForm = () => {
         </FRow>
       </FormCard>
     </form>
-  )
-}
+  );
+};
 
-export default UsersForm
+export default UsersForm;

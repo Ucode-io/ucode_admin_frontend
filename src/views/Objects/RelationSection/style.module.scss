@@ -1,6 +1,6 @@
 .card {
   border-radius: 0;
-  border-left: 1px solid #e5e9eb;
+  // border-left: 1px solid #e5e9eb;
   height: 100%;
   width: 100%;
 
@@ -9,8 +9,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
-    border-bottom: 1px solid #e5e9eb;
+    padding: 0 12px 0 30px;
+    // border-bottom: 1px solid #e5e9eb;  
   }
 
   .cardBody {
@@ -23,12 +23,12 @@
 
   .filtersBlock {
     padding: 12px;
-    border-right: 1px solid #e5e9eb;
+    // border-right: 1px solid #e5e9eb;
     width: 210px;
   }
 
   .tableBlock {
-    padding: 12px;
+    // padding: 12px;
     flex: 1;
     overflow: auto;
   }

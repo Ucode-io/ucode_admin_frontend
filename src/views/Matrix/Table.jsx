@@ -89,6 +89,7 @@ const MatrixTable = () => {
       .finally(() => setModalLoading(false))
   }
 
+  console.log("PROJECT ID ==>", projectId)
   const getClientTypes = () => {
     clientTypeServiceV2
       .getList({ project_id: projectId })

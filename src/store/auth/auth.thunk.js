@@ -8,7 +8,7 @@ import { authActions } from "./auth.slice";
 export const loginAction = createAsyncThunk(
   'auth/login',
   async (data, { dispatch }) => {
-
+    console.log("DATA ==>", data)
     try {
       const res = await authService.login(data)
       dispatch(authActions.loginSuccess({ ...res, project_id: data.project_id }))

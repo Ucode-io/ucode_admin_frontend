@@ -11,7 +11,7 @@ export const loginAction = createAsyncThunk(
 
     try {
       const res = await authService.login(data)
-      dispatch(authActions.loginSuccess(res))
+      dispatch(authActions.loginSuccess({ ...res, project_id: data.project_id }))
       // dispatch(cashboxActions.setData(cashboxData))
     } catch (error) {
       throw new Error(error)

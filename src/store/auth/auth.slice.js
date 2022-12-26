@@ -10,6 +10,7 @@ const initialState = {
   permissions: {},
   loginTableSlug: "",
   userId: "",
+  projectId: "",
   tables: []
 }
 
@@ -27,6 +28,7 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
       state.loginTableSlug = payload.login_table_slug
       state.userId = payload.user_id
       state.tables = payload.tables
+      state.projectId = payload.project_id
       // state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
       state.permissions = payload?.permissions
         ? payload?.permissions?.reduce((acc, curr) => {

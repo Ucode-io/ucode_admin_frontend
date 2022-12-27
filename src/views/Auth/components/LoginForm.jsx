@@ -52,7 +52,7 @@ const LoginForm = () => {
     enabled: !!selectedProjectID,
     select: (res => res.data.response?.map(row => ({
       label: row.name,
-      value: row.name,
+      value: row.guid,
     })))
   })
 

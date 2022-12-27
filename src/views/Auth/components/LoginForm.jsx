@@ -4,12 +4,14 @@ import { useMemo } from "react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
+import { useQuery } from "react-query"
 import { useDispatch } from "react-redux"
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
 import PrimaryButton from "../../../components/Buttons/PrimaryButton"
 import HFSelect from "../../../components/FormElements/HFSelect"
 import HFTextField from "../../../components/FormElements/HFTextField"
 import authService from "../../../services/auth/authService"
+import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2"
 import { loginAction } from "../../../store/auth/auth.thunk"
 import listToOptions from "../../../utils/listToOptions"
 import classes from "../style.module.scss"
@@ -39,9 +41,20 @@ const LoginForm = () => {
   }, [companies, selectedCompanyID])
 
   
-  const computedClientTypes = useMemo(() => {
-    return listToOptions(clientTypes?.filter(el => el.project_id === selectedProjectID), "name", "name")
-  }, [selectedProjectID, clientTypes])
+  // const computedClientTypes = useMemo(() => {
+  //   return listToOptions(clientTypes?.filter(el => el.project_id === selectedProjectID), "name", "name")
+  // }, [selectedProjectID, clientTypes])
+
+
+  const { data: computedClientTypes = [] } = useQuery(["GET_CLIENT_TYPE_LIST", {project_id: selectedProjectID}], () => {
+    return clientTypeServiceV2.getList({project_id: selectedProjectID})
+  }, {
+    enabled: !!selectedProjectID,
+    select: (res => res.data.response?.map(row => ({
+      label: row.name,
+      value: row.name,
+    })))
+  })
 
   const multiCompanyLogin = (data) => {
     setLoading(true)

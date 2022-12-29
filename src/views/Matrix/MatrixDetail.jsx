@@ -13,9 +13,12 @@ import Logins from "./Logins";
 import Connections from "./Connections";
 import MatrixRoles from "./MatrixRoles";
 import HeaderSettings from "../../components/HeaderSettings";
+import { useSelector } from "react-redux";
 
 const MatrixDetail = () => {
   const [tabIndex, setTabIndex] = useState(1);
+  const projectId = useSelector((state) => state.auth.projectId)
+
   const tabs = [
     {
       id: 1,
@@ -55,7 +58,7 @@ const MatrixDetail = () => {
 
   const getClientType = () => {
     clientTypeServiceV2
-      .getById(params.typeId)
+      .getById(params.typeId, { project_id: projectId })
       .then((res) => {
         setClientType(res?.data?.response);
         const platform = res?.data?.response?.$client_platform?.find(

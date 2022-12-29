@@ -76,8 +76,9 @@ const LoginForm = () => {
   }
 
   const onSubmit = (values) => {
+    setLoading(true)
     if (formType === "LOGIN") multiCompanyLogin(values)
-    else dispatch(loginAction(values))
+    else dispatch(loginAction(values)).then(() => setLoading(false))
   }
 
   return (

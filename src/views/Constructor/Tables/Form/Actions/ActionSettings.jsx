@@ -1,19 +1,39 @@
-import { Close } from "@mui/icons-material"
-import { IconButton } from "@mui/material"
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { useQuery } from "react-query"
-import { useParams } from "react-router-dom"
-import PrimaryButton from "../../../../../components/Buttons/PrimaryButton"
-import FRow from "../../../../../components/FormElements/FRow"
-import HFAutocomplete from "../../../../../components/FormElements/HFAutocomplete"
-import HFIconPicker from "../../../../../components/FormElements/HFIconPicker"
-import HFTextField from "../../../../../components/FormElements/HFTextField"
-import HFSwitch from "../../../../../components/FormElements/HFSwitch"
-import constructorCustomEventService from "../../../../../services/constructorCustomEventService"
-import listToOptions from "../../../../../utils/listToOptions"
-import request from "../../../../../utils/request"
-import styles from "./style.module.scss"
+import { Close } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
+import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
+import FRow from "../../../../../components/FormElements/FRow";
+import HFAutocomplete from "../../../../../components/FormElements/HFAutocomplete";
+import HFIconPicker from "../../../../../components/FormElements/HFIconPicker";
+import HFTextField from "../../../../../components/FormElements/HFTextField";
+import HFSwitch from "../../../../../components/FormElements/HFSwitch";
+import constructorCustomEventService from "../../../../../services/constructorCustomEventService";
+import listToOptions from "../../../../../utils/listToOptions";
+import request from "../../../../../utils/request";
+import styles from "./style.module.scss";
+import HFSelect from "../../../../../components/FormElements/HFSelect";
+import TableActions from "./TableActions";
+
+const actionTypeList = [
+  { label: "HTTP", value: "HTTP" },
+  { label: "after", value: "after" },
+  { label: "before", value: "before" },
+];
+const methodList = [
+  { label: "UPDATE", value: "UPDATE" },
+  { label: "CREATE", value: "CREATE" },
+  { label: "DELETE", value: "DELETE" },
+  { label: "MULTIPLE_UPDATE", value: "MULTIPLE_UPDATE" },
+];
+
+const typeList = [
+  { label: "TABLE", value: "TABLE" },
+  { label: "OBJECTID", value: "OBJECTID" },
+  { label: "HARDCODE", value: "HARDCODE" },
+];
 
 const ActionSettings = ({
   closeSettingsBlock = () => {},
@@ -23,66 +43,66 @@ const ActionSettings = ({
   formType,
   height,
 }) => {
-  const { slug } = useParams()
+  const { slug } = useParams();
 
-  const [loader, setLoader] = useState(false)
+  const [loader, setLoader] = useState(false);
 
-  const { handleSubmit, control, reset } = useForm({
+  const { handleSubmit, control, reset, watch, setValue } = useForm({
     defaultValues: {
       table_slug: slug,
-    }
-  })
+    },
+  });
 
   const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
-      return request.get("/function")
+      return request.get("/function");
     },
     {
       select: (res) => {
-        return listToOptions(res.functions, "name", "id")
+        return listToOptions(res.functions, "name", "id");
       },
     }
-  )
+  );
 
   const createAction = (data) => {
-    setLoader(true)
+    setLoader(true);
 
     constructorCustomEventService
       .create(data)
       .then((res) => {
-        closeSettingsBlock()
-        onCreate(res)
+        closeSettingsBlock();
+        onCreate(res);
       })
-      .catch(() => setLoader(false))
-  }
+      .catch(() => setLoader(false));
+  };
 
   const updateAction = (data) => {
-    setLoader(true)
+    setLoader(true);
 
     constructorCustomEventService
       .update(data)
       .then((res) => {
-        closeSettingsBlock()
-        onUpdate(data)
+        closeSettingsBlock();
+        onUpdate(data);
       })
-      .catch(() => setLoader(false))
-  }
+      .catch(() => setLoader(false));
+  };
 
   const submitHandler = (values) => {
-    if (formType === "CREATE") createAction(values)
-    else updateAction(values)
-  }
+    if (formType === "CREATE") createAction(values);
+    else updateAction(values);
+  };
 
   useEffect(() => {
-    if (formType === "CREATE") return
-    reset(action)
-  }, [action, formType, reset])
+    if (formType === "CREATE") return;
+    reset(action);
+  }, [action, formType, reset]);
 
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
-        <h2>{formType === "CREATE" ? "Create" : "Edit"} relation</h2>
+        <h2>{formType === "CREATE" ? "Create" : "Edit"} action</h2>
 
         <IconButton onClick={closeSettingsBlock}>
           <Close />
@@ -98,7 +118,6 @@ const ActionSettings = ({
             <FRow label="Icon" required>
               <HFIconPicker control={control} required name="icon" />
             </FRow>
-
             <FRow label="Label" required>
               <HFTextField
                 name="label"
@@ -108,7 +127,6 @@ const ActionSettings = ({
                 required
               />
             </FRow>
-
             <FRow label="Function" required>
               <HFAutocomplete
                 name="event_path"
@@ -118,7 +136,6 @@ const ActionSettings = ({
                 required
               />
             </FRow>
-
             <FRow label="Redirect url">
               <HFTextField
                 name="url"
@@ -128,12 +145,35 @@ const ActionSettings = ({
                 fullWidth
               />
             </FRow>
-            
-            <FRow label="Disabled">
-              <HFSwitch
-              name="disabled"
-              control={control}
+            <FRow label="Action type">
+              <HFSelect
+                name="action_type"
+                control={control}
+                placeholder="action type"
+                options={actionTypeList}
+                fullWidth
               />
+            </FRow>
+            <FRow label="Method">
+              <HFSelect
+                name="method"
+                control={control}
+                placeholder="Redirect url"
+                options={methodList}
+                fullWidth
+              />
+            </FRow>
+
+            <TableActions
+              control={control}
+              typeList={typeList}
+              slug={slug}
+              watch={watch}
+              setValue={setValue}
+            />
+
+            <FRow label="Disabled">
+              <HFSwitch name="disabled" control={control} />
             </FRow>
           </div>
 
@@ -151,7 +191,7 @@ const ActionSettings = ({
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ActionSettings
+export default ActionSettings;

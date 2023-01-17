@@ -8,7 +8,13 @@ import "./Gallery/style.scss";
 import fileService from "../../services/fileService";
 import DownloadIcon from "@mui/icons-material/Download";
 
-const FileUpload = ({ value, onChange, className = "", disabled, tabIndex }) => {
+const FileUpload = ({
+  value,
+  onChange,
+  className = "",
+  disabled,
+  tabIndex,
+}) => {
   const inputRef = useRef("");
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);

@@ -1,110 +1,84 @@
-import { Add, Delete } from "@mui/icons-material";
-import { Collapse } from "@mui/material";
-import { get } from "@ngard/tiny-get";
 import { useState } from "react";
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import CollapseIcon from "../../../components/CollapseIcon";
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableHeadCell,
-  CTableRow,
-} from "../../../components/CTable";
-import useTabRouter from "../../../hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
 import styles from "./style.module.scss";
+import { useEffect } from "react";
+import { format } from "date-fns";
+import RecursiveBlock from "./RecursiveBlock";
+import { ru } from "date-fns/locale";
 
 const FinancialCalendarView = ({
-  row,
   view,
-  data = [],
-  setData,
-  level = 1,
   fieldsMap,
+  tab,
+  filters,
+  financeDate,
 }) => {
-  console.log("view", view);
   const { tableSlug } = useParams();
-  const [childBlockVisible, setChildBlockVisible] = useState(false);
-  const [deleteLoader, setDeleteLoader] = useState(false);
-  const { navigateToForm } = useTabRouter();
+  const [dataList, setDataList] = useState();
 
-  const children = useMemo(() => {
-    return data.filter((el) => el[`${tableSlug}_id`] === row.guid);
-  }, [data, row, tableSlug]);
-
-  const switchChildBlock = (e) => {
-    e.stopPropagation();
-    setChildBlockVisible((prev) => !prev);
-  };
-
-  const navigateToCreatePage = () => {
-    navigateToForm(tableSlug, "CREATE", null, {
-      [`${tableSlug}_id`]: row.guid,
-    });
-  };
-
-  const navigateToEditPage = () => {
-    navigateToForm(tableSlug, "EDIT", row);
-  };
-
-  const deleteHandler = async (id) => {
-    setDeleteLoader(true);
-    try {
-      await constructorObjectService.delete(tableSlug, row.guid);
-      setData((prev) => prev.filter((el) => el.guid !== row.guid));
-    } catch {
-      setDeleteLoader(false);
+  const parentElements = useMemo(() => {
+    if (financeDate?.length) {
+      return financeDate.filter((row) => !row[`${tableSlug}_id`]);
     }
+  }, [financeDate, tableSlug]);
+
+  const getDates = useMemo(() => {
+    const val = [];
+    if (financeDate?.length > 0) {
+      financeDate?.[0]?.amounts.map((item) => {
+        val.push(item?.month);
+      });
+    }
+    return val;
+  }, [financeDate]);
+
+  const getAccountList = () => {
+    constructorObjectService
+      .getList(tableSlug, {
+        data: { offset: 0, ...filters, [tab?.slug]: tab?.value },
+      })
+      .then((res) => {
+        setDataList(res?.data?.response);
+      });
   };
 
-  const months = [
-    { id: 1, value: "June" },
-    { id: 2, value: "July" },
-    { id: 3, value: "August" },
-    { id: 3, value: "August" },
-    { id: 3, value: "August" },
-    { id: 3, value: "August" },
-  ];
-  const datas = [
-    { id: 1, value: "First" },
-    { id: 2, value: "Second" },
-    { id: 3, value: "Third" },
-    { id: 3, value: "Third" },
-    { id: 3, value: "Third" },
-    { id: 3, value: "Third" },
-  ];
+  useEffect(() => {
+    getAccountList();
+  }, []);
 
   return (
     <div className={styles.financial_view}>
       <div className={styles.datesRow}>
         <div className={styles.mockBlock} />
 
-        {months.map((dateItem) => (
-          <div className={styles.dateBlock}>
-            <div className={styles.monthBlock}>
-              <span className={styles.monthText}>{dateItem?.value}</span>
-            </div>
+        {getDates?.map((item) => (
+          <div className={styles.monthBlock}>
+            <span className={styles.monthText}>
+              {`${format(new Date(item), "LLL", { locale: ru })} '${format(
+                new Date(item),
+                "yy",
+                { locale: ru }
+              )}`}
+            </span>
           </div>
         ))}
       </div>
-      <Collapse in={childBlockVisible} unmountOnExit>
-        {children?.map((childRow) => (
-          <FinancialCalendarView
-            key={childRow.guid}
-            row={childRow}
-            data={data}
+      <div className={styles.row_element}>
+        {parentElements?.map((row) => (
+          <RecursiveBlock
+            key={row?.guid}
+            row={row}
             view={view}
-            level={level + 1}
-            setData={setData}
+            dataList={dataList}
             fieldsMap={fieldsMap}
+            financeDate={financeDate}
+            getDates={getDates}
           />
         ))}
-      </Collapse>
+      </div>
     </div>
   );
 };

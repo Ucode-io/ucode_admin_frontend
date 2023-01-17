@@ -1,5 +1,5 @@
-import TableCard from "../../../components/TableCard"
-import TablesList from "./TablesList"
+import TableCard from "../../../components/TableCard";
+import TablesList from "./TablesList";
 
 const ConstructorTablesListPage = () => {
   return (
@@ -8,7 +8,7 @@ const ConstructorTablesListPage = () => {
         <TablesList />
       </TableCard>
     </div>
-  )
-}
+  );
+};
 
-export default ConstructorTablesListPage
+export default ConstructorTablesListPage;

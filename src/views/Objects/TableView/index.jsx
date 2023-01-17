@@ -24,29 +24,39 @@ const TableView = ({
   selectedObjects,
   setDataLength,
   setSelectedObjects,
+  selectedLinkedObject,
+  selectedLinkedTableSlug,
   ...props
 }) => {
   const { navigateToForm } = useTabRouter();
-  const { tableSlug } = useParams();
+  const { tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState();
+  const [limit, setLimit] = useState(10);
   const [deleteLoader, setDeleteLoader] = useState(false);
+  const selectTableSlug = selectedLinkedObject
+    ? selectedLinkedObject?.split("#")?.[1]
+    : tableSlug;
 
   const columns = useMemo(() => {
     return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
   }, [view, fieldsMap]);
 
   const {
-    data: { tableData, pageCount } = { tableData: [], pageCount: 1 },
+    data: { tableData, pageCount, fiedlsarray, fieldView } = {
+      tableData: [],
+      pageCount: 1,
+      fieldView: [],
+      fiedlsarray: [],
+    },
     refetch,
     isLoading: tableLoader,
   } = useQuery({
     queryKey: [
       "GET_OBJECTS_LIST",
       {
-        tableSlug,
+        selectTableSlug,
         currentPage,
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
@@ -54,9 +64,11 @@ const TableView = ({
       },
     ],
     queryFn: () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getList(selectTableSlug, {
         data: {
           offset: pageToOffset(currentPage),
+          app_id: appId,
+          with_relations: true,
           limit,
           ...filters,
           [tab?.slug]: tab?.value,
@@ -64,8 +76,9 @@ const TableView = ({
       });
     },
     select: (res) => {
-      // setDataLength(res.data?.response.length ?? 0)
       return {
+        fiedlsarray: res?.data?.fields ?? [],
+        fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
         pageCount: isNaN(res.data?.count)
           ? 1
@@ -73,6 +86,39 @@ const TableView = ({
       };
     },
   });
+
+  // ==========FILTER FIELDS=========== //
+  const getFilteredFilterFields = useMemo(() => {
+    const filteredFieldsView =
+      fieldView &&
+      fieldView?.find((item) => {
+        return item?.type === "TABLE" && item?.quick_filters;
+      });
+    const quickFilters = filteredFieldsView?.quick_filters?.map((el) => {
+      return el?.field_id;
+    });
+    const filteredFields = fiedlsarray?.filter((item) => {
+      return quickFilters?.includes(item.id);
+    });
+
+    return filteredFields;
+  }, [fieldView, fiedlsarray]);
+
+  // ==========FILTER COLUMNS============ //
+  const getFilteredColumns = useMemo(() => {
+    const filteredFieldsView =
+      fieldView &&
+      fieldView?.find((item) => {
+        return item?.type === "TABLE" && item?.columns;
+      });
+
+    const filteredFields =
+      fiedlsarray?.length &&
+      fiedlsarray?.filter((item) => {
+        return filteredFieldsView?.columns.includes?.(item?.id ?? "");
+      });
+    return filteredFields;
+  }, [fiedlsarray, fieldView]);
 
   useEffect(() => {
     if (isNaN(parseInt(view?.default_limit))) setLimit(10);
@@ -108,7 +154,7 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    navigateToForm(tableSlug, "EDIT", row);
+    navigateToForm(selectedLinkedTableSlug ?? tableSlug, "EDIT", row);
   };
 
   return (
@@ -118,7 +164,13 @@ const TableView = ({
           new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>Фильтры</p>
-          <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
+          <FastFilter
+            view={view}
+            fieldsMap={fieldsMap}
+            getFilteredFilterFields={getFilteredFilterFields}
+            isVertical
+            selectedLinkedObject={selectedLinkedObject}
+          />
         </div>
       )}
       <ObjectDataTable
@@ -129,7 +181,7 @@ const TableView = ({
         removableHeight={isDocView ? 150 : 215}
         currentPage={currentPage}
         pagesCount={pageCount}
-        columns={columns}
+        columns={getFilteredColumns ? getFilteredColumns : columns}
         limit={limit}
         setLimit={setLimit}
         onPaginationChange={setCurrentPage}

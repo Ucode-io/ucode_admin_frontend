@@ -26,6 +26,7 @@ const TableRowForm = ({
   pageName,
   calculateWidth,
   limit = 10,
+  relationFields,
 }) => {
   const [showCheckbox, setShowCheckbox] = useState(false);
 
@@ -94,6 +95,7 @@ const TableRowForm = ({
             index={rowIndex}
             control={control}
             setFormValue={setFormValue}
+            relationfields={relationFields}
           />
         </CTableCell>
       ))}

@@ -43,7 +43,6 @@ const ViewSettings = ({ closeModal, setIsChanged, viewData, typeNewView }) => {
       },
     }
   );
-
   return (
     <Card className={styles.card}>
       <div className={styles.header}>

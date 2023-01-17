@@ -1,5 +1,5 @@
 import { Checkbox } from "@mui/material"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useWatch } from "react-hook-form"
 import {
   CTable,
@@ -9,11 +9,12 @@ import {
 } from "../../../../components/CTable"
 
 const GroupsTab = ({ columns, form }) => {
+  
   const selectedColumns = useWatch({
     control: form.control,
     name: "group_fields",
   })
-
+  
   const computedColumns = useMemo(() => {
     return columns?.filter(
       (column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT"

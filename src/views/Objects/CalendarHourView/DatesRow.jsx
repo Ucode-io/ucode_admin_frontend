@@ -20,7 +20,7 @@ const DatesRow = ({ datesList }) => {
 
     return Object.values(result);
   }, [datesList]);
-
+  console.log("computedDatesList", computedDatesList);
   return (
     <div className={styles.datesRow}>
       <div className={styles.mockBlock} />

@@ -1,20 +1,20 @@
-import { Today } from "@mui/icons-material"
-import { InputAdornment, TextField } from "@mui/material"
-import DatePicker from "react-multi-date-picker"
-import CustomNavButton from "./Plugins/CustomNavButton"
-import weekends from "react-multi-date-picker/plugins/highlight_weekends"
-import { locale } from "./Plugins/locale"
+import { Today } from "@mui/icons-material";
+import { InputAdornment, TextField } from "@mui/material";
+import DatePicker from "react-multi-date-picker";
+import CustomNavButton from "./Plugins/CustomNavButton";
+import weekends from "react-multi-date-picker/plugins/highlight_weekends";
+import { locale } from "./Plugins/locale";
 
-const CRangePickerNew = ({ onChange, value }) => {
+const CRangePickerNew = ({ onChange, value, placeholder }) => {
   const changeHander = (val) => {
-    if (!val?.length) onChange([])
+    if (!val?.length) onChange([]);
     else {
       onChange({
         $gte: new Date(val[0]),
         $lt: new Date(val[1]),
-      })
+      });
     }
-  }
+  };
 
   return (
     <DatePicker
@@ -27,7 +27,7 @@ const CRangePickerNew = ({ onChange, value }) => {
             size="small"
             fullWidth
             autoComplete="off"
-            placeholder="sasdasd"
+            placeholder={placeholder}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -36,10 +36,10 @@ const CRangePickerNew = ({ onChange, value }) => {
               ),
             }}
           />
-        )
+        );
       }}
       range
-      renderButton={<CustomNavButton />}
+      // renderButton={<CustomNavButton />}
       // animations={[opacity()]}
       plugins={[weekends()]}
       weekStartDayIndex={1}
@@ -52,7 +52,7 @@ const CRangePickerNew = ({ onChange, value }) => {
       value={Object.values(value ?? {})}
       // onChange={(val) => onChange(val ? new Date(val) : "")}
     />
-  )
-}
+  );
+};
 
-export default CRangePickerNew
+export default CRangePickerNew;

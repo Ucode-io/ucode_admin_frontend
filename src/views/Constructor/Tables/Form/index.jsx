@@ -158,14 +158,16 @@ const ConstructorTablesFormPage = () => {
           layoutRelations.push(relation);
         else tableRelations.push(relation);
       });
-
       const layoutRelationsFields = layoutRelations.map((relation) => ({
         ...relation,
-        id: `${relation[relation.relatedTableSlug]?.slug ?? ""}#${relation.id}`,
+        id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label: relation?.label ?? relation[relation.relatedTableSlug]?.label,
+        label:
+          relation?.label ?? relation[relation.relatedTableSlug]?.label
+            ? relation[relation.relatedTableSlug]?.label
+            : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -214,14 +216,12 @@ const ConstructorTablesFormPage = () => {
   };
 
   const onSubmit = (data) => {
-    console.log("DATA ===>", data);
     const computedData = {
       ...data,
       sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
     };
 
-    console.log("COMPUTED DATA ==>", computedData);
     // return;
     if (id) updateConstructorTable(computedData);
     else createConstructorTable(computedData);

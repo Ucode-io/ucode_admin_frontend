@@ -1,14 +1,14 @@
-import { Delete } from "@mui/icons-material"
-import { Card } from "@mui/material"
-import { useFieldArray, useWatch } from "react-hook-form"
-import { Container, Draggable } from "react-smooth-dnd"
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
-import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator"
-import HFIconPicker from "../../../../../components/FormElements/HFIconPicker"
-import HFTextField from "../../../../../components/FormElements/HFTextField"
-import { applyDrag } from "../../../../../utils/applyDrag"
-import SectionSettingsDropdown from "../../../components/SectionSettingsDropdown"
-import styles from "./style.module.scss"
+import { Delete } from "@mui/icons-material";
+import { Card } from "@mui/material";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { Container, Draggable } from "react-smooth-dnd";
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
+import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
+import HFIconPicker from "../../../../../components/FormElements/HFIconPicker";
+import HFTextField from "../../../../../components/FormElements/HFTextField";
+import { applyDrag } from "../../../../../utils/applyDrag";
+import SectionSettingsDropdown from "../../../components/SectionSettingsDropdown";
+import styles from "./style.module.scss";
 
 const Section = ({
   mainForm,
@@ -16,52 +16,53 @@ const Section = ({
   sectionsFieldArray,
   layoutForm,
   fieldsMap,
-  disableSection
+  disableSection,
 }) => {
   const columnType = useWatch({
     control: mainForm.control,
     name: `sections.${index}.column`,
-  })
+  });
 
   const sectionFields = useFieldArray({
     control: mainForm.control,
     name: `sections.${index}.fields`,
     keyName: "key",
-  })
+  });
 
   const onDrop = (dropResult) => {
-    const { fields, insert, move, remove } = sectionFields
+    const { fields, insert, move, remove } = sectionFields;
 
-    const result = applyDrag(fields, dropResult)
+    const result = applyDrag(fields, dropResult);
 
-    if (!result) return
+    if (!result) return;
 
     if (result.length > fields.length) {
-
-      insert(dropResult.addedIndex, { ...dropResult.payload })
+      insert(dropResult.addedIndex, { ...dropResult.payload });
     } else if (result.length < fields.length) {
-      remove(dropResult.removedIndex)
+      remove(dropResult.removedIndex);
     } else {
-      move(dropResult.removedIndex, dropResult.addedIndex)
+      move(dropResult.removedIndex, dropResult.addedIndex);
     }
-  }
+  };
 
   const setColumnType = (type) => {
     sectionsFieldArray.update(index, {
       ...mainForm.getValues(`sections.${index}`),
       column: type,
-    })
-  }
+    });
+  };
 
   const removeField = (index, colNumber) => {
-    const { remove } = sectionFields
-    remove(index)
-  }
+    const { remove } = sectionFields;
+    remove(index);
+  };
 
   return (
-    <Card className={`${styles.sectionCard} ${disableSection ? styles.short : ''}`} >
+    <Card
+      className={`${styles.sectionCard} ${disableSection ? styles.short : ""}`}
+    >
       <div className={styles.sectionCardHeader}>
-        <div  className={styles.sectionCardHeaderLeftSide}>
+        <div className={styles.sectionCardHeaderLeftSide}>
           <HFIconPicker
             control={mainForm.control}
             name={`sections[${index}].icon`}
@@ -106,20 +107,22 @@ const Section = ({
                   fieldIndex={fieldIndex}
                   mainForm={mainForm}
                 />
-                {!disableSection && <RectangleIconButton
-                  className={styles.deleteButton}
-                  color={"error"}
-                  onClick={() => removeField(fieldIndex, 1)}
-                >
-                  <Delete color="error" />
-                </RectangleIconButton>}
+                {!disableSection && (
+                  <RectangleIconButton
+                    className={styles.deleteButton}
+                    color={"error"}
+                    onClick={() => removeField(fieldIndex, 1)}
+                  >
+                    <Delete color="error" />
+                  </RectangleIconButton>
+                )}
               </div>
             </Draggable>
           ))}
         </Container>
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export default Section
+export default Section;

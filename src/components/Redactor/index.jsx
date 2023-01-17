@@ -64,7 +64,6 @@ const Redactor = ({ value, onChange }) => {
   return (
     <div className="Redactor">
       <ReactQuill
-      
         style={{ header: "600px" }}
         value={value}
         onChange={onChange}

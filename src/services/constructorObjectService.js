@@ -16,6 +16,8 @@ const constructorObjectService = {
   deleteManyToMany: (data) => request.delete("/many-to-many", { data }),
   downloadExcel: (tableSlug, data) =>
     request.post(`/object/excel/${tableSlug}`, data),
+  getFinancialAnalytics: (tableSlug, data) =>
+    request.post(`/object/get-financial-analytics/${tableSlug}`, data),
 }
 
 export default constructorObjectService

@@ -1,4 +1,3 @@
-
 export const numberWithSpaces = (x) => {
   if(!x) return 0
   if(isNaN(Number(x))) return 0

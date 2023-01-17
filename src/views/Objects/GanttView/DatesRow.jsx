@@ -9,7 +9,15 @@ import styles from "./style.module.scss";
 
 const DatesRow = ({ datesList, tabs, period }) => {
   const blocksCount = useMemo(() => {
-    return tabs.reduce((acc, cur) => acc + cur.list.length, 0);
+    return [
+      {
+        id: tabs[0]?.id,
+        list: tabs[0].list?.filter((p) =>
+          tabs[1]?.list.some((c) => c.cabinets_id === p.value)
+        ),
+      },
+      tabs[1],
+    ].reduce((acc, cur) => acc + cur.list.length, 0);
   }, [tabs]);
 
   const computedDatesList = useMemo(() => {

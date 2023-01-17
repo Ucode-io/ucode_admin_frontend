@@ -101,6 +101,7 @@ const RelationsBlock = ({
             </RectangleIconButton>
           </div>
         </div>
+
         <RelationTable
           key={computedViewRelations[selectedTabIndex]?.id}
           relation={computedViewRelations[selectedTabIndex]}

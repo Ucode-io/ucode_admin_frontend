@@ -23,6 +23,10 @@ import SettingsButton from "../components/ViewSettings/SettingsButton";
 import ViewTabSelector from "../components/ViewTypeSelector";
 import Calendar from "./Calendar";
 import styles from "@/views/Objects/TableView/styles.module.scss";
+import style from "./style.module.scss";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import Menu from "@mui/material/Menu";
+import { Description } from "@mui/icons-material";
 
 const CalendarView = ({
   view,
@@ -35,11 +39,18 @@ const CalendarView = ({
     startOfWeek(new Date(), { weekStartsOn: 1 }),
     endOfWeek(new Date(), { weekStartsOn: 1 }),
   ]);
-
   const [fieldsMap, setFieldsMap] = useState({});
 
-  const { filters, dataFilters } = useFilters(tableSlug, view.id);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
+  const { filters, dataFilters } = useFilters(tableSlug, view.id);
   const groupFieldIds = view.group_fields;
   const groupFields = groupFieldIds
     .map((id) => fieldsMap[id])
@@ -58,10 +69,20 @@ const CalendarView = ({
   }, [dateFilters]);
 
   const { data: { data } = { data: [] }, isLoading } = useQuery(
-    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, dataFilters }],
+    [
+      "GET_OBJECTS_LIST_WITH_RELATIONS",
+      { tableSlug, dataFilters, dateFilters },
+    ],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { with_relations: true, ...dataFilters },
+        data: {
+          with_relations: true,
+          [view.calendar_from_slug]: {
+            $gte: dateFilters[0],
+            $lt: dateFilters[1],
+          },
+          ...dataFilters,
+        },
       });
     },
     {
@@ -106,7 +127,12 @@ const CalendarView = ({
       if (!view?.disable_dates?.table_slug) return {};
 
       return constructorObjectService.getList(view?.disable_dates?.table_slug, {
-        data: {},
+        data: {
+          [view.disable_dates.day_slug]: {
+            $gte: dateFilters[0],
+            $lt: dateFilters[1],
+          },
+        },
       });
     },
     {
@@ -154,9 +180,69 @@ const CalendarView = ({
         extra={
           <>
             <FastFilterButton view={view} />
-            <ExcelButtons />
 
-            <SettingsButton />
+            <button className={style.moreButton} onClick={handleClick}>
+              <MoreHorizIcon
+                style={{
+                  color: "#888",
+                }}
+              />
+            </button>
+            <Menu
+              open={open}
+              onClose={handleClose}
+              anchorEl={anchorEl}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    // width: 100,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+            >
+              <div className={styles.menuBar}>
+                <ExcelButtons />
+                <div
+                  className={style.template}
+                  onClick={() => setSelectedTabIndex(views?.length)}
+                >
+                  <div
+                    className={`${style.element} ${
+                      selectedTabIndex === views?.length ? style.active : ""
+                    }`}
+                  >
+                    <Description
+                      className={style.icon}
+                      style={{ color: "#6E8BB7" }}
+                    />
+                  </div>
+                  <span>Template</span>
+                </div>
+                <SettingsButton />
+              </div>
+            </Menu>
+            {/* <ExcelButtons />
+
+            <SettingsButton /> */}
           </>
         }
       >
@@ -257,7 +343,7 @@ const promiseGenerator = (groupField, filters = {}) => {
           ? groupField.slug?.slice(0, -3)
           : groupField.slug?.slice(0, -4),
         {
-          data: computedFilters ?? {},
+          data: computedFilters,
         }
       );
 

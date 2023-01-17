@@ -134,6 +134,9 @@ export const contentStyles = `
    flex-shrink: 1;
    max-width: 100%;
 }
+.img {
+   max-width: 100% !important;
+}
 /* ckeditor5-image/theme/imagecaption.css */
 .ck-content .image > figcaption {
    display: table-caption;

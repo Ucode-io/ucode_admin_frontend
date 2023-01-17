@@ -41,7 +41,7 @@ const RelationFormElement = ({
 
   if (!isLayout)
     return (
-      <FRow label={field.label} required={field.required}>
+      <FRow label={field?.label ?? field?.title} required={field.required}>
         <Controller
           control={control}
           name={(name || field.slug) ?? `${tableSlug}_id`}
@@ -57,6 +57,7 @@ const RelationFormElement = ({
               disabledHelperText={disabledHelperText}
               setFormValue={setFormValue}
               control={control}
+              name={name}
             />
           )}
         />
@@ -99,6 +100,7 @@ const RelationFormElement = ({
                   error={error}
                   disabledHelperText={disabledHelperText}
                   control={control}
+                  name={name}
                 />
               )
             }
@@ -120,6 +122,7 @@ const AutoCompleteElement = ({
   disabled,
   disabledHelperText,
   control,
+  name,
   setFormValue = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");
@@ -181,6 +184,10 @@ const AutoCompleteElement = ({
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option);
   };
+  const computedValue = useMemo(() => {
+    const findedOption = options?.find((el) => el?.guid === value);
+    return findedOption ? [findedOption] : [];
+  }, [options, value]);
 
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
@@ -203,9 +210,24 @@ const AutoCompleteElement = ({
       });
     }
   };
+
+  useEffect(() => {
+    const val = computedValue[computedValue.length - 1];
+    if (!field?.attributes?.autofill || !val) return;
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+      const setName = name?.split(".");
+      setName?.pop();
+      setName?.push(field_to);
+      automatic &&
+        setTimeout(() => {
+          setFormValue(setName.join("."), get(val, field_from));
+        }, 1);
+    });
+  }, [computedValue]);
+
   useEffect(() => {
     if (value) getValueData();
-  }, []);
+  }, [value]);
 
   return (
     <div className={styles.autocompleteWrapper}>

@@ -30,7 +30,7 @@ import ConstructorTablesFormPage from "../views/Constructor/Tables/Form";
 import ObjectsPage from "../views/Objects";
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
 import ReloadPage from "../components/ReloadComponent/index";
-import routes from "@/components/Sidebar2222/elements";
+import ReloadRelations from "@/components/ReloadRelations";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -365,6 +365,7 @@ const Router = () => {
 
       <Route path="*" element={<Navigate to={redirectLink} />} />
       <Route path="reload" element={<ReloadPage />} />
+      <Route path="reloadRelations" element={<ReloadRelations />} />
     </Routes>
   );
 };

@@ -32,6 +32,7 @@ function CascadingSectionItem({
   const [levelSlug, setLevelSlug] = useState("");
   const [levelTableSlug, setLevelTableSlug] = useState("");
   const [ids, setIds] = useState([]);
+  const cascadingLength = fields?.attributes?.cascadings?.length;
 
   // Search filter
   const foundServices = useMemo(() => {
@@ -118,7 +119,7 @@ function CascadingSectionItem({
   };
 
   useEffect(() => {
-    if (fields?.attributes?.cascadings?.length === 4) {
+    if (cascadingLength === 4) {
       if (currentLevel === 1) {
         setLevelSlug(fields?.attributes.cascadings[3].field_slug);
         setLevelTableSlug(fields?.attributes.cascadings[2]?.table_slug);
@@ -132,7 +133,7 @@ function CascadingSectionItem({
         setLevelSlug(fields?.attributes.cascadings[0].field_slug);
       }
     }
-  }, [fields, currentLevel]);
+  }, [fields, currentLevel, cascadingLength]);
 
   return (
     <>

@@ -9,7 +9,6 @@ import useCustomActionsQuery from "../../../../queries/hooks/useCustomActionsQue
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import request from "../../../../utils/request";
 import styles from "./style.module.scss";
-import router from "@/router";
 
 const CustomActionsButton = ({
   selectedObjects,
@@ -69,7 +68,13 @@ const CustomActionsButton = ({
           } else if (url === "" || url === "reload") {
             navigate("/reload", {
               state: {
-                redirectUrl: window.location.pathname,
+                redirectUrl: window.location.pathname
+              },
+            });
+          } else if (url === "reloadRelations") {
+            navigate("/reloadRelations", {
+              state: {
+                redirectUrl: window.location.pathname
               },
             });
           } else if (url === "schedule") {

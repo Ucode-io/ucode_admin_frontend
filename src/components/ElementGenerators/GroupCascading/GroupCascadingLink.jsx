@@ -28,7 +28,6 @@ const CascadingRecursiveBlock = ({
   const children = useMemo(() => {
     return data.filter((el) => el[`${tableSlug}_id`] === item?.guid);
   }, [data, item, tableSlug]);
-
   const foundServices = useMemo(() => {
     if (!searchText) return [];
     return serviceData?.filter((item) =>

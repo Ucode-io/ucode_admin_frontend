@@ -33,6 +33,7 @@ const TableRow = ({
   limit = 10,
   relationAction,
   onChecked,
+  relationFields,
 }) => {
   if (formVisible)
     return (
@@ -58,6 +59,7 @@ const TableRow = ({
         pageName={pageName}
         calculateWidth={calculateWidth}
         tableSlug={tableSlug}
+        relationFields={relationFields}
       />
     );
 

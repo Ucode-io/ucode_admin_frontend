@@ -1,10 +1,10 @@
-import { useMutation, useQuery } from "react-query"
-import { useNavigate } from "react-router-dom"
-import DataTable from "../../../components/DataTable"
-import TableCard from "../../../components/TableCard"
-import TableRowButton from "../../../components/TableRowButton"
-import useAnalyticsTabRouter from "../../../hooks/useAnalyticsTabRouter"
-import dashboardService from "../../../services/analytics/dashboardService"
+import { useMutation, useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
+import DataTable from "../../../components/DataTable";
+import TableCard from "../../../components/TableCard";
+import TableRowButton from "../../../components/TableRowButton";
+import useAnalyticsTabRouter from "../../../hooks/useAnalyticsTabRouter";
+import dashboardService from "../../../services/analytics/dashboardService";
 
 const columns = [
   {
@@ -13,32 +13,32 @@ const columns = [
     slug: "name",
     type: "SINGLE_LINE",
   },
-]
+];
 
 const DashboardList = () => {
-  const navigate = useNavigate()
-  const { navigateToForm } = useAnalyticsTabRouter()
+  const navigate = useNavigate();
+  const { navigateToForm } = useAnalyticsTabRouter();
 
   const { data, isLoading, refetch } = useQuery(["GET_DASHBOARD_LIST"], () => {
-    return dashboardService.getList()
-  })
+    return dashboardService.getList();
+  });
 
   const { mutate, isLoading: deleteLoading } = useMutation(
     (row) => {
-      return dashboardService.delete(row.id)
+      return dashboardService.delete(row.id);
     },
     {
       onSuccess: () => refetch(),
     }
-  )
+  );
 
   const navigateToCreateForm = () => {
-    navigateToForm("", "CREATE")
-  }
+    navigateToForm("", "CREATE");
+  };
 
   const navigateToDetailPage = (row) => {
-    navigate(`/analytics/dashboard/${row.id}`)
-  }
+    navigate(`/analytics/dashboard/${row.id}`);
+  };
 
   return (
     <div>
@@ -60,7 +60,7 @@ const DashboardList = () => {
         />
       </TableCard>
     </div>
-  )
-}
+  );
+};
 
-export default DashboardList
+export default DashboardList;

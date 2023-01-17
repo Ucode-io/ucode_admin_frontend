@@ -282,6 +282,7 @@ const ObjectDataTable = ({
                 )?.isStiky
                   ? "1"
                   : "",
+                color: formVisible && column?.required === true ? "red" : "",
               }}
             >
               <div
@@ -380,6 +381,7 @@ const ObjectDataTable = ({
             onDeleteClick={onDeleteClick}
             relationAction={relationAction}
             onChecked={onChecked}
+            relationFields={fields}
           />
         ))}
         {!!summaries?.length && (

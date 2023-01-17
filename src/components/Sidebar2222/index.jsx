@@ -1,43 +1,45 @@
-import "./style.scss"
-import menuElements from "./elements"
-import brandLogo from "../../../builder_config/assets/company-logo.svg"
-import MenuOpenIcon from "@mui/icons-material/MenuOpen"
-import { useState, useEffect } from "react"
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-import { NavLink } from "react-router-dom"
-import ChildBlock from "./ChildBlock"
-import { useSelector } from "react-redux"
-import { useDispatch } from "react-redux"
-import { mainActions } from "../../store/main/main.slice"
+import "./style.scss";
+import menuElements from "./elements";
+import brandLogo from "../../../builder_config/assets/company-logo.svg";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import { useState, useEffect } from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { NavLink } from "react-router-dom";
+import ChildBlock from "./ChildBlock";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { mainActions } from "../../store/main/main.slice";
 
 const Sidebar2222 = () => {
-  const sidebarIsOpen = useSelector(state => state.main.settingsSidebarIsOpen)
-  const permissions = useSelector((state) => state.auth.permissions)
-  const dispatch = useDispatch()
-  const [openedBlock, setOpenedBlock] = useState(null)
+  const sidebarIsOpen = useSelector(
+    (state) => state.main.settingsSidebarIsOpen
+  );
+  const permissions = useSelector((state) => state.auth.permissions);
+  const dispatch = useDispatch();
+  const [openedBlock, setOpenedBlock] = useState(null);
 
   const setSidebarIsOpen = (val) => {
-    dispatch(mainActions.setSettingsSidebarIsOpen(val))
-  }
+    dispatch(mainActions.setSettingsSidebarIsOpen(val));
+  };
 
   const switchRightSideVisible = () => {
-    setSidebarIsOpen(!sidebarIsOpen)
-  }
+    setSidebarIsOpen(!sidebarIsOpen);
+  };
 
   const parentClickHandler = (element) => {
     if (element.children) {
-      switchChildBlockHandler(element.id)
-      if (!sidebarIsOpen) setSidebarIsOpen(true)
-    } else setOpenedBlock(null)
-  }
+      switchChildBlockHandler(element.id);
+      if (!sidebarIsOpen) setSidebarIsOpen(true);
+    } else setOpenedBlock(null);
+  };
 
   const switchChildBlockHandler = (id) => {
-    setOpenedBlock((prev) => (prev === id ? null : id))
-  }
+    setOpenedBlock((prev) => (prev === id ? null : id));
+  };
 
   useEffect(() => {
-    if (!sidebarIsOpen) setOpenedBlock(null)
-  }, [sidebarIsOpen])
+    if (!sidebarIsOpen) setOpenedBlock(null);
+  }, [sidebarIsOpen]);
 
   return (
     <div className={`Sidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}>
@@ -57,7 +59,7 @@ const Sidebar2222 = () => {
         <div className="menu-element">
           {menuElements
             ?.filter((el, idx) =>
-              idx === 1 ? (permissions?.[el.slug]?.["read"] !== false) : true
+              idx === 1 ? permissions?.[el.slug]?.["read"] !== false : true
             )
             .map((element) => (
               <div className="parent-block" key={element.id}>
@@ -71,8 +73,8 @@ const Sidebar2222 = () => {
                     }`
                   }
                   onClick={(e) => {
-                    if (element.children) e.preventDefault()
-                    parentClickHandler(element)
+                    if (element.children) e.preventDefault();
+                    parentClickHandler(element);
                   }}
                 >
                   <div className="icon">
@@ -123,7 +125,7 @@ const Sidebar2222 = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar2222
+export default Sidebar2222;

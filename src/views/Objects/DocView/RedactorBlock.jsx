@@ -34,15 +34,20 @@ const RedactorBlock = forwardRef(
       htmlLoader,
       pdfLoader,
       print,
+      selectedOutputTable,
+      selectedLinkedObject,
     },
     redactorRef
   ) => {
-    const { tableSlug } = useParams();
+    const { tableSlug, appId } = useParams();
     const { control, handleSubmit, reset } = useForm();
     const [btnLoader, setBtnLoader] = useState(false);
     const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
     const userId = useSelector((state) => state.auth.userId);
     const queryClient = useQueryClient();
+    const selectTableSlug = selectedLinkedObject
+      ? selectedLinkedObject?.split("#")?.[1]
+      : tableSlug;
     const {
       selectedPaperSize,
       selectPaperIndexBySize,
@@ -83,6 +88,9 @@ const RedactorBlock = forwardRef(
           title: values.title,
           table_slug: tableSlug,
           [getFilteredData?.slug]: selectedObject ?? undefined,
+          output_object: selectedOutputTable?.split("#")?.[1],
+          linked_object:
+            selectedLinkedObject && selectedLinkedObject?.split("#")?.[1],
         };
 
         if (loginTableSlug && values.type === "CREATE") {
@@ -100,7 +108,7 @@ const RedactorBlock = forwardRef(
         }
 
         setSelectedTemplate(null);
-        queryClient.refetchQueries("GET_OBJECT_LIST", { tableSlug });
+        queryClient.refetchQueries("GET_OBJECT_LIST", { selectTableSlug });
       } catch (error) {
         console.log(error);
         setBtnLoader(false);

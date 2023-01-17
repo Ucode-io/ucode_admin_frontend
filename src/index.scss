@@ -198,6 +198,10 @@ html {
   margin-right: 16px;
 }
 
+.mr-5 {
+  margin-right: 25px;
+}
+
 .ml-1 {
   margin-left: 8px;
 }
@@ -310,4 +314,11 @@ html {
 }
 #barcodes_print {
   display: none !important;
+}
+
+.text-overflow {
+  white-space: nowrap;
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

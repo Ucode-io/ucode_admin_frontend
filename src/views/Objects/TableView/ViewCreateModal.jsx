@@ -1,17 +1,17 @@
-import { Divider } from "@mui/material"
-import { useMemo } from "react"
-import { useForm } from "react-hook-form"
-import { useQuery } from "react-query"
-import FRow from "../../../components/FormElements/FRow"
-import HFMultipleSelect from "../../../components/FormElements/HFMultipleSelect"
-import HFSelect from "../../../components/FormElements/HFSelect"
-import ModalCard from "../../../components/ModalCard"
-import constructorFieldService from "../../../services/constructorFieldService"
-import constructorTableService from "../../../services/constructorTableService"
-import constructorViewService from "../../../services/constructorViewService"
-import { arrayToOptions } from "../../../utils/arrayToOptions"
-import { viewTypes } from "../../../utils/constants/viewTypes"
-import listToOptions from "../../../utils/listToOptions"
+import { Divider } from "@mui/material";
+import { useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { useQuery } from "react-query";
+import FRow from "../../../components/FormElements/FRow";
+import HFMultipleSelect from "../../../components/FormElements/HFMultipleSelect";
+import HFSelect from "../../../components/FormElements/HFSelect";
+import ModalCard from "../../../components/ModalCard";
+import constructorFieldService from "../../../services/constructorFieldService";
+import constructorTableService from "../../../services/constructorTableService";
+import constructorViewService from "../../../services/constructorViewService";
+import { arrayToOptions } from "../../../utils/arrayToOptions";
+import { viewTypes } from "../../../utils/constants/viewTypes";
+import listToOptions from "../../../utils/listToOptions";
 
 const ViewCreateModal = ({
   tableSlug,
@@ -43,65 +43,78 @@ const ViewCreateModal = ({
         time_to_slug: "",
       },
     },
-  })
+  });
 
-  const type = watch("type")
-  const selectedDisableDatesTableSlug = watch("disable_dates.table_slug")
+  const type = watch("type");
+  const selectedDisableDatesTableSlug = watch("disable_dates.table_slug");
 
   const computedViewTypes = useMemo(() => {
-    return arrayToOptions(viewTypes)
-  }, [])
+    return arrayToOptions(viewTypes);
+  }, []);
 
   const computedFields = useMemo(() => {
     const newFields = fields?.map((field) => {
-
-      let slug = field.slug
+      let slug = field.slug;
 
       if (field.id.includes("#")) {
-        const tableSlug = field.id.split("#")[0]
+        const tableSlug = field.id.split("#")[0];
         const viewFields =
           field.attributes?.map(
             (viewField) => `${tableSlug}.${viewField.slug}`
-          ) ?? []
+          ) ?? [];
 
-        slug = viewFields.join("#")
+        slug = viewFields.join("#");
       }
-      return { ...field, slug }
-    })
+      return { ...field, slug };
+    });
 
-    return listToOptions(newFields, "label", "slug")
-  }, [fields])
+    return listToOptions(newFields, "label", "slug");
+  }, [fields]);
 
+  const { data: tablesList = [] } = useQuery(
+    ["GET_TABLES_LIST"],
+    () => {
+      return constructorTableService.getList();
+    },
+    {
+      select: (data) => listToOptions(data?.tables, "label", "slug"),
+    }
+  );
 
-  const { data: tablesList = [] } = useQuery(["GET_TABLES_LIST"], () => {
-    return constructorTableService.getList()
-  }, {
-    select: (data) => listToOptions(data?.tables, 'label', 'slug')
-  })
+  console.log("TABLES LIST ===>", tablesList);
 
-  console.log("TABLES LIST ===>", tablesList)
-
-  const { data: disabledDateFieldsList = [] } = useQuery(['GET_TABLE_FIELDS', selectedDisableDatesTableSlug], () => {
-    if (!selectedDisableDatesTableSlug) return []
-    return constructorFieldService.getList({ table_slug: selectedDisableDatesTableSlug })
-  }, {
-    select: ({ fields }) => listToOptions(fields?.filter(field => field.type !== 'LOOKUP'), "label", "slug")
-  })
+  const { data: disabledDateFieldsList = [] } = useQuery(
+    ["GET_TABLE_FIELDS", selectedDisableDatesTableSlug],
+    () => {
+      if (!selectedDisableDatesTableSlug) return [];
+      return constructorFieldService.getList({
+        table_slug: selectedDisableDatesTableSlug,
+      });
+    },
+    {
+      select: ({ fields }) =>
+        listToOptions(
+          fields?.filter((field) => field.type !== "LOOKUP"),
+          "label",
+          "slug"
+        ),
+    }
+  );
   const submitHandler = async (values) => {
     try {
-      let res
+      let res;
 
       if (initialValues.id) {
-        res = await constructorViewService.update(values)
+        res = await constructorViewService.update(values);
       } else {
-        res = await constructorViewService.create(values)
+        res = await constructorViewService.create(values);
 
-        setViews((prev) => [...prev, res])
+        setViews((prev) => [...prev, res]);
       }
 
-      closeModal()
+      closeModal();
     } catch (error) {}
-  }
+  };
 
   return (
     <ModalCard
@@ -156,7 +169,6 @@ const ViewCreateModal = ({
               />
             </FRow>
 
-
             {/* ============== DISABLES DATES =============== */}
 
             <Divider className="my-2" />
@@ -204,7 +216,7 @@ const ViewCreateModal = ({
         )}
       </form>
     </ModalCard>
-  )
-}
+  );
+};
 
-export default ViewCreateModal
+export default ViewCreateModal;

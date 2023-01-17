@@ -7,7 +7,7 @@ import {
   setHours,
   setMinutes,
 } from "date-fns";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Navigate,
   useParams,
@@ -126,12 +126,12 @@ const DataColumn = ({
     return index < disabledTimes?.startIndex || index > disabledTimes?.endIndex;
   };
 
-  const navigateToCreatePage = (time) => {
+  const navigateToCreatePage = async (time) => {
     const hour = Number(format(time, "H"));
     const minute = Number(format(time, "m"));
-    const computedDate = setHours(setMinutes(date, minute), hour);
+    const computedDate = await setHours(setMinutes(date, minute), hour);
     if (queryTableSlug) {
-      constructorObjectService.update(queryTableSlug, {
+      await constructorObjectService.update(queryTableSlug, {
         data: {
           guid: queryGuid,
           doctors_id: parentTab?.guid,

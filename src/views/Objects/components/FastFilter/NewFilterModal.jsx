@@ -1,31 +1,53 @@
-import { useEffect, useMemo, useState } from "react"
-import { useParams } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux"
-import { useFieldArray, useForm } from "react-hook-form"
-import { Checkbox, Popover } from "@mui/material"
-import { Clear } from "@mui/icons-material"
+import {useEffect, useMemo, useState} from "react"
+import {useParams} from "react-router-dom"
+import {useDispatch, useSelector} from "react-redux"
+import {useFieldArray, useForm} from "react-hook-form"
+import {Checkbox, Popover} from "@mui/material"
+import {Clear} from "@mui/icons-material"
 import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined"
 
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
-import { filterActions } from "../../../../store/filter/filter.slice"
-import { PinFilled, PlusIcon } from "../../../../assets/icons/icon"
+import {filterActions} from "../../../../store/filter/filter.slice"
+import {PinFilled, PlusIcon} from "../../../../assets/icons/icon"
 import HFSelect from "../../../../components/FormElements/HFSelect"
 import useFilters from "../../../../hooks/useFilters"
-import { Filter } from "../FilterGenerator"
+import {Filter} from "../FilterGenerator"
 import styles from "./style.module.scss"
+import constructorObjectService from "@/services/constructorObjectService";
 
-const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
+const NewFilterModal = ({anchorEl, handleClose, fieldsMap = {}, view}) => {
   const dispatch = useDispatch()
-  const { tableSlug } = useParams()
+  const {tableSlug} = useParams()
   const [didUpdate, setDidUpdate] = useState(false)
-  const { new_list } = useSelector((s) => s.filter)
-  const { filters } = useFilters(tableSlug, view.id)
+  const {new_list} = useSelector((s) => s.filter)
+  const {filters} = useFilters(tableSlug, view.id)
+  const [responseForGrouping, setResponseForGrouping] = useState([])
+  const [selectedOption, setSelectedOption] = useState('')
+  const open = Boolean(anchorEl)
+  const id = open ? "simple-popover" : undefined
 
-  const { control, watch, reset } = useForm({
+  const {control, watch, reset} = useForm({
     defaultValues: {
       new: [],
     },
   })
+
+  useEffect(() => {
+    if (open) {
+      constructorObjectService
+        .getList(tableSlug, {
+          data: {
+            with_relations: true
+          }
+        })
+        .then((res) => {
+          setResponseForGrouping(res.data)
+        })
+        .catch((a) => (
+          console.log('error', a)
+        ))
+    }
+  }, [open])
 
   const onChange = (value, name) => {
     dispatch(
@@ -38,14 +60,33 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
     )
   }
 
-  const { fields, append, remove } = useFieldArray({
+  const {fields, append, remove} = useFieldArray({
     control,
     name: "new",
   })
 
   const computedOptions = useMemo(() => {
-    return Object.values(fieldsMap ?? {})?.map((i) => ({ ...i, value: i.id }))
-  }, [fieldsMap])
+    const groups = responseForGrouping?.relation_fields?.map(item => item.table_label).filter(function (item, pos) {
+      return responseForGrouping?.relation_fields?.map(item => item.table_label).indexOf(item) == pos;
+    })
+
+    const compute = groups?.map((item) => {
+      return {
+        label: item,
+        options: responseForGrouping.relation_fields.filter(option => option.table_label === item).map((option => ({
+          label: option.label,
+          value: option.id
+        })))
+      }
+    }) ?? []
+
+    const old = [{
+      label: 'Fields',
+      options: Object.values(fieldsMap ?? {})?.map((i) => ({...i, value: i.id}))
+    }]
+
+    return [...old, ...compute]
+  }, [fieldsMap, responseForGrouping])
 
   const isAddBtnDisabled = useMemo(() => {
     return fields.length === computedOptions.length
@@ -73,10 +114,6 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
       })
     }
   }, [filtered, didUpdate])
-
-  const open = Boolean(anchorEl)
-  const id = open ? "simple-popover" : undefined
-
   return (
     <div>
       <Popover
@@ -103,8 +140,8 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
                     (i) => i.id === watch(`new.${index}.left_field`)
                   )?.checked
                 }
-                checkedIcon={<PinFilled />}
-                icon={<PushPinOutlinedIcon />}
+                checkedIcon={<PinFilled/>}
+                icon={<PushPinOutlinedIcon/>}
                 disabled={
                   !(
                     watch(`new.${index}.left_field`) &&
@@ -127,7 +164,9 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
               <HFSelect
                 control={control}
                 options={computedOptions}
+                optionType={'GROUP'}
                 onChange={(e) => {
+                  setSelectedOption(e)
                   if (e) {
                     dispatch(
                       filterActions.setNewFilter({
@@ -140,6 +179,7 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
                 }}
                 name={`new.${index}.left_field`}
               />
+
               <Filter
                 disabled
                 field={
@@ -155,6 +195,7 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
                 filters={filters}
                 tableSlug={tableSlug}
               />
+
               <RectangleIconButton
                 color="white"
                 onClick={() => {
@@ -177,7 +218,7 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
                   remove(index)
                 }}
               >
-                <Clear />
+                <Clear/>
               </RectangleIconButton>
             </div>
           ))}
@@ -187,10 +228,10 @@ const NewFilterModal = ({ anchorEl, handleClose, fieldsMap = {}, view }) => {
             }`}
             onClick={() =>
               !isAddBtnDisabled &&
-              append({ checked: false, left_field: "", right_field: "" })
+              append({checked: false, left_field: "", right_field: ""})
             }
           >
-            <PlusIcon />
+            <PlusIcon/>
             Добавить
           </div>
         </div>

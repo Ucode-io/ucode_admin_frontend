@@ -1,5 +1,5 @@
 import { BackupTable, ImportExport } from "@mui/icons-material";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
@@ -10,7 +10,10 @@ import PageFallback from "../../../components/PageFallback";
 import usePaperSize from "../../../hooks/usePaperSize";
 import constructorObjectService from "../../../services/constructorObjectService";
 import documentTemplateService from "../../../services/documentTemplateService";
-import { pixelToMillimeter, pointToMillimeter } from "../../../utils/SizeConverters";
+import {
+  pixelToMillimeter,
+  pointToMillimeter,
+} from "../../../utils/SizeConverters";
 import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSelector";
 
 import ViewTabSelector from "../components/ViewTypeSelector";
@@ -52,6 +55,15 @@ const DocView = ({
   const [tableViewIsActive, setTableViewIsActive] = useState(false);
   const [relationViewIsActive, setRelationViewIsActive] = useState(false);
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0);
+  const [selectedOutputTable, setSelectedOutputTable] = useState("");
+  const [selectedOutputObject, setSelectedOutputObject] = useState("");
+  const [selectedLinkedObject, setSelectedLinkedObject] = useState("");
+  const outputTableSlug = selectedOutputTable?.split("#")?.[1];
+
+  // ============SELECTED LINKED TABLE SLUG=============== //
+  const selectedLinkedTableSlug = selectedLinkedObject
+    ? selectedLinkedObject?.split("#")?.[1]
+    : tableSlug;
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
@@ -60,6 +72,35 @@ const DocView = ({
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
   );
+
+  // ==========GET VARIABLES WITH LINKED TABLE SLUG============//
+  const { data: varFields = [] } = useQuery(
+    ["GET_OBJECT_LIST", outputTableSlug],
+    () => {
+      return constructorObjectService.getList(outputTableSlug, {
+        data: {
+          offset: 0,
+        },
+      });
+    },
+
+    {
+      enabled: !!selectedOutputTable,
+      select: (res) => {
+        const fields = res.data?.fields ?? [];
+        const relationFields =
+          res?.data?.relation_fields?.map((el) => ({
+            ...el,
+            label: `${el.label} (${el.table_label})`,
+          })) ?? [];
+
+        return [...fields, ...relationFields]?.filter(
+          (el) => el.type !== "LOOKUP"
+        );
+      },
+    }
+  );
+
   // ========FIELDS FOR RELATIONS=========
   const { data: fields = [], isLoading: fieldsLoading } = useQuery(
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, limit: 0, offset: 0 }],
@@ -85,7 +126,6 @@ const DocView = ({
   );
 
   // ========GET TEMPLATES LIST===========
-
   const {
     data: { templates, templateFields } = { templates: [], templateFields: [] },
     isLoading,
@@ -95,6 +135,9 @@ const DocView = ({
     () => {
       const data = {
         table_slug: tableSlug,
+        output_object: selectedOutputTable?.table_to?.slug,
+        linked_object:
+          selectedLinkedObject && selectedLinkedObject?.split("#")?.[1],
       };
 
       data[`${loginTableSlug}_ids`] = [userId];
@@ -115,6 +158,8 @@ const DocView = ({
       },
     }
   );
+
+  console.log("fields", fields);
   // ========UPDATE TEMPLATE===========
 
   const updateTemplate = (template) => {
@@ -133,7 +178,6 @@ const DocView = ({
   };
 
   // =======EXPORT TO PDF============
-
   const exportToPDF = async () => {
     if (!selectedTemplate) return;
     setPdfLoader(true);
@@ -149,23 +193,29 @@ const DocView = ({
           `<%= it.${field.path_slug ?? field.slug} %>`
         );
       });
-      
 
-      let pageSize = pointToMillimeter(selectedPaperSize.height)
+      let pageSize = pointToMillimeter(selectedPaperSize.height);
 
-      if(selectedPaperSize.height === 1000) {
-        pageSize = pixelToMillimeter(document.querySelector('.ck-content').offsetHeight - 37)
+      if (selectedPaperSize.height === 1000) {
+        pageSize = pixelToMillimeter(
+          document.querySelector(".ck-content").offsetHeight - 37
+        );
       }
-
       const res = await documentTemplateService.exportToPDF({
         data: {
-          table_slug: tableSlug,
-          object_id: selectedObject,
+          linked_table_slug: selectedLinkedTableSlug
+            ? selectedLinkedTableSlug
+            : tableSlug,
+          linked_object_id: selectedObject,
           page_size: selectedPaperSize.name,
           page_height: pageSize,
-          page_width: pointToMillimeter(selectedPaperSize.width)
+          page_width: pointToMillimeter(selectedPaperSize.width),
+          object_id: selectedOutputObject?.value?.split("#")?.[0],
+          table_slug: selectedOutputObject?.value.split("#")?.[1],
         },
-        html: `${meta} <div class="ck-content" style="width: ${pointToMillimeter(selectedPaperSize.width) + 10}mm" >${html}</div>`,
+        html: `${meta} <div class="ck-content" style="width: ${
+          pointToMillimeter(selectedPaperSize.width) + 100
+        }mm" >${html}</div>`,
       });
 
       queryClient.refetchQueries([
@@ -178,7 +228,6 @@ const DocView = ({
       setPdfLoader(false);
     }
   };
-
   // ========EXPORT TO HTML===============
 
   const exportToHTML = async () => {
@@ -199,14 +248,18 @@ const DocView = ({
       const res = await documentTemplateService.exportToHTML({
         data: {
           table_slug: tableSlug,
-          object_id: selectedObject,
+          // object_id: selectedObject,
+          linked_object_id: selectedObject,
+          linked_table_slug: selectedLinkedTableSlug
+            ? selectedLinkedTableSlug
+            : tableSlug,
         },
         html: meta + html,
       });
 
       setSelectedTemplate((prev) => ({
         ...prev,
-        html: res.html.replaceAll('<p></p>', ""),
+        html: res.html.replaceAll("<p></p>", ""),
         size: [selectedPaperSize?.name],
       }));
     } finally {
@@ -242,7 +295,6 @@ const DocView = ({
       setPdfLoader(false);
     }
   };
-
   return (
     <div>
       <FiltersBlock
@@ -295,6 +347,7 @@ const DocView = ({
             <div className={styles.redactorBlock}>
               <TableView
                 formVisible={false}
+                selectedLinkedTableSlug={selectedLinkedTableSlug}
                 reset={reset}
                 isChecked={(row) => selectedObject === row.guid}
                 onCheckboxChange={onCheckboxChange}
@@ -302,6 +355,7 @@ const DocView = ({
                 filters={{}}
                 view={view}
                 fieldsMap={fieldsMap}
+                selectedLinkedObject={selectedLinkedObject}
               />
             </div>
           )}
@@ -324,7 +378,7 @@ const DocView = ({
                   addNewTemplate={addNewTemplate}
                   ref={redactorRef}
                   tableViewIsActive={tableViewIsActive}
-                  fields={fields}
+                  fields={varFields ?? fields}
                   selectedPaperSizeIndex={selectedPaperSizeIndex}
                   setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
                   htmlLoader={htmlLoader}
@@ -332,6 +386,8 @@ const DocView = ({
                   exportToPDF={exportToPDF}
                   pdfLoader={pdfLoader}
                   print={print}
+                  selectedOutputTable={selectedOutputTable}
+                  selectedLinkedObject={selectedLinkedObject}
                 />
               ) : (
                 <div
@@ -351,6 +407,14 @@ const DocView = ({
             selectedSettingsTab={selectedSettingsTab}
             selectedPaperSizeIndex={selectedPaperSizeIndex}
             setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
+            setSelectedOutputTable={setSelectedOutputTable}
+            selectedOutputTable={selectedOutputTable}
+            selectedOutputObject={selectedOutputObject}
+            setSelectedOutputObject={setSelectedOutputObject}
+            templates={templates}
+            selectedTemplate={selectedTemplate}
+            selectedLinkedObject={selectedLinkedObject}
+            setSelectedLinkedObject={setSelectedLinkedObject}
           />
         </div>
       )}

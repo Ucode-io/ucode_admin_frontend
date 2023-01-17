@@ -37,7 +37,7 @@ const SummaryBlock = ({ control }) => {
   const deleteSummary = (index) => {
     remove(index);
   };
-  console.log("relation", relation);
+
   return (
     <>
       <div className={styles.settingsBlockHeader}>

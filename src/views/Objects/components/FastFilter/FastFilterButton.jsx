@@ -1,38 +1,38 @@
-import { Close, FilterAlt } from "@mui/icons-material"
-import { Typography } from "@mui/material"
-import { useMemo, useState } from "react"
-import { useParams } from "react-router-dom"
+import { Close, FilterAlt } from "@mui/icons-material";
+import { Typography } from "@mui/material";
+import { useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
-import TableOrderingButton from "../../../../components/TableOrderingButton"
-import useFilters from "../../../../hooks/useFilters"
-import NewFilterModal from "./NewFilterModal"
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
+import TableOrderingButton from "../../../../components/TableOrderingButton";
+import useFilters from "../../../../hooks/useFilters";
+import NewFilterModal from "./NewFilterModal";
 
 const FastFilterButton = ({ view, fieldsMap }) => {
-  const [anchorEl, setAnchorEl] = useState(null)
-  const { tableSlug } = useParams()
+  const [anchorEl, setAnchorEl] = useState(null);
+  const { tableSlug } = useParams();
 
   const handleClose = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
-  const { filters, clearFilters, clearOrders } = useFilters(tableSlug, view.id)
+  const { filters, clearFilters, clearOrders } = useFilters(tableSlug, view.id);
 
   const selectedFiltersNumber = useMemo(() => {
-    let count = 0
+    let count = 0;
     Object.entries(filters).forEach(([key, value]) => {
-      if (key !== "order" && value) count++
-    })
-    return count
-  }, [filters])
+      if (key !== "order" && value) count++;
+    });
+    return count;
+  }, [filters]);
 
   const selectedOrdersNumber = useMemo(() => {
-    const orders = filters.order ?? {}
-    return Object.values(orders)?.filter((el) => el)?.length
-  }, [filters])
+    const orders = filters.order ?? {};
+    return Object.values(orders)?.filter((el) => el)?.length;
+  }, [filters]);
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
       <RectangleIconButton
         color="white"
         size={!!selectedFiltersNumber ? "long" : ""}
@@ -52,8 +52,8 @@ const FastFilterButton = ({ view, fieldsMap }) => {
 
             <Close
               onClick={(e) => {
-                e.stopPropagation()
-                clearFilters()
+                e.stopPropagation();
+                clearFilters();
               }}
             />
           </>
@@ -70,8 +70,8 @@ const FastFilterButton = ({ view, fieldsMap }) => {
           </strong>
           <Close
             onClick={(e) => {
-              e.stopPropagation()
-              clearOrders()
+              e.stopPropagation();
+              clearOrders();
             }}
           />
         </RectangleIconButton>
@@ -84,7 +84,7 @@ const FastFilterButton = ({ view, fieldsMap }) => {
         handleClose={handleClose}
       />
     </div>
-  )
-}
+  );
+};
 
-export default FastFilterButton
+export default FastFilterButton;

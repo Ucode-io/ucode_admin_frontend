@@ -41,13 +41,19 @@ const ActionButton = ({ event, id, control, disable }) => {
           if (url.includes("reload:")) {
             navigate("/reload", {
               state: {
-                redirectUrl: url,
+                redirectUrl: url
               },
             });
           } else if (url === "" || url === "reload") {
             navigate("/reload", {
               state: {
-                redirectUrl: window.location.pathname,
+                redirectUrl: window.location.pathname
+              },
+            });
+          } else if (url === "reloadRelations") {
+            navigate("/reloadRelations", {
+              state: {
+                redirectUrl: window.location.pathname
               },
             });
           } else {

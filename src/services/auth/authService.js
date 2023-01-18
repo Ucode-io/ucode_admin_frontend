@@ -2,7 +2,7 @@ import requestAuth from "../../utils/requestAuth"
 import requestAuthV2 from "../../utils/requestAuthV2"
 
 const authService = {
-  login: (data) => requestAuthV2.post(`/login`, data),
+  login: (data) => requestAuthV2.post(`/login`, data, { headers: {'environment-id': data.environment_id} }),
   multiCompanyLogin: (data) => requestAuthV2.post('/multi-company/login', data),
   sendResetMessageToEmail: (data) =>
   requestAuth.post(`/user/send-message`, data),

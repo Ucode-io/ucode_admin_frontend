@@ -1,7 +1,7 @@
 import requestAuthV2 from "../../utils/requestAuthV2";
 
 const clientTypeServiceV2 = {
-  getList: (params) => requestAuthV2.get(`/client-type`, { params }),
+  getList: (params, headers) => requestAuthV2.get(`/client-type`, { params, headers }),
   getById: (id, params) => requestAuthV2.get(`/client-type/${id}`, { params }),
   create: (data) => requestAuthV2.post('/client-type', data),
   update: (data) => requestAuthV2.put('/client-type', data),

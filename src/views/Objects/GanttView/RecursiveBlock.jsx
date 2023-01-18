@@ -1,6 +1,6 @@
-import { Fragment, useMemo } from "react"
-import DataRow from "./DataRow"
-import styles from "./style.module.scss"
+import { Fragment, useMemo } from "react";
+import DataRow from "./DataRow";
+import styles from "./style.module.scss";
 
 const RecursiveBlock = ({
   data,
@@ -13,18 +13,21 @@ const RecursiveBlock = ({
   datesList,
 }) => {
   const elements = useMemo(() => {
-    if (!parentTab) return tabs?.[level]?.list
+    if (!parentTab)
+      return tabs?.[level]?.list.filter((p) =>
+        tabs[1]?.list.some((c) => c.cabinets_id === p.value)
+      );
     return tabs?.[level]?.list?.filter((el) => {
       return Array.isArray(el[parentTab.slug])
         ? el[parentTab.slug]?.includes(parentTab.value)
-        : el[parentTab.slug] === parentTab.value
-    })
-  }, [parentTab, tabs, level])
+        : el[parentTab.slug] === parentTab.value;
+    });
+  }, [parentTab, tabs, level]);
 
-  const rowWidth = datesList?.length * 160 + 200
+  const rowWidth = datesList?.length * 160 + 200;
 
   return (
-    <div>
+    <div className={styles.recursiveBlock}>
       {elements?.map((tab) => (
         <Fragment key={tab.id}>
           {tabs?.[level + 1] ? (
@@ -59,7 +62,7 @@ const RecursiveBlock = ({
         </Fragment>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default RecursiveBlock
+export default RecursiveBlock;

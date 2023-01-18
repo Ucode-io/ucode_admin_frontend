@@ -1,38 +1,55 @@
-import styles from "./style.module.scss"
-import companyLogo from "../../../builder_config/assets/company-logo.svg"
-import { Collapse, Tooltip, Typography } from "@mui/material"
-import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft"
-import React, { useEffect, useMemo, useState } from "react"
-import { NavLink, useLocation } from "react-router-dom"
-import IconGenerator from "../IconPicker/IconGenerator"
+import styles from "./style.module.scss";
+import companyLogo from "../../../builder_config/assets/company-logo.svg";
+import { Collapse, Tooltip, Typography } from "@mui/material";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import React, { useEffect, useMemo, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import IconGenerator from "../IconPicker/IconGenerator";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 
 const Sidebar = ({ elements = [] }) => {
-  const location = useLocation()
+  const location = useLocation();
+  const [visible, setVisible] = useState(false);
 
-  const [rightBlockVisible, setRightBlockVisible] = useState(true)
+  const [rightBlockVisible, setRightBlockVisible] = useState(true);
 
   const selectedMenuItem = useMemo(() => {
     const activeElement = elements.find((el) => {
-      if (location.pathname === el.path) return true
+      if (location.pathname === el.path) return true;
       return el.children?.some((child) =>
         location.pathname.includes(child.path)
-      )
-    })
-    return activeElement
-  }, [location.pathname, elements])
+      );
+    });
+    return activeElement;
+  }, [location.pathname, elements]);
+
+  const setVisibBlock = () => {
+    setVisible(!visible);
+  };
 
   useEffect(() => {
-    if (selectedMenuItem?.children) setRightBlockVisible(true)
-  }, [selectedMenuItem])
+    if (selectedMenuItem?.children) setRightBlockVisible(true);
+  }, [selectedMenuItem]);
 
   return (
     <div className={styles.sidebar}>
-      <div className={styles.leftSide}>
+      <div className={visible ? styles.leftSide_open : styles.leftSide}>
         <div
           className={styles.header}
-          onClick={() => setRightBlockVisible((prev) => !prev)}
+          onClick={() => {
+            setRightBlockVisible((prev) => !prev);
+            setVisibBlock();
+          }}
         >
-          <img className={styles.logo} src={companyLogo} alt="logo" />
+          <div className={styles.headerLogo}>
+            <img className={styles.logo} src={companyLogo} alt="logo" />
+            {visible && <h2>Medion</h2>}
+          </div>
+          {visible && (
+            <div className={styles.closeBtn} onClick={setVisibBlock}>
+              <MenuOpenIcon />
+            </div>
+          )}
         </div>
 
         <div className={styles.scrollBlock}>
@@ -46,20 +63,44 @@ const Sidebar = ({ elements = [] }) => {
                   key={element.id}
                   title={element.title}
                 >
-                  <NavLink
-                    key={element.id}
-                    to={element.path ?? element.children?.[0]?.path}
-                    className={`${styles.menuItem} ${
-                      selectedMenuItem?.id === element.id ? styles.active : ""
-                    }`}
-                  >
-                    {typeof element.icon === "string" ? (
-                      <IconGenerator icon={element.icon} size={18} />
-                    ) : (
-                      // <IconPickerItem icon="FaAdobe" size={24} />
-                      <element.icon />
-                    )}
-                  </NavLink>
+                  {visible ? (
+                    <div className={styles.navLinkOpen}>
+                      <NavLink
+                        key={element.id}
+                        to={element.path ?? element.children?.[0]?.path}
+                        className={`${styles.menuItem} ${
+                          selectedMenuItem?.id === element.id
+                            ? styles.active
+                            : ""
+                        }`}
+                        // onClick={setVisibBlock}
+                      >
+                        {typeof element.icon === "string" ? (
+                          <IconGenerator icon={element.icon} size={18} />
+                        ) : (
+                          // <IconPickerItem icon="FaAdobe" size={24} />
+                          <element.icon />
+                        )}
+                        <span>{element?.title}</span>
+                      </NavLink>
+                    </div>
+                  ) : (
+                    <NavLink
+                      key={element.id}
+                      to={element.path ?? element.children?.[0]?.path}
+                      className={`${styles.menuItem} ${
+                        selectedMenuItem?.id === element.id ? styles.active : ""
+                      }`}
+                      // onClick={setVisibBlock}
+                    >
+                      {typeof element.icon === "string" ? (
+                        <IconGenerator icon={element.icon} size={18} />
+                      ) : (
+                        // <IconPickerItem icon="FaAdobe" size={24} />
+                        <element.icon />
+                      )}
+                    </NavLink>
+                  )}
                 </Tooltip>
               ))}
           </div>
@@ -137,7 +178,7 @@ const Sidebar = ({ elements = [] }) => {
         </div>
       </Collapse>
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

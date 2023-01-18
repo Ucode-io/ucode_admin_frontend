@@ -1,27 +1,30 @@
-import { Card, Collapse, Typography } from "@mui/material"
-import { useFieldArray } from "react-hook-form"
-import { Container, Draggable } from "react-smooth-dnd"
-import styles from "./style.module.scss"
-import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator"
-import { applyDrag } from "../../../../../utils/applyDrag"
-import { useMemo, useState } from "react"
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
-import { KeyboardArrowDown, KeyboardDoubleArrowLeft } from "@mui/icons-material"
+import { Card, Collapse, Typography } from "@mui/material";
+import { useFieldArray } from "react-hook-form";
+import { Container, Draggable } from "react-smooth-dnd";
+import styles from "./style.module.scss";
+import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
+import { applyDrag } from "../../../../../utils/applyDrag";
+import { useMemo, useState } from "react";
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
+import {
+  KeyboardArrowDown,
+  KeyboardDoubleArrowLeft,
+} from "@mui/icons-material";
 
 const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
-  const [blockIsOpen, setBlockIsOpen] = useState(true)
+  const [blockIsOpen, setBlockIsOpen] = useState(true);
 
   const { fields } = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
-  })
+  });
 
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
     name: "layoutRelations",
     keyName: "key",
-  })
+  });
 
   const unusedFields = useMemo(() => {
     return fields?.filter(
@@ -29,27 +32,32 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
         field.type !== "LOOKUP" &&
         field.type !== "LOOKUPS" &&
         !usedFields.includes(field.id)
-    )
-  }, [usedFields, fields])
+    );
+  }, [usedFields, fields]);
 
   const unusedRelations = useMemo(() => {
-    return relations?.filter((relation) => !usedFields.includes(relation.id))
-  }, [relations, usedFields])
+    return relations?.filter((relation) => !usedFields.includes(relation.id));
+  }, [relations, usedFields]);
 
   const onDrop = (dropResult, colNumber) => {
-    const result = applyDrag(fields, dropResult)
+    const result = applyDrag(fields, dropResult);
 
-    if (!result) return
-  }
+    if (!result) return;
+  };
 
   return (
     <div>
-
-      {!blockIsOpen && <Card className={styles.collapseBlock} onClick={() => setBlockIsOpen(true)} >
-        
-        <div className={styles.collapseButton} > Fields <KeyboardArrowDown /> </div>
-
-      </Card>}
+      {!blockIsOpen && (
+        <Card
+          className={styles.collapseBlock}
+          onClick={() => setBlockIsOpen(true)}
+        >
+          <div className={styles.collapseButton}>
+            {" "}
+            Fields <KeyboardArrowDown />{" "}
+          </div>
+        </Card>
+      )}
 
       <Collapse unmountOnExit orientation="horizontal" in={blockIsOpen}>
         <div className={styles.fieldsBlock}>
@@ -57,10 +65,9 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
             <div className={styles.fieldCardHeader}>
               <Typography variant="h4">Fields</Typography>
 
-              <RectangleIconButton onClick={() => setBlockIsOpen(false)} >
+              <RectangleIconButton onClick={() => setBlockIsOpen(false)}>
                 <KeyboardDoubleArrowLeft />
               </RectangleIconButton>
-
             </div>
 
             <div className={styles.fieldsWrapperBlock}>
@@ -100,7 +107,8 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
                   ...unusedRelations[i],
-                  field_name: unusedRelations[i]?.label,
+                  field_name:
+                    unusedRelations[i]?.label ?? unusedRelations[i]?.title,
                 })}
               >
                 {unusedRelations?.map((relation) => (
@@ -132,7 +140,7 @@ const FieldsBlock = ({ mainForm, layoutForm, usedFields }) => {
         </div>
       </Collapse>
     </div>
-  )
-}
+  );
+};
 
-export default FieldsBlock
+export default FieldsBlock;

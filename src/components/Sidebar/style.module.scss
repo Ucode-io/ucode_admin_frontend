@@ -1,5 +1,4 @@
-
-@use '/src/scss/colors';
+@use "/src/scss/colors";
 
 .sidebar {
   display: flex;
@@ -11,19 +10,19 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
+  transition: 0.3s ease;
 
-  
   .header {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 56px;
+    height: 50px;
+    box-shadow: inset 0 -1px #e5e9eb;
 
     .logo {
       cursor: pointer;
       width: 35px;
     }
-
   }
 
   .scrollBlock {
@@ -41,7 +40,6 @@
     gap: 5px;
     min-height: calc(100vh - 200px);
   }
-
 
   .footer {
     display: flex;
@@ -76,8 +74,9 @@
     height: 56px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0 12px;
-    box-shadow: inset 0px -1px 0px #E5E9EB;
+    box-shadow: inset 0px -1px 0px #e5e9eb;
 
     .title {
       flex: 1;
@@ -89,15 +88,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #6E8BB71A;
+      background-color: #6e8bb71a;
       border-radius: 6px;
-      transition-duration: .1s;
+      transition-duration: 0.1s;
       cursor: pointer;
 
       &:hover {
         background-color: colors.$primary;
         color: #fff;
-
       }
     }
   }
@@ -123,6 +121,93 @@
       }
     }
   }
-
 }
 
+// Visible
+
+.leftSide_open {
+  width: 250px;
+  box-shadow: inset -1px 0px 0px rgba(229, 233, 235, 0.75);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s ease;
+
+  .closeBtn {
+    display: block;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  .headerLogo {
+    display: flex;
+    align-items: center;
+    h2 {
+      color: rgb(55, 71, 91);
+      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 20px;
+      margin-left: 5px;
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+    height: 50px;
+    box-shadow: inset 0 -1px #e5e9eb;
+
+    .logo {
+      cursor: pointer;
+      width: 35px;
+    }
+  }
+
+  .scrollBlock {
+    height: calc(100vh - 56px);
+    overflow: auto;
+  }
+
+  .menuItemsBlock {
+    flex: 1;
+    // overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    padding: 10px;
+    gap: 5px;
+    min-height: calc(100vh - 200px);
+  }
+
+  .footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    gap: 5px;
+  }
+
+  .menuItem {
+    min-height: 36px;
+    min-width: 36px;
+    border-radius: 6px;
+    color: colors.$grey;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    // justify-content: center;
+    cursor: pointer;
+
+    &.active {
+      color: #fff;
+      background-color: colors.$primary;
+    }
+  }
+
+  .navLinkOpen {
+    span {
+      margin-left: 20px;
+    }
+  }
+}

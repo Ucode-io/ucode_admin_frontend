@@ -22,7 +22,6 @@ const TemplatesList = ({
     };
     setSelectedTemplate(data);
   };
-  console.log("templates", templates);
 
   return (
     <div className={styles.docListBlock}>

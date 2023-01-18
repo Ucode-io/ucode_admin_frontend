@@ -124,7 +124,7 @@ function CascadingItem({
       }
     }
   }, [fields, currentLevel]);
-  console.log("field", fields);
+
   return (
     <>
       {fields?.type === "LOOKUPS"

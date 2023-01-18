@@ -3,16 +3,17 @@ import {
   InputAdornment,
   Menu,
   TextField,
-} from "@mui/material"
-import { useState } from "react"
-import FRow from "../../FormElements/FRow"
-import styles from "./style.module.scss"
-import { useController } from "react-hook-form"
-import Dropdown from "./Dropdown"
-import { useMemo } from "react"
-import { useEffect } from "react"
-import constructorObjectService from "../../../services/constructorObjectService"
-import { getLabelWithViewFields } from "../../../utils/getRelationFieldLabel"
+} from "@mui/material";
+import { useState } from "react";
+import FRow from "../../FormElements/FRow";
+import styles from "./style.module.scss";
+import { useController } from "react-hook-form";
+import Dropdown from "./Dropdown";
+import { useMemo } from "react";
+import { useEffect } from "react";
+import constructorObjectService from "../../../services/constructorObjectService";
+import { getLabelWithViewFields } from "../../../utils/getRelationFieldLabel";
+import FEditableRow from "../../FormElements/FEditableRow";
 
 const DynamicRelationFormElement = ({
   control,
@@ -24,42 +25,42 @@ const DynamicRelationFormElement = ({
     field: { onChange, value },
     fieldState: { error },
   } = useController({
-    name: field.attributes?.relation_field_slug,
+    name: field?.attributes?.relation_field_slug ?? field?.relation_field_slug,
     control,
     defaultValue: null,
-  })
+  });
 
-  const [anchorEl, setAnchorEl] = useState(null)
-  const [localValue, setLocalValue] = useState(null)
-  const [inputLoader, setInputLoader] = useState(false)
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [localValue, setLocalValue] = useState(null);
+  const [inputLoader, setInputLoader] = useState(false);
 
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
-        return el.table ? { ...el.table, ...el } : el
+        return el.table ? { ...el.table, ...el } : el;
       }) ?? []
-    )
-  }, [field.attributes?.dynamic_tables])
+    );
+  }, [field.attributes?.dynamic_tables]);
 
   const tableInValue = useMemo(() => {
-    return tablesList?.find((table) => value?.[`${table.slug}_id`]) ?? ""
-  }, [tablesList, value])
+    return tablesList?.find((table) => value?.[`${table.slug}_id`]) ?? "";
+  }, [tablesList, value]);
 
   const onObjectSelect = (object, selectedTable) => {
     const data = {
       [`${selectedTable.slug}_id`]: object.value,
-    }
-    setLocalValue(object)
-    onChange(data)
-    closeMenu()
-  }
-
+    };
+    setLocalValue(object);
+    onChange(data);
+    closeMenu();
+  };
   const getValueData = async () => {
     try {
-      setInputLoader(true)
-      const id = value?.[`${tableInValue.slug}_id`]
-      const res = await constructorObjectService.getById(tableInValue.slug, id)
-      const data = res?.data?.response
+      setInputLoader(true);
+      const id = value?.[`${tableInValue.slug}_id`];
+      const res = await constructorObjectService.getById(tableInValue.slug, id);
+      const data = res?.data?.response;
+
       setLocalValue(
         data
           ? {
@@ -67,34 +68,39 @@ const DynamicRelationFormElement = ({
               label: getLabelWithViewFields(tableInValue.view_fields, data),
             }
           : null
-      )
+      );
     } finally {
-      setInputLoader(false)
+      setInputLoader(false);
     }
-  }
+  };
 
   const openMenu = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const closeMenu = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     if (tableInValue) {
-      getValueData()
+      getValueData();
     }
-  }, [])
+  }, []);
 
   const computedInputString = useMemo(() => {
-    if (!tableInValue || !localValue) return ""
-    return `${tableInValue.label} / ${localValue.label}`
-  }, [tableInValue, localValue])
+    if (!tableInValue || !localValue) return "";
+    return `${tableInValue.label} / ${localValue.label}`;
+  }, [tableInValue, localValue]);
 
   return (
     <>
-      <FRow label={field.label} required={field.required}>
+      <FEditableRow
+        label={field.label ?? field.title}
+        onLabelChange={onChange}
+        required={field.required}
+      >
+        {/* <FRow label={field.label ?? field.title} required={field.required}> */}
         <TextField
           disabled={disabled}
           size="small"
@@ -110,7 +116,8 @@ const DynamicRelationFormElement = ({
             ),
           }}
         />
-      </FRow>
+        {/* </FRow> */}
+      </FEditableRow>
       <Menu
         anchorEl={anchorEl}
         open={!!anchorEl}
@@ -125,7 +132,7 @@ const DynamicRelationFormElement = ({
         />
       </Menu>
     </>
-  )
-}
+  );
+};
 
-export default DynamicRelationFormElement
+export default DynamicRelationFormElement;

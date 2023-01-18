@@ -1,5 +1,5 @@
 import { get } from "@ngard/tiny-get";
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
 import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
@@ -10,12 +10,6 @@ import { formatDate } from "../../utils/dateFormatter";
 import LogoDisplay from "../LogoDisplay";
 import TableTag from "../TableTag";
 import DownloadIcon from "@mui/icons-material/Download";
-
-const capitalizeFirstLowercaseRest = (str) => {
-  if (typeof str === "string") {
-    return str?.charAt(0).toUpperCase() + str?.slice(1).toLowerCase();
-  } else return str;
-};
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
@@ -29,6 +23,36 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     return result;
   }, [row, field]);
+
+  const tablesList = useMemo(() => {
+    return (
+      field.attributes?.dynamic_tables?.map((el) => {
+        return el.table ? { ...el.table, ...el } : el;
+      }) ?? []
+    );
+  }, [field.attributes?.dynamic_tables]);
+
+  const getValue = useMemo(() => {
+    let val = tablesList?.find((table) => value?.[`${table.slug}_id`]) ?? "";
+    if (!val) return "";
+    return value?.[`${val?.slug}_id_data`];
+  }, [value, tablesList]);
+
+  const computedInputString = useMemo(() => {
+    let val = "";
+    let getVal = tablesList
+      ? tablesList?.find((table) => value?.[`${table.slug}_id`])
+      : [];
+    let viewFields = getVal?.view_fields;
+
+    viewFields &&
+      viewFields?.map((item) => {
+        val += `${getValue ? getValue?.[item?.slug] + " " : ""}`;
+      });
+
+    return val;
+  }, [getValue, tablesList, value]);
+
   if (field.render) {
     return field.render(row);
   }
@@ -52,7 +76,13 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return <MultiselectCellColoredElement field={field} value={value} />;
 
     case "MULTI_LINE":
-      return <span dangerouslySetInnerHTML={{ __html: value }}></span>;
+      return (
+        <div className="text-overflow">
+          <span
+            dangerouslySetInnerHTML={{ __html: value + `${value && "..."}` }}
+          ></span>
+        </div>
+      );
 
     case "CHECKBOX":
     case "SWITCH":
@@ -67,9 +97,12 @@ const CellElementGenerator = ({ field = {}, row }) => {
       );
 
     case "DYNAMIC":
-      return null;
+      return computedInputString ?? "";
 
     case "FORMULA":
+      return value ? numberWithSpaces(value) : "";
+
+    case "FORMULA_FRONTEND":
       return value ? numberWithSpaces(value) : "";
 
     // case "FORMULA_FRONTEND":
@@ -115,4 +148,4 @@ const CellElementGenerator = ({ field = {}, row }) => {
   }
 };
 
-export default memo(CellElementGenerator);
+export default CellElementGenerator;

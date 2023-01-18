@@ -1,11 +1,20 @@
-import { CircularProgress } from "@mui/material"
-import styles from "./style.module.scss"
+import { CircularProgress } from "@mui/material";
+import styles from "./style.module.scss";
+import LinkedListTables from "./DynamicObjectsTemplate/LinkedListTables";
 
 const ExportBlock = ({
   pdfLoader,
   exportToPDF,
   htmlLoader,
   exportToHTML,
+  setSelectedOutputTable,
+  selectedOutputTable,
+  selectedOutputObject,
+  setSelectedOutputObject,
+  templates,
+  selectedTemplate,
+  selectedLinkedObject,
+  setSelectedLinkedObject,
 }) => {
   return (
     <div className={styles.docListBlock}>
@@ -18,13 +27,28 @@ const ExportBlock = ({
           <div className={styles.documentIcon}>PDF</div> Export to PDF
           {pdfLoader && <CircularProgress size={14} />}
         </div>
-        <div className={styles.pageSizeRow} onClick={exportToHTML} >
+        <div className={styles.pageSizeRow} onClick={exportToHTML}>
           <div className={styles.documentIcon}>Variable</div> Set variables
           {htmlLoader && <CircularProgress size={14} />}
         </div>
+
+        {selectedTemplate ? (
+          <LinkedListTables
+            setSelectedOutputTable={setSelectedOutputTable}
+            selectedOutputTable={selectedOutputTable}
+            selectedOutputObject={selectedOutputObject}
+            setSelectedOutputObject={setSelectedOutputObject}
+            templates={templates}
+            selectedTemplate={selectedTemplate}
+            selectedLinkedObject={selectedLinkedObject}
+            setSelectedLinkedObject={setSelectedLinkedObject}
+          />
+        ) : (
+          ""
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ExportBlock
+export default ExportBlock;

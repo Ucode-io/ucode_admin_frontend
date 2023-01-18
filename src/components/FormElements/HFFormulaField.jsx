@@ -5,6 +5,7 @@ import { Parser } from "hot-formula-parser";
 import { useEffect } from "react";
 import IconGenerator from "../IconPicker/IconGenerator";
 import { useState } from "react";
+import {numberWithSpaces} from "@/utils/formatNumbers";
 
 const parser = new Parser();
 
@@ -69,9 +70,15 @@ const HFFormulaField = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
-          onChange={onChange}
-          value={formulaIsVisible ? formula : value}
+          value={formulaIsVisible ? formula : typeof(value) === 'number' ? numberWithSpaces(value) : ''}
           name={name}
+          onChange={(e) => {
+            const val = e.target.value;
+            const valueWithoutSpaces = val.replaceAll(' ', '')
+
+            if (!valueWithoutSpaces) onChange('');
+            else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '');
+          }}
           error={error}
           fullWidth
           autoFocus={tabIndex === 1}

@@ -1,15 +1,15 @@
-import { Settings } from "@mui/icons-material"
-import { useMemo } from "react"
-import { useSelector } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
+import { Settings } from "@mui/icons-material";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
+import style from "./style.module.scss";
 
 const SettingsButton = () => {
-  const { tableSlug, appId } = useParams()
-  const navigate = useNavigate()
+  const { tableSlug, appId } = useParams();
+  const navigate = useNavigate();
 
-
-  const tables = useSelector((state) => state.constructorTable.list)
+  const tables = useSelector((state) => state.constructorTable.list);
 
   // const [anchorEl, setAnchorEl] = useState(null)
   // const [modalVisible, setModalVisible] = useState(false)
@@ -18,13 +18,13 @@ const SettingsButton = () => {
   // const menuVisible = Boolean(anchorEl)
 
   const tableInfo = useMemo(() => {
-    return tables?.find((table) => table.slug === tableSlug)
-  }, [tables, tableSlug])
+    return tables?.find((table) => table.slug === tableSlug);
+  }, [tables, tableSlug]);
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${tableInfo?.id}/${tableInfo?.slug}`
-    navigate(url)
-  }
+    const url = `/settings/constructor/apps/${appId}/objects/${tableInfo?.id}/${tableInfo?.slug}`;
+    navigate(url);
+  };
 
   // const openModal = () => {
   //   closeMenu()
@@ -47,10 +47,12 @@ const SettingsButton = () => {
 
   return (
     <div>
-      <RectangleIconButton color="white" onClick={navigateToSettingsPage} >
-        <Settings />
-      </RectangleIconButton>
-
+      <div className={style.settings} onClick={navigateToSettingsPage}>
+        <RectangleIconButton color="white">
+          <Settings />
+        </RectangleIconButton>
+        <span>Settings</span>
+      </div>
       {/* <Menu
         anchorEl={anchorEl}
         open={menuVisible}
@@ -68,10 +70,8 @@ const SettingsButton = () => {
       <Modal className={styles.modal} open={modalVisible} onClose={closeModal} >
         <ViewSettings closeModal={closeModal} setIsChanged={setIsChanged} />
       </Modal> */}
-
-
     </div>
-  )
-}
+  );
+};
 
-export default SettingsButton
+export default SettingsButton;

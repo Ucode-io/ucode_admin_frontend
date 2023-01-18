@@ -49,9 +49,7 @@ const RelationTable = forwardRef(
     const { appId } = useParams();
     const navigate = useNavigate();
     const { navigateToForm } = useTabRouter();
-    const queryClient = useQueryClient();
     const tableRef = useRef(null);
-
     const [filters, setFilters] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState();
@@ -194,7 +192,6 @@ const RelationTable = forwardRef(
       {
         onSuccess: (a, b) => {
           remove(tableData.findIndex((i) => i.guid === b.guid));
-          queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTableSlug]);
         },
       }
     );
@@ -254,7 +251,8 @@ const RelationTable = forwardRef(
         {!!quickFilters?.length && (
           <div className={styles.filtersBlock}>
             {quickFilters.map((field) => (
-              <FRow key={field.id} label={field.label}>
+              <FRow key={field.id}>
+                {/* label={field.label} */}
                 <Filter
                   field={field}
                   name={field.slug}

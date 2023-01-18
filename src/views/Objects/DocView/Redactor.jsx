@@ -24,7 +24,7 @@ const Redactor = forwardRef(
         })) ?? []
       );
     }, [fields]);
-
+    
     useEffect(() => {
       const editor = ref.current;
       if (!editor) return;

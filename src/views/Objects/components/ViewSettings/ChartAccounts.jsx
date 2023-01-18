@@ -1,85 +1,151 @@
-import { Checkbox } from "@mui/material"
-import { useMemo } from "react"
-import { useWatch } from "react-hook-form"
+import {Checkbox} from "@mui/material"
+import {useEffect, useMemo, useState} from "react"
+import {useFieldArray, useForm, useWatch} from "react-hook-form"
 import style from './style.module.scss'
 import {
   CTable,
   CTableBody,
   CTableCell,
-  CTableRow,
+  CTableHead,
+  CTableHeadRow
 } from "../../../../components/CTable"
-import FRow from "../../../../components/FormElements/FRow"
+import constructorObjectService from "../../../../services/constructorObjectService"
+import {useParams} from "react-router-dom"
+import FinancialTreeBody from "./FinancialTreeBody"
+import HFSelect from "../../../../components/FormElements/HFSelect"
+import constructorFieldService from "../../../../services/constructorFieldService"
+import TableRowButton from "@/components/TableRowButton";
+import TableCancelButton from "@/components/TableRowButton/CancelButton";
+import RemoveIcon from "@mui/icons-material/Remove";
+import constructorRelationService from "@/services/constructorRelationService";
+import PageFallback from "@/components/PageFallback";
 
-const ChartAccounts = () => {
-  
+const ChartAccounts = ({viewId, form, addChart, charts, index, removeChart}) => {
+  const {tableSlug, appId} = useParams();
+  const [objectList, setObjectList] = useState([]);
+  const [groupByField, setGroupByField] = useState([])
+  const [relations, setRelations] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const groupby = useWatch({
+    control: form.control,
+    name: `chartOfAccounts.${index}.group_by`
+  })
+
+  useEffect(() => {
+    constructorFieldService
+      .getList({
+        table_slug: tableSlug
+      })
+      .then((res) => {
+        setGroupByField(res.fields.find((item) => (item.type === 'MULTISELECT')))
+      })
+      .catch((a) => (
+        console.log('error', a)
+      ))
+  }, [])
+
+  useEffect(() => {
+    setIsLoading(true)
+    constructorObjectService
+      .getList(tableSlug, {
+        data: {
+          app_id: appId,
+          [groupByField?.slug]: groupby ?? []
+        }
+      })
+      .then((res) => {
+        setObjectList(res.data.response);
+        setIsLoading(false)
+      })
+      .catch((a) => (
+        console.log('error', a)
+      ))
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }, [groupByField, groupby])
+
+  const parentElements = useMemo(() => {
+    return objectList.filter((row) => !row[`${tableSlug}_id`]);
+  }, [objectList, tableSlug]);
+
+  useEffect(() => {
+    form.setValue(`group_by_field_selected`, groupByField)
+  }, [groupByField]);
+
+  useEffect(() => {
+    constructorRelationService
+      .getList({
+        table_slug: tableSlug
+      })
+      .then((res) => {
+        setRelations(res.relations)
+      })
+      .catch((a) => (
+        console.log('error', a)
+      ))
+  }, [groupby]);
+
   return (
-    <div className={style.chartAccounts}>
-        <div className={style.sectionHeader}>
-            <div className={style.sectionTitle}>Treeview</div>
-        </div>
-
-        <CTable
+    isLoading ? <PageFallback /> :
+    <>
+      <CTable
+        count={''}
+        page={''}
+        setCurrentPage={''}
+        columnsCount={4}
+        loader={false}
         removableHeight={false}
-        disablePagination
-        tableStyle={{ border: "none" }}
+        disablePagination={true}
       >
-        <CTableBody dataLength={1}>
-          
-            <CTableRow>
-              <CTableCell>
+        <CTableHead>
+          <CTableHeadRow>
+            <CTableCell>
+              <div className={style.groupbyAndDelete}>
+                {
+                  groupByField?.attributes?.options?.[0]?.label && groupByField?.attributes?.options?.[0]?.value ? <HFSelect
+                    fullWidth
+                    required
+                    control={form.control}
+                    options={groupByField.attributes.options}
+                    name={`chartOfAccounts.${index}.group_by`}
+                  /> : ''
+                }
 
-              </CTableCell>
+                <button onClick={() => removeChart(index)}>
+                  <RemoveIcon style={{color: "#FF4842"}}/>
+                </button>
 
-              <CTableCell style={{ width: 160 }}>
-                Тип
-              </CTableCell>
+              </div>
+            </CTableCell>
+            <CTableCell>Тип</CTableCell>
+            <CTableCell>Таблица</CTableCell>
+            <CTableCell>Цифровое поля </CTableCell>
+            <CTableCell>Поля даты</CTableCell>
+            <CTableCell>Фильтр</CTableCell>
+          </CTableHeadRow>
+        </CTableHead>
 
-              <CTableCell style={{ width: 160 }}>
-              Таблица
-              </CTableCell>
-
-              <CTableCell style={{ width: 160 }}>
-              Цифровое поля 
-              </CTableCell>
-
-              <CTableCell style={{ width: 160 }}>
-                Дата поля
-              </CTableCell>
-
-              <CTableCell style={{ width: 160 }}>
-              Филтр
-              </CTableCell>
-            </CTableRow>
-
-            <CTableRow>
-              <CTableCell>
-                
-              </CTableCell>
-
-              <CTableCell style={{ width: 160 }}>
-                Тип
-              </CTableCell>
-
-              <CTableCell style={{ width: 160 }}>
-              Таблица
-              </CTableCell>
-
-              <CTableCell style={{ width: 160 }}>
-              Цифровое поля 
-              </CTableCell>
-
-              <CTableCell style={{ width: 160 }}>
-                Дата поля
-              </CTableCell>
-
-              <CTableCell style={{ width: 160 }}>
-              Филтр
-              </CTableCell>
-            </CTableRow>
-
+        <CTableBody loader={false} columnsCount={3} dataLength={3}>
+          {
+            parentElements.map((item, indexMap) => (
+              <FinancialTreeBody
+                indexMap={indexMap}
+                indexParent={index}
+                form={form}
+                viewId={viewId}
+                key={item.guid}
+                item={item}
+                objectList={objectList}
+                setObjectList={setObjectList}
+                groupby={groupby}
+                relations={relations}
+              />
+            ))
+          }
         </CTableBody>
       </CTable>
-    </div>
+    </>
   )
 }
 

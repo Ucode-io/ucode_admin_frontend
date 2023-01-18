@@ -33,8 +33,6 @@ const ClientType = () => {
       .finally(() => setLoader(false))
   }
 
-  console.log("DATA ===>", data)
-
   useEffect(() => {
     getData()
   }, [])

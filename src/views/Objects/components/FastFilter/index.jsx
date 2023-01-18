@@ -1,18 +1,39 @@
-import { useMemo } from "react"
-import { useParams } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux"
+import { useEffect, useMemo, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-import useFilters from "../../../../hooks/useFilters"
-import { filterActions } from "../../../../store/filter/filter.slice"
-import { Filter } from "../FilterGenerator"
-import styles from "./style.module.scss"
+import useFilters from "../../../../hooks/useFilters";
+import { filterActions } from "../../../../store/filter/filter.slice";
+import { Filter } from "../FilterGenerator";
+import styles from "./style.module.scss";
 
-const FastFilter = ({ view, fieldsMap, isVertical = false }) => {
-  const { tableSlug } = useParams()
-  const { new_list } = useSelector((state) => state.filter)
-  const dispatch = useDispatch()
+const FastFilter = ({
+  view,
+  fieldsMap,
+  isVertical = false,
+  getFilteredFilterFields,
+  selectedLinkedObject,
+}) => {
+  const { tableSlug } = useParams();
+  const { new_list } = useSelector((state) => state.filter);
+  const dispatch = useDispatch();
+  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
+  const [searchParams] = useSearchParams();
+  const defaultSpecialities = [searchParams.get("specialities")];
+  const defaultCategory = [searchParams.get("category")];
 
-  const { filters } = useFilters(tableSlug, view.id)
+  useEffect(() => {
+    if (
+      !defaultCategory.includes(null) &&
+      !defaultSpecialities.includes(null)
+    ) {
+      filterChangeHandler(defaultCategory, "categories_id");
+      filterChangeHandler(
+        defaultSpecialities,
+        "doctors_id_data.specialities_ids"
+      );
+    }
+  }, []);
 
   const computedFields = useMemo(() => {
     return (
@@ -28,8 +49,8 @@ const FastFilter = ({ view, fieldsMap, isVertical = false }) => {
       ]
         ?.map((el) => fieldsMap[el?.field_id])
         ?.filter((el) => el) ?? []
-    )
-  }, [view?.quick_filters, fieldsMap, new_list, tableSlug])
+    );
+  }, [view?.quick_filters, fieldsMap, new_list, tableSlug]);
 
   const onChange = (value, name) => {
     dispatch(
@@ -39,15 +60,18 @@ const FastFilter = ({ view, fieldsMap, isVertical = false }) => {
         name,
         value,
       })
-    )
-  }
+    );
+  };
 
   return (
     <div
       className={styles.filtersBlock}
       style={{ flexDirection: isVertical ? "column" : "row" }}
     >
-      {computedFields?.map((filter) => (
+      {(getFilteredFilterFields
+        ? getFilteredFilterFields
+        : computedFields
+      )?.map((filter) => (
         <div className={styles.filter} key={filter.id}>
           <Filter
             field={filter}
@@ -59,7 +83,7 @@ const FastFilter = ({ view, fieldsMap, isVertical = false }) => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export default FastFilter
+export default FastFilter;

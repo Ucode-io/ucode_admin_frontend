@@ -33,6 +33,7 @@ const CellFormElementGenerator = ({
   setFormValue,
   shouldWork = false,
   index,
+  relationfields,
   ...props
 }) => {
   const userId = useSelector((state) => state.auth.userId);
@@ -109,6 +110,7 @@ const CellFormElementGenerator = ({
           setFormValue={setFormValue}
           index={index}
           defaultValue={defaultValue}
+          relationfields={relationfields}
         />
       );
 

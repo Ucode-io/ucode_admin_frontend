@@ -1,9 +1,9 @@
-import { Delete } from "@mui/icons-material"
-import { useFieldArray } from "react-hook-form"
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
-import HFSelect from "../../../../../components/FormElements/HFSelect"
-import HFTextField from "../../../../../components/FormElements/HFTextField"
-import styles from "./style.module.scss"
+import { Delete } from "@mui/icons-material";
+import { useFieldArray } from "react-hook-form";
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
+import HFSelect from "../../../../../components/FormElements/HFSelect";
+import HFTextField from "../../../../../components/FormElements/HFTextField";
+import styles from "./style.module.scss";
 
 const formulaTypes = [
   {
@@ -14,25 +14,29 @@ const formulaTypes = [
     value: "average",
     label: "Avg ()",
   },
-]
+];
 
 const SummaryBlock = ({ control, computedFieldsListOptions }) => {
-  const { fields: summaries, insert, remove } = useFieldArray({
+  const {
+    fields: summaries,
+    insert,
+    remove,
+  } = useFieldArray({
     control,
     name: "summaries",
     keyName: "key",
-  })
+  });
 
   const addNewSummary = () => {
     insert({
       field_name: "",
       formula_name: "",
-    })
-  }
+    });
+  };
 
   const deleteSummary = (index) => {
-    remove(index)
-  }
+    remove(index);
+  };
 
   return (
     <>
@@ -57,18 +61,21 @@ const SummaryBlock = ({ control, computedFieldsListOptions }) => {
               name={`summaries[${index}].formula_name`}
               options={formulaTypes}
             />
-            <RectangleIconButton color="error" onClick={() => deleteSummary(index)} >
+            <RectangleIconButton
+              color="error"
+              onClick={() => deleteSummary(index)}
+            >
               <Delete color="error" />
             </RectangleIconButton>
           </div>
         ))}
 
-        <div className={styles.summaryButton} onClick={addNewSummary} >
-          <button type="button" >+ Создать новый</button>
+        <div className={styles.summaryButton} onClick={addNewSummary}>
+          <button type="button">+ Создать новый</button>
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default SummaryBlock
+export default SummaryBlock;

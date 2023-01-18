@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CreateButton from "../../components/Buttons/CreateButton";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
@@ -25,10 +25,14 @@ import ExcelButtons from "./components/ExcelButtons";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MultipleInsertButton from "./components/MultipleInsertForm";
 import CustomActionsButton from "./components/CustomActionsButton";
-import { Clear, Edit, Save } from "@mui/icons-material";
+import { Clear, Description, Edit, Save } from "@mui/icons-material";
 import { useFieldArray, useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
+import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
+import { endOfMonth, startOfMonth } from "date-fns";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import Menu from "@mui/material/Menu";
 
 const ViewsWithGroups = ({
   views,
@@ -43,10 +47,25 @@ const ViewsWithGroups = ({
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [shouldGet, setShouldGet] = useState(false);
   const [heightControl, setHeightControl] = useState(false);
+  const [financeDate, setFinanceDate] = useState([]);
   const { navigateToForm } = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
+
+  const [dateFilters, setDateFilters] = useState({
+    $gte: startOfMonth(new Date()),
+    $lt: endOfMonth(new Date()),
+  });
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const tableHeightOptions = [
     {
@@ -122,20 +141,38 @@ const ViewsWithGroups = ({
     navigateToForm(tableSlug);
   };
 
+  function dateIsValid(date) {
+    return date instanceof Date && !isNaN(date);
+  }
+
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
   const { data: tabs, isLoading: loader } = useQuery(
     queryGenerator(groupField, filters)
   );
-  console.log("view", view);
+
+  useEffect(() => {
+    if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
+      constructorObjectService
+        .getFinancialAnalytics(tableSlug, {
+          data: {
+            start: dateFilters?.$gte,
+            end: dateFilters?.$lt,
+            view_id: view?.id,
+          },
+        })
+        .then((res) => {
+          setFinanceDate(res?.data?.response);
+        });
+    }
+  }, [dateFilters, tableSlug]);
+
   return (
     <>
       <FiltersBlock
         extra={
           <>
-            <FastFilterButton view={view} fieldsMap={fieldsMap} />
-            <ExcelButtons fieldsMap={fieldsMap} />
             {view.type === "TABLE" && (
               <RectangleIconButton
                 color="white"
@@ -149,7 +186,7 @@ const ViewsWithGroups = ({
                       alignItems: "center",
                     }}
                   >
-                    <FormatLineSpacingIcon />
+                    <FormatLineSpacingIcon color="primary" />
                   </span>
                   {heightControl && (
                     <div className={style.heightControl}>
@@ -160,7 +197,9 @@ const ViewsWithGroups = ({
                           onClick={() => handleHeightControl(el.value)}
                         >
                           {el.label}
-                          {tableHeight === el.value ? <CheckIcon /> : null}
+                          {tableHeight === el.value ? (
+                            <CheckIcon color="primary" />
+                          ) : null}
                         </div>
                       ))}
                     </div>
@@ -168,7 +207,68 @@ const ViewsWithGroups = ({
                 </div>
               </RectangleIconButton>
             )}
-            <SettingsButton />
+
+            <FastFilterButton view={view} fieldsMap={fieldsMap} />
+
+            <button className={style.moreButton} onClick={handleClick}>
+              <MoreHorizIcon
+                style={{
+                  color: "#888",
+                }}
+              />
+            </button>
+            <Menu
+              open={open}
+              onClose={handleClose}
+              anchorEl={anchorEl}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    // width: 100,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+            >
+              <div className={style.menuBar}>
+                <ExcelButtons fieldsMap={fieldsMap} />
+                <div
+                  className={style.template}
+                  onClick={() => setSelectedTabIndex(views?.length)}
+                >
+                  <div
+                    className={`${style.element} ${
+                      selectedTabIndex === views?.length ? style.active : ""
+                    }`}
+                  >
+                    <Description
+                      className={style.icon}
+                      style={{ color: "#6E8BB7" }}
+                    />
+                  </div>
+                  <span>Template</span>
+                </div>
+                <SettingsButton />
+              </div>
+            </Menu>
           </>
         }
       >
@@ -177,6 +277,9 @@ const ViewsWithGroups = ({
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
         />
+        {view?.type === "FINANCE CALENDAR" && (
+          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+        )}
       </FiltersBlock>
 
       <Tabs direction={"ltr"} defaultIndex={0}>
@@ -289,11 +392,11 @@ const ViewsWithGroups = ({
                     />
                   ) : view?.type === "FINANCE CALENDAR" ? (
                     <FinancialCalendarView
-                      control={control}
                       view={view}
                       filters={filters}
                       fieldsMap={fieldsMap}
                       tab={tab}
+                      financeDate={financeDate}
                     />
                   ) : (
                     <TableView
@@ -326,6 +429,7 @@ const ViewsWithGroups = ({
                       view={view}
                       filters={filters}
                       fieldsMap={fieldsMap}
+                      financeDate={financeDate}
                     />
                   ) : (
                     <TableView

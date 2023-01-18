@@ -69,6 +69,7 @@ const FieldsBlock = ({
       (field) =>
         field.type !== "LOOKUP" &&
         field.type !== "LOOKUPS" &&
+        field.type !== "DYNAMIC" &&
         (!usedFields.includes(field.id) ||
           !usedSummarySectionFields.includes(field.id))
     );
@@ -128,7 +129,7 @@ const FieldsBlock = ({
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
                   ...unusedFields[i],
-                  field_name: unusedFields[i]?.label,
+                  field_name: unusedFields[i]?.label ?? unusedFields[i]?.title,
                 })}
               >
                 {unusedFields?.map((field, index) => (
@@ -156,7 +157,8 @@ const FieldsBlock = ({
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
                   ...unusedRelations[i],
-                  field_name: unusedRelations[i]?.label,
+                  field_name:
+                    unusedRelations[i]?.label ?? unusedFields[i]?.title,
                   relation_type: unusedRelations[i].type,
                 })}
               >

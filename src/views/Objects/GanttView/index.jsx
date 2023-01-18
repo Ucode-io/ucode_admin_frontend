@@ -24,8 +24,12 @@ import FastFilterButton from "../components/FastFilter/FastFilterButton";
 import SettingsButton from "../components/ViewSettings/SettingsButton";
 import ViewTabSelector from "../components/ViewTypeSelector";
 import styles from "@/views/Objects/TableView/styles.module.scss";
+import style from "./style.module.scss";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import Gantt from "./Gantt";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import Menu from "@mui/material/Menu";
+import { Description } from "@mui/icons-material";
 
 const variableTypes = [
   {
@@ -56,6 +60,15 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
     endOfMonth(new Date()),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const groupFieldIds = view.group_fields;
   const groupFields = groupFieldIds
@@ -122,9 +135,69 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
         extra={
           <>
             <FastFilterButton view={view} />
-            <ExcelButtons />
+            <button className={style.moreButton} onClick={handleClick}>
+              <MoreHorizIcon
+                style={{
+                  color: "#888",
+                }}
+              />
+            </button>
+            <Menu
+              open={open}
+              onClose={handleClose}
+              anchorEl={anchorEl}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    // width: 100,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+            >
+              <div className={style.menuBar}>
+                <ExcelButtons />
+                <div
+                  className={style.template}
+                  onClick={() => setSelectedTabIndex(views?.length)}
+                >
+                  <div
+                    className={`${style.element} ${
+                      selectedTabIndex === views?.length ? style.active : ""
+                    }`}
+                  >
+                    <Description
+                      className={style.icon}
+                      style={{ color: "#6E8BB7" }}
+                    />
+                  </div>
+                  <span>Template</span>
+                </div>
 
-            <SettingsButton />
+                <SettingsButton />
+              </div>
+            </Menu>
+            {/* <ExcelButtons />
+
+            <SettingsButton /> */}
           </>
         }
       >

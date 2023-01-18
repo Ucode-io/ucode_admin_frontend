@@ -1,5 +1,6 @@
 import { TextField } from "@mui/material";
 import { Controller, useWatch } from "react-hook-form";
+import {numberWithSpaces} from "@/utils/formatNumbers";
 
 const HFNumberField = ({
   control,
@@ -14,6 +15,7 @@ const HFNumberField = ({
   defaultValue = "",
     tabIndex,
   disabled,
+  type='text',
   ...props
 }) => {
   const value = useWatch({
@@ -33,12 +35,13 @@ const HFNumberField = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
-          value={value}
+          value={numberWithSpaces(Number(value))}
           onChange={(e) => {
             const val = e.target.value;
+            const valueWithoutSpaces = val.replaceAll(' ', '')
 
-            if (!val) onChange("");
-            else onChange(!isNaN(Number(val)) ? Number(val) : "");
+            if (!valueWithoutSpaces) onChange('');
+            else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '');
           }}
           className={`${isFormEdit ? "custom_textfield" : ""}`}
           name={name}

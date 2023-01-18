@@ -242,7 +242,6 @@ const AutoCompleteElement = ({
           </span>
         }
         inputValue={inputValue}
-        // inputValue={inputValue}
         onInputChange={(_, val) => {
           setInputValue(val);
           inputChangeHandler(val);

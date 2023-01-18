@@ -117,9 +117,11 @@ const AutoCompleteElement = ({
   isBlackBg,
 }) => {
   const [dialogState, setDialogState] = useState(null);
+  const editPermission = field?.attributes?.field_permission?.edit_permission;
   const handleOpen = (inputValue) => {
     setDialogState(inputValue);
   };
+
   const handleClose = () => {
     setDialogState(null);
   };
@@ -218,10 +220,12 @@ const AutoCompleteElement = ({
               >
                 {hasIcon && <IconGenerator icon={el?.icon} />}
                 <p className={styles.value}>{el?.label ?? el?.value}</p>
-                <Close
-                  fontSize="10"
-                  onClick={getTagProps({ index })?.onDelete}
-                />
+                {field?.attributes?.disabled === false && editPermission && (
+                  <Close
+                    fontSize="10"
+                    onClick={getTagProps({ index })?.onDelete}
+                  />
+                )}
               </div>
             ))}
           </div>

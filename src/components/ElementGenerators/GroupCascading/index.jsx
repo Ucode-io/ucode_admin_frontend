@@ -81,7 +81,7 @@ const GroupCascading = ({
       const { data } = await constructorObjectService.getList(
         field?.attributes?.cascading_tree_table_slug,
         {
-          data: { offset: 0, limit: 10 },
+          data: {},
         }
       );
 

@@ -160,7 +160,6 @@ const Logins = ({ tables, fields, clientType, getFields = () => {} }) => {
   return (
     <FormCard title="Логин" icon="address-card.svg" maxWidth="100%">
       <div className={styles.login_card}>
-        {console.log("logins ", logins)}
         {logins.map((login) => (
           <div className={styles.card_holder} key={login?.guid}>
             <div className={styles.card_header}>

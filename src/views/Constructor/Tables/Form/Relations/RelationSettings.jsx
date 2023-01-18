@@ -32,11 +32,11 @@ import CascadingRelationSettings from "./CascadingRelationSettings.jsx";
 import CascadingTreeBlock from "./CascadingTreeBlock";
 import styles from "./style.module.scss";
 import SummaryBlock from "./SummaryBlock";
-import ActionRelations from "./ActionRelations";
 import { useSelector } from "react-redux";
 import MultipleInsertSettings from "@/views/Objects/components/ViewSettings/MultipleInsertSettings";
 import multipleInsertForm from "@/views/Objects/components/MultipleInsertForm";
 import listToOptions from "@/utils/listToOptions";
+import TableActions from "../Actions/TableActions";
 
 const relationViewTypes = [
   {
@@ -422,7 +422,7 @@ const RelationSettings = ({
             </Container>
           )}
 
-          <ActionRelations control={control} />
+          <TableActions control={control} watch={watch} setValue={setValue} />
 
           <div className={styles.section}>
             <div className={styles.sectionHeader}>

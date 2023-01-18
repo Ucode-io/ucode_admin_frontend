@@ -13,7 +13,6 @@ import {
 } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import constructorObjectService from "../../../services/constructorObjectService";
 import CustomActionsButton from "../components/CustomActionsButton";
@@ -28,14 +27,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import DownloadIcon from "@mui/icons-material/Download";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import ExcelButtons from "@/views/Objects/components/ExcelButtons";
 import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDownloadButton";
 import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUploadButton";
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
-import { addMinutes } from "date-fns";
 
 const RelationSection = ({
   relations,
@@ -43,7 +37,10 @@ const RelationSection = ({
   id: idFromProps,
 }) => {
   const filteredRelations = useMemo(() => {
-    return relations?.filter((relation) => relation?.relatedTable);
+    const rel = relations?.filter((relation) => relation?.relatedTable);
+    return rel?.filter((item) => {
+      return item?.permission?.view_permission === true;
+    });
   }, [relations]);
   const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
 
@@ -60,15 +57,18 @@ const RelationSection = ({
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
+  const [jwtObjects, setJwtObjects] = useState([]);
   const [dataLength, setDataLength] = useState(0);
   const [heightControl, setHeightControl] = useState(false);
   const [moreShowButton, setMoreShowButton] = useState(false);
+  const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   let [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
   const navigate = useNavigate();
+  const tables = useSelector((state) => state?.auth?.tables);
 
   useEffect(() => {
     queryTab
@@ -98,10 +98,13 @@ const RelationSection = ({
     },
   });
 
-  const { fields, remove, append } = useFieldArray({
+  const { fields, remove, append, update } = useFieldArray({
     control,
     name: "multi",
   });
+  useEffect(() => {
+    update();
+  }, []);
 
   const selectedRelation = filteredRelations[selectedTabIndex];
 
@@ -124,12 +127,19 @@ const RelationSection = ({
       [relationId]: value,
     }));
   };
-
   const navigateToCreatePage = () => {
+    let mapped = {
+      [`${tableSlug}_id`]: idFromParams ?? "",
+    };
+    defaultValuesFromJwt.forEach((el) => {
+      let keys = Object.keys(el);
+      let values = Object.values(el);
+      mapped[keys[0]] = values[0];
+    });
     const relation = filteredRelations[selectedTabIndex];
     if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation);
     else {
-      append({ [`${tableSlug}_id`]: idFromParams ?? "" });
+      append(mapped);
       setFormVisible(true);
 
       // if (relation.is_editable) setCreateFormVisible(relation.id, true)
@@ -191,15 +201,56 @@ const RelationSection = ({
   );
   const onSubmit = (data) => {
     updateMultipleObject(data);
-    navigate("/reload", {
+    navigate("/reloadRelations", {
       state: {
         redirectUrl: window.location.pathname,
       },
     });
   };
 
-  if (!filteredRelations?.length) return null;
+  /*****************************JWT START*************************/
 
+  useEffect(() => {
+    selectedRelation &&
+      constructorObjectService
+        .getList(selectedRelation?.relatedTable, {
+          data: {
+            offset: 0,
+            limit: 0,
+            [`${tableSlug}_id`]: idFromParams,
+          },
+        })
+        .then((res) => {
+          setJwtObjects(
+            res?.data?.fields?.filter(
+              (item) => item?.attributes?.object_id_from_jwt === true
+            )
+          );
+        })
+        .catch((a) => console.log("error", a));
+  }, [selectedRelation]);
+
+  useEffect(() => {
+    let tableSlugsFromObj = jwtObjects?.map((item) => {
+      return item?.table_slug;
+    });
+
+    let computeJwtObjs = tableSlugsFromObj?.map((item) => {
+      return tables?.filter((table) => item === table?.table_slug);
+    });
+
+    setDefaultValuesFromJwt(
+      computeJwtObjs?.map((item) => {
+        return {
+          [`${item?.[0]?.table_slug}_id`]: item?.[0]?.object_id,
+        };
+      })
+    );
+  }, [jwtObjects]);
+
+  /*****************************JWT END*************************/
+
+  if (!filteredRelations?.length) return null;
   return (
     <>
       {selectedManyToManyRelation && (
@@ -409,7 +460,7 @@ const RelationSection = ({
                             fieldSlug={fieldSlug}
                             fieldSlugId={id}
                             withText={true}
-                            sort={myRef.current.excelSort()}
+                            sort={myRef.current?.excelSort()}
                           />
                         </div>
                       </div>

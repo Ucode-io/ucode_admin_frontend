@@ -1,9 +1,9 @@
-import { Delete, FilterAlt, JoinInner, TableChart } from "@mui/icons-material";
+import {Delete, FilterAlt, JoinInner, TableChart} from "@mui/icons-material";
 import InfoIcon from '@mui/icons-material/Info';
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { Tab, TabList, Tabs, TabPanel } from "react-tabs";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useParams} from "react-router-dom";
+import {Tab, TabList, Tabs, TabPanel} from "react-tabs";
 import CancelButton from "../../../../components/Buttons/CancelButton";
 import SaveButton from "../../../../components/Buttons/SaveButton";
 import FRow from "../../../../components/FormElements/FRow";
@@ -11,7 +11,7 @@ import HFSelect from "../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import useWatch from "../../../../hooks/useWatch";
 import constructorViewService from "../../../../services/constructorViewService";
-import { viewTypes } from "../../../../utils/constants/viewTypes";
+import {viewTypes} from "../../../../utils/constants/viewTypes";
 import CalendarHourSettings from "./CalendarHourSettings";
 import CalendarSettings from "./CalendarSettings";
 import ColumnsTab from "./ColumnsTab";
@@ -22,25 +22,29 @@ import QuickFiltersTab from "./QuicFiltersTab";
 import styles from "./style.module.scss";
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ChartAccounts from "./ChartAccounts";
+import ChartAccountsWrapper from "@/views/Objects/components/ViewSettings/ChartAccountsWrapper";
+import constructorFieldService from "@/services/constructorFieldService";
 
 const ViewForm = ({
-  initialValues,
-  typeNewView,
-  closeForm,
-  refetchViews,
-  setIsChanged,
-  columns,
-  relationColumns,
-}) => {
-  const { tableSlug, appId } = useParams();
+                    initialValues,
+                    typeNewView,
+                    closeForm,
+                    refetchViews,
+                    setIsChanged,
+                    closeModal,
+                    columns,
+                    relationColumns,
+                  }) => {
+  const {tableSlug, appId} = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
-
-  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
-
+  const [computeObjects, setComputeObjects] = useState([]);
+  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
+  const financialValues = initialValues?.attributes?.chart_of_accounts
   const form = useForm();
-
   const type = form.watch("type");
+
+
 
   const computedColumns = useMemo(() => {
     if (type !== "CALENDAR" && type !== "GANTT") {
@@ -50,18 +54,46 @@ const ViewForm = ({
     }
   }, [columns, relationColumns, type]);
 
+  const computeFinancialAcc = (values, groupByField) => {
+    if (values === undefined) return {chart_of_accounts: []};
+
+    const computedFormat = values.map(row => {
+
+      return {
+        group_by: row.group_by,
+        field_slug: groupByField,
+        chart_of_account: Object.entries(row).filter(([key]) => key !== "group_by").map(([key, value]) => {
+
+          const options = []
+
+          return {
+            object_id: key,
+            options: value.filter(option => !!option)?.map(option => ({
+              ...option,
+              filters: option.filterFields?.map(filterField=>({
+                field_id: filterField.field_id,
+                value: option.filters?.[filterField.field_id]
+              }))
+            }))
+          }
+        })
+      }
+    })
+    return {chart_of_accounts: computedFormat}
+  }
+
   useEffect(() => {
     form.reset(
-      getInitialValues(initialValues, tableSlug, columns, relationColumns)
+      {...getInitialValues(initialValues, tableSlug, columns, typeNewView, relationColumns, financialValues), filters: []}
     );
-  }, [initialValues, tableSlug, form]);
+  }, [initialValues, tableSlug, form, typeNewView]);
 
   useWatch(() => {
     // const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)
     const formQuickFilters = form
       .getValues("quick_filters")
       ?.filter((el) => el?.is_checked)
-      ?.map((el) => ({ field_id: el.id }));
+      ?.map((el) => ({field_id: el.id}));
 
     // form.setValue('columns', computeColumns(formColumns, computedColumns))
     form.setValue(
@@ -73,11 +105,10 @@ const ViewForm = ({
           : columns
       )
     );
-  }, [type]);
+  }, [type, form]);
 
   const onSubmit = (values) => {
     setBtnLoader(true);
-
     const computedValues = {
       ...values,
       columns:
@@ -89,6 +120,7 @@ const ViewForm = ({
             field_id: el.id,
             default_value: el.default_value ?? "",
           })) ?? [],
+      attributes: computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug),
       app_id: appId,
     };
 
@@ -100,7 +132,9 @@ const ViewForm = ({
           refetchViews();
           setIsChanged(true);
         })
-        .finally(() => setBtnLoader(false));
+        .finally(() => {
+          setBtnLoader(false)
+        });
     } else {
       constructorViewService
         .update(computedValues)
@@ -109,8 +143,11 @@ const ViewForm = ({
           refetchViews();
           setIsChanged(true);
         })
-        .finally(() => setBtnLoader(false));
+        .finally(() => {
+          setBtnLoader(false)
+        });
     }
+    closeForm();
   };
 
   const deleteView = () => {
@@ -132,79 +169,83 @@ const ViewForm = ({
             <TabList>
               <Tab>
                 {" "}
-                <InfoIcon /> Info
+                <InfoIcon/> Info
               </Tab>
               <Tab>
                 {" "}
-                <FilterAlt /> Quick filters
+                <FilterAlt/> Quick filters
               </Tab>
               <Tab>
                 {" "}
-                <TableChart />
+                <TableChart/>
                 Columns
               </Tab>
-              <Tab>
-                {" "}
-                <JoinInner /> Group by
-              </Tab>
+              {
+                type !== "FINANCE CALENDAR" && <Tab>
+                  {" "}
+                  <JoinInner/> Group by
+                </Tab>
+              }
               {
                 type === 'FINANCE CALENDAR' && <Tab>
-                {" "}
-                <MonetizationOnIcon /> Chart of accaunts
-              </Tab>
+                  {" "}
+                  <MonetizationOnIcon/> Chart of accaunts
+                </Tab>
               }
             </TabList>
             <TabPanel>
-            <div className={styles.section}>
-              <div className={styles.sectionHeader}>
-                <div className={styles.sectionTitle}>Main info</div>
-              </div>
+              <div className={styles.section}>
+                <div className={styles.sectionHeader}>
+                  <div className={styles.sectionTitle}>Main info</div>
+                </div>
 
-              <div className={styles.sectionBody}>
-                <div className={styles.formRow}>
-                  <FRow label="Название">
-                    <HFTextField control={form.control} name="name" fullWidth />
-                  </FRow>
-                  <FRow label="Тип">
-                    <HFSelect
-                      options={computedViewTypes}
-                      defaultValue={typeNewView}
-                      control={form.control}
-                      name="type"
-                      fullWidth
-                    />
+                <div className={styles.sectionBody}>
+                  <div className={styles.formRow}>
+                    <FRow label="Название">
+                      <HFTextField control={form.control} name="name" fullWidth/>
+                    </FRow>
+                    <FRow label="Тип">
+                      <HFSelect
+                        options={computedViewTypes}
+                        defaultValue={typeNewView}
+                        control={form.control}
+                        name="type"
+                        fullWidth
+                      />
+                    </FRow>
+                  </div>
+                  <FRow label="Default limit">
+                    <HFTextField control={form.control} name="default_limit"/>
                   </FRow>
                 </div>
-                <FRow label="Default limit">
-                  <HFTextField control={form.control} name="default_limit" />
-                </FRow>
               </div>
-            </div>
 
-            <MultipleInsertSettings form={form} columns={columns} />
+              <MultipleInsertSettings form={form} columns={columns}/>
 
-            {type === "CALENDAR" && (
-          <CalendarSettings form={form} columns={columns} />
-        )}
+              {type === "CALENDAR" && (
+                <CalendarSettings form={form} columns={columns}/>
+              )}
 
-        {type === "CALENDAR HOUR" && (
-          <CalendarHourSettings form={form} columns={columns} />
-        )}
+              {type === "CALENDAR HOUR" && (
+                <CalendarHourSettings form={form} columns={columns}/>
+              )}
 
-        {type === "GANTT" && <GanttSettings form={form} columns={columns} />}
+              {type === "GANTT" && <GanttSettings form={form} columns={columns}/>}
 
             </TabPanel>
             <TabPanel>
-              <QuickFiltersTab form={form} />
+              <QuickFiltersTab form={form}/>
             </TabPanel>
             <TabPanel>
-              <ColumnsTab form={form} />
+              <ColumnsTab form={form}/>
             </TabPanel>
+            {
+              type !== "FINANCE CALENDAR" && <TabPanel>
+                <GroupsTab columns={computedColumns} form={form}/>
+              </TabPanel>
+            }
             <TabPanel>
-              <GroupsTab columns={computedColumns} form={form} />
-            </TabPanel>
-            <TabPanel>
-              <ChartAccounts />
+              <ChartAccountsWrapper viewId={initialValues.id} form={form}/>
             </TabPanel>
           </div>
         </Tabs>
@@ -216,11 +257,11 @@ const ViewForm = ({
             loading={deleteBtnLoader}
             onClick={deleteView}
             title={"Delete"}
-            icon={<Delete />}
+            icon={<Delete/>}
           />
         )}
-        <CancelButton onClick={closeForm} />
-        <SaveButton onClick={form.handleSubmit(onSubmit)} loading={btnLoader} />
+        <CancelButton onClick={closeModal}/>
+        <SaveButton onClick={form.handleSubmit(onSubmit)} loading={btnLoader}/>
       </div>
     </div>
   );
@@ -230,11 +271,13 @@ const getInitialValues = (
   initialValues,
   tableSlug,
   columns,
-  relationColumns
+  typeNewView,
+  relationColumns,
+  financialValues
 ) => {
   if (initialValues === "NEW")
     return {
-      type: "TABLE",
+      type: typeNewView,
       users: [],
       name: "",
       default_limit: "",
@@ -247,15 +290,15 @@ const getInitialValues = (
         time_from_slug: "",
         time_to_slug: "",
       },
-      columns: columns?.map((el) => ({ ...el, is_checked: true })) ?? [],
+      columns: columns?.map((el) => ({...el, is_checked: true})) ?? [],
       quick_filters: columns ?? [],
       group_fields: [],
       table_slug: tableSlug,
       updated_fields: [],
       multiple_insert: false,
       multiple_insert_field: "",
+      chartOfAccounts: [{}]
     };
-
   return {
     type: initialValues?.type ?? "TABLE",
     users: initialValues?.users ?? [],
@@ -291,7 +334,9 @@ const getInitialValues = (
     updated_fields: initialValues?.updated_fields ?? [],
     multiple_insert: initialValues?.multiple_insert ?? false,
     multiple_insert_field: initialValues?.multiple_insert_field ?? "",
+    chartOfAccounts: computeFinancialColumns(financialValues),
   };
+
 };
 
 const computeColumns = (checkedColumnsIds = [], columns) => {
@@ -306,6 +351,33 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
     columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
   return [...selectedColumns, ...unselectedColumns];
 };
+
+const computeFinancialColumns = (financialValues) => {
+
+  return financialValues?.map(row => {
+    const computedRow = { group_by: row.group_by }
+
+    row.chart_of_account?.forEach(chart => {
+      computedRow[chart.object_id] = []
+
+      chart.options?.forEach(option => {
+        const filters = {}
+        const filterFields = []
+
+        option.filters?.forEach(filter => {
+          filters[filter.field_id] = filter.value
+          filterFields.push({ field_id: filter.field_id })
+        })
+        const computedObj = {...option, filters, filterFields}
+        computedRow[chart.object_id].push(computedObj)
+      })
+
+    })
+
+    return computedRow
+
+  })
+}
 
 const computeQuickFilters = (quickFilters = [], columns) => {
   const selectedQuickFilters =

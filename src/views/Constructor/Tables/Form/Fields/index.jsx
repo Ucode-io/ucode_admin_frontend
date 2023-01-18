@@ -1,85 +1,85 @@
 // import { Delete, Edit } from "@mui/icons-material"
-import { Add } from "@mui/icons-material"
-import { Drawer } from "@mui/material"
-import { useMemo, useState } from "react"
-import { useFieldArray } from "react-hook-form"
-import { useParams } from "react-router-dom"
-import { CTableCell, CTableRow } from "../../../../../components/CTable"
-import DataTable from "../../../../../components/DataTable"
-import TableCard from "../../../../../components/TableCard"
-import constructorFieldService from "../../../../../services/constructorFieldService"
-import { generateGUID } from "../../../../../utils/generateID"
-import FieldSettings from "./FieldSettings"
-import styles from "./style.module.scss"
+import { Add } from "@mui/icons-material";
+import { Drawer } from "@mui/material";
+import { useMemo, useState } from "react";
+import { useFieldArray } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import { CTableCell, CTableRow } from "../../../../../components/CTable";
+import DataTable from "../../../../../components/DataTable";
+import TableCard from "../../../../../components/TableCard";
+import constructorFieldService from "../../../../../services/constructorFieldService";
+import { generateGUID } from "../../../../../utils/generateID";
+import FieldSettings from "./FieldSettings";
+import styles from "./style.module.scss";
 
 const Fields = ({ mainForm }) => {
-  const { id, slug } = useParams()
-  const [formLoader, setFormLoader] = useState(false)
-  const [drawerState, setDrawerState] = useState(null)
+  const { id, slug } = useParams();
+  const [formLoader, setFormLoader] = useState(false);
+  const [drawerState, setDrawerState] = useState(null);
 
   const { fields, prepend, update, remove } = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
-  })
+  });
 
   const createField = (field) => {
     const data = {
       ...field,
       id: generateGUID(),
-    }
+    };
 
     if (!id) {
-      prepend(data)
-      setDrawerState(null)
+      prepend(data);
+      setDrawerState(null);
     } else {
-      setFormLoader(true)
+      setFormLoader(true);
       constructorFieldService
         .create(data)
         .then((res) => {
-          prepend(res)
-          setDrawerState(null)
+          prepend(res);
+          setDrawerState(null);
         })
-        .finally(() => setFormLoader(false))
+        .finally(() => setFormLoader(false));
     }
-  }
+  };
 
   const updateField = (field) => {
-    const index = fields.findIndex((el) => el.id === field.id)
+    const index = fields.findIndex((el) => el.id === field.id);
 
     if (!id) {
-      update(index, field)
-      setDrawerState(null)
+      update(index, field);
+      setDrawerState(null);
     } else {
-      setFormLoader(true)
+      setFormLoader(true);
       constructorFieldService
         .update(field)
         .then((res) => {
-          update(index, field)
-          setDrawerState(null)
+          update(index, field);
+          setDrawerState(null);
         })
-        .finally(() => setFormLoader(false))
+        .finally(() => setFormLoader(false));
     }
-  }
+  };
 
   const openEditForm = (field) => {
-    setDrawerState(field)
-  }
+    setDrawerState(field);
+  };
 
   const deleteField = (field, index) => {
-    if (!id) remove(index)
+    if (!id) remove(index);
     else {
-      constructorFieldService.delete(field.id).then((res) => remove(index))
+      constructorFieldService.delete(field.id).then((res) => remove(index));
     }
-  }
+  };
 
   const onFormSubmit = (values) => {
     if (drawerState === "CREATE") {
-      createField(values)
+      createField(values);
     } else {
-      updateField(values)
+      updateField(values);
     }
-  }
+  };
 
   const columns = useMemo(
     () => [
@@ -100,7 +100,7 @@ const Fields = ({ mainForm }) => {
       },
     ],
     []
-  )
+  );
 
   return (
     <TableCard>
@@ -157,7 +157,7 @@ const Fields = ({ mainForm }) => {
         mainForm={mainForm}
       /> */}
     </TableCard>
-  )
-}
+  );
+};
 
-export default Fields
+export default Fields;

@@ -4,6 +4,7 @@ import RectangleIconButton from "../../../../components/Buttons/RectangleIconBut
 import { Dialog } from "@mui/material";
 import ExcelUploadModal from "./ExcelUploadModal";
 import { makeStyles } from "@mui/styles";
+import style from "./style.module.scss";
 
 const useStyles = makeStyles({
   root: {},
@@ -16,12 +17,13 @@ const ExcelUploadButton = ({ fieldsMap, withText }) => {
   const classes = useStyles();
   return (
     <div>
-      <RectangleIconButton color="white" onClick={() => handleClick()}>
-          {
-            withText ? 'Импорт' : null
-          }
+      <div className={style.excelUpload} onClick={() => handleClick()}>
+        <RectangleIconButton color="white" onClick={() => handleClick()}>
+          {withText ? "Импорт" : null}
           <Upload />
-      </RectangleIconButton>
+        </RectangleIconButton>
+        <span>Excel upload</span>
+      </div>
 
       <Dialog className={classes.root} open={open} onClose={handleClose}>
         <ExcelUploadModal fieldsMap={fieldsMap} handleClose={handleClose} />

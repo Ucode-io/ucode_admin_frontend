@@ -1,5 +1,4 @@
-
-@use '/src/scss/colors';
+@use "/src/scss/colors";
 
 .selector {
   display: flex;
@@ -12,26 +11,25 @@
     height: 48px;
     min-width: 32px;
     // background: #fff;
-    border-right: 1px solid #E5E9EB;
+    border-right: 1px solid #e5e9eb;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #6E8BB7;
+    color: #6e8bb7;
     cursor: pointer;
     padding: 0 10px;
     &.active {
       color: colors.$primary;
       background-color: #fff;
       border-bottom: 1px solid #fff;
-      border-top: 2px solid #0E73F6;
-
+      border-top: 2px solid #0e73f6;
     }
 
-    .icon{
+    .icon {
       margin-right: 6px;
     }
 
-    span{
+    span {
       font-size: 14px;
       font-weight: 500;
       line-height: 24px;
@@ -43,19 +41,19 @@
       // border: 1px solid #D5DADD;
     }
 
-    button{
+    button {
       border: none;
       margin-left: 5px;
       background: none;
-      color: #0E73F6;
+      color: #0e73f6;
       border-radius: 50%;
       width: 20px;
       height: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
-      &:hover{
-        background-color: #E5E9EB;
+      &:hover {
+        background-color: #e5e9eb;
         cursor: pointer;
       }
     }
@@ -63,17 +61,18 @@
 }
 
 .modal {
+  z-index: 3 !important;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.viewTypes{
+.viewTypes {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 12px;
-  button{
+  button {
     background-color: #fff;
     border: 0;
     padding: 8px 12px;
@@ -84,13 +83,13 @@
     width: 100%;
     display: flex;
     justify-content: flex-start;
-    svg{
+    svg {
       margin-right: 8px;
-      color: #6E8BB7;
+      color: #6e8bb7;
     }
 
-    &:hover{
-      background-color: #F6F8F9;
+    &:hover {
+      background-color: #f6f8f9;
     }
   }
 }

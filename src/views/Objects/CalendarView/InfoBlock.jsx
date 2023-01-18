@@ -5,7 +5,6 @@ import {getRelationFieldTableCellLabel} from "../../../utils/getRelationFieldLab
 import styles from "./style.module.scss"
 
 const InfoBlock = ({viewFields, data, isSingleLine}) => {
-    console.log("DATA ===>", data)
 
     if (isSingleLine)
         return (

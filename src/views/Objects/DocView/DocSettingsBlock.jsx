@@ -1,6 +1,6 @@
-import ExportBlock from "./ExportBlock"
-import PageSizeBlock from "./PageSizeBlock"
-import styles from "./style.module.scss"
+import ExportBlock from "./ExportBlock";
+import PageSizeBlock from "./PageSizeBlock";
+import styles from "./style.module.scss";
 
 const DocSettingsBlock = ({
   selectedSettingsTab,
@@ -10,6 +10,14 @@ const DocSettingsBlock = ({
   setSelectedPaperSizeIndex,
   htmlLoader,
   exportToHTML,
+  setSelectedOutputTable,
+  selectedOutputTable,
+  selectedOutputObject,
+  setSelectedOutputObject,
+  templates,
+  selectedTemplate,
+  selectedLinkedObject,
+  setSelectedLinkedObject,
 }) => {
   return (
     <div className={styles.docSettingsBlock}>
@@ -25,10 +33,18 @@ const DocSettingsBlock = ({
           pdfLoader={pdfLoader}
           htmlLoader={htmlLoader}
           exportToHTML={exportToHTML}
+          setSelectedOutputTable={setSelectedOutputTable}
+          selectedOutputTable={selectedOutputTable}
+          selectedOutputObject={selectedOutputObject}
+          setSelectedOutputObject={setSelectedOutputObject}
+          templates={templates}
+          selectedTemplate={selectedTemplate}
+          selectedLinkedObject={selectedLinkedObject}
+          setSelectedLinkedObject={setSelectedLinkedObject}
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default DocSettingsBlock
+export default DocSettingsBlock;

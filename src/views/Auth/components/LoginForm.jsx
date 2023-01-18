@@ -12,6 +12,7 @@ import HFSelect from "../../../components/FormElements/HFSelect"
 import HFTextField from "../../../components/FormElements/HFTextField"
 import authService from "../../../services/auth/authService"
 import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2"
+import environmentService from "../../../services/environmentService"
 import { loginAction } from "../../../store/auth/auth.thunk"
 import listToOptions from "../../../utils/listToOptions"
 import classes from "../style.module.scss"
@@ -29,6 +30,7 @@ const LoginForm = () => {
 
   const selectedCompanyID = watch('company_id')
   const selectedProjectID = watch('project_id')
+  const selectedEnvID = watch('environment_id')
 
   const computedCompanies = useMemo(() => {
     return listToOptions(companies, "name")
@@ -40,21 +42,30 @@ const LoginForm = () => {
     return listToOptions(company?.projects, "name")
   }, [companies, selectedCompanyID])
 
-  
-  // const computedClientTypes = useMemo(() => {
-  //   return listToOptions(clientTypes?.filter(el => el.project_id === selectedProjectID), "name", "name")
-  // }, [selectedProjectID, clientTypes])
 
 
-  const { data: computedClientTypes = [] } = useQuery(["GET_CLIENT_TYPE_LIST", {project_id: selectedProjectID}], () => {
-    return clientTypeServiceV2.getList({project_id: selectedProjectID})
+  const {data: computedEnvironments} = useQuery(["GET_ENVIRONMENT_LIST", {'project-id': selectedProjectID}], () => {
+    return environmentService.getList({'project-id': selectedProjectID})
   }, {
     enabled: !!selectedProjectID,
+    select: (res => res.data?.map(row => ({
+      label: row.name,
+      value: row.environment_id
+    })))
+  })
+
+
+  const { data: computedClientTypes = [] } = useQuery(["GET_CLIENT_TYPE_LIST", {project_id: selectedProjectID}, { 'environment-id': selectedEnvID }], () => {
+    return clientTypeServiceV2.getList({project_id: selectedProjectID}, { 'environment-id': selectedEnvID })
+  }, {
+    enabled: !!selectedEnvID,
     select: (res => res.data.response?.map(row => ({
       label: row.name,
       value: row.guid,
     })))
   })
+
+  
 
   const multiCompanyLogin = (data) => {
     setLoading(true)
@@ -69,10 +80,6 @@ const LoginForm = () => {
         setFormType("MULTI_COMPANY")
       })
       .catch(() => setLoading(false))
-  }
-
-  const login = () => {
-    
   }
 
   const onSubmit = (values) => {
@@ -164,6 +171,17 @@ const LoginForm = () => {
                   size="large"
                   placeholder={t("enter.project")}
                   options={computedProjects}
+                />
+              </div>
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("environment")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="environment_id"
+                  size="large"
+                  placeholder={t("select.environment")}
+                  options={computedEnvironments}
                 />
               </div>
               <div className={classes.formRow}>

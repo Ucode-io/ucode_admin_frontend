@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useMemo } from "react";
 
 import DataColumn from "./DataColumn";
@@ -15,13 +16,21 @@ const RecursiveBlock = ({
   workingDays,
 }) => {
   const elements = useMemo(() => {
-    if (!parentTab) return tabs?.[level]?.list;
+    const computedElements = [];
 
-    return tabs?.[level]?.list?.filter((el) => {
-      return Array.isArray(el[parentTab.slug])
-        ? el[parentTab.slug]?.includes(parentTab.value)
-        : el[parentTab.slug] === parentTab.value;
+    getChildrenList(parentTab, tabs, level)?.forEach((tab) => {
+      const childrens = getChildrenList(tab, tabs, level + 1);
+
+      if (!(childrens?.length || level !== 0 || tabs.length !== 2)) return;
+      else {
+        computedElements.push({
+          ...tab,
+          childrenNumber: childrens?.length,
+        });
+      }
     });
+
+    return computedElements;
   }, [parentTab, tabs, level]);
 
   if (!elements?.length)
@@ -35,7 +44,15 @@ const RecursiveBlock = ({
             elements?.length === 1 && level === 1 ? styles.oneElement : ""
           }`}
         >
-          <div className={`${styles.blockElement}`}>{tab.label}</div>
+          <div
+            className={`${styles.blockElement}  ${
+              !tabs?.[level + 1] || tab.childrenNumber === 1
+                ? styles.last
+                : styles.before
+            } `}
+          >
+            {tab.label}
+          </div>
 
           {tabs?.[level + 1] ? (
             <RecursiveBlock
@@ -63,6 +80,18 @@ const RecursiveBlock = ({
       ))}
     </div>
   );
+};
+
+const getChildrenList = (parentTab, tabs, level) => {
+  if (!parentTab) return tabs?.[level]?.list;
+
+  const computedElements = tabs?.[level]?.list?.filter((el) => {
+    return Array.isArray(el[parentTab.slug])
+      ? el[parentTab.slug]?.includes(parentTab.value)
+      : el[parentTab.slug] === parentTab.value;
+  });
+
+  return computedElements;
 };
 
 export default RecursiveBlock;

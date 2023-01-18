@@ -1,7 +1,7 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -10,8 +10,8 @@ import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
 import IconGenerator from "../IconPicker/IconGenerator";
 import styles from "./style.module.scss";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import CascadingElement from "./CascadingElement";
-import GroupCascadingViews from "./GroupCascadingView/index";
+import { useLocation } from "react-router-dom";
+import useDebounce from "../../hooks/useDebounce";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -33,8 +33,8 @@ const CellRelationFormElement = ({
   disabledHelperText,
   setFormValue,
   index,
-  defaultValue,
-  row,
+  defaultValue = null,
+  relationfields,
 }) => {
   const classes = useStyles();
 
@@ -45,32 +45,7 @@ const CellRelationFormElement = ({
         name={name}
         defaultValue={defaultValue}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
-          return field?.attributes?.cascadings?.length === 4 ? (
-            <CascadingElement
-              field={field}
-              tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              control={control}
-              setValue={onChange}
-              value={value}
-              setFormValue={setFormValue}
-              row={row}
-              index={index}
-            />
-          ) : field?.attributes?.cascading_tree ? (
-            <GroupCascadingViews
-              field={field}
-              tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              value={value}
-              setFormValue={setFormValue}
-              setValue={onChange}
-              index={index}
-              row={row}
-            />
-          ) : (
+          return (
             <AutoCompleteElement
               disabled={disabled}
               isFormEdit={isFormEdit}
@@ -87,6 +62,7 @@ const CellRelationFormElement = ({
               setFormValue={setFormValue}
               control={control}
               index={index}
+              relationfields={relationfields}
             />
           );
         }}
@@ -109,9 +85,14 @@ const AutoCompleteElement = ({
   setValue,
   index,
   control,
+  relationfields,
   setFormValue = () => {},
 }) => {
   const { navigateToForm } = useTabRouter();
+  const pathname = useLocation();
+  const [inputValue, setInputValue] = useState("");
+  const [debouncedValue, setDebouncedValue] = useState("");
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
@@ -137,15 +118,32 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
+  const getIds = useMemo(() => {
+    let val = [];
+    relationfields
+      ?.filter((item) => {
+        return item[field?.slug];
+      })
+      .map((item) => {
+        return val.push(item[field?.slug]);
+      });
+    return val;
+  }, [relationfields, field]);
+
   const { data: options } = useQuery(
-    [
-      "GET_OBJECT_LIST",
-      tableSlug.includes("doctors_") ? "doctors" : tableSlug,
-      autoFiltersValue,
-    ],
+    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: autoFiltersValue,
+        data: {
+          ...autoFiltersValue,
+          view_fields: field?.view_fields?.map((f) => f.slug),
+          limit: 10,
+          additional_request: {
+            additional_field: "guid",
+            additional_values: getIds,
+          },
+          search: debouncedValue.trim(),
+        },
       });
     },
     {
@@ -154,6 +152,7 @@ const AutoCompleteElement = ({
       },
     }
   );
+
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
@@ -163,6 +162,7 @@ const AutoCompleteElement = ({
     const val = value?.[value?.length - 1];
 
     setValue(val?.guid ?? null);
+    setInputValue("");
 
     // if (!field?.attributes?.autofill) return;
 
@@ -173,7 +173,7 @@ const AutoCompleteElement = ({
     //   setFormValue(setName.join("."), get(val, field_from));
     // });
   };
-  console.log("field", field);
+
   useEffect(() => {
     const val = computedValue[computedValue.length - 1];
     if (!field?.attributes?.autofill || !val) return;
@@ -184,13 +184,20 @@ const AutoCompleteElement = ({
       automatic &&
         setTimeout(() => {
           setFormValue(setName.join("."), get(val, field_from));
-        }, []);
+        }, 1);
     });
   }, [computedValue]);
 
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
+        inputValue={inputValue}
+        onInputChange={(event, newInputValue, reason) => {
+          if (reason !== "reset") {
+            setInputValue(newInputValue);
+            inputChangeHandler(newInputValue);
+          }
+        }}
         disabled={disabled}
         options={options ?? []}
         value={computedValue}
@@ -216,7 +223,10 @@ const AutoCompleteElement = ({
         openOnFocus
         getOptionLabel={(option) => getRelationFieldTabsLabel(field, option)}
         multiple
-        isOptionEqualToValue={(option, value) => option.guid === value.guid}
+        onPaste={(e) => {
+          console.log("eeeeeee -", e.clipboardData.getData("Text"));
+        }}
+        // isOptionEqualToValue={(option, value) => option.guid === value.guid}
         renderInput={(params) => (
           <TextField
             className={`${isFormEdit ? "custom_textfield" : ""}`}

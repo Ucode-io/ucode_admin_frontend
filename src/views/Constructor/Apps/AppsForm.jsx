@@ -1,5 +1,5 @@
-import { Save } from "@mui/icons-material";
-import { useEffect } from "react";
+import { Save, Upload } from "@mui/icons-material";
+import { useEffect, useMemo, useRef } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -18,6 +18,13 @@ import PermissionWrapperV2 from "../../../components/PermissionWrapper/Permissio
 import applicationService from "../../../services/applicationSercixe";
 import { fetchApplicationListActions } from "../../../store/application/application.thunk";
 import TablesList from "../Tables/TablesList";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import exportToJsonService from "../../../services/exportToJson";
+import useDownloader from "../../../hooks/useDownloader";
+import DownloadIcon from "@mui/icons-material/Download";
+import UploadIcon from "@mui/icons-material/Upload";
+import FileUpload from "../../../components/Upload/FileUpload";
+import fileService from "../../../services/fileService";
 
 const applicationListPageLink = "/settings/constructor/apps";
 
@@ -29,6 +36,9 @@ const AppsForm = () => {
   const [btnLoader, setBtnLoader] = useState();
   const [loader, setLoader] = useState(true);
   const [appData, setAppData] = useState({});
+  const [ids, setIds] = useState([]);
+  // const { download } = useDownloader();
+  const ref = useRef();
 
   const mainForm = useForm({
     defaultValues: {
@@ -45,7 +55,6 @@ const AppsForm = () => {
     applicationService
       .create(data)
       .then(() => {
-        console.log("sdasdasdadadas");
         navigate(applicationListPageLink);
         dispatch(fetchApplicationListActions());
       })
@@ -82,6 +91,41 @@ const AppsForm = () => {
       })
       .finally(() => setLoader(false));
   };
+
+  // Export to Json
+  // const exportToJson = async () => {
+  //   await exportToJsonService
+  //     .postToJson({
+  //       table_ids: ids,
+  //     })
+  //     .then((res) => {
+  //       download({
+  //         link: "https://" + res?.link,
+  //         fileName: res?.link.split("/").pop(),
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.log("exportToJson error", err);
+  //     });
+  // };
+
+  // const inputChangeHandler = (e) => {
+  //   const file = e.target.files[0];
+
+  //   const data = new FormData();
+  //   data.append("file", file);
+
+  //   fileService.upload(data).then((res) => {
+  //     fileSend(res?.filename);
+  //   });
+  // };
+
+  // const fileSend = (value) => {
+  //   exportToJsonService.uploadToJson({
+  //     file_name: value,
+  //     app_id: appId,
+  //   });
+  // };
 
   useEffect(() => {
     if (appId) getData();
@@ -123,6 +167,45 @@ const AppsForm = () => {
             <Tab>Details</Tab>
             {appId && <Tab>Objects</Tab>}
           </TabList>
+          {/* {ids?.length > 0 && (
+            <div
+              style={{
+                position: "absolute",
+                right: "150px",
+                zIndex: 999,
+                top: "13px",
+              }}
+              title="Download"
+            >
+              <RectangleIconButton color="white" onClick={() => exportToJson()}>
+                <DownloadIcon />
+              </RectangleIconButton>
+            </div>
+          )} */}
+          {/* 
+          <div
+            style={{
+              position: "absolute",
+              right: "110px",
+              zIndex: 999,
+              top: "13px",
+            }}
+            title="Upload"
+          >
+            <RectangleIconButton
+              color="white"
+              onClick={() => ref.current.click()}
+            >
+              <input
+                ref={ref}
+                style={{ display: "none" }}
+                type="file"
+                accept=".json"
+                onChange={inputChangeHandler}
+              />
+              <UploadIcon />
+            </RectangleIconButton>
+          </div> */}
         </HeaderSettings>
 
         <TabPanel>
@@ -191,6 +274,7 @@ const AppsForm = () => {
               mainForm={mainForm}
               appData={appData}
               getData={getData}
+              setIds={setIds}
             />
           </TabPanel>
         )}

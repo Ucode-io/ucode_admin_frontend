@@ -6,7 +6,7 @@ const CalendarColumn = ({ date, data, fieldsMap, view, tabs, workingDays }) => {
   return (
     <div>
       <div className={styles.dateBlock}>{format(date, "dd MMMM yyyy")}</div>
-
+      
       <RecursiveBlock
         date={date}
         data={data}

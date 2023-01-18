@@ -19,7 +19,6 @@ import clientPlatformServiceV2 from "../../services/auth/clientPlatformServiceV2
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2"
 import styles from "./styles.module.scss"
 import { useNavigate } from "react-router-dom"
-import { useSelector } from "react-redux"
 
 const MatrixTable = () => {
   const [clientTypes, setClientTypes] = useState([])
@@ -29,8 +28,6 @@ const MatrixTable = () => {
   const [modalLoader, setModalLoading] = useState(false)
   const [selectedObject, setSelectedObject] = useState(null)
   const navigate = useNavigate()
-  const projectId = useSelector((state) => state.auth.projectId)
-
 
   const closeModal = () => {
     setSelectedObject(null)
@@ -89,10 +86,9 @@ const MatrixTable = () => {
       .finally(() => setModalLoading(false))
   }
 
-  console.log("PROJECT ID ==>", projectId)
   const getClientTypes = () => {
     clientTypeServiceV2
-      .getList({ project_id: projectId })
+      .getList()
       .then((res) => {
         setClientTypes(res?.data?.response)
       })
@@ -103,7 +99,7 @@ const MatrixTable = () => {
 
   const getClientPlatforms = () => {
     clientPlatformServiceV2
-      .getList({ project_id: projectId })
+      .getList()
       .then((res) => {
         setClientPlatforms(res?.data?.response)
       })

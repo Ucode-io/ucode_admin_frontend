@@ -32,13 +32,17 @@ function LinkedListTables({
   const subttitleFieldSlug = selectedOutputTable?.split("#")?.[2];
   const [debouncedValue, setDebouncedValue] = useState("");
   const [inputValue, setInputValue] = useState("");
+
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+
+  const getSelectTedTemplate = templates.find((item) => {
+    return item?.guid === selectedTemplate?.guid;
+  });
 
   // =============GET RELATION TABLE SLUG==============//
   const { data: computedValue = [] } = useQuery(
     ["GET_RELATION_OBJECT_LIST", tableSlug],
     () => {
-      // if (!selectedTable?.slug) return null;
       return constructorRelationService.getList({
         table_slug: "file",
         relation_table_slug: "file",
@@ -78,11 +82,14 @@ function LinkedListTables({
     {
       enabled: !!selectedOutputTable,
       select: (res) => {
+        console.log("res", res);
         const computedObject = res?.data?.response.map((item) => ({
-          label: item?.[selectedOutputTable?.split("#")?.[2]],
+          label: item?.[selectedOutputTable?.split("#")?.[2]]
+            ? item?.[selectedOutputTable?.split("#")?.[2]]
+            : item?.name,
           value: `${item?.guid}#${res?.table_slug}`,
         }));
-
+        console.log("computedObject", computedObject);
         return computedObject;
       },
     }
@@ -90,9 +97,8 @@ function LinkedListTables({
 
   // ==============GET LINKED OBJECT LIST==============//
   const { data: computedRelations = [] } = useQuery(
-    ["GET_RELATION_OBJECTS", tableSlug],
+    ["GET_RELATION_OBJECTS", tableSlug, getSelectTedTemplate],
     () => {
-      // if (!selectedTable?.slug) return null;
       return constructorRelationService.getList({
         table_slug: tableSlug,
         relation_table_slug: tableSlug,
@@ -109,15 +115,25 @@ function LinkedListTables({
             value: `${el?.table_from?.id}#${el?.table_from?.slug}`,
           }));
 
-        return computedRelations;
+        const result = computedRelations?.find((item) => {
+          return (
+            item?.value?.split("#")?.[1] === getSelectTedTemplate?.linked_object
+          );
+        });
+        console.log("result", result);
+
+        return {
+          computedRelations,
+          result,
+        };
+      },
+      onSuccess: ({ result }) => {
+        setSelectedLinkedObject(result?.value ?? "");
       },
     }
   );
-
+  //===========OUTPUT TABLE VALUE================//
   const getComputedObjectVal = useMemo(() => {
-    const getSelectTedTemplate = templates.find((item) => {
-      return item?.guid === selectedTemplate?.guid;
-    });
     const val =
       computedValue &&
       computedValue?.find((item) => {
@@ -127,22 +143,7 @@ function LinkedListTables({
       });
 
     return val?.value;
-  }, [computedValue, templates, selectedTemplate]);
-
-  const getComputedRelationObjects = useMemo(() => {
-    const getSelectTedTemplate = templates.find((item) => {
-      return item?.guid === selectedTemplate?.guid;
-    });
-
-    const result =
-      computedRelations &&
-      computedRelations?.find((item) => {
-        return (
-          item?.value?.split("#")?.[1] === getSelectTedTemplate?.linked_object
-        );
-      });
-    return result && result?.value;
-  }, [templates, computedRelations]);
+  }, [computedValue, getSelectTedTemplate]);
 
   const handleTableChange = (event) => {
     setSelectedLinkedObject(event.target.value);
@@ -158,13 +159,7 @@ function LinkedListTables({
   useEffect(() => {
     setSelectedOutputTable(getComputedObjectVal);
   }, [getComputedObjectVal]);
-
-  useEffect(() => {
-    setSelectedLinkedObject(
-      getComputedRelationObjects ? getComputedRelationObjects : tableSlug
-    );
-  }, [selectedTemplate, getComputedRelationObjects]);
-
+  console.log("computedObject", computedObject);
   return (
     <div className={styles.docListTables}>
       <FRow label={"Linked Table"}>
@@ -175,7 +170,7 @@ function LinkedListTables({
           onChange={handleTableChange}
           size="small"
         >
-          {computedRelations?.map((item) => (
+          {computedRelations?.computedRelations?.map((item) => (
             <MenuItem value={item?.value}>{item?.label}</MenuItem>
           ))}
         </Select>
@@ -199,7 +194,7 @@ function LinkedListTables({
             <InputLabel id="demo-simple-select-label"></InputLabel>
             <Autocomplete
               inputValue={inputValue}
-              options={computedObject}
+              options={computedObject ?? []}
               value={selectedOutputObject}
               renderInput={(params) => <TextField {...params} size="small" />}
               onChange={(event, newValue) => {
@@ -210,17 +205,6 @@ function LinkedListTables({
                 inputChangeHandler(newInputValue);
               }}
             />
-            {/* <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={selectedOutputObject}
-              onChange={handleChangeObject}
-              size="small"
-            >
-              {computedObject?.map((item) => (
-                <MenuItem value={item?.value}>{item?.label}</MenuItem>
-              ))}
-            </Select> */}
           </FormControl>
         </FRow>
       ) : (

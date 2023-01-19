@@ -15,6 +15,7 @@ import RingLoader from "../../../../components/Loaders/RingLoader";
 import RippleLoader from "../../../../components/Loaders/RippleLoader";
 import { useQueryClient } from "react-query";
 import listToOptions from "../../../../utils/listToOptions";
+import HFMultipleSelect from "../../../../components/FormElements/HFMultipleSelect";
 
 const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
   const inputFIle = useRef();
@@ -167,7 +168,7 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
                           <div className={styles.select_body_item}>
                             {item?.type === "LOOKUP" ||
                             item?.type === "LOOKUPS" ? (
-                              <HFSelect
+                              <HFMultipleSelect
                                 name={`fields[${index}].viewFieldSlug`}
                                 placeholder={item.label}
                                 control={control}

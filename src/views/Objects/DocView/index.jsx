@@ -7,6 +7,7 @@ import { useLocation, useParams } from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
+import useDebounce from "../../../hooks/useDebounce";
 import usePaperSize from "../../../hooks/usePaperSize";
 import constructorObjectService from "../../../services/constructorObjectService";
 import documentTemplateService from "../../../services/documentTemplateService";
@@ -58,7 +59,7 @@ const DocView = ({
   const [selectedOutputTable, setSelectedOutputTable] = useState("");
   const [selectedOutputObject, setSelectedOutputObject] = useState("");
   const [selectedLinkedObject, setSelectedLinkedObject] = useState("");
-  const outputTableSlug = selectedOutputTable?.split("#")?.[1];
+  const [searchText, setSearchText] = useState("");
 
   // ============SELECTED LINKED TABLE SLUG=============== //
   const selectedLinkedTableSlug = selectedLinkedObject
@@ -73,43 +74,19 @@ const DocView = ({
     state?.template ?? null
   );
 
-  // ==========GET VARIABLES WITH LINKED TABLE SLUG============//
-  const { data: varFields = [] } = useQuery(
-    ["GET_OBJECT_LIST", outputTableSlug],
-    () => {
-      return constructorObjectService.getList(outputTableSlug, {
-        data: {
-          offset: 0,
-        },
-      });
-    },
-
-    {
-      enabled: !!selectedOutputTable,
-      select: (res) => {
-        const fields = res.data?.fields ?? [];
-        const relationFields =
-          res?.data?.relation_fields?.map((el) => ({
-            ...el,
-            label: `${el.label} (${el.table_label})`,
-          })) ?? [];
-
-        return [...fields, ...relationFields]?.filter(
-          (el) => el.type !== "LOOKUP"
-        );
-      },
-    }
-  );
-
   // ========FIELDS FOR RELATIONS=========
   const { data: fields = [], isLoading: fieldsLoading } = useQuery(
-    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, limit: 0, offset: 0 }],
+    [
+      "GET_OBJECTS_LIST_WITH_RELATIONS",
+      { tableSlug: selectedLinkedTableSlug, limit: 0, offset: 0 },
+    ],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getList(selectedLinkedTableSlug, {
         data: { with_relations: true, limit: 0, offset: 0 },
       });
     },
     {
+      cacheTime: 10,
       select: (res) => {
         const fields = res.data?.fields ?? [];
         const relationFields =
@@ -124,7 +101,6 @@ const DocView = ({
       },
     }
   );
-
   // ========GET TEMPLATES LIST===========
   const {
     data: { templates, templateFields } = { templates: [], templateFields: [] },
@@ -134,10 +110,12 @@ const DocView = ({
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
     () => {
       const data = {
-        table_slug: tableSlug,
-        output_object: selectedOutputTable?.table_to?.slug,
-        linked_object:
-          selectedLinkedObject && selectedLinkedObject?.split("#")?.[1],
+        view_fields: ["title"],
+        search: searchText,
+        // table_slug: tableSlug,
+        // output_object: selectedOutputTable?.table_to?.slug,
+        // linked_object:
+        //   selectedLinkedObject && selectedLinkedObject?.split("#")?.[1],
       };
 
       data[`${loginTableSlug}_ids`] = [userId];
@@ -159,7 +137,6 @@ const DocView = ({
     }
   );
 
-  console.log("fields", fields);
   // ========UPDATE TEMPLATE===========
 
   const updateTemplate = (template) => {
@@ -295,6 +272,8 @@ const DocView = ({
       setPdfLoader(false);
     }
   };
+
+  const inputChangeHandler = useDebounce((val) => setSearchText(val), 300);
   return (
     <div>
       <FiltersBlock
@@ -303,7 +282,7 @@ const DocView = ({
           <>
             <RectangleIconButton
               color="white"
-              onClick={() => setRelationViewIsActive((prev) => !prev)}
+              onClick={() => setTableViewIsActive((prev) => !prev)}
             >
               <ImportExport
                 style={{ transform: "rotate(45deg)" }}
@@ -312,12 +291,12 @@ const DocView = ({
             </RectangleIconButton>
 
             {/* <DocRelationsButton /> */}
-            <RectangleIconButton
+            {/* <RectangleIconButton
               color="white"
               onClick={() => setTableViewIsActive((prev) => !prev)}
             >
               <BackupTable color={tableViewIsActive ? "primary" : ""} />
-            </RectangleIconButton>
+            </RectangleIconButton> */}
 
             <DocumentSettingsTypeSelector
               selectedTabIndex={selectedSettingsTab}
@@ -333,7 +312,7 @@ const DocView = ({
         />
       </FiltersBlock>
 
-      {isLoading || fieldsLoading ? (
+      {isLoading ? (
         <PageFallback />
       ) : (
         <div className={styles.mainBlock}>
@@ -341,6 +320,7 @@ const DocView = ({
             templates={templates}
             selectedTemplate={selectedTemplate}
             setSelectedTemplate={setSelectedTemplate}
+            onChange={inputChangeHandler}
           />
 
           {tableViewIsActive && (
@@ -369,26 +349,32 @@ const DocView = ({
           {!relationViewIsActive && (
             <>
               {selectedTemplate ? (
-                <RedactorBlock
-                  templateFields={templateFields}
-                  selectedObject={selectedObject}
-                  selectedTemplate={selectedTemplate}
-                  setSelectedTemplate={setSelectedTemplate}
-                  updateTemplate={updateTemplate}
-                  addNewTemplate={addNewTemplate}
-                  ref={redactorRef}
-                  tableViewIsActive={tableViewIsActive}
-                  fields={varFields ?? fields}
-                  selectedPaperSizeIndex={selectedPaperSizeIndex}
-                  setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
-                  htmlLoader={htmlLoader}
-                  exportToHTML={exportToHTML}
-                  exportToPDF={exportToPDF}
-                  pdfLoader={pdfLoader}
-                  print={print}
-                  selectedOutputTable={selectedOutputTable}
-                  selectedLinkedObject={selectedLinkedObject}
-                />
+                <>
+                  {fieldsLoading ? (
+                    <PageFallback />
+                  ) : (
+                    <RedactorBlock
+                      templateFields={templateFields}
+                      selectedObject={selectedObject}
+                      selectedTemplate={selectedTemplate}
+                      setSelectedTemplate={setSelectedTemplate}
+                      updateTemplate={updateTemplate}
+                      addNewTemplate={addNewTemplate}
+                      ref={redactorRef}
+                      tableViewIsActive={tableViewIsActive}
+                      fields={fields}
+                      selectedPaperSizeIndex={selectedPaperSizeIndex}
+                      setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
+                      htmlLoader={htmlLoader}
+                      exportToHTML={exportToHTML}
+                      exportToPDF={exportToPDF}
+                      pdfLoader={pdfLoader}
+                      print={print}
+                      selectedOutputTable={selectedOutputTable}
+                      selectedLinkedObject={selectedLinkedObject}
+                    />
+                  )}
+                </>
               ) : (
                 <div
                   className={`${styles.redactorBlock} ${

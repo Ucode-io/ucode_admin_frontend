@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { Delete } from "@mui/icons-material";
 import { useMutation } from "react-query";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ChevronDownIcon,
   CrossPerson,
@@ -51,6 +51,8 @@ const staticTables = [
 ];
 
 const MatrixRolePage = () => {
+  const projectId = useSelector(state => state.auth.projectId)
+
   const { roleId, typeId } = useParams();
   const TYPES = [
     { key: "read", name: "Чтение" },
@@ -247,7 +249,7 @@ const MatrixRolePage = () => {
 
   const getRoleById = () => {
     roleServiceV2
-      .getById(roleId)
+      .getById(roleId, { project_id: projectId })
       .then((res) => {
         roleForm.setValue("name", res?.data?.response?.name || "");
       })

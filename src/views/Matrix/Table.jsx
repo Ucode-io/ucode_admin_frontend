@@ -19,8 +19,10 @@ import clientPlatformServiceV2 from "../../services/auth/clientPlatformServiceV2
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2"
 import styles from "./styles.module.scss"
 import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux"
 
 const MatrixTable = () => {
+  const projectId = useSelector(state => state.auth.projectId)
   const [clientTypes, setClientTypes] = useState([])
   const [clientPlatforms, setClientPlatforms] = useState([])
   const [platformId, setPlatformId] = useState(null)
@@ -88,7 +90,7 @@ const MatrixTable = () => {
 
   const getClientTypes = () => {
     clientTypeServiceV2
-      .getList()
+      .getList({ project_id: projectId })
       .then((res) => {
         setClientTypes(res?.data?.response)
       })
@@ -99,7 +101,7 @@ const MatrixTable = () => {
 
   const getClientPlatforms = () => {
     clientPlatformServiceV2
-      .getList()
+      .getList({ project_id: projectId })
       .then((res) => {
         setClientPlatforms(res?.data?.response)
       })

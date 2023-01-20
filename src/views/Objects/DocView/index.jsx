@@ -61,14 +61,14 @@ const DocView = ({
   const [selectedLinkedObject, setSelectedLinkedObject] = useState("");
   const [searchText, setSearchText] = useState("");
 
-  // ============SELECTED LINKED TABLE SLUG=============== //
+  // ============SELECTED LINKED TABLE SLUG=============
   const selectedLinkedTableSlug = selectedLinkedObject
     ? selectedLinkedObject?.split("#")?.[1]
     : tableSlug;
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
-  const [selectedObject, setSelectedObject] = useState(state?.objectId ?? null);
+  const [selectedObject, setSelectedObject] = useState(null);
 
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
@@ -107,15 +107,11 @@ const DocView = ({
     isLoading,
     refetch,
   } = useQuery(
-    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug],
+    ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug, searchText],
     () => {
       const data = {
         view_fields: ["title"],
         search: searchText,
-        // table_slug: tableSlug,
-        // output_object: selectedOutputTable?.table_to?.slug,
-        // linked_object:
-        //   selectedLinkedObject && selectedLinkedObject?.split("#")?.[1],
       };
 
       data[`${loginTableSlug}_ids`] = [userId];
@@ -142,6 +138,9 @@ const DocView = ({
   const updateTemplate = (template) => {
     refetch();
   };
+
+  // ==========SEARCH TEMPLATES=========
+  const inputChangeHandler = useDebounce((val) => setSearchText(val), 300);
 
   // ========ADD NEW TEMPLATE=========
   const addNewTemplate = (template) => {
@@ -183,7 +182,7 @@ const DocView = ({
           linked_table_slug: selectedLinkedTableSlug
             ? selectedLinkedTableSlug
             : tableSlug,
-          linked_object_id: selectedObject,
+          linked_object_id: selectedObject?.value,
           page_size: selectedPaperSize.name,
           page_height: pageSize,
           page_width: pointToMillimeter(selectedPaperSize.width),
@@ -225,8 +224,7 @@ const DocView = ({
       const res = await documentTemplateService.exportToHTML({
         data: {
           table_slug: tableSlug,
-          // object_id: selectedObject,
-          linked_object_id: selectedObject,
+          linked_object_id: selectedObject?.value,
           linked_table_slug: selectedLinkedTableSlug
             ? selectedLinkedTableSlug
             : tableSlug,
@@ -273,31 +271,12 @@ const DocView = ({
     }
   };
 
-  const inputChangeHandler = useDebounce((val) => setSearchText(val), 300);
   return (
     <div>
       <FiltersBlock
         style={{ padding: 0 }}
         extra={
           <>
-            <RectangleIconButton
-              color="white"
-              onClick={() => setTableViewIsActive((prev) => !prev)}
-            >
-              <ImportExport
-                style={{ transform: "rotate(45deg)" }}
-                color={relationViewIsActive ? "primary" : ""}
-              />
-            </RectangleIconButton>
-
-            {/* <DocRelationsButton /> */}
-            <RectangleIconButton
-              color="white"
-              onClick={() => setTableViewIsActive((prev) => !prev)}
-            >
-              <BackupTable color={tableViewIsActive ? "primary" : ""} />
-            </RectangleIconButton>
-
             <DocumentSettingsTypeSelector
               selectedTabIndex={selectedSettingsTab}
               setSelectedTabIndex={setSelectedSettingsTab}
@@ -311,99 +290,86 @@ const DocView = ({
           views={views}
         />
       </FiltersBlock>
-
-      {isLoading ? (
+      {/* {isLoading ? (
         <PageFallback />
-      ) : (
-        <div className={styles.mainBlock}>
-          <TemplatesList
-            templates={templates}
-            selectedTemplate={selectedTemplate}
-            setSelectedTemplate={setSelectedTemplate}
-            onChange={inputChangeHandler}
-          />
+      ) : ( */}
+      <div className={styles.mainBlock}>
+        <TemplatesList
+          templates={templates}
+          selectedTemplate={selectedTemplate}
+          setSelectedTemplate={setSelectedTemplate}
+          onChange={inputChangeHandler}
+          setSelectedOutputTable={setSelectedOutputTable}
+          setSelectedOutputObject={setSelectedOutputObject}
+          setSelectedLinkedObject={setSelectedLinkedObject}
+          isLoading={isLoading}
+        />
 
-          {tableViewIsActive && (
-            <div className={styles.redactorBlock}>
-              <TableView
-                formVisible={false}
-                selectedLinkedTableSlug={selectedLinkedTableSlug}
-                reset={reset}
-                isChecked={(row) => selectedObject === row.guid}
-                onCheckboxChange={onCheckboxChange}
-                isDocView
-                filters={{}}
-                view={view}
-                fieldsMap={fieldsMap}
-                selectedLinkedObject={selectedLinkedObject}
+        {relationViewIsActive && (
+          <div className={styles.redactorBlock}>
+            <DocRelationsSection />
+          </div>
+        )}
+
+        {!relationViewIsActive && (
+          <>
+            {selectedTemplate ? (
+              <>
+                {fieldsLoading ? (
+                  <PageFallback />
+                ) : (
+                  <RedactorBlock
+                    templateFields={templateFields}
+                    selectedObject={selectedObject}
+                    selectedTemplate={selectedTemplate}
+                    setSelectedTemplate={setSelectedTemplate}
+                    updateTemplate={updateTemplate}
+                    addNewTemplate={addNewTemplate}
+                    ref={redactorRef}
+                    fields={fields}
+                    selectedPaperSizeIndex={selectedPaperSizeIndex}
+                    setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
+                    htmlLoader={htmlLoader}
+                    exportToHTML={exportToHTML}
+                    exportToPDF={exportToPDF}
+                    pdfLoader={pdfLoader}
+                    print={print}
+                    selectedOutputTable={selectedOutputTable}
+                    selectedLinkedObject={selectedLinkedObject}
+                  />
+                )}
+              </>
+            ) : (
+              <div
+                className={`${styles.redactorBlock} ${
+                  tableViewIsActive ? styles.hidden : ""
+                }`}
               />
-            </div>
-          )}
+            )}
+          </>
+        )}
 
-          {relationViewIsActive && (
-            <div className={styles.redactorBlock}>
-              <DocRelationsSection />
-            </div>
-          )}
-
-          {!relationViewIsActive && (
-            <>
-              {selectedTemplate ? (
-                <>
-                  {fieldsLoading ? (
-                    <PageFallback />
-                  ) : (
-                    <RedactorBlock
-                      templateFields={templateFields}
-                      selectedObject={selectedObject}
-                      selectedTemplate={selectedTemplate}
-                      setSelectedTemplate={setSelectedTemplate}
-                      updateTemplate={updateTemplate}
-                      addNewTemplate={addNewTemplate}
-                      ref={redactorRef}
-                      tableViewIsActive={tableViewIsActive}
-                      fields={fields}
-                      selectedPaperSizeIndex={selectedPaperSizeIndex}
-                      setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
-                      htmlLoader={htmlLoader}
-                      exportToHTML={exportToHTML}
-                      exportToPDF={exportToPDF}
-                      pdfLoader={pdfLoader}
-                      print={print}
-                      selectedOutputTable={selectedOutputTable}
-                      selectedLinkedObject={selectedLinkedObject}
-                    />
-                  )}
-                </>
-              ) : (
-                <div
-                  className={`${styles.redactorBlock} ${
-                    tableViewIsActive ? styles.hidden : ""
-                  }`}
-                />
-              )}
-            </>
-          )}
-
-          <DocSettingsBlock
-            pdfLoader={pdfLoader}
-            htmlLoader={htmlLoader}
-            exportToPDF={exportToPDF}
-            exportToHTML={exportToHTML}
-            selectedSettingsTab={selectedSettingsTab}
-            selectedPaperSizeIndex={selectedPaperSizeIndex}
-            setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
-            setSelectedOutputTable={setSelectedOutputTable}
-            selectedOutputTable={selectedOutputTable}
-            selectedOutputObject={selectedOutputObject}
-            setSelectedOutputObject={setSelectedOutputObject}
-            templates={templates}
-            selectedTemplate={selectedTemplate}
-            selectedLinkedObject={selectedLinkedObject}
-            setSelectedLinkedObject={setSelectedLinkedObject}
-          />
-        </div>
-      )}
+        <DocSettingsBlock
+          pdfLoader={pdfLoader}
+          htmlLoader={htmlLoader}
+          exportToPDF={exportToPDF}
+          exportToHTML={exportToHTML}
+          selectedSettingsTab={selectedSettingsTab}
+          selectedPaperSizeIndex={selectedPaperSizeIndex}
+          setSelectedPaperSizeIndex={setSelectedPaperSizeIndex}
+          setSelectedOutputTable={setSelectedOutputTable}
+          selectedOutputTable={selectedOutputTable}
+          selectedOutputObject={selectedOutputObject}
+          setSelectedOutputObject={setSelectedOutputObject}
+          templates={templates}
+          selectedTemplate={selectedTemplate}
+          selectedLinkedObject={selectedLinkedObject}
+          setSelectedLinkedObject={setSelectedLinkedObject}
+          setSelectedObject={setSelectedObject}
+          selectedObject={selectedObject}
+        />
+      </div>
+      {/* )} */}
     </div>
   );
 };

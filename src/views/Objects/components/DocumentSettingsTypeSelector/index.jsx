@@ -1,11 +1,27 @@
-import { DescriptionOutlined, FileUploadOutlined } from "@mui/icons-material"
-import styles from "./style.module.scss"
+import {
+  DescriptionOutlined,
+  FileUploadOutlined,
+  ImportExport,
+} from "@mui/icons-material";
+import styles from "./style.module.scss";
 
-const DocumentSettingsTypeSelector = ({ selectedTabIndex, setSelectedTabIndex }) => {
+const DocumentSettingsTypeSelector = ({
+  selectedTabIndex,
+  setSelectedTabIndex,
+}) => {
   return (
     <div className={styles.selector} style={{ minWidth: `${32 * 2}px` }}>
-      
-      
+      {/* <div
+        onClick={() => setSelectedTabIndex(0)}
+        className={`${styles.element} ${
+          selectedTabIndex === 0 ? styles.active : ""
+        }`}
+      >
+        <ImportExport
+          style={{ transform: "rotate(45deg)" }}
+          color={"primary"}
+        />
+      </div> */}
       <div
         onClick={() => setSelectedTabIndex(0)}
         className={`${styles.element} ${
@@ -23,13 +39,8 @@ const DocumentSettingsTypeSelector = ({ selectedTabIndex, setSelectedTabIndex })
       >
         <FileUploadOutlined />
       </div>
-
-
-
-
-
     </div>
-  )
-}
+  );
+};
 
-export default DocumentSettingsTypeSelector
+export default DocumentSettingsTypeSelector;

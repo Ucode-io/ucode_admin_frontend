@@ -82,7 +82,6 @@ function LinkedListTables({
     {
       enabled: !!selectedOutputTable,
       select: (res) => {
-        console.log("res", res);
         const computedObject = res?.data?.response.map((item) => ({
           label: item?.[selectedOutputTable?.split("#")?.[2]]
             ? item?.[selectedOutputTable?.split("#")?.[2]]

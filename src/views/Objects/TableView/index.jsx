@@ -35,9 +35,9 @@ const TableView = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [deleteLoader, setDeleteLoader] = useState(false);
-  const selectTableSlug = selectedLinkedObject
-    ? selectedLinkedObject?.split("#")?.[1]
-    : tableSlug;
+  // const selectTableSlug = selectedLinkedObject
+  //   ? selectedLinkedObject?.split("#")?.[1]
+  //   : tableSlug;
 
   const columns = useMemo(() => {
     return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
@@ -56,7 +56,7 @@ const TableView = ({
     queryKey: [
       "GET_OBJECTS_LIST",
       {
-        selectTableSlug,
+        tableSlug,
         currentPage,
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
@@ -64,7 +64,7 @@ const TableView = ({
       },
     ],
     queryFn: () => {
-      return constructorObjectService.getList(selectTableSlug, {
+      return constructorObjectService.getList(tableSlug, {
         data: {
           offset: pageToOffset(currentPage),
           app_id: appId,
@@ -104,22 +104,6 @@ const TableView = ({
     return filteredFields;
   }, [fieldView, fiedlsarray]);
 
-  // ==========FILTER COLUMNS============ //
-  const getFilteredColumns = useMemo(() => {
-    const filteredFieldsView =
-      fieldView &&
-      fieldView?.find((item) => {
-        return item?.type === "TABLE" && item?.columns;
-      });
-
-    const filteredFields =
-      fiedlsarray?.length &&
-      fiedlsarray?.filter((item) => {
-        return filteredFieldsView?.columns.includes?.(item?.id ?? "");
-      });
-    return filteredFields;
-  }, [fiedlsarray, fieldView]);
-
   useEffect(() => {
     if (isNaN(parseInt(view?.default_limit))) setLimit(10);
     else setLimit(parseInt(view?.default_limit));
@@ -154,7 +138,7 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    navigateToForm(selectedLinkedTableSlug ?? tableSlug, "EDIT", row);
+    navigateToForm(tableSlug, "EDIT", row);
   };
 
   return (
@@ -169,7 +153,6 @@ const TableView = ({
             fieldsMap={fieldsMap}
             getFilteredFilterFields={getFilteredFilterFields}
             isVertical
-            selectedLinkedObject={selectedLinkedObject}
           />
         </div>
       )}
@@ -181,7 +164,7 @@ const TableView = ({
         removableHeight={isDocView ? 150 : 215}
         currentPage={currentPage}
         pagesCount={pageCount}
-        columns={getFilteredColumns ? getFilteredColumns : columns}
+        columns={columns}
         limit={limit}
         setLimit={setLimit}
         onPaginationChange={setCurrentPage}

@@ -291,12 +291,12 @@ const DocView = ({
             </RectangleIconButton>
 
             {/* <DocRelationsButton /> */}
-            {/* <RectangleIconButton
+            <RectangleIconButton
               color="white"
               onClick={() => setTableViewIsActive((prev) => !prev)}
             >
               <BackupTable color={tableViewIsActive ? "primary" : ""} />
-            </RectangleIconButton> */}
+            </RectangleIconButton>
 
             <DocumentSettingsTypeSelector
               selectedTabIndex={selectedSettingsTab}

@@ -233,12 +233,3 @@ function TableRow({
 }
 
 export default TableRow;
-
-// for Autocomplete
-
-// <HFMultipleSelect
-//   fullWidth
-//   control={control}
-//   options={valueList}
-//   name={`attributes.additional_parameters.${index}.value`}
-// />

@@ -1,5 +1,6 @@
 import {
   add,
+  addMonths,
   differenceInDays,
   endOfMonth,
   format,
@@ -56,8 +57,8 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   const { filters } = useFilters(tableSlug, view.id);
 
   const [dateFilters, setDateFilters] = useState([
-    startOfMonth(new Date()),
-    endOfMonth(new Date()),
+    new Date(),
+    addMonths(new Date(), 1),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
 

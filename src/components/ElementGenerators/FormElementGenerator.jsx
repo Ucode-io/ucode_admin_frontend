@@ -390,6 +390,23 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
+    case "DENTIST":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <BarcodeGenerator
+            control={control}
+            name={field.slug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            // disabled={isDisabled}
+            formTableSlug={formTableSlug}
+            {...props}
+          />
+        </FRow>
+      );
 
     case "ICON":
       return (

@@ -104,7 +104,7 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
     return (
       options?.map((el) => ({
         value: el.id,
-        label: `${field.label} (${el.label})`,
+        label: `${field.label ?? ""} (${el.label})`,
       })) ?? []
     );
   };

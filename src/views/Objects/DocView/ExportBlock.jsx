@@ -15,6 +15,9 @@ const ExportBlock = ({
   selectedTemplate,
   selectedLinkedObject,
   setSelectedLinkedObject,
+  setSelectedObject,
+  selectedObject,
+  setlLinkedObjectView,
 }) => {
   return (
     <div className={styles.docListBlock}>
@@ -42,6 +45,10 @@ const ExportBlock = ({
             selectedTemplate={selectedTemplate}
             selectedLinkedObject={selectedLinkedObject}
             setSelectedLinkedObject={setSelectedLinkedObject}
+            setSelectedObject={setSelectedObject}
+            selectedObject={selectedObject}
+            setlLinkedObjectView={setlLinkedObjectView}
+            exportToHTML={exportToHTML}
           />
         ) : (
           ""

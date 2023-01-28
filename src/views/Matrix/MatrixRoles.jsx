@@ -19,10 +19,8 @@ import roleServiceV2 from "../../services/roleServiceV2"
 import styles from "./styles.module.scss"
 import PrimaryButton from "../../components/Buttons/PrimaryButton"
 import SecondaryButton from "../../components/Buttons/SecondaryButton"
-import { useSelector } from "react-redux"
 
 const MatrixRoles = ({ infoForm }) => {
-  const projectId = useSelector(state => state.auth.projectId)
   const { control, handleSubmit, reset } = useForm({})
   const navigate = useNavigate()
   const params = useParams()
@@ -32,7 +30,7 @@ const MatrixRoles = ({ infoForm }) => {
 
   const getRoles = () => {
     roleServiceV2
-      .getList({ "client-type-id": infoForm.getValues().clientTypeId, project_id: projectId })
+      .getList({ "client-type-id": infoForm.getValues().clientTypeId })
       .then((res) => {
         setRoles(res?.data?.response || [])
       })

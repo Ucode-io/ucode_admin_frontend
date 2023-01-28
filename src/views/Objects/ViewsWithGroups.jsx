@@ -52,7 +52,6 @@ const ViewsWithGroups = ({
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
-
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
     $lt: endOfMonth(new Date()),

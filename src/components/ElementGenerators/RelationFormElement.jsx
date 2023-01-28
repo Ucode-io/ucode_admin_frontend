@@ -128,7 +128,6 @@ const AutoCompleteElement = ({
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const [debouncedValue, setDebouncedValue] = useState("");
-
   const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
 
@@ -191,7 +190,7 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
-      setValue(value?.guid ?? null);
+      setValue(value?.guid ?? value);
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 

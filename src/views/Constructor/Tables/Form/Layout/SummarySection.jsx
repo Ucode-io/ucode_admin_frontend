@@ -23,8 +23,6 @@ const SummarySection = ({
     keyName: "key",
   });
 
-  console.log("SECTION ===>", sections);
-
   const fieldsList = useWatch({
     control: mainForm.control,
     name: `fields`,

@@ -77,16 +77,6 @@ function TableRow({
     }));
   }, [data, getFilterData]);
 
-  // const computedValue = useMemo(() => {
-  //   const val = [];
-  //   valueList?.map((item) => {
-  //     if (selectedValueOptions[item?.value]) {
-  //       val.push(item);
-  //     }
-  //   });
-  //   return val;
-  // }, [selectedValueOptions, valueList]);
-
   // FUNCTIONS
 
   const onUpdate = () => {
@@ -233,3 +223,12 @@ function TableRow({
 }
 
 export default TableRow;
+
+// for Autocomplete
+
+// <HFMultipleSelect
+//   fullWidth
+//   control={control}
+//   options={valueList}
+//   name={`attributes.additional_parameters.${index}.value`}
+// />

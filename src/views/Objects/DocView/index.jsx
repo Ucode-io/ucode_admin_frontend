@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
@@ -30,36 +30,41 @@ const DocView = ({
   views,
   selectedTabIndex,
   setSelectedTabIndex,
-  fieldsMap,
+  // fieldsMap,
 }) => {
   const redactorRef = useRef();
   const { state } = useLocation();
   const { tableSlug } = useParams();
+  const navigate = useNavigate();
+
   const queryClient = useQueryClient();
 
   const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
   const userId = useSelector((state) => state.auth.userId);
 
-  const view = views.find((view) => view.type === "TABLE");
+  // const view = views.find((view) => view.type === "TABLE");
 
   const { control, reset } = useForm();
 
-  const { append } = useFieldArray({
-    control: control,
-    name: "multi",
-  });
+  // const { append } = useFieldArray({
+  //   control: control,
+  //   name: "multi",
+  // });
 
   // =====SETTINGS BLOCK=========
   const [pdfLoader, setPdfLoader] = useState(false);
   const [htmlLoader, setHtmlLoader] = useState(false);
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(1);
-  const [tableViewIsActive, setTableViewIsActive] = useState(false);
   const [relationViewIsActive, setRelationViewIsActive] = useState(false);
   const [selectedPaperSizeIndex, setSelectedPaperSizeIndex] = useState(0);
   const [selectedOutputTable, setSelectedOutputTable] = useState("");
   const [selectedOutputObject, setSelectedOutputObject] = useState("");
   const [selectedLinkedObject, setSelectedLinkedObject] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [fetch, setFetch] = useState(false);
+  const [selectedObject, setSelectedObject] = useState("");
+
+  const selectLinkedObject = selectedObject?.value;
 
   // ============SELECTED LINKED TABLE SLUG=============
   const selectedLinkedTableSlug = selectedLinkedObject
@@ -67,8 +72,6 @@ const DocView = ({
     : tableSlug;
 
   const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
-
-  const [selectedObject, setSelectedObject] = useState(null);
 
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
@@ -110,8 +113,14 @@ const DocView = ({
     ["GET_DOCUMENT_TEMPLATE_LIST", tableSlug, searchText],
     () => {
       const data = {
+        limit: 10,
+        offset: 0,
         view_fields: ["title"],
         search: searchText,
+        additional_request: {
+          additional_field: ["guid"],
+          additional_values: [state?.template?.guid],
+        },
       };
 
       data[`${loginTableSlug}_ids`] = [userId];
@@ -121,6 +130,7 @@ const DocView = ({
       });
     },
     {
+      cacheTime: 10,
       select: ({ data }) => {
         const templates = data?.response ?? [];
         const templateFields = data?.fields ?? [];
@@ -130,8 +140,17 @@ const DocView = ({
           templateFields,
         };
       },
+      onSuccess: () => {
+        handleChange();
+      },
     }
   );
+
+  const handleChange = useDebounce(() => {
+    if (state?.objectId) {
+      exportToHTML();
+    }
+  }, 700);
 
   // ========UPDATE TEMPLATE===========
 
@@ -145,12 +164,6 @@ const DocView = ({
   // ========ADD NEW TEMPLATE=========
   const addNewTemplate = (template) => {
     refetch();
-  };
-
-  // =========CHECKBOX CHANGE HANDLER=========
-  const onCheckboxChange = (val, row) => {
-    if (val) setSelectedObject(row.guid);
-    else setSelectedObject(null);
   };
 
   // =======EXPORT TO PDF============
@@ -179,15 +192,13 @@ const DocView = ({
       }
       const res = await documentTemplateService.exportToPDF({
         data: {
-          linked_table_slug: selectedLinkedTableSlug
-            ? selectedLinkedTableSlug
-            : tableSlug,
+          linked_table_slug: selectedLinkedTableSlug,
           linked_object_id: selectedObject?.value,
           page_size: selectedPaperSize.name,
           page_height: pageSize,
           page_width: pointToMillimeter(selectedPaperSize.width),
           object_id: selectedOutputObject?.value?.split("#")?.[0],
-          table_slug: selectedOutputObject?.value.split("#")?.[1],
+          table_slug: selectedOutputTable?.split("#")?.[1],
         },
         html: `${meta} <div class="ck-content" style="width: ${
           pointToMillimeter(selectedPaperSize.width) + 100
@@ -196,7 +207,7 @@ const DocView = ({
 
       queryClient.refetchQueries([
         "GET_OBJECT_FILES",
-        { tableSlug, selectedObject },
+        { tableSlug, selectLinkedObject },
       ]);
 
       window.open(res.link, { target: "_blank" });
@@ -225,9 +236,7 @@ const DocView = ({
         data: {
           table_slug: tableSlug,
           linked_object_id: selectedObject?.value,
-          linked_table_slug: selectedLinkedTableSlug
-            ? selectedLinkedTableSlug
-            : tableSlug,
+          linked_table_slug: selectedLinkedTableSlug,
         },
         html: meta + html,
       });
@@ -290,9 +299,7 @@ const DocView = ({
           views={views}
         />
       </FiltersBlock>
-      {/* {isLoading ? (
-        <PageFallback />
-      ) : ( */}
+
       <div className={styles.mainBlock}>
         <TemplatesList
           templates={templates}
@@ -340,11 +347,7 @@ const DocView = ({
                 )}
               </>
             ) : (
-              <div
-                className={`${styles.redactorBlock} ${
-                  tableViewIsActive ? styles.hidden : ""
-                }`}
-              />
+              <div className={`${styles.redactorBlock} `} />
             )}
           </>
         )}

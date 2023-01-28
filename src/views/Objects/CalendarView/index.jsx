@@ -293,9 +293,8 @@ const queryGenerator = (groupFields, filters = {}) => {
 };
 
 const promiseGenerator = (groupField, filters = {}) => {
-  const filterValue = filters[groupField.slug];
+  const filterValue = filters[groupField.slug] ?? filters;
   const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {};
-
   const relationFilters = {};
 
   Object.entries(filters)?.forEach(([key, value]) => {
@@ -307,20 +306,23 @@ const promiseGenerator = (groupField, filters = {}) => {
       index: 2,
     });
 
+    const slug = key.split(".")?.pop();
+
     if (filterTableSlug === groupField.table_slug) {
       const slug = key.split(".")?.pop();
-
       relationFilters[slug] = value;
     } else {
-      const slug = key.split(".")?.pop();
-
       if (groupField.slug === slug) {
+        const slug = key.split(".")?.pop();
         relationFilters[slug] = value;
       }
     }
   });
-  const computedFilters = { ...defaultFilters, ...relationFilters };
 
+  const objectSlug = Object.keys(filters)?.[0]?.split(".").pop();
+  const slugValue = Object.values(filters)?.[0];
+  const computedFilters = { ...defaultFilters, ...relationFilters };
+  const computedFilterValue = { [objectSlug]: slugValue };
   if (groupField?.type === "PICK_LIST") {
     return {
       queryKey: ["GET_GROUP_OPTIONS", groupField.id],
@@ -343,7 +345,7 @@ const promiseGenerator = (groupField, filters = {}) => {
           ? groupField.slug?.slice(0, -3)
           : groupField.slug?.slice(0, -4),
         {
-          data: computedFilters,
+          data: computedFilterValue,
         }
       );
 

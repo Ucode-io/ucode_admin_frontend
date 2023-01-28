@@ -12,12 +12,12 @@ const DatesRow = ({ datesList, tabs, period }) => {
     return [
       {
         id: tabs[0]?.id,
-        list: tabs[0].list?.filter((p) =>
+        list: tabs[0]?.list?.filter((p) =>
           tabs[1]?.list.some((c) => c.cabinets_id === p.value)
         ),
       },
       tabs[1],
-    ].reduce((acc, cur) => acc + cur.list.length, 0);
+    ].reduce((acc, cur) => acc + cur?.list?.length, 0);
   }, [tabs]);
 
   const computedDatesList = useMemo(() => {

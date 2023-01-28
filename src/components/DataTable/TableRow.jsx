@@ -14,8 +14,6 @@ const TableRow = ({
   control,
   onRowClick,
   onDeleteClick,
-  selected,
-  onSelectedRowChange,
   checkboxValue,
   onCheckboxChange,
   currentPage,
@@ -38,8 +36,6 @@ const TableRow = ({
   if (formVisible)
     return (
       <TableRowForm
-        selected={selected}
-        onSelectedRowChange={onSelectedRowChange}
         onDeleteClick={onDeleteClick}
         remove={remove}
         watch={watch}
@@ -251,10 +247,6 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2
-            tabelSlug={tableSlug}
-            type={["update", "delete"]}
-          ></PermissionWrapperV2>
           <RectangleIconButton
             color="error"
             onClick={() =>

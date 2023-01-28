@@ -375,7 +375,7 @@ const DataTable = ({
                     )}
                     {onDeleteClick && (
                       <DeleteWrapperModal
-                        id={row.guid}
+                        // id={row.guid}
                         onDelete={() => onDeleteClick(row, rowIndex)}
                       >
                         <RectangleIconButton color="error">

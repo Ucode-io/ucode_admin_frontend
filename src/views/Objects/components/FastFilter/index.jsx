@@ -12,7 +12,6 @@ const FastFilter = ({
   fieldsMap,
   isVertical = false,
   getFilteredFilterFields,
-  selectedLinkedObject,
 }) => {
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
@@ -51,7 +50,6 @@ const FastFilter = ({
         ?.filter((el) => el) ?? []
     );
   }, [view?.quick_filters, fieldsMap, new_list, tableSlug]);
-
   const onChange = (value, name) => {
     dispatch(
       filterActions.setFilter({

@@ -30,9 +30,16 @@ const errorHandler = (error, hooks) => {
 
 requestAuth.interceptors.request.use(
   config => {
-    const token = store.getState().auth.token
+    const authStore = store.getState().auth
+    const token = authStore.token
+    const environmentId = authStore.environmentId
+    const resourceId = authStore.resourceId
+
+    
     if(token) {
       config.headers.Authorization = `Bearer ${token}`
+      config.headers['environment-id'] = environmentId
+      config.headers['resource-id'] = resourceId
     }
     return config
   },

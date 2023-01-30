@@ -27,6 +27,8 @@ const methodList = [
   { label: "CREATE", value: "CREATE" },
   { label: "DELETE", value: "DELETE" },
   { label: "MULTIPLE_UPDATE", value: "MULTIPLE_UPDATE" },
+  { label: "APPEND_MANY2MANY", value: "APPEND_MANY2MANY" },
+  { label: "DELETE_MANY2MANY", value: "DELETE_MANY2MANY" },
 ];
 
 const typeList = [

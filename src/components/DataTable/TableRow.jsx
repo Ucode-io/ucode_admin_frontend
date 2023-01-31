@@ -32,6 +32,7 @@ const TableRow = ({
   relationAction,
   onChecked,
   relationFields,
+  statusPermission,
 }) => {
   if (formVisible)
     return (
@@ -118,14 +119,16 @@ const TableRow = ({
             tabelSlug={tableSlug}
             type={["update", "delete"]}
           ></PermissionWrapperV2>
-          <RectangleIconButton
-            color="error"
-            onClick={() =>
-              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-            }
-          >
-            <Delete color="error" />
-          </RectangleIconButton>
+          {statusPermission?.delete && (
+            <RectangleIconButton
+              color="error"
+              onClick={() =>
+                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              }
+            >
+              <Delete color="error" />
+            </RectangleIconButton>
+          )}
         </CTableRow>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
         !relationAction?.action_relations ? (
@@ -185,14 +188,16 @@ const TableRow = ({
             tabelSlug={tableSlug}
             type={["update", "delete"]}
           ></PermissionWrapperV2>
-          <RectangleIconButton
-            color="error"
-            onClick={() =>
-              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-            }
-          >
-            <Delete color="error" />
-          </RectangleIconButton>
+          {statusPermission?.delete && (
+            <RectangleIconButton
+              color="error"
+              onClick={() =>
+                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              }
+            >
+              <Delete color="error" />
+            </RectangleIconButton>
+          )}
         </CTableRow>
       ) : (
         <CTableRow
@@ -247,14 +252,16 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <RectangleIconButton
-            color="error"
-            onClick={() =>
-              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-            }
-          >
-            <Delete color="error" />
-          </RectangleIconButton>
+          {statusPermission?.delete && (
+            <RectangleIconButton
+              color="error"
+              onClick={() =>
+                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              }
+            >
+              <Delete color="error" />
+            </RectangleIconButton>
+          )}
         </CTableRow>
       )}
     </>

@@ -50,6 +50,7 @@ const DataTable = ({
   paginationExtraButton,
   checkboxValue,
   onCheckboxChange,
+  defaultLimit,
 }) => {
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -182,6 +183,7 @@ const DataTable = ({
         ?.reduce((acc, item) => acc + item?.colWidth, 0);
     }
   };
+
   return (
     <CTable
       disablePagination={disablePagination}
@@ -195,6 +197,7 @@ const DataTable = ({
       paginationExtraButton={paginationExtraButton}
       limit={limit}
       setLimit={setLimit}
+      defaultLimit={defaultLimit}
     >
       <CTableHead>
         <CTableRow>

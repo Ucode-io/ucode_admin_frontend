@@ -13,6 +13,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useLocation } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
 import GroupCascading from "./GroupCascading";
+import CascadingElement from "./CascadingElement";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -59,10 +60,20 @@ const CellRelationFormElement = ({
               control={control}
               index={index}
               setValue={onChange}
-              // onInputChange={(e, newValue) => {
-              //   setInputValue(newValue);
-              //   inputChangeHandler(newValue);
-              // }}
+            />
+          ) : field?.attributes?.cascadings?.length > 1 ? (
+            <CascadingElement
+              field={field}
+              tableSlug={field.table_slug}
+              error={error}
+              disabledHelperText={disabledHelperText}
+              value={value ?? ""}
+              setFormValue={setFormValue}
+              classes={classes}
+              name={name}
+              control={control}
+              index={index}
+              setValue={onChange}
             />
           ) : (
             <AutoCompleteElement

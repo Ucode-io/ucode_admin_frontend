@@ -39,32 +39,18 @@ const ManyToManyRelationFormElement = ({
           name={name || `${tableSlug}_ids`}
           defaultValue={null}
           {...props}
-          render={({ field: { onChange, value }, fieldState: { error } }) =>
-            field?.attributes?.cascadings?.length > 1 ? (
-              <CascadingSection
-                value={value}
-                setValue={onChange}
-                field={field}
-                tableSlug={tableSlug}
-                error={error}
-                disabledHelperText={disabledHelperText}
-                control={control}
-                {...autocompleteProps}
-                name={name}
-              />
-            ) : (
-              <AutoCompleteElement
-                value={value}
-                setValue={onChange}
-                field={field}
-                tableSlug={tableSlug}
-                error={error}
-                disabledHelperText={disabledHelperText}
-                control={control}
-                {...autocompleteProps}
-              />
-            )
-          }
+          render={({ field: { onChange, value }, fieldState: { error } }) => (
+            <AutoCompleteElement
+              value={value}
+              setValue={onChange}
+              field={field}
+              tableSlug={tableSlug}
+              error={error}
+              disabledHelperText={disabledHelperText}
+              control={control}
+              {...autocompleteProps}
+            />
+          )}
         />
       </FRow>
     );

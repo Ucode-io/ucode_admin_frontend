@@ -27,6 +27,7 @@ import style from "./style.module.scss";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
 import { Description } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 
 const CalendarView = ({
   view,
@@ -35,6 +36,8 @@ const CalendarView = ({
   views,
 }) => {
   const { tableSlug } = useParams();
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
+
   const [dateFilters, setDateFilters] = useState([
     startOfWeek(new Date(), { weekStartsOn: 1 }),
     endOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -67,6 +70,12 @@ const CalendarView = ({
     }
     return result;
   }, [dateFilters]);
+
+  //=========STATUS PERMISSIONS=========
+  const statusPermission = useMemo(() => {
+    const getPermissions = isPermissions?.[tableSlug];
+    return getPermissions;
+  }, [tableSlug, isPermissions]);
 
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
@@ -237,7 +246,7 @@ const CalendarView = ({
                   </div>
                   <span>Template</span>
                 </div>
-                <SettingsButton />
+                {statusPermission?.update && <SettingsButton />}
               </div>
             </Menu>
             {/* <ExcelButtons />

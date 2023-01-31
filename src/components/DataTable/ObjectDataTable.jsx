@@ -58,6 +58,7 @@ const ObjectDataTable = ({
   relationAction,
   onChecked,
   defaultLimit,
+  statusPermission,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -352,6 +353,7 @@ const ObjectDataTable = ({
             relationAction={relationAction}
             onChecked={onChecked}
             relationFields={fields}
+            statusPermission={statusPermission}
           />
         ))}
         {!!summaries?.length && (

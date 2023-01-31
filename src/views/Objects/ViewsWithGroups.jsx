@@ -52,6 +52,7 @@ const ViewsWithGroups = ({
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
     $lt: endOfMonth(new Date()),
@@ -97,6 +98,12 @@ const ViewsWithGroups = ({
     control,
     name: "multi",
   });
+
+  //=========STATUS PERMISSIONS=========
+  const statusPermission = useMemo(() => {
+    const getPermissions = isPermissions?.[tableSlug];
+    return getPermissions;
+  }, [tableSlug, isPermissions]);
 
   const getValue = useCallback((item, key) => {
     return typeof item?.[key] === "object" ? item?.[key].value : item?.[key];
@@ -265,7 +272,7 @@ const ViewsWithGroups = ({
                   </div>
                   <span>Template</span>
                 </div>
-                <SettingsButton />
+                {statusPermission?.update && <SettingsButton />}
               </div>
             </Menu>
           </>
@@ -297,13 +304,15 @@ const ViewsWithGroups = ({
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tabelSlug={tableSlug} type="write">
-                <RectangleIconButton
-                  color="success"
-                  size="small"
-                  onClick={navigateToCreatePage}
-                >
-                  <AddIcon style={{ color: "#007AFF" }} />
-                </RectangleIconButton>
+                {statusPermission?.write && (
+                  <RectangleIconButton
+                    color="success"
+                    size="small"
+                    onClick={navigateToCreatePage}
+                  >
+                    <AddIcon style={{ color: "#007AFF" }} />
+                  </RectangleIconButton>
+                )}
 
                 {formVisible ? (
                   <>
@@ -332,17 +341,19 @@ const ViewsWithGroups = ({
                     </RectangleIconButton>
                   </>
                 ) : (
-                  <RectangleIconButton
-                    color="success"
-                    className=""
-                    size="small"
-                    onClick={() => {
-                      setFormVisible(true);
-                      // reset()
-                    }}
-                  >
-                    <Edit color="primary" />
-                  </RectangleIconButton>
+                  statusPermission?.update && (
+                    <RectangleIconButton
+                      color="success"
+                      className=""
+                      size="small"
+                      onClick={() => {
+                        setFormVisible(true);
+                        // reset()
+                      }}
+                    >
+                      <Edit color="primary" />
+                    </RectangleIconButton>
+                  )
                 )}
                 <MultipleInsertButton
                   view={view}

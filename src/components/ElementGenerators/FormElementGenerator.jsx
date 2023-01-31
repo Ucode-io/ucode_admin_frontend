@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import FRow from "../FormElements/FRow";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
@@ -48,6 +48,7 @@ const FormElementGenerator = ({
       objectIdFromJWT = table?.object_id;
     }
   });
+
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))
       return `$${field.id?.split("@")?.[0]}.${field?.slug}`;

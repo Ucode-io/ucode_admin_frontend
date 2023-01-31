@@ -27,6 +27,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
 import style from "./style.module.scss";
 import { Description } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 
 const CalendarHourView = ({
   view,
@@ -36,6 +37,7 @@ const CalendarHourView = ({
 }) => {
   const { tableSlug } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
 
   const [dateFilters, setDateFilters] = useState([
     startOfMonth(new Date()),
@@ -106,6 +108,12 @@ const CalendarHourView = ({
     }
   );
 
+  //=========STATUS PERMISSIONS=========
+  const statusPermission = useMemo(() => {
+    const getPermissions = isPermissions?.[tableSlug];
+    return getPermissions;
+  }, [tableSlug, isPermissions]);
+
   const tabResponses = useQueries(queryGenerator(groupFields, filters));
 
   const tabs = tabResponses?.map((response) => response?.data);
@@ -173,7 +181,7 @@ const CalendarHourView = ({
                   </div>
                   <span>Template</span>
                 </div>
-                <SettingsButton />
+                {statusPermission?.update && <SettingsButton />}
               </div>
             </Menu>
           </>

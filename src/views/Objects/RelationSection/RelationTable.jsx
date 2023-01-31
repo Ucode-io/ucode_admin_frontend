@@ -20,6 +20,7 @@ import { Filter } from "../components/FilterGenerator";
 import styles from "./style.module.scss";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
+import { useSelector } from "react-redux";
 
 const RelationTable = forwardRef(
   (
@@ -53,7 +54,7 @@ const RelationTable = forwardRef(
     const [filters, setFilters] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState();
-
+    const isPermissions = useSelector((state) => state?.auth?.permissions);
     const filterChangeHandler = (value, name) => {
       setFilters({
         ...filters,
@@ -90,14 +91,19 @@ const RelationTable = forwardRef(
       };
     }, [filters, tableSlug, id, relation.type, relation.relatedTable]);
 
-    // view perission
+    //============VIEW PERMISSION=========
     const viewPermission = useMemo(() => {
       if (relation.permission.view_permission) return true;
       else return false;
     }, [relation.permission.view_permission]);
 
-    const relatedTableSlug = relation?.relatedTable;
+    //=========STATUS PERMISSIONS=========
+    const statusPermission = useMemo(() => {
+      const getPermissions = isPermissions?.[tableSlug];
+      return getPermissions;
+    }, [tableSlug, isPermissions]);
 
+    const relatedTableSlug = relation?.relatedTable;
     const {
       data: {
         tableData = [],
@@ -290,6 +296,7 @@ const RelationTable = forwardRef(
               onDeleteClick={deleteHandler}
               onPaginationChange={setCurrentPage}
               filters={filters}
+              statusPermission={statusPermission}
               filterChangeHandler={filterChangeHandler}
               paginationExtraButton={
                 id && (

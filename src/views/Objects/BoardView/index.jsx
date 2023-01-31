@@ -1,5 +1,5 @@
 import { Description, Download, Upload } from "@mui/icons-material";
-import { useId } from "react";
+import { useId, useMemo } from "react";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
@@ -34,6 +34,7 @@ const BoardView = ({
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
 
   const [columns, setColumns] = useState([]);
   const { navigateToForm } = useTabRouter();
@@ -47,6 +48,12 @@ const BoardView = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  //=========STATUS PERMISSIONS=========
+  const statusPermission = useMemo(() => {
+    const getPermissions = isPermissions?.[tableSlug];
+    return getPermissions;
+  }, [tableSlug, isPermissions]);
 
   const { data = [], isLoading: dataLoader } = useQuery(
     ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters }],
@@ -141,7 +148,7 @@ const BoardView = ({
                   <span>Template</span>
                 </div>
 
-                <SettingsButton />
+                {statusPermission?.update && <SettingsButton />}
               </div>
             </Menu>
             {/* <ExcelButtons />

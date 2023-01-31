@@ -34,6 +34,7 @@ const ObjectsFormPage = () => {
   const { removeTab, navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
   const tablesList = useSelector((state) => state.constructorTable.list);
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
@@ -57,6 +58,12 @@ const ObjectsFormPage = () => {
         .sort(sortByOrder) ?? []
     );
   }, [sections]);
+
+  //=========STATUS PERMISSIONS=========
+  const statusPermission = useMemo(() => {
+    const getPermissions = isPermissions?.[tableSlug];
+    return getPermissions;
+  }, [tableSlug, isPermissions]);
 
   const computedSummary = useMemo(() => {
     return sections.find((item) => item.is_summary_section);
@@ -261,14 +268,16 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
 
-              <PrimaryButton
-                loader={btnLoader}
-                id="submit"
-                onClick={handleSubmit(onSubmit)}
-              >
-                <Save />
-                Сохранить
-              </PrimaryButton>
+              {statusPermission?.update && (
+                <PrimaryButton
+                  loader={btnLoader}
+                  id="submit"
+                  onClick={handleSubmit(onSubmit)}
+                >
+                  <Save />
+                  Сохранить
+                </PrimaryButton>
+              )}
             </PermissionWrapperV2>
           </>
         }

@@ -1,7 +1,8 @@
 import { Delete } from "@mui/icons-material";
-import { Autocomplete, CircularProgress, TextField } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
-import { Controller, useFieldArray, useWatch } from "react-hook-form";
+import { Autocomplete, TextField } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { useWatch } from "react-hook-form";
+import { useQuery } from "react-query";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
@@ -21,10 +22,9 @@ function TableRow({
   relation,
   setValue,
 }) {
-  const [relations, setRelations] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [data, setData] = useState([]);
   const [debouncedValue, setDebouncedValue] = useState("");
+
   const selectedTableOptions = useWatch({
     control: control,
     name: `attributes.additional_parameters.${index}.table_slug`,
@@ -34,7 +34,24 @@ function TableRow({
     name: `attributes.additional_parameters.${index}.value`,
   });
 
-  const getList = useMemo(() => {
+  //============GET RELATIONS===========
+  const { data: relations } = useQuery(
+    ["GET_RELATION_LIST", slug],
+    () => {
+      return constructorRelationService.getList({
+        table_slug: slug,
+        relation_table_slug: slug,
+      });
+    },
+    {
+      select: (res) => {
+        return res?.relations;
+      },
+    }
+  );
+
+  //============COMPUTED OPTIONS===============
+  const getListValues = useMemo(() => {
     const relationsWithRelatedTableSlug = relations?.map((relation) => ({
       ...relation,
       relatedTableSlug:
@@ -62,63 +79,54 @@ function TableRow({
       }));
   }, [relations, slug]);
 
+  //========COMPUTE FILTERED DATA=======
   const getFilterData = useMemo(() => {
-    return getList?.find((item) => {
+    return getListValues?.find((item) => {
       if (item?.value === selectedTableOptions) {
         return item;
       }
     });
-  }, [getList, selectedTableOptions]);
+  }, [getListValues, selectedTableOptions]);
 
+  const { data: values } = useQuery(
+    ["GET_OBJECT_LIST", selectedTableOptions, getFilterData, debouncedValue],
+    () => {
+      return constructorObjectService.getList(selectedTableOptions, {
+        data: {
+          limit: 10,
+          offset: 0,
+          view_fields: [getFilterData?.view],
+          search: debouncedValue,
+        },
+      });
+    },
+    {
+      enabled: !!selectedTableOptions,
+      select: (res) => {
+        return res?.data?.response;
+      },
+    }
+  );
+
+  //==========OBJECTID OPTIONS==========
   const valueList = useMemo(() => {
-    return data?.map((item) => ({
+    return values?.map((item) => ({
       label: item?.[getFilterData?.view],
       value: item?.guid,
     }));
-  }, [data, getFilterData]);
+  }, [values, getFilterData]);
 
-  // FUNCTIONS
+  //==============FUNCTIONS============
 
   const onUpdate = () => {
     update([...relation]);
   };
 
-  // Delete function
   const deleteSummary = (index) => {
     remove(index);
   };
 
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
-
-  useEffect(() => {
-    if (selectedTableOptions) {
-      selectedTableOptions &&
-        constructorObjectService
-          ?.getList(selectedTableOptions, {
-            data: {
-              limit: 10,
-              offset: 0,
-              view_fields: [getFilterData?.view],
-              search: debouncedValue,
-            },
-          })
-          .then((res) => {
-            setData(res?.data?.response);
-          });
-    }
-  }, [selectedTableOptions, debouncedValue, getFilterData]);
-
-  useEffect(() => {
-    constructorRelationService
-      .getList({
-        table_slug: slug,
-        relation_table_slug: slug,
-      })
-      .then((res) => {
-        setRelations(res.relations);
-      })
-      .catch((a) => console.log("error", a));
-  }, []);
 
   return (
     <div key={summary.key} className={styles.tableActions}>
@@ -141,7 +149,7 @@ function TableRow({
             <HFSelect
               fullWidth
               control={control}
-              options={getList}
+              options={getListValues}
               name={`attributes.additional_parameters.${index}.table_slug`}
             />
           </div>
@@ -199,7 +207,7 @@ function TableRow({
             <HFSelect
               fullWidth
               control={control}
-              options={getList}
+              options={getListValues}
               name={`attributes.additional_parameters.${index}.value`}
             />
           ) : (
@@ -223,12 +231,3 @@ function TableRow({
 }
 
 export default TableRow;
-
-// for Autocomplete
-
-// <HFMultipleSelect
-//   fullWidth
-//   control={control}
-//   options={valueList}
-//   name={`attributes.additional_parameters.${index}.value`}
-// />

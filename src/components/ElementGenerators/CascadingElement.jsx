@@ -6,11 +6,7 @@ import constructorObjectService from "../../services/constructorObjectService";
 import IconGenerator from "../IconPicker/IconGenerator";
 import useTabRouter from "../../hooks/useTabRouter";
 import CloseIcon from "@mui/icons-material/Close";
-import { get } from "@ngard/tiny-get";
-import {
-  getRelationFieldLabel,
-  getRelationFieldTableCellLabel,
-} from "../../utils/getRelationFieldLabel";
+import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
 import { useQuery } from "react-query";
 
 function CascadingElement({
@@ -18,8 +14,6 @@ function CascadingElement({
   field,
   setFormValue,
   tableSlug,
-  error,
-  disabledHelperText,
   value,
   row,
   index,
@@ -35,25 +29,12 @@ function CascadingElement({
   const [dataFilter, setDataFilter] = useState([]);
   const [tablesSlug, setTablesSlug] = useState([]);
 
-  const valuess = useMemo(() => {
-    if (field.type !== "LOOKUPS" || field.type !== "LOOKUPS")
-      return get(row, field.slug, "");
-
-    const result = getRelationFieldTableCellLabel(
-      field,
-      row,
-      field.slug + "_data"
-    );
-
-    return result;
-  }, [row, field]);
-
+  //==========OPTIONS REQUEST===========
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug],
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
-          // ...autoFiltersValue,
           view_fields:
             field?.view_fields?.map((field) => field.slug) ??
             field?.attributes?.view_fields?.map((field) => field.slug),
@@ -74,10 +55,10 @@ function CascadingElement({
     }
   );
 
+  //=========COMPUTED VALUE FOR LOOKUPS========
   const computedValue = useMemo(() => {
     if (field?.type === "LOOKUPS") {
       if (!value) return [];
-
       return value
         ?.map((id) => {
           const option = options?.find((el) => el?.guid === id);
@@ -85,20 +66,29 @@ function CascadingElement({
           if (!option) return null;
           return {
             ...option,
-            // label: getRelationFieldLabel(field, option)
           };
         })
         ?.filter((el) => el);
     }
-  }, [options, value]);
+  }, [options, value, field]);
 
+  //==========COMPUTED VALUE FOR LOOKUP===========
   const insideValue = useMemo(() => {
     let values = "";
+    const option = options?.find((el) => el?.guid === value);
     const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
-    slugs?.map((item) => (values += " " + inputValue?.[item]));
-    return values;
-  }, [inputValue, field]);
 
+    if (inputValue === undefined) {
+      slugs?.map(
+        (item) => (values += option === undefined ? "" : " " + option?.[item])
+      );
+    } else {
+      slugs?.map((item) => (values += " " + inputValue?.[item]));
+    }
+    return values;
+  }, [field, options, inputValue, value]);
+
+  //==========MAIN SETVALUE FUNCTION===========
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
     constructorObjectService
@@ -123,6 +113,7 @@ function CascadingElement({
     handleClose();
   };
 
+  //==========MENU CLOSE FUNCTION=========
   const handleClose = () => {
     setAnchorEl(null);
     setCurrentLevel(1);
@@ -137,9 +128,8 @@ function CascadingElement({
           <Autocomplete
             multiple
             id="tags-standard"
-            options={computedValue}
             value={computedValue}
-            getOptionLabel={(option) => option.title}
+            getOptionLabel={(option) => option.label}
             onChange={onCompanyChange}
             renderInput={(params) => (
               <TextField {...params} variant="standard" onClick={handleClick} />
@@ -166,15 +156,6 @@ function CascadingElement({
                             navigateToForm(tableSlug, "EDIT", values[index]);
                           }}
                         />
-
-                        {/* <Close
-                       fontSize="12"
-                       onChange={getTagProps({ index })?.onDelete}
-                       onClick={(e) => {
-                         e.stopPropagation();
-                       }}
-                       style={{ cursor: "pointer" }}
-                     /> */}
                       </div>
                     ))}
                   </div>
@@ -188,7 +169,7 @@ function CascadingElement({
             fullWidth
             id="password"
             onClick={handleClick}
-            value={inputValue === undefined ? valuess : insideValue}
+            value={insideValue ?? ""}
             inputStyle={{ height: "35px" }}
             InputProps={{
               endAdornment: value && (

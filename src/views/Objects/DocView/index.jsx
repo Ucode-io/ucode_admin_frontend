@@ -18,7 +18,6 @@ import {
 import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSelector";
 
 import ViewTabSelector from "../components/ViewTypeSelector";
-import TableView from "../TableView";
 import DocRelationsSection from "./DocRelationsSection";
 import DocSettingsBlock from "./DocSettingsBlock";
 import { contentStyles } from "./editorContentStyles";
@@ -26,12 +25,7 @@ import RedactorBlock from "./RedactorBlock";
 import styles from "./style.module.scss";
 import TemplatesList from "./TemplatesList";
 
-const DocView = ({
-  views,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  // fieldsMap,
-}) => {
+const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const redactorRef = useRef();
   const { state } = useLocation();
   const { tableSlug } = useParams();
@@ -41,15 +35,6 @@ const DocView = ({
 
   const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
   const userId = useSelector((state) => state.auth.userId);
-
-  // const view = views.find((view) => view.type === "TABLE");
-
-  const { control, reset } = useForm();
-
-  // const { append } = useFieldArray({
-  //   control: control,
-  //   name: "multi",
-  // });
 
   // =====SETTINGS BLOCK=========
   const [pdfLoader, setPdfLoader] = useState(false);
@@ -61,7 +46,6 @@ const DocView = ({
   const [selectedOutputObject, setSelectedOutputObject] = useState("");
   const [selectedLinkedObject, setSelectedLinkedObject] = useState("");
   const [searchText, setSearchText] = useState("");
-  const [fetch, setFetch] = useState(false);
   const [selectedObject, setSelectedObject] = useState("");
 
   const selectLinkedObject = selectedObject?.value;
@@ -140,17 +124,8 @@ const DocView = ({
           templateFields,
         };
       },
-      onSuccess: () => {
-        handleChange();
-      },
     }
   );
-
-  const handleChange = useDebounce(() => {
-    if (state?.objectId) {
-      exportToHTML();
-    }
-  }, 700);
 
   // ========UPDATE TEMPLATE===========
 
@@ -279,6 +254,12 @@ const DocView = ({
       setPdfLoader(false);
     }
   };
+
+  useEffect(() => {
+    if (state?.objectId && selectedOutputTable) {
+      exportToHTML();
+    }
+  }, [state, selectedOutputTable]);
 
   return (
     <div>

@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
-import styles from "./style.module.scss";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { SearchIcon } from "../../../../src/assets/icons/icon.jsx";
-import DescriptionIcon from "@mui/icons-material/Description";
+import { useQuery } from "react-query";
+import useDebounce from "../../../hooks/useDebounce";
 import constructorObjectService from "../../../services/constructorObjectService";
-import FolderIcon from "@mui/icons-material/Folder";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { numberWithSpaces } from "../../../utils/formatNumbers";
 import CascadingMany2Many from "./CascadingMany2Many";
 import CascadingMany2One from "./CascadingMany2One";
 
@@ -33,8 +28,9 @@ function CascadingSectionItem({
   const [levelTableSlug, setLevelTableSlug] = useState("");
   const [ids, setIds] = useState([]);
   const cascadingLength = fields?.attributes?.cascadings?.length;
+  const [debouncedValue, setDebouncedValue] = useState("");
 
-  // Search filter
+  //=========SEARCH FILTER=========
   const foundServices = useMemo(() => {
     if (!searchText) return [];
     return field.filter(
@@ -44,7 +40,7 @@ function CascadingSectionItem({
     );
   }, [searchText, field]);
 
-  // Data for service filter
+  //========DATA FOR SERVICE FILTER===========
   const dataObject = useMemo(() => {
     const values = {};
     tablesSlug?.map((item, index) => {
@@ -94,6 +90,31 @@ function CascadingSectionItem({
     } else setCurrentLevel(1);
   };
 
+  //==========SEARCH REQUEST==========
+  const { data: searchServices } = useQuery(
+    ["GET_OBJECT_LIST", debouncedValue],
+    () => {
+      if (!tableSlug) return null;
+      return constructorObjectService.getList(tableSlug, {
+        data: {
+          view_fields: fields.attributes?.view_fields?.map((f) => f.slug),
+          search: debouncedValue.trim(),
+          limit: 10,
+        },
+      });
+    },
+    {
+      select: (res) => {
+        return res?.data?.response ?? [];
+      },
+    }
+  );
+
+  const handleServices = (item) => {
+    setValue(item);
+    handleClose();
+  };
+
   const backArrowButton = () => {
     setCurrentLevel(currentLevel - 1);
     setDataFilter(dataFilter.splice(0, dataFilter.length - 1));
@@ -101,13 +122,13 @@ function CascadingSectionItem({
     setTitle(title.splice(0, title?.length - 1));
   };
 
-  // Many2Many confirm function
+  //=========MANY2MANY CONFIRM FUNCTION============
   const confirmButton = () => {
     setValue(ids);
     handleClose();
   };
 
-  // Checkbox function Many2Many
+  //======CHECKBOX FUNCTION MANY2MANY========
   const onChecked = (id) => {
     setIds((prev) => {
       if (prev.includes(id)) {
@@ -166,6 +187,10 @@ function CascadingSectionItem({
               handleClick={handleClick}
               field={field}
               fields={fields}
+              setDebouncedValue={setDebouncedValue}
+              searchServices={searchServices}
+              debouncedValue={debouncedValue}
+              handleServices={handleServices}
             />
           )}
       {level < 4 && values && (

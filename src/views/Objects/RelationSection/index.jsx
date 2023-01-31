@@ -35,6 +35,8 @@ const RelationSection = ({
   relations,
   tableSlug: tableSlugFromProps,
   id: idFromProps,
+  limit,
+  setLimit,
 }) => {
   const filteredRelations = useMemo(() => {
     const rel = relations?.filter((relation) => relation?.relatedTable);
@@ -257,6 +259,8 @@ const RelationSection = ({
         <ManyToManyRelationCreateModal
           relation={selectedManyToManyRelation}
           closeModal={() => setSelectedManyToManyRelation(null)}
+          limit={limit}
+          setLimit={setLimit}
         />
       )}
       {filteredRelations.length ? (

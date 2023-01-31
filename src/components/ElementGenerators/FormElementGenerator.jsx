@@ -39,8 +39,8 @@ const FormElementGenerator = ({
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
-  if (field?.id.includes("#")) {
-    relationTableSlug = field?.id.split("#")[0];
+  if (field?.id?.includes("#")) {
+    relationTableSlug = field?.id?.split("#")[0];
   }
 
   tables?.forEach((table) => {
@@ -50,26 +50,26 @@ const FormElementGenerator = ({
   });
 
   const computedSlug = useMemo(() => {
-    if (field.id?.includes("@"))
-      return `$${field.id?.split("@")?.[0]}.${field?.slug}`;
-    return field.slug;
-  }, [field.id, field.slug]);
+    if (field?.id?.includes("@"))
+      return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    return field?.slug;
+  }, [field?.id, field?.slug]);
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
     const defaultValue =
-      field.attributes?.defaultValue ?? field.attributes?.default_values;
+      field?.attributes?.defaultValue ?? field.attributes?.default_values;
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
-  }, [field.attributes, field.type, field.id, field.relation_type]);
+  }, [field?.attributes, field?.type, field.id, field?.relation_type]);
 
   const isDisabled = useMemo(() => {
     return (
-      field.attributes?.disabled ||
+      field?.attributes?.disabled ||
       !field.attributes?.field_permission?.edit_permission
     );
   }, [field]);
@@ -80,8 +80,8 @@ const FormElementGenerator = ({
 
   // console.log("FIELD - ", field);
 
-  if (field.id?.includes("#")) {
-    if (field.relation_type === "Many2Many") {
+  if (field?.id?.includes("#")) {
+    if (field?.relation_type === "Many2Many") {
       return (
         <ManyToManyRelationFormElement
           control={control}
@@ -92,7 +92,7 @@ const FormElementGenerator = ({
           {...props}
         />
       );
-    } else if (field.relation_type === "Many2Dynamic") {
+    } else if (field?.relation_type === "Many2Dynamic") {
       return (
         <DynamicRelationFormElement
           control={control}
@@ -118,7 +118,7 @@ const FormElementGenerator = ({
     }
   }
 
-  switch (field.type) {
+  switch (field?.type) {
     case "SINGLE_LINE":
       return (
         <FRow label={field.label} required={field.required}>

@@ -53,6 +53,7 @@ const ViewsWithGroups = ({
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
   const isPermissions = useSelector((state) => state?.auth?.permissions);
+  const role = useSelector((state) => state.auth.roleInfo);
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
     $lt: endOfMonth(new Date()),
@@ -272,7 +273,11 @@ const ViewsWithGroups = ({
                   </div>
                   <span>Template</span>
                 </div>
-                {statusPermission?.update && <SettingsButton />}
+                {statusPermission?.update || role?.name === "DEFAULT ADMIN" ? (
+                  <SettingsButton />
+                ) : (
+                  ""
+                )}
               </div>
             </Menu>
           </>
@@ -304,7 +309,7 @@ const ViewsWithGroups = ({
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tabelSlug={tableSlug} type="write">
-                {statusPermission?.write && (
+                {statusPermission?.write || role?.name === "DEFAULT ADMIN" ? (
                   <RectangleIconButton
                     color="success"
                     size="small"
@@ -312,6 +317,8 @@ const ViewsWithGroups = ({
                   >
                     <AddIcon style={{ color: "#007AFF" }} />
                   </RectangleIconButton>
+                ) : (
+                  ""
                 )}
 
                 {formVisible ? (
@@ -340,20 +347,21 @@ const ViewsWithGroups = ({
                       <Clear color="error" />
                     </RectangleIconButton>
                   </>
+                ) : statusPermission?.update ||
+                  role?.name === "DEFAULT ADMIN" ? (
+                  <RectangleIconButton
+                    color="success"
+                    className=""
+                    size="small"
+                    onClick={() => {
+                      setFormVisible(true);
+                      // reset()
+                    }}
+                  >
+                    <Edit color="primary" />
+                  </RectangleIconButton>
                 ) : (
-                  statusPermission?.update && (
-                    <RectangleIconButton
-                      color="success"
-                      className=""
-                      size="small"
-                      onClick={() => {
-                        setFormVisible(true);
-                        // reset()
-                      }}
-                    >
-                      <Edit color="primary" />
-                    </RectangleIconButton>
-                  )
+                  ""
                 )}
                 <MultipleInsertButton
                   view={view}

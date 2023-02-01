@@ -33,6 +33,7 @@ const TableRow = ({
   onChecked,
   relationFields,
   statusPermission,
+  role,
 }) => {
   if (formVisible)
     return (
@@ -119,7 +120,7 @@ const TableRow = ({
             tabelSlug={tableSlug}
             type={["update", "delete"]}
           ></PermissionWrapperV2>
-          {statusPermission?.delete && (
+          {statusPermission?.delete || role?.name === "DEFAULT ADMIN" ? (
             <RectangleIconButton
               color="error"
               onClick={() =>
@@ -128,6 +129,8 @@ const TableRow = ({
             >
               <Delete color="error" />
             </RectangleIconButton>
+          ) : (
+            ""
           )}
         </CTableRow>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
@@ -188,7 +191,7 @@ const TableRow = ({
             tabelSlug={tableSlug}
             type={["update", "delete"]}
           ></PermissionWrapperV2>
-          {statusPermission?.delete && (
+          {statusPermission?.delete || role?.name === "DEFAULT ADMIN" ? (
             <RectangleIconButton
               color="error"
               onClick={() =>
@@ -197,6 +200,8 @@ const TableRow = ({
             >
               <Delete color="error" />
             </RectangleIconButton>
+          ) : (
+            ""
           )}
         </CTableRow>
       ) : (
@@ -252,7 +257,7 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          {statusPermission?.delete && (
+          {statusPermission?.delete || role?.name === "DEFAULT ADMIN" ? (
             <RectangleIconButton
               color="error"
               onClick={() =>
@@ -261,6 +266,8 @@ const TableRow = ({
             >
               <Delete color="error" />
             </RectangleIconButton>
+          ) : (
+            ""
           )}
         </CTableRow>
       )}

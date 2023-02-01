@@ -38,6 +38,7 @@ const CalendarHourView = ({
   const { tableSlug } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
   const isPermissions = useSelector((state) => state?.auth?.permissions);
+  const role = useSelector((state) => state.auth.roleInfo);
 
   const [dateFilters, setDateFilters] = useState([
     startOfMonth(new Date()),
@@ -181,7 +182,11 @@ const CalendarHourView = ({
                   </div>
                   <span>Template</span>
                 </div>
-                {statusPermission?.update && <SettingsButton />}
+                {statusPermission?.update || role?.name === "DEFAULT ADMIN" ? (
+                  <SettingsButton />
+                ) : (
+                  ""
+                )}
               </div>
             </Menu>
           </>

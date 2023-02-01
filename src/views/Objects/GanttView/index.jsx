@@ -57,6 +57,7 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   const { tableSlug } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
   const isPermissions = useSelector((state) => state?.auth?.permissions);
+  const role = useSelector((state) => state.auth.roleInfo);
 
   const [dateFilters, setDateFilters] = useState([
     new Date(),
@@ -201,7 +202,11 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
                   <span>Template</span>
                 </div>
 
-                {statusPermission?.update && <SettingsButton />}
+                {statusPermission?.update || role?.name === "DEFAULT ADMIN" ? (
+                  <SettingsButton />
+                ) : (
+                  ""
+                )}
               </div>
             </Menu>
             {/* <ExcelButtons />

@@ -37,6 +37,7 @@ const CalendarView = ({
 }) => {
   const { tableSlug } = useParams();
   const isPermissions = useSelector((state) => state?.auth?.permissions);
+  const role = useSelector((state) => state.auth.roleInfo);
 
   const [dateFilters, setDateFilters] = useState([
     startOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -246,7 +247,11 @@ const CalendarView = ({
                   </div>
                   <span>Template</span>
                 </div>
-                {statusPermission?.update && <SettingsButton />}
+                {statusPermission?.update || role?.name === "DEFAULT ADMIN" ? (
+                  <SettingsButton />
+                ) : (
+                  ""
+                )}
               </div>
             </Menu>
             {/* <ExcelButtons />

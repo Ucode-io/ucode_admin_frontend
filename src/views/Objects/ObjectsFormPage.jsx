@@ -35,6 +35,7 @@ const ObjectsFormPage = () => {
   const queryClient = useQueryClient();
   const tablesList = useSelector((state) => state.constructorTable.list);
   const isPermissions = useSelector((state) => state?.auth?.permissions);
+  const role = useSelector((state) => state.auth.roleInfo);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
@@ -268,7 +269,7 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
 
-              {statusPermission?.update && (
+              {statusPermission?.update || role?.name === "DEFAULT ADMIN" ? (
                 <PrimaryButton
                   loader={btnLoader}
                   id="submit"
@@ -277,6 +278,8 @@ const ObjectsFormPage = () => {
                   <Save />
                   Сохранить
                 </PrimaryButton>
+              ) : (
+                ""
               )}
             </PermissionWrapperV2>
           </>

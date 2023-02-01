@@ -35,6 +35,7 @@ const BoardView = ({
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
   const isPermissions = useSelector((state) => state?.auth?.permissions);
+  const role = useSelector((state) => state.auth.roleInfo);
 
   const [columns, setColumns] = useState([]);
   const { navigateToForm } = useTabRouter();
@@ -148,7 +149,11 @@ const BoardView = ({
                   <span>Template</span>
                 </div>
 
-                {statusPermission?.update && <SettingsButton />}
+                {statusPermission?.update || role?.name === "DEFAULT ADMIN" ? (
+                  <SettingsButton />
+                ) : (
+                  ""
+                )}
               </div>
             </Menu>
             {/* <ExcelButtons />

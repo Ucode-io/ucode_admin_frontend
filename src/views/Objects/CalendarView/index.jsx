@@ -44,6 +44,9 @@ const CalendarView = ({
     endOfWeek(new Date(), { weekStartsOn: 1 }),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
+  const [searchParams] = useSearchParams();
+  const defaultSpecialities = [searchParams.get("specialities")] ?? "";
+  const defaultCategory = [searchParams.get("category")] ?? "";
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -91,7 +94,9 @@ const CalendarView = ({
             $gte: dateFilters[0],
             $lt: dateFilters[1],
           },
-          ...dataFilters,
+          // ...dataFilters,
+          categories_id: defaultCategory,
+          "doctors_id_data.specialities_id": defaultSpecialities,
         },
       });
     },

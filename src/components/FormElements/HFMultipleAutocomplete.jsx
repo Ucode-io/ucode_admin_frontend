@@ -52,6 +52,10 @@ const HFMultipleAutocomplete = ({
   defaultValue = "",
   disabled,
 }) => {
+  const values = useWatch({
+    control,
+  });
+
   const classes = useStyles();
   const options = field.attributes?.options ?? [];
   const hasColor = field.attributes?.has_color;
@@ -62,7 +66,7 @@ const HFMultipleAutocomplete = ({
     <Controller
       control={control}
       name={name}
-      defaultValue={"Открыто"}
+      defaultValue={defaultValue}
       rules={{
         required: required ? "This is required field" : false,
         ...rules,

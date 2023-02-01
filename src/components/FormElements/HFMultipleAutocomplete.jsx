@@ -62,7 +62,7 @@ const HFMultipleAutocomplete = ({
     <Controller
       control={control}
       name={name}
-      defaultValue={defaultValue}
+      defaultValue={"Открыто"}
       rules={{
         required: required ? "This is required field" : false,
         ...rules,

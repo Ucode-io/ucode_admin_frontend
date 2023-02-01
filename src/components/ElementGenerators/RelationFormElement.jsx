@@ -201,13 +201,13 @@ const AutoCompleteElement = ({
     return findedOption ? [findedOption] : [];
   }, [options, value]);
 
-  const setDefaultValue = () => {
-    if (options?.slugOptions) {
-      const val = options?.slugOptions?.find((item) => item?.guid === id);
-      setValue(val?.guid ?? null);
-      setLocalValue(val ? [val] : null);
-    }
-  };
+  // const setDefaultValue = () => {
+  //   if (options?.slugOptions) {
+  //     const val = options?.slugOptions?.find((item) => item?.guid === id);
+  //     setValue(val?.guid ?? null);
+  //     setLocalValue(val ? [val] : null);
+  //   }
+  // };
 
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
@@ -247,7 +247,6 @@ const AutoCompleteElement = ({
 
   useEffect(() => {
     if (value) getValueData();
-    setDefaultValue();
   }, [value]);
 
   return (

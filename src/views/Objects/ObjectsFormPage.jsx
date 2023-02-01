@@ -65,6 +65,7 @@ const ObjectsFormPage = () => {
     return getPermissions;
   }, [tableSlug, isPermissions]);
 
+
   const computedSummary = useMemo(() => {
     return sections.find((item) => item.is_summary_section);
   }, [sections]);
@@ -269,7 +270,7 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
 
-              {statusPermission?.update && (
+              {/* {statusPermission?.update && ( */}
                 <PrimaryButton
                   loader={btnLoader}
                   id="submit"
@@ -278,7 +279,7 @@ const ObjectsFormPage = () => {
                   <Save />
                   Сохранить
                 </PrimaryButton>
-              )}
+              {/* )} */}
             </PermissionWrapperV2>
           </>
         }

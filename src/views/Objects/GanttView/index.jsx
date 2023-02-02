@@ -32,6 +32,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
 import { Description } from "@mui/icons-material";
 import { useSelector } from "react-redux";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const variableTypes = [
   {
@@ -56,8 +57,6 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   });
   const { tableSlug } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
-  const isPermissions = useSelector((state) => state?.auth?.permissions);
-  const role = useSelector((state) => state.auth.roleInfo);
 
   const [dateFilters, setDateFilters] = useState([
     new Date(),
@@ -78,12 +77,6 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   const groupFields = groupFieldIds
     .map((id) => fieldsMap[id])
     .filter((el) => el);
-
-  //=========STATUS PERMISSIONS=========
-  const statusPermission = useMemo(() => {
-    const getPermissions = isPermissions?.[tableSlug];
-    return getPermissions;
-  }, [tableSlug, isPermissions]);
 
   const datesList = useMemo(() => {
     if (!dateFilters?.[0] || !dateFilters?.[1]) return [];
@@ -202,11 +195,9 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
                   <span>Template</span>
                 </div>
 
-                {statusPermission?.update || role?.name === "DEFAULT ADMIN" ? (
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
                   <SettingsButton />
-                ) : (
-                  ""
-                )}
+                </PermissionWrapperV2>
               </div>
             </Menu>
             {/* <ExcelButtons />

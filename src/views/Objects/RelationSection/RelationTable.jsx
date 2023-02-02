@@ -54,7 +54,6 @@ const RelationTable = forwardRef(
     const [filters, setFilters] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState();
-    const isPermissions = useSelector((state) => state?.auth?.permissions);
     const filterChangeHandler = (value, name) => {
       setFilters({
         ...filters,
@@ -96,12 +95,6 @@ const RelationTable = forwardRef(
       if (relation.permission.view_permission) return true;
       else return false;
     }, [relation.permission.view_permission]);
-
-    //=========STATUS PERMISSIONS=========
-    const statusPermission = useMemo(() => {
-      const getPermissions = isPermissions?.[tableSlug];
-      return getPermissions;
-    }, [tableSlug, isPermissions]);
 
     const relatedTableSlug = relation?.relatedTable;
     const {
@@ -296,7 +289,6 @@ const RelationTable = forwardRef(
               onDeleteClick={deleteHandler}
               onPaginationChange={setCurrentPage}
               filters={filters}
-              statusPermission={statusPermission}
               filterChangeHandler={filterChangeHandler}
               paginationExtraButton={
                 id && (

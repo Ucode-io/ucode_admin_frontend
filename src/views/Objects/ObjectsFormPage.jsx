@@ -59,13 +59,6 @@ const ObjectsFormPage = () => {
     );
   }, [sections]);
 
-  //=========STATUS PERMISSIONS=========
-  const statusPermission = useMemo(() => {
-    const getPermissions = isPermissions?.[tableSlug];
-    return getPermissions;
-  }, [tableSlug, isPermissions]);
-
-
   const computedSummary = useMemo(() => {
     return sections.find((item) => item.is_summary_section);
   }, [sections]);
@@ -270,16 +263,15 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
 
-              {/* {statusPermission?.update && ( */}
-                <PrimaryButton
-                  loader={btnLoader}
-                  id="submit"
-                  onClick={handleSubmit(onSubmit)}
-                >
-                  <Save />
-                  Сохранить
-                </PrimaryButton>
-              {/* )} */}
+              <PermissionWrapperV2 tableSlug={tableSlug} type="update" />
+              <PrimaryButton
+                loader={btnLoader}
+                id="submit"
+                onClick={handleSubmit(onSubmit)}
+              >
+                <Save />
+                Сохранить
+              </PrimaryButton>
             </PermissionWrapperV2>
           </>
         }

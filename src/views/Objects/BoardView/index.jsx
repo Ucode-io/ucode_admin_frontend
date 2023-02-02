@@ -22,6 +22,7 @@ import BoardColumn from "./BoardColumn";
 import styles from "./style.module.scss";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const BoardView = ({
   view,
@@ -34,7 +35,6 @@ const BoardView = ({
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
-  const isPermissions = useSelector((state) => state?.auth?.permissions);
   const role = useSelector((state) => state.auth.roleInfo);
 
   const [columns, setColumns] = useState([]);
@@ -49,12 +49,6 @@ const BoardView = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  //=========STATUS PERMISSIONS=========
-  const statusPermission = useMemo(() => {
-    const getPermissions = isPermissions?.[tableSlug];
-    return getPermissions;
-  }, [tableSlug, isPermissions]);
 
   const { data = [], isLoading: dataLoader } = useQuery(
     ["GET_OBJECT_LIST_ALL", { tableSlug, id, filters }],
@@ -148,12 +142,9 @@ const BoardView = ({
                   </div>
                   <span>Template</span>
                 </div>
-
-                {statusPermission?.update || role?.name === "DEFAULT ADMIN" ? (
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
                   <SettingsButton />
-                ) : (
-                  ""
-                )}
+                </PermissionWrapperV2>
               </div>
             </Menu>
             {/* <ExcelButtons />

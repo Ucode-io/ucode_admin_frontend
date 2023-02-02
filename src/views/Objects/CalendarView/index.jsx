@@ -28,6 +28,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
 import { Description } from "@mui/icons-material";
 import { useSelector } from "react-redux";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const CalendarView = ({
   view,
@@ -36,7 +37,6 @@ const CalendarView = ({
   views,
 }) => {
   const { tableSlug } = useParams();
-  const isPermissions = useSelector((state) => state?.auth?.permissions);
   const [searchParams] = useSearchParams();
   const defaultSpecialities =
     searchParams.get("specialities") === null
@@ -79,12 +79,6 @@ const CalendarView = ({
     }
     return result;
   }, [dateFilters]);
-
-  //=========STATUS PERMISSIONS=========
-  const statusPermission = useMemo(() => {
-    const getPermissions = isPermissions?.[tableSlug];
-    return getPermissions;
-  }, [tableSlug, isPermissions]);
 
   const { data: { data } = { data: [] }, isLoading } = useQuery(
     [
@@ -257,7 +251,9 @@ const CalendarView = ({
                   </div>
                   <span>Template</span>
                 </div>
-                {statusPermission?.update && <SettingsButton />}
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                  <SettingsButton />
+                </PermissionWrapperV2>
               </div>
             </Menu>
             {/* <ExcelButtons />

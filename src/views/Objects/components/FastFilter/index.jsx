@@ -29,7 +29,7 @@ const FastFilter = ({
       filterChangeHandler(defaultCategory, "categories_id");
       filterChangeHandler(
         defaultSpecialities,
-        "doctors_id_data.specialities_ids"
+        "doctors_id_data.specialities_id"
       );
     }
   }, []);

@@ -37,7 +37,6 @@ const CalendarView = ({
 }) => {
   const { tableSlug } = useParams();
   const isPermissions = useSelector((state) => state?.auth?.permissions);
-  const role = useSelector((state) => state.auth.roleInfo);
 
   const [dateFilters, setDateFilters] = useState([
     startOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -91,6 +90,7 @@ const CalendarView = ({
             $gte: dateFilters[0],
             $lt: dateFilters[1],
           },
+          categorrrrr: undefined,
           ...dataFilters,
         },
       });
@@ -130,7 +130,7 @@ const CalendarView = ({
       },
     }
   );
-
+  console.log("dataFilters", dataFilters);
   const { data: workingDays } = useQuery(
     ["GET_OBJECTS_LIST", view?.disable_dates?.table_slug],
     () => {
@@ -247,11 +247,7 @@ const CalendarView = ({
                   </div>
                   <span>Template</span>
                 </div>
-                {statusPermission?.update || role?.name === "DEFAULT ADMIN" ? (
-                  <SettingsButton />
-                ) : (
-                  ""
-                )}
+                {statusPermission?.update && <SettingsButton />}
               </div>
             </Menu>
             {/* <ExcelButtons />

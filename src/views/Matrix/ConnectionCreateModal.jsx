@@ -1,10 +1,10 @@
-import * as React from "react"
-import Box from "@mui/material/Box"
-import Modal from "@mui/material/Modal"
-import HFSelect from "../../components/FormElements/HFSelect"
-import HFTextField from "../../components/FormElements/HFTextField"
-import styles from "./styles.module.scss"
-import HFIconPicker from "../../components/FormElements/HFIconPicker"
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import HFSelect from "../../components/FormElements/HFSelect";
+import HFTextField from "../../components/FormElements/HFTextField";
+import styles from "./styles.module.scss";
+import HFIconPicker from "../../components/FormElements/HFIconPicker";
 
 const style = {
   position: "absolute",
@@ -17,7 +17,7 @@ const style = {
   borderRadius: "6px",
   boxShadow: 24,
   p: 3,
-}
+};
 
 const ConnectionCreateModal = ({
   open = false,
@@ -30,11 +30,9 @@ const ConnectionCreateModal = ({
   isEdit = false,
 }) => {
   const handleClose = () => {
-    setOpen(false)
-    connectionForm.reset()
-  }
-
-  console.log("fields", tables)
+    setOpen(false);
+    connectionForm.reset();
+  };
 
   return (
     <div>
@@ -53,14 +51,14 @@ const ConnectionCreateModal = ({
                   control={connectionForm.control}
                   shape="rectangle"
                   onChange={(e) => {
-                    connectionForm.setValue("icon", e)
+                    connectionForm.setValue("icon", e);
                   }}
                 />
                 <HFTextField
                   label="Name"
                   name="name"
                   onChange={(e) => {
-                    connectionForm.setValue("name", e.target.value)
+                    connectionForm.setValue("name", e.target.value);
                   }}
                   control={connectionForm.control}
                   fullWidth
@@ -69,8 +67,8 @@ const ConnectionCreateModal = ({
                   options={tables}
                   control={connectionForm.control}
                   onChange={(e) => {
-                    getFields({ table_id: e })
-                    connectionForm.setValue("table_slug", e)
+                    getFields({ table_id: e });
+                    connectionForm.setValue("table_slug", e);
                   }}
                   name="table_slug"
                   required
@@ -84,7 +82,7 @@ const ConnectionCreateModal = ({
                     name="view_label"
                     // value={connectionForm.getValues().view_label}
                     onChange={(e) => {
-                      connectionForm.setValue("view_label", e.target.value)
+                      connectionForm.setValue("view_label", e.target.value);
                     }}
                     control={connectionForm.control}
                     fullWidth
@@ -96,7 +94,7 @@ const ConnectionCreateModal = ({
                     control={connectionForm.control}
                     name="view_slug"
                     onChange={(e) => {
-                      connectionForm.setValue("view_slug", e)
+                      connectionForm.setValue("view_slug", e);
                     }}
                     required
                   />
@@ -108,8 +106,8 @@ const ConnectionCreateModal = ({
             <button
               className={styles.cancel_btn}
               onClick={() => {
-                handleClose()
-                connectionForm.reset()
+                handleClose();
+                connectionForm.reset();
               }}
             >
               Cancel
@@ -117,8 +115,8 @@ const ConnectionCreateModal = ({
             <button
               className={styles.craete_btn}
               onClick={() => {
-                handleSubmit()
-                handleClose()
+                handleSubmit();
+                handleClose();
               }}
             >
               {isEdit ? "Update" : "Create"}
@@ -127,7 +125,7 @@ const ConnectionCreateModal = ({
         </Box>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default ConnectionCreateModal
+export default ConnectionCreateModal;

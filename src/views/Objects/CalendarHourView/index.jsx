@@ -27,6 +27,8 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
 import style from "./style.module.scss";
 import { Description } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const CalendarHourView = ({
   view,
@@ -173,7 +175,9 @@ const CalendarHourView = ({
                   </div>
                   <span>Template</span>
                 </div>
-                <SettingsButton />
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                  <SettingsButton />
+                </PermissionWrapperV2>
               </div>
             </Menu>
           </>

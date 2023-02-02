@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import FRow from "../FormElements/FRow";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
@@ -39,8 +39,8 @@ const FormElementGenerator = ({
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
-  if (field?.id.includes("#")) {
-    relationTableSlug = field?.id.split("#")[0];
+  if (field?.id?.includes("#")) {
+    relationTableSlug = field?.id?.split("#")[0];
   }
 
   tables?.forEach((table) => {
@@ -48,11 +48,12 @@ const FormElementGenerator = ({
       objectIdFromJWT = table?.object_id;
     }
   });
+
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))
-      return `$${field.id?.split("@")?.[0]}.${field?.slug}`;
-    return field.slug;
-  }, [field.id, field.slug]);
+      return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    return field?.slug;
+  }, [field?.id, field?.slug]);
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
@@ -79,8 +80,8 @@ const FormElementGenerator = ({
 
   // console.log("FIELD - ", field);
 
-  if (field.id?.includes("#")) {
-    if (field.relation_type === "Many2Many") {
+  if (field?.id?.includes("#")) {
+    if (field?.relation_type === "Many2Many") {
       return (
         <ManyToManyRelationFormElement
           control={control}
@@ -91,7 +92,7 @@ const FormElementGenerator = ({
           {...props}
         />
       );
-    } else if (field.relation_type === "Many2Dynamic") {
+    } else if (field?.relation_type === "Many2Dynamic") {
       return (
         <DynamicRelationFormElement
           control={control}
@@ -374,6 +375,23 @@ const FormElementGenerator = ({
       );
 
     case "BARCODE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <BarcodeGenerator
+            control={control}
+            name={field.slug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            // disabled={isDisabled}
+            formTableSlug={formTableSlug}
+            {...props}
+          />
+        </FRow>
+      );
+    case "DENTIST":
       return (
         <FRow label={field.label} required={field.required}>
           <BarcodeGenerator

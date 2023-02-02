@@ -36,7 +36,8 @@ export const fieldTypes = [
   "PHONE",
   "ICON",
   "PASSWORD",
-  "FORMULA"
+  "FORMULA",
+  "DENTIST"
 ]
 
 export const fieldTypesOptions = [
@@ -191,6 +192,11 @@ export const fieldTypesOptions = [
         icon: 'fill.svg',
         label: 'Autofill',
         value: 'AUTOFILL'
+      },
+      {
+        icon: 'teeth.svg',
+        label: 'Dentist',
+        value: 'DENTIST'
       }
     ]
   },

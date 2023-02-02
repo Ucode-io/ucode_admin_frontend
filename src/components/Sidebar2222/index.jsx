@@ -1,6 +1,6 @@
 import "./style.scss";
 import menuElements from "./elements";
-import brandLogo from "../../../builder_config/assets/company-logo.svg";
+import companyLogo from "../../../builder_config/assets/company-logo.svg";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { useState, useEffect } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -9,6 +9,8 @@ import ChildBlock from "./ChildBlock";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { mainActions } from "../../store/main/main.slice";
+import { useQuery } from "react-query";
+import projectService from "../../services/projectService";
 
 const Sidebar2222 = () => {
   const sidebarIsOpen = useSelector(
@@ -17,6 +19,7 @@ const Sidebar2222 = () => {
   const permissions = useSelector((state) => state.auth.permissions);
   const dispatch = useDispatch();
   const [openedBlock, setOpenedBlock] = useState(null);
+  const projectId = useSelector(state => state.auth.projectId)
 
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
@@ -41,12 +44,22 @@ const Sidebar2222 = () => {
     if (!sidebarIsOpen) setOpenedBlock(null);
   }, [sidebarIsOpen]);
 
+  const { data: projectInfo } = useQuery(
+    [
+      "GET_PROJECT_BY_ID",
+      projectId
+    ],
+    () => {
+      return projectService.getById(projectId);
+    },
+  );
+
   return (
     <div className={`Sidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}>
       <div className="header">
         <div className="brand">
           <div className="brand-logo" onClick={switchRightSideVisible}>
-            <img src={brandLogo} alt="logo" />
+            <img src={projectInfo?.logo ?? companyLogo} alt="logo" />
           </div>
           <div className="brand-name">SETTINGS</div>
         </div>

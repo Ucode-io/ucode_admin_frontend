@@ -12,6 +12,8 @@ import styles from "./style.module.scss";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useLocation } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
+import GroupCascading from "./GroupCascading";
+import CascadingElement from "./CascadingElement";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -45,7 +47,35 @@ const CellRelationFormElement = ({
         name={name}
         defaultValue={defaultValue}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
-          return (
+          return field?.attributes?.cascading_tree_table_slug ? (
+            <GroupCascading
+              field={field}
+              tableSlug={field.table_slug}
+              error={error}
+              disabledHelperText={disabledHelperText}
+              value={value ?? ""}
+              setFormValue={setFormValue}
+              classes={classes}
+              name={name}
+              control={control}
+              index={index}
+              setValue={onChange}
+            />
+          ) : field?.attributes?.cascadings?.length > 1 ? (
+            <CascadingElement
+              field={field}
+              tableSlug={field.table_slug}
+              error={error}
+              disabledHelperText={disabledHelperText}
+              value={value ?? ""}
+              setFormValue={setFormValue}
+              classes={classes}
+              name={name}
+              control={control}
+              index={index}
+              setValue={onChange}
+            />
+          ) : (
             <AutoCompleteElement
               disabled={disabled}
               isFormEdit={isFormEdit}

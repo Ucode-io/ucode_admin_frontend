@@ -266,7 +266,9 @@ const ViewsWithGroups = ({
                   </div>
                   <span>Template</span>
                 </div>
-                <SettingsButton />
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                  <SettingsButton />
+                </PermissionWrapperV2>
               </div>
             </Menu>
           </>
@@ -333,17 +335,19 @@ const ViewsWithGroups = ({
                     </RectangleIconButton>
                   </>
                 ) : (
-                  <RectangleIconButton
-                    color="success"
-                    className=""
-                    size="small"
-                    onClick={() => {
-                      setFormVisible(true);
-                      // reset()
-                    }}
-                  >
-                    <Edit color="primary" />
-                  </RectangleIconButton>
+                  <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                    <RectangleIconButton
+                      color="success"
+                      className=""
+                      size="small"
+                      onClick={() => {
+                        setFormVisible(true);
+                        // reset()
+                      }}
+                    >
+                      <Edit color="primary" />
+                    </RectangleIconButton>
+                  </PermissionWrapperV2>
                 )}
                 <MultipleInsertButton
                   view={view}

@@ -1,7 +1,8 @@
 import { TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Controller } from "react-hook-form";
-import {numberWithSpaces} from "@/utils/formatNumbers";
+
+import { numberWithSpaces } from "@/utils/formatNumbers";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -41,9 +42,15 @@ const HFTextField = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
-          value={typeof(value) === 'number' ? numberWithSpaces(value) : value}
+          value={typeof value === "number" ? numberWithSpaces(value) : value}
           onChange={(e) => {
-            onChange(withTrim ? e.target.value?.trim() : typeof(e.target.value) === 'number' ? numberWithSpaces(e.target.value) : e.target.value);
+            onChange(
+              withTrim
+                ? e.target.value?.trim()
+                : typeof e.target.value === "number"
+                ? numberWithSpaces(e.target.value)
+                : e.target.value
+            );
           }}
           name={name}
           error={error}
@@ -70,7 +77,7 @@ const HFTextField = ({
           {...props}
         />
       )}
-    ></Controller>
+    />
   );
 };
 

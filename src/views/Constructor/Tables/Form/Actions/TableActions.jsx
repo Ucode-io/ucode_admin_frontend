@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useFieldArray } from "react-hook-form";
 import styles from "./style.module.scss";
 import TableRow from "./TableRow";
 
-function TableActions({ control, typeList, slug, setValue, watch }) {
+function TableActions({ control, typeList, slug, setValue }) {
   const {
     fields: relation,
     append,

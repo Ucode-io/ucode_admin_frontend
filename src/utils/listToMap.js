@@ -2,7 +2,7 @@ export const listToMap = (list = [], fieldName = 'id') => {
 
   const map = {}
 
-  list.forEach((item) => {
+  list?.forEach((item) => {
       map[item[fieldName]] = item
     }
   )

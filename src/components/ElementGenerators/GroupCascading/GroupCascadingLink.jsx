@@ -53,6 +53,14 @@ const CascadingRecursiveBlock = ({
     handleClose();
   };
 
+  const setParents = (element) => {
+    setValue(element?.guid);
+    field?.attributes?.autofill.forEach(({ field_from, field_to }) => {
+      setFormValue(`multi.${index}.${field_to}`, get(element, field_from));
+    });
+    handleClose();
+  };
+
   return (
     <>
       {!serviceData?.length ? (
@@ -63,11 +71,18 @@ const CascadingRecursiveBlock = ({
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedIds([...selectedIds, item?.guid]);
+                setParents(item);
               }}
             >
               <div className={style.cascading_link_folder}>
                 <span className={style.cascading_folder}>
-                  <FolderIcon style={{ color: "#6E8BB7" }} />
+                  <FolderIcon
+                    style={{ color: "#6E8BB7" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedIds([...selectedIds, item?.guid]);
+                    }}
+                  />
                 </span>
                 <span> {item?.name}</span>
               </div>

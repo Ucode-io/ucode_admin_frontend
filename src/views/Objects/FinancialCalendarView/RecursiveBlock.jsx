@@ -85,21 +85,39 @@ const RecursiveBlock = ({
 
         {row?.amounts.map((item) =>
           level === 1 ? (
-            <div className={style.priceBlockChild}>
-              {numberWithSpaces(item?.amount) === 0 ? (
-                <span className={style.line}>-</span>
-              ) : (
-                numberWithSpaces(item?.amount)
-              )}
-            </div>
+            <>
+              <div className={style.priceBlockChild}>
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  numberWithSpaces(item?.amount)
+                )}
+              </div>
+              <div className={style.percentBlockChilde}>
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  parseFloat(item?.percentage).toFixed(2) + "%"
+                )}
+              </div>
+            </>
           ) : (
-            <div className={style.priceBlock}>
-              {numberWithSpaces(item?.amount) === 0 ? (
-                <span className={style.line}>-</span>
-              ) : (
-                numberWithSpaces(item?.amount)
-              )}
-            </div>
+            <>
+              <div className={style.priceBlock}>
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  numberWithSpaces(item?.amount)
+                )}
+              </div>
+              <div className={style.percentBlock}>
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  parseFloat(item?.percentage).toFixed(2) + "%"
+                )}
+              </div>
+            </>
           )
         )}
       </div>

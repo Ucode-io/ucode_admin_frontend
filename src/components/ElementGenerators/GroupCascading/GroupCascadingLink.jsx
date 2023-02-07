@@ -35,18 +35,18 @@ const CascadingRecursiveBlock = ({
     );
   }, [searchText, serviceData]);
 
-  const getServices = (item) => {
-    constructorObjectService
-      .getList(relTableSLug, {
-        data: { [fieldSlug]: item?.guid },
-      })
-      .then((res) => {
-        setServiceData(res?.data?.response);
-      });
-  };
+  // const getServices = (item) => {
+  //   constructorObjectService
+  //     .getList(relTableSLug, {
+  //       data: { [fieldSlug]: item?.guid },
+  //     })
+  //     .then((res) => {
+  //       setServiceData(res?.data?.response);
+  //     });
+  // };
 
   const setServices = (element) => {
-    setValue(element);
+    setValue(element?.guid);
     field?.attributes?.autofill.forEach(({ field_from, field_to }) => {
       setFormValue(`multi.${index}.${field_to}`, get(element, field_from));
     });

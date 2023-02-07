@@ -1,108 +1,134 @@
-import { Checkbox } from "@mui/material"
-import { useMemo } from "react"
-import { useState } from "react"
-import { useQuery, useQueryClient } from "react-query"
-import { useParams } from "react-router-dom"
-import CreateButton from "../../../components/Buttons/CreateButton"
-import DataTable from "../../../components/DataTable"
-import LargeModalCard from "../../../components/LargeModalCard"
-import SearchInput from "../../../components/SearchInput"
-import useTabRouter from "../../../hooks/useTabRouter"
-import constructorObjectService from "../../../services/constructorObjectService"
-import { generateID } from "../../../utils/generateID"
-import { objectToArray } from "../../../utils/objectToArray"
-import { pageToOffset } from "../../../utils/pageToOffset"
+import { Checkbox } from "@mui/material";
+import { useEffect, useMemo } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
+import CreateButton from "../../../components/Buttons/CreateButton";
+import DataTable from "../../../components/DataTable";
+import LargeModalCard from "../../../components/LargeModalCard";
+import SearchInput from "../../../components/SearchInput";
+import useDebounce from "../../../hooks/useDebounce";
+import useTabRouter from "../../../hooks/useTabRouter";
+import constructorObjectService from "../../../services/constructorObjectService";
+import { generateID } from "../../../utils/generateID";
+import { objectToArray } from "../../../utils/objectToArray";
+import { pageToOffset } from "../../../utils/pageToOffset";
 
 const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
-  const { tableSlug, id } = useParams()
-  const { navigateToForm } = useTabRouter()
-  const queryClient = useQueryClient()
+  const { tableSlug, id } = useParams();
+  const { navigateToForm } = useTabRouter();
+  const queryClient = useQueryClient();
+  const [limit, setLimit] = useState(10);
 
-  const relatedTableSlug = relation.relatedTable
+  const relatedTableSlug = relation.relatedTable;
+  const [btnLoader, setBtnLoader] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [checkedElements, setCheckedElements] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [filters, setFilters] = useState({});
 
-  const [btnLoader, setBtnLoader] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [checkedElements, setCheckedElements] = useState([])
-  const [searchText, setSearchText] = useState("")
-  const [filters, setFilters] = useState({})
+  const getSearchViewFields = useMemo(() => {
+    return relation?.view_fields?.map((item) => item?.slug);
+  }, [relation]);
 
-  const { isLoading: loader, data: { tableData, pageCount, fields } = { tableData: [], pageCount: 1, fields: [] } } = useQuery([
-    "GET_OBJECT_LIST",
-    {
-      tableSlug: relatedTableSlug,
-      limit: 10,
-      offset: pageToOffset(currentPage),
-      filters
+  const {
+    isLoading: loader,
+    data: { tableData, pageCount, fields } = {
+      tableData: [],
+      pageCount: 1,
+      fields: [],
     },
-  ], () => {
-    return constructorObjectService.getList(relatedTableSlug, {
-      data: {
-        offset: pageToOffset(currentPage),
-        limit: 10,
-        search: searchText,
-        ...filters
+  } = useQuery(
+    [
+      "GET_OBJECT_LIST",
+      {
+        tableSlug: relatedTableSlug,
+        limit: limit,
+        offset: pageToOffset(currentPage, limit),
+        filters,
+        searchText,
       },
-    })
-  }, {
-    select: ({data}) => {
-      const pageCount = Math.ceil(data?.count / 10)
+    ],
+    () => {
+      return constructorObjectService.getList(relatedTableSlug, {
+        data: {
+          offset: pageToOffset(currentPage, limit),
+          limit: limit,
+          view_fields: getSearchViewFields,
+          search: searchText,
+          ...filters,
+        },
+      });
+    },
+    {
+      select: ({ data }) => {
+        const pageCount = Math.ceil(data?.count / 10);
 
-
-      return {
-        fields: data?.fields ?? [],
-        tableData: objectToArray(data?.response ?? {}),
-        pageCount: isNaN(pageCount) ? 1 : pageCount,
-      }
-
+        return {
+          fields: data?.fields ?? [],
+          tableData: objectToArray(data?.response ?? {}),
+          pageCount: isNaN(pageCount) ? 1 : pageCount,
+        };
+      },
     }
-  })
+  );
 
   const computedFields = useMemo(() => {
-    const staticFields = [{
-      id: generateID(),
-      render: (row) => <Checkbox
-      onChange={(e) => onCheck(e, row.guid)}
-      checked={checkedElements.includes(row.guid)}
-    />
-    }]
+    const staticFields = [
+      {
+        id: generateID(),
+        render: (row) => (
+          <Checkbox
+            onChange={(e) => onCheck(e, row.guid)}
+            checked={checkedElements.includes(row.guid)}
+          />
+        ),
+      },
+    ];
 
-    return [...staticFields, ...fields]
-  }, [fields, checkedElements])
+    return [...staticFields, ...fields];
+  }, [fields, checkedElements]);
 
   const onCheck = (e, id) => {
     if (e.target.checked) {
-      setCheckedElements([...checkedElements, id])
+      setCheckedElements([...checkedElements, id]);
     } else {
-      setCheckedElements(checkedElements.filter((element) => element !== id))
+      setCheckedElements(checkedElements.filter((element) => element !== id));
     }
-  }
+  };
 
   const filterChangeHandler = (value, name) => {
     setFilters({
       ...filters,
       [name]: value,
-    })
-  }
+    });
+  };
 
   const onSubmit = async () => {
     try {
-      setBtnLoader(true)
+      setBtnLoader(true);
 
       const data = {
         id_from: id,
         id_to: checkedElements,
         table_from: tableSlug,
         table_to: relatedTableSlug,
-      }
+      };
 
-      await constructorObjectService.updateManyToMany(data)
+      await constructorObjectService.updateManyToMany(data);
 
-      queryClient.invalidateQueries(["GET_OBJECT_LIST", relatedTableSlug])
-      closeModal()
+      queryClient.invalidateQueries(["GET_OBJECT_LIST", relatedTableSlug]);
+      closeModal();
     } catch (error) {
-      setBtnLoader(false)
+      setBtnLoader(false);
     }
-  }
+  };
+  const inputChangeHandler = useDebounce((val) => setSearchText(val), 300);
+
+  useEffect(() => {
+    if (isNaN(parseInt(relation?.default_limit))) setLimit(10);
+    else setLimit(parseInt(relation?.default_limit));
+  }, [relation?.default_limit]);
 
   return (
     <LargeModalCard
@@ -114,12 +140,16 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
       onClose={closeModal}
     >
       <div className="flex align-center gap-2 mb-2">
-        <SearchInput style={{ flex: 1 }} autoFocus onChange={setSearchText} />
+        <SearchInput
+          style={{ flex: 1 }}
+          autoFocus
+          onChange={(e) => inputChangeHandler(e)}
+        />
         <CreateButton
           title="Создать новый"
           onClick={() => {
-            navigateToForm(relation.relatedTable, "CREATE", null, {})
-            closeModal()
+            navigateToForm(relation.relatedTable, "CREATE", null, {});
+            closeModal();
           }}
         />
       </div>
@@ -135,6 +165,9 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
         tableSlug={relation.relatedTable}
         filterChangeHandler={filterChangeHandler}
         filters={filters}
+        limit={limit}
+        setLimit={setLimit}
+        defaultLimit={relation?.default_limit}
       />
 
       {/* <CTable
@@ -199,7 +232,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
         </CTableBody>
       </CTable> */}
     </LargeModalCard>
-  )
-}
+  );
+};
 
-export default ManyToManyRelationCreateModal
+export default ManyToManyRelationCreateModal;

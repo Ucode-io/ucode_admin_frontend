@@ -12,7 +12,6 @@ const FastFilter = ({
   fieldsMap,
   isVertical = false,
   getFilteredFilterFields,
-  selectedLinkedObject,
 }) => {
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
@@ -30,7 +29,7 @@ const FastFilter = ({
       filterChangeHandler(defaultCategory, "categories_id");
       filterChangeHandler(
         defaultSpecialities,
-        "doctors_id_data.specialities_ids"
+        "doctors_id_data.specialities_id"
       );
     }
   }, []);
@@ -51,7 +50,6 @@ const FastFilter = ({
         ?.filter((el) => el) ?? []
     );
   }, [view?.quick_filters, fieldsMap, new_list, tableSlug]);
-
   const onChange = (value, name) => {
     dispatch(
       filterActions.setFilter({

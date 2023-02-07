@@ -27,6 +27,8 @@ import style from "./style.module.scss";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
 import { Description } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const CalendarView = ({
   view,
@@ -35,6 +37,16 @@ const CalendarView = ({
   views,
 }) => {
   const { tableSlug } = useParams();
+  const [searchParams] = useSearchParams();
+  const defaultSpecialities =
+    searchParams.get("specialities") === null
+      ? undefined
+      : searchParams.get("specialities");
+  const defaultCategory =
+    searchParams.get("category") === null
+      ? undefined
+      : searchParams.get("category");
+
   const [dateFilters, setDateFilters] = useState([
     startOfWeek(new Date(), { weekStartsOn: 1 }),
     endOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -82,6 +94,8 @@ const CalendarView = ({
             $lt: dateFilters[1],
           },
           ...dataFilters,
+          categories_id: defaultCategory,
+          "doctors_id_data.specialities_id": defaultSpecialities,
         },
       });
     },
@@ -120,7 +134,7 @@ const CalendarView = ({
       },
     }
   );
-
+  console.log("dataFilters", dataFilters);
   const { data: workingDays } = useQuery(
     ["GET_OBJECTS_LIST", view?.disable_dates?.table_slug],
     () => {
@@ -237,7 +251,9 @@ const CalendarView = ({
                   </div>
                   <span>Template</span>
                 </div>
-                <SettingsButton />
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                  <SettingsButton />
+                </PermissionWrapperV2>
               </div>
             </Menu>
             {/* <ExcelButtons />
@@ -293,9 +309,8 @@ const queryGenerator = (groupFields, filters = {}) => {
 };
 
 const promiseGenerator = (groupField, filters = {}) => {
-  const filterValue = filters[groupField.slug];
+  const filterValue = filters[groupField.slug] ?? filters;
   const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {};
-
   const relationFilters = {};
 
   Object.entries(filters)?.forEach(([key, value]) => {
@@ -307,20 +322,23 @@ const promiseGenerator = (groupField, filters = {}) => {
       index: 2,
     });
 
+    const slug = key.split(".")?.pop();
+
     if (filterTableSlug === groupField.table_slug) {
       const slug = key.split(".")?.pop();
-
       relationFilters[slug] = value;
     } else {
-      const slug = key.split(".")?.pop();
-
       if (groupField.slug === slug) {
+        const slug = key.split(".")?.pop();
         relationFilters[slug] = value;
       }
     }
   });
-  const computedFilters = { ...defaultFilters, ...relationFilters };
 
+  const objectSlug = Object.keys(filters)?.[0]?.split(".").pop();
+  const slugValue = Object.values(filters)?.[0];
+  const computedFilters = { ...defaultFilters, ...relationFilters };
+  const computedFilterValue = { [objectSlug]: slugValue };
   if (groupField?.type === "PICK_LIST") {
     return {
       queryKey: ["GET_GROUP_OPTIONS", groupField.id],
@@ -343,7 +361,7 @@ const promiseGenerator = (groupField, filters = {}) => {
           ? groupField.slug?.slice(0, -3)
           : groupField.slug?.slice(0, -4),
         {
-          data: computedFilters,
+          data: computedFilterValue,
         }
       );
 

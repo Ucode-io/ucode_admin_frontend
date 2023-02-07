@@ -6,11 +6,14 @@ import React, { useEffect, useMemo, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import IconGenerator from "../IconPicker/IconGenerator";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import { useQuery } from "react-query";
+import projectService from "../../services/projectService";
+import { useSelector } from "react-redux";
 
 const Sidebar = ({ elements = [] }) => {
   const location = useLocation();
+  const projectId = useSelector(state => state.auth.projectId)
   const [visible, setVisible] = useState(false);
-
   const [rightBlockVisible, setRightBlockVisible] = useState(true);
 
   const selectedMenuItem = useMemo(() => {
@@ -31,6 +34,15 @@ const Sidebar = ({ elements = [] }) => {
     if (selectedMenuItem?.children) setRightBlockVisible(true);
   }, [selectedMenuItem]);
 
+  const { data: projectInfo } = useQuery(
+    [
+      "GET_PROJECT_BY_ID",
+      projectId
+    ],
+    () => {
+      return projectService.getById(projectId);
+    },
+  );
   return (
     <div className={styles.sidebar}>
       <div className={visible ? styles.leftSide_open : styles.leftSide}>
@@ -42,8 +54,8 @@ const Sidebar = ({ elements = [] }) => {
           }}
         >
           <div className={styles.headerLogo}>
-            <img className={styles.logo} src={companyLogo} alt="logo" />
-            {visible && <h2>Medion</h2>}
+            <img className={styles.logo} src={projectInfo?.logo ?? companyLogo} alt="logo" />
+            {visible && <h2>{projectInfo?.title}</h2>}
           </div>
           {visible && (
             <div className={styles.closeBtn} onClick={setVisibBlock}>

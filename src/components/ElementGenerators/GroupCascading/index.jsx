@@ -33,7 +33,6 @@ const GroupCascading = ({
   const [relTableSLug, setRelTableSlug] = useState("");
   const [serviceData, setServiceData] = useState([]);
   const [title, setTitle] = useState([]);
-
   const [searchText, setSearchText] = useState("");
   const [menu, setMenu] = useState(null);
   const open = Boolean(menu);
@@ -43,15 +42,6 @@ const GroupCascading = ({
     setSelectedIds([]);
     setServiceData([]);
   };
-
-  const insideValue = useMemo(() => {
-    let values = "";
-    if (value?.length) {
-      const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
-      slugs?.map((item) => (values += " " + value?.[0]?.[item]));
-    }
-    return values;
-  }, [value, field]);
 
   const currentList = useMemo(() => {
     if (!selectedIds?.length) {
@@ -66,6 +56,24 @@ const GroupCascading = ({
       );
     }
   }, [data, selectedIds, field?.attributes?.cascading_tree_table_slug]);
+
+  //=========COMPUTED VALUE=========
+  const computedValue = useMemo(() => {
+    let val = "";
+
+    if (Array.isArray(value)) {
+      const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
+      slugs?.map((item) => (val += " " + value?.[0]?.[item]));
+    } else {
+      const foundObject = data?.find((item) => {
+        return item?.guid === value;
+      });
+      const slugs = field?.attributes?.view_fields?.map((i) => i?.slug);
+      slugs?.map((item) => (val += "" + foundObject?.[item]));
+    }
+
+    return val !== "undefined" ? val : "";
+  }, [value, data, field]);
 
   const backIcon = useMemo(() => {
     if (!selectedIds?.length) {
@@ -114,7 +122,7 @@ const GroupCascading = ({
           fullWidth
           id="password"
           onClick={handleClick}
-          value={insideValue === undefined ? "" : insideValue}
+          value={computedValue ?? ""}
           inputStyle={{ height: "35px" }}
           InputProps={{
             endAdornment: value && (

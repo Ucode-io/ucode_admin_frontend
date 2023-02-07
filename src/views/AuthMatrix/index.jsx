@@ -97,7 +97,7 @@ const AuthMatrix = () => {
     setSelectedObject(clientTypeList.find((el) => el.id === id))
     setModalType("typeEdit")
   }
-  
+
   const createPlatform = (data) => {
     setModalLoading(true)
 

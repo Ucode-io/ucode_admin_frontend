@@ -1,5 +1,6 @@
 import {
   add,
+  addMonths,
   differenceInDays,
   endOfMonth,
   format,
@@ -30,6 +31,8 @@ import Gantt from "./Gantt";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
 import { Description } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const variableTypes = [
   {
@@ -56,8 +59,8 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   const { filters } = useFilters(tableSlug, view.id);
 
   const [dateFilters, setDateFilters] = useState([
-    startOfMonth(new Date()),
-    endOfMonth(new Date()),
+    new Date(),
+    addMonths(new Date(), 1),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
 
@@ -192,7 +195,9 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
                   <span>Template</span>
                 </div>
 
-                <SettingsButton />
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                  <SettingsButton />
+                </PermissionWrapperV2>
               </div>
             </Menu>
             {/* <ExcelButtons />

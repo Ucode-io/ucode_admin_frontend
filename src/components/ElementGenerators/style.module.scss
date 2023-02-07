@@ -216,7 +216,7 @@
 }
 
 .cascading_items {
-  height: 40px;
+  min-height: 45px;
   padding: 8px 12px 8px 16px;
   display: flex;
   align-items: center;
@@ -252,8 +252,12 @@
 .search_items {
   height: 190px;
   overflow: auto;
-  padding: 0 0 0px 0;
+  padding: 10px 0 0px 0;
   border-radius: 10px;
+
+  p {
+    max-height: 50px;
+  }
 
   &::-webkit-scrollbar {
     width: 10px;

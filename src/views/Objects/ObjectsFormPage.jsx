@@ -34,6 +34,7 @@ const ObjectsFormPage = () => {
   const { removeTab, navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
   const tablesList = useSelector((state) => state.constructorTable.list);
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
@@ -163,6 +164,7 @@ const ObjectsFormPage = () => {
   };
 
   const create = (data) => {
+    console.log("data", data);
     setBtnLoader(true);
 
     constructorObjectService
@@ -261,6 +263,7 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
 
+              <PermissionWrapperV2 tableSlug={tableSlug} type="update" />
               <PrimaryButton
                 loader={btnLoader}
                 id="submit"

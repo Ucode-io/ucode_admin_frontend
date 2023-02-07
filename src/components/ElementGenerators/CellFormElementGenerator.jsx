@@ -27,7 +27,6 @@ const CellFormElementGenerator = ({
   isBlackBg = false,
   watch,
   columns = [],
-  selected,
   row,
   control,
   setFormValue,
@@ -36,6 +35,7 @@ const CellFormElementGenerator = ({
   relationfields,
   ...props
 }) => {
+  const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
   let relationTableSlug = "";
@@ -50,9 +50,11 @@ const CellFormElementGenerator = ({
       objectIdFromJWT = table.object_id;
     }
   });
-  const computedSlug = useMemo(() => {
-    return `multi.${index}.${field.slug}`;
-  }, [field.slug, index]);
+
+  const computedSlug = useMemo(
+    () => `multi.${index}.${field.slug}`,
+    [field.slug, index]
+  );
 
   const changedValue = useWatch({
     control,
@@ -86,14 +88,15 @@ const CellFormElementGenerator = ({
   }, [field, row, setFormValue, computedSlug]);
 
   useEffect(() => {
-    if (columns.length && changedValue) {
+    if (columns.length && changedValue !== undefined && changedValue !== null) {
+      console.log("index => ", index);
       columns.forEach(
-        (i, index) =>
-          selected.includes(i.guid) &&
-          setFormValue(`multi.${index}.${field.slug}`, changedValue)
+        (i, rowIndex) =>
+          selectedRow.includes(i.guid) &&
+          setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue)
       );
     }
-  }, [changedValue, setFormValue, columns, field, selected]);
+  }, [changedValue, setFormValue, columns, field, selectedRow]);
 
   switch (field.type) {
     case "LOOKUP":
@@ -234,16 +237,17 @@ const CellFormElementGenerator = ({
     case "DATE":
       return (
         <HFDatePicker
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
           fullWidth
           width={"100%"}
+          mask={"99.99.9999"}
+          isFormEdit
+          isBlackBg={isBlackBg}
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
+          disabled={isDisabled}
           {...props}
         />
       );
@@ -344,18 +348,6 @@ const CellFormElementGenerator = ({
           {...props}
         />
       );
-
-    // case "PHOTO":
-    //   return (
-    //     <FRow label={field.label} required={field.required}>
-    //       <HFImageUpload
-    //         control={control}
-    //         name={computedSlug}
-    //         required={field.required}
-    //         {...props}
-    //       />
-    //     </FRow>
-    //   )
 
     case "ICON":
       return (

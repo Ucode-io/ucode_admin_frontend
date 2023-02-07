@@ -1,12 +1,12 @@
+import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
+
 import { CTableCell } from "../CTable";
 import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
 import "./style.scss";
-import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 
 const MultipleUpdateRow = ({
   columns,
   fields,
-  selected,
   watch,
   control,
   setFormValue,
@@ -23,7 +23,7 @@ const MultipleUpdateRow = ({
         <BorderColorOutlinedIcon style={{ paddingBottom: 3 }} />
       </CTableCell>
 
-      {fields.map((field, index) => (
+      {fields.map((field) => (
         <CTableCell
           key={field.id}
           style={{
@@ -33,8 +33,6 @@ const MultipleUpdateRow = ({
           <CellFormElementGenerator
             isBlackBg
             columns={columns}
-            selected={selected}
-            index={index}
             watch={watch}
             control={control}
             setFormValue={setFormValue}
@@ -43,6 +41,7 @@ const MultipleUpdateRow = ({
           />
         </CTableCell>
       ))}
+      <CTableCell></CTableCell>
     </tr>
   );
 };

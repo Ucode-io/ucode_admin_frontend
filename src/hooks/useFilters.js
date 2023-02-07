@@ -39,8 +39,8 @@ const useFilters = (tableSlug, viewId) => {
     const filterObject = { ...filtersFromLocation, ...filtersFromRedux }
 
     return Object.entries(filterObject)
-      .filter(([key]) => !key.includes("."))
-      .reduce((a, [k, v]) => (v ? ((a[k] = v), a) : a), {})
+    .reduce((a, [k, v]) => (v ? ((a[k] = v), a) : a), {})
+    // .filter(([key]) => !key.includes("."))
   }, [filtersFromRedux, filtersFromLocation])
 
   return {

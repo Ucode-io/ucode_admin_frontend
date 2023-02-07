@@ -49,7 +49,12 @@
   width: 280px;
   background-color: #fff;
   height: calc(100vh - 48px - 50px);
+  overflow: scroll;
   border-right: 1px solid #e5e9eb;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   .doclistHeader {
     padding: 10px 20px;
@@ -67,7 +72,7 @@
 
   .docList {
     cursor: pointer;
-
+    padding: 2px 8px 0 0;
     .row {
       padding: 10px 20px;
       border-bottom: 1px solid #e5e9eb;
@@ -139,5 +144,51 @@
 
   &:hover {
     background-color: colors.$primary-hover;
+  }
+}
+.search_section {
+  margin-left: 5px;
+  margin-bottom: 10px;
+}
+
+.card {
+  min-width: 400px;
+  padding: 32px;
+  border: none;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .cardTitle {
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 32px;
+    }
+
+    .closeButton {
+    }
+
+    .closeIcon {
+      font-size: 28px;
+    }
+  }
+
+  .body {
+    overflow: auto;
+    margin-bottom: 16px;
+    // font-weight: bold;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    .button {
+      flex: 1;
+    }
   }
 }

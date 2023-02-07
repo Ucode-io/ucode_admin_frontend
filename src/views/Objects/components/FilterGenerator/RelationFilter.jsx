@@ -6,7 +6,7 @@ import FilterAutoComplete from "./FilterAutocomplete";
 
 const RelationFilter = ({ field = {}, filters, name, onChange }) => {
   const [debouncedValue, setDebouncedValue] = useState("");
-  // const [options, setOptions] = useState([])
+
   const value = filters[name];
 
   const {

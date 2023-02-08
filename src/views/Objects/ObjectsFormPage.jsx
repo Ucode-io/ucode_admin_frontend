@@ -26,9 +26,10 @@ import SummarySection from "./SummarySection/SummarySection";
 import BackButton from "../../components/BackButton";
 import FormPageBackButton from "./components/FormPageBackButton";
 import { addMinutes } from "date-fns";
+import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
 
 const ObjectsFormPage = () => {
-  const { tableSlug, id } = useParams();
+  const { tableSlug, id, appId } = useParams();
   const { pathname, state = {} } = useLocation();
   const dispatch = useDispatch();
   const { removeTab, navigateToForm } = useTabRouter();
@@ -170,6 +171,10 @@ const ObjectsFormPage = () => {
       .create(tableSlug, { data })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
+          table_slug: tableSlug,
+          user_id: isUserId,
+        });
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
         if (tableRelations?.length)
@@ -183,6 +188,7 @@ const ObjectsFormPage = () => {
     if (id) update(data);
     else {
       create(data);
+      dispatch(fetchConstructorTableListAction(appId));
     }
   };
 

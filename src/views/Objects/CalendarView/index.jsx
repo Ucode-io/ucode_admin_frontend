@@ -37,15 +37,7 @@ const CalendarView = ({
   views,
 }) => {
   const { tableSlug } = useParams();
-  const [searchParams] = useSearchParams();
-  const defaultSpecialities =
-    searchParams.get("specialities") === null
-      ? undefined
-      : searchParams.get("specialities");
-  const defaultCategory =
-    searchParams.get("category") === null
-      ? undefined
-      : searchParams.get("category");
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
 
   const [dateFilters, setDateFilters] = useState([
     startOfWeek(new Date(), { weekStartsOn: 1 }),
@@ -94,8 +86,6 @@ const CalendarView = ({
             $lt: dateFilters[1],
           },
           ...dataFilters,
-          categories_id: defaultCategory,
-          "doctors_id_data.specialities_id": defaultSpecialities,
         },
       });
     },
@@ -134,7 +124,7 @@ const CalendarView = ({
       },
     }
   );
-  console.log("dataFilters", dataFilters);
+
   const { data: workingDays } = useQuery(
     ["GET_OBJECTS_LIST", view?.disable_dates?.table_slug],
     () => {

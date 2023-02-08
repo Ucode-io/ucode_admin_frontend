@@ -54,6 +54,7 @@ const RelationTable = forwardRef(
     const [filters, setFilters] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState();
+    const isPermissions = useSelector((state) => state?.auth?.permissions);
     const filterChangeHandler = (value, name) => {
       setFilters({
         ...filters,

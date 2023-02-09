@@ -32,7 +32,6 @@ const TableRow = ({
   relationAction,
   onChecked,
   relationFields,
-  role,
 }) => {
   if (formVisible)
     return (
@@ -215,6 +214,7 @@ const TableRow = ({
               </div>
             )}
           </CTableCell>
+
           {columns.map((column, index) => (
             <CTableCell
               key={column.id}
@@ -243,18 +243,16 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2
-            tabelSlug={tableSlug}
-            type="delete"
-          ></PermissionWrapperV2>
-          <RectangleIconButton
-            color="error"
-            onClick={() =>
-              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-            }
-          >
-            <Delete color="error" />
-          </RectangleIconButton>
+          <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
+            <RectangleIconButton
+              color="error"
+              onClick={() =>
+                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              }
+            >
+              <Delete color="error" />
+            </RectangleIconButton>
+          </PermissionWrapperV2>
         </CTableRow>
       )}
     </>

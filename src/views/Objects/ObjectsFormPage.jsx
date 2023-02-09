@@ -26,15 +26,16 @@ import SummarySection from "./SummarySection/SummarySection";
 import BackButton from "../../components/BackButton";
 import FormPageBackButton from "./components/FormPageBackButton";
 import { addMinutes } from "date-fns";
+import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
 
 const ObjectsFormPage = () => {
-  const { tableSlug, id } = useParams();
+  const { tableSlug, id, appId } = useParams();
   const { pathname, state = {} } = useLocation();
   const dispatch = useDispatch();
   const { removeTab, navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
   const tablesList = useSelector((state) => state.constructorTable.list);
-  const isPermissions = useSelector((state) => state?.auth?.permissions);
+  const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
@@ -164,13 +165,16 @@ const ObjectsFormPage = () => {
   };
 
   const create = (data) => {
-    console.log("data", data);
     setBtnLoader(true);
 
     constructorObjectService
       .create(tableSlug, { data })
       .then((res) => {
         queryClient.invalidateQueries(["GET_OBJECT_LIST", tableSlug]);
+        queryClient.refetchQueries("GET_NOTIFICATION_LIST", tableSlug, {
+          table_slug: tableSlug,
+          user_id: isUserId,
+        });
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
         if (tableRelations?.length)
@@ -182,7 +186,10 @@ const ObjectsFormPage = () => {
 
   const onSubmit = (data) => {
     if (id) update(data);
-    else create(data);
+    else {
+      create(data);
+      dispatch(fetchConstructorTableListAction(appId));
+    }
   };
 
   useEffect(() => {
@@ -262,16 +269,16 @@ const ObjectsFormPage = () => {
                   <IconGenerator icon={event.icon} /> {event.label}
                 </PrimaryButton>
               ))} */}
-
-              <PermissionWrapperV2 tableSlug={tableSlug} type="update" />
-              <PrimaryButton
-                loader={btnLoader}
-                id="submit"
-                onClick={handleSubmit(onSubmit)}
-              >
-                <Save />
-                Сохранить
-              </PrimaryButton>
+              <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                <PrimaryButton
+                  loader={btnLoader}
+                  id="submit"
+                  onClick={handleSubmit(onSubmit)}
+                >
+                  <Save />
+                  Сохранить
+                </PrimaryButton>
+              </PermissionWrapperV2>
             </PermissionWrapperV2>
           </>
         }

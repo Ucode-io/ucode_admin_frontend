@@ -322,3 +322,12 @@ html {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+#hovers {
+  // fill: white;
+  transition: 0.2s all;
+}
+#hovers:hover {
+  fill: #ec8c9c;
+  pointer-events: all;
+}

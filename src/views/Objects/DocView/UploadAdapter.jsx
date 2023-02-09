@@ -13,7 +13,7 @@ function uploadAdapter(loader) {
             .then((res) => {
               resolve({
                 default:
-                  import.meta.env.VITE_CDN_BASE_URL + "ucode/" + res.filename,
+                  import.meta.env.VITE_CDN_BASE_URL + "medion/" + res.filename,
               });
             })
             .catch((err) => reject(err));

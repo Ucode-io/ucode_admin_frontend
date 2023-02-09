@@ -35,7 +35,7 @@ const BoardView = ({
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
-  const role = useSelector((state) => state.auth.roleInfo);
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
 
   const [columns, setColumns] = useState([]);
   const { navigateToForm } = useTabRouter();

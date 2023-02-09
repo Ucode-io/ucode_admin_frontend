@@ -124,6 +124,10 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
           templateFields,
         };
       },
+      onSuccess: () => {
+        setVariable();
+        exportToHTML();
+      },
     }
   );
 
@@ -139,6 +143,13 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   // ========ADD NEW TEMPLATE=========
   const addNewTemplate = (template) => {
     refetch();
+  };
+
+  //=========SET VARIABLE===========
+  const setVariable = () => {
+    if (state && selectedOutputTable) {
+      exportToHTML();
+    }
   };
 
   // =======EXPORT TO PDF============
@@ -256,9 +267,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   };
 
   useEffect(() => {
-    if (state?.objectId && selectedOutputTable) {
-      exportToHTML();
-    }
+    exportToHTML();
   }, [state, selectedOutputTable]);
 
   return (

@@ -1,18 +1,11 @@
 import { useEffect, useMemo } from "react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import FolderIcon from "@mui/icons-material/Folder";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import { Add, Delete } from "@mui/icons-material";
 import useTabRouter from "../../../hooks/useTabRouter";
 import GroupCascadingLink from "./GroupCascadingLink";
-import FastFilter from "../../../views/Objects/components/FastFilter";
 import { Menu, TextField, InputAdornment } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { SearchIcon } from "../../../assets/icons/icon.jsx";
@@ -60,23 +53,25 @@ const GroupCascading = ({
     let slug = field?.attributes?.view_fields ?? [];
 
     if (Array.isArray(value)) {
-      const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
-      slugs?.map((item) => (val += " " + value?.[0]?.[item]));
+      const slugs = field?.attributes?.view_fields?.map((i) => i.slug)
+      slugs?.map(
+        (item) => (val += " " + value?.length > 0 ? value?.[0]?.[item] : "")
+      )
     } else if (!slug.length) {
       const foundName = data?.find((item) => {
-        return item?.guid === value;
-      });
+        return item?.guid === value
+      })
 
-      return (val += foundName?.["name"]);
+      return (val += foundName?.["name"])
     } else {
       const foundObject = data?.find((item) => {
-        return item?.guid === value;
-      });
-      const slugs = field?.attributes?.view_fields?.map((i) => i?.slug);
-      slugs?.map((item) => (val += "" + foundObject?.[item]));
+        return item?.guid === value
+      })
+      const slugs = field?.attributes?.view_fields?.map((i) => i?.slug)
+      slugs?.map((item) => (val += "" + foundObject ? foundObject?.[item] : ""))
     }
-
-    return val === "undefined" ? "" : val;
+    console.log("val", val);
+    return val;
   }, [value, data, field]);
 
   const backIcon = useMemo(() => {

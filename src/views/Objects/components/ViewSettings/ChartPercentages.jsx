@@ -30,7 +30,8 @@ const options = [
 
 const ChartPercentages = ({ form, chart }) => {
   const { tableSlug } = useParams();
-  const [value, setValue] = useState();
+  let selectedType = form.watch('typee')
+
   return (
     <>
       <CTable
@@ -50,19 +51,17 @@ const ChartPercentages = ({ form, chart }) => {
                 <HFSelect
                   fullWidth
                   required
-                  value={value}
-                  onChange={setValue}
                   control={form.control}
                   options={options}
-                  name="options"
+                  name="typee"
                 />
               </div>
             </CTableCell>
-            {value === "field" && (
+            {form.watch("typee") === "field" && (
               <CTableCell>
                 <Controller
                   control={form.control}
-                  name="filed_id"
+                  name="filed_idss"
                   render={({ field: { onChange, value } }) => {
                     return (
                       <GroupCascading
@@ -70,7 +69,7 @@ const ChartPercentages = ({ form, chart }) => {
                         setValue={onChange}
                         value={value ?? ""}
                       />
-                    );
+                    )
                   }}
                 />
               </CTableCell>
@@ -79,7 +78,7 @@ const ChartPercentages = ({ form, chart }) => {
         </CTableHead>
       </CTable>
     </>
-  );
+  )
 };
 
 export default ChartPercentages;

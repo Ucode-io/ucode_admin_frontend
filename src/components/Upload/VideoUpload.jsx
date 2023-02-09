@@ -7,13 +7,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import "./style.scss";
 import fileService from "../../services/fileService";
 
-const VideoUpload = ({
-  value,
-  onChange,
-  className = "",
-  disabled,
-  tabIndex,
-}) => {
+const VideoUpload = ({ value, onChange, className = "", disabled, tabIndex }) => {
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,7 +26,7 @@ const VideoUpload = ({
     fileService
       .upload(data)
       .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + "ucode/" + res.filename);
+        onChange(import.meta.env.VITE_CDN_BASE_URL + "medion/" + res.filename);
       })
       .finally(() => setLoading(false));
   };

@@ -17,6 +17,7 @@ function CascadingElement({
   value,
   row,
   index,
+  name,
 }) {
   const [values, setValues] = useState();
   const [inputValue, setInputValue] = useState();

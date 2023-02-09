@@ -68,13 +68,13 @@ const CustomActionsButton = ({
           } else if (url === "" || url === "reload") {
             navigate("/reload", {
               state: {
-                redirectUrl: window.location.pathname,
+                redirectUrl: window.location.pathname
               },
             });
           } else if (url === "reloadRelations") {
             navigate("/reloadRelations", {
               state: {
-                redirectUrl: window.location.pathname,
+                redirectUrl: window.location.pathname
               },
             });
           } else if (url === "schedule") {

@@ -41,9 +41,10 @@ const ViewForm = ({
   const [computeObjects, setComputeObjects] = useState([]);
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   const financialValues = initialValues?.attributes?.chart_of_accounts;
+  const financialTypee = initialValues?.attributes?.percent?.type;
   const form = useForm();
   const type = form.watch("type");
-
+  console.log('ssssss1', financialTypee)
   const computedColumns = useMemo(() => {
     if (type !== "CALENDAR" && type !== "GANTT") {
       return columns;
@@ -54,7 +55,7 @@ const ViewForm = ({
 
   const computeFinancialAcc = (values, groupByField, data) => {
     if (values === undefined) return { chart_of_accounts: [] };
-
+    console.log('ssssss', data)
     const computedFormat = values.map((row) => {
       return {
         group_by: row.group_by,
@@ -82,8 +83,7 @@ const ViewForm = ({
     return {
       chart_of_accounts: computedFormat,
       percent: {
-        type: data.options,
-        field_id: data.options === "field" ? data.filed_id : null,
+        type: data.typee
       },
     };
   };
@@ -96,7 +96,8 @@ const ViewForm = ({
         columns,
         typeNewView,
         relationColumns,
-        financialValues
+        financialValues,
+        financialTypee
       ),
       filters: [],
     });
@@ -297,7 +298,8 @@ const getInitialValues = (
   columns,
   typeNewView,
   relationColumns,
-  financialValues
+  financialValues,
+  financialTypee
 ) => {
   if (initialValues === "NEW")
     return {
@@ -359,6 +361,7 @@ const getInitialValues = (
     multiple_insert: initialValues?.multiple_insert ?? false,
     multiple_insert_field: initialValues?.multiple_insert_field ?? "",
     chartOfAccounts: computeFinancialColumns(financialValues),
+    typee: financialTypee
   };
 };
 

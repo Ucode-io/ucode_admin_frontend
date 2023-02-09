@@ -30,7 +30,9 @@ const options = [
 
 const ChartPercentages = ({ form, chart }) => {
   const { tableSlug } = useParams();
-  const [value, setValue] = useState();
+  let selectedType = form.watch('typee')
+  console.log('ssssss', selectedType)
+
   return (
     <>
       <CTable
@@ -50,15 +52,13 @@ const ChartPercentages = ({ form, chart }) => {
                 <HFSelect
                   fullWidth
                   required
-                  value={value}
-                  onChange={setValue}
                   control={form.control}
                   options={options}
-                  name="options"
+                  name="typee"
                 />
               </div>
             </CTableCell>
-            {value === "field" && (
+            {'' === "field" && (
               <CTableCell>
                 <Controller
                   control={form.control}

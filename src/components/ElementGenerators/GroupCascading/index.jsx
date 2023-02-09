@@ -53,18 +53,22 @@ const GroupCascading = ({
     let slug = field?.attributes?.view_fields ?? [];
 
     if (Array.isArray(value)) {
-      const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
+      const slugs = field?.attributes?.view_fields?.map((i) => i.slug)
       slugs?.map(
         (item) => (val += " " + value?.length > 0 ? value?.[0]?.[item] : "")
-      );
+      )
+    } else if (!slug.length) {
+      const foundName = data?.find((item) => {
+        return item?.guid === value
+      })
+
+      return (val += foundName?.["name"])
     } else {
       const foundObject = data?.find((item) => {
-        return item?.guid === value;
-      });
-      const slugs = field?.attributes?.view_fields?.map((i) => i?.slug);
-      slugs?.map(
-        (item) => (val += "" + foundObject ? foundObject?.[item] : "")
-      );
+        return item?.guid === value
+      })
+      const slugs = field?.attributes?.view_fields?.map((i) => i?.slug)
+      slugs?.map((item) => (val += "" + foundObject ? foundObject?.[item] : ""))
     }
     console.log("val", val);
     return val;

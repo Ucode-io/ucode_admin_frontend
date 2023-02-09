@@ -31,7 +31,6 @@ const options = [
 const ChartPercentages = ({ form, chart }) => {
   const { tableSlug } = useParams();
   let selectedType = form.watch('typee')
-  console.log('ssssss', selectedType)
 
   return (
     <>
@@ -58,11 +57,11 @@ const ChartPercentages = ({ form, chart }) => {
                 />
               </div>
             </CTableCell>
-            {'' === "field" && (
+            {form.watch("typee") === "field" && (
               <CTableCell>
                 <Controller
                   control={form.control}
-                  name="filed_id"
+                  name="filed_idss"
                   render={({ field: { onChange, value } }) => {
                     return (
                       <GroupCascading
@@ -70,7 +69,7 @@ const ChartPercentages = ({ form, chart }) => {
                         setValue={onChange}
                         value={value ?? ""}
                       />
-                    );
+                    )
                   }}
                 />
               </CTableCell>
@@ -79,7 +78,7 @@ const ChartPercentages = ({ form, chart }) => {
         </CTableHead>
       </CTable>
     </>
-  );
+  )
 };
 
 export default ChartPercentages;

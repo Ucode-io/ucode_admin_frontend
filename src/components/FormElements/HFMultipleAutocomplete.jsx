@@ -52,10 +52,6 @@ const HFMultipleAutocomplete = ({
   defaultValue = "",
   disabled,
 }) => {
-  const values = useWatch({
-    control,
-  });
-
   const classes = useStyles();
   const options = field.attributes?.options ?? [];
   const hasColor = field.attributes?.has_color;

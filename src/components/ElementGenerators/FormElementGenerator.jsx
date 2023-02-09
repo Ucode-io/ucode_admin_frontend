@@ -16,6 +16,7 @@ import HFTextEditor from "../FormElements/HFTextEditor";
 import HFTextField from "../FormElements/HFTextField";
 import HFTextFieldWithMask from "../FormElements/HFTextFieldWithMask";
 import HFTimePicker from "../FormElements/HFTimePicker";
+import HFDentist from "../FormElements/HFDentist";
 import DynamicRelationFormElement from "./DynamicRelationFormElement";
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import RelationFormElement from "./RelationFormElement";
@@ -77,8 +78,6 @@ const FormElementGenerator = ({
   // if (!field.attributes?.field_permission?.view_permission) {
   //   return null
   // }
-
-  // console.log("FIELD - ", field);
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
@@ -394,16 +393,15 @@ const FormElementGenerator = ({
     case "DENTIST":
       return (
         <FRow label={field.label} required={field.required}>
-          <BarcodeGenerator
+          <HFDentist
             control={control}
-            name={field.slug}
-            tabIndex={field?.tabIndex}
+            name={computedSlug}
             fullWidth
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            // disabled={isDisabled}
-            formTableSlug={formTableSlug}
+            tabIndex={field?.tabIndex}
+            disabled={isDisabled}
             {...props}
           />
         </FRow>

@@ -115,13 +115,10 @@ const ConstructorTablesFormPage = () => {
       mainForm.reset(data);
 
       await getRelationFields();
-    } catch(error) {
     } finally {
       setLoader(false);
     }
   };
-
-  console.log("LOADEr ==>", loader)
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {

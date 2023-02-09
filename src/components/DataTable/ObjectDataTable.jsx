@@ -64,7 +64,6 @@ const ObjectDataTable = ({
 
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
-  const role = useSelector((state) => state.auth.roleInfo);
 
   const [columnId, setColumnId] = useState("");
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
@@ -353,7 +352,6 @@ const ObjectDataTable = ({
             relationAction={relationAction}
             onChecked={onChecked}
             relationFields={fields}
-            role={role}
           />
         ))}
         {!!summaries?.length && (

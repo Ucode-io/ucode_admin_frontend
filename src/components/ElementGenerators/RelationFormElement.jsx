@@ -90,6 +90,7 @@ const RelationFormElement = ({
                   control={control}
                   setValue={onChange}
                   value={Array.isArray(value) ? value[0] : value}
+                  name={name}
                 />
               ) : (
                 <AutoCompleteElement
@@ -211,7 +212,7 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
-      setValue(value?.guid ?? value);
+      setValue(value?.guid ?? value?.guid);
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 

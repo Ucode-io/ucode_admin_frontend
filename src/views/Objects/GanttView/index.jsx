@@ -57,6 +57,7 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
   });
   const { tableSlug } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
 
   const [dateFilters, setDateFilters] = useState([
     new Date(),

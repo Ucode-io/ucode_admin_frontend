@@ -268,7 +268,7 @@ const ViewsWithGroups = ({
                   </div>
                   <span>Template</span>
                 </div>
-                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
                   <SettingsButton />
                 </PermissionWrapperV2>
               </div>
@@ -309,7 +309,6 @@ const ViewsWithGroups = ({
                 >
                   <AddIcon style={{ color: "#007AFF" }} />
                 </RectangleIconButton>
-
                 {formVisible ? (
                   <>
                     <RectangleIconButton
@@ -364,7 +363,6 @@ const ViewsWithGroups = ({
               </PermissionWrapperV2>
             </div>
           </div>
-
           {/* <>
             {view.type === "TREE" ? (
               <TreeView
@@ -379,7 +377,6 @@ const ViewsWithGroups = ({
               />
             )}
           </> */}
-
           {loader ? (
             <div className={style.loader}>
               <CircularProgress />

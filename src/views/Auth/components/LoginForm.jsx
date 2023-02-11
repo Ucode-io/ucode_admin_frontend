@@ -12,10 +12,12 @@ import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
 import authService from "../../../services/auth/authService";
 import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
+import connectionServiceV2 from "../../../services/auth/connectionService";
 import environmentService from "../../../services/environmentService";
 import { loginAction } from "../../../store/auth/auth.thunk";
 import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
+import DynamicFields from "./DynamicFields";
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -25,10 +27,11 @@ const LoginForm = () => {
   const [clientTypes, setClientTypes] = useState([]);
 
   const [formType, setFormType] = useState("LOGIN");
-  const { control, handleSubmit, watch } = useForm();
+  const { control, handleSubmit, watch, setValue } = useForm();
 
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
+  const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
 
   const computedCompanies = useMemo(() => {
@@ -79,6 +82,25 @@ const LoginForm = () => {
     }
   );
 
+  const { data: computedConnections = [] } = useQuery(
+    [
+      "GET_CONNECTION_LIST",
+      { project_id: selectedProjectID },
+      { "environment-id": selectedEnvID },
+    ],
+    () => {
+      return connectionServiceV2.getList(
+        { project_id: selectedProjectID },
+        { "environment-id": selectedEnvID },
+        { client_type_id: selectedClientTypeID }
+      );
+    },
+    {
+      enabled: !!selectedClientTypeID,
+      select: (res) => res.data.response ?? [],
+    }
+  );
+  console.log("computedConnections", computedConnections);
   const multiCompanyLogin = (data) => {
     setLoading(true);
 
@@ -207,6 +229,19 @@ const LoginForm = () => {
                   options={computedClientTypes}
                 />
               </div>
+              {computedConnections.length
+                ? computedConnections?.map((connection, idx) => (
+                    <DynamicFields
+                      key={connection?.guid}
+                      table={computedConnections}
+                      connection={connection}
+                      index={idx}
+                      control={control}
+                      setValue={setValue}
+                      watch={watch}
+                    />
+                  ))
+                : null}
             </div>
           </div>
         )}

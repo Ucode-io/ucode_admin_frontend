@@ -25,7 +25,6 @@ const GroupCascading = ({
   const [data, setData] = useState([]);
   const [relTableSLug, setRelTableSlug] = useState("");
   const [serviceData, setServiceData] = useState([]);
-  const [title, setTitle] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [menu, setMenu] = useState(null);
   const open = Boolean(menu);
@@ -53,22 +52,28 @@ const GroupCascading = ({
   //=========COMPUTED VALUE=========
   const computedValue = useMemo(() => {
     let val = "";
-
+    const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
+    const foundValue = data?.find((item) => {
+      return item?.guid === value?.[0] ?? value;
+    });
+    const foundObject = data?.find((item) => {
+      return item?.guid === value;
+    });
+    
     if (Array.isArray(value)) {
-      const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
-      slugs?.map(
-        (item) => (val += " " + value?.length > 0 ? value?.[0]?.[item] : "")
-      );
+      if(typeof value?.[0] === 'string') {
+        slugs?.map(
+          (item) => (val += " " + value?.length > 0 ? foundValue?.[item] : "")
+        );
+      } else {
+        return val += ' ' + value?.length > 0 ? value?.[0]?.name : ''
+      }
     } else {
-      const foundObject = data?.find((item) => {
-        return item?.guid === value;
-      });
       const slugs = field?.attributes?.view_fields?.map((i) => i?.slug);
       slugs?.map(
         (item) => (val += "" + foundObject ? foundObject?.[item] : "")
       );
     }
-    console.log("val", val);
     return val;
   }, [value, data, field]);
 
@@ -202,7 +207,6 @@ const GroupCascading = ({
                     setFormValue={setFormValue}
                     index={index}
                     searchText={searchText}
-                    setTitle={setTitle}
                   />
                 ))}
               </div>

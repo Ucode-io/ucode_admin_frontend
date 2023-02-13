@@ -24,7 +24,6 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [clientTypes, setClientTypes] = useState([]);
 
   const [formType, setFormType] = useState("LOGIN");
   const { control, handleSubmit, watch, setValue } = useForm();
@@ -100,7 +99,6 @@ const LoginForm = () => {
       select: (res) => res.data.response ?? [],
     }
   );
-  console.log("computedConnections", computedConnections);
   const multiCompanyLogin = (data) => {
     setLoading(true);
 
@@ -109,7 +107,6 @@ const LoginForm = () => {
       .then((res) => {
         setLoading(false);
 
-        setClientTypes(res.client_types);
         setCompanies(res.companies);
         setFormType("MULTI_COMPANY");
       })

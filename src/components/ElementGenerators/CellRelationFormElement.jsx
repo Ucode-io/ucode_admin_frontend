@@ -155,7 +155,7 @@ const AutoCompleteElement = ({
         return item[field?.slug];
       })
       .map((item) => {
-        return val.push(item[field?.slug]);
+        return !val.includes(item[field?.slug]) && val.push(item[field?.slug]);
       });
     return val;
   }, [relationfields, field]);
@@ -178,15 +178,21 @@ const AutoCompleteElement = ({
     },
     {
       select: (res) => {
-        return res?.data?.response ?? [];
+        return res?.data?.response ?? []
       },
     }
   );
-
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
+  
+  // const computedOptions = useMemo(() => {
+  //   let uniqueObjArray = [
+  //     ...new Map(options.map((item) => [item["title"], item])).values(),
+  // ]
+  // return uniqueObjArray  
+  // }, [options])
 
   const changeHandler = (value) => {
     const val = value?.[value?.length - 1];

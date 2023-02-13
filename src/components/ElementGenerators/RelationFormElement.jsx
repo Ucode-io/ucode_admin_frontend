@@ -1,5 +1,4 @@
 import { Autocomplete, TextField } from "@mui/material";
-import { getValue } from "@mui/system";
 import { get } from "@ngard/tiny-get";
 import { useEffect, useState } from "react";
 import { useMemo } from "react";
@@ -202,13 +201,6 @@ const AutoCompleteElement = ({
     return findedOption ? [findedOption] : [];
   }, [options, value]);
 
-  // const setDefaultValue = () => {
-  //   if (options?.slugOptions) {
-  //     const val = options?.slugOptions?.find((item) => item?.guid === id);
-  //     setValue(val?.guid ?? null);
-  //     setLocalValue(val ? [val] : null);
-  //   }
-  // };
 
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {

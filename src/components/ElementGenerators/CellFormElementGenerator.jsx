@@ -45,7 +45,7 @@ const CellFormElementGenerator = ({
     relationTableSlug = field?.id.split("#")[0];
   }
 
-  tables.forEach((table) => {
+  tables?.forEach((table) => {
     if (table.table_slug === relationTableSlug) {
       objectIdFromJWT = table.object_id;
     }

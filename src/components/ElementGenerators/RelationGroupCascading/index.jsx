@@ -5,14 +5,14 @@ import constructorObjectService from "../../../services/constructorObjectService
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useTabRouter from "../../../hooks/useTabRouter";
-import GroupCascadingLink from "./GroupCascadingLink";
+import GroupCascadingLink from "./CascadingRecursiveBlock";
 import { Menu, TextField, InputAdornment } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { SearchIcon } from "../../../assets/icons/icon.jsx";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import SearchInput from "../../SearchInput";
 
-const GroupCascading = ({
+const RelationGroupCascading = ({
   field,
   value,
   setValue,
@@ -48,24 +48,14 @@ const GroupCascading = ({
       );
     }
   }, [data, selectedIds, field?.attributes?.cascading_tree_table_slug]);
-
   //=========COMPUTED VALUE=========
   const computedValue = useMemo(() => {
     let val = "";
     const slugs = field?.attributes?.view_fields?.map((i) => i.slug)
-    
-    if (Array.isArray(value)) {
-      if(typeof value?.[0] === 'string') {
-        const object = data?.find((item) => item?.guid === value?.[0])
-        slugs?.map(
-          (item) => (val += " " + value?.length > 0 ? object?.[item] : "")
-        );
-      } else {
-        return slugs?.map(
-          (item) => (val += " " + value?.length > 0 ? value?.[0]?.[item] : "")
-        );
-      }
-    }
+      const object = data?.find((item) => item?.guid === value)
+      slugs?.map(
+        (item) => (val += "" + object ? object?.[item] : "")
+      );
     return val;
   }, [value, data, field]);
 
@@ -210,4 +200,4 @@ const GroupCascading = ({
   );
 };
 
-export default GroupCascading;
+export default RelationGroupCascading;

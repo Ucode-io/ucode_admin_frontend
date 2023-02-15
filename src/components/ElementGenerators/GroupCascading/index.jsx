@@ -23,6 +23,7 @@ const GroupCascading = ({
   const [selectedIds, setSelectedIds] = useState([]);
   const [tableLoader, setTableLoader] = useState(true);
   const [data, setData] = useState([]);
+  const tab_slug = field?.attributes?.cascading_tree_table_slug ?? tableSlug;
   const [relTableSLug, setRelTableSlug] = useState("");
   const [serviceData, setServiceData] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -37,17 +38,13 @@ const GroupCascading = ({
 
   const currentList = useMemo(() => {
     if (!selectedIds?.length) {
-      return data.filter(
-        (row) => !row[`${field?.attributes?.cascading_tree_table_slug}_id`]
-      );
+      return data.filter((row) => !row[`${tab_slug}_id`]);
     } else {
       return data.filter(
-        (el) =>
-          el[`${field?.attributes?.cascading_tree_table_slug}_id`] ===
-          selectedIds[selectedIds.length - 1]
+        (el) => el[`${tab_slug}_id`] === selectedIds[selectedIds.length - 1]
       );
     }
-  }, [data, selectedIds, field?.attributes?.cascading_tree_table_slug]);
+  }, [data, selectedIds, tab_slug]);
 
   //=========COMPUTED VALUE=========
   const computedValue = useMemo(() => {
@@ -80,12 +77,9 @@ const GroupCascading = ({
   const getAllData = async () => {
     setTableLoader(true);
     try {
-      const { data } = await constructorObjectService.getList(
-        field?.attributes?.cascading_tree_table_slug,
-        {
-          data: {},
-        }
-      );
+      const { data } = await constructorObjectService.getList(tab_slug, {
+        data: {},
+      });
 
       setData(data.response ?? []);
     } finally {
@@ -183,8 +177,8 @@ const GroupCascading = ({
               <div className={styles.tree_data_wrapper}>
                 {currentList?.map((item, index) => (
                   <GroupCascadingLink
-                    tableSlug={field?.attributes?.cascading_tree_table_slug}
-                    fieldSlug={field?.attributes?.cascading_tree_field_slug}
+                    tableSlug={tab_slug}
+                    fieldSlug={tab_slug}
                     selectedIds={selectedIds}
                     setSelectedIds={setSelectedIds}
                     item={item}

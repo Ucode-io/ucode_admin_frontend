@@ -1,31 +1,34 @@
 import { useMemo } from "react";
-import { Parser } from "hot-formula-parser"
-import { getWordsBetweenCurlies } from "../../utils/getWordsBetweenCurlies";
-import { get } from "@ngard/tiny-get";
+import { Parser } from "hot-formula-parser";
 
 const parser = new Parser();
 
-
 const FormulaCell = ({ field, row }) => {
-  const formula = field?.attributes?.formula ?? ''
+  const formula = field?.attributes?.formula ?? "";
 
   const computedValue = useMemo(() => {
+    let computedFormula = formula;
 
-    const variables = getWordsBetweenCurlies(formula)
-    let computedFormula = formula
-    variables?.forEach(variable => {
-      computedFormula = computedFormula.replaceAll(`{${variable}}`, get(row, variable))
-    })
+    const sortedRowProperties = Object.entries(row ?? {}).sort(
+      (a, b) => b[0].length - a[0].length
+    );
 
-    const { result, error } = parser.parse(computedFormula)
+    sortedRowProperties.forEach((i) => {
+      let value = i[1] ?? 0;
 
-    if(error) return 'Err'
-    return result
+      if (typeof value === "string") value = `${value}`;
+      if (typeof value === "boolean")
+        value = JSON.stringify(value).toUpperCase();
+      computedFormula = computedFormula.replaceAll(`${i[0]}`, value);
+    });
 
-  }, [ formula, row ])
+    const { result, error } = parser.parse(computedFormula);
 
+    if (error) return "Err";
+    return result;
+  }, [formula, row]);
 
-  return ( <span>{computedValue}</span> );
-}
- 
+  return <span>{computedValue}</span>;
+};
+
 export default FormulaCell;

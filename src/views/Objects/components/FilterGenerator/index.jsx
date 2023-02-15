@@ -113,6 +113,7 @@ export const Filter = ({
       return null;
 
     case "DATE":
+      case "DATE_TIME":
       return (
         <DateFilter
           value={filters[name]}

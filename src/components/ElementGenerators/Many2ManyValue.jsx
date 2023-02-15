@@ -23,9 +23,9 @@ function Many2ManyValue({field, value}) {
         let val = '';
         const slugs = field?.view_fields?.map((item) => item?.slug)
          options?.map((item) => {
-           return val += slugs?.map((el) => " " +  item?.[el] + ', ')
+           return val += slugs?.map((el) =>  " " + item?.[el] + ',')
         })
-        return val
+        return val.substring(0, val?.length - 1)
       }, [field, options])
     return (
         <div>

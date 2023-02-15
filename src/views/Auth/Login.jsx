@@ -1,9 +1,9 @@
-import { useTranslation } from "react-i18next"
-import LoginForm from "./components/LoginForm"
-import styles from "./style.module.scss"
+import { useTranslation } from "react-i18next";
+import LoginForm from "./components/LoginForm";
+import styles from "./style.module.scss";
 
 const Login = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <div className={styles.page}>
@@ -12,7 +12,7 @@ const Login = () => {
 
       <LoginForm />
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

@@ -12,8 +12,8 @@ import styles from "./style.module.scss";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useLocation } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
-import GroupCascading from "./GroupCascading";
 import CascadingElement from "./CascadingElement";
+import RelationGroupCascading from "./RelationGroupCascading";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -48,7 +48,7 @@ const CellRelationFormElement = ({
         defaultValue={defaultValue}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
           return field?.attributes?.cascading_tree_table_slug ? (
-            <GroupCascading
+            <RelationGroupCascading
               field={field}
               tableSlug={field.table_slug}
               error={error}
@@ -155,7 +155,7 @@ const AutoCompleteElement = ({
         return item[field?.slug];
       })
       .map((item) => {
-        return val.push(item[field?.slug]);
+        return !val.includes(item[field?.slug]) && val.push(item[field?.slug]);
       });
     return val;
   }, [relationfields, field]);
@@ -178,15 +178,21 @@ const AutoCompleteElement = ({
     },
     {
       select: (res) => {
-        return res?.data?.response ?? [];
+        return res?.data?.response ?? []
       },
     }
   );
-
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
+  
+  // const computedOptions = useMemo(() => {
+  //   let uniqueObjArray = [
+  //     ...new Map(options.map((item) => [item["title"], item])).values(),
+  // ]
+  // return uniqueObjArray  
+  // }, [options])
 
   const changeHandler = (value) => {
     const val = value?.[value?.length - 1];

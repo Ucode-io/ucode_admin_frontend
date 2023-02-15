@@ -8,6 +8,8 @@ import { locale } from "./Plugins/locale";
 const CRangePickerNew = ({ onChange, value, placeholder }) => {
   const changeHander = (val) => {
     if (!val?.length) onChange([]);
+
+    
     else if (val?.[0] && val?.[1]) {
       onChange({
         $gte: new Date(val[0]),

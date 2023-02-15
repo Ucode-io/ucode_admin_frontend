@@ -38,6 +38,14 @@ const CascadingRecursiveBlock = ({
     handleClose();
   };
 
+  const setParents = (element) => {
+    setValue(element?.guid);
+    field?.attributes?.autofill.forEach(({ field_from, field_to }) => {
+      setFormValue(`multi.${index}.${field_to}`, get(element, field_from));
+    });
+    handleClose();
+  };
+
   return (
     <>
       {!serviceData?.length ? (

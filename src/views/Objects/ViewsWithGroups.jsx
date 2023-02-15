@@ -48,6 +48,7 @@ const ViewsWithGroups = ({
   const [shouldGet, setShouldGet] = useState(false);
   const [heightControl, setHeightControl] = useState(false);
   const [financeDate, setFinanceDate] = useState([]);
+  const [financeTotal, setFinanceTotal] = useState([])
   const { navigateToForm } = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
@@ -164,6 +165,7 @@ const ViewsWithGroups = ({
         })
         .then((res) => {
           setFinanceDate(res?.data?.response);
+          setFinanceTotal(res?.data?.total_amount);
         });
     }
   }, [dateFilters, tableSlug]);
@@ -398,6 +400,7 @@ const ViewsWithGroups = ({
                       fieldsMap={fieldsMap}
                       tab={tab}
                       financeDate={financeDate}
+                      financeTotal={financeTotal}
                     />
                   ) : (
                     <TableView
@@ -431,6 +434,7 @@ const ViewsWithGroups = ({
                       filters={filters}
                       fieldsMap={fieldsMap}
                       financeDate={financeDate}
+                      financeTotal={financeTotal}
                     />
                   ) : (
                     <TableView

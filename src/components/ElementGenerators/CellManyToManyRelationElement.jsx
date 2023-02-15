@@ -99,7 +99,6 @@ const AutoCompleteElement = ({
   setFormValue = () => {},
 }) => {
   const { navigateToForm } = useTabRouter();
-
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
@@ -121,8 +120,9 @@ const AutoCompleteElement = ({
       const key = autoFilters?.[index]?.field_to;
       if (key) result[key] = value;
     });
-    return result;
-  }, [autoFilters, filtersHandler]);
+
+    return result?.guid ? result : value;
+  }, [autoFilters, filtersHandler, value]);
 
   const { data: options } = useQuery(
     [
@@ -132,7 +132,10 @@ const AutoCompleteElement = ({
     ],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: autoFiltersValue,
+        data: {
+          ...autoFiltersValue,
+          guid: value
+        }
       });
     },
     {
@@ -173,7 +176,7 @@ const AutoCompleteElement = ({
     //   setFormValue(setName.join("."), get(val, field_from));
     // });
   };
-
+  console.log('computedValue', computedValue)
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete

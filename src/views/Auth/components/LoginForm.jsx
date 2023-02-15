@@ -38,7 +38,7 @@ const LoginForm = () => {
   }, [companies]);
 
   const computedProjects = useMemo(() => {
-    const company = companies.find(
+    const company = companies?.find(
       (company) => company.id === selectedCompanyID
     );
     return listToOptions(company?.projects, "name");

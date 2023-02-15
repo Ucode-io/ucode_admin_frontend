@@ -178,7 +178,7 @@ const AutoCompleteElement = ({
         };
       })
       ?.filter((el) => el);
-  }, [value]);
+  }, [value, options]);
 
   const getOptionLabel = (option) => {
     // return ''

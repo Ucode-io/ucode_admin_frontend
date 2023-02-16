@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import constructorObjectService from '../../services/constructorObjectService';
+import get from 'lodash.get'
 
 function Many2ManyValue({field, value}) {
     
@@ -20,13 +21,10 @@ function Many2ManyValue({field, value}) {
         }
       );
       const computedValue = useMemo(() => {
-        let val = '';
-        const slugs = field?.view_fields?.map((item) => item?.slug)
-         options?.map((item) => {
-           return val += slugs?.map((el) =>  " " + item?.[el] + ',')
-        })
-        return val.substring(0, val?.length - 1)
-      }, [field, options])
+        const slugs = field?.view_fields?.map((item) => item?.slug) ?? [];
+        return options?.map((option) => slugs.map((slug) => get(option, slug, '')).join(' ')).join(', ');
+      }, [field, options]);
+    
     return (
         <div>
             {computedValue}

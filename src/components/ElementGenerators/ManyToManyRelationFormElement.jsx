@@ -235,6 +235,7 @@ const AutoCompleteElement = ({
         disablePortal
         blurOnSelect
         openOnFocus
+        clearOnBlur={!inputValue}
         getOptionLabel={(option) => getRelationFieldLabel(field, option)}
         multiple
         isOptionEqualToValue={(option, value) => option.guid === value.guid}

@@ -47,7 +47,7 @@ const DynamicFields = ({
     getConnection();
   }, []);
 
-  console.log("options", options);
+
 
   // const computedOptions = useMemo(() => {
   //   return table?.map((field) => ({

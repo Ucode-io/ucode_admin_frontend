@@ -32,8 +32,6 @@ const Variable = ({ variable = {}, value, onChange }) => {
     return []
   }, [variable, data])
 
-  console.log("OPTIONS ====>", data)
-
   return (
     <div className={styles.variable}>
       <div className={styles.label}>{variable.label}</div>

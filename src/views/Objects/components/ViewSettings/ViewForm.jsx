@@ -42,6 +42,8 @@ const ViewForm = ({
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }))
   const financialValues = initialValues?.attributes?.chart_of_accounts
   const financialTypee = initialValues?.attributes?.percent?.type
+  const relationObjValue = initialValues?.attributes?.balance.table_slug + '#' + initialValues?.attributes?.balance.table_id
+  const numberFieldValue =  initialValues?.attributes?.balance.field_slug + '#' + initialValues?.attributes?.balance.field_id
   const financialFiledId = initialValues?.attributes?.percent?.field_id
   const form = useForm()
   const type = form.watch("type")
@@ -54,7 +56,7 @@ const ViewForm = ({
   }, [columns, relationColumns, type])
 
   const computeFinancialAcc = (values, groupByField, data) => {
-    // console.log("View values", data)
+    
     if (values === undefined) return { chart_of_accounts: [] }
 
     const computedFormat = values.map((row) => {
@@ -91,7 +93,8 @@ const ViewForm = ({
       balance: {
         table_slug: data.relation_obj.split('#')[0],
         table_id: data?.relation_obj.split('#')[1],
-        field_id: data?.number_field.split('#')[1]
+        field_id: data?.number_field.split('#')[1],
+        field_slug: data?.number_field.split('#')[0]
       }
     }
   }
@@ -106,7 +109,9 @@ const ViewForm = ({
         relationColumns,
         financialValues,
         financialTypee,
-        financialFiledId
+        financialFiledId,
+        relationObjValue,
+        numberFieldValue
       ),
       filters: [],
     })
@@ -310,7 +315,9 @@ const getInitialValues = (
   relationColumns,
   financialValues,
   financialTypee,
-  financialFiledId
+  financialFiledId,
+  relationObjValue,
+  numberFieldValue
 ) => {
   if (initialValues === "NEW")
     return {
@@ -373,6 +380,8 @@ const getInitialValues = (
     multiple_insert_field: initialValues?.multiple_insert_field ?? "",
     chartOfAccounts: computeFinancialColumns(financialValues),
     typee: financialTypee ?? "",
+    relation_obj: relationObjValue ?? "",
+    number_field: numberFieldValue ?? "",
     filed_idss: financialFiledId ?? "",
   }
 }

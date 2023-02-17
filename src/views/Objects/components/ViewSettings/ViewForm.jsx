@@ -54,7 +54,6 @@ const ViewForm = ({
   }, [columns, relationColumns, type])
 
   const computeFinancialAcc = (values, groupByField, data) => {
-    // console.log("View values", data)
     if (values === undefined) return { chart_of_accounts: [] }
 
     const computedFormat = values.map((row) => {
@@ -79,7 +78,6 @@ const ViewForm = ({
                 })),
             }
           }),
-          
       }
     })
     return {
@@ -88,11 +86,11 @@ const ViewForm = ({
         type: data.typee,
         field_id: data.typee === "field" ? data.filed_idss : null,
       },
-      balance: {
-        table_slug: data.relation_obj.split('#')[0],
-        table_id: data?.relation_obj.split('#')[1],
-        field_id: data?.number_field.split('#')[1]
-      }
+      // balance: {
+      //   table_slug: data.relation_obj.split('#')[0],
+      //   table_id: data?.relation_obj.split('#')[1],
+      //   field_id: data?.number_field.split('#')[1]
+      // }
     }
   }
 
@@ -132,7 +130,6 @@ const ViewForm = ({
   }, [type, form])
 
   const onSubmit = (values) => {
-    // console.log("onsubmit values", values)
     setBtnLoader(true)
     const computedValues = {
       ...values,

@@ -110,7 +110,6 @@ const FinancialCalendarView = ({
       </div>
       <div>
         <TotalAmountByMonth 
-          data={totalData}
           totalBalance={totalBalance}
         />
       </div>
@@ -119,11 +118,3 @@ const FinancialCalendarView = ({
 };
 
 export default FinancialCalendarView;
-
-
-const totalData =  {
-    id: 0,
-    total: [22_000, 12_000],
-    cash: [12_000, 10_000],
-    bank: [40_000, 5_000]
-  }

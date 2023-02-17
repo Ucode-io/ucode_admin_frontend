@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   CTable,
@@ -9,6 +9,11 @@ import {
 import HFSelect from "../../../../components/FormElements/HFSelect";
 import GroupCascading from "../../../../components/ElementGenerators/GroupCascading";
 import { Controller, useWatch } from "react-hook-form";
+import { useQuery } from "react-query";
+import applicationService from "../../../../services/applicationSercixe";
+import constructorFieldService from "../../../../services/constructorFieldService";
+
+
 const options = [
   {
     label: "Total",
@@ -29,8 +34,40 @@ const options = [
 ];
 
 const ChartPercentages = ({ form, chart }) => {
-  const { tableSlug } = useParams();
-  let selectedType = form.watch('typee')
+  const [digitalAreas, setDigitalAreas] = useState([]);
+  const { tableSlug, appId } = useParams();
+  const { data: app } = useQuery(["GET_TABLE_LIST", appId], () => {
+    return applicationService.getById(appId)
+  })
+  const selectedBalance = form.watch('relation_obj')
+  const computedTablesList = useMemo(() => {
+    return app?.tables?.map((table) => ({
+      value: `${table.slug}#${table.id}`,
+      label: table?.label
+    }))
+  }, [app])
+
+
+  useEffect(() => {
+    selectedBalance && constructorFieldService.getList({
+      table_slug: selectedBalance.split('#')[0]
+    }).then((res) => {
+      console.log('option 2', res)
+      setDigitalAreas(
+        res.fields
+          .filter(
+            (item) => item.type === "NUMBER"
+          )
+          .map((item) => ({
+            label: item.label,
+            value: `${item.slug}#${item.id}`,
+          }))
+      );
+    })
+  }, [selectedBalance])
+
+
+  console.log("digitalAreas", digitalAreas.length)
 
   return (
     <>
@@ -74,6 +111,33 @@ const ChartPercentages = ({ form, chart }) => {
                 />
               </CTableCell>
             )}
+          </CTableHeadRow>
+          <CTableHeadRow>
+            <CTableCell>Balance</CTableCell>
+            <CTableCell>
+              <div>
+                <HFSelect
+                  fullWidth
+                  required
+                  control={form.control}
+                  options={computedTablesList}
+                  name="relation_obj"
+                  placeholder='Выберите...'
+                />
+              </div>
+            </CTableCell>
+            <CTableCell>
+              <div>
+                <HFSelect
+                  fullWidth
+                  required={digitalAreas.length > 0 ? true : false}
+                  control={form.control}
+                  options={digitalAreas}
+                  name="number_field"
+                  placeholder='Выберите...'
+                />
+              </div>
+            </CTableCell>
           </CTableHeadRow>
         </CTableHead>
       </CTable>

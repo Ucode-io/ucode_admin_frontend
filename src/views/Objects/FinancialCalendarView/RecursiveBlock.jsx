@@ -121,7 +121,6 @@ const RecursiveBlock = ({
           )
         )}
       </div>
-
       <Collapse in={childBlockVisible} unmountOnExit>
         {children?.map((childRow) => (
           <RecursiveBlock

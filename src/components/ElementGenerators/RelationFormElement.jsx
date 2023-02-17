@@ -1,5 +1,4 @@
 import { Autocomplete, TextField } from "@mui/material";
-import { getValue } from "@mui/system";
 import { get } from "@ngard/tiny-get";
 import { useEffect, useState } from "react";
 import { useMemo } from "react";
@@ -39,7 +38,8 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
-
+  console.log('name', name)
+  console.log('field.slug', field.slug)
   if (!isLayout)
     return (
       <FRow label={field?.label ?? field?.title} required={field.required}>
@@ -202,15 +202,10 @@ const AutoCompleteElement = ({
     return findedOption ? [findedOption] : [];
   }, [options, value]);
 
-  // const setDefaultValue = () => {
-  //   if (options?.slugOptions) {
-  //     const val = options?.slugOptions?.find((item) => item?.guid === id);
-  //     setValue(val?.guid ?? null);
-  //     setLocalValue(val ? [val] : null);
-  //   }
-  // };
 
   const changeHandler = (value, key = "") => {
+    console.log('value', value)
+    console.log('value', key)
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value ? [value] : null);

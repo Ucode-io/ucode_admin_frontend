@@ -1,36 +1,35 @@
-import { AccountCircle, Lock, SupervisedUserCircle } from "@mui/icons-material"
-import { InputAdornment } from "@mui/material"
-import axios from "axios"
-import { useEffect, useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
-import { useTranslation } from "react-i18next"
-import { useQuery } from "react-query"
-import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
-import PrimaryButton from "../../../components/Buttons/PrimaryButton"
-import HFSelect from "../../../components/FormElements/HFSelect"
-import HFTextField from "../../../components/FormElements/HFTextField"
-import authService from "../../../services/auth/authService"
-import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2"
-import { authActions } from "../../../store/auth/auth.slice"
-import { loginAction } from "../../../store/auth/auth.thunk"
-import listToOptions from "../../../utils/listToOptions"
-import classes from "../style.module.scss"
-import DynamicFields from "./DynamicFields"
+import { AccountCircle, Lock, SupervisedUserCircle } from "@mui/icons-material";
+import { InputAdornment } from "@mui/material";
+import axios from "axios";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import PrimaryButton from "../../../components/Buttons/PrimaryButton";
+import HFSelect from "../../../components/FormElements/HFSelect";
+import HFTextField from "../../../components/FormElements/HFTextField";
+import authService from "../../../services/auth/authService";
+import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
+import { authActions } from "../../../store/auth/auth.slice";
+import { loginAction } from "../../../store/auth/auth.thunk";
+import listToOptions from "../../../utils/listToOptions";
+import classes from "../style.module.scss";
+import DynamicFields from "./DynamicFields";
 
 const LoginForm = ({ navigateToRegistrationForm }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-
-  const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const [selectedTab, setSelectedTab] = useState(0)
-  const [connections, setConnections] = useState([])
-  const [isCodeSent, setIsCodeSent] = useState(false)
-  const [loginStrategies, setLoginStrategies] = useState({})
-  const [resData, setResData] = useState({})
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [connections, setConnections] = useState([]);
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [loginStrategies, setLoginStrategies] = useState({});
+  const [resData, setResData] = useState({});
 
   const { control, handleSubmit, setValue, getValues, watch } = useForm({
     defaultValues: {
@@ -43,21 +42,20 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
       password: "",
       tables: [],
     },
-  })
+  });
 
-  const otpCode = watch("otp")
-  const phone = watch("recipient")
-  const email = watch("email")
+  const otpCode = watch("otp");
+  const phone = watch("recipient");
+  const email = watch("email");
+  const clientTypeId = watch("client_type");
 
   const { data: { data } = {} } = useQuery(["GET_CLIENT_TYPES"], () => {
-    return clientTypeServiceV2.getList()
-  })
+    return clientTypeServiceV2.getList();
+  });
 
   const computedClientTypes = useMemo(() => {
-    return listToOptions(data?.response, "name", "guid")
-  }, [data?.response])
-
-  const clientTypeId = watch("client_type")
+    return listToOptions(data?.response, "name", "guid");
+  }, [data?.response]);
 
   const getConnections = () => {
     axios
@@ -66,12 +64,12 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
         { data: { client_type_id: clientTypeId } }
       )
       .then((res) => {
-        setConnections(res?.data?.data?.data?.response || [])
+        setConnections(res?.data?.data?.data?.response || []);
       })
       .catch((err) => {
-        console.log(err)
-      })
-  }
+        console.log(err);
+      });
+  };
 
   const getLoginStrategies = () => {
     axios
@@ -90,21 +88,21 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
             }),
             {}
           )
-        )
+        );
       })
       .catch((err) => {
-        console.log(err)
-      })
-  }
+        console.log(err);
+      });
+  };
 
   const selectedClientType = useMemo(() => {
     return data?.response?.find(
       (clientType) => clientType.guid === clientTypeId
-    )
-  }, [clientTypeId, data?.response])
+    );
+  }, [clientTypeId, data?.response]);
 
   const verifySmsCode = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (phone?.length > 0) {
       authService
         .verifyCode(resData?.sms_id, otpCode, {
@@ -114,8 +112,8 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
           tables: getValues("tables"),
         })
         .then((res) => {
-          dispatch(authActions.loginSuccess(res))
-        })
+          dispatch(authActions.loginSuccess(res));
+        });
     } else {
       authService
         .verifyEmail(resData?.sms_id, otpCode, {
@@ -125,10 +123,10 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
           tables: getValues("tables"),
         })
         .then((res) => {
-          dispatch(authActions.loginSuccess(res))
-        })
+          dispatch(authActions.loginSuccess(res));
+        });
     }
-  }
+  };
 
   const onSubmit = (data) => {
     const computedData = {
@@ -137,13 +135,13 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
         (item) => item?.value === data?.client_type
       )?.label,
       tables: data?.tables?.filter((table) => table?.object_id?.length > 0),
-    }
+    };
 
     // return console.log('computedData', computedData)
 
-    const cashboxData = getCashboxData(data)
+    const cashboxData = getCashboxData(data);
 
-    setLoading(true)
+    setLoading(true);
     if (phone?.length > 0) {
       authService
         .sendCode({
@@ -154,15 +152,15 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
           text: "Code...",
         })
         .then((res) => {
-          console.log("res", res)
-          setResData(res)
-          setIsCodeSent(true)
-          setLoading(false)
+          console.log("res", res);
+          setResData(res);
+          setIsCodeSent(true);
+          setLoading(false);
         })
         .catch((err) => {
-          console.log("err", err)
-          setLoading(false)
-        })
+          console.log("err", err);
+          setLoading(false);
+        });
     } else if (email?.length > 0) {
       authService
         .sendMessage({
@@ -172,58 +170,58 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
           email,
         })
         .then((res) => {
-          console.log("res", res)
-          setResData(res)
-          setIsCodeSent(true)
-          setLoading(false)
+          console.log("res", res);
+          setResData(res);
+          setIsCodeSent(true);
+          setLoading(false);
         })
         .catch((err) => {
-          console.log("err", err)
-          setLoading(false)
-        })
+          console.log("err", err);
+          setLoading(false);
+        });
     } else {
       dispatch(loginAction({ data: computedData, cashboxData }))
         .unwrap()
         .then(() => {
           if (selectedClientType?.name === "CASHIER") {
-            navigate("/cashbox/opening")
+            navigate("/cashbox/opening");
           }
         })
-        .catch(() => setLoading(false))
+        .catch(() => setLoading(false));
     }
-  }
+  };
 
   const getCashboxData = (data) => {
-    if (selectedClientType?.name !== "CASHIER") return null
-    const cashboxId = data.tables.cashbox
+    if (selectedClientType?.name !== "CASHIER") return null;
+    const cashboxId = data.tables.cashbox;
     const cashboxTable = selectedClientType?.tables?.find(
       (table) => table.slug === "cashbox"
-    )
+    );
     const selectedCashbox = cashboxTable?.data?.response?.find(
       (object) => object.guid === cashboxId
-    )
-    return selectedCashbox
-  }
+    );
+    return selectedCashbox;
+  };
 
   useEffect(() => {
     if (Object.keys(loginStrategies)) {
-      setSelectedTab(0)
+      setSelectedTab(0);
     }
-  }, [loginStrategies])
+  }, [loginStrategies]);
 
   useEffect(() => {
-    if (!clientTypeId) return
-    getConnections()
-    getLoginStrategies()
-  }, [clientTypeId])
+    if (!clientTypeId) return;
+    getConnections();
+    getLoginStrategies();
+  }, [clientTypeId]);
 
   useEffect(() => {
-    setValue("recipient", "")
-    setValue("username", "")
-    setValue("password", "")
-    setValue("email", "")
-    setIsCodeSent(false)
-  }, [selectedTab, clientTypeId])
+    setValue("recipient", "");
+    setValue("username", "");
+    setValue("password", "");
+    setValue("email", "");
+    setIsCodeSent(false);
+  }, [selectedTab, clientTypeId]);
 
   return (
     <form
@@ -265,10 +263,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
               {loginStrategies["Email OTP"] && <Tab>{t("E-mail")}</Tab>}
             </TabList>
 
-            <div
-              className={classes.formArea}
-              style={{ marginTop: "10px" }}
-            >
+            <div className={classes.formArea} style={{ marginTop: "10px" }}>
               {(Object.keys(loginStrategies)?.length === 0 ||
                 loginStrategies["Login with password"]) && (
                 <TabPanel>
@@ -418,7 +413,7 @@ const LoginForm = ({ navigateToRegistrationForm }) => {
         </PrimaryButton>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default LoginForm
+export default LoginForm;

@@ -5,14 +5,14 @@ import constructorObjectService from "../../../services/constructorObjectService
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useTabRouter from "../../../hooks/useTabRouter";
-import GroupCascadingLink from "./GroupCascadingLink";
+import GroupCascadingLink from "./CascadingRecursiveBlock";
 import { Menu, TextField, InputAdornment } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { SearchIcon } from "../../../assets/icons/icon.jsx";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import SearchInput from "../../SearchInput";
 
-const GroupCascading = ({
+const RelationGroupCascading = ({
   field,
   value,
   setValue,
@@ -23,7 +23,6 @@ const GroupCascading = ({
   const [selectedIds, setSelectedIds] = useState([]);
   const [tableLoader, setTableLoader] = useState(true);
   const [data, setData] = useState([]);
-  const tab_slug = field?.attributes?.cascading_tree_table_slug ?? tableSlug;
   const [relTableSLug, setRelTableSlug] = useState("");
   const [serviceData, setServiceData] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -38,31 +37,25 @@ const GroupCascading = ({
 
   const currentList = useMemo(() => {
     if (!selectedIds?.length) {
-      return data.filter((row) => !row[`${tab_slug}_id`]);
+      return data.filter(
+        (row) => !row[`${field?.attributes?.cascading_tree_table_slug}_id`]
+      );
     } else {
       return data.filter(
-        (el) => el[`${tab_slug}_id`] === selectedIds[selectedIds.length - 1]
+        (el) =>
+          el[`${field?.attributes?.cascading_tree_table_slug}_id`] ===
+          selectedIds[selectedIds.length - 1]
       );
     }
-  }, [data, selectedIds, tab_slug]);
-
+  }, [data, selectedIds, field?.attributes?.cascading_tree_table_slug]);
   //=========COMPUTED VALUE=========
   const computedValue = useMemo(() => {
     let val = "";
     const slugs = field?.attributes?.view_fields?.map((i) => i.slug)
-    
-    if (Array.isArray(value)) {
-      if(typeof value?.[0] === 'string') {
-        const object = data?.find((item) => item?.guid === value?.[0])
-        slugs?.map(
-          (item) => (val += " " + value?.length > 0 ? object?.[item] : "")
-        );
-      } else {
-        return slugs?.map(
-          (item) => (val += " " + value?.length > 0 ? value?.[0]?.[item] : "")
-        );
-      }
-    }
+      const object = data?.find((item) => item?.guid === value)
+      slugs?.map(
+        (item) => (val += "" + object ? object?.[item] : "")
+      );
     return val;
   }, [value, data, field]);
 
@@ -77,9 +70,12 @@ const GroupCascading = ({
   const getAllData = async () => {
     setTableLoader(true);
     try {
-      const { data } = await constructorObjectService.getList(tab_slug, {
-        data: {},
-      });
+      const { data } = await constructorObjectService.getList(
+        field?.attributes?.cascading_tree_table_slug,
+        {
+          data: {},
+        }
+      );
 
       setData(data.response ?? []);
     } finally {
@@ -177,8 +173,8 @@ const GroupCascading = ({
               <div className={styles.tree_data_wrapper}>
                 {currentList?.map((item, index) => (
                   <GroupCascadingLink
-                    tableSlug={tab_slug}
-                    fieldSlug={tab_slug}
+                    tableSlug={field?.attributes?.cascading_tree_table_slug}
+                    fieldSlug={field?.attributes?.cascading_tree_field_slug}
                     selectedIds={selectedIds}
                     setSelectedIds={setSelectedIds}
                     item={item}
@@ -204,4 +200,4 @@ const GroupCascading = ({
   );
 };
 
-export default GroupCascading;
+export default RelationGroupCascading;

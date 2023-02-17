@@ -81,7 +81,6 @@ const ViewForm = ({
                 })),
             }
           }),
-          
       }
     })
     return {
@@ -137,7 +136,6 @@ const ViewForm = ({
   }, [type, form])
 
   const onSubmit = (values) => {
-    // console.log("onsubmit values", values)
     setBtnLoader(true)
     const computedValues = {
       ...values,

@@ -10,6 +10,7 @@ import { formatDate } from "../../utils/dateFormatter";
 import LogoDisplay from "../LogoDisplay";
 import TableTag from "../TableTag";
 import DownloadIcon from "@mui/icons-material/Download";
+import Many2ManyValue from "./Many2ManyValue";
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
@@ -23,7 +24,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     return result;
   }, [row, field]);
-
+  
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
@@ -58,6 +59,9 @@ const CellElementGenerator = ({ field = {}, row }) => {
   }
 
   switch (field.type) {
+    case "LOOKUPS":
+      return <Many2ManyValue field={field} value={value}/>
+    
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;
 

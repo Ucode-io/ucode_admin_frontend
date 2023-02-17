@@ -178,7 +178,7 @@ const AutoCompleteElement = ({
         };
       })
       ?.filter((el) => el);
-  }, [options, value]);
+  }, [value, options]);
 
   const getOptionLabel = (option) => {
     // return ''
@@ -235,6 +235,7 @@ const AutoCompleteElement = ({
         disablePortal
         blurOnSelect
         openOnFocus
+        clearOnBlur={!inputValue}
         getOptionLabel={(option) => getRelationFieldLabel(field, option)}
         multiple
         isOptionEqualToValue={(option, value) => option.guid === value.guid}

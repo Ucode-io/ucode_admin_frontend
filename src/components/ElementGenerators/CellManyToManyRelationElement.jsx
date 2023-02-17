@@ -176,7 +176,7 @@ const AutoCompleteElement = ({
     //   setFormValue(setName.join("."), get(val, field_from));
     // });
   };
-  console.log('computedValue', computedValue)
+  
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete

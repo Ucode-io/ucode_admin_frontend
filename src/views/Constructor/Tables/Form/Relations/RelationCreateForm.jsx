@@ -34,6 +34,7 @@ const RelationCreateForm = ({
   isLoading = false,
 }) => {
   const { appId } = useParams();
+  const params = useParams()
   const [fieldOptions, setFieldOptions] = useState([]);
   const [openSumCreate, setOpenSumCreate] = useState(false);
 

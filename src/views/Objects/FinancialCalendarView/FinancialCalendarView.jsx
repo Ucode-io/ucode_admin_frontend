@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import RecursiveBlock from "./RecursiveBlock";
 import { ru } from "date-fns/locale";
 import { numberWithSpaces } from "../../../utils/formatNumbers";
+import TotalAmountByMonth from "./TotalAmountByMonth";
 
 const FinancialCalendarView = ({
   view,
@@ -17,15 +18,20 @@ const FinancialCalendarView = ({
   filters,
   financeDate,
   financeTotal,
+  totalBalance
 }) => {
   const { tableSlug } = useParams();
   const [dataList, setDataList] = useState();
+
+
 
   const parentElements = useMemo(() => {
     if (financeDate?.length) {
       return financeDate.filter((row) => !row[`${tableSlug}_id`]);
     }
   }, [financeDate, tableSlug]);
+
+
 
   const getDates = useMemo(() => {
     const val = [];
@@ -61,6 +67,8 @@ const FinancialCalendarView = ({
     getAccountList();
   }, []);
 
+
+
   return (
     <div className={styles.financial_view}>
       <div className={styles.datesRow}>
@@ -82,6 +90,7 @@ const FinancialCalendarView = ({
         <div className={styles.mockBlock} />
         {getTotal?.map((item) => (
           <div className={styles.totalBlock}>
+            <div className={styles.priceBlockChild} />
             <span className={styles.totalText}>{numberWithSpaces(item)}</span>
           </div>
         ))}
@@ -98,6 +107,11 @@ const FinancialCalendarView = ({
             getDates={getDates}
           />
         ))}
+      </div>
+      <div>
+        <TotalAmountByMonth 
+          totalBalance={totalBalance}
+        />
       </div>
     </div>
   );

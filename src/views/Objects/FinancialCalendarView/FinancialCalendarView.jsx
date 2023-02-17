@@ -73,18 +73,22 @@ const FinancialCalendarView = ({
     <div className={styles.financial_view}>
       <div className={styles.datesRow}>
         <div className={styles.mockBlock} />
-
-        {getDates?.map((item) => (
-          <div className={styles.monthBlock}>
-            <span className={styles.monthText}>
-              {`${format(new Date(item), "LLL", { locale: ru })} '${format(
-                new Date(item),
-                "yy",
-                { locale: ru }
-              )}`}
-            </span>
-          </div>
-        ))}
+          {getDates?.map((item) => (
+            <div className={styles.monthBlock}>
+              <span className={styles.monthText}>
+                {`${format(new Date(item), "LLL", { locale: ru })} '${format(
+                  new Date(item),
+                  "yy",
+                  { locale: ru }
+                )}`}
+              </span>
+            </div>
+          ))}
+      </div>
+      <div>
+        <TotalAmountByMonth 
+          totalBalance={totalBalance}
+        />
       </div>
       <div className={styles.datesRow}>
         <div className={styles.mockBlock} />
@@ -108,11 +112,7 @@ const FinancialCalendarView = ({
           />
         ))}
       </div>
-      <div>
-        <TotalAmountByMonth 
-          totalBalance={totalBalance}
-        />
-      </div>
+     
     </div>
   );
 };

@@ -23,7 +23,6 @@ const RecursiveBlock = ({
   const { tableSlug } = useParams();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const { navigateToForm } = useTabRouter();
-
   const children = useMemo(() => {
     return financeDate.filter((el) => el[`${tableSlug}_id`] === row.guid);
   }, [financeDate, row, tableSlug]);
@@ -97,7 +96,9 @@ const RecursiveBlock = ({
                 {numberWithSpaces(item?.amount) === 0 ? (
                   <span className={style.line}>-</span>
                 ) : (
-                  parseFloat(item?.percentage).toFixed(2) + "%"
+                  <span style={{fontSize: '12px', opacity: '0.7'}}>
+                    {parseFloat(item?.percentage).toFixed(2) + "%"}
+                  </span>
                 )}
               </div>
             </>
@@ -114,7 +115,9 @@ const RecursiveBlock = ({
                 {numberWithSpaces(item?.amount) === 0 ? (
                   <span className={style.line}>-</span>
                 ) : (
-                  parseFloat(item?.percentage).toFixed(2) + "%"
+                  <span style={{fontSize: '12px', opacity: '0.7'}}>
+                  {parseFloat(item?.percentage).toFixed(2) + "%"}
+                </span>
                 )}
               </div>
             </>

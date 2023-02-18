@@ -42,8 +42,8 @@ const ViewForm = ({
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }))
   const financialValues = initialValues?.attributes?.chart_of_accounts
   const financialTypee = initialValues?.attributes?.percent?.type
-  const relationObjValue = initialValues?.attributes?.balance.table_slug + '#' + initialValues?.attributes?.balance.table_id
-  const numberFieldValue =  initialValues?.attributes?.balance.field_slug + '#' + initialValues?.attributes?.balance.field_id
+  const relationObjValue = initialValues?.attributes?.balance?.table_slug + '#' + initialValues?.attributes?.balance?.table_id
+  const numberFieldValue =  initialValues?.attributes?.balance?.field_slug + '#' + initialValues?.attributes?.balance?.field_id
   const financialFiledId = initialValues?.attributes?.percent?.field_id
   const form = useForm()
   const type = form.watch("type")
@@ -90,10 +90,10 @@ const ViewForm = ({
         field_id: data.typee === "field" ? data.filed_idss : null,
       },
       balance: {
-        table_slug: data.relation_obj.split('#')[0],
-        table_id: data?.relation_obj.split('#')[1],
-        field_id: data?.number_field.split('#')[1],
-        field_slug: data?.number_field.split('#')[0]
+        table_slug: data.relation_obj?.split('#')?.[0],
+        table_id: data?.relation_obj?.split('#')?.[1],
+        field_id: data?.number_field?.split('#')?.[1],
+        field_slug: data?.number_field?.split('#')?.[0]
       }
     }
   }

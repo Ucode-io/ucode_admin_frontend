@@ -52,7 +52,6 @@ const ChartPercentages = ({ form, chart }) => {
     selectedBalance && constructorFieldService.getList({
       table_slug: selectedBalance.split('#')[0]
     }).then((res) => {
-      console.log('option 2', res)
       setDigitalAreas(
         res.fields
           .filter(
@@ -66,8 +65,6 @@ const ChartPercentages = ({ form, chart }) => {
     })
   }, [selectedBalance])
 
-
-  console.log("digitalAreas", digitalAreas.length)
 
   return (
     <>
@@ -122,7 +119,6 @@ const ChartPercentages = ({ form, chart }) => {
                   control={form.control}
                   options={computedTablesList}
                   name="relation_obj"
-                  placeholder='Выберите...'
                 />
               </div>
             </CTableCell>
@@ -134,7 +130,6 @@ const ChartPercentages = ({ form, chart }) => {
                   control={form.control}
                   options={digitalAreas}
                   name="number_field"
-                  placeholder='Выберите...'
                 />
               </div>
             </CTableCell>

@@ -12,7 +12,7 @@ import PrimaryButton from "../../Buttons/PrimaryButton";
 import CodabarGeneratorBtn from "./CodabarGeneratorBtn";
 const pageStyle = `
   @page {
-    size: 30mm 20mm;
+    size: 40mm 20mm;
   }
 
   @media all {

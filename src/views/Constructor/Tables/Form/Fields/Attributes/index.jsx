@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import CheckboxAttributes from "./CheckboxAttributes";
+import CodabarIncrements from "./CodabarAttributes";
 import DateAttributes from "./DateAttributes";
 import FormulaAttributes from "./FormulaAttributes";
 import FrontendFormulaAttributes from "./FrontendFormulaAttributes";
@@ -9,6 +10,7 @@ import MultiLineAttributes from "./MultiLineAttributes";
 import NumberAttributes from "./NumberAttributes";
 import PickListAttributes from "./PickListAttributes";
 import SingleLineAttributes from "./SingleLineAttributes";
+
 
 const Attributes = ({ control, watch, mainForm }) => {
   const fieldType = watch("type");
@@ -49,6 +51,9 @@ const Attributes = ({ control, watch, mainForm }) => {
 
     case "INCREMENT_NUMBER":
       return <IncrementNumberAttributes control={control} />;
+    
+    case "CODABAR":
+      return <CodabarIncrements control={control} />;
 
     default:
       return <SingleLineAttributes control={control} />;

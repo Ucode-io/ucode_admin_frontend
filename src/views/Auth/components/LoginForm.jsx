@@ -89,9 +89,8 @@ const LoginForm = () => {
     ],
     () => {
       return connectionServiceV2.getList(
-        { project_id: selectedProjectID },
+        { project_id: selectedProjectID, client_type_id: selectedClientTypeID },
         { "environment-id": selectedEnvID },
-        { client_type_id: selectedClientTypeID }
       );
     },
     {

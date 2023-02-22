@@ -23,7 +23,7 @@ import RelationFormElement from "./RelationFormElement";
 import { Parser } from "hot-formula-parser";
 import BarcodeGenerator from "./BarcodeGenerator";
 import { useSelector } from "react-redux";
-// import DocumentGeneratorButton from "./components/DocumentGeneratorButton";
+import CodabarBarcode from "./CodabarBarcode";
 
 const parser = new Parser();
 
@@ -390,6 +390,26 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
+      
+    case "CODABAR":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <CodabarBarcode
+            control={control}
+            name={field.slug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            field={field}
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            // disabled={isDisabled}
+            formTableSlug={formTableSlug}
+            {...props}
+          />
+        </FRow>
+      );
+      
     case "DENTIST":
       return (
         <FRow label={field.label} required={field.required}>

@@ -85,7 +85,7 @@ const FinancialCalendarView = ({
             </div>
           ))}
       </div>
-      {Object.keys(totalBalance).length > 0 && <div>
+      {Object.keys(totalBalance ?? {}).length > 0 && <div>
         <TotalAmountByMonth 
           totalBalance={totalBalance}
         />

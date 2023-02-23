@@ -85,11 +85,11 @@ const FinancialCalendarView = ({
             </div>
           ))}
       </div>
-      <div>
+      {Object.keys(totalBalance).length > 0 && <div>
         <TotalAmountByMonth 
           totalBalance={totalBalance}
         />
-      </div>
+      </div>}
       <div className={styles.datesRow}>
         <div className={styles.mockBlock} />
         {getTotal?.map((item) => (

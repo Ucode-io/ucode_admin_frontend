@@ -39,7 +39,8 @@ const RecursiveBlock = ({
   return (
     <>
       <div
-        onClick={switchChildBlock}
+        onClick={navigateToEditPage}
+        // onClick={switchChildBlock}
         className={`${
           level === 1 ? style.recursiveBlock : style.recursiveChildBlock
         } ${style[`level${level}`]}`}

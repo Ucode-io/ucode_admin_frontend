@@ -2,8 +2,9 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Sidebar2222 from "../../components/Sidebar2222";
 import styles from "./style.module.scss";
+import Favicon from "react-favicon";
 
-const SettingsLayout = () => {
+const SettingsLayout = ({favicon}) => {
   // const dispatch = useDispatch()
 
   // useEffect(() => {
@@ -12,7 +13,8 @@ const SettingsLayout = () => {
 
   return (
     <div className={styles.layout}>
-      <Sidebar2222 />
+      <Favicon url={favicon} />
+      <Sidebar2222 favicon={favicon}/>
       <div className={styles.content}>
         {/* <RouterTabsBlock /> */}
 

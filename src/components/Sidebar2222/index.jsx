@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { mainActions } from "../../store/main/main.slice";
 
-const Sidebar2222 = () => {
+const Sidebar2222 = ({favicon}) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -40,13 +40,13 @@ const Sidebar2222 = () => {
   useEffect(() => {
     if (!sidebarIsOpen) setOpenedBlock(null);
   }, [sidebarIsOpen]);
-
+console.log('sssssss', favicon);
   return (
     <div className={`Sidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}>
       <div className="header">
         <div className="brand">
           <div className="brand-logo" onClick={switchRightSideVisible}>
-            <img src={brandLogo} alt="logo" />
+            <img src={favicon ?? brandLogo} alt="logo" />
           </div>
           <div className="brand-name">SETTINGS</div>
         </div>

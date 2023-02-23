@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
@@ -58,7 +58,7 @@ const Router = () => {
   const isAuth = useSelector((state) => state.auth.isAuth);
   const applications = useSelector((state) => state.application.list);
   const cashbox = useSelector((state) => state.cashbox.data);
-
+  const [favicon, setFavicon] = useState('');
   const cashboxIsOpen = cashbox.is_open === "Открыто";
 
   const redirectLink = useMemo(() => {
@@ -88,7 +88,7 @@ const Router = () => {
     <Routes>
       {/* <Route path="remote" element={<Suspense fallback="Loading..." > <SafeComponent><FileSystemModule /></SafeComponent></Suspense>} /> */}
 
-      <Route path="/main" element={<MainLayout />}>
+      <Route path="/main" element={<MainLayout favicon={favicon} setFavicon={setFavicon}/>}>
         <Route index element={<Navigate to={redirectLink} />} />
 
         <Route path=":appId" element={<div></div>} />
@@ -120,7 +120,7 @@ const Router = () => {
 
       {/* ---------SETTINGS APP---------------- */}
 
-      <Route path="settings" element={<SettingsLayout />}>
+      <Route path="settings" element={<SettingsLayout favicon={favicon}/>}>
         <Route index element={<Navigate to={"/settings/constructor/apps"} />} />
 
         <Route path="constructor/apps" element={<AppsPage />} />

@@ -18,6 +18,7 @@ const GroupCascading = ({
   setValue,
   setFormValue,
   tableSlug,
+  autoFiltersValue
 }) => {
   const { navigateToForm } = useTabRouter();
   const [selectedIds, setSelectedIds] = useState([]);
@@ -78,9 +79,8 @@ const GroupCascading = ({
     setTableLoader(true);
     try {
       const { data } = await constructorObjectService.getList(tab_slug, {
-        data: {},
+        data: {...autoFiltersValue},
       });
-
       setData(data.response ?? []);
     } finally {
       setTableLoader(false);
@@ -96,12 +96,15 @@ const GroupCascading = ({
     }
   };
   useEffect(() => {
-    getAllData();
     setRelTableSlug(
       field?.table_slug ? field?.table_slug : field?.id.split("#")?.[0]
     );
   }, []);
 
+  useEffect(() => {
+    getAllData();
+  }, [autoFiltersValue])
+  
   return (
     <div>
       <div className={styles.input_wrapper}>

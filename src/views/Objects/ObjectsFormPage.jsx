@@ -216,7 +216,7 @@ const ObjectsFormPage = () => {
   useEffect(() => {
     setFormValue(
       "time_end",
-      addMinutes(new Date(startTime), parseInt(serviceTime))
+      startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined
     );
   }, [serviceTime, startTime]);
 

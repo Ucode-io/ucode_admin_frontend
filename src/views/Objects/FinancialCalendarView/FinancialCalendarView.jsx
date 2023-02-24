@@ -90,12 +90,19 @@ const FinancialCalendarView = ({
           totalBalance={totalBalance}
         />
       </div>}
+      <div className={styles.recursiveBlock}>
+        <div className={styles.priceBlockChild} />
+      </div>
       <div className={styles.datesRow}>
         <div className={styles.mockBlock} />
+    
         {getTotal?.map((item) => (
           <div className={styles.totalBlock}>
-            <div className={styles.priceBlockChild} />
-            <span className={styles.totalText}>{numberWithSpaces(item)}</span>
+            {/* <div className={styles.priceBlockChild}/> */}
+            <div className={styles.joinedPriceBlockChild}>
+              <span className={styles.totalText}>{numberWithSpaces(item)}</span>
+            </div>
+            
           </div>
         ))}
       </div>

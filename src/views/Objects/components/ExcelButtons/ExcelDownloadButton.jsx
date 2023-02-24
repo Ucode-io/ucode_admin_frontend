@@ -1,5 +1,6 @@
 import { Download } from "@mui/icons-material";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import useDownloader from "../../../../hooks/useDownloader";
@@ -13,6 +14,7 @@ const ExcelDownloadButton = ({
   withText,
   sort,
 }) => {
+  const { t } = useTranslation()
   const { tableSlug } = useParams();
   const { download } = useDownloader();
   const [loader, setLoader] = useState(false);
@@ -42,7 +44,7 @@ const ExcelDownloadButton = ({
         {withText ? "Экспорт" : null}
         <Download />
       </RectangleIconButton>
-      <span>Excel download</span>
+      <span>{ t('excel.download') }</span>
     </div>
   );
 };

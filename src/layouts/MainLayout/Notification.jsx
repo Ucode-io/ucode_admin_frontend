@@ -60,7 +60,6 @@ function Notifications({}) {
         )}
 
         <RectangleIconButton
-          color="success"
           className=""
           size="small"
           onClick={handleOpenNotify}

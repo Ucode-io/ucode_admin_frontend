@@ -11,6 +11,7 @@ import styles from "./styles.module.scss";
 import { useSelector } from "react-redux";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
+import { useTranslation } from "react-i18next";
 
 const TableView = ({
   tab,
@@ -28,6 +29,7 @@ const TableView = ({
   selectedLinkedTableSlug,
   ...props
 }) => {
+  const { t } = useTranslation()
   const { navigateToForm } = useTabRouter();
   const { tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
@@ -147,7 +149,7 @@ const TableView = ({
         (new_list[tableSlug] &&
           new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
-          <p>Фильтры</p>
+          <p>{t('filters')}</p>
           <FastFilter
             view={view}
             fieldsMap={fieldsMap}

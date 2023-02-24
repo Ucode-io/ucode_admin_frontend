@@ -33,6 +33,7 @@ import Menu from "@mui/material/Menu";
 import { Description } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
+import { useTranslation } from "react-i18next";
 
 const variableTypes = [
   {
@@ -50,6 +51,7 @@ const variableTypes = [
 ];
 
 const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
+  const { t } = useTranslation()
   const { control, watch, setValue } = useForm({
     defaultValues: {
       period: "months",
@@ -193,7 +195,7 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
                       style={{ color: "#6E8BB7" }}
                     />
                   </div>
-                  <span>Template</span>
+                  <span>{ t('template') }</span>
                 </div>
 
                 <PermissionWrapperV2 tableSlug={tableSlug} type="update">

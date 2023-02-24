@@ -12,8 +12,8 @@ export default function TotalAmountByMonth({totalBalance}) {
                 </div>
                 {totalBalance.total && totalBalance.total.length > 0 && totalBalance.total.map((el, index) => 
                 <>
-                <div className={styles.priceBlockChild} />
-                    <div className={styles.priceBlockChild} key={`total-amount-${index}`}>
+                {/* <div className={styles.priceBlockChild} /> */}
+                    <div className={styles.joinedPriceBlockChild} key={`total-amount-${index}`}>
                         {el.amount}
                     </div>
                     {/* <div className={styles.priceBlockChild} /> */}
@@ -25,8 +25,8 @@ export default function TotalAmountByMonth({totalBalance}) {
                 <div className={styles.title} style={{paddingLeft: '30px'}}>{el.name}</div>
                 {el.amounts.length && el?.amounts?.map((el, index) => 
                     <>
-                    <div className={styles.priceBlockChild} />
-                        <div className={styles.priceBlockChild} key={`total-amount-${index}`}>
+                    {/* <div className={styles.priceBlockChild} /> */}
+                        <div className={styles.joinedPriceBlockChild} key={`total-amount-${index}`}>
                             {el.amount}
                         </div>
                         {/* <div className={styles.priceBlockChild} /> */}

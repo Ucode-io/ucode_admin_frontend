@@ -1,11 +1,13 @@
 import { Menu } from "@mui/material"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useSelector } from "react-redux"
 import useTabRouter from "../../hooks/useTabRouter"
 import IconGenerator from "../IconPicker/IconGenerator"
 import styles from "./style.module.scss"
 
 const FormSelector = ({ tableSlug }) => {
+  const { t } = useTranslation()
   const [anchorEl, setAnchorEl] = useState(null)
   const menuVisible = Boolean(anchorEl)
   const { navigateToForm } = useTabRouter()
@@ -31,7 +33,7 @@ const FormSelector = ({ tableSlug }) => {
     <div>
       <div onClick={openMenu} className={`${styles.addButton}`}>
         <IconGenerator icon={"plus.svg"} className={styles.buttonIcon} size={14} />
-        <div className={styles.buttonTitle}>Добавить</div>
+        <div className={styles.buttonTitle}>{t('add')}</div>
       </div>
 
       <Menu

@@ -1,4 +1,5 @@
 import { Pagination } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import CSelect from "../CSelect";
 import styles from "./style.module.scss";
 
@@ -9,6 +10,7 @@ const CPagination = ({
   setLimit = () => {},
   ...props
 }) => {
+  const { t } = useTranslation()
   const options = [
     {
       value: isNaN(parseInt(props?.defaultLimit))
@@ -40,7 +42,7 @@ const CPagination = ({
       <div>
         {limit && (
           <div className={styles.limitSide}>
-            Showing
+            {t('showing')}
             <CSelect
               options={options}
               disabledHelperText

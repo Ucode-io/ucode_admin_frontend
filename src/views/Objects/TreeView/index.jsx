@@ -8,9 +8,10 @@ import constructorObjectService from "../../../services/constructorObjectService
 import FastFilter from "../components/FastFilter";
 import RecursiveBlock from "./RecursiveBlock";
 import styles from "./style.module.scss";
-import {pageToOffset} from "@/utils/pageToOffset";
+import { useTranslation } from "react-i18next";
 
 const TreeView = ({ groupField, fieldsMap, group, view, tab, filters }) => {
+  const { t } = useTranslation()
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
 
@@ -61,7 +62,7 @@ const TreeView = ({ groupField, fieldsMap, group, view, tab, filters }) => {
         (new_list[tableSlug] &&
           new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
-          <p>Фильтры</p>
+          <p>{ t('filters') }</p>
           <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
         </div>
       )}

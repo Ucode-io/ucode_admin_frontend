@@ -18,15 +18,16 @@ import { Navigate, useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { viewTypes } from "../../../../utils/constants/viewTypes";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import { useTranslation } from "react-i18next";
 
 const ViewTabSelector = ({
   selectedTabIndex,
   setSelectedTabIndex,
   views = [],
 }) => {
+  const { t } = useTranslation()
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const [newViewTypes, setNewViewTypes] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -116,7 +117,7 @@ const ViewTabSelector = ({
           onClick={handleClick}
         >
           <AddIcon className={style.icon} />
-          View
+          {t('add')}
         </div>
 
         <Popover

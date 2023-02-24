@@ -93,7 +93,8 @@ const RecursiveBlock = ({
                   numberWithSpaces(item?.amount)
                 )}
               </div>
-              <div className={style.percentBlockChilde}>
+              {/* div class was percentBlockChilde */}
+              <div className={style.priceBlockChild}> 
                 {numberWithSpaces(item?.amount) === 0 ? (
                   <span className={style.line}>-</span>
                 ) : (

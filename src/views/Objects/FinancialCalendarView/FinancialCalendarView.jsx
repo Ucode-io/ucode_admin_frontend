@@ -10,19 +10,22 @@ import RecursiveBlock from "./RecursiveBlock";
 import { ru } from "date-fns/locale";
 import { numberWithSpaces } from "../../../utils/formatNumbers";
 import TotalAmountByMonth from "./TotalAmountByMonth";
+import PageFallback from "../../../components/PageFallback";
+import { CTable, CTableBody, CTableCell, CTableHead, CTableRow } from "../../../components/CTable";
 
 const FinancialCalendarView = ({
   view,
   fieldsMap,
   tab,
   filters,
+  isLoading,
   financeDate,
   financeTotal,
   totalBalance
 }) => {
   const { tableSlug } = useParams();
   const [dataList, setDataList] = useState();
-
+  
 
 
   const parentElements = useMemo(() => {
@@ -70,57 +73,100 @@ const FinancialCalendarView = ({
 
 
   return (
-    <div className={styles.financial_view}>
-      <div className={styles.datesRow}>
-        <div className={styles.mockBlock} />
-          {getDates?.map((item) => (
-            <div className={styles.monthBlock}>
-              <span className={styles.monthText}>
-                {`${format(new Date(item), "LLL", { locale: ru })} '${format(
-                  new Date(item),
-                  "yy",
-                  { locale: ru }
-                )}`}
-              </span>
+    <>
+      {/* {isLoading ? <PageFallback /> : 
+        <CTable
+          count={''}
+          page={''}
+          setCurrentPage={''}
+          loader={false}
+          removableHeight={false}
+          disablePagination={true}
+        >
+          <CTableHead>
+            <CTableRow>
+              <CTableCell />
+              {getDates?.map((item) => (
+                <CTableCell>
+                  {`${format(new Date(item), "LLL", { locale: ru })} '${format(
+                        new Date(item),
+                        "yy",
+                        { locale: ru }
+                      )}`}
+                </CTableCell>
+              ))}
+            </CTableRow>
+          </CTableHead>
+          <CTableBody>
+            <CTableRow>
+            <CTableCell />
+              {getDates?.map((item) => (
+                <div className={styles.monthBlock}>
+                  <span className={styles.monthText}>
+                    {`${format(new Date(item), "LLL", { locale: ru })} '${format(
+                      new Date(item),
+                      "yy",
+                      { locale: ru }
+                    )}`}
+                  </span>
+                </div>
+              ))}
+            </CTableRow>
+          </CTableBody>
+        </CTable>
+      } */}
+      <div className={styles.financial_view}>
+        <div className={styles.datesRow}>
+          <div className={styles.mockBlock} />
+            {getDates?.map((item) => (
+              <div className={styles.monthBlock}>
+                <span className={styles.monthText}>
+                  {`${format(new Date(item), "LLL", { locale: ru })} '${format(
+                    new Date(item),
+                    "yy",
+                    { locale: ru }
+                  )}`}
+                </span>
+              </div>
+            ))}
+        </div>
+        {Object.keys(totalBalance ?? {}).length > 0 && <div>
+          <TotalAmountByMonth
+            totalBalance={totalBalance}
+          />
+        </div>}
+        <div className={styles.recursiveBlock}>
+          <div className={styles.priceBlockChild} />
+        </div>
+        <div className={styles.datesRow}>
+          <div className={styles.mockBlock} />
+      
+          {getTotal?.map((item) => (
+            <div className={styles.totalBlock}>
+              {/* <div className={styles.priceBlockChild}/> */}
+              <div className={styles.joinedPriceBlockChild}>
+                <span className={styles.totalText}>{numberWithSpaces(item)}</span>
+              </div>
+      
             </div>
           ))}
+        </div>
+        <div className={styles.row_element}>
+          {parentElements?.map((row) => (
+            <RecursiveBlock
+              key={row?.guid}
+              row={row}
+              view={view}
+              dataList={dataList}
+              fieldsMap={fieldsMap}
+              financeDate={financeDate}
+              getDates={getDates}
+            />
+          ))}
+        </div>
+      
       </div>
-      {Object.keys(totalBalance ?? {}).length > 0 && <div>
-        <TotalAmountByMonth 
-          totalBalance={totalBalance}
-        />
-      </div>}
-      <div className={styles.recursiveBlock}>
-        <div className={styles.priceBlockChild} />
-      </div>
-      <div className={styles.datesRow}>
-        <div className={styles.mockBlock} />
-    
-        {getTotal?.map((item) => (
-          <div className={styles.totalBlock}>
-            {/* <div className={styles.priceBlockChild}/> */}
-            <div className={styles.joinedPriceBlockChild}>
-              <span className={styles.totalText}>{numberWithSpaces(item)}</span>
-            </div>
-            
-          </div>
-        ))}
-      </div>
-      <div className={styles.row_element}>
-        {parentElements?.map((row) => (
-          <RecursiveBlock
-            key={row?.guid}
-            row={row}
-            view={view}
-            dataList={dataList}
-            fieldsMap={fieldsMap}
-            financeDate={financeDate}
-            getDates={getDates}
-          />
-        ))}
-      </div>
-     
-    </div>
+    </>
   );
 };
 

@@ -1,7 +1,7 @@
 
 
-
 export const iconsList = [
+  "clock-sleep.svg",
   "address-book.svg",
   "address-card.svg",
   "align-center.svg",

@@ -1,6 +1,6 @@
 
-
 export const iconsList = [
+  "bear-toy.svg",
   "clock-sleep.svg",
   "address-book.svg",
   "address-card.svg",

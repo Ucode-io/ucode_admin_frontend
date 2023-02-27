@@ -10,7 +10,7 @@ i18next
   .use(initReactI18next)
   .init({
     fallbackLng: "en",
-    whiteList: ["en", "ru", "uz"],
+    whiteList: ["en", "ru"],
     detection: {
       order: ['localStorage'],
       caches: ['localStorage'],

@@ -38,8 +38,6 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
-  console.log('name', name)
-  console.log('field.slug', field.slug)
   if (!isLayout)
     return (
       <FRow label={field?.label ?? field?.title} required={field.required}>
@@ -204,8 +202,6 @@ const AutoCompleteElement = ({
 
 
   const changeHandler = (value, key = "") => {
-    console.log('value', value)
-    console.log('value', key)
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value ? [value] : null);
@@ -273,6 +269,7 @@ const AutoCompleteElement = ({
           field={field}
           tableSlug={tableSlug}
           error={error}
+          autoFiltersValue={autoFiltersValue}
           disabledHelperText={disabledHelperText}
           value={localValue ?? []}
           setFormValue={setFormValue}

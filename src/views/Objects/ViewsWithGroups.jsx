@@ -33,6 +33,7 @@ import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import { endOfMonth, startOfMonth } from "date-fns";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
+import { useTranslation } from "react-i18next";
 
 const ViewsWithGroups = ({
   views,
@@ -41,6 +42,7 @@ const ViewsWithGroups = ({
   view,
   fieldsMap,
 }) => {
+  const { t } = useTranslation()
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
   const { filters } = useFilters(tableSlug, view.id);
@@ -270,7 +272,7 @@ const ViewsWithGroups = ({
                       style={{ color: "#6E8BB7" }}
                     />
                   </div>
-                  <span>Template</span>
+                  <span>{ t('template') }</span>
                 </div>
                 <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
                   <SettingsButton />

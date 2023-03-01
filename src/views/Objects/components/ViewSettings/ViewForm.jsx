@@ -326,8 +326,8 @@ const getInitialValues = (
   financialValues,
   financialTypee,
   financialFiledId,
-  // relationObjValue,
-  // numberFieldValue
+  relationObjValue,
+  numberFieldValue
 ) => {
   if (initialValues === "NEW")
     return {
@@ -390,8 +390,8 @@ const getInitialValues = (
     multiple_insert_field: initialValues?.multiple_insert_field ?? "",
     chartOfAccounts: computeFinancialColumns(financialValues),
     typee: financialTypee ?? "",
-    // relation_obj: relationObjValue ?? "",
-    // number_field: numberFieldValue ?? "",
+    relation_obj: relationObjValue ?? "",
+    number_field: numberFieldValue ?? "",
     filed_idss: financialFiledId ?? "",
   }
 }

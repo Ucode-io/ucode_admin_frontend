@@ -74,7 +74,7 @@ const FinancialCalendarView = ({
 
   return (
     <>
-      {/* {isLoading ? <PageFallback /> : 
+      {isLoading ? <PageFallback /> : 
         <CTable
           count={''}
           page={''}
@@ -85,7 +85,7 @@ const FinancialCalendarView = ({
         >
           <CTableHead>
             <CTableRow>
-              <CTableCell />
+              <CTableCell w={2}/>
               {getDates?.map((item) => (
                 <CTableCell>
                   {`${format(new Date(item), "LLL", { locale: ru })} '${format(
@@ -98,23 +98,14 @@ const FinancialCalendarView = ({
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            <CTableRow>
-            <CTableCell />
-              {getDates?.map((item) => (
-                <div className={styles.monthBlock}>
-                  <span className={styles.monthText}>
-                    {`${format(new Date(item), "LLL", { locale: ru })} '${format(
-                      new Date(item),
-                      "yy",
-                      { locale: ru }
-                    )}`}
-                  </span>
-                </div>
-              ))}
-            </CTableRow>
+                {Object.keys(totalBalance ?? {}).length > 0 && 
+                  <TotalAmountByMonth
+                    totalBalance={totalBalance}
+                  />
+                }
           </CTableBody>
         </CTable>
-      } */}
+      }
       <div className={styles.financial_view}>
         <div className={styles.datesRow}>
           <div className={styles.mockBlock} />
@@ -130,7 +121,8 @@ const FinancialCalendarView = ({
               </div>
             ))}
         </div>
-        {Object.keys(totalBalance ?? {}).length > 0 && <div>
+        {Object.keys(totalBalance ?? {}).length > 0 && 
+        <div>
           <TotalAmountByMonth
             totalBalance={totalBalance}
           />

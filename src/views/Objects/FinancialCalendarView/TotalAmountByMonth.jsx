@@ -1,39 +1,34 @@
 import React from 'react'
 import styles from './style.module.scss'
+import { CTableRow, CTableCell } from '../../../components/CTable'
 
 export default function TotalAmountByMonth({totalBalance}) {
 
     return (
-        <div>
-            {/* <div className={styles.recursiveBlock} style={{padding: '15px'}} /> */}
-            <div className={styles.recursiveBlock}>
-                <div className={styles.title}>
-                <div className={styles.parentElement} style={{paddingLeft: '15px'}}>Общий</div>
-                </div>
+        <>
+            <CTableRow>
+                <CTableCell>Общий</CTableCell>
                 {totalBalance.total && totalBalance.total.length > 0 && totalBalance.total.map((el, index) => 
                 <>
-                {/* <div className={styles.priceBlockChild} /> */}
-                    <div className={styles.joinedPriceBlockChild} key={`total-amount-${index}`}>
+                    <CTableCell className={styles.joinedPriceBlockChild} key={`total-amount-${index}`}>
                         {el.amount}
-                    </div>
-                    {/* <div className={styles.priceBlockChild} /> */}
+                    </CTableCell>
                 </>
                 )}
-            </div>
+            </CTableRow>
+            
             {totalBalance.items && totalBalance.items.length > 0 && totalBalance.items.map((el, index) => 
-            <div className={styles.recursiveBlock} key={`items-${el.id}`}>
-                <div className={styles.title} style={{paddingLeft: '30px'}}>{el.name}</div>
+            <CTableRow className={styles.recursiveBlock} key={`items-${el.id}`}>
+                <CTableCell className={styles.title} style={{paddingLeft: '30px'}}>{el.name}</CTableCell>
                 {el.amounts.length && el?.amounts?.map((el, index) => 
                     <>
-                    {/* <div className={styles.priceBlockChild} /> */}
-                        <div className={styles.joinedPriceBlockChild} key={`total-amount-${index}`}>
+                        <CTableCell className={styles.joinedPriceBlockChild} key={`total-amount-${index}`}>
                             {el.amount}
-                        </div>
-                        {/* <div className={styles.priceBlockChild} /> */}
+                        </CTableCell>
                     </>
                 )}
-            </div>)}
-        </div>
+            </CTableRow>)}
+        </>
     )
 }
       

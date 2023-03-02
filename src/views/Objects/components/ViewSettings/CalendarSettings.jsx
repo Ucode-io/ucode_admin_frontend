@@ -2,6 +2,7 @@ import { Divider, Typography } from "@mui/material"
 import { useMemo } from "react"
 import { useWatch } from "react-hook-form"
 import { useQuery } from "react-query"
+import { useSelector } from "react-redux"
 import FRow from "../../../../components/FormElements/FRow"
 import HFSelect from "../../../../components/FormElements/HFSelect"
 import constructorFieldService from "../../../../services/constructorFieldService"
@@ -13,7 +14,7 @@ import styles from "./style.module.scss"
 
 
 const CalendarSettings = ({ columns, form }) => {
-
+  const projectId = useSelector(state => state.auth.projectId)
   const computedColumns = useMemo(() => {
     return listToOptions(columns, 'label', 'slug')
   }, [ columns ])
@@ -31,7 +32,7 @@ const CalendarSettings = ({ columns, form }) => {
 
 
   const { data: tablesList = [] } = useQuery(["GET_TABLES_LIST"], () => {
-    return constructorTableService.getList()
+    return constructorTableService.getList(projectId)
   }, {
     select: (data) => listToOptions(data?.tables, 'label', 'slug')
   })

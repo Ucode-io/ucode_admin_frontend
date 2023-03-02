@@ -7,6 +7,7 @@ import constructorTableService from "../../../services/constructorTableService"
 import listToOptions from "../../../utils/listToOptions"
 import HFSelect from "../../../components/FormElements/HFSelect"
 import constructorFieldService from "../../../services/constructorFieldService"
+import { useParams } from "react-router-dom"
 
 const TableCreateRow = ({
   onSubmit,
@@ -22,13 +23,14 @@ const TableCreateRow = ({
       view_field: [],
     },
   })
-
+  const { projectId } = useParams()
+  
   const tableSlug = watch("slug")
 
   const { data: tables } = useQuery(
     ["GET_TABLE_LIST"],
     () => {
-      return constructorTableService.getList()
+      return constructorTableService.getList(projectId)
     },
     {
       select: ({ tables }) => listToOptions(tables, "label", "slug")

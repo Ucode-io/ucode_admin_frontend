@@ -13,9 +13,11 @@ import Logins from "./Logins";
 import Connections from "./Connections";
 import MatrixRoles from "./MatrixRoles";
 import HeaderSettings from "../../components/HeaderSettings";
+import { useSelector } from "react-redux";
 
 const MatrixDetail = () => {
   const [tabIndex, setTabIndex] = useState(1);
+  const projectId = useSelector(state => state.auth.projectId)
   const tabs = [
     {
       id: 1,
@@ -33,7 +35,7 @@ const MatrixDetail = () => {
 
   const getTables = () => {
     constructorTableService
-      .getList()
+      .getList(projectId)
       .then((res) => {
         setTables(res?.tables || []);
       })

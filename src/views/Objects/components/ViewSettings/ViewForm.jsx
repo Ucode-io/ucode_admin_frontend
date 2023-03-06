@@ -49,6 +49,10 @@ const ViewForm = ({
   const type = form.watch("type")
   const relationObjInput = form.watch("relation_obj")
   const numberFieldInput = form.watch("number_field")
+  console.log("relationObjInput", relationObjInput)
+  console.log("numberFieldInput", numberFieldInput)
+
+
 
   useEffect(() => {
     if (relationObjInput && numberFieldInput) {
@@ -127,6 +131,10 @@ const ViewForm = ({
       filters: [],
     })
   }, [initialValues, tableSlug, form, typeNewView])
+
+  useEffect(() => {
+    form.reset({...form.getValues(), "number_field": ""})
+  }, [relationObjInput])
 
   useWatch(() => {
     // const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)

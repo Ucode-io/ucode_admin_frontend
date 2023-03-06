@@ -39,11 +39,14 @@ const RecursiveBlock = ({
 
   return (
     <>
-      <CTableRow
+      <div
         onClick={navigateToEditPage}
         // onClick={switchChildBlock}
-        >
-        <CTableCell className={style.title} style={{ paddingLeft: 15 * level }}>
+        className={`${
+          level === 1 ? style.recursiveBlock : style.recursiveChildBlock
+        } ${style[`level${level}`]}`}
+      >
+        <div className={style.title} style={{ paddingLeft: 15 * level }}>
           {children?.length ? (
             <span
               className={style.switchIcon}
@@ -73,74 +76,74 @@ const RecursiveBlock = ({
           ) : (
             <div className="mr-2"></div>
           )}
-          {view?.columns?.map((fieldId) => {
+          <div className={`${level === 1 && style.parentElement}`}>
+            {view?.columns?.map((fieldId) => {
               const fieldSlug = fieldsMap?.[fieldId]?.slug;
               return `${get(row, fieldSlug, "")} `;
             })}
-        </CTableCell>
+          </div>
+        </div>
 
         {row?.amounts.map((item) =>
           level === 1 ? (
-            <CTableCell>
-              <div style={{display: 'flex'}}>
-                <div className={style.priceBlockChild}>
-                  {numberWithSpaces(item?.amount) === 0 ? (
-                    <span>-</span>
-                  ) : (
-                    numberWithSpaces(item?.amount)
-                  )}
-                </div>
-                <div className={style.priceBlockChild}>
-                  {numberWithSpaces(item?.amount) === 0 ? (
-                    <span>-</span>
-                  ) : (
-                    <span style={{fontSize: '12px', opacity: '0.7'}}>
-                      {parseFloat(item?.percentage).toFixed(2) + "%"}
-                    </span>
-                  )}
-                </div>
+            <>
+              <div className={style.priceBlockChild}>
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  numberWithSpaces(item?.amount)
+                )}
               </div>
-            </CTableCell>
-          ) : (
-            <CTableCell>
-              <div style={{display: 'flex'}}>
-                <div className={style.priceBlockChild}>
-                  {numberWithSpaces(item?.amount) === 0 ? (
-                    <span>-</span>
-                  ) : (
-                    numberWithSpaces(item?.amount)
-                  )}
-                </div>
-                <div className={style.priceBlockChild}>
-                  {numberWithSpaces(item?.amount) === 0 ? (
-                    <span >-</span>
-                  ) : (
-                    <span style={{fontSize: '12px', opacity: '0.7'}}>
+              {/* div class was percentBlockChilde */}
+              <div className={style.priceBlockChild}> 
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  <span style={{fontSize: '12px', opacity: '0.7'}}>
                     {parseFloat(item?.percentage).toFixed(2) + "%"}
                   </span>
-                  )}
-                </div>
+                )}
               </div>
-            </CTableCell>
+            </>
+          ) : (
+            <>
+              <div className={style.priceBlock}>
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  numberWithSpaces(item?.amount)
+                )}
+              </div>
+              <div className={style.percentBlock}>
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  <span style={{fontSize: '12px', opacity: '0.7'}}>
+                  {parseFloat(item?.percentage).toFixed(2) + "%"}
+                </span>
+                )}
+              </div>
+            </>
           )
         )}
-      </CTableRow>
-          <Collapse in={childBlockVisible} unmountOnExit>
-            {children?.map((childRow) => (
-              <RecursiveBlock
-                key={childRow.guid}
-                row={childRow}
-                data={data}
-                view={view}
-                level={level + 1}
-                setData={setData}
-                fieldsMap={fieldsMap}
-                dataList={dataList}
-                financeDate={financeDate}
-              />
-            ))}
-          </Collapse>
+      </div>
+      <Collapse in={childBlockVisible} unmountOnExit>
+        {children?.map((childRow) => (
+          <RecursiveBlock
+            key={childRow.guid}
+            row={childRow}
+            data={data}
+            view={view}
+            level={level + 1}
+            setData={setData}
+            fieldsMap={fieldsMap}
+            dataList={dataList}
+            financeDate={financeDate}
+          />
+        ))}
+      </Collapse>
     </>
+
   );
 };
 

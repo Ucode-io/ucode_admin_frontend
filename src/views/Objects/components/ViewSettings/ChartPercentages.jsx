@@ -55,6 +55,8 @@ const ChartPercentages = ({ form, chart }) => {
     }))
   }, [app])
 
+ 
+
 
   useEffect(() => {
     selectedBalance && constructorFieldService.getList({

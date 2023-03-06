@@ -7,10 +7,10 @@ export default function TotalAmountByMonth({totalBalance}) {
     return (
         <>
             <CTableRow>
-                <CTableCell>Общий</CTableCell>
+                <CTableCell style={{fontWeight: 700, fontSize: '14px'}}>Общий</CTableCell>
                 {totalBalance.total && totalBalance.total.length > 0 && totalBalance.total.map((el, index) => 
                 <>
-                    <CTableCell className={styles.joinedPriceBlockChild} key={`total-amount-${index}`}>
+                    <CTableCell key={`total-amount-${index}`}>
                         {el.amount}
                     </CTableCell>
                 </>
@@ -18,16 +18,15 @@ export default function TotalAmountByMonth({totalBalance}) {
             </CTableRow>
             
             {totalBalance.items && totalBalance.items.length > 0 && totalBalance.items.map((el, index) => 
-            <CTableRow className={styles.recursiveBlock} key={`items-${el.id}`}>
-                <CTableCell className={styles.title} style={{paddingLeft: '30px'}}>{el.name}</CTableCell>
-                {el.amounts.length && el?.amounts?.map((el, index) => 
-                    <>
-                        <CTableCell className={styles.joinedPriceBlockChild} key={`total-amount-${index}`}>
+                <CTableRow key={`items-${el.id}`}>
+                    <CTableCell style={{paddingLeft: '30px'}}>{el.name}</CTableCell>
+                    {el.amounts.length && el?.amounts?.map((el, index) => 
+                        <CTableCell key={`total-amount-${index}`}>
                             {el.amount}
                         </CTableCell>
-                    </>
-                )}
-            </CTableRow>)}
+                    )}
+                </CTableRow>
+            )}
         </>
     )
 }

@@ -30,7 +30,7 @@ const FinancialCalendarView = ({
 
   const parentElements = useMemo(() => {
     if (financeDate?.length) {
-      return financeDate.filter((row) => !row[`${tableSlug}_id`]);
+      return financeDate?.filter((row) => !row[`${tableSlug}_id`]);
     }
   }, [financeDate, tableSlug]);
 
@@ -39,7 +39,7 @@ const FinancialCalendarView = ({
   const getDates = useMemo(() => {
     const val = [];
     if (financeDate?.length > 0) {
-      financeDate?.[0]?.amounts.map((item) => {
+      financeDate?.[0]?.amounts?.forEach((item) => {
         val.push(item?.month);
       });
     }
@@ -49,7 +49,7 @@ const FinancialCalendarView = ({
   const getTotal = useMemo(() => {
     const val = [];
     if (financeTotal?.length > 0) {
-      financeTotal.map((item) => {
+      financeTotal?.forEach((item) => {
         val.push(item?.amount);
       });
     }

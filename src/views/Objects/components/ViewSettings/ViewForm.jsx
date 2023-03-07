@@ -105,10 +105,10 @@ const ViewForm = ({
       // send balance field if relation_obj is selected
       ...isBalanceExist && {
         balance: {
-          table_slug: data.relation_obj?.split('#')?.[0],
-          table_id: data?.relation_obj?.split('#')?.[1],
-          field_id: data?.number_field?.split('#')?.[1],
-          field_slug: data?.number_field?.split('#')?.[0]
+          table_slug: data?.relation_obj?.split('#')?.[0] !== 'undefined' ? data?.relation_obj?.split('#')?.[0] : undefined,
+          table_id: data?.relation_obj?.split('#')?.[1] !== 'undefined' ? data?.relation_obj?.split('#')?.[0] : undefined,
+          field_id: data?.number_field?.split('#')?.[1] !== 'undefined' ? data?.number_field?.split('#')?.[1] : undefined,
+          field_slug: data?.number_field?.split('#')?.[0] !== 'undefined' ? data?.number_field?.split('#')?.[0] : undefined
         }
       }
     }

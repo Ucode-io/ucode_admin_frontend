@@ -59,20 +59,22 @@ const ChartPercentages = ({ form, chart }) => {
 
 
   useEffect(() => {
-    selectedBalance && constructorFieldService.getList({
-      table_slug: selectedBalance.split('#')[0]
-    }).then((res) => {
-      setDigitalAreas(
-        res.fields
-          .filter(
-            (item) => item.type === "NUMBER"
-          )
-          .map((item) => ({
-            label: item.label,
-            value: `${item.slug}#${item.id}`,
-          }))
-      );
-    })
+    if(selectedBalance.split('#')[0] !== 'undefined') {
+      selectedBalance && constructorFieldService.getList({
+        table_slug: selectedBalance.split('#')[0]
+      }).then((res) => {
+        setDigitalAreas(
+          res.fields
+            .filter(
+              (item) => item.type === "NUMBER"
+            )
+            .map((item) => ({
+              label: item.label,
+              value: `${item.slug}#${item.id}`,
+            }))
+        );
+      })
+    }
   }, [selectedBalance])
 
 

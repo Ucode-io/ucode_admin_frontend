@@ -40,12 +40,22 @@ const ChartPercentages = ({ form, chart }) => {
     return applicationService.getById(appId)
   })
   const selectedBalance = form.watch('relation_obj')
+
+  const checkRelationField = () => {
+    if (selectedBalance && selectedBalance.length > 0) {
+      return true
+    }
+    return false
+  }
+
   const computedTablesList = useMemo(() => {
     return app?.tables?.map((table) => ({
       value: `${table.slug}#${table.id}`,
       label: table?.label
     }))
   }, [app])
+
+ 
 
 
   useEffect(() => {
@@ -112,26 +122,22 @@ const ChartPercentages = ({ form, chart }) => {
           <CTableHeadRow>
             <CTableCell>Balance</CTableCell>
             <CTableCell>
-              <div>
-                <HFSelect
-                  fullWidth
-                  required
-                  control={form.control}
-                  options={computedTablesList}
-                  name="relation_obj"
-                />
-              </div>
+              <HFSelect
+                    fullWidth
+                    // required
+                    control={form.control}
+                    options={computedTablesList}
+                    name="relation_obj"
+                  />
             </CTableCell>
             <CTableCell>
-              <div>
-                <HFSelect
-                  fullWidth
-                  required={digitalAreas.length > 0 ? true : false}
-                  control={form.control}
-                  options={digitalAreas}
-                  name="number_field"
-                />
-              </div>
+              <HFSelect
+                    fullWidth
+                    required={(digitalAreas.length > 0 && checkRelationField()) ? true : false}
+                    control={form.control}
+                    options={digitalAreas}
+                    name="number_field"
+                  />
             </CTableCell>
           </CTableHeadRow>
         </CTableHead>

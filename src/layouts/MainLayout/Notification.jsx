@@ -25,7 +25,7 @@ function Notifications({}) {
       });
     },
     {
-      enabled: !!tableSlug,
+      enabled: false,
       select: (res) => {
         const newData =
           res?.notifications?.filter((item) => {

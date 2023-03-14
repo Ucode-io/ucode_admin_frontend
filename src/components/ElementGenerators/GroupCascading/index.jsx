@@ -50,7 +50,7 @@ const GroupCascading = ({
   //=========COMPUTED VALUE=========
   const computedValue = useMemo(() => {
     let val = "";
-    const slugs = field?.attributes?.view_fields?.map((i) => i.slug)
+    const slugs = field?.attributes?.view_fields?.map((i) => i?.slug)
     
     if (Array.isArray(value)) {
       if(typeof value?.[0] === 'string') {
@@ -81,7 +81,7 @@ const GroupCascading = ({
       const { data } = await constructorObjectService.getList(tab_slug, {
         data: {...autoFiltersValue},
       });
-      setData(data.response ?? []);
+      setData(data?.response ?? []);
     } finally {
       setTableLoader(false);
     }
@@ -90,7 +90,7 @@ const GroupCascading = ({
   const backData = () => {
     setServiceData(null);
     if (selectedIds?.length > 0) {
-      setSelectedIds(selectedIds.splice(0, selectedIds.length - 1));
+      setSelectedIds(selectedIds?.splice(0, selectedIds?.length - 1));
     } else {
       setSelectedIds([]);
     }

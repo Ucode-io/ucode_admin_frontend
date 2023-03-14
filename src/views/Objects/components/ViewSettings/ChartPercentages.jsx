@@ -40,6 +40,14 @@ const ChartPercentages = ({ form, chart }) => {
     return applicationService.getById(appId)
   })
   const selectedBalance = form.watch('relation_obj')
+
+  const checkRelationField = () => {
+    if (selectedBalance && selectedBalance.length > 0) {
+      return true
+    }
+    return false
+  }
+
   const computedTablesList = useMemo(() => {
     return app?.tables?.map((table) => ({
       value: `${table.slug}#${table.id}`,
@@ -47,22 +55,26 @@ const ChartPercentages = ({ form, chart }) => {
     }))
   }, [app])
 
+ 
+
 
   useEffect(() => {
-    selectedBalance && constructorFieldService.getList({
-      table_slug: selectedBalance.split('#')[0]
-    }).then((res) => {
-      setDigitalAreas(
-        res.fields
-          .filter(
-            (item) => item.type === "NUMBER"
-          )
-          .map((item) => ({
-            label: item.label,
-            value: `${item.slug}#${item.id}`,
-          }))
-      );
-    })
+    if(selectedBalance.split('#')[0] !== 'undefined') {
+      selectedBalance && constructorFieldService.getList({
+        table_slug: selectedBalance.split('#')[0]
+      }).then((res) => {
+        setDigitalAreas(
+          res.fields
+            .filter(
+              (item) => item.type === "NUMBER"
+            )
+            .map((item) => ({
+              label: item.label,
+              value: `${item.slug}#${item.id}`,
+            }))
+        );
+      })
+    }
   }, [selectedBalance])
 
 
@@ -112,26 +124,22 @@ const ChartPercentages = ({ form, chart }) => {
           <CTableHeadRow>
             <CTableCell>Balance</CTableCell>
             <CTableCell>
-              <div>
-                <HFSelect
-                  fullWidth
-                  required
-                  control={form.control}
-                  options={computedTablesList}
-                  name="relation_obj"
-                />
-              </div>
+              <HFSelect
+                    fullWidth
+                    // required
+                    control={form.control}
+                    options={computedTablesList}
+                    name="relation_obj"
+                  />
             </CTableCell>
             <CTableCell>
-              <div>
-                <HFSelect
-                  fullWidth
-                  required={digitalAreas.length > 0 ? true : false}
-                  control={form.control}
-                  options={digitalAreas}
-                  name="number_field"
-                />
-              </div>
+              <HFSelect
+                    fullWidth
+                    required={(digitalAreas.length > 0 && checkRelationField()) ? true : false}
+                    control={form.control}
+                    options={digitalAreas}
+                    name="number_field"
+                  />
             </CTableCell>
           </CTableHeadRow>
         </CTableHead>

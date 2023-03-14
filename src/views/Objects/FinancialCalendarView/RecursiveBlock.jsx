@@ -9,6 +9,7 @@ import useTabRouter from "../../../hooks/useTabRouter";
 import style from "./style.module.scss";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { numberWithSpaces } from "../../../utils/formatNumbers";
+import { CTableCell, CTableRow } from "../../../components/CTable";
 
 const RecursiveBlock = ({
   row,
@@ -142,6 +143,7 @@ const RecursiveBlock = ({
         ))}
       </Collapse>
     </>
+
   );
 };
 

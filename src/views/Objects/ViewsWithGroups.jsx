@@ -50,6 +50,7 @@ const ViewsWithGroups = ({
   const [shouldGet, setShouldGet] = useState(false);
   const [heightControl, setHeightControl] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null)
+  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false)
   const [res, setRes] = [{
     balance: []
   }]
@@ -159,6 +160,7 @@ const ViewsWithGroups = ({
 
   useEffect(() => {
     if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
+      setIsFinancialCalendarLoading(true)
       constructorObjectService
         .getFinancialAnalytics(tableSlug, {
           data: {
@@ -169,7 +171,7 @@ const ViewsWithGroups = ({
         })
         .then((res) => {
           setAnalyticsRes(res.data)
-        });
+        }).finally(() => setIsFinancialCalendarLoading(false));
     }
   }, [dateFilters, tableSlug]);
 
@@ -403,6 +405,7 @@ const ViewsWithGroups = ({
                       filters={filters}
                       fieldsMap={fieldsMap}
                       tab={tab}
+                      isLoading={isFinancialCalendarLoading}
                       financeDate={analyticsRes?.response || []}
                       financeTotal={analyticsRes?.total_amount || []}
                       totalBalance={analyticsRes?.balance}
@@ -438,6 +441,7 @@ const ViewsWithGroups = ({
                       view={view}
                       filters={filters}
                       fieldsMap={fieldsMap}
+                      isLoading={isFinancialCalendarLoading}
                       financeDate={analyticsRes?.response || []}
                       financeTotal={analyticsRes?.total_amount || []}
                       totalBalance={analyticsRes?.balance || []}

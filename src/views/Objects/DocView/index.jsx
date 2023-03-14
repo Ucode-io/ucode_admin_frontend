@@ -1,4 +1,5 @@
 import { BackupTable, ImportExport } from "@mui/icons-material";
+import printJS from "print-js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
@@ -240,9 +241,10 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   // =======PRINT============
 
   const print = async () => {
+    
     if (!selectedTemplate) return;
     setPdfLoader(true);
-
+    console.log('ssssssss');
     try {
       let html = redactorRef.current.getData();
 
@@ -257,10 +259,10 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
 
       const computedHTML = `${meta} ${html} `;
 
-      // printJS({ printable: computedHTML, type: 'raw-html', style: [
-      //   `@page { size: ${selectedPaperSize.width}pt ${selectedPaperSize.height}pt; margin: 5mm;} body { margin: 0 }`
-      // ],
-      // targetStyles: ["*"] })
+      printJS({ printable: computedHTML, type: 'raw-html', style: [
+        `@page { size: ${selectedPaperSize.width}pt ${selectedPaperSize.height}pt; margin: 5mm;} body { margin: 0 }`
+      ],
+      targetStyles: ["*"] })
     } finally {
       setPdfLoader(false);
     }

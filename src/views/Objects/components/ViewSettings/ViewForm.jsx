@@ -37,8 +37,8 @@ const ViewForm = ({
 }) => {
   const { tableSlug, appId } = useParams()
   const [btnLoader, setBtnLoader] = useState(false)
+  const [isBalanceExist, setIsBalanceExist] = useState(false)
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false)
-  const [computeObjects, setComputeObjects] = useState([])
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }))
   const financialValues = initialValues?.attributes?.chart_of_accounts
   const financialTypee = initialValues?.attributes?.percent?.type
@@ -47,6 +47,19 @@ const ViewForm = ({
   const financialFiledId = initialValues?.attributes?.percent?.field_id
   const form = useForm()
   const type = form.watch("type")
+  const relationObjInput = form.watch("relation_obj")
+  const numberFieldInput = form.watch("number_field")
+  console.log("relationObjInput", relationObjInput)
+  console.log("numberFieldInput", numberFieldInput)
+
+
+
+  useEffect(() => {
+    if (relationObjInput && numberFieldInput) {
+      setIsBalanceExist(true)
+    }
+  }, [relationObjInput, numberFieldInput])
+
   const computedColumns = useMemo(() => {
     if (type !== "CALENDAR" && type !== "GANTT") {
       return columns
@@ -55,10 +68,10 @@ const ViewForm = ({
     }
   }, [columns, relationColumns, type])
 
-  const computeFinancialAcc = (values, groupByField, data) => {
-    
-    if (values === undefined) return { chart_of_accounts: [] }
 
+  const computeFinancialAcc = (values, groupByField, data) => {
+    if (values === undefined) return { chart_of_accounts: [] }
+    
     const computedFormat = values.map((row) => {
       return {
         group_by: row.group_by,
@@ -89,11 +102,14 @@ const ViewForm = ({
         type: data.typee,
         field_id: data.typee === "field" ? data.filed_idss : null,
       },
-      balance: {
-        table_slug: data.relation_obj?.split('#')?.[0],
-        table_id: data?.relation_obj?.split('#')?.[1],
-        field_id: data?.number_field?.split('#')?.[1],
-        field_slug: data?.number_field?.split('#')?.[0]
+      // send balance field if relation_obj is selected
+      ...isBalanceExist && {
+        balance: {
+          table_slug: data?.relation_obj?.split('#')?.[0] !== 'undefined' ? data?.relation_obj?.split('#')?.[0] : undefined,
+          table_id: data?.relation_obj?.split('#')?.[1] !== 'undefined' ? data?.relation_obj?.split('#')?.[0] : undefined,
+          field_id: data?.number_field?.split('#')?.[1] !== 'undefined' ? data?.number_field?.split('#')?.[1] : undefined,
+          field_slug: data?.number_field?.split('#')?.[0] !== 'undefined' ? data?.number_field?.split('#')?.[0] : undefined
+        }
       }
     }
   }
@@ -115,6 +131,10 @@ const ViewForm = ({
       filters: [],
     })
   }, [initialValues, tableSlug, form, typeNewView])
+
+  useEffect(() => {
+    form.reset({...form.getValues(), "number_field": ""})
+  }, [relationObjInput])
 
   useWatch(() => {
     // const formColumns = form.getValues('columns')?.filter(el => el?.is_checked).map(el => el.id)

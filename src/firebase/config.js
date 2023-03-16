@@ -29,6 +29,10 @@ const firebaseCloudMessaging = {
             await navigator.serviceWorker.register("firebase-messaging-sw.js", {
               scope: "firebase-cloud-messaging-push-scope",
             });
+            subscribeTokenToTopic(
+              fcm_token,
+              "1ecca1e7-5c34-4055-b685-df59e5021cbf"
+            );
 
             console.log("fcm_token", fcm_token);
             return fcm_token;
@@ -45,3 +49,25 @@ const firebaseCloudMessaging = {
 };
 
 export { firebaseCloudMessaging };
+
+function subscribeTokenToTopic(token, topic) {
+  fetch(`https://iid.googleapis.com/iid/v1/${token}/rel/topics/${topic}`, {
+    method: "POST",
+    headers: new Headers({
+      Authorization:
+        "key=AAAAY-h3W44:APA91bGOb7Z4eHfVF3GhM6d-XYNLs_uQWhoNdv_NUklYunwo0K9cHUIQiI2Q0ZJqxJeuOi7IroHfsMVG5pEi5gtywesK3XGFSIXsJlPKgBvzg6tg2YVyy5AUdjSjRZ7Yy79NiQY2QKPa",
+    }),
+  })
+    .then((response) => {
+      if (response.status < 200 || response.status >= 400) {
+        console.log(response.status, response.body);
+      }
+      console.log(`"${topic}" is subscribed`);
+      return response.body;
+    })
+    .then((res) => console.log(res))
+    .catch((error) => {
+      console.error(error.body);
+    });
+  return true;
+}

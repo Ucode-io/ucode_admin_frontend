@@ -1,6 +1,6 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
 import { InputAdornment } from "@mui/material";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -26,6 +26,10 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [clientTypes, setClientTypes] = useState([]);
+
+  useEffect(() => {
+    getFcmToken();
+  }, []);
 
   const getFcmToken = async () => {
     const token = await firebaseCloudMessaging.init();
@@ -115,7 +119,6 @@ const LoginForm = () => {
         setClientTypes(res.client_types);
         setCompanies(res.companies);
         setFormType("MULTI_COMPANY");
-        getFcmToken();
       })
       .catch(() => setLoading(false));
   };

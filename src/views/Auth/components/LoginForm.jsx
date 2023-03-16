@@ -1,92 +1,114 @@
-import { AccountCircle, Lock } from "@mui/icons-material"
-import { InputAdornment } from "@mui/material"
-import { useMemo } from "react"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { useTranslation } from "react-i18next"
-import { useQuery } from "react-query"
-import { useDispatch } from "react-redux"
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
-import PrimaryButton from "../../../components/Buttons/PrimaryButton"
-import HFSelect from "../../../components/FormElements/HFSelect"
-import HFTextField from "../../../components/FormElements/HFTextField"
-import authService from "../../../services/auth/authService"
-import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2"
-import environmentService from "../../../services/environmentService"
-import { loginAction } from "../../../store/auth/auth.thunk"
-import listToOptions from "../../../utils/listToOptions"
-import classes from "../style.module.scss"
-
+import { AccountCircle, Lock } from "@mui/icons-material";
+import { InputAdornment } from "@mui/material";
+import { useMemo } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useDispatch } from "react-redux";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import PrimaryButton from "../../../components/Buttons/PrimaryButton";
+import HFSelect from "../../../components/FormElements/HFSelect";
+import HFTextField from "../../../components/FormElements/HFTextField";
+// import { auth, mess, getToken } from "../../../firebase/config";
+import authService from "../../../services/auth/authService";
+import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
+import environmentService from "../../../services/environmentService";
+import { loginAction } from "../../../store/auth/auth.thunk";
+import listToOptions from "../../../utils/listToOptions";
+import classes from "../style.module.scss";
+import { firebaseCloudMessaging } from "../../../firebase/config";
 const LoginForm = () => {
-  const { t } = useTranslation()
-  const dispatch = useDispatch()
-  const [loading, setLoading] = useState(false)
-  const [companies, setCompanies] = useState([])
-  const [clientTypes, setClientTypes] = useState([])
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [companies, setCompanies] = useState([]);
+  const [clientTypes, setClientTypes] = useState([]);
 
-  const [formType, setFormType] = useState("LOGIN")
-  const { control, handleSubmit, watch } = useForm()
+  const getFcmToken = async () => {
+    const token = await firebaseCloudMessaging.init();
+    localStorage.setItem("fcmToken", token);
+  };
 
+  const [formType, setFormType] = useState("LOGIN");
+  const { control, handleSubmit, watch } = useForm();
 
-  const selectedCompanyID = watch('company_id')
-  const selectedProjectID = watch('project_id')
-  const selectedEnvID = watch('environment_id')
+  const selectedCompanyID = watch("company_id");
+  const selectedProjectID = watch("project_id");
+  const selectedEnvID = watch("environment_id");
 
   const computedCompanies = useMemo(() => {
-    return listToOptions(companies, "name")
-  }, [companies])
-
+    return listToOptions(companies, "name");
+  }, [companies]);
 
   const computedProjects = useMemo(() => {
-    const company = companies.find(company => company.id === selectedCompanyID)
-    return listToOptions(company?.projects, "name")
-  }, [companies, selectedCompanyID])
+    const company = companies.find(
+      (company) => company.id === selectedCompanyID
+    );
+    return listToOptions(company?.projects, "name");
+  }, [companies, selectedCompanyID]);
 
+  const { data: computedEnvironments } = useQuery(
+    ["GET_ENVIRONMENT_LIST", { "project-id": selectedProjectID }],
+    () => {
+      return environmentService.getList({ "project-id": selectedProjectID });
+    },
+    {
+      enabled: !!selectedProjectID,
+      select: (res) =>
+        res.data?.map((row) => ({
+          label: row.name,
+          value: row.environment_id,
+        })),
+    }
+  );
 
-
-  const {data: computedEnvironments} = useQuery(["GET_ENVIRONMENT_LIST", {'project-id': selectedProjectID}], () => {
-    return environmentService.getList({'project-id': selectedProjectID})
-  }, {
-    enabled: !!selectedProjectID,
-    select: (res => res.data?.map(row => ({
-      label: row.name,
-      value: row.environment_id
-    })))
-  })
-
-
-  const { data: computedClientTypes = [] } = useQuery(["GET_CLIENT_TYPE_LIST", {project_id: selectedProjectID}, { 'environment-id': selectedEnvID }], () => {
-    return clientTypeServiceV2.getList({project_id: selectedProjectID}, { 'environment-id': selectedEnvID })
-  }, {
-    enabled: !!selectedEnvID,
-    select: (res => res.data.response?.map(row => ({
-      label: row.name,
-      value: row.guid,
-    })))
-  })
-
-  
+  const { data: computedClientTypes = [] } = useQuery(
+    [
+      "GET_CLIENT_TYPE_LIST",
+      { project_id: selectedProjectID },
+      { "environment-id": selectedEnvID },
+    ],
+    () => {
+      return clientTypeServiceV2.getList(
+        { project_id: selectedProjectID },
+        { "environment-id": selectedEnvID }
+      );
+    },
+    {
+      enabled: !!selectedEnvID,
+      select: (res) =>
+        res.data.response?.map((row) => ({
+          label: row.name,
+          value: row.guid,
+        })),
+    }
+  );
 
   const multiCompanyLogin = (data) => {
-    setLoading(true)
+    setLoading(true);
 
     authService
       .multiCompanyLogin(data)
       .then((res) => {
-        setLoading(false)
-
-        setClientTypes(res.client_types)
-        setCompanies(res.companies)
-        setFormType("MULTI_COMPANY")
+        console.log("dfsfsdf");
+        setLoading(false);
+        setClientTypes(res.client_types);
+        setCompanies(res.companies);
+        setFormType("MULTI_COMPANY");
+        getFcmToken();
       })
-      .catch(() => setLoading(false))
-  }
+      .catch(() => setLoading(false));
+  };
 
   const onSubmit = (values) => {
-    setLoading(true)
-    if (formType === "LOGIN") multiCompanyLogin(values)
-    else dispatch(loginAction(values)).then(() => setLoading(false))
-  }
+    setLoading(true);
+    if (formType === "LOGIN") multiCompanyLogin(values);
+    else
+      dispatch(loginAction(values)).then(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
@@ -205,7 +227,7 @@ const LoginForm = () => {
         </PrimaryButton>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default LoginForm
+export default LoginForm;

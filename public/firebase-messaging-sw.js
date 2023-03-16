@@ -30,7 +30,7 @@ messaging.onBackgroundMessage((payload) => {
     // click_action: `https://app.delever.uz/orders/edit/${e.data.order_id}?status_id=986a0d09-7b4d-4ca9-8567-aa1c6d770505`,
     // actions: [{action: "open_url", title: "Read Now"}]
   };
-  return navigator.registration.showNotification(
+  return self.registration.showNotification(
     notificationTitle,
     notificationOptions
   );

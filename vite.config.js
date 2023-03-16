@@ -43,7 +43,7 @@ export default defineConfig({
     },
     rollupOptions: {
       input: {
-        "firebase-messaging-sw": "src/firebase-messaging-sw.js",
+        "firebase-messaging-sw": "public/firebase-messaging-sw.js",
       },
     },
   },

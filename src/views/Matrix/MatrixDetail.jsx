@@ -16,8 +16,8 @@ import HeaderSettings from "../../components/HeaderSettings";
 import { useSelector } from "react-redux";
 
 const MatrixDetail = () => {
-  const projectId = useSelector(state => state.auth.projectId)
   const [tabIndex, setTabIndex] = useState(1);
+  const projectId = useSelector(state => state.auth.projectId)
   const tabs = [
     {
       id: 1,
@@ -35,7 +35,7 @@ const MatrixDetail = () => {
 
   const getTables = () => {
     constructorTableService
-      .getList()
+      .getList(projectId)
       .then((res) => {
         setTables(res?.tables || []);
       })
@@ -57,7 +57,7 @@ const MatrixDetail = () => {
 
   const getClientType = () => {
     clientTypeServiceV2
-      .getById(params.typeId, { project_id: projectId })
+      .getById(params.typeId)
       .then((res) => {
         setClientType(res?.data?.response);
         const platform = res?.data?.response?.$client_platform?.find(

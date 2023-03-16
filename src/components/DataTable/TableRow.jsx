@@ -14,8 +14,6 @@ const TableRow = ({
   control,
   onRowClick,
   onDeleteClick,
-  selected,
-  onSelectedRowChange,
   checkboxValue,
   onCheckboxChange,
   currentPage,
@@ -38,8 +36,6 @@ const TableRow = ({
   if (formVisible)
     return (
       <TableRowForm
-        selected={selected}
-        onSelectedRowChange={onSelectedRowChange}
         onDeleteClick={onDeleteClick}
         remove={remove}
         watch={watch}
@@ -118,18 +114,16 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2
-            tabelSlug={tableSlug}
-            type={["update", "delete"]}
-          ></PermissionWrapperV2>
-          <RectangleIconButton
-            color="error"
-            onClick={() =>
-              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-            }
-          >
-            <Delete color="error" />
-          </RectangleIconButton>
+          <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+            <RectangleIconButton
+              color="error"
+              onClick={() =>
+                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              }
+            >
+              <Delete color="error" />
+            </RectangleIconButton>
+          </PermissionWrapperV2>
         </CTableRow>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
         !relationAction?.action_relations ? (
@@ -185,18 +179,16 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2
-            tabelSlug={tableSlug}
-            type={["update", "delete"]}
-          ></PermissionWrapperV2>
-          <RectangleIconButton
-            color="error"
-            onClick={() =>
-              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-            }
-          >
-            <Delete color="error" />
-          </RectangleIconButton>
+          <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+            <RectangleIconButton
+              color="error"
+              onClick={() =>
+                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              }
+            >
+              <Delete color="error" />
+            </RectangleIconButton>
+          </PermissionWrapperV2>
         </CTableRow>
       ) : (
         <CTableRow
@@ -251,18 +243,16 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2
-            tabelSlug={tableSlug}
-            type={["update", "delete"]}
-          ></PermissionWrapperV2>
-          <RectangleIconButton
-            color="error"
-            onClick={() =>
-              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-            }
-          >
-            <Delete color="error" />
-          </RectangleIconButton>
+          <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
+            <RectangleIconButton
+              color="error"
+              onClick={() =>
+                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              }
+            >
+              <Delete color="error" />
+            </RectangleIconButton>
+          </PermissionWrapperV2>
         </CTableRow>
       )}
     </>

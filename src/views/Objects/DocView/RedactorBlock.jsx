@@ -1,5 +1,5 @@
-import { PictureAsPdf, Print } from "@mui/icons-material";
-import { CircularProgress } from "@mui/material";
+import { Delete, PictureAsPdf, Print } from "@mui/icons-material";
+import { Card, CircularProgress } from "@mui/material";
 import { forwardRef, useMemo, useState } from "react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,9 @@ import DropdownButtonItem from "../components/DropdownButton/DropdownButtonItem"
 import Redactor from "./Redactor";
 import styles from "./style.module.scss";
 import { useQueryClient } from "react-query";
+import Dialog from "@mui/material/Dialog";
+import SecondaryButton from "../../../components/Buttons/SecondaryButton";
+import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 
 const RedactorBlock = forwardRef(
   (
@@ -42,6 +45,15 @@ const RedactorBlock = forwardRef(
     const { tableSlug, appId } = useParams();
     const { control, handleSubmit, reset } = useForm();
     const [btnLoader, setBtnLoader] = useState(false);
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+
+    const handleClose = () => {
+      setOpen(false);
+    };
     const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
     const userId = useSelector((state) => state.auth.userId);
     const queryClient = useQueryClient();
@@ -150,12 +162,40 @@ const RedactorBlock = forwardRef(
           extra={
             <>
               <div
-                onClick={handleSubmit(onSubmit)}
+                onClick={() => handleClickOpen()}
                 className={styles.saveButton}
               >
                 {btnLoader && <CircularProgress color="secondary" size={15} />}
                 Save
               </div>
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <Card className={styles.card}>
+                  <div className={styles.body}>
+                    Вы действительно хотите Сохранить?
+                  </div>
+
+                  <div className={styles.footer}>
+                    <SecondaryButton
+                      className={styles.button}
+                      onClick={handleClose}
+                    >
+                      Отменить
+                    </SecondaryButton>
+                    <PrimaryButton
+                      className={styles.button}
+                      color="error"
+                      onClick={handleSubmit(onSubmit)}
+                    >
+                      Да
+                    </PrimaryButton>
+                  </div>
+                </Card>
+              </Dialog>
               <DropdownButton
                 onClick={exportToHTML}
                 loader={pdfLoader || htmlLoader}

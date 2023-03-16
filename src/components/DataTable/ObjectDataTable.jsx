@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useOnClickOutside from "use-onclickoutside";
 import { useLocation } from "react-router-dom";
-import { Checkbox } from "@mui/material";
 
 import {
   CTable,
@@ -16,10 +15,11 @@ import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import TableRow from "./TableRow";
-import TableRowForm from "./TableRowForm";
 import SummaryRow from "./SummaryRow";
 import MultipleUpdateRow from "./MultipleUpdateRow";
 import "./style.scss";
+import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
+import CellCheckboxNoSign from "./CellCheckboxNoSign";
 
 const ObjectDataTable = ({
   data = [],
@@ -50,8 +50,6 @@ const ObjectDataTable = ({
   isResizeble,
   paginationExtraButton,
   onCheckboxChange,
-  createFormVisible,
-  setCreateFormVisible,
   limit,
   setLimit,
   isChecked,
@@ -62,25 +60,21 @@ const ObjectDataTable = ({
   defaultLimit,
 }) => {
   const location = useLocation();
-  const [showCheckbox, setShowCheckbox] = useState(false);
+  const dispatch = useDispatch();
+
   const tableSize = useSelector((state) => state.tableSize.tableSize);
+  const selectedRow = useSelector((state) => state.selectedRow.selected);
+
   const [columnId, setColumnId] = useState("");
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [currentColumnWidth, setCurrentColumnWidth] = useState(0);
-  const [selected, setSelected] = useState([]);
-
-  const onSelectedRowChange = (val, row) => {
-    if (val) setSelected((prev) => [...prev, row.guid]);
-    else setSelected((prev) => prev.filter((id) => id !== row.guid));
-  };
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
 
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!isResizeble) return;
@@ -202,7 +196,7 @@ const ObjectDataTable = ({
 
   useEffect(() => {
     if (!formVisible) {
-      setSelected([]);
+      dispatch(selectedRowActions.clear());
     }
   }, [formVisible]);
 
@@ -222,38 +216,18 @@ const ObjectDataTable = ({
       defaultLimit={defaultLimit}
     >
       <CTableHead>
-        {formVisible && selected.length > 0 && (
+        {formVisible && selectedRow.length > 0 && (
           <MultipleUpdateRow
-            selected={selected}
-            setSelected={setSelected}
+            columns={data}
+            fields={columns}
             watch={watch}
             setFormValue={setFormValue}
             control={control}
-            fields={columns}
-            columns={data}
-            row={{}}
           />
         )}
         <CTableRow>
-          {formVisible ? (
-            <CTableHeadCell
-              onMouseEnter={() => setShowCheckbox(true)}
-              onMouseLeave={() => setShowCheckbox(false)}
-              style={{ padding: "2px 0", minWidth: "40px" }}
-            >
-              {showCheckbox || data.length === selected.length ? (
-                <Checkbox
-                  onChange={(e, val) =>
-                    setSelected(val ? data.map((i) => i.guid) : [])
-                  }
-                />
-              ) : (
-                "№"
-              )}
-            </CTableHeadCell>
-          ) : (
-            <CTableHeadCell width={10}>№</CTableHeadCell>
-          )}
+          <CellCheckboxNoSign formVisible={formVisible} data={data} />
+
           {columns.map((column, index) => (
             <CTableHeadCell
               id={column.id}
@@ -312,7 +286,6 @@ const ObjectDataTable = ({
                 )}
                 {columnId === column?.id && (
                   <div className="cell-popup" ref={popupRef}>
-                    {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
                     <div
                       className="cell-popup-item"
                       onClick={() => handlePin(column?.id, index)}
@@ -333,7 +306,6 @@ const ObjectDataTable = ({
                       <ResizeIcon />
                       <span>Autosize</span>
                     </div>
-                    {/* </OutsideClickHandler> */}
                   </div>
                 )}
               </div>
@@ -358,8 +330,6 @@ const ObjectDataTable = ({
         {(isRelationTable ? fields : data)?.map((row, rowIndex) => (
           <TableRow
             remove={remove}
-            selected={selected}
-            onSelectedRowChange={onSelectedRowChange}
             watch={watch}
             control={control}
             key={row.id}
@@ -388,24 +358,6 @@ const ObjectDataTable = ({
           <SummaryRow summaries={summaries} columns={columns} data={data} />
         )}
         {additionalRow}
-        {createFormVisible && (
-          <TableRowForm
-            remove={remove}
-            control={control}
-            setFormValue={setFormValue}
-            fields={fields}
-            formVisible={formVisible}
-            row={null}
-            currentPage={currentPage}
-            rowIndex={data?.length}
-            columns={columns}
-            tableHeight={tableHeight}
-            tableSettings={tableSettings}
-            pageName={pageName}
-            calculateWidth={calculateWidth}
-            setFormVisible={setCreateFormVisible}
-          />
-        )}
       </CTableBody>
     </CTable>
   );

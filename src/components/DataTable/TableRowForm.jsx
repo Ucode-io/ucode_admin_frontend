@@ -1,15 +1,13 @@
 import { Delete } from "@mui/icons-material";
 import { Checkbox } from "@mui/material";
-import { useState } from "react";
 
-import RectangleIconButton from "../Buttons/RectangleIconButton";
 import { CTableCell, CTableRow } from "../CTable";
+import RectangleIconButton from "../Buttons/RectangleIconButton";
 import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
+import CellCheckboxOrOrderNumBlock from "./CellCheckboxOrOrderNumBlock";
 
 const TableRowForm = ({
   onCheckboxChange,
-  selected,
-  onSelectedRowChange,
   checkboxValue,
   watch = () => {},
   row,
@@ -28,24 +26,14 @@ const TableRowForm = ({
   limit = 10,
   relationFields,
 }) => {
-  const [showCheckbox, setShowCheckbox] = useState(false);
-
   return (
     <CTableRow>
-      <CTableCell
-        onMouseEnter={() => setShowCheckbox(true)}
-        onMouseLeave={() => setShowCheckbox(false)}
-        style={{ padding: 0, textAlign: "center" }}
-      >
-        {showCheckbox || !!selected.find((i) => i === row.guid) ? (
-          <Checkbox
-            onChange={(_, val) => onSelectedRowChange(val, row)}
-            checked={!!selected.find((i) => i === row.guid)}
-          />
-        ) : (
-          (currentPage - 1) * limit + rowIndex + 1
-        )}
-      </CTableCell>
+      <CellCheckboxOrOrderNumBlock
+        currentPage={currentPage}
+        limit={limit}
+        rowIndex={rowIndex}
+        row={row}
+      />
       {onCheckboxChange && !formVisible && (
         <CTableCell>
           <Checkbox
@@ -55,6 +43,7 @@ const TableRowForm = ({
           />
         </CTableCell>
       )}
+
       {!formVisible && (
         <CTableCell align="center">
           {(currentPage - 1) * limit + rowIndex + 1}
@@ -86,7 +75,6 @@ const TableRowForm = ({
           }}
         >
           <CellFormElementGenerator
-            selected={selected}
             tableSlug={tableSlug}
             watch={watch}
             fields={columns}

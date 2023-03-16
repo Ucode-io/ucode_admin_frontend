@@ -1,10 +1,10 @@
 import { Autocomplete, TextField } from "@mui/material";
-import { getValue } from "@mui/system";
 import { get } from "@ngard/tiny-get";
 import { useEffect, useState } from "react";
 import { useMemo } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
 
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -38,7 +38,6 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
-
   if (!isLayout)
     return (
       <FRow label={field?.label ?? field?.title} required={field.required}>
@@ -89,6 +88,7 @@ const RelationFormElement = ({
                   control={control}
                   setValue={onChange}
                   value={Array.isArray(value) ? value[0] : value}
+                  name={name}
                 />
               ) : (
                 <AutoCompleteElement
@@ -127,11 +127,11 @@ const AutoCompleteElement = ({
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
-  const [debouncedValue, setDebouncedValue] = useState("");
+  const { id } = useParams();
 
+  const [debouncedValue, setDebouncedValue] = useState("");
   const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
-
   const autoFilters = field?.attributes?.auto_filters;
 
   const autoFiltersFieldFroms = useMemo(() => {
@@ -159,6 +159,10 @@ const AutoCompleteElement = ({
       return constructorObjectService.getList(tableSlug, {
         data: {
           ...autoFiltersValue,
+          additional_request: {
+            additional_field: "guid",
+            additional_values: [id],
+          },
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
           limit: 10,
@@ -167,7 +171,14 @@ const AutoCompleteElement = ({
     },
     {
       select: (res) => {
-        return res?.data?.response ?? [];
+        const options = res?.data?.response ?? [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
+
+        return {
+          options,
+          slugOptions,
+        };
       },
     }
   );
@@ -185,13 +196,14 @@ const AutoCompleteElement = ({
     return getRelationFieldLabel(field, option);
   };
   const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === value);
+    const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
 
+
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
-      setValue(value?.guid ?? null);
+      setValue(value?.guid ?? value?.guid);
       setLocalValue(value ? [value] : null);
       if (!field?.attributes?.autofill) return;
 
@@ -223,7 +235,7 @@ const AutoCompleteElement = ({
           setFormValue(setName.join("."), get(val, field_from));
         }, 1);
     });
-  }, [computedValue]);
+  }, [computedValue, field]);
 
   useEffect(() => {
     if (value) getValueData();
@@ -257,6 +269,7 @@ const AutoCompleteElement = ({
           field={field}
           tableSlug={tableSlug}
           error={error}
+          autoFiltersValue={autoFiltersValue}
           disabledHelperText={disabledHelperText}
           value={localValue ?? []}
           setFormValue={setFormValue}
@@ -271,7 +284,7 @@ const AutoCompleteElement = ({
       ) : (
         <Autocomplete
           disabled={disabled}
-          options={options ?? []}
+          options={options?.options ?? []}
           value={localValue ?? []}
           freeSolo
           onChange={(event, newValue) => {

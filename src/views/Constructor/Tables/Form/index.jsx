@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tab, TabList, Tabs, TabPanel } from "react-tabs";
 import PageFallback from "../../../../components/PageFallback";
@@ -37,6 +37,7 @@ const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id, slug, appId } = useParams();
+  const projectId = useSelector(state => state.auth.projectId)
 
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
@@ -76,7 +77,7 @@ const ConstructorTablesFormPage = () => {
   const getData = async () => {
     setLoader(true);
 
-    const getTableData = constructorTableService.getById(id);
+    const getTableData = constructorTableService.getById(id, projectId);
     const getViewRelations = constructorViewRelationService.getList({
       table_slug: slug,
     });
@@ -190,11 +191,10 @@ const ConstructorTablesFormPage = () => {
       })
       .catch(() => setBtnLoader(false));
   };
-
   const updateConstructorTable = (data) => {
     setBtnLoader(true);
 
-    const updateTableData = constructorTableService.update(data);
+    const updateTableData = constructorTableService.update(data, projectId);
 
     const updateSectionData = constructorSectionService.update({
       sections: addOrderNumberToSections(data.sections),

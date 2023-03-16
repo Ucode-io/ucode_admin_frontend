@@ -1,18 +1,11 @@
 import { useEffect, useMemo } from "react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-
 import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import FolderIcon from "@mui/icons-material/Folder";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import { Add, Delete } from "@mui/icons-material";
 import useTabRouter from "../../../hooks/useTabRouter";
 import GroupCascadingLink from "./GroupCascadingLink";
-import FastFilter from "../../../views/Objects/components/FastFilter";
 import { Menu, TextField, InputAdornment } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { SearchIcon } from "../../../assets/icons/icon.jsx";
@@ -25,15 +18,15 @@ const GroupCascading = ({
   setValue,
   setFormValue,
   tableSlug,
+  autoFiltersValue
 }) => {
   const { navigateToForm } = useTabRouter();
   const [selectedIds, setSelectedIds] = useState([]);
   const [tableLoader, setTableLoader] = useState(true);
   const [data, setData] = useState([]);
+  const tab_slug = field?.attributes?.cascading_tree_table_slug ?? tableSlug;
   const [relTableSLug, setRelTableSlug] = useState("");
   const [serviceData, setServiceData] = useState([]);
-  const [title, setTitle] = useState([]);
-
   const [searchText, setSearchText] = useState("");
   const [menu, setMenu] = useState(null);
   const open = Boolean(menu);
@@ -44,28 +37,35 @@ const GroupCascading = ({
     setServiceData([]);
   };
 
-  const insideValue = useMemo(() => {
-    let values = "";
-    if (value?.length) {
-      const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
-      slugs?.map((item) => (values += " " + value?.[0]?.[item]));
-    }
-    return values;
-  }, [value, field]);
-
   const currentList = useMemo(() => {
     if (!selectedIds?.length) {
-      return data.filter(
-        (row) => !row[`${field?.attributes?.cascading_tree_table_slug}_id`]
-      );
+      return data.filter((row) => !row[`${tab_slug}_id`]);
     } else {
       return data.filter(
-        (el) =>
-          el[`${field?.attributes?.cascading_tree_table_slug}_id`] ===
-          selectedIds[selectedIds.length - 1]
+        (el) => el[`${tab_slug}_id`] === selectedIds[selectedIds.length - 1]
       );
     }
-  }, [data, selectedIds, field?.attributes?.cascading_tree_table_slug]);
+  }, [data, selectedIds, tab_slug]);
+
+  //=========COMPUTED VALUE=========
+  const computedValue = useMemo(() => {
+    let val = "";
+    const slugs = field?.attributes?.view_fields?.map((i) => i?.slug)
+    
+    if (Array.isArray(value)) {
+      if(typeof value?.[0] === 'string') {
+        const object = data?.find((item) => item?.guid === value?.[0])
+        slugs?.map(
+          (item) => (val += " " + value?.length > 0 ? object?.[item] : "")
+        );
+      } else {
+        return slugs?.map(
+          (item) => (val += " " + value?.length > 0 ? value?.[0]?.[item] : "")
+        );
+      }
+    }
+    return val;
+  }, [value, data, field]);
 
   const backIcon = useMemo(() => {
     if (!selectedIds?.length) {
@@ -78,14 +78,10 @@ const GroupCascading = ({
   const getAllData = async () => {
     setTableLoader(true);
     try {
-      const { data } = await constructorObjectService.getList(
-        field?.attributes?.cascading_tree_table_slug,
-        {
-          data: {},
-        }
-      );
-
-      setData(data.response ?? []);
+      const { data } = await constructorObjectService.getList(tab_slug, {
+        data: {...autoFiltersValue},
+      });
+      setData(data?.response ?? []);
     } finally {
       setTableLoader(false);
     }
@@ -94,18 +90,21 @@ const GroupCascading = ({
   const backData = () => {
     setServiceData(null);
     if (selectedIds?.length > 0) {
-      setSelectedIds(selectedIds.splice(0, selectedIds.length - 1));
+      setSelectedIds(selectedIds?.splice(0, selectedIds?.length - 1));
     } else {
       setSelectedIds([]);
     }
   };
   useEffect(() => {
-    getAllData();
     setRelTableSlug(
       field?.table_slug ? field?.table_slug : field?.id.split("#")?.[0]
     );
   }, []);
 
+  useEffect(() => {
+    getAllData();
+  }, [autoFiltersValue])
+  
   return (
     <div>
       <div className={styles.input_wrapper}>
@@ -114,7 +113,7 @@ const GroupCascading = ({
           fullWidth
           id="password"
           onClick={handleClick}
-          value={insideValue === undefined ? "" : insideValue}
+          value={computedValue ?? ""}
           inputStyle={{ height: "35px" }}
           InputProps={{
             endAdornment: value && (
@@ -181,8 +180,8 @@ const GroupCascading = ({
               <div className={styles.tree_data_wrapper}>
                 {currentList?.map((item, index) => (
                   <GroupCascadingLink
-                    tableSlug={field?.attributes?.cascading_tree_table_slug}
-                    fieldSlug={field?.attributes?.cascading_tree_field_slug}
+                    tableSlug={tab_slug}
+                    fieldSlug={tab_slug}
                     selectedIds={selectedIds}
                     setSelectedIds={setSelectedIds}
                     item={item}
@@ -197,7 +196,6 @@ const GroupCascading = ({
                     setFormValue={setFormValue}
                     index={index}
                     searchText={searchText}
-                    setTitle={setTitle}
                   />
                 ))}
               </div>

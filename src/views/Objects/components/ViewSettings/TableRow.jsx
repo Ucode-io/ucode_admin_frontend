@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {
   CTable,
   CTableBody,
@@ -14,60 +14,48 @@ import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownR
 import HFSelect from "../../../../components/FormElements/HFSelect";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import style from "./style.module.scss";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import clientRelationService from "../../../../services/auth/clientRelationService";
 import constructorRelationService from "../../../../services/constructorRelationService";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import {useFieldArray, useForm, useWatch} from "react-hook-form";
 import constructorFieldService from "../../../../services/constructorFieldService";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { generateID } from "../../../../utils/generateID";
-import { IconButton, Modal } from "@mui/material";
+import {generateID} from "../../../../utils/generateID";
+import {IconButton, Modal} from "@mui/material";
 import FinancialTreeBody from "@/views/Objects/components/ViewSettings/FinancialTreeBody";
 import FinancialFilterModal from "@/views/Objects/components/ViewSettings/FinancialFilterModal";
 import ViewSettings from "@/views/Objects/components/ViewSettings/index";
 import Popover from "@mui/material/Popover";
 import styles from "@/views/Objects/components/ViewSettings/style.module.scss";
-import { Add, Close } from "@mui/icons-material";
+import {Add, Close} from "@mui/icons-material";
 import HFMultipleSelect from "@/components/FormElements/HFMultipleSelect";
 
 const FinancialTableRow = ({
-  form,
-  item,
-  objectList = [],
-  level = 1,
-  setObjectList,
-  viewId,
-  indexMap,
-  indexParent,
-  key,
-}) => {
+                             form,
+                             item,
+                             objectList = [],
+                             level = 1,
+                             setObjectList,
+                             viewId,
+                             optionIndex,
+                             indexMap,
+                             indexParent,
+                             append,
+                             remove,
+                             chartChild,
+                             relations
+                           }) => {
   const groupby = useWatch({
     control: form.control,
     name: `chartOfAccounts.form_fields.selected_fields.${indexParent}`,
   });
 
   const [expanded, setExpanded] = useState(false);
-  const [relations, setRelations] = useState([]);
   const [digitalAreas, setDigitalAreas] = useState([]);
   const [dateAreas, setDateAreas] = useState([]);
-  const { tableSlug } = useParams();
-  const [modalShow, setModalShow] = useState(false);
-  const [thisIndex, setThisIndex] = useState();
+  const {tableSlug} = useParams();
   const [filterFieldArea, setFilterFieldArea] = useState([]);
-  let optionIndex = 0;
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
   const optionsType = [
     {
@@ -83,21 +71,6 @@ const FinancialTableRow = ({
   const children = useMemo(() => {
     return objectList.filter((el) => el[`${tableSlug}_id`] === item.guid);
   }, [objectList, tableSlug, item]);
-
-  const getRelations = () => {
-    constructorRelationService
-      .getList({
-        table_slug: tableSlug,
-      })
-      .then((res) => {
-        setRelations(res.relations);
-      })
-      .catch((a) => console.log("error", a));
-  };
-
-  useEffect(() => {
-    getRelations();
-  }, []);
 
   const tableOptions = useMemo(() => {
     const relationsWithRelatedTableSlug = relations?.map((relation) => ({
@@ -121,7 +94,8 @@ const FinancialTableRow = ({
       })
       .map((relation) => ({
         label: relation.table_from.label,
-        value: relation.table_from.slug,
+        value: `${relation.table_from.slug}#${relation.id}`,
+        id: relation.id
       }));
   }, [relations, tableSlug]);
 
@@ -130,74 +104,48 @@ const FinancialTableRow = ({
     name: `chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.table_slug`,
   });
 
+ 
+
+  useEffect(() => {
+    form.setValue(`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.relation_id`, tableOptions.filter(item => item.value === selectedTableOptions)?.[0]?.id)
+  }, [selectedTableOptions])
+
   useEffect(() => {
     selectedTableOptions &&
-      constructorFieldService
-        .getList({
-          table_slug: selectedTableOptions,
-        })
-        .then((res) => {
-          setDigitalAreas(
-            res.fields
-              .filter(
-                (item) => item.type === "NUMBER" || item.type === "FORMULA" || item.type === "FORMULA_FRONTEND"
-              )
-              .map((item) => ({
-                label: item.label,
-                value: item.slug,
-              }))
-          );
-          setDateAreas(
-            res.fields
-              .filter(
-                (item) => item.type === "DATE" || item.type === "DATE_TIME"
-              )
-              .map((item) => ({
-                label: item.label,
-                value: item.slug,
-              }))
-          );
-          setFilterFieldArea(
-            res.fields.map((item) => ({
+    constructorFieldService
+      .getList({
+        table_slug: selectedTableOptions?.split('#')?.[0],
+      })
+      .then((res) => {
+        setDigitalAreas(
+          res.fields
+            .filter(
+              (item) => item.type === "NUMBER" || item.type === "FORMULA" || item.type === "FORMULA_FRONTEND"
+            )
+            .map((item) => ({
               label: item.label,
               value: item.slug,
             }))
-          );
-        })
-        .catch((a) => console.log("error", a));
+        );
+        setDateAreas(
+          res.fields
+            .filter(
+              (item) => item.type === "DATE" || item.type === "DATE_TIME"
+            )
+            .map((item) => ({
+              label: item.label,
+              value: item.slug,
+            }))
+        );
+        setFilterFieldArea(
+          res.fields.map((item) => ({
+            label: item.label,
+            value: item.slug,
+          }))
+        );
+      })
+      .catch((a) => console.log("error", a));
   }, [selectedTableOptions]);
-
-  const addRow = () => {
-    setObjectList([...objectList, { ...item, name: "", idGuid: generateID() }]);
-  };
-
-  const removeRow = () => {
-    setObjectList(objectList.filter((field) => field.idGuid !== item.idGuid));
-  };
-
-  const {
-    fields: chartChild,
-    append,
-    replace,
-    remove,
-  } = useFieldArray({
-    control: form.control,
-    name: `chartOfAccounts.${indexParent}.${item.guid}`,
-    keyName: "key",
-  });
-  useEffect(() => {
-    if (chartChild.length === 0) {
-      replace([
-        {
-          table_slug: "",
-          type: "",
-          number_field: "",
-          date_field: "",
-          id: generateID(),
-        },
-      ]);
-    }
-  }, []);
 
   const removeChild = (index) => {
     remove(index);
@@ -205,113 +153,111 @@ const FinancialTableRow = ({
 
   return (
     <>
-      {chartChild.map((childItem, optionIndex) => (
-        <CTableRow key={childItem.id}>
-          <CTableCell>
-            <div className={style.wrapper}>
-              <div className={style.title}>
-                {<div style={{ marginRight: `${10 * level}px` }} />}
-                {children?.length ? (
-                  <button onClick={() => setExpanded(!expanded)}>
-                    <KeyboardArrowDownRoundedIcon />
-                  </button>
-                ) : (
-                  ""
-                )}
-                {optionIndex !== 0 ? "" : item.name}
-              </div>
-
-              {optionIndex === 0 ? (
-                <button
-                  className={style.addIcon}
-                  onClick={() =>
-                    append({
-                      id: generateID(),
-                      table_slug: "",
-                      type: "",
-                      number_field: "",
-                      date_field: "",
-                    })
-                  }
-                >
-                  <AddIcon />
+      <CTableRow>
+        <CTableCell>
+          <div className={style.wrapper}>
+            <div className={style.title}>
+              {<div style={{marginRight: `${10 * level}px`}}/>}
+              {children?.length ? (
+                <button onClick={() => setExpanded(!expanded)}>
+                  <KeyboardArrowDownRoundedIcon/>
                 </button>
               ) : (
                 ""
               )}
-
-              {optionIndex !== 0 ? (
-                <button
-                  className={style.addIcon}
-                  onClick={() => removeChild(optionIndex)}
-                >
-                  <RemoveIcon style={{ color: "#B72136" }} />
-                </button>
-              ) : (
-                ""
-              )}
+              {optionIndex !== 0 ? "" : item.name}
             </div>
-          </CTableCell>
-          <CTableCell>
-            {!children?.length ? (
-              <HFSelect
-                fullWidth
-                control={form.control}
-                options={optionsType}
-                name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.type`}
-              />
-            ) : (
-              ""
-            )}
-          </CTableCell>
-          <CTableCell>
-            {!children?.length ? (
-              <HFSelect
-                fullWidth
-                control={form.control}
-                options={tableOptions}
-                name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.table_slug`}
-              />
-            ) : (
-              ""
-            )}
-          </CTableCell>
-          <CTableCell>
-            {!children?.length ? (
-              <HFSelect
-                fullWidth
-                control={form.control}
-                options={digitalAreas}
-                name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.number_field`}
-              />
-            ) : (
-              ""
-            )}
-          </CTableCell>
-          <CTableCell>
-            {!children?.length ? (
-              <HFSelect
-                fullWidth
-                control={form.control}
-                options={dateAreas}
-                name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.date_field`}
-              />
-            ) : (
-              ""
-            )}
-          </CTableCell>
 
-          <FinancialFilterModal
-            form={form}
-            viewId={viewId}
-            indexParent={indexParent}
-            item={item}
-            children={children}
-            optionIndex={optionIndex}
-            filterFieldArea={filterFieldArea}
-          />
-        </CTableRow>
-      ))}
+            {optionIndex === 0 ? (
+              <button
+                className={style.addIcon}
+                onClick={() =>
+                  append({
+                    id: generateID(),
+                    table_slug: "",
+                    type: "",
+                    number_field: "",
+                    date_field: "",
+                  })
+                }
+              >
+                <AddIcon/>
+              </button>
+            ) : (
+              ""
+            )}
+
+            {optionIndex !== 0 ? (
+              <button
+                className={style.addIcon}
+                onClick={() => removeChild(optionIndex)}
+              >
+                <RemoveIcon style={{color: "#B72136"}}/>
+              </button>
+            ) : (
+              ""
+            )}
+          </div>
+        </CTableCell>
+        <CTableCell>
+          {!children?.length ? (
+            <HFSelect
+              fullWidth
+              control={form.control}
+              options={optionsType}
+              name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.type`}
+            />
+          ) : (
+            ""
+          )}
+        </CTableCell>
+        <CTableCell>
+          {!children?.length ? (
+            <HFSelect
+              fullWidth
+              control={form.control}
+              options={tableOptions}
+              name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.table_slug`}
+            />
+          ) : (
+            ""
+          )}
+        </CTableCell>
+        <CTableCell>
+          {!children?.length ? (
+            <HFSelect
+              fullWidth
+              control={form.control}
+              options={digitalAreas}
+              name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.number_field`}
+            />
+          ) : (
+            ""
+          )}
+        </CTableCell>
+        <CTableCell>
+          {!children?.length ? (
+            <HFSelect
+              fullWidth
+              control={form.control}
+              options={dateAreas}
+              name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.date_field`}
+            />
+          ) : (
+            ""
+          )}
+        </CTableCell>
+
+        <FinancialFilterModal
+          form={form}
+          viewId={viewId}
+          indexParent={indexParent}
+          item={item}
+          children={children}
+          optionIndex={optionIndex}
+          filterFieldArea={filterFieldArea}
+        />
+      </CTableRow>
     </>
   );
 };

@@ -6,11 +6,7 @@ import constructorObjectService from "../../../services/constructorObjectService
 import IconGenerator from "../../IconPicker/IconGenerator";
 import useTabRouter from "../../../hooks/useTabRouter";
 import CloseIcon from "@mui/icons-material/Close";
-import { get } from "@ngard/tiny-get";
-import {
-  getRelationFieldLabel,
-  getRelationFieldTableCellLabel,
-} from "../../../utils/getRelationFieldLabel";
+import { getRelationFieldLabel } from "../../../utils/getRelationFieldLabel";
 import { useQuery } from "react-query";
 
 function CascadingSection({
@@ -36,7 +32,6 @@ function CascadingSection({
     () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
-          // ...autoFiltersValue,
           view_fields:
             field?.view_fields?.map((field) => field.slug) ??
             field?.attributes?.view_fields?.map((field) => field.slug),
@@ -57,6 +52,7 @@ function CascadingSection({
     }
   );
 
+  //==========COMPUTED VALUE FOR MANY2MANY==========
   const computedValue = useMemo(() => {
     if (!value) return [];
 
@@ -73,6 +69,7 @@ function CascadingSection({
       ?.filter((el) => el);
   }, [options, value, field]);
 
+  //==========COMPUTED VALUE FOR MANY2ONE==========
   const insideValue = useMemo(() => {
     let values = "";
     if (value?.length) {
@@ -82,6 +79,7 @@ function CascadingSection({
     return values;
   }, [value, field]);
 
+  //============SETVALUE FUNCTION=========
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
     constructorObjectService
@@ -149,15 +147,6 @@ function CascadingSection({
                             navigateToForm(tableSlug, "EDIT", values[index]);
                           }}
                         />
-
-                        {/* <Close
-                          fontSize="12"
-                          onChange={getTagProps({ index })?.onDelete}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                          style={{ cursor: "pointer" }}
-                        /> */}
                       </div>
                     ))}
                   </div>

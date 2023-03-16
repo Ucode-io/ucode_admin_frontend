@@ -9,6 +9,7 @@ import useTabRouter from "../../../hooks/useTabRouter";
 import style from "./style.module.scss";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { numberWithSpaces } from "../../../utils/formatNumbers";
+import { CTableCell, CTableRow } from "../../../components/CTable";
 
 const RecursiveBlock = ({
   row,
@@ -23,7 +24,6 @@ const RecursiveBlock = ({
   const { tableSlug } = useParams();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const { navigateToForm } = useTabRouter();
-
   const children = useMemo(() => {
     return financeDate.filter((el) => el[`${tableSlug}_id`] === row.guid);
   }, [financeDate, row, tableSlug]);
@@ -40,7 +40,8 @@ const RecursiveBlock = ({
   return (
     <>
       <div
-        onClick={switchChildBlock}
+        onClick={navigateToEditPage}
+        // onClick={switchChildBlock}
         className={`${
           level === 1 ? style.recursiveBlock : style.recursiveChildBlock
         } ${style[`level${level}`]}`}
@@ -85,25 +86,47 @@ const RecursiveBlock = ({
 
         {row?.amounts.map((item) =>
           level === 1 ? (
-            <div className={style.priceBlockChild}>
-              {numberWithSpaces(item?.amount) === 0 ? (
-                <span className={style.line}>-</span>
-              ) : (
-                numberWithSpaces(item?.amount)
-              )}
-            </div>
+            <>
+              <div className={style.priceBlockChild}>
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  numberWithSpaces(item?.amount)
+                )}
+              </div>
+              {/* div class was percentBlockChilde */}
+              <div className={style.priceBlockChild}> 
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  <span style={{fontSize: '12px', opacity: '0.7'}}>
+                    {parseFloat(item?.percentage).toFixed(2) + "%"}
+                  </span>
+                )}
+              </div>
+            </>
           ) : (
-            <div className={style.priceBlock}>
-              {numberWithSpaces(item?.amount) === 0 ? (
-                <span className={style.line}>-</span>
-              ) : (
-                numberWithSpaces(item?.amount)
-              )}
-            </div>
+            <>
+              <div className={style.priceBlock}>
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  numberWithSpaces(item?.amount)
+                )}
+              </div>
+              <div className={style.percentBlock}>
+                {numberWithSpaces(item?.amount) === 0 ? (
+                  <span className={style.line}>-</span>
+                ) : (
+                  <span style={{fontSize: '12px', opacity: '0.7'}}>
+                  {parseFloat(item?.percentage).toFixed(2) + "%"}
+                </span>
+                )}
+              </div>
+            </>
           )
         )}
       </div>
-
       <Collapse in={childBlockVisible} unmountOnExit>
         {children?.map((childRow) => (
           <RecursiveBlock
@@ -120,6 +143,7 @@ const RecursiveBlock = ({
         ))}
       </Collapse>
     </>
+
   );
 };
 

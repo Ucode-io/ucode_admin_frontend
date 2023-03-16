@@ -1,5 +1,5 @@
 import { Description, Download, Upload } from "@mui/icons-material";
-import { useId } from "react";
+import { useId, useMemo } from "react";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
@@ -22,6 +22,8 @@ import BoardColumn from "./BoardColumn";
 import styles from "./style.module.scss";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
+import { useTranslation } from "react-i18next";
 
 const BoardView = ({
   view,
@@ -34,6 +36,8 @@ const BoardView = ({
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const id = useId();
+  const { t } = useTranslation()
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
 
   const [columns, setColumns] = useState([]);
   const { navigateToForm } = useTabRouter();
@@ -138,10 +142,11 @@ const BoardView = ({
                       style={{ color: "#6E8BB7" }}
                     />
                   </div>
-                  <span>Template</span>
+                  <span>{ t('template') }</span>
                 </div>
-
-                <SettingsButton />
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                  <SettingsButton />
+                </PermissionWrapperV2>
               </div>
             </Menu>
             {/* <ExcelButtons />
@@ -179,7 +184,7 @@ const BoardView = ({
             (new_list[tableSlug] &&
               new_list[tableSlug].some((i) => i.checked))) && (
             <div className={styles.filters}>
-              <p>Фильтры</p>
+              <p>{t('filters')}</p>
               <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
             </div>
           )}

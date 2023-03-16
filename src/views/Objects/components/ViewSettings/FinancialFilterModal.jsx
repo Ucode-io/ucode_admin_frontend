@@ -1,42 +1,50 @@
-import {Add, Close} from "@mui/icons-material";
-import {Card, IconButton} from "@mui/material";
-import React, {useEffect, useMemo, useState} from "react";
-import {useQuery} from "react-query";
-import {useParams} from "react-router-dom";
+import { Add, Close } from "@mui/icons-material";
+import { Card, IconButton } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
+import { useQuery } from "react-query";
+import { useParams } from "react-router-dom";
 import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
 import ViewsList from "./ViewsList";
-import {CTableCell} from "@/components/CTable";
+import { CTableCell } from "@/components/CTable";
 import style from "@/views/Objects/components/ViewSettings/style.module.scss";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Popover from "@mui/material/Popover";
 import HFSelect from "@/components/FormElements/HFSelect";
 import HFMultipleSelect from "@/components/FormElements/HFMultipleSelect";
 import RemoveIcon from "@mui/icons-material/Remove";
-import {useFieldArray, useForm, useWatch} from "react-hook-form";
-import {generateID} from "@/utils/generateID";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { generateID } from "@/utils/generateID";
 import constructorFieldService from "@/services/constructorFieldService";
-import {Filter} from "@/views/Objects/components/FilterGenerator";
-import {listToMap} from "@/utils/listToMap";
+import { Filter } from "@/views/Objects/components/FilterGenerator";
+import { listToMap } from "@/utils/listToMap";
 import useFilters from "@/hooks/useFilters";
-import {filterActions} from "@/store/filter/filter.slice";
+import { filterActions } from "@/store/filter/filter.slice";
 import ClearIcon from "@mui/icons-material/Clear";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import ListSubheader from '@mui/material/ListSubheader';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import {Controller} from "react-hook-form";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import ListSubheader from "@mui/material/ListSubheader";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import { Controller } from "react-hook-form";
 
-const FinancialFilterModal = ({form, indexParent, item, children, viewId, optionIndex, filterFieldArea}) => {
-  const [left, setLeft] = useState([])
-  const [right, setRight] = useState([])
+const FinancialFilterModal = ({
+  form,
+  indexParent,
+  item,
+  children,
+  viewId,
+  optionIndex,
+  filterFieldArea,
+}) => {
+  const [left, setLeft] = useState([]);
+  const [right, setRight] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [quantity, setQuantity] = useState(0)
-  const [responseForGrouping, setResponseForGrouping] = useState([])
+  const [quantity, setQuantity] = useState(0);
+  const [responseForGrouping, setResponseForGrouping] = useState([]);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -44,26 +52,33 @@ const FinancialFilterModal = ({form, indexParent, item, children, viewId, option
     setAnchorEl(null);
   };
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-  const {tableSlug, appId} = useParams();
+  const id = open ? "simple-popover" : undefined;
+  const { tableSlug, appId } = useParams();
 
-  const {fields: filtersCharts, append: appendFilter, replace: replaceFilter, remove: removeFilter} = useFieldArray({
+  const {
+    fields: filtersCharts,
+    append: appendFilter,
+    replace: replaceFilter,
+    remove: removeFilter,
+  } = useFieldArray({
     control: form.control,
     name: `chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filterFields`,
     keyName: "key",
   });
-  const filterForm = form.watch(`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filters`)
+  const filterForm = form.watch(
+    `chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filters`
+  );
 
   useEffect(() => {
     if (filtersCharts.length === 0) {
-      replaceFilter([{field_id: '', id: generateID()}])
+      replaceFilter([{ field_id: "", id: generateID() }]);
     }
-  }, [])
+  }, []);
 
   const selectedTableOptions = useWatch({
     control: form.control,
     name: `chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.table_slug`,
-  })
+  });
 
   useEffect(() => {
     if (selectedTableOptions) {
@@ -73,27 +88,31 @@ const FinancialFilterModal = ({form, indexParent, item, children, viewId, option
             with_relations: true,
             offset: 0,
             limit: 10,
-          }
+          },
         })
         .then((res) => {
-          setLeft(res.data.fields.map((item) => ({
-            label: item.label,
-            value: item.id
-          })).concat(res.data.relation_fields.map((item) => ({
-            label: `${item.label} (${item.table_label})`,
-            value: item.id,
-            group: item.table_label
-          }))))
-          setResponseForGrouping(res.data)
+          setLeft(
+            res.data.fields
+              .map((item) => ({
+                label: item.label,
+                value: item.id,
+              }))
+              .concat(
+                res.data.relation_fields.map((item) => ({
+                  label: `${item.label} (${item.table_label})`,
+                  value: item.id,
+                  group: item.table_label,
+                }))
+              )
+          );
+          setResponseForGrouping(res.data);
         })
-        .catch((a) => (
-          console.log('error', a)
-        ))
+        .catch((a) => console.log("error", a));
     }
-  }, [selectedTableOptions])
+  }, [selectedTableOptions]);
 
   const {
-    data: {views, fieldsMap} = {
+    data: { views, fieldsMap } = {
       views: [],
       fieldsMap: {},
     },
@@ -102,64 +121,91 @@ const FinancialFilterModal = ({form, indexParent, item, children, viewId, option
     ["GET_VIEWS_AND_FIELDS", selectedTableOptions],
     () => {
       return constructorObjectService.getList(selectedTableOptions, {
-        data: {limit: 10, offset: 0, with_relations: true},
+        data: { limit: 10, offset: 0, with_relations: true },
       });
     },
     {
       enabled: !!selectedTableOptions,
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           views: data?.views ?? [],
           fieldsMap: listToMap(data?.fields.concat(data?.relation_fields)),
         };
       },
-      onSuccess: ({views}) => {
-
-      },
+      onSuccess: ({ views }) => {},
     }
   );
 
   const onChange = (value, name) => {
-    form.setValue(`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filters.${name}`, value)
-  }
+    form.setValue(
+      `chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filters.${name}`,
+      value === "true" ? [true] : value === "false" ? [false] : value
+    );
+  };
 
   const computedLeftOptions = useMemo(() => {
-    const groups = responseForGrouping?.relation_fields?.map(item => item.table_label).filter(function (item, pos) {
-      return responseForGrouping?.relation_fields?.map(item => item.table_label).indexOf(item) == pos;
-    })
+    const groups = responseForGrouping?.relation_fields
+      ?.map((item) => item.table_label)
+      .filter(function (item, pos) {
+        return (
+          responseForGrouping?.relation_fields
+            ?.map((item) => item.table_label)
+            .indexOf(item) == pos
+        );
+      });
 
-    const compute = groups?.map((item) => {
-      return {
-        label: item,
-        options: responseForGrouping.relation_fields.filter(option => option.table_label === item).map((option => ({
-          label: option.label,
-          value: option.id
-        })))
-      }
-    }) ?? []
+    const compute =
+      groups?.map((item) => {
+        return {
+          label: item,
+          options: responseForGrouping.relation_fields
+            .filter((option) => option.table_label === item)
+            .map((option) => ({
+              label: option.label,
+              value: option.id,
+            })),
+        };
+      }) ?? [];
 
-    const old = [{
-      label: 'Fields', options: responseForGrouping?.fields?.map(item => ({
-        label: item.label,
-        value: item.id
-      }))
-    }]
+    const old = [
+      {
+        label: "Fields",
+        options: responseForGrouping?.fields?.map((item) => ({
+          label: item.label,
+          value: item.id,
+        })),
+      },
+    ];
 
-    return [...old, ...compute]
-  })
+    return [...old, ...compute];
+  });
 
   return (
     <>
       <CTableCell>
-        {
-          !children?.length ? <div className={style.filter}>
-            <button aria-describedby={id} variant="contained" onClick={handleClick}>
-              <FilterAltIcon/>
+        {!children?.length ? (
+          <div className={style.filter}>
+            <button
+              aria-describedby={id}
+              variant="contained"
+              onClick={handleClick}
+            >
+              <FilterAltIcon />
             </button>
-            {filterForm ? Object.keys(filterForm)?.[0] === '' || Object.keys(filterForm)?.[0] === undefined ? '' :
-              <span>{Object.keys(filterForm)?.length}</span> : ''}
-          </div> : ''
-        }
+            {filterForm ? (
+              Object.keys(filterForm)?.[0] === "" ||
+              Object.keys(filterForm)?.[0] === undefined ? (
+                ""
+              ) : (
+                <span>{Object.keys(filterForm)?.length}</span>
+              )
+            ) : (
+              ""
+            )}
+          </div>
+        ) : (
+          ""
+        )}
       </CTableCell>
 
       <Popover
@@ -168,12 +214,12 @@ const FinancialFilterModal = ({form, indexParent, item, children, viewId, option
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
+          vertical: "bottom",
+          horizontal: "right",
         }}
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+          vertical: "top",
+          horizontal: "right",
         }}
       >
         <div className={style.cardFilter}>
@@ -185,19 +231,16 @@ const FinancialFilterModal = ({form, indexParent, item, children, viewId, option
           {/*</div>*/}
 
           <div className={style.body}>
-            {
-              filtersCharts.map((filterItem, filterIndex) => (
-                <div key={filterItem.id} className={style.wrapper}>
+            {filtersCharts.map((filterItem, filterIndex) => (
+              <div key={filterItem.id} className={style.wrapper}>
+                <HFSelect
+                  control={form.control}
+                  options={computedLeftOptions}
+                  optionType={"GROUP"}
+                  name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filterFields.${filterIndex}.field_id`}
+                />
 
-                  <
-                    HFSelect
-                    control={form.control}
-                    options={computedLeftOptions}
-                    optionType={'GROUP'}
-                    name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filterFields.${filterIndex}.field_id`}
-                  />
-
-                  {/*<Controller
+                {/*<Controller
                     control={form.control}
                     name={`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filterFields.${filterIndex}.field_id`}
                     render={({
@@ -238,32 +281,40 @@ const FinancialFilterModal = ({form, indexParent, item, children, viewId, option
                     )}
                   ></Controller>*/}
 
-                  <Filter
-                    field={
-                      form.watch(`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filterFields.${filterIndex}.field_id`)
-                        ? fieldsMap[form.watch(`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filterFields.${filterIndex}.field_id`)]
-                        : ""
-                    }
-                    name={`${form.watch(`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filterFields.${filterIndex}.field_id`)}`}
-                    onChange={onChange}
-                    filters={form.watch(`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filters`)}
-                    tableSlug={tableSlug}
-                  />
+                <Filter
+                  field={
+                    form.watch(
+                      `chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filterFields.${filterIndex}.field_id`
+                    )
+                      ? fieldsMap[
+                          form.watch(
+                            `chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filterFields.${filterIndex}.field_id`
+                          )
+                        ]
+                      : ""
+                  }
+                  name={`${form.watch(
+                    `chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filterFields.${filterIndex}.field_id`
+                  )}`}
+                  onChange={onChange}
+                  filters={form.watch(
+                    `chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.filters`
+                  )}
+                  tableSlug={tableSlug}
+                />
 
-                  <RectangleIconButton onClick={() => removeFilter(filterIndex)}>
-                    <ClearIcon/>
-                  </RectangleIconButton>
-                </div>
-
-              ))
-            }
+                <RectangleIconButton onClick={() => removeFilter(filterIndex)}>
+                  <ClearIcon />
+                </RectangleIconButton>
+              </div>
+            ))}
 
             <div className={style.footerButton}>
               <div
                 className={styles.button}
-                onClick={() => appendFilter({field_id: '', id: generateID()})}
+                onClick={() => appendFilter({ field_id: "", id: generateID() })}
               >
-                <Add color="primary"/>
+                <Add color="primary" />
                 <p>Добавить</p>
               </div>
             </div>

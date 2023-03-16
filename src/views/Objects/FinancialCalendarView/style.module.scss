@@ -13,7 +13,7 @@
   .monthBlock {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     height: 32px;
     border-left: none;
     margin: -1px -1px 0 0;
@@ -26,6 +26,25 @@
       flex-direction: row;
       font-size: 12px;
       font-weight: 700;
+      justify-content: flex-end;
+    }
+  }
+  .totalBlock {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 32px;
+    border-left: none;
+    margin: -1px -1px 0 0;
+    max-width: 400px;
+    min-width: 80px;
+
+    .totalText {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      font-size: 14px;
+      font-weight: 900;
       justify-content: flex-end;
     }
   }
@@ -120,18 +139,53 @@
   height: 32px;
   border-left: none;
   margin: -1px -1px 0 0;
-  min-width: 140px;
+  min-width: 80px;
   text-align: right;
   font-size: 12px;
 }
-.priceBlockChild {
+
+.percentBlock {
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
   height: 32px;
   border-left: none;
+  margin: -1px -1px 0 15px;
+  min-width: 50px;
+  text-align: right;
+  font-size: 12px;
+}
+
+.priceBlockChild {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border-left: none;
   margin: -1px -1px 0 0;
-  min-width: 140px;
+  min-width: 80px;
+  font-weight: 700;
+  font-size: 14px;
+}
+.joinedPriceBlockChild {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border-left: none;
+  margin: -1px -1px 0 0;
+  min-width: 160px;
+  font-weight: 700;
+  font-size: 14px;
+}
+.percentBlockChilde {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  height: 32px;
+  border-left: none;
+  margin: -1px -1px 0 15px;
+  min-width: 50px;
   font-weight: 700;
   font-size: 14px;
 }

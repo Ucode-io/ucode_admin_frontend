@@ -5,12 +5,14 @@ import { Dialog } from "@mui/material";
 import ExcelUploadModal from "./ExcelUploadModal";
 import { makeStyles } from "@mui/styles";
 import style from "./style.module.scss";
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles({
   root: {},
 });
 
 const ExcelUploadButton = ({ fieldsMap, withText }) => {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false);
   const handleClick = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -22,7 +24,7 @@ const ExcelUploadButton = ({ fieldsMap, withText }) => {
           {withText ? "Импорт" : null}
           <Upload />
         </RectangleIconButton>
-        <span>Excel upload</span>
+        <span>{t('excel.upload')}</span>
       </div>
 
       <Dialog className={classes.root} open={open} onClose={handleClose}>

@@ -10,14 +10,16 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
-// import { auth, mess, getToken } from "../../../firebase/config";
 import authService from "../../../services/auth/authService";
 import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
+import connectionServiceV2 from "../../../services/auth/connectionService";
 import environmentService from "../../../services/environmentService";
 import { loginAction } from "../../../store/auth/auth.thunk";
 import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import { firebaseCloudMessaging } from "../../../firebase/config";
+import DynamicFields from "./DynamicFields";
+
 const LoginForm = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -31,10 +33,11 @@ const LoginForm = () => {
   };
 
   const [formType, setFormType] = useState("LOGIN");
-  const { control, handleSubmit, watch } = useForm();
+  const { control, handleSubmit, watch, setValue } = useForm();
 
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
+  const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
 
   const computedCompanies = useMemo(() => {
@@ -42,7 +45,7 @@ const LoginForm = () => {
   }, [companies]);
 
   const computedProjects = useMemo(() => {
-    const company = companies.find(
+    const company = companies?.find(
       (company) => company.id === selectedCompanyID
     );
     return listToOptions(company?.projects, "name");
@@ -85,13 +88,29 @@ const LoginForm = () => {
     }
   );
 
+  const { data: computedConnections = [] } = useQuery(
+    [
+      "GET_CONNECTION_LIST",
+      { project_id: selectedProjectID },
+      { "environment-id": selectedEnvID },
+    ],
+    () => {
+      return connectionServiceV2.getList(
+        { project_id: selectedProjectID, client_type_id: selectedClientTypeID },
+        { "environment-id": selectedEnvID }
+      );
+    },
+    {
+      enabled: !!selectedClientTypeID,
+      select: (res) => res.data.response ?? [],
+    }
+  );
   const multiCompanyLogin = (data) => {
     setLoading(true);
 
     authService
       .multiCompanyLogin(data)
       .then((res) => {
-        console.log("dfsfsdf");
         setLoading(false);
         setClientTypes(res.client_types);
         setCompanies(res.companies);
@@ -104,10 +123,7 @@ const LoginForm = () => {
   const onSubmit = (values) => {
     setLoading(true);
     if (formType === "LOGIN") multiCompanyLogin(values);
-    else
-      dispatch(loginAction(values)).then(() => {
-        setLoading(false);
-      });
+    else dispatch(loginAction(values)).then(() => setLoading(false));
   };
 
   return (
@@ -217,6 +233,19 @@ const LoginForm = () => {
                   options={computedClientTypes}
                 />
               </div>
+              {computedConnections.length
+                ? computedConnections?.map((connection, idx) => (
+                    <DynamicFields
+                      key={connection?.guid}
+                      table={computedConnections}
+                      connection={connection}
+                      index={idx}
+                      control={control}
+                      setValue={setValue}
+                      watch={watch}
+                    />
+                  ))
+                : null}
             </div>
           </div>
         )}

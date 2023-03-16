@@ -2,6 +2,7 @@ import {
   Autocomplete,
   FormControl,
   FormHelperText,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -9,13 +10,14 @@ import {
 } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import { useEffect } from "react";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { useQuery, useQueryClient } from "react-query";
+import { useLocation, useParams } from "react-router-dom";
 import FRow from "../../../../components/FormElements/FRow";
 import useDebounce from "../../../../hooks/useDebounce";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../services/constructorRelationService";
 import styles from "./style.module.scss";
+import ClearIcon from "@mui/icons-material/Clear";
 
 function LinkedListTables({
   selectedOutputTable,
@@ -26,22 +28,30 @@ function LinkedListTables({
   selectedTemplate,
   selectedLinkedObject,
   setSelectedLinkedObject,
+  setSelectedObject,
+  selectedObject,
 }) {
   const { tableSlug } = useParams();
+  const { state } = useLocation();
+
   const outputTableSlug = selectedOutputTable?.split("#")?.[1];
   const subttitleFieldSlug = selectedOutputTable?.split("#")?.[2];
   const [debouncedValue, setDebouncedValue] = useState("");
+  const [debouncedObjectValue, setdebouncedObjectValue] = useState("");
   const [inputValue, setInputValue] = useState("");
-
-  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+  const [objectValue, setObjectValue] = useState("");
 
   const getSelectTedTemplate = templates.find((item) => {
     return item?.guid === selectedTemplate?.guid;
   });
 
-  // =============GET RELATION TABLE SLUG==============//
-  const { data: computedValue = [] } = useQuery(
-    ["GET_RELATION_OBJECT_LIST", tableSlug],
+  const selectTableSlug = selectedLinkedObject
+    ? selectedLinkedObject?.split("#")?.[1]
+    : tableSlug;
+
+  // ==========GET RELATION TABLE SLUG========
+  const { data: computedRelationValue = [] } = useQuery(
+    ["GET_RELATION_OBJECT_LIST", tableSlug, getSelectTedTemplate],
     () => {
       return constructorRelationService.getList({
         table_slug: "file",
@@ -59,14 +69,141 @@ function LinkedListTables({
             item?.table_to?.subtitle_field_slug ?? ""
           }`,
         }));
-
-        return computedValue;
+        const result =
+          computedValue &&
+          computedValue?.find((item) => {
+            return (
+              item?.value.split("#")?.[1] ===
+              getSelectTedTemplate?.output_object
+            );
+          });
+        return {
+          computedValue,
+          result,
+        };
+      },
+      onSuccess: ({ result }) => {
+        setSelectedOutputTable(result?.value ?? "");
       },
     }
   );
 
+  // ==========GET LINKED OBJECT LIST=========
+  const { data: computedRelations = [] } = useQuery(
+    ["GET_RELATION_OBJECTS", tableSlug, getSelectTedTemplate],
+    () => {
+      return constructorRelationService.getList({
+        table_slug: tableSlug,
+        relation_table_slug: tableSlug,
+      });
+    },
+    {
+      select: (res) => {
+        const relations = res?.relations;
+        const defaultValue = res?.relations?.find((item) => {
+          return item?.table_to?.slug === tableSlug;
+        });
+
+        const computedRelations = res?.relations
+          .filter((item) => {
+            return item?.table_to?.slug === tableSlug;
+          })
+          .map((el) => ({
+            label: el?.table_from?.label,
+            value: `${el?.table_from?.id}#${el?.table_from?.slug}`,
+          }));
+
+        const arr = [
+          ...computedRelations,
+          {
+            label: defaultValue?.table_to?.label,
+            value: `${defaultValue?.table_to?.id}#${defaultValue?.table_to?.slug}`,
+          },
+        ];
+
+        const linkedDefault = arr?.find((item) => {
+          return item?.value?.split("#")?.[1] === tableSlug;
+        });
+        const result = computedRelations?.find((item) => {
+          return (
+            item?.value?.split("#")?.[1] === getSelectTedTemplate?.linked_object
+          );
+        });
+
+        return {
+          arr,
+          relations,
+          result,
+          linkedDefault,
+        };
+      },
+      onSuccess: ({ result, linkedDefault }) => {
+        setSelectedLinkedObject(linkedDefault?.value ?? result?.value);
+      },
+    }
+  );
+
+  // =====COMPUTE SUBTITLE FIELD SLUG FOR LINKED OBJECT ==========
+  const getSubtitleFieldSlug = useMemo(() => {
+    const getObject = computedRelations.relations?.find((item) => {
+      return (
+        item?.table_from?.slug === selectTableSlug ||
+        item?.table_to?.slug === selectTableSlug
+      );
+    });
+
+    if (getObject?.table_from?.slug === selectTableSlug) {
+      return getObject?.table_from?.subtitle_field_slug;
+    } else if (getObject?.table_to?.slug === selectTableSlug) {
+      return getObject?.table_to?.subtitle_field_slug;
+    }
+  }, [selectTableSlug, computedRelations?.relations]);
+
+  // ========LINKED OBJECT LIST TABLE VIEW===========
+  const { data: computedLinkedObjects = [] } = useQuery(
+    ["GET_OBJECT_LIST_TABLE", selectTableSlug, state, debouncedObjectValue],
+    () => {
+      // if (state === undefined) return null;
+      return constructorObjectService.getList(selectTableSlug, {
+        data: {
+          view_fields: [getSubtitleFieldSlug],
+          search: debouncedObjectValue.trim(),
+          additional_request: {
+            additional_field: ["guid"],
+            additional_values: [state?.objectId],
+          },
+          limit: 10,
+          offset: 0,
+        },
+      });
+    },
+    {
+      select: (res) => {
+        const linkedObject = res?.data?.response;
+        const computeFilter = res?.data?.response.map((item) => ({
+          label: item?.[getSubtitleFieldSlug] ?? "",
+          value: item?.guid,
+        }));
+
+        const defaultValue = computeFilter?.find((item) => {
+          return state ? item?.value === state?.objectId : "";
+        });
+
+        return {
+          computeFilter,
+          defaultValue,
+          linkedObject,
+        };
+      },
+      onSuccess: ({ defaultValue }) => {
+        setSelectedObject(defaultValue ? defaultValue : selectedObject);
+      },
+    }
+  );
+
+  // =========GET OUTPUT OBJECT LIST==========
   const { data: computedObject = [] } = useQuery(
-    ["GET_OBJECT_LIST", outputTableSlug, computedValue, debouncedValue],
+    ["GET_OBJECT_LIST", outputTableSlug, computedLinkedObjects, debouncedValue],
     () => {
       if (outputTableSlug === undefined) return null;
       return constructorObjectService.getList(outputTableSlug, {
@@ -78,9 +215,7 @@ function LinkedListTables({
         },
       });
     },
-
     {
-      enabled: !!selectedOutputTable,
       select: (res) => {
         const computedObject = res?.data?.response.map((item) => ({
           label: item?.[selectedOutputTable?.split("#")?.[2]]
@@ -88,88 +223,89 @@ function LinkedListTables({
             : item?.name,
           value: `${item?.guid}#${res?.table_slug}`,
         }));
-        console.log("computedObject", computedObject);
-        return computedObject;
-      },
-    }
-  );
 
-  // ==============GET LINKED OBJECT LIST==============//
-  const { data: computedRelations = [] } = useQuery(
-    ["GET_RELATION_OBJECTS", tableSlug, getSelectTedTemplate],
-    () => {
-      return constructorRelationService.getList({
-        table_slug: tableSlug,
-        relation_table_slug: tableSlug,
-      });
-    },
-    {
-      select: (res) => {
-        const computedRelations = res?.relations
-          .filter((item) => {
-            return item?.table_to?.slug === tableSlug;
-          })
-          .map((el) => ({
-            label: el?.table_from?.label,
-            value: `${el?.table_from?.id}#${el?.table_from?.slug}`,
-          }));
+        const val =
+          computedLinkedObjects?.linkedObject?.[0]?.[
+            `${selectedOutputTable?.split("#")?.[1]}_id_data`
+          ];
+        const arr = [
+          ...computedObject,
+          { label: val?.[subttitleFieldSlug] ?? "", value: val?.guid ?? "" },
+        ];
 
-        const result = computedRelations?.find((item) => {
-          return (
-            item?.value?.split("#")?.[1] === getSelectTedTemplate?.linked_object
-          );
+        const defaultValue = arr?.find((item) => {
+          return item?.value === val?.guid;
         });
-        console.log("result", result);
 
         return {
-          computedRelations,
-          result,
+          computedObject,
+          arr,
+          defaultValue,
         };
       },
-      onSuccess: ({ result }) => {
-        setSelectedLinkedObject(result?.value ?? "");
+      onSuccess: ({ defaultValue }) => {
+        setSelectedOutputObject(defaultValue ?? selectedOutputObject);
       },
     }
   );
-  //===========OUTPUT TABLE VALUE================//
-  const getComputedObjectVal = useMemo(() => {
-    const val =
-      computedValue &&
-      computedValue?.find((item) => {
-        return (
-          item?.value.split("#")?.[1] === getSelectTedTemplate?.output_object
-        );
-      });
 
-    return val?.value;
-  }, [computedValue, getSelectTedTemplate]);
-
+  // ==========LINKED TABLE===========
   const handleTableChange = (event) => {
     setSelectedLinkedObject(event.target.value);
   };
 
+  // ==========OUTPUT TABLE==========
   const handleChange = (event) => {
     setSelectedOutputTable(event.target.value);
   };
+
+  // =========OUTPUT OBJECT==========
   const handleChangeObject = (event) => {
     setSelectedOutputObject(event);
   };
 
+  // =======LINKED OBJECT=============
+  const handleLinkedObject = (event) => {
+    setSelectedObject(event);
+  };
+
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+  const inputObjectHandler = useDebounce(
+    (val) => setdebouncedObjectValue(val),
+    1000
+  );
+
+  const setDefaultValue = () => {
+    computedLinkedObjects?.defaultValue &&
+      setSelectedObject(
+        computedLinkedObjects?.defaultValue
+          ? computedLinkedObjects?.defaultValue
+          : selectedObject
+      );
+  };
+
   useEffect(() => {
-    setSelectedOutputTable(getComputedObjectVal);
-  }, [getComputedObjectVal]);
-  console.log("computedObject", computedObject);
+    setDefaultValue();
+  }, [computedLinkedObjects?.defaultValue]);
+
   return (
     <div className={styles.docListTables}>
       <FRow label={"Linked Table"}>
         <Select
           fullWidth
           id="demo-simple-select"
-          value={selectedLinkedObject}
+          value={selectedLinkedObject ?? ""}
           onChange={handleTableChange}
           size="small"
+          endAdornment={
+            selectedLinkedObject && (
+              <IconButton onClick={() => setSelectedLinkedObject(null)}>
+                <ClearIcon />
+              </IconButton>
+            )
+          }
         >
-          {computedRelations?.computedRelations?.map((item) => (
+          {computedRelations?.arr?.map((item) => (
             <MenuItem value={item?.value}>{item?.label}</MenuItem>
           ))}
         </Select>
@@ -182,7 +318,7 @@ function LinkedListTables({
           onChange={handleChange}
           size="small"
         >
-          {computedValue?.map((item) => (
+          {computedRelationValue?.computedValue?.map((item) => (
             <MenuItem value={item?.value}>{item?.label}</MenuItem>
           ))}
         </Select>
@@ -193,13 +329,14 @@ function LinkedListTables({
             <InputLabel id="demo-simple-select-label"></InputLabel>
             <Autocomplete
               inputValue={inputValue}
-              options={computedObject ?? []}
-              value={selectedOutputObject}
+              options={computedObject?.arr ?? []}
+              value={selectedOutputObject ?? ""}
+              getOptionLabel={(option) => option.label ?? ""}
               renderInput={(params) => <TextField {...params} size="small" />}
               onChange={(event, newValue) => {
                 handleChangeObject(newValue);
               }}
-              onInputChange={(event, newInputValue) => {
+              onInputChange={(_, newInputValue) => {
                 setInputValue(newInputValue);
                 inputChangeHandler(newInputValue);
               }}
@@ -209,6 +346,38 @@ function LinkedListTables({
       ) : (
         ""
       )}
+
+      <FRow label={"Linked Object"}>
+        <FormControl fullWidth>
+          <Autocomplete
+            id="attributes"
+            options={computedLinkedObjects?.computeFilter ?? []}
+            value={selectedObject ?? ""}
+            inputValue={objectValue}
+            freeSolo
+            onChange={(e, values) => {
+              handleLinkedObject(values);
+            }}
+            getOptionLabel={(option) => option.label ?? ""}
+            disablePortal
+            blurOnSelect
+            openOnFocus
+            onInputChange={(event, newInputValue, reason) => {
+              setObjectValue(newInputValue);
+              inputObjectHandler(newInputValue);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size="small"
+                InputProps={{
+                  ...params.InputProps,
+                }}
+              />
+            )}
+          ></Autocomplete>
+        </FormControl>
+      </FRow>
     </div>
   );
 }

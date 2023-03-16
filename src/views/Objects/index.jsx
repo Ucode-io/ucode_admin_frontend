@@ -21,7 +21,7 @@ const ObjectsPage = () => {
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
 
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [selectedTabIndex, setSelectedTabIndex] = useState(1);
 
   const {
     data: { views, fieldsMap } = {

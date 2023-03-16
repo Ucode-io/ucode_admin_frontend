@@ -27,6 +27,9 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
 import style from "./style.module.scss";
 import { Description } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
+import { useTranslation } from "react-i18next";
 
 const CalendarHourView = ({
   view,
@@ -34,8 +37,10 @@ const CalendarHourView = ({
   setSelectedTabIndex,
   views,
 }) => {
+  const { t } = useTranslation()
   const { tableSlug } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
+  const isPermissions = useSelector((state) => state?.auth?.permissions);
 
   const [dateFilters, setDateFilters] = useState([
     startOfMonth(new Date()),
@@ -171,9 +176,11 @@ const CalendarHourView = ({
                       style={{ color: "#6E8BB7" }}
                     />
                   </div>
-                  <span>Template</span>
+                  <span>{ t('template') }</span>
                 </div>
-                <SettingsButton />
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                  <SettingsButton />
+                </PermissionWrapperV2>
               </div>
             </Menu>
           </>
@@ -207,7 +214,7 @@ const CalendarHourView = ({
       ) : (
         <div className={styles.wrapper}>
           <div className={styles.filters}>
-            <p>Фильтры</p>
+            <p>{t('filters')}</p>
             <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
           </div>
           <CalendarHour

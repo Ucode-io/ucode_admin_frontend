@@ -33,6 +33,7 @@ import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import { endOfMonth, startOfMonth } from "date-fns";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
+import { useTranslation } from "react-i18next";
 
 const ViewsWithGroups = ({
   views,
@@ -41,13 +42,18 @@ const ViewsWithGroups = ({
   view,
   fieldsMap,
 }) => {
+  const { t } = useTranslation()
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
   const { filters } = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [shouldGet, setShouldGet] = useState(false);
   const [heightControl, setHeightControl] = useState(false);
-  const [financeDate, setFinanceDate] = useState([]);
+  const [analyticsRes, setAnalyticsRes] = useState(null)
+  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false)
+  const [res, setRes] = [{
+    balance: []
+  }]
   const { navigateToForm } = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
@@ -154,6 +160,7 @@ const ViewsWithGroups = ({
 
   useEffect(() => {
     if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
+      setIsFinancialCalendarLoading(true)
       constructorObjectService
         .getFinancialAnalytics(tableSlug, {
           data: {
@@ -163,10 +170,11 @@ const ViewsWithGroups = ({
           },
         })
         .then((res) => {
-          setFinanceDate(res?.data?.response);
-        });
+          setAnalyticsRes(res.data)
+        }).finally(() => setIsFinancialCalendarLoading(false));
     }
   }, [dateFilters, tableSlug]);
+
 
   return (
     <>
@@ -264,9 +272,11 @@ const ViewsWithGroups = ({
                       style={{ color: "#6E8BB7" }}
                     />
                   </div>
-                  <span>Template</span>
+                  <span>{ t('template') }</span>
                 </div>
-                <SettingsButton />
+                <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+                  <SettingsButton />
+                </PermissionWrapperV2>
               </div>
             </Menu>
           </>
@@ -305,7 +315,6 @@ const ViewsWithGroups = ({
                 >
                   <AddIcon style={{ color: "#007AFF" }} />
                 </RectangleIconButton>
-
                 {formVisible ? (
                   <>
                     <RectangleIconButton
@@ -333,17 +342,19 @@ const ViewsWithGroups = ({
                     </RectangleIconButton>
                   </>
                 ) : (
-                  <RectangleIconButton
-                    color="success"
-                    className=""
-                    size="small"
-                    onClick={() => {
-                      setFormVisible(true);
-                      // reset()
-                    }}
-                  >
-                    <Edit color="primary" />
-                  </RectangleIconButton>
+                  <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                    <RectangleIconButton
+                      color="success"
+                      className=""
+                      size="small"
+                      onClick={() => {
+                        setFormVisible(true);
+                        // reset()
+                      }}
+                    >
+                      <Edit color="primary" />
+                    </RectangleIconButton>
+                  </PermissionWrapperV2>
                 )}
                 <MultipleInsertButton
                   view={view}
@@ -358,7 +369,6 @@ const ViewsWithGroups = ({
               </PermissionWrapperV2>
             </div>
           </div>
-
           {/* <>
             {view.type === "TREE" ? (
               <TreeView
@@ -373,7 +383,6 @@ const ViewsWithGroups = ({
               />
             )}
           </> */}
-
           {loader ? (
             <div className={style.loader}>
               <CircularProgress />
@@ -396,7 +405,10 @@ const ViewsWithGroups = ({
                       filters={filters}
                       fieldsMap={fieldsMap}
                       tab={tab}
-                      financeDate={financeDate}
+                      isLoading={isFinancialCalendarLoading}
+                      financeDate={analyticsRes?.response || []}
+                      financeTotal={analyticsRes?.total_amount || []}
+                      totalBalance={analyticsRes?.balance}
                     />
                   ) : (
                     <TableView
@@ -429,7 +441,10 @@ const ViewsWithGroups = ({
                       view={view}
                       filters={filters}
                       fieldsMap={fieldsMap}
-                      financeDate={financeDate}
+                      isLoading={isFinancialCalendarLoading}
+                      financeDate={analyticsRes?.response || []}
+                      financeTotal={analyticsRes?.total_amount || []}
+                      totalBalance={analyticsRes?.balance || []}
                     />
                   ) : (
                     <TableView

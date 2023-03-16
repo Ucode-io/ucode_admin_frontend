@@ -2,6 +2,7 @@ import { Divider } from "@mui/material";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 import FRow from "../../../components/FormElements/FRow";
 import HFMultipleSelect from "../../../components/FormElements/HFMultipleSelect";
 import HFSelect from "../../../components/FormElements/HFSelect";
@@ -47,6 +48,7 @@ const ViewCreateModal = ({
 
   const type = watch("type");
   const selectedDisableDatesTableSlug = watch("disable_dates.table_slug");
+  const projectId = useSelector(state => state.auth.projectId)
 
   const computedViewTypes = useMemo(() => {
     return arrayToOptions(viewTypes);
@@ -74,7 +76,7 @@ const ViewCreateModal = ({
   const { data: tablesList = [] } = useQuery(
     ["GET_TABLES_LIST"],
     () => {
-      return constructorTableService.getList();
+      return constructorTableService.getList(projectId);
     },
     {
       select: (data) => listToOptions(data?.tables, "label", "slug"),

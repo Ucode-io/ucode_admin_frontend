@@ -32,38 +32,43 @@ const HFNumberField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <TextField
-          size="small"
-          value={numberWithSpaces(Number(value))}
-          onChange={(e) => {
-            const val = e.target.value;
-            const valueWithoutSpaces = val.replaceAll(' ', '')
-
-            if (!valueWithoutSpaces) onChange('');
-            else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '');
-          }}
-          className={`${isFormEdit ? "custom_textfield" : ""}`}
-          name={name}
-          error={error}
-          fullWidth={fullWidth}
-          helperText={!disabledHelperText && error?.message}
-          autoFocus={tabIndex === 1}
-          InputProps={{
-            inputProps: { tabIndex },
-            readOnly: disabled,
-            style: disabled
-              ? {
-                  background: "#c0c0c039",
-                }
-              : {
-                  background: isBlackBg ? "#2A2D34" : "",
-                  color: isBlackBg ? "#fff" : "",
-                },
-          }}
-          {...props}
-        />
-      )}
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        
+        return (
+          <TextField
+            size="small"
+            value={numberWithSpaces(value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              const valueWithoutSpaces = val.replaceAll(' ', '')
+              
+              if (!valueWithoutSpaces) onChange('');
+              else {
+                if(valueWithoutSpaces.at(-1) === '.') onChange(valueWithoutSpaces)
+                else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '');}
+            }}
+            className={`${isFormEdit ? "custom_textfield" : ""}`}
+            name={name}
+            error={error}
+            fullWidth={fullWidth}
+            helperText={!disabledHelperText && error?.message}
+            autoFocus={tabIndex === 1}
+            InputProps={{
+              inputProps: { tabIndex },
+              readOnly: disabled,
+              style: disabled
+                ? {
+                    background: "#c0c0c039",
+                  }
+                : {
+                    background: isBlackBg ? "#2A2D34" : "",
+                    color: isBlackBg ? "#fff" : "",
+                  },
+            }}
+            {...props}
+          />
+        )
+      }}
     ></Controller>
   );
 };

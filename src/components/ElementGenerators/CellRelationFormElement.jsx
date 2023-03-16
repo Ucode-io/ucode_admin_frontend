@@ -12,6 +12,8 @@ import styles from "./style.module.scss";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useLocation } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
+import CascadingElement from "./CascadingElement";
+import RelationGroupCascading from "./RelationGroupCascading";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -45,7 +47,35 @@ const CellRelationFormElement = ({
         name={name}
         defaultValue={defaultValue}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
-          return (
+          return field?.attributes?.cascading_tree_table_slug ? (
+            <RelationGroupCascading
+              field={field}
+              tableSlug={field.table_slug}
+              error={error}
+              disabledHelperText={disabledHelperText}
+              value={value ?? ""}
+              setFormValue={setFormValue}
+              classes={classes}
+              name={name}
+              control={control}
+              index={index}
+              setValue={onChange}
+            />
+          ) : field?.attributes?.cascadings?.length > 1 ? (
+            <CascadingElement
+              field={field}
+              tableSlug={field.table_slug}
+              error={error}
+              disabledHelperText={disabledHelperText}
+              value={value ?? ""}
+              setFormValue={setFormValue}
+              classes={classes}
+              name={name}
+              control={control}
+              index={index}
+              setValue={onChange}
+            />
+          ) : (
             <AutoCompleteElement
               disabled={disabled}
               isFormEdit={isFormEdit}
@@ -125,7 +155,7 @@ const AutoCompleteElement = ({
         return item[field?.slug];
       })
       .map((item) => {
-        return val.push(item[field?.slug]);
+        return !val.includes(item[field?.slug]) && val.push(item[field?.slug]);
       });
     return val;
   }, [relationfields, field]);
@@ -148,15 +178,21 @@ const AutoCompleteElement = ({
     },
     {
       select: (res) => {
-        return res?.data?.response ?? [];
+        return res?.data?.response ?? []
       },
     }
   );
-
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
+  
+  // const computedOptions = useMemo(() => {
+  //   let uniqueObjArray = [
+  //     ...new Map(options.map((item) => [item["title"], item])).values(),
+  // ]
+  // return uniqueObjArray  
+  // }, [options])
 
   const changeHandler = (value) => {
     const val = value?.[value?.length - 1];
@@ -164,14 +200,14 @@ const AutoCompleteElement = ({
     setValue(val?.guid ?? null);
     setInputValue("");
 
-    // if (!field?.attributes?.autofill) return;
+    if (!field?.attributes?.autofill) return;
 
-    // field.attributes.autofill.forEach(({ field_from, field_to }) => {
-    //   const setName = name.split(".");
-    //   setName.pop();
-    //   setName.push(field_to);
-    //   setFormValue(setName.join("."), get(val, field_from));
-    // });
+    field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      const setName = name.split(".");
+      setName.pop();
+      setName.push(field_to);
+      setFormValue(setName.join("."), get(val, field_from));
+    });
   };
 
   useEffect(() => {

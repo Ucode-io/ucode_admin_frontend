@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -12,28 +12,13 @@ const FastFilter = ({
   fieldsMap,
   isVertical = false,
   getFilteredFilterFields,
-  selectedLinkedObject,
 }) => {
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const dispatch = useDispatch();
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const [searchParams] = useSearchParams();
-  const defaultSpecialities = [searchParams.get("specialities")];
-  const defaultCategory = [searchParams.get("category")];
-
-  useEffect(() => {
-    if (
-      !defaultCategory.includes(null) &&
-      !defaultSpecialities.includes(null)
-    ) {
-      filterChangeHandler(defaultCategory, "categories_id");
-      filterChangeHandler(
-        defaultSpecialities,
-        "doctors_id_data.specialities_ids"
-      );
-    }
-  }, []);
+  const defaultSpecialities = searchParams.get("specialities") ? [searchParams.get("specialities")] : undefined;
 
   const computedFields = useMemo(() => {
     return (
@@ -51,7 +36,6 @@ const FastFilter = ({
         ?.filter((el) => el) ?? []
     );
   }, [view?.quick_filters, fieldsMap, new_list, tableSlug]);
-
   const onChange = (value, name) => {
     dispatch(
       filterActions.setFilter({
@@ -62,6 +46,15 @@ const FastFilter = ({
       })
     );
   };
+
+  useEffect(() => {
+    if (!defaultSpecialities?.includes(null) || !defaultSpecialities?.includes('')) {
+      filterChangeHandler(
+        defaultSpecialities,
+        "doctors_id_data.specialities_ids"
+      );
+    }
+  }, []);
 
   return (
     <div

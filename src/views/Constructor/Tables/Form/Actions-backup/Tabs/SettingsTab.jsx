@@ -12,6 +12,7 @@ import HFSelect from "../../../../../../components/FormElements/HFSelect";
 import eventsService from "../../../../../../services/eventsService";
 import constructorTableService from "../../../../../../services/constructorTableService";
 import eventService from "../../../../../../services/eventsService";
+import { useSelector } from "react-redux";
 
 const SettingsTab = ({
   eventLabel,
@@ -20,6 +21,7 @@ const SettingsTab = ({
   eventsRefetch,
 }) => {
   const { slug: table_slug } = useParams();
+  const projectId = useSelector(state => state.auth.projectId)
 
   const emptyFields = {
     left_field: "",
@@ -48,7 +50,7 @@ const SettingsTab = ({
 
   const { data: tables } = useQuery(
     ["GET_TABLE_LIST"],
-    () => constructorTableService.getList(),
+    () => constructorTableService.getList(projectId),
     {
       select: (data) => {
         return data?.tables?.map((i) => ({

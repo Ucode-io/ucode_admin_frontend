@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import FormElementGenerator from "../../../../components/ElementGenerators/FormElementGenerator";
 import ManyToManyRelationFormElement from "../../../../components/ElementGenerators/ManyToManyRelationFormElement";
@@ -18,7 +18,7 @@ import styles from "./style.module.scss";
 const Form = ({ view = {}, onClose, tableSlug }) => {
   const [btnLoader, setBtnLoader] = useState(false);
   const queryClient = useQueryClient();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { handleSubmit, control } = useForm({
     defaultValues: {},
   });
@@ -90,7 +90,6 @@ const Form = ({ view = {}, onClose, tableSlug }) => {
       setBtnLoader(false);
     }
   };
-
 
   return (
     <>

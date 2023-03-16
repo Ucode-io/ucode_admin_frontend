@@ -34,6 +34,7 @@ requestAuth.interceptors.request.use(
     const token = authStore.token
     const environmentId = authStore.environmentId
     const resourceId = authStore.resourceId
+
     
     if(token) {
       config.headers.Authorization = `Bearer ${token}`

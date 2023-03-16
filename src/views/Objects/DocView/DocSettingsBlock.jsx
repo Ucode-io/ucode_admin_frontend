@@ -19,9 +19,10 @@ const DocSettingsBlock = ({
   selectedLinkedObject,
   setSelectedLinkedObject,
   relationViewIsActive,
-  linkedObjectView,
+  setlLinkedObjectView,
   setSelectedObject,
   selectedObject,
+  isChecked,
 }) => {
   return (
     <div className={styles.docSettingsBlock}>
@@ -46,9 +47,10 @@ const DocSettingsBlock = ({
           selectedLinkedObject={selectedLinkedObject}
           setSelectedLinkedObject={setSelectedLinkedObject}
           relationViewIsActive={relationViewIsActive}
-          linkedObjectView={linkedObjectView}
+          setlLinkedObjectView={setlLinkedObjectView}
           setSelectedObject={setSelectedObject}
           selectedObject={selectedObject}
+          isChecked={isChecked}
         />
       )}
     </div>

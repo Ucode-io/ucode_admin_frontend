@@ -20,15 +20,11 @@ messaging.onBackgroundMessage((payload) => {
     "[firebase-messaging-sw.js] Received background message ",
     payload
   );
-  const notificationTitle = payload.notification.title;
+  const notificationTitle =
+    payload?.notification?.title || payload?.data?.title;
   const notificationOptions = {
-    body: payload.notification.body,
-    title: payload.notification.title,
-    //icon: './favicon.ico',
-    // image: payload.notification.image,
-    // data: { url: e.data.order_id },
-    // click_action: `https://app.delever.uz/orders/edit/${e.data.order_id}?status_id=986a0d09-7b4d-4ca9-8567-aa1c6d770505`,
-    // actions: [{action: "open_url", title: "Read Now"}]
+    body: payload?.notification?.body || payload?.data?.body,
+    title: payload?.notification?.title || payload?.data?.title,
   };
   return self.registration.showNotification(
     notificationTitle,

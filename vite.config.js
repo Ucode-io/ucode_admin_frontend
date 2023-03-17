@@ -41,11 +41,11 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
-    rollupOptions: {
-      input: {
-        "firebase-messaging-sw": "public/firebase-messaging-sw.js",
-      },
-    },
+    // rollupOptions: {
+    //   input: {
+    //     "firebase-messaging-sw": "public/firebase-messaging-sw.js",
+    //   },
+    // },
   },
   server: {
     port: 7777,

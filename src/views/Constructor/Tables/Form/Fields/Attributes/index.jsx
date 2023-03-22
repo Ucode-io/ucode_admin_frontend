@@ -6,11 +6,11 @@ import FormulaAttributes from "./FormulaAttributes";
 import FrontendFormulaAttributes from "./FrontendFormulaAttributes";
 import IncrementIDAttributes from "./IncrementIDAttributes";
 import IncrementNumberAttributes from "./IncrementNumberAttributes";
+import InventoryBarcodeAttributes from "./InventoryBarcodeAttributes";
 import MultiLineAttributes from "./MultiLineAttributes";
 import NumberAttributes from "./NumberAttributes";
 import PickListAttributes from "./PickListAttributes";
 import SingleLineAttributes from "./SingleLineAttributes";
-
 
 const Attributes = ({ control, watch, mainForm }) => {
   const fieldType = watch("type");
@@ -18,6 +18,9 @@ const Attributes = ({ control, watch, mainForm }) => {
   if (!fieldType) return null;
 
   switch (fieldType) {
+    case "SCAN_BARCODE":
+      return <InventoryBarcodeAttributes control={control} />;
+
     case "SINGLE_LINE":
       return <SingleLineAttributes control={control} />;
 
@@ -51,7 +54,7 @@ const Attributes = ({ control, watch, mainForm }) => {
 
     case "INCREMENT_NUMBER":
       return <IncrementNumberAttributes control={control} />;
-    
+
     case "CODABAR":
       return <CodabarIncrements control={control} />;
 

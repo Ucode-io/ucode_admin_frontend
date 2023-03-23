@@ -1,6 +1,7 @@
-import { TextField } from "@mui/material";
+
 import { Controller, useWatch } from "react-hook-form";
-import {numberWithSpaces} from "@/utils/formatNumbers";
+import { NumericFormat } from 'react-number-format';
+import styles from './style.module.scss'
 
 const HFNumberField = ({
   control,
@@ -35,38 +36,31 @@ const HFNumberField = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         
         return (
-          <TextField
-            size="small"
-            value={numberWithSpaces(value)}
-            onChange={(e) => {
-              const val = e.target.value;
-              const valueWithoutSpaces = val.replaceAll(' ', '')
-              
-              if (!valueWithoutSpaces) onChange('');
-              else {
-                if(valueWithoutSpaces.at(-1) === '.') onChange(valueWithoutSpaces)
-                else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '');}
-            }}
-            className={`${isFormEdit ? "custom_textfield" : ""}`}
-            name={name}
-            error={error}
+          <NumericFormat
+            thousandsGroupStyle="thousand"
+            thousandSeparator=" "
+            decimalSeparator="."
+            displayType="input"
+            isNumericString={true}
+            autoComplete="off"
+            allowNegative
             fullWidth={fullWidth}
-            helperText={!disabledHelperText && error?.message}
-            autoFocus={tabIndex === 1}
-            InputProps={{
-              inputProps: { tabIndex },
-              readOnly: disabled,
-              style: disabled
-                ? {
-                    background: "#c0c0c039",
-                  }
-                : {
-                    background: isBlackBg ? "#2A2D34" : "",
-                    color: isBlackBg ? "#fff" : "",
-                  },
-            }}
+            value={value}
+            onChange={(e) => {
+                  const val = e.target.value;
+                  const valueWithoutSpaces = val.replaceAll(' ', '')
+                  
+                  if (!valueWithoutSpaces) onChange('');
+                  else {
+                    if(valueWithoutSpaces.at(-1) === '.') onChange(valueWithoutSpaces)
+                    else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '');}
+                }}
+                className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
+            name={name}
+            readOnly={disabled}
+            style={disabled ? { background: "#c0c0c039" } : { background: isBlackBg ? "#2A2D34" : "", color: isBlackBg ? "#fff" : "" }}
             {...props}
-          />
+            />
         )
       }}
     ></Controller>

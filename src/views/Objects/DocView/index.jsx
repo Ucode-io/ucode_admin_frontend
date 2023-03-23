@@ -227,7 +227,6 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
         },
         html: meta + html,
       });
-
       setSelectedTemplate((prev) => ({
         ...prev,
         html: res.html.replaceAll("<p></p>", ""),
@@ -244,7 +243,6 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
     
     if (!selectedTemplate) return;
     setPdfLoader(true);
-    console.log('ssssssss');
     try {
       let html = redactorRef.current.getData();
 

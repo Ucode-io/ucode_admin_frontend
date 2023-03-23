@@ -1,6 +1,6 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
 import { InputAdornment } from "@mui/material";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -17,6 +17,7 @@ import environmentService from "../../../services/environmentService";
 import { loginAction } from "../../../store/auth/auth.thunk";
 import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
+import { firebaseCloudMessaging } from "../../../firebase/config";
 import DynamicFields from "./DynamicFields";
 
 const LoginForm = () => {
@@ -24,6 +25,16 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
+  const [clientTypes, setClientTypes] = useState([]);
+
+  useEffect(() => {
+    getFcmToken();
+  }, []);
+
+  const getFcmToken = async () => {
+    const token = await firebaseCloudMessaging.init();
+    localStorage.setItem("fcmToken", token);
+  };
 
   const [formType, setFormType] = useState("LOGIN");
   const { control, handleSubmit, watch, setValue } = useForm();
@@ -90,7 +101,7 @@ const LoginForm = () => {
     () => {
       return connectionServiceV2.getList(
         { project_id: selectedProjectID, client_type_id: selectedClientTypeID },
-        { "environment-id": selectedEnvID },
+        { "environment-id": selectedEnvID }
       );
     },
     {
@@ -105,7 +116,7 @@ const LoginForm = () => {
       .multiCompanyLogin(data)
       .then((res) => {
         setLoading(false);
-
+        setClientTypes(res.client_types);
         setCompanies(res.companies);
         setFormType("MULTI_COMPANY");
       })

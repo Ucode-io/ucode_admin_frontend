@@ -1,13 +1,12 @@
-import { defineConfig } from "vite"
-import { resolve } from "path"
-import progress from "vite-plugin-progress"
-import react from "@vitejs/plugin-react"
-import { visualizer } from "rollup-plugin-visualizer"
+import { defineConfig } from "vite";
+import { resolve } from "path";
+import progress from "vite-plugin-progress";
+import react from "@vitejs/plugin-react";
+import { visualizer } from "rollup-plugin-visualizer";
 
 // import federation from "@originjs/vite-plugin-federation"
 // const deps = require("./package.json").dependencies
 // const pkg = require("./package.json")
-
 
 export default defineConfig({
   plugins: [
@@ -42,6 +41,11 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    // rollupOptions: {
+    //   input: {
+    //     "firebase-messaging-sw": "public/firebase-messaging-sw.js",
+    //   },
+    // },
   },
   server: {
     port: 7777,
@@ -57,4 +61,4 @@ export default defineConfig({
       },
     ],
   },
-})
+});

@@ -47,19 +47,19 @@ const HFNumberField = ({
             fullWidth={fullWidth}
             value={value}
             onChange={(e) => {
-                  const val = e.target.value;
-                  const valueWithoutSpaces = val.replaceAll(' ', '')
-                  
-                  if (!valueWithoutSpaces) onChange('');
-                  else {
-                    if(valueWithoutSpaces.at(-1) === '.') onChange(valueWithoutSpaces)
-                    else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '');}
+              const val = e.target.value;
+              const valueWithoutSpaces = val.replaceAll(' ', '')
+              
+              if (!valueWithoutSpaces) onChange('');
+              else {
+                if(valueWithoutSpaces.at(-1) === '.') onChange(valueWithoutSpaces)
+                else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '')}
                 }}
-                className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
-            name={name}
-            readOnly={disabled}
-            style={disabled ? { background: "#c0c0c039" } : { background: isBlackBg ? "#2A2D34" : "", color: isBlackBg ? "#fff" : "" }}
-            {...props}
+              className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
+              name={name}
+              readOnly={disabled}
+              style={disabled ? { background: "#c0c0c039" } : { background: isBlackBg ? "#2A2D34" : "", color: isBlackBg ? "#fff" : "" }}
+              {...props}
             />
         )
       }}

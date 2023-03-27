@@ -8,10 +8,11 @@ import { TextField } from "@mui/material";
 import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import request from "../../utils/request";
 import { showAlert } from "../../store/alert/alert.thunk";
+import constructorFunctionService from "../../services/constructorFunctionService";
 
 const InventoryBarCode = ({
   control,
-  watch,
+  watch = () => {},
   name = "",
   tableSlug,
   disabledHelperText = false,
@@ -34,10 +35,14 @@ const InventoryBarCode = ({
 
   useDebouncedWatch(
     () => {
-      if (elmValue.length > field.attributes?.length) {
-        request
-          .get(`/${field.attributes?.request_url}/${tableSlug}/${id}`, {
-            params: { barcode: elmValue, branch_id: watch("branch_table_id") },
+      if (elmValue.length >= field.attributes?.length) {
+        constructorFunctionService
+          .invoke({
+            function_id: field?.attributes?.function,
+            object_ids: [id, elmValue],
+            attributes: {
+              barcode: elmValue,
+            },
           })
           .then((res) => {
             if (res === "Updated successfully!") {

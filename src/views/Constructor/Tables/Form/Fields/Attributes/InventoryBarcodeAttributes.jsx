@@ -3,31 +3,28 @@ import HFTextField from "../../../../../../components/FormElements/HFTextField";
 import FRow from "../../../../../../components/FormElements/FRow";
 import HFSelect from "../../../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../../../components/FormElements/HFSwitch";
+import { useQuery } from "react-query";
+import constructorFunctionService from "../../../../../../services/constructorFunctionService";
 
 const InventoryBarcodeAttributes = ({ control }) => {
+  const { data: { functions: list } = [] } = useQuery("GET_FUNCTIONS", () =>
+    constructorFunctionService.getList({})
+  );
+
+  const options = list?.map((v) => ({ value: v.id, label: v.name }));
+
   return (
     <>
       <div className={styles.settingsBlockHeader}>
         <h2>Settings</h2>
       </div>
       <div className="p-2">
-        <FRow label={"Actions"}>
+        <FRow label={"Function"}>
           <HFSelect
-            name="attributes.action"
+            name="attributes.function"
             control={control}
             fullWidth
-            options={[
-              {
-                icon: "table-cells.svg",
-                label: "Table",
-                value: "TABLE",
-              },
-              {
-                icon: "square.svg",
-                label: "Card",
-                value: "CARD",
-              },
-            ]}
+            options={options}
           />
         </FRow>
         <FRow label={"Automatic"}>

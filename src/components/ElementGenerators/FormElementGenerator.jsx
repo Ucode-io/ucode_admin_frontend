@@ -24,6 +24,7 @@ import { Parser } from "hot-formula-parser";
 import BarcodeGenerator from "./BarcodeGenerator";
 import { useSelector } from "react-redux";
 import CodabarBarcode from "./CodabarBarcode";
+import InventoryBarCode from "../FormElements/InventoryBarcode";
 
 const parser = new Parser();
 
@@ -33,6 +34,7 @@ const FormElementGenerator = ({
   setFormValue,
   formTableSlug,
   fieldsList,
+  relatedTable,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -115,9 +117,27 @@ const FormElementGenerator = ({
         />
       );
     }
+    s;
   }
-
   switch (field.type) {
+    case "SCAN_BARCODE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <InventoryBarCode
+            relatedTable={relatedTable}
+            control={control}
+            name={field.slug}
+            fullWidth
+            setFormValue={setFormValue}
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            field={field}
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
     case "SINGLE_LINE":
       return (
         <FRow label={field.label} required={field.required}>
@@ -390,7 +410,7 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
-      
+
     case "CODABAR":
       return (
         <FRow label={field.label} required={field.required}>
@@ -409,7 +429,7 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
-      
+
     case "DENTIST":
       return (
         <FRow label={field.label} required={field.required}>

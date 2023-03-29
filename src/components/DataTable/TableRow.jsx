@@ -33,6 +33,15 @@ const TableRow = ({
   onChecked,
   relationFields,
 }) => {
+  const colorCell = (num) => {
+    if (num === 0) {
+      return "rgba(3, 172, 19,0.5)";
+    }
+    if (num < 0 || num > 0) {
+      return "rgba(254 , 0, 0,0.5)";
+    }
+    return "transparent";
+  };
   if (formVisible)
     return (
       <TableRowForm
@@ -178,6 +187,7 @@ const TableRow = ({
                 )?.isStiky
                   ? "1"
                   : "",
+                backgroundColor: colorCell(row?.difference),
               }}
             >
               <CellElementGenerator field={column} row={row} />

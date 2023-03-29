@@ -30,6 +30,7 @@ import { fetchConstructorTableListAction } from "../../store/constructorTable/co
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { pathname, state = {} } = useLocation();
   const dispatch = useDispatch();
   const { removeTab, navigateToForm } = useTabRouter();
@@ -216,12 +217,16 @@ const ObjectsFormPage = () => {
   useEffect(() => {
     setFormValue(
       "time_end",
-      startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined
+      startTime && serviceTime
+        ? addMinutes(new Date(startTime), parseInt(serviceTime))
+        : undefined
     );
   }, [serviceTime, startTime]);
 
-  if (loader) return <PageFallback />;
+  console.log("tableRelations", tableRelations);
 
+  console.log("selectedTabIndex", selectedTabIndex);
+  if (loader) return <PageFallback />;
   return (
     <div className={styles.formPage}>
       <FiltersBlock
@@ -242,9 +247,15 @@ const ObjectsFormPage = () => {
           control={control}
           computedSections={computedSections}
           setFormValue={setFormValue}
+          relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
         />
         <div className={styles.secondaryCardSide}>
-          <RelationSection relations={tableRelations} control={control} />
+          <RelationSection
+            selectedTabIndex={selectedTabIndex}
+            setSelectedTabIndex={setSelectedTabIndex}
+            relations={tableRelations}
+            control={control}
+          />
         </div>
       </div>
       <Footer

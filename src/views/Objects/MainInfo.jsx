@@ -8,7 +8,12 @@ import IconGenerator from "@/components/IconPicker/IconGenerator";
 import { Tooltip } from "@mui/material";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 
-const MainInfo = ({ computedSections, control, setFormValue }) => {
+const MainInfo = ({
+  computedSections,
+  control,
+  setFormValue,
+  relatedTable,
+}) => {
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
   const fieldsList = useMemo(() => {
@@ -50,6 +55,7 @@ const MainInfo = ({ computedSections, control, setFormValue }) => {
                     setFormValue={setFormValue}
                     fieldsList={fieldsList}
                     formTableSlug={tableSlug}
+                    relatedTable={relatedTable}
                   />
                 ))}
               </div>

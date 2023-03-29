@@ -32,6 +32,8 @@ import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUplo
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
 
 const RelationSection = ({
+  selectedTabIndex,
+  setSelectedTabIndex,
   relations,
   tableSlug: tableSlugFromProps,
   id: idFromProps,
@@ -54,7 +56,6 @@ const RelationSection = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
-  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);

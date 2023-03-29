@@ -34,6 +34,7 @@ const FormElementGenerator = ({
   setFormValue,
   formTableSlug,
   fieldsList,
+  relatedTable,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -123,7 +124,7 @@ const FormElementGenerator = ({
       return (
         <FRow label={field.label} required={field.required}>
           <InventoryBarCode
-            tableSlug={relationTableSlug}
+            relatedTable={relatedTable}
             control={control}
             name={field.slug}
             fullWidth

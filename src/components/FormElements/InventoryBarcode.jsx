@@ -14,7 +14,7 @@ const InventoryBarCode = ({
   control,
   watch = () => {},
   name = "",
-  tableSlug,
+  relatedTable,
   disabledHelperText = false,
   required = false,
   fullWidth = false,
@@ -52,7 +52,7 @@ const InventoryBarCode = ({
           .finally(() => {
             setFormValue(name, "");
             setElmValue("");
-            queryClient.refetchQueries(["GET_OBJECT_LIST", tableSlug]);
+            queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
           });
       }
     },

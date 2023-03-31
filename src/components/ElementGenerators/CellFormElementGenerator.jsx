@@ -89,7 +89,6 @@ const CellFormElementGenerator = ({
 
   useEffect(() => {
     if (columns.length && changedValue !== undefined && changedValue !== null) {
-      console.log("index => ", index);
       columns.forEach(
         (i, rowIndex) =>
           selectedRow.includes(i.guid) &&

@@ -53,6 +53,7 @@ const DataTable = ({
   filteredColumns,
   defaultLimit,
 }) => {
+  console.log('filteredColumns', filteredColumns)
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const [columnId, setColumnId] = useState("");

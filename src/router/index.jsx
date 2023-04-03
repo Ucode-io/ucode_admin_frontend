@@ -31,6 +31,7 @@ import ObjectsPage from "../views/Objects";
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
 import ReloadPage from "../components/ReloadComponent/index";
 import ReloadRelations from "@/components/ReloadRelations";
+import Chat from "../components/Chat";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -58,7 +59,7 @@ const Router = () => {
   const isAuth = useSelector((state) => state.auth.isAuth);
   const applications = useSelector((state) => state.application.list);
   const cashbox = useSelector((state) => state.cashbox.data);
-  const [favicon, setFavicon] = useState('');
+  const [favicon, setFavicon] = useState("");
   const cashboxIsOpen = cashbox.is_open === "Открыто";
 
   const redirectLink = useMemo(() => {
@@ -88,7 +89,10 @@ const Router = () => {
     <Routes>
       {/* <Route path="remote" element={<Suspense fallback="Loading..." > <SafeComponent><FileSystemModule /></SafeComponent></Suspense>} /> */}
 
-      <Route path="/main" element={<MainLayout favicon={favicon} setFavicon={setFavicon}/>}>
+      <Route
+        path="/main"
+        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
+      >
         <Route index element={<Navigate to={redirectLink} />} />
 
         <Route path=":appId" element={<div></div>} />
@@ -120,9 +124,8 @@ const Router = () => {
 
       {/* ---------SETTINGS APP---------------- */}
 
-      <Route path="settings" element={<SettingsLayout favicon={favicon}/>}>
+      <Route path="settings" element={<SettingsLayout favicon={favicon} />}>
         <Route index element={<Navigate to={"/settings/constructor/apps"} />} />
-
         <Route path="constructor/apps" element={<AppsPage />} />
         <Route path="constructor/apps/create" element={<AppsForm />} />
         <Route path="constructor/apps/:appId" element={<AppsForm />} />
@@ -366,6 +369,9 @@ const Router = () => {
       <Route path="*" element={<Navigate to={redirectLink} />} />
       <Route path="reload" element={<ReloadPage />} />
       <Route path="reloadRelations" element={<ReloadRelations />} />
+      <Route path="chat" element={<Chat />}>
+        <Route path=":chat_id" element={<Chat />} />
+      </Route>
     </Routes>
   );
 };

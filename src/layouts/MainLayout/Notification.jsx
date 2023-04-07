@@ -14,6 +14,9 @@ function Notifications({}) {
   const { tableSlug } = useParams();
   const [notify, setNotify] = useState(null);
   const openNotify = Boolean(notify);
+  const projectId = useSelector(state => state.auth.projectId)
+  console.log('ssssssss', projectId);
+
 
   //==========GET NOTIFICATIONS==========
   const { data: notifications } = useQuery(
@@ -22,6 +25,7 @@ function Notifications({}) {
       return notificationService.getList({
         table_slug: tableSlug,
         user_id: isUserId,
+        "project-id": projectId,
       });
     },
     {

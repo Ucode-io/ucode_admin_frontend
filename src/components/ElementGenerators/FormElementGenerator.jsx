@@ -117,7 +117,6 @@ const FormElementGenerator = ({
         />
       );
     }
-    s;
   }
   switch (field.type) {
     case "SCAN_BARCODE":

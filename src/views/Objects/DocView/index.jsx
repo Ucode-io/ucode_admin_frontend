@@ -311,7 +311,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
             <DocRelationsSection />
           </div>
         )}
-
+        
         {!relationViewIsActive && (
           <>
             {selectedTemplate ? (

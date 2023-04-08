@@ -57,9 +57,8 @@ const ActionButton = ({ event, id, control, disable }) => {
               },
             });
           } else {
-            if (url.includes("http") === false) {
-              url = `/${url}`
-              navigate(url);
+            if (url.includes("http") || url.includes("https")) {
+              navigate(`/${url}`);
             } else {
               window.open(url, "_blank");
             }

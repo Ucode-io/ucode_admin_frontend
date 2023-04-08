@@ -57,7 +57,12 @@ const ActionButton = ({ event, id, control, disable }) => {
               },
             });
           } else {
-            navigate(url);
+            if (url.includes("http") === false) {
+              url = `/${url}`
+              navigate(url);
+            } else {
+              window.open(url, "_blank");
+            }
           }
         }
       })

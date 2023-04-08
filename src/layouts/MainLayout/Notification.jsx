@@ -15,8 +15,6 @@ function Notifications({}) {
   const [notify, setNotify] = useState(null);
   const openNotify = Boolean(notify);
   const projectId = useSelector(state => state.auth.projectId)
-  console.log('ssssssss', projectId);
-
 
   //==========GET NOTIFICATIONS==========
   const { data: notifications } = useQuery(

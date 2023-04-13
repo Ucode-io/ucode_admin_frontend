@@ -34,13 +34,19 @@ requestAuth.interceptors.request.use(
     const token = authStore.token
     const environmentId = authStore.environmentId
     const resourceId = authStore.resourceId
+    const projectId = authStore.projectId
 
-    
     if(token) {
       config.headers.Authorization = `Bearer ${token}`
       config.headers['environment-id'] = environmentId
       config.headers['resource-id'] = resourceId
-
+    }
+    if(config.params) {
+      config.params['project-id'] = projectId
+    }else {
+      config.params = {
+        'project-id': projectId
+      }
     }
     return config
   },

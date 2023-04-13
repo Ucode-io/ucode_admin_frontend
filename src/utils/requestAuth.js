@@ -41,11 +41,13 @@ requestAuth.interceptors.request.use(
       config.headers['environment-id'] = environmentId
       config.headers['resource-id'] = resourceId
     }
-    if(config.params) {
-      config.params['project-id'] = projectId
-    }else {
-      config.params = {
-        'project-id': projectId
+    if (!config.params?.["project-id"]) {
+      if (config.params) {
+        config.params["project-id"] = projectId;
+      } else {
+        config.params = {
+          "project-id": projectId,
+        };
       }
     }
     return config

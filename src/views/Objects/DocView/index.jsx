@@ -207,18 +207,21 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const exportToHTML = async () => {
     if (!selectedTemplate) return;
     setHtmlLoader(true);
-
+  
     try {
       let html = redactorRef.current.getData();
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`;
-
+  
       fields.forEach((field) => {
         html = html.replaceAll(
           `{ ${field.label} }`,
           `<%= it.${field.path_slug ?? field.slug} %>`
         );
       });
-
+  
+      html = html.replace(/<div\s+class="raw-html-embed">/, '');
+      html = html.replace(/<\/div>/, '');
+  
       const res = await documentTemplateService.exportToHTML({
         data: {
           table_slug: tableSlug,
@@ -227,7 +230,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
         },
         html: meta + html,
       });
-
+  
       setSelectedTemplate((prev) => ({
         ...prev,
         html: res.html.replaceAll("<p></p>", ""),
@@ -237,14 +240,13 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
       setHtmlLoader(false);
     }
   };
-
+  
   // =======PRINT============
 
   const print = async () => {
     
     if (!selectedTemplate) return;
     setPdfLoader(true);
-    console.log('ssssssss');
     try {
       let html = redactorRef.current.getData();
 
@@ -309,7 +311,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
             <DocRelationsSection />
           </div>
         )}
-
+        
         {!relationViewIsActive && (
           <>
             {selectedTemplate ? (

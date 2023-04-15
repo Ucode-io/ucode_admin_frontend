@@ -34,13 +34,14 @@ function LinkedListTables({
   const { tableSlug } = useParams();
   const { state } = useLocation();
 
-  const outputTableSlug = selectedOutputTable?.split("#")?.[1];
-  const subttitleFieldSlug = selectedOutputTable?.split("#")?.[2];
   const [debouncedValue, setDebouncedValue] = useState("");
   const [debouncedObjectValue, setdebouncedObjectValue] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [objectValue, setObjectValue] = useState("");
-
+  
+  const outputTableSlug = selectedOutputTable?.split("#")?.[1];
+  const subttitleFieldSlug = selectedOutputTable?.split("#")?.[2];
+  
   const getSelectTedTemplate = templates.find((item) => {
     return item?.guid === selectedTemplate?.guid;
   });
@@ -87,6 +88,24 @@ function LinkedListTables({
       },
     }
   );
+  // ==========GET RELATION RELATED TABLE LIST==========
+  // const { data: computedRelationTableValue = [] } = useQuery(
+  //   ["GET_RELATION_OBJECT_TABLE", tableSlug, getSelectTedTemplate],
+  //   () => {
+  //     return constructorRelationService.getList({
+  //       table_slug: selectTableSlug,
+  //       relation_table_slug: selectTableSlug,
+  //     });
+  //   },
+  //   {
+  //     select: (res) => {
+  //       return res?.relations.filter((el) => el?.type === 'Many2Many').map((item) => ({
+  //         label: item?.title,
+  //         value: item?.id
+  //       }))
+  //     },
+  //   }
+  // );
 
   // ==========GET LINKED OBJECT LIST=========
   const { data: computedRelations = [] } = useQuery(
@@ -378,6 +397,39 @@ function LinkedListTables({
           ></Autocomplete>
         </FormControl>
       </FRow>
+{/*       
+      
+      <FRow label={"Related Table"}>
+        <FormControl fullWidth>
+          <Autocomplete
+            id="attributes"
+            options={computedRelationTableValue ?? []}
+            value={selectedObject ?? ""}
+            inputValue={objectValue}
+            freeSolo
+            onChange={(e, values) => {
+              handleLinkedObject(values);
+            }}
+            getOptionLabel={(option) => option.label ?? ""}
+            disablePortal
+            blurOnSelect
+            openOnFocus
+            onInputChange={(event, newInputValue, reason) => {
+              setObjectValue(newInputValue);
+              inputObjectHandler(newInputValue);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size="small"
+                InputProps={{
+                  ...params.InputProps,
+                }}
+              />
+            )}
+          ></Autocomplete>
+        </FormControl>
+      </FRow> */}
     </div>
   );
 }

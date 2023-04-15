@@ -16,6 +16,7 @@ import request from "../../../../../utils/request";
 import styles from "./style.module.scss";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import TableActions from "./TableActions";
+import requestV2 from "../../../../../utils/requestV2";
 
 const actionTypeList = [
   { label: "HTTP", value: "HTTP" },
@@ -58,7 +59,7 @@ const ActionSettings = ({
   const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
-      return request.get("/function");
+      return requestV2.get("/function");
     },
     {
       select: (res) => {

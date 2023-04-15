@@ -6,7 +6,7 @@ import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import TableRowForm from "./TableRowForm";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-
+import GeneratePdfFromTable from "./GeneratePdfFromTable";
 const TableRow = ({
   row,
   key,
@@ -25,7 +25,7 @@ const TableRow = ({
   watch,
   setFormValue,
   tableSlug,
-  isChecked = () => {},
+  isChecked = () => { },
   formVisible,
   remove,
   limit = 10,
@@ -33,6 +33,15 @@ const TableRow = ({
   onChecked,
   relationFields,
 }) => {
+  const colorCell = (num) => {
+    if (num === 0) {
+      return "rgba(3, 172, 19,0.5)";
+    }
+    if (num < 0 || num > 0) {
+      return "rgba(254 , 0, 0,0.5)";
+    }
+    return "transparent";
+  };
   if (formVisible)
     return (
       <TableRowForm
@@ -73,9 +82,8 @@ const TableRow = ({
             </span>
             {onCheckboxChange && (
               <div
-                className={`data_table__row_checkbox ${
-                  isChecked(row) ? "checked" : ""
-                }`}
+                className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""
+                  }`}
               >
                 <Checkbox
                   checked={isChecked(row)}
@@ -114,16 +122,22 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
-            <RectangleIconButton
-              color="error"
-              onClick={() =>
-                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-              }
-            >
-              <Delete color="error" />
-            </RectangleIconButton>
-          </PermissionWrapperV2>
+          <td>
+          <div style={{ display: 'flex', gap: '5px', padding: '3px' }}>
+            <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+              <RectangleIconButton
+                color="error"
+                onClick={() =>
+                  row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+                }
+              >
+                <Delete color="error" />
+              </RectangleIconButton>
+            </PermissionWrapperV2>
+
+            <GeneratePdfFromTable row={row} />
+          </div>
+          </td>
         </CTableRow>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
         !relationAction?.action_relations ? (
@@ -138,9 +152,8 @@ const TableRow = ({
             </span>
             {onCheckboxChange && (
               <div
-                className={`data_table__row_checkbox ${
-                  isChecked(row) ? "checked" : ""
-                }`}
+                className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""
+                  }`}
               >
                 <Checkbox
                   checked={isChecked(row)}
@@ -174,6 +187,7 @@ const TableRow = ({
                 )?.isStiky
                   ? "1"
                   : "",
+                backgroundColor: colorCell(row?.difference),
               }}
             >
               <CellElementGenerator field={column} row={row} />
@@ -202,9 +216,8 @@ const TableRow = ({
             </span>
             {onCheckboxChange && (
               <div
-                className={`data_table__row_checkbox ${
-                  isChecked(row) ? "checked" : ""
-                }`}
+                className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""
+                  }`}
               >
                 <Checkbox
                   checked={isChecked(row)}

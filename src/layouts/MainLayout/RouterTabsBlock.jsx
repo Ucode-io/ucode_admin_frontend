@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import AppSelector from "../../components/AppSelector";
+import ChatRouter from "../../components/Chat/components/ChatRouter";
 import FormSelector from "../../components/FormSelector";
 import LanguageSelector from "../../components/LanguageSelector";
 import ProfilePanel from "../../components/ProfilePanel";
@@ -16,12 +17,13 @@ const RouterTabsBlock = () => {
         {tabs.map((tab) => (
           <RouteTabComponent key={tab.id} tab={tab} />
         ))}
-        
+
         <FormSelector />
       </div>
-      
+
       <div className={styles.rightSide}>
         <LanguageSelector />
+        <ChatRouter />
         <Notifications />
         <AppSelector />
         <ProfilePanel />

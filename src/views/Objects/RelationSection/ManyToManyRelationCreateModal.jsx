@@ -88,6 +88,10 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
 
     return [...staticFields, ...fields];
   }, [fields, checkedElements]);
+  
+  const filteredColumns = useMemo(() => {
+    return computedFields.filter(item => relation?.columns?.includes(item?.id) || item?.render)
+  }, [computedFields, relation?.columns])
 
   const onCheck = (e, id) => {
     if (e.target.checked) {
@@ -129,6 +133,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
     if (isNaN(parseInt(relation?.default_limit))) setLimit(10);
     else setLimit(parseInt(relation?.default_limit));
   }, [relation?.default_limit]);
+  
 
   return (
     <LargeModalCard
@@ -167,6 +172,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
         filters={filters}
         limit={limit}
         setLimit={setLimit}
+        filteredColumns={filteredColumns}
         defaultLimit={relation?.default_limit}
       />
 

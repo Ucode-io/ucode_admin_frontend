@@ -1,0 +1,231 @@
+@use "/src/scss/colors";
+
+
+.sidebar {
+  height: 100%;
+  width: 35%;
+
+  .collapse {
+    border-right: 1px solid colors.$borders;
+
+    .chat {
+      height: calc(96vh - 70px);
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #6E8BB733;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #6E8BB7;
+        border-radius: 10px;
+        background-clip: content-box;
+        border: 2px solid transparent;
+      }
+    }
+  }
+
+  .sidebarRightBlock {
+    width: 300px;
+    border-right: 1px solid colors.$borders;
+    background-color: #1e272c;
+  }
+
+  .header {
+    padding: 6px;
+    border-bottom: 1px solid colors.$borders;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .input {
+      border: none;
+      box-shadow: none !important;
+      outline: none;
+      max-width: 250px;
+
+      input {
+        font-size: 18px !important;
+        line-height: 24px;
+        font-weight: 700;
+        color: #000;
+      }
+
+
+      fieldset {
+        border: none !important;
+      }
+    }
+
+    .setting {
+      display: flex;
+      align-items: center;
+      column-gap: 17px;
+    }
+  }
+}
+
+.card {
+  padding: 16px;
+  display: flex;
+  align-items: start;
+  border-bottom: 1px solid colors.$borders;
+  column-gap: 12px;
+  cursor: pointer;
+
+  .info {
+    width: 100%;
+
+    .message {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      display: inherit;
+      width: 230px;
+    }
+
+    .message {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      display: inherit;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 400;
+      color: #5B6871;
+      margin-top: 4px;
+    }
+
+    .name {
+      font-size: 14px;
+      line-height: 24px;
+      font-weight: 600;
+    }
+
+    .time {
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 400;
+      color: #6E7C87;
+    }
+  }
+}
+
+.field {
+  width: 100%;
+
+  .header {
+    padding: 6px;
+    border-bottom: 1px solid colors.$borders;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    svg:nth-child(1) {
+      width: 20px;
+      height: 20px;
+    }
+
+    .input {
+      border: none !important;
+      box-shadow: none !important;
+      outline: none;
+      max-width: 250px;
+
+      input {
+        font-size: 18px;
+        line-height: 24px;
+        font-weight: 700;
+        color: #000;
+      }
+
+      fieldset {
+        border: none !important;
+      }
+    }
+
+    .setting {
+      display: flex;
+      align-items: center;
+      column-gap: 17px;
+    }
+  }
+
+  .chat {
+    // height: calc(100% - 122px);
+    height: 80vh;
+    overflow: auto;
+    scroll-behavior: smooth;
+  }
+
+  .message {
+    padding: 10px 16px;
+    display: flex;
+    align-items: start;
+    column-gap: 12px;
+    width: 530px;
+
+    .info {
+      width: 100%;
+      padding: 12px;
+      border-radius: 0px 6px 6px 6px;
+
+      .desc {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: inherit;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 400;
+        color: #5B6871;
+        margin-top: 4px;
+      }
+
+      .name {
+        font-size: 14px;
+        line-height: 24px;
+        font-weight: 600;
+      }
+
+      .time {
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+        color: #6E7C87;
+        margin-top: 4px;
+        display: flex;
+        justify-content: end;
+        margin-top: 8px;
+      }
+    }
+  }
+
+  .footer {
+    padding: 12px;
+    border-top: 1px solid colors.$borders;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 12px;
+
+    input {
+      max-height: 32px !important;
+      padding: 6px 12px;
+    }
+
+    fieldset {
+      border-radius: 6px;
+    }
+  }
+
+}

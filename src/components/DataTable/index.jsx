@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Delete, Edit } from "@mui/icons-material";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
@@ -50,8 +50,10 @@ const DataTable = ({
   paginationExtraButton,
   checkboxValue,
   onCheckboxChange,
+  filteredColumns,
   defaultLimit,
 }) => {
+  console.log('filteredColumns', filteredColumns)
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const [columnId, setColumnId] = useState("");
@@ -65,6 +67,7 @@ const DataTable = ({
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     if (!isResizeble) return;
@@ -203,7 +206,7 @@ const DataTable = ({
         <CTableRow>
           {onCheckboxChange && <CTableCell width={10} />}
           <CTableHeadCell width={10}>№</CTableHeadCell>
-          {columns.map((column, index) => (
+          {(filteredColumns?.length ? filteredColumns : columns).map((column, index) => (
             <CTableHeadCell
               id={column.id}
               key={index}
@@ -323,7 +326,7 @@ const DataTable = ({
             <CTableCell align="center">
               {(currentPage - 1) * 10 + rowIndex + 1}
             </CTableCell>
-            {columns.map((column, index) => (
+            {(filteredColumns?.length ? filteredColumns : columns).map((column, index) => (
               <CTableCell
                 key={column.id}
                 className={`overflow-ellipsis ${tableHeight}`}

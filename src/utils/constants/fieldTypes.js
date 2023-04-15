@@ -1,5 +1,3 @@
-
-
 // export const fieldTypes = [
 //   "SINGLE_LINE",
 //   "MULTI_LINE",
@@ -17,7 +15,7 @@
 //   "URL",
 //   "FORMULA",
 //   "LOOKUP",
-  // "PHOTO"
+// "PHOTO"
 // ]
 
 export const fieldTypes = [
@@ -37,72 +35,72 @@ export const fieldTypes = [
   "ICON",
   "PASSWORD",
   "FORMULA",
-  "DENTIST"
-]
+  "DENTIST",
+];
 
 export const fieldTypesOptions = [
   {
-    label: 'Text',
+    label: "Text",
     options: [
       {
         icon: "minus.svg",
         label: "Single line",
-        value: "SINGLE_LINE"
+        value: "SINGLE_LINE",
       },
       {
         icon: "grip-lines.svg",
         label: "Multi line",
-        value: "MULTI_LINE"
+        value: "MULTI_LINE",
       },
-    ]
+    ],
   },
   {
-    label: 'Date',
+    label: "Date",
     options: [
       {
         icon: "calendar.svg",
         label: "Date",
-        value: "DATE"
+        value: "DATE",
       },
       {
         icon: "clock.svg",
         label: "Time",
-        value: "TIME"
+        value: "TIME",
       },
       {
         icon: "business-time.svg",
         label: "Date time",
-        value: "DATE_TIME"
+        value: "DATE_TIME",
       },
-    ]
+    ],
   },
   {
-    label: 'Number',
+    label: "Number",
     options: [
       {
         icon: "hashtag.svg",
         label: "Number",
-        value: "NUMBER"
+        value: "NUMBER",
       },
-    ]
+    ],
   },
   {
-    label: 'Input',
+    label: "Input",
     options: [
       {
         icon: "square-check.svg",
         label: "Checkbox",
-        value: "CHECKBOX"
+        value: "CHECKBOX",
       },
       {
         icon: "toggle-on.svg",
         label: "Switch",
-        value: "SWITCH"
+        value: "SWITCH",
       },
-    ]
+    ],
   },
   {
-    label: 'Select',
+    label: "Select",
     options: [
       // {
       //   label: "Picklist",
@@ -111,99 +109,103 @@ export const fieldTypesOptions = [
       {
         icon: "list-check.svg",
         label: "Multi select",
-        value: "MULTISELECT"
+        value: "MULTISELECT",
       },
-    ]
+    ],
   },
   {
-    label: 'File',
+    label: "File",
     options: [
       {
         icon: "image.svg",
         label: "Photo",
-        value: "PHOTO"
+        value: "PHOTO",
       },
       {
         icon: "video.svg",
         label: "Video",
-        value: "VIDEO"
+        value: "VIDEO",
       },
       {
         icon: "file.svg",
         label: "File",
-        value: "FILE"
+        value: "FILE",
       },
-    ]
+    ],
   },
   {
-    label: 'Formula',
+    label: "Formula",
     options: [
       {
         icon: "square-root-variable.svg",
         label: "Formula in frontend",
-        value: "FORMULA_FRONTEND"
+        value: "FORMULA_FRONTEND",
       },
       {
         icon: "plus-minus.svg",
         label: "Formula in backend",
-        value: "FORMULA"
+        value: "FORMULA",
       },
-    ]
+    ],
   },
   {
-    label: 'Other',
+    label: "Other",
     options: [
       {
         icon: "arrow-up-9-1.svg",
         label: "Increment ID",
-        value: "INCREMENT_ID"
+        value: "INCREMENT_ID",
       },
       {
         icon: "arrow-up-a-z.svg",
         label: "Increment number",
-        value: "INCREMENT_NUMBER"
+        value: "INCREMENT_NUMBER",
       },
       {
         icon: "phone.svg",
         label: "Phone",
-        value: "PHONE"
+        value: "PHONE",
       },
       {
         icon: "envelope.svg",
         label: "Email",
-        value: "EMAIL"
+        value: "EMAIL",
       },
       {
         icon: "icons.svg",
         label: "Icon",
-        value: "ICON"
+        value: "ICON",
       },
       {
         icon: "lock.svg",
         label: "Password",
-        value: "PASSWORD"
+        value: "PASSWORD",
       },
       {
-        icon: 'barcode.svg',
-        label: 'Barcode',
-        value: 'BARCODE'
+        icon: "barcode.svg",
+        label: "Barcode",
+        value: "BARCODE",
       },
       {
-        icon: 'barcode.svg',
-        label: 'Codabar',
-        value: 'CODABAR'
+        icon: "barcode.svg",
+        label: "Codabar",
+        value: "CODABAR",
       },
       {
-        icon: 'fill.svg',
-        label: 'Autofill',
-        value: 'AUTOFILL'
+        icon: "fill.svg",
+        label: "Autofill",
+        value: "AUTOFILL",
       },
       {
-        icon: 'teeth.svg',
-        label: 'Dentist',
-        value: 'DENTIST'
-      }
-    ]
+        icon: "barcode.svg",
+        label: "Scan-barcode",
+        value: "SCAN_BARCODE",
+      },
+      {
+        icon: "teeth.svg",
+        label: "Dentist",
+        value: "DENTIST",
+      },
+    ],
   },
-
-]
+];

@@ -4,9 +4,9 @@ import { store } from "../store/index";
 import { showAlert } from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
 import { authActions } from "../store/auth/auth.slice";
-export const baseURL = import.meta.env.VITE_BASE_URL
+export const baseURL = ' https://test.admin.api.u-code.io/v2'
 
-const request = axios.create({
+const requestV2 = axios.create({
   baseURL,
   timeout: 100000,
 })
@@ -38,7 +38,7 @@ const errorHandler = (error, hooks) => {
       .then((res) => {
         store.dispatch(authActions.setTokens(res))
         store.dispatch(authActions.setPermission(res))
-        return request(originalRequest);
+        return requestV2(originalRequest);
       })
       .catch((err) => {
         console.log(err)
@@ -65,18 +65,19 @@ const errorHandler = (error, hooks) => {
 
 
 
-request.interceptors.request.use(
+requestV2.interceptors.request.use(
   config => {
     const authStore = store.getState().auth
     const token = authStore.token
     const environmentId = authStore.environmentId
     const resourceId = authStore.resourceId
     const projectId = authStore.projectId
-
+    
     if(token) {
       config.headers.Authorization = `Bearer ${token}`
       config.headers['environment-id'] = environmentId
       config.headers['resource-id'] = resourceId
+
     }
     if (!config.params?.["project-id"]) {
       if (config.params) {
@@ -87,13 +88,12 @@ request.interceptors.request.use(
         };
       }
     }
-   
     return config
   },
   
   error => errorHandler(error)
   )
 
-request.interceptors.response.use(response => response.data.data , errorHandler)
+  requestV2.interceptors.response.use(response => response.data.data , errorHandler)
 
-export default request
+export default requestV2

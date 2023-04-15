@@ -200,14 +200,14 @@ const AutoCompleteElement = ({
     setValue(val?.guid ?? null);
     setInputValue("");
 
-    // if (!field?.attributes?.autofill) return;
+    if (!field?.attributes?.autofill) return;
 
-    // field.attributes.autofill.forEach(({ field_from, field_to }) => {
-    //   const setName = name.split(".");
-    //   setName.pop();
-    //   setName.push(field_to);
-    //   setFormValue(setName.join("."), get(val, field_from));
-    // });
+    field.attributes.autofill.forEach(({ field_from, field_to }) => {
+      const setName = name.split(".");
+      setName.pop();
+      setName.push(field_to);
+      setFormValue(setName.join("."), get(val, field_from));
+    });
   };
 
   useEffect(() => {

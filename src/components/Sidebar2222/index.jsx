@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { mainActions } from "../../store/main/main.slice";
 
-const Sidebar2222 = ({favicon}) => {
+const Sidebar2222 = ({ favicon }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -40,7 +40,7 @@ const Sidebar2222 = ({favicon}) => {
   useEffect(() => {
     if (!sidebarIsOpen) setOpenedBlock(null);
   }, [sidebarIsOpen]);
-console.log('sssssss', favicon);
+
   return (
     <div className={`Sidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}>
       <div className="header">
@@ -67,9 +67,8 @@ console.log('sssssss', favicon);
                   to={element.path}
                   exact={0}
                   className={({ isActive }) =>
-                    `nav-element ${
-                      isActive &&
-                      (element.children ? "active-with-child" : "active")
+                    `nav-element ${isActive &&
+                    (element.children ? "active-with-child" : "active")
                     }`
                   }
                   onClick={(e) => {
@@ -84,9 +83,8 @@ console.log('sssssss', favicon);
                   <div className="label">{element.title}</div>
                   {element.children && (
                     <div
-                      className={`arrow-icon ${
-                        openedBlock === element.id ? "open" : ""
-                      }`}
+                      className={`arrow-icon ${openedBlock === element.id ? "open" : ""
+                        }`}
                     >
                       <ExpandMoreIcon />
                     </div>

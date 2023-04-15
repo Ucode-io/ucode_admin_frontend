@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import useCustomActionsQuery from "../../../../queries/hooks/useCustomActionsQuery";
 import ActionButton from "./ActionButton";
 
@@ -11,9 +12,15 @@ const FormCustomActionButton = ({ tableSlug, id, control }) => {
       },
     });
 
+    console.log("customEvents ==>", customEvents)
+
+    const computedCustomEvents = useMemo(() => {
+      return customEvents?.filter(event => event.action_type === "HTTP")
+    }, [customEvents])
+
   return (
     <>
-      {customEvents?.map((event) =>
+      {computedCustomEvents?.map((event) =>
         event?.action_permission &&
         event?.action_permission?.permission === true ? (
           <ActionButton

@@ -26,10 +26,15 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
   const [checkedElements, setCheckedElements] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filters, setFilters] = useState({});
-
+  const [filteredData, setFilteredData] = useState([])
+  
   const getSearchViewFields = useMemo(() => {
     return relation?.view_fields?.map((item) => item?.slug);
   }, [relation]);
+  
+  const filteredDataIds = useMemo(() => {
+    return filteredData.filter((item) => !item?.render).map((el) => el?.slug)
+  }, [filteredData])
 
   const {
     isLoading: loader,
@@ -54,7 +59,7 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
         data: {
           offset: pageToOffset(currentPage, limit),
           limit: limit,
-          view_fields: getSearchViewFields,
+          view_fields: filteredDataIds ?? getSearchViewFields,
           search: searchText,
           ...filters,
         },
@@ -128,13 +133,20 @@ const ManyToManyRelationCreateModal = ({ relation, closeModal }) => {
     }
   };
   const inputChangeHandler = useDebounce((val) => setSearchText(val), 300);
+  
+  const getFilteredData = () => {
+    setFilteredData(filteredColumns ?? [])
+  }
 
   useEffect(() => {
     if (isNaN(parseInt(relation?.default_limit))) setLimit(10);
     else setLimit(parseInt(relation?.default_limit));
   }, [relation?.default_limit]);
   
-
+  useEffect(() => {
+    getFilteredData()
+  }, [filteredColumns])
+  
   return (
     <LargeModalCard
       title={relation.label}

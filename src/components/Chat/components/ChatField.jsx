@@ -1,30 +1,28 @@
 import styles from "../index.module.scss";
-// import { AiOutlineCheck, AiOutlinePaperClip } from "react-icons/ai";
-// import { FaUsers } from "react-icons/fa";
-// import { MdOutlineNotInterested } from "react-icons/md";
-// import { CiChat1 } from "react-icons/ci";
-// import { BiDotsHorizontalRounded } from "react-icons/bi";
+import { AiOutlineCheck, AiOutlinePaperClip } from "react-icons/ai";
+import { FaUsers } from "react-icons/fa";
+import { MdOutlineNotInterested } from "react-icons/md";
+import { CiChat1 } from "react-icons/ci";
+import { BiArrowBack, BiDotsHorizontalRounded } from "react-icons/bi";
 import MessageCard from "./MessageCard";
-import { useParams } from "react-router-dom";
-import { webSocket } from "../socket_init";
-import { useEffect, useRef } from "react";
-import { Box, Button, Input, TextField } from "@mui/material";
-import { store } from "../../../store";
+import { useNavigate, useParams } from "react-router-dom";
+import { connectSocket, webSocket } from "../socket_init";
+import { useEffect, useRef, useState } from "react";
+import { Box, Button, TextField } from "@mui/material";
 import SearchInput from "../../SearchInput";
 import { useChatGetByIdQuery } from "../../../services/chatService";
 
-const ChatField = ({
-  messages,
-  setMessages,
-  setSendMessage,
-  sendMessage,
-  onRequest,
-  setOnRequest,
-}) => {
+const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
   const { chat_id } = useParams();
+  const [platformType, setPlatformType] = useState();
+  const [sendMessage, setSendMessage] = useState("");
   const divRef = useRef();
   const audio = new Audio("/sound/bubbleSound.mp3");
-  const authStore = store.getState().auth;
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/chat");
+  };
 
   const { isLoading } = useChatGetByIdQuery({
     id: chat_id,
@@ -32,9 +30,10 @@ const ChatField = ({
       cacheTime: 10,
       enabled: Boolean(onRequest) || Boolean(chat_id),
       onSuccess: (res) => {
-        console.log("res", res);
         setMessages(res.messages);
+        setPlatformType(res.platform_type);
         setOnRequest(false);
+        connectSocket(sendMessage, res.chat_id, res.platform_type, res.user_id);
       },
     },
   });
@@ -42,7 +41,6 @@ const ChatField = ({
     // if (sendMessage || messages) {
     if (webSocket) {
       webSocket.onmessage = (event) => {
-        console.log("event", event);
         if (messages) {
           audio.play();
           setMessages([...messages, JSON.parse(event.data)]);
@@ -58,9 +56,9 @@ const ChatField = ({
 
   const handleSendMessage = () => {
     const message = {
-      user_id: authStore.userId,
       message: sendMessage || "",
-      type: "text",
+      platform_type:
+        platformType === "From_Telegram_bot" ? "to_telegram_bot" : "website",
     };
     if (sendMessage) {
       webSocket.send(JSON.stringify(message));
@@ -71,35 +69,55 @@ const ChatField = ({
   return (
     <Box className={styles.field}>
       <Box className={styles.header}>
-        <SearchInput
-          className={styles.input}
-          placeholder="Поиск по переписке"
-          iconColor="#000"
-        />
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            columnGap: "10px",
+          }}
+        >
+          {chat_id && <BiArrowBack cursor={"pointer"} onClick={handleClick} />}
+          <SearchInput
+            className={styles.input}
+            placeholder="Поиск по переписке"
+            iconColor="#000"
+          />
+        </Box>
         <Box className={styles.setting}>
-          {/* <AiOutlineCheck size={"18px"} />
+          <AiOutlineCheck size={"18px"} />
           <FaUsers size={"20px"} />
           <MdOutlineNotInterested size={"18px"} />
           <CiChat1 size={"18px"} />
-          <BiDotsHorizontalRounded size={"18px"} /> */}
+          <BiDotsHorizontalRounded size={"18px"} />
         </Box>
       </Box>
-      <Box className={styles.chat} ref={divRef}>
-        {messages?.map((item, idx) => (
-          <MessageCard item={item} idx={idx} />
-        ))}
+      <Box
+        className={chat_id && messages ? styles.chat : styles.emptyChat}
+        ref={divRef}
+      >
+        {chat_id ? (
+          messages ? (
+            messages?.map((item, idx) => <MessageCard item={item} idx={idx} />)
+          ) : (
+            <Box className={styles.empty}>Здесь пока ничего нет...</Box>
+          )
+        ) : (
+          <Box className={styles.empty}>Выберите, кому бы хотели написать</Box>
+        )}
       </Box>
-      <Box className={styles.footer}>
-        {/* <AiOutlinePaperClip size={"28px"} /> */}
-        <TextField
-          placeholder="Add a comment"
-          onChange={(e) => setSendMessage(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-          value={sendMessage}
-          fullWidth
-        />
-        <Button onClick={() => handleSendMessage()}>SEND</Button>
-      </Box>
+      {chat_id && (
+        <Box className={styles.footer}>
+          <AiOutlinePaperClip size={"28px"} />
+          <TextField
+            placeholder="Add a comment"
+            onChange={(e) => setSendMessage(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+            value={sendMessage}
+            fullWidth
+          />
+          <Button onClick={() => handleSendMessage()}>SEND</Button>
+        </Box>
+      )}
     </Box>
   );
 };

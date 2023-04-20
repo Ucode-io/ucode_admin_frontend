@@ -1,15 +1,16 @@
-// import { notification } from "antd"
-
 import { store } from "../../store";
 
 let webSocket;
+let chatSocket;
 
-function connectSocket(sendMessage, chat_id) {
+function connectSocket(sendMessage, chat_id, platformType, userId) {
   const authStore = store.getState().auth;
-
   const ws = new WebSocket(
-    `wss://test.chat.u-code.io/ws/${chat_id}/${authStore.userId}?sender_name=Moxrbe`
+    `wss://test.chat.u-code.io/ws/${chat_id}/${
+      platformType === "websites" ? authStore.userId : userId
+    }?sender_name=Moxrbe`
   );
+
   // ws.addEventListener('open', function (event) {
   //   const message = {
   //     name: 'John',
@@ -26,10 +27,6 @@ function connectSocket(sendMessage, chat_id) {
     // })
     // subscribe to some channels
     console.log("Connected");
-    const message = {
-      user_id: authStore.userId,
-      message: sendMessage || "",
-    };
     // ws.send("we have been connected to the web-socket :)");
     // ws.send("Hello, world!", {
 
@@ -57,4 +54,32 @@ function connectSocket(sendMessage, chat_id) {
   webSocket = ws;
 }
 
-export { webSocket, connectSocket };
+function connectChatSocket() {
+  const authStore = store.getState().auth;
+  const environmentId = authStore.environmentId;
+  const wsChat = new WebSocket(
+    `wss://test.chat.u-code.io/ws/rooms/${environmentId}`
+  );
+
+  wsChat.onopen = function () {
+    console.log("Get list connected");
+  };
+
+  wsChat.onclose = function (e) {
+    console.log(`Get list socket is closed.`, e.reason);
+    connectChatSocket();
+  };
+
+  wsChat.onerror = function (err) {
+    console.error(
+      "Get list socket encountered error: ",
+      err.message,
+      "Closing socket"
+    );
+    wsChat.close();
+  };
+
+  chatSocket = wsChat;
+}
+
+export { webSocket, chatSocket, connectSocket, connectChatSocket };

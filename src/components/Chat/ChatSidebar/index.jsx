@@ -1,11 +1,35 @@
 import styles from "../index.module.scss";
-// import { BsPlusLg } from "react-icons/bs";
-// import { GoSettings } from "react-icons/go";
 import UserCard from "../components/UserCard";
 import { Box } from "@mui/material";
 import SearchInput from "../../SearchInput";
+import { useEffect } from "react";
+import { chatSocket, connectChatSocket } from "../socket_init";
 
-const ChatSidebar = ({ chats, setOnRequest }) => {
+const ChatSidebar = ({ chats, setChats, setOnRequest, setSearchText }) => {
+  const audio = new Audio("/sound/Notification.mp3");
+
+  useEffect(() => {
+    connectChatSocket();
+  }, []);
+
+  useEffect(() => {
+    if (chatSocket) {
+      chatSocket.onmessage = (event) => {
+        if (chats) {
+          setChats((prev) => [JSON.parse(event.data), ...prev]);
+          audio.play();
+        }
+      };
+    }
+  }, [chatSocket]);
+
+  const updateArrayFunc = () => {
+    const updatedArray = chats?.map((item) => {
+      return { ...item, check: true };
+    });
+    setChats(updatedArray);
+  };
+
   return (
     <Box className={styles.sidebar}>
       <Box w={"100%"} bgColor="#fff" className={styles.collapse}>
@@ -14,6 +38,9 @@ const ChatSidebar = ({ chats, setOnRequest }) => {
             className={styles.input}
             placeholder="Поиск"
             iconColor="#000"
+            onChange={(e) => {
+              setSearchText(e);
+            }}
           />
           <Box className={styles.setting}>
             {/* <BsPlusLg /> */}
@@ -21,8 +48,14 @@ const ChatSidebar = ({ chats, setOnRequest }) => {
           </Box>
         </Box>
         <Box className={styles.chat}>
-          {chats?.chats?.map((item, idx) => (
-            <UserCard item={item} idx={idx} setOnRequest={setOnRequest} />
+          {chats?.map((item, idx) => (
+            <UserCard
+              item={item}
+              idx={idx}
+              key={item.chat_id}
+              setOnRequest={setOnRequest}
+              updateArrayFunc={updateArrayFunc}
+            />
           ))}
         </Box>
       </Box>

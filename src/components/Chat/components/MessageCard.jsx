@@ -9,7 +9,8 @@ const MessageCard = ({ item, idx }) => {
       className={styles.message}
       key={idx}
       style={
-        authStore?.userId === item?.user_id
+        authStore?.userId === item?.user_id ||
+        item?.platform_type === "to_telegram_bot"
           ? {
               flexDirection: "row-reverse",
               marginLeft: "auto",
@@ -21,7 +22,11 @@ const MessageCard = ({ item, idx }) => {
       <Box
         className={styles.info}
         style={{
-          background: authStore.userId === item.user_id ? "#F2F8F8" : "#E1EDFD",
+          background:
+            authStore.userId === item.user_id ||
+            item?.platform_type === "to_telegram_bot"
+              ? "#F2F8F8"
+              : "#E1EDFD",
         }}
       >
         <Box
@@ -32,7 +37,7 @@ const MessageCard = ({ item, idx }) => {
           <p className={styles.name}>{item.sender_name}</p>
         </Box>
         <p className={styles.desc}>{item.message || "Message is empty!"}</p>
-        <p className={styles.time}>{item.created_at.slice(11, 16)}</p>
+        <p className={styles.time}>{item.created_at?.slice(11, 16)}</p>
       </Box>
     </Box>
   );

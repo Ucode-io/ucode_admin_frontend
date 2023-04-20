@@ -1,10 +1,9 @@
 import { Box } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "../index.module.scss";
 
-const UserCard = ({ item, idx, setOnRequest }) => {
+const UserCard = ({ item, idx, setOnRequest, updateArrayFunc }) => {
   const navigate = useNavigate();
-  const { projectId } = useParams();
 
   return (
     <Box
@@ -13,6 +12,7 @@ const UserCard = ({ item, idx, setOnRequest }) => {
       onClick={() => {
         navigate(`/chat/${item.chat_id}`);
         setOnRequest(true);
+        updateArrayFunc();
       }}
     >
       <img alt="avatarka" src="/img/AvatarPhoto.png" />
@@ -27,6 +27,7 @@ const UserCard = ({ item, idx, setOnRequest }) => {
         </Box>
         <p className={styles.message}>
           {item?.message.type || "Message is empty!"}
+          {!item.check && <span className={styles.status}>1</span>}
         </p>
       </Box>
     </Box>

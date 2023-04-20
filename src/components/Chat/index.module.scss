@@ -90,19 +90,23 @@
       text-overflow: ellipsis;
       overflow: hidden;
       display: inherit;
-      width: 230px;
-    }
-
-    .message {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      display: inherit;
       font-size: 14px;
       line-height: 20px;
       font-weight: 400;
       color: #5B6871;
       margin-top: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .status {
+        display: block;
+        border-radius: 50%;
+        background: #919EAB;
+        padding: 2px 9px;
+        color: #fff;
+        font-size: 10px;
+      }
     }
 
     .name {
@@ -161,10 +165,25 @@
   }
 
   .chat {
+    height: 80vh;
+    overflow: auto;
+    scroll-behavior: smooth;
+  }
+
+  .emptyChat {
     // height: calc(100% - 122px);
     height: 80vh;
     overflow: auto;
     scroll-behavior: smooth;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .empty {
+      padding: 2px 5px;
+      background: #D4DAE2;
+      border-radius: 16px;
+    }
   }
 
   .message {

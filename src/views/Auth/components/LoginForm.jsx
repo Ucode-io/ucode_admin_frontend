@@ -73,12 +73,12 @@ const LoginForm = () => {
   const { data: computedClientTypes = [] } = useQuery(
     [
       "GET_CLIENT_TYPE_LIST",
-      { project_id: selectedProjectID },
+      { "project-id": selectedProjectID },
       { "environment-id": selectedEnvID },
     ],
     () => {
       return clientTypeServiceV2.getList(
-        { project_id: selectedProjectID },
+        { 'project-id': selectedProjectID },
         { "environment-id": selectedEnvID }
       );
     },

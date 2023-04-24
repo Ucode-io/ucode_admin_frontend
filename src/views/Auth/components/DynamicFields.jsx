@@ -23,7 +23,7 @@ const DynamicFields = ({
   }`;
   const data = {
     data: {
-      project_id: selectedProjectID,
+      "project-id": selectedProjectID,
     },
   };
   const config = {
@@ -31,7 +31,7 @@ const DynamicFields = ({
       "environment-id": selectedEnvID,
     },
     params: {
-      project_id: selectedProjectID,
+      "project-id": selectedProjectID,
     },
   };
 

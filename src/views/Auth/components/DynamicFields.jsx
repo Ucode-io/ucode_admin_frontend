@@ -11,19 +11,22 @@ const DynamicFields = ({
   table = {},
   index,
   watch,
+  companies
 }) => {
   const [selectedCollection, setSelectedCollection] = useState(null);
-
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
-
+  const field_slug = connection?.field_slug; 
+  
+  
   const url = `${import.meta.env.VITE_AUTH_BASE_URL_V2}/object/get-list/${
     connection?.table_slug
   }`;
   const data = {
     data: {
       "project-id": selectedProjectID,
+      field_slug: companies?.owner_id
     },
   };
   const config = {

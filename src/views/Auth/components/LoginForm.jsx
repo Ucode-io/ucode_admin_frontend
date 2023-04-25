@@ -246,6 +246,7 @@ const LoginForm = () => {
                       control={control}
                       setValue={setValue}
                       watch={watch}
+                      companies={companies}
                     />
                   ))
                 : null}

@@ -26,7 +26,7 @@ const DynamicFields = ({
   const data = {
     data: {
       "project-id": selectedProjectID,
-      field_slug: companies?.owner_id
+      [field_slug]: companies?.owner_id
     },
   };
   const config = {

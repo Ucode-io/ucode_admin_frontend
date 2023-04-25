@@ -73,12 +73,12 @@ const LoginForm = () => {
   const { data: computedClientTypes = [] } = useQuery(
     [
       "GET_CLIENT_TYPE_LIST",
-      { project_id: selectedProjectID },
+      { "project-id": selectedProjectID },
       { "environment-id": selectedEnvID },
     ],
     () => {
       return clientTypeServiceV2.getList(
-        { project_id: selectedProjectID },
+        { 'project-id': selectedProjectID },
         { "environment-id": selectedEnvID }
       );
     },
@@ -95,12 +95,12 @@ const LoginForm = () => {
   const { data: computedConnections = [] } = useQuery(
     [
       "GET_CONNECTION_LIST",
-      { project_id: selectedProjectID },
+      { "project-id": selectedProjectID },
       { "environment-id": selectedEnvID },
     ],
     () => {
       return connectionServiceV2.getList(
-        { project_id: selectedProjectID, client_type_id: selectedClientTypeID },
+        { "project-id": selectedProjectID, client_type_id: selectedClientTypeID },
         { "environment-id": selectedEnvID }
       );
     },
@@ -246,6 +246,7 @@ const LoginForm = () => {
                       control={control}
                       setValue={setValue}
                       watch={watch}
+                      companies={companies}
                     />
                   ))
                 : null}

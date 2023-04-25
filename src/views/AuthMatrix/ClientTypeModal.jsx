@@ -33,7 +33,7 @@ const ClientTypeModal = ({
       name: selectedType?.name ?? "",
       self_recover: selectedType?.self_recover ?? false,
       self_register: selectedType?.self_register ?? false,
-      project_id: projectId,
+      'project-id': projectId,
     }
   })
 

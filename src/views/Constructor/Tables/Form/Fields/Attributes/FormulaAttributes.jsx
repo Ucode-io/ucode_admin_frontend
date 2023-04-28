@@ -95,7 +95,7 @@ const FormulaAttributes = ({ control, mainForm }) => {
           />
         </FRow>
 
-        {(type === "SUMM" || type === "MAX") && (
+        {(type === "SUMM" || type === "MAX" || type === 'AVG') && (
           <>
             <FRow label="Table from">
               <HFSelect

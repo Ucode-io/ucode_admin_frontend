@@ -1,9 +1,14 @@
 @use "/src/scss/colors";
 
+.img:focus-visible {
+  outline: none !important;
+}
 
-.sidebar {
+
+.chatSidebar {
   height: 100%;
   width: 35%;
+  background: #fff;
 
   .collapse {
     border-right: 1px solid colors.$borders;
@@ -126,6 +131,7 @@
 
 .field {
   width: 100%;
+  background: #fff;
 
   .header {
     padding: 6px;
@@ -189,19 +195,20 @@
   .message {
     padding: 10px 16px;
     display: flex;
-    align-items: start;
+    align-items: end;
     column-gap: 12px;
     width: 530px;
+
+
 
     .info {
       width: 100%;
       padding: 12px;
-      border-radius: 0px 6px 6px 6px;
+      border-radius: 6px 6px 6px 0;
 
       .desc {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
+        // white-space: nowrap;// text-overflow: ellipsis;
+        // overflow: hidden;
         display: inherit;
         font-size: 14px;
         line-height: 20px;

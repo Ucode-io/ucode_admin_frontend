@@ -31,7 +31,7 @@ const ChatSidebar = ({ chats, setChats, setOnRequest, setSearchText }) => {
   };
 
   return (
-    <Box className={styles.sidebar}>
+    <Box className={styles.chatSidebar}>
       <Box w={"100%"} bgColor="#fff" className={styles.collapse}>
         <Box className={styles.header}>
           <SearchInput

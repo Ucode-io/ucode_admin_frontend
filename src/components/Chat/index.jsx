@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useChatListQuery } from "../../services/chatService";
 import { Box } from "@mui/material";
 import { store } from "../../store";
-import RouterTabsBlock from "../../layouts/MainLayout/RouterTabsBlock";
 
 const Chat = () => {
   const authStore = store.getState().auth;
@@ -19,7 +18,6 @@ const Chat = () => {
       search: searchText,
     },
     queryParams: {
-      // enabled: !!searchText,
       onSuccess: (res) => {
         setChats(res.chats);
       },
@@ -28,8 +26,7 @@ const Chat = () => {
 
   return (
     <>
-      <RouterTabsBlock />
-      <Box display={"flex"} height="100%" width={"100%"}>
+      <Box display={"flex"} height={"calc(100% - 48px)"} width={"100%"}>
         <ChatSidebar
           chats={chats}
           setChats={setChats}

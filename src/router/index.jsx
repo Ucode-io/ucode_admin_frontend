@@ -97,6 +97,10 @@ const Router = () => {
 
         <Route path=":appId" element={<div></div>} />
 
+        <Route path=":appId/chat" element={<Chat />}>
+          <Route path=":chat_id" element={<Chat />} />
+        </Route>
+
         <Route
           path=":appId/object/:tableSlug"
           element={<ReloadWrapper component={ObjectsPage} />}
@@ -369,9 +373,6 @@ const Router = () => {
       <Route path="*" element={<Navigate to={redirectLink} />} />
       <Route path="reload" element={<ReloadPage />} />
       <Route path="reloadRelations" element={<ReloadRelations />} />
-      <Route path="chat" element={<Chat />}>
-        <Route path=":chat_id" element={<Chat />} />
-      </Route>
     </Routes>
   );
 };

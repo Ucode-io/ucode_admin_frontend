@@ -11,23 +11,51 @@ import { useEffect, useRef, useState } from "react";
 import { Box, Button, TextField } from "@mui/material";
 import SearchInput from "../../SearchInput";
 import { useChatGetByIdQuery } from "../../../services/chatService";
+import fileService from "../../../services/fileService";
 
 const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
-  const { chat_id } = useParams();
+  const { chat_id, appId } = useParams();
+  const inputRef = useRef();
   const [platformType, setPlatformType] = useState();
   const [sendMessage, setSendMessage] = useState("");
   const divRef = useRef();
   const audio = new Audio("/sound/bubbleSound.mp3");
   const navigate = useNavigate();
+  const cdnURL = import.meta.env.VITE_CDN_BASE_URL;
 
   const handleClick = () => {
-    navigate("/chat");
+    navigate(`/main/${appId}/chat`);
+  };
+
+  console.log("messages", messages);
+
+  const uploadFile = (e) => {
+    const file = e.target.files[0];
+    console.log("file", file);
+    const data = new FormData();
+    data.append("file", file);
+    fileService
+      .upload(data, {
+        "from-chat": "to_telegram_bot",
+      })
+      .then((res) => {
+        fileSend(res?.filename);
+      });
+  };
+
+  const fileSend = (value) => {
+    const url = `${cdnURL}telegram/${value}`;
+    console.log("url", url);
+    setSendMessage(url);
+    // exportToJsonService.uploadToJson({
+    //   file_name: value,
+    //   // app_id: appId,
+    // });
   };
 
   const { isLoading } = useChatGetByIdQuery({
     id: chat_id,
     queryParams: {
-      cacheTime: 10,
       enabled: Boolean(onRequest) || Boolean(chat_id),
       onSuccess: (res) => {
         setMessages(res.messages);
@@ -41,10 +69,10 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
     // if (sendMessage || messages) {
     if (webSocket) {
       webSocket.onmessage = (event) => {
-        if (messages) {
-          audio.play();
-          setMessages([...messages, JSON.parse(event.data)]);
-        }
+        // if (messages) {
+        audio.play();
+        setMessages([...messages, JSON.parse(event.data)]);
+        // }
       };
     }
     // }
@@ -58,7 +86,7 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
     const message = {
       message: sendMessage || "",
       platform_type:
-        platformType === "From_Telegram_bot" ? "to_telegram_bot" : "website",
+        platformType === "from_telegram_bot" ? "to_telegram_bot" : "website",
     };
     if (sendMessage) {
       webSocket.send(JSON.stringify(message));
@@ -97,7 +125,9 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
       >
         {chat_id ? (
           messages ? (
-            messages?.map((item, idx) => <MessageCard item={item} idx={idx} />)
+            messages?.map((item, idx) => (
+              <MessageCard item={item} idx={idx} key={item.chat_id} />
+            ))
           ) : (
             <Box className={styles.empty}>Здесь пока ничего нет...</Box>
           )
@@ -107,7 +137,19 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
       </Box>
       {chat_id && (
         <Box className={styles.footer}>
-          <AiOutlinePaperClip size={"28px"} />
+          <AiOutlinePaperClip
+            size={"28px"}
+            onClick={() => inputRef.current.click()}
+          />
+          <input
+            type="file"
+            className="hidden"
+            ref={inputRef}
+            onChange={uploadFile}
+            style={{
+              display: "none",
+            }}
+          />
           <TextField
             placeholder="Add a comment"
             onChange={(e) => setSendMessage(e.target.value)}

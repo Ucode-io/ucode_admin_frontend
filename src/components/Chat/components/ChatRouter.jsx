@@ -1,12 +1,14 @@
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import RectangleIconButton from "../../Buttons/RectangleIconButton";
 const ChatRouter = () => {
   const navigate = useNavigate();
-
+  const param = useParams();
   const handleClick = () => {
-    navigate("/chat");
+    navigate(`/main/${param.appId}/chat`);
   };
+
+  console.log("param", param);
 
   return (
     <div>

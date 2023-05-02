@@ -16,7 +16,11 @@ const UserCard = ({ item, idx, setOnRequest, updateArrayFunc }) => {
         updateArrayFunc();
       }}
     >
-      <img alt="avatarka" src="/img/AvatarPhoto.png" />
+      <img
+        alt="avatarka"
+        src={item.userProfilePhotoUrl || "/img/AvatarPhoto.png"}
+        className={styles.avatar}
+      />
       <Box className={styles.info}>
         <Box
           alignItems={"center"}

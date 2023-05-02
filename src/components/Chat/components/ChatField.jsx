@@ -12,6 +12,7 @@ import { Box, Button, TextField } from "@mui/material";
 import SearchInput from "../../SearchInput";
 import { useChatGetByIdQuery } from "../../../services/chatService";
 import fileService from "../../../services/fileService";
+import { MessageType } from "../utils/MessageType";
 
 const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
   const { chat_id, appId } = useParams();
@@ -87,6 +88,7 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
       message: sendMessage || "",
       platform_type:
         platformType === "from_telegram_bot" ? "to_telegram_bot" : "website",
+      message_type: MessageType(sendMessage),
     };
     if (sendMessage) {
       webSocket.send(JSON.stringify(message));

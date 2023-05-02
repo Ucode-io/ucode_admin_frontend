@@ -87,6 +87,14 @@
   column-gap: 12px;
   cursor: pointer;
 
+  .avatar {
+    width: 100%;
+    max-width: 32px;
+    height: 100%;
+    max-height: 32px;
+    border-radius: 50%;
+  }
+
   .info {
     width: 100%;
 
@@ -215,6 +223,7 @@
         font-weight: 400;
         color: #5B6871;
         margin-top: 4px;
+        overflow-wrap: break-word;
       }
 
       .name {

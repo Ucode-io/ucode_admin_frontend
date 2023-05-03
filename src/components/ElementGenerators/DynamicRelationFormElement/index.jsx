@@ -36,11 +36,11 @@ const DynamicRelationFormElement = ({
 
   const tablesList = useMemo(() => {
     return (
-      field.attributes?.dynamic_tables?.map((el) => {
+      field?.attributes?.dynamic_tables?.map((el) => {
         return el.table ? { ...el.table, ...el } : el;
       }) ?? []
     );
-  }, [field.attributes?.dynamic_tables]);
+  }, [field?.attributes?.dynamic_tables]);
 
   const tableInValue = useMemo(() => {
     return tablesList?.find((table) => value?.[`${table.slug}_id`]) ?? "";
@@ -90,13 +90,13 @@ const DynamicRelationFormElement = ({
 
   const computedInputString = useMemo(() => {
     if (!tableInValue || !localValue) return "";
-    return `${tableInValue.label} / ${localValue.label}`;
+    return `${tableInValue?.label} / ${localValue?.label}`;
   }, [tableInValue, localValue]);
 
   return (
     <>
       <FEditableRow
-        label={field.label ?? field.title}
+        label={field?.label ?? field.title}
         onLabelChange={onChange}
         required={field.required}
       >

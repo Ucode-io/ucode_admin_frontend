@@ -82,14 +82,14 @@ const RelationTable = forwardRef(
       if (relation.type === "Many2Many")
         relationFilter[`${tableSlug}_ids`] = id;
       else if (relation.type === "Many2Dynamic")
-        relationFilter[`${relation.relatedTable}.${tableSlug}_id`] = id;
+        relationFilter[`${relation?.relation_field_slug}.${tableSlug}_id`] = id;
       else relationFilter[`${tableSlug}_id`] = id;
 
       return {
         ...filters,
         ...relationFilter,
       };
-    }, [filters, tableSlug, id, relation.type, relation.relatedTable]);
+    }, [filters, tableSlug, id, relation.type, relation.relation_field_slug]);
 
     //============VIEW PERMISSION=========
     const viewPermission = useMemo(() => {

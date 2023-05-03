@@ -22,7 +22,6 @@ const RelationsBlock = ({
   });
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-
   const { fields: viewRelations, ...viewRelationsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "view_relations",
@@ -78,7 +77,7 @@ const RelationsBlock = ({
               orientation="horizontal"
               onDrop={onDrop}
             >
-              {computedViewRelations.map((relation, index) => (
+              {computedViewRelations?.map((relation, index) => (
                 <Draggable key={relation.id}>
                   <div
                     className={`${styles.tab} ${

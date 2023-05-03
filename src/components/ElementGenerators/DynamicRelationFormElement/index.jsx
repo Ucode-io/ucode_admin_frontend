@@ -25,7 +25,7 @@ const DynamicRelationFormElement = ({
     field: { onChange, value },
     fieldState: { error },
   } = useController({
-    name: field?.attributes?.relation_field_slug ?? field?.relation_field_slug,
+    name: field?.attributes?.relation_field_slug ?? field?.relation_field_slug ?? '',
     control,
     defaultValue: null,
   });

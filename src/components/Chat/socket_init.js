@@ -8,7 +8,7 @@ function connectSocket(sendMessage, chat_id, platformType, userId) {
   const ws = new WebSocket(
     `wss://test.chat.u-code.io/ws/${chat_id}/${
       platformType === "websites" ? authStore.userId : userId
-    }?sender_name=Moxrbe`
+    }?sender_name=Admin`
   );
 
   // ws.addEventListener('open', function (event) {

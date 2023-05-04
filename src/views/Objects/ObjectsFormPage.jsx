@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PageFallback from "../../components/PageFallback";
 import constructorObjectService from "../../services/constructorObjectService";
 import constructorSectionService from "../../services/constructorSectionService";
@@ -32,6 +32,7 @@ const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { pathname, state = {} } = useLocation();
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const { removeTab, navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
@@ -176,6 +177,7 @@ const ObjectsFormPage = () => {
           table_slug: tableSlug,
           user_id: isUserId,
         });
+        navigate(-1)
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
         if (tableRelations?.length)

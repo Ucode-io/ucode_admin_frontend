@@ -4,6 +4,13 @@
   outline: none !important;
 }
 
+.avatar {
+  width: 100%;
+  max-width: 32px;
+  height: 100%;
+  max-height: 32px;
+  border-radius: 50%;
+}
 
 .chatSidebar {
   height: 100%;
@@ -82,7 +89,7 @@
 .card {
   padding: 16px;
   display: flex;
-  align-items: start;
+  align-items: center;
   border-bottom: 1px solid colors.$borders;
   column-gap: 12px;
   cursor: pointer;
@@ -208,11 +215,11 @@
     width: 530px;
 
 
-
     .info {
       width: 100%;
       padding: 12px;
       border-radius: 6px 6px 6px 0;
+      position: relative;
 
       .desc {
         // white-space: nowrap;// text-overflow: ellipsis;
@@ -241,6 +248,9 @@
         display: flex;
         justify-content: end;
         margin-top: 8px;
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
       }
     }
   }

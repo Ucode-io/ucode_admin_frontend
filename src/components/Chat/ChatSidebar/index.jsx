@@ -16,7 +16,13 @@ const ChatSidebar = ({ chats, setChats, setOnRequest, setSearchText }) => {
     if (chatSocket) {
       chatSocket.onmessage = (event) => {
         if (chats) {
-          setChats((prev) => [JSON.parse(event.data), ...prev]);
+          setChats((prev) =>
+            prev.map((item) =>
+              item.user_id === JSON.parse(event.data).user_id
+                ? JSON.parse(event.data)
+                : item
+            )
+          );
           audio.play();
         }
       };
@@ -25,7 +31,7 @@ const ChatSidebar = ({ chats, setChats, setOnRequest, setSearchText }) => {
 
   const updateArrayFunc = () => {
     const updatedArray = chats?.map((item) => {
-      return { ...item, check: true };
+      return { ...item, unreadMessageCount: undefined };
     });
     setChats(updatedArray);
   };

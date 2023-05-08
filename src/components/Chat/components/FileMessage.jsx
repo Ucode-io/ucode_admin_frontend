@@ -24,16 +24,16 @@ const FileMessage = ({ item }) => {
         >
           <p className={styles.name}>{item.sender_name}</p>
         </Box>
-        <Box display={"flex"} alignItems={"center"}>
-          <Box width={"100px"} height={"100px"}>
+        <Box display={"flex"} alignItems={"center"} columnGap={"10px"}>
+          <Box width={"70px"} height={"70px"}>
             <iframe
               src={item.message}
-              width="100%"
-              height="100%"
               style={{
                 cursor: "pointer",
                 objectFit: "contain",
                 borderRadius: "10px",
+                width: "70px",
+                height: "100%",
               }}
               title="Test"
             ></iframe>

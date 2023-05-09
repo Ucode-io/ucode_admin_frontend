@@ -27,7 +27,7 @@ const DynamicFields = ({
   const data = {
     data: {
       "project-id": selectedProjectID,
-      user_id: userId
+      user_ids: userId
     },
   };
   const config = {

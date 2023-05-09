@@ -32,9 +32,9 @@ const UserCard = ({ item, idx, setOnRequest, updateArrayFunc }) => {
         </Box>
         <p className={styles.message}>
           {item?.message.type || "Message is empty!"}
-          {Boolean(item?.unreadMessageCount) && (
+          {Boolean(item?.unread_message_count + 1) && (
             <span className={styles.status}>
-              {item?.unreadMessageCount?.toString()}
+              {(item?.unread_message_count + 1)?.toString()}
             </span>
           )}
         </p>

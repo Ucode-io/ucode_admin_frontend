@@ -31,7 +31,7 @@ const ChatSidebar = ({ chats, setChats, setOnRequest, setSearchText }) => {
 
   const updateArrayFunc = () => {
     const updatedArray = chats?.map((item) => {
-      return { ...item, unreadMessageCount: undefined };
+      return { ...item, unread_message_count: undefined };
     });
     setChats(updatedArray);
   };

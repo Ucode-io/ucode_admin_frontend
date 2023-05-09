@@ -12,6 +12,8 @@ const MessageTypes = ({ item }) => {
       return <FileMessage item={item} />;
     case "video":
       return <VideoMessage item={item} />;
+    case "animation":
+      return <VideoMessage item={item} />;
     case "audio":
       return <AudioMessage item={item} />;
 

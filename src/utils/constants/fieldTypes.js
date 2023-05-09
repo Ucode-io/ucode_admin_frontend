@@ -36,6 +36,7 @@ export const fieldTypes = [
   "PASSWORD",
   "FORMULA",
   "DENTIST",
+  'COLOR'
 ];
 
 export const fieldTypesOptions = [
@@ -205,6 +206,11 @@ export const fieldTypesOptions = [
         icon: "teeth.svg",
         label: "Dentist",
         value: "DENTIST",
+      },
+      {
+        icon: "colon-sign.svg",
+        label: "Color",
+        value: "COLOR",
       },
     ],
   },

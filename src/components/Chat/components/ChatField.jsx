@@ -19,6 +19,7 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
   const inputRef = useRef();
   const [platformType, setPlatformType] = useState();
   const [sendMessage, setSendMessage] = useState("");
+  const [avatar, setAvatar] = useState("");
   const divRef = useRef();
   const audio = new Audio("/sound/bubbleSound.mp3");
   const navigate = useNavigate();
@@ -27,8 +28,6 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
   const handleClick = () => {
     navigate(`/main/${appId}/chat`);
   };
-
-  console.log("messages", messages);
 
   const uploadFile = (e) => {
     const file = e.target.files[0];
@@ -60,6 +59,7 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
       enabled: Boolean(onRequest) || Boolean(chat_id),
       onSuccess: (res) => {
         setMessages(res.messages);
+        setAvatar(res.userProfilePhotoUrl);
         setPlatformType(res.platform_type);
         setOnRequest(false);
         connectSocket(sendMessage, res.chat_id, res.platform_type, res.user_id);
@@ -128,7 +128,12 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
         {chat_id ? (
           messages ? (
             messages?.map((item, idx) => (
-              <MessageCard item={item} idx={idx} key={item.chat_id} />
+              <MessageCard
+                item={item}
+                idx={idx}
+                key={item.chat_id}
+                avatar={avatar}
+              />
             ))
           ) : (
             <Box className={styles.empty}>Здесь пока ничего нет...</Box>

@@ -8,8 +8,6 @@ const ChatRouter = () => {
     navigate(`/main/${param.appId}/chat`);
   };
 
-  console.log("param", param);
-
   return (
     <div>
       <RectangleIconButton color="primary" onClick={handleClick}>

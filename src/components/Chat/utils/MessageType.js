@@ -6,11 +6,15 @@ export const MessageType = (item) => {
       return "photo";
     case item?.includes("MP4"):
       return "video";
+    case item?.includes("mov"):
+      return "video";
+    case item?.includes("heic"):
+      return "video";
     case item?.includes("pdf"):
       return "document";
     case item?.includes("docx"):
       return "document";
     default:
-      return "#D29404";
+      return "text";
   }
 };

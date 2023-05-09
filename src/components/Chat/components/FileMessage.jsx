@@ -24,18 +24,35 @@ const FileMessage = ({ item }) => {
         >
           <p className={styles.name}>{item.sender_name}</p>
         </Box>
-        <a
-          className={styles.desc}
-          href={item.message}
-          style={{
-            color: "blue",
-          }}
-          rel="noreferrer"
-          target="_blank"
-        >
-          {item.message}
-        </a>
-        <p className={styles.time}>{item.created_at?.slice(11, 16)}</p>
+        <Box display={"flex"} alignItems={"center"} columnGap={"10px"}>
+          <Box width={"70px"} height={"70px"}>
+            <iframe
+              src={item.message}
+              style={{
+                cursor: "pointer",
+                objectFit: "contain",
+                borderRadius: "10px",
+                width: "70px",
+                height: "100%",
+              }}
+              title="Test"
+            ></iframe>
+          </Box>
+          <div>
+            <a
+              className={styles.desc}
+              href={item.message}
+              style={{
+                color: "blue",
+              }}
+              rel="noreferrer"
+              target="_blank"
+            >
+              {item.message}
+            </a>
+            <p className={styles.time}>{item.created_at?.slice(11, 16)}</p>
+          </div>
+        </Box>
       </Box>
     </>
   );

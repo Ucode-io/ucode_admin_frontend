@@ -397,6 +397,7 @@ const FormElementGenerator = ({
         <FRow label={field.label} required={field.required}>
           <BarcodeGenerator
             control={control}
+            field={field}
             name={field.slug}
             tabIndex={field?.tabIndex}
             fullWidth

@@ -46,7 +46,7 @@ const CodabarBarcode = ({
   const [open, setOpen] = useState(false);
   const ref = useRef();
   const handleClose = () => setOpen(false);
-  console.log('name', name)
+
   return (
     <div className={styles.barcode_layer}>
       <Controller

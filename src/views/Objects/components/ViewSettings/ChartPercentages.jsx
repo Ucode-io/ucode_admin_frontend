@@ -56,12 +56,11 @@ const ChartPercentages = ({ form, chart }) => {
   }, [app])
 
  
-
-
   useEffect(() => {
-    if(selectedBalance.split('#')[0] !== 'undefined') {
+    if(!selectedBalance?.split('#')[0]) return;
+    else {
       selectedBalance && constructorFieldService.getList({
-        table_slug: selectedBalance.split('#')[0]
+        table_slug: selectedBalance?.split('#')[0]
       }).then((res) => {
         setDigitalAreas(
           res.fields

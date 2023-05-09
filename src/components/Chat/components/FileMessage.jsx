@@ -27,7 +27,7 @@ const FileMessage = ({ item }) => {
         <Box display={"flex"} alignItems={"center"} columnGap={"10px"}>
           <Box width={"70px"} height={"70px"}>
             <iframe
-              src={item.message}
+              src={!item.message.includes("org") ? item.message : ""}
               style={{
                 cursor: "pointer",
                 objectFit: "contain",
@@ -48,7 +48,7 @@ const FileMessage = ({ item }) => {
               rel="noreferrer"
               target="_blank"
             >
-              {item.message}
+              {item.message.substring(item.message.lastIndexOf("/") + 1)}
             </a>
             <p className={styles.time}>{item.created_at?.slice(11, 16)}</p>
           </div>

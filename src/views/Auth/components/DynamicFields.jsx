@@ -17,8 +17,8 @@ const DynamicFields = ({
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
-  const field_slug = connection?.field_slug; 
-  const ownerId = Array.isArray(companies) ? companies?.[0]?.owner_id : companies?.owner_id
+  // const field_slug = connection?.field_slug; 
+  const userId = Array.isArray(companies) ? companies?.[0]?.user_id : companies?.user_id
 
   
   const url = `${import.meta.env.VITE_AUTH_BASE_URL_V2}/object/get-list/${
@@ -27,7 +27,7 @@ const DynamicFields = ({
   const data = {
     data: {
       "project-id": selectedProjectID,
-      [field_slug]: ownerId
+      user_id: userId
     },
   };
   const config = {

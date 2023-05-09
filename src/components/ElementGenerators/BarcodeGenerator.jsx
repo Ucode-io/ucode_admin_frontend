@@ -39,6 +39,7 @@ const BarcodeGenerator = ({
   defaultValue = "",
   disabled,
   formTableSlug,
+  field,
   ...props
 }) => {
   const [count, setCount] = useState(1);
@@ -46,7 +47,7 @@ const BarcodeGenerator = ({
   const ref = useRef();
 
   const handleClose = () => setOpen(false);
-
+  console.log("field", field);
   return (
     <div className={styles.barcode_layer}>
       <Controller
@@ -130,10 +131,14 @@ const BarcodeGenerator = ({
                 )}
               </div>
 
-              <BarcodeGenerateButton
-                onChange={onChange}
-                tableSlug={formTableSlug}
-              />
+              {field?.attributes?.disabled === false ? (
+                <BarcodeGenerateButton
+                  onChange={onChange}
+                  tableSlug={formTableSlug}
+                />
+              ) : (
+                ""
+              )}
             </>
           );
         }}

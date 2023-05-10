@@ -18,6 +18,7 @@ import HFTimePicker from "../FormElements/HFTimePicker";
 import CellElementGenerator from "./CellElementGenerator";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import CellRelationFormElement from "./CellRelationFormElement";
+import HFFloatField from "../FormElements/HFFloatField";
 
 const parser = new Parser();
 
@@ -232,6 +233,22 @@ const CellFormElementGenerator = ({
           {...props}
         />
       );
+    case "MULTISELECT_V2":
+      return (
+        <HFMultipleAutocomplete
+          disabled={isDisabled}
+          isFormEdit
+          control={control}
+          name={computedSlug}
+          width="100%"
+          required={field.required}
+          field={field}
+          placeholder={field.attributes?.placeholder}
+          isBlackBg={isBlackBg}
+          defaultValue={defaultValue}
+          {...props}
+        />
+      );
 
     case "DATE":
       return (
@@ -285,6 +302,21 @@ const CellFormElementGenerator = ({
     case "NUMBER":
       return (
         <HFNumberField
+          disabled={isDisabled}
+          isFormEdit
+          control={control}
+          name={computedSlug}
+          fullWidth
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          isBlackBg={isBlackBg}
+          defaultValue={defaultValue}
+          {...props}
+        />
+      );
+    case "FLOAT":
+      return (
+        <HFFloatField
           disabled={isDisabled}
           isFormEdit
           control={control}

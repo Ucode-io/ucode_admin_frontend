@@ -34,7 +34,7 @@ build-prod:
   only:
     - master
 
-deploy-staging:
+deploy-dev:
   stage: deploy
   extends: .deploy_template
   variables:

@@ -5,7 +5,7 @@ import styles from "../index.module.scss";
 const UserCard = ({ item, idx, setOnRequest, updateArrayFunc }) => {
   const navigate = useNavigate();
   const { appId } = useParams();
-
+  console.log("item", item);
   return (
     <Box
       className={styles.card}
@@ -18,7 +18,7 @@ const UserCard = ({ item, idx, setOnRequest, updateArrayFunc }) => {
     >
       <img
         alt="avatarka"
-        src={item.userProfilePhotoUrl || "/img/AvatarPhoto.png"}
+        src={item.user_profile_photo_url || "/img/AvatarPhoto.png"}
         className={styles.avatar}
       />
       <Box className={styles.info}>
@@ -31,7 +31,7 @@ const UserCard = ({ item, idx, setOnRequest, updateArrayFunc }) => {
           <p className={styles.time}>{item?.created_at.slice(0, 10)}</p>
         </Box>
         <p className={styles.message}>
-          {item?.message.type || "Message is empty!"}
+          <p>{item?.message.message || item?.message}</p>
           {Boolean(item?.unread_message_count + 1) && (
             <span className={styles.status}>
               {(item?.unread_message_count + 1)?.toString()}

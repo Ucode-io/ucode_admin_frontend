@@ -2,7 +2,7 @@ import { Controller, useWatch } from "react-hook-form";
 import { NumericFormat } from 'react-number-format';
 import styles from './style.module.scss'
 
-const HFNumberField = ({
+const HFFloatField = ({
   control,
   name = "",
   disabledHelperText = false,
@@ -16,8 +16,8 @@ const HFNumberField = ({
   tabIndex,
   disabled,
   type='text',
-  isFloat = false, // new prop to indicate whether this is a float field
-  decimalScale = 2, // new prop to set the number of decimal places
+  isFloat = false, 
+  decimalScale = 2, 
   ...props
 }) => {
   const value = useWatch({
@@ -71,4 +71,4 @@ const HFNumberField = ({
   );
 };
 
-export default HFNumberField;
+export default HFFloatField;

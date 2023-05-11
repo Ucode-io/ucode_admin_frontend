@@ -25,6 +25,7 @@ import BarcodeGenerator from "./BarcodeGenerator";
 import { useSelector } from "react-redux";
 import CodabarBarcode from "./CodabarBarcode";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
+import HFFloatField from "../FormElements/HFFloatField";
 
 const parser = new Parser();
 
@@ -265,6 +266,23 @@ const FormElementGenerator = ({
       return (
         <FRow label={field.label} required={field.required}>
           <HFNumberField
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            type="number"
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
+    case "FLOAT":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFFloatField
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}

@@ -59,7 +59,7 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
       enabled: Boolean(onRequest) || Boolean(chat_id),
       onSuccess: (res) => {
         setMessages(res.messages);
-        setAvatar(res.userProfilePhotoUrl);
+        setAvatar(res.user_profile_photo_url);
         setPlatformType(res.platform_type);
         setOnRequest(false);
         connectSocket(sendMessage, res.chat_id, res.platform_type, res.user_id);

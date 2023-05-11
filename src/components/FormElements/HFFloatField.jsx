@@ -2,7 +2,7 @@ import { Controller, useWatch } from "react-hook-form";
 import { NumericFormat } from 'react-number-format';
 import styles from './style.module.scss'
 
-const HFNumberField = ({
+const HFFloatField = ({
   control,
   name = "",
   disabledHelperText = false,
@@ -13,9 +13,11 @@ const HFNumberField = ({
   withTrim = false,
   rules = {},
   defaultValue = "",
-    tabIndex,
+  tabIndex,
   disabled,
   type='text',
+  isFloat = false, 
+  decimalScale = 2, 
   ...props
 }) => {
   const value = useWatch({
@@ -33,16 +35,19 @@ const HFNumberField = ({
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
-        
+        const allowNegative = isFloat; // allow negatives only for float fields
+        const decimalSeparator = isFloat ? '.' : undefined; // set the decimal separator only for float fields
+
         return (
           <NumericFormat
             thousandsGroupStyle="thousand"
             thousandSeparator=" "
-            decimalSeparator=""
+            decimalSeparator={decimalSeparator}
+            decimalScale={decimalScale}
             displayType="input"
             isNumericString={true}
             autoComplete="off"
-            allowNegative
+            allowNegative={allowNegative}
             fullWidth={fullWidth}
             value={value}
             onChange={(e) => {
@@ -51,7 +56,7 @@ const HFNumberField = ({
               
               if (!valueWithoutSpaces) onChange('');
               else {
-                if(valueWithoutSpaces.at(-1) === ' ') onChange(valueWithoutSpaces)
+                if(valueWithoutSpaces.at(-1) === '.') onChange(valueWithoutSpaces)
                 else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '')}
                 }}
               className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
@@ -66,4 +71,4 @@ const HFNumberField = ({
   );
 };
 
-export default HFNumberField;
+export default HFFloatField;

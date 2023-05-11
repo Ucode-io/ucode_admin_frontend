@@ -83,6 +83,11 @@ export const fieldTypesOptions = [
         label: "Number",
         value: "NUMBER",
       },
+      {
+        icon: "hashtag.svg",
+        label: "Float",
+        value: "FLOAT",
+      },
     ],
   },
   {
@@ -111,6 +116,11 @@ export const fieldTypesOptions = [
         icon: "list-check.svg",
         label: "Multi select",
         value: "MULTISELECT",
+      },
+      {
+        icon: "list-check.svg",
+        label: "Multi select V2",
+        value: "MULTISELECT_V2",
       },
     ],
   },

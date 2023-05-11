@@ -9,17 +9,19 @@ const MultiselectCellColoredElement = ({
   ...props
 }) => {
   const tags = useMemo(() => {
-    if (typeof value === "string")
+    if (typeof value === "string" || typeof value === 'number')
       return [
         {
           value,
         },
       ];
-    return value
+    if(Array.isArray(value)) {
+      return value
       ?.map((tagValue) =>
         field.attributes?.options?.find((option) => option.value === tagValue)
       )
       ?.filter((el) => el);
+    }
   }, [value, field?.attributes?.options]);
 
   const hasColor = field?.attributes?.has_color;

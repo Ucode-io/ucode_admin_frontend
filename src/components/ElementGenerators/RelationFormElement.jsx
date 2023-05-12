@@ -57,6 +57,7 @@ const RelationFormElement = ({
               setFormValue={setFormValue}
               control={control}
               name={name}
+              defaultValue={defaultValue}
             />
           )}
         />
@@ -101,6 +102,7 @@ const RelationFormElement = ({
                   disabledHelperText={disabledHelperText}
                   control={control}
                   name={name}
+                  defaultValue={defaultValue}
                 />
               )
             }
@@ -123,6 +125,7 @@ const AutoCompleteElement = ({
   disabledHelperText,
   control,
   name,
+  defaultValue, 
   setFormValue = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");

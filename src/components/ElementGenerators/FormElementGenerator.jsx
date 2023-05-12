@@ -52,25 +52,27 @@ const FormElementGenerator = ({
       objectIdFromJWT = table?.object_id;
     }
   });
-
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     return field?.slug;
   }, [field?.id, field?.slug]);
+
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
-    const defaultValue =
-      field.attributes?.defaultValue ?? field.attributes?.default_values;
+    
+    const defaultValue = field.attributes?.defaultValue ? field.attributes?.defaultValue : field.attributes?.default_values;
+
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
+
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
-
+  // console.log('defaultValue', defaultValue)
   const isDisabled = useMemo(() => {
     return (
       field.attributes?.disabled ||

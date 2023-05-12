@@ -3,7 +3,7 @@ import { store } from "../store/index";
 import { showAlert } from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
 import { authActions } from "../store/auth/auth.slice";
-export const baseURL = " https://test.admin.api.u-code.io/v3";
+export const baseURL = `${import.meta.env.VITE_BASE_URL}/v3`
 
 const requestV3 = axios.create({
   baseURL,

@@ -4,7 +4,7 @@ import { store } from "../store/index";
 import { showAlert } from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
 import { authActions } from "../store/auth/auth.slice";
-export const baseURL = import.meta.env.VITE_BASE_URL
+export const baseURL = `${import.meta.env.VITE_BASE_URL}/v1`
 
 const request = axios.create({
   baseURL,

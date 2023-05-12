@@ -92,7 +92,7 @@ ingress:
           path: /
           servicePort: 80
       tls:
-        - secretName: dev-app-tls
+        - secretName: ucode-star
           hosts:
             - "dev-app.ucode.run"
 

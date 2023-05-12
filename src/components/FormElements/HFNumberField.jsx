@@ -1,3 +1,4 @@
+
 import { Controller, useWatch } from "react-hook-form";
 import { NumericFormat } from 'react-number-format';
 import styles from './style.module.scss'
@@ -38,7 +39,7 @@ const HFNumberField = ({
           <NumericFormat
             thousandsGroupStyle="thousand"
             thousandSeparator=" "
-            decimalSeparator=""
+            decimalSeparator="."
             displayType="input"
             isNumericString={true}
             autoComplete="off"
@@ -51,7 +52,7 @@ const HFNumberField = ({
               
               if (!valueWithoutSpaces) onChange('');
               else {
-                if(valueWithoutSpaces.at(-1) === ' ') onChange(valueWithoutSpaces)
+                if(valueWithoutSpaces.at(-1) === '.') onChange(valueWithoutSpaces)
                 else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '')}
                 }}
               className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}

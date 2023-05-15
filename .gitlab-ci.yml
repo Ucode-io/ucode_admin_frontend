@@ -12,7 +12,7 @@ build-dev:
   extends: .build_template
   variables:
     ENV_TAG: dev
-    DOCKERFILE: Dockerfile
+    DOCKERFILE: Dockerfile-dev
   only:
     - dev
 
@@ -21,7 +21,7 @@ build-staging:
   extends: .build_template
   variables:
     ENV_TAG: test
-    DOCKERFILE: Dockerfile
+    DOCKERFILE: Dockerfile-staging
   only:
     - staging
 

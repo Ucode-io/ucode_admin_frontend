@@ -76,7 +76,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
           openRelationSettingsBlock={openRelationSettingsBlock}
         /> */}
         
-        <NewlayoutList  />
+        {/* <NewlayoutList  /> */}
 
         <Collapse
           in={settingsBlockVisible}

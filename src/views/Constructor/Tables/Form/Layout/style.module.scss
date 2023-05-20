@@ -297,6 +297,7 @@
   cursor: pointer;
   border-radius: 4px;
   color:#5B6871;
+  margin: 0 5px;
 }
 
 
@@ -389,4 +390,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.addBtn {
+  height: 40px;
+  width: 40px;
+  margin-left: 10px;
 }

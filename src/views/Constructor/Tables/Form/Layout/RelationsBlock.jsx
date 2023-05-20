@@ -69,7 +69,7 @@ const RelationsBlock = ({
   return (
     <div className={styles.relationsBlock}>
       <Card>
-        <div className={styles.cardHeader}>
+        {/* <div className={styles.cardHeader}>
           <div className={styles.tabList}>
             <Container
               groupName="table_relation"
@@ -99,7 +99,7 @@ const RelationsBlock = ({
               <Add />
             </RectangleIconButton>
           </div>
-        </div>
+        </div> */}
 
         <RelationTable
           key={computedViewRelations[selectedTabIndex]?.id}

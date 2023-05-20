@@ -331,3 +331,24 @@ html {
   fill: #ec8c9c;
   pointer-events: all;
 }
+
+.custom-selected-tab {
+  background-color: #0E73F626;
+  border-bottom: none;
+  outline: none;
+  padding: 10px;
+  
+  .custom_tab {
+    border-bottom: none;
+    outline: none;
+    padding: 10px;
+    width: 34px;
+    height: 34px;
+    color:#0E73F6;
+  }
+}
+.custom-tabs .react-tabs__tab-list {
+  padding: 5px 16px 10px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 5px;
+}

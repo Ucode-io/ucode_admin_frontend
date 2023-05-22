@@ -225,9 +225,6 @@ const ObjectsFormPage = () => {
     );
   }, [serviceTime, startTime]);
 
-  console.log("tableRelations", tableRelations);
-
-  console.log("selectedTabIndex", selectedTabIndex);
   if (loader) return <PageFallback />;
   return (
     <div className={styles.formPage}>

@@ -125,6 +125,16 @@ export const fieldTypesOptions = [
     ],
   },
   {
+    label: "Map",
+    options: [
+      {
+        icon: "map-pin.svg",
+        label: "Map",
+        value: "MAP",
+      },
+    ],
+  },
+  {
     label: "File",
     options: [
       {

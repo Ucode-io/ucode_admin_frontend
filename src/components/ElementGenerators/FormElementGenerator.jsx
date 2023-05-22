@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import CodabarBarcode from "./CodabarBarcode";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFFloatField from "../FormElements/HFFloatField";
+import HFMapField from "../FormElements/HFMapField";
 
 const parser = new Parser();
 
@@ -52,21 +53,23 @@ const FormElementGenerator = ({
       objectIdFromJWT = table?.object_id;
     }
   });
-
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@"))
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     return field?.slug;
   }, [field?.id, field?.slug]);
+
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
-    const defaultValue =
-      field.attributes?.defaultValue ?? field.attributes?.default_values;
+
+    const defaultValue = field.attributes?.defaultValue ? field.attributes?.defaultValue : field.attributes?.default_values;
+
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
+
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
@@ -376,6 +379,21 @@ const FormElementGenerator = ({
             required={field.required}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
+    case "MAP":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFMapField
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            field={field}
             {...props}
           />
         </FRow>

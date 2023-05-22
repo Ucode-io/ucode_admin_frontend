@@ -38,6 +38,8 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
+  
+  console.log('defaultValue', defaultValue)
   if (!isLayout)
     return (
       <FRow label={field?.label ?? field?.title} required={field.required}>
@@ -57,6 +59,7 @@ const RelationFormElement = ({
               setFormValue={setFormValue}
               control={control}
               name={name}
+              defaultValue={defaultValue}
             />
           )}
         />
@@ -101,6 +104,7 @@ const RelationFormElement = ({
                   disabledHelperText={disabledHelperText}
                   control={control}
                   name={name}
+                  defaultValue={defaultValue}
                 />
               )
             }
@@ -123,6 +127,7 @@ const AutoCompleteElement = ({
   disabledHelperText,
   control,
   name,
+  defaultValue, 
   setFormValue = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");

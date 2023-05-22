@@ -89,13 +89,13 @@ ingress:
 
       type: web
       hosts:
-        - host: "test.app.u-code.io"
+        - host: "app.ucode.run"
           path: /
           servicePort: 80
       tls:
-        - secretName: react-app-tls
+        - secretName: ucode-star
           hosts:
-            - "test.app.u-code.io"
+            - "app.ucode.run"
 
 resources:
   {}

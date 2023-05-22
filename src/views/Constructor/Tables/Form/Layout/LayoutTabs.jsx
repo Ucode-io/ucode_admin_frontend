@@ -53,9 +53,10 @@ function LayoutTabs({
             >
               <HFTextField
                 control={mainForm.control}
-                style={{width: '150px'}}
+                // style={{width: '120px', border: '0px solid #fff', boxShadow: 'none'}}
                 placeholder="Tab name"
                 name={`tabs[${index}].tab_name`}
+                className={styles.tabInput}
               />
             </Tab>
             <ButtonsPopover

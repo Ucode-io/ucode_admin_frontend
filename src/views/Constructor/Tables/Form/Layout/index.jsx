@@ -54,15 +54,15 @@ const Layout = ({ mainForm, getRelationFields }) => {
 
   return (
     <>
-      <NewLayoutSettings
+      {/* <NewLayoutSettings
         mainForm={mainForm}
         layoutForm={layoutForm}
         openFieldsBlock={openFieldsBlock}
         openFieldSettingsBlock={openFieldSettingsBlock}
         openRelationSettingsBlock={openRelationSettingsBlock}
-      />
+      /> */}
       <div className={styles.page}>
-        {/* <SectionsBlock
+        <SectionsBlock
           mainForm={mainForm}
           layoutForm={layoutForm}
           openFieldsBlock={openFieldsBlock}
@@ -74,7 +74,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
           mainForm={mainForm}
           openFieldsBlock={openFieldsBlock}
           openRelationSettingsBlock={openRelationSettingsBlock}
-        /> */}
+        />
         
         {/* <NewlayoutList  /> */}
 

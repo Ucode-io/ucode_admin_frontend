@@ -9,11 +9,15 @@ import SectionsBlock from "./SectionsBlock";
 import SettingsBlock from "./SettingsBlock";
 import SummarySection from "./SummarySection.jsx";
 import styles from "./style.module.scss";
+import NewlayoutList from "./NewlayoutList";
+import NewLayoutSettings from "./NewLayoutSettings";
+import { useNavigate } from "react-router-dom";
 
 const Layout = ({ mainForm, getRelationFields }) => {
   const dispatch = useDispatch();
   const layoutForm = useForm({ mode: "onChange" });
   const [settingsBlockVisible, setSettingsBlockVisible] = useState(false);
+  const navigate = useNavigate();
 
   const [selectedField, setSelectedField] = useState(null);
   const [selectedRelation, setSelectedRelation] = useState(null);
@@ -50,17 +54,15 @@ const Layout = ({ mainForm, getRelationFields }) => {
 
   return (
     <>
-      <div className={styles.summary_section_layer}>
-        <SummarySection
-          mainForm={mainForm}
-          layoutForm={layoutForm}
-          openFieldsBlock={openFieldsBlock}
-          openFieldSettingsBlock={openFieldSettingsBlock}
-          openRelationSettingsBlock={openRelationSettingsBlock}
-        />
-      </div>
+      <NewLayoutSettings
+        mainForm={mainForm}
+        layoutForm={layoutForm}
+        openFieldsBlock={openFieldsBlock}
+        openFieldSettingsBlock={openFieldSettingsBlock}
+        openRelationSettingsBlock={openRelationSettingsBlock}
+      />
       <div className={styles.page}>
-        <SectionsBlock
+        {/* <SectionsBlock
           mainForm={mainForm}
           layoutForm={layoutForm}
           openFieldsBlock={openFieldsBlock}
@@ -72,7 +74,9 @@ const Layout = ({ mainForm, getRelationFields }) => {
           mainForm={mainForm}
           openFieldsBlock={openFieldsBlock}
           openRelationSettingsBlock={openRelationSettingsBlock}
-        />
+        /> */}
+        
+        {/* <NewlayoutList  /> */}
 
         <Collapse
           in={settingsBlockVisible}

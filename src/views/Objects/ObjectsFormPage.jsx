@@ -22,11 +22,11 @@ import DocumentGeneratorButton from "./components/DocumentGeneratorButton";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import { showAlert } from "../../store/alert/alert.thunk";
-import SummarySection from "./SummarySection/SummarySection";
 import BackButton from "../../components/BackButton";
 import FormPageBackButton from "./components/FormPageBackButton";
 import { addMinutes } from "date-fns";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
+import SummarySectionValue from "./SummarySection/SummarySectionValue";
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
@@ -235,7 +235,7 @@ const ObjectsFormPage = () => {
         hasBackground={true}
       >
         <FormPageBackButton />
-        <SummarySection
+        <SummarySectionValue
           computedSummary={computedSummary}
           control={control}
           sections={sections}

@@ -9,6 +9,7 @@ import { applyDrag } from "../../../../../utils/applyDrag";
 import { generateGUID } from "../../../../../utils/generateID";
 import Section from "./Section";
 import styles from "./style.module.scss";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const SummarySection = ({
   mainForm,
@@ -62,10 +63,15 @@ const SummarySection = ({
 
     openRelationSettingsBlock(relation);
   };
+
   return (
     <div className={styles.summarySection}>
+      <div className={styles.summaySectionTitle}>
+          <span><ArrowBackIcon/></span>
+          <h2>Name</h2>
+      </div>
       <Container
-        style={{ minHeight: 20, minWidth: "400px" }}
+        style={{ minHeight: 20, minWidth: "100%" }}
         groupName="1"
         dragClass="drag-row"
         orientation="horizontal"

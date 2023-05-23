@@ -1,26 +1,21 @@
-import "./style.scss";
-import menuElements from "./elements";
-import brandLogo from "../../../builder_config/assets/company-logo.svg";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
-import { useState, useEffect, useMemo } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { NavLink } from "react-router-dom";
-import ChildBlock from "./ChildBlock";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { mainActions } from "../../store/main/main.slice";
-import constructorTableService from "../../services/constructorTableService";
+import { useEffect, useMemo, useState } from "react";
+import { AiFillFolderAdd } from "react-icons/ai";
 import { useQuery } from "react-query";
-import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
+import { useDispatch, useSelector } from "react-redux";
+import brandLogo from "../../../builder_config/assets/company-logo.svg";
 import useSidebarElements from "../../hooks/useSidebarElements";
-import RingLoader from "../Loaders/RingLoader";
-import projectService from "../../services/projectService";
-import { AiFillFolderAdd, AiOutlinePlus } from "react-icons/ai";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
-import SidebarRecursiveBlock from "./SidebarRecursiveBlock";
+import constructorTableService from "../../services/constructorTableService";
+import projectService from "../../services/projectService";
+import { mainActions } from "../../store/main/main.slice";
+import { applyDrag } from "../../utils/applyDrag";
+import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import RecursiveBlock from "./SidebarRecursiveBlock/recursiveBlock";
+import FolderModal from "./folderModal";
+import "./style.scss";
 
-const LayoutSidebar = ({ favicon, appId, environment }) => {
+const LayoutSidebar = ({ favicon, appId, environment, getAppById }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -32,11 +27,17 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const [openedBlock, setOpenedBlock] = useState(null);
   const [loading, setLoading] = useState(false);
   const [modalType, setModalType] = useState(null);
+  const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [childBlockVisible, setChildBlockVisible] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(null);
 
   const closeModal = () => {
     setModalType(null);
+  };
+
+  const closeFolderModal = () => {
+    setFolderModalType(null);
   };
 
   const openFolderCreateModal = (type, element) => {
@@ -100,6 +101,30 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     }
   );
 
+  console.log("tableFolder?.folders", tableFolder?.folders);
+
+  const onDrop = (dropResult) => {
+    const result = applyDrag(sidebarElements, dropResult);
+    const computedTables = [
+      ...result.map((el) => ({
+        table_id: el.id,
+        is_visible: Boolean(el.is_visible),
+        is_own_table: Boolean(el.is_own_table),
+      })),
+    ];
+    console.log("result", result);
+    // if (result) {
+    //   applicationService
+    //     .update({
+    //       ...applicationElements,
+    //       tables: computedTables,
+    //     })
+    //     .then(() => {
+    //       dispatch(fetchConstructorTableListAction(appId));
+    //     });
+    // }
+  };
+
   console.log("environment", environment);
 
   const hasNestedLevel = sidebarElements?.some((element) => element.children);
@@ -149,97 +174,34 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         }}
       >
         <div className="menu-element">
-          {sidebarElements
-            // ?.filter((el, idx) =>
-            //   idx === 1 ? permissions?.[el.slug]?.["read"] !== false : true
-            // )
-            ?.map((element, index) => (
-              // <div className="parent-block" key={element?.id}>
-              //   <NavLink
-              //     // to={element?.path}
-              //     exact={0}
-              //     className={({ isActive }) =>
-              //       `nav-element ${
-              //         isActive &&
-              //         // (element?.children ? "active-with-child" : "active")
-              //         "active-with-child"
-              //       }`
-              //     }
-              //     onClick={(e) => {
-              //       if (element?.children) e.preventDefault();
-              //       parentClickHandler(element);
-              //     }}
-              //   >
-              //     {/* <div className="icon">
-              //             <element.icon />
-              //           </div> */}
-
-              //     <div className="label">{element.title}</div>
-              //     {/* {element?.children && ( */}
-              //     <div
-              //       className={`arrow-icon ${
-              //         openedBlock === element?.id ? "open" : ""
-              //       }`}
-              //     >
-              //       <AiOutlinePlus
-              //         onClick={(e) => {
-              //           e.preventDefault();
-              //           openFolderCreateModal("parent", element);
-              //         }}
-              //       />
-              //       <ExpandMoreIcon />
-              //     </div>
-              //     {/* )} */}
-              //   </NavLink>
-
-              //   {element?.children && (
-              //     <ChildBlock
-              //       element={element}
-              //       isVisible={openedBlock === element.id}
-              //     />
-              //   )}
-              // </div>
-              <RecursiveBlock
-                key={index}
-                element={element}
-                parentClickHandler={parentClickHandler}
-                openedBlock={openedBlock}
-                openFolderCreateModal={openFolderCreateModal}
-                // hasNestedLevel={hasNestedLevel}
-                environment={environment}
-                childBlockVisible={childBlockVisible}
-              />
-              // <SidebarRecursiveBlock
-              //   key={index}
-              //   element={element}
-              //   parentClickHandler={parentClickHandler}
-              //   openedBlock={openedBlock}
-              //   openFolderCreateModal={openFolderCreateModal}
-              //   hasNestedLevel={hasNestedLevel}
-              // />
-            ))}
+          {sidebarElements?.map((element, index) => (
+            <RecursiveBlock
+              key={index}
+              element={element}
+              parentClickHandler={parentClickHandler}
+              openedBlock={openedBlock}
+              openFolderCreateModal={openFolderCreateModal}
+              // hasNestedLevel={hasNestedLevel}
+              environment={environment}
+              childBlockVisible={childBlockVisible}
+              onDrop={onDrop}
+              tableFolder={tableFolder?.folders}
+              setFolderModalType={setFolderModalType}
+              setSelectedTable={setSelectedTable}
+            />
+          ))}
+          {folderModalType === "folder" && (
+            <FolderModal
+              closeModal={closeFolderModal}
+              tableFolder={tableFolder?.folders}
+              modalType={folderModalType}
+              selectedTable={selectedTable}
+              getAppById={getAppById}
+            />
+          )}
         </div>
 
-        <div className="sidebar-footer">
-          {/* <div className="parent-block">
-            <NavLink
-              className="nav-element"
-              to="/home/profile"
-              style={{ padding: "10px 0px" }}
-            >
-              <div className="profile-avatar">{'K'}</div>
-              <div className="label">Shaxsiy ma'lumotlar</div>
-            </NavLink>
-          </div> */}
-          {/* <div className="parent-block">
-            <div className="nav-element" onClick={logoutHandler}>
-              <div className="icon">
-                <ExitToAppIcon />
-              </div>
-              <div className="label" >Logout</div>
-            </div>
-          </div> */}
-        </div>
+        <div className="sidebar-footer"></div>
       </div>
       {(modalType === "create" || modalType === "parent") && (
         <FolderCreateModal

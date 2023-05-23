@@ -119,6 +119,7 @@ const FieldsBlock = ({
             <Tab>Form fields</Tab>
             {/* <Tab>Input relation fields</Tab> */}
             <Tab>Table fields</Tab>
+            <Tab>Tabs</Tab>
           </TabList>
 
           <TabPanel>
@@ -177,6 +178,30 @@ const FieldsBlock = ({
             </div>
           </TabPanel>
 
+          <TabPanel>
+            <div className={styles.fieldsBlock}>
+              <Container
+                groupName="table_relation"
+                onDrop={onDrop}
+                dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                getChildPayload={(i) => unusedTableRelations[i]}
+              >
+                {unusedTableRelations?.map((relation) => (
+                  <Draggable
+                    key={relation.id}
+                    style={{ overflow: "visible", width: "fit-content" }}
+                  >
+                    <div
+                      className={`${styles.sectionFieldRow} ${styles.relation}`}
+                    >
+                      {relation.title ??
+                        relation[relation.relatedTableSlug]?.label}
+                    </div>
+                  </Draggable>
+                ))}
+              </Container>
+            </div>
+          </TabPanel>
           <TabPanel>
             <div className={styles.fieldsBlock}>
               <Container

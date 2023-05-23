@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 const useSidebarElements = () => {
   const { appId } = useParams();
   const constructorElements = useSelector(
-    (state) => state.constructorTable.applications.tables
+    (state) => state.constructorTable?.applications?.tables
   );
   const permissions = useSelector((state) => state.auth.permissions);
   const role = useSelector((state) => state.auth.roleInfo);

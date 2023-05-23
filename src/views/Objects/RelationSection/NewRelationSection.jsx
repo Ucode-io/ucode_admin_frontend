@@ -30,8 +30,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDownloadButton";
 import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUploadButton";
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
+import NewMainInfo from "../NewMainInfo";
+import MainInfo from "../MainInfo";
 
-const   RelationSection = ({
+const NewRelationSection = ({
   selectedTabIndex,
   setSelectedTabIndex,
   relations,
@@ -39,13 +41,16 @@ const   RelationSection = ({
   id: idFromProps,
   limit,
   setLimit,
+  computedSections,
+  relatedTable,
 }) => {
   const filteredRelations = useMemo(() => {
     const rel = relations?.filter((relation) => relation?.relatedTable);
     return rel?.filter((item) => {
-      return item?.permission?.view_permission === true;
+      return item?.permission;
     });
   }, [relations]);
+
   const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
 
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
@@ -65,6 +70,7 @@ const   RelationSection = ({
   const [heightControl, setHeightControl] = useState(false);
   const [moreShowButton, setMoreShowButton] = useState(false);
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
+  const [selectedTab, setSelectTab] = useState();
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   let [searchParams] = useSearchParams();
   const dispatch = useDispatch();
@@ -144,18 +150,6 @@ const   RelationSection = ({
     else {
       append(mapped);
       setFormVisible(true);
-
-      // if (relation.is_editable) setCreateFormVisible(relation.id, true)
-      // else {
-      //   const relatedTable =
-      //     relation.table_to?.slug === tableSlug
-      //       ? relation.table_from
-      //       : relation.table_to
-
-      //   navigateToForm(relatedTable.slug, "CREATE", null, {
-      //     [`${tableSlug}_id`]: id,
-      //   })
-      // }
     }
   };
 
@@ -212,10 +206,10 @@ const   RelationSection = ({
   };
 
   /*****************************JWT START*************************/
-  
+
   const relationFieldSlug = useMemo(() => {
-    return relations.find((item) => item?.type === 'Many2Dynamic')
-  }, [relations])
+    return relations.find((item) => item?.type === "Many2Dynamic");
+  }, [relations]);
 
   useEffect(() => {
     selectedRelation &&
@@ -224,7 +218,8 @@ const   RelationSection = ({
           data: {
             offset: 0,
             limit: 0,
-            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]: idFromParams,
+            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
+              idFromParams,
           },
         })
         .then((res) => {
@@ -255,8 +250,20 @@ const   RelationSection = ({
     );
   }, [jwtObjects]);
 
-  /*****************************JWT END*************************/
+  const hasRelationTypeId = useMemo(() => {
+    const relation = relations[selectedTabIndex];
+    return relation && relation.relation_type_id;
+  }, [relations, selectedTabIndex]);
 
+  const onSelect = (el) => {
+    console.log('eleeeeee', el);
+    setSelectTab(el ?? relations[selectedTabIndex]);
+  };
+
+  /*****************************JWT END*************************/
+  useEffect(() => {
+    setSelectTab( relations[selectedTabIndex]);
+  }, [])
   if (!filteredRelations?.length) return null;
   return (
     <>
@@ -270,16 +277,24 @@ const   RelationSection = ({
       )}
       {filteredRelations.length ? (
         <Card className={styles.card}>
-          <Tabs 
+          <Tabs
+            className={"react-tabs react_detail"}
             selectedIndex={selectedTabIndex}
             onSelect={(index) => setSelectedTabIndex(index)}
           >
             <div className={styles.cardHeader}>
               <TabList className={styles.tabList}>
                 {filteredRelations?.map((relation, index) =>
-                  relation?.permission &&
-                  relation.permission?.view_permission === true ? (
-                    <Tab key={index}>
+                  relation?.permission && relation.permission ? (
+                    <Tab
+                      key={index}
+                      className={`${styles.tabs_item} ${
+                        selectedTabIndex === index
+                          ? "custom-selected-tab"
+                          : "custom_tab"
+                      }`}
+                      onClick={() => onSelect(relation)}
+                    >
                       {/* {relation?.view_relation_type === "FILE" ? (
                       <>
                         <InsertDriveFile /> Файлы
@@ -310,37 +325,6 @@ const   RelationSection = ({
                 >
                   <Add style={{ color: "#007AFF" }} />
                 </RectangleIconButton>
-
-                {/*<RectangleIconButton
-                    color="white"
-                    onClick={() => setHeightControl(!heightControl)}
-                >
-                  <div style={{position: "relative"}}>
-                  <span
-                      style={{
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                  >
-                    <FormatLineSpacingIcon color="primary"/>
-                  </span>
-                    {heightControl && (
-                        <div className={style.heightControl}>
-                          {tableHeightOptions.map((el) => (
-                              <div
-                                  key={el.value}
-                                  className={style.heightControl_item}
-                                  onClick={() => handleHeightControl(el.value)}
-                              >
-                                {el.label}
-                                {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
-                              </div>
-                          ))}
-                        </div>
-                    )}
-                  </div>
-                </RectangleIconButton>*/}
 
                 {formVisible ? (
                   <>
@@ -479,49 +463,61 @@ const   RelationSection = ({
               </div>
             </div>
 
-            {filteredRelations?.map((relation) => (
-              <TabPanel key={relation.id}>
-                {relation?.relatedTable === "file" ? (
-                  <FilesSection
-                    shouldGet={shouldGet}
-                    setFormValue={setFormValue}
-                    remove={remove}
-                    reset={reset}
-                    watch={watch}
-                    control={control}
-                    formVisible={formVisible}
-                    relation={relation}
-                    key={relation.id}
-                    createFormVisible={relationsCreateFormVisible}
-                    setCreateFormVisible={setCreateFormVisible}
-                  />
-                ) : (
-                  <RelationTable
-                    ref={myRef}
-                    setFieldSlug={setFieldSlug}
-                    setDataLength={setDataLength}
-                    shouldGet={shouldGet}
-                    remove={remove}
-                    reset={reset}
-                    selectedTabIndex={selectedTabIndex}
-                    watch={watch}
-                    control={control}
-                    setFormValue={setFormValue}
-                    fields={fields}
-                    setFormVisible={setFormVisible}
-                    formVisible={formVisible}
-                    key={relation.id}
-                    relation={relation}
-                    createFormVisible={relationsCreateFormVisible}
-                    setCreateFormVisible={setCreateFormVisible}
-                    selectedObjects={selectedObjects}
-                    setSelectedObjects={setSelectedObjects}
-                    tableSlug={tableSlug}
-                    id={id}
-                  />
-                )}
+            {selectedTab?.type === "Many2Many" ? (
+              <TabPanel >
+                <NewMainInfo
+                control={control}
+                computedSections={computedSections}
+                setFormValue={setFormValue}
+                relatedTable={relatedTable}
+                
+              />
               </TabPanel>
-            ))}
+             ) : (
+              filteredRelations?.map((relation) => (
+                <TabPanel key={relation.id}>
+                  {relation?.relatedTable === "file" ? (
+                    <FilesSection
+                      shouldGet={shouldGet}
+                      setFormValue={setFormValue}
+                      remove={remove}
+                      reset={reset}
+                      watch={watch}
+                      control={control}
+                      formVisible={formVisible}
+                      relation={relation}
+                      key={relation.id}
+                      createFormVisible={relationsCreateFormVisible}
+                      setCreateFormVisible={setCreateFormVisible}
+                    />
+                  ) : (
+                    <RelationTable
+                      ref={myRef}
+                      setFieldSlug={setFieldSlug}
+                      setDataLength={setDataLength}
+                      shouldGet={shouldGet}
+                      remove={remove}
+                      reset={reset}
+                      selectedTabIndex={selectedTabIndex}
+                      watch={watch}
+                      control={control}
+                      setFormValue={setFormValue}
+                      fields={fields}
+                      setFormVisible={setFormVisible}
+                      formVisible={formVisible}
+                      key={relation.id}
+                      relation={relation}
+                      createFormVisible={relationsCreateFormVisible}
+                      setCreateFormVisible={setCreateFormVisible}
+                      selectedObjects={selectedObjects}
+                      setSelectedObjects={setSelectedObjects}
+                      tableSlug={tableSlug}
+                      id={id}
+                    />
+                  )}
+                </TabPanel>
+              ))
+            )}
           </Tabs>
         </Card>
       ) : null}
@@ -529,4 +525,4 @@ const   RelationSection = ({
   );
 };
 
-export default RelationSection;
+export default NewRelationSection;

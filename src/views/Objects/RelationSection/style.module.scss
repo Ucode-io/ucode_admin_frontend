@@ -10,7 +10,21 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 12px 0 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
     // border-bottom: 1px solid #e5e9eb;  
+  }
+  .tabList {
+    width: calc(100% - 200px);
+    overflow-x: auto;
+  }
+  .tabs_item {
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #0E73F626;
+    min-width: 90px;
+    max-width: 110px;
+    list-style-type: none;
   }
 
   .cardBody {

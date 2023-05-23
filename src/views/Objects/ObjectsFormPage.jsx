@@ -27,12 +27,14 @@ import FormPageBackButton from "./components/FormPageBackButton";
 import { addMinutes } from "date-fns";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
 import SummarySectionValue from "./SummarySection/SummarySectionValue";
+import DetailTabs from "../Constructor/Tables/Form/Layout/DetailPage";
+import NewRelationSection from "./RelationSection/NewRelationSection";
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { pathname, state = {} } = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { removeTab, navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
@@ -42,6 +44,11 @@ const ObjectsFormPage = () => {
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const handleTabSelection = (tabIndex) => {
+    setSelectedTab(tabIndex);
+  };
+
   const tableInfo = useMemo(() => {
     return tablesList.find((el) => el.slug === tableSlug);
   }, [tablesList, tableSlug]);
@@ -177,7 +184,7 @@ const ObjectsFormPage = () => {
           table_slug: tableSlug,
           user_id: isUserId,
         });
-        navigate(-1)
+        navigate(-1);
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
         if (tableRelations?.length)
@@ -242,7 +249,7 @@ const ObjectsFormPage = () => {
         />
       </FiltersBlock>
       <div className={styles.formArea}>
-        <MainInfo
+        {/* <MainInfo
           control={control}
           computedSections={computedSections}
           setFormValue={setFormValue}
@@ -255,7 +262,21 @@ const ObjectsFormPage = () => {
             relations={tableRelations}
             control={control}
           />
-        </div>
+        </div> */}
+        {/* <DetailTabs
+          control={control}
+          // selectedTab={selectedTab}
+          // handleTabSelection={handleTabSelection}
+        /> */}
+        <NewRelationSection
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          relations={tableRelations}
+          control={control}
+          computedSections={computedSections}
+          relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
+          
+        />
       </div>
       <Footer
         extra={

@@ -2,7 +2,7 @@ import FormElementGenerator from "../../../components/ElementGenerators/FormElem
 import styles from "./style.module.scss";
 import ValueGenerator from "./ValueGenerator.jsx";
 
-const SummarySection = ({ control, computedSummary }) => {
+const SummarySectionValue = ({ control, computedSummary }) => {
   const fields = computedSummary?.fields ?? [];
   return (
     <div className={styles.summarySection}>
@@ -24,4 +24,4 @@ const SummarySection = ({ control, computedSummary }) => {
   );
 };
 
-export default SummarySection;
+export default SummarySectionValue;

@@ -11,12 +11,12 @@ import styles from "./style.module.scss";
 const SummarySection = ({
   mainForm,
   layoutForm,
+  selectedLayout,
+  setSelectedLayout,
   openFieldSettingsBlock,
   openFieldsBlock,
   openRelationSettingsBlock,
 }) => {
-
-  const navigate = useNavigate();
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "summary_section.fields",
@@ -26,11 +26,6 @@ const SummarySection = ({
   const fieldsList = useWatch({
     control: mainForm.control,
     name: `fields`,
-  });
-
-  const name = useWatch({
-    control: mainForm.control,
-    name: `label`,
   });
 
   const fieldsMap = useMemo(() => {
@@ -59,22 +54,17 @@ const SummarySection = ({
       openFieldSettingsBlock(fieldsMap[field.id] ?? field);
       return;
     }
-
     const relationsMap = mainForm.getValues("relationsMap");
     const relationId = field.id.split("#")[1];
-
     const relation = relationsMap[relationId];
-
     openRelationSettingsBlock(relation);
   };
-
-  console.log('sssssssssss', mainForm.watch())
 
   return (
     <div className={styles.summarySection}>
       <div className={styles.summaySectionTitle}>
-          <span onClick={() => navigate(-1)}><ArrowBackIcon/></span>
-          <h2>{name}</h2>
+          <span onClick={() => setSelectedLayout("")}><ArrowBackIcon/></span>
+          <h2>{selectedLayout?.label}</h2>
       </div>
       <Container
         style={{ minHeight: 20, minWidth: "100%" }}

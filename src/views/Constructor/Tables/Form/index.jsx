@@ -14,13 +14,7 @@ import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
 import constructorRelationService from "../../../../services/constructorRelationService";
-import {
-  computeSections,
-  computeSectionsOnSubmit,
-  computeSummarySection,
-  computeViewRelations,
-  computeViewRelationsOnSubmit,
-} from "../utils";
+import { computeSections, computeSectionsOnSubmit, computeSummarySection, computeViewRelations, computeViewRelationsOnSubmit } from "../utils";
 import { addOrderNumberToSections } from "../../../../utils/sectionsOrderNumber";
 import HeaderSettings from "../../../../components/HeaderSettings";
 import Footer from "../../../../components/Footer";
@@ -32,12 +26,13 @@ import { listToMap } from "../../../../utils/listToMap";
 import Actions from "./Actions";
 import { generateGUID } from "../../../../utils/generateID";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
+import layoutService from "../../../../services/layoutService";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id, slug, appId } = useParams();
-  const projectId = useSelector(state => state.auth.projectId)
+  const projectId = useSelector((state) => state.auth.projectId);
 
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
@@ -70,7 +65,182 @@ const ConstructorTablesFormPage = () => {
       description: "",
       slug: "",
       icon: "",
-      layouts: ""
+      layouts: [
+        {
+          icon: "",
+          label: "",
+          order: 0,
+          tabs: [
+            {
+              icon: "",
+              label: "",
+              layout_id: "",
+              order: 0,
+              relation_id: "",
+              relations: [
+                {
+                  action_relations: [
+                    {
+                      key: "",
+                      value: "",
+                    },
+                  ],
+                  auto_filters: [
+                    {
+                      field_from: "",
+                      field_to: "",
+                    },
+                  ],
+                  cascading_tree_field_slug: "",
+                  cascading_tree_table_slug: "",
+                  cascadings: [
+                    {
+                      field_slug: "",
+                      label: "",
+                      order: 0,
+                      table_slug: "",
+                    },
+                  ],
+                  columns: [""],
+                  default_limit: "",
+                  default_values: [""],
+                  dynamic_tables: [
+                    {
+                      table_slug: "",
+                      view_fields: [""],
+                    },
+                  ],
+                  editable: true,
+                  field_from: "",
+                  field_to: "",
+                  group_fields: [""],
+                  is_editable: true,
+                  is_user_id_default: true,
+                  multiple_insert: true,
+                  multiple_insert_field: "",
+                  object_id_from_jwt: true,
+                  quick_filters: [
+                    {
+                      default_value: "",
+                      field_id: "",
+                    },
+                  ],
+                  relation_field_slug: "",
+                  relation_table_slug: "",
+                  summaries: [
+                    {
+                      field_name: "",
+                      formula_name: "",
+                    },
+                  ],
+                  table_from: {
+                    author_id: "",
+                    commit_info: {
+                      commit_type: "",
+                      created_at: "",
+                      name: "",
+                      version_ids: [""],
+                    },
+                    description: "",
+                    folder_id: "",
+                    icon: "",
+                    increment_id: {
+                      digit_number: 0,
+                      prefix: "",
+                      with_increment_id: true,
+                    },
+                    is_cached: true,
+                    is_own_table: true,
+                    is_visible: true,
+                    label: "",
+                    project_id: "",
+                    show_in_menu: true,
+                    slug: "",
+                    subtitle_field_slug: "",
+                  },
+                  table_to: {
+                    author_id: "",
+                    commit_info: {
+                      commit_type: "",
+                      created_at: "",
+
+                      name: "",
+                      version_ids: [""],
+                    },
+                    description: "",
+                    folder_id: "",
+                    icon: "",
+
+                    increment_id: {
+                      digit_number: 0,
+                      prefix: "",
+                      with_increment_id: true,
+                    },
+                    is_cached: true,
+                    is_own_table: true,
+                    is_visible: true,
+                    label: "",
+                    project_id: "",
+                    show_in_menu: true,
+                    slug: "",
+                    subtitle_field_slug: "",
+                  },
+                  title: "",
+                  type: "section",
+                  updated_fields: [""],
+                  view_fields: [
+                    {
+                      attributes: {
+                        fields: {
+                          additionalProp1: {},
+                          additionalProp2: {},
+                          additionalProp3: {},
+                        },
+                      },
+                      autofill_field: "",
+                      autofill_table: "",
+                      automatic: true,
+                      commit_id: "",
+                      default: "",
+                      index: "",
+                      is_visible: true,
+                      label: "",
+                      project_id: "",
+                      relation_id: "",
+                      required: true,
+                      slug: "",
+                      table_id: "",
+                      type: "",
+                      unique: true,
+                      version_id: "",
+                    },
+                  ],
+                  view_type: "",
+                },
+              ],
+              sections: [
+                {
+                  column: "",
+                  fields: [
+                    {
+                      column: 0,
+                      field_name: "",
+                      order: 0,
+                      relation_type: "",
+                    },
+                  ],
+                  icon: "",
+                  is_summary_section: true,
+                  label: "",
+                  order: 0,
+                },
+              ],
+              type: "section",
+            },
+          ],
+          type: "SimpleLayout",
+        },
+      ],
     },
     mode: "all",
   });
@@ -92,12 +262,7 @@ const ConstructorTablesFormPage = () => {
     });
 
     try {
-      const [
-        tableData,
-        { sections = [] },
-        { relations: viewRelations = [] },
-        { custom_events: actions = [] },
-      ] = await Promise.all([
+      const [tableData, { sections = [] }, { relations: viewRelations = [] }, { custom_events: actions = [] }] = await Promise.all([
         getTableData,
         getSectionsData,
         getViewRelations,
@@ -131,17 +296,13 @@ const ConstructorTablesFormPage = () => {
         relation_table_slug: slug,
       });
 
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
-        getRelations,
-        getFieldsData,
-      ]);
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
 
       mainForm.setValue("fields", fields);
 
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug:
-          relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -149,13 +310,11 @@ const ConstructorTablesFormPage = () => {
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" &&
-            relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" &&
-            relation.table_from?.slug === slug)
+          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
         )
           layoutRelations.push(relation);
         else tableRelations.push(relation);
@@ -166,10 +325,7 @@ const ConstructorTablesFormPage = () => {
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
-            ? relation[relation.relatedTableSlug]?.label
-            : relation?.title,
+        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -208,7 +364,13 @@ const ConstructorTablesFormPage = () => {
       table_slug: data.slug,
     });
 
-    Promise.all([updateTableData, updateSectionData, updateViewRelationsData])
+    const updateLayoutData = layoutService.update({
+      layouts: data.layouts,
+      table_id: id,
+      project_id: projectId
+    });
+
+    Promise.all([updateTableData, updateSectionData, updateViewRelationsData, updateLayoutData])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
         navigate(-1);
@@ -221,6 +383,7 @@ const ConstructorTablesFormPage = () => {
       ...data,
       sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
+      layouts: data.layouts,
     };
 
     // return;
@@ -239,13 +402,7 @@ const ConstructorTablesFormPage = () => {
     <>
       <div className="pageWithStickyFooter">
         <Tabs direction={"ltr"}>
-          <HeaderSettings
-            title="Objects"
-            subtitle={id ? mainForm.getValues("label") : "Добавить"}
-            icon={mainForm.getValues("icon")}
-            backButtonLink={-1}
-            sticky
-          >
+          <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Добавить"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
             <TabList>
               <Tab>Details</Tab>
               <Tab>Layouts</Tab>
@@ -269,10 +426,7 @@ const ConstructorTablesFormPage = () => {
 
           {id && (
             <TabPanel>
-              <Relations
-                mainForm={mainForm}
-                getRelationFields={getRelationFields}
-              />
+              <Relations mainForm={mainForm} getRelationFields={getRelationFields} />
             </TabPanel>
           )}
           {id && (
@@ -289,11 +443,7 @@ const ConstructorTablesFormPage = () => {
             <SecondaryButton onClick={() => navigate(-1)} color="error">
               Закрыть
             </SecondaryButton>
-            <PrimaryButton
-              loader={btnLoader}
-              onClick={mainForm.handleSubmit(onSubmit)}
-              loading={btnLoader}
-            >
+            <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
               <Save /> Сохранить
             </PrimaryButton>
           </>

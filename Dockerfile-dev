@@ -5,10 +5,10 @@ WORKDIR /app
 
 COPY . ./
 
-RUN mv .env.staging .env
+RUN mv .env.development .env
 RUN yarn install --network-timeout 1000000000
 
-RUN yarn build --mode staging
+RUN yarn build --mode dev
 
 FROM nginx:alpine
 COPY --from=builder /app/build /build

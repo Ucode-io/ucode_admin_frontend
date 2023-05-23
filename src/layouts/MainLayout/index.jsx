@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import Sidebar from "../../components/Sidebar";
 import useSidebarElements from "../../hooks/useSidebarElements";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
 import RouterTabsBlock from "./RouterTabsBlock";
@@ -62,12 +61,14 @@ const MainLayout = ({ setFavicon, favicon }) => {
     <div className={styles.layout}>
       <Favicon url={favicon} />
       {/* <Sidebar elements={elements} environment={environment} /> */}
-      <LayoutSidebar
-        elements={elements}
-        appId={appId}
-        environment={environment}
-        getAppById={getAppById}
-      />
+      {elements && (
+        <LayoutSidebar
+          elements={elements}
+          appId={appId}
+          environment={environment}
+          getAppById={getAppById}
+        />
+      )}
       <div className={styles.content}>
         <RouterTabsBlock />
 

@@ -6,6 +6,7 @@ import "../style.scss";
 import { Box, Collapse } from "@mui/material";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import { Container, Draggable } from "react-smooth-dnd";
+import { useState } from "react";
 
 const RecursiveBlock = ({
   index,
@@ -15,12 +16,18 @@ const RecursiveBlock = ({
   openFolderCreateModal,
   //   hasNestedLevel,
   environment,
-  childBlockVisible,
+  // childBlockVisible,
   onDrop,
   setFolderModalType,
   setSelectedTable,
 }) => {
+  const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
+  const clickHandler = () => {
+    !element.isChild && parentClickHandler(element);
+    setChildBlockVisible((prev) => !prev);
+  };
+
   return (
     <>
       {/* <Container
@@ -58,8 +65,8 @@ const RecursiveBlock = ({
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            !element.isChild && parentClickHandler(element);
             element.isChild && navigate(element?.path);
+            clickHandler();
           }}
         >
           <div
@@ -118,7 +125,7 @@ const RecursiveBlock = ({
           )}
         </NavLink>
       </div>
-      <Collapse in={openedBlock === element?.id} unmountOnExit>
+      <Collapse in={childBlockVisible} unmountOnExit>
         {element?.children?.map((childElement, index) => (
           <RecursiveBlock
             key={index}
@@ -128,7 +135,6 @@ const RecursiveBlock = ({
             openFolderCreateModal={openFolderCreateModal}
             // hasNestedLevel={hasNestedLevel}
             environment={environment}
-            childBlockVisible={childBlockVisible}
             onDrop={onDrop}
             setFolderModalType={setFolderModalType}
             setSelectedTable={setSelectedTable}

@@ -102,7 +102,7 @@ function LayoutTabs({
   const handleTabsDrag = (index) => {
     setSelectedTabIndex(index);
   };
-  console.log('computedViewRelations', computedViewRelations);
+
   return (
     <div className={styles.relationsBlock}>
       <Card>

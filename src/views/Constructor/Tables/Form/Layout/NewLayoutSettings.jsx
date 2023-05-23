@@ -14,6 +14,11 @@ function NewLayoutSettings({
   const handleTabSelection = (tabIndex) => {
     setSelectedTab(tabIndex);
   };
+
+  const form = mainForm.getValues();
+
+  console.log('sssssssssss', form)
+  
   return (
     <>
       <div className={styles.summary_section_layer}>

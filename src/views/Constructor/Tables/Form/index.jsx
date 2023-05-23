@@ -70,6 +70,7 @@ const ConstructorTablesFormPage = () => {
       description: "",
       slug: "",
       icon: "",
+      layouts: ""
     },
     mode: "all",
   });

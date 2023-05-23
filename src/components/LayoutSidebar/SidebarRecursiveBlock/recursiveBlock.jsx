@@ -20,6 +20,7 @@ const RecursiveBlock = ({
   onDrop,
   setFolderModalType,
   setSelectedTable,
+  level = 1,
 }) => {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
@@ -61,6 +62,7 @@ const RecursiveBlock = ({
               (!openedBlock === element?.id
                 ? "active-with-child"
                 : environment?.data?.active_color),
+            marginLeft: level === 1 || element.isChild ? "" : level * 4,
           })}
           onClick={(e) => {
             e.preventDefault();
@@ -129,6 +131,7 @@ const RecursiveBlock = ({
         {element?.children?.map((childElement, index) => (
           <RecursiveBlock
             key={index}
+            level={level + 1}
             element={childElement}
             parentClickHandler={parentClickHandler}
             openedBlock={openedBlock}

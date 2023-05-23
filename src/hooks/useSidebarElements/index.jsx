@@ -15,10 +15,10 @@ const useSidebarElements = () => {
     const computedConstructorElements = constructorElements
       ?.filter(
         (el) =>
-          el.is_visible &&
+          el?.is_visible &&
           (permissions?.[el.slug]?.["read"] || role?.name === "DEFAULT ADMIN")
       )
-      .map((el) => ({
+      ?.map((el) => ({
         ...el,
         title: el.label,
         parent_id: el.folder_id,

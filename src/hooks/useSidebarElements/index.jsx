@@ -13,7 +13,7 @@ const useSidebarElements = () => {
 
   const computedElements = useMemo(() => {
     const computedConstructorElements = constructorElements
-      .filter(
+      ?.filter(
         (el) =>
           el.is_visible &&
           (permissions?.[el.slug]?.["read"] || role?.name === "DEFAULT ADMIN")
@@ -21,7 +21,9 @@ const useSidebarElements = () => {
       .map((el) => ({
         ...el,
         title: el.label,
+        parent_id: el.folder_id,
         path: `/main/${appId}/object/${el.slug}`,
+        isChild: true,
       }));
 
     return [...computedConstructorElements, ...elements];

@@ -26,7 +26,7 @@ const useSidebarElements = () => {
         isChild: true,
       }));
 
-    return [...computedConstructorElements, ...elements];
+    return [...(computedConstructorElements ?? []), ...(elements ?? [])];
   }, [constructorElements, permissions, appId, role]);
 
   return { elements: computedElements ?? [] };

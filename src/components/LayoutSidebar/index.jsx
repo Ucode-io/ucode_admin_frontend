@@ -15,14 +15,19 @@ import RecursiveBlock from "./SidebarRecursiveBlock/recursiveBlock";
 import FolderModal from "./folderModal";
 import "./style.scss";
 
-const LayoutSidebar = ({ favicon, appId, environment, getAppById }) => {
+const LayoutSidebar = ({
+  elements,
+  favicon,
+  appId,
+  environment,
+  getAppById,
+}) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
   const projectId = useSelector((state) => state.auth.projectId);
 
   const permissions = useSelector((state) => state.auth.permissions);
-  const { elements } = useSidebarElements();
   const dispatch = useDispatch();
   const [openedBlock, setOpenedBlock] = useState(null);
   const [loading, setLoading] = useState(false);

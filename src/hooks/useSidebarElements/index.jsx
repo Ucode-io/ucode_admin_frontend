@@ -13,16 +13,16 @@ const useSidebarElements = () => {
 
   const computedElements = useMemo(() => {
     const computedConstructorElements = constructorElements
-      .filter(
+      ?.filter(
         (el) =>
           el.is_visible &&
           (permissions?.[el.slug]?.["read"] || role?.name === "DEFAULT ADMIN")
       )
-      .map((el) => ({
+      ?.map((el) => ({
         ...el,
         title: el.label,
         path: `/main/${appId}/object/${el.slug}`,
-      }));
+      })) ?? [];
 
     return [...computedConstructorElements, ...elements];
   }, [constructorElements, permissions, appId, role]);

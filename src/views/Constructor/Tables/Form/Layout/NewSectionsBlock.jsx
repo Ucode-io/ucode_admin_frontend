@@ -51,6 +51,17 @@ const NewSectionsBlock = ({ mainForm, layoutForm, openFieldSettingsBlock, openFi
     }
   }
 
+  const watchSelectedTab = mainForm.watch("selectedTab")
+
+  const selectedSectionTab = useMemo(() => {
+    if (mainForm.getValues("selectedTab")?.type === 'sectionTab') {
+      return mainForm.getValues("selectedTab")?.title
+    } 
+    return null
+  }, [watchSelectedTab])
+
+  console.log('ssssssss', watchSelectedTab)
+
   return (
     <div className={styles.newsectionsBlock}>
       {!!sections.length && (
@@ -58,12 +69,12 @@ const NewSectionsBlock = ({ mainForm, layoutForm, openFieldSettingsBlock, openFi
           lockAxis="y"
           onDrop={onDrop}
           dropPlaceholder={{ className: "drag-row-drop-preview" }}
-          
         >
           {sections.map((section, index) => (
             <Draggable key={section.id}>
               <NewSection
                 key={section.id}
+                selectedSectionTab={selectedSectionTab}
                 index={index}
                 mainForm={mainForm}
                 layoutForm={layoutForm}

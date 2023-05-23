@@ -4,7 +4,6 @@ import { AiFillFolderAdd } from "react-icons/ai";
 import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import brandLogo from "../../../builder_config/assets/company-logo.svg";
-import useSidebarElements from "../../hooks/useSidebarElements";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import constructorTableService from "../../services/constructorTableService";
 import projectService from "../../services/projectService";
@@ -27,7 +26,6 @@ const LayoutSidebar = ({
   );
   const projectId = useSelector((state) => state.auth.projectId);
 
-  const permissions = useSelector((state) => state.auth.permissions);
   const dispatch = useDispatch();
   const [openedBlock, setOpenedBlock] = useState(null);
   const [loading, setLoading] = useState(false);

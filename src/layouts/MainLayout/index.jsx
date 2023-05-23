@@ -9,9 +9,12 @@ import RouterTabsBlock from "./RouterTabsBlock";
 import styles from "./style.module.scss";
 import projectService from "@/services/projectService";
 import Favicon from "react-favicon";
+import environmentService from "../../services/environmentService";
+import LayoutSidebar from "../../components/LayoutSidebar";
 
 const MainLayout = ({ setFavicon, favicon }) => {
-  const projectId = useSelector(state => state.auth.projectId)
+  const projectId = useSelector((state) => state.auth.projectId);
+  const envId = useSelector((state) => state.auth.environmentId);
   const { appId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,26 +38,31 @@ const MainLayout = ({ setFavicon, favicon }) => {
     };
   }, []);
 
+  const { data: environment } = useQuery(["GET_ENVIRONMENT", envId], () => {
+    return environmentService.getEnvironments(envId);
+  });
+
   const { data: projectInfo } = useQuery(
-    [
-      "GET_PROJECT_BY_ID",
-      projectId
-    ],
+    ["GET_PROJECT_BY_ID", projectId],
     () => {
       return projectService.getById(projectId);
-    },
+    }
   );
 
   useEffect(() => {
-    setFavicon(projectInfo?.logo)
-    document.title = projectInfo?.title
-  }, [projectInfo])
-
+    setFavicon(projectInfo?.logo);
+    document.title = projectInfo?.title;
+  }, [projectInfo]);
 
   return (
     <div className={styles.layout}>
       <Favicon url={favicon} />
-      <Sidebar elements={elements} />
+      {/* <Sidebar elements={elements} environment={environment} /> */}
+      <LayoutSidebar
+        elements={elements}
+        appId={appId}
+        environment={environment}
+      />
       <div className={styles.content}>
         <RouterTabsBlock />
 

@@ -13,28 +13,8 @@ const SidebarRecursiveBlock = ({
   openFolderCreateModal,
   hasNestedLevel,
 }) => {
-  // console.log("openedBlock === element?.id", element?.id);
   return (
     <>
-      {/* {element?.children ? (
-        <Collapse
-          in={openedBlock === element.id}
-          timeout={{
-            enter: 300,
-            exit: 200,
-          }}
-        >
-          <div className="child-block">
-            <NavLink key={element.id} to={element.path} className="nav-element">
-              <div className="child-element-dot">
-                <IconGenerator icon={element.icon} size={18} />
-              </div>
-
-              <div className="label"> {element?.title}</div>
-            </NavLink>
-          </div>
-        </Collapse>
-      ) : ( */}
       {!element.isChild && (
         <div className="parent-block" key={element?.id}>
           <NavLink
@@ -52,10 +32,6 @@ const SidebarRecursiveBlock = ({
               parentClickHandler(element);
             }}
           >
-            {/* <div className="icon">
-                    <element.icon />
-                  </div> */}
-
             <div className="label">{element?.title}</div>
             {/* {element?.children && ( */}
             <AiOutlinePlus
@@ -85,17 +61,6 @@ const SidebarRecursiveBlock = ({
           )}
         </div>
       )}
-      {/* )} */}
-      {/* {element?.children?.map((childElement, index) => (
-        <SidebarRecursiveBlock
-          key={index}
-          element={childElement}
-          parentClickHandler={parentClickHandler}
-          openedBlock={openedBlock}
-          openFolderCreateModal={openFolderCreateModal}
-          hasNestedLevel={hasNestedLevel}
-        />
-      ))} */}
     </>
   );
 };

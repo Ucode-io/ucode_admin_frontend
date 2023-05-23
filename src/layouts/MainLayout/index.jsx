@@ -24,6 +24,10 @@ const MainLayout = ({ setFavicon, favicon }) => {
     dispatch(fetchConstructorTableListAction(appId));
   }, [dispatch, appId]);
 
+  const getAppById = () => {
+    dispatch(fetchConstructorTableListAction(appId));
+  };
+
   useEffect(() => {
     const keyDownHandler = (event) => {
       if (event.key === "Escape") {
@@ -62,6 +66,7 @@ const MainLayout = ({ setFavicon, favicon }) => {
         elements={elements}
         appId={appId}
         environment={environment}
+        getAppById={getAppById}
       />
       <div className={styles.content}>
         <RouterTabsBlock />

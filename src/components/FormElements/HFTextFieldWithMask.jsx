@@ -1,7 +1,8 @@
-import { TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Controller } from "react-hook-form";
-import InputMask from "react-input-mask";
+import PhoneInput from "react-phone-number-input";
+import styles from './style.module.scss'
+import 'react-phone-number-input/style.css'
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -10,6 +11,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+
+
 
 const HFTextFieldWithMask = ({
   control,
@@ -37,36 +40,45 @@ const HFTextFieldWithMask = ({
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <InputMask
-          mask={mask}
-          value={value ?? undefined}
-          onChange={(e) => onChange(e.target.value)}
-          disabled={disabled}
-        >
-          {(inputProps) => (
-            <TextField
-              size="small"
-              name={name}
-              error={error}
-              helperText={!disabledHelperText && error?.message}
-              placeholder={placeholder}
-              className={isFormEdit ? "custom_textfield" : ""}
-              autoFocus={tabIndex === 1}
-              {...props}
-              InputProps={{
-                ...inputProps,
-                inputProps: { tabIndex },
-                classes: {
-                  input: isBlackBg ? classes.input : "",
-                },
-                style: {
-                  background: isBlackBg ? "#2A2D34" : "",
-                  color: isBlackBg ? "#fff" : "",
-                },
-              }}
-            />
-          )}
-        </InputMask>
+        // <InputMask
+        //   mask={mask}
+        //   value={value ?? undefined}
+        //   onChange={(e) => onChange(e.target.value)}
+        //   disabled={disabled}
+        // >
+        //   {(inputProps) => (
+        //     <TextField
+        //       size="small"
+        //       name={name}
+        //       error={error}
+        //       helperText={!disabledHelperText && error?.message}
+        //       placeholder={placeholder}
+        //       className={isFormEdit ? "custom_textfield" : ""}
+        //       autoFocus={tabIndex === 1}
+        //       {...props}
+        //       InputProps={{
+        //         ...inputProps,
+        //         inputProps: { tabIndex },
+        //         classes: {
+        //           input: isBlackBg ? classes.input : "",
+        //         },
+        //         style: {
+        //           background: isBlackBg ? "#2A2D34" : "",
+        //           color: isBlackBg ? "#fff" : "",
+        //         },
+        //       }}
+        //     />
+        //   )}
+        // </InputMask>
+        <PhoneInput
+          placeholder="Enter phone number"
+          value={value}
+          onChange={onChange}
+          defaultCountry="UZ"
+          international
+          className={styles.phoneNumber}
+          name={name}
+          />
       )}
     ></Controller>
   );

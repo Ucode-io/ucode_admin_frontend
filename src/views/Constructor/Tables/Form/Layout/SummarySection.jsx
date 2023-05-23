@@ -1,13 +1,11 @@
-import { Add } from "@mui/icons-material";
-import { Card } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import ButtonsPopover from "../../../../../components/ButtonsPopover";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
 import { applyDrag } from "../../../../../utils/applyDrag";
-import { generateGUID } from "../../../../../utils/generateID";
-import Section from "./Section";
 import styles from "./style.module.scss";
 
 const SummarySection = ({
@@ -17,6 +15,8 @@ const SummarySection = ({
   openFieldsBlock,
   openRelationSettingsBlock,
 }) => {
+
+  const navigate = useNavigate();
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "summary_section.fields",
@@ -26,6 +26,11 @@ const SummarySection = ({
   const fieldsList = useWatch({
     control: mainForm.control,
     name: `fields`,
+  });
+
+  const name = useWatch({
+    control: mainForm.control,
+    name: `label`,
   });
 
   const fieldsMap = useMemo(() => {
@@ -62,10 +67,17 @@ const SummarySection = ({
 
     openRelationSettingsBlock(relation);
   };
+
+  console.log('sssssssssss', mainForm.watch())
+
   return (
     <div className={styles.summarySection}>
+      <div className={styles.summaySectionTitle}>
+          <span onClick={() => navigate(-1)}><ArrowBackIcon/></span>
+          <h2>{name}</h2>
+      </div>
       <Container
-        style={{ minHeight: 20, minWidth: "400px" }}
+        style={{ minHeight: 20, minWidth: "100%" }}
         groupName="1"
         dragClass="drag-row"
         orientation="horizontal"

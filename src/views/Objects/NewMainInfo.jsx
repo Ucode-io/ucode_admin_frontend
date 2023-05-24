@@ -14,7 +14,12 @@ const MainInfo = ({
   control,
   setFormValue,
   relatedTable,
+  relation,
+  selectedTabIndex,
+  selectedTab,
+  selectedIndex
 }) => {
+
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
   const fieldsList = useMemo(() => {
@@ -27,7 +32,7 @@ const MainInfo = ({
     });
     return fields;
   }, [computedSections]);
-
+  console.log('computedSections', computedSections);
   return (
     <div className={styles.newcontainer}>
       {isShow ? (

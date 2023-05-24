@@ -33,6 +33,7 @@ import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm"
 import NewMainInfo from "../NewMainInfo";
 import MainInfo from "../MainInfo";
 import layoutService from "../../../services/layoutService";
+import {data} from './data'
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -46,11 +47,11 @@ const NewRelationSection = ({
   relatedTable,
 }) => {
   const filteredRelations = useMemo(() => {
-    const rel = relations?.filter((relation) => relation?.relatedTable);
+    const rel = data?.filter((relation) => relation?.table_id);
     return rel?.filter((item) => {
-      return item?.permission;
+      return item?.type;
     });
-  }, [relations]);
+  }, [data]);
 
   const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
 
@@ -71,6 +72,7 @@ const NewRelationSection = ({
   const [heightControl, setHeightControl] = useState(false);
   const [moreShowButton, setMoreShowButton] = useState(false);
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedTab, setSelectTab] = useState();
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   let [searchParams] = useSearchParams();
@@ -172,7 +174,6 @@ const NewRelationSection = ({
       value: "large",
     },
   ];
-
   const { mutate: updateMultipleObject } = useMutation(
     (values) =>
       constructorObjectService.updateMultipleObject(
@@ -205,11 +206,6 @@ const NewRelationSection = ({
       },
     });
   };
-  
-  const tableId = useWatch({
-    control: control,
-    name: "id",
-  });
 
   /*****************************JWT START*************************/
 
@@ -256,13 +252,8 @@ const NewRelationSection = ({
     );
   }, [jwtObjects]);
 
-  const hasRelationTypeId = useMemo(() => {
-    const relation = relations[selectedTabIndex];
-    return relation && relation.relation_type_id;
-  }, [relations, selectedTabIndex]);
 
   const onSelect = (el) => {
-    console.log('eleeeeee', el);
     setSelectTab(el ?? relations[selectedTabIndex]);
   };
 
@@ -289,8 +280,9 @@ const NewRelationSection = ({
           setLimit={setLimit}
         />
       )}
-      {filteredRelations.length ? (
+      {data.length ? (
         <Card className={styles.card}>
+          {data?.map((relation, index) =>
           <Tabs
             className={"react-tabs react_detail"}
             selectedIndex={selectedTabIndex}
@@ -298,16 +290,17 @@ const NewRelationSection = ({
           >
             <div className={styles.cardHeader}>
               <TabList className={styles.tabList}>
-                {filteredRelations?.map((relation, index) =>
-                  relation?.permission && relation.permission ? (
-                    <Tab
+                    {relation?.tabs?.map((el, index) => (
+                      <Tab
                       key={index}
                       className={`${styles.tabs_item} ${
                         selectedTabIndex === index
                           ? "custom-selected-tab"
-                          : "custom_tab"
+                          : "custom-selected-tab"
                       }`}
-                      onClick={() => onSelect(relation)}
+                      onClick={() => {
+                        setSelectedIndex(index)
+                        onSelect(el)}}
                     >
                       {/* {relation?.view_relation_type === "FILE" ? (
                       <>
@@ -315,15 +308,13 @@ const NewRelationSection = ({
                       </>
                     ) : ( */}
                       <div className="flex align-center gap-2 text-nowrap">
-                        <IconGenerator icon={relation?.icon} /> {relation.title}
+                        <IconGenerator icon={el?.icon} /> {el.label}
                       </div>
                       {/* )} */}
                     </Tab>
-                  ) : (
-                    ""
-                  )
-                )}
+                    ))}
               </TabList>
+
 
               <div className="flex gap-2">
                 <CustomActionsButton
@@ -383,7 +374,7 @@ const NewRelationSection = ({
 
                 <DocumentGeneratorButton />
 
-                {filteredRelations[selectedTabIndex].multiple_insert && (
+                {data[selectedTabIndex]?.multiple_insert && (
                   <MultipleInsertButton
                     view={filteredRelations[selectedTabIndex]}
                     tableSlug={filteredRelations[selectedTabIndex].relatedTable}
@@ -477,14 +468,15 @@ const NewRelationSection = ({
               </div>
             </div>
 
-            {selectedTab?.type === "Many2Many" ? (
+            {selectedTab ? (
               <TabPanel >
                 <NewMainInfo
                 control={control}
                 computedSections={computedSections}
                 setFormValue={setFormValue}
                 relatedTable={relatedTable}
-                
+                relation={relation}
+                selectedIndex={selectedIndex}
               />
               </TabPanel>
              ) : (
@@ -533,6 +525,7 @@ const NewRelationSection = ({
               ))
             )}
           </Tabs>
+                          )}
         </Card>
       ) : null}
     </>

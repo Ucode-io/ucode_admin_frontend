@@ -17,11 +17,13 @@
   .tabList {
     width: calc(100% - 200px);
     overflow-x: auto;
+    display: flex;
+    align-items: center;
+    
   }
   .tabs_item {
     border-radius: 4px;
     cursor: pointer;
-    background-color: #0E73F626;
     min-width: 90px;
     max-width: 140px;
     display: flex;
@@ -30,7 +32,8 @@
     list-style-type: none;
     font-size: 14px;
     font-weight: 500;
-    
+    margin: 0 10px;
+    background-color: #0E73F626; 
   }
 
   .cardBody {

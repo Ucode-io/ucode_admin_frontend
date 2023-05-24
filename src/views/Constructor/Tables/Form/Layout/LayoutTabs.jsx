@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import styles from "./style.module.scss";
 import NewSectionsBlock from "./NewSectionsBlock";
@@ -17,19 +17,26 @@ function LayoutTabs({
   openFieldsBlock,
   openFieldSettingsBlock,
   openRelationSettingsBlock,
+  selectedLayout,
+  setSelectedLayout,
   selectedTab,
-  handleTabSelection,
+  sectionTabs,
+  insertSectionTab,
+  setSelectedTab,
+  removeSectionTab,
+  moveSectionTab,
+  appendSectionTab,
 }) {
-  const {
-    fields: tabs,
-    insert,
-    remove,
-    move,
-  } = useFieldArray({
-    control: mainForm.control,
-    name: "tabs",
-    keyName: "key",
-  });
+  // const {
+  //   fields: tabs,
+  //   insert,
+  //   remove,
+  //   move,
+  // } = useFieldArray({
+  //   control: mainForm.control,
+  //   name: "tabs",
+  //   keyName: "key",
+  // });
 
   const relationsMap = useWatch({
     control: mainForm.control,
@@ -37,6 +44,7 @@ function LayoutTabs({
   });
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
   const { fields: viewRelations, ...viewRelationsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "view_relations",
@@ -64,88 +72,109 @@ function LayoutTabs({
       if (result.length > computedViewRelations?.length) {
         viewRelationsFieldArray.insert(
           dropResult?.addedIndex,
-          dropResult.payload.view_relation_type === "FILE"
-            ? { ...dropResult.payload, relation_id: dropResult.payload?.id }
-            : { relation_id: dropResult.payload?.id }
+          dropResult.payload.view_relation_type === "FILE" ? { ...dropResult.payload, relation_id: dropResult.payload?.id } : { relation_id: dropResult.payload?.id }
         );
       } else {
         // viewRelationsFieldArray.replace(result)
-        viewRelationsFieldArray.move(
-          dropResult.removedIndex,
-          dropResult.addedIndex
-        );
+        viewRelationsFieldArray.move(dropResult.removedIndex, dropResult.addedIndex);
       }
   };
 
-  const removeViewRelation = (index, relation) => {
-    viewRelationsFieldArray.remove(index);
-  };
+  // const removeViewRelation = (index, relation) => {
+  //   viewRelationsFieldArray.remove(index);
+  // };
 
-  const addNewSummary = () => {
-    insert({
-      tab_name: "",
-      tab_order: "",
-    });
-  };
+  // const addNewSummary = () => {
+  //   insert({
+  //     tab_name: "",
+  //     tab_order: "",
+  //   });
+  // };
 
-  const deleteSummary = (index) => {
-    remove(index);
-  };
+  // const deleteSummary = (index) => {
+  //   remove(index);
+  // };
 
-  const handleTabDrag = ({ removedIndex, addedIndex }) => {
-    move(removedIndex, addedIndex);
-    if (selectedTab === removedIndex) {
-      handleTabSelection(addedIndex);
-    }
-  };
+  // const handleTabDrag = ({ removedIndex, addedIndex }) => {
+  //   move(removedIndex, addedIndex);
+  //   if (selectedTab === removedIndex) {
+  //     handleTabSelection(addedIndex);
+  //   }
+  // };
 
-  const handleTabsDrag = (index) => {
-    setSelectedTabIndex(index);
-  };
+  // const handleTabsDrag = (index) => {
+  //   setSelectedTabIndex(index);
+  // };
+
+  const allTabs = useMemo(() => {
+    return [...sectionTabs, ...computedViewRelations];
+  }, [sectionTabs, computedViewRelations]);
+
+  useEffect(() => {
+    setSelectedTab(allTabs[0] ?? {});
+  }, [allTabs]);
+
+  // const selectedLayout = mainForm.watch("selectedLayout");
+
+  const selectedLayoutIndex = useMemo(() => {
+    if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
+    return mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
+  }, [mainForm, selectedLayout]);
 
   return (
     <div className={styles.relationsBlock}>
       <Card>
         <div className={styles.cardHeader}>
           <div className={styles.tabList}>
-            <Container
-              groupName="table_relation"
-              dropPlaceholder={{ className: "drag-row-drop-preview" }}
-              orientation="horizontal"
-              onDrop={onDrop}
-            >
-              {tabs.map((tab, index) => (
+            <Container groupName="table_relation" dropPlaceholder={{ className: "drag-row-drop-preview" }} orientation="horizontal" onDrop={onDrop}>
+              {/* {tabs.map((tab, index) => (
                 <Draggable key={tab.id} onDrag={() => handleTabsDrag(index)}>
-                  <div
-                    className={`${styles.tab} ${
-                      selectedTab === index ? styles.active : ""
-                    }`}
-                    onClick={() => setSelectedTabIndex(index)}
-                  >
+                  <div className={`${styles.tab} ${selectedTab === index ? styles.active : ""}`} onClick={() => setSelectedTabIndex(index)}>
                     {tab.tab_name}
-                    <ButtonsPopover
-                      onEditClick={() => openFieldSettingsBlock(tab)}
-                      onDeleteClick={() => deleteSummary(index)}
-                    />
+                    <ButtonsPopover onEditClick={() => openFieldSettingsBlock(tab)} onDeleteClick={() => deleteSummary(index)} />
                   </div>
                 </Draggable>
-              ))}
-              {computedViewRelations?.map((relation, index) => (
-                <Draggable key={relation.id} onDrag={() => handleTabsDrag(index)}>
+              ))} */}
+
+              {allTabs?.map((tab, index) => (
+                <Draggable 
+                  key={tab.id} 
+                  // onDrag={() => handleTabsDrag(index)}
+                >
                   <div
-                    className={`${styles.tab} ${
-                      selectedTabIndex === index ? styles.active : ""
-                    }`}
-                    onClick={() => setSelectedTabIndex(index)}
+                    className={`${styles.tab} ${selectedTabIndex === index ? styles.active : ""}`}
+                    onClick={() => {
+                      setSelectedTabIndex(index);
+                      setSelectedTab(tab);
+                    }}
                   >
-                    {relation.table_from?.label}
-                    <ButtonsPopover
-                      onEditClick={() => openRelationSettingsBlock(relation)}
-                      onDeleteClick={() => removeViewRelation(index, relation)}
-                    />
+                    {/* {tab?.type === "sectionTab" ? tab?.title : tab?.table_from?.label} */}
+                    {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label}
+                    {/* <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab)} onDeleteClick={() => removeViewRelation(index, tab)} /> */}
                   </div>
                 </Draggable>
               ))}
+
+              {/* {computedViewRelations?.map((relation, index) => (
+                <Draggable key={relation.id} onDrag={() => handleTabsDrag(index)}>
+                  <div className={`${styles.tab} ${selectedTabIndex === index ? styles.active : ""}`} onClick={() => setSelectedTabIndex(index)}>
+                    {relation.table_from?.label}
+                    <ButtonsPopover onEditClick={() => openRelationSettingsBlock(relation)} onDeleteClick={() => removeViewRelation(index, relation)} />
+                  </div>
+                </Draggable>
+              ))}
+
+              {sectionTabs?.map((sectionTab, index) => (
+                <Draggable key={sectionTab.id} onDrag={() => handleTabsDrag(index)}>
+                  <div className={`${styles.tab} ${isSectionTab?.id === sectionTab?.id ? styles.active : ""}`} onClick={() => {
+                    setSelectedTabIndex(index)
+                    setIsSectionTab(sectionTab)
+                  }}>
+                    {sectionTab?.title}
+                    <ButtonsPopover onEditClick={() => openRelationSettingsBlock(sectionTab)} onDeleteClick={() => removeSectionTab(index, sectionTab)} />
+                  </div>
+                </Draggable>
+              ))} */}
             </Container>
 
             <RectangleIconButton onClick={() => openFieldsBlock("RELATION")}>
@@ -154,19 +183,20 @@ function LayoutTabs({
           </div>
         </div>
 
-        {selectedTab === selectedTabIndex ? (
-          <RelationTable
-          key={computedViewRelations[selectedTabIndex]?.id}
-          relation={computedViewRelations[selectedTabIndex]}
-        />
-        ) : (
+        {selectedTab?.type === "section" ? (
           <NewSectionsBlock
-          mainForm={mainForm}
-          layoutForm={layoutForm}
-          openFieldsBlock={openFieldsBlock}
-          openFieldSettingsBlock={openFieldSettingsBlock}
-          openRelationSettingsBlock={openRelationSettingsBlock}
-        />
+            mainForm={mainForm}
+            layoutForm={layoutForm}
+            openFieldsBlock={openFieldsBlock}
+            openFieldSettingsBlock={openFieldSettingsBlock}
+            openRelationSettingsBlock={openRelationSettingsBlock}
+            selectedLayout={selectedLayout}
+            setSelectedLayout={setSelectedLayout}
+            selectedTab={selectedTab}
+            sectionTabs={sectionTabs}
+          />
+        ) : (
+          <RelationTable relation={computedViewRelations[selectedTabIndex]} />
         )}
       </Card>
     </div>

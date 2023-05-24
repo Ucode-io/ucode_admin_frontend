@@ -23,8 +23,7 @@ const useSidebarElements = () => {
         title: el.label,
         parent_id: el.folder_id,
         path: `/main/${appId}/object/${el.slug}`,
-        isChild: true,
-      }));
+      })) ?? [];
 
     return [...(computedConstructorElements ?? []), ...(elements ?? [])];
   }, [constructorElements, permissions, appId, role]);

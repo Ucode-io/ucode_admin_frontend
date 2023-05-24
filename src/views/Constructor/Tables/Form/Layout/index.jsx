@@ -1,5 +1,5 @@
 import { Collapse } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -13,11 +13,11 @@ const Layout = ({ mainForm, getRelationFields }) => {
   const dispatch = useDispatch();
   const layoutForm = useForm({ mode: "onChange" });
   const [settingsBlockVisible, setSettingsBlockVisible] = useState(false);
-  const navigate = useNavigate();
-  const [selectedLayout, setSelectedLayout] = useState("");
+  const [selectedLayout, setSelectedLayout] = useState({});
   const [selectedField, setSelectedField] = useState(null);
   const [selectedRelation, setSelectedRelation] = useState(null);
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState({});
 
   const openFieldsBlock = (type) => {
     setSelectedField(null);
@@ -48,23 +48,36 @@ const Layout = ({ mainForm, getRelationFields }) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(false));
   }, [dispatch]);
 
+  const selectedLayoutIndex = useMemo(() => {
+    if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
+    return mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
+  }, [selectedLayout]);
+
   const {
     fields: sectionTabs,
     insert: insertSectionTab,
+    update: updateSectionTab,
     remove: removeSectionTab,
     move: moveSectionTab,
     append: appendSectionTab,
   } = useFieldArray({
     control: mainForm.control,
-    name: "sectionTabs",
+    name: `layouts.${selectedLayoutIndex}.tabs`,
+    keyName: "key"
   });
+
+  useEffect(() => {
+    updateSectionTab()
+  }, [selectedLayoutIndex])
 
   return (
     <>
-      {selectedLayout ? (
+      {selectedLayout.id ? (
         <NewLayoutSettings
           mainForm={mainForm}
           selectedLayout={selectedLayout}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
           setSelectedLayout={setSelectedLayout}
           layoutForm={layoutForm}
           openFieldsBlock={openFieldsBlock}
@@ -97,6 +110,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
 
         <Collapse in={settingsBlockVisible} unmountOnExit orientation="horizontal">
           <SettingsBlock
+            updateSectionTab={updateSectionTab}
             mainForm={mainForm}
             layoutForm={layoutForm}
             closeSettingsBlock={closeSettingsBlock}

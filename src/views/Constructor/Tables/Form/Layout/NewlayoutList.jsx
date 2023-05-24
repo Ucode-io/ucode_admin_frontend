@@ -185,11 +185,6 @@ const defaultLayout = {
 };
 
 function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm }) {
-  const layoutsFields = useWatch({
-    control: layoutForm.control,
-    name: "layouts",
-  });
-
   const tableId = useWatch({
     control: mainForm.control,
     name: "id",
@@ -197,9 +192,7 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
 
   useEffect(() => {
     layoutService.getList({ data: { tableId: tableId ?? "" } }).then((res) => {
-      layoutForm.reset({
-        layouts: res?.layouts ?? [],
-      });
+      mainForm.setValue("layouts", res?.layouts ?? []);
     });
   }, []);
 
@@ -208,15 +201,11 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
     append,
     remove,
   } = useFieldArray({
-    control: layoutForm.control,
+    control: mainForm.control,
     name: "layouts",
     keyName: "key",
   });
-
-  useEffect(() => {
-    mainForm.setValue("layouts", layoutsFields);
-  }, [layoutsFields]);
-
+ 
   const navigateToEditForm = (element) => {
     setSelectedLayout(element);
   };
@@ -241,7 +230,7 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
               <CTableCell>
                 <HFAutoWidthInput
                   onClick={(e) => e.stopPropagation()}
-                  control={layoutForm.control}
+                  control={mainForm.control}
                   name={`layouts.${index}.label`}
                   inputStyle={{ border: "none", outline: "none", fontWeight: 500, minWidth: 300, background: "transparent" }}
                 />
@@ -258,7 +247,7 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
             </CTableRow>
           ))}
           <PermissionWrapperV2 tabelSlug="app" type="write">
-            <TableRowButton colSpan={4} onClick={() => append({ ...defaultLayout, table_id: tableId })} />
+            <TableRowButton colSpan={4} onClick={() => append({ table_id: tableId, type: 'SimpleLayout', label: "New" })} />
           </PermissionWrapperV2>
           {/* </CTableBody> */}
         </CTable>

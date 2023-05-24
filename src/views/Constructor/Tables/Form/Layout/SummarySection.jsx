@@ -63,7 +63,7 @@ const SummarySection = ({
   return (
     <div className={styles.summarySection}>
       <div className={styles.summaySectionTitle}>
-          <span onClick={() => setSelectedLayout("")}><ArrowBackIcon/></span>
+          <span onClick={() => setSelectedLayout({})}><ArrowBackIcon/></span>
           <h2>{selectedLayout?.label}</h2>
       </div>
       <Container
@@ -79,7 +79,7 @@ const SummarySection = ({
             <div className={styles.field_summary}>
               <div className={styles.field_summary_item}>
                 <FormElementGenerator
-                  control={layoutForm.control}
+                  control={mainForm.control}
                   field={fieldsMap[field.id] ?? field}
                   isLayout={true}
                   sectionIndex={fieldIndex}

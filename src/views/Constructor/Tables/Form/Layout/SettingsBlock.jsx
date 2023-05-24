@@ -9,6 +9,7 @@ const SettingsBlock = ({
   setSelectedSettingsTab,
   closeSettingsBlock,
   selectedField,
+  updateSectionTab,
   selectedRelation,
   getRelationFields,
   sectionTabs,
@@ -33,6 +34,7 @@ const SettingsBlock = ({
       setSelectedSettingsTab={setSelectedSettingsTab}
       closeSettingsBlock={closeSettingsBlock}
       sectionTabs={sectionTabs}
+      updateSectionTab={updateSectionTab}
       insertSectionTab={insertSectionTab}
       removeSectionTab={removeSectionTab}
       moveSectionTab={moveSectionTab}

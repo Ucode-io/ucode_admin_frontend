@@ -7,20 +7,22 @@ function NewLayoutSettings({
   mainForm,
   layoutForm,
   selectedLayout,
+  setSelectedTab,
   setSelectedLayout,
   openFieldsBlock,
   openFieldSettingsBlock,
   openRelationSettingsBlock,
   sectionTabs,
   insertSectionTab,
+  selectedTab,
   removeSectionTab,
   moveSectionTab,
   appendSectionTab,
 }) {
-  const [selectedTab, setSelectedTab] = useState(0);
-  const handleTabSelection = (tabIndex) => {
-    setSelectedTab(tabIndex);
-  };
+  // const [selectedTab, setSelectedTab] = useState(0);
+  // const handleTabSelection = (tabIndex) => {
+  //   setSelectedTab(tabIndex);
+  // };
 
   return (
     <>
@@ -38,12 +40,15 @@ function NewLayoutSettings({
       <div className={styles.tabs_section}>
         <LayoutTabs
           mainForm={mainForm}
+          selectedLayout={selectedLayout}
+          setSelectedLayout={setSelectedLayout}
           layoutForm={layoutForm}
           openFieldsBlock={openFieldsBlock}
           openFieldSettingsBlock={openFieldSettingsBlock}
           openRelationSettingsBlock={openRelationSettingsBlock}
           selectedTab={selectedTab}
-          handleTabSelection={handleTabSelection}
+          setSelectedTab={setSelectedTab}
+          // handleTabSelection={handleTabSelection}
           sectionTabs={sectionTabs}
           insertSectionTab={insertSectionTab}
           removeSectionTab={removeSectionTab}

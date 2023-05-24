@@ -15,15 +15,22 @@ const NewSection = ({
   mainForm,
   index,
   layoutForm,
+  selectedTab,
   fieldsMap,
   openFieldSettingsBlock,
   sectionsFieldArray,
+  selectedLayout,
   openFieldsBlock,
   openRelationSettingsBlock,
+  selectedLayoutIndex,
+  selectedTabIndex,
+  section,
+  removeSection
 }) => {
+
   const sectionFields = useFieldArray({
     control: mainForm.control,
-    name: `sections.${index}.fields`,
+    name: `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.fields`,
     keyName: "key",
   });
 
@@ -75,13 +82,13 @@ const NewSection = ({
             disabledHelperText
             placeholder="Label"
             control={mainForm.control}
-            name={`sections[${index}].label`}
+            name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`}
             size="small"
             style={{ width: 170 }}
           />
         </div>
 
-        <div className="flex gap-1" style={{ marginLeft: '5px' }}>
+        <div className="flex gap-1" style={{ marginLeft: "5px" }}>
           <RectangleIconButton onClick={() => openFieldsBlock("FIELD")}>
             <Add />
           </RectangleIconButton>
@@ -96,8 +103,8 @@ const NewSection = ({
       </div>
 
       <div className={styles.newsectionCardBody}>
-        <Container 
-          style={{ minHeight: 50, width: "100%", display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+        <Container
+          style={{ minHeight: 50, width: "100%", display: "flex", flexDirection: "row", alignItems: "center" }}
           groupName="1"
           dragClass="drag-row"
           orientation="horizontal"
@@ -106,7 +113,7 @@ const NewSection = ({
           getChildPayload={(index) => sectionFields.fields[index]}
         >
           {sectionFields?.fields?.map((field, fieldIndex) => (
-            <Draggable key={field.key} >
+            <Draggable key={field.key}>
               <div className={styles.newsectionCardRow}>
                 <FormElementGenerator
                   control={layoutForm.control}
@@ -117,11 +124,7 @@ const NewSection = ({
                   fieldIndex={fieldIndex}
                   mainForm={mainForm}
                 />
-                <ButtonsPopover
-                  className={styles.deleteButton}
-                  onEditClick={() => openSettingsBlock(field)}
-                  onDeleteClick={() => removeField(fieldIndex, 1)}
-                />
+                <ButtonsPopover className={styles.deleteButton} onEditClick={() => openSettingsBlock(field)} onDeleteClick={() => removeField(fieldIndex, 1)} />
                 {/* <RectangleIconButton
                   className={styles.deleteButton}
                   color={"error"}
@@ -142,12 +145,9 @@ const NewSection = ({
         </Container>
       </div>
       <div className={styles.newSectionDelete}>
-      <RectangleIconButton
-            color="error"
-            onClick={() => sectionsFieldArray.remove(index)}
-          >
-            <Delete color="error" />
-          </RectangleIconButton>
+        <RectangleIconButton color="error" onClick={() => removeSection(index)}>
+          <Delete color="error" />
+        </RectangleIconButton>
       </div>
     </Card>
   );

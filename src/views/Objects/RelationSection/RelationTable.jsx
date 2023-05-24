@@ -93,9 +93,9 @@ const RelationTable = forwardRef(
 
     //============VIEW PERMISSION=========
     const viewPermission = useMemo(() => {
-      if (relation.permission.view_permission) return true;
+      if (relation?.permission?.view_permission) return true;
       else return false;
-    }, [relation.permission.view_permission]);
+    }, [relation?.permission?.view_permission]);
 
     const relatedTableSlug = relation?.relatedTable;
     const {

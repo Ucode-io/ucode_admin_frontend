@@ -33,7 +33,6 @@ import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm"
 import NewMainInfo from "../NewMainInfo";
 import MainInfo from "../MainInfo";
 import layoutService from "../../../services/layoutService";
-import {data} from './data'
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -46,6 +45,7 @@ const NewRelationSection = ({
   computedSections,
   relatedTable,
 }) => {
+  const [data, setData] = useState([]);
   const filteredRelations = useMemo(() => {
     const rel = data?.filter((relation) => relation?.table_id);
     return rel?.filter((item) => {
@@ -57,7 +57,7 @@ const NewRelationSection = ({
 
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
-
+  console.log('ssssssss', id)
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
@@ -213,26 +213,26 @@ const NewRelationSection = ({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
-  useEffect(() => {
-    selectedRelation &&
-      constructorObjectService
-        .getList(selectedRelation?.relatedTable, {
-          data: {
-            offset: 0,
-            limit: 0,
-            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
-              idFromParams,
-          },
-        })
-        .then((res) => {
-          setJwtObjects(
-            res?.data?.fields?.filter(
-              (item) => item?.attributes?.object_id_from_jwt === true
-            )
-          );
-        })
-        .catch((a) => console.log("error", a));
-  }, [selectedRelation]);
+  // useEffect(() => {
+  //   selectedRelation &&
+  //     constructorObjectService
+  //       .getList(selectedRelation?.relatedTable, {
+  //         data: {
+  //           offset: 0,
+  //           limit: 0,
+  //           [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
+  //             idFromParams,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         setJwtObjects(
+  //           res?.data?.fields?.filter(
+  //             (item) => item?.attributes?.object_id_from_jwt === true
+  //           )
+  //         );
+  //       })
+  //       .catch((a) => console.log("error", a));
+  // }, [selectedRelation]);
 
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {
@@ -260,8 +260,8 @@ const NewRelationSection = ({
   /*****************************JWT END*************************/
   
   useEffect(() => {
-    layoutService.getList({ data: { tableId: id ?? "" } }).then((res) => {
-
+    layoutService.getList({ data: { tableId: "53edfff0-2a31-4c73-b230-06a134afa50b" } }).then((res) => {
+      setData([res.layouts[1]])
     });
   }, []);
 

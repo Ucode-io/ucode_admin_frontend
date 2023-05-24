@@ -1,12 +1,16 @@
+import "../style.scss";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { AiOutlinePlus } from "react-icons/ai";
 import { TbReplace } from "react-icons/tb";
+import { BsThreeDots } from "react-icons/bs";
+import { RiPencilFill } from "react-icons/ri";
 import { NavLink, useNavigate } from "react-router-dom";
-import "../style.scss";
-import { Box, Collapse } from "@mui/material";
+import { Box, Collapse, Menu } from "@mui/material";
 import IconGenerator from "../../IconPicker/IconGenerator";
-import { Container, Draggable } from "react-smooth-dnd";
 import { useState } from "react";
+import ButtonsMenu from "../buttonsMenu";
+import constructorTableService from "../../../services/constructorTableService";
+import { useQueryClient } from "react-query";
 
 const RecursiveBlock = ({
   index,
@@ -14,19 +18,39 @@ const RecursiveBlock = ({
   parentClickHandler,
   openedBlock,
   openFolderCreateModal,
-  //   hasNestedLevel,
   environment,
-  // childBlockVisible,
   onDrop,
   setFolderModalType,
   setSelectedTable,
   level = 1,
+  sidebarIsOpen,
 }) => {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
+  const [menu, setMenu] = useState(null);
+  const queryClient = useQueryClient();
+  const openMenu = Boolean(menu);
   const clickHandler = () => {
     !element.isChild && parentClickHandler(element);
     setChildBlockVisible((prev) => !prev);
+  };
+
+  const handleOpenNotify = (event) => {
+    setMenu(event.currentTarget);
+  };
+  const handleCloseNotify = () => {
+    setMenu(null);
+  };
+
+  const deleteFolder = (element) => {
+    constructorTableService
+      .deleteFolder(element.id)
+      .then(() => {
+        queryClient.refetchQueries(["GET_TABLE_FOLDER"]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -83,19 +107,15 @@ const RecursiveBlock = ({
           >
             <IconGenerator icon={element?.icon} size={18} />
 
-            {element?.title}
+            {sidebarIsOpen && element?.title}
           </div>
-          {!element?.isChild && (
+          {!element?.isChild && sidebarIsOpen ? (
             <Box className="icon_group">
-              <AiOutlinePlus
+              <BsThreeDots
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  openFolderCreateModal("parent", element);
-                }}
-                size={13}
-                style={{
-                  color: environment?.data?.color,
+                  handleOpenNotify(e);
                 }}
               />
               <div
@@ -109,7 +129,19 @@ const RecursiveBlock = ({
                 <ExpandMoreIcon />
               </div>
             </Box>
+          ) : (
+            ""
           )}
+          <ButtonsMenu
+            element={element}
+            menu={menu}
+            openMenu={openMenu}
+            handleCloseNotify={handleCloseNotify}
+            sidebarIsOpen={sidebarIsOpen}
+            openFolderCreateModal={openFolderCreateModal}
+            environment={environment}
+            deleteFolder={deleteFolder}
+          />
           {element?.isChild && (
             <TbReplace
               size={14}
@@ -136,11 +168,11 @@ const RecursiveBlock = ({
             parentClickHandler={parentClickHandler}
             openedBlock={openedBlock}
             openFolderCreateModal={openFolderCreateModal}
-            // hasNestedLevel={hasNestedLevel}
             environment={environment}
             onDrop={onDrop}
             setFolderModalType={setFolderModalType}
             setSelectedTable={setSelectedTable}
+            sidebarIsOpen={sidebarIsOpen}
           />
         ))}
       </Collapse>

@@ -3,25 +3,22 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CancelButton from "../../components/Buttons/CancelButton";
 import CreateButton from "../../components/Buttons/CreateButton";
 import SaveButton from "../../components/Buttons/SaveButton";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import HFTextField from "../../components/FormElements/HFTextField";
-import HFCheckbox from "../../components/FormElements/HFCheckbox";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import constructorTableService from "../../services/constructorTableService";
 import { useQueryClient } from "react-query";
+import { useEffect } from "react";
 
 const FolderCreateModal = ({
   closeModal,
-  updateType,
   loading,
   modalType,
-  selectedType,
   appId,
   selectedFolder,
 }) => {
   const { projectId } = useParams();
-  const [setQueryParams] = useSearchParams();
   const queryClient = useQueryClient();
 
   const onSubmit = (data) => {
@@ -29,25 +26,28 @@ const FolderCreateModal = ({
       createType(data);
     } else if (modalType === "parent") {
       createType(data, selectedFolder);
+    } else if (modalType === "update") {
+      updateType(data);
     }
-
-    // updateType({
-    //   ...selectedType,
-    //   ...data,
-    // });
   };
 
-  const { control, handleSubmit, watch } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     defaultValues: {
-      //   confirm_by: 1,
-      //   name: selectedType?.name ?? "",
-      //   self_recover: selectedType?.self_recover ?? false,
-      //   self_register: selectedType?.self_register ?? false,
-      //   "project-id": projectId,
       app_id: appId,
     },
   });
-  console.log("watch", watch());
+
+  useEffect(() => {
+    if (modalType === "update")
+      constructorTableService
+        .getFolderById(selectedFolder.id, projectId)
+        .then((res) => {
+          reset({ ...res, app_id: appId });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }, [modalType]);
 
   const createType = (data, selectedFolder) => {
     constructorTableService
@@ -56,10 +56,22 @@ const FolderCreateModal = ({
         parent_id: modalType === "parent" ? selectedFolder.id : "",
       })
       .then(() => {
-        queryClient.refetchQueries([
-          "GET_TABLE_FOLDER",
-          //   { scenarioId: scenarioId },
-        ]);
+        queryClient.refetchQueries(["GET_TABLE_FOLDER", appId]);
+        closeModal();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const updateType = (data, selectedFolder) => {
+    constructorTableService
+      .updateFolder({
+        ...data,
+        // parent_id: modalType === "parent" ? selectedFolder.id : "",
+        app_id: appId,
+      })
+      .then((res) => {
+        queryClient.refetchQueries(["GET_TABLE_FOLDER", appId]);
         closeModal();
       })
       .catch((err) => {
@@ -73,7 +85,9 @@ const FolderCreateModal = ({
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
             <Typography variant="h4">
-              {modalType === "create" ? "Create folder" : "Edit folder"}
+              {modalType === "create" || modalType === "parent"
+                ? "Create folder"
+                : "Edit folder"}
             </Typography>
             <IconButton color="primary" onClick={closeModal}>
               <HighlightOffIcon fontSize="large" />
@@ -94,7 +108,7 @@ const FolderCreateModal = ({
 
             <div className="btns-row">
               <CancelButton onClick={closeModal} />
-              {modalType === "typeCreate" ? (
+              {modalType === "crete" ? (
                 <CreateButton type="submit" loading={loading} />
               ) : (
                 <SaveButton type="submit" loading={loading} />

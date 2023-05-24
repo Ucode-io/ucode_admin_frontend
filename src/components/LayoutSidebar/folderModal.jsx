@@ -3,7 +3,6 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CancelButton from "../../components/Buttons/CancelButton";
 import CreateButton from "../../components/Buttons/CreateButton";
 import SaveButton from "../../components/Buttons/SaveButton";
-import { useParams, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import constructorTableService from "../../services/constructorTableService";
 import { useQueryClient } from "react-query";
@@ -18,8 +17,6 @@ const FolderModal = ({
   selectedTable,
   getAppById,
 }) => {
-  const { projectId } = useParams();
-  const [setQueryParams] = useSearchParams();
   const queryClient = useQueryClient();
   const computedOption = useMemo(() => {
     return tableFolder?.map((item, index) => ({
@@ -28,27 +25,15 @@ const FolderModal = ({
     }));
   }, []);
 
-  console.log("selectedTable", selectedTable);
-
   const onSubmit = (data) => {
     console.log("sentdata", data);
 
     createType(data);
   };
 
-  const { control, handleSubmit, watch } = useForm({
-    defaultValues: {
-      //   confirm_by: 1,
-      //   name: selectedType?.name ?? "",
-      //   self_recover: selectedType?.self_recover ?? false,
-      //   self_register: selectedType?.self_register ?? false,
-      //   "project-id": projectId,
-    },
-  });
-  console.log("watch", watch());
+  const { control, handleSubmit } = useForm();
 
   const createType = (data) => {
-    console.log("sentdata", data);
     constructorTableService
       .update({
         ...selectedTable,

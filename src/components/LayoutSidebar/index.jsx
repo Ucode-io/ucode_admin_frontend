@@ -55,7 +55,6 @@ const LayoutSidebar = ({
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
   };
-  const folders = tableFolder?.folders;
 
   const switchRightSideVisible = () => {
     setSidebarIsOpen(!sidebarIsOpen);
@@ -65,10 +64,8 @@ const LayoutSidebar = ({
     if (element.children) {
       switchChildBlockHandler(element.id);
       if (!sidebarIsOpen) setSidebarIsOpen(true);
-      console.log("this is parent");
       setChildBlockVisible((prev) => !prev);
     } else {
-      console.log("this is close");
       setOpenedBlock(null);
     }
   };
@@ -104,8 +101,6 @@ const LayoutSidebar = ({
     }
   );
 
-  console.log("tableFolder?.folders", tableFolder?.folders);
-
   const onDrop = (dropResult) => {
     const result = applyDrag(sidebarElements, dropResult);
     const computedTables = [
@@ -127,10 +122,6 @@ const LayoutSidebar = ({
     //     });
     // }
   };
-
-  console.log("environment", environment);
-
-  const hasNestedLevel = sidebarElements?.some((element) => element.children);
 
   return (
     <div
@@ -184,13 +175,13 @@ const LayoutSidebar = ({
               parentClickHandler={parentClickHandler}
               openedBlock={openedBlock}
               openFolderCreateModal={openFolderCreateModal}
-              // hasNestedLevel={hasNestedLevel}
               environment={environment}
               childBlockVisible={childBlockVisible}
               onDrop={onDrop}
               tableFolder={tableFolder?.folders}
               setFolderModalType={setFolderModalType}
               setSelectedTable={setSelectedTable}
+              sidebarIsOpen={sidebarIsOpen}
             />
           ))}
           {folderModalType === "folder" && (
@@ -206,7 +197,9 @@ const LayoutSidebar = ({
 
         <div className="sidebar-footer"></div>
       </div>
-      {(modalType === "create" || modalType === "parent") && (
+      {(modalType === "create" ||
+        modalType === "parent" ||
+        modalType === "update") && (
         <FolderCreateModal
           modalType={modalType}
           closeModal={closeModal}

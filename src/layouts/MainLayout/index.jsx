@@ -60,7 +60,6 @@ const MainLayout = ({ setFavicon, favicon }) => {
   return (
     <div className={styles.layout}>
       <Favicon url={favicon} />
-      {/* <Sidebar elements={elements} environment={environment} /> */}
       {elements && (
         <LayoutSidebar
           elements={elements}

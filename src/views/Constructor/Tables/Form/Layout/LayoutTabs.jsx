@@ -149,7 +149,7 @@ function LayoutTabs({
                     }}
                   >
                     {/* {tab?.type === "sectionTab" ? tab?.title : tab?.table_from?.label} */}
-                    {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`)}
+                    {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label}
                     {/* <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab)} onDeleteClick={() => removeViewRelation(index, tab)} /> */}
                   </div>
                 </Draggable>
@@ -196,8 +196,7 @@ function LayoutTabs({
             sectionTabs={sectionTabs}
           />
         ) : (
-          // <RelationTable relation={computedViewRelations[selectedTabIndex]} />
-          ""
+          <RelationTable relation={computedViewRelations[selectedTabIndex]} />
         )}
       </Card>
     </div>

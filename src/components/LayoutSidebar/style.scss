@@ -13,6 +13,7 @@ $main-color: #0365F2;
 
 
 
+
   .header {
     width: 100%;
     display: flex;
@@ -53,6 +54,7 @@ $main-color: #0365F2;
       column-gap: 8px;
     }
   }
+
 
   .nav-block {
     padding: 12px;
@@ -183,9 +185,7 @@ $main-color: #0365F2;
           white-space: normal;
         }
 
-        &.opened {
-          // display: block;
-        }
+
       }
 
     }
@@ -231,4 +231,29 @@ $main-color: #0365F2;
   transition-property: height;
   transition-duration: 0.2s;
   transition-timing-function: linear;
+}
+
+.menu {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 8px;
+
+  div {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #6E8BB714;
+    }
+  }
+
+  h3 {
+    font-weight: normal;
+
+  }
 }

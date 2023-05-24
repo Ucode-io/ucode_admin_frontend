@@ -3,7 +3,7 @@ import { Card } from "@mui/material";
 import { useCallback, useMemo, useRef } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { useMutation } from "react-query";
 import {
   useLocation,
@@ -32,6 +32,7 @@ import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUplo
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
 import NewMainInfo from "../NewMainInfo";
 import MainInfo from "../MainInfo";
+import layoutService from "../../../services/layoutService";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -204,6 +205,11 @@ const NewRelationSection = ({
       },
     });
   };
+  
+  const tableId = useWatch({
+    control: control,
+    name: "id",
+  });
 
   /*****************************JWT START*************************/
 
@@ -261,9 +267,17 @@ const NewRelationSection = ({
   };
 
   /*****************************JWT END*************************/
+  
   useEffect(() => {
-    setSelectTab( relations[selectedTabIndex]);
+    layoutService.getList({ data: { tableId: id ?? "" } }).then((res) => {
+
+    });
+  }, []);
+
+  useEffect(() => {
+    setSelectTab( relations[0]);
   }, [])
+
   if (!filteredRelations?.length) return null;
   return (
     <>

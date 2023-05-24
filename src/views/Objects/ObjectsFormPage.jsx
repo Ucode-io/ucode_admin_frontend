@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PageFallback from "../../components/PageFallback";
@@ -275,6 +275,7 @@ const ObjectsFormPage = () => {
           control={control}
           computedSections={computedSections}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
+          id={id}
           
         />
       </div>

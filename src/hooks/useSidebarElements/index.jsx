@@ -22,6 +22,7 @@ const useSidebarElements = () => {
         ...el,
         title: el.label,
         parent_id: el.folder_id,
+        isChild: true,
         path: `/main/${appId}/object/${el.slug}`,
       })) ?? [];
 

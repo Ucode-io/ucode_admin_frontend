@@ -1,5 +1,5 @@
 import { Delete } from "@mui/icons-material";
-import { Box, Input } from "@mui/material";
+import { Box, FormControlLabel, Input, Switch } from "@mui/material";
 import React, { useEffect } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
@@ -11,6 +11,7 @@ import TableRowButton from "../../../../../components/TableRowButton";
 import layoutService from "../../../../../services/layoutService";
 import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
 import AutosizeInput from "react-input-autosize";
+import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 
 const defaultLayout = {
   icon: "",
@@ -205,10 +206,33 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
     name: "layouts",
     keyName: "key",
   });
- 
+
   const navigateToEditForm = (element) => {
     setSelectedLayout(element);
   };
+
+  const setDefault = (index) => {
+    const newLayouts = layouts.map((element, i) => {
+      if (i === index) {
+        return {
+          ...element,
+          is_default: !element.is_default,
+        };
+      }
+      return {
+        ...element,
+        is_default: false,
+      };
+    });
+    mainForm.setValue("layouts", newLayouts);
+  };
+
+  const computedLayouts = useWatch({
+    control: mainForm.control,
+    name: "layouts",
+  });
+
+  console.log("sssssssss", computedLayouts);
 
   return (
     <Box sx={{ width: "100%", height: "100vh", background: "#fff" }}>
@@ -224,16 +248,33 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
           </CTableHead>
 
           {/* <CTableBody  columnsCount={4} > */}
-          {layouts?.map((element, index) => (
+          {computedLayouts?.map((element, index) => (
             <CTableRow key={element.id} onClick={() => navigateToEditForm(element)}>
               <CTableCell>{index + 1}</CTableCell>
               <CTableCell>
-                <HFAutoWidthInput
-                  onClick={(e) => e.stopPropagation()}
-                  control={mainForm.control}
-                  name={`layouts.${index}.label`}
-                  inputStyle={{ border: "none", outline: "none", fontWeight: 500, minWidth: 300, background: "transparent" }}
-                />
+                <Box style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <HFAutoWidthInput
+                    onClick={(e) => e.stopPropagation()}
+                    control={mainForm.control}
+                    name={`layouts.${index}.label`}
+                    inputStyle={{ border: "none", outline: "none", fontWeight: 500, minWidth: 300, background: "transparent" }}
+                  />
+
+                  <Box style={{ display: "flex", alignItems: "center" }}>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          onChange={() => setDefault(index)}
+                          checked={element.is_default ?? false}
+                        />
+                      }
+                      label={"Default"}
+                    />
+                  </Box>
+                </Box>
               </CTableCell>
               <PermissionWrapperV2 tabelSlug="app" type="delete">
                 <CTableCell>
@@ -247,7 +288,7 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
             </CTableRow>
           ))}
           <PermissionWrapperV2 tabelSlug="app" type="write">
-            <TableRowButton colSpan={4} onClick={() => append({ table_id: tableId, type: 'SimpleLayout', label: "New" })} />
+            <TableRowButton colSpan={4} onClick={() => append({ table_id: tableId, type: "SimpleLayout", label: "New" })} />
           </PermissionWrapperV2>
           {/* </CTableBody> */}
         </CTable>

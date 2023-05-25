@@ -13,7 +13,6 @@ $main-color: #0365F2;
 
 
 
-
   .header {
     width: 100%;
     display: flex;
@@ -228,6 +227,30 @@ $main-color: #0365F2;
 
 }
 
+.tree_view {
+
+  li {
+    width: 100%;
+
+    .Mui-selected {
+      color: #fff;
+      background-color: #0365F2 !important;
+    }
+
+
+    .MuiTreeItem-content {
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .MuiTreeItem-label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+  }
+}
+
+
 .ReactCollapse--collapse {
   transition-property: height;
   transition-duration: 0.2s;
@@ -257,4 +280,12 @@ $main-color: #0365F2;
     font-weight: normal;
 
   }
+}
+
+.folder_btns-row {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
 }

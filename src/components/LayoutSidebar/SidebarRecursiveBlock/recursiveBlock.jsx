@@ -35,8 +35,6 @@ const RecursiveBlock = ({
     setChildBlockVisible((prev) => !prev);
   };
   const { tableSlug } = useParams();
-  console.log("tableSlug", tableSlug);
-  console.log("element", element);
 
   const handleOpenNotify = (event) => {
     setMenu(event.currentTarget);
@@ -55,9 +53,8 @@ const RecursiveBlock = ({
         console.log(err);
       });
   };
-  console.log("element?.isChild", element?.isChild);
   return (
-    <Draggable key={element.id}>
+    <Draggable key={element.id} data={element} payload={element}>
       <div className="parent-block column-drag-handle" key={index}>
         <Button
           key={index}

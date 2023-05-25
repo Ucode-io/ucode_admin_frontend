@@ -15,7 +15,6 @@ import FolderModal from "./folderModal";
 import "./style.scss";
 import applicationService from "../../services/applicationSercixe";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
-import { Container, Draggable } from "react-smooth-dnd";
 
 const LayoutSidebar = ({
   elements,
@@ -89,6 +88,12 @@ const LayoutSidebar = ({
     );
   }, [tableFolder?.folders, elements]);
 
+  const computedFolderList = useMemo(() => {
+    return tableFolderListToNested([...(tableFolder?.folders ?? [])], {
+      undefinedChildren: true,
+    });
+  }, [tableFolder?.folders]);
+
   const sidebarElements = useMemo(() => computedTableList, [computedTableList]);
 
   useEffect(() => {
@@ -107,33 +112,11 @@ const LayoutSidebar = ({
     }
   );
 
-  // const onDrop = (dropResult) => {
-  //   const result = applyDrag(sidebarElements, dropResult);
-  //   const computedTables = [
-  //     ...result.map((el) => ({
-  //       table_id: el.id,
-  //       is_visible: Boolean(el.is_visible),
-  //       is_own_table: Boolean(el.is_own_table),
-  //     })),
-  //   ];
-  //   console.log("result", result);
-  //   // if (result) {
-  //   //   applicationService
-  //   //     .update({
-  //   //       ...applicationElements,
-  //   //       tables: computedTables,
-  //   //     })
-  //   //     .then(() => {
-  //   //       dispatch(fetchConstructorTableListAction(appId));
-  //   //     });
-  //   // }
-  // };
-
   const onDrop = (dropResult) => {
     const result = applyDrag(elements, dropResult);
     const computedTables = [
-      ...result.map((el) => ({
-        table_id: el.id,
+      ...result?.map((el) => ({
+        table_id: el?.id,
         is_visible: Boolean(el.is_visible),
         is_own_table: Boolean(el.is_own_table),
       })),
@@ -195,37 +178,31 @@ const LayoutSidebar = ({
         }}
       >
         <div className="menu-element">
-          <Container
-            lockAxis="y"
-            // onDrop={onDrop}
-            dragHandleSelector=".column-drag-handle"
-          >
-            {sidebarElements?.map((element, index) => (
-              <RecursiveBlock
-                key={index}
-                element={element}
-                parentClickHandler={parentClickHandler}
-                openedBlock={openedBlock}
-                openFolderCreateModal={openFolderCreateModal}
-                environment={environment}
-                childBlockVisible={childBlockVisible}
-                tableFolder={tableFolder?.folders}
-                setFolderModalType={setFolderModalType}
-                setSelectedTable={setSelectedTable}
-                sidebarIsOpen={sidebarIsOpen}
-                onDrop={onDrop}
-              />
-            ))}
-            {folderModalType === "folder" && (
-              <FolderModal
-                closeModal={closeFolderModal}
-                tableFolder={tableFolder?.folders}
-                modalType={folderModalType}
-                selectedTable={selectedTable}
-                getAppById={getAppById}
-              />
-            )}
-          </Container>
+          {sidebarElements?.map((element, index) => (
+            <RecursiveBlock
+              key={index}
+              element={element}
+              parentClickHandler={parentClickHandler}
+              openedBlock={openedBlock}
+              openFolderCreateModal={openFolderCreateModal}
+              environment={environment}
+              childBlockVisible={childBlockVisible}
+              tableFolder={tableFolder?.folders}
+              setFolderModalType={setFolderModalType}
+              setSelectedTable={setSelectedTable}
+              sidebarIsOpen={sidebarIsOpen}
+              onDrop={onDrop}
+            />
+          ))}
+          {folderModalType === "folder" && (
+            <FolderModal
+              closeModal={closeFolderModal}
+              modalType={folderModalType}
+              selectedTable={selectedTable}
+              getAppById={getAppById}
+              computedFolderList={computedFolderList}
+            />
+          )}
         </div>
         <div className="sidebar-footer"></div>
       </div>

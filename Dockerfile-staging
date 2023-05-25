@@ -1,4 +1,4 @@
-FROM node:14.18-alpine as builder
+FROM node:18.16.0-alpine as builder
 RUN apk update && apk add yarn 
 RUN mkdir app
 WORKDIR /app
@@ -8,7 +8,7 @@ COPY . ./
 RUN mv .env.staging .env
 RUN yarn install --network-timeout 1000000000
 
-RUN yarn build
+RUN yarn build --mode staging
 
 FROM nginx:alpine
 COPY --from=builder /app/build /build

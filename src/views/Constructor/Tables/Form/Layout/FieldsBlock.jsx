@@ -1,5 +1,5 @@
 import { Add, Close } from "@mui/icons-material";
-import { Button, IconButton } from "@mui/material";
+import { Button, IconButton, Input, OutlinedInput } from "@mui/material";
 import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
@@ -7,20 +7,29 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import { generateGUID } from "../../../../../utils/generateID";
+import { generateGUID, generateID } from "../../../../../utils/generateID";
 import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
+import HFTextField from "../../../../../components/FormElements/HFTextField";
 
-const FieldsBlock = ({ mainForm, layoutForm, selectedSettingsTab, setSelectedSettingsTab, closeSettingsBlock, sectionTabs={sectionTabs},
+const FieldsBlock = ({
+  mainForm,
+  layoutForm,
+  selectedSettingsTab,
+  setSelectedSettingsTab,
+  closeSettingsBlock,
+  sectionTabs,
   insertSectionTab,
   removeSectionTab,
   moveSectionTab,
-  appendSectionTab }) => {
+  updateSectionTab,
+  appendSectionTab,
+}) => {
   const { fields } = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
   });
-  
+
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
     name: "layoutRelations",
@@ -89,6 +98,9 @@ const FieldsBlock = ({ mainForm, layoutForm, selectedSettingsTab, setSelectedSet
     if (!result) return;
   };
 
+  const handleNameChange = (event, index, oldId) => {
+    updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
+  }
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -121,7 +133,7 @@ const FieldsBlock = ({ mainForm, layoutForm, selectedSettingsTab, setSelectedSet
                 {unusedFields?.map((field, index) => (
                   <Draggable key={field.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
-                      <FormElementGenerator field={field} control={layoutForm.control} disabledHelperText />
+                      <FormElementGenerator field={field} control={mainForm.control} disabledHelperText />
                     </div>
                   </Draggable>
                 ))}
@@ -146,7 +158,7 @@ const FieldsBlock = ({ mainForm, layoutForm, selectedSettingsTab, setSelectedSet
                 {unusedRelations?.map((relation) => (
                   <Draggable key={relation.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
-                      <FormElementGenerator field={relation} control={layoutForm.control} disabledHelperText />
+                      <FormElementGenerator field={relation} control={mainForm.control} disabledHelperText />
                     </div>
                   </Draggable>
                 ))}
@@ -170,19 +182,20 @@ const FieldsBlock = ({ mainForm, layoutForm, selectedSettingsTab, setSelectedSet
             <div className={styles.fieldsBlock}>
               <Container groupName="section_tabs" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }} getChildPayload={(i) => unusedTableRelations[i]}>
                 {sectionTabs?.map((tab, index) => (
-                  <Draggable key={tab.id} style={{ overflow: "visible", width: "fit-content" }}>
+                  <Draggable key={index} style={{ overflow: "visible", width: "fit-content" }}>
                     <div className={`${styles.sectionFieldRow} ${styles.relation}`}>
-                      <HFAutoWidthInput
+                      <OutlinedInput
+                      value={tab.label}
                         onClick={(e) => e.stopPropagation()}
-                        control={mainForm.control}
-                        name={`sectionTabs.${index}.title`}
-                        inputStyle={{ border: "none", outline: "none", fontWeight: 500, minWidth: 100, background: "transparent" }}
+                        size="small"
+                        onChange={(e) => handleNameChange(e, index, tab.id)}
+                        style={{ border: "none", outline: "none", fontWeight: 500, minWidth: 100, background: "transparent" }}
                       />
                     </div>
                   </Draggable>
                 ))}
 
-                <Button onClick={() => appendSectionTab({ title: "", type: "sectionTab" })}>
+                <Button onClick={() => appendSectionTab({ type: "section", id: generateGUID() })}>
                   <Add />
                   Add Section tab
                 </Button>

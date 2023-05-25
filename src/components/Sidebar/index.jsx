@@ -13,8 +13,9 @@ import { Container, Draggable } from "react-smooth-dnd";
 import { applyDrag } from "../../utils/applyDrag";
 import applicationService from "../../services/applicationSercixe";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
+import constructorTableService from "../../services/constructorTableService";
 
-const Sidebar = ({ elements = [] }) => {
+const Sidebar = ({ elements = [], environment }) => {
   const dispatch = useDispatch();
   const { appId } = useParams();
   const location = useLocation();
@@ -49,6 +50,9 @@ const Sidebar = ({ elements = [] }) => {
       return projectService.getById(projectId);
     }
   );
+  const { data: tableFolder } = useQuery(["GET_TABLE_FOLDER"], () => {
+    return constructorTableService.getFolderList(projectId);
+  });
 
   const onDrop = (dropResult) => {
     const result = applyDrag(elements, dropResult);
@@ -96,7 +100,12 @@ const Sidebar = ({ elements = [] }) => {
           )}
         </div>
 
-        <div className={styles.scrollBlock}>
+        <div
+          className={styles.scrollBlock}
+          style={{
+            background: environment?.data?.background || "#fff",
+          }}
+        >
           <div className={styles.menuItemsBlock}>
             <Container
               lockAxis="y"
@@ -106,14 +115,14 @@ const Sidebar = ({ elements = [] }) => {
               {elements
                 .filter((element) => element.icon)
                 .map((element) => (
-                  <Draggable key={element.id}>
-                    <Tooltip
-                      placement="right"
-                      followCursor
-                      key={element.id}
-                      title={element.title}
-                    >
-                      <Box className={styles.dragBox}>
+                  <Tooltip
+                    placement="right"
+                    followCursor
+                    key={element.id}
+                    title={element.title}
+                  >
+                    <Box className={styles.dragBox}>
+                      <Draggable key={element.id}>
                         {visible ? (
                           <div className={styles.navLinkOpen}>
                             <NavLink
@@ -124,6 +133,17 @@ const Sidebar = ({ elements = [] }) => {
                                   ? styles.active
                                   : ""
                               }`}
+                              style={{
+                                color:
+                                  selectedMenuItem?.id === element.id
+                                    ? environment?.data?.active_color || "#fff"
+                                    : environment?.data?.color || "#6E8BB7",
+                                background:
+                                  selectedMenuItem?.id === element.id
+                                    ? environment?.data?.active_background ||
+                                      "#007AFF"
+                                    : "",
+                              }}
                               // onClick={setVisibBlock}
                             >
                               {typeof element.icon === "string" ? (
@@ -154,6 +174,17 @@ const Sidebar = ({ elements = [] }) => {
                                 ? styles.active
                                 : ""
                             }`}
+                            style={{
+                              color:
+                                selectedMenuItem?.id === element.id
+                                  ? environment?.data?.active_color || "#fff"
+                                  : environment?.data?.color || "#6E8BB7",
+                              background:
+                                selectedMenuItem?.id === element.id
+                                  ? environment?.data?.active_background ||
+                                    "#007AFF"
+                                  : "",
+                            }}
                             // onClick={setVisibBlock}
                           >
                             {typeof element.icon === "string" ? (
@@ -171,9 +202,9 @@ const Sidebar = ({ elements = [] }) => {
                             )}
                           </NavLink>
                         )}
-                      </Box>
-                    </Tooltip>
-                  </Draggable>
+                      </Draggable>
+                    </Box>
+                  </Tooltip>
                 ))}
             </Container>
           </div>

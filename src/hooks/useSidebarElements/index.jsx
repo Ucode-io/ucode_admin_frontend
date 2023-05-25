@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 const useSidebarElements = () => {
   const { appId } = useParams();
   const constructorElements = useSelector(
-    (state) => state.constructorTable.applications.tables
+    (state) => state.constructorTable?.applications?.tables
   );
   const permissions = useSelector((state) => state.auth.permissions);
   const role = useSelector((state) => state.auth.roleInfo);
@@ -15,16 +15,17 @@ const useSidebarElements = () => {
     const computedConstructorElements = constructorElements
       ?.filter(
         (el) =>
-          el.is_visible &&
+          el?.is_visible &&
           (permissions?.[el.slug]?.["read"] || role?.name === "DEFAULT ADMIN")
       )
       ?.map((el) => ({
         ...el,
         title: el.label,
+        parent_id: el.folder_id,
         path: `/main/${appId}/object/${el.slug}`,
       })) ?? [];
 
-    return [...computedConstructorElements, ...elements];
+    return [...(computedConstructorElements ?? []), ...(elements ?? [])];
   }, [constructorElements, permissions, appId, role]);
 
   return { elements: computedElements ?? [] };

@@ -13,6 +13,9 @@ import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst
 import RecursiveBlock from "./SidebarRecursiveBlock/recursiveBlock";
 import FolderModal from "./folderModal";
 import "./style.scss";
+import applicationService from "../../services/applicationSercixe";
+import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
+import { Container, Draggable } from "react-smooth-dnd";
 
 const LayoutSidebar = ({
   elements,
@@ -25,6 +28,9 @@ const LayoutSidebar = ({
     (state) => state.main.settingsSidebarIsOpen
   );
   const projectId = useSelector((state) => state.auth.projectId);
+  const applicationElements = useSelector(
+    (state) => state.constructorTable.applications
+  );
 
   const dispatch = useDispatch();
   const [openedBlock, setOpenedBlock] = useState(null);
@@ -101,8 +107,30 @@ const LayoutSidebar = ({
     }
   );
 
+  // const onDrop = (dropResult) => {
+  //   const result = applyDrag(sidebarElements, dropResult);
+  //   const computedTables = [
+  //     ...result.map((el) => ({
+  //       table_id: el.id,
+  //       is_visible: Boolean(el.is_visible),
+  //       is_own_table: Boolean(el.is_own_table),
+  //     })),
+  //   ];
+  //   console.log("result", result);
+  //   // if (result) {
+  //   //   applicationService
+  //   //     .update({
+  //   //       ...applicationElements,
+  //   //       tables: computedTables,
+  //   //     })
+  //   //     .then(() => {
+  //   //       dispatch(fetchConstructorTableListAction(appId));
+  //   //     });
+  //   // }
+  // };
+
   const onDrop = (dropResult) => {
-    const result = applyDrag(sidebarElements, dropResult);
+    const result = applyDrag(elements, dropResult);
     const computedTables = [
       ...result.map((el) => ({
         table_id: el.id,
@@ -110,17 +138,16 @@ const LayoutSidebar = ({
         is_own_table: Boolean(el.is_own_table),
       })),
     ];
-    console.log("result", result);
-    // if (result) {
-    //   applicationService
-    //     .update({
-    //       ...applicationElements,
-    //       tables: computedTables,
-    //     })
-    //     .then(() => {
-    //       dispatch(fetchConstructorTableListAction(appId));
-    //     });
-    // }
+    if (result) {
+      applicationService
+        .update({
+          ...applicationElements,
+          tables: computedTables,
+        })
+        .then(() => {
+          dispatch(fetchConstructorTableListAction(appId));
+        });
+    }
   };
 
   return (
@@ -168,35 +195,41 @@ const LayoutSidebar = ({
         }}
       >
         <div className="menu-element">
-          {sidebarElements?.map((element, index) => (
-            <RecursiveBlock
-              key={index}
-              element={element}
-              parentClickHandler={parentClickHandler}
-              openedBlock={openedBlock}
-              openFolderCreateModal={openFolderCreateModal}
-              environment={environment}
-              childBlockVisible={childBlockVisible}
-              onDrop={onDrop}
-              tableFolder={tableFolder?.folders}
-              setFolderModalType={setFolderModalType}
-              setSelectedTable={setSelectedTable}
-              sidebarIsOpen={sidebarIsOpen}
-            />
-          ))}
-          {folderModalType === "folder" && (
-            <FolderModal
-              closeModal={closeFolderModal}
-              tableFolder={tableFolder?.folders}
-              modalType={folderModalType}
-              selectedTable={selectedTable}
-              getAppById={getAppById}
-            />
-          )}
+          <Container
+            lockAxis="y"
+            // onDrop={onDrop}
+            dragHandleSelector=".column-drag-handle"
+          >
+            {sidebarElements?.map((element, index) => (
+              <RecursiveBlock
+                key={index}
+                element={element}
+                parentClickHandler={parentClickHandler}
+                openedBlock={openedBlock}
+                openFolderCreateModal={openFolderCreateModal}
+                environment={environment}
+                childBlockVisible={childBlockVisible}
+                tableFolder={tableFolder?.folders}
+                setFolderModalType={setFolderModalType}
+                setSelectedTable={setSelectedTable}
+                sidebarIsOpen={sidebarIsOpen}
+                onDrop={onDrop}
+              />
+            ))}
+            {folderModalType === "folder" && (
+              <FolderModal
+                closeModal={closeFolderModal}
+                tableFolder={tableFolder?.folders}
+                modalType={folderModalType}
+                selectedTable={selectedTable}
+                getAppById={getAppById}
+              />
+            )}
+          </Container>
         </div>
-
         <div className="sidebar-footer"></div>
       </div>
+
       {(modalType === "create" ||
         modalType === "parent" ||
         modalType === "update") && (

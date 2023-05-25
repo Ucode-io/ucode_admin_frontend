@@ -115,14 +115,14 @@ const Sidebar = ({ elements = [], environment }) => {
               {elements
                 .filter((element) => element.icon)
                 .map((element) => (
-                  <Draggable key={element.id}>
-                    <Tooltip
-                      placement="right"
-                      followCursor
-                      key={element.id}
-                      title={element.title}
-                    >
-                      <Box className={styles.dragBox}>
+                  <Tooltip
+                    placement="right"
+                    followCursor
+                    key={element.id}
+                    title={element.title}
+                  >
+                    <Box className={styles.dragBox}>
+                      <Draggable key={element.id}>
                         {visible ? (
                           <div className={styles.navLinkOpen}>
                             <NavLink
@@ -202,9 +202,9 @@ const Sidebar = ({ elements = [], environment }) => {
                             )}
                           </NavLink>
                         )}
-                      </Box>
-                    </Tooltip>
-                  </Draggable>
+                      </Draggable>
+                    </Box>
+                  </Tooltip>
                 ))}
             </Container>
           </div>

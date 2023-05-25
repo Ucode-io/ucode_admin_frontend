@@ -8,13 +8,10 @@ import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import constructorTableService from "../../services/constructorTableService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
-import { applyDrag } from "../../utils/applyDrag";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import RecursiveBlock from "./SidebarRecursiveBlock/recursiveBlock";
 import FolderModal from "./folderModal";
 import "./style.scss";
-import applicationService from "../../services/applicationSercixe";
-import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
 
 const LayoutSidebar = ({
   elements,
@@ -27,9 +24,6 @@ const LayoutSidebar = ({
     (state) => state.main.settingsSidebarIsOpen
   );
   const projectId = useSelector((state) => state.auth.projectId);
-  const applicationElements = useSelector(
-    (state) => state.constructorTable.applications
-  );
 
   const dispatch = useDispatch();
   const [openedBlock, setOpenedBlock] = useState(null);
@@ -112,27 +106,6 @@ const LayoutSidebar = ({
     }
   );
 
-  const onDrop = (dropResult) => {
-    const result = applyDrag(elements, dropResult);
-    const computedTables = [
-      ...result?.map((el) => ({
-        table_id: el?.id,
-        is_visible: Boolean(el.is_visible),
-        is_own_table: Boolean(el.is_own_table),
-      })),
-    ];
-    if (result) {
-      applicationService
-        .update({
-          ...applicationElements,
-          tables: computedTables,
-        })
-        .then(() => {
-          dispatch(fetchConstructorTableListAction(appId));
-        });
-    }
-  };
-
   return (
     <div
       className={`LayoutSidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}
@@ -191,7 +164,6 @@ const LayoutSidebar = ({
               setFolderModalType={setFolderModalType}
               setSelectedTable={setSelectedTable}
               sidebarIsOpen={sidebarIsOpen}
-              onDrop={onDrop}
             />
           ))}
           {folderModalType === "folder" && (

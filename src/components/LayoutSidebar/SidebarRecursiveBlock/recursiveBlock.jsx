@@ -1,6 +1,6 @@
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Button, Collapse } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { TbReplace } from "react-icons/tb";
 import { useQueryClient } from "react-query";
@@ -38,6 +38,11 @@ const RecursiveBlock = ({
     !element.isChild && parentClickHandler(element);
     setChildBlockVisible((prev) => !prev);
   };
+  useEffect(() => {
+    if (element.id === "96ed7568-e086-48db-92b5-658450cbd4a8") {
+      setChildBlockVisible(true);
+    }
+  }, []);
   const applicationElements = useSelector(
     (state) => state.constructorTable.applications
   );
@@ -96,7 +101,10 @@ const RecursiveBlock = ({
               (tableSlug !== element.slug
                 ? "active-with-child"
                 : environment?.data?.active_color),
-            marginLeft: level === 1 || element.isChild ? "" : level * 4,
+            marginLeft:
+              level === 1 || level === 2 || element.isChild ? "" : level * 4,
+            display:
+              element.id === "96ed7568-e086-48db-92b5-658450cbd4a8" && "none",
           }}
           className={`nav-element ${
             element.isChild &&

@@ -1,16 +1,19 @@
-import "../style.scss";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { TbReplace } from "react-icons/tb";
-import { BsThreeDots } from "react-icons/bs";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
-import { Box, Button, Collapse, Menu } from "@mui/material";
-import IconGenerator from "../../IconPicker/IconGenerator";
+import { Box, Button, Collapse } from "@mui/material";
 import { useState } from "react";
-import ButtonsMenu from "../buttonsMenu";
-import constructorTableService from "../../../services/constructorTableService";
+import { BsThreeDots } from "react-icons/bs";
+import { TbReplace } from "react-icons/tb";
 import { useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
-import { FaGripLines } from "react-icons/fa";
+import applicationService from "../../../services/applicationSercixe";
+import constructorTableService from "../../../services/constructorTableService";
+import { fetchConstructorTableListAction } from "../../../store/constructorTable/constructorTable.thunk";
+import { applyDrag } from "../../../utils/applyDrag";
+import IconGenerator from "../../IconPicker/IconGenerator";
+import ButtonsMenu from "../buttonsMenu";
+import "../style.scss";
 
 const RecursiveBlock = ({
   index,
@@ -23,8 +26,9 @@ const RecursiveBlock = ({
   setSelectedTable,
   level = 1,
   sidebarIsOpen,
-  onDrop,
 }) => {
+  const { appId } = useParams();
+  const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
   const [menu, setMenu] = useState(null);
@@ -34,6 +38,9 @@ const RecursiveBlock = ({
     !element.isChild && parentClickHandler(element);
     setChildBlockVisible((prev) => !prev);
   };
+  const applicationElements = useSelector(
+    (state) => state.constructorTable.applications
+  );
   const { tableSlug } = useParams();
 
   const handleOpenNotify = (event) => {
@@ -53,8 +60,28 @@ const RecursiveBlock = ({
         console.log(err);
       });
   };
+  const onDrop = (dropResult) => {
+    const result = applyDrag(element.children, dropResult);
+    const computedTables = [
+      ...result?.map((el) => ({
+        table_id: el?.id,
+        is_visible: Boolean(el.is_visible),
+        is_own_table: Boolean(el.is_own_table),
+      })),
+    ];
+    if (result) {
+      applicationService
+        .update({
+          ...applicationElements,
+          tables: computedTables,
+        })
+        .then(() => {
+          dispatch(fetchConstructorTableListAction(appId));
+        });
+    }
+  };
   return (
-    <Draggable key={element.id} data={element} payload={element}>
+    <Draggable key={index}>
       <div className="parent-block column-drag-handle" key={index}>
         <Button
           key={index}
@@ -71,7 +98,7 @@ const RecursiveBlock = ({
                 : environment?.data?.active_color),
             marginLeft: level === 1 || element.isChild ? "" : level * 4,
           }}
-          className={`nav-element column-drag-handle ${
+          className={`nav-element ${
             element.isChild &&
             (tableSlug !== element.slug ? "active-with-child" : "active")
           }`}
@@ -132,7 +159,7 @@ const RecursiveBlock = ({
             environment={environment}
             deleteFolder={deleteFolder}
           />
-          {element?.isChild && (
+          {element?.isChild && sidebarIsOpen ? (
             <TbReplace
               size={14}
               onClick={(e) => {
@@ -149,6 +176,8 @@ const RecursiveBlock = ({
                     : environment?.data?.color,
               }}
             />
+          ) : (
+            ""
           )}
         </Button>
       </div>
@@ -167,7 +196,6 @@ const RecursiveBlock = ({
                 setFolderModalType={setFolderModalType}
                 setSelectedTable={setSelectedTable}
                 sidebarIsOpen={sidebarIsOpen}
-                onDrop={onDrop}
               />
             ))}
           </Container>

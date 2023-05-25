@@ -1,16 +1,16 @@
 import "../style.scss";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { AiOutlinePlus } from "react-icons/ai";
 import { TbReplace } from "react-icons/tb";
 import { BsThreeDots } from "react-icons/bs";
-import { RiPencilFill } from "react-icons/ri";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Box, Collapse, Menu } from "@mui/material";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { Box, Button, Collapse, Menu } from "@mui/material";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import { useState } from "react";
 import ButtonsMenu from "../buttonsMenu";
 import constructorTableService from "../../../services/constructorTableService";
 import { useQueryClient } from "react-query";
+import { Container, Draggable } from "react-smooth-dnd";
+import { FaGripLines } from "react-icons/fa";
 
 const RecursiveBlock = ({
   index,
@@ -19,11 +19,11 @@ const RecursiveBlock = ({
   openedBlock,
   openFolderCreateModal,
   environment,
-  onDrop,
   setFolderModalType,
   setSelectedTable,
   level = 1,
   sidebarIsOpen,
+  onDrop,
 }) => {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
@@ -34,6 +34,9 @@ const RecursiveBlock = ({
     !element.isChild && parentClickHandler(element);
     setChildBlockVisible((prev) => !prev);
   };
+  const { tableSlug } = useParams();
+  console.log("tableSlug", tableSlug);
+  console.log("element", element);
 
   const handleOpenNotify = (event) => {
     setMenu(event.currentTarget);
@@ -54,40 +57,27 @@ const RecursiveBlock = ({
   };
 
   return (
-    <>
-      {/* <Container
-        lockAxis="y"
-        onDrop={onDrop}
-        dropPlaceholder={{ className: "drag-row-drop-preview" }}
-        dragHandleSelector=".drag-handle"
-      >
-        <Draggable key={index}> */}
-      <div className="parent-block" key={index}>
-        <NavLink
-          to={element?.isChild && element?.path}
+    <Draggable key={element.id}>
+      <div className="parent-block column-drag-handle" key={index}>
+        <Button
           key={index}
-          className={({ isActive }) =>
-            `nav-element ${
-              isActive &&
-              element.isChild &&
-              (!openedBlock === element?.id ? "active-with-child" : "active")
-            }`
-          }
-          style={({ isActive }) => ({
+          style={{
             backgroundColor:
-              isActive &&
               element.isChild &&
-              (!openedBlock === element?.id
+              (tableSlug !== element.slug
                 ? "active-with-child"
                 : environment?.data?.active_background),
             color:
-              isActive &&
               element.isChild &&
-              (!openedBlock === element?.id
+              (tableSlug !== element.slug
                 ? "active-with-child"
                 : environment?.data?.active_color),
             marginLeft: level === 1 || element.isChild ? "" : level * 4,
-          })}
+          }}
+          className={`nav-element column-drag-handle ${
+            element.isChild &&
+            (tableSlug !== element.slug ? "active-with-child" : "active")
+          }`}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -99,7 +89,7 @@ const RecursiveBlock = ({
             className="label"
             style={{
               color:
-                !openedBlock === element?.id
+                tableSlug === element.slug
                   ? environment?.data?.active_color
                   : environment?.data?.color,
               opacity: element?.isChild && 0.6,
@@ -116,6 +106,9 @@ const RecursiveBlock = ({
                   e.preventDefault();
                   e.stopPropagation();
                   handleOpenNotify(e);
+                }}
+                style={{
+                  color: environment?.data?.color,
                 }}
               />
               <div
@@ -153,32 +146,37 @@ const RecursiveBlock = ({
                 setSelectedTable(element);
               }}
               style={{
-                color: environment?.data?.color,
+                color:
+                  tableSlug === element.slug
+                    ? environment?.data?.active_color
+                    : environment?.data?.color,
               }}
             />
           )}
-        </NavLink>
+        </Button>
       </div>
       <Collapse in={childBlockVisible} unmountOnExit>
-        {element?.children?.map((childElement, index) => (
-          <RecursiveBlock
-            key={index}
-            level={level + 1}
-            element={childElement}
-            parentClickHandler={parentClickHandler}
-            openedBlock={openedBlock}
-            openFolderCreateModal={openFolderCreateModal}
-            environment={environment}
-            onDrop={onDrop}
-            setFolderModalType={setFolderModalType}
-            setSelectedTable={setSelectedTable}
-            sidebarIsOpen={sidebarIsOpen}
-          />
-        ))}
+        {element?.children && (
+          <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>
+            {element?.children?.map((childElement, index) => (
+              <RecursiveBlock
+                key={index}
+                level={level + 1}
+                element={childElement}
+                parentClickHandler={parentClickHandler}
+                openedBlock={openedBlock}
+                openFolderCreateModal={openFolderCreateModal}
+                environment={environment}
+                setFolderModalType={setFolderModalType}
+                setSelectedTable={setSelectedTable}
+                sidebarIsOpen={sidebarIsOpen}
+                onDrop={onDrop}
+              />
+            ))}
+          </Container>
+        )}
       </Collapse>
-      {/* </Draggable>
-      </Container> */}
-    </>
+    </Draggable>
   );
 };
 

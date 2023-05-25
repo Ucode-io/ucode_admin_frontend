@@ -10,6 +10,7 @@ import projectService from "@/services/projectService";
 import Favicon from "react-favicon";
 import environmentService from "../../services/environmentService";
 import LayoutSidebar from "../../components/LayoutSidebar";
+import Sidebar from "../../components/Sidebar";
 
 const MainLayout = ({ setFavicon, favicon }) => {
   const projectId = useSelector((state) => state.auth.projectId);
@@ -60,6 +61,7 @@ const MainLayout = ({ setFavicon, favicon }) => {
   return (
     <div className={styles.layout}>
       <Favicon url={favicon} />
+      {/* <Sidebar elements={elements} appId={appId} /> */}
       {elements && (
         <LayoutSidebar
           elements={elements}

@@ -3,41 +3,29 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CancelButton from "../../components/Buttons/CancelButton";
 import CreateButton from "../../components/Buttons/CreateButton";
 import SaveButton from "../../components/Buttons/SaveButton";
-import { useForm } from "react-hook-form";
 import constructorTableService from "../../services/constructorTableService";
 import { useQueryClient } from "react-query";
-import HFSelect from "../FormElements/HFSelect";
-import { useMemo } from "react";
-
+import { useState } from "react";
+import { TreeItem, TreeView } from "@mui/lab";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import "./style.scss";
 const FolderModal = ({
   closeModal,
-  tableFolder,
   modalType,
   loading,
   selectedTable,
   getAppById,
+  computedFolderList,
 }) => {
   const queryClient = useQueryClient();
-  const computedOption = useMemo(() => {
-    return tableFolder?.map((item, index) => ({
-      label: item.title,
-      value: item.id,
-    }));
-  }, []);
-
-  const onSubmit = (data) => {
-    console.log("sentdata", data);
-
-    createType(data);
-  };
-
-  const { control, handleSubmit } = useForm();
+  const [folder, setFolder] = useState();
 
   const createType = (data) => {
     constructorTableService
       .update({
         ...selectedTable,
-        folder_id: data.folder_id,
+        folder_id: folder,
       })
       .then(() => {
         queryClient.refetchQueries(["GET_TABLE_FOLDER"]);
@@ -49,6 +37,25 @@ const FolderModal = ({
       });
   };
 
+  const handleSelect = (event, itemId) => {
+    setFolder(itemId);
+  };
+  const renderTree = (nodes) => (
+    <TreeItem
+      key={nodes.id}
+      nodeId={nodes.id}
+      label={nodes.label || nodes.title}
+    >
+      {Array.isArray(nodes?.children)
+        ? nodes?.children.map((node) => renderTree(node))
+        : null}
+    </TreeItem>
+  );
+  const data = {
+    id: "0",
+    title: "Select folder",
+    children: [...(computedFolderList ?? [])],
+  };
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
@@ -61,28 +68,31 @@ const FolderModal = ({
               <HighlightOffIcon fontSize="large" />
             </IconButton>
           </div>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="form">
-            <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              <HFSelect
-                autoFocus
-                fullWidth
-                label="Title"
-                control={control}
-                name="folder_id"
-                options={computedOption}
-              />
-            </Box>
-
-            <div className="btns-row">
-              <CancelButton onClick={closeModal} />
-              {modalType === "typeCreate" ? (
-                <CreateButton type="submit" loading={loading} />
-              ) : (
-                <SaveButton type="submit" loading={loading} />
-              )}
-            </div>
-          </form>
+          <Box className="tree_view">
+            <TreeView
+              defaultCollapseIcon={<ExpandMoreIcon />}
+              defaultExpandIcon={<ChevronRightIcon />}
+              sx={{
+                height: "100%",
+                flexGrow: 1,
+                display: "flex",
+                justifyContent: "center",
+                overflow: "auto",
+                padding: "10px",
+              }}
+              onNodeSelect={handleSelect}
+            >
+              {renderTree(data)}
+            </TreeView>
+          </Box>
+          <div className="folder_btns-row">
+            <CancelButton onClick={closeModal} />
+            {modalType === "typeCreate" ? (
+              <CreateButton onClick={() => createType()} loading={loading} />
+            ) : (
+              <SaveButton onClick={() => createType()} loading={loading} />
+            )}
+          </div>
         </Card>
       </Modal>
     </div>

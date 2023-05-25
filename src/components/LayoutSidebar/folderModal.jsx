@@ -36,7 +36,6 @@ const FolderModal = ({
         console.log(err);
       });
   };
-
   const handleSelect = (event, itemId) => {
     setFolder(itemId);
   };
@@ -52,9 +51,9 @@ const FolderModal = ({
     </TreeItem>
   );
   const data = {
-    id: "0",
-    title: "Select folder",
-    children: [...(computedFolderList ?? [])],
+    id: "96ed7568-e086-48db-92b5-658450cbd4a8",
+    title: "Root folder",
+    children: [...(computedFolderList[0].children ?? [])],
   };
   return (
     <div>

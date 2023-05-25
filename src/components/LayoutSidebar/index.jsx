@@ -106,6 +106,8 @@ const LayoutSidebar = ({
     }
   );
 
+  console.log("sidebarElements", sidebarElements);
+
   return (
     <div
       className={`LayoutSidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}

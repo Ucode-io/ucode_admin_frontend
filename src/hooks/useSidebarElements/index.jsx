@@ -12,19 +12,20 @@ const useSidebarElements = () => {
   const role = useSelector((state) => state.auth.roleInfo);
 
   const computedElements = useMemo(() => {
-    const computedConstructorElements = constructorElements
-      ?.filter(
-        (el) =>
-          el?.is_visible &&
-          (permissions?.[el.slug]?.["read"] || role?.name === "DEFAULT ADMIN")
-      )
-      ?.map((el) => ({
-        ...el,
-        title: el.label,
-        parent_id: el.folder_id,
-        isChild: true,
-        path: `/main/${appId}/object/${el.slug}`,
-      })) ?? [];
+    const computedConstructorElements =
+      constructorElements
+        ?.filter(
+          (el) =>
+            el?.is_visible &&
+            (permissions?.[el.slug]?.["read"] || role?.name === "DEFAULT ADMIN")
+        )
+        ?.map((el) => ({
+          ...el,
+          title: el.label,
+          parent_id: el.folder_id,
+          isChild: true,
+          path: `/main/${appId}/object/${el.slug}`,
+        })) ?? [];
 
     return [...(computedConstructorElements ?? []), ...(elements ?? [])];
   }, [constructorElements, permissions, appId, role]);

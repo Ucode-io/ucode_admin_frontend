@@ -55,7 +55,7 @@ const RecursiveBlock = ({
         console.log(err);
       });
   };
-
+  console.log("element?.isChild", element?.isChild);
   return (
     <Draggable key={element.id}>
       <div className="parent-block column-drag-handle" key={index}>
@@ -89,7 +89,7 @@ const RecursiveBlock = ({
             className="label"
             style={{
               color:
-                tableSlug === element.slug
+                tableSlug === element.slug && element.isChild
                   ? environment?.data?.active_color
                   : environment?.data?.color,
               opacity: element?.isChild && 0.6,

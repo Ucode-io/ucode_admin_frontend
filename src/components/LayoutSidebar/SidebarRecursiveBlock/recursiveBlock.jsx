@@ -39,7 +39,7 @@ const RecursiveBlock = ({
     setChildBlockVisible((prev) => !prev);
   };
   useEffect(() => {
-    if (element.id === "96ed7568-e086-48db-92b5-658450cbd4a8") {
+    if (element.id === "0") {
       setChildBlockVisible(true);
     }
   }, []);
@@ -102,9 +102,8 @@ const RecursiveBlock = ({
                 ? "active-with-child"
                 : environment?.data?.active_color),
             marginLeft:
-              level === 1 || level === 2 || element.isChild ? "" : level * 4,
-            display:
-              element.id === "96ed7568-e086-48db-92b5-658450cbd4a8" && "none",
+              level === 1 || level === 2 || element.isChild ? "" : level * 3,
+            display: element.id === "0" && "none",
           }}
           className={`nav-element ${
             element.isChild &&

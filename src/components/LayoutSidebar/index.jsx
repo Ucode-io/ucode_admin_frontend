@@ -73,22 +73,44 @@ const LayoutSidebar = ({
     setOpenedBlock((prev) => (prev === id ? null : id));
   };
 
-  const computedTableList = useMemo(() => {
-    return tableFolderListToNested(
-      [...(tableFolder?.folders ?? []), ...elements],
-      {
-        undefinedChildren: true,
-      }
-    );
-  }, [tableFolder?.folders, elements]);
+  // const computedTableList = useMemo(() => {
+  //   return tableFolderListToNested(
+  //     [...(tableFolder?.folders ?? []), ...elements],
+  //     {
+  //       undefinedChildren: true,
+  //     }
+  //   );
+  // }, [tableFolder?.folders, elements]);
 
-  const computedFolderList = useMemo(() => {
-    return tableFolderListToNested([...(tableFolder?.folders ?? [])], {
+  // const sidebarElements = useMemo(() => computedTableList, [computedTableList]);
+
+  // console.log("tableFolder?.folders?", tableFolder?.folders);
+
+  const files = [
+    ...(tableFolder?.folders?.map((item) => ({
+      ...item,
+      parent_id: item?.parent_id ? item?.parent_id : "0",
+    })) ?? []),
+    {
+      id: "0",
+      title: "Root",
+    },
+  ];
+  console.log("files", files);
+
+  const computedTableList = useMemo(() => {
+    return tableFolderListToNested([...(files ?? []), ...elements], {
       undefinedChildren: true,
     });
-  }, [tableFolder?.folders]);
+  }, [tableFolder?.folders, elements, files]);
 
-  const sidebarElements = useMemo(() => computedTableList, [computedTableList]);
+  const computedFolderList = useMemo(() => {
+    return tableFolderListToNested([...(files ?? [])], {
+      undefinedChildren: true,
+    });
+  }, [files]);
+
+  console.log("computedTableList", computedTableList);
 
   useEffect(() => {
     if (!computedTableList) setLoading(true);
@@ -106,7 +128,7 @@ const LayoutSidebar = ({
     }
   );
 
-  console.log("sidebarElements", sidebarElements);
+  console.log("sidebarElements", computedTableList);
 
   return (
     <div
@@ -153,7 +175,7 @@ const LayoutSidebar = ({
         }}
       >
         <div className="menu-element">
-          {sidebarElements?.map((element, index) => (
+          {computedTableList?.map((element, index) => (
             <RecursiveBlock
               key={index}
               element={element}

@@ -51,7 +51,7 @@ const FolderModal = ({
     </TreeItem>
   );
   const data = {
-    id: "96ed7568-e086-48db-92b5-658450cbd4a8",
+    id: "0",
     title: "Root folder",
     children: [...(computedFolderList[0].children ?? [])],
   };

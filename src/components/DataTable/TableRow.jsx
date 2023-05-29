@@ -25,7 +25,7 @@ const TableRow = ({
   watch,
   setFormValue,
   tableSlug,
-  isChecked = () => { },
+  isChecked = () => {},
   formVisible,
   remove,
   limit = 10,
@@ -82,8 +82,9 @@ const TableRow = ({
             </span>
             {onCheckboxChange && (
               <div
-                className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""
-                  }`}
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
               >
                 <Checkbox
                   checked={isChecked(row)}
@@ -123,20 +124,20 @@ const TableRow = ({
             </CTableCell>
           ))}
           <td>
-          <div style={{ display: 'flex', gap: '5px', padding: '3px' }}>
-            <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
-              <RectangleIconButton
-                color="error"
-                onClick={() =>
-                  row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-                }
-              >
-                <Delete color="error" />
-              </RectangleIconButton>
-            </PermissionWrapperV2>
+            <div style={{ display: "flex", gap: "5px", padding: "3px" }}>
+              <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+                <RectangleIconButton
+                  color="error"
+                  onClick={() =>
+                    row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+                  }
+                >
+                  <Delete color="error" />
+                </RectangleIconButton>
+              </PermissionWrapperV2>
 
-            <GeneratePdfFromTable row={row} />
-          </div>
+              <GeneratePdfFromTable row={row} />
+            </div>
           </td>
         </CTableRow>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
@@ -152,8 +153,9 @@ const TableRow = ({
             </span>
             {onCheckboxChange && (
               <div
-                className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""
-                  }`}
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
               >
                 <Checkbox
                   checked={isChecked(row)}
@@ -181,13 +183,12 @@ const TableRow = ({
                 )?.isStiky
                   ? calculateWidth(column?.id, index)
                   : "0",
-                backgroundColor: "#fff",
                 zIndex: tableSettings?.[pageName]?.find(
                   (item) => item?.id === column?.id
                 )?.isStiky
                   ? "1"
                   : "",
-                backgroundColor: colorCell(row?.difference),
+                backgroundColor: colorCell(row?.difference) || "#fff",
               }}
             >
               <CellElementGenerator field={column} row={row} />
@@ -216,8 +217,9 @@ const TableRow = ({
             </span>
             {onCheckboxChange && (
               <div
-                className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""
-                  }`}
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
               >
                 <Checkbox
                   checked={isChecked(row)}

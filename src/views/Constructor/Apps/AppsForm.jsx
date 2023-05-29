@@ -25,6 +25,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import UploadIcon from "@mui/icons-material/Upload";
 import FileUpload from "../../../components/Upload/FileUpload";
 import fileService from "../../../services/fileService";
+import PermissionWrapperApp from "../../../components/PermissionWrapper/PermissionWrapperApp";
 
 const applicationListPageLink = "/settings/constructor/apps";
 
@@ -36,9 +37,8 @@ const AppsForm = () => {
   const [btnLoader, setBtnLoader] = useState();
   const [loader, setLoader] = useState(true);
   const [appData, setAppData] = useState({});
+  const [appPermission, setAppPermission] = useState();
   const [ids, setIds] = useState([]);
-  // const { download } = useDownloader();
-  const ref = useRef();
 
   const mainForm = useForm({
     defaultValues: {
@@ -91,6 +91,15 @@ const AppsForm = () => {
       })
       .finally(() => setLoader(false));
   };
+  const getApp = () => {
+    setLoader(true);
+    applicationService
+      .getList()
+      .then((res) => {
+        setAppPermission(res.apps.filter((item) => item.id === appId));
+      })
+      .finally(() => setLoader(false));
+  };
 
   // Export to Json
   // const exportToJson = async () => {
@@ -128,8 +137,12 @@ const AppsForm = () => {
   // };
 
   useEffect(() => {
-    if (appId) getData();
-    else setLoader(false);
+    if (appId) {
+      getData();
+      getApp();
+    } else {
+      setLoader(false);
+    }
   }, []);
 
   const onSubmit = (data) => {
@@ -256,12 +269,18 @@ const AppsForm = () => {
                   Закрыть
                 </SecondaryButton>
                 <PermissionWrapperV2 tabelSlug="app" type="update">
-                  <PrimaryButton
-                    loader={btnLoader}
-                    onClick={mainForm.handleSubmit(onSubmit)}
+                  <PermissionWrapperApp
+                    permission={
+                      appPermission && appPermission[0]?.permission?.update
+                    }
                   >
-                    <Save /> Сохранить
-                  </PrimaryButton>
+                    <PrimaryButton
+                      loader={btnLoader}
+                      onClick={mainForm.handleSubmit(onSubmit)}
+                    >
+                      <Save /> Сохранить
+                    </PrimaryButton>
+                  </PermissionWrapperApp>
                 </PermissionWrapperV2>
               </>
             }

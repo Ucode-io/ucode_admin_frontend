@@ -269,18 +269,18 @@ const AppsForm = () => {
                   Закрыть
                 </SecondaryButton>
                 <PermissionWrapperV2 tabelSlug="app" type="update">
-                  <PermissionWrapperApp
+                  {/* <PermissionWrapperApp
                     permission={
                       appPermission && appPermission[0]?.permission?.update
                     }
+                  > */}
+                  <PrimaryButton
+                    loader={btnLoader}
+                    onClick={mainForm.handleSubmit(onSubmit)}
                   >
-                    <PrimaryButton
-                      loader={btnLoader}
-                      onClick={mainForm.handleSubmit(onSubmit)}
-                    >
-                      <Save /> Сохранить
-                    </PrimaryButton>
-                  </PermissionWrapperApp>
+                    <Save /> Сохранить
+                  </PrimaryButton>
+                  {/* </PermissionWrapperApp> */}
                 </PermissionWrapperV2>
               </>
             }

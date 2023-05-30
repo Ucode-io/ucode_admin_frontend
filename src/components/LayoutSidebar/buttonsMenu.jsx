@@ -1,5 +1,4 @@
 import { Box, Menu } from "@mui/material";
-import { AiOutlinePlus } from "react-icons/ai";
 import { RiPencilFill } from "react-icons/ri";
 import "./style.scss";
 import { BsFillTrashFill } from "react-icons/bs";
@@ -11,8 +10,10 @@ const ButtonsMenu = ({
   handleCloseNotify,
   sidebarIsOpen,
   openFolderCreateModal,
-  environment,
   deleteFolder,
+  menuType,
+  setFolderModalType,
+  setSelectedTable,
 }) => {
   return (
     <>
@@ -23,8 +24,9 @@ const ButtonsMenu = ({
         PaperProps={{
           elevation: 0,
           sx: {
+            width: "17%",
             overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+            filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
             mt: 1.5,
             "& .MuiAvatar-root": {
               width: 32,
@@ -36,7 +38,7 @@ const ButtonsMenu = ({
           },
         }}
       >
-        {!element?.isChild && sidebarIsOpen ? (
+        {!element?.isChild && sidebarIsOpen && menuType === "folder" ? (
           <Box className="menu">
             <Box
               onClick={(e) => {
@@ -45,28 +47,8 @@ const ButtonsMenu = ({
                 openFolderCreateModal("update", element);
               }}
             >
-              <RiPencilFill
-                size={13}
-                style={{
-                  color: environment?.data?.color,
-                }}
-              />
+              <RiPencilFill size={13} />
               <h3>Изменить папку</h3>
-            </Box>
-            <Box
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                openFolderCreateModal("parent", element);
-              }}
-            >
-              <AiOutlinePlus
-                size={13}
-                style={{
-                  color: environment?.data?.color,
-                }}
-              />
-              <h3>Добавить папку</h3>
             </Box>
             <Box
               onClick={(e) => {
@@ -75,17 +57,25 @@ const ButtonsMenu = ({
                 deleteFolder(element);
               }}
             >
-              <BsFillTrashFill
-                size={13}
-                style={{
-                  color: environment?.data?.color,
-                }}
-              />
+              <BsFillTrashFill size={13} />
               <h3>Удалить папку</h3>
             </Box>
           </Box>
         ) : (
-          ""
+          <Box className="menu">
+            <Box
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setFolderModalType("folder");
+                setSelectedTable(element);
+                handleCloseNotify();
+              }}
+            >
+              <RiPencilFill size={13} />
+              <h3>Изменить расположение</h3>
+            </Box>
+          </Box>
         )}
       </Menu>
     </>

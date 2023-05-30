@@ -101,19 +101,22 @@ const FieldSettings = ({
     control: mainForm.control,
     name: "layoutRelations",
   });
+  
+  const selectedAutofillSlug = selectedAutofillTableSlug.split('#')?.[0];
+  const selectedAutofillFieldSlug = selectedAutofillTableSlug.split('#')?.[1]
 
   const computedRelationTables = useMemo(() => {
     return layoutRelations?.map((table) => ({
-      value: table.id?.split("#")?.[0],
+      value: `${table.id?.split("#")?.[0]}#${table?.field_from}`,
       label: table.label,
     }));
   }, [layoutRelations]);
   const { data: computedRelationFields } = useQuery(
-    ["GET_TABLE_FIELDS", selectedAutofillTableSlug],
+    ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
-      if (!selectedAutofillTableSlug) return [];
+      if (!selectedAutofillSlug) return [];
       return constructorFieldService.getList({
-        table_slug: selectedAutofillTableSlug,
+        table_slug: selectedAutofillSlug,
         with_one_relation: true,
       });
     },
@@ -140,6 +143,7 @@ const FieldSettings = ({
       slug: "",
       table_id: id,
       type: "",
+      relation_slug: selectedAutofillFieldSlug
     };
 
     if (formType !== "CREATE") {

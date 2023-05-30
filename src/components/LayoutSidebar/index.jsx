@@ -1,6 +1,5 @@
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { useEffect, useMemo, useState } from "react";
-import { AiFillFolderAdd } from "react-icons/ai";
 import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import brandLogo from "../../../builder_config/assets/company-logo.svg";
@@ -8,14 +7,15 @@ import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import constructorTableService from "../../services/constructorTableService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
-import { applyDrag } from "../../utils/applyDrag";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import RecursiveBlock from "./SidebarRecursiveBlock/recursiveBlock";
 import FolderModal from "./folderModal";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import "./style.scss";
-import applicationService from "../../services/applicationSercixe";
-import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
-import { Container, Draggable } from "react-smooth-dnd";
+import { Box, Collapse, ListItemButton, ListItemText } from "@mui/material";
+import SearchInput from "../SearchInput";
+import MenuButton from "./menuButton";
 
 const LayoutSidebar = ({
   elements,
@@ -23,14 +23,13 @@ const LayoutSidebar = ({
   appId,
   environment,
   getAppById,
+  setSelectedTable,
+  selectedTable,
 }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
   const projectId = useSelector((state) => state.auth.projectId);
-  const applicationElements = useSelector(
-    (state) => state.constructorTable.applications
-  );
 
   const dispatch = useDispatch();
   const [openedBlock, setOpenedBlock] = useState(null);
@@ -39,7 +38,11 @@ const LayoutSidebar = ({
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [childBlockVisible, setChildBlockVisible] = useState(false);
-  const [selectedTable, setSelectedTable] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
 
   console.log('sssssssss', selectedTable)
 
@@ -82,16 +85,30 @@ const LayoutSidebar = ({
     setOpenedBlock((prev) => (prev === id ? null : id));
   };
 
-  const computedTableList = useMemo(() => {
-    return tableFolderListToNested(
-      [...(tableFolder?.folders ?? []), ...elements],
+  const files = useMemo(() => {
+    return [
+      ...(tableFolder?.folders?.map((item) => ({
+        ...item,
+        parent_id: item?.parent_id ? item?.parent_id : "0",
+      })) ?? []),
       {
-        undefinedChildren: true,
-      }
-    );
-  }, [tableFolder?.folders, elements]);
+        id: "0",
+        title: "Root",
+      },
+    ];
+  }, [tableFolder?.folders]);
 
-  const sidebarElements = useMemo(() => computedTableList, [computedTableList]);
+  const computedTableList = useMemo(() => {
+    return tableFolderListToNested([...(files ?? []), ...elements], {
+      undefinedChildren: true,
+    });
+  }, [tableFolder?.folders, elements, files]);
+
+  const computedFolderList = useMemo(() => {
+    return tableFolderListToNested([...(files ?? [])], {
+      undefinedChildren: true,
+    });
+  }, [files]);
 
   useEffect(() => {
     if (!computedTableList) setLoading(true);
@@ -109,49 +126,6 @@ const LayoutSidebar = ({
     }
   );
 
-  // const onDrop = (dropResult) => {
-  //   const result = applyDrag(sidebarElements, dropResult);
-  //   const computedTables = [
-  //     ...result.map((el) => ({
-  //       table_id: el.id,
-  //       is_visible: Boolean(el.is_visible),
-  //       is_own_table: Boolean(el.is_own_table),
-  //     })),
-  //   ];
-  //   console.log("result", result);
-  //   // if (result) {
-  //   //   applicationService
-  //   //     .update({
-  //   //       ...applicationElements,
-  //   //       tables: computedTables,
-  //   //     })
-  //   //     .then(() => {
-  //   //       dispatch(fetchConstructorTableListAction(appId));
-  //   //     });
-  //   // }
-  // };
-
-  const onDrop = (dropResult) => {
-    const result = applyDrag(elements, dropResult);
-    const computedTables = [
-      ...result.map((el) => ({
-        table_id: el.id,
-        is_visible: Boolean(el.is_visible),
-        is_own_table: Boolean(el.is_own_table),
-      })),
-    ];
-    if (result) {
-      applicationService
-        .update({
-          ...applicationElements,
-          tables: computedTables,
-        })
-        .then(() => {
-          dispatch(fetchConstructorTableListAction(appId));
-        });
-    }
-  };
-
   return (
     <div
       className={`LayoutSidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}
@@ -159,7 +133,6 @@ const LayoutSidebar = ({
       <div
         className="header"
         onClick={() => {
-          // setRightBlockVisible((prev) => !prev);
           switchRightSideVisible();
         }}
       >
@@ -178,31 +151,46 @@ const LayoutSidebar = ({
           )}{" "}
         </div>
         <div className="cloes-btn" onClick={switchRightSideVisible}>
-          <AiFillFolderAdd
-            size={19}
-            onClick={(e) => {
-              e.stopPropagation();
-              openFolderCreateModal("create");
-            }}
-          />
           <MenuOpenIcon />
         </div>
       </div>
 
-      <div
-        className="nav-block"
+      <Box className="search">
+        <SearchInput
+          style={{
+            borderRadius: "8px",
+            width: "100%",
+          }}
+        />
+      </Box>
+
+      <ListItemButton
+        onClick={handleClick}
         style={{
-          height: `calc(100vh - ${57}px)`,
-          background: environment?.data?.background,
+          borderBottom: !open && "1px solid #F0F0F0",
         }}
       >
-        <div className="menu-element">
-          <Container
-            lockAxis="y"
-            // onDrop={onDrop}
-            dragHandleSelector=".column-drag-handle"
-          >
-            {sidebarElements?.map((element, index) => (
+        <ListItemText primary="Admin" />
+        {open ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
+      </ListItemButton>
+      <Collapse
+        in={open}
+        unmountOnExit
+        timeout={{
+          enter: 300,
+          exit: 200,
+        }}
+        className="sidebar-collapse"
+      >
+        <div
+          className="nav-block"
+          style={{
+            // height: `calc(100vh - ${57}px)`,
+            background: environment?.data?.background,
+          }}
+        >
+          <div className="menu-element">
+            {computedTableList?.map((element, index) => (
               <RecursiveBlock
                 key={index}
                 element={element}
@@ -215,22 +203,22 @@ const LayoutSidebar = ({
                 setFolderModalType={setFolderModalType}
                 setSelectedTable={setSelectedTable}
                 sidebarIsOpen={sidebarIsOpen}
-                onDrop={onDrop}
               />
             ))}
             {folderModalType === "folder" && (
               <FolderModal
                 closeModal={closeFolderModal}
-                tableFolder={tableFolder?.folders}
                 modalType={folderModalType}
                 selectedTable={selectedTable}
                 getAppById={getAppById}
+                computedFolderList={computedFolderList}
               />
             )}
-          </Container>
+          </div>
+          <MenuButton openFolderCreateModal={openFolderCreateModal} />
+          {/* <div className="sidebar-footer"></div> */}
         </div>
-        <div className="sidebar-footer"></div>
-      </div>
+      </Collapse>
 
       {(modalType === "create" ||
         modalType === "parent" ||

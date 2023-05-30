@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
@@ -19,6 +19,7 @@ const MainLayout = ({ setFavicon, favicon }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { elements } = useSidebarElements();
+  const [selectedTable, setSelectedTable] = useState(null);
 
   useEffect(() => {
     dispatch(fetchConstructorTableListAction(appId));
@@ -68,6 +69,8 @@ const MainLayout = ({ setFavicon, favicon }) => {
           appId={appId}
           environment={environment}
           getAppById={getAppById}
+          setSelectedTable={setSelectedTable}
+          selectedTable={selectedTable}
         />
       )}
       <div className={styles.content}>

@@ -19,6 +19,7 @@ import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import { firebaseCloudMessaging } from "../../../firebase/config";
 import DynamicFields from "./DynamicFields";
+import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -78,7 +79,7 @@ const LoginForm = () => {
     ],
     () => {
       return clientTypeServiceV2.getList(
-        { 'project-id': selectedProjectID },
+        { "project-id": selectedProjectID },
         { "environment-id": selectedEnvID }
       );
     },
@@ -100,7 +101,10 @@ const LoginForm = () => {
     ],
     () => {
       return connectionServiceV2.getList(
-        { "project-id": selectedProjectID, client_type_id: selectedClientTypeID },
+        {
+          "project-id": selectedProjectID,
+          client_type_id: selectedClientTypeID,
+        },
         { "environment-id": selectedEnvID }
       );
     },

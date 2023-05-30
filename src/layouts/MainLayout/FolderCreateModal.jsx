@@ -53,7 +53,7 @@ const FolderCreateModal = ({
     constructorTableService
       .createFolder({
         ...data,
-        parent_id: modalType === "parent" ? selectedFolder.id : "",
+        parent_id: modalType === "parent" ? selectedFolder.id : "0",
       })
       .then(() => {
         queryClient.refetchQueries(["GET_TABLE_FOLDER", appId]);

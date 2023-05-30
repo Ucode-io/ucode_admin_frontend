@@ -143,7 +143,7 @@ const FieldSettings = ({
       slug: "",
       table_id: id,
       type: "",
-      relation_slug: selectedAutofillFieldSlug
+      relation_field: selectedAutofillFieldSlug
     };
 
     if (formType !== "CREATE") {

@@ -17,7 +17,11 @@ import { Box, Collapse, ListItemButton, ListItemText } from "@mui/material";
 import SearchInput from "../SearchInput";
 import MenuButton from "./menuButton";
 import AddIcon from "@mui/icons-material/Add";
-
+import HomeIcon from "@mui/icons-material/Home";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import ProfilePanel from "../ProfilePanel";
+import { useNavigate } from "react-router-dom";
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 const LayoutSidebar = ({
   elements,
   favicon,
@@ -33,6 +37,7 @@ const LayoutSidebar = ({
   const projectId = useSelector((state) => state.auth.projectId);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [openedBlock, setOpenedBlock] = useState(null);
   const [loading, setLoading] = useState(false);
   const [modalType, setModalType] = useState(null);
@@ -40,6 +45,14 @@ const LayoutSidebar = ({
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleRouter = () => {
+    navigate(`/main/${appId}/chat`);
+  };
+
+  const openMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleClick = () => {
     setOpen(!open);
@@ -154,66 +167,108 @@ const LayoutSidebar = ({
         </div>
       </div>
 
-      <Box className="search">
-        <SearchInput
-          style={{
-            borderRadius: "8px",
-            width: "100%",
-          }}
-        />
-      </Box>
-
-      <ListItemButton
-        onClick={handleClick}
+      <Box
         style={{
-          borderBottom: !open && "1px solid #F0F0F0",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          height: "calc(100% - 56px)",
         }}
       >
-        <ListItemText primary="Admin" />
-        {open ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
-      </ListItemButton>
-      <Collapse
-        in={open}
-        unmountOnExit
-        timeout={{
-          enter: 300,
-          exit: 200,
-        }}
-        className="sidebar-collapse"
-      >
-        <div
-          className="nav-block"
-          style={{
-            // height: `calc(100vh - ${57}px)`,
-            background: environment?.data?.background,
-          }}
-        >
-          <div className="menu-element">
-            {computedTableList?.map((element, index) => (
-              <RecursiveBlock
-                key={index}
-                element={element}
-                parentClickHandler={parentClickHandler}
-                openedBlock={openedBlock}
-                openFolderCreateModal={openFolderCreateModal}
-                environment={environment}
-                childBlockVisible={childBlockVisible}
-                tableFolder={tableFolder?.folders}
-                setFolderModalType={setFolderModalType}
-                setSelectedTable={setSelectedTable}
-                sidebarIsOpen={sidebarIsOpen}
-              />
-            ))}
-            {folderModalType === "folder" && (
-              <FolderModal
-                closeModal={closeFolderModal}
-                modalType={folderModalType}
-                selectedTable={selectedTable}
-                getAppById={getAppById}
-                computedFolderList={computedFolderList}
-              />
-            )}
-          </div>
+        <div>
+          <Box className="search">
+            <SearchInput
+              style={{
+                borderRadius: "8px",
+                width: "100%",
+              }}
+            />
+          </Box>
+
+          {/* <MenuButton
+            title={"My tasks"}
+            icon={<HomeIcon />}
+            openFolderCreateModal={openFolderCreateModal}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              openFolderCreateModal("create");
+            }}
+          />
+          <MenuButton
+            title={"Notification"}
+            icon={<NotificationsIcon />}
+            openFolderCreateModal={openFolderCreateModal}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              openFolderCreateModal("create");
+            }}
+          /> */}
+          <MenuButton
+            title={"Chat"}
+            icon={<ChatBubbleIcon />}
+            openFolderCreateModal={openFolderCreateModal}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleRouter();
+            }}
+          />
+          <ListItemButton
+            onClick={handleClick}
+            style={{
+              borderBottom: !open && "1px solid #F0F0F0",
+            }}
+          >
+            <ListItemText primary="Admin" />
+            {open ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
+          </ListItemButton>
+          <Collapse
+            in={open}
+            unmountOnExit
+            timeout={{
+              enter: 200,
+              exit: 200,
+            }}
+            className="sidebar-collapse"
+          >
+            <div
+              className="nav-block"
+              style={{
+                // height: `calc(100vh - ${57}px)`,
+                background: environment?.data?.background,
+              }}
+            >
+              <div className="menu-element">
+                {computedTableList?.map((element, index) => (
+                  <RecursiveBlock
+                    key={index}
+                    element={element}
+                    parentClickHandler={parentClickHandler}
+                    openedBlock={openedBlock}
+                    openFolderCreateModal={openFolderCreateModal}
+                    environment={environment}
+                    childBlockVisible={childBlockVisible}
+                    tableFolder={tableFolder?.folders}
+                    setFolderModalType={setFolderModalType}
+                    setSelectedTable={setSelectedTable}
+                    sidebarIsOpen={sidebarIsOpen}
+                  />
+                ))}
+                {folderModalType === "folder" && (
+                  <FolderModal
+                    closeModal={closeFolderModal}
+                    modalType={folderModalType}
+                    selectedTable={selectedTable}
+                    getAppById={getAppById}
+                    computedFolderList={computedFolderList}
+                  />
+                )}
+              </div>
+              {/* <div className="sidebar-footer"></div> */}
+            </div>
+          </Collapse>
           <MenuButton
             title={"Create folder"}
             icon={<AddIcon />}
@@ -224,9 +279,19 @@ const LayoutSidebar = ({
               openFolderCreateModal("create");
             }}
           />
-          {/* <div className="sidebar-footer"></div> */}
         </div>
-      </Collapse>
+
+        <MenuButton
+          title={"Profile"}
+          openFolderCreateModal={openFolderCreateModal}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            anchorEl ? setAnchorEl(null) : openMenu(e);
+          }}
+          children={<ProfilePanel anchorEl={anchorEl} />}
+        />
+      </Box>
 
       {(modalType === "create" ||
         modalType === "parent" ||

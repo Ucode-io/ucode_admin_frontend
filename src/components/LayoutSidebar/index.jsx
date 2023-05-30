@@ -41,6 +41,8 @@ const LayoutSidebar = ({
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [selectedTable, setSelectedTable] = useState(null);
 
+  console.log('sssssssss', selectedTable)
+
   const closeModal = () => {
     setModalType(null);
   };

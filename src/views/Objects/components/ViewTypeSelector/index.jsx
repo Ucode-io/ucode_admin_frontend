@@ -1,11 +1,5 @@
-import {
-  AccountTree,
-  CalendarMonth,
-  Description,
-  Settings,
-  TableChart,
-} from "@mui/icons-material";
-import { Modal, Popover } from "@mui/material";
+import { AccountTree, CalendarMonth, Description, Settings, TableChart } from "@mui/icons-material";
+import { Button, Modal, Popover } from "@mui/material";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
@@ -19,13 +13,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { viewTypes } from "../../../../utils/constants/viewTypes";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { useTranslation } from "react-i18next";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const ViewTabSelector = ({
-  selectedTabIndex,
-  setSelectedTabIndex,
-  views = [],
-}) => {
-  const { t } = useTranslation()
+const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) => {
+  const { t } = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const queryClient = useQueryClient();
@@ -69,40 +60,29 @@ const ViewTabSelector = ({
   return (
     <>
       <div className={style.selector} style={{ minWidth: "fit-content" }}>
+        <div className={style.leftSide}>
+          <div style={{height: '100%'}}>
+            <Button style={{height: '100%'}} onClick={() => navigate(-1)}>
+              <ArrowBackIcon style={{color: '#000'}}/>
+            </Button>
+          </div>
+
+          <div className={style.title}>
+            <h3>{''}</h3>
+          </div>
+        </div>
         {views.map((view, index) => (
-          <div
-            onClick={() => setSelectedTabIndex(index)}
-            key={view.id}
-            className={`${style.element} ${
-              selectedTabIndex === index ? style.active : ""
-            }`}
-          >
+          <div onClick={() => setSelectedTabIndex(index)} key={view.id} className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
             {view.type === "TABLE" && <TableChart className={style.icon} />}
-            {view.type === "CALENDAR" && (
-              <CalendarMonth className={style.icon} />
-            )}
-            {view.type === "CALENDAR HOUR" && (
-              <IconGenerator className={style.icon} icon="chart-gantt.svg" />
-            )}
-            {view.type === "GANTT" && (
-              <IconGenerator className={style.icon} icon="chart-gantt.svg" />
-            )}
+            {view.type === "CALENDAR" && <CalendarMonth className={style.icon} />}
+            {view.type === "CALENDAR HOUR" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+            {view.type === "GANTT" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
             {view.type === "TREE" && <AccountTree className={style.icon} />}
-            {view.type === "BOARD" && (
-              <IconGenerator className={style.icon} icon="brand_trello.svg" />
-            )}
-            {view.type === "FINANCE CALENDAR" && (
-              <MonetizationOnIcon className={style.icon} />
-            )}
+            {view.type === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
+            {view.type === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
             <span>{view.name ? view.name : view.type}</span>
 
-            {selectedTabIndex === index && (
-              <ButtonsPopover
-                className={""}
-                onEditClick={() => openModal(view)}
-                onDeleteClick={() => deleteView(view.id)}
-              />
-            )}
+            {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />}
           </div>
         ))}
 
@@ -110,14 +90,9 @@ const ViewTabSelector = ({
           <Settings className={style.icon} />
         </div> */}
 
-        <div
-          className={style.element}
-          aria-describedby={id}
-          variant="contained"
-          onClick={handleClick}
-        >
+        <div className={style.element} aria-describedby={id} variant="contained" onClick={handleClick}>
           <AddIcon className={style.icon} />
-          {t('add')}
+          {t("add")}
         </div>
 
         <Popover
@@ -140,36 +115,13 @@ const ViewTabSelector = ({
                   setTypeNewView(type.value);
                 }}
               >
-                {type.value === "TABLE" && (
-                  <TableChart className={style.icon} />
-                )}
-                {type.value === "CALENDAR" && (
-                  <CalendarMonth className={style.icon} />
-                )}
-                {type.value === "CALENDAR HOUR" && (
-                  <IconGenerator
-                    className={style.icon}
-                    icon="chart-gantt.svg"
-                  />
-                )}
-                {type.value === "GANTT" && (
-                  <IconGenerator
-                    className={style.icon}
-                    icon="chart-gantt.svg"
-                  />
-                )}
-                {type.value === "TREE" && (
-                  <AccountTree className={style.icon} />
-                )}
-                {type.value === "BOARD" && (
-                  <IconGenerator
-                    className={style.icon}
-                    icon="brand_trello.svg"
-                  />
-                )}
-                {type.value === "FINANCE CALENDAR" && (
-                  <MonetizationOnIcon className={style.icon} />
-                )}
+                {type.value === "TABLE" && <TableChart className={style.icon} />}
+                {type.value === "CALENDAR" && <CalendarMonth className={style.icon} />}
+                {type.value === "CALENDAR HOUR" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+                {type.value === "GANTT" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+                {type.value === "TREE" && <AccountTree className={style.icon} />}
+                {type.value === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
+                {type.value === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
                 {type.label}
               </button>
             ))}
@@ -177,17 +129,8 @@ const ViewTabSelector = ({
         </Popover>
       </div>
 
-      <Modal
-        className={style.modal}
-        open={settingsModalVisible}
-        onClose={closeModal}
-      >
-        <ViewSettings
-          closeModal={closeModal}
-          setIsChanged={setIsChanged}
-          viewData={selectedView}
-          typeNewView={typeNewView}
-        />
+      <Modal className={style.modal} open={settingsModalVisible} onClose={closeModal}>
+        <ViewSettings closeModal={closeModal} setIsChanged={setIsChanged} viewData={selectedView} typeNewView={typeNewView} />
       </Modal>
     </>
   );

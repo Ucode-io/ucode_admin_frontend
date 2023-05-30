@@ -1,57 +1,13 @@
-import AddIcon from "@mui/icons-material/Add";
-import { Box, Button, Tooltip } from "@mui/material";
-import { BsThreeDots } from "react-icons/bs";
-import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "@mui/material";
 import "./style.scss";
 
-const MenuButton = ({ openFolderCreateModal }) => {
-  const { tableSlug } = useParams();
-  const navigate = useNavigate();
-
+const MenuButton = ({ onClick, title, icon }) => {
   return (
-    <Button
-      className="menu-button active-with-child"
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        openFolderCreateModal("create");
-      }}
-    >
+    <Button className="menu-button active-with-child" onClick={onClick}>
       <div className="label">
-        <AddIcon />
-        Create folder
+        {icon}
+        {title}
       </div>
-      <Box className="icon_group">
-        {/* <Tooltip title="Folder settings" placement="top">
-          <Box className="extra_icon">
-            <BsThreeDots
-              size={13}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              style={{
-                color: environment?.data?.color,
-              }}
-            />
-          </Box>
-        </Tooltip>
-        <Tooltip title="Create folder" placement="top">
-          <Box className="extra_icon">
-            <AddIcon
-              size={13}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                openFolderCreateModal("parent", element);
-              }}
-              style={{
-                color: environment?.data?.color,
-              }}
-            />
-          </Box>
-        </Tooltip> */}
-      </Box>
     </Button>
   );
 };

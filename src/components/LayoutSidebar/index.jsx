@@ -16,6 +16,7 @@ import "./style.scss";
 import { Box, Collapse, ListItemButton, ListItemText } from "@mui/material";
 import SearchInput from "../SearchInput";
 import MenuButton from "./menuButton";
+import AddIcon from "@mui/icons-material/Add";
 
 const LayoutSidebar = ({
   elements,
@@ -213,7 +214,16 @@ const LayoutSidebar = ({
               />
             )}
           </div>
-          <MenuButton openFolderCreateModal={openFolderCreateModal} />
+          <MenuButton
+            title={"Create folder"}
+            icon={<AddIcon />}
+            openFolderCreateModal={openFolderCreateModal}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              openFolderCreateModal("create");
+            }}
+          />
           {/* <div className="sidebar-footer"></div> */}
         </div>
       </Collapse>

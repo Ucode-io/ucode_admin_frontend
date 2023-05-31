@@ -102,8 +102,8 @@ const FieldSettings = ({
     name: "layoutRelations",
   });
   
-  const selectedAutofillSlug = selectedAutofillTableSlug.split('#')?.[0];
-  const selectedAutofillFieldSlug = selectedAutofillTableSlug.split('#')?.[1]
+  const selectedAutofillSlug = selectedAutofillTableSlug?.split('#')?.[0];
+  const selectedAutofillFieldSlug = selectedAutofillTableSlug?.split('#')?.[1]
 
   const computedRelationTables = useMemo(() => {
     return layoutRelations?.map((table) => ({

@@ -1,0 +1,74 @@
+import { ArrowDropDownCircleOutlined } from "@mui/icons-material";
+import { Button, Menu, MenuItem } from "@mui/material";
+import React, { useMemo } from "react";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useTranslation } from "react-i18next";
+
+const languages = [
+  {
+    title: "English",
+    slug: "en",
+  },
+  {
+    title: "Русский",
+    slug: "ru",
+  },
+  {
+    title: "O'zbekcha",
+    slug: "uz",
+  },
+];
+
+export default function LanguagesNavbar() {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const { i18n } = useTranslation();
+
+  const handleRowClick = (lang) => {
+    i18n.changeLanguage(lang);
+    handleClose();
+  };
+
+  const activeLang = useMemo(() => {
+    return languages.find((lang) => lang.slug === i18n.language);
+  }, [i18n.language]);
+
+  return (
+    <>
+      <Button
+        variant="outlined"
+        id="basic-button"
+        aria-controls={open ? "basic-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClick}
+      >
+        {activeLang.title}
+        <KeyboardArrowDownIcon />
+      </Button>
+
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        {languages.map((language) => (
+          <MenuItem key={language.slug} onClick={() => handleRowClick(language.slug)}>
+            {language.title}
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  );
+}

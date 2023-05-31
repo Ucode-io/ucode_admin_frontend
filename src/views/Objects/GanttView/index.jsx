@@ -50,7 +50,7 @@ const variableTypes = [
   },
 ];
 
-const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
+const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views, selectedTable }) => {
   const { t } = useTranslation()
   const { control, watch, setValue } = useForm({
     defaultValues: {
@@ -213,6 +213,7 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views }) => {
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
+          selectedTable={selectedTable}
         />
         <CRangePicker
           interval={"months"}

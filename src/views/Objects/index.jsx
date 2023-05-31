@@ -57,91 +57,92 @@ const ObjectsPage = () => {
   const setViews = () => {};
   if (isLoading) return <PageFallback />;
   return (
-    <>
-      <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
-        <div>
-          {views.map((view) => {
-            return (
-              <TabPanel key={view.id}>
-                {view.type === "BOARD" ? (
-                  <>
-                    <BoardView
-                      view={view}
-                      setViews={setViews}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      fieldsMap={fieldsMap}
-                    />
-                  </>
-                ) : view.type === "CALENDAR" ? (
-                  <>
-                    <CalendarView
-                      view={view}
-                      setViews={setViews}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      fieldsMap={fieldsMap}
-                    />
-                  </>
-                ) : view.type === "CALENDAR HOUR" ? (
-                  <>
-                    <CalendarHourView
-                      view={view}
-                      setViews={setViews}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      fieldsMap={fieldsMap}
-                    />
-                  </>
-                ) : view.type === "GANTT" ? (
-                  <>
-                    <GanttView
-                      view={view}
-                      setViews={setViews}
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      fieldsMap={fieldsMap}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <ViewsWithGroups
-                      selectedTabIndex={selectedTabIndex}
-                      setSelectedTabIndex={setSelectedTabIndex}
-                      views={views}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                    />
-                  </>
-                )}
-              </TabPanel>
-            );
-          })}
-          <TabPanel>
-            <DocView
-              views={views}
-              fieldsMap={fieldsMap}
-              selectedTabIndex={selectedTabIndex}
-              setSelectedTabIndex={setSelectedTabIndex}
-            />
-          </TabPanel>
-        </div>
-      </Tabs>
+    // <>
+    //   <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
+    //     <div>
+    //       {views.map((view) => {
+    //         return (
+    //           <TabPanel key={view.id}>
+    //             {view.type === "BOARD" ? (
+    //               <>
+    //                 <BoardView
+    //                   view={view}
+    //                   setViews={setViews}
+    //                   selectedTabIndex={selectedTabIndex}
+    //                   setSelectedTabIndex={setSelectedTabIndex}
+    //                   views={views}
+    //                   fieldsMap={fieldsMap}
+    //                 />
+    //               </>
+    //             ) : view.type === "CALENDAR" ? (
+    //               <>
+    //                 <CalendarView
+    //                   view={view}
+    //                   setViews={setViews}
+    //                   selectedTabIndex={selectedTabIndex}
+    //                   setSelectedTabIndex={setSelectedTabIndex}
+    //                   views={views}
+    //                   fieldsMap={fieldsMap}
+    //                 />
+    //               </>
+    //             ) : view.type === "CALENDAR HOUR" ? (
+    //               <>
+    //                 <CalendarHourView
+    //                   view={view}
+    //                   setViews={setViews}
+    //                   selectedTabIndex={selectedTabIndex}
+    //                   setSelectedTabIndex={setSelectedTabIndex}
+    //                   views={views}
+    //                   fieldsMap={fieldsMap}
+    //                 />
+    //               </>
+    //             ) : view.type === "GANTT" ? (
+    //               <>
+    //                 <GanttView
+    //                   view={view}
+    //                   setViews={setViews}
+    //                   selectedTabIndex={selectedTabIndex}
+    //                   setSelectedTabIndex={setSelectedTabIndex}
+    //                   views={views}
+    //                   fieldsMap={fieldsMap}
+    //                 />
+    //               </>
+    //             ) : (
+    //               <>
+    //                 <ViewsWithGroups
+    //                   selectedTabIndex={selectedTabIndex}
+    //                   setSelectedTabIndex={setSelectedTabIndex}
+    //                   views={views}
+    //                   view={view}
+    //                   fieldsMap={fieldsMap}
+    //                 />
+    //               </>
+    //             )}
+    //           </TabPanel>
+    //         );
+    //       })}
+    //       <TabPanel>
+    //         <DocView
+    //           views={views}
+    //           fieldsMap={fieldsMap}
+    //           selectedTabIndex={selectedTabIndex}
+    //           setSelectedTabIndex={setSelectedTabIndex}
+    //         />
+    //       </TabPanel>
+    //     </div>
+    //   </Tabs>
 
-      {!views?.length && (
-        <FiltersBlock>
-          <ViewTabSelector
-            selectedTabIndex={selectedTabIndex}
-            setSelectedTabIndex={setSelectedTabIndex}
-            views={views}
-          />
-        </FiltersBlock>
-      )}
-    </>
+    //   {!views?.length && (
+    //     <FiltersBlock>
+    //       <ViewTabSelector
+    //         selectedTabIndex={selectedTabIndex}
+    //         setSelectedTabIndex={setSelectedTabIndex}
+    //         views={views}
+    //       />
+    //     </FiltersBlock>
+    //   )}
+    // </>
+    <></>
   );
 };
 

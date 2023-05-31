@@ -176,10 +176,11 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   
       let pageSize = pointToMillimeter(selectedPaperSize.height);
       let pageWidth = pointToMillimeter(selectedPaperSize.width);
-      let extraWidth = pointToMillimeter(selectedPaperSize.width) === 100 ? 150 : 100;
+      let extraWidth = pointToMillimeter(selectedPaperSize.width) === 100 ? 213 : 175;
       tables.forEach((table) => {
-        table.style.width = `${pageWidth === 100 ? '60%' : '100%'}`;
-      });
+        table.style.width = `${pageWidth === 100 ? '50%' : '97%'}`;
+        table.style.borderRightCollapse = 'collapse'; 
+      }); 
   
   
       if (selectedPaperSize.height === 1000) {

@@ -23,7 +23,7 @@ import CalendarHourView from "../../views/Objects/CalendarHourView";
 import CalendarView from "../../views/Objects/CalendarView";
 import BoardView from "../../views/Objects/BoardView";
 
-const RouterTabsBlock = () => {
+const RouterTabsBlock = ({ selectedTable }) => {
   const tabs = useSelector((state) => state.tabRouter.tabs);
   const { tableSlug, appId } = useParams();
   const { state } = useLocation();
@@ -58,9 +58,7 @@ const RouterTabsBlock = () => {
     }
   );
   useEffect(() => {
-    queryTab
-      ? setSelectedTabIndex(parseInt(queryTab - 1))
-      : setSelectedTabIndex(0);
+    queryTab ? setSelectedTabIndex(parseInt(queryTab - 1)) : setSelectedTabIndex(0);
   }, [queryTab]);
 
   const setViews = () => {};
@@ -75,7 +73,6 @@ const RouterTabsBlock = () => {
 
     //     <FormSelector /> */}
 
-        
     //   </div>
 
     //   <div className={styles.rightSide}>
@@ -88,75 +85,86 @@ const RouterTabsBlock = () => {
     // </div>
 
     <>
-          <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
-            <div>
-              {views.map((view) => {
-                return (
-                  <TabPanel key={view.id}>
-                    {view.type === "BOARD" ? (
-                      <>
-                        <BoardView
-                          view={view}
-                          setViews={setViews}
-                          selectedTabIndex={selectedTabIndex}
-                          setSelectedTabIndex={setSelectedTabIndex}
-                          views={views}
-                          fieldsMap={fieldsMap}
-                        />
-                      </>
-                    ) : view.type === "CALENDAR" ? (
-                      <>
-                        <CalendarView
-                          view={view}
-                          setViews={setViews}
-                          selectedTabIndex={selectedTabIndex}
-                          setSelectedTabIndex={setSelectedTabIndex}
-                          views={views}
-                          fieldsMap={fieldsMap}
-                        />
-                      </>
-                    ) : view.type === "CALENDAR HOUR" ? (
-                      <>
-                        <CalendarHourView
-                          view={view}
-                          setViews={setViews}
-                          selectedTabIndex={selectedTabIndex}
-                          setSelectedTabIndex={setSelectedTabIndex}
-                          views={views}
-                          fieldsMap={fieldsMap}
-                        />
-                      </>
-                    ) : view.type === "GANTT" ? (
-                      <>
-                        <GanttView
-                          view={view}
-                          setViews={setViews}
-                          selectedTabIndex={selectedTabIndex}
-                          setSelectedTabIndex={setSelectedTabIndex}
-                          views={views}
-                          fieldsMap={fieldsMap}
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <ViewsWithGroups selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} view={view} fieldsMap={fieldsMap} />
-                      </>
-                    )}
-                  </TabPanel>
-                );
-              })}
-              <TabPanel>
-                <DocView views={views} fieldsMap={fieldsMap} selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} />
+      <Tabs direction={"ltr"} selectedIndex={selectedTabIndex}>
+        <div>
+          {views.map((view) => {
+            return (
+              <TabPanel key={view.id}>
+                {view.type === "BOARD" ? (
+                  <>
+                    <BoardView
+                      view={view}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                      selectedTable={selectedTable}
+                    />
+                  </>
+                ) : view.type === "CALENDAR" ? (
+                  <>
+                    <CalendarView
+                      view={view}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                      selectedTable={selectedTable}
+                    />
+                  </>
+                ) : view.type === "CALENDAR HOUR" ? (
+                  <>
+                    <CalendarHourView
+                      view={view}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                      selectedTable={selectedTable}
+                    />
+                  </>
+                ) : view.type === "GANTT" ? (
+                  <>
+                    <GanttView
+                      view={view}
+                      setViews={setViews}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      fieldsMap={fieldsMap}
+                      selectedTable={selectedTable}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <ViewsWithGroups
+                      selectedTable={selectedTable}
+                      selectedTabIndex={selectedTabIndex}
+                      setSelectedTabIndex={setSelectedTabIndex}
+                      views={views}
+                      view={view}
+                      fieldsMap={fieldsMap}
+                    />
+                  </>
+                )}
               </TabPanel>
-            </div>
-          </Tabs>
+            );
+          })}
+          <TabPanel>
+            <DocView views={views} fieldsMap={fieldsMap} selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} />
+          </TabPanel>
+        </div>
+      </Tabs>
 
-          {!views?.length && (
-            <FiltersBlock>
-              <ViewTabSelector selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} />
-            </FiltersBlock>
-          )}
-        </>
+      {!views?.length && (
+        <FiltersBlock>
+          <ViewTabSelector selectedTable={selectedTable} selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} />
+        </FiltersBlock>
+      )}
+    </>
   );
 };
 

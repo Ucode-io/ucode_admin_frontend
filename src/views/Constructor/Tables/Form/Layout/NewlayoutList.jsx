@@ -232,8 +232,6 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
     name: "layouts",
   });
 
-  console.log("sssssssss", computedLayouts);
-
   return (
     <Box sx={{ width: "100%", height: "100vh", background: "#fff" }}>
       <TableCard>

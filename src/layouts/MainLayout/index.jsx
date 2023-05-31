@@ -74,7 +74,7 @@ const MainLayout = ({ setFavicon, favicon }) => {
         />
       )}
       <div className={styles.content}>
-        <RouterTabsBlock />
+        <RouterTabsBlock selectedTable={selectedTable}/>
 
         <Outlet />
       </div>

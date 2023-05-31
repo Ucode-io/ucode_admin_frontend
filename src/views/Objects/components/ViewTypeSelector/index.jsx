@@ -14,8 +14,10 @@ import { viewTypes } from "../../../../utils/constants/viewTypes";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { useTranslation } from "react-i18next";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ViewTypeList from "../ViewTypeList";
+import MoreButtonViewType from "./MoreButtonViewType";
 
-const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) => {
+const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [], selectedTable }) => {
   const { t } = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
@@ -61,14 +63,15 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
     <>
       <div className={style.selector} style={{ minWidth: "fit-content" }}>
         <div className={style.leftSide}>
-          <div style={{height: '100%'}}>
-            <Button style={{height: '100%'}} onClick={() => navigate(-1)}>
-              <ArrowBackIcon style={{color: '#000'}}/>
+          <div className={style.button}>
+            <Button style={{ height: "100%" }} onClick={() => navigate(-1)}>
+              <ArrowBackIcon style={{ color: "#000" }} />
             </Button>
           </div>
 
           <div className={style.title}>
-            <h3>{''}</h3>
+            <IconGenerator className={style.icon} icon={selectedTable?.isChild ? selectedTable?.icon : selectedTable?.icon} />
+            <h3>{selectedTable?.isChild ? selectedTable?.label : selectedTable?.title}</h3>
           </div>
         </div>
         {views.map((view, index) => (
@@ -82,7 +85,10 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
             {view.type === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
             <span>{view.name ? view.name : view.type}</span>
 
-            {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />}
+            <div className={style.popoverElement}>
+              {/* {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />} */}
+              {selectedTabIndex === index && <MoreButtonViewType onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />}
+            </div>
           </div>
         ))}
 
@@ -105,7 +111,7 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
             horizontal: "left",
           }}
         >
-          <div className={style.viewTypes}>
+          {/* <div className={style.viewTypes}>
             {computedViewTypes.map((type, index) => (
               <button
                 onClick={() => {
@@ -125,7 +131,9 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
                 {type.label}
               </button>
             ))}
-          </div>
+          </div> */}
+
+          <ViewTypeList computedViewTypes={computedViewTypes} handleClose={handleClose} openModal={openModal} setSelectedView={setSelectedView} setTypeNewView={setTypeNewView} />
         </Popover>
       </div>
 

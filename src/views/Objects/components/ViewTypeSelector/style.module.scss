@@ -16,6 +16,7 @@
     align-items: center;
     justify-content: center;
     color: #6e8bb7;
+    transition: all 0.2s ease-in-out;
     cursor: pointer;
     padding: 0 10px;
     &.active {
@@ -24,6 +25,7 @@
       border-bottom: 1px solid #fff;
       // border-top: 2px solid #0e73f6;
     }
+
 
     .icon {
       margin-right: 6px;
@@ -39,6 +41,10 @@
     &:hover .icon {
       transform: scale(1.2);
       // border: 1px solid #D5DADD;
+    }
+
+    &:hover .popoverElement {
+      display: block;
     }
 
     button {
@@ -91,5 +97,54 @@
     &:hover {
       background-color: #f6f8f9;
     }
+  }
+}
+
+.leftSide {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+
+  .button {
+    height: 100%;
+  }
+
+  .title {
+    display: flex;
+    gap: 10px;
+    .icon {
+      background: #2626261a;
+      padding: 5px;
+      border-radius: 3px;
+      color: #26262680;
+    }
+  }
+}
+
+.popoverElement {
+  display: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.menuWrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 5px;
+  button{
+    width: 100%;
+    padding: 5px;
+    border: none;
+    background: none;
+    text-align: left;
+    color: #747474;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start;
+    &:hover{
+      background: #f6f8f9;
+    }
+
   }
 }

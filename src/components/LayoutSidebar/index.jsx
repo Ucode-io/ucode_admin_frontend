@@ -44,8 +44,6 @@ const LayoutSidebar = ({
     setOpen(!open);
   };
 
-  console.log('sssssssss', selectedTable)
-
   const closeModal = () => {
     setModalType(null);
   };

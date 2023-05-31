@@ -73,7 +73,7 @@ const ButtonsMenu = ({
               }}
             >
               <RiPencilFill size={13} />
-              <h3>Изменить расположение</h3>
+              <h3>Переместить</h3>
             </Box>
           </Box>
         )}

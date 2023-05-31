@@ -215,60 +215,41 @@ const LayoutSidebar = ({
               handleRouter();
             }}
           />
-          <ListItemButton
-            onClick={handleClick}
+          <div
+            className="nav-block"
             style={{
-              borderBottom: !open && "1px solid #F0F0F0",
+              // height: `calc(100vh - ${57}px)`,
+              background: environment?.data?.background,
             }}
           >
-            <ListItemText primary="Admin" />
-            {open ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
-          </ListItemButton>
-          <Collapse
-            in={open}
-            unmountOnExit
-            timeout={{
-              enter: 200,
-              exit: 200,
-            }}
-            className="sidebar-collapse"
-          >
-            <div
-              className="nav-block"
-              style={{
-                // height: `calc(100vh - ${57}px)`,
-                background: environment?.data?.background,
-              }}
-            >
-              <div className="menu-element">
-                {computedTableList?.map((element, index) => (
-                  <RecursiveBlock
-                    key={index}
-                    element={element}
-                    parentClickHandler={parentClickHandler}
-                    openedBlock={openedBlock}
-                    openFolderCreateModal={openFolderCreateModal}
-                    environment={environment}
-                    childBlockVisible={childBlockVisible}
-                    tableFolder={tableFolder?.folders}
-                    setFolderModalType={setFolderModalType}
-                    setSelectedTable={setSelectedTable}
-                    sidebarIsOpen={sidebarIsOpen}
-                  />
-                ))}
-                {folderModalType === "folder" && (
-                  <FolderModal
-                    closeModal={closeFolderModal}
-                    modalType={folderModalType}
-                    selectedTable={selectedTable}
-                    getAppById={getAppById}
-                    computedFolderList={computedFolderList}
-                  />
-                )}
-              </div>
-              {/* <div className="sidebar-footer"></div> */}
+            <div className="menu-element">
+              {computedTableList?.map((element, index) => (
+                <RecursiveBlock
+                  key={index}
+                  element={element}
+                  parentClickHandler={parentClickHandler}
+                  openedBlock={openedBlock}
+                  openFolderCreateModal={openFolderCreateModal}
+                  environment={environment}
+                  childBlockVisible={childBlockVisible}
+                  tableFolder={tableFolder?.folders}
+                  setFolderModalType={setFolderModalType}
+                  setSelectedTable={setSelectedTable}
+                  sidebarIsOpen={sidebarIsOpen}
+                />
+              ))}
+              {folderModalType === "folder" && (
+                <FolderModal
+                  closeModal={closeFolderModal}
+                  modalType={folderModalType}
+                  selectedTable={selectedTable}
+                  getAppById={getAppById}
+                  computedFolderList={computedFolderList}
+                />
+              )}
             </div>
-          </Collapse>
+            {/* <div className="sidebar-footer"></div> */}
+          </div>
           <MenuButton
             title={"Create folder"}
             icon={<AddIcon />}

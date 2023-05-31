@@ -1,5 +1,12 @@
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
+import {
+  Box,
+  Button,
+  Collapse,
+  ListItemButton,
+  ListItemText,
+  Tooltip,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { TbReplace } from "react-icons/tb";
@@ -35,10 +42,14 @@ const RecursiveBlock = ({
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
-  const [menu, setMenu] = useState(null);
-  const [menuType, setMenuType] = useState(null);
+  const [menu, setMenu] = useState();
+  const [menuType, setMenuType] = useState();
   const queryClient = useQueryClient();
   const openMenu = Boolean(menu);
+
+  console.log("openMenu", openMenu);
+  console.log("menuType", menuType);
+  console.log("menu", menu);
 
   const activeStyle = {
     backgroundColor:
@@ -65,7 +76,7 @@ const RecursiveBlock = ({
   );
 
   const handleOpenNotify = (event, type) => {
-    setMenu(event.currentTarget);
+    setMenu(event?.currentTarget);
     setMenuType(type);
   };
   const handleCloseNotify = () => {
@@ -102,26 +113,78 @@ const RecursiveBlock = ({
         });
     }
   };
-
   return (
     <Draggable key={index}>
-      <div className="parent-block column-drag-handle" key={index}>
-        <Button
+      {element?.parent_id === "0" ? (
+        <ListItemButton
           key={index}
-          style={activeStyle}
-          className={`nav-element ${
-            element.isChild &&
-            (tableSlug !== element.slug ? "active-with-child" : "active")
-          }`}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            element.isChild && navigate(element?.path);
-            clickHandler();
-            setSelectedTable(element);
+          onClick={() => {
+            element.children && clickHandler();
           }}
+          className="parent-folder"
         >
-          {/* {!element.isChild && childBlockVisible ? (
+          <ListItemText primary={sidebarIsOpen && element?.title} />
+          <Tooltip title="Folder settings" placement="top">
+            <Box className="extra_icon">
+              <BsThreeDots
+                size={13}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenNotify(e, "folder");
+                }}
+              />
+            </Box>
+          </Tooltip>
+          <Tooltip title="Create folder" placement="top">
+            <Box className="extra_icon">
+              <AddIcon
+                size={13}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  // openFolderCreateModal("parent", element);
+                  handleOpenNotify(e, "tableMenu");
+                }}
+              />
+            </Box>
+          </Tooltip>
+          {childBlockVisible && element.children ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
+          <ButtonsMenu
+            element={element}
+            menu={menu}
+            openMenu={openMenu}
+            handleCloseNotify={handleCloseNotify}
+            sidebarIsOpen={sidebarIsOpen}
+            openFolderCreateModal={openFolderCreateModal}
+            deleteFolder={deleteFolder}
+            menuType={menuType}
+            setFolderModalType={setFolderModalType}
+            setSelectedTable={setSelectedTable}
+            appId={appId}
+          />
+        </ListItemButton>
+      ) : (
+        <div className="parent-block column-drag-handle" key={index}>
+          <Button
+            key={index}
+            style={activeStyle}
+            className={`nav-element ${
+              element.isChild &&
+              (tableSlug !== element.slug ? "active-with-child" : "active")
+            }`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              element.isChild && navigate(element?.path);
+              clickHandler();
+              setSelectedTable(element);
+            }}
+          >
+            {/* {!element.isChild && childBlockVisible ? (
             <KeyboardArrowDownIcon
               style={{
                 color: environment?.data?.color,
@@ -136,92 +199,96 @@ const RecursiveBlock = ({
           ) : (
             ""
           )} */}
-          <div
-            className="label"
-            style={{
-              color:
-                tableSlug === element.slug && element.isChild
-                  ? environment?.data?.active_color
-                  : environment?.data?.color,
-              opacity: element?.isChild && 0.6,
-            }}
-          >
-            <IconGenerator icon={element?.icon} size={18} />
+            <div
+              className="label"
+              style={{
+                color:
+                  tableSlug === element.slug && element.isChild
+                    ? environment?.data?.active_color
+                    : environment?.data?.color,
+                opacity: element?.isChild && 0.6,
+              }}
+            >
+              <IconGenerator icon={element?.icon} size={18} />
 
-            {sidebarIsOpen && element?.title}
-          </div>
-          {!element?.isChild && sidebarIsOpen ? (
-            <Box className="icon_group">
-              <Tooltip title="Folder settings" placement="top">
+              {sidebarIsOpen && element?.title}
+            </div>
+            {!element?.isChild && sidebarIsOpen ? (
+              <Box className="icon_group">
+                <Tooltip title="Folder settings" placement="top">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleOpenNotify(e, "folder");
+                      }}
+                      style={{
+                        color: environment?.data?.color,
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+                <Tooltip title="Create folder" placement="top">
+                  <Box className="extra_icon">
+                    <AddIcon
+                      size={13}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        // openFolderCreateModal("parent", element);
+                        handleOpenNotify(e, "tableMenu");
+                      }}
+                      style={{
+                        color: environment?.data?.color,
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+              </Box>
+            ) : (
+              ""
+            )}
+            <ButtonsMenu
+              element={element}
+              menu={menu}
+              openMenu={openMenu}
+              handleCloseNotify={handleCloseNotify}
+              sidebarIsOpen={sidebarIsOpen}
+              openFolderCreateModal={openFolderCreateModal}
+              deleteFolder={deleteFolder}
+              menuType={menuType}
+              setFolderModalType={setFolderModalType}
+              setSelectedTable={setSelectedTable}
+              appId={appId}
+            />
+            {element?.isChild && sidebarIsOpen ? (
+              <Tooltip title="Table settings" placement="top">
                 <Box className="extra_icon">
                   <BsThreeDots
                     size={13}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      handleOpenNotify(e, "folder");
+                      handleOpenNotify(e, "table");
                     }}
                     style={{
-                      color: environment?.data?.color,
+                      color:
+                        tableSlug === element.slug
+                          ? environment?.data?.active_color
+                          : environment?.data?.color,
                     }}
                   />
                 </Box>
               </Tooltip>
-              <Tooltip title="Create folder" placement="top">
-                <Box className="extra_icon">
-                  <AddIcon
-                    size={13}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      openFolderCreateModal("parent", element);
-                    }}
-                    style={{
-                      color: environment?.data?.color,
-                    }}
-                  />
-                </Box>
-              </Tooltip>
-            </Box>
-          ) : (
-            ""
-          )}
-          <ButtonsMenu
-            element={element}
-            menu={menu}
-            openMenu={openMenu}
-            handleCloseNotify={handleCloseNotify}
-            sidebarIsOpen={sidebarIsOpen}
-            openFolderCreateModal={openFolderCreateModal}
-            deleteFolder={deleteFolder}
-            menuType={menuType}
-            setFolderModalType={setFolderModalType}
-            setSelectedTable={setSelectedTable}
-          />
-          {element?.isChild && sidebarIsOpen ? (
-            <Tooltip title="Table settings" placement="top">
-              <Box className="extra_icon">
-                <BsThreeDots
-                  size={13}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleOpenNotify(e, "table");
-                  }}
-                  style={{
-                    color:
-                      tableSlug === element.slug
-                        ? environment?.data?.active_color
-                        : environment?.data?.color,
-                  }}
-                />
-              </Box>
-            </Tooltip>
-          ) : (
-            ""
-          )}
-        </Button>
-      </div>
+            ) : (
+              ""
+            )}
+          </Button>
+        </div>
+      )}
+
       <Collapse in={childBlockVisible} unmountOnExit>
         {element?.children && (
           <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>

@@ -2,6 +2,9 @@ import { Box, Menu } from "@mui/material";
 import { RiPencilFill } from "react-icons/ri";
 import "./style.scss";
 import { BsFillTrashFill } from "react-icons/bs";
+import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
+import TableChartIcon from "@mui/icons-material/TableChart";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ButtonsMenu = ({
   element,
@@ -14,7 +17,11 @@ const ButtonsMenu = ({
   menuType,
   setFolderModalType,
   setSelectedTable,
+  appId,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  console.log("appId", appId);
   return (
     <>
       <Menu
@@ -45,6 +52,7 @@ const ButtonsMenu = ({
                 e.stopPropagation();
                 e.preventDefault();
                 openFolderCreateModal("update", element);
+                handleCloseNotify();
               }}
             >
               <RiPencilFill size={13} />
@@ -59,6 +67,30 @@ const ButtonsMenu = ({
             >
               <BsFillTrashFill size={13} />
               <h3>Удалить папку</h3>
+            </Box>
+          </Box>
+        ) : !element?.isChild && sidebarIsOpen && menuType === "tableMenu" ? (
+          <Box className="menu">
+            <Box
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                openFolderCreateModal("create", element);
+                handleCloseNotify();
+              }}
+            >
+              <CreateNewFolderIcon size={13} />
+              <h3>Добавить папку</h3>
+            </Box>
+            <Box
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/settings/constructor/apps/${appId}/objects/create`);
+              }}
+            >
+              <TableChartIcon size={13} />
+              <h3>Добавить table</h3>
             </Box>
           </Box>
         ) : (

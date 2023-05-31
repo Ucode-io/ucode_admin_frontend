@@ -36,6 +36,7 @@ const CalendarHourView = ({
   selectedTabIndex,
   setSelectedTabIndex,
   views,
+  selectedTable
 }) => {
   const { t } = useTranslation()
   const { tableSlug } = useParams();
@@ -190,6 +191,7 @@ const CalendarHourView = ({
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
+          selectedTable={selectedTable}
         />
         <CRangePicker
           interval={"months"}

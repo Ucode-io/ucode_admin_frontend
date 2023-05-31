@@ -1,4 +1,4 @@
-export const data = [
+export const datas = [
             {
               "icon": "string",
               "id": "string",

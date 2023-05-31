@@ -33,6 +33,7 @@ import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm"
 import NewMainInfo from "../NewMainInfo";
 import MainInfo from "../MainInfo";
 import layoutService from "../../../services/layoutService";
+import {datas} from './data.js'
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -57,7 +58,7 @@ const NewRelationSection = ({
 
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
-  console.log('ssssssss', id)
+
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
     useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
@@ -269,7 +270,7 @@ const NewRelationSection = ({
     setSelectTab( relations[0]);
   }, [])
 
-  if (!filteredRelations?.length) return null;
+  // if (!datas?.length) return null;
   return (
     <>
       {selectedManyToManyRelation && (
@@ -284,7 +285,7 @@ const NewRelationSection = ({
         <Card className={styles.card}>
           {data?.map((relation, index) =>
           <Tabs
-            className={"react-tabs react_detail"}
+            className={"react_detail"}
             selectedIndex={selectedTabIndex}
             onSelect={(index) => setSelectedTabIndex(index)}
           >
@@ -296,7 +297,7 @@ const NewRelationSection = ({
                       className={`${styles.tabs_item} ${
                         selectedTabIndex === index
                           ? "custom-selected-tab"
-                          : "custom-selected-tab"
+                          : "custom-tab"
                       }`}
                       onClick={() => {
                         setSelectedIndex(index)

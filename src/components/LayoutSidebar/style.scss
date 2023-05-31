@@ -211,8 +211,28 @@ $main-color: #0365F2;
       border-top: 1px solid rgba(192, 192, 192, 0.294);
     }
 
+    .parent-folder {
+      cursor: default;
+
+      &:hover {
+        .extra_icon {
+          display: flex;
+          margin-right: 5px;
+          cursor: pointer;
+          z-index: 99999;
+        }
+      }
+
+      .extra_icon {
+        display: none;
+
+      }
+    }
+
     .parent-block {
       // margin-bottom: 4px;
+
+
 
       .nav-element {
         display: flex;

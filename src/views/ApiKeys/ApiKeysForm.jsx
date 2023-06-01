@@ -1,7 +1,7 @@
 import { Save } from "@mui/icons-material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tabs } from "react-tabs";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
@@ -22,7 +22,6 @@ import { store } from "../../store";
 const ApiKeysForm = () => {
   const { appId, apiKeyId } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [search, setSearch] = useSearchParams();
   const [btnLoader, setBtnLoader] = useState();
   const [role, setRole] = useState([]);
@@ -30,17 +29,15 @@ const ApiKeysForm = () => {
   const [clientType, setClientType] = useState([]);
   const authStore = store.getState().auth;
 
-  console.log("apiKeyId", apiKeyId);
-
-  console.log("role", role);
-  console.log("clientType", clientType);
-
   const mainForm = useForm({
     defaultValues: {
       environment_id: authStore.environmentId,
       project_id: authStore.projectId,
+      client_type_id: authStore.clientType.id,
+      role_id: authStore.roleInfo.id,
     },
   });
+  console.log("watch()", mainForm.watch());
 
   const createApp = (data) => {
     setBtnLoader(true);
@@ -213,7 +210,7 @@ const ApiKeysForm = () => {
                 required
               />
             </FRow>
-            <FRow
+            {/* <FRow
               label={"Client type"}
               componentClassName="flex gap-2 align-center"
               required
@@ -238,7 +235,7 @@ const ApiKeysForm = () => {
                 required
                 options={computedRoles}
               />
-            </FRow>
+            </FRow> */}
           </FormCard>
         </form>
 

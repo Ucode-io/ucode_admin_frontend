@@ -37,6 +37,9 @@ import MultipleInsertSettings from "@/views/Objects/components/ViewSettings/Mult
 import multipleInsertForm from "@/views/Objects/components/MultipleInsertForm";
 import listToOptions from "@/utils/listToOptions";
 import TableActions from "../Actions/TableActions";
+import requestV2 from "../../../../../utils/requestV2";
+import FunctionPath from "./FunctionPath";
+
 
 const relationViewTypes = [
   {
@@ -155,6 +158,19 @@ const RelationSettings = ({
       },
     }
   );
+  
+  const { data: functions = [] } = useQuery(
+    ["GET_FUNCTIONS_LIST"],
+    () => {
+      return requestV2.get("/function");
+    },
+    {
+      select: (res) => {
+        return listToOptions(res.functions, "name", "path");
+      },
+    }
+  );
+
 
   const computedFieldsListOptions = useMemo(() => {
     return values.columnsList?.map((field) => ({
@@ -360,6 +376,8 @@ const RelationSettings = ({
               computedTablesList={computedTablesList}
             />
           )}
+          
+          <FunctionPath control={control} watch={watch} functions={functions} />
 
           <DefaultValueBlock
             control={control}

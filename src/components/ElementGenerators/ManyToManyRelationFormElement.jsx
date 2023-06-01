@@ -12,6 +12,7 @@ import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
+import constructorFunctionService from "../../services/constructorFunctionService";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -164,6 +165,35 @@ const AutoCompleteElement = ({
     }
   );
 
+  useDebouncedWatch(
+    () => {
+      // if (elmValue.length >= field.attributes?.length) {
+        constructorFunctionService
+          .invoke({
+            function_id: field?.attributes?.function,
+            // object_ids: [id, elmValue],
+            attributes: {
+              // barcode: elmValue,
+            },
+          })
+          .then((res) => {
+            if (res === "Updated successfully!") {
+              console.log("Успешно обновлено!", "success");
+            }
+          })
+          .finally(() => {
+            // setFormValue(name, "");
+            // setElmValue("");
+            // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
+          });
+      // }
+    },
+    [],
+    300
+  );
+
+  
+  
   const computedValue = useMemo(() => {
     if (!value) return undefined;
 

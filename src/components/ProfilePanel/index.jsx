@@ -3,10 +3,11 @@ import { Menu } from "@mui/material";
 import { useState } from "react";
 import { useAliveController } from "react-activation";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { authActions } from "../../store/auth/auth.slice";
 import UserAvatar from "../UserAvatar";
 import styles from "./style.module.scss";
+import KeyIcon from "@mui/icons-material/Key";
 
 const ProfilePanel = ({ anchorEl }) => {
   const [anchorProfileEl, setProfileAnchorEl] = useState(null);
@@ -14,7 +15,15 @@ const ProfilePanel = ({ anchorEl }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { clear } = useAliveController();
+  const { appId } = useParams();
 
+  const openMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClick = () => {
+    navigate(`/main/${appId}/api-key`);
+  };
   const closeMenu = () => {
     setProfileAnchorEl(null);
   };
@@ -44,6 +53,11 @@ const ProfilePanel = ({ anchorEl }) => {
         classes={{ list: styles.menu, paper: styles.paper }}
       >
         <div className={styles.scrollBlocksss}>
+          <div className={styles.menuItem} onClick={handleClick}>
+            <KeyIcon className={styles.dragIcon} />
+
+            <p className={styles.itemText}>Api Keys</p>
+          </div>
           <div
             className={styles.menuItem}
             onClick={() => {

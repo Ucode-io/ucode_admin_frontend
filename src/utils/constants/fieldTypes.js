@@ -32,6 +32,7 @@ export const fieldTypes = [
   "SWITCH",
   "PHOTO",
   "PHONE",
+  "INTERNATION_PHONE",
   "ICON",
   "PASSWORD",
   "FORMULA",
@@ -125,6 +126,17 @@ export const fieldTypesOptions = [
     ],
   },
   {
+    label: "Map",
+    options: [
+      {
+        icon: "map-pin.svg",
+        label: "Map",
+        value: "MAP",
+      },
+    ],
+  },
+
+  {
     label: "File",
     options: [
       {
@@ -176,6 +188,11 @@ export const fieldTypesOptions = [
         icon: "phone.svg",
         label: "Phone",
         value: "PHONE",
+      },
+      {
+        icon: "phone.svg",
+        label: "Internation Phone",
+        value: "INTERNATION_PHONE",
       },
       {
         icon: "envelope.svg",

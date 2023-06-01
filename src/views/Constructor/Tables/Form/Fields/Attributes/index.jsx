@@ -11,6 +11,7 @@ import MultiLineAttributes from "./MultiLineAttributes";
 import NumberAttributes from "./NumberAttributes";
 import PickListAttributes from "./PickListAttributes";
 import SingleLineAttributes from "./SingleLineAttributes";
+import MapAttributes from "./MapAttributes";
 
 const Attributes = ({ control, watch, mainForm }) => {
   const fieldType = watch("type");
@@ -57,6 +58,10 @@ const Attributes = ({ control, watch, mainForm }) => {
 
     case "CODABAR":
       return <CodabarIncrements control={control} />;
+      
+      case "MAP":
+        return <MapAttributes control={control} />;
+  
 
     default:
       return <SingleLineAttributes control={control} />;

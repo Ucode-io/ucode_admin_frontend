@@ -26,6 +26,8 @@ import { useSelector } from "react-redux";
 import CodabarBarcode from "./CodabarBarcode";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFFloatField from "../FormElements/HFFloatField";
+import HFInternationPhone from "../FormElements/HFInternationPhone";
+import HFMapField from "../FormElements/HFMapField";
 
 const parser = new Parser();
 
@@ -161,6 +163,24 @@ const FormElementGenerator = ({
       return (
         <FRow label={field.label} required={field.required}>
           <HFTextFieldWithMask
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            mask={"(99) 999-99-99"}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
+      
+    case "INTERNATION_PHONE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFInternationPhone
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
@@ -380,6 +400,23 @@ const FormElementGenerator = ({
             disabled={isDisabled}
             {...props}
           />
+        </FRow>
+      );
+    case "MAP":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFMapField
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            field={field}
+            {...props}
+          />
+
+
         </FRow>
       );
 

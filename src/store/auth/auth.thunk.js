@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "../../services/auth/authService";
 import { authActions } from "./auth.slice";
+import { store } from "..";
 
 export const loginAction = createAsyncThunk(
   "auth/login",
@@ -10,6 +11,18 @@ export const loginAction = createAsyncThunk(
       dispatch(
         authActions.loginSuccess({ ...res, project_id: data.project_id })
       );
+      await authService
+        .updateToken({
+          refresh_token: res.token.access_token,
+          env_id: res.environment_id,
+          project_id: res.client_platform.project_id,
+        })
+        .then((res) => {
+          store.dispatch(authActions.setTokens(res));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       const fcmToken = localStorage.getItem("fcmToken");
       if (res.user.id)
         await authService.sendFcmToken({

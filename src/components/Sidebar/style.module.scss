@@ -4,6 +4,11 @@
   display: flex;
 }
 
+.dragBox {
+  // display: flex;
+  cursor: grab;
+}
+
 .leftSide {
   width: 56px;
   box-shadow: inset -1px 0px 0px rgba(229, 233, 235, 0.75);
@@ -41,6 +46,7 @@
     min-height: calc(100vh - 200px);
   }
 
+
   .footer {
     display: flex;
     flex-direction: column;
@@ -57,7 +63,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    cursor: grab;
 
     &.active {
       color: #fff;
@@ -138,9 +144,11 @@
     margin-right: 10px;
     cursor: pointer;
   }
+
   .headerLogo {
     display: flex;
     align-items: center;
+
     h2 {
       color: rgb(55, 71, 91);
       text-transform: uppercase;
@@ -230,6 +238,7 @@
     top: -5px;
   }
 }
+
 .noficationButtons {
   position: relative;
 

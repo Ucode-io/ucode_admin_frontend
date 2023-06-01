@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import CodabarBarcode from "./CodabarBarcode";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFFloatField from "../FormElements/HFFloatField";
+import HFMapField from "../FormElements/HFMapField";
 
 const parser = new Parser();
 
@@ -61,7 +62,7 @@ const FormElementGenerator = ({
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
-    
+
     const defaultValue = field.attributes?.defaultValue ? field.attributes?.defaultValue : field.attributes?.default_values;
 
     if (!defaultValue) return undefined;
@@ -72,7 +73,7 @@ const FormElementGenerator = ({
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
-  // console.log('defaultValue', defaultValue)
+
   const isDisabled = useMemo(() => {
     return (
       field.attributes?.disabled ||
@@ -378,6 +379,21 @@ const FormElementGenerator = ({
             required={field.required}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
+    case "MAP":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFMapField
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            field={field}
             {...props}
           />
         </FRow>

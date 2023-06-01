@@ -157,26 +157,38 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const exportToPDF = async () => {
     if (!selectedTemplate) return;
     setPdfLoader(true);
-
+  
     try {
       let html = redactorRef.current.getData();
-
+  
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><style>${contentStyles}</style>`;
-
+  
       fields.forEach((field) => {
         html = html.replaceAll(
           `{ ${field.label} }`,
           `<%= it.${field.path_slug ?? field.slug} %>`
         );
       });
-
+  
+      const tempElement = document.createElement('div');
+      tempElement.innerHTML = html;
+      const tables = tempElement.querySelectorAll('table');
+  
       let pageSize = pointToMillimeter(selectedPaperSize.height);
-
+      let pageWidth = pointToMillimeter(selectedPaperSize.width);
+      let extraWidth = pointToMillimeter(selectedPaperSize.width) === 100 ? 213 : 175;
+      tables.forEach((table) => {
+        table.style.width = `${pageWidth === 100 ? '50%' : '97%'}`;
+        table.style.borderRightCollapse = 'collapse'; 
+      }); 
+  
+  
       if (selectedPaperSize.height === 1000) {
         pageSize = pixelToMillimeter(
           document.querySelector(".ck-content").offsetHeight - 37
         );
       }
+  
       const res = await documentTemplateService.exportToPDF({
         data: {
           linked_table_slug: selectedLinkedTableSlug,
@@ -188,20 +200,21 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
           table_slug: selectedOutputTable?.split("#")?.[1],
         },
         html: `${meta} <div class="ck-content" style="width: ${
-          pointToMillimeter(selectedPaperSize.width) + 100
-        }mm" >${html}</div>`,
+          pointToMillimeter(selectedPaperSize.width) + extraWidth
+        }mm" >${tempElement.innerHTML}</div>`,
       });
-
+  
       queryClient.refetchQueries([
         "GET_OBJECT_FILES",
         { tableSlug, selectLinkedObject },
       ]);
-
+  
       window.open(res.link, { target: "_blank" });
     } finally {
       setPdfLoader(false);
     }
   };
+  
   // ========EXPORT TO HTML===============
 
   const exportToHTML = async () => {

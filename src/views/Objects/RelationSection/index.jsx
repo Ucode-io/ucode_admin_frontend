@@ -31,7 +31,7 @@ import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDo
 import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUploadButton";
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
 
-const RelationSection = ({
+const   RelationSection = ({
   selectedTabIndex,
   setSelectedTabIndex,
   relations,
@@ -270,7 +270,7 @@ const RelationSection = ({
       )}
       {filteredRelations.length ? (
         <Card className={styles.card}>
-          <Tabs
+          <Tabs 
             selectedIndex={selectedTabIndex}
             onSelect={(index) => setSelectedTabIndex(index)}
           >

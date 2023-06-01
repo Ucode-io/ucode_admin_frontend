@@ -68,7 +68,8 @@ const Router = () => {
     if (location.pathname.includes("settings"))
       return "/settings/constructor/apps";
     if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
-    if (!applications.length) return "/settings/constructor/apps";
+    if (!applications.length || !applications[0].permission?.read)
+      return "/settings/constructor/apps";
     return `/main/${applications[0].id}`;
   }, [location.pathname, applications]);
 

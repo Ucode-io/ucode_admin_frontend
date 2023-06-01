@@ -9,27 +9,21 @@ const SettingsBlock = ({
   setSelectedSettingsTab,
   closeSettingsBlock,
   selectedField,
+  updateSectionTab,
   selectedRelation,
   getRelationFields,
+  sectionTabs,
+  insertSectionTab,
+  removeSectionTab,
+  moveSectionTab,
+  appendSectionTab,
 }) => {
   if (selectedField) {
-    return (
-      <FieldSettings
-        field={selectedField}
-        mainForm={mainForm}
-        closeSettingsBlock={closeSettingsBlock}
-      />
-    );
+    return <FieldSettings field={selectedField} mainForm={mainForm} closeSettingsBlock={closeSettingsBlock} />;
   }
 
   if (selectedRelation) {
-    return (
-      <RelationSettings
-        closeSettingsBlock={closeSettingsBlock}
-        relation={selectedRelation}
-        getRelationFields={getRelationFields}
-      />
-    );
+    return <RelationSettings closeSettingsBlock={closeSettingsBlock} relation={selectedRelation} getRelationFields={getRelationFields} />;
   }
 
   return (
@@ -39,6 +33,12 @@ const SettingsBlock = ({
       selectedSettingsTab={selectedSettingsTab}
       setSelectedSettingsTab={setSelectedSettingsTab}
       closeSettingsBlock={closeSettingsBlock}
+      sectionTabs={sectionTabs}
+      updateSectionTab={updateSectionTab}
+      insertSectionTab={insertSectionTab}
+      removeSectionTab={removeSectionTab}
+      moveSectionTab={moveSectionTab}
+      appendSectionTab={appendSectionTab}
     />
   );
 };

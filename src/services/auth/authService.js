@@ -1,3 +1,4 @@
+import authRequestV2 from "../../utils/authRequest";
 import request from "../../utils/request";
 import requestAuth from "../../utils/requestAuth";
 import requestAuthV2 from "../../utils/requestAuthV2";
@@ -16,6 +17,7 @@ const authService = {
     requestAuth.post(`/user/send-message`, data),
   resetPassword: (data) => requestAuth.put(`/user/reset-password`, data),
   refreshToken: (data) => requestAuthV2.put(`/refresh`, data),
+  updateToken: (data) => authRequestV2.put(`/refresh`, data),
   sendCode: (data) => requestAuth.post(`/send-code`, data),
   verifyCode: (sms_id, otp, data) =>
     requestAuth.post(`/verify/${sms_id}/${otp}`, data),

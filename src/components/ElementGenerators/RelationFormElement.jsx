@@ -17,6 +17,8 @@ import CascadingElement from "./CascadingElement";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import GroupCascading from "./GroupCascading/index";
 import styles from "./style.module.scss";
+import constructorFunctionService from "../../services/constructorFunctionService";
+import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 
 const RelationFormElement = ({
   control,
@@ -38,6 +40,7 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
+
   if (!isLayout)
     return (
       <FRow label={field?.label ?? field?.title} required={field.required}>
@@ -184,6 +187,33 @@ const AutoCompleteElement = ({
         };
       },
     }
+  );
+  
+  useDebouncedWatch(
+    () => {
+      // if (elmValue.length >= field.attributes?.length) {
+        constructorFunctionService
+          .invoke({
+            function_id: field?.attributes?.function,
+            // object_ids: [id, elmValue],
+            attributes: {
+              // barcode: elmValue,
+            },
+          })
+          .then((res) => {
+            if (res === "Updated successfully!") {
+              console.log("Успешно обновлено!", "success");
+            }
+          })
+          .finally(() => {
+            // setFormValue(name, "");
+            // setElmValue("");
+            // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
+          });
+      // }
+    },
+    [],
+    300
   );
 
   const getValueData = async () => {

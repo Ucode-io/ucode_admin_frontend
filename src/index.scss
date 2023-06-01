@@ -95,6 +95,10 @@ html {
   }
 }
 
+.react_detail {
+  padding: 10px 0;
+}
+
 .drag-row-drop-preview {
   background-color: rgba(150, 150, 200, 0.1);
   border: 1px dashed #abc;
@@ -330,4 +334,55 @@ html {
 #hovers:hover {
   fill: #ec8c9c;
   pointer-events: all;
+}
+
+.custom-selected-tab {
+  border-bottom: none;
+  outline: none;
+  padding: 10px;
+  display: none;
+  background-color: #0E73F626; 
+  
+  .custom_tab {
+    border-bottom: none;
+    outline: none;
+    padding: 10px;
+    width: 34px;
+    height: 34px;
+    // color:#0E73F6; 
+  }
+}
+
+.custom-tabs .react-tabs__tab-list {
+  padding: 5px 16px 10px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.detail_selected_tab {
+  background-color: #0E73F626;
+  border-bottom: none;
+  outline: none;
+  padding: 10px;
+  
+  
+  .detail_custom_tab {
+    border-bottom: none;
+    outline: none;
+    padding: 10px;
+    width: 34px;
+    height: 34px;
+    // color:#0E73F6;
+  }
+  
+}
+
+.detail_custom_tabs .react-tabs__tab-list {
+  padding: 5px 16px 10px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
 }

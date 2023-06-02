@@ -255,7 +255,7 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
                     onClick={(e) => e.stopPropagation()}
                     control={mainForm.control}
                     name={`layouts.${index}.label`}
-                    inputStyle={{ border: "none", outline: "none", fontWeight: 500, minWidth: 300, background: "transparent" }}
+                    inputStyle={{ border: "none", outline: "none", fontWeight: 500, background: "transparent" }}
                   />
 
                   <Box style={{ display: "flex", alignItems: "center" }}>

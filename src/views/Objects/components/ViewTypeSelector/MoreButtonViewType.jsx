@@ -61,14 +61,14 @@ export default function MoreButtonViewType({
               <CreateIcon />
               View settings
             </Button>
-            <Button>
+            {/* <Button>
               <StarOutlineIcon />
               Add to favorites
             </Button>
             <Button>
               <ContentCopyIcon />
               Duplicate as
-            </Button>
+            </Button> */}
           </div>
         </Card>
       </Popover>

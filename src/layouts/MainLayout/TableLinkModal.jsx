@@ -1,4 +1,11 @@
-import { Box, Card, IconButton, Modal, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  IconButton,
+  Modal,
+  Typography,
+} from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import CancelButton from "../../components/Buttons/CancelButton";
 import CreateButton from "../../components/Buttons/CreateButton";
@@ -9,10 +16,11 @@ import HFTextField from "../../components/FormElements/HFTextField";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import constructorTableService from "../../services/constructorTableService";
 import { useQueryClient } from "react-query";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import menuSettingsService from "../../services/menuSettingsService";
-
-const FolderCreateModal = ({
+import HFSelect from "../../components/FormElements/HFSelect";
+import ClearIcon from "@mui/icons-material/Clear";
+const TableLinkModal = ({
   closeModal,
   loading,
   modalType,
@@ -22,29 +30,23 @@ const FolderCreateModal = ({
 }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
+  const [tables, setTables] = useState();
 
   const onSubmit = (data) => {
-    if (modalType === "create") {
-      createType(data, selectedFolder);
-    } else if (modalType === "parent") {
-      createType(data, selectedFolder);
-    } else if (modalType === "update") {
-      updateType(data);
-    }
+    console.log("data", data);
+    createType(data, selectedFolder);
   };
 
-  const { control, handleSubmit, reset } = useForm({
-    defaultValues: {
-      app_id: appId,
-    },
-  });
+  console.log("selectedFolder", selectedFolder);
+
+  const { control, handleSubmit, reset } = useForm();
 
   useEffect(() => {
     if (modalType === "update")
-      menuSettingsService
-        .getById(selectedFolder.id, projectId)
+      constructorTableService
+        .getFolderById(selectedFolder.id, projectId)
         .then((res) => {
-          reset(res);
+          reset({ ...res, app_id: appId });
         })
         .catch((err) => {
           console.log(err);
@@ -52,28 +54,15 @@ const FolderCreateModal = ({
   }, [modalType]);
 
   const createType = (data, selectedFolder) => {
-    // constructorTableService
-    //   .createFolder({
-    //     ...data,
-    //     parent_id: modalType === "parent" ? selectedFolder.id : "0",
-    //   })
-    //   .then(() => {
-    //     queryClient.refetchQueries(["GET_TABLE_FOLDER", appId]);
-    //     closeModal();
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    console.log("data", data);
     menuSettingsService
       .create({
         ...data,
         parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
-        type: selectedFolder?.type || "FOLDER",
-        label: data.title,
+        type: "TABLE",
+        table_id: data?.table_id,
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_MENU", appId]);
-        getMenuList();
         closeModal();
       })
       .catch((err) => {
@@ -84,6 +73,8 @@ const FolderCreateModal = ({
     constructorTableService
       .updateFolder({
         ...data,
+        // parent_id: modalType === "parent" ? selectedFolder.id : "",
+        app_id: appId,
       })
       .then((res) => {
         queryClient.refetchQueries(["GET_TABLE_FOLDER", appId]);
@@ -94,40 +85,53 @@ const FolderCreateModal = ({
       });
   };
 
+  const getTables = () => {
+    constructorTableService.getList().then((res) => {
+      setTables(res);
+    });
+  };
+
+  useEffect(() => {
+    getTables();
+  }, []);
+
+  const tableOptions = useMemo(() => {
+    return tables?.tables?.map((item, index) => ({
+      label: item.label,
+      value: item.id,
+    }));
+  }, [tables]);
+  console.log("tableOptions", tableOptions);
+
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">
-              {modalType === "create" || modalType === "parent"
-                ? "Create folder"
-                : "Edit folder"}
-            </Typography>
-            <IconButton color="primary" onClick={closeModal}>
-              <HighlightOffIcon fontSize="large" />
-            </IconButton>
+            <Typography variant="h4">Привязать table</Typography>
+            <ClearIcon
+              color="primary"
+              onClick={closeModal}
+              width="46px"
+              style={{
+                cursor: "pointer",
+              }}
+            />
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              <HFIconPicker name="icon" control={control} />
-              <HFTextField
-                autoFocus
+              <HFSelect
                 fullWidth
-                label="Title"
+                label="Tables"
                 control={control}
-                name="label"
+                name="table_id"
+                options={tableOptions}
               />
             </Box>
 
             <div className="btns-row">
-              <CancelButton onClick={closeModal} />
-              {modalType === "crete" ? (
-                <CreateButton type="submit" loading={loading} />
-              ) : (
-                <SaveButton type="submit" loading={loading} />
-              )}
+              <SaveButton title="Добавить" type="submit" loading={loading} />
             </div>
           </form>
         </Card>
@@ -136,4 +140,4 @@ const FolderCreateModal = ({
   );
 };
 
-export default FolderCreateModal;
+export default TableLinkModal;

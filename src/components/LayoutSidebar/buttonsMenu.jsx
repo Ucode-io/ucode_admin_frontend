@@ -1,10 +1,10 @@
-import { Box, Menu } from "@mui/material";
+import { Box, Divider, Menu } from "@mui/material";
 import { RiPencilFill } from "react-icons/ri";
 import "./style.scss";
 import { BsFillTrashFill } from "react-icons/bs";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import TableChartIcon from "@mui/icons-material/TableChart";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ButtonsMenu = ({
   element,
@@ -18,10 +18,9 @@ const ButtonsMenu = ({
   setFolderModalType,
   setSelectedTable,
   appId,
+  setTableModal,
 }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  console.log("appId", appId);
   return (
     <>
       <Menu
@@ -58,11 +57,18 @@ const ButtonsMenu = ({
               <RiPencilFill size={13} />
               <h3>Изменить папку</h3>
             </Box>
+            <Divider
+              style={{
+                marginBottom: "8px",
+                marginTop: "8px",
+              }}
+            />
             <Box
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 deleteFolder(element);
+                handleCloseNotify();
               }}
             >
               <BsFillTrashFill size={13} />
@@ -73,6 +79,34 @@ const ButtonsMenu = ({
           <Box className="menu">
             <Box
               onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/settings/constructor/apps/${appId}/objects/create`);
+                handleCloseNotify();
+              }}
+            >
+              <TableChartIcon size={13} />
+              <h3>Создать table</h3>
+            </Box>
+            <Box
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setTableModal(element);
+                handleCloseNotify();
+              }}
+            >
+              <TableChartIcon size={13} />
+              <h3>Добавить table</h3>
+            </Box>
+            <Divider
+              style={{
+                marginBottom: "8px",
+                marginTop: "8px",
+              }}
+            />
+            <Box
+              onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
                 openFolderCreateModal("create", element);
@@ -81,16 +115,6 @@ const ButtonsMenu = ({
             >
               <CreateNewFolderIcon size={13} />
               <h3>Добавить папку</h3>
-            </Box>
-            <Box
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigate(`/settings/constructor/apps/${appId}/objects/create`);
-              }}
-            >
-              <TableChartIcon size={13} />
-              <h3>Добавить table</h3>
             </Box>
           </Box>
         ) : (

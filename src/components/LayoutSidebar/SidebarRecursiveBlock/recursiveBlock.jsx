@@ -14,7 +14,7 @@ import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
-import applicationService from "../../../services/applicationSercixe";
+import applicationService from "../../../services/applicationService";
 import constructorTableService from "../../../services/constructorTableService";
 import { fetchConstructorTableListAction } from "../../../store/constructorTable/constructorTable.thunk";
 import { applyDrag } from "../../../utils/applyDrag";

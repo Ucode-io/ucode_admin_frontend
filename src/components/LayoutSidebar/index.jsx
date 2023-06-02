@@ -251,6 +251,7 @@ const LayoutSidebar = ({
                   sidebarIsOpen={sidebarIsOpen}
                   getMenuList={getMenuList}
                   setTableModal={setTableModal}
+                  selectedFolder={selectedFolder}
                 />
               ))}
               {folderModalType === "folder" && (

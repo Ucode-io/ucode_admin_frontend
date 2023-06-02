@@ -33,11 +33,8 @@ import CascadingTreeBlock from "./CascadingTreeBlock";
 import styles from "./style.module.scss";
 import SummaryBlock from "./SummaryBlock";
 import { useSelector } from "react-redux";
-import MultipleInsertSettings from "@/views/Objects/components/ViewSettings/MultipleInsertSettings";
-import multipleInsertForm from "@/views/Objects/components/MultipleInsertForm";
 import listToOptions from "@/utils/listToOptions";
 import TableActions from "../Actions/TableActions";
-import requestV2 from "../../../../../utils/requestV2";
 import FunctionPath from "./FunctionPath";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
 

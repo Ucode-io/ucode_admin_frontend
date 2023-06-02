@@ -12,6 +12,7 @@ import styles from "./style.module.scss";
 import constructorFunctionService from "../../../services/constructorFunctionService";
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch";
 import constructorFunctionServiceV2 from "../../../services/contructorFunctionServiceV2";
+import request from "../../../utils/request";
 
 const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
   const [selectedTable, setSelectedTable] = useState(null);
@@ -31,15 +32,21 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
     search: searchText,
   };
 
-  const { data: objectsList = [], isLoading: loader } = useQuery(
-    ["GET_OBJECT_LIST_QUERY", selectedTable?.slug, queryPayload],
+
+  const { data: objectsList } = useQuery(
+    ["GET_OPENFAAS_LIST", selectedTable?.slug, queryPayload],
     () => {
       if (!selectedTable?.slug) return null;
-      return constructorFunctionServiceV2.invoke(fields?.function_path, {
-        ...queryPayload,
-        table_slug: selectedTable?.slug,
-        function_path: 'BLA BLA BLA'
-      });
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            ...queryPayload,
+            table_slug: selectedTable?.slug,
+          },
+        }
+      );
     },
     {
       select: (res) => {
@@ -52,28 +59,6 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
       },
     }
   );
-  
-  // useDebouncedWatch(
-  //   () => {
-  //       constructorFunctionService
-  //         .invoke({
-  //           table_slug: selectedTable?.slug,
-  //           ...queryPayload,
-  //           function_path: '',
-  //         })
-  //         .then((res) => {
-  //           if (res === "Updated successfully!") {
-  //             console.log("Успешно обновлено!", "success");
-  //           }
-  //         })
-  //         .finally(() => {
-  //         });
-  //     // }
-  //   },
-  //   [],
-  //   300
-  // );
-
 
   useEffect(() => {
     setSearchText("");

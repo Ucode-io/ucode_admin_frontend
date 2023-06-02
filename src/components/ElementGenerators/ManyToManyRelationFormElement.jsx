@@ -13,6 +13,7 @@ import IconGenerator from "../IconPicker/IconGenerator";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
 import constructorFunctionService from "../../services/constructorFunctionService";
+import constructorFunctionServiceV2 from "../../services/contructorFunctionServiceV2";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -140,10 +141,11 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler]);
 
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: {
+      return constructorFunctionServiceV2
+      .invoke(field?.function_path, {
+        table_slug: tableSlug,
           ...autoFiltersValue,
           view_fields:
             field?.view_fields?.map((field) => field.slug) ??
@@ -155,7 +157,7 @@ const AutoCompleteElement = ({
           // additional_ids: value,
           search: debouncedValue,
           limit: 10,
-        },
+          function_path: 'Bla Bla Bla'
       });
     },
     {
@@ -165,32 +167,37 @@ const AutoCompleteElement = ({
     }
   );
 
-  useDebouncedWatch(
-    () => {
-      // if (elmValue.length >= field.attributes?.length) {
-        constructorFunctionService
-          .invoke({
-            function_id: field?.attributes?.function,
-            // object_ids: [id, elmValue],
-            attributes: {
-              // barcode: elmValue,
-            },
-          })
-          .then((res) => {
-            if (res === "Updated successfully!") {
-              console.log("Успешно обновлено!", "success");
-            }
-          })
-          .finally(() => {
-            // setFormValue(name, "");
-            // setElmValue("");
-            // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
-          });
-      // }
-    },
-    [],
-    300
-  );
+  // useDebouncedWatch(
+  //   () => {
+  //       constructorFunctionService
+  //         .invoke({
+  //           function_path: 'bla bla',
+  //           ...autoFiltersValue,
+  //           view_fields:
+  //             field?.view_fields?.map((field) => field.slug) ??
+  //             field?.attributes?.view_fields?.map((field) => field.slug),
+  //           additional_request: {
+  //             additional_field: "guid",
+  //             additional_values: value,
+  //           },
+  //           table_slug:tableSlug,
+  //           // additional_ids: value,
+  //           search: debouncedValue,
+  //           limit: 10,
+  //         })
+  //         .then((res) => {
+  //           if (res === "Updated successfully!") {
+  //             console.log("Успешно обновлено!", "success");
+  //           }
+  //         })
+  //         .finally(() => {
+            
+  //         });
+  //     // }
+  //   },
+  //   [],
+  //   300
+  // );
 
   
   

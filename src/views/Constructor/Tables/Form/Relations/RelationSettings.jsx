@@ -39,6 +39,7 @@ import listToOptions from "@/utils/listToOptions";
 import TableActions from "../Actions/TableActions";
 import requestV2 from "../../../../../utils/requestV2";
 import FunctionPath from "./FunctionPath";
+import constructorFunctionService from "../../../../../services/constructorFunctionService";
 
 
 const relationViewTypes = [
@@ -162,7 +163,7 @@ const RelationSettings = ({
   const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
-      return requestV2.get("/function");
+      return constructorFunctionService.getListV2({});
     },
     {
       select: (res) => {
@@ -170,7 +171,6 @@ const RelationSettings = ({
       },
     }
   );
-
 
   const computedFieldsListOptions = useMemo(() => {
     return values.columnsList?.map((field) => ({

@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import { Text, Rect, Circle, Designer, Image } from "@looop/react-designer";
 import styles from "./style.module.scss";
 import html2canvas from "html2canvas";
-import axios from "axios";
 import { Button } from "@mui/material";
 import fileService from "../../../services/fileService";
 
@@ -51,11 +50,11 @@ function HFCustomImageComponent(props) {
       );
   
       const croppedImage = croppedCanvas.toDataURL();
-      sendImageToBackend(croppedImage);
+      sendImage(croppedImage);
     });
   };
 
-  const sendImageToBackend = async (imageData) => {
+  const sendImage = async (imageData) => {
     try {
       const blob = dataURItoBlob(imageData);
       const formData = new FormData();
@@ -95,6 +94,7 @@ function HFCustomImageComponent(props) {
               rect: Rect,
               circle: Circle,
               image: Image,
+              
             }}
             onUpdate={(objects) => setSVG(objects)}
             objects={svg}

@@ -34,6 +34,7 @@ import ReloadRelations from "@/components/ReloadRelations";
 import Chat from "../components/Chat";
 import ApiKeyPage from "../views/ApiKeys/index.jsx";
 import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
+import Microfrontend from "../views/Microfrontend";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -126,6 +127,13 @@ const Router = () => {
             <KeepAliveWrapper>
               <ObjectsFormPage />
             </KeepAliveWrapper>
+          }
+        />
+
+        <Route
+          path=":appId/microfrontend"
+          element={
+            <Microfrontend />
           }
         />
 

@@ -77,6 +77,13 @@ const NewRelationSection = ({
   const myRef = useRef();
   const navigate = useNavigate();
   const tables = useSelector((state) => state?.auth?.tables);
+  
+
+  useEffect(() => {
+    if (data?.[0]?.tabs?.length > 0) {
+      setSelectTab(data?.[0]?.tabs?.[0]);
+    }
+  }, [data]);
 
   useEffect(() => {
     queryTab ? setSelectedTabIndex(parseInt(queryTab) - 1) : setSelectedTabIndex(0);
@@ -112,7 +119,7 @@ const NewRelationSection = ({
     update();
   }, []);
 
-  const selectedRelation = filteredRelations[selectedTabIndex];
+  const selectedRelation = filteredRelations?.[selectedTabIndex];
 
   useEffect(() => {
     setSelectedObjects([]);
@@ -255,29 +262,24 @@ const NewRelationSection = ({
       const table = tables?.find((table) => table?.slug === tableSlug);
       setTableId(table?.id);
     });
-  }, [tableSlug]);
+  }, []);
 
   useEffect(() => {
     if (!tableId) return;
     layoutService.getList({ data: { tableId } }).then((res) => {
-      console.log('ssssssss', res?.layouts)
       const layout = res?.layouts?.filter((layout) => layout?.is_default === true);
       setData(layout);
     });
-  }, [tableId]);
+  }, [tableSlug, tableId]);
 
-  useEffect(() => {
-    setSelectTab(relations[0]);
-  }, []);
-
-
-  // if (!datas?.length) return null;
+  console.log('ssssssssss', data)
+  // if (!data?.length) return null;
   return (
     <>
       {selectedManyToManyRelation && (
         <ManyToManyRelationCreateModal relation={selectedManyToManyRelation} closeModal={() => setSelectedManyToManyRelation(null)} limit={limit} setLimit={setLimit} />
       )}
-      {data.length ? (
+      {data?.length ? (
         <Card className={styles.card}>
           {data?.map((relation, index) => (
             <Tabs className={"react_detail"} selectedIndex={selectedTabIndex} onSelect={(index) => setSelectedTabIndex(index)}>

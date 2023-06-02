@@ -72,6 +72,7 @@ const ObjectsFormPage = () => {
   const computedSummary = useMemo(() => {
     return sections.find((item) => item.is_summary_section);
   }, [sections]);
+  
   const getAllData = async () => {
     const getSections = constructorSectionService.getList({
       table_slug: tableSlug,
@@ -84,11 +85,7 @@ const ObjectsFormPage = () => {
     });
 
     try {
-      const [
-        { sections = [] },
-        { data = {} },
-        { relations: view_relations = [] },
-      ] = await Promise.all([getSections, getFormData, getRelations]);
+      const [{ sections = [] }, { data = {} }, { relations: view_relations = [] }] = await Promise.all([getSections, getFormData, getRelations]);
 
       setSections(sortSections(sections));
 
@@ -103,10 +100,7 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
 
@@ -133,8 +127,7 @@ const ObjectsFormPage = () => {
         // relation_table_slug: tableSlug
       });
 
-      const [{ sections = [] }, { relations: view_relations = [] }] =
-        await Promise.all([getSections, getRelations]);
+      const [{ sections = [] }, { relations: view_relations = [] }] = await Promise.all([getSections, getRelations]);
 
       setSections(sortSections(sections));
 
@@ -147,10 +140,7 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
     } catch (error) {
@@ -187,8 +177,7 @@ const ObjectsFormPage = () => {
         navigate(-1);
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
-        if (tableRelations?.length)
-          navigateToForm(tableSlug, "EDIT", res.data?.data);
+        if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
@@ -224,12 +213,7 @@ const ObjectsFormPage = () => {
   const startTime = watch("date_start");
 
   useEffect(() => {
-    setFormValue(
-      "time_end",
-      startTime && serviceTime
-        ? addMinutes(new Date(startTime), parseInt(serviceTime))
-        : undefined
-    );
+    setFormValue("time_end", startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined);
   }, [serviceTime, startTime]);
 
   if (loader) return <PageFallback />;
@@ -242,11 +226,7 @@ const ObjectsFormPage = () => {
         hasBackground={true}
       >
         <FormPageBackButton />
-        <SummarySectionValue
-          computedSummary={computedSummary}
-          control={control}
-          sections={sections}
-        />
+        <SummarySectionValue computedSummary={computedSummary} control={control} sections={sections} />
       </FiltersBlock>
       <div className={styles.formArea}>
         {/* <MainInfo
@@ -276,7 +256,6 @@ const ObjectsFormPage = () => {
           computedSections={computedSections}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}
-          
         />
       </div>
       <Footer
@@ -287,11 +266,7 @@ const ObjectsFormPage = () => {
             </SecondaryButton>
 
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
-              <FormCustomActionButton
-                control={control?._formValues}
-                tableSlug={tableSlug}
-                id={id}
-              />
+              <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
 
               {/* {customEvents?.map((event) => (
                 <PrimaryButton
@@ -302,11 +277,7 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
               <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                <PrimaryButton
-                  loader={btnLoader}
-                  id="submit"
-                  onClick={handleSubmit(onSubmit)}
-                >
+                <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
                   <Save />
                   Сохранить
                 </PrimaryButton>

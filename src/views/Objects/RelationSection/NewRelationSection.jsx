@@ -77,6 +77,13 @@ const NewRelationSection = ({
   const myRef = useRef();
   const navigate = useNavigate();
   const tables = useSelector((state) => state?.auth?.tables);
+  
+
+  useEffect(() => {
+    if (data?.[0]?.tabs?.length > 0) {
+      setSelectTab(data?.[0]?.tabs?.[0]);
+    }
+  }, [data]);
 
   useEffect(() => {
     queryTab ? setSelectedTabIndex(parseInt(queryTab) - 1) : setSelectedTabIndex(0);
@@ -255,23 +262,17 @@ const NewRelationSection = ({
       const table = tables?.find((table) => table?.slug === tableSlug);
       setTableId(table?.id);
     });
-  }, [tableSlug]);
+  }, []);
 
   useEffect(() => {
-    if (!tableId) return;
+    // if (!tableId) return;
     layoutService.getList({ data: { tableId } }).then((res) => {
-      console.log('ssssssss', res?.layouts)
       const layout = res?.layouts?.filter((layout) => layout?.is_default === true);
       setData(layout);
     });
-  }, [tableId]);
+  }, [tableSlug, tableId]);
 
-  useEffect(() => {
-    setSelectTab(relations[0]);
-  }, []);
-
-
-  // if (!datas?.length) return null;
+  // if (!data?.length) return null;
   return (
     <>
       {selectedManyToManyRelation && (

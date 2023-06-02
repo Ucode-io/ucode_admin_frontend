@@ -44,6 +44,7 @@ const NewRelationSection = ({
   relatedTable,
 }) => {
   const [data, setData] = useState([]);
+
   const filteredRelations = useMemo(() => {
     const rel = data?.filter((relation) => relation?.table_id);
     return rel?.filter((item) => {
@@ -259,7 +260,9 @@ const NewRelationSection = ({
   useEffect(() => {
     if (!tableId) return;
     layoutService.getList({ data: { tableId } }).then((res) => {
-      setData(res.layouts);
+      console.log('ssssssss', res?.layouts)
+      const layout = res?.layouts?.filter((layout) => layout?.is_default === true);
+      setData(layout);
     });
   }, [tableId]);
 

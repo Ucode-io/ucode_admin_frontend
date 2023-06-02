@@ -17,7 +17,7 @@ import HFCheckbox from "../../../components/FormElements/HFCheckbox";
 import HFSwitch from "../../../components/FormElements/HFSwitch";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
-import applicationService from "../../../services/applicationSercixe";
+import applicationService from "../../../services/applicationService";
 import constructorTableService from "../../../services/constructorTableService";
 import ImportModal from "./ImportModal";
 

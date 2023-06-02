@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import applicationService from "../../services/applicationSercixe";
+import applicationService from "../../services/applicationService";
 import constructorTableService from "../../services/constructorTableService";
 import { constructorTableActions } from "./constructorTable.slice";
 

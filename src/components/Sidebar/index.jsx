@@ -11,7 +11,7 @@ import { useQuery } from "react-query";
 import projectService from "../../services/projectService";
 import { Container, Draggable } from "react-smooth-dnd";
 import { applyDrag } from "../../utils/applyDrag";
-import applicationService from "../../services/applicationSercixe";
+import applicationService from "../../services/applicationService";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
 import constructorTableService from "../../services/constructorTableService";
 

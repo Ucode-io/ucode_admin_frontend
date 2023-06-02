@@ -10,6 +10,7 @@ import IconGenerator from "../../IconPicker/IconGenerator";
 import SearchInput from "../../SearchInput";
 import styles from "./style.module.scss";
 import constructorFunctionService from "../../../services/constructorFunctionService";
+import useDebouncedWatch from "../../../hooks/useDebouncedWatch";
 
 const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
   const [selectedTable, setSelectedTable] = useState(null);

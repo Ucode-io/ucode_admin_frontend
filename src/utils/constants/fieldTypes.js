@@ -145,6 +145,11 @@ export const fieldTypesOptions = [
         value: "PHOTO",
       },
       {
+        icon: "image.svg",
+        label: "Custom Image",
+        value: "CUSTOM_IMAGE",
+      },
+      {
         icon: "video.svg",
         label: "Video",
         value: "VIDEO",

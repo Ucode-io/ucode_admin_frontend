@@ -68,8 +68,8 @@ const ApiKeyPage = () => {
   };
   const getList = () => {
     const params = {
-      clientTypeId: clientTypeId,
-      roleId: roleId,
+      client_type_id: clientTypeId,
+      role_id: roleId,
     };
     apiKeyService
       .getList(projectId, params)

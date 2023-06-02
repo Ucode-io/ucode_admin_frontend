@@ -119,7 +119,7 @@ const NewRelationSection = ({
     update();
   }, []);
 
-  const selectedRelation = filteredRelations[selectedTabIndex];
+  const selectedRelation = filteredRelations?.[selectedTabIndex];
 
   useEffect(() => {
     setSelectedObjects([]);
@@ -265,20 +265,21 @@ const NewRelationSection = ({
   }, []);
 
   useEffect(() => {
-    // if (!tableId) return;
+    if (!tableId) return;
     layoutService.getList({ data: { tableId } }).then((res) => {
       const layout = res?.layouts?.filter((layout) => layout?.is_default === true);
       setData(layout);
     });
   }, [tableSlug, tableId]);
 
+  console.log('ssssssssss', data)
   // if (!data?.length) return null;
   return (
     <>
       {selectedManyToManyRelation && (
         <ManyToManyRelationCreateModal relation={selectedManyToManyRelation} closeModal={() => setSelectedManyToManyRelation(null)} limit={limit} setLimit={setLimit} />
       )}
-      {data.length ? (
+      {data?.length ? (
         <Card className={styles.card}>
           {data?.map((relation, index) => (
             <Tabs className={"react_detail"} selectedIndex={selectedTabIndex} onSelect={(index) => setSelectedTabIndex(index)}>

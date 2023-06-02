@@ -55,6 +55,8 @@ const RecursiveBlock = ({
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
 
+  console.log("level", level);
+
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: id,
@@ -89,7 +91,8 @@ const RecursiveBlock = ({
     color:
       element.isChild &&
       (tableSlug !== element.slug ? environment?.data?.active_color : ""),
-    paddingLeft: level === 1 || level === 2 ? "" : level * 6,
+    // paddingLeft: level === 1 || level === 2 ? level * 2 * 4 : level * 7,
+    paddingLeft: level * 2 * 5,
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),

@@ -34,7 +34,11 @@ const TableLinkModal = ({
 
   const onSubmit = (data) => {
     console.log("data", data);
-    createType(data, selectedFolder);
+    if (selectedFolder.type === "TABLE") {
+      updateType(data, selectedFolder);
+    } else {
+      createType(data, selectedFolder);
+    }
   };
 
   console.log("selectedFolder", selectedFolder);
@@ -42,11 +46,11 @@ const TableLinkModal = ({
   const { control, handleSubmit, reset } = useForm();
 
   useEffect(() => {
-    if (modalType === "update")
-      constructorTableService
-        .getFolderById(selectedFolder.id, projectId)
+    if (selectedFolder.type === "TABLE")
+      menuSettingsService
+        .getById(selectedFolder.id, projectId)
         .then((res) => {
-          reset({ ...res, app_id: appId });
+          reset(res);
         })
         .catch((err) => {
           console.log(err);
@@ -64,21 +68,20 @@ const TableLinkModal = ({
       })
       .then(() => {
         closeModal();
+        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
       })
       .catch((err) => {
         console.log(err);
       });
   };
   const updateType = (data, selectedFolder) => {
-    constructorTableService
-      .updateFolder({
+    menuSettingsService
+      .update({
         ...data,
-        // parent_id: modalType === "parent" ? selectedFolder.id : "",
-        app_id: appId,
       })
-      .then((res) => {
-        queryClient.refetchQueries(["GET_TABLE_FOLDER", appId]);
+      .then(() => {
         closeModal();
+        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
       })
       .catch((err) => {
         console.log(err);

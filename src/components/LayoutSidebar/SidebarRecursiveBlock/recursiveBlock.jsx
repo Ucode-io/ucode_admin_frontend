@@ -25,6 +25,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import AddIcon from "@mui/icons-material/Add";
 import "../style.scss";
 import menuSettingsService from "../../../services/menuSettingsService";
+import { useMenuListQuery } from "../../../services/menuService";
 
 const RecursiveBlock = ({
   index,
@@ -39,6 +40,7 @@ const RecursiveBlock = ({
   sidebarIsOpen,
   getMenuList,
   setTableModal,
+  selectedFolder,
 }) => {
   const { tableSlug } = useParams();
   const { appId } = useParams();
@@ -46,21 +48,39 @@ const RecursiveBlock = ({
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
   const [menu, setMenu] = useState();
-  const [child, setChild] = useState();
   const [menuType, setMenuType] = useState();
   const openMenu = Boolean(menu);
   const queryClient = useQueryClient();
+  const [child, setChild] = useState();
+  const [check, setCheck] = useState(false);
+  const [id, setId] = useState();
 
-  const getListMenu = (id) => {
-    menuSettingsService
-      .getList({
-        parent_id: id,
-      })
-      .then((res) => {
+  const { isLoading } = useMenuListQuery({
+    params: {
+      parent_id: id,
+    },
+    queryParams: {
+      cacheTime: 10,
+      enabled: Boolean(check),
+      onSuccess: (res) => {
         console.log("res", res);
+        setCheck(false);
         setChild(res.menus);
-      });
-  };
+      },
+    },
+  });
+
+  console.log("data", child);
+
+  // const getListMenu = (id) => {
+  //   menuSettingsService
+  //     .getList({
+  //       parent_id: id,
+  //     })
+  //     .then((res) => {
+  //       setChild(res.menus);
+  //     });
+  // };
 
   const activeStyle = {
     backgroundColor:
@@ -78,7 +98,9 @@ const RecursiveBlock = ({
   const clickHandler = () => {
     element.type === "TABLE" && parentClickHandler(element);
     setChildBlockVisible((prev) => !prev);
-    getListMenu(element.id);
+    // getListMenu(element.id);
+    setCheck(true);
+    setId(element.id);
   };
   useEffect(() => {
     if (
@@ -104,9 +126,9 @@ const RecursiveBlock = ({
     menuSettingsService
       .delete(element.id)
       .then(() => {
-        getListMenu(element.id);
+        // getListMenu(element.id);
         setChildBlockVisible(false);
-        queryClient.refetchQueries(["GET_MENU", appId]);
+        queryClient.refetchQueries(["MENU"], element?.id);
         getMenuList();
       })
       .catch((err) => {
@@ -247,7 +269,7 @@ const RecursiveBlock = ({
 
               {sidebarIsOpen && element?.label}
             </div>
-            {!element?.isChild && sidebarIsOpen ? (
+            {element?.type !== "TABLE" && sidebarIsOpen ? (
               <Box className="icon_group">
                 <Tooltip title="Folder settings" placement="top">
                   <Box className="extra_icon">
@@ -298,23 +320,25 @@ const RecursiveBlock = ({
               appId={appId}
               setTableModal={setTableModal}
             />
-            {element?.isChild && sidebarIsOpen ? (
+            {element?.type === "TABLE" && sidebarIsOpen ? (
               <Tooltip title="Table settings" placement="top">
-                <Box className="extra_icon">
-                  <BsThreeDots
-                    size={13}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleOpenNotify(e, "table");
-                    }}
-                    style={{
-                      color:
-                        tableSlug === element.slug
-                          ? environment?.data?.active_color
-                          : environment?.data?.color,
-                    }}
-                  />
+                <Box className="icon_group">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleOpenNotify(e, "table");
+                      }}
+                      style={{
+                        color:
+                          tableSlug === element.slug
+                            ? environment?.data?.active_color
+                            : environment?.data?.color,
+                      }}
+                    />
+                  </Box>
                 </Box>
               </Tooltip>
             ) : (

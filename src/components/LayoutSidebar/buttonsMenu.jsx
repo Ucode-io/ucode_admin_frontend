@@ -5,6 +5,7 @@ import { BsFillTrashFill } from "react-icons/bs";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "react-query";
 
 const ButtonsMenu = ({
   element,
@@ -20,7 +21,9 @@ const ButtonsMenu = ({
   appId,
   setTableModal,
 }) => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  console.log("selectedFolder?.id", element?.id);
   return (
     <>
       <Menu
@@ -59,8 +62,8 @@ const ButtonsMenu = ({
             </Box>
             <Divider
               style={{
-                marginBottom: "8px",
-                marginTop: "8px",
+                marginBottom: "4px",
+                marginTop: "4px",
               }}
             />
             <Box
@@ -101,8 +104,8 @@ const ButtonsMenu = ({
             </Box>
             <Divider
               style={{
-                marginBottom: "8px",
-                marginTop: "8px",
+                marginBottom: "4px",
+                marginTop: "4px",
               }}
             />
             <Box
@@ -117,21 +120,43 @@ const ButtonsMenu = ({
               <h3>Добавить папку</h3>
             </Box>
           </Box>
-        ) : (
-          <Box className="menu">
-            <Box
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                setFolderModalType("folder");
-                setSelectedTable(element);
-                handleCloseNotify();
-              }}
-            >
-              <RiPencilFill size={13} />
-              <h3>Переместить</h3>
+        ) : element.type === "TABLE" ? (
+          <>
+            <Box className="menu">
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setTableModal(element);
+                  handleCloseNotify();
+                }}
+              >
+                <RiPencilFill size={13} />
+                <h3>Изменить table</h3>
+              </Box>
             </Box>
-          </Box>
+            <Divider
+              style={{
+                marginBottom: "4px",
+                marginTop: "4px",
+              }}
+            />
+            <Box className="menu">
+              <Box
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  deleteFolder(element);
+                  handleCloseNotify();
+                }}
+              >
+                <BsFillTrashFill size={13} />
+                <h3>Удалить table</h3>
+              </Box>
+            </Box>
+          </>
+        ) : (
+          ""
         )}
       </Menu>
     </>

@@ -1,6 +1,4 @@
-import { Box, Card, IconButton, Modal, Typography } from "@mui/material";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import CancelButton from "../../components/Buttons/CancelButton";
+import { Box, Card, Modal, Typography } from "@mui/material";
 import CreateButton from "../../components/Buttons/CreateButton";
 import SaveButton from "../../components/Buttons/SaveButton";
 import { useParams } from "react-router-dom";
@@ -11,6 +9,7 @@ import constructorTableService from "../../services/constructorTableService";
 import { useQueryClient } from "react-query";
 import { useEffect } from "react";
 import menuSettingsService from "../../services/menuSettingsService";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const FolderCreateModal = ({
   closeModal,
@@ -52,27 +51,15 @@ const FolderCreateModal = ({
   }, [modalType]);
 
   const createType = (data, selectedFolder) => {
-    // constructorTableService
-    //   .createFolder({
-    //     ...data,
-    //     parent_id: modalType === "parent" ? selectedFolder.id : "0",
-    //   })
-    //   .then(() => {
-    //     queryClient.refetchQueries(["GET_TABLE_FOLDER", appId]);
-    //     closeModal();
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
     menuSettingsService
       .create({
         ...data,
         parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
         type: selectedFolder?.type || "FOLDER",
-        label: data.title,
+        label: data.label,
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_MENU", appId]);
+        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
         getMenuList();
         closeModal();
       })
@@ -80,13 +67,14 @@ const FolderCreateModal = ({
         console.log(err);
       });
   };
+
   const updateType = (data, selectedFolder) => {
-    constructorTableService
-      .updateFolder({
+    menuSettingsService
+      .update({
         ...data,
       })
-      .then((res) => {
-        queryClient.refetchQueries(["GET_TABLE_FOLDER", appId]);
+      .then(() => {
+        queryClient.refetchQueries(["MENU"], selectedFolder?.id);
         closeModal();
       })
       .catch((err) => {
@@ -104,9 +92,14 @@ const FolderCreateModal = ({
                 ? "Create folder"
                 : "Edit folder"}
             </Typography>
-            <IconButton color="primary" onClick={closeModal}>
-              <HighlightOffIcon fontSize="large" />
-            </IconButton>
+            <ClearIcon
+              color="primary"
+              onClick={closeModal}
+              width="46px"
+              style={{
+                cursor: "pointer",
+              }}
+            />
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="form">
@@ -122,7 +115,6 @@ const FolderCreateModal = ({
             </Box>
 
             <div className="btns-row">
-              <CancelButton onClick={closeModal} />
               {modalType === "crete" ? (
                 <CreateButton type="submit" loading={loading} />
               ) : (

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Text, Rect, Circle, Designer, Image } from "@looop/react-designer";
+// import { Text, Rect, Circle, Designer, Image } from "@looop/react-designer";
 import styles from "./style.module.scss";
 import html2canvas from "html2canvas";
 import { Button } from "@mui/material";
@@ -85,7 +85,7 @@ function HFCustomImageComponent(props) {
     <>
       <div className={styles.designer_content}>
         <div ref={designerRef} className={styles.designer_content_item}>
-          <Designer
+          {/* <Designer
             width={1100}
             height={500}
             background={null} 
@@ -98,7 +98,7 @@ function HFCustomImageComponent(props) {
             }}
             onUpdate={(objects) => setSVG(objects)}
             objects={svg}
-          />
+          /> */}
         </div>
         <Button
           variant="contained"

@@ -31,14 +31,14 @@ const ApiKeyPage = () => {
   const list = useSelector((state) => state.application.list);
   const loader = useSelector((state) => state.application.loader);
   const projectId = useSelector((state) => state.auth.projectId);
+  const clientTypeId = useSelector((state) => state.auth.clientType.id);
+  const roleId = useSelector((state) => state.auth.roleInfo.id);
   const inputRef = useRef();
   const [apiKeys, setApiKeys] = useState();
-
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
   };
 
-  console.log("location.pathname", location.pathname);
 
   const navigateToCreateForm = () => {
     navigate(`${location.pathname}/create`);
@@ -67,10 +67,13 @@ const ApiKeyPage = () => {
       });
   };
   const getList = () => {
+    const params = {
+      clientTypeId: clientTypeId,
+      roleId: roleId,
+    };
     apiKeyService
-      .getList(projectId)
+      .getList(projectId, params)
       .then((res) => {
-        console.log("res", res);
         setApiKeys(res.data);
       })
       .catch((err) => {

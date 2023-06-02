@@ -25,7 +25,7 @@ import ExcelButtons from "./components/ExcelButtons";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MultipleInsertButton from "./components/MultipleInsertForm";
 import CustomActionsButton from "./components/CustomActionsButton";
-import { ArrowDropDownCircleOutlined, Clear, Description, Edit, Save } from "@mui/icons-material";
+import { ArrowDropDownCircleOutlined, Clear, Description, Edit, MoreVertOutlined, Save } from "@mui/icons-material";
 import { useFieldArray, useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
@@ -323,12 +323,11 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             <FastFilterButton view={view} fieldsMap={fieldsMap} />
 
             <button className={style.moreButton} onClick={handleClick}>
-              <MoreHorizIcon
+              <MoreVertOutlined
                 style={{
                   color: "#888",
                 }}
               />
-              More options
             </button>
             <Menu
               open={open}

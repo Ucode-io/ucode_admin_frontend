@@ -52,6 +52,7 @@ const ObjectsFormPage = () => {
   const tableInfo = useMemo(() => {
     return tablesList.find((el) => el.slug === tableSlug);
   }, [tablesList, tableSlug]);
+  
   const computedSections = useMemo(() => {
     let tabIndex = 1;
     return (
@@ -68,7 +69,7 @@ const ObjectsFormPage = () => {
         .sort(sortByOrder) ?? []
     );
   }, [sections]);
-
+ 
   const computedSummary = useMemo(() => {
     return sections.find((item) => item.is_summary_section);
   }, [sections]);
@@ -195,8 +196,8 @@ const ObjectsFormPage = () => {
     if (!tableInfo) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo]);
-
+  }, [id, tableInfo, tableSlug]);
+ 
   const {
     handleSubmit,
     control,
@@ -209,12 +210,12 @@ const ObjectsFormPage = () => {
 
   // Automatic setValue for End of Session
 
-  const serviceTime = watch("service_time");
-  const startTime = watch("date_start");
-
-  useEffect(() => {
-    setFormValue("time_end", startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined);
-  }, [serviceTime, startTime]);
+  // const serviceTime = watch("service_time");
+  // const startTime = watch("date_start");
+ 
+  // useEffect(() => {
+  //   setFormValue("time_end", startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined);
+  // }, [serviceTime, startTime]);
 
   if (loader) return <PageFallback />;
   return (
@@ -253,6 +254,11 @@ const ObjectsFormPage = () => {
           setSelectedTabIndex={setSelectedTabIndex}
           relations={tableRelations}
           control={control}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          reset={reset}
+          setFormValue={setFormValue}
+          watch={watch}
           computedSections={computedSections}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}

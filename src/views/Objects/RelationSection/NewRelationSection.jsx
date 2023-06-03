@@ -42,6 +42,12 @@ const NewRelationSection = ({
   setLimit,
   computedSections,
   relatedTable,
+  control,
+  handleSubmit,
+  onSubmit,
+  reset,
+  setFormValue,
+  watch,
 }) => {
   const [data, setData] = useState([]);
 
@@ -77,7 +83,6 @@ const NewRelationSection = ({
   const myRef = useRef();
   const navigate = useNavigate();
   const tables = useSelector((state) => state?.auth?.tables);
-  
 
   useEffect(() => {
     if (data?.[0]?.tabs?.length > 0) {
@@ -98,18 +103,18 @@ const NewRelationSection = ({
     setHeightControl(false);
   };
 
-  const {
-    control,
-    reset,
-    handleSubmit,
-    watch,
-    setValue: setFormValue,
-  } = useForm({
-    defaultValues: {
-      [`${tableSlug}_id`]: id,
-      multi: [],
-    },
-  });
+  // const {
+  //   control,
+  //   reset,
+  //   handleSubmit,
+  //   watch,
+  //   setValue: setFormValue,
+  // } = useForm({
+  //   defaultValues: {
+  //     [`${tableSlug}_id`]: id,
+  //     multi: [],
+  //   },
+  // });
 
   const { fields, remove, append, update } = useFieldArray({
     control,
@@ -196,14 +201,14 @@ const NewRelationSection = ({
       },
     }
   );
-  const onSubmit = (data) => {
-    updateMultipleObject(data);
-    navigate("/reloadRelations", {
-      state: {
-        redirectUrl: window.location.pathname,
-      },
-    });
-  };
+  // const onSubmit = (data) => {
+  //   updateMultipleObject(data);
+  //   navigate("/reloadRelations", {
+  //     state: {
+  //       redirectUrl: window.location.pathname,
+  //     },
+  //   });
+  // };
 
   /*****************************JWT START*************************/
 
@@ -272,7 +277,6 @@ const NewRelationSection = ({
     });
   }, [tableSlug, tableId]);
 
-  console.log('ssssssssss', data)
   // if (!data?.length) return null;
   return (
     <>
@@ -339,14 +343,14 @@ const NewRelationSection = ({
                         <Clear color="error" />
                       </RectangleIconButton>
                     </>
-                  ) : (
+                  ) : ( 
                     fields.length > 0 && (
                       <RectangleIconButton
                         color="success"
                         size="small"
                         onClick={() => {
                           setFormVisible(true);
-                          reset();
+                          
                         }}
                       >
                         <Edit color="primary" />

@@ -129,7 +129,7 @@ const RelationTable = forwardRef(
         });
       },
       {
-        enabled: !!appId,
+        enabled: !!relatedTableSlug && !!appId,
         select: ({ data }) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount = isNaN(data.count)
@@ -166,13 +166,13 @@ const RelationTable = forwardRef(
       else setLimit(parseInt(relation?.default_limit));
     }, [relation?.default_limit]);
 
-    useEffect(() => {
-      setTimeout(() => {
-        reset({
-          multi: tableData?.length ? tableData.map((i) => i) : [],
-        });
-      }, 0);
-    }, [tableData, reset, selectedTabIndex]);
+    // useEffect(() => {
+    //   setTimeout(() => {
+    //     reset({
+    //       multi: tableData?.length ? tableData.map((i) => i) : [],
+    //     });
+    //   }, 0);
+    // }, [tableData, reset, selectedTabIndex]);
 
     const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {

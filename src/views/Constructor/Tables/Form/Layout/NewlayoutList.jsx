@@ -1,61 +1,236 @@
-import { Box } from "@mui/material";
-import React, { useEffect } from "react";
-import TableCard from "../../../../../components/TableCard";
-import { CTable, CTableBody, CTableCell, CTableHead, CTableRow } from "../../../../../components/CTable";
-import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/PermissionWrapperV2";
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
-import DeleteWrapperModal from "../../../../../components/DeleteWrapperModal";
 import { Delete } from "@mui/icons-material";
+import { Box, FormControlLabel, Input, Switch } from "@mui/material";
+import React, { useEffect } from "react";
+import { useFieldArray, useWatch } from "react-hook-form";
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
+import { CTable, CTableCell, CTableHead, CTableRow } from "../../../../../components/CTable";
+import DeleteWrapperModal from "../../../../../components/DeleteWrapperModal";
+import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/PermissionWrapperV2";
+import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
-import { useNavigate, useParams } from "react-router-dom";
 import layoutService from "../../../../../services/layoutService";
+import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
+import AutosizeInput from "react-input-autosize";
+import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 
-function NewlayoutList(props) {
-  const navigate = useNavigate();
-  const { id } = useParams()
+const defaultLayout = {
+  icon: "",
+  label: "NEW LAYOUT",
+  tabs: [
+    {
+      icon: "",
+      label: "",
+      layout_id: "",
+      relation_id: "",
+      relations: [
+        {
+          action_relations: [
+            {
+              key: "",
+              value: "",
+            },
+          ],
+          auto_filters: [
+            {
+              field_from: "",
+              field_to: "",
+            },
+          ],
+          cascading_tree_field_slug: "",
+          cascading_tree_table_slug: "",
+          cascadings: [
+            {
+              field_slug: "",
+              label: "",
+              table_slug: "",
+            },
+          ],
+          columns: [""],
+          default_limit: "",
+          default_values: [""],
+          dynamic_tables: [
+            {
+              table_slug: "",
+              view_fields: [""],
+            },
+          ],
+          editable: true,
+          field_from: "",
+          field_to: "",
+          group_fields: [""],
+          is_editable: true,
+          is_user_id_default: true,
+          multiple_insert: true,
+          multiple_insert_field: "",
+          object_id_from_jwt: true,
+          quick_filters: [
+            {
+              default_value: "",
+              field_id: "",
+            },
+          ],
+          relation_field_slug: "",
+          relation_table_slug: "",
+          summaries: [
+            {
+              field_name: "",
+              formula_name: "",
+            },
+          ],
+          table_from: {
+            author_id: "",
+            commit_info: {
+              commit_type: "",
+              created_at: "",
+              name: "",
+              version_ids: [""],
+            },
+            description: "",
+            folder_id: "",
+            icon: "",
+            increment_id: {
+              digit_number: 0,
+              prefix: "",
+              with_increment_id: true,
+            },
+            is_cached: true,
+            is_own_table: true,
+            is_visible: true,
+            label: "",
+            project_id: "",
+            show_in_menu: true,
+            slug: "",
+            subtitle_field_slug: "",
+          },
+          table_to: {
+            author_id: "",
+            commit_info: {
+              commit_type: "",
+              created_at: "",
+
+              name: "",
+              version_ids: [""],
+            },
+            description: "",
+            folder_id: "",
+            icon: "",
+
+            increment_id: {
+              digit_number: 0,
+              prefix: "",
+              with_increment_id: true,
+            },
+            is_cached: true,
+            is_own_table: true,
+            is_visible: true,
+            label: "",
+            project_id: "",
+            show_in_menu: true,
+            slug: "",
+            subtitle_field_slug: "",
+          },
+          title: "",
+          type: "section",
+          updated_fields: [""],
+          view_fields: [
+            {
+              attributes: {
+                fields: {
+                  additionalProp1: {},
+                  additionalProp2: {},
+                  additionalProp3: {},
+                },
+              },
+              autofill_field: "",
+              autofill_table: "",
+              automatic: true,
+              commit_id: "",
+              default: "",
+              index: "",
+              is_visible: true,
+              label: "",
+              project_id: "",
+              relation_id: "",
+              required: true,
+              slug: "",
+              table_id: "",
+              type: "",
+              unique: true,
+              version_id: "",
+            },
+          ],
+          view_type: "",
+        },
+      ],
+      sections: [
+        {
+          column: "",
+          fields: [
+            {
+              column: 0,
+              field_name: "",
+              order: 0,
+              relation_type: "",
+            },
+          ],
+          icon: "",
+          is_summary_section: true,
+          label: "",
+          order: 0,
+        },
+      ],
+      type: "section",
+    },
+  ],
+  type: "SimpleLayout",
+};
+
+function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm }) {
+  const tableId = useWatch({
+    control: mainForm.control,
+    name: "id",
+  });
 
   useEffect(() => {
-    layoutService.getList({id, data: {tableId: id}}).then((res) => {
-      console.log('sssssssssss', res)
+    layoutService.getList({ data: { tableId: tableId ?? "" } }).then((res) => {
+      mainForm.setValue("layouts", res?.layouts ?? []);
     });
   }, []);
 
-  const layouts = [
-    {
-      id: "adsadsdsdads",
-      order: 1,
-      table_id: "EEEEEEEEEE",
-      label: "Painter",
-      type: "",
-    },
-    {
-      id: "adsadsdsdads",
-      order: 2,
-      table_id: "EEEEEEEEEE",
-      label: "Payments",
-      type: "",
-    },
-    {
-      id: "adsadsdsdads",
-      order: 3,
-      table_id: "EEEEEEEEEE",
-      label: "Orders",
-      type: "",
-    },
-    {
-      id: "adsadsdsdads",
-      order: 4,
-      table_id: "EEEEEEEEEE",
-      label: "Products",
-      type: "",
-    },
-  ];
+  const {
+    fields: layouts,
+    append,
+    remove,
+  } = useFieldArray({
+    control: mainForm.control,
+    name: "layouts",
+    keyName: "key",
+  });
 
-  const navigateToEditForm = (id) => {
-    // // Construct the URL for the "NewLayoutSettings" page with the specified id
-    // const url = `/settings/newlayoutsettings/${id}`;
-    // tabRouter.navigateTab(url);
+  const navigateToEditForm = (element) => {
+    setSelectedLayout(element);
   };
+
+  const setDefault = (index) => {
+    const newLayouts = layouts.map((element, i) => {
+      if (i === index) {
+        return {
+          ...element,
+          is_default: !element.is_default,
+        };
+      }
+      return {
+        ...element,
+        is_default: false,
+      };
+    });
+    mainForm.setValue("layouts", newLayouts);
+  };
+
+  const computedLayouts = useWatch({
+    control: mainForm.control,
+    name: "layouts",
+  });
 
   return (
     <Box sx={{ width: "100%", height: "100vh", background: "#fff" }}>
@@ -71,13 +246,37 @@ function NewlayoutList(props) {
           </CTableHead>
 
           {/* <CTableBody  columnsCount={4} > */}
-          {layouts?.map((element) => (
-            <CTableRow key={element.id} onClick={() => navigateToEditForm(element.id)}>
-              <CTableCell>{element?.order}</CTableCell>
-              <CTableCell>{element?.label}</CTableCell>
+          {computedLayouts?.map((element, index) => (
+            <CTableRow key={element.id} onClick={() => navigateToEditForm(element)}>
+              <CTableCell>{index + 1}</CTableCell>
+              <CTableCell>
+                <Box style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <HFAutoWidthInput
+                    onClick={(e) => e.stopPropagation()}
+                    control={mainForm.control}
+                    name={`layouts.${index}.label`}
+                    inputStyle={{ border: "none", outline: "none", fontWeight: 500, background: "transparent" }}
+                  />
+
+                  <Box style={{ display: "flex", alignItems: "center" }}>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          onChange={() => setDefault(index)}
+                          checked={element.is_default ?? false}
+                        />
+                      }
+                      label={"Default"}
+                    />
+                  </Box>
+                </Box>
+              </CTableCell>
               <PermissionWrapperV2 tabelSlug="app" type="delete">
                 <CTableCell>
-                  <DeleteWrapperModal>
+                  <DeleteWrapperModal onDelete={() => remove(index)}>
                     <RectangleIconButton color="error">
                       <Delete color="error" />
                     </RectangleIconButton>
@@ -87,8 +286,7 @@ function NewlayoutList(props) {
             </CTableRow>
           ))}
           <PermissionWrapperV2 tabelSlug="app" type="write">
-            <TableRowButton colSpan={4} />
-            {/* onClick={navigateToCreateForm}  */}
+            <TableRowButton colSpan={4} onClick={() => append({ table_id: tableId, type: "SimpleLayout", label: "New" })} />
           </PermissionWrapperV2>
           {/* </CTableBody> */}
         </CTable>

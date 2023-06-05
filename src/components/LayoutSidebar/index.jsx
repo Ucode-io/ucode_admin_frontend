@@ -1,6 +1,5 @@
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { useEffect, useMemo, useState } from "react";
-import { AiFillFolderAdd } from "react-icons/ai";
 import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import brandLogo from "../../../builder_config/assets/company-logo.svg";
@@ -8,18 +7,29 @@ import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import constructorTableService from "../../services/constructorTableService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
-import { applyDrag } from "../../utils/applyDrag";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import RecursiveBlock from "./SidebarRecursiveBlock/recursiveBlock";
 import FolderModal from "./folderModal";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import "./style.scss";
-
+import { Box, Collapse, ListItemButton, ListItemText } from "@mui/material";
+import SearchInput from "../SearchInput";
+import MenuButton from "./menuButton";
+import AddIcon from "@mui/icons-material/Add";
+import HomeIcon from "@mui/icons-material/Home";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import ProfilePanel from "../ProfilePanel";
+import { useNavigate } from "react-router-dom";
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 const LayoutSidebar = ({
   elements,
   favicon,
   appId,
   environment,
   getAppById,
+  setSelectedTable,
+  selectedTable,
 }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
@@ -27,13 +37,26 @@ const LayoutSidebar = ({
   const projectId = useSelector((state) => state.auth.projectId);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [openedBlock, setOpenedBlock] = useState(null);
   const [loading, setLoading] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [childBlockVisible, setChildBlockVisible] = useState(false);
-  const [selectedTable, setSelectedTable] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleRouter = () => {
+    navigate(`/main/${appId}/chat`);
+  };
+
+  const openMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
 
   const closeModal = () => {
     setModalType(null);
@@ -55,7 +78,6 @@ const LayoutSidebar = ({
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
   };
-  const folders = tableFolder?.folders;
 
   const switchRightSideVisible = () => {
     setSidebarIsOpen(!sidebarIsOpen);
@@ -65,10 +87,8 @@ const LayoutSidebar = ({
     if (element.children) {
       switchChildBlockHandler(element.id);
       if (!sidebarIsOpen) setSidebarIsOpen(true);
-      console.log("this is parent");
       setChildBlockVisible((prev) => !prev);
     } else {
-      console.log("this is close");
       setOpenedBlock(null);
     }
   };
@@ -77,16 +97,30 @@ const LayoutSidebar = ({
     setOpenedBlock((prev) => (prev === id ? null : id));
   };
 
-  const computedTableList = useMemo(() => {
-    return tableFolderListToNested(
-      [...(tableFolder?.folders ?? []), ...elements],
+  const files = useMemo(() => {
+    return [
+      ...(tableFolder?.folders?.map((item) => ({
+        ...item,
+        parent_id: item?.parent_id ? item?.parent_id : "0",
+      })) ?? []),
       {
-        undefinedChildren: true,
-      }
-    );
-  }, [tableFolder?.folders, elements]);
+        id: "0",
+        title: "Root",
+      },
+    ];
+  }, [tableFolder?.folders]);
 
-  const sidebarElements = useMemo(() => computedTableList, [computedTableList]);
+  const computedTableList = useMemo(() => {
+    return tableFolderListToNested([...(files ?? []), ...elements], {
+      undefinedChildren: true,
+    });
+  }, [tableFolder?.folders, elements, files]);
+
+  const computedFolderList = useMemo(() => {
+    return tableFolderListToNested([...(files ?? [])], {
+      undefinedChildren: true,
+    });
+  }, [files]);
 
   useEffect(() => {
     if (!computedTableList) setLoading(true);
@@ -104,34 +138,6 @@ const LayoutSidebar = ({
     }
   );
 
-  console.log("tableFolder?.folders", tableFolder?.folders);
-
-  const onDrop = (dropResult) => {
-    const result = applyDrag(sidebarElements, dropResult);
-    const computedTables = [
-      ...result.map((el) => ({
-        table_id: el.id,
-        is_visible: Boolean(el.is_visible),
-        is_own_table: Boolean(el.is_own_table),
-      })),
-    ];
-    console.log("result", result);
-    // if (result) {
-    //   applicationService
-    //     .update({
-    //       ...applicationElements,
-    //       tables: computedTables,
-    //     })
-    //     .then(() => {
-    //       dispatch(fetchConstructorTableListAction(appId));
-    //     });
-    // }
-  };
-
-  console.log("environment", environment);
-
-  const hasNestedLevel = sidebarElements?.some((element) => element.children);
-
   return (
     <div
       className={`LayoutSidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}
@@ -139,7 +145,6 @@ const LayoutSidebar = ({
       <div
         className="header"
         onClick={() => {
-          // setRightBlockVisible((prev) => !prev);
           switchRightSideVisible();
         }}
       >
@@ -158,55 +163,120 @@ const LayoutSidebar = ({
           )}{" "}
         </div>
         <div className="cloes-btn" onClick={switchRightSideVisible}>
-          <AiFillFolderAdd
-            size={19}
-            onClick={(e) => {
-              e.stopPropagation();
-              openFolderCreateModal("create");
-            }}
-          />
           <MenuOpenIcon />
         </div>
       </div>
 
-      <div
-        className="nav-block"
+      <Box
         style={{
-          height: `calc(100vh - ${57}px)`,
-          background: environment?.data?.background,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          height: "calc(100% - 56px)",
         }}
       >
-        <div className="menu-element">
-          {sidebarElements?.map((element, index) => (
-            <RecursiveBlock
-              key={index}
-              element={element}
-              parentClickHandler={parentClickHandler}
-              openedBlock={openedBlock}
-              openFolderCreateModal={openFolderCreateModal}
-              // hasNestedLevel={hasNestedLevel}
-              environment={environment}
-              childBlockVisible={childBlockVisible}
-              onDrop={onDrop}
-              tableFolder={tableFolder?.folders}
-              setFolderModalType={setFolderModalType}
-              setSelectedTable={setSelectedTable}
+        <div>
+          <Box className="search">
+            <SearchInput
+              style={{
+                borderRadius: "8px",
+                width: "100%",
+              }}
             />
-          ))}
-          {folderModalType === "folder" && (
-            <FolderModal
-              closeModal={closeFolderModal}
-              tableFolder={tableFolder?.folders}
-              modalType={folderModalType}
-              selectedTable={selectedTable}
-              getAppById={getAppById}
-            />
-          )}
+          </Box>
+
+          {/* <MenuButton
+            title={"My tasks"}
+            icon={<HomeIcon />}
+            openFolderCreateModal={openFolderCreateModal}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              openFolderCreateModal("create");
+            }}
+          />
+          <MenuButton
+            title={"Notification"}
+            icon={<NotificationsIcon />}
+            openFolderCreateModal={openFolderCreateModal}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              openFolderCreateModal("create");
+            }}
+          /> */}
+          <MenuButton
+            title={"Chat"}
+            icon={<ChatBubbleIcon />}
+            openFolderCreateModal={openFolderCreateModal}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleRouter();
+            }}
+          />
+          <div
+            className="nav-block"
+            style={{
+              // height: `calc(100vh - ${57}px)`,
+              background: environment?.data?.background,
+            }}
+          >
+            <div className="menu-element">
+              {computedTableList?.map((element, index) => (
+                <RecursiveBlock
+                  key={index}
+                  element={element}
+                  parentClickHandler={parentClickHandler}
+                  openedBlock={openedBlock}
+                  openFolderCreateModal={openFolderCreateModal}
+                  environment={environment}
+                  childBlockVisible={childBlockVisible}
+                  tableFolder={tableFolder?.folders}
+                  setFolderModalType={setFolderModalType}
+                  setSelectedTable={setSelectedTable}
+                  sidebarIsOpen={sidebarIsOpen}
+                />
+              ))}
+              {folderModalType === "folder" && (
+                <FolderModal
+                  closeModal={closeFolderModal}
+                  modalType={folderModalType}
+                  selectedTable={selectedTable}
+                  getAppById={getAppById}
+                  computedFolderList={computedFolderList}
+                />
+              )}
+            </div>
+            {/* <div className="sidebar-footer"></div> */}
+          </div>
+          <MenuButton
+            title={"Create folder"}
+            icon={<AddIcon />}
+            openFolderCreateModal={openFolderCreateModal}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              openFolderCreateModal("create");
+            }}
+          />
         </div>
 
-        <div className="sidebar-footer"></div>
-      </div>
-      {(modalType === "create" || modalType === "parent") && (
+        <MenuButton
+          title={"Profile"}
+          openFolderCreateModal={openFolderCreateModal}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            anchorEl ? setAnchorEl(null) : openMenu(e);
+          }}
+          children={<ProfilePanel anchorEl={anchorEl} />}
+        />
+      </Box>
+
+      {(modalType === "create" ||
+        modalType === "parent" ||
+        modalType === "update") && (
         <FolderCreateModal
           modalType={modalType}
           closeModal={closeModal}

@@ -14,7 +14,7 @@ import {
 import FRow from "../../../components/FormElements/FRow"
 import LargeModalCard from "../../../components/LargeModalCard"
 import useWatch from "../../../hooks/useWatch"
-import applicationService from "../../../services/applicationSercixe"
+import applicationService from "../../../services/applicationService"
 import listToOptions from "../../../utils/listToOptions"
 
 const ImportModal = ({ closeModal, btnLoader, importTable }) => {

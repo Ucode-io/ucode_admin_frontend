@@ -11,7 +11,7 @@ import { useQuery } from "react-query";
 import projectService from "../../services/projectService";
 import { Container, Draggable } from "react-smooth-dnd";
 import { applyDrag } from "../../utils/applyDrag";
-import applicationService from "../../services/applicationSercixe";
+import applicationService from "../../services/applicationService";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
 import constructorTableService from "../../services/constructorTableService";
 
@@ -115,14 +115,14 @@ const Sidebar = ({ elements = [], environment }) => {
               {elements
                 .filter((element) => element.icon)
                 .map((element) => (
-                  <Draggable key={element.id}>
-                    <Tooltip
-                      placement="right"
-                      followCursor
-                      key={element.id}
-                      title={element.title}
-                    >
-                      <Box className={styles.dragBox}>
+                  <Tooltip
+                    placement="right"
+                    followCursor
+                    key={element.id}
+                    title={element.title}
+                  >
+                    <Box className={styles.dragBox}>
+                      <Draggable key={element.id}>
                         {visible ? (
                           <div className={styles.navLinkOpen}>
                             <NavLink
@@ -202,9 +202,9 @@ const Sidebar = ({ elements = [], environment }) => {
                             )}
                           </NavLink>
                         )}
-                      </Box>
-                    </Tooltip>
-                  </Draggable>
+                      </Draggable>
+                    </Box>
+                  </Tooltip>
                 ))}
             </Container>
           </div>

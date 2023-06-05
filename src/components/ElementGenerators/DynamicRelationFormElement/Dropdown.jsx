@@ -9,6 +9,8 @@ import { getLabelWithViewFields } from "../../../utils/getRelationFieldLabel";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import SearchInput from "../../SearchInput";
 import styles from "./style.module.scss";
+import constructorFunctionService from "../../../services/constructorFunctionService";
+import useDebouncedWatch from "../../../hooks/useDebouncedWatch";
 
 const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
   const [selectedTable, setSelectedTable] = useState(null);
@@ -46,6 +48,33 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
         );
       },
     }
+  );
+  
+  useDebouncedWatch(
+    () => {
+      // if (elmValue.length >= field.attributes?.length) {
+        constructorFunctionService
+          .invoke({
+            function_id: field?.attributes?.function,
+            // object_ids: [id, elmValue],
+            attributes: {
+              // barcode: elmValue,
+            },
+          })
+          .then((res) => {
+            if (res === "Updated successfully!") {
+              console.log("Успешно обновлено!", "success");
+            }
+          })
+          .finally(() => {
+            // setFormValue(name, "");
+            // setElmValue("");
+            // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
+          });
+      // }
+    },
+    [],
+    300
   );
 
   useEffect(() => {

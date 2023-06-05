@@ -1,5 +1,5 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
-import { InputAdornment } from "@mui/material";
+import { Box, InputAdornment } from "@mui/material";
 import { useEffect, useMemo } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,6 +19,7 @@ import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import { firebaseCloudMessaging } from "../../../firebase/config";
 import DynamicFields from "./DynamicFields";
+import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -78,7 +79,7 @@ const LoginForm = () => {
     ],
     () => {
       return clientTypeServiceV2.getList(
-        { 'project-id': selectedProjectID },
+        { "project-id": selectedProjectID },
         { "environment-id": selectedEnvID }
       );
     },
@@ -100,7 +101,10 @@ const LoginForm = () => {
     ],
     () => {
       return connectionServiceV2.getList(
-        { "project-id": selectedProjectID, client_type_id: selectedClientTypeID },
+        {
+          "project-id": selectedProjectID,
+          client_type_id: selectedClientTypeID,
+        },
         { "environment-id": selectedEnvID }
       );
     },
@@ -184,6 +188,20 @@ const LoginForm = () => {
                   />
                 </div>
               </TabPanel>
+              {/* <TabPanel>
+                <div className={classes.formRow}>
+                  <p className={classes.label}>{t("login")}</p>
+                  <Box className={classes.phone}>
+                    <HFTextFieldWithMask
+                      isFormEdit
+                      control={control}
+                      name={"phoneNumber"}
+                      fullWidth
+                      // mask={"(99) 999-99-99"}
+                    />
+                  </Box>
+                </div>
+              </TabPanel> */}
             </div>
           </div>
         ) : (

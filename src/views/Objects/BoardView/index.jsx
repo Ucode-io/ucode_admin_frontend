@@ -32,6 +32,7 @@ const BoardView = ({
   setSelectedTabIndex,
   views,
   fieldsMap,
+  selectedTable
 }) => {
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
@@ -160,6 +161,7 @@ const BoardView = ({
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
           setViews={setViews}
+          selectedTable={selectedTable}
         />
       </FiltersBlock>
 

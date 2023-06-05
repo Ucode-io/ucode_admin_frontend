@@ -2,6 +2,13 @@
 
 .page {
   display: flex;
+  background-color: #fff;
+  border-left: 1px solid #e5e9eb;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 4;
+  height: 100vh;
 }
 
 .sectionsBlock {
@@ -273,6 +280,7 @@
     font-weight: 500;
     font-size: 20px;
     line-height: 24px;
+    min-width: 250px;
   }
   span {
     cursor: pointer;
@@ -296,11 +304,9 @@
   list-style-type: none;
   cursor: pointer;
   border-radius: 4px;
-  color:#5B6871;
+  color: #5b6871;
   margin: 0 5px;
 }
-
-
 
 .newsectionsBlock {
   min-height: 40px;
@@ -311,7 +317,6 @@
     border-radius: 6px;
     // margin-bottom: 15px;
     display: flex;
-    
 
     &.short {
       min-width: 160px;
@@ -341,7 +346,7 @@
       display: flex;
       align-items: center;
       flex-direction: row;
-      
+
       &::-webkit-scrollbar {
         display: none;
       }
@@ -405,3 +410,23 @@
   }
 
 }
+
+.tabs_section {
+  background: #fff;
+  padding: 5px 0 0;
+  width: 100%;
+}
+
+.tabs {
+  padding: 5px 10px;
+}
+
+.tabs_item {
+  padding: 10px;
+  list-style-type: none;
+  cursor: pointer;
+  border-radius: 4px;
+  color:#5B6871;
+  margin: 0 5px;
+}
+

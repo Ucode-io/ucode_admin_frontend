@@ -27,7 +27,7 @@ import HFSelect from "../../components/FormElements/HFSelect";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
 // SERVICES
-import applicationService from "../../services/applicationSercixe";
+import applicationService from "../../services/applicationService";
 import constructorObjectService from "../../services/constructorObjectService";
 import constructorRelationService from "../../services/constructorRelationService";
 import roleServiceV2 from "../../services/roleServiceV2";

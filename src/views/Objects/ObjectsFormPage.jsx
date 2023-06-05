@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PageFallback from "../../components/PageFallback";
@@ -22,17 +22,19 @@ import DocumentGeneratorButton from "./components/DocumentGeneratorButton";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import { showAlert } from "../../store/alert/alert.thunk";
-import SummarySection from "./SummarySection/SummarySection";
 import BackButton from "../../components/BackButton";
 import FormPageBackButton from "./components/FormPageBackButton";
 import { addMinutes } from "date-fns";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
+import SummarySectionValue from "./SummarySection/SummarySectionValue";
+import DetailTabs from "../Constructor/Tables/Form/Layout/DetailPage";
+import NewRelationSection from "./RelationSection/NewRelationSection";
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { pathname, state = {} } = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { removeTab, navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
@@ -42,9 +44,15 @@ const ObjectsFormPage = () => {
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const handleTabSelection = (tabIndex) => {
+    setSelectedTab(tabIndex);
+  };
+
   const tableInfo = useMemo(() => {
     return tablesList.find((el) => el.slug === tableSlug);
   }, [tablesList, tableSlug]);
+  
   const computedSections = useMemo(() => {
     let tabIndex = 1;
     return (
@@ -61,10 +69,11 @@ const ObjectsFormPage = () => {
         .sort(sortByOrder) ?? []
     );
   }, [sections]);
-
+ 
   const computedSummary = useMemo(() => {
     return sections.find((item) => item.is_summary_section);
   }, [sections]);
+  
   const getAllData = async () => {
     const getSections = constructorSectionService.getList({
       table_slug: tableSlug,
@@ -77,11 +86,7 @@ const ObjectsFormPage = () => {
     });
 
     try {
-      const [
-        { sections = [] },
-        { data = {} },
-        { relations: view_relations = [] },
-      ] = await Promise.all([getSections, getFormData, getRelations]);
+      const [{ sections = [] }, { data = {} }, { relations: view_relations = [] }] = await Promise.all([getSections, getFormData, getRelations]);
 
       setSections(sortSections(sections));
 
@@ -96,10 +101,7 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
 
@@ -126,8 +128,7 @@ const ObjectsFormPage = () => {
         // relation_table_slug: tableSlug
       });
 
-      const [{ sections = [] }, { relations: view_relations = [] }] =
-        await Promise.all([getSections, getRelations]);
+      const [{ sections = [] }, { relations: view_relations = [] }] = await Promise.all([getSections, getRelations]);
 
       setSections(sortSections(sections));
 
@@ -140,10 +141,7 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
     } catch (error) {
@@ -177,11 +175,10 @@ const ObjectsFormPage = () => {
           table_slug: tableSlug,
           user_id: isUserId,
         });
-        navigate(-1)
+        navigate(-1);
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
-        if (tableRelations?.length)
-          navigateToForm(tableSlug, "EDIT", res.data?.data);
+        if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
@@ -199,8 +196,8 @@ const ObjectsFormPage = () => {
     if (!tableInfo) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo]);
-
+  }, [id, tableInfo, tableSlug]);
+ 
   const {
     handleSubmit,
     control,
@@ -213,17 +210,12 @@ const ObjectsFormPage = () => {
 
   // Automatic setValue for End of Session
 
-  const serviceTime = watch("service_time");
-  const startTime = watch("date_start");
-
-  useEffect(() => {
-    setFormValue(
-      "time_end",
-      startTime && serviceTime
-        ? addMinutes(new Date(startTime), parseInt(serviceTime))
-        : undefined
-    );
-  }, [serviceTime, startTime]);
+  // const serviceTime = watch("service_time");
+  // const startTime = watch("date_start");
+ 
+  // useEffect(() => {
+  //   setFormValue("time_end", startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined);
+  // }, [serviceTime, startTime]);
 
   if (loader) return <PageFallback />;
   return (
@@ -235,14 +227,10 @@ const ObjectsFormPage = () => {
         hasBackground={true}
       >
         <FormPageBackButton />
-        <SummarySection
-          computedSummary={computedSummary}
-          control={control}
-          sections={sections}
-        />
+        <SummarySectionValue computedSummary={computedSummary} control={control} sections={sections} />
       </FiltersBlock>
       <div className={styles.formArea}>
-        <MainInfo
+        {/* <MainInfo
           control={control}
           computedSections={computedSections}
           setFormValue={setFormValue}
@@ -255,7 +243,26 @@ const ObjectsFormPage = () => {
             relations={tableRelations}
             control={control}
           />
-        </div>
+        </div> */}
+        {/* <DetailTabs
+          control={control}
+          // selectedTab={selectedTab}
+          // handleTabSelection={handleTabSelection}
+        /> */}
+        <NewRelationSection
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          relations={tableRelations}
+          control={control}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          reset={reset}
+          setFormValue={setFormValue}
+          watch={watch}
+          computedSections={computedSections}
+          relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
+          id={id}
+        />
       </div>
       <Footer
         extra={
@@ -265,11 +272,7 @@ const ObjectsFormPage = () => {
             </SecondaryButton>
 
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
-              <FormCustomActionButton
-                control={control?._formValues}
-                tableSlug={tableSlug}
-                id={id}
-              />
+              <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
 
               {/* {customEvents?.map((event) => (
                 <PrimaryButton
@@ -280,11 +283,7 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
               <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                <PrimaryButton
-                  loader={btnLoader}
-                  id="submit"
-                  onClick={handleSubmit(onSubmit)}
-                >
+                <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
                   <Save />
                   Сохранить
                 </PrimaryButton>

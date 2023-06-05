@@ -1,15 +1,14 @@
-
 import axios from "axios";
 import { store } from "../store/index";
 import { showAlert } from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
 import { authActions } from "../store/auth/auth.slice";
-export const baseURL = `${import.meta.env.VITE_BASE_URL}/v2`
+export const baseURL = `${import.meta.env.VITE_BASE_URL}/v2`;
 
 const requestV2 = axios.create({
   baseURL,
   timeout: 100000,
-})
+});
 
 // const errorHandler = (error, hooks) => {
 
@@ -20,80 +19,82 @@ const requestV2 = axios.create({
 // }
 
 const errorHandler = (error, hooks) => {
-  const token = store.getState().auth.token
+  const token = store.getState().auth.token;
   // const logoutParams = {
   //   access_token: token,
   // };
 
-  if(error?.response?.status === 401) {
-    const refreshToken = store.getState().auth.refreshToken
+  if (error?.response?.status === 401) {
+    const refreshToken = store.getState().auth.refreshToken;
 
     const params = {
       refresh_token: refreshToken,
-    }
+    };
 
-    const originalRequest = error.config
+    const originalRequest = error.config;
 
-    return authService.refreshToken(params)
+    return authService
+      .refreshToken(params)
       .then((res) => {
-        store.dispatch(authActions.setTokens(res))
-        store.dispatch(authActions.setPermission(res))
+        store.dispatch(authActions.setTokens(res));
+        store.dispatch(authActions.setPermission(res));
         return requestV2(originalRequest);
       })
       .catch((err) => {
-        console.log(err)
-        return Promise.reject(error)
-      })
+        console.log(err);
+        return Promise.reject(error);
+      });
   } else {
     if (error?.response) {
-      if(error.response?.data?.data) {
-        if (error.response.data.data !== "rpc error: code = Internal desc = member group is required to add new member") {
-          store.dispatch(showAlert(error.response.data.data))
+      if (error.response?.data?.data) {
+        if (
+          error.response.data.data !==
+          "rpc error: code = Internal desc = member group is required to add new member"
+        ) {
+          store.dispatch(showAlert(error.response.data.data));
         }
       }
       if (error?.response?.status === 403) {
-        store.dispatch(authActions.logout())
+        store.dispatch(authActions.logout());
         // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }
-    }
-    
-    else store.dispatch(showAlert('___ERROR___'))
-    
-    return Promise.reject(error.response)
+    } else store.dispatch(showAlert("___ERROR___"));
+
+    return Promise.reject(error.response);
   }
-}
-
-
+};
 
 requestV2.interceptors.request.use(
-  config => {
-    const authStore = store.getState().auth
-    const token = authStore.token
-    const environmentId = authStore.environmentId
-    const resourceId = authStore.resourceId
-    const projectId = authStore.projectId
-    
-    if(token) {
-      config.headers.Authorization = `Bearer ${token}`
-      config.headers['environment-id'] = environmentId
-      config.headers['resource-id'] = resourceId
+  (config) => {
+    const authStore = store.getState().auth;
+    const token = authStore.token;
+    const environmentId = authStore.environmentId;
+    const resourceId = authStore.resourceId;
+    const projectId = authStore.projectId;
 
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      // config.headers['environment-id'] = environmentId
+      config.headers["resource-id"] = resourceId;
     }
-    if (!config.params?.["project-id"]) {
-      if (config.params) {
-        config.params["project-id"] = projectId;
-      } else {
-        config.params = {
-          "project-id": projectId,
-        };
-      }
-    }
-    return config
+    // if (!config.params?.["project-id"]) {
+    //   if (config.params) {
+    //     config.params["project-id"] = projectId;
+    //   } else {
+    //     config.params = {
+    //       "project-id": projectId,
+    //     };
+    //   }
+    // }
+    return config;
   },
-  
-  error => errorHandler(error)
-  )
 
-  requestV2.interceptors.response.use(response => response.data.data , errorHandler)
+  (error) => errorHandler(error)
+);
 
-export default requestV2
+requestV2.interceptors.response.use(
+  (response) => response.data.data,
+  errorHandler
+);
+
+export default requestV2;

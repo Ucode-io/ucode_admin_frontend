@@ -5,6 +5,7 @@ let webSocket;
 let chatSocket;
 
 function connectSocket(sendMessage, chat_id, platformType, userId) {
+  console.log("websocketURL", websocketURL);
   const authStore = store.getState().auth;
   const ws = new WebSocket(
     `${websocketURL}/ws/${chat_id}/${

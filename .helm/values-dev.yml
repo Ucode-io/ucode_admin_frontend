@@ -15,7 +15,7 @@ image:
   repository: ucode/ucode_admin_frontend
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "test"
+  tag: "dev"
 
 imagePullSecrets: "gitlab-registry"
 nameOverride: ""
@@ -82,16 +82,19 @@ ingress:
   rules:
     - annotations:
         kubernetes.io/ingress.class: nginx
-        cert-manager.io/cluster-issuer: letsencrypt-prod
+        nginx.ingress.kubernetes.io/proxy-body-size: "0"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+
       type: web
       hosts:
-        - host: "test.app.u-code.io"
+        - host: "dev-app.ucode.run"
           path: /
           servicePort: 80
       tls:
-        - secretName: react-app-tls
+        - secretName: ucode-star
           hosts:
-            - "test.app.u-code.io"
+            - "dev-app.ucode.run"
 
 resources:
   {}
@@ -118,8 +121,7 @@ affinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
         - matchExpressions:
-            - key: kubernetes.io/env-test
+            - key: kubernetes.io/ucode-dev
               operator: In
               values:
                 - "true"
-

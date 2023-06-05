@@ -33,7 +33,7 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
   };
 
 
-  const { data: objectsList } = useQuery(
+  const { data: objectsList, isLoading: loader } = useQuery(
     ["GET_OPENFAAS_LIST", selectedTable?.slug, queryPayload],
     () => {
       if (!selectedTable?.slug) return null;
@@ -59,6 +59,7 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
       },
     }
   );
+  
 
   useEffect(() => {
     setSearchText("");

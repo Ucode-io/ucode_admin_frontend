@@ -20,7 +20,7 @@ import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import RingLoaderWithWrapper from "../../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
-import applicationService from "../../../../../services/applicationSercixe";
+import applicationService from "../../../../../services/applicationService";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import { applyDrag } from "../../../../../utils/applyDrag";

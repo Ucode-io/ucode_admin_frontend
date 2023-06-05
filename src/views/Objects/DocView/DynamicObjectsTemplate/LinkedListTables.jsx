@@ -64,12 +64,14 @@ function LinkedListTables({
         const relations = res?.relations.filter((item) => {
           return item?.type === "Many2One" && item?.table_from?.slug === "file";
         });
-        const computedValue = relations.map((item) => ({
-          label: item?.title,
+
+        const computedValue = relations.filter((el) => el?.table_to).map((item) => ({
+          label: item?.table_to.label,
           value: `${item?.id}#${item?.table_to?.slug}#${
             item?.table_to?.subtitle_field_slug ?? ""
           }`,
         }));
+
         const result =
           computedValue &&
           computedValue?.find((item) => {
@@ -120,7 +122,7 @@ function LinkedListTables({
       select: (res) => {
         const relations = res?.relations;
         const defaultValue = res?.relations?.find((item) => {
-          return item?.table_to?.slug === tableSlug;
+          return item?.table_to?.slug === tableSlug || item?.table_from?.slug === tableSlug;
         });
 
         const computedRelations = res?.relations
@@ -306,7 +308,7 @@ function LinkedListTables({
   useEffect(() => {
     setDefaultValue();
   }, [computedLinkedObjects?.defaultValue]);
-
+console.log('computedObject', computedObject);
   return (
     <div className={styles.docListTables}>
       <FRow label={"Linked Table"}>

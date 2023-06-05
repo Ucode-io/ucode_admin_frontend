@@ -1,36 +1,29 @@
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Box,
   Button,
-  Collapse,
   ListItemButton,
   ListItemText,
   Tooltip,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { TbReplace } from "react-icons/tb";
 import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
-import applicationService from "../../../services/applicationSercixe";
-import constructorTableService from "../../../services/constructorTableService";
-import { fetchConstructorTableListAction } from "../../../store/constructorTable/constructorTable.thunk";
-import { applyDrag } from "../../../utils/applyDrag";
-import IconGenerator from "../../IconPicker/IconGenerator";
-import ButtonsMenu from "../buttonsMenu";
+import { Draggable } from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import AddIcon from "@mui/icons-material/Add";
-import "../style.scss";
-import menuSettingsService from "../../../services/menuSettingsService";
-import { useMenuListQuery } from "../../../services/menuService";
+import "./style.scss";
+import menuSettingsService from "../../services/menuSettingsService";
+import IconGenerator from "../IconPicker/IconGenerator";
+import ButtonsMenu from "./buttonsMenu";
 
-const RecursiveBlock = ({
+const AppSidebar = ({
   index,
   element,
   parentClickHandler,
+  openedBlock,
   openFolderCreateModal,
   environment,
   setFolderModalType,
@@ -39,6 +32,10 @@ const RecursiveBlock = ({
   sidebarIsOpen,
   getMenuList,
   setTableModal,
+  selectedFolder,
+  setCheck,
+  setElement,
+  setSubMenuIsOpen,
 }) => {
   const { tableSlug } = useParams();
   const { appId } = useParams();
@@ -49,38 +46,24 @@ const RecursiveBlock = ({
   const [menuType, setMenuType] = useState();
   const openMenu = Boolean(menu);
   const queryClient = useQueryClient();
-  const [child, setChild] = useState();
-  const [check, setCheck] = useState(false);
-  const [id, setId] = useState();
+  //   const [id, setId] = useState();
+  //   const [child, setChild] = useState();
+  //   const [check, setCheck] = useState(false);
 
-  console.log("level", level);
-
-  const { isLoading } = useMenuListQuery({
-    params: {
-      parent_id: id,
-    },
-    queryParams: {
-      cacheTime: 10,
-      enabled: Boolean(check),
-      onSuccess: (res) => {
-        console.log("res", res);
-        setCheck(false);
-        setChild(res.menus);
-      },
-    },
-  });
-
-  console.log("data", child);
-
-  // const getListMenu = (id) => {
-  //   menuSettingsService
-  //     .getList({
+  //   const { isLoading } = useMenuListQuery({
+  //     params: {
   //       parent_id: id,
-  //     })
-  //     .then((res) => {
-  //       setChild(res.menus);
-  //     });
-  // };
+  //     },
+  //     queryParams: {
+  //       cacheTime: 10,
+  //       enabled: Boolean(check),
+  //       onSuccess: (res) => {
+  //         console.log("res", res);
+  //         setCheck(false);
+  //         setChild(res.menus);
+  //       },
+  //     },
+  //   });
 
   const activeStyle = {
     backgroundColor:
@@ -101,7 +84,8 @@ const RecursiveBlock = ({
     setChildBlockVisible((prev) => !prev);
     // getListMenu(element.id);
     setCheck(true);
-    setId(element.id);
+    setElement(element);
+    setSubMenuIsOpen(true);
   };
   useEffect(() => {
     if (
@@ -111,9 +95,6 @@ const RecursiveBlock = ({
       setChildBlockVisible(true);
     }
   }, []);
-  const applicationElements = useSelector(
-    (state) => state.constructorTable.applications
-  );
 
   const handleOpenNotify = (event, type) => {
     setMenu(event?.currentTarget);
@@ -135,26 +116,6 @@ const RecursiveBlock = ({
       .catch((err) => {
         console.log(err);
       });
-  };
-  const onDrop = (dropResult) => {
-    const result = applyDrag(element.children, dropResult);
-    const computedTables = [
-      ...result?.map((el) => ({
-        table_id: el?.id,
-        is_visible: Boolean(el.is_visible),
-        is_own_table: Boolean(el.is_own_table),
-      })),
-    ];
-    if (result) {
-      applicationService
-        .update({
-          ...applicationElements,
-          tables: computedTables,
-        })
-        .then(() => {
-          dispatch(fetchConstructorTableListAction(appId));
-        });
-    }
   };
 
   return (
@@ -348,30 +309,8 @@ const RecursiveBlock = ({
           </Button>
         </div>
       )}
-
-      <Collapse in={childBlockVisible} unmountOnExit>
-        {child && (
-          <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>
-            {child?.map((childElement, index) => (
-              <RecursiveBlock
-                key={index}
-                level={level + 1}
-                element={childElement}
-                parentClickHandler={parentClickHandler}
-                openFolderCreateModal={openFolderCreateModal}
-                environment={environment}
-                setFolderModalType={setFolderModalType}
-                setSelectedTable={setSelectedTable}
-                sidebarIsOpen={sidebarIsOpen}
-                getMenuList={getMenuList}
-                setTableModal={setTableModal}
-              />
-            ))}
-          </Container>
-        )}
-      </Collapse>
     </Draggable>
   );
 };
 
-export default RecursiveBlock;
+export default AppSidebar;

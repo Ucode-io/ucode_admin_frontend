@@ -71,7 +71,6 @@
     "editorjs-toggle-block": "^0.2.5",
     "firebase": "8.10.1",
     "hot-formula-parser": "^4.0.0",
-    "html2canvas": "^1.4.1",
     "i18next": "^21.6.16",
     "i18next-browser-languagedetector": "^6.1.4",
     "i18next-http-backend": "^1.4.0",

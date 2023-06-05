@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Text, Rect, Circle, Designer, Image } from "@looop/react-designer";
 import styles from "./style.module.scss";
-import html2canvas from "html2canvas";
+// import html2canvas from "html2canvas";
 import { Button } from "@mui/material";
 import fileService from "../../../services/fileService";
 
@@ -33,25 +33,25 @@ function HFCustomImageComponent(props) {
   const designerRef = useRef(null);
 
   const captureScreenshot = () => {
-    html2canvas(designerRef.current).then((canvas) => {
-      const imageData = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height);
+    // html2canvas(designerRef.current).then((canvas) => {
+    //   const imageData = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height);
   
-      const uploadedImage = svg.find((obj) => obj.type === "image");
-      const { x, y, width, height } = uploadedImage;
-      const croppedCanvas = document.createElement("canvas");
-      const croppedContext = croppedCanvas.getContext("2d");
-      croppedCanvas.width = width;
-      croppedCanvas.height = height;
+    //   const uploadedImage = svg.find((obj) => obj.type === "image");
+    //   const { x, y, width, height } = uploadedImage;
+    //   const croppedCanvas = document.createElement("canvas");
+    //   const croppedContext = croppedCanvas.getContext("2d");
+    //   croppedCanvas.width = width;
+    //   croppedCanvas.height = height;
   
-      croppedContext.putImageData(
-        imageData,
-        -x,
-        -y
-      );
+    //   croppedContext.putImageData(
+    //     imageData,
+    //     -x,
+    //     -y
+    //   );
   
-      const croppedImage = croppedCanvas.toDataURL();
-      sendImage(croppedImage);
-    });
+    //   const croppedImage = croppedCanvas.toDataURL();
+    //   sendImage(croppedImage);
+    // });
   };
 
   const sendImage = async (imageData) => {
@@ -62,7 +62,7 @@ function HFCustomImageComponent(props) {
 
       const response = await fileService.upload(formData);
       const imageUrl = import.meta.env.VITE_CDN_BASE_URL + "ucode/" + response.filename;
-      onChange(imageUrl);
+      // onChange(imageUrl);
     } catch (error) {
       console.error("Error uploading image:", error);
     }

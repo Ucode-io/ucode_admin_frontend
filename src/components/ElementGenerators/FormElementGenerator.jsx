@@ -503,22 +503,22 @@ const FormElementGenerator = ({
         </FRow>
       );
       
-      case "CUSTOM_IMAGE":
-        return (
-          <FRow label={field.label} required={field.required}>
-            <HFCustomImage
-              control={control}
-              name={computedSlug}
-              fullWidth
-              required={field.required}
-              placeholder={field.attributes?.placeholder}
-              defaultValue={defaultValue}
-              tabIndex={field?.tabIndex}
-              disabled={isDisabled}
-              {...props}
-            />
-          </FRow>
-        );
+      // case "CUSTOM_IMAGE":
+      //   return (
+      //     <FRow label={field.label} required={field.required}>
+      //       <HFCustomImage
+      //         control={control}
+      //         name={computedSlug}
+      //         fullWidth
+      //         required={field.required}
+      //         placeholder={field.attributes?.placeholder}
+      //         defaultValue={defaultValue}
+      //         tabIndex={field?.tabIndex}
+      //         disabled={isDisabled}
+      //         {...props}
+      //       />
+      //     </FRow>
+      //   );
 
 
     case "ICON":

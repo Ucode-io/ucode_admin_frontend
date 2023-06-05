@@ -1,27 +1,27 @@
+import AddIcon from "@mui/icons-material/Add";
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import { Box } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import brandLogo from "../../../builder_config/assets/company-logo.svg";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import constructorTableService from "../../services/constructorTableService";
+import menuService from "../../services/menuService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
+import ProfilePanel from "../ProfilePanel";
+import SearchInput from "../SearchInput";
 import RecursiveBlock from "./SidebarRecursiveBlock/recursiveBlock";
 import FolderModal from "./folderModal";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import "./style.scss";
-import { Box, Collapse, ListItemButton, ListItemText } from "@mui/material";
-import SearchInput from "../SearchInput";
 import MenuButton from "./menuButton";
-import AddIcon from "@mui/icons-material/Add";
-import HomeIcon from "@mui/icons-material/Home";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import ProfilePanel from "../ProfilePanel";
-import { useNavigate } from "react-router-dom";
-import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import "./style.scss";
+import menuSettingsService from "../../services/menuSettingsService";
+import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
+
 const LayoutSidebar = ({
   elements,
   favicon,
@@ -44,8 +44,9 @@ const LayoutSidebar = ({
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [childBlockVisible, setChildBlockVisible] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [menuList, setMenuList] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [tableModal, setTableModalOpen] = useState(false);
   const handleRouter = () => {
     navigate(`/main/${appId}/chat`);
   };
@@ -53,11 +54,13 @@ const LayoutSidebar = ({
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  const handleClick = () => {
-    setOpen(!open);
+  const setTableModal = (element) => {
+    setTableModalOpen(true);
+    setSelectedFolder(element);
   };
-
+  const closeTableModal = () => {
+    setTableModalOpen(null);
+  };
   const closeModal = () => {
     setModalType(null);
   };
@@ -74,6 +77,12 @@ const LayoutSidebar = ({
   const { data: tableFolder } = useQuery(["GET_TABLE_FOLDER"], () => {
     return constructorTableService.getFolderList();
   });
+
+  const getMenuList = () => {
+    menuSettingsService.getList().then((res) => {
+      setMenuList(res);
+    });
+  };
 
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
@@ -130,6 +139,9 @@ const LayoutSidebar = ({
   useEffect(() => {
     if (!sidebarIsOpen) setOpenedBlock(null);
   }, [sidebarIsOpen]);
+  useEffect(() => {
+    getMenuList();
+  }, []);
 
   const { data: projectInfo } = useQuery(
     ["GET_PROJECT_BY_ID", projectId],
@@ -214,6 +226,7 @@ const LayoutSidebar = ({
               e.stopPropagation();
               handleRouter();
             }}
+            sidebarIsOpen={sidebarIsOpen}
           />
           <div
             className="nav-block"
@@ -223,7 +236,7 @@ const LayoutSidebar = ({
             }}
           >
             <div className="menu-element">
-              {computedTableList?.map((element, index) => (
+              {menuList?.menus[0]?.child_menus?.map((element, index) => (
                 <RecursiveBlock
                   key={index}
                   element={element}
@@ -236,6 +249,9 @@ const LayoutSidebar = ({
                   setFolderModalType={setFolderModalType}
                   setSelectedTable={setSelectedTable}
                   sidebarIsOpen={sidebarIsOpen}
+                  getMenuList={getMenuList}
+                  setTableModal={setTableModal}
+                  selectedFolder={selectedFolder}
                 />
               ))}
               {folderModalType === "folder" && (
@@ -259,6 +275,7 @@ const LayoutSidebar = ({
               e.stopPropagation();
               openFolderCreateModal("create");
             }}
+            sidebarIsOpen={sidebarIsOpen}
           />
         </div>
 
@@ -271,6 +288,7 @@ const LayoutSidebar = ({
             anchorEl ? setAnchorEl(null) : openMenu(e);
           }}
           children={<ProfilePanel anchorEl={anchorEl} />}
+          sidebarIsOpen={sidebarIsOpen}
         />
       </Box>
 
@@ -282,6 +300,16 @@ const LayoutSidebar = ({
           closeModal={closeModal}
           appId={appId}
           selectedFolder={selectedFolder}
+          getMenuList={getMenuList}
+        />
+      )}
+      {tableModal && (
+        <TableLinkModal
+          modalType={modalType}
+          closeModal={closeTableModal}
+          appId={appId}
+          selectedFolder={selectedFolder}
+          getMenuList={getMenuList}
         />
       )}
     </div>

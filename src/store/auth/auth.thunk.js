@@ -15,7 +15,7 @@ export const loginAction = createAsyncThunk(
         .updateToken({
           refresh_token: res.token.access_token,
           env_id: res.environment_id,
-          project_id: res.client_platform.project_id,
+          project_id: data.project_id,
         })
         .then((res) => {
           store.dispatch(authActions.setTokens(res));

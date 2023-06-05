@@ -24,6 +24,8 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import AddIcon from "@mui/icons-material/Add";
 import "../style.scss";
+import menuSettingsService from "../../../services/menuSettingsService";
+import { useMenuListQuery } from "../../../services/menuService";
 
 const RecursiveBlock = ({
   index,
@@ -36,6 +38,9 @@ const RecursiveBlock = ({
   setSelectedTable,
   level = 1,
   sidebarIsOpen,
+  getMenuList,
+  setTableModal,
+  selectedFolder,
 }) => {
   const { tableSlug } = useParams();
   const { appId } = useParams();
@@ -44,12 +49,40 @@ const RecursiveBlock = ({
   const navigate = useNavigate();
   const [menu, setMenu] = useState();
   const [menuType, setMenuType] = useState();
-  const queryClient = useQueryClient();
   const openMenu = Boolean(menu);
+  const queryClient = useQueryClient();
+  const [child, setChild] = useState();
+  const [check, setCheck] = useState(false);
+  const [id, setId] = useState();
 
-  console.log("openMenu", openMenu);
-  console.log("menuType", menuType);
-  console.log("menu", menu);
+  console.log("level", level);
+
+  const { isLoading } = useMenuListQuery({
+    params: {
+      parent_id: id,
+    },
+    queryParams: {
+      cacheTime: 10,
+      enabled: Boolean(check),
+      onSuccess: (res) => {
+        console.log("res", res);
+        setCheck(false);
+        setChild(res.menus);
+      },
+    },
+  });
+
+  console.log("data", child);
+
+  // const getListMenu = (id) => {
+  //   menuSettingsService
+  //     .getList({
+  //       parent_id: id,
+  //     })
+  //     .then((res) => {
+  //       setChild(res.menus);
+  //     });
+  // };
 
   const activeStyle = {
     backgroundColor:
@@ -58,16 +91,25 @@ const RecursiveBlock = ({
     color:
       element.isChild &&
       (tableSlug !== element.slug ? environment?.data?.active_color : ""),
-    paddingLeft: level === 1 || level === 2 ? "" : level * 6,
-    display: element.id === "0" && "none",
+    // paddingLeft: level === 1 || level === 2 ? level * 2 * 4 : level * 7,
+    paddingLeft: level * 2 * 5,
+    display:
+      element.id === "0" ||
+      (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 
   const clickHandler = () => {
-    !element.isChild && parentClickHandler(element);
+    element.type === "TABLE" && parentClickHandler(element);
     setChildBlockVisible((prev) => !prev);
+    // getListMenu(element.id);
+    setCheck(true);
+    setId(element.id);
   };
   useEffect(() => {
-    if (element.id === "0") {
+    if (
+      element.id === "0" ||
+      element.id === "c57eedc3-a954-4262-a0af-376c65b5a284"
+    ) {
       setChildBlockVisible(true);
     }
   }, []);
@@ -84,10 +126,13 @@ const RecursiveBlock = ({
   };
 
   const deleteFolder = (element) => {
-    constructorTableService
-      .deleteFolder(element.id)
+    menuSettingsService
+      .delete(element.id)
       .then(() => {
-        queryClient.refetchQueries(["GET_TABLE_FOLDER"]);
+        // getListMenu(element.id);
+        setChildBlockVisible(false);
+        queryClient.refetchQueries(["MENU"], element?.id);
+        getMenuList();
       })
       .catch((err) => {
         console.log(err);
@@ -113,46 +158,58 @@ const RecursiveBlock = ({
         });
     }
   };
+
   return (
     <Draggable key={index}>
-      {element?.parent_id === "0" ? (
+      {element?.parent_id === "0" ||
+      element?.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a284" ? (
         <ListItemButton
           key={index}
           onClick={() => {
-            element.children && clickHandler();
+            clickHandler();
           }}
           className="parent-folder"
         >
-          <ListItemText primary={sidebarIsOpen && element?.title} />
-          <Tooltip title="Folder settings" placement="top">
-            <Box className="extra_icon">
-              <BsThreeDots
-                size={13}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOpenNotify(e, "folder");
-                }}
-              />
-            </Box>
-          </Tooltip>
-          <Tooltip title="Create folder" placement="top">
-            <Box className="extra_icon">
-              <AddIcon
-                size={13}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  // openFolderCreateModal("parent", element);
-                  handleOpenNotify(e, "tableMenu");
-                }}
-              />
-            </Box>
-          </Tooltip>
-          {childBlockVisible && element.children ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
+          <IconGenerator
+            icon={element?.icon}
+            size={18}
+            className="folder-icon"
+          />
+          {sidebarIsOpen && <ListItemText primary={element?.label} />}
+          {sidebarIsOpen && (
+            <>
+              <Tooltip title="Folder settings" placement="top">
+                <Box className="extra_icon">
+                  <BsThreeDots
+                    size={13}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenNotify(e, "folder");
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+              <Tooltip title="Create folder" placement="top">
+                <Box className="extra_icon">
+                  <AddIcon
+                    size={13}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // openFolderCreateModal("parent", element);
+                      handleOpenNotify(e, "tableMenu");
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            </>
           )}
+          {sidebarIsOpen &&
+            (childBlockVisible ? (
+              <KeyboardArrowDownIcon />
+            ) : (
+              <KeyboardArrowRightIcon />
+            ))}
           <ButtonsMenu
             element={element}
             menu={menu}
@@ -165,6 +222,7 @@ const RecursiveBlock = ({
             setFolderModalType={setFolderModalType}
             setSelectedTable={setSelectedTable}
             appId={appId}
+            setTableModal={setTableModal}
           />
         </ListItemButton>
       ) : (
@@ -179,7 +237,8 @@ const RecursiveBlock = ({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              element.isChild && navigate(element?.path);
+              element.type === "TABLE" &&
+                navigate(`/main/${appId}/object/${element?.table?.slug}`);
               clickHandler();
               setSelectedTable(element);
             }}
@@ -211,9 +270,9 @@ const RecursiveBlock = ({
             >
               <IconGenerator icon={element?.icon} size={18} />
 
-              {sidebarIsOpen && element?.title}
+              {sidebarIsOpen && element?.label}
             </div>
-            {!element?.isChild && sidebarIsOpen ? (
+            {element?.type !== "TABLE" && sidebarIsOpen ? (
               <Box className="icon_group">
                 <Tooltip title="Folder settings" placement="top">
                   <Box className="extra_icon">
@@ -262,24 +321,27 @@ const RecursiveBlock = ({
               setFolderModalType={setFolderModalType}
               setSelectedTable={setSelectedTable}
               appId={appId}
+              setTableModal={setTableModal}
             />
-            {element?.isChild && sidebarIsOpen ? (
+            {element?.type === "TABLE" && sidebarIsOpen ? (
               <Tooltip title="Table settings" placement="top">
-                <Box className="extra_icon">
-                  <BsThreeDots
-                    size={13}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleOpenNotify(e, "table");
-                    }}
-                    style={{
-                      color:
-                        tableSlug === element.slug
-                          ? environment?.data?.active_color
-                          : environment?.data?.color,
-                    }}
-                  />
+                <Box className="icon_group">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleOpenNotify(e, "table");
+                      }}
+                      style={{
+                        color:
+                          tableSlug === element.slug
+                            ? environment?.data?.active_color
+                            : environment?.data?.color,
+                      }}
+                    />
+                  </Box>
                 </Box>
               </Tooltip>
             ) : (
@@ -290,9 +352,9 @@ const RecursiveBlock = ({
       )}
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        {element?.children && (
+        {child && (
           <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>
-            {element?.children?.map((childElement, index) => (
+            {child?.map((childElement, index) => (
               <RecursiveBlock
                 key={index}
                 level={level + 1}
@@ -304,6 +366,8 @@ const RecursiveBlock = ({
                 setFolderModalType={setFolderModalType}
                 setSelectedTable={setSelectedTable}
                 sidebarIsOpen={sidebarIsOpen}
+                getMenuList={getMenuList}
+                setTableModal={setTableModal}
               />
             ))}
           </Container>

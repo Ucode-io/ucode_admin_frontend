@@ -223,13 +223,20 @@ const FieldSettings = ({
           </div>
 
           <div className="p-2">
-            <FRow label="Placeholder">
+            {/* <FRow label="Placeholder">
               <HFTextField
                 fullWidth
                 name="attributes.placeholder"
                 control={control}
               />
-            </FRow>
+            </FRow> */}
+
+            <HFSwitch
+              control={control}
+              name="attributes.show_label"
+              label="Show label"
+              className="mb-1"
+            />
 
             <DefaultValueBlock control={control} />
 

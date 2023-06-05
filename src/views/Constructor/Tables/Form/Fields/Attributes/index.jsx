@@ -59,8 +59,9 @@ const Attributes = ({ control, watch, mainForm }) => {
     case "CODABAR":
       return <CodabarIncrements control={control} />;
       
-    case "MAP":
-      return <MapAttributes control={control} />;
+      case "MAP":
+        return <MapAttributes control={control} />;
+  
 
     default:
       return <SingleLineAttributes control={control} />;

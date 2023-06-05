@@ -1,5 +1,4 @@
 import FRow from "../../../../../../components/FormElements/FRow";
-import HFNumberField from "../../../../../../components/FormElements/HFNumberField";
 import HFTextField from "../../../../../../components/FormElements/HFTextField";
 import styles from "./style.module.scss";
 

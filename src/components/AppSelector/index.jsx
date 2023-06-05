@@ -73,7 +73,7 @@ const AppSelector = () => {
         <div className={styles.scrollBlocksss}>
           {computedList.map(
             (app, index) =>
-              app.permission.read && (
+              app.permission?.read && (
                 <div
                   key={app.id}
                   className={`${styles.menuItem} ${

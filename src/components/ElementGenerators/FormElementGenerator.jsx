@@ -177,7 +177,7 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
-      
+
     case "INTERNATION_PHONE":
       return (
         <FRow label={field.label} required={field.required}>
@@ -502,6 +502,7 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
+<<<<<<< HEAD
       
       // case "CUSTOM_IMAGE":
       //   return (
@@ -519,7 +520,25 @@ const FormElementGenerator = ({
       //       />
       //     </FRow>
       //   );
+=======
+>>>>>>> b90b9a5dd9ce5cfbb119e96d852dbc863bc72d11
 
+    // case "CUSTOM_IMAGE":
+    //   return (
+    //     <FRow label={field.label} required={field.required}>
+    //       <HFCustomImage
+    //         control={control}
+    //         name={computedSlug}
+    //         fullWidth
+    //         required={field.required}
+    //         placeholder={field.attributes?.placeholder}
+    //         defaultValue={defaultValue}
+    //         tabIndex={field?.tabIndex}
+    //         disabled={isDisabled}
+    //         {...props}
+    //       />
+    //     </FRow>
+    //   );
 
     case "ICON":
       return (

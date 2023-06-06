@@ -20,7 +20,7 @@ import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import RingLoaderWithWrapper from "../../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
-import applicationService from "../../../../../services/applicationSercixe";
+import applicationService from "../../../../../services/applicationService";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import { applyDrag } from "../../../../../utils/applyDrag";
@@ -33,10 +33,11 @@ import CascadingTreeBlock from "./CascadingTreeBlock";
 import styles from "./style.module.scss";
 import SummaryBlock from "./SummaryBlock";
 import { useSelector } from "react-redux";
-import MultipleInsertSettings from "@/views/Objects/components/ViewSettings/MultipleInsertSettings";
-import multipleInsertForm from "@/views/Objects/components/MultipleInsertForm";
 import listToOptions from "@/utils/listToOptions";
 import TableActions from "../Actions/TableActions";
+import FunctionPath from "./FunctionPath";
+import constructorFunctionService from "../../../../../services/constructorFunctionService";
+
 
 const relationViewTypes = [
   {
@@ -152,6 +153,18 @@ const RelationSettings = ({
         );
         setValue("filtersList", [...checkedFilters, ...unCheckedFilters]);
         setValue("columnsList", [...checkedColumns, ...unCheckedColumns]);
+      },
+    }
+  );
+  
+  const { data: functions = [] } = useQuery(
+    ["GET_FUNCTIONS_LIST"],
+    () => {
+      return constructorFunctionService.getListV2({});
+    },
+    {
+      select: (res) => {
+        return listToOptions(res.functions, "name", "path");
       },
     }
   );
@@ -360,6 +373,8 @@ const RelationSettings = ({
               computedTablesList={computedTablesList}
             />
           )}
+          
+          <FunctionPath control={control} watch={watch} functions={functions} />
 
           <DefaultValueBlock
             control={control}

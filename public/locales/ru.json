@@ -204,5 +204,7 @@
   "enter.client_type": "Выберите тип пользователя",
   "showing": "Показать",
   "excel.upload": "Загрузка Excel",
-  "excel.download": "Скачать Excel"
+  "excel.download": "Скачать Excel",
+  "select.environment": "Select environment"
+
 }

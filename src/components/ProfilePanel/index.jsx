@@ -9,26 +9,24 @@ import UserAvatar from "../UserAvatar";
 import styles from "./style.module.scss";
 import KeyIcon from "@mui/icons-material/Key";
 
-const ProfilePanel = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const menuVisible = Boolean(anchorEl);
-
+const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
+  const [anchorProfileEl, setProfileAnchorEl] = useState(null);
+  const menuVisible = Boolean(anchorEl || anchorProfileEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { clear } = useAliveController();
   const { appId } = useParams();
 
-  const openMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
   const handleClick = () => {
     navigate(`/main/${appId}/api-key`);
   };
   const closeMenu = () => {
-    setAnchorEl(null);
+    setProfileAnchorEl(null);
   };
-
+  const openMenu = (event) => {
+    setProfileAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget);
+  };
   const logoutClickHandler = () => {
     dispatch(authActions.logout());
     closeMenu();
@@ -46,7 +44,7 @@ const ProfilePanel = () => {
 
       <Menu
         id="lock-menu"
-        anchorEl={anchorEl}
+        anchorEl={anchorEl || anchorProfileEl}
         open={menuVisible}
         onClose={closeMenu}
         classes={{ list: styles.menu, paper: styles.paper }}

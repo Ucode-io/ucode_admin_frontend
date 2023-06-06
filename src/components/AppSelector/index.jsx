@@ -71,24 +71,21 @@ const AppSelector = () => {
         classes={{ list: styles.menu, paper: styles.paper }}
       >
         <div className={styles.scrollBlocksss}>
-          {computedList.map(
-            (app, index) =>
-              app.permission?.read && (
-                <div
-                  key={app.id}
-                  className={`${styles.menuItem} ${
-                    app.id === activeApp ? styles.active : ""
-                  }`}
-                  onClick={() => rowClickHandler(app)}
-                >
-                  <IconGenerator
-                    icon={app.icon}
-                    className={`${styles.dragIcon} drag-handle`}
-                  />
-                  <p className={styles.itemText}>{app.name}</p>
-                </div>
-              )
-          )}
+          {computedList.map((app, index) => (
+            <div
+              key={app.id}
+              className={`${styles.menuItem} ${
+                app.id === activeApp ? styles.active : ""
+              }`}
+              onClick={() => rowClickHandler(app)}
+            >
+              <IconGenerator
+                icon={app.icon}
+                className={`${styles.dragIcon} drag-handle`}
+              />
+              <p className={styles.itemText}>{app.name}</p>
+            </div>
+          ))}
         </div>
       </Menu>
     </div>

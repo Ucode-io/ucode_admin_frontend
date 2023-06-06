@@ -57,7 +57,7 @@ export default function GeneratePdfFromTable({ row }) {
     const state = {
       toDocsTab: true,
       template: template,
-      objectId,
+      objectId: row?.guid,
     };
 
     handleClose(e);

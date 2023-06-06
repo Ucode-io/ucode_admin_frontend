@@ -21,6 +21,7 @@ function LinkedListTables({
   setSelectedLinkedObject,
   setSelectedObject,
   selectedObject,
+  exportToHTML
 }) {
   const { tableSlug } = useParams();
   const { state } = useLocation();
@@ -339,6 +340,7 @@ function LinkedListTables({
             freeSolo
             onChange={(e, values) => {
               handleLinkedObject(values);
+              exportToHTML()
             }}
             getOptionLabel={(option) => option.label ?? ""}
             disablePortal

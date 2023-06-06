@@ -1,14 +1,13 @@
 import { Suspense } from "react";
-import { useId } from "react";
 import { lazy } from "react";
-import empty from "remote_empty_app/empty";
+// import empty from "remote_empty_app/empty";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
+
+const empty = lazy(() => import('remote_empty_app/empty'));
 
 const EMPTY = empty;
 
 const MicrofrontendComponent = ({ link }) => {
-  console.log("LINK ==>", link);
-
   const RemoteButton = lazy(async () => {
     window.remotesMap[`remote_app_${link}`] = {
       url: link,
@@ -24,6 +23,7 @@ const MicrofrontendComponent = ({ link }) => {
   });
 
   return (
+    
     <Suspense fallback={<RingLoaderWithWrapper style={{ height: "100vh" }} />}>
       <RemoteButton text="Hello microfrontend" />
     </Suspense>

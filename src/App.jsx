@@ -12,6 +12,9 @@ import { QueryClientProvider } from "react-query"
 import queryClient from "./queries"
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { AliveScope } from "react-activation"
+import chakraUITheme from "./theme/chakraUITheme"
+import { ChakraProvider } from '@chakra-ui/react'
+
 
 function App() {
   return (
@@ -22,6 +25,7 @@ function App() {
         <Provider store={store}>
           <PersistGate persistor={persistor}>
             <MaterialUIProvider>
+            <ChakraProvider theme={chakraUITheme}>
               <AlertProvider>
                 <GlobalFunctionsProvider />
                 <BrowserRouter>
@@ -30,6 +34,7 @@ function App() {
                   </AliveScope>
                 </BrowserRouter>
               </AlertProvider>
+              </ChakraProvider>
             </MaterialUIProvider>
           </PersistGate>
         </Provider>

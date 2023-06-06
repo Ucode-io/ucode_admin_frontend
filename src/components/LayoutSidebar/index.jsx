@@ -15,14 +15,14 @@ import { mainActions } from "../../store/main/main.slice";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
-import FolderModal from "./FolderModal";
+// import FolderModal from "./FolderModal";
 import "./style.scss";
 import menuSettingsService from "../../services/menuSettingsService";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
-import AppSidebar from "./AppSidebar";
 import SubMenu from "./SubMenu";
 import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
 import MenuButtonComponent from "./MenuButton";
+import AppSidebar from "./appSidebar";
 
 const LayoutSidebar = ({
   elements,
@@ -256,7 +256,7 @@ const LayoutSidebar = ({
                     setSubMenuIsOpen={setSubMenuIsOpen}
                   />
                 ))}
-                {folderModalType === "folder" && (
+                {/* {folderModalType === "folder" && (
                   <FolderModal
                     closeModal={closeFolderModal}
                     modalType={folderModalType}
@@ -265,7 +265,7 @@ const LayoutSidebar = ({
                     computedFolderList={computedFolderList}
                     menuList={menuList}
                   />
-                )}
+                )} */}
               </div>
               {/* <div className="sidebar-footer"></div> */}
             </div>

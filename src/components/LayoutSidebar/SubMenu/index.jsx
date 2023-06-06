@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlock";
-import FolderModal from "../FolderModal";
 import "./style.scss";
 import ClearIcon from "@mui/icons-material/Clear";
 import { BsThreeDots } from "react-icons/bs";
@@ -130,7 +129,7 @@ const SubMenu = ({
                   setMicrofrontendModal={setMicrofrontendModal}
                 />
               ))}
-              {folderModalType === "folder" && (
+              {/* {folderModalType === "folder" && (
                 <FolderModal
                   closeModal={closeFolderModal}
                   modalType={folderModalType}
@@ -138,7 +137,7 @@ const SubMenu = ({
                   getAppById={getAppById}
                   computedFolderList={computedFolderList}
                 />
-              )}
+              )} */}
               <ButtonsMenu
                 element={element}
                 menu={menu}

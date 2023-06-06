@@ -37,8 +37,8 @@ const RecursiveBlock = ({
   const queryClient = useQueryClient();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
-  const [menu, setMenu] = useState();
-  const [menuType, setMenuType] = useState();
+  const [menu, setMenu] = useState("");
+  const [menuType, setMenuType] = useState("");
   const [child, setChild] = useState();
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
@@ -143,7 +143,6 @@ const RecursiveBlock = ({
             (tableSlug !== element.slug ? "active-with-child" : "active")
           }`}
           onClick={(e) => {
-            e.preventDefault();
             e.stopPropagation();
             element.type === "TABLE" &&
               navigate(`/main/${appId}/object/${element?.table?.slug}`);
@@ -174,7 +173,7 @@ const RecursiveBlock = ({
                   <BsThreeDots
                     size={13}
                     onClick={(e) => {
-                      e.stopPropagation();
+                      e?.stopPropagation();
                       handleOpenNotify(e, "FOLDER");
                     }}
                     style={{

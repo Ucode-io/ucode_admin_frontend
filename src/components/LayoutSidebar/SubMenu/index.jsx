@@ -62,7 +62,6 @@ const SubMenu = ({
             <BsThreeDots
               size={13}
               onClick={(e) => {
-                e.stopPropagation();
                 handleOpenNotify(e, "FOLDER");
               }}
               style={{
@@ -72,7 +71,6 @@ const SubMenu = ({
             <AddIcon
               size={13}
               onClick={(e) => {
-                e.stopPropagation();
                 handleOpenNotify(e, "CREATE_TO_FOLDER");
               }}
               style={{

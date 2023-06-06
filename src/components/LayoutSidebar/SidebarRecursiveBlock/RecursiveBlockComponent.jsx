@@ -65,10 +65,10 @@ const RecursiveBlock = ({
 
   const activeStyle = {
     backgroundColor:
-      selectedTable.id === element.id
+      selectedTable?.id === element?.id
         ? environment?.data?.active_background
         : "",
-    color: selectedTable.id === element.id ? "#fff" : "",
+    color: selectedTable?.id === element?.id ? "#fff" : "",
     // paddingLeft: level === 1 || level === 2 ? level * 2 * 4 : level * 7,
     paddingLeft: level * 2 * 5,
     display:
@@ -157,7 +157,7 @@ const RecursiveBlock = ({
             className="label"
             style={{
               color:
-                selectedTable.id === element.id
+                selectedTable?.id === element?.id
                   ? environment?.data?.active_color
                   : environment?.data?.color,
               opacity: element?.isChild && 0.6,
@@ -179,7 +179,7 @@ const RecursiveBlock = ({
                     }}
                     style={{
                       color:
-                        selectedTable.id === element.id
+                        selectedTable?.id === element?.id
                           ? environment?.data?.active_color
                           : environment?.data?.color,
                     }}
@@ -196,7 +196,7 @@ const RecursiveBlock = ({
                     }}
                     style={{
                       color:
-                        selectedTable.id === element.id
+                        selectedTable?.id === element?.id
                           ? environment?.data?.active_color
                           : environment?.data?.color,
                     }}

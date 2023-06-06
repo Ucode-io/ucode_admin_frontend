@@ -5,6 +5,7 @@ import {
   CTableBody,
   CTableCell,
   CTableHead,
+  CTableRow,
 } from "../../../components/CTable";
 import FiltersBlock from "../../../components/FiltersBlock";
 import HeaderSettings from "../../../components/HeaderSettings";
@@ -14,6 +15,9 @@ import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
 import { useEffect, useState } from "react";
 import microfrontendService from "../../../services/microfrontendService";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import DeleteWrapperModal from "../../../components/DeleteWrapperModal";
+import { Delete } from "@mui/icons-material";
 
 const MicrofrontendPage = () => {
   const navigate = useNavigate();
@@ -29,11 +33,15 @@ const MicrofrontendPage = () => {
     navigate(`${location.pathname}/create`);
   };
 
-  const deleteTable = (id) => {};
+  const deleteTable = (id) => {
+    microfrontendService.delete(id).then(() => {
+      getMicrofrontendList();
+    });
+  };
 
-  const getMicrofrontendList = (e) => {
+  const getMicrofrontendList = () => {
     microfrontendService.getList().then((res) => {
-      console.log("res", res);
+      setList(res);
     });
   };
 
@@ -57,47 +65,32 @@ const MicrofrontendPage = () => {
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>
             <CTableCell>Описание</CTableCell>
+            <CTableCell>Cсылка</CTableCell>
             <CTableCell width={60}></CTableCell>
-            <PermissionWrapperV2 tabelSlug="app" type="delete">
-              <CTableCell width={60} />
-            </PermissionWrapperV2>
           </CTableHead>
-
           <CTableBody
             loader={loader}
             columnsCount={4}
-            dataLength={list?.length}
+            dataLength={list?.functions?.length}
           >
-            {/* {list?.map((element, index) => (
+            {list?.functions?.map((element, index) => (
               <CTableRow
                 key={element.id}
                 onClick={() => navigateToEditForm(element.id)}
               >
                 <CTableCell>{index + 1}</CTableCell>
-                <CTableCell>{element.name}</CTableCell>
-                <CTableCell>{element.description}</CTableCell>
+                <CTableCell>{element?.name}</CTableCell>
+                <CTableCell>{element?.description}</CTableCell>
+                <CTableCell>{element?.path}</CTableCell>
                 <CTableCell>
-                  {" "}
-                  <RectangleIconButton color="white">
-                    <FileDownloadIcon />
-                  </RectangleIconButton>
+                  <DeleteWrapperModal id={element.id} onDelete={deleteTable}>
+                    <RectangleIconButton color="error">
+                      <Delete color="error" />
+                    </RectangleIconButton>
+                  </DeleteWrapperModal>
                 </CTableCell>
-                <PermissionWrapperV2 tabelSlug="app" type="delete">
-                  <PermissionWrapperApp permission={element.permission.delete}>
-                    <CTableCell>
-                      <DeleteWrapperModal
-                        id={element.id}
-                        onDelete={deleteTable}
-                      >
-                        <RectangleIconButton color="error">
-                          <Delete color="error" />
-                        </RectangleIconButton>
-                      </DeleteWrapperModal>
-                    </CTableCell>
-                  </PermissionWrapperApp>
-                </PermissionWrapperV2>
               </CTableRow>
-            ))} */}
+            ))}
             <PermissionWrapperV2 tabelSlug="app" type="write">
               <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
             </PermissionWrapperV2>

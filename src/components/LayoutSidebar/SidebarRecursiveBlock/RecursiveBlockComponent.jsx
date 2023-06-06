@@ -11,7 +11,6 @@ import { Container, Draggable } from "react-smooth-dnd";
 import applicationService from "../../../services/applicationService";
 import { useMenuListQuery } from "../../../services/menuService";
 import menuSettingsService from "../../../services/menuSettingsService";
-import { fetchConstructorTableListAction } from "../../../store/constructorTable/constructorTable.thunk";
 import { applyDrag } from "../../../utils/applyDrag";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ButtonsMenu from "../MenuButtons";
@@ -29,6 +28,8 @@ const RecursiveBlock = ({
   level = 1,
   sidebarIsOpen,
   setTableModal,
+  setMicrofrontendModal,
+  selectedTable,
 }) => {
   const { tableSlug } = useParams();
   const { appId } = useParams();
@@ -64,11 +65,10 @@ const RecursiveBlock = ({
 
   const activeStyle = {
     backgroundColor:
-      element.isChild &&
-      (tableSlug === element.slug ? environment?.data?.active_background : ""),
-    color:
-      element.isChild &&
-      (tableSlug !== element.slug ? environment?.data?.active_color : ""),
+      selectedTable.id === element.id
+        ? environment?.data?.active_background
+        : "",
+    color: selectedTable.id === element.id ? "#fff" : "",
     // paddingLeft: level === 1 || level === 2 ? level * 2 * 4 : level * 7,
     paddingLeft: level * 2 * 5,
     display:
@@ -127,7 +127,7 @@ const RecursiveBlock = ({
           tables: computedTables,
         })
         .then(() => {
-          dispatch(fetchConstructorTableListAction(appId));
+          // dispatch(fetchConstructorTableListAction(appId));
         });
     }
   };
@@ -157,7 +157,7 @@ const RecursiveBlock = ({
             className="label"
             style={{
               color:
-                tableSlug === element.slug && element.isChild
+                selectedTable.id === element.id
                   ? environment?.data?.active_color
                   : environment?.data?.color,
               opacity: element?.isChild && 0.6,
@@ -178,7 +178,10 @@ const RecursiveBlock = ({
                       handleOpenNotify(e, "FOLDER");
                     }}
                     style={{
-                      color: environment?.data?.color,
+                      color:
+                        selectedTable.id === element.id
+                          ? environment?.data?.active_color
+                          : environment?.data?.color,
                     }}
                   />
                 </Box>
@@ -192,7 +195,10 @@ const RecursiveBlock = ({
                       handleOpenNotify(e, "CREATE_TO_FOLDER");
                     }}
                     style={{
-                      color: environment?.data?.color,
+                      color:
+                        selectedTable.id === element.id
+                          ? environment?.data?.active_color
+                          : environment?.data?.color,
                     }}
                   />
                 </Box>
@@ -219,6 +225,7 @@ const RecursiveBlock = ({
             setSelectedTable={setSelectedTable}
             appId={appId}
             setTableModal={setTableModal}
+            setMicrofrontendModal={setMicrofrontendModal}
           />
           {element?.type === "TABLE" && (
             <MenuIcon
@@ -234,7 +241,7 @@ const RecursiveBlock = ({
               title="Microfrontend settings"
               onClick={(e) => {
                 e.stopPropagation();
-                handleOpenNotify(e, "TABLE");
+                handleOpenNotify(e, "MICROFRONTEND");
               }}
             />
           )}
@@ -256,6 +263,7 @@ const RecursiveBlock = ({
                 setSelectedTable={setSelectedTable}
                 sidebarIsOpen={sidebarIsOpen}
                 setTableModal={setTableModal}
+                selectedTable={selectedTable}
               />
             ))}
           </Container>

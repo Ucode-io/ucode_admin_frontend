@@ -11,7 +11,7 @@ const MenuButtonComponent = ({
   return (
     <Button className="menu-button active-with-child" onClick={onClick}>
       {children}
-      <div className="label">
+      <div className={sidebarIsOpen ? `open-label` : "label"}>
         {icon}
         {sidebarIsOpen && title}
       </div>

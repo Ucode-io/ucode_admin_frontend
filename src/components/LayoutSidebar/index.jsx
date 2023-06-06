@@ -41,7 +41,6 @@ const LayoutSidebar = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [openedBlock, setOpenedBlock] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [modalType, setModalType] = useState(null);
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
@@ -51,23 +50,23 @@ const LayoutSidebar = ({
   const [tableModal, setTableModalOpen] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
   const [child, setChild] = useState();
-  const [check, setCheck] = useState(false);
   const [element, setElement] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
 
   const { isLoading } = useMenuListQuery({
     params: {
-      parent_id: element?.id,
+      parent_id: appId,
     },
     queryParams: {
       cacheTime: 10,
-      enabled: Boolean(check),
+      enabled: Boolean(appId),
       onSuccess: (res) => {
-        setCheck(false);
         setChild(res.menus);
+        setSubMenuIsOpen(true);
       },
     },
   });
+  console.log("element", element);
   const handleRouter = () => {
     navigate(`/main/${appId}/chat`);
   };
@@ -251,9 +250,10 @@ const LayoutSidebar = ({
                     getMenuList={getMenuList}
                     setTableModal={setTableModal}
                     selectedFolder={selectedFolder}
-                    setCheck={setCheck}
                     setElement={setElement}
                     setSubMenuIsOpen={setSubMenuIsOpen}
+                    subMenuIsOpen={subMenuIsOpen}
+                    setMicrofrontendModal={setMicrofrontendModal}
                   />
                 ))}
                 {/* {folderModalType === "folder" && (

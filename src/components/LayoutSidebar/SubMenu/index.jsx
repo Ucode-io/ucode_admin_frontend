@@ -56,17 +56,7 @@ const SubMenu = ({
   return (
     <div className={`SubMenu ${!subMenuIsOpen ? "right-side-closed" : ""}`}>
       <div className="header" onClick={() => {}}>
-        <div className="brand">
-          {subMenuIsOpen && (
-            <h2
-              style={{
-                marginLeft: "8px",
-              }}
-            >
-              {element?.label}
-            </h2>
-          )}{" "}
-        </div>
+        {subMenuIsOpen && <h2>{element?.label}</h2>}{" "}
         <Box className="buttons">
           <div className="dots" onClick={() => setSubMenuIsOpen(false)}>
             <BsThreeDots
@@ -127,6 +117,7 @@ const SubMenu = ({
                   setTableModal={setTableModal}
                   selectedFolder={selectedFolder}
                   setMicrofrontendModal={setMicrofrontendModal}
+                  selectedTable={selectedTable}
                 />
               ))}
               {/* {folderModalType === "folder" && (

@@ -156,6 +156,33 @@ const ButtonsMenu = ({
               }}
             />
           </Box>
+        ) : menuType === "MICROFRONTEND" ? (
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Изменить microfrontend"
+              onClick={(e) => {
+                e.stopPropagation();
+                setMicrofrontendModal(element);
+                handleCloseNotify();
+              }}
+            />
+            <Divider
+              style={{
+                marginBottom: "4px",
+                marginTop: "4px",
+              }}
+            />
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Удалить microfrontend"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFolder(element);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
         ) : (
           ""
         )}

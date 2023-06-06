@@ -227,6 +227,19 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
     mainForm.setValue("layouts", newLayouts);
   };
 
+  const setModal = (index, e) => {
+    const newLayout = layouts.map((element, i) => {
+      if (i === index) {
+        return {
+          ...element,
+          type: e.target.checked ? "PopupLayout" : "SimpleLayout",
+        };
+      }
+      return element;
+    });
+    mainForm.setValue("layouts", newLayout);
+  };
+
   const computedLayouts = useWatch({
     control: mainForm.control,
     name: "layouts",
@@ -270,6 +283,19 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
                         />
                       }
                       label={"Default"}
+                    />
+
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          onChange={(e) => setModal(index, e)}
+                          checked={element.type === "SimpleLayout" ? false : true}
+                        />
+                      }
+                      label={"Modal"}
                     />
                   </Box>
                 </Box>

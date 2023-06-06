@@ -1,11 +1,10 @@
-import { Box, Divider, Menu } from "@mui/material";
+import { Box, Divider, Menu, MenuItem } from "@mui/material";
 import { RiPencilFill } from "react-icons/ri";
 import "./style.scss";
 import { BsFillTrashFill } from "react-icons/bs";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "react-query";
 
 const ButtonsMenu = ({
   element,
@@ -21,9 +20,7 @@ const ButtonsMenu = ({
   appId,
   setTableModal,
 }) => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
-  console.log("selectedFolder?.id", element?.id);
   return (
     <>
       <Menu
@@ -46,13 +43,13 @@ const ButtonsMenu = ({
             },
           },
         }}
+        key={element?.id}
       >
         {!element?.isChild && sidebarIsOpen && menuType === "folder" ? (
-          <Box className="menu">
+          <MenuItem className="menu">
             <Box
               onClick={(e) => {
                 e.stopPropagation();
-                e.preventDefault();
                 openFolderCreateModal("update", element);
                 handleCloseNotify();
               }}
@@ -68,7 +65,6 @@ const ButtonsMenu = ({
             />
             <Box
               onClick={(e) => {
-                e.preventDefault();
                 e.stopPropagation();
                 deleteFolder(element);
                 handleCloseNotify();
@@ -77,12 +73,11 @@ const ButtonsMenu = ({
               <BsFillTrashFill size={13} />
               <h3>Удалить папку</h3>
             </Box>
-          </Box>
+          </MenuItem>
         ) : !element?.isChild && sidebarIsOpen && menuType === "tableMenu" ? (
-          <Box className="menu">
+          <MenuItem className="menu">
             <Box
               onClick={(e) => {
-                e.preventDefault();
                 e.stopPropagation();
                 navigate(`/settings/constructor/apps/${appId}/objects/create`);
                 handleCloseNotify();
@@ -93,7 +88,6 @@ const ButtonsMenu = ({
             </Box>
             <Box
               onClick={(e) => {
-                e.preventDefault();
                 e.stopPropagation();
                 setTableModal(element);
                 handleCloseNotify();
@@ -111,7 +105,6 @@ const ButtonsMenu = ({
             <Box
               onClick={(e) => {
                 e.stopPropagation();
-                e.preventDefault();
                 openFolderCreateModal("create", element);
                 handleCloseNotify();
               }}
@@ -119,14 +112,13 @@ const ButtonsMenu = ({
               <CreateNewFolderIcon size={13} />
               <h3>Добавить папку</h3>
             </Box>
-          </Box>
+          </MenuItem>
         ) : element.type === "TABLE" ? (
-          <>
+          <MenuItem>
             <Box className="menu">
               <Box
                 onClick={(e) => {
                   e.stopPropagation();
-                  e.preventDefault();
                   setTableModal(element);
                   handleCloseNotify();
                 }}
@@ -144,7 +136,6 @@ const ButtonsMenu = ({
             <Box className="menu">
               <Box
                 onClick={(e) => {
-                  e.preventDefault();
                   e.stopPropagation();
                   deleteFolder(element);
                   handleCloseNotify();
@@ -154,7 +145,7 @@ const ButtonsMenu = ({
                 <h3>Удалить table</h3>
               </Box>
             </Box>
-          </>
+          </MenuItem>
         ) : (
           ""
         )}

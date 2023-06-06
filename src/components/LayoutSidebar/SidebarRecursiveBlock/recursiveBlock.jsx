@@ -9,13 +9,11 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { TbReplace } from "react-icons/tb";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import applicationService from "../../../services/applicationSercixe";
-import constructorTableService from "../../../services/constructorTableService";
 import { fetchConstructorTableListAction } from "../../../store/constructorTable/constructorTable.thunk";
 import { applyDrag } from "../../../utils/applyDrag";
 import IconGenerator from "../../IconPicker/IconGenerator";
@@ -39,21 +37,21 @@ const RecursiveBlock = ({
   sidebarIsOpen,
   getMenuList,
   setTableModal,
+  menu,
+  setMenu,
+  menuType,
+  handleOpenNotify,
 }) => {
   const { tableSlug } = useParams();
   const { appId } = useParams();
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
-  const [menu, setMenu] = useState();
-  const [menuType, setMenuType] = useState();
   const openMenu = Boolean(menu);
   const queryClient = useQueryClient();
   const [child, setChild] = useState();
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
-
-  console.log("level", level);
 
   const { isLoading } = useMenuListQuery({
     params: {
@@ -63,14 +61,11 @@ const RecursiveBlock = ({
       cacheTime: 10,
       enabled: Boolean(check),
       onSuccess: (res) => {
-        console.log("res", res);
         setCheck(false);
         setChild(res.menus);
       },
     },
   });
-
-  console.log("data", child);
 
   // const getListMenu = (id) => {
   //   menuSettingsService
@@ -115,10 +110,6 @@ const RecursiveBlock = ({
     (state) => state.constructorTable.applications
   );
 
-  const handleOpenNotify = (event, type) => {
-    setMenu(event?.currentTarget);
-    setMenuType(type);
-  };
   const handleCloseNotify = () => {
     setMenu(null);
   };
@@ -192,9 +183,7 @@ const RecursiveBlock = ({
                   <AddIcon
                     size={13}
                     onClick={(e) => {
-                      e.preventDefault();
                       e.stopPropagation();
-                      // openFolderCreateModal("parent", element);
                       handleOpenNotify(e, "tableMenu");
                     }}
                   />
@@ -294,7 +283,6 @@ const RecursiveBlock = ({
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        // openFolderCreateModal("parent", element);
                         handleOpenNotify(e, "tableMenu");
                       }}
                       style={{
@@ -365,6 +353,10 @@ const RecursiveBlock = ({
                 sidebarIsOpen={sidebarIsOpen}
                 getMenuList={getMenuList}
                 setTableModal={setTableModal}
+                menu={menu}
+                setMenu={setMenu}
+                menuType={menuType}
+                handleOpenNotify={handleOpenNotify}
               />
             ))}
           </Container>

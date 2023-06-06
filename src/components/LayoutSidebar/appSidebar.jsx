@@ -8,7 +8,6 @@ import {
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useQueryClient } from "react-query";
-import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Draggable } from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -23,7 +22,6 @@ const AppSidebar = ({
   index,
   element,
   parentClickHandler,
-  openedBlock,
   openFolderCreateModal,
   environment,
   setFolderModalType,
@@ -32,38 +30,18 @@ const AppSidebar = ({
   sidebarIsOpen,
   getMenuList,
   setTableModal,
-  selectedFolder,
   setCheck,
   setElement,
   setSubMenuIsOpen,
 }) => {
   const { tableSlug } = useParams();
   const { appId } = useParams();
-  const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
   const [menu, setMenu] = useState();
   const [menuType, setMenuType] = useState();
   const openMenu = Boolean(menu);
   const queryClient = useQueryClient();
-  //   const [id, setId] = useState();
-  //   const [child, setChild] = useState();
-  //   const [check, setCheck] = useState(false);
-
-  //   const { isLoading } = useMenuListQuery({
-  //     params: {
-  //       parent_id: id,
-  //     },
-  //     queryParams: {
-  //       cacheTime: 10,
-  //       enabled: Boolean(check),
-  //       onSuccess: (res) => {
-  //         console.log("res", res);
-  //         setCheck(false);
-  //         setChild(res.menus);
-  //       },
-  //     },
-  //   });
 
   const activeStyle = {
     backgroundColor:
@@ -82,7 +60,6 @@ const AppSidebar = ({
   const clickHandler = () => {
     element.type === "TABLE" && parentClickHandler(element);
     setChildBlockVisible((prev) => !prev);
-    // getListMenu(element.id);
     setCheck(true);
     setElement(element);
     setSubMenuIsOpen(true);

@@ -1,8 +1,11 @@
-import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { Box } from "@mui/material";
 import RecursiveBlock from "../SidebarRecursiveBlock/recursiveBlock";
 import FolderModal from "../folderModal";
 import "./style.scss";
+import ClearIcon from "@mui/icons-material/Clear";
+import { BsThreeDots } from "react-icons/bs";
+import { useState } from "react";
+import AddIcon from "@mui/icons-material/Add";
 
 const SubMenu = ({
   child,
@@ -21,7 +24,14 @@ const SubMenu = ({
   selectedFolder,
   folderModalType,
   closeFolderModal,
+  setSubMenuIsOpen,
 }) => {
+  const [menu, setMenu] = useState();
+  const [menuType, setMenuType] = useState();
+  const handleOpenNotify = (event, type) => {
+    setMenu(event?.currentTarget);
+    setMenuType(type);
+  };
   return (
     <div className={`SubMenu ${!subMenuIsOpen ? "right-side-closed" : ""}`}>
       <div className="header" onClick={() => {}}>
@@ -36,9 +46,30 @@ const SubMenu = ({
             </h2>
           )}{" "}
         </div>
-        <div className="cloes-btn">
-          <MenuOpenIcon />
-        </div>
+        <Box className="buttons">
+          <div className="dots" onClick={() => setSubMenuIsOpen(false)}>
+            <BsThreeDots
+              size={13}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenNotify(e, "folder");
+              }}
+              style={{
+                color: environment?.data?.color,
+              }}
+            />
+            <AddIcon
+              size={13}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenNotify(e, "tableMenu");
+              }}
+            />
+          </div>
+          <div className="close-btn" onClick={() => setSubMenuIsOpen(false)}>
+            <ClearIcon />
+          </div>
+        </Box>
       </div>
 
       <Box
@@ -71,6 +102,10 @@ const SubMenu = ({
                   sidebarIsOpen={subMenuIsOpen}
                   setTableModal={setTableModal}
                   selectedFolder={selectedFolder}
+                  menu={menu}
+                  setMenu={setMenu}
+                  menuType={menuType}
+                  handleOpenNotify={handleOpenNotify}
                 />
               ))}
               {folderModalType === "folder" && (

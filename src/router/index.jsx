@@ -32,6 +32,8 @@ import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
 import ReloadPage from "../components/ReloadComponent/index";
 import ReloadRelations from "@/components/ReloadRelations";
 import Chat from "../components/Chat";
+import MicrofrontendPage from "../views/Constructor/Microfrontend";
+import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -134,6 +136,18 @@ const Router = () => {
         <Route path="constructor/apps" element={<AppsPage />} />
         <Route path="constructor/apps/create" element={<AppsForm />} />
         <Route path="constructor/apps/:appId" element={<AppsForm />} />
+        <Route
+          path="constructor/microfrontend"
+          element={<MicrofrontendPage />}
+        />
+        <Route
+          path="constructor/microfrontend/create"
+          element={<MicrofrontendForm />}
+        />
+        <Route
+          path="constructor/microfrontend/:microfrontendId"
+          element={<MicrofrontendForm />}
+        />
 
         {/* <Route path="constructor/objects" element={<ConstructorTablesListPage />} /> */}
         <Route

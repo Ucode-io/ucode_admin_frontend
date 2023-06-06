@@ -54,6 +54,16 @@
         padding: 0 12px;
         // box-shadow: inset 0px -1px 0px #E5E9EB;
 
+        .buttons {
+            display: flex;
+            column-gap: 8px;
+
+            .close-btn,
+            .dots {
+                cursor: pointer;
+            }
+        }
+
 
         .brand {
             display: flex;

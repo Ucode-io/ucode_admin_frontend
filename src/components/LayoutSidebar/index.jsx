@@ -62,7 +62,6 @@ const LayoutSidebar = ({
       cacheTime: 10,
       enabled: Boolean(check),
       onSuccess: (res) => {
-        console.log("res", res);
         setCheck(false);
         setChild(res.menus);
       },
@@ -348,6 +347,7 @@ const LayoutSidebar = ({
         computedFolderList={computedFolderList}
         element={element}
         subMenuIsOpen={subMenuIsOpen}
+        setSubMenuIsOpen={setSubMenuIsOpen}
         parentClickHandler={parentClickHandler}
         openFolderCreateModal={openFolderCreateModal}
         childBlockVisible={childBlockVisible}

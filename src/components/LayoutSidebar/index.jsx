@@ -222,8 +222,6 @@ const LayoutSidebar = ({
               icon={<ChatBubbleIcon />}
               openFolderCreateModal={openFolderCreateModal}
               onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
                 handleRouter();
               }}
               sidebarIsOpen={sidebarIsOpen}
@@ -276,8 +274,6 @@ const LayoutSidebar = ({
               icon={<AddIcon />}
               openFolderCreateModal={openFolderCreateModal}
               onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
                 openFolderCreateModal("create");
               }}
               sidebarIsOpen={sidebarIsOpen}
@@ -288,8 +284,6 @@ const LayoutSidebar = ({
             title={"Profile"}
             openFolderCreateModal={openFolderCreateModal}
             onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
               anchorEl ? setAnchorEl(null) : openMenu(e);
             }}
             children={<ProfilePanel anchorEl={anchorEl} />}

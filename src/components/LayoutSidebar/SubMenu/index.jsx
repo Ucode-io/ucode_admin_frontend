@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlock";
+import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import ClearIcon from "@mui/icons-material/Clear";
 import { BsThreeDots } from "react-icons/bs";

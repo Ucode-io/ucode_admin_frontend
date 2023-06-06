@@ -21,7 +21,7 @@ import menuSettingsService from "../../services/menuSettingsService";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import SubMenu from "./SubMenu";
 import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
-import MenuButtonComponent from "./MenuButton";
+import MenuButtonComponent from "./MenuButtonComponent";
 import AppSidebar from "./appSidebar";
 
 const LayoutSidebar = ({

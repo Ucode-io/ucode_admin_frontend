@@ -22,6 +22,9 @@ const FolderCreateModal = ({
   const { projectId } = useParams();
   const queryClient = useQueryClient();
 
+  console.log("selectedFolder", selectedFolder);
+  console.log("modalType", modalType);
+
   const onSubmit = (data) => {
     if (modalType === "create") {
       createType(data, selectedFolder);

@@ -9,20 +9,20 @@ import { useNavigate } from "react-router-dom";
 import brandLogo from "../../../builder_config/assets/company-logo.svg";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import constructorTableService from "../../services/constructorTableService";
-import menuService, { useMenuListQuery } from "../../services/menuService";
+import { useMenuListQuery } from "../../services/menuService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
-import RecursiveBlock from "./SidebarRecursiveBlock/recursiveBlock";
-import FolderModal from "./folderModal";
-import MenuButton from "./menuButton";
+import FolderModal from "./FolderModal";
+import MenuButton from "./MenuButton";
 import "./style.scss";
 import menuSettingsService from "../../services/menuSettingsService";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
-import AppSidebar from "./appSidebar";
+import AppSidebar from "./AppSidebar";
 import SubMenu from "./SubMenu";
+import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
 
 const LayoutSidebar = ({
   elements,
@@ -49,6 +49,7 @@ const LayoutSidebar = ({
   const [menuList, setMenuList] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
   const [tableModal, setTableModalOpen] = useState(false);
+  const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
   const [child, setChild] = useState();
   const [check, setCheck] = useState(false);
   const [element, setElement] = useState();
@@ -80,6 +81,13 @@ const LayoutSidebar = ({
   };
   const closeTableModal = () => {
     setTableModalOpen(null);
+  };
+  const setMicrofrontendModal = (element) => {
+    setMicrofrontendModalOpen(true);
+    setSelectedFolder(element);
+  };
+  const closeMicrofrontendModal = () => {
+    setMicrofrontendModalOpen(null);
   };
   const closeModal = () => {
     setModalType(null);
@@ -139,12 +147,6 @@ const LayoutSidebar = ({
     ];
   }, [tableFolder?.folders]);
 
-  const computedTableList = useMemo(() => {
-    return tableFolderListToNested([...(files ?? []), ...elements], {
-      undefinedChildren: true,
-    });
-  }, [tableFolder?.folders, elements, files]);
-
   const computedFolderList = useMemo(() => {
     return tableFolderListToNested([...(files ?? [])], {
       undefinedChildren: true,
@@ -152,13 +154,9 @@ const LayoutSidebar = ({
   }, [files]);
 
   useEffect(() => {
-    if (!computedTableList) setLoading(true);
-    else setLoading(false);
-  }, [computedTableList]);
-
-  useEffect(() => {
     if (!sidebarIsOpen) setOpenedBlock(null);
   }, [sidebarIsOpen]);
+
   useEffect(() => {
     getMenuList();
   }, []);
@@ -218,26 +216,6 @@ const LayoutSidebar = ({
               />
             </Box>
 
-            {/* <MenuButton
-            title={"My tasks"}
-            icon={<HomeIcon />}
-            openFolderCreateModal={openFolderCreateModal}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              openFolderCreateModal("create");
-            }}
-          />
-          <MenuButton
-            title={"Notification"}
-            icon={<NotificationsIcon />}
-            openFolderCreateModal={openFolderCreateModal}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              openFolderCreateModal("create");
-            }}
-          /> */}
             <MenuButton
               title={"Chat"}
               icon={<ChatBubbleIcon />}
@@ -285,6 +263,7 @@ const LayoutSidebar = ({
                     selectedTable={selectedTable}
                     getAppById={getAppById}
                     computedFolderList={computedFolderList}
+                    menuList={menuList}
                   />
                 )}
               </div>
@@ -320,20 +299,23 @@ const LayoutSidebar = ({
           modalType === "parent" ||
           modalType === "update") && (
           <FolderCreateModal
-            modalType={modalType}
             closeModal={closeModal}
-            appId={appId}
             selectedFolder={selectedFolder}
+            modalType={modalType}
+            appId={appId}
             getMenuList={getMenuList}
           />
         )}
         {tableModal && (
           <TableLinkModal
-            modalType={modalType}
             closeModal={closeTableModal}
-            appId={appId}
             selectedFolder={selectedFolder}
-            getMenuList={getMenuList}
+          />
+        )}
+        {microfrontendModal && (
+          <MicrofrontendLinkModal
+            closeModal={closeMicrofrontendModal}
+            selectedFolder={selectedFolder}
           />
         )}
       </div>
@@ -356,6 +338,7 @@ const LayoutSidebar = ({
         selectedFolder={selectedFolder}
         folderModalType={folderModalType}
         closeFolderModal={closeFolderModal}
+        setMicrofrontendModal={setMicrofrontendModal}
       />
     </>
   );

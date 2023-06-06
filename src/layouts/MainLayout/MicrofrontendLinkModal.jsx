@@ -6,16 +6,16 @@ import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
 import HFSelect from "../../components/FormElements/HFSelect";
-import constructorTableService from "../../services/constructorTableService";
 import menuSettingsService from "../../services/menuSettingsService";
+import microfrontendService from "../../services/microfrontendService";
 
-const TableLinkModal = ({ closeModal, loading, selectedFolder }) => {
+const MicrofrontendLinkModal = ({ closeModal, loading, selectedFolder }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
-  const [tables, setTables] = useState();
+  const [list, setList] = useState();
 
   const onSubmit = (data) => {
-    if (selectedFolder.type === "TABLE") {
+    if (selectedFolder.type === "MICROFRONTEND") {
       updateType(data, selectedFolder);
     } else {
       createType(data, selectedFolder);
@@ -25,7 +25,7 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder }) => {
   const { control, handleSubmit, reset } = useForm();
 
   useEffect(() => {
-    if (selectedFolder.type === "TABLE")
+    if (selectedFolder.type === "MICROFRONTEND")
       menuSettingsService
         .getById(selectedFolder.id, projectId)
         .then((res) => {
@@ -34,15 +34,15 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder }) => {
         .catch((err) => {
           console.log(err);
         });
-  }, [selectedFolder]);
+  }, []);
 
   const createType = (data, selectedFolder) => {
     menuSettingsService
       .create({
         ...data,
         parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
-        type: "TABLE",
-        table_id: data?.table_id,
+        type: "MICROFRONTEND",
+        microfrontend_id: data?.microfrontend_id,
       })
       .then(() => {
         closeModal();
@@ -67,8 +67,8 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder }) => {
   };
 
   const getTables = () => {
-    constructorTableService.getList().then((res) => {
-      setTables(res);
+    microfrontendService.getList().then((res) => {
+      setList(res);
     });
   };
 
@@ -76,19 +76,20 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder }) => {
     getTables();
   }, []);
 
-  const tableOptions = useMemo(() => {
-    return tables?.tables?.map((item, index) => ({
-      label: item.label,
+  const microfrontendOptions = useMemo(() => {
+    return list?.functions?.map((item, index) => ({
+      label: item.name,
       value: item.id,
     }));
-  }, [tables]);
+  }, [list]);
+  console.log("microfrontendOptions", microfrontendOptions);
 
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Привязать table</Typography>
+            <Typography variant="h4">Привязать microfrontend</Typography>
             <ClearIcon
               color="primary"
               onClick={closeModal}
@@ -103,10 +104,10 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder }) => {
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFSelect
                 fullWidth
-                label="Tables"
+                label="Microfrontend"
                 control={control}
-                name="table_id"
-                options={tableOptions}
+                name="microfrontend_id"
+                options={microfrontendOptions}
               />
             </Box>
 
@@ -120,4 +121,4 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder }) => {
   );
 };
 
-export default TableLinkModal;
+export default MicrofrontendLinkModal;

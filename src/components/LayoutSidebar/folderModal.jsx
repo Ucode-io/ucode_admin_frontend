@@ -1,8 +1,8 @@
 import { Box, Card, IconButton, Modal, Typography } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import CancelButton from "../../components/Buttons/CancelButton";
-import CreateButton from "../../components/Buttons/CreateButton";
-import SaveButton from "../../components/Buttons/SaveButton";
+import CancelButton from "../Buttons/CancelButton";
+import CreateButton from "../Buttons/CreateButton";
+import SaveButton from "../Buttons/SaveButton";
 import constructorTableService from "../../services/constructorTableService";
 import { useQueryClient } from "react-query";
 import { useState } from "react";
@@ -17,6 +17,7 @@ const FolderModal = ({
   selectedTable,
   getAppById,
   computedFolderList,
+  menuList,
 }) => {
   const queryClient = useQueryClient();
   const [folder, setFolder] = useState();
@@ -40,21 +41,13 @@ const FolderModal = ({
     setFolder(itemId);
   };
   const renderTree = (nodes) => (
-    <TreeItem
-      key={nodes.id}
-      nodeId={nodes.id}
-      label={nodes.label || nodes.title}
-    >
-      {Array.isArray(nodes?.children)
-        ? nodes?.children.map((node) => renderTree(node))
+    <TreeItem key={nodes?.id} nodeId={nodes?.id} label={nodes?.label}>
+      {Array.isArray(nodes?.child_menus)
+        ? nodes?.child_menus.map((node) => renderTree(node))
         : null}
     </TreeItem>
   );
-  const data = {
-    id: "0",
-    title: "Root folder",
-    children: [...(computedFolderList[0].children ?? [])],
-  };
+
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
@@ -81,7 +74,7 @@ const FolderModal = ({
               }}
               onNodeSelect={handleSelect}
             >
-              {renderTree(data)}
+              {renderTree(menuList?.menus[0])}
             </TreeView>
           </Box>
           <div className="folder_btns-row">

@@ -5,13 +5,15 @@ import { BsFillTrashFill } from "react-icons/bs";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import { useNavigate } from "react-router-dom";
+import MenuItemComponent from "./MenuItem";
+import SyncAltIcon from "@mui/icons-material/SyncAlt";
+import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
 
 const ButtonsMenu = ({
   element,
   menu,
   openMenu,
   handleCloseNotify,
-  sidebarIsOpen,
   openFolderCreateModal,
   deleteFolder,
   menuType,
@@ -19,6 +21,7 @@ const ButtonsMenu = ({
   setSelectedTable,
   appId,
   setTableModal,
+  setMicrofrontendModal,
 }) => {
   const navigate = useNavigate();
   return (
@@ -34,118 +37,125 @@ const ButtonsMenu = ({
             overflow: "visible",
             filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
             mt: 1.5,
+            padding: "5px",
             "& .MuiAvatar-root": {
               width: 32,
               height: 32,
               ml: -0.5,
               mr: 1,
-              padding: "5px",
             },
           },
         }}
         key={element?.id}
       >
-        {!element?.isChild && sidebarIsOpen && menuType === "folder" ? (
-          <MenuItem className="menu">
-            <Box
+        {menuType === "FOLDER" ? (
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Изменить папку"
               onClick={(e) => {
                 e.stopPropagation();
                 openFolderCreateModal("update", element);
                 handleCloseNotify();
               }}
-            >
-              <RiPencilFill size={13} />
-              <h3>Изменить папку</h3>
-            </Box>
+            />
             <Divider
               style={{
                 marginBottom: "4px",
                 marginTop: "4px",
               }}
             />
-            <Box
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Удалить папку"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteFolder(element);
                 handleCloseNotify();
               }}
-            >
-              <BsFillTrashFill size={13} />
-              <h3>Удалить папку</h3>
-            </Box>
-          </MenuItem>
-        ) : !element?.isChild && sidebarIsOpen && menuType === "tableMenu" ? (
-          <MenuItem className="menu">
-            <Box
+            />
+          </Box>
+        ) : menuType === "CREATE_TO_FOLDER" ? (
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<TableChartIcon size={13} />}
+              title="Создать table"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/settings/constructor/apps/${appId}/objects/create`);
                 handleCloseNotify();
               }}
-            >
-              <TableChartIcon size={13} />
-              <h3>Создать table</h3>
-            </Box>
-            <Box
+            />
+            <MenuItemComponent
+              icon={<SyncAltIcon size={13} />}
+              title="Добавить table"
               onClick={(e) => {
                 e.stopPropagation();
                 setTableModal(element);
                 handleCloseNotify();
               }}
-            >
-              <TableChartIcon size={13} />
-              <h3>Добавить table</h3>
-            </Box>
+            />
+            <MenuItemComponent
+              icon={<DeveloperBoardIcon size={13} />}
+              title="Добавить microfrontend"
+              onClick={(e) => {
+                e.stopPropagation();
+                setMicrofrontendModal(element);
+                handleCloseNotify();
+              }}
+            />
             <Divider
               style={{
                 marginBottom: "4px",
                 marginTop: "4px",
               }}
             />
-            <Box
+            <MenuItemComponent
+              icon={<CreateNewFolderIcon size={13} />}
+              title="Добавить папку"
               onClick={(e) => {
                 e.stopPropagation();
                 openFolderCreateModal("create", element);
                 handleCloseNotify();
               }}
-            >
-              <CreateNewFolderIcon size={13} />
-              <h3>Добавить папку</h3>
-            </Box>
-          </MenuItem>
-        ) : element.type === "TABLE" ? (
-          <MenuItem>
-            <Box className="menu">
-              <Box
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setTableModal(element);
-                  handleCloseNotify();
-                }}
-              >
-                <RiPencilFill size={13} />
-                <h3>Изменить table</h3>
-              </Box>
-            </Box>
+            />
+          </Box>
+        ) : menuType === "TABLE" ? (
+          <Box className="menu">
+            {/* <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Переместить table"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFolderModalType("folder", element);
+                handleCloseNotify();
+              }}
+            /> */}
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Изменить table"
+              onClick={(e) => {
+                e.stopPropagation();
+                setTableModal(element);
+                handleCloseNotify();
+              }}
+            />
             <Divider
               style={{
                 marginBottom: "4px",
                 marginTop: "4px",
               }}
             />
-            <Box className="menu">
-              <Box
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteFolder(element);
-                  handleCloseNotify();
-                }}
-              >
-                <BsFillTrashFill size={13} />
-                <h3>Удалить table</h3>
-              </Box>
-            </Box>
-          </MenuItem>
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Удалить table"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFolder(element);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
         ) : (
           ""
         )}

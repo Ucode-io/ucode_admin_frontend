@@ -57,10 +57,14 @@
         .buttons {
             display: flex;
             column-gap: 8px;
+            align-items: center;
 
             .close-btn,
             .dots {
                 cursor: pointer;
+                display: flex;
+                align-items: center;
+                column-gap: 8px;
             }
         }
 

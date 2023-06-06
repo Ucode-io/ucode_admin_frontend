@@ -104,6 +104,8 @@ const Router = () => {
           <Route path=":chat_id" element={<Chat />} />
         </Route>
 
+        <Route path=":appId/page/:microfrontendId" element={<></>} />
+
         <Route
           path=":appId/object/:tableSlug"
           element={<ReloadWrapper component={ObjectsPage} />}

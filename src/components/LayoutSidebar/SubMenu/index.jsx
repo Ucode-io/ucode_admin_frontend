@@ -1,11 +1,15 @@
 import { Box } from "@mui/material";
-import RecursiveBlock from "../SidebarRecursiveBlock/recursiveBlock";
-import FolderModal from "../folderModal";
+import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlock";
+import FolderModal from "../FolderModal";
 import "./style.scss";
 import ClearIcon from "@mui/icons-material/Clear";
 import { BsThreeDots } from "react-icons/bs";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
+import ButtonsMenu from "../MenuButtons";
+import { useParams } from "react-router-dom";
+import menuSettingsService from "../../../services/menuSettingsService";
+import { useQueryClient } from "react-query";
 
 const SubMenu = ({
   child,
@@ -25,12 +29,30 @@ const SubMenu = ({
   folderModalType,
   closeFolderModal,
   setSubMenuIsOpen,
+  setMicrofrontendModal,
 }) => {
+  const { appId } = useParams();
+  const queryClient = useQueryClient();
   const [menu, setMenu] = useState();
   const [menuType, setMenuType] = useState();
   const handleOpenNotify = (event, type) => {
     setMenu(event?.currentTarget);
     setMenuType(type);
+  };
+  const openMenu = Boolean(menu);
+  const handleCloseNotify = () => {
+    setMenu(null);
+  };
+  const deleteFolder = (element) => {
+    menuSettingsService
+      .delete(element.id)
+      .then(() => {
+        // getListMenu(element.id);
+        queryClient.refetchQueries(["MENU"], element?.id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   return (
     <div className={`SubMenu ${!subMenuIsOpen ? "right-side-closed" : ""}`}>
@@ -52,7 +74,7 @@ const SubMenu = ({
               size={13}
               onClick={(e) => {
                 e.stopPropagation();
-                handleOpenNotify(e, "folder");
+                handleOpenNotify(e, "FOLDER");
               }}
               style={{
                 color: environment?.data?.color,
@@ -62,7 +84,10 @@ const SubMenu = ({
               size={13}
               onClick={(e) => {
                 e.stopPropagation();
-                handleOpenNotify(e, "tableMenu");
+                handleOpenNotify(e, "CREATE_TO_FOLDER");
+              }}
+              style={{
+                color: environment?.data?.color,
               }}
             />
           </div>
@@ -102,10 +127,7 @@ const SubMenu = ({
                   sidebarIsOpen={subMenuIsOpen}
                   setTableModal={setTableModal}
                   selectedFolder={selectedFolder}
-                  menu={menu}
-                  setMenu={setMenu}
-                  menuType={menuType}
-                  handleOpenNotify={handleOpenNotify}
+                  setMicrofrontendModal={setMicrofrontendModal}
                 />
               ))}
               {folderModalType === "folder" && (
@@ -117,6 +139,20 @@ const SubMenu = ({
                   computedFolderList={computedFolderList}
                 />
               )}
+              <ButtonsMenu
+                element={element}
+                menu={menu}
+                openMenu={openMenu}
+                handleCloseNotify={handleCloseNotify}
+                openFolderCreateModal={openFolderCreateModal}
+                deleteFolder={deleteFolder}
+                menuType={menuType}
+                setFolderModalType={setFolderModalType}
+                setSelectedTable={setSelectedTable}
+                appId={appId}
+                setTableModal={setTableModal}
+                setMicrofrontendModal={setMicrofrontendModal}
+              />
             </div>
           </div>
         </div>

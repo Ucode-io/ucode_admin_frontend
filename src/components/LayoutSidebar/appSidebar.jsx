@@ -16,7 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import "./style.scss";
 import menuSettingsService from "../../services/menuSettingsService";
 import IconGenerator from "../IconPicker/IconGenerator";
-import ButtonsMenu from "./buttonsMenu";
+import ButtonsMenu from "./MenuButtons";
 
 const AppSidebar = ({
   index,
@@ -120,7 +120,7 @@ const AppSidebar = ({
                     size={13}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleOpenNotify(e, "folder");
+                      handleOpenNotify(e, "FOLDER");
                     }}
                   />
                 </Box>
@@ -132,20 +132,14 @@ const AppSidebar = ({
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      // openFolderCreateModal("parent", element);
-                      handleOpenNotify(e, "tableMenu");
+                      handleOpenNotify(e, "CREATE_TO_FOLDER");
                     }}
                   />
                 </Box>
               </Tooltip>
             </>
           )}
-          {sidebarIsOpen &&
-            (childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            ))}
+          <KeyboardArrowRightIcon />
           <ButtonsMenu
             element={element}
             menu={menu}
@@ -217,7 +211,7 @@ const AppSidebar = ({
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleOpenNotify(e, "folder");
+                        handleOpenNotify(e, "FOLDER");
                       }}
                       style={{
                         color: environment?.data?.color,
@@ -233,7 +227,7 @@ const AppSidebar = ({
                         e.preventDefault();
                         e.stopPropagation();
                         // openFolderCreateModal("parent", element);
-                        handleOpenNotify(e, "tableMenu");
+                        handleOpenNotify(e, "CREATE_TO_FOLDER");
                       }}
                       style={{
                         color: environment?.data?.color,
@@ -268,7 +262,7 @@ const AppSidebar = ({
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleOpenNotify(e, "table");
+                        handleOpenNotify(e, "TABLE");
                       }}
                       style={{
                         color:

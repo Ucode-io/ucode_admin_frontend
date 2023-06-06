@@ -16,13 +16,13 @@ import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst
 import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
 import FolderModal from "./FolderModal";
-import MenuButton from "./MenuButton";
 import "./style.scss";
 import menuSettingsService from "../../services/menuSettingsService";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import AppSidebar from "./AppSidebar";
 import SubMenu from "./SubMenu";
 import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
+import MenuButtonComponent from "./MenuButton";
 
 const LayoutSidebar = ({
   elements,
@@ -216,7 +216,7 @@ const LayoutSidebar = ({
               />
             </Box>
 
-            <MenuButton
+            <MenuButtonComponent
               title={"Chat"}
               icon={<ChatBubbleIcon />}
               openFolderCreateModal={openFolderCreateModal}
@@ -269,7 +269,7 @@ const LayoutSidebar = ({
               </div>
               {/* <div className="sidebar-footer"></div> */}
             </div>
-            <MenuButton
+            <MenuButtonComponent
               title={"Create folder"}
               icon={<AddIcon />}
               openFolderCreateModal={openFolderCreateModal}
@@ -282,7 +282,7 @@ const LayoutSidebar = ({
             />
           </div>
 
-          <MenuButton
+          <MenuButtonComponent
             title={"Profile"}
             openFolderCreateModal={openFolderCreateModal}
             onClick={(e) => {

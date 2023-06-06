@@ -34,6 +34,7 @@ import ReloadRelations from "@/components/ReloadRelations";
 import Chat from "../components/Chat";
 import ApiKeyPage from "../views/ApiKeys/index.jsx";
 import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
+import Microfrontend from "../views/Microfrontend";
 import MicrofrontendPage from "../views/Constructor/Microfrontend";
 import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
 
@@ -110,7 +111,10 @@ const Router = () => {
         <Route path=":appId/api-key/create" element={<ApiKeysForm />} />
         <Route path=":appId/api-key/:apiKeyId" element={<ApiKeysForm />} />
 
-        <Route path=":appId/page/:microfrontendId" element={<></>} />
+        <Route
+          path=":appId/page/:microfrontendId"
+          element={<Microfrontend />}
+        />
 
         <Route
           path=":appId/object/:tableSlug"

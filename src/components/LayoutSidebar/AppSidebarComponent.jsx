@@ -29,9 +29,10 @@ const AppSidebar = ({
   sidebarIsOpen,
   getMenuList,
   setTableModal,
-  setCheck,
   setElement,
   setSubMenuIsOpen,
+  subMenuIsOpen,
+  setMicrofrontendModal,
 }) => {
   const { tableSlug } = useParams();
   const { appId } = useParams();
@@ -59,9 +60,9 @@ const AppSidebar = ({
   const clickHandler = () => {
     element.type === "TABLE" && parentClickHandler(element);
     setChildBlockVisible((prev) => !prev);
-    setCheck(true);
     setElement(element);
     setSubMenuIsOpen(true);
+    navigate(`/main/${element.id}`);
   };
   useEffect(() => {
     if (
@@ -71,6 +72,12 @@ const AppSidebar = ({
       setChildBlockVisible(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (element?.id === appId) {
+      setElement(element);
+    }
+  }, [appId, element]);
 
   const handleOpenNotify = (event, type) => {
     setMenu(event?.currentTarget);
@@ -104,6 +111,10 @@ const AppSidebar = ({
             clickHandler();
           }}
           className="parent-folder"
+          style={{
+            background: appId === element.id && subMenuIsOpen ? "#007AFF" : "",
+            color: appId === element.id && subMenuIsOpen ? "#fff" : "",
+          }}
         >
           <IconGenerator
             icon={element?.icon}
@@ -138,7 +149,7 @@ const AppSidebar = ({
               </Tooltip>
             </>
           )}
-          <KeyboardArrowRightIcon />
+          {sidebarIsOpen && <KeyboardArrowRightIcon />}
           <ButtonsMenu
             element={element}
             menu={menu}
@@ -152,6 +163,7 @@ const AppSidebar = ({
             setSelectedTable={setSelectedTable}
             appId={appId}
             setTableModal={setTableModal}
+            setMicrofrontendModal={setMicrofrontendModal}
           />
         </ListItemButton>
       ) : (
@@ -251,6 +263,7 @@ const AppSidebar = ({
               setSelectedTable={setSelectedTable}
               appId={appId}
               setTableModal={setTableModal}
+              setMicrofrontendModal={setMicrofrontendModal}
             />
             {element?.type === "TABLE" && sidebarIsOpen ? (
               <Tooltip title="Table settings" placement="top">

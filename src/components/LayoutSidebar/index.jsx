@@ -62,7 +62,9 @@ const LayoutSidebar = ({
       enabled: Boolean(appId),
       onSuccess: (res) => {
         setChild(res.menus);
-        setSubMenuIsOpen(true);
+        if (element?.id === appId) {
+          setSubMenuIsOpen(true);
+        }
       },
     },
   });

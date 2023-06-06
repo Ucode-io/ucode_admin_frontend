@@ -277,6 +277,10 @@ function LinkedListTables({
     setDefaultValue();
   }, [computedLinkedObjects?.defaultValue]);
 
+  useEffect(() => {
+    exportToHTML()
+  }, [selectedObject]);
+
   return (
     <div className={styles.docListTables}>
       <FRow label={"Linked Table"}>
@@ -340,7 +344,6 @@ function LinkedListTables({
             freeSolo
             onChange={(e, values) => {
               handleLinkedObject(values);
-              exportToHTML()
             }}
             getOptionLabel={(option) => option.label ?? ""}
             disablePortal

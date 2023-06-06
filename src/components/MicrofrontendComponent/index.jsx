@@ -2,32 +2,30 @@ import { Suspense } from "react";
 import { useId } from "react";
 import { lazy } from "react";
 import empty from "remote_empty_app/empty";
+import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 
 const EMPTY = empty;
 
-const MicrofrontendComponent = () => {
-  const id = useId();
+const MicrofrontendComponent = ({ link }) => {
+  console.log("LINK ==>", link);
 
   const RemoteButton = lazy(async () => {
-    window.remotesMap[`remote_app_${id}`] = {
-      url: "http://localhost:6003/assets/remoteEntry.js",
+    window.remotesMap[`remote_app_${link}`] = {
+      url: link,
       format: "esm",
       from: "vite",
     };
 
     const comp = await window.__federation_method_getRemote(
-      `remote_app_${id}`,
+      `remote_app_${link}`,
       "./Page"
     );
     return comp;
   });
-  
+
   return (
-    <Suspense fallback={() => "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"}>
-      <div>
-        asdasd
-        <RemoteButton text="Hello microfrontend" />
-      </div>
+    <Suspense fallback={<RingLoaderWithWrapper style={{ height: "100vh" }} />}>
+      <RemoteButton text="Hello microfrontend" />
     </Suspense>
   );
 };

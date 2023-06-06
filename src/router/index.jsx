@@ -111,7 +111,10 @@ const Router = () => {
         <Route path=":appId/api-key/create" element={<ApiKeysForm />} />
         <Route path=":appId/api-key/:apiKeyId" element={<ApiKeysForm />} />
 
-        <Route path=":appId/page/:microfrontendId" element={<></>} />
+        <Route
+          path=":appId/page/:microfrontendId"
+          element={<Microfrontend />}
+        />
 
         <Route
           path=":appId/object/:tableSlug"
@@ -132,13 +135,6 @@ const Router = () => {
             <KeepAliveWrapper>
               <ObjectsFormPage />
             </KeepAliveWrapper>
-          }
-        />
-
-        <Route
-          path=":appId/microfrontend"
-          element={
-            <Microfrontend />
           }
         />
 

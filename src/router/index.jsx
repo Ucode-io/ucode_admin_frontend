@@ -34,6 +34,8 @@ import ReloadRelations from "@/components/ReloadRelations";
 import Chat from "../components/Chat";
 import ApiKeyPage from "../views/ApiKeys/index.jsx";
 import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
+import MicrofrontendPage from "../views/Constructor/Microfrontend";
+import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -108,6 +110,8 @@ const Router = () => {
         <Route path=":appId/api-key/create" element={<ApiKeysForm />} />
         <Route path=":appId/api-key/:apiKeyId" element={<ApiKeysForm />} />
 
+        <Route path=":appId/page/:microfrontendId" element={<></>} />
+
         <Route
           path=":appId/object/:tableSlug"
           element={<ReloadWrapper component={ObjectsPage} />}
@@ -140,6 +144,18 @@ const Router = () => {
         <Route path="constructor/apps" element={<AppsPage />} />
         <Route path="constructor/apps/create" element={<AppsForm />} />
         <Route path="constructor/apps/:appId" element={<AppsForm />} />
+        <Route
+          path="constructor/microfrontend"
+          element={<MicrofrontendPage />}
+        />
+        <Route
+          path="constructor/microfrontend/create"
+          element={<MicrofrontendForm />}
+        />
+        <Route
+          path="constructor/microfrontend/:microfrontendId"
+          element={<MicrofrontendForm />}
+        />
 
         {/* <Route path="constructor/objects" element={<ConstructorTablesListPage />} /> */}
         <Route

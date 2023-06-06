@@ -22,7 +22,7 @@ import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import SubMenu from "./SubMenu";
 import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
 import MenuButtonComponent from "./MenuButtonComponent";
-import AppSidebar from "./appSidebar";
+import AppSidebar from "./AppSidebarComponent";
 
 const LayoutSidebar = ({
   elements,

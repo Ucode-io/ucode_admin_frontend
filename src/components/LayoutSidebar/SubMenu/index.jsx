@@ -9,7 +9,7 @@ import ButtonsMenu from "../MenuButtons";
 import { useParams } from "react-router-dom";
 import menuSettingsService from "../../../services/menuSettingsService";
 import { useQueryClient } from "react-query";
-import FolderModal from "../FolderModal";
+import FolderModal from "../folderModal";
 
 const SubMenu = ({
   child,

@@ -147,14 +147,14 @@ const FormElementGenerator = ({
       );
     case "SINGLE_LINE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label} 
             defaultValue={defaultValue}
             disabled={isDisabled}
             {...props}
@@ -164,14 +164,14 @@ const FormElementGenerator = ({
 
     case "PHONE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextFieldWithMask
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             mask={"(99) 999-99-99"}
             defaultValue={defaultValue}
             disabled={isDisabled}
@@ -218,7 +218,7 @@ const FormElementGenerator = ({
 
     case "MULTI_LINE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextEditor
             control={control}
             name={computedSlug}
@@ -227,7 +227,7 @@ const FormElementGenerator = ({
             multiline
             rows={4}
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={field.defaultValue}
             disabled={isDisabled}
             {...props}
@@ -289,7 +289,7 @@ const FormElementGenerator = ({
 
     case "NUMBER":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFNumberField
             control={control}
             name={computedSlug}
@@ -297,7 +297,7 @@ const FormElementGenerator = ({
             fullWidth
             type="number"
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             disabled={isDisabled}
             {...props}
@@ -370,7 +370,7 @@ const FormElementGenerator = ({
 
     case "EMAIL":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={computedSlug}
@@ -382,7 +382,7 @@ const FormElementGenerator = ({
             }}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             tabIndex={field?.tabIndex}
             disabled={isDisabled}
@@ -618,14 +618,14 @@ const FormElementGenerator = ({
 
     case "PASSWORD":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field?.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             disabled={field.attributes?.disabled}
             type="password"
@@ -636,14 +636,14 @@ const FormElementGenerator = ({
 
     default:
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field?.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             disabled={isDisabled}
             {...props}

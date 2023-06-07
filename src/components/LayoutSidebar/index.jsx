@@ -15,7 +15,6 @@ import { mainActions } from "../../store/main/main.slice";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
-import FolderModal from "./FolderModal";
 import "./style.scss";
 import menuSettingsService from "../../services/menuSettingsService";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
@@ -25,6 +24,7 @@ import MenuButtonComponent from "./MenuButtonComponent";
 import AppSidebar from "./AppSidebarComponent";
 import { applyDrag } from "../../utils/applyDrag";
 import { Container } from "react-smooth-dnd";
+import FolderModal from "./folderModal";
 
 const LayoutSidebar = ({
   favicon,

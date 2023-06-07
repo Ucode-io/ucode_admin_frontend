@@ -54,9 +54,6 @@ const LayoutSidebar = ({
   const [element, setElement] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
 
-  console.log("element", element);
-  console.log("subMenuIsOpen", subMenuIsOpen);
-
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: appId,

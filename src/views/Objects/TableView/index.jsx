@@ -12,6 +12,9 @@ import { useSelector } from "react-redux";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import { useTranslation } from "react-i18next";
+import layoutService from "../../../services/layoutService";
+import applicationService from "../../../services/applicationService";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 
 const TableView = ({
   tab,
@@ -29,7 +32,7 @@ const TableView = ({
   selectedLinkedTableSlug,
   ...props
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
   const { tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
@@ -82,9 +85,7 @@ const TableView = ({
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count)
-          ? 1
-          : Math.ceil(res.data?.count / limit),
+        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
       };
     },
   });
@@ -119,10 +120,9 @@ const TableView = ({
     }
   }, [tableData, reset]);
 
-  const { data: { custom_events: customEvents = [] } = {} } =
-    useCustomActionsQuery({
-      tableSlug,
-    });
+  const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
+    tableSlug,
+  });
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -139,23 +139,40 @@ const TableView = ({
     }
   };
 
+  const [tableId, setTableId] = useState(null);
+  const [layoutType, setLayoutType] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    applicationService.getById(appId).then((res) => {
+      const tables = res?.tables;
+      const table = tables?.find((table) => table?.slug === tableSlug);
+      setTableId(table?.id);
+    });
+  }, []);
+
+  useEffect(() => {
+    layoutService.getList({ data: { tableId: tableId ?? "" } }).then((res) => {
+      res?.layouts?.find((layout) => {
+        layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
+      });
+    });
+  }, [tableId]);
+
   const navigateToEditPage = (row) => {
-    navigateToForm(tableSlug, "EDIT", row);
+    if (layoutType === "PopupLayout") {
+      setOpen(true);
+    } else {
+      navigateToForm(tableSlug, "EDIT", row);
+    }
   };
 
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 ||
-        (new_list[tableSlug] &&
-          new_list[tableSlug].some((i) => i.checked))) && (
+      {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
-          <p>{t('filters')}</p>
-          <FastFilter
-            view={view}
-            fieldsMap={fieldsMap}
-            getFilteredFilterFields={getFilteredFilterFields}
-            isVertical
-          />
+          <p>{t("filters")}</p>
+          <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
         </div>
       )}
       <ObjectDataTable
@@ -189,6 +206,8 @@ const TableView = ({
         isResizeble={true}
         {...props}
       />
+
+      <ModalDetailPage open={open} setOpen={setOpen} />
     </div>
   );
 };

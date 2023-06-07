@@ -62,19 +62,15 @@ const MainLayout = ({ setFavicon, favicon }) => {
   return (
     <div className={styles.layout}>
       <Favicon url={favicon} />
-      {/* <Sidebar elements={elements} appId={appId} /> */}
-      {elements && (
-        <LayoutSidebar
-          elements={elements}
-          appId={appId}
-          environment={environment}
-          getAppById={getAppById}
-          setSelectedTable={setSelectedTable}
-          selectedTable={selectedTable}
-        />
-      )}
+      <LayoutSidebar
+        appId={appId}
+        environment={environment}
+        getAppById={getAppById}
+        setSelectedTable={setSelectedTable}
+        selectedTable={selectedTable}
+      />
       <div className={styles.content}>
-        <RouterTabsBlock selectedTable={selectedTable} />
+        {/* <RouterTabsBlock selectedTable={selectedTable} /> */}
 
         <Outlet />
       </div>

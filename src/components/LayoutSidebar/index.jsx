@@ -9,13 +9,13 @@ import { useNavigate } from "react-router-dom";
 import brandLogo from "../../../builder_config/assets/company-logo.svg";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import constructorTableService from "../../services/constructorTableService";
-import { useMenuListQuery } from "../../services/menuService";
+import menuService, { useMenuListQuery } from "../../services/menuService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
-// import FolderModal from "./FolderModal";
+import FolderModal from "./FolderModal";
 import "./style.scss";
 import menuSettingsService from "../../services/menuSettingsService";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
@@ -23,9 +23,10 @@ import SubMenu from "./SubMenu";
 import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
 import MenuButtonComponent from "./MenuButtonComponent";
 import AppSidebar from "./AppSidebarComponent";
+import { applyDrag } from "../../utils/applyDrag";
+import { Container } from "react-smooth-dnd";
 
 const LayoutSidebar = ({
-  elements,
   favicon,
   appId,
   environment,
@@ -53,6 +54,9 @@ const LayoutSidebar = ({
   const [element, setElement] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
 
+  console.log("element", element);
+  console.log("subMenuIsOpen", subMenuIsOpen);
+
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: appId,
@@ -62,13 +66,10 @@ const LayoutSidebar = ({
       enabled: Boolean(appId),
       onSuccess: (res) => {
         setChild(res.menus);
-        if (element?.id === appId) {
-          setSubMenuIsOpen(true);
-        }
+        setSubMenuIsOpen(true);
       },
     },
   });
-  console.log("element", element);
   const handleRouter = () => {
     navigate(`/main/${appId}/chat`);
   };
@@ -169,6 +170,19 @@ const LayoutSidebar = ({
     }
   );
 
+  const onDrop = (dropResult) => {
+    const result = applyDrag(menuList?.menus[0]?.child_menus, dropResult);
+    if (result) {
+      menuService
+        .updateOrder({
+          menus: result,
+        })
+        .then(() => {
+          getMenuList();
+        });
+    }
+  };
+
   return (
     <>
       <div
@@ -234,38 +248,44 @@ const LayoutSidebar = ({
               }}
             >
               <div className="menu-element">
-                {menuList?.menus[0]?.child_menus?.map((element, index) => (
-                  <AppSidebar
-                    key={index}
-                    element={element}
-                    parentClickHandler={parentClickHandler}
-                    openedBlock={openedBlock}
-                    openFolderCreateModal={openFolderCreateModal}
-                    environment={environment}
-                    childBlockVisible={childBlockVisible}
-                    tableFolder={tableFolder?.folders}
-                    setFolderModalType={setFolderModalType}
-                    setSelectedTable={setSelectedTable}
-                    sidebarIsOpen={sidebarIsOpen}
-                    getMenuList={getMenuList}
-                    setTableModal={setTableModal}
-                    selectedFolder={selectedFolder}
-                    setElement={setElement}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    subMenuIsOpen={subMenuIsOpen}
-                    setMicrofrontendModal={setMicrofrontendModal}
-                  />
-                ))}
-                {/* {folderModalType === "folder" && (
-                  <FolderModal
-                    closeModal={closeFolderModal}
-                    modalType={folderModalType}
-                    selectedTable={selectedTable}
-                    getAppById={getAppById}
-                    computedFolderList={computedFolderList}
-                    menuList={menuList}
-                  />
-                )} */}
+                <Container
+                  dragHandleSelector=".column-drag-handle"
+                  onDrop={onDrop}
+                >
+                  {menuList?.menus[0]?.child_menus?.map((element, index) => (
+                    <AppSidebar
+                      key={index}
+                      element={element}
+                      parentClickHandler={parentClickHandler}
+                      openedBlock={openedBlock}
+                      openFolderCreateModal={openFolderCreateModal}
+                      environment={environment}
+                      childBlockVisible={childBlockVisible}
+                      tableFolder={tableFolder?.folders}
+                      setFolderModalType={setFolderModalType}
+                      setSelectedTable={setSelectedTable}
+                      sidebarIsOpen={sidebarIsOpen}
+                      getMenuList={getMenuList}
+                      setTableModal={setTableModal}
+                      selectedFolder={selectedFolder}
+                      setElement={setElement}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
+                      subMenuIsOpen={subMenuIsOpen}
+                      setMicrofrontendModal={setMicrofrontendModal}
+                    />
+                  ))}
+                  {folderModalType === "folder" && (
+                    <FolderModal
+                      closeModal={closeFolderModal}
+                      modalType={folderModalType}
+                      selectedTable={selectedTable}
+                      getAppById={getAppById}
+                      computedFolderList={computedFolderList}
+                      menuList={menuList}
+                      element={element}
+                    />
+                  )}
+                </Container>
               </div>
               {/* <div className="sidebar-footer"></div> */}
             </div>
@@ -335,6 +355,7 @@ const LayoutSidebar = ({
         folderModalType={folderModalType}
         closeFolderModal={closeFolderModal}
         setMicrofrontendModal={setMicrofrontendModal}
+        menuList={menuList}
       />
     </>
   );

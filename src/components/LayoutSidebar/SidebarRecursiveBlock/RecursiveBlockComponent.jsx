@@ -5,13 +5,11 @@ import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
-import applicationService from "../../../services/applicationService";
+import { Draggable } from "react-smooth-dnd";
 import { useMenuListQuery } from "../../../services/menuService";
 import menuSettingsService from "../../../services/menuSettingsService";
-import { applyDrag } from "../../../utils/applyDrag";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ButtonsMenu from "../MenuButtons";
 import "../style.scss";
@@ -91,9 +89,6 @@ const RecursiveBlock = ({
       setChildBlockVisible(true);
     }
   }, []);
-  const applicationElements = useSelector(
-    (state) => state.constructorTable.applications
-  );
 
   const handleCloseNotify = () => {
     setMenu(null);
@@ -110,26 +105,6 @@ const RecursiveBlock = ({
       .catch((err) => {
         console.log(err);
       });
-  };
-  const onDrop = (dropResult) => {
-    const result = applyDrag(element.children, dropResult);
-    const computedTables = [
-      ...result?.map((el) => ({
-        table_id: el?.id,
-        is_visible: Boolean(el.is_visible),
-        is_own_table: Boolean(el.is_own_table),
-      })),
-    ];
-    if (result) {
-      applicationService
-        .update({
-          ...applicationElements,
-          tables: computedTables,
-        })
-        .then(() => {
-          // dispatch(fetchConstructorTableListAction(appId));
-        });
-    }
   };
 
   return (
@@ -175,6 +150,7 @@ const RecursiveBlock = ({
                     onClick={(e) => {
                       e?.stopPropagation();
                       handleOpenNotify(e, "FOLDER");
+                      setSelectedTable(element);
                     }}
                     style={{
                       color:
@@ -192,6 +168,7 @@ const RecursiveBlock = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       handleOpenNotify(e, "CREATE_TO_FOLDER");
+                      setSelectedTable(element);
                     }}
                     style={{
                       color:
@@ -232,6 +209,7 @@ const RecursiveBlock = ({
               onClick={(e) => {
                 e.stopPropagation();
                 handleOpenNotify(e, "TABLE");
+                setSelectedTable(element);
               }}
             />
           )}
@@ -241,6 +219,7 @@ const RecursiveBlock = ({
               onClick={(e) => {
                 e.stopPropagation();
                 handleOpenNotify(e, "MICROFRONTEND");
+                setSelectedTable(element);
               }}
             />
           )}
@@ -248,25 +227,21 @@ const RecursiveBlock = ({
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        {child && (
-          <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>
-            {child?.map((childElement, index) => (
-              <RecursiveBlock
-                key={index}
-                level={level + 1}
-                element={childElement}
-                parentClickHandler={parentClickHandler}
-                openFolderCreateModal={openFolderCreateModal}
-                environment={environment}
-                setFolderModalType={setFolderModalType}
-                setSelectedTable={setSelectedTable}
-                sidebarIsOpen={sidebarIsOpen}
-                setTableModal={setTableModal}
-                selectedTable={selectedTable}
-              />
-            ))}
-          </Container>
-        )}
+        {child?.map((childElement, index) => (
+          <RecursiveBlock
+            key={index}
+            level={level + 1}
+            element={childElement}
+            parentClickHandler={parentClickHandler}
+            openFolderCreateModal={openFolderCreateModal}
+            environment={environment}
+            setFolderModalType={setFolderModalType}
+            setSelectedTable={setSelectedTable}
+            sidebarIsOpen={sidebarIsOpen}
+            setTableModal={setTableModal}
+            selectedTable={selectedTable}
+          />
+        ))}
       </Collapse>
     </Draggable>
   );

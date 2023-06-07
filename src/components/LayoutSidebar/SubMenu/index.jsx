@@ -9,6 +9,7 @@ import ButtonsMenu from "../MenuButtons";
 import { useParams } from "react-router-dom";
 import menuSettingsService from "../../../services/menuSettingsService";
 import { useQueryClient } from "react-query";
+import FolderModal from "../FolderModal";
 
 const SubMenu = ({
   child,
@@ -29,6 +30,7 @@ const SubMenu = ({
   closeFolderModal,
   setSubMenuIsOpen,
   setMicrofrontendModal,
+  menuList,
 }) => {
   const { appId } = useParams();
   const queryClient = useQueryClient();
@@ -63,6 +65,7 @@ const SubMenu = ({
               size={13}
               onClick={(e) => {
                 handleOpenNotify(e, "FOLDER");
+                setSelectedTable(element);
               }}
               style={{
                 color: environment?.data?.color,
@@ -72,6 +75,7 @@ const SubMenu = ({
               size={13}
               onClick={(e) => {
                 handleOpenNotify(e, "CREATE_TO_FOLDER");
+                setSelectedTable(element);
               }}
               style={{
                 color: environment?.data?.color,
@@ -118,15 +122,17 @@ const SubMenu = ({
                   selectedTable={selectedTable}
                 />
               ))}
-              {/* {folderModalType === "folder" && (
+              {folderModalType === "folder" && (
                 <FolderModal
                   closeModal={closeFolderModal}
                   modalType={folderModalType}
                   selectedTable={selectedTable}
                   getAppById={getAppById}
                   computedFolderList={computedFolderList}
+                  menuList={menuList}
+                  element={element}
                 />
-              )} */}
+              )}
               <ButtonsMenu
                 element={element}
                 menu={menu}

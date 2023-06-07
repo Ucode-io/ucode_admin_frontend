@@ -10,6 +10,11 @@ import { TreeItem, TreeView } from "@mui/lab";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import "./style.scss";
+import FolderTreeView from "./TreeView";
+import {
+  useMenuListQuery,
+  useMenuUpdateMutation,
+} from "../../services/menuService";
 const FolderModal = ({
   closeModal,
   modalType,
@@ -18,35 +23,33 @@ const FolderModal = ({
   getAppById,
   computedFolderList,
   menuList,
+  element,
 }) => {
   const queryClient = useQueryClient();
   const [folder, setFolder] = useState();
+  const [check, setCheck] = useState(false);
 
-  const createType = (data) => {
-    constructorTableService
-      .update({
-        ...selectedTable,
-        folder_id: folder,
-      })
-      .then(() => {
-        queryClient.refetchQueries(["GET_TABLE_FOLDER"]);
+  const { mutateAsync: updateMenu, isLoading: createLoading } =
+    useMenuUpdateMutation({
+      onSuccess: () => {
         closeModal();
-        getAppById();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        queryClient.refetchQueries(["MENU"], element?.id);
+      },
+    });
+  const createType = () => {
+    updateMenu({
+      parent_id: folder,
+      id: selectedTable?.id,
+      type: selectedTable?.type,
+      icon: selectedTable?.icon || undefined,
+      label: selectedTable?.label || undefined,
+    });
   };
-  const handleSelect = (event, itemId) => {
+
+  const handleSelect = (e, itemId) => {
     setFolder(itemId);
+    setCheck(true);
   };
-  const renderTree = (nodes) => (
-    <TreeItem key={nodes?.id} nodeId={nodes?.id} label={nodes?.label}>
-      {Array.isArray(nodes?.child_menus)
-        ? nodes?.child_menus.map((node) => renderTree(node))
-        : null}
-    </TreeItem>
-  );
 
   return (
     <div>
@@ -74,7 +77,15 @@ const FolderModal = ({
               }}
               onNodeSelect={handleSelect}
             >
-              {renderTree(menuList?.menus[0])}
+              {/* {renderTree(menuList?.menus[0])} */}
+              {menuList?.menus?.map((item) => (
+                <FolderTreeView
+                  element={item}
+                  setCheck={setCheck}
+                  check={check}
+                  folder={folder}
+                />
+              ))}
             </TreeView>
           </Box>
           <div className="folder_btns-row">

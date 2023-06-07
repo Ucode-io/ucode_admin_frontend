@@ -23,7 +23,7 @@ function App() {
           <ReactQueryDevtools initialIsOpen={false} />
           <Provider store={store}>
             <PersistGate persistor={persistor}>
-              <ChakraProvider theme={chakraUITheme}>
+              {/* <ChakraProvider theme={chakraUITheme}> */}
                 <MaterialUIProvider>
                   <AlertProvider>
                     <GlobalFunctionsProvider />
@@ -34,7 +34,7 @@ function App() {
                     </BrowserRouter>
                   </AlertProvider>
                 </MaterialUIProvider>
-              </ChakraProvider>
+              {/* </ChakraProvider> */}
             </PersistGate>
           </Provider>
         </QueryClientProvider>

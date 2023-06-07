@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  IconButton,
-  ListItemButton,
-  ListItemText,
-  Tooltip,
-} from "@mui/material";
+import { Box, ListItemButton, ListItemText, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useQueryClient } from "react-query";
@@ -50,10 +43,8 @@ const AppSidebar = ({
   };
 
   useEffect(() => {
-    if (element?.id === appId) {
-      setElement(element);
-    }
-  }, [appId, element]);
+    setElement(element);
+  }, [element]);
 
   const handleOpenNotify = (event, type) => {
     setMenu(event?.currentTarget);
@@ -82,7 +73,7 @@ const AppSidebar = ({
         onClick={() => {
           clickHandler();
         }}
-        className="parent-folder"
+        className="parent-folder column-drag-handle"
         style={{
           background: appId === element.id && subMenuIsOpen ? "#007AFF" : "",
           color: appId === element.id && subMenuIsOpen ? "#fff" : "",

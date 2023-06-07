@@ -32,37 +32,39 @@ const RouterTabsBlock = ({ selectedTable }) => {
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(1);
 
-  const {
-    data: { views, fieldsMap } = {
-      views: [],
-      fieldsMap: {},
-    },
-    isLoading,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", tableSlug],
-    () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: { limit: 0, offset: 0, app_id: appId },
-      });
-    },
-    {
-      select: ({ data }) => {
-        return {
-          views: data?.views ?? [],
-          fieldsMap: listToMap(data?.fields),
-        };
-      },
-      onSuccess: ({ views }) => {
-        if (state?.toDocsTab) setSelectedTabIndex(views?.length);
-      },
-    }
-  );
+  // const {
+  //   data: { views, fieldsMap } = {
+  //     views: [],
+  //     fieldsMap: {},
+  //   },
+  //   isLoading,
+  // } = useQuery(
+  //   ["GET_VIEWS_AND_FIELDS", tableSlug],
+  //   () => {
+  //     return constructorObjectService.getList(tableSlug, {
+  //       data: { limit: 0, offset: 0, app_id: appId },
+  //     });
+  //   },
+  //   {
+  //     select: ({ data }) => {
+  //       return {
+  //         views: data?.views ?? [],
+  //         fieldsMap: listToMap(data?.fields),
+  //       };
+  //     },
+  //     onSuccess: ({ views }) => {
+  //       if (state?.toDocsTab) setSelectedTabIndex(views?.length);
+  //     },
+  //   }
+  // );
   useEffect(() => {
-    queryTab ? setSelectedTabIndex(parseInt(queryTab - 1)) : setSelectedTabIndex(0);
+    queryTab
+      ? setSelectedTabIndex(parseInt(queryTab - 1))
+      : setSelectedTabIndex(0);
   }, [queryTab]);
 
   const setViews = () => {};
-  if (isLoading) return <PageFallback />;
+  // if (isLoading) return <PageFallback />;
 
   return (
     // <div className={styles.tabsBlock}>

@@ -7,6 +7,7 @@ import { constructorTableReducer } from "./constructorTable/constructorTable.sli
 import { tableColumnReducer } from "./tableColumn/tableColumn.slice";
 import { tabRouterReducer } from "./tabRouter/tabRouter.slice";
 import { applicationReducer } from "./application/application.slice";
+import { menuReducer } from "./menuItem/menuItem.slice";
 import { cashboxReducer } from "./cashbox/cashbox.slice";
 import { filterReducer } from "./filter/filter.slice";
 import { tableSizeReducer } from "./tableSize/tableSizeSlice";
@@ -30,6 +31,11 @@ const constructorTablePersistConfig = {
 
 const applicationPersistConfig = {
   key: "application",
+  storage,
+};
+
+const menuPersistConfig = {
+  key: "menu",
   storage,
 };
 
@@ -75,6 +81,7 @@ const rootReducer = combineReducers({
     constructorTableReducer
   ),
   application: persistReducer(applicationPersistConfig, applicationReducer),
+  menu: persistReducer(menuPersistConfig, menuReducer),
   tableColumn: persistReducer(
     tableColumnTablePersistConfig,
     tableColumnReducer

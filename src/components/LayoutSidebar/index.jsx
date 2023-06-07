@@ -15,7 +15,7 @@ import { mainActions } from "../../store/main/main.slice";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
-import FolderModal from "./FolderModal";
+import FolderModal from "./folderModal";
 import "./style.scss";
 import menuSettingsService from "../../services/menuSettingsService";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";

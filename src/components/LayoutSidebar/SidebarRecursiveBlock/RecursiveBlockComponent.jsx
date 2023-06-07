@@ -14,6 +14,8 @@ import IconGenerator from "../../IconPicker/IconGenerator";
 import ButtonsMenu from "../MenuButtons";
 import "../style.scss";
 import MenuIcon from "../MenuIcon";
+import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import { store } from "../../../store";
 
 const RecursiveBlock = ({
   index,
@@ -41,6 +43,9 @@ const RecursiveBlock = ({
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const openMenu = Boolean(menu);
+  const menuItem = store.getState().menu.menuItem;
+
+  console.log("menuItem", menuItem);
 
   const handleOpenNotify = (event, type) => {
     setMenu(event?.currentTarget);
@@ -125,6 +130,7 @@ const RecursiveBlock = ({
               navigate(`/main/${appId}/page/${element?.microfrontend?.id}`);
             clickHandler();
             setSelectedTable(element);
+            dispatch(menuActions.setMenuItem(element));
           }}
         >
           <div

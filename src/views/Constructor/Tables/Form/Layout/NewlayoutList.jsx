@@ -10,18 +10,16 @@ import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/Per
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
 import layoutService from "../../../../../services/layoutService";
+import { store } from "../../../../../store";
 
 function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm }) {
-  const tableId = useWatch({
-    control: mainForm.control,
-    name: "id",
-  });
+  const menuItem = store.getState().menu.menuItem;
 
   useEffect(() => {
-    layoutService.getList({ data: { tableId: tableId ?? "" } }).then((res) => {
+    layoutService.getList({ data: { tableId: menuItem.table_id } }).then((res) => {
       mainForm.setValue("layouts", res?.layouts ?? []);
     });
-  }, [tableId]);
+  }, [menuItem.table_id]);
 
   const {
     fields: layouts,
@@ -138,7 +136,7 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
             </CTableRow>
           ))}
           <PermissionWrapperV2 tabelSlug="app" type="write">
-            <TableRowButton colSpan={4} onClick={() => append({ table_id: tableId, type: "SimpleLayout", label: "New" })} />
+            <TableRowButton colSpan={4} onClick={() => append({ table_id: menuItem.table_id, type: "SimpleLayout", label: "New" })} />
           </PermissionWrapperV2>
           {/* </CTableBody> */}
         </CTable>

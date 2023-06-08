@@ -17,8 +17,6 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
   const { clear } = useAliveController();
   const { appId } = useParams();
 
-
-
   const handleClick = () => {
     navigate(`/main/${appId}/api-key`);
   };
@@ -30,6 +28,7 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
     setAnchorEl(event.currentTarget);
 
   };
+  
   const logoutClickHandler = () => {
     dispatch(authActions.logout());
     closeMenu();

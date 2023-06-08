@@ -1,36 +1,32 @@
-import { Add, Clear, Edit, Save } from "@mui/icons-material";
-import { Card } from "@mui/material";
-import { useCallback, useMemo, useRef } from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useMutation } from "react-query";
-import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import IconGenerator from "../../../components/IconPicker/IconGenerator";
-import constructorObjectService from "../../../services/constructorObjectService";
-import CustomActionsButton from "../components/CustomActionsButton";
-import FilesSection from "../FilesSection";
-import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
-import RelationTable from "./RelationTable";
-import styles from "./style.module.scss";
-import DocumentGeneratorButton from "../components/DocumentGeneratorButton";
-import style from "@/views/Objects/style.module.scss";
-import { CheckIcon, UploadIcon } from "@/assets/icons/icon";
-import { useDispatch, useSelector } from "react-redux";
+import { CheckIcon } from "@/assets/icons/icon";
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
-import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDownloadButton";
 import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUploadButton";
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
-import NewMainInfo from "../NewMainInfo";
-import MainInfo from "../MainInfo";
-import layoutService from "../../../services/layoutService";
-import { datas } from "./data.js";
-import { use } from "i18next";
+import style from "@/views/Objects/style.module.scss";
+import { Add, Clear, Edit, Save } from "@mui/icons-material";
+import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { Card } from "@mui/material";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useFieldArray } from "react-hook-form";
+import { useMutation } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
+import IconGenerator from "../../../components/IconPicker/IconGenerator";
 import applicationService from "../../../services/applicationService";
+import constructorObjectService from "../../../services/constructorObjectService";
+import layoutService from "../../../services/layoutService";
+import FilesSection from "../FilesSection";
+import NewMainInfo from "../NewMainInfo";
+import CustomActionsButton from "../components/CustomActionsButton";
+import DocumentGeneratorButton from "../components/DocumentGeneratorButton";
+import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
+import RelationTable from "./RelationTable";
+import styles from "./style.module.scss";
+import { store } from "../../../store";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -59,9 +55,9 @@ const NewRelationSection = ({
   }, [data]);
 
   const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
-  const [tableId, setTableId] = useState(null);
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
+  const menuItem = store.getState().menu.menuItem;
 
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
@@ -261,21 +257,15 @@ const NewRelationSection = ({
 
   /*****************************JWT END*************************/
 
-  useEffect(() => {
-    applicationService.getById(appId).then((res) => {
-      const tables = res?.tables;
-      const table = tables?.find((table) => table?.slug === tableSlug);
-      setTableId(table?.id);
-    });
-  }, []);
+  
 
   useEffect(() => {
-    if (!tableId) return;
-    layoutService.getList({ data: { tableId } }).then((res) => {
+    if (!menuItem.table_id) return;
+    layoutService.getList({ data: { tableId: menuItem.table_id } }).then((res) => {
       const layout = res?.layouts?.filter((layout) => layout?.is_default === true);
       setData(layout);
     });
-  }, [tableSlug, tableId]);
+  }, [tableSlug, menuItem.table_id]);
 
   // if (!data?.length) return null;
   return (

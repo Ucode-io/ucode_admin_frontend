@@ -1,34 +1,29 @@
+import { Save } from "@mui/icons-material";
 import { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import SecondaryButton from "../../components/Buttons/SecondaryButton";
+import FiltersBlock from "../../components/FiltersBlock";
+import Footer from "../../components/Footer";
 import PageFallback from "../../components/PageFallback";
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
+import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import constructorSectionService from "../../services/constructorSectionService";
-import { sortByOrder } from "../../utils/sortByOrder";
-import MainInfo from "./MainInfo";
-import RelationSection from "./RelationSection";
-import styles from "./style.module.scss";
-import Footer from "../../components/Footer";
-import useTabRouter from "../../hooks/useTabRouter";
-import { Save } from "@mui/icons-material";
-import SecondaryButton from "../../components/Buttons/SecondaryButton";
-import { useQueryClient } from "react-query";
-import { sortSections } from "../../utils/sectionsOrderNumber";
 import constructorViewRelationService from "../../services/constructorViewRelationService";
-import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import FiltersBlock from "../../components/FiltersBlock";
-import DocumentGeneratorButton from "./components/DocumentGeneratorButton";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
+import { store } from "../../store";
 import { showAlert } from "../../store/alert/alert.thunk";
-import BackButton from "../../components/BackButton";
-import FormPageBackButton from "./components/FormPageBackButton";
-import { addMinutes } from "date-fns";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
-import SummarySectionValue from "./SummarySection/SummarySectionValue";
-import DetailTabs from "../Constructor/Tables/Form/Layout/DetailPage";
+import { sortSections } from "../../utils/sectionsOrderNumber";
+import { sortByOrder } from "../../utils/sortByOrder";
 import NewRelationSection from "./RelationSection/NewRelationSection";
+import SummarySectionValue from "./SummarySection/SummarySectionValue";
+import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
+import FormPageBackButton from "./components/FormPageBackButton";
+import styles from "./style.module.scss";
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
@@ -38,21 +33,14 @@ const ObjectsFormPage = () => {
   const dispatch = useDispatch();
   const { removeTab, navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
-  const tablesList = useSelector((state) => state.constructorTable.list);
   const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
-  const [selectedTab, setSelectedTab] = useState(0);
-  const handleTabSelection = (tabIndex) => {
-    setSelectedTab(tabIndex);
-  };
 
-  const tableInfo = useMemo(() => {
-    return tablesList.find((el) => el.slug === tableSlug);
-  }, [tablesList, tableSlug]);
-  
+  const tableInfo = store.getState().menu.menuItem;
+
   const computedSections = useMemo(() => {
     let tabIndex = 1;
     return (
@@ -69,11 +57,11 @@ const ObjectsFormPage = () => {
         .sort(sortByOrder) ?? []
     );
   }, [sections]);
- 
+
   const computedSummary = useMemo(() => {
     return sections.find((item) => item.is_summary_section);
   }, [sections]);
-  
+
   const getAllData = async () => {
     const getSections = constructorSectionService.getList({
       table_slug: tableSlug,
@@ -197,7 +185,7 @@ const ObjectsFormPage = () => {
     if (id) getAllData();
     else getFields();
   }, [id, tableInfo, tableSlug]);
- 
+
   const {
     handleSubmit,
     control,
@@ -212,7 +200,7 @@ const ObjectsFormPage = () => {
 
   // const serviceTime = watch("service_time");
   // const startTime = watch("date_start");
- 
+
   // useEffect(() => {
   //   setFormValue("time_end", startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined);
   // }, [serviceTime, startTime]);

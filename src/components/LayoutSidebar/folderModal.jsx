@@ -1,8 +1,8 @@
 import { Box, Card, IconButton, Modal, Typography } from "@mui/material";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import CancelButton from "../../components/Buttons/CancelButton";
-import CreateButton from "../../components/Buttons/CreateButton";
-import SaveButton from "../../components/Buttons/SaveButton";
+import CancelButton from "../Buttons/CancelButton";
+import CreateButton from "../Buttons/CreateButton";
+import SaveButton from "../Buttons/SaveButton";
 import constructorTableService from "../../services/constructorTableService";
 import { useQueryClient } from "react-query";
 import { useState } from "react";
@@ -10,6 +10,11 @@ import { TreeItem, TreeView } from "@mui/lab";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import "./style.scss";
+import FolderTreeView from "./TreeView";
+import {
+  useMenuListQuery,
+  useMenuUpdateMutation,
+} from "../../services/menuService";
 const FolderModal = ({
   closeModal,
   modalType,
@@ -17,44 +22,35 @@ const FolderModal = ({
   selectedTable,
   getAppById,
   computedFolderList,
+  menuList,
+  element,
 }) => {
   const queryClient = useQueryClient();
   const [folder, setFolder] = useState();
+  const [check, setCheck] = useState(false);
 
-  const createType = (data) => {
-    constructorTableService
-      .update({
-        ...selectedTable,
-        folder_id: folder,
-      })
-      .then(() => {
-        queryClient.refetchQueries(["GET_TABLE_FOLDER"]);
+  const { mutateAsync: updateMenu, isLoading: createLoading } =
+    useMenuUpdateMutation({
+      onSuccess: () => {
         closeModal();
-        getAppById();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        queryClient.refetchQueries(["MENU"], element?.id);
+      },
+    });
+  const createType = () => {
+    updateMenu({
+      parent_id: folder,
+      id: selectedTable?.id,
+      type: selectedTable?.type,
+      icon: selectedTable?.icon || undefined,
+      label: selectedTable?.label || undefined,
+    });
   };
-  const handleSelect = (event, itemId) => {
+
+  const handleSelect = (e, itemId) => {
     setFolder(itemId);
+    setCheck(true);
   };
-  const renderTree = (nodes) => (
-    <TreeItem
-      key={nodes.id}
-      nodeId={nodes.id}
-      label={nodes.label || nodes.title}
-    >
-      {Array.isArray(nodes?.children)
-        ? nodes?.children.map((node) => renderTree(node))
-        : null}
-    </TreeItem>
-  );
-  const data = {
-    id: "0",
-    title: "Root folder",
-    children: [...(computedFolderList[0].children ?? [])],
-  };
+
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
@@ -81,7 +77,15 @@ const FolderModal = ({
               }}
               onNodeSelect={handleSelect}
             >
-              {renderTree(data)}
+              {/* {renderTree(menuList?.menus[0])} */}
+              {menuList?.menus?.map((item) => (
+                <FolderTreeView
+                  element={item}
+                  setCheck={setCheck}
+                  check={check}
+                  folder={folder}
+                />
+              ))}
             </TreeView>
           </Box>
           <div className="folder_btns-row">

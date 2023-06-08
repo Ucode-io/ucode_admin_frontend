@@ -128,7 +128,7 @@ const AutoCompleteElement = ({
   disabledHelperText,
   control,
   name,
-  defaultValue, 
+  defaultValue,
   setFormValue = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");
@@ -157,20 +157,20 @@ const AutoCompleteElement = ({
     });
     return result;
   }, [autoFilters, filtersHandler]);
-  
-  
+
   const { data: options } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
-        params: {
-        },
-        data: {
-          table_slug: tableSlug,
-          ...autoFiltersValue
-
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
+          },
         }
-      });
+      );
     },
     {
       select: (res) => {
@@ -178,9 +178,6 @@ const AutoCompleteElement = ({
       },
     }
   );
-  
-
-
 
   const getValueData = async () => {
     try {
@@ -198,7 +195,6 @@ const AutoCompleteElement = ({
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
-
 
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {

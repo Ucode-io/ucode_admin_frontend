@@ -17,6 +17,12 @@ const menuService = {
         "project-id": data.project_id,
       },
     }),
+  updateOrder: (data) =>
+    request.put(`/menu/menu-order`, data, {
+      params: {
+        "project-id": data.project_id,
+      },
+    }),
   create: (data) =>
     request.post(`/menu`, data, {
       params: {
@@ -53,11 +59,11 @@ export const usePlatformGetByIdQuery = ({
   );
 };
 
-export const usePlatformUpdateMutation = (mutationSettings) => {
+export const useMenuUpdateMutation = (mutationSettings) => {
   return useMutation((data) => menuService.update(data), mutationSettings);
 };
 
-export const usePlatformCreateMutation = (mutationSettings) => {
+export const useMenuCreateMutation = (mutationSettings) => {
   return useMutation((data) => menuService.create(data), mutationSettings);
 };
 

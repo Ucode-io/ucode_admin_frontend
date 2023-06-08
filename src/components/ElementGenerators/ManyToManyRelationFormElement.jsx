@@ -139,30 +139,29 @@ const AutoCompleteElement = ({
     });
     return result;
   }, [autoFilters, filtersHandler]);
-  
-  
-  
-  
+
   const { data: options } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
-        params: {
-        },
-        data: {
-          ...autoFiltersValue,
-          view_fields:
-            field?.view_fields?.map((field) => field.slug) ??
-            field?.attributes?.view_fields?.map((field) => field.slug),
-          additional_request: {
-            additional_field: "guid",
-            additional_values: value,
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            ...autoFiltersValue,
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+            additional_request: {
+              additional_field: "guid",
+              additional_values: value,
+            },
+            // additional_ids: value,
+            search: debouncedValue,
+            limit: 10,
           },
-          // additional_ids: value,
-          search: debouncedValue,
-          limit: 10,
         }
-      });
+      );
     },
     {
       select: (res) => {
@@ -170,10 +169,7 @@ const AutoCompleteElement = ({
       },
     }
   );
-  
 
-  
-  
   const computedValue = useMemo(() => {
     if (!value) return undefined;
 

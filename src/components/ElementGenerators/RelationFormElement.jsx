@@ -17,8 +17,8 @@ import CascadingElement from "./CascadingElement";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import GroupCascading from "./GroupCascading/index";
 import styles from "./style.module.scss";
-import constructorFunctionService from "../../services/constructorFunctionService";
-import useDebouncedWatch from "../../hooks/useDebouncedWatch";
+import constructorFunctionServiceV2 from "../../services/contructorFunctionServiceV2";
+import request from "../../utils/request";
 
 const RelationFormElement = ({
   control,
@@ -128,7 +128,7 @@ const AutoCompleteElement = ({
   disabledHelperText,
   control,
   name,
-  defaultValue, 
+  defaultValue,
   setFormValue = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");
@@ -159,61 +159,24 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler]);
 
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      if (!tableSlug) return null;
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [id],
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
           },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
-        },
-      });
+        }
+      );
     },
     {
       select: (res) => {
-        const options = res?.data?.response ?? [];
-        const slugOptions =
-          res?.table_slug === tableSlug ? res?.data?.response : [];
-
-        return {
-          options,
-          slugOptions,
-        };
+        return res?.data?.response ?? [];
       },
     }
-  );
-  
-  useDebouncedWatch(
-    () => {
-      // if (elmValue.length >= field.attributes?.length) {
-        constructorFunctionService
-          .invoke({
-            function_id: field?.attributes?.function,
-            // object_ids: [id, elmValue],
-            attributes: {
-              // barcode: elmValue,
-            },
-          })
-          .then((res) => {
-            if (res === "Updated successfully!") {
-              console.log("Успешно обновлено!", "success");
-            }
-          })
-          .finally(() => {
-            // setFormValue(name, "");
-            // setElmValue("");
-            // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
-          });
-      // }
-    },
-    [],
-    300
   );
 
   const getValueData = async () => {
@@ -232,7 +195,6 @@ const AutoCompleteElement = ({
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
-
 
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {

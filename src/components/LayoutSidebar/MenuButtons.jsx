@@ -1,4 +1,4 @@
-import { Box, Divider, Menu, MenuItem } from "@mui/material";
+import { Box, Divider, Menu } from "@mui/material";
 import { RiPencilFill } from "react-icons/ri";
 import "./style.scss";
 import { BsFillTrashFill } from "react-icons/bs";
@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import MenuItemComponent from "./MenuItem";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { useMenuCreateMutation } from "../../services/menuService";
 
 const ButtonsMenu = ({
   element,
@@ -23,7 +25,32 @@ const ButtonsMenu = ({
   setTableModal,
   setMicrofrontendModal,
 }) => {
+  const { mutateAsync: createMenu, isLoading: createLoading } =
+    useMenuCreateMutation();
   const navigate = useNavigate();
+
+  const onFavourite = (element, type) => {
+    type === "TABLE"
+      ? createMenu({
+          parent_id: "c57eedc3-a954-4262-a0af-376c65b5a282",
+          type: type,
+          table_id: element?.table?.id,
+        })
+      : type === "FOLDER"
+      ? createMenu({
+          parent_id: "c57eedc3-a954-4262-a0af-376c65b5a282",
+          type: type,
+          folder_id: element?.id,
+          label: element?.label,
+          icon: element?.icon,
+        })
+      : createMenu({
+          parent_id: "c57eedc3-a954-4262-a0af-376c65b5a282",
+          type: type,
+          microfrontend_id: element?.microfrontend?.id,
+        });
+  };
+
   return (
     <>
       <Menu
@@ -74,6 +101,34 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Переместить folder"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFolderModalType("folder", element);
+                handleCloseNotify();
+              }}
+            />
+            {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
+              <>
+                <Divider
+                  style={{
+                    marginBottom: "4px",
+                    marginTop: "4px",
+                  }}
+                />
+                <MenuItemComponent
+                  icon={<StarBorderIcon size={13} />}
+                  title="Favourite"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCloseNotify();
+                    onFavourite(element, "FOLDER");
+                  }}
+                />
+              </>
+            )}
           </Box>
         ) : menuType === "CREATE_TO_FOLDER" ? (
           <Box className="menu">
@@ -119,10 +174,16 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
+            <Divider
+              style={{
+                marginBottom: "4px",
+                marginTop: "4px",
+              }}
+            />
           </Box>
         ) : menuType === "TABLE" ? (
           <Box className="menu">
-            {/* <MenuItemComponent
+            <MenuItemComponent
               icon={<RiPencilFill size={13} />}
               title="Переместить table"
               onClick={(e) => {
@@ -130,7 +191,7 @@ const ButtonsMenu = ({
                 setFolderModalType("folder", element);
                 handleCloseNotify();
               }}
-            /> */}
+            />
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
               title="Изменить table"
@@ -155,6 +216,71 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
+            {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
+              <>
+                <Divider
+                  style={{
+                    marginBottom: "4px",
+                    marginTop: "4px",
+                  }}
+                />
+                <MenuItemComponent
+                  icon={<StarBorderIcon size={13} />}
+                  title="Favourite"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCloseNotify();
+                    onFavourite(element, "TABLE");
+                  }}
+                />
+              </>
+            )}
+          </Box>
+        ) : menuType === "MICROFRONTEND" ? (
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Изменить microfrontend"
+              onClick={(e) => {
+                e.stopPropagation();
+                setMicrofrontendModal(element);
+                handleCloseNotify();
+              }}
+            />
+            <Divider
+              style={{
+                marginBottom: "4px",
+                marginTop: "4px",
+              }}
+            />
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Удалить microfrontend"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFolder(element);
+                handleCloseNotify();
+              }}
+            />
+            {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
+              <>
+                <Divider
+                  style={{
+                    marginBottom: "4px",
+                    marginTop: "4px",
+                  }}
+                />
+                <MenuItemComponent
+                  icon={<StarBorderIcon size={13} />}
+                  title="Favourite"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCloseNotify();
+                    onFavourite(element, "MICROFRONTEND");
+                  }}
+                />
+              </>
+            )}
           </Box>
         ) : (
           ""

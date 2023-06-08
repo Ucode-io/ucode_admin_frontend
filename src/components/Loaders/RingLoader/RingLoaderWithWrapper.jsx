@@ -2,8 +2,8 @@
 import React from 'react';
 import RingLoader from '.';
 
-const RingLoaderWithWrapper = () => {
-  return <div className='RingLoaderWithWrapper'>
+const RingLoaderWithWrapper = ({ ...props }) => {
+  return <div className='RingLoaderWithWrapper' {...props}>
     <RingLoader />
   </div>;
 };

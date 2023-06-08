@@ -21,9 +21,9 @@ const MainLayout = ({ setFavicon, favicon }) => {
   const { elements } = useSidebarElements();
   const [selectedTable, setSelectedTable] = useState(null);
 
-  useEffect(() => {
-    dispatch(fetchConstructorTableListAction(appId));
-  }, [dispatch, appId]);
+  // useEffect(() => {
+  //   dispatch(fetchConstructorTableListAction(appId));
+  // }, [dispatch, appId]);
 
   const getAppById = () => {
     dispatch(fetchConstructorTableListAction(appId));
@@ -62,19 +62,15 @@ const MainLayout = ({ setFavicon, favicon }) => {
   return (
     <div className={styles.layout}>
       <Favicon url={favicon} />
-      {/* <Sidebar elements={elements} appId={appId} /> */}
-      {elements && (
-        <LayoutSidebar
-          elements={elements}
-          appId={appId}
-          environment={environment}
-          getAppById={getAppById}
-          setSelectedTable={setSelectedTable}
-          selectedTable={selectedTable}
-        />
-      )}
+      <LayoutSidebar
+        appId={appId}
+        environment={environment}
+        getAppById={getAppById}
+        setSelectedTable={setSelectedTable}
+        selectedTable={selectedTable}
+      />
       <div className={styles.content}>
-        <RouterTabsBlock selectedTable={selectedTable}/>
+        {/* <RouterTabsBlock selectedTable={selectedTable} /> */}
 
         <Outlet />
       </div>

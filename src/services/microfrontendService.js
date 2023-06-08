@@ -9,4 +9,7 @@ const microfrontendService = {
   delete: (id) => requestV2.delete(`/functions/micro-frontend/${id}`),
 };
 
+
+
+
 export default microfrontendService;

@@ -5,7 +5,7 @@ import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import applicationService from "../../../services/applicationService";
@@ -18,6 +18,8 @@ import IconGenerator from "../../IconPicker/IconGenerator";
 import ButtonsMenu from "../MenuButtons";
 import "../style.scss";
 import MenuIcon from "../MenuIcon";
+import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import { store } from "../../../store";
 
 const RecursiveBlock = ({
   index,
@@ -30,6 +32,8 @@ const RecursiveBlock = ({
   level = 1,
   sidebarIsOpen,
   setTableModal,
+  setMicrofrontendModal,
+  selectedTable,
 }) => {
   const { tableSlug } = useParams();
   const { appId } = useParams();
@@ -37,12 +41,15 @@ const RecursiveBlock = ({
   const queryClient = useQueryClient();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
-  const [menu, setMenu] = useState();
-  const [menuType, setMenuType] = useState();
+  const [menu, setMenu] = useState("");
+  const [menuType, setMenuType] = useState("");
   const [child, setChild] = useState();
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const openMenu = Boolean(menu);
+  const menuItem = store.getState().menu.menuItem;
+
+  console.log("menuItem", menuItem);
 
   const handleOpenNotify = (event, type) => {
     setMenu(event?.currentTarget);
@@ -65,11 +72,10 @@ const RecursiveBlock = ({
 
   const activeStyle = {
     backgroundColor:
-      element.isChild &&
-      (tableSlug === element.slug ? environment?.data?.active_background : ""),
-    color:
-      element.isChild &&
-      (tableSlug !== element.slug ? environment?.data?.active_color : ""),
+      selectedTable?.id === element?.id
+        ? environment?.data?.active_background
+        : "",
+    color: selectedTable?.id === element?.id ? "#fff" : "",
     // paddingLeft: level === 1 || level === 2 ? level * 2 * 4 : level * 7,
     paddingLeft: level * 2 * 5,
     display:
@@ -92,9 +98,6 @@ const RecursiveBlock = ({
       setChildBlockVisible(true);
     }
   }, []);
-  const applicationElements = useSelector(
-    (state) => state.constructorTable.applications
-  );
 
   const handleCloseNotify = () => {
     setMenu(null);
@@ -112,26 +115,6 @@ const RecursiveBlock = ({
         console.log(err);
       });
   };
-  const onDrop = (dropResult) => {
-    const result = applyDrag(element.children, dropResult);
-    const computedTables = [
-      ...result?.map((el) => ({
-        table_id: el?.id,
-        is_visible: Boolean(el.is_visible),
-        is_own_table: Boolean(el.is_own_table),
-      })),
-    ];
-    if (result) {
-      applicationService
-        .update({
-          ...applicationElements,
-          tables: computedTables,
-        })
-        .then(() => {
-          dispatch(fetchConstructorTableListAction(appId));
-        });
-    }
-  };
 
   return (
     <Draggable key={index}>
@@ -144,7 +127,6 @@ const RecursiveBlock = ({
             (tableSlug !== element.slug ? "active-with-child" : "active")
           }`}
           onClick={(e) => {
-            e.preventDefault();
             e.stopPropagation();
             element.type === "TABLE" &&
               navigate(`/main/${appId}/object/${element?.table?.slug}`);
@@ -152,13 +134,14 @@ const RecursiveBlock = ({
               navigate(`/main/${appId}/page/${element?.microfrontend?.id}`);
             clickHandler();
             setSelectedTable(element);
+            dispatch(menuActions.setMenuItem(element));
           }}
         >
           <div
             className="label"
             style={{
               color:
-                tableSlug === element.slug && element.isChild
+                selectedTable?.id === element?.id
                   ? environment?.data?.active_color
                   : environment?.data?.color,
               opacity: element?.isChild && 0.6,
@@ -175,11 +158,15 @@ const RecursiveBlock = ({
                   <BsThreeDots
                     size={13}
                     onClick={(e) => {
-                      e.stopPropagation();
+                      e?.stopPropagation();
                       handleOpenNotify(e, "FOLDER");
+                      setSelectedTable(element);
                     }}
                     style={{
-                      color: environment?.data?.color,
+                      color:
+                        selectedTable?.id === element?.id
+                          ? environment?.data?.active_color
+                          : environment?.data?.color,
                     }}
                   />
                 </Box>
@@ -191,9 +178,13 @@ const RecursiveBlock = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       handleOpenNotify(e, "CREATE_TO_FOLDER");
+                      setSelectedTable(element);
                     }}
                     style={{
-                      color: environment?.data?.color,
+                      color:
+                        selectedTable?.id === element?.id
+                          ? environment?.data?.active_color
+                          : environment?.data?.color,
                     }}
                   />
                 </Box>
@@ -220,6 +211,7 @@ const RecursiveBlock = ({
             setSelectedTable={setSelectedTable}
             appId={appId}
             setTableModal={setTableModal}
+            setMicrofrontendModal={setMicrofrontendModal}
           />
           {element?.type === "TABLE" && (
             <MenuIcon
@@ -227,6 +219,7 @@ const RecursiveBlock = ({
               onClick={(e) => {
                 e.stopPropagation();
                 handleOpenNotify(e, "TABLE");
+                setSelectedTable(element);
               }}
             />
           )}
@@ -235,7 +228,8 @@ const RecursiveBlock = ({
               title="Microfrontend settings"
               onClick={(e) => {
                 e.stopPropagation();
-                handleOpenNotify(e, "TABLE");
+                handleOpenNotify(e, "MICROFRONTEND");
+                setSelectedTable(element);
               }}
             />
           )}
@@ -243,24 +237,21 @@ const RecursiveBlock = ({
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        {child && (
-          <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>
-            {child?.map((childElement, index) => (
-              <RecursiveBlock
-                key={index}
-                level={level + 1}
-                element={childElement}
-                parentClickHandler={parentClickHandler}
-                openFolderCreateModal={openFolderCreateModal}
-                environment={environment}
-                setFolderModalType={setFolderModalType}
-                setSelectedTable={setSelectedTable}
-                sidebarIsOpen={sidebarIsOpen}
-                setTableModal={setTableModal}
-              />
-            ))}
-          </Container>
-        )}
+        {child?.map((childElement, index) => (
+          <RecursiveBlock
+            key={index}
+            level={level + 1}
+            element={childElement}
+            parentClickHandler={parentClickHandler}
+            openFolderCreateModal={openFolderCreateModal}
+            environment={environment}
+            setFolderModalType={setFolderModalType}
+            setSelectedTable={setSelectedTable}
+            sidebarIsOpen={sidebarIsOpen}
+            setTableModal={setTableModal}
+            selectedTable={selectedTable}
+          />
+        ))}
       </Collapse>
     </Draggable>
   );

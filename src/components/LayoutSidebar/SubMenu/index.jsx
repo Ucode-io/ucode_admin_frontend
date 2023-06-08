@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
-import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlock";
-import FolderModal from "../FolderModal";
+import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import ClearIcon from "@mui/icons-material/Clear";
 import { BsThreeDots } from "react-icons/bs";
@@ -10,6 +9,7 @@ import ButtonsMenu from "../MenuButtons";
 import { useParams } from "react-router-dom";
 import menuSettingsService from "../../../services/menuSettingsService";
 import { useQueryClient } from "react-query";
+import FolderModal from "../folderModal";
 
 const SubMenu = ({
   child,
@@ -30,6 +30,7 @@ const SubMenu = ({
   closeFolderModal,
   setSubMenuIsOpen,
   setMicrofrontendModal,
+  menuList,
 }) => {
   const { appId } = useParams();
   const queryClient = useQueryClient();
@@ -57,24 +58,14 @@ const SubMenu = ({
   return (
     <div className={`SubMenu ${!subMenuIsOpen ? "right-side-closed" : ""}`}>
       <div className="header" onClick={() => {}}>
-        <div className="brand">
-          {subMenuIsOpen && (
-            <h2
-              style={{
-                marginLeft: "8px",
-              }}
-            >
-              {element?.label}
-            </h2>
-          )}{" "}
-        </div>
+        {subMenuIsOpen && <h2>{element?.label}</h2>}{" "}
         <Box className="buttons">
           <div className="dots" onClick={() => setSubMenuIsOpen(false)}>
             <BsThreeDots
               size={13}
               onClick={(e) => {
-                e.stopPropagation();
                 handleOpenNotify(e, "FOLDER");
+                setSelectedTable(element);
               }}
               style={{
                 color: environment?.data?.color,
@@ -83,8 +74,8 @@ const SubMenu = ({
             <AddIcon
               size={13}
               onClick={(e) => {
-                e.stopPropagation();
                 handleOpenNotify(e, "CREATE_TO_FOLDER");
+                setSelectedTable(element);
               }}
               style={{
                 color: environment?.data?.color,
@@ -128,6 +119,7 @@ const SubMenu = ({
                   setTableModal={setTableModal}
                   selectedFolder={selectedFolder}
                   setMicrofrontendModal={setMicrofrontendModal}
+                  selectedTable={selectedTable}
                 />
               ))}
               {folderModalType === "folder" && (
@@ -137,6 +129,8 @@ const SubMenu = ({
                   selectedTable={selectedTable}
                   getAppById={getAppById}
                   computedFolderList={computedFolderList}
+                  menuList={menuList}
+                  element={element}
                 />
               )}
               <ButtonsMenu

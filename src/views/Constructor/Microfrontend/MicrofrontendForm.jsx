@@ -1,7 +1,6 @@
 import { Save } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
@@ -19,11 +18,8 @@ const microfrontendListPageLink = "/settings/constructor/microfrontend";
 const MicrofrontendForm = () => {
   const { microfrontendId } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [btnLoader, setBtnLoader] = useState();
   const [loader, setLoader] = useState(true);
-  const [appData, setAppData] = useState({});
-  const [appPermission, setAppPermission] = useState();
 
   const mainForm = useForm({
     defaultValues: {

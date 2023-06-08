@@ -1,27 +1,29 @@
+import AddIcon from "@mui/icons-material/Add";
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import { Box } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import brandLogo from "../../../builder_config/assets/company-logo.svg";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import constructorTableService from "../../services/constructorTableService";
+import { useMenuListQuery } from "../../services/menuService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
-import RecursiveBlock from "./SidebarRecursiveBlock/recursiveBlock";
-import FolderModal from "./folderModal";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import "./style.scss";
-import { Box, Collapse, ListItemButton, ListItemText } from "@mui/material";
-import SearchInput from "../SearchInput";
-import MenuButton from "./menuButton";
-import AddIcon from "@mui/icons-material/Add";
-import HomeIcon from "@mui/icons-material/Home";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import ProfilePanel from "../ProfilePanel";
-import { useNavigate } from "react-router-dom";
-import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import SearchInput from "../SearchInput";
+import FolderModal from "./FolderModal";
+import MenuButton from "./MenuButton";
+import "./style.scss";
+import menuSettingsService from "../../services/menuSettingsService";
+import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
+import AppSidebar from "./AppSidebar";
+import SubMenu from "./SubMenu";
+import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
+
 const LayoutSidebar = ({
   elements,
   favicon,
@@ -44,8 +46,28 @@ const LayoutSidebar = ({
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [childBlockVisible, setChildBlockVisible] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [menuList, setMenuList] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [tableModal, setTableModalOpen] = useState(false);
+  const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
+  const [child, setChild] = useState();
+  const [check, setCheck] = useState(false);
+  const [element, setElement] = useState();
+  const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
+
+  const { isLoading } = useMenuListQuery({
+    params: {
+      parent_id: element?.id,
+    },
+    queryParams: {
+      cacheTime: 10,
+      enabled: Boolean(check),
+      onSuccess: (res) => {
+        setCheck(false);
+        setChild(res.menus);
+      },
+    },
+  });
   const handleRouter = () => {
     navigate(`/main/${appId}/chat`);
   };
@@ -53,11 +75,20 @@ const LayoutSidebar = ({
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  const handleClick = () => {
-    setOpen(!open);
+  const setTableModal = (element) => {
+    setTableModalOpen(true);
+    setSelectedFolder(element);
   };
-
+  const closeTableModal = () => {
+    setTableModalOpen(null);
+  };
+  const setMicrofrontendModal = (element) => {
+    setMicrofrontendModalOpen(true);
+    setSelectedFolder(element);
+  };
+  const closeMicrofrontendModal = () => {
+    setMicrofrontendModalOpen(null);
+  };
   const closeModal = () => {
     setModalType(null);
   };
@@ -74,6 +105,12 @@ const LayoutSidebar = ({
   const { data: tableFolder } = useQuery(["GET_TABLE_FOLDER"], () => {
     return constructorTableService.getFolderList();
   });
+
+  const getMenuList = () => {
+    menuSettingsService.getList().then((res) => {
+      setMenuList(res);
+    });
+  };
 
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
@@ -110,12 +147,6 @@ const LayoutSidebar = ({
     ];
   }, [tableFolder?.folders]);
 
-  const computedTableList = useMemo(() => {
-    return tableFolderListToNested([...(files ?? []), ...elements], {
-      undefinedChildren: true,
-    });
-  }, [tableFolder?.folders, elements, files]);
-
   const computedFolderList = useMemo(() => {
     return tableFolderListToNested([...(files ?? [])], {
       undefinedChildren: true,
@@ -123,13 +154,12 @@ const LayoutSidebar = ({
   }, [files]);
 
   useEffect(() => {
-    if (!computedTableList) setLoading(true);
-    else setLoading(false);
-  }, [computedTableList]);
-
-  useEffect(() => {
     if (!sidebarIsOpen) setOpenedBlock(null);
   }, [sidebarIsOpen]);
+
+  useEffect(() => {
+    getMenuList();
+  }, []);
 
   const { data: projectInfo } = useQuery(
     ["GET_PROJECT_BY_ID", projectId],
@@ -139,152 +169,178 @@ const LayoutSidebar = ({
   );
 
   return (
-    <div
-      className={`LayoutSidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}
-    >
+    <>
       <div
-        className="header"
-        onClick={() => {
-          switchRightSideVisible();
-        }}
+        className={`LayoutSidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}
       >
-        <div className="brand">
-          <div className="brand-logo" onClick={switchRightSideVisible}>
-            <img src={favicon ?? brandLogo} alt="logo" />
+        <div
+          className="header"
+          onClick={() => {
+            switchRightSideVisible();
+          }}
+        >
+          <div className="brand">
+            <div className="brand-logo" onClick={switchRightSideVisible}>
+              <img src={favicon ?? brandLogo} alt="logo" />
+            </div>
+            {sidebarIsOpen && (
+              <h2
+                style={{
+                  marginLeft: "8px",
+                }}
+              >
+                {projectInfo?.title}
+              </h2>
+            )}{" "}
           </div>
-          {sidebarIsOpen && (
-            <h2
+          <div className="cloes-btn" onClick={switchRightSideVisible}>
+            <MenuOpenIcon />
+          </div>
+        </div>
+
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            height: "calc(100% - 56px)",
+          }}
+        >
+          <div>
+            <Box className="search">
+              <SearchInput
+                style={{
+                  borderRadius: "8px",
+                  width: "100%",
+                }}
+              />
+            </Box>
+
+            <MenuButton
+              title={"Chat"}
+              icon={<ChatBubbleIcon />}
+              openFolderCreateModal={openFolderCreateModal}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleRouter();
+              }}
+              sidebarIsOpen={sidebarIsOpen}
+            />
+            <div
+              className="nav-block"
               style={{
-                marginLeft: "8px",
+                // height: `calc(100vh - ${57}px)`,
+                background: environment?.data?.background,
               }}
             >
-              {projectInfo?.title}
-            </h2>
-          )}{" "}
-        </div>
-        <div className="cloes-btn" onClick={switchRightSideVisible}>
-          <MenuOpenIcon />
-        </div>
-      </div>
-
-      <Box
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          height: "calc(100% - 56px)",
-        }}
-      >
-        <div>
-          <Box className="search">
-            <SearchInput
-              style={{
-                borderRadius: "8px",
-                width: "100%",
-              }}
-            />
-          </Box>
-
-          {/* <MenuButton
-            title={"My tasks"}
-            icon={<HomeIcon />}
-            openFolderCreateModal={openFolderCreateModal}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              openFolderCreateModal("create");
-            }}
-          />
-          <MenuButton
-            title={"Notification"}
-            icon={<NotificationsIcon />}
-            openFolderCreateModal={openFolderCreateModal}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              openFolderCreateModal("create");
-            }}
-          /> */}
-          <MenuButton
-            title={"Chat"}
-            icon={<ChatBubbleIcon />}
-            openFolderCreateModal={openFolderCreateModal}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleRouter();
-            }}
-          />
-          <div
-            className="nav-block"
-            style={{
-              // height: `calc(100vh - ${57}px)`,
-              background: environment?.data?.background,
-            }}
-          >
-            <div className="menu-element">
-              {computedTableList?.map((element, index) => (
-                <RecursiveBlock
-                  key={index}
-                  element={element}
-                  parentClickHandler={parentClickHandler}
-                  openedBlock={openedBlock}
-                  openFolderCreateModal={openFolderCreateModal}
-                  environment={environment}
-                  childBlockVisible={childBlockVisible}
-                  tableFolder={tableFolder?.folders}
-                  setFolderModalType={setFolderModalType}
-                  setSelectedTable={setSelectedTable}
-                  sidebarIsOpen={sidebarIsOpen}
-                />
-              ))}
-              {folderModalType === "folder" && (
-                <FolderModal
-                  closeModal={closeFolderModal}
-                  modalType={folderModalType}
-                  selectedTable={selectedTable}
-                  getAppById={getAppById}
-                  computedFolderList={computedFolderList}
-                />
-              )}
+              <div className="menu-element">
+                {menuList?.menus[0]?.child_menus?.map((element, index) => (
+                  <AppSidebar
+                    key={index}
+                    element={element}
+                    parentClickHandler={parentClickHandler}
+                    openedBlock={openedBlock}
+                    openFolderCreateModal={openFolderCreateModal}
+                    environment={environment}
+                    childBlockVisible={childBlockVisible}
+                    tableFolder={tableFolder?.folders}
+                    setFolderModalType={setFolderModalType}
+                    setSelectedTable={setSelectedTable}
+                    sidebarIsOpen={sidebarIsOpen}
+                    getMenuList={getMenuList}
+                    setTableModal={setTableModal}
+                    selectedFolder={selectedFolder}
+                    setCheck={setCheck}
+                    setElement={setElement}
+                    setSubMenuIsOpen={setSubMenuIsOpen}
+                  />
+                ))}
+                {folderModalType === "folder" && (
+                  <FolderModal
+                    closeModal={closeFolderModal}
+                    modalType={folderModalType}
+                    selectedTable={selectedTable}
+                    getAppById={getAppById}
+                    computedFolderList={computedFolderList}
+                    menuList={menuList}
+                  />
+                )}
+              </div>
+              {/* <div className="sidebar-footer"></div> */}
             </div>
-            {/* <div className="sidebar-footer"></div> */}
+            <MenuButton
+              title={"Create folder"}
+              icon={<AddIcon />}
+              openFolderCreateModal={openFolderCreateModal}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openFolderCreateModal("create");
+              }}
+              sidebarIsOpen={sidebarIsOpen}
+            />
           </div>
+
           <MenuButton
-            title={"Create folder"}
-            icon={<AddIcon />}
+            title={"Profile"}
             openFolderCreateModal={openFolderCreateModal}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              openFolderCreateModal("create");
+              anchorEl ? setAnchorEl(null) : openMenu(e);
             }}
+            children={<ProfilePanel anchorEl={anchorEl} />}
+            sidebarIsOpen={sidebarIsOpen}
           />
-        </div>
+        </Box>
 
-        <MenuButton
-          title={"Profile"}
-          openFolderCreateModal={openFolderCreateModal}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            anchorEl ? setAnchorEl(null) : openMenu(e);
-          }}
-          children={<ProfilePanel anchorEl={anchorEl} />}
-        />
-      </Box>
-
-      {(modalType === "create" ||
-        modalType === "parent" ||
-        modalType === "update") && (
-        <FolderCreateModal
-          modalType={modalType}
-          closeModal={closeModal}
-          appId={appId}
-          selectedFolder={selectedFolder}
-        />
-      )}
-    </div>
+        {(modalType === "create" ||
+          modalType === "parent" ||
+          modalType === "update") && (
+          <FolderCreateModal
+            closeModal={closeModal}
+            selectedFolder={selectedFolder}
+            modalType={modalType}
+            appId={appId}
+            getMenuList={getMenuList}
+          />
+        )}
+        {tableModal && (
+          <TableLinkModal
+            closeModal={closeTableModal}
+            selectedFolder={selectedFolder}
+          />
+        )}
+        {microfrontendModal && (
+          <MicrofrontendLinkModal
+            closeModal={closeMicrofrontendModal}
+            selectedFolder={selectedFolder}
+          />
+        )}
+      </div>
+      <SubMenu
+        child={child}
+        appId={appId}
+        environment={environment}
+        setSelectedTable={setSelectedTable}
+        selectedTable={selectedTable}
+        getAppById={getAppById}
+        computedFolderList={computedFolderList}
+        element={element}
+        subMenuIsOpen={subMenuIsOpen}
+        setSubMenuIsOpen={setSubMenuIsOpen}
+        parentClickHandler={parentClickHandler}
+        openFolderCreateModal={openFolderCreateModal}
+        childBlockVisible={childBlockVisible}
+        setFolderModalType={setFolderModalType}
+        setTableModal={setTableModal}
+        selectedFolder={selectedFolder}
+        folderModalType={folderModalType}
+        closeFolderModal={closeFolderModal}
+        setMicrofrontendModal={setMicrofrontendModal}
+      />
+    </>
   );
 };
 

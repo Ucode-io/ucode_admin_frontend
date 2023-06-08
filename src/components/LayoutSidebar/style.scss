@@ -223,9 +223,12 @@ $main-color: #0365F2;
         }
       }
 
+      .folder-icon {
+        margin-right: 8px;
+      }
+
       .extra_icon {
         display: none;
-
       }
     }
 
@@ -370,6 +373,7 @@ $main-color: #0365F2;
     }
   }
 
+
   &.right-side-closed {
     // min-width: 72px;
     width: 72px;
@@ -443,7 +447,12 @@ $main-color: #0365F2;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 5px;
+
+  li {
+    column-gap: 6px;
+    padding: 5px;
+    border-radius: 6px;
+  }
 
 
   div {

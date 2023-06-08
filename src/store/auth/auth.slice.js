@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 // import { listToMap } from "../../utils/listToMap";
 
 const initialState = {
@@ -13,26 +13,25 @@ const initialState = {
   projectId: "",
   tables: [],
   environmentId: "",
-  resourceId: ""
-}
+  resourceId: "",
+};
 
 export const { actions: authActions, reducer: authReducer } = createSlice({
   name: "auth",
   initialState,
   reducers: {
     loginSuccess(state, { payload }) {
-      state.isAuth = true
-      state.token = payload.token.access_token
-      state.refreshToken = payload.token.refresh_token
-      state.userInfo = payload.user
-      state.clientType = payload.client_type
-      state.roleInfo = payload.role
-      state.loginTableSlug = payload.login_table_slug
-      state.userId = payload.user_id
-      state.tables = payload.tables
-      state.projectId = payload.project_id
-      state.environmentId = payload.environment_id
-      state.resourceId = payload.resource_id
+      state.token = payload.token.access_token;
+      state.refreshToken = payload.token.refresh_token;
+      state.userInfo = payload.user;
+      state.clientType = payload.client_type;
+      state.roleInfo = payload.role;
+      state.loginTableSlug = payload.login_table_slug;
+      state.userId = payload.user_id;
+      state.tables = payload.tables;
+      state.projectId = payload.project_id;
+      state.environmentId = payload.environment_id;
+      state.resourceId = payload.resource_id;
       // state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
       state.permissions = payload?.permissions
         ? payload?.permissions?.reduce((acc, curr) => {
@@ -42,15 +41,16 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
               write: curr.write !== "No",
               update: curr.update !== "No",
               delete: curr.delete !== "No",
-            }
-            return acc
+            };
+            return acc;
           }, {})
-        : []
-      state.loading = false
+        : [];
+      state.loading = false;
     },
     setTokens(state, { payload }) {
-      state.token = payload.token.access_token
-      state.refreshToken = payload.token.refresh_token
+      state.token = payload.token.access_token;
+      state.refreshToken = payload.token.refresh_token;
+      state.isAuth = true;
     },
     setPermission(state, { payload }) {
       state.permissions =
@@ -61,10 +61,10 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
             write: curr.write !== "No",
             update: curr.update !== "No",
             delete: curr.delete !== "No",
-          }
-          return acc
-        }, {}) || []
+          };
+          return acc;
+        }, {}) || [];
     },
     logout: (state) => initialState,
   },
-})
+});

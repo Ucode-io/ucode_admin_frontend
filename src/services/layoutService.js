@@ -1,7 +1,7 @@
 import request from "../utils/request";
 
 const layoutService = {
-  getList: (data, params) => request.get(`/layout/${data?.data?.tableId}`, data, { params }),
+  getList: (params) => request.get(`/layout`, { params }),
   update: (data) => request.put(`/layout`, data),
 };
 

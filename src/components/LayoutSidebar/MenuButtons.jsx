@@ -240,6 +240,15 @@ const ButtonsMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
+              title="Переместить microfrontend"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFolderModalType("folder", element);
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
               title="Изменить microfrontend"
               onClick={(e) => {
                 e.stopPropagation();
@@ -283,7 +292,60 @@ const ButtonsMenu = ({
             )}
           </Box>
         ) : (
-          ""
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<TableChartIcon size={13} />}
+              title="Создать table"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/settings/constructor/apps/${appId}/objects/create`);
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<SyncAltIcon size={13} />}
+              title="Добавить table"
+              onClick={(e) => {
+                e.stopPropagation();
+                setTableModal({ id: "c57eedc3-a954-4262-a0af-376c65b5a284" });
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<DeveloperBoardIcon size={13} />}
+              title="Добавить microfrontend"
+              onClick={(e) => {
+                e.stopPropagation();
+                setMicrofrontendModal({
+                  id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+                });
+                handleCloseNotify();
+              }}
+            />
+            <Divider
+              style={{
+                marginBottom: "4px",
+                marginTop: "4px",
+              }}
+            />
+            <MenuItemComponent
+              icon={<CreateNewFolderIcon size={13} />}
+              title="Добавить папку"
+              onClick={(e) => {
+                e.stopPropagation();
+                openFolderCreateModal("create", {
+                  id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+                });
+                handleCloseNotify();
+              }}
+            />
+            <Divider
+              style={{
+                marginBottom: "4px",
+                marginTop: "4px",
+              }}
+            />
+          </Box>
         )}
       </Menu>
     </>

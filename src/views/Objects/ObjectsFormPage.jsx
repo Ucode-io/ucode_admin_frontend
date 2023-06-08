@@ -38,10 +38,6 @@ const ObjectsFormPage = () => {
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
-  const [selectedTab, setSelectedTab] = useState(0);
-  const handleTabSelection = (tabIndex) => {
-    setSelectedTab(tabIndex);
-  };
 
   const tableInfo = useMemo(() => {
     return tablesList.find((el) => el.slug === tableSlug);
@@ -211,7 +207,7 @@ const ObjectsFormPage = () => {
   //   setFormValue("time_end", startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined);
   // }, [serviceTime, startTime]);
 
-  if (loader) return <PageFallback />;
+  // if (loader) return <PageFallback />;
   return (
     <div className={styles.formPage}>
       <FiltersBlock

@@ -3,6 +3,7 @@
 //   "MULTI_LINE",
 //   "EMAIL",
 //   "PHONE",
+//   "INTERNATIONAL_PHONE",
 //   "PICK_LIST",
 //   "MULTISELECT",
 //   "DATE",
@@ -180,7 +181,7 @@ export const fieldTypesOptions = [
       {
         icon: "phone.svg",
         label: "Internation Phone",
-        value: "INTERNATION_PHONE",
+        value: "INTERNATIONAL_PHONE",
       },
       {
         icon: "envelope.svg",

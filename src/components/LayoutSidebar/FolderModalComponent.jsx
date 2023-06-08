@@ -36,6 +36,7 @@ const FolderModal = ({
         queryClient.refetchQueries(["MENU"], element?.id);
       },
     });
+  console.log("selectedTable", selectedTable);
   const createType = () => {
     updateMenu({
       parent_id: folder,
@@ -43,6 +44,10 @@ const FolderModal = ({
       type: selectedTable?.type,
       icon: selectedTable?.icon || undefined,
       label: selectedTable?.label || undefined,
+      table: selectedTable?.table || undefined,
+      microfrontend: selectedTable?.microfrontend || undefined,
+      table_id: selectedTable?.table_id || undefined,
+      microfrontend_id: selectedTable?.microfrontend_id || undefined,
     });
   };
 

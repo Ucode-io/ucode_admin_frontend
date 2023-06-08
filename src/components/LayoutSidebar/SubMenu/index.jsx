@@ -9,7 +9,8 @@ import ButtonsMenu from "../MenuButtons";
 import { useParams } from "react-router-dom";
 import menuSettingsService from "../../../services/menuSettingsService";
 import { useQueryClient } from "react-query";
-import FolderModal from "../folderModal";
+import FolderModal from "../FolderModalComponent";
+import SearchInput from "../../SearchInput";
 
 const SubMenu = ({
   child,
@@ -31,6 +32,7 @@ const SubMenu = ({
   setSubMenuIsOpen,
   setMicrofrontendModal,
   menuList,
+  setSubSearchText,
 }) => {
   const { appId } = useParams();
   const queryClient = useQueryClient();
@@ -60,7 +62,7 @@ const SubMenu = ({
       <div className="header" onClick={() => {}}>
         {subMenuIsOpen && <h2>{element?.label}</h2>}{" "}
         <Box className="buttons">
-          <div className="dots" onClick={() => setSubMenuIsOpen(false)}>
+          <div className="dots">
             <BsThreeDots
               size={13}
               onClick={(e) => {
@@ -97,6 +99,17 @@ const SubMenu = ({
         }}
       >
         <div>
+          <Box className="search">
+            <SearchInput
+              style={{
+                borderRadius: "8px",
+                width: "100%",
+              }}
+              onChange={(e) => {
+                setSubSearchText(e);
+              }}
+            />
+          </Box>
           <div
             className="nav-block"
             style={{

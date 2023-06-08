@@ -145,7 +145,7 @@ const TableView = ({
   const [open, setOpen] = useState(false);
   
   useEffect(() => {
-    layoutService.getList({ data: { tableId: menuItem.id ?? "" } }).then((res) => {
+    layoutService.getList({ data: { tableId: menuItem?.table_id } }).then((res) => {
       res?.layouts?.find((layout) => {
         layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
       });
@@ -159,6 +159,8 @@ const TableView = ({
       navigateToForm(tableSlug, "EDIT", row);
     }
   };
+
+  console.log('sssssssss', layoutType)
 
   return (
     <div className={styles.wrapper}>

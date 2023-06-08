@@ -26,6 +26,7 @@ import DocumentGeneratorButton from "../components/DocumentGeneratorButton";
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import styles from "./style.module.scss";
+import { store } from "../../../store";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -54,9 +55,9 @@ const NewRelationSection = ({
   }, [data]);
 
   const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
-  const [tableId, setTableId] = useState(null);
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
+  const menuItem = store.getState().menu.menuItem;
 
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
@@ -256,21 +257,15 @@ const NewRelationSection = ({
 
   /*****************************JWT END*************************/
 
-  useEffect(() => {
-    applicationService.getById(appId).then((res) => {
-      const tables = res?.tables;
-      const table = tables?.find((table) => table?.slug === tableSlug);
-      setTableId(table?.id);
-    });
-  }, []);
+  
 
   useEffect(() => {
-    if (!tableId) return;
-    layoutService.getList({ data: { tableId } }).then((res) => {
+    if (!menuItem.table_id) return;
+    layoutService.getList({ data: { tableId: menuItem.table_id } }).then((res) => {
       const layout = res?.layouts?.filter((layout) => layout?.is_default === true);
       setData(layout);
     });
-  }, [tableSlug, tableId]);
+  }, [tableSlug, menuItem.table_id]);
 
   // if (!data?.length) return null;
   return (

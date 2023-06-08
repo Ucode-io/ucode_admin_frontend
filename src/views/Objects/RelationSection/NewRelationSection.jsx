@@ -257,14 +257,16 @@ const NewRelationSection = ({
 
   /*****************************JWT END*************************/
 
-  
-
   useEffect(() => {
     if (!menuItem.table_id) return;
-    layoutService.getList({ data: { tableId: menuItem.table_id } }).then((res) => {
-      const layout = res?.layouts?.filter((layout) => layout?.is_default === true);
-      setData(layout);
-    });
+    layoutService
+      .getList({
+        "table-slug": tableSlug,
+      })
+      .then((res) => {
+        const layout = res?.layouts?.filter((layout) => layout?.is_default === true);
+        setData(layout);
+      });
   }, [tableSlug, menuItem.table_id]);
 
   // if (!data?.length) return null;
@@ -333,14 +335,13 @@ const NewRelationSection = ({
                         <Clear color="error" />
                       </RectangleIconButton>
                     </>
-                  ) : ( 
+                  ) : (
                     fields.length > 0 && (
                       <RectangleIconButton
                         color="success"
                         size="small"
                         onClick={() => {
                           setFormVisible(true);
-                          
                         }}
                       >
                         <Edit color="primary" />

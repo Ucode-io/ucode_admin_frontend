@@ -11,15 +11,21 @@ import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
 import layoutService from "../../../../../services/layoutService";
 import { store } from "../../../../../store";
+import { useParams } from "react-router-dom";
 
 function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm }) {
   const menuItem = store.getState().menu.menuItem;
+  const { slug } = useParams();
 
   useEffect(() => {
-    layoutService.getList({ data: { tableId: menuItem.table_id } }).then((res) => {
-      mainForm.setValue("layouts", res?.layouts ?? []);
-    });
-  }, [menuItem.table_id]);
+    layoutService
+      .getList({
+        "table-slug": slug,
+      })
+      .then((res) => {
+        mainForm.setValue("layouts", res?.layouts ?? []);
+      });
+  }, [slug]);
 
   const {
     fields: layouts,
@@ -68,6 +74,10 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
     control: mainForm.control,
     name: "layouts",
   });
+
+  const {id} = useParams();
+
+  console.log('sssss222222', id)
 
   return (
     <Box sx={{ width: "100%", height: "100vh", background: "#fff" }}>
@@ -136,7 +146,7 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
             </CTableRow>
           ))}
           <PermissionWrapperV2 tabelSlug="app" type="write">
-            <TableRowButton colSpan={4} onClick={() => append({ table_id: menuItem.table_id, type: "SimpleLayout", label: "New" })} />
+            <TableRowButton colSpan={4} onClick={() => append({ table_id: id, type: "SimpleLayout", label: "New" })} />
           </PermissionWrapperV2>
           {/* </CTableBody> */}
         </CTable>

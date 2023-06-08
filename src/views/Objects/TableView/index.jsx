@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import layoutService from "../../../services/layoutService";
 import applicationService from "../../../services/applicationService";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
+import { store } from "../../../store";
 
 const TableView = ({
   tab,
@@ -30,6 +31,7 @@ const TableView = ({
   setSelectedObjects,
   selectedLinkedObject,
   selectedLinkedTableSlug,
+  menuItem,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -139,25 +141,16 @@ const TableView = ({
     }
   };
 
-  const [tableId, setTableId] = useState(null);
   const [layoutType, setLayoutType] = useState(null);
   const [open, setOpen] = useState(false);
-
+  
   useEffect(() => {
-    applicationService.getById(appId).then((res) => {
-      const tables = res?.tables;
-      const table = tables?.find((table) => table?.slug === tableSlug);
-      setTableId(table?.id);
-    });
-  }, []);
-
-  useEffect(() => {
-    layoutService.getList({ data: { tableId: tableId ?? "" } }).then((res) => {
+    layoutService.getList({ data: { tableId: menuItem.id ?? "" } }).then((res) => {
       res?.layouts?.find((layout) => {
         layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
       });
     });
-  }, [tableId]);
+  }, [menuItem.id]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {

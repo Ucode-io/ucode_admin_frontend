@@ -14,6 +14,7 @@ import ViewTabSelector from "./components/ViewTypeSelector";
 import styles from "./style.module.scss";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
+import { store } from "../../store";
 
 const ObjectsPage = () => {
   const { tableSlug, appId } = useParams();
@@ -53,6 +54,8 @@ const ObjectsPage = () => {
       ? setSelectedTabIndex(parseInt(queryTab - 1))
       : setSelectedTabIndex(0);
   }, [queryTab]);
+
+  const menuItem = store.getState().menu.menuItem;
 
   const setViews = () => {};
   if (isLoading) return <PageFallback />;
@@ -115,6 +118,7 @@ const ObjectsPage = () => {
                       views={views}
                       view={view}
                       fieldsMap={fieldsMap}
+                      menuItem={menuItem}
                     />
                   </>
                 )}

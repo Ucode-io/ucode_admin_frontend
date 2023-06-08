@@ -143,13 +143,17 @@ const TableView = ({
 
   const [layoutType, setLayoutType] = useState(null);
   const [open, setOpen] = useState(false);
-  
+
   useEffect(() => {
-    layoutService.getList({ data: { tableId: menuItem?.table_id } }).then((res) => {
-      res?.layouts?.find((layout) => {
-        layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
+    layoutService
+      .getList({
+        "table-slug": tableSlug,
+      })
+      .then((res) => {
+        res?.layouts?.find((layout) => {
+          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
+        });
       });
-    });
   }, [menuItem.id]);
 
   const navigateToEditPage = (row) => {
@@ -160,7 +164,7 @@ const TableView = ({
     }
   };
 
-  console.log('sssssssss', layoutType)
+  console.log("sssssssss", layoutType);
 
   return (
     <div className={styles.wrapper}>

@@ -12,8 +12,6 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import HeaderSettings from "../../../components/HeaderSettings";
 import PageFallback from "../../../components/PageFallback";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
-import applicationService from "../../../services/applicationSercixe";
-import { fetchApplicationListActions } from "../../../store/application/application.thunk";
 import microfrontendService from "../../../services/microfrontendService";
 
 const microfrontendListPageLink = "/settings/constructor/microfrontend";

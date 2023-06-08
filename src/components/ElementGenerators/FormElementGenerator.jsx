@@ -176,6 +176,25 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
+      
+      case "INTERNATION_PHONE":
+        return (
+          <FRow label={field.label} required={field.required}>
+            <HFInternationPhone
+              control={control}
+              name={computedSlug}
+              tabIndex={field?.tabIndex}
+              fullWidth
+              required={field.required}
+              placeholder={field.attributes?.placeholder}
+              mask={"(99) 999-99-99"}
+              defaultValue={defaultValue}
+              disabled={isDisabled}
+              {...props}
+            />
+          </FRow>
+        );
+  
 
     case "INTERNATION_PHONE":
       return (

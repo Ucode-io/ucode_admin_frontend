@@ -5955,9 +5955,15 @@ levn@^0.4.1:
     type-check "~0.4.0"
 
 libphonenumber-js@^1.10.30:
+<<<<<<< HEAD
   version "1.10.31"
   resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.31.tgz#aab580894c263093a3085a02afcda7a742faeff1"
   integrity sha512-qYTzElLePmz3X/6I0JPX5n87tu7jVIMtR/yRLi5PGVPvMCMSVTCR+079KmdNK005i4dBjFxY/bMYceI9IBp47w==
+=======
+  version "1.10.34"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.34.tgz#63374bb988688ac28b03ed6c4b344d412199d56c"
+  integrity sha512-p6g4NaQH4gK1gre32+kV14Mk6GPo2EDcPDvjbi+D2ycsPFsN4gVWNbs0itdHLZqByg6YEK8mE7OeP200I/ScTQ==
+>>>>>>> internation_phone
 
 lines-and-columns@^1.1.6:
   version "1.2.4"

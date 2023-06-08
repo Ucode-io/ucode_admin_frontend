@@ -39,9 +39,9 @@ const HFFormulaField = ({
       let value = values[field.slug] ?? 0;
 
       if (typeof value === "string") value = `'${value}'`;
+      if (typeof value === "object") value = `"${value}"`;
       if (typeof value === "boolean")
         value = JSON.stringify(value).toUpperCase();
-
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
 

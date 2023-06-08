@@ -178,6 +178,11 @@ export const fieldTypesOptions = [
         value: "PHONE",
       },
       {
+        icon: "phone.svg",
+        label: "Internation Phone",
+        value: "INTERNATION_PHONE",
+      },
+      {
         icon: "envelope.svg",
         label: "Email",
         value: "EMAIL",

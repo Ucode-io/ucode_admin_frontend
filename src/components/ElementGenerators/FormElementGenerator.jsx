@@ -177,7 +177,7 @@ const FormElementGenerator = ({
         </FRow>
       );
       
-      case "INTERNATION_PHONE":
+      case "INTERNATIONAL_PHONE":
         return (
           <FRow label={field.label} required={field.required}>
             <HFInternationPhone

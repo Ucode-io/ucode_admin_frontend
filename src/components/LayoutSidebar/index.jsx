@@ -66,8 +66,6 @@ const LayoutSidebar = ({
   const handleCloseNotify = () => {
     setMenu(null);
   };
-  console.log("menu", menu);
-  console.log("object ", searchText);
 
   const { isLoading } = useMenuListQuery({
     params: {
@@ -125,6 +123,7 @@ const LayoutSidebar = ({
     menuSettingsService
       .getList({
         search: searchText,
+        parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
       })
       .then((res) => {
         setMenuList(res);
@@ -188,7 +187,7 @@ const LayoutSidebar = ({
   );
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(menuList?.menus[0]?.child_menus, dropResult);
+    const result = applyDrag(menuList?.menus, dropResult);
     if (result) {
       menuService
         .updateOrder({
@@ -199,7 +198,6 @@ const LayoutSidebar = ({
         });
     }
   };
-  console.log("menuList", menuList);
 
   return (
     <>
@@ -274,7 +272,7 @@ const LayoutSidebar = ({
                   onDrop={onDrop}
                 >
                   {menuList?.menus &&
-                    menuList?.menus[0]?.child_menus?.map((element, index) => (
+                    menuList?.menus?.map((element, index) => (
                       <AppSidebar
                         key={index}
                         element={element}

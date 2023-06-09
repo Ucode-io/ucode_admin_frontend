@@ -15,7 +15,7 @@ import { mainActions } from "../../store/main/main.slice";
 import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
-import FolderModal from "./folderModal";
+import FolderModal from "./FolderModalComponent";
 import "./style.scss";
 import menuSettingsService from "../../services/menuSettingsService";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
@@ -25,6 +25,7 @@ import MenuButtonComponent from "./MenuButtonComponent";
 import AppSidebar from "./AppSidebarComponent";
 import { applyDrag } from "../../utils/applyDrag";
 import { Container } from "react-smooth-dnd";
+import ButtonsMenu from "./MenuButtons";
 
 const LayoutSidebar = ({
   favicon,
@@ -52,11 +53,24 @@ const LayoutSidebar = ({
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
   const [child, setChild] = useState();
   const [element, setElement] = useState();
+  const [searchText, setSearchText] = useState();
+  const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
+  const [menu, setMenu] = useState({ event: "", type: "" });
+  const openSidebarMenu = Boolean(menu?.event);
+
+  const handleOpenNotify = (event, type) => {
+    setMenu({ event: event?.currentTarget, type: type });
+  };
+
+  const handleCloseNotify = () => {
+    setMenu(null);
+  };
 
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: appId,
+      search: subSearchText,
     },
     queryParams: {
       cacheTime: 10,
@@ -106,9 +120,14 @@ const LayoutSidebar = ({
   });
 
   const getMenuList = () => {
-    menuSettingsService.getList().then((res) => {
-      setMenuList(res);
-    });
+    menuSettingsService
+      .getList({
+        search: searchText,
+        parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+      })
+      .then((res) => {
+        setMenuList(res);
+      });
   };
 
   const setSidebarIsOpen = (val) => {
@@ -158,7 +177,7 @@ const LayoutSidebar = ({
 
   useEffect(() => {
     getMenuList();
-  }, []);
+  }, [searchText]);
 
   const { data: projectInfo } = useQuery(
     ["GET_PROJECT_BY_ID", projectId],
@@ -168,7 +187,7 @@ const LayoutSidebar = ({
   );
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(menuList?.menus[0]?.child_menus, dropResult);
+    const result = applyDrag(menuList?.menus, dropResult);
     if (result) {
       menuService
         .updateOrder({
@@ -225,6 +244,9 @@ const LayoutSidebar = ({
                   borderRadius: "8px",
                   width: "100%",
                 }}
+                onChange={(e) => {
+                  setSearchText(e);
+                }}
               />
             </Box>
 
@@ -249,28 +271,29 @@ const LayoutSidebar = ({
                   dragHandleSelector=".column-drag-handle"
                   onDrop={onDrop}
                 >
-                  {menuList?.menus[0]?.child_menus?.map((element, index) => (
-                    <AppSidebar
-                      key={index}
-                      element={element}
-                      parentClickHandler={parentClickHandler}
-                      openedBlock={openedBlock}
-                      openFolderCreateModal={openFolderCreateModal}
-                      environment={environment}
-                      childBlockVisible={childBlockVisible}
-                      tableFolder={tableFolder?.folders}
-                      setFolderModalType={setFolderModalType}
-                      setSelectedTable={setSelectedTable}
-                      sidebarIsOpen={sidebarIsOpen}
-                      getMenuList={getMenuList}
-                      setTableModal={setTableModal}
-                      selectedFolder={selectedFolder}
-                      setElement={setElement}
-                      setSubMenuIsOpen={setSubMenuIsOpen}
-                      subMenuIsOpen={subMenuIsOpen}
-                      setMicrofrontendModal={setMicrofrontendModal}
-                    />
-                  ))}
+                  {menuList?.menus &&
+                    menuList?.menus?.map((element, index) => (
+                      <AppSidebar
+                        key={index}
+                        element={element}
+                        parentClickHandler={parentClickHandler}
+                        openedBlock={openedBlock}
+                        openFolderCreateModal={openFolderCreateModal}
+                        environment={environment}
+                        childBlockVisible={childBlockVisible}
+                        tableFolder={tableFolder?.folders}
+                        setFolderModalType={setFolderModalType}
+                        setSelectedTable={setSelectedTable}
+                        sidebarIsOpen={sidebarIsOpen}
+                        getMenuList={getMenuList}
+                        setTableModal={setTableModal}
+                        selectedFolder={selectedFolder}
+                        setElement={setElement}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        subMenuIsOpen={subMenuIsOpen}
+                        setMicrofrontendModal={setMicrofrontendModal}
+                      />
+                    ))}
                   {folderModalType === "folder" && (
                     <FolderModal
                       closeModal={closeFolderModal}
@@ -287,11 +310,11 @@ const LayoutSidebar = ({
               {/* <div className="sidebar-footer"></div> */}
             </div>
             <MenuButtonComponent
-              title={"Create folder"}
+              title={"Create"}
               icon={<AddIcon />}
               openFolderCreateModal={openFolderCreateModal}
               onClick={(e) => {
-                openFolderCreateModal("create");
+                handleOpenNotify(e, "ROOT");
               }}
               sidebarIsOpen={sidebarIsOpen}
             />
@@ -353,6 +376,20 @@ const LayoutSidebar = ({
         closeFolderModal={closeFolderModal}
         setMicrofrontendModal={setMicrofrontendModal}
         menuList={menuList}
+        setSubSearchText={setSubSearchText}
+      />
+      <ButtonsMenu
+        element={element}
+        menu={menu?.event}
+        openMenu={openSidebarMenu}
+        handleCloseNotify={handleCloseNotify}
+        openFolderCreateModal={openFolderCreateModal}
+        menuType={menu?.type}
+        setFolderModalType={setFolderModalType}
+        setSelectedTable={setSelectedTable}
+        appId={appId}
+        setTableModal={setTableModal}
+        setMicrofrontendModal={setMicrofrontendModal}
       />
     </>
   );

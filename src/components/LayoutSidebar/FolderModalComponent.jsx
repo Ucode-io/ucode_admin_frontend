@@ -1,20 +1,17 @@
-import { Box, Card, IconButton, Modal, Typography } from "@mui/material";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { TreeView } from "@mui/lab";
+import { Box, Card, IconButton, Modal, Typography } from "@mui/material";
+import { useState } from "react";
+import { useQueryClient } from "react-query";
+import { useMenuUpdateMutation } from "../../services/menuService";
 import CancelButton from "../Buttons/CancelButton";
 import CreateButton from "../Buttons/CreateButton";
 import SaveButton from "../Buttons/SaveButton";
-import constructorTableService from "../../services/constructorTableService";
-import { useQueryClient } from "react-query";
-import { useState } from "react";
-import { TreeItem, TreeView } from "@mui/lab";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import "./style.scss";
 import FolderTreeView from "./TreeView";
-import {
-  useMenuListQuery,
-  useMenuUpdateMutation,
-} from "../../services/menuService";
+import "./style.scss";
+
 const FolderModal = ({
   closeModal,
   modalType,
@@ -43,6 +40,10 @@ const FolderModal = ({
       type: selectedTable?.type,
       icon: selectedTable?.icon || undefined,
       label: selectedTable?.label || undefined,
+      table: selectedTable?.table || undefined,
+      microfrontend: selectedTable?.microfrontend || undefined,
+      table_id: selectedTable?.table_id || undefined,
+      microfrontend_id: selectedTable?.microfrontend_id || undefined,
     });
   };
 

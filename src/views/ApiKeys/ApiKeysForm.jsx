@@ -166,10 +166,6 @@ const ApiKeysForm = () => {
     return listToOptions(role?.response, "name", "guid");
   }, [role?.response]);
 
-  console.log("meinForm", mainForm.watch());
-
-  console.log("computedRoles", computedRoles);
-
   const onSubmit = (data) => {
     if (apiKeyId) updateApp(data);
     else createApp(data);

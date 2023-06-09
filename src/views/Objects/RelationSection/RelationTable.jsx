@@ -134,10 +134,7 @@ const RelationTable = forwardRef(
       {
         enabled: !!appId,
         select: ({ data }) => {
-          console.log("data", data);
-
           const tableData = id ? objectToArray(data.response ?? {}) : [];
-          console.log("data?.response?.length", data?.response?.length);
           const pageCount =
             isNaN(data?.count) || tableData.length === 0
               ? 1

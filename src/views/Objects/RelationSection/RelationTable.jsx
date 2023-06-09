@@ -55,6 +55,9 @@ const RelationTable = forwardRef(
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState();
     const isPermissions = useSelector((state) => state?.auth?.permissions);
+    const rowClickType = relation?.action_relations?.find(
+      (item) => item.key === "click"
+    );
     const filterChangeHandler = (value, name) => {
       setFilters({
         ...filters,
@@ -131,10 +134,14 @@ const RelationTable = forwardRef(
       {
         enabled: !!appId,
         select: ({ data }) => {
+          console.log("data", data);
+
           const tableData = id ? objectToArray(data.response ?? {}) : [];
-          const pageCount = isNaN(data.count)
-            ? 1
-            : Math.ceil(data.count / limit);
+          console.log("data?.response?.length", data?.response?.length);
+          const pageCount =
+            isNaN(data?.count) || tableData.length === 0
+              ? 1
+              : Math.ceil(data.count / limit);
           setDataLength(tableData.length);
 
           const fieldsMap = listToMap(data.fields);
@@ -202,7 +209,10 @@ const RelationTable = forwardRef(
       });
 
     const navigateToEditPage = (row) => {
+      // if (rowClickType.value === "detail_page") {
       navigateToForm(relatedTableSlug, "EDIT", row);
+      // } else {
+      // }
     };
 
     const navigateToTablePage = () => {
@@ -308,6 +318,7 @@ const RelationTable = forwardRef(
               isChecked={(row) => selectedObjects?.includes(row.guid)}
               onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}
+              title={"Сначала нужно создать объект"}
             />
           ) : (
             ""

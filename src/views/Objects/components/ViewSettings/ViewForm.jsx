@@ -57,8 +57,6 @@ const ViewForm = ({
   const relationObjInput = form.watch("relation_obj");
   const numberFieldInput = form.watch("number_field");
 
-  console.log("relationColumns", relationColumns);
-
   useEffect(() => {
     if (relationObjInput && numberFieldInput) {
       setIsBalanceExist(true);
@@ -228,7 +226,6 @@ const ViewForm = ({
       })
       .catch(() => setDeleteBtnLoader(false));
   };
-  console.log("dfdfdf", form.watch());
 
   return (
     <div className={styles.formSection}>

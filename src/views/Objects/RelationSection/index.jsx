@@ -123,7 +123,6 @@ const RelationSection = ({
 
     setRelationsCreateFormVisible(result);
   }, [filteredRelations]);
-  console.log("selectedRelation", selectedRelation);
 
   const setCreateFormVisible = (relationId, value) => {
     setRelationsCreateFormVisible((prev) => ({

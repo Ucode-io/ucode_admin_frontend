@@ -136,7 +136,6 @@ const AutoCompleteElement = ({
   const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
-  console.log("field", field);
 
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
@@ -226,8 +225,10 @@ const AutoCompleteElement = ({
   };
 
   useEffect(() => {
-    if (computedValue[0]?.guid !== localValue[0]?.guid) {
-      setLocalValue([]);
+    if (computedValue && localValue) {
+      if (computedValue[0]?.guid !== localValue[0]?.guid) {
+        setLocalValue([]);
+      }
     }
   }, [computedValue, localValue]);
 

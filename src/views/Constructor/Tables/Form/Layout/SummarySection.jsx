@@ -36,7 +36,7 @@ const SummarySection = ({ mainForm, layoutForm, openFieldSettingsBlock, openFiel
   const checkDuplicate = (result) => {
     const ids = new Set();
 
-    for (let i = 0; i < result.length; i++) {
+    for (let i = 0; i < result?.length; i++) {
       const obj = result[i];
       const id = obj.id;
 

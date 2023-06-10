@@ -64,8 +64,8 @@ const HFTextField = ({
                   paddingRight: "0px",
                 }
               : {
-                  background: isBlackBg ? "#2A2D34" : "inherit",
-                  color: isBlackBg ? "#fff" : "inherit",
+                background: "inherit",
+                color: "inherit",
                 },
 
             endAdornment: disabled && (

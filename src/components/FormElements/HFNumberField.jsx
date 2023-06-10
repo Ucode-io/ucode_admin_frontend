@@ -36,7 +36,7 @@ const HFNumberField = ({
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
-          <Box style={disabled ? { background: "#DEDEDE", display: "flex", borderRadius: '4px' } : { background: isBlackBg ? "#2A2D34" : "", color: isBlackBg ? "#fff" : "" }}>
+          <Box style={disabled ? { background: "#DEDEDE", display: "flex", borderRadius: "4px" } : { background: isBlackBg ? "#2A2D34" : "", color: isBlackBg ? "#fff" : "" }}>
             <NumericFormat
               thousandsGroupStyle="thousand"
               thousandSeparator=" "
@@ -63,9 +63,11 @@ const HFNumberField = ({
               {...props}
             />
 
-            <Box style={{display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '5px', }}>
-              <Lock style={{ fontSize: "20px" }} />
-            </Box>
+            {disabled && (
+              <Box style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "5px" }}>
+                <Lock style={{ fontSize: "20px" }} />
+              </Box>
+            )}
           </Box>
         );
       }}

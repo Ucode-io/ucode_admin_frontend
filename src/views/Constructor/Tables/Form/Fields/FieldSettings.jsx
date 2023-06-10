@@ -268,6 +268,20 @@ const FieldSettings = ({
               name="attributes.creatable"
               label="Can create"
             />
+            <FRow label="Validation">
+              <HFTextField
+                fullWidth
+                name="attributes.validation"
+                control={control}
+              />
+            </FRow>
+            <FRow label="Validation message">
+              <HFTextField
+                fullWidth
+                name="attributes.validation_message"
+                control={control}
+              />
+            </FRow>
           </div>
 
           <div className={styles.settingsBlockHeader}>

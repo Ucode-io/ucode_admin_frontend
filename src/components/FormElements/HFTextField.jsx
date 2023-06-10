@@ -61,13 +61,14 @@ const HFTextField = ({
             style: disabled
               ? {
                   background: "#c0c0c039",
+                  paddingRight: "0px",
                 }
               : {
                   background: isBlackBg ? "#2A2D34" : "inherit",
                   color: isBlackBg ? "#fff" : "inherit",
                 },
 
-            startAdornment: disabled && (
+            endAdornment: disabled && (
               <Tooltip title="This field is disabled for this role!">
                 <InputAdornment position="start">
                   <Lock style={{ fontSize: "20px" }} />

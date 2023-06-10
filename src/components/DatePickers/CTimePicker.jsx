@@ -2,10 +2,11 @@ import DatePicker from "react-multi-date-picker"
 import TimePickerPlugin from "./Plugins/TimePickerPlugin"
 import "react-multi-date-picker/styles/layouts/mobile.css"
 import "./style2.scss"
-import { InputAdornment, TextField } from "@mui/material"
-import { DateRange } from "@mui/icons-material"
+import { Box, InputAdornment, TextField, Tooltip } from "@mui/material"
+import { DateRange, Lock, Today } from "@mui/icons-material"
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
-const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit, tabIndex }) => {
+const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit, tabIndex, disabled }) => {
   const getValue = () => {
     if (!value) return ""
 
@@ -34,14 +35,25 @@ const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit, tabIndex
               classes: {
                 input: isBlackBg ? classes.input : "",
               },
-              style: {
-                background: isBlackBg ? "#2A2D34" : "",
-                color: isBlackBg ? "#fff" : "",
-              },
+              style: disabled
+                    ? {
+                        background: "#c0c0c039",
+                      }
+                    : {
+                        background: isBlackBg ? "#2A2D34" : "",
+                        color: isBlackBg ? "#fff" : "",
+                      },
               endAdornment: (
                 <InputAdornment position="end">
-                  <DateRange />
-                </InputAdornment>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <AccessTimeIcon style={{ color: isBlackBg ? "#fff" : "", fontSize: "20px" }} />
+                        {disabled && (
+                          <Tooltip title="This field is disabled for this role!">
+                            <Lock style={{ fontSize: "20px" }} />
+                          </Tooltip>
+                        )}
+                      </Box>
+                    </InputAdornment>
               ),
             }}
             className={`${isFormEdit ? "custom_textfield" : ""}`}

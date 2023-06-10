@@ -28,10 +28,11 @@ import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFFloatField from "../FormElements/HFFloatField";
 import { InputAdornment, Tooltip } from "@mui/material";
 import { Lock } from "@mui/icons-material";
+import { is } from "date-fns/locale";
 
 const parser = new Parser();
 
-const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, fieldsList, relatedTable, ...props }) => {
+const FormElementGenerator = ({ field = {}, control, setFormValue, checkPermission, formTableSlug, fieldsList, relatedTable, ...props }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
   let relationTableSlug = "";
@@ -68,10 +69,12 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
   const isDisabled = useMemo(() => {
     return field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
-  }, [field]);  
+  }, [field]);
 
-  if (!field.attributes?.field_permission?.view_permission) {
-    return null
+  if (checkPermission) {
+    if (!field.attributes?.field_permission?.view_permission) {
+      return null;
+    }
   }
 
   if (field?.id?.includes("#")) {
@@ -335,15 +338,6 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             defaultValue={defaultValue}
             tabIndex={field?.tabIndex}
             disabled={isDisabled}
-            InputProps={{
-              startAdornment: isDisabled && (
-                <Tooltip title="This field is disabled for this role!">
-                  <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
-                  </InputAdornment>
-                </Tooltip>
-              ),
-            }}
             {...props}
           />
         </FRow>
@@ -381,7 +375,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            // disabled={isDisabled}
+            disabled={isDisabled}
             formTableSlug={formTableSlug}
             {...props}
           />
@@ -400,7 +394,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            // disabled={isDisabled}
+            disabled={isDisabled}
             formTableSlug={formTableSlug}
             {...props}
           />
@@ -445,10 +439,16 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             defaultValue={defaultValue}
             InputProps={{
               readOnly: true,
-              style: {
-                background: "#c0c0c039",
-              },
-              startAdornment: isDisabled && (
+              style: isDisabled
+                ? {
+                    background: "#c0c0c039",
+                    paddingRight: "0",
+                  }
+                : {
+                    background: "#2A2D34",
+                    color: "#fff",
+                  },
+              endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
                     <Lock style={{ fontSize: "20px" }} />
@@ -475,8 +475,9 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
               readOnly: true,
               style: {
                 background: "#c0c0c039",
+                paddingRight: "0",
               },
-              startAdornment: isDisabled && (
+              endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
                     <Lock style={{ fontSize: "20px" }} />
@@ -521,7 +522,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             type="color"
             disabled={isDisabled}
             InputProps={{
-              startAdornment: isDisabled && (
+              endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
                     <Lock style={{ fontSize: "20px" }} />
@@ -548,7 +549,17 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             disabled={field.attributes?.disabled}
             type="password"
             InputProps={{
-              startAdornment: isDisabled && (
+              style: isDisabled
+                ? {
+                    background: "#c0c0c039",
+                    paddingRight: "0px",
+                  }
+                : {
+                    background: "#fff",
+                    color: "#fff",
+                  },
+
+              endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
                     <Lock style={{ fontSize: "20px" }} />
@@ -574,7 +585,17 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             defaultValue={defaultValue}
             disabled={isDisabled}
             InputProps={{
-              startAdornment: isDisabled && (
+              style: isDisabled
+                ? {
+                    background: "#c0c0c039",
+                    paddingRight: "0px",
+                  }
+                : {
+                    background: "#fff",
+                    color: "#fff",
+                  },
+
+              endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
                     <Lock style={{ fontSize: "20px" }} />

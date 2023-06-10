@@ -1,4 +1,4 @@
-import { IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
+import { Box, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
 import { Controller, useWatch } from "react-hook-form";
 import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import { Parser } from "hot-formula-parser";
@@ -71,25 +71,31 @@ const HFFormulaField = ({ control, name, tabIndex, rules = {}, setFormValue = ()
           InputProps={{
             inputProps: { tabIndex },
             readOnly: disabled,
-            style: {
-              background: disabled ? "#c0c0c039" : "#fff",
-            },
-            startAdornment: disabled && (
-              <Tooltip title="This field is disabled for this role!">
-                <InputAdornment position="start">
-                  <Lock style={{ fontSize: "20px" }} />
-                </InputAdornment>
-              </Tooltip>
-            ),
+            style: disabled
+              ? {
+                  background: "#c0c0c039",
+                  paddingRight: '0'
+                }
+              : {
+                  background: "#2A2D34",
+                  color: '#fff'
+                },
             endAdornment: (
               <InputAdornment position="end">
-                <Tooltip title={formulaIsVisible ? "Hide formula" : "Show formula"}>
-                  <IconButton edge="end" color={formulaIsVisible ? "primary" : "default"} onClick={() => setFormulaIsVisible((prev) => !prev)}>
-                    <IconGenerator icon="square-root-variable.svg" size={15} />
-                  </IconButton>
-                </Tooltip>
+                <Box style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Tooltip title={formulaIsVisible ? "Hide formula" : "Show formula"}>
+                    <IconButton edge="end" color={formulaIsVisible ? "primary" : "default"} onClick={() => setFormulaIsVisible((prev) => !prev)}>
+                      <IconGenerator icon="square-root-variable.svg" size={15} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="This field is disabled for this role!">
+                    <InputAdornment position="start">
+                      <Lock style={{ fontSize: "20px" }} />
+                    </InputAdornment>
+                  </Tooltip>
+                </Box>
               </InputAdornment>
-            )
+            ),
           }}
           {...props}
         />

@@ -128,16 +128,17 @@ const FieldsBlock = ({
                 onDrop={onDrop}
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
-                  ...unusedFields[i],
-                  field_name: unusedFields[i]?.label ?? unusedFields[i]?.title,
+                  ...fields[i],
+                  field_name: fields[i]?.label ?? fields[i]?.title,
                 })}
               >
-                {unusedFields?.map((field, index) => (
+                {fields?.map((field, index) => (
                   <Draggable key={field.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator
                         field={field}
                         control={layoutForm.control}
+                        checkPermission={false}
                         disabledHelperText
                       />
                     </div>

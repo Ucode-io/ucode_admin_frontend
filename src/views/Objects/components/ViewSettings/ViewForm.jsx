@@ -257,7 +257,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
 
       <div className={styles.formFooter}>
         {initialValues !== "NEW" && <CancelButton loading={deleteBtnLoader} onClick={deleteView} title={"Delete"} icon={<Delete />} />}
-        <CancelButton onClick={closeModal} />
+        {/* <CancelButton onClick={closeModal} /> */}
         <SaveButton onClick={form.handleSubmit(onSubmit)} loading={btnLoader} />
       </div>
     </div>

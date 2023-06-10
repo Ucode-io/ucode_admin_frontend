@@ -3,12 +3,13 @@ import { useDispatch } from "react-redux";
 import { Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
-import { TextField } from "@mui/material";
+import { InputAdornment, TextField, Tooltip } from "@mui/material";
 
 import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import request from "../../utils/request";
 import { showAlert } from "../../store/alert/alert.thunk";
 import constructorFunctionService from "../../services/constructorFunctionService";
+import { Lock } from "@mui/icons-material";
 
 const InventoryBarCode = ({
   control,
@@ -96,10 +97,22 @@ const InventoryBarCode = ({
             InputProps={{
               readOnly: disabled,
               style: disabled
-                ? {
-                    background: "#c0c0c039",
-                  }
-                : {},
+                      ? {
+                          background: "#c0c0c039",
+                          paddingRight: "0px",
+                        }
+                      : {
+                          background: "#fff",
+                          color: "#fff"
+                        },
+
+                    endAdornment: disabled && (
+                      <Tooltip title="This field is disabled for this role!">
+                        <InputAdornment position="start">
+                          <Lock style={{ fontSize: "20px" }} />
+                        </InputAdornment>
+                      </Tooltip>
+                    ),
             }}
             helperText={!disabledHelperText && error?.message}
             {...props}

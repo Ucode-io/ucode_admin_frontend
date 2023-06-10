@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Barcode from "react-barcode";
 import styles from "./styles.module.scss";
 import { Controller } from "react-hook-form";
-import { TextField } from "@mui/material";
+import { InputAdornment, TextField, Tooltip } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import Dialog from "@mui/material/Dialog";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -10,6 +10,7 @@ import ReactToPrint from "react-to-print";
 import FRow from "../../FormElements/FRow";
 import PrimaryButton from "../../Buttons/PrimaryButton";
 import CodabarGeneratorBtn from "./CodabarGeneratorBtn";
+import { Lock } from "@mui/icons-material";
 const pageStyle = `
   @page {
     size: 40mm 20mm;
@@ -79,8 +80,20 @@ const CodabarBarcode = ({
                     style: disabled
                       ? {
                           background: "#c0c0c039",
+                          paddingRight: "0px",
                         }
-                      : {},
+                      : {
+                          background: "#fff",
+                          color: "#fff"
+                        },
+
+                    endAdornment: disabled && (
+                      <Tooltip title="This field is disabled for this role!">
+                        <InputAdornment position="start">
+                          <Lock style={{ fontSize: "20px" }} />
+                        </InputAdornment>
+                      </Tooltip>
+                    ),
                   }}
                   helperText={!disabledHelperText && error?.message}
                   {...props}

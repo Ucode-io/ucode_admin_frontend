@@ -15,6 +15,7 @@ const HFTimePicker = ({
   className,
   isBlackBg,
   name,
+  disabled,
   label,
     tabIndex,
   isFormEdit = false,
@@ -37,6 +38,7 @@ const HFTimePicker = ({
             isFormEdit={isFormEdit}
             classes={classes}
             tabIndex={tabIndex}
+            disabled={disabled}
             isBlackBg={isBlackBg}
             value={value}
             onChange={onChange}

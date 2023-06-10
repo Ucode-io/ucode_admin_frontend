@@ -113,7 +113,6 @@ const RelationSection = ({
 
   useEffect(() => {
     setSelectedObjects([]);
-    setFormVisible(false);
   }, [selectedTabIndex]);
 
   useEffect(() => {

@@ -65,6 +65,12 @@ const RelationTable = forwardRef(
       });
     };
 
+    useEffect(() => {
+      if (relation?.default_editable) {
+        setFormVisible(true);
+      }
+    }, [relation?.default_editable]);
+
     const onCheckboxChange = (val, row) => {
       if (val) setSelectedObjects((prev) => [...prev, row.guid]);
       else setSelectedObjects((prev) => prev.filter((id) => id !== row.guid));

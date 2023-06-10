@@ -1,4 +1,5 @@
-import { TextField } from "@mui/material";
+import { Lock } from "@mui/icons-material";
+import { InputAdornment, TextField, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Controller } from "react-hook-form";
 import InputMask from "react-input-mask";
@@ -37,12 +38,7 @@ const HFTextFieldWithMask = ({
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <InputMask
-          mask={mask}
-          value={value ?? undefined}
-          onChange={(e) => onChange(e.target.value)}
-          disabled={disabled}
-        >
+        <InputMask mask={mask} value={value ?? undefined} onChange={(e) => onChange(e.target.value)} disabled={disabled}>
           {(inputProps) => (
             <TextField
               size="small"
@@ -55,14 +51,26 @@ const HFTextFieldWithMask = ({
               {...props}
               InputProps={{
                 ...inputProps,
+                readOnly: disabled,
                 inputProps: { tabIndex },
                 classes: {
                   input: isBlackBg ? classes.input : "",
                 },
-                style: {
-                  background: isBlackBg ? "#2A2D34" : "",
-                  color: isBlackBg ? "#fff" : "",
-                },
+                style: disabled
+                  ? {
+                      background: "#c0c0c039",
+                    }
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "inherit",
+                      color: isBlackBg ? "#fff" : "inherit",
+                    },
+                startAdornment: disabled && (
+                  <Tooltip title="This field is disabled for this role!">
+                    <InputAdornment position="start">
+                      <Lock style={{ fontSize: "20px" }} />
+                    </InputAdornment>
+                  </Tooltip>
+                ),
               }}
             />
           )}

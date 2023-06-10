@@ -274,7 +274,7 @@ const ViewsWithGroups = ({
                   </div>
                   <span>{ t('template') }</span>
                 </div>
-                <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
                   <SettingsButton />
                 </PermissionWrapperV2>
               </div>
@@ -307,7 +307,7 @@ const ViewsWithGroups = ({
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <PermissionWrapperV2 tabelSlug={tableSlug} type="write">
+              <PermissionWrapperV2 tableSlug={tableSlug} type="write">
                 <RectangleIconButton
                   color="success"
                   size="small"

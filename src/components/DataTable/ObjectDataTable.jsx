@@ -313,7 +313,7 @@ const ObjectDataTable = ({
           ))}
 
           <PermissionWrapperV2
-            tabelSlug={tableSlug}
+            tableSlug={tableSlug}
             type={["update", "delete"]}
           >
             {(onDeleteClick || onEditClick) && (

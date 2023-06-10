@@ -61,8 +61,10 @@ const FormElementGenerator = ({
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
-    
-    const defaultValue = field.attributes?.defaultValue ? field.attributes?.defaultValue : field.attributes?.default_values;
+
+    const defaultValue = field.attributes?.defaultValue
+      ? field.attributes?.defaultValue
+      : field.attributes?.default_values;
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
@@ -152,6 +154,13 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            rules={{
+              pattern: {
+                value: new RegExp(field?.attributes?.validation),
+                message:
+                  field?.attributes?.validation_message || "Incorrect value",
+              },
+            }}
             {...props}
           />
         </FRow>

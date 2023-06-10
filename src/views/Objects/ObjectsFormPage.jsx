@@ -32,7 +32,7 @@ const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { pathname, state = {} } = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { removeTab, navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
@@ -177,7 +177,7 @@ const ObjectsFormPage = () => {
           table_slug: tableSlug,
           user_id: isUserId,
         });
-        navigate(-1)
+        navigate(-1);
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
         if (tableRelations?.length)
@@ -239,6 +239,7 @@ const ObjectsFormPage = () => {
           computedSummary={computedSummary}
           control={control}
           sections={sections}
+          computedSections={computedSections}
         />
       </FiltersBlock>
       <div className={styles.formArea}>

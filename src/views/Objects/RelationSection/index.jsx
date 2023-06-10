@@ -212,10 +212,10 @@ const RelationSection = ({
   };
 
   /*****************************JWT START*************************/
-  
+
   const relationFieldSlug = useMemo(() => {
-    return relations.find((item) => item?.type === 'Many2Dynamic')
-  }, [relations])
+    return relations.find((item) => item?.type === "Many2Dynamic");
+  }, [relations]);
 
   useEffect(() => {
     selectedRelation &&
@@ -224,7 +224,8 @@ const RelationSection = ({
           data: {
             offset: 0,
             limit: 0,
-            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]: idFromParams,
+            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
+              idFromParams,
           },
         })
         .then((res) => {
@@ -297,11 +298,11 @@ const RelationSection = ({
               </TabList>
 
               <div className="flex gap-2">
-                <CustomActionsButton
+                {/* <CustomActionsButton
                   tableSlug={selectedRelation?.relatedTable}
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}
-                />
+                /> */}
                 <RectangleIconButton
                   color="success"
                   size="small"

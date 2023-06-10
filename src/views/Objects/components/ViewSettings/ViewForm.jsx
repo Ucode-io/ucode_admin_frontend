@@ -218,6 +218,14 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
                   <FRow label="Default limit">
                     <HFTextField control={form.control} name="default_limit" />
                   </FRow>
+                  <FRow label="Изменение по умолчанию">
+                    <HFSwitch
+                      control={form.control}
+                      name="default_editable"
+                      required
+                      value={form.watch("default_editable")}
+                    />
+                  </FRow>
                 </div>
               </div>
 

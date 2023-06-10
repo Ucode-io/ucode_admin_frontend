@@ -1,7 +1,7 @@
 
 import { Controller, useWatch } from "react-hook-form";
 import { NumericFormat } from 'react-number-format';
-import styles from './style.module.scss'
+import styles from './style.module.scss';
 
 const HFNumberField = ({
   control,
@@ -49,7 +49,6 @@ const HFNumberField = ({
             onChange={(e) => {
               const val = e.target.value;
               const valueWithoutSpaces = val.replaceAll(' ', '')
-              
               if (!valueWithoutSpaces) onChange('');
               else {
                 if(valueWithoutSpaces.at(-1) === '.') onChange(valueWithoutSpaces)

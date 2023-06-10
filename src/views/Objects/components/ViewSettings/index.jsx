@@ -1,6 +1,6 @@
 import { Close } from "@mui/icons-material";
 import { Card, IconButton } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
@@ -9,7 +9,7 @@ import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
 import ViewsList from "./ViewsList";
 
-const ViewSettings = ({ closeModal, setIsChanged, viewData, typeNewView }) => {
+const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewView }) => {
   const { tableSlug, appId } = useParams();
   const [selectedView, setSelectedView] = useState(viewData);
 
@@ -43,6 +43,14 @@ const ViewSettings = ({ closeModal, setIsChanged, viewData, typeNewView }) => {
       },
     }
   );
+
+  useEffect(() => {
+    if (isChanged === true) {
+      refetchViews();
+      closeModal()
+    }
+  }, [isChanged]);
+
   return (
     <Card className={styles.card}>
       <div className={styles.header}>

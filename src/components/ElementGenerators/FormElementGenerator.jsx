@@ -26,18 +26,12 @@ import { useSelector } from "react-redux";
 import CodabarBarcode from "./CodabarBarcode";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFFloatField from "../FormElements/HFFloatField";
+import { InputAdornment, Tooltip } from "@mui/material";
+import { Lock } from "@mui/icons-material";
 
 const parser = new Parser();
 
-const FormElementGenerator = ({
-  field = {},
-  control,
-  setFormValue,
-  formTableSlug,
-  fieldsList,
-  relatedTable,
-  ...props
-}) => {
+const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, fieldsList, relatedTable, ...props }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
   let relationTableSlug = "";
@@ -53,60 +47,38 @@ const FormElementGenerator = ({
     }
   });
   const computedSlug = useMemo(() => {
-    if (field.id?.includes("@"))
-      return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    if (field.id?.includes("@")) return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     return field?.slug;
   }, [field?.id, field?.slug]);
 
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
-    
+
     const defaultValue = field.attributes?.defaultValue ? field.attributes?.defaultValue : field.attributes?.default_values;
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
-    if (field.type === "MULTISELECT" || field.id?.includes("#"))
-      return defaultValue;
+    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
 
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
   // console.log('defaultValue', defaultValue)
-  const isDisabled = useMemo(() => {
-    return (
-      field.attributes?.disabled ||
-      !field.attributes?.field_permission?.edit_permission
-    );
-  }, [field]);
 
-  // if (!field.attributes?.field_permission?.view_permission) {
-  //   return null
-  // }
+  const isDisabled = useMemo(() => {
+    return field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
+  }, [field]);  
+
+  if (!field.attributes?.field_permission?.view_permission) {
+    return null
+  }
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
-      return (
-        <ManyToManyRelationFormElement
-          control={control}
-          field={field}
-          setFormValue={setFormValue}
-          defaultValue={defaultValue}
-          disabled={isDisabled}
-          {...props}
-        />
-      );
+      return <ManyToManyRelationFormElement control={control} field={field} setFormValue={setFormValue} defaultValue={defaultValue} disabled={isDisabled} {...props} />;
     } else if (field?.relation_type === "Many2Dynamic") {
-      return (
-        <DynamicRelationFormElement
-          control={control}
-          field={field}
-          setFormValue={setFormValue}
-          defaultValue={defaultValue}
-          disabled={isDisabled}
-          {...props}
-        />
-      );
+      return <DynamicRelationFormElement control={control} field={field} setFormValue={setFormValue} defaultValue={defaultValue} disabled={isDisabled} {...props} />;
     } else {
       return (
         <RelationFormElement
@@ -363,6 +335,15 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             tabIndex={field?.tabIndex}
             disabled={isDisabled}
+            InputProps={{
+              startAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
+            }}
             {...props}
           />
         </FRow>
@@ -371,44 +352,20 @@ const FormElementGenerator = ({
     case "PHOTO":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFImageUpload
-            control={control}
-            name={computedSlug}
-            tabIndex={field?.tabIndex}
-            required={field.required}
-            defaultValue={defaultValue}
-            disabled={isDisabled}
-            {...props}
-          />
+          <HFImageUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
         </FRow>
       );
 
     case "VIDEO":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFVideoUpload
-            control={control}
-            name={computedSlug}
-            tabIndex={field?.tabIndex}
-            required={field.required}
-            defaultValue={defaultValue}
-            disabled={isDisabled}
-            {...props}
-          />
+          <HFVideoUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
         </FRow>
       );
     case "FILE":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFFileUpload
-            control={control}
-            name={computedSlug}
-            tabIndex={field?.tabIndex}
-            required={field.required}
-            defaultValue={defaultValue}
-            disabled={isDisabled}
-            {...props}
-          />
+          <HFFileUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
         </FRow>
       );
 
@@ -470,15 +427,7 @@ const FormElementGenerator = ({
     case "ICON":
       return (
         <FRow label={field.label} required={field.required}>
-          <HFIconPicker
-            control={control}
-            name={computedSlug}
-            tabIndex={field?.tabIndex}
-            required={field.required}
-            defaultValue={defaultValue}
-            disabled={isDisabled}
-            {...props}
-          />
+          <HFIconPicker control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
         </FRow>
       );
 
@@ -499,6 +448,13 @@ const FormElementGenerator = ({
               style: {
                 background: "#c0c0c039",
               },
+              startAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
             }}
             {...props}
           />
@@ -520,6 +476,13 @@ const FormElementGenerator = ({
               style: {
                 background: "#c0c0c039",
               },
+              startAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
             }}
             {...props}
           />
@@ -538,6 +501,7 @@ const FormElementGenerator = ({
             tabIndex={field?.tabIndex}
             fieldsList={fieldsList}
             field={field}
+            disabled={isDisabled}
             defaultValue={defaultValue}
           />
         </FRow>
@@ -556,6 +520,15 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             type="color"
             disabled={isDisabled}
+            InputProps={{
+              startAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
+            }}
             {...props}
           />
         </FRow>
@@ -574,6 +547,15 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             disabled={field.attributes?.disabled}
             type="password"
+            InputProps={{
+              startAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
+            }}
             {...props}
           />
         </FRow>
@@ -591,6 +573,15 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            InputProps={{
+              startAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
+            }}
             {...props}
           />
         </FRow>

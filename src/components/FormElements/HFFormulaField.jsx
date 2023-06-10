@@ -77,8 +77,8 @@ const HFFormulaField = ({ control, name, tabIndex, rules = {}, setFormValue = ()
                   paddingRight: '0'
                 }
               : {
-                  background: "#2A2D34",
-                  color: '#fff'
+                background: "inherit",
+                color: "inherit",
                 },
             endAdornment: (
               <InputAdornment position="end">

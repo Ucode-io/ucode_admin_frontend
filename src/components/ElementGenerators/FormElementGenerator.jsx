@@ -445,8 +445,8 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, checkPermissi
                     paddingRight: "0",
                   }
                 : {
-                    background: "#2A2D34",
-                    color: "#fff",
+                    background: "inherit",
+                    color: "inherit",
                   },
               endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
@@ -591,8 +591,8 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, checkPermissi
                     paddingRight: "0px",
                   }
                 : {
-                    background: "#fff",
-                    color: "#fff",
+                  background: "inherit",
+                  color: "inherit",
                   },
 
               endAdornment: isDisabled && (

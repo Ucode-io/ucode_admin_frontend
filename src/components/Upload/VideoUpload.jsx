@@ -63,8 +63,8 @@ const VideoUpload = ({ value, onChange, className = "", disabled, tabIndex }) =>
                   background: "#c0c0c039",
                 }
               : {
-                  background: "#2A2D34",
-                  color: "#fff",
+                background: "inherit",
+                color: "inherit",
                 }
           }
         >

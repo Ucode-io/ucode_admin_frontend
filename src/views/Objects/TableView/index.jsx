@@ -143,7 +143,7 @@ const TableView = ({
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [view?.quick_filters?.length]);
 
   return (
     <div className={styles.wrapper}>

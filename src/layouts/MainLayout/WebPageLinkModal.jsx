@@ -1,21 +1,22 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import { Box, Card, Modal, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
 import HFSelect from "../../components/FormElements/HFSelect";
 import menuSettingsService from "../../services/menuSettingsService";
-import microfrontendService from "../../services/microfrontendService";
+import { useWebPagesListQuery } from "../../services/webpageService";
+import { store } from "../../store";
 
-const MicrofrontendLinkModal = ({ closeModal, loading, selectedFolder }) => {
+const WebPageLinkModal = ({ closeModal, loading, selectedFolder }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
-  const [list, setList] = useState();
+  const authStore = store.getState().auth;
 
   const onSubmit = (data) => {
-    if (selectedFolder.type === "MICROFRONTEND") {
+    if (selectedFolder.type === "WEBPAGE") {
       updateType(data, selectedFolder);
     } else {
       createType(data, selectedFolder);
@@ -25,7 +26,7 @@ const MicrofrontendLinkModal = ({ closeModal, loading, selectedFolder }) => {
   const { control, handleSubmit, reset } = useForm();
 
   useEffect(() => {
-    if (selectedFolder.type === "MICROFRONTEND")
+    if (selectedFolder.type === "WEBPAGE")
       menuSettingsService
         .getById(selectedFolder.id, projectId)
         .then((res) => {
@@ -41,8 +42,8 @@ const MicrofrontendLinkModal = ({ closeModal, loading, selectedFolder }) => {
       .create({
         ...data,
         parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
-        type: "MICROFRONTEND",
-        microfrontend_id: data?.microfrontend_id,
+        type: "WEBPAGE",
+        webpage_id: data?.webpage_id,
       })
       .then(() => {
         closeModal();
@@ -66,29 +67,26 @@ const MicrofrontendLinkModal = ({ closeModal, loading, selectedFolder }) => {
       });
   };
 
-  const getTables = () => {
-    microfrontendService.getList().then((res) => {
-      setList(res);
-    });
-  };
-
-  useEffect(() => {
-    getTables();
-  }, []);
+  const { data: pages } = useWebPagesListQuery({
+    params: {
+      "project-id": projectId,
+    },
+    envId: authStore.environmentId,
+  });
 
   const microfrontendOptions = useMemo(() => {
-    return list?.functions?.map((item, index) => ({
-      label: item.name,
+    return pages?.web_pages?.map((item, index) => ({
+      label: item.title,
       value: item.id,
     }));
-  }, [list]);
+  }, [pages]);
 
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">Привязать microfrontend</Typography>
+            <Typography variant="h4">Привязать web page</Typography>
             <ClearIcon
               color="primary"
               onClick={closeModal}
@@ -103,9 +101,9 @@ const MicrofrontendLinkModal = ({ closeModal, loading, selectedFolder }) => {
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFSelect
                 fullWidth
-                label="Microfrontend"
+                label="Web pages"
                 control={control}
-                name="microfrontend_id"
+                name="webpage_id"
                 options={microfrontendOptions}
               />
             </Box>
@@ -120,4 +118,4 @@ const MicrofrontendLinkModal = ({ closeModal, loading, selectedFolder }) => {
   );
 };
 
-export default MicrofrontendLinkModal;
+export default WebPageLinkModal;

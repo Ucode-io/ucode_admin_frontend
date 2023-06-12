@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
-import constructorTableService from "../../services/constructorTableService";
 import { useQueryClient } from "react-query";
 import { useEffect } from "react";
 import menuSettingsService from "../../services/menuSettingsService";
@@ -21,9 +20,6 @@ const FolderCreateModal = ({
 }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
-
-  console.log("selectedFolder", selectedFolder);
-  console.log("modalType", modalType);
 
   const onSubmit = (data) => {
     if (modalType === "create") {

@@ -4,27 +4,18 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, Draggable } from "react-smooth-dnd";
-import applicationService from "../../../services/applicationService";
-import constructorTableService from "../../../services/constructorTableService";
+import { Draggable } from "react-smooth-dnd";
 import { useMenuListQuery } from "../../../services/menuService";
-import menuSettingsService from "../../../services/menuSettingsService";
-import { fetchConstructorTableListAction } from "../../../store/constructorTable/constructorTable.thunk";
-import { applyDrag } from "../../../utils/applyDrag";
-import IconGenerator from "../../IconPicker/IconGenerator";
-import ButtonsMenu from "../MenuButtons";
-import "../style.scss";
-import MenuIcon from "../MenuIcon";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
-import { store } from "../../../store";
+import IconGenerator from "../../IconPicker/IconGenerator";
+import MenuIcon from "../MenuIcon";
+import "../style.scss";
 
 const RecursiveBlock = ({
   index,
   element,
-  parentClickHandler,
   openFolderCreateModal,
   environment,
   setFolderModalType,
@@ -32,26 +23,18 @@ const RecursiveBlock = ({
   level = 1,
   sidebarIsOpen,
   setTableModal,
-  setMicrofrontendModal,
   selectedTable,
+  handleOpenNotify,
+  setElement,
 }) => {
   const { tableSlug } = useParams();
   const { appId } = useParams();
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
-  const [menu, setMenu] = useState("");
-  const [menuType, setMenuType] = useState("");
   const [child, setChild] = useState();
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
-  const openMenu = Boolean(menu);
-
-  const handleOpenNotify = (event, type) => {
-    setMenu(event?.currentTarget);
-    setMenuType(type);
-  };
 
   const { isLoading } = useMenuListQuery({
     params: {
@@ -73,7 +56,6 @@ const RecursiveBlock = ({
         ? environment?.data?.active_background
         : "",
     color: selectedTable?.id === element?.id ? "#fff" : "",
-    // paddingLeft: level === 1 || level === 2 ? level * 2 * 4 : level * 7,
     paddingLeft: level * 2 * 5,
     display:
       element.id === "0" ||
@@ -81,9 +63,7 @@ const RecursiveBlock = ({
   };
 
   const clickHandler = () => {
-    element.type === "TABLE" && parentClickHandler(element);
     setChildBlockVisible((prev) => !prev);
-    // getListMenu(element.id);
     setCheck(true);
     setId(element?.id);
   };
@@ -95,23 +75,6 @@ const RecursiveBlock = ({
       setChildBlockVisible(true);
     }
   }, []);
-
-  const handleCloseNotify = () => {
-    setMenu(null);
-  };
-
-  const deleteFolder = (element) => {
-    menuSettingsService
-      .delete(element.id)
-      .then(() => {
-        // getListMenu(element.id);
-        setChildBlockVisible(false);
-        queryClient.refetchQueries(["MENU"], element?.id);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   return (
     <Draggable key={index}>
@@ -126,11 +89,16 @@ const RecursiveBlock = ({
           onClick={(e) => {
             e.stopPropagation();
             element.type === "TABLE" &&
-              navigate(`/main/${appId}/object/${element?.table?.slug}`);
+              navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
             element.type === "MICROFRONTEND" &&
-              navigate(`/main/${appId}/page/${element?.microfrontend?.id}`);
+              navigate(
+                `/main/${appId}/page/${element?.data?.microfrontend?.id}`
+              );
+            element.type === "WEBPAGE" &&
+              navigate(`/main/${appId}/web-page/${element?.data?.webpage?.id}`);
             clickHandler();
             setSelectedTable(element);
+            setElement(element);
             dispatch(menuActions.setMenuItem(element));
           }}
         >
@@ -144,9 +112,18 @@ const RecursiveBlock = ({
               opacity: element?.isChild && 0.6,
             }}
           >
-            <IconGenerator icon={element?.icon} size={18} />
+            <IconGenerator
+              icon={
+                element?.icon ||
+                element?.data?.microfrontend?.icon ||
+                element?.data?.webpage?.icon
+              }
+              size={18}
+            />
 
-            {(sidebarIsOpen && element?.label) || element?.microfrontend?.name}
+            {(sidebarIsOpen && element?.label) ||
+              element?.data?.microfrontend?.name ||
+              element?.data?.webpage?.title}
           </div>
           {element?.type === "FOLDER" && sidebarIsOpen ? (
             <Box className="icon_group">
@@ -158,6 +135,7 @@ const RecursiveBlock = ({
                       e?.stopPropagation();
                       handleOpenNotify(e, "FOLDER");
                       setSelectedTable(element);
+                      setElement(element);
                     }}
                     style={{
                       color:
@@ -176,6 +154,7 @@ const RecursiveBlock = ({
                       e.stopPropagation();
                       handleOpenNotify(e, "CREATE_TO_FOLDER");
                       setSelectedTable(element);
+                      setElement(element);
                     }}
                     style={{
                       color:
@@ -195,21 +174,6 @@ const RecursiveBlock = ({
           ) : (
             ""
           )}
-          <ButtonsMenu
-            element={element}
-            menu={menu}
-            openMenu={openMenu}
-            handleCloseNotify={handleCloseNotify}
-            sidebarIsOpen={sidebarIsOpen}
-            openFolderCreateModal={openFolderCreateModal}
-            deleteFolder={deleteFolder}
-            menuType={menuType}
-            setFolderModalType={setFolderModalType}
-            setSelectedTable={setSelectedTable}
-            appId={appId}
-            setTableModal={setTableModal}
-            setMicrofrontendModal={setMicrofrontendModal}
-          />
           {element?.type === "TABLE" && (
             <MenuIcon
               title="Table settings"
@@ -217,6 +181,7 @@ const RecursiveBlock = ({
                 e.stopPropagation();
                 handleOpenNotify(e, "TABLE");
                 setSelectedTable(element);
+                setElement(element);
               }}
             />
           )}
@@ -227,6 +192,18 @@ const RecursiveBlock = ({
                 e.stopPropagation();
                 handleOpenNotify(e, "MICROFRONTEND");
                 setSelectedTable(element);
+                setElement(element);
+              }}
+            />
+          )}
+          {element?.type === "WEBPAGE" && (
+            <MenuIcon
+              title="Webpage settings"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenNotify(e, "WEBPAGE");
+                setSelectedTable(element);
+                setElement(element);
               }}
             />
           )}
@@ -239,7 +216,6 @@ const RecursiveBlock = ({
             key={index}
             level={level + 1}
             element={childElement}
-            parentClickHandler={parentClickHandler}
             openFolderCreateModal={openFolderCreateModal}
             environment={environment}
             setFolderModalType={setFolderModalType}
@@ -247,6 +223,8 @@ const RecursiveBlock = ({
             sidebarIsOpen={sidebarIsOpen}
             setTableModal={setTableModal}
             selectedTable={selectedTable}
+            handleOpenNotify={handleOpenNotify}
+            setElement={setElement}
           />
         ))}
       </Collapse>

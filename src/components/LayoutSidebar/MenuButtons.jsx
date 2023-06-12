@@ -10,7 +10,7 @@ import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useMenuCreateMutation } from "../../services/menuService";
-
+import WebIcon from "@mui/icons-material/Web";
 const ButtonsMenu = ({
   element,
   menu,
@@ -20,10 +20,11 @@ const ButtonsMenu = ({
   deleteFolder,
   menuType,
   setFolderModalType,
-  setSelectedTable,
   appId,
   setTableModal,
   setMicrofrontendModal,
+  setWebPageModal,
+  selectedTable,
 }) => {
   const { mutateAsync: createMenu, isLoading: createLoading } =
     useMenuCreateMutation();
@@ -34,7 +35,7 @@ const ButtonsMenu = ({
       ? createMenu({
           parent_id: "c57eedc3-a954-4262-a0af-376c65b5a282",
           type: type,
-          table_id: element?.table?.id,
+          table_id: element?.data?.table?.id,
         })
       : type === "FOLDER"
       ? createMenu({
@@ -44,10 +45,16 @@ const ButtonsMenu = ({
           label: element?.label,
           icon: element?.icon,
         })
+      : type === "MICROFRONTEND"
+      ? createMenu({
+          parent_id: "c57eedc3-a954-4262-a0af-376c65b5a282",
+          type: type,
+          microfrontend_id: element?.data?.microfrontend?.id,
+        })
       : createMenu({
           parent_id: "c57eedc3-a954-4262-a0af-376c65b5a282",
           type: type,
-          microfrontend_id: element?.microfrontend?.id,
+          webpage_id: element?.data?.webpage?.id,
         });
   };
 
@@ -159,6 +166,15 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
+            <MenuItemComponent
+              icon={<WebIcon size={13} />}
+              title="Добавить web-page"
+              onClick={(e) => {
+                e.stopPropagation();
+                setWebPageModal(element);
+                handleCloseNotify();
+              }}
+            />
             <Divider
               style={{
                 marginBottom: "4px",
@@ -172,12 +188,6 @@ const ButtonsMenu = ({
                 e.stopPropagation();
                 openFolderCreateModal("create", element);
                 handleCloseNotify();
-              }}
-            />
-            <Divider
-              style={{
-                marginBottom: "4px",
-                marginTop: "4px",
               }}
             />
           </Box>
@@ -291,6 +301,61 @@ const ButtonsMenu = ({
               </>
             )}
           </Box>
+        ) : menuType === "WEBPAGE" ? (
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Переместить webpage"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFolderModalType("folder", element);
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Изменить webpage"
+              onClick={(e) => {
+                e.stopPropagation();
+                setWebPageModal(element);
+                handleCloseNotify();
+              }}
+            />
+            <Divider
+              style={{
+                marginBottom: "4px",
+                marginTop: "4px",
+              }}
+            />
+            <MenuItemComponent
+              icon={<BsFillTrashFill size={13} />}
+              title="Удалить webpage"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFolder(element);
+                handleCloseNotify();
+              }}
+            />
+            {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
+              <>
+                <Divider
+                  style={{
+                    marginBottom: "4px",
+                    marginTop: "4px",
+                  }}
+                />
+                <MenuItemComponent
+                  icon={<StarBorderIcon size={13} />}
+                  title="Favourite"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCloseNotify();
+                    onFavourite(element, "WEBPAGE");
+                  }}
+                />
+              </>
+            )}
+          </Box>
         ) : (
           <Box className="menu">
             <MenuItemComponent
@@ -337,12 +402,6 @@ const ButtonsMenu = ({
                   id: "c57eedc3-a954-4262-a0af-376c65b5a284",
                 });
                 handleCloseNotify();
-              }}
-            />
-            <Divider
-              style={{
-                marginBottom: "4px",
-                marginTop: "4px",
               }}
             />
           </Box>

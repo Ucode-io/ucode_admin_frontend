@@ -1,7 +1,7 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { TreeView } from "@mui/lab";
+import { TreeItem, TreeView } from "@mui/lab";
 import { Box, Card, IconButton, Modal, Typography } from "@mui/material";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
@@ -21,6 +21,7 @@ const FolderModal = ({
   computedFolderList,
   menuList,
   element,
+  getMenuList,
 }) => {
   const queryClient = useQueryClient();
   const [folder, setFolder] = useState();
@@ -31,19 +32,20 @@ const FolderModal = ({
       onSuccess: () => {
         closeModal();
         queryClient.refetchQueries(["MENU"], element?.id);
+        getMenuList();
       },
     });
   const createType = () => {
     updateMenu({
       parent_id: folder,
-      id: selectedTable?.id,
-      type: selectedTable?.type,
-      icon: selectedTable?.icon || undefined,
-      label: selectedTable?.label || undefined,
-      table: selectedTable?.table || undefined,
-      microfrontend: selectedTable?.microfrontend || undefined,
-      table_id: selectedTable?.table_id || undefined,
-      microfrontend_id: selectedTable?.microfrontend_id || undefined,
+      id: element?.id,
+      type: element?.type,
+      icon: element?.icon || undefined,
+      label: element?.label || undefined,
+      table: element?.data?.table || undefined,
+      microfrontend: element?.data?.microfrontend || undefined,
+      table_id: element?.table_id || undefined,
+      microfrontend_id: element?.microfrontend_id || undefined,
     });
   };
 
@@ -79,14 +81,19 @@ const FolderModal = ({
               onNodeSelect={handleSelect}
             >
               {/* {renderTree(menuList?.menus[0])} */}
-              {menuList?.menus?.map((item) => (
-                <FolderTreeView
-                  element={item}
-                  setCheck={setCheck}
-                  check={check}
-                  folder={folder}
-                />
-              ))}
+              <TreeItem
+                nodeId={"c57eedc3-a954-4262-a0af-376c65b5a284"}
+                label={"Root"}
+              >
+                {menuList?.menus?.map((item) => (
+                  <FolderTreeView
+                    element={item}
+                    setCheck={setCheck}
+                    check={check}
+                    folder={folder}
+                  />
+                ))}
+              </TreeItem>
             </TreeView>
           </Box>
           <div className="folder_btns-row">

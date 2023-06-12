@@ -37,6 +37,7 @@ import MultipleInsertSettings from "@/views/Objects/components/ViewSettings/Mult
 import multipleInsertForm from "@/views/Objects/components/MultipleInsertForm";
 import listToOptions from "@/utils/listToOptions";
 import TableActions from "../Actions/TableActions";
+import RowBlock from "./RowClickForm";
 
 const relationViewTypes = [
   {
@@ -329,6 +330,12 @@ const RelationSettings = ({
             </FRow>
 
             <HFSwitch control={control} name="is_editable" label={"Editable"} />
+            <HFSwitch
+              control={control}
+              name="default_editable"
+              label={"Default editable"}
+            />
+            <HFSwitch control={control} name="creatable" label={"Creatable"} />
 
             {values.type === "Many2Many" && (
               <FRow label="Relate field type" required>
@@ -386,6 +393,7 @@ const RelationSettings = ({
             control={control}
             computedFieldsListOptions={computedFieldsListOptions}
           />
+          <RowBlock control={control} />
 
           <div className={styles.settingsBlockHeader}>
             <h2>Columns</h2>

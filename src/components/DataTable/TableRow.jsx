@@ -3,10 +3,10 @@ import { Delete } from "@mui/icons-material";
 
 import { CTableCell, CTableRow } from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
-import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import TableRowForm from "./TableRowForm";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 const TableRow = ({
   row,
   key,
@@ -67,7 +67,6 @@ const TableRow = ({
         relationFields={relationFields}
       />
     );
-
   return (
     <>
       {relationAction === undefined ? (
@@ -124,7 +123,7 @@ const TableRow = ({
           ))}
           <td>
           <div style={{ display: 'flex', gap: '5px', padding: '3px' }}>
-            <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+            <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
               <RectangleIconButton
                 color="error"
                 onClick={() =>
@@ -193,7 +192,7 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+          <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
             <RectangleIconButton
               color="error"
               onClick={() =>

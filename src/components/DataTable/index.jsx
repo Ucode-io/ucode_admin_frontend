@@ -293,7 +293,7 @@ const DataTable = ({
           ))}
 
           <PermissionWrapperV2
-            tabelSlug={tableSlug}
+            tableSlug={tableSlug}
             type={["update", "delete"]}
           >
             {(onDeleteClick || onEditClick) && (
@@ -358,7 +358,7 @@ const DataTable = ({
               </CTableCell>
             ))}
             <PermissionWrapperV2
-              tabelSlug={tableSlug}
+              tableSlug={tableSlug}
               type={["update", "delete"]}
             >
               {(onDeleteClick || onEditClick) && (

@@ -1,7 +1,7 @@
 import DatePicker from "react-multi-date-picker";
 import weekends from "react-multi-date-picker/plugins/highlight_weekends";
-import { InputAdornment, TextField } from "@mui/material";
-import { Today } from "@mui/icons-material";
+import { Box, InputAdornment, TextField, Tooltip } from "@mui/material";
+import { Lock, Today } from "@mui/icons-material";
 import InputMask from "react-input-mask";
 import { useRef } from "react";
 
@@ -10,18 +10,7 @@ import CustomNavButton from "./Plugins/CustomNavButton";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 import "./style2.scss";
 
-const CDatePicker = ({
-  value,
-  onChange,
-  disabled,
-  isBlackBg,
-  name,
-  isFormEdit,
-  mask,
-  tabIndex,
-  classes,
-  placeholder,
-}) => {
+const CDatePicker = ({ value, onChange, disabled, isBlackBg, name, isFormEdit, mask, tabIndex, classes, placeholder }) => {
   const datePickerRef = useRef();
   return (
     <DatePicker
@@ -35,12 +24,7 @@ const CDatePicker = ({
           }
         });
         return (
-          <InputMask
-            mask={mask}
-            value={value ?? undefined}
-            onChange={handleChange}
-            disabled={disabled}
-          >
+          <InputMask mask={mask} value={value ?? undefined} onChange={handleChange} disabled={disabled}>
             {(InputProps) => (
               <TextField
                 size="small"
@@ -68,7 +52,14 @@ const CDatePicker = ({
                       },
                   endAdornment: (
                     <InputAdornment position="end">
-                      <Today style={{ color: isBlackBg ? "#fff" : "" }} />
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <Today style={{ color: isBlackBg ? "#fff" : "", fontSize: "20px" }} />
+                        {disabled && (
+                          <Tooltip title="This field is disabled for this role!">
+                            <Lock style={{ fontSize: "20px" }} />
+                          </Tooltip>
+                        )}
+                      </Box>
                     </InputAdornment>
                   ),
                 }}

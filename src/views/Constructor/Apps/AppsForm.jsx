@@ -255,7 +255,7 @@ const AppsForm = () => {
                 >
                   Закрыть
                 </SecondaryButton>
-                <PermissionWrapperV2 tabelSlug="app" type="update">
+                <PermissionWrapperV2 tableSlug="app" type="update">
                   <PrimaryButton
                     loader={btnLoader}
                     onClick={mainForm.handleSubmit(onSubmit)}

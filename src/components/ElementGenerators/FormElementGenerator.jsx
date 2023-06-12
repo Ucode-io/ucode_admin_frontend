@@ -27,6 +27,9 @@ import CodabarBarcode from "./CodabarBarcode";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFFloatField from "../FormElements/HFFloatField";
 import HFInternationPhone from "../FormElements/HFInternationPhone";
+import { InputAdornment, Tooltip } from "@mui/material";
+import { Lock } from "@mui/icons-material";
+import { is } from "date-fns/locale";
 
 const parser = new Parser();
 
@@ -34,6 +37,7 @@ const FormElementGenerator = ({
   field = {},
   control,
   setFormValue,
+  checkPermission,
   formTableSlug,
   fieldsList,
   relatedTable,
@@ -62,8 +66,10 @@ const FormElementGenerator = ({
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
-    
-    const defaultValue = field.attributes?.defaultValue ? field.attributes?.defaultValue : field.attributes?.default_values;
+
+    const defaultValue = field.attributes?.defaultValue
+      ? field.attributes?.defaultValue
+      : field.attributes?.default_values;
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
@@ -74,6 +80,7 @@ const FormElementGenerator = ({
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
   // console.log('defaultValue', defaultValue)
+
   const isDisabled = useMemo(() => {
     return (
       field.attributes?.disabled ||
@@ -81,9 +88,11 @@ const FormElementGenerator = ({
     );
   }, [field]);
 
-  // if (!field.attributes?.field_permission?.view_permission) {
-  //   return null
-  // }
+  if (checkPermission) {
+    if (!field.attributes?.field_permission?.view_permission) {
+      return null;
+    }
+  }
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
@@ -153,6 +162,13 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            rules={{
+              pattern: {
+                value: new RegExp(field?.attributes?.validation),
+                message:
+                  field?.attributes?.validation_message || "Incorrect value",
+              },
+            }}
             {...props}
           />
         </FRow>
@@ -444,7 +460,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            // disabled={isDisabled}
+            disabled={isDisabled}
             formTableSlug={formTableSlug}
             {...props}
           />
@@ -463,7 +479,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            // disabled={isDisabled}
+            disabled={isDisabled}
             formTableSlug={formTableSlug}
             {...props}
           />
@@ -516,9 +532,22 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             InputProps={{
               readOnly: true,
-              style: {
-                background: "#c0c0c039",
-              },
+              style: isDisabled
+                ? {
+                    background: "#c0c0c039",
+                    paddingRight: "0",
+                  }
+                : {
+                    background: "inherit",
+                    color: "inherit",
+                  },
+              endAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
             }}
             {...props}
           />
@@ -539,7 +568,15 @@ const FormElementGenerator = ({
               readOnly: true,
               style: {
                 background: "#c0c0c039",
+                paddingRight: "0",
               },
+              endAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
             }}
             {...props}
           />
@@ -558,6 +595,7 @@ const FormElementGenerator = ({
             tabIndex={field?.tabIndex}
             fieldsList={fieldsList}
             field={field}
+            disabled={isDisabled}
             defaultValue={defaultValue}
           />
         </FRow>
@@ -576,6 +614,15 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             type="color"
             disabled={isDisabled}
+            InputProps={{
+              endAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
+            }}
             {...props}
           />
         </FRow>
@@ -594,6 +641,25 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             disabled={field.attributes?.disabled}
             type="password"
+            InputProps={{
+              style: isDisabled
+                ? {
+                    background: "#c0c0c039",
+                    paddingRight: "0px",
+                  }
+                : {
+                    background: "#fff",
+                    color: "#fff",
+                  },
+
+              endAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
+            }}
             {...props}
           />
         </FRow>
@@ -611,6 +677,25 @@ const FormElementGenerator = ({
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            InputProps={{
+              style: isDisabled
+                ? {
+                    background: "#c0c0c039",
+                    paddingRight: "0px",
+                  }
+                : {
+                  background: "inherit",
+                  color: "inherit",
+                  },
+
+              endAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
+            }}
             {...props}
           />
         </FRow>

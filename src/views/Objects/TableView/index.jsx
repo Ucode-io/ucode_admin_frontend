@@ -29,7 +29,7 @@ const TableView = ({
   selectedLinkedTableSlug,
   ...props
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
   const { tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
@@ -65,6 +65,7 @@ const TableView = ({
         shouldGet,
       },
     ],
+
     queryFn: () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
@@ -82,12 +83,14 @@ const TableView = ({
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count)
-          ? 1
-          : Math.ceil(res.data?.count / limit),
+        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
       };
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [currentPage, limit, filters, columns]);
 
   // ==========FILTER FIELDS=========== //
   const getFilteredFilterFields = useMemo(() => {
@@ -119,10 +122,9 @@ const TableView = ({
     }
   }, [tableData, reset]);
 
-  const { data: { custom_events: customEvents = [] } = {} } =
-    useCustomActionsQuery({
-      tableSlug,
-    });
+  const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
+    tableSlug,
+  });
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -145,17 +147,10 @@ const TableView = ({
 
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 ||
-        (new_list[tableSlug] &&
-          new_list[tableSlug].some((i) => i.checked))) && (
+      {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
-          <p>{t('filters')}</p>
-          <FastFilter
-            view={view}
-            fieldsMap={fieldsMap}
-            getFilteredFilterFields={getFilteredFilterFields}
-            isVertical
-          />
+          <p>{t("filters")}</p>
+          <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
         </div>
       )}
       <ObjectDataTable

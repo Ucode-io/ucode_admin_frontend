@@ -58,6 +58,7 @@ const ObjectDataTable = ({
   relationAction,
   onChecked,
   defaultLimit,
+  title,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -313,7 +314,7 @@ const ObjectDataTable = ({
           ))}
 
           <PermissionWrapperV2
-            tabelSlug={tableSlug}
+            tableSlug={tableSlug}
             type={["update", "delete"]}
           >
             {(onDeleteClick || onEditClick) && (
@@ -326,6 +327,7 @@ const ObjectDataTable = ({
         loader={loader}
         columnsCount={columns.length}
         dataLength={dataLength || data?.length}
+        title={title}
       >
         {(isRelationTable ? fields : data)?.map((row, rowIndex) => (
           <TableRow

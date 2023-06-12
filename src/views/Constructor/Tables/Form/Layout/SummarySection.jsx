@@ -9,14 +9,10 @@ import { applyDrag } from "../../../../../utils/applyDrag";
 import { generateGUID } from "../../../../../utils/generateID";
 import Section from "./Section";
 import styles from "./style.module.scss";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../../../../store/alert/alert.thunk";
 
-const SummarySection = ({
-  mainForm,
-  layoutForm,
-  openFieldSettingsBlock,
-  openFieldsBlock,
-  openRelationSettingsBlock,
-}) => {
+const SummarySection = ({ mainForm, layoutForm, openFieldSettingsBlock, openFieldsBlock, openRelationSettingsBlock }) => {
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
     control: mainForm.control,
     name: "summary_section.fields",
@@ -37,14 +33,38 @@ const SummarySection = ({
     return map;
   }, [fieldsList]);
 
+  const checkDuplicate = (result) => {
+    const ids = new Set();
+
+    for (let i = 0; i < result?.length; i++) {
+      const obj = result[i];
+      const id = obj.id;
+
+      if (ids.has(id)) {
+        return true;
+      }
+
+      ids.add(id);
+    }
+
+    return false;
+  };
+
+  const dispatch = useDispatch();
+
   const onDrop = (dropResult) => {
     const result = applyDrag(sections, dropResult);
 
-    if (result) {
-      sectionsFieldArray.move(dropResult.removedIndex, dropResult.addedIndex);
-      sectionsFieldArray.replace(result);
+    if (checkDuplicate(result)) {
+      dispatch(showAlert('Поле уже добавлено в секцию'))
+    } else {
+      if (result) {
+        sectionsFieldArray.move(dropResult.removedIndex, dropResult.addedIndex);
+        sectionsFieldArray.replace(result);
+      }
     }
   };
+
   const removeField = (index, colNumber) => {
     sectionsFieldArray.remove(index);
   };
@@ -87,11 +107,7 @@ const SummarySection = ({
                   maxWidth={true}
                 />
               </div>
-              <ButtonsPopover
-                className={styles.deleteButton}
-                onEditClick={() => openSettingsBlock(field)}
-                onDeleteClick={() => removeField(fieldIndex, 1)}
-              />
+              <ButtonsPopover className={styles.deleteButton} onEditClick={() => openSettingsBlock(field)} onDeleteClick={() => removeField(fieldIndex, 1)} />
             </div>
           </Draggable>
         ))}

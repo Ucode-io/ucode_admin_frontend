@@ -42,18 +42,21 @@ const ViewsWithGroups = ({
   view,
   fieldsMap,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
   const { filters } = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   const [shouldGet, setShouldGet] = useState(false);
   const [heightControl, setHeightControl] = useState(false);
-  const [analyticsRes, setAnalyticsRes] = useState(null)
-  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false)
-  const [res, setRes] = [{
-    balance: []
-  }]
+  const [analyticsRes, setAnalyticsRes] = useState(null);
+  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
+    useState(false);
+  const [res, setRes] = [
+    {
+      balance: [],
+    },
+  ];
   const { navigateToForm } = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
@@ -72,6 +75,12 @@ const ViewsWithGroups = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    if (view?.default_editable) {
+      setFormVisible(true);
+    }
+  }, [view?.default_editable]);
 
   const tableHeightOptions = [
     {
@@ -160,7 +169,7 @@ const ViewsWithGroups = ({
 
   useEffect(() => {
     if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
-      setIsFinancialCalendarLoading(true)
+      setIsFinancialCalendarLoading(true);
       constructorObjectService
         .getFinancialAnalytics(tableSlug, {
           data: {
@@ -170,11 +179,11 @@ const ViewsWithGroups = ({
           },
         })
         .then((res) => {
-          setAnalyticsRes(res.data)
-        }).finally(() => setIsFinancialCalendarLoading(false));
+          setAnalyticsRes(res.data);
+        })
+        .finally(() => setIsFinancialCalendarLoading(false));
     }
   }, [dateFilters, tableSlug]);
-
 
   return (
     <>
@@ -272,9 +281,9 @@ const ViewsWithGroups = ({
                       style={{ color: "#6E8BB7" }}
                     />
                   </div>
-                  <span>{ t('template') }</span>
+                  <span>{t("template")}</span>
                 </div>
-                <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
                   <SettingsButton />
                 </PermissionWrapperV2>
               </div>
@@ -307,7 +316,7 @@ const ViewsWithGroups = ({
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <PermissionWrapperV2 tabelSlug={tableSlug} type="write">
+              <PermissionWrapperV2 tableSlug={tableSlug} type="write">
                 <RectangleIconButton
                   color="success"
                   size="small"

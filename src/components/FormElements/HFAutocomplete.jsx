@@ -9,6 +9,7 @@ const HFAutocomplete = ({
   isBlackBg,
   label,
   tabIndex,
+  disabled,
   width = "100%",
   options = [],
   disabledHelperText,
@@ -48,6 +49,7 @@ const HFAutocomplete = ({
             <CAutoCompleteSelect
               value={value}
               tabIndex={tabIndex}
+              disabled={disabled}
               isBlackBg={isBlackBg}
               onChange={(val) => {
                 onChange(val?.value);

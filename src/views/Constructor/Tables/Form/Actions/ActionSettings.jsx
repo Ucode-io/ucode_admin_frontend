@@ -136,6 +136,7 @@ const ActionSettings = ({
                 control={control}
                 placeholder="Event path"
                 options={functions}
+                disabled={false}
                 required
               />
             </FRow>

@@ -295,6 +295,7 @@ const RelationTable = forwardRef(
               columns={columns}
               setFormValue={setFormValue}
               control={control}
+              relatedTableSlug={relatedTableSlug}
               removableHeight={290}
               disableFilters
               pagesCount={pageCount}

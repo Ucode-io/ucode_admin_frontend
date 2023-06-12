@@ -88,10 +88,6 @@ const TableView = ({
     },
   });
 
-  useEffect(() => {
-    refetch();
-  }, [currentPage, limit, filters, columns]);
-
   // ==========FILTER FIELDS=========== //
   const getFilteredFilterFields = useMemo(() => {
     const filteredFieldsView =
@@ -144,6 +140,10 @@ const TableView = ({
   const navigateToEditPage = (row) => {
     navigateToForm(tableSlug, "EDIT", row);
   };
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   return (
     <div className={styles.wrapper}>

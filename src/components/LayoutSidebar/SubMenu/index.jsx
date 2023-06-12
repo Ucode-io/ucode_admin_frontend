@@ -1,66 +1,32 @@
+import AddIcon from "@mui/icons-material/Add";
+import ClearIcon from "@mui/icons-material/Clear";
 import { Box } from "@mui/material";
+import { BsThreeDots } from "react-icons/bs";
+import SearchInput from "../../SearchInput";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
-import ClearIcon from "@mui/icons-material/Clear";
-import { BsThreeDots } from "react-icons/bs";
-import { useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
-import ButtonsMenu from "../MenuButtons";
-import { useParams } from "react-router-dom";
-import menuSettingsService from "../../../services/menuSettingsService";
-import { useQueryClient } from "react-query";
-import FolderModal from "../FolderModalComponent";
-import SearchInput from "../../SearchInput";
 
 const SubMenu = ({
   child,
   environment,
   setSelectedTable,
   selectedTable,
-  getAppById,
-  computedFolderList,
   element,
   subMenuIsOpen,
-  parentClickHandler,
   openFolderCreateModal,
-  childBlockVisible,
   setFolderModalType,
   setTableModal,
   selectedFolder,
-  folderModalType,
-  closeFolderModal,
   setSubMenuIsOpen,
-  setMicrofrontendModal,
-  menuList,
   setSubSearchText,
+  handleOpenNotify,
+  setElement,
+  selectedApp,
 }) => {
-  const { appId } = useParams();
-  const queryClient = useQueryClient();
-  const [menu, setMenu] = useState();
-  const [menuType, setMenuType] = useState();
-  const handleOpenNotify = (event, type) => {
-    setMenu(event?.currentTarget);
-    setMenuType(type);
-  };
-  const openMenu = Boolean(menu);
-  const handleCloseNotify = () => {
-    setMenu(null);
-  };
-  const deleteFolder = (element) => {
-    menuSettingsService
-      .delete(element.id)
-      .then(() => {
-        // getListMenu(element.id);
-        queryClient.refetchQueries(["MENU"], element?.id);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
   return (
     <div className={`SubMenu ${!subMenuIsOpen ? "right-side-closed" : ""}`}>
       <div className="header" onClick={() => {}}>
-        {subMenuIsOpen && <h2>{element?.label}</h2>}{" "}
+        {subMenuIsOpen && <h2>{selectedApp?.label}</h2>}{" "}
         <Box className="buttons">
           <div className="dots">
             <BsThreeDots
@@ -68,6 +34,7 @@ const SubMenu = ({
               onClick={(e) => {
                 handleOpenNotify(e, "FOLDER");
                 setSelectedTable(element);
+                setElement(element);
               }}
               style={{
                 color: environment?.data?.color,
@@ -78,6 +45,7 @@ const SubMenu = ({
               onClick={(e) => {
                 handleOpenNotify(e, "CREATE_TO_FOLDER");
                 setSelectedTable(element);
+                setElement(element);
               }}
               style={{
                 color: environment?.data?.color,
@@ -122,44 +90,18 @@ const SubMenu = ({
                 <RecursiveBlock
                   key={index}
                   element={element}
-                  parentClickHandler={parentClickHandler}
                   openFolderCreateModal={openFolderCreateModal}
                   environment={environment}
-                  childBlockVisible={childBlockVisible}
                   setFolderModalType={setFolderModalType}
                   setSelectedTable={setSelectedTable}
                   sidebarIsOpen={subMenuIsOpen}
                   setTableModal={setTableModal}
                   selectedFolder={selectedFolder}
-                  setMicrofrontendModal={setMicrofrontendModal}
                   selectedTable={selectedTable}
+                  handleOpenNotify={handleOpenNotify}
+                  setElement={setElement}
                 />
               ))}
-              {folderModalType === "folder" && (
-                <FolderModal
-                  closeModal={closeFolderModal}
-                  modalType={folderModalType}
-                  selectedTable={selectedTable}
-                  getAppById={getAppById}
-                  computedFolderList={computedFolderList}
-                  menuList={menuList}
-                  element={element}
-                />
-              )}
-              <ButtonsMenu
-                element={element}
-                menu={menu}
-                openMenu={openMenu}
-                handleCloseNotify={handleCloseNotify}
-                openFolderCreateModal={openFolderCreateModal}
-                deleteFolder={deleteFolder}
-                menuType={menuType}
-                setFolderModalType={setFolderModalType}
-                setSelectedTable={setSelectedTable}
-                appId={appId}
-                setTableModal={setTableModal}
-                setMicrofrontendModal={setMicrofrontendModal}
-              />
             </div>
           </div>
         </div>

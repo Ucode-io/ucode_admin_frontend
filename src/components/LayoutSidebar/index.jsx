@@ -3,7 +3,7 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { Box } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import brandLogo from "../../../builder_config/assets/company-logo.svg";
@@ -26,6 +26,7 @@ import AppSidebar from "./AppSidebarComponent";
 import { applyDrag } from "../../utils/applyDrag";
 import { Container } from "react-smooth-dnd";
 import ButtonsMenu from "./MenuButtons";
+import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
 
 const LayoutSidebar = ({
   favicon,
@@ -42,15 +43,16 @@ const LayoutSidebar = ({
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [openedBlock, setOpenedBlock] = useState(null);
+  const queryClient = useQueryClient();
   const [modalType, setModalType] = useState(null);
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
-  const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [menuList, setMenuList] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
   const [tableModal, setTableModalOpen] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
+  const [webPageModal, setWebPageModalOpen] = useState(false);
+  const [selectedApp, setSelectedApp] = useState();
   const [child, setChild] = useState();
   const [element, setElement] = useState();
   const [searchText, setSearchText] = useState();
@@ -102,6 +104,13 @@ const LayoutSidebar = ({
   const closeMicrofrontendModal = () => {
     setMicrofrontendModalOpen(null);
   };
+  const setWebPageModal = (element) => {
+    setWebPageModalOpen(true);
+    setSelectedFolder(element);
+  };
+  const closeWebPageModal = () => {
+    setWebPageModalOpen(null);
+  };
   const closeModal = () => {
     setModalType(null);
   };
@@ -113,6 +122,18 @@ const LayoutSidebar = ({
   const openFolderCreateModal = (type, element) => {
     setModalType(type);
     setSelectedFolder(element);
+  };
+
+  const deleteFolder = (element) => {
+    menuSettingsService
+      .delete(element.id)
+      .then(() => {
+        queryClient.refetchQueries(["MENU"], element?.id);
+        getMenuList();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const { data: tableFolder } = useQuery(["GET_TABLE_FOLDER"], () => {
@@ -138,20 +159,6 @@ const LayoutSidebar = ({
     setSidebarIsOpen(!sidebarIsOpen);
   };
 
-  const parentClickHandler = (element) => {
-    if (element.children) {
-      switchChildBlockHandler(element.id);
-      if (!sidebarIsOpen) setSidebarIsOpen(true);
-      setChildBlockVisible((prev) => !prev);
-    } else {
-      setOpenedBlock(null);
-    }
-  };
-
-  const switchChildBlockHandler = (id) => {
-    setOpenedBlock((prev) => (prev === id ? null : id));
-  };
-
   const files = useMemo(() => {
     return [
       ...(tableFolder?.folders?.map((item) => ({
@@ -170,10 +177,6 @@ const LayoutSidebar = ({
       undefinedChildren: true,
     });
   }, [files]);
-
-  useEffect(() => {
-    if (!sidebarIsOpen) setOpenedBlock(null);
-  }, [sidebarIsOpen]);
 
   useEffect(() => {
     getMenuList();
@@ -276,22 +279,12 @@ const LayoutSidebar = ({
                       <AppSidebar
                         key={index}
                         element={element}
-                        parentClickHandler={parentClickHandler}
-                        openedBlock={openedBlock}
-                        openFolderCreateModal={openFolderCreateModal}
-                        environment={environment}
-                        childBlockVisible={childBlockVisible}
-                        tableFolder={tableFolder?.folders}
-                        setFolderModalType={setFolderModalType}
-                        setSelectedTable={setSelectedTable}
                         sidebarIsOpen={sidebarIsOpen}
-                        getMenuList={getMenuList}
-                        setTableModal={setTableModal}
-                        selectedFolder={selectedFolder}
                         setElement={setElement}
                         setSubMenuIsOpen={setSubMenuIsOpen}
                         subMenuIsOpen={subMenuIsOpen}
-                        setMicrofrontendModal={setMicrofrontendModal}
+                        handleOpenNotify={handleOpenNotify}
+                        setSelectedApp={setSelectedApp}
                       />
                     ))}
                   {folderModalType === "folder" && (
@@ -354,29 +347,41 @@ const LayoutSidebar = ({
             selectedFolder={selectedFolder}
           />
         )}
+        {webPageModal && (
+          <WebPageLinkModal
+            closeModal={closeWebPageModal}
+            selectedFolder={selectedFolder}
+          />
+        )}
+        {folderModalType === "folder" && (
+          <FolderModal
+            closeModal={closeFolderModal}
+            modalType={folderModalType}
+            selectedTable={selectedTable}
+            getAppById={getAppById}
+            computedFolderList={computedFolderList}
+            menuList={menuList}
+            element={element}
+            getMenuList={getMenuList}
+          />
+        )}
       </div>
       <SubMenu
         child={child}
-        appId={appId}
         environment={environment}
         setSelectedTable={setSelectedTable}
         selectedTable={selectedTable}
-        getAppById={getAppById}
-        computedFolderList={computedFolderList}
         element={element}
         subMenuIsOpen={subMenuIsOpen}
         setSubMenuIsOpen={setSubMenuIsOpen}
-        parentClickHandler={parentClickHandler}
         openFolderCreateModal={openFolderCreateModal}
-        childBlockVisible={childBlockVisible}
         setFolderModalType={setFolderModalType}
         setTableModal={setTableModal}
         selectedFolder={selectedFolder}
-        folderModalType={folderModalType}
-        closeFolderModal={closeFolderModal}
-        setMicrofrontendModal={setMicrofrontendModal}
-        menuList={menuList}
         setSubSearchText={setSubSearchText}
+        handleOpenNotify={handleOpenNotify}
+        setElement={setElement}
+        selectedApp={selectedApp}
       />
       <ButtonsMenu
         element={element}
@@ -386,10 +391,11 @@ const LayoutSidebar = ({
         openFolderCreateModal={openFolderCreateModal}
         menuType={menu?.type}
         setFolderModalType={setFolderModalType}
-        setSelectedTable={setSelectedTable}
         appId={appId}
         setTableModal={setTableModal}
         setMicrofrontendModal={setMicrofrontendModal}
+        setWebPageModal={setWebPageModal}
+        deleteFolder={deleteFolder}
       />
     </>
   );

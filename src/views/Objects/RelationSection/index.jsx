@@ -229,7 +229,7 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
       })
     );
   }, [jwtObjects]);
-  console.log("sssssssss", filteredRelations?.[0]?.relatedTable);
+
   /*****************************JWT END*************************/
 
   if (!filteredRelations?.length) return null;
@@ -268,7 +268,7 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}
                 /> */}
-                <PermissionWrapperV2 tableSlug={filteredRelations?.[0]?.relatedTable} type={"create"}>
+                <PermissionWrapperV2 tableSlug={filteredRelations?.[0]?.relatedTable} type={"write"}>
                   <RectangleIconButton color="success" size="small" onClick={navigateToCreatePage} disabled={!id}>
                     <Add style={{ color: "#007AFF" }} />
                   </RectangleIconButton>

@@ -38,6 +38,7 @@ import multipleInsertForm from "@/views/Objects/components/MultipleInsertForm";
 import listToOptions from "@/utils/listToOptions";
 import TableActions from "../Actions/TableActions";
 import RowBlock from "./RowClickForm";
+import constructorTableService from "../../../../../services/constructorTableService";
 
 const relationViewTypes = [
   {
@@ -164,8 +165,8 @@ const RelationSettings = ({
     }));
   }, [values.columnsList]);
 
-  const { data: app } = useQuery(["GET_TABLE_LIST", appId], () => {
-    return applicationService.getById(appId);
+  const { data: app } = useQuery(["GET_TABLE_LIST"], () => {
+    return constructorTableService.getList();
   });
 
   const computedTablesList = useMemo(() => {

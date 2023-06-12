@@ -288,6 +288,7 @@ html {
 }
 
 .custom_textfield {
+  padding-right: 0 !important;
   div fieldset {
     border: none;
   }
@@ -304,6 +305,13 @@ html {
 
 .MuiAutocomplete-inputRoot {
   padding-right: 45px !important;
+}
+
+.multiSelectInput{
+  
+  .MuiAutocomplete-inputRoot {
+    padding-right: 0 !important;
+  }
 }
 
 #cascading_menu {

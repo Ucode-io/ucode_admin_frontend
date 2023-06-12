@@ -1,8 +1,9 @@
-import { TextField } from "@mui/material";
+import { InputAdornment, TextField, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Controller } from "react-hook-form";
 
 import { numberWithSpaces } from "@/utils/formatNumbers";
+import { Lock } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -44,13 +45,7 @@ const HFTextField = ({
           size="small"
           value={typeof value === "number" ? numberWithSpaces(value) : value}
           onChange={(e) => {
-            onChange(
-              withTrim
-                ? e.target.value?.trim()
-                : typeof e.target.value === "number"
-                ? numberWithSpaces(e.target.value)
-                : e.target.value
-            );
+            onChange(withTrim ? e.target.value?.trim() : typeof e.target.value === "number" ? numberWithSpaces(e.target.value) : e.target.value);
           }}
           name={name}
           error={error}
@@ -66,11 +61,20 @@ const HFTextField = ({
             style: disabled
               ? {
                   background: "#c0c0c039",
+                  paddingRight: "0px",
                 }
               : {
-                  background: isBlackBg ? "#2A2D34" : "inherit",
-                  color: isBlackBg ? "#fff" : "inherit",
+                background: "inherit",
+                color: "inherit",
                 },
+
+            endAdornment: disabled && (
+              <Tooltip title="This field is disabled for this role!">
+                <InputAdornment position="start">
+                  <Lock style={{ fontSize: "20px" }} />
+                </InputAdornment>
+              </Tooltip>
+            ),
           }}
           helperText={!disabledHelperText && error?.message}
           className={isFormEdit ? "custom_textfield" : ""}

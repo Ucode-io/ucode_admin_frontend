@@ -48,7 +48,7 @@ const ViewCreateModal = ({
 
   const type = watch("type");
   const selectedDisableDatesTableSlug = watch("disable_dates.table_slug");
-  const projectId = useSelector(state => state.auth.projectId)
+  const projectId = useSelector((state) => state.auth.projectId);
 
   const computedViewTypes = useMemo(() => {
     return arrayToOptions(viewTypes);
@@ -82,8 +82,6 @@ const ViewCreateModal = ({
       select: (data) => listToOptions(data?.tables, "label", "slug"),
     }
   );
-
-  console.log("TABLES LIST ===>", tablesList);
 
   const { data: disabledDateFieldsList = [] } = useQuery(
     ["GET_TABLE_FIELDS", selectedDisableDatesTableSlug],

@@ -1,4 +1,4 @@
-import { IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
+import { Box, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
 import { Controller, useWatch } from "react-hook-form";
 import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import { Parser } from "hot-formula-parser";
@@ -6,23 +6,11 @@ import { useEffect } from "react";
 import IconGenerator from "../IconPicker/IconGenerator";
 import { useState } from "react";
 import { numberWithSpaces } from "@/utils/formatNumbers";
+import { Lock } from "@mui/icons-material";
 
 const parser = new Parser();
 
-const HFFormulaField = ({
-  control,
-  name,
-  tabIndex,
-  rules = {},
-  setFormValue = () => {},
-  required,
-  disabledHelperText,
-  fieldsList,
-  disabled,
-  defaultValue,
-  field,
-  ...props
-}) => {
+const HFFormulaField = ({ control, name, tabIndex, rules = {}, setFormValue = () => {}, required, disabledHelperText, fieldsList, disabled, defaultValue, field, ...props }) => {
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
   const formula = field?.attributes?.formula ?? "";
 
@@ -32,16 +20,13 @@ const HFFormulaField = ({
 
   const updateValue = () => {
     let computedFormula = formula;
-    const fieldsListSorted = fieldsList
-      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
-      : [];
+    const fieldsListSorted = fieldsList ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length) : [];
     fieldsListSorted?.forEach((field) => {
       let value = values[field.slug] ?? 0;
 
       if (typeof value === "string") value = `'${value}'`;
-      if (typeof value === "boolean")
-        value = JSON.stringify(value).toUpperCase();
-
+      if (typeof value === "object") value = `"${value}"`;
+      if (typeof value === "boolean") value = JSON.stringify(value).toUpperCase();
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
 
@@ -70,25 +55,14 @@ const HFFormulaField = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
-          value={
-            formulaIsVisible
-              ? formula
-              : typeof value === "number"
-              ? numberWithSpaces(value)
-              : ""
-          }
+          value={formulaIsVisible ? formula : typeof value === "number" ? numberWithSpaces(value) : ""}
           name={name}
           onChange={(e) => {
             const val = e.target.value;
             const valueWithoutSpaces = val.replaceAll(" ", "");
 
             if (!valueWithoutSpaces) onChange("");
-            else
-              onChange(
-                !isNaN(Number(valueWithoutSpaces))
-                  ? Number(valueWithoutSpaces)
-                  : ""
-              );
+            else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : "");
           }}
           error={error}
           fullWidth
@@ -97,22 +71,29 @@ const HFFormulaField = ({
           InputProps={{
             inputProps: { tabIndex },
             readOnly: disabled,
-            style: {
-              background: disabled ? "#c0c0c039" : "#fff",
-            },
+            style: disabled
+              ? {
+                  background: "#c0c0c039",
+                  paddingRight: '0'
+                }
+              : {
+                background: "inherit",
+                color: "inherit",
+                },
             endAdornment: (
               <InputAdornment position="end">
-                <Tooltip
-                  title={formulaIsVisible ? "Hide formula" : "Show formula"}
-                >
-                  <IconButton
-                    edge="end"
-                    color={formulaIsVisible ? "primary" : "default"}
-                    onClick={() => setFormulaIsVisible((prev) => !prev)}
-                  >
-                    <IconGenerator icon="square-root-variable.svg" size={15} />
-                  </IconButton>
-                </Tooltip>
+                <Box style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Tooltip title={formulaIsVisible ? "Hide formula" : "Show formula"}>
+                    <IconButton edge="end" color={formulaIsVisible ? "primary" : "default"} onClick={() => setFormulaIsVisible((prev) => !prev)}>
+                      <IconGenerator icon="square-root-variable.svg" size={15} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="This field is disabled for this role!">
+                    <InputAdornment position="start">
+                      <Lock style={{ fontSize: "20px" }} />
+                    </InputAdornment>
+                  </Tooltip>
+                </Box>
               </InputAdornment>
             ),
           }}

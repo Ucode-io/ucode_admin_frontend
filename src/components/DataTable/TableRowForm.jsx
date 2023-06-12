@@ -5,6 +5,7 @@ import { CTableCell, CTableRow } from "../CTable";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
 import CellCheckboxOrOrderNumBlock from "./CellCheckboxOrOrderNumBlock";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 
 const TableRowForm = ({
   onCheckboxChange,
@@ -17,6 +18,8 @@ const TableRowForm = ({
   control,
   currentPage,
   rowIndex,
+  relatedTableSlug,
+  isRelationTable,
   columns,
   tableSettings,
   tableSlug,
@@ -26,51 +29,27 @@ const TableRowForm = ({
   limit = 10,
   relationFields,
 }) => {
+  console.log("qqqqqqq2222222", isRelationTable ? relatedTableSlug : tableSlug);
   return (
     <CTableRow>
-      <CellCheckboxOrOrderNumBlock
-        currentPage={currentPage}
-        limit={limit}
-        rowIndex={rowIndex}
-        row={row}
-      />
+      <CellCheckboxOrOrderNumBlock currentPage={currentPage} limit={limit} rowIndex={rowIndex} row={row} />
       {onCheckboxChange && !formVisible && (
         <CTableCell>
-          <Checkbox
-            checked={checkboxValue === row.guid}
-            onChange={(_, val) => onCheckboxChange(val, row)}
-            onClick={(e) => e.stopPropagation()}
-          />
+          <Checkbox checked={checkboxValue === row.guid} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
         </CTableCell>
       )}
 
-      {!formVisible && (
-        <CTableCell align="center">
-          {(currentPage - 1) * limit + rowIndex + 1}
-        </CTableCell>
-      )}
+      {!formVisible && <CTableCell align="center">{(currentPage - 1) * limit + rowIndex + 1}</CTableCell>}
       {columns.map((column, index) => (
         <CTableCell
           key={column.id}
           className={`overflow-ellipsis editable_col`}
           style={{
             padding: 0,
-            position: tableSettings?.[pageName]?.find(
-              (item) => item?.id === column?.id
-            )?.isStiky
-              ? "sticky"
-              : "relative",
-            left: tableSettings?.[pageName]?.find(
-              (item) => item?.id === column?.id
-            )?.isStiky
-              ? calculateWidth(column?.id, index)
-              : "0",
+            position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
+            left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
             backgroundColor: "#fff",
-            zIndex: tableSettings?.[pageName]?.find(
-              (item) => item?.id === column?.id
-            )?.isStiky
-              ? "1"
-              : "",
+            zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
             minWidth: "max-content",
           }}
         >
@@ -88,14 +67,11 @@ const TableRowForm = ({
         </CTableCell>
       ))}
       <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>
-        <RectangleIconButton
-          color="error"
-          onClick={() =>
-            row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-          }
-        >
-          <Delete color="error" />
-        </RectangleIconButton>
+        <PermissionWrapperV2 type="delete" tableSlug={isRelationTable ? relatedTableSlug : tableSlug}>
+          <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
+            <Delete color="error" />
+          </RectangleIconButton>
+        </PermissionWrapperV2>
       </CTableCell>
     </CTableRow>
   );

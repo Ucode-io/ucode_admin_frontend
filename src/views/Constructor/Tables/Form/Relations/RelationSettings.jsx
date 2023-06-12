@@ -35,9 +35,9 @@ import SummaryBlock from "./SummaryBlock";
 import { useSelector } from "react-redux";
 import listToOptions from "@/utils/listToOptions";
 import TableActions from "../Actions/TableActions";
-import FunctionPath from "./FunctionPath";
+import RowBlock from "./RowClickForm";
+import constructorTableService from "../../../../../services/constructorTableService";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
-
 
 const relationViewTypes = [
   {
@@ -176,8 +176,8 @@ const RelationSettings = ({
     }));
   }, [values.columnsList]);
 
-  const { data: app } = useQuery(["GET_TABLE_LIST", appId], () => {
-    return applicationService.getById(appId);
+  const { data: app } = useQuery(["GET_TABLE_LIST"], () => {
+    return constructorTableService.getList();
   });
 
   const computedTablesList = useMemo(() => {
@@ -342,6 +342,12 @@ const RelationSettings = ({
             </FRow>
 
             <HFSwitch control={control} name="is_editable" label={"Editable"} />
+            <HFSwitch
+              control={control}
+              name="default_editable"
+              label={"Default editable"}
+            />
+            <HFSwitch control={control} name="creatable" label={"Creatable"} />
 
             {values.type === "Many2Many" && (
               <FRow label="Relate field type" required>
@@ -401,6 +407,7 @@ const RelationSettings = ({
             control={control}
             computedFieldsListOptions={computedFieldsListOptions}
           />
+          <RowBlock control={control} />
 
           <div className={styles.settingsBlockHeader}>
             <h2>Columns</h2>

@@ -68,7 +68,7 @@ export const CTableHeadCell = ({
 };
 
 export const CTableBody = forwardRef(
-  ({ children, columnsCount, loader, dataLength, ...props }, ref) => {
+  ({ children, columnsCount, loader, title, dataLength, ...props }, ref) => {
     return (
       <>
         <TableLoader
@@ -82,6 +82,7 @@ export const CTableBody = forwardRef(
           <EmptyDataComponent
             columnsCount={columnsCount}
             isVisible={!dataLength}
+            title={title}
           />
         </tbody>
       </>

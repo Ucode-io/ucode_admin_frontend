@@ -178,7 +178,6 @@ const AutoCompleteElement = ({
       },
     }
   );
-
   const getValueData = async () => {
     try {
       const id = value;
@@ -219,6 +218,14 @@ const AutoCompleteElement = ({
   };
 
   useEffect(() => {
+    if (computedValue && localValue) {
+      if (computedValue[0]?.guid !== localValue[0]?.guid) {
+        setLocalValue([]);
+      }
+    }
+  }, [computedValue, localValue]);
+
+  useEffect(() => {
     const val = computedValue[computedValue.length - 1];
     if (!field?.attributes?.autofill || !val) return;
     field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
@@ -238,12 +245,14 @@ const AutoCompleteElement = ({
 
   return (
     <div className={styles.autocompleteWrapper}>
-      <div
-        className={styles.createButton}
-        onClick={() => navigateToForm(tableSlug)}
-      >
-        Создать новый
-      </div>
+      {field.attributes?.creatable && (
+        <div
+          className={styles.createButton}
+          onClick={() => navigateToForm(tableSlug)}
+        >
+          Создать новый
+        </div>
+      )}
       {field?.attributes?.cascadings?.length === 4 ? (
         <CascadingSection
           field={field}

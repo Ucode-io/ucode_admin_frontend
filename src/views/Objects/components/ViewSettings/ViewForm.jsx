@@ -24,6 +24,7 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import ChartAccounts from "./ChartAccounts";
 import ChartAccountsWrapper from "@/views/Objects/components/ViewSettings/ChartAccountsWrapper";
 import constructorFieldService from "@/services/constructorFieldService";
+import HFSwitch from "../../../../components/FormElements/HFSwitch";
 
 const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsChanged, closeModal, columns, relationColumns }) => {
   const { tableSlug, appId } = useParams();

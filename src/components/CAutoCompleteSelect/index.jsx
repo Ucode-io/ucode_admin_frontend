@@ -21,29 +21,7 @@ const CAutoCompleteSelect = ({ options, value, onChange, tabIndex, disabled }) =
         renderInput={(params) => (
           <TextField
             {...params}
-            // autoFocus={tabIndex === 1}
-            // InputProps={{ inputProps: { tabIndex } }}
             size="small"
-            // InputProps={{
-            //   readOnly: disabled,
-            //   style: disabled
-            //     ? {
-            //         background: "#c0c0c039",
-            //         paddingRight: "0px",
-            //       }
-            //     : {
-            //         background: "#fff",
-            //         color: "#fff",
-            //       },
-
-            //   endAdornment: disabled && (
-            //     <Tooltip title="This field is disabled for this role!">
-            //       <InputAdornment position="start">
-            //         <Lock style={{ fontSize: "20px" }} />
-            //       </InputAdornment>
-            //     </Tooltip>
-            //   ),
-            // }}
           />
         )}
       />

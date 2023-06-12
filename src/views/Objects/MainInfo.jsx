@@ -56,6 +56,7 @@ const MainInfo = ({
                     fieldsList={fieldsList}
                     formTableSlug={tableSlug}
                     relatedTable={relatedTable}
+                    checkPermission={true}
                   />
                 ))}
               </div>

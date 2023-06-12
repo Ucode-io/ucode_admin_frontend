@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import CodabarBarcode from "./CodabarBarcode";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFFloatField from "../FormElements/HFFloatField";
+import HFInternationPhone from "../FormElements/HFInternationPhone";
 import { InputAdornment, Tooltip } from "@mui/material";
 import { Lock } from "@mui/icons-material";
 import { is } from "date-fns/locale";
@@ -190,6 +191,25 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
+      
+      case "INTERNATIONAL_PHONE":
+        return (
+          <FRow label={field.label} required={field.required}>
+            <HFInternationPhone
+              control={control}
+              name={computedSlug}
+              tabIndex={field?.tabIndex}
+              fullWidth
+              required={field.required}
+              placeholder={field.attributes?.placeholder}
+              mask={"(99) 999-99-99"}
+              defaultValue={defaultValue}
+              disabled={isDisabled}
+              {...props}
+            />
+          </FRow>
+        );
+  
 
     case "PICK_LIST":
       return (

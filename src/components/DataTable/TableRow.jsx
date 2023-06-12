@@ -7,6 +7,7 @@ import TableRowForm from "./TableRowForm";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+
 const TableRow = ({
   row,
   key,
@@ -15,6 +16,8 @@ const TableRow = ({
   onRowClick,
   onDeleteClick,
   checkboxValue,
+  isRelationTable,
+  relatedTableSlug,
   onCheckboxChange,
   currentPage,
   columns,
@@ -42,6 +45,7 @@ const TableRow = ({
     }
     return "transparent";
   };
+
   if (formVisible)
     return (
       <TableRowForm
@@ -123,7 +127,7 @@ const TableRow = ({
           ))}
           <td>
           <div style={{ display: 'flex', gap: '5px', padding: '3px' }}>
-            <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
+            <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type="delete">
               <RectangleIconButton
                 color="error"
                 onClick={() =>
@@ -192,7 +196,7 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
+          <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type="delete">
             <RectangleIconButton
               color="error"
               onClick={() =>
@@ -255,7 +259,7 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
+          <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type="delete">
             <RectangleIconButton
               color="error"
               onClick={() =>

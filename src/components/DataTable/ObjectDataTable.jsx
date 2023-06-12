@@ -34,6 +34,7 @@ const ObjectDataTable = ({
   onPaginationChange = () => {},
   pagesCount = 1,
   columns = [],
+  relatedTableSlug,
   watch,
   control,
   setFormValue,
@@ -314,7 +315,7 @@ const ObjectDataTable = ({
           ))}
 
           <PermissionWrapperV2
-            tableSlug={tableSlug}
+            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
             type={["update", "delete"]}
           >
             {(onDeleteClick || onEditClick) && (
@@ -338,6 +339,8 @@ const ObjectDataTable = ({
             row={row}
             formVisible={formVisible}
             rowIndex={rowIndex}
+            isRelationTable={isRelationTable}
+            relatedTableSlug={relatedTableSlug}
             onRowClick={onRowClick}
             isChecked={isChecked}
             onCheckboxChange={onCheckboxChange}

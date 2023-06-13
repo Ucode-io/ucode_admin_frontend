@@ -144,11 +144,9 @@ const AppsPage = () => {
                 </CTableCell>
                 <PermissionWrapperV2 tableSlug="app" type="delete">
                   <CTableCell>
-                    <DeleteWrapperModal id={element.id} onDelete={deleteTable}>
-                      <RectangleIconButton color="error">
-                        <Delete color="error" />
-                      </RectangleIconButton>
-                    </DeleteWrapperModal>
+                    <RectangleIconButton color="error" onClick={deleteTable}>
+                      <Delete color="error" />
+                    </RectangleIconButton>
                   </CTableCell>
                 </PermissionWrapperV2>
               </CTableRow>

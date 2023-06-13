@@ -39,7 +39,6 @@ const ApiKeyPage = () => {
     navigate(`${location.pathname}/${id}`);
   };
 
-
   const navigateToCreateForm = () => {
     navigate(`${location.pathname}/create`);
   };
@@ -142,11 +141,9 @@ const ApiKeyPage = () => {
                 {/* <PermissionWrapperV2 tableSlug="app" type="delete">
                   <PermissionWrapperApp permission={element.permission.delete}> */}
                 <CTableCell>
-                  <DeleteWrapperModal id={element.id} onDelete={deleteTable}>
-                    <RectangleIconButton color="error">
-                      <Delete color="error" />
-                    </RectangleIconButton>
-                  </DeleteWrapperModal>
+                  <RectangleIconButton color="error" onClick={deleteTable}>
+                    <Delete color="error" />
+                  </RectangleIconButton>
                 </CTableCell>
                 {/* </PermissionWrapperApp>
                 </PermissionWrapperV2> */}

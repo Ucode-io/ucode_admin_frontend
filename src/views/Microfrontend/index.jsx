@@ -9,6 +9,7 @@ import { useQuery } from "react-query";
 import microfrontendService from "../../services/microfrontendService";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 
+
 const Microfrontend = () => {
   const { microfrontendId } = useParams()  
 

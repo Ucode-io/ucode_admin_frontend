@@ -116,7 +116,6 @@ const Router = () => {
           path=":appId/page/:microfrontendId"
           element={<Microfrontend />}
         />
-        <Route path=":appId/web-page/:webpageId" element={<></>} />
 
         <Route
           path=":appId/web-page/:webPageId"

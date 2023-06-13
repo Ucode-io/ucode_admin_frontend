@@ -30,6 +30,7 @@ import HFInternationPhone from "../FormElements/HFInternationPhone";
 import { InputAdornment, Tooltip } from "@mui/material";
 import { Lock } from "@mui/icons-material";
 import { is } from "date-fns/locale";
+import HFMapField from "../FormElements/HFMapField";
 
 const parser = new Parser();
 
@@ -418,7 +419,22 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
-
+      case "MAP":
+        return (
+          <FRow label={field.label} required={field.required}>
+            <HFMapField
+              control={control}
+              name={computedSlug}
+              tabIndex={field?.tabIndex}
+              required={field.required}
+              defaultValue={defaultValue}
+              disabled={isDisabled}
+              field={field}
+              {...props}
+            />
+          </FRow>
+        );
+        
     case "VIDEO":
       return (
         <FRow label={field.label} required={field.required}>

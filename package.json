@@ -50,6 +50,7 @@
     "@nivo/line": "^0.80.0",
     "@nivo/pie": "^0.80.0",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
+    "@pbe/react-yandex-maps": "^1.2.4",
     "@reduxjs/toolkit": "^1.7.1",
     "@tanstack/react-virtual": "^3.0.0-beta.39",
     "@uiw/react-codemirror": "^4.11.4",

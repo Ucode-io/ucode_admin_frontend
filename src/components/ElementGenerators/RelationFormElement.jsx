@@ -40,7 +40,11 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> map_field
   if (!isLayout)
     return (
       <FRow label={field?.label ?? field?.title} required={field.required}>
@@ -217,13 +221,13 @@ const AutoCompleteElement = ({
     }
   };
 
-  useEffect(() => {
-    if (computedValue && localValue) {
-      if (computedValue[0]?.guid !== localValue[0]?.guid) {
-        setLocalValue([]);
-      }
-    }
-  }, [computedValue, localValue]);
+  // useEffect(() => {
+  //   if (computedValue && localValue) {
+  //     if (computedValue[0]?.guid !== localValue[0]?.guid) {
+  //       setLocalValue([]);
+  //     }
+  //   }
+  // }, [computedValue, localValue]);
 
   useEffect(() => {
     const val = computedValue[computedValue.length - 1];

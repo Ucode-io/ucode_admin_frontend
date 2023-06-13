@@ -27,8 +27,15 @@ import CodabarBarcode from "./CodabarBarcode";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFFloatField from "../FormElements/HFFloatField";
 import HFInternationPhone from "../FormElements/HFInternationPhone";
+<<<<<<< HEAD
 import HFMapField from "../FormElements/HFMapField";
 import HFCustomImage from "../FormElements/HFCustomImage";
+=======
+import { InputAdornment, Tooltip } from "@mui/material";
+import { Lock } from "@mui/icons-material";
+import { is } from "date-fns/locale";
+import HFMapField from "../FormElements/HFMapField";
+>>>>>>> map_field
 
 const parser = new Parser();
 
@@ -424,6 +431,7 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
+<<<<<<< HEAD
     case "MAP":
       return (
         <FRow label={field.label} required={field.required}>
@@ -440,6 +448,24 @@ const FormElementGenerator = ({
         </FRow>
       );
 
+=======
+      case "MAP":
+        return (
+          <FRow label={field.label} required={field.required}>
+            <HFMapField
+              control={control}
+              name={computedSlug}
+              tabIndex={field?.tabIndex}
+              required={field.required}
+              defaultValue={defaultValue}
+              disabled={isDisabled}
+              field={field}
+              {...props}
+            />
+          </FRow>
+        );
+        
+>>>>>>> map_field
     case "VIDEO":
       return (
         <FRow label={field.label} required={field.required}>

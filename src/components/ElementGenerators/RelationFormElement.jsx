@@ -228,7 +228,7 @@ const AutoCompleteElement = ({
   useEffect(() => {
     setLocalValue(
       localValue?.filter((item) => {
-        return item?.clients_id === filtersHandler[0];
+        return item?.[autoFiltersFieldFroms] === filtersHandler[0];
       })
     );
   }, [filtersHandler]);

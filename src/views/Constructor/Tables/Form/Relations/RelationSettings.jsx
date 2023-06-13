@@ -38,6 +38,7 @@ import TableActions from "../Actions/TableActions";
 import RowBlock from "./RowClickForm";
 import constructorTableService from "../../../../../services/constructorTableService";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
+import FunctionPath from "./FunctionPath";
 
 const relationViewTypes = [
   {

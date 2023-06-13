@@ -117,7 +117,7 @@ const Router = () => {
           element={<Microfrontend />}
         />
 
-<Route
+        <Route
           path=":appId/web-page/:webPageId"
           element={<WebPage />}
         />

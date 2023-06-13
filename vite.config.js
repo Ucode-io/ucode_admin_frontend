@@ -18,7 +18,7 @@ export default defineConfig({
           external:`new Promise(resolve=>resolve('https://empty-microfrontend.netlify.app/assets/remoteEntry.js'))`,
           externalType:"promise"
         },
-        'remote_webpage_app': "http://localhost:4300/assets/remoteEntry.js"
+        'remote_webpage_app': `${import.meta.env.WEBPAGE_REMOTE_APP_URL}/assets/remoteEntry.js`
       },
       shared: ["react", "react-dom", "react-router-dom"]
     }),

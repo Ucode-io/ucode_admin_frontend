@@ -12,8 +12,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-
 const HFInternationPhone = ({
   control,
   name = "",
@@ -36,7 +34,7 @@ const HFInternationPhone = ({
       name={name}
       defaultValue={defaultValue}
       rules={{
-        required: required ? "This is required field" : false,
+        required: required ? "This is a required field" : false,
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
@@ -48,7 +46,17 @@ const HFInternationPhone = ({
           international
           className={styles.phoneNumber}
           name={name}
-          />
+          limitMaxLength={true}
+          {...props}
+          isValidPhoneNumber
+          renderInput={(inputProps) => (
+            <input
+              {...inputProps}
+              className={classes.input}
+              data-valid={inputProps.isValidPhoneNumber}
+            />
+          )}
+        />
       )}
     ></Controller>
   );

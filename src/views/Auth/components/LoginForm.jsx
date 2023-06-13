@@ -113,6 +113,30 @@ const LoginForm = () => {
       select: (res) => res.data.response ?? [],
     }
   );
+  useEffect(() => {
+    if (computedCompanies?.length === 1) {
+      setValue("company_id", computedCompanies[0]?.value);
+    }
+  }, [computedCompanies]);
+
+  useEffect(() => {
+    if (computedProjects?.length === 1) {
+      setValue("project_id", computedProjects[0]?.value);
+    }
+  }, [computedProjects]);
+
+  useEffect(() => {
+    if (computedEnvironments?.length === 1) {
+      setValue("environment_id", computedEnvironments[0]?.value);
+    }
+  }, [computedEnvironments]);
+
+  useEffect(() => {
+    if (computedClientTypes?.length === 1) {
+      setValue("client_type", computedClientTypes[0]?.value);
+    }
+  }, [computedClientTypes]);
+
   const multiCompanyLogin = (data) => {
     setLoading(true);
 

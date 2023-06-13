@@ -144,19 +144,12 @@ const AppsPage = () => {
                     <FileDownloadIcon />
                   </RectangleIconButton>
                 </CTableCell>
-                <PermissionWrapperV2 tabelSlug="app" type="delete">
-                  <PermissionWrapperApp permission={element.permission?.delete}>
-                    <CTableCell>
-                      <DeleteWrapperModal
-                        id={element.id}
-                        onDelete={deleteTable}
-                      >
-                        <RectangleIconButton color="error">
-                          <Delete color="error" />
-                        </RectangleIconButton>
-                      </DeleteWrapperModal>
-                    </CTableCell>
-                  </PermissionWrapperApp>
+                <PermissionWrapperV2 tableSlug="app" type="delete">
+                  <CTableCell>
+                    <RectangleIconButton color="error" onClick={deleteTable}>
+                      <Delete color="error" />
+                    </RectangleIconButton>
+                  </CTableCell>
                 </PermissionWrapperV2>
               </CTableRow>
             ))}

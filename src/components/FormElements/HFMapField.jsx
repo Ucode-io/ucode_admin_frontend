@@ -17,8 +17,8 @@ const HFMapField = ({
 }) => {
   const mapRef = useRef();
   const [selectedCoordinates, setSelectedCoordinates] = useState({
-    lat: "",
-    long: ""
+    lat: 55.76,
+    long: 37.64
   });
 
   return (
@@ -46,10 +46,10 @@ const HFMapField = ({
         }
 
         return (
-          <Box sx={{ width: "350px", overflow: "hidden" }}>
+          <Box sx={{ width: "270px", overflow: "hidden" }}>
             <YMaps query={{ load: "package.full" }}>
               <Map
-                style={{ width: "350px", height: "200px" }}
+                style={{ width: "270px", height: "200px" }}
                 defaultState={{
                   center: [lat, long],
                   zoom: 7

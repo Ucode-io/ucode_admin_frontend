@@ -357,6 +357,7 @@ const ObjectDataTable = ({
             relationAction={relationAction}
             onChecked={onChecked}
             relationFields={fields}
+            data={data}
           />
         ))}
         {!!summaries?.length && (

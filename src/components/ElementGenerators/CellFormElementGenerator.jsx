@@ -34,6 +34,7 @@ const CellFormElementGenerator = ({
   shouldWork = false,
   index,
   relationfields,
+  data,
   ...props
 }) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
@@ -114,6 +115,7 @@ const CellFormElementGenerator = ({
           index={index}
           defaultValue={defaultValue}
           relationfields={relationfields}
+          data={data}
         />
       );
 

@@ -36,6 +36,7 @@ const TableRow = ({
   relationAction,
   onChecked,
   relationFields,
+  data,
 }) => {
   const colorCell = (num) => {
     if (num === 0) {
@@ -72,6 +73,7 @@ const TableRow = ({
         calculateWidth={calculateWidth}
         tableSlug={tableSlug}
         relationFields={relationFields}
+        data={data}
       />
     );
   return (

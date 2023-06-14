@@ -11,7 +11,6 @@ const WebPage = () => {
   const { webPageId } = useParams()
   
   return <Box>
-    asdasd
     <RemoteWebPage webPageId={webPageId} />
   </Box>
 }

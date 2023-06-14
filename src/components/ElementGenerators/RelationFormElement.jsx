@@ -17,6 +17,10 @@ import CascadingElement from "./CascadingElement";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import GroupCascading from "./GroupCascading/index";
 import styles from "./style.module.scss";
+import useDebouncedWatch from "../../hooks/useDebouncedWatch";
+import constructorFunctionService from "../../services/constructorFunctionService";
+import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
+import request from "../../utils/request";
 
 const RelationFormElement = ({
   control,
@@ -71,11 +75,7 @@ const RelationFormElement = ({
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FEditableRow
-          label={value}
-          onLabelChange={onChange}
-          required={field.required}
-        >
+        <FEditableRow label={value} onLabelChange={onChange} required={field.required}>
           <Controller
             control={control}
             name={`${tableSlug}_id`}
@@ -116,19 +116,7 @@ const RelationFormElement = ({
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
-const AutoCompleteElement = ({
-  field,
-  value,
-  tableSlug,
-  setValue,
-  error,
-  disabled,
-  disabledHelperText,
-  control,
-  name,
-  defaultValue,
-  setFormValue = () => {},
-}) => {
+const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disabled, disabledHelperText, control, name, defaultValue, setFormValue = () => {} }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
@@ -164,7 +152,35 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const { data: options } = useQuery(
+  const { data: optionsFromFunctions } = useQuery(
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
+    () => {
+      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
+        data: {
+          table_slug: tableSlug,
+          ...autoFiltersValue,
+          search: debouncedValue,
+          limit: 10,
+          offset: 0,
+          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
+        },
+      });
+    },
+    {
+      enabled: !!field?.attributes?.function_path,
+      select: (res) => {
+        const options = res?.data?.response ?? [];
+        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+
+        return {
+          options,
+          slugOptions,
+        };
+      },
+    }
+  );
+
+  const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
       if (!tableSlug) return null;
@@ -182,11 +198,10 @@ const AutoCompleteElement = ({
       });
     },
     {
+      enabled: !field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions =
-          res?.table_slug === tableSlug ? res?.data?.response : [];
-
+        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
         return {
           options,
           slugOptions,
@@ -194,6 +209,41 @@ const AutoCompleteElement = ({
       },
     }
   );
+
+  const options = useMemo(() => {
+    if (field?.attributes?.function_path) {
+      return optionsFromFunctions ?? [];
+    }
+    return optionsFromLocale ?? [];
+  }, [optionsFromFunctions, optionsFromLocale]);
+
+  // useDebouncedWatch(
+  //   () => {
+  //     // if (elmValue.length >= field.attributes?.length) {
+  //     constructorFunctionService
+  //       .invoke({
+  //         function_id: field?.attributes?.function,
+  //         // object_ids: [id, elmValue],
+  //         attributes: {
+  //           // barcode: elmValue,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         if (res === "Updated successfully!") {
+  //           console.log("Успешно обновлено!", "success");
+  //         }
+  //       })
+  //       .finally(() => {
+  //         // setFormValue(name, "");
+  //         // setElmValue("");
+  //         // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
+  //       });
+  //     // }
+  //   },
+  //   [],
+  //   300
+  // );
+
   const getValueData = async () => {
     try {
       const id = value;
@@ -262,10 +312,7 @@ const AutoCompleteElement = ({
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
-        <div
-          className={styles.createButton}
-          onClick={() => navigateToForm(tableSlug)}
-        >
+        <div className={styles.createButton} onClick={() => navigateToForm(tableSlug)}>
           Создать новый
         </div>
       )}
@@ -311,10 +358,7 @@ const AutoCompleteElement = ({
             changeHandler(newValue);
           }}
           noOptionsText={
-            <span
-              onClick={() => navigateToForm(tableSlug)}
-              style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-            >
+            <span onClick={() => navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
               Создать новый
             </span>
           }

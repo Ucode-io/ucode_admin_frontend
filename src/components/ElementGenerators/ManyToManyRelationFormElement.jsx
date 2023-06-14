@@ -12,6 +12,10 @@ import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
+import useDebouncedWatch from "../../hooks/useDebouncedWatch";
+import constructorFunctionService from "../../services/constructorFunctionService";
+import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
+import request from "../../utils/request";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -61,11 +65,7 @@ const ManyToManyRelationFormElement = ({
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FEditableRow
-          label={value}
-          onLabelChange={onChange}
-          required={field.required}
-        >
+        <FEditableRow label={value} onLabelChange={onChange} required={field.required}>
           <Controller
             control={control}
             name={`${tableSlug}_id`}
@@ -104,16 +104,7 @@ const ManyToManyRelationFormElement = ({
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
-const AutoCompleteElement = ({
-  field,
-  value,
-  tableSlug,
-  setValue,
-  control,
-  error,
-  disabled,
-  disabledHelperText,
-}) => {
+const AutoCompleteElement = ({ field, value, tableSlug, setValue, control, error, disabled, disabledHelperText }) => {
   const { navigateToForm } = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
   const [inputValue, setInputValue] = useState("");
@@ -139,14 +130,13 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler]);
 
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
+        params: {},
         data: {
           ...autoFiltersValue,
-          view_fields:
-            field?.view_fields?.map((field) => field.slug) ??
-            field?.attributes?.view_fields?.map((field) => field.slug),
+          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
           additional_request: {
             additional_field: "guid",
             additional_values: value,
@@ -163,6 +153,33 @@ const AutoCompleteElement = ({
       },
     }
   );
+
+  // useDebouncedWatch(
+  //   () => {
+  //     // if (elmValue.length >= field.attributes?.length) {
+  //     constructorFunctionService
+  //       .invoke({
+  //         function_id: field?.attributes?.function,
+  //         // object_ids: [id, elmValue],
+  //         attributes: {
+  //           // barcode: elmValue,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         if (res === "Updated successfully!") {
+  //           console.log("Успешно обновлено!", "success");
+  //         }
+  //       })
+  //       .finally(() => {
+  //         // setFormValue(name, "");
+  //         // setElmValue("");
+  //         // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
+  //       });
+  //     // }
+  //   },
+  //   [],
+  //   300
+  // );
 
   const computedValue = useMemo(() => {
     if (!value) return undefined;
@@ -205,10 +222,7 @@ const AutoCompleteElement = ({
 
   return (
     <div className={styles.autocompleteWrapper}>
-      <div
-        className={styles.createButton}
-        onClick={() => navigateToForm(tableSlug)}
-      >
+      <div className={styles.createButton} onClick={() => navigateToForm(tableSlug)}>
         Создать новый
       </div>
 
@@ -220,10 +234,7 @@ const AutoCompleteElement = ({
           changeHandler(newValue);
         }}
         noOptionsText={
-          <span
-            onClick={() => navigateToForm(tableSlug)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-          >
+          <span onClick={() => navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
             Создать новый
           </span>
         }
@@ -245,13 +256,8 @@ const AutoCompleteElement = ({
             <>
               <div className={styles.valuesWrapper}>
                 {values?.map((el, index) => (
-                  <div
-                    key={el.value}
-                    className={styles.multipleAutocompleteTags}
-                  >
-                    <p className={styles.value}>
-                      {getOptionLabel(values[index])}
-                    </p>
+                  <div key={el.value} className={styles.multipleAutocompleteTags}>
+                    <p className={styles.value}>{getOptionLabel(values[index])}</p>
                     <IconGenerator
                       icon="arrow-up-right-from-square.svg"
                       style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -263,11 +269,7 @@ const AutoCompleteElement = ({
                       }}
                     />
 
-                    <Close
-                      fontSize="12"
-                      onClick={getTagProps({ index })?.onDelete}
-                      style={{ cursor: "pointer" }}
-                    />
+                    <Close fontSize="12" onClick={getTagProps({ index })?.onDelete} style={{ cursor: "pointer" }} />
                   </div>
                 ))}
               </div>

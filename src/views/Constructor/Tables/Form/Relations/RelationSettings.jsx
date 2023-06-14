@@ -1,3 +1,4 @@
+import listToOptions from "@/utils/listToOptions";
 import {
   Close,
   DragIndicator,
@@ -8,7 +9,7 @@ import {
 } from "@mui/icons-material";
 import { Checkbox, IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
@@ -21,23 +22,21 @@ import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import RingLoaderWithWrapper from "../../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import applicationService from "../../../../../services/applicationSercixe";
+import constructorFunctionService from "../../../../../services/constructorFunctionService";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import { relationTyes } from "../../../../../utils/constants/relationTypes";
+import TableActions from "../Actions/TableActions";
 import AutoFiltersBlock from "./AutoFiltersBlock";
-import DefaultValueBlock from "./DefaultValueBlock";
-import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import CascadingRelationSettings from "./CascadingRelationSettings.jsx";
 import CascadingTreeBlock from "./CascadingTreeBlock";
-import styles from "./style.module.scss";
-import SummaryBlock from "./SummaryBlock";
-import { useSelector } from "react-redux";
-import MultipleInsertSettings from "@/views/Objects/components/ViewSettings/MultipleInsertSettings";
-import multipleInsertForm from "@/views/Objects/components/MultipleInsertForm";
-import listToOptions from "@/utils/listToOptions";
-import TableActions from "../Actions/TableActions";
+import DefaultValueBlock from "./DefaultValueBlock";
+import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import RowBlock from "./RowClickForm";
+import SummaryBlock from "./SummaryBlock";
+import styles from "./style.module.scss";
+import FunctionPath from "./FunctionPath";
 
 const relationViewTypes = [
   {
@@ -74,6 +73,7 @@ const RelationSettings = ({
     },
   });
   const values = watch();
+  console.log('ssssssss', values)
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
     if (values.table_to === slug) return values.table_from;
@@ -156,6 +156,19 @@ const RelationSettings = ({
       },
     }
   );
+
+  const { data: functions = [] } = useQuery(
+    ["GET_FUNCTIONS_LIST"],
+    () => {
+      return constructorFunctionService.getListV2();
+    },
+    {
+      select: (res) => {
+        return listToOptions(res.functions, "name", "path");
+      },
+    }
+  );
+
 
   const computedFieldsListOptions = useMemo(() => {
     return values.columnsList?.map((field) => ({
@@ -367,6 +380,8 @@ const RelationSettings = ({
               computedTablesList={computedTablesList}
             />
           )}
+
+          <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue}/>
 
           <DefaultValueBlock
             control={control}

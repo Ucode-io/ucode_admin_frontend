@@ -2,15 +2,12 @@ import { Add } from "@mui/icons-material";
 import { useMemo, useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { CTableCell, CTableRow } from "../../../../../components/CTable";
 import DataTable from "../../../../../components/DataTable";
 import TableCard from "../../../../../components/TableCard";
 import constructorRelationService from "../../../../../services/constructorRelationService";
-import { generateGUID } from "../../../../../utils/generateID";
-import styles from "../Fields/style.module.scss";
 import { Drawer } from "@mui/material";
 import TableRowButton from "../../../../../components/TableRowButton";
-import RelationSettings from "../Relations/RelationSettings";
+import CustomErrorsSettings from "./CustomErrorsSettings";
 
 const CustomErrors = ({ mainForm, getRelationFields }) => {
   const [drawerState, setDrawerState] = useState(null);
@@ -93,7 +90,7 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
         onClose={() => setDrawerState(null)}
         orientation="horizontal"
       >
-        <RelationSettings
+        <CustomErrorsSettings
           relation={drawerState}
           closeSettingsBlock={() => setDrawerState(null)}
           getRelationFields={getRelationFields}

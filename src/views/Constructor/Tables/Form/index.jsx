@@ -32,6 +32,7 @@ import { listToMap } from "../../../../utils/listToMap";
 import Actions from "./Actions";
 import { generateGUID } from "../../../../utils/generateID";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
+import CustomErrors from "./CustomErrors";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -280,6 +281,9 @@ const ConstructorTablesFormPage = () => {
               <Actions mainForm={mainForm} />
             </TabPanel>
           )}
+          {/* <TabPanel>
+            <CustomErrors mainForm={mainForm} />
+          </TabPanel> */}
           {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
         </Tabs>
       </div>

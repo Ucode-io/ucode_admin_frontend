@@ -1,4 +1,4 @@
-import { Delete, FilterAlt, JoinInner, TableChart } from "@mui/icons-material";
+import { Delete, FilterAlt, JoinInner, TableChart, AltRoute } from "@mui/icons-material";
 import InfoIcon from "@mui/icons-material/Info";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -25,6 +25,7 @@ import ChartAccounts from "./ChartAccounts";
 import ChartAccountsWrapper from "@/views/Objects/components/ViewSettings/ChartAccountsWrapper";
 import constructorFieldService from "@/services/constructorFieldService";
 import HFSwitch from "../../../../components/FormElements/HFSwitch";
+import NavigateSettings from "./NavigateSettings";
 
 const ViewForm = ({
   initialValues,
@@ -239,6 +240,10 @@ const ViewForm = ({
                 <TableChart />
                 Columns
               </Tab>
+              <Tab>
+                <AltRoute />
+                Navigation
+              </Tab>
               {type !== "FINANCE CALENDAR" && (
                 <Tab>
                   <JoinInner /> Group by
@@ -308,6 +313,9 @@ const ViewForm = ({
             </TabPanel>
             <TabPanel>
               <ColumnsTab form={form} />
+            </TabPanel>
+            <TabPanel>
+              <NavigateSettings form={form} />
             </TabPanel>
             {type !== "FINANCE CALENDAR" && (
               <TabPanel>

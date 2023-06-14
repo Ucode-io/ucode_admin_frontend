@@ -37,7 +37,7 @@ const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id, slug, appId } = useParams();
-  const projectId = useSelector(state => state.auth.projectId)
+  const projectId = useSelector((state) => state.auth.projectId);
 
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
@@ -251,6 +251,7 @@ const ConstructorTablesFormPage = () => {
               <Tab>Fields</Tab>
               {id && <Tab>Relations</Tab>}
               {id && <Tab>Actions</Tab>}
+              {/* <Tab>Custom errors</Tab> */}
             </TabList>
           </HeaderSettings>
 

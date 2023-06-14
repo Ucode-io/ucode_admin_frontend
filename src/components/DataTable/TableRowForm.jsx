@@ -29,6 +29,7 @@ const TableRowForm = ({
   calculateWidth,
   limit = 10,
   relationFields,
+  data,
 }) => {
   console.log("qqqqqqq2222222", isRelationTable ? relatedTableSlug : tableSlug);
   return (
@@ -89,6 +90,7 @@ const TableRowForm = ({
             control={control}
             setFormValue={setFormValue}
             relationfields={relationFields}
+            data={data}
           />
         </CTableCell>
       ))}

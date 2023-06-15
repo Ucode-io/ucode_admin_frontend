@@ -8,7 +8,7 @@ import constructorRelationService from "../../../../../services/constructorRelat
 import { Drawer } from "@mui/material";
 import TableRowButton from "../../../../../components/TableRowButton";
 import CustomErrorsSettings from "./CustomErrorsSettings";
-import { useCustomErrorListQuery } from "../../../../../services/customErrorMessage";
+import { useCustomErrorListQuery } from "../../../../../services/customErrorMessageService";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 
 const CustomErrors = ({ mainForm, getRelationFields }) => {

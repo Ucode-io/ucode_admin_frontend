@@ -11,6 +11,12 @@ import constructorRelationService from "../../../../../services/constructorRelat
 import styles from "./style.module.scss";
 import { store } from "../../../../../store";
 import actionTypes from "./mock/ActionTypes";
+import {
+  useCustomErrorCreateMutation,
+  useCustomErrorUpdateMutation,
+} from "../../../../../services/customErrorMessageService";
+import HFNumberField from "../../../../../components/FormElements/HFNumberField";
+import { useQueryClient } from "react-query";
 
 const CustomErrorsSettings = ({
   closeSettingsBlock = () => {},
@@ -21,13 +27,15 @@ const CustomErrorsSettings = ({
   languages,
 }) => {
   const authStore = store.getState().auth;
-  const { appId, slug } = useParams();
+  const { appId, slug, id } = useParams();
   const [loader, setLoader] = useState(false);
   const [formLoader, setFormLoader] = useState(false);
+  const queryClient = useQueryClient();
 
   const { handleSubmit, control, reset, watch } = useForm({
     defaultValues: {
       project_id: authStore.projectId,
+      table_id: id,
     },
   });
   const values = watch();
@@ -52,50 +60,72 @@ const CustomErrorsSettings = ({
     setLoader(false);
   };
 
+  const { mutate: create, isLoading: createLoading } =
+    useCustomErrorCreateMutation({
+      onSuccess: () => {
+        closeSettingsBlock(null);
+        queryClient.refetchQueries(["CUSTOM_ERROR_MESSAGE"]);
+      },
+    });
+
+  const { mutate: update, isLoading: updateLoading } =
+    useCustomErrorUpdateMutation({
+      onSuccess: () => {
+        closeSettingsBlock(null);
+        queryClient.refetchQueries(["CUSTOM_ERROR_MESSAGE"]);
+      },
+    });
+
   const submitHandler = (values) => {
-    const data = {
-      ...values,
-      relation_table_slug: slug,
-      // compute columns
-      columns: values.columnsList
-        ?.filter((el) => el.is_checked)
-        ?.map((el) => el.id),
+    // const data = {
+    //   ...values,
+    //   relation_table_slug: slug,
+    //   // compute columns
+    //   columns: values.columnsList
+    //     ?.filter((el) => el.is_checked)
+    //     ?.map((el) => el.id),
 
-      // compute filters
-      quick_filters: values.filtersList
-        ?.filter((el) => el.is_checked)
-        ?.map((el) => ({
-          field_id: el.id,
-          default_value: "",
-        })),
+    //   // compute filters
+    //   quick_filters: values.filtersList
+    //     ?.filter((el) => el.is_checked)
+    //     ?.map((el) => ({
+    //       field_id: el.id,
+    //       default_value: "",
+    //     })),
 
-      // compute default value
-      default_values: values?.default_values
-        ? Array.isArray(values.default_values)
-          ? values.default_values
-          : [values.default_values]
-        : [],
-    };
+    //   // compute default value
+    //   default_values: values?.default_values
+    //     ? Array.isArray(values.default_values)
+    //       ? values.default_values
+    //       : [values.default_values]
+    //     : [],
+    // };
 
-    delete data?.field_name;
-    delete data?.formula_name;
+    // delete data?.field_name;
+    // delete data?.formula_name;
 
     setFormLoader(true);
 
     if (formType === "CREATE") {
-      constructorRelationService
-        .create(data)
-        .then((res) => {
-          updateRelations();
-        })
-        .finally(() => setFormLoader(false));
+      // constructorRelationService
+      //   .create(values)
+      //   .then((res) => {
+      //     updateRelations();
+      //   })
+      //   .finally(() => setFormLoader(false));
+      create({
+        ...values,
+      });
     } else {
-      constructorRelationService
-        .update(data)
-        .then((res) => {
-          updateRelations();
-        })
-        .finally(() => setFormLoader(false));
+      // constructorRelationService
+      //   .update(values)
+      //   .then((res) => {
+      //     updateRelations();
+      //   })
+      //   .finally(() => setFormLoader(false));
+      update({
+        ...values,
+      });
     }
   };
 
@@ -132,7 +162,7 @@ const CustomErrorsSettings = ({
         >
           <div className="p-2">
             <FRow label="Code" required>
-              <HFTextField
+              <HFNumberField
                 name="code"
                 control={control}
                 placeholder="Type code"
@@ -188,7 +218,7 @@ const CustomErrorsSettings = ({
               className={styles.button}
               style={{ width: "100%" }}
               onClick={handleSubmit(submitHandler)}
-              loader={formLoader || loader}
+              loader={createLoading || updateLoading}
             >
               Сохранить
             </PrimaryButton>

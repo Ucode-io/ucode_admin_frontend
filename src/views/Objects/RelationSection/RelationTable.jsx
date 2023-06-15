@@ -105,7 +105,7 @@ const RelationTable = forwardRef(
       if (relation.permission.view_permission) return true;
       else return false;
     }, [relation.permission.view_permission]);
-
+    console.log('');
     const relatedTableSlug = relation?.relatedTable;
     const {
       data: {

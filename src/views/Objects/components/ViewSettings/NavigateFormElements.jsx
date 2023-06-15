@@ -15,13 +15,13 @@ function NavigateFormElements({ elements, index, form, remove }) {
       <HFTextField
         fullWidth
         control={form.control}
-        name={`navigate.params[${index}].key`}
+        name={`attributes.navigate.params[${index}].key`}
         placeholder={"key"}
       />
       <HFTextField
         fullWidth
         control={form.control}
-        name={`navigate.params[${index}].value`}
+        name={`attributes.navigate.params[${index}].value`}
         placeholder={"value"}
       />
       <RectangleIconButton onClick={() => deleteField(index)} color="error">

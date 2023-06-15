@@ -175,7 +175,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   console.log("sssssssss", menuItem);
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.table.slug}`;
+    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
   };
 

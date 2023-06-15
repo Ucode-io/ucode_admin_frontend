@@ -22,16 +22,6 @@ function NavigateGenerator({ form }) {
     });
   };
 
-
-  useEffect(() => {
-    if (values.length === 0) {
-      append({
-        key: "",
-        value: "",
-      });
-    }
-  }, []);
-
   return (
     <Box mt={3}>
       <div>

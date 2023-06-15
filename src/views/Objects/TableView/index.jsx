@@ -144,7 +144,7 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    if (view?.navigate?.params) {
+    if (view?.navigate?.params?.length || view?.navigate?.url) {
       const params = view.navigate?.params
         ?.map(
           (param) =>
@@ -156,7 +156,8 @@ const TableView = ({
         .join("&&");
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
-    } else navigateToForm(tableSlug, "EDIT", row);
+    } else {
+      navigateToForm(tableSlug, "EDIT", row)};
   };
 
   useEffect(() => {

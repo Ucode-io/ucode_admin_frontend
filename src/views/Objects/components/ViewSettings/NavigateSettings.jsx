@@ -8,7 +8,7 @@ function NavigateSettings({ form }) {
   return (
     <Box p={2}>
       <FEditableRow label="URL">
-        <HFTextField fullWidth control={form.control} name="navigate.url" placeholder={'url'} />
+        <HFTextField fullWidth control={form.control} name="navigate.url" placeholder={'/url/{{$variable}}'} />
       </FEditableRow>
       
       <NavigateGenerator form={form} />

@@ -42,8 +42,10 @@ const ViewForm = ({
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
+  console.log('initialValues', initialValues);
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
+  const navigate = initialValues?.navigate;
   const relationObjValue =
     initialValues?.attributes?.balance?.table_slug +
     "#" +
@@ -57,8 +59,7 @@ const ViewForm = ({
   const type = form.watch("type");
   const relationObjInput = form.watch("relation_obj");
   const numberFieldInput = form.watch("number_field");
-  const navigate = form.watch("navigate");
-
+  console.log('navigate', navigate);
   useEffect(() => {
     if (relationObjInput && numberFieldInput) {
       setIsBalanceExist(true);
@@ -143,7 +144,7 @@ const ViewForm = ({
         financialFiledId,
         relationObjValue,
         numberFieldValue,
-        ...navigate?.params
+        navigate
       ),
       filters: [],
     });
@@ -358,8 +359,10 @@ const getInitialValues = (
   financialTypee,
   financialFiledId,
   relationObjValue,
-  numberFieldValue
+  numberFieldValue,
+  navigate
 ) => {
+  console.log('navigate', navigate);
   if (initialValues === "NEW")
     return {
       type: typeNewView,
@@ -378,6 +381,12 @@ const getInitialValues = (
       columns: columns?.map((el) => ({ ...el, is_checked: true })) ?? [],
       quick_filters: columns ?? [],
       group_fields: [],
+      navigate: {
+        params: [],
+        url: '',
+        headers: [],
+        cookies: []
+      },
       table_slug: tableSlug,
       updated_fields: [],
       multiple_insert: false,
@@ -411,6 +420,12 @@ const getInitialValues = (
         ? [...columns, ...relationColumns]
         : columns
     ),
+    navigate: {
+      params: navigate?.params,
+      url: navigate?.url,
+      headers: [],
+      cookies: []
+    }, 
     table_slug: tableSlug,
     id: initialValues?.id,
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",

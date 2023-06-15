@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 
 import constructorObjectService from "../../../services/constructorObjectService";
@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import { useTranslation } from "react-i18next";
+import { mergeStringAndState } from "../../../utils/jsonPath";
 
 const TableView = ({
   tab,
@@ -31,6 +32,7 @@ const TableView = ({
 }) => {
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
+  const navigate = useNavigate();
   const { tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
@@ -44,6 +46,7 @@ const TableView = ({
   const columns = useMemo(() => {
     return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
   }, [view, fieldsMap]);
+  console.log("view", view);
 
   const {
     data: { tableData, pageCount, fiedlsarray, fieldView } = {
@@ -83,7 +86,9 @@ const TableView = ({
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
+        pageCount: isNaN(res.data?.count)
+          ? 1
+          : Math.ceil(res.data?.count / limit),
       };
     },
   });
@@ -118,9 +123,10 @@ const TableView = ({
     }
   }, [tableData, reset]);
 
-  const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
-    tableSlug,
-  });
+  const { data: { custom_events: customEvents = [] } = {} } =
+    useCustomActionsQuery({
+      tableSlug,
+    });
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -138,7 +144,19 @@ const TableView = ({
   };
 
   const navigateToEditPage = (row) => {
-    navigateToForm(tableSlug, "EDIT", row);
+    if (view?.navigate?.params) {
+      const params = view.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&&");
+      const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
+      navigate(result);
+    } else navigateToForm(tableSlug, "EDIT", row);
   };
 
   useEffect(() => {
@@ -147,10 +165,17 @@ const TableView = ({
 
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
+      {(view?.quick_filters?.length > 0 ||
+        (new_list[tableSlug] &&
+          new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>{t("filters")}</p>
-          <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
+          <FastFilter
+            view={view}
+            fieldsMap={fieldsMap}
+            getFilteredFilterFields={getFilteredFilterFields}
+            isVertical
+          />
         </div>
       )}
       <ObjectDataTable

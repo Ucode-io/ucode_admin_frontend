@@ -57,6 +57,8 @@ const ViewForm = ({
   const type = form.watch("type");
   const relationObjInput = form.watch("relation_obj");
   const numberFieldInput = form.watch("number_field");
+  const navigate = form.watch("navigate");
+
   useEffect(() => {
     if (relationObjInput && numberFieldInput) {
       setIsBalanceExist(true);
@@ -140,7 +142,8 @@ const ViewForm = ({
         financialTypee,
         financialFiledId,
         relationObjValue,
-        numberFieldValue
+        numberFieldValue,
+        ...navigate?.params
       ),
       filters: [],
     });
@@ -223,7 +226,7 @@ const ViewForm = ({
       })
       .catch(() => setDeleteBtnLoader(false));
   };
-
+  
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>

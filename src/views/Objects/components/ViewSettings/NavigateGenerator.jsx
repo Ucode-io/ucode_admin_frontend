@@ -26,8 +26,8 @@ function NavigateGenerator({ form }) {
   useEffect(() => {
     if (values.length === 0) {
       append({
-        key: "Default key",
-        value: "Default value",
+        key: "",
+        value: "",
       });
     }
   }, []);

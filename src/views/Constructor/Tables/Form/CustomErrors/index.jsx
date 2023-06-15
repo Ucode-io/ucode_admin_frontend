@@ -1,5 +1,5 @@
 import { Add } from "@mui/icons-material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import DataTable from "../../../../../components/DataTable";
@@ -8,10 +8,16 @@ import constructorRelationService from "../../../../../services/constructorRelat
 import { Drawer } from "@mui/material";
 import TableRowButton from "../../../../../components/TableRowButton";
 import CustomErrorsSettings from "./CustomErrorsSettings";
+import { useCustomErrorListQuery } from "../../../../../services/customErrorMessage";
+import constructorObjectService from "../../../../../services/constructorObjectService";
 
 const CustomErrors = ({ mainForm, getRelationFields }) => {
   const [drawerState, setDrawerState] = useState(null);
+  const [languages, setLanguages] = useState(null);
   const [loader, setLoader] = useState(false);
+  const { id } = useParams();
+
+  console.log("tableSlug", id);
 
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
@@ -19,7 +25,26 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
     keyName: "key",
   });
 
-  const { id } = useParams();
+  const { data: customErrors } = useCustomErrorListQuery({
+    params: {
+      table_id: id,
+    },
+  });
+
+  const getLanguageOptions = () => {
+    constructorObjectService
+      .getList("setting.languages", { data: {} })
+      .then((res) => {
+        console.log("res", res);
+        setLanguages(res.data?.response);
+      });
+  };
+
+  useEffect(() => {
+    getLanguageOptions();
+  }, []);
+
+  console.log("customErrors", customErrors);
 
   const openEditForm = (field, index) => {
     setDrawerState(field);
@@ -96,6 +121,7 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
           getRelationFields={getRelationFields}
           formType={drawerState}
           height={`calc(100vh - 48px)`}
+          languages={languages}
         />
       </Drawer>
     </TableCard>

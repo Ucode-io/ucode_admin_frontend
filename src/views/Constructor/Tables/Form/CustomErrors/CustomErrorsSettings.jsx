@@ -2,17 +2,15 @@ import { Close } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
-import applicationService from "../../../../../services/applicationSercixe";
 import constructorRelationService from "../../../../../services/constructorRelationService";
-import { relationTyes } from "../../../../../utils/constants/relationTypes";
 import styles from "./style.module.scss";
-import RowBlock from "../Relations/RowClickForm";
+import { store } from "../../../../../store";
+import actionTypes from "./mock/ActionTypes";
 
 const CustomErrorsSettings = ({
   closeSettingsBlock = () => {},
@@ -20,41 +18,30 @@ const CustomErrorsSettings = ({
   getRelationFields,
   formType,
   height,
+  languages,
 }) => {
+  const authStore = store.getState().auth;
   const { appId, slug } = useParams();
   const [loader, setLoader] = useState(false);
   const [formLoader, setFormLoader] = useState(false);
 
   const { handleSubmit, control, reset, watch } = useForm({
     defaultValues: {
-      table_from: slug,
-      auto_filters: [],
-      action_relations: [],
+      project_id: authStore.projectId,
     },
   });
   const values = watch();
+  console.log("values", values);
+  console.log("languages", languages);
 
-  const { data: app } = useQuery(["GET_TABLE_LIST", appId], () => {
-    return applicationService.getById(appId);
-  });
-
-  const computedTablesList = useMemo(() => {
-    return app?.tables?.map((table) => ({
-      value: table.slug,
-      label: table.label,
+  const computedLanguageOptions = useMemo(() => {
+    return languages?.map((item) => ({
+      value: item.id,
+      label: item.name,
     }));
-  }, [app]);
+  }, [languages]);
 
-  const isRecursiveRelation = useMemo(() => {
-    return values.type === "Recursive";
-  }, [values.type]);
-
-  const computedRelationsTypesList = useMemo(() => {
-    return relationTyes.map((type) => ({
-      value: type,
-      label: type,
-    }));
-  }, []);
+  console.log("computedLanguageOptions", computedLanguageOptions);
 
   const updateRelations = async () => {
     setLoader(true);
@@ -129,7 +116,9 @@ const CustomErrorsSettings = ({
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
-        <h2>{formType === "CREATE" ? "Create" : "Edit"} relation</h2>
+        <h2>
+          {formType === "CREATE" ? "Create" : "Edit"} Custom Error Message
+        </h2>
 
         <IconButton onClick={closeSettingsBlock}>
           <Close />
@@ -169,9 +158,29 @@ const CustomErrorsSettings = ({
                 required
               />
             </FRow>
+            <FRow label="Languages" required>
+              <HFSelect
+                name="language_id"
+                control={control}
+                placeholder="Languages"
+                options={computedLanguageOptions}
+                autoFocus
+                required
+              />
+            </FRow>
+            <FRow label="Action type" required>
+              <HFSelect
+                name="action_type"
+                control={control}
+                placeholder="Action type"
+                options={actionTypes}
+                autoFocus
+                required
+              />
+            </FRow>
           </div>
 
-          <RowBlock control={control} />
+          {/* <RowBlock control={control} /> */}
 
           <div className={styles.settingsFooter}>
             <PrimaryButton

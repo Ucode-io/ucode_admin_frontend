@@ -252,7 +252,7 @@ const ConstructorTablesFormPage = () => {
               <Tab>Fields</Tab>
               {id && <Tab>Relations</Tab>}
               {id && <Tab>Actions</Tab>}
-              {/* <Tab>Custom errors</Tab> */}
+              <Tab>Custom errors</Tab>
             </TabList>
           </HeaderSettings>
 
@@ -281,9 +281,9 @@ const ConstructorTablesFormPage = () => {
               <Actions mainForm={mainForm} />
             </TabPanel>
           )}
-          {/* <TabPanel>
+          <TabPanel>
             <CustomErrors mainForm={mainForm} />
-          </TabPanel> */}
+          </TabPanel>
           {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
         </Tabs>
       </div>

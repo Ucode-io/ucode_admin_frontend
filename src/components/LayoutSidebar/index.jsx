@@ -182,6 +182,10 @@ const LayoutSidebar = ({
     getMenuList();
   }, [searchText]);
 
+  useEffect(() => {
+    setSelectedApp(menuList?.menus?.find((item) => item?.id === appId));
+  }, [menuList]);
+
   const { data: projectInfo } = useQuery(
     ["GET_PROJECT_BY_ID", projectId],
     () => {

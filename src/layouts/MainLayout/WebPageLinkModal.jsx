@@ -14,6 +14,7 @@ const WebPageLinkModal = ({ closeModal, loading, selectedFolder }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
   const authStore = store.getState().auth;
+  console.log("selectedFolder", selectedFolder);
 
   const onSubmit = (data) => {
     if (selectedFolder.type === "WEBPAGE") {

@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
 import { Map, Placemark, YMaps } from "@pbe/react-yandex-maps";
 import { toNumber } from "lodash-es";
-import { useEffect, useRef } from "react";
-import { Controller } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
 
-const HFMapField = ({   
+const HFMapField = ({
   control,
   name,
   tabIndex,
@@ -15,44 +15,59 @@ const HFMapField = ({
   field,
   ...props
 }) => {
-  const mapRef = useRef()
+  const mapRef = useRef();
+  const [selectedCoordinates, setSelectedCoordinates] = useState({
+    lat: 55.76,
+    long: 37.64
+  });
 
-  useEffect(() => {
-    mapRef?.current?.panTo(
-      [
-        parseFloat(field?.attributes?.lat),
-        parseFloat(field?.attributes?.long),
-      ],
-      { flying: 1 }
-    )
-  }, [])
-  
-  
   return (
     <Controller
-    control={control}
-    name={name}
-    defaultValue=""
-    rules={{
-      required: required ? "This is required field" : false,
-      ...rules,
-    }}
-    render={({ field: { onChange, value }, fieldState: { error } }) => (
-      <Box sx={{ width: '250px', overflow: 'hidden' }}>
-      <YMaps query={{ load: "package.full" }}>
-        <Map style={{ width: '250px', height: '200px'}} defaultState={{
-          center: [toNumber(field?.attributes?.lat), toNumber(field?.attributes?.long)],
-          zoom: toNumber(7),
-          
-        }}
-          instanceRef={mapRef}
-        >
-          <Placemark geometry={[toNumber(field?.attributes?.lat), toNumber(field?.attributes?.long)]} />
-        </Map>
-      </YMaps>
-      </Box>
-      )}
-    ></Controller>
+      control={control}
+      name={name}
+      defaultValue=""
+      rules={{
+        required: required ? "This is a required field" : false,
+        ...rules
+      }}
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        const lat = selectedCoordinates.lat || value?.split(",")?.[0];
+        const long = selectedCoordinates.long || value?.split(",")?.[1];
+
+        if (!lat && !long) {
+          const attributesLat = toNumber(field?.attributes?.lat);
+          const attributesLong = toNumber(field?.attributes?.long);
+          if (attributesLat && attributesLong) {
+            setSelectedCoordinates({
+              lat: attributesLat,
+              long: attributesLong
+            });
+          }
+        }
+
+        return (
+          <Box sx={{ width: "275px", overflow: "hidden" }}>
+            <YMaps query={{ load: "package.full" }}>
+              <Map
+                style={{ width: "275px", height: "200px" }}
+                defaultState={{
+                  center: [lat, long],
+                  zoom: 7
+                }}
+                instanceRef={mapRef}
+                onClick={(e) => {
+                  const [clickedLat, clickedLng] = e.get("coords");
+                  setSelectedCoordinates({ lat: clickedLat, long: clickedLng });
+                  onChange(`${clickedLat},${clickedLng}`);
+                }}
+              >
+                <Placemark geometry={[lat, long]} />
+              </Map>
+            </YMaps>
+          </Box>
+        );
+      }}
+    />
   );
 };
 

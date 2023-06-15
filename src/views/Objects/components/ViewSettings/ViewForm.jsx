@@ -42,7 +42,6 @@ const ViewForm = ({
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
-  console.log('initialValues', initialValues);
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
   const navigate = initialValues?.navigate;
@@ -59,7 +58,7 @@ const ViewForm = ({
   const type = form.watch("type");
   const relationObjInput = form.watch("relation_obj");
   const numberFieldInput = form.watch("number_field");
-  console.log('navigate', navigate);
+
   useEffect(() => {
     if (relationObjInput && numberFieldInput) {
       setIsBalanceExist(true);
@@ -181,6 +180,7 @@ const ViewForm = ({
       constructorViewService
         .create(computedValues)
         .then(() => {
+          closeForm();
           refetchViews();
           setIsChanged(true);
         })
@@ -191,6 +191,7 @@ const ViewForm = ({
       constructorViewService
         .update(computedValues)
         .then(() => {
+          closeForm();
           refetchViews();
           setIsChanged(true);
         })
@@ -198,6 +199,7 @@ const ViewForm = ({
           setBtnLoader(false);
         });
     }
+    closeForm();
   };
 
   const deleteView = () => {
@@ -216,31 +218,12 @@ const ViewForm = ({
       <div className={styles.viewForm}>
         <Tabs>
           <div className={styles.section}>
-            <TabList>
-              <Tab>
-                <InfoIcon /> Info
-              </Tab>
-              <Tab>
-                <FilterAlt /> Quick filters
-              </Tab>
-              <Tab>
-                <TableChart />
-                Columns
-              </Tab>
-              <Tab>
-                <AltRoute />
-                Navigation
-              </Tab>
-              {type !== "FINANCE CALENDAR" && (
-                <Tab>
-                  <JoinInner /> Group by
-                </Tab>
-              )}
-              {type === "FINANCE CALENDAR" && (
-                <Tab>
-                  <MonetizationOnIcon /> Chart of accaunts
-                </Tab>
-              )}
+            <TabList style={{marginBottom: '1px'}}>
+              <Tab>Information</Tab>
+              <Tab>Quick filters</Tab>
+              <Tab>Columns</Tab>
+              {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
+              {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
             </TabList>
             <TabPanel>
               <div className={styles.section}>

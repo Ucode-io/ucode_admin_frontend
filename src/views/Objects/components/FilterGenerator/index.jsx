@@ -8,6 +8,7 @@ import DefaultFilter from "./DefaultFilter";
 import RelationFilter from "./RelationFilter";
 import FilterAutoComplete from "./FilterAutocomplete";
 import DateFilter from "./DateFilter";
+import BooleanFilter from "./BooleanFilter";
 
 const FilterGenerator = ({
   field,
@@ -150,22 +151,11 @@ export const Filter = ({
 
     case "SWITCH":
       return (
-        <CSelect
-          fullWidth
-          placeholder={field.label}
-          value={filters[name] ?? ""}
-          disabledHelperText
-          options={[
-            {
-              label: field.attributes?.text_true ?? "Да",
-              value: "true",
-            },
-            {
-              label: field.attributes?.text_false ?? "Нет",
-              value: "false",
-            },
-          ]}
-          onChange={(e) => onChange(e.target.value, name)}
+        <BooleanFilter
+          filters={filters}
+          onChange={onChange}
+          name={name}
+          field={field}
         />
       );
 

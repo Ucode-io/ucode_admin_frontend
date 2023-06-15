@@ -396,6 +396,7 @@ const LayoutSidebar = ({
         setMicrofrontendModal={setMicrofrontendModal}
         setWebPageModal={setWebPageModal}
         deleteFolder={deleteFolder}
+        selectedApp={selectedApp}
       />
     </>
   );

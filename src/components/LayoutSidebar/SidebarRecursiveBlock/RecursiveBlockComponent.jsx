@@ -53,9 +53,9 @@ const RecursiveBlock = ({
   const activeStyle = {
     backgroundColor:
       selectedTable?.id === element?.id
-        ? environment?.data?.active_background
-        : "",
-    color: selectedTable?.id === element?.id ? "#fff" : "",
+        ? environment?.data?.active_background || "#007AFF"
+        : "#fff",
+    color: selectedTable?.id === element?.id ? "#fff" : "#007AFF",
     paddingLeft: level * 2 * 5,
     display:
       element.id === "0" ||
@@ -183,6 +183,12 @@ const RecursiveBlock = ({
                 setSelectedTable(element);
                 setElement(element);
               }}
+              style={{
+                color:
+                  selectedTable?.id === element?.id
+                    ? environment?.data?.active_color
+                    : environment?.data?.color,
+              }}
             />
           )}
           {element?.type === "MICROFRONTEND" && (
@@ -194,6 +200,12 @@ const RecursiveBlock = ({
                 setSelectedTable(element);
                 setElement(element);
               }}
+              style={{
+                color:
+                  selectedTable?.id === element?.id
+                    ? environment?.data?.active_color
+                    : environment?.data?.color,
+              }}
             />
           )}
           {element?.type === "WEBPAGE" && (
@@ -204,6 +216,12 @@ const RecursiveBlock = ({
                 handleOpenNotify(e, "WEBPAGE");
                 setSelectedTable(element);
                 setElement(element);
+              }}
+              style={{
+                color:
+                  selectedTable?.id === element?.id
+                    ? environment?.data?.active_color
+                    : environment?.data?.color,
               }}
             />
           )}

@@ -23,6 +23,9 @@ const SubMenu = ({
   setElement,
   selectedApp,
 }) => {
+  console.log("element===>", element);
+  console.log("selectedTable===>", selectedTable);
+  console.log("selectedApp===>", selectedApp);
   return (
     <div className={`SubMenu ${!subMenuIsOpen ? "right-side-closed" : ""}`}>
       <div className="header" onClick={() => {}}>
@@ -46,6 +49,7 @@ const SubMenu = ({
                 handleOpenNotify(e, "CREATE_TO_FOLDER");
                 setSelectedTable(element);
                 setElement(element);
+                console.log("eeeee", e.target);
               }}
               style={{
                 color: environment?.data?.color,

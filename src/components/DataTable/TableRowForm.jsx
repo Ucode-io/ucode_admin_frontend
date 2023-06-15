@@ -5,6 +5,8 @@ import { CTableCell, CTableRow } from "../CTable";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
 import CellCheckboxOrOrderNumBlock from "./CellCheckboxOrOrderNumBlock";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import DeleteWrapperModal from "../DeleteWrapperModal";
 
 const TableRowForm = ({
   onCheckboxChange,
@@ -17,6 +19,8 @@ const TableRowForm = ({
   control,
   currentPage,
   rowIndex,
+  relatedTableSlug,
+  isRelationTable,
   columns,
   tableSettings,
   tableSlug,
@@ -25,7 +29,9 @@ const TableRowForm = ({
   calculateWidth,
   limit = 10,
   relationFields,
+  data,
 }) => {
+  console.log("qqqqqqq2222222", isRelationTable ? relatedTableSlug : tableSlug);
   return (
     <CTableRow>
       <CellCheckboxOrOrderNumBlock
@@ -84,18 +90,24 @@ const TableRowForm = ({
             control={control}
             setFormValue={setFormValue}
             relationfields={relationFields}
+            data={data}
           />
         </CTableCell>
       ))}
       <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>
-        <RectangleIconButton
-          color="error"
-          onClick={() =>
-            row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-          }
+        <PermissionWrapperV2
+          type="delete"
+          tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
         >
-          <Delete color="error" />
-        </RectangleIconButton>
+          <RectangleIconButton
+            color="error"
+            onClick={() =>
+              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+            }
+          >
+            <Delete color="error" />
+          </RectangleIconButton>
+        </PermissionWrapperV2>
       </CTableCell>
     </CTableRow>
   );

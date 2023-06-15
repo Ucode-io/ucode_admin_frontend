@@ -53,7 +53,6 @@ const DataTable = ({
   filteredColumns,
   defaultLimit,
 }) => {
-
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const [columnId, setColumnId] = useState("");
@@ -67,7 +66,6 @@ const DataTable = ({
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
   const dispatch = useDispatch();
-
 
   useEffect(() => {
     if (!isResizeble) return;
@@ -206,94 +204,96 @@ const DataTable = ({
         <CTableRow>
           {onCheckboxChange && <CTableCell width={10} />}
           <CTableHeadCell width={10}>№</CTableHeadCell>
-          {(filteredColumns?.length ? filteredColumns : columns).map((column, index) => (
-            <CTableHeadCell
-              id={column.id}
-              key={index}
-              style={{
-                minWidth: tableSize?.[pageName]?.[column.id]
-                  ? tableSize?.[pageName]?.[column.id]
-                  : "auto",
-                width:
-                  column.width ??
-                  (tableSize?.[pageName]?.[column.id]
+          {(filteredColumns?.length ? filteredColumns : columns).map(
+            (column, index) => (
+              <CTableHeadCell
+                id={column.id}
+                key={index}
+                style={{
+                  minWidth: tableSize?.[pageName]?.[column.id]
                     ? tableSize?.[pageName]?.[column.id]
-                    : "auto"),
-                position: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "sticky"
-                  : "relative",
-                left: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? calculateWidth(column?.id, index)
-                  : "0",
-                backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "1"
-                  : "",
-              }}
-            >
-              <div
-                className="table-filter-cell cell-data"
-                onMouseEnter={(e) => {
-                  setCurrentColumnWidth(e.relatedTarget.offsetWidth);
+                    : "auto",
+                  width:
+                    column.width ??
+                    (tableSize?.[pageName]?.[column.id]
+                      ? tableSize?.[pageName]?.[column.id]
+                      : "auto"),
+                  position: tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky
+                    ? "sticky"
+                    : "relative",
+                  left: tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky
+                    ? calculateWidth(column?.id, index)
+                    : "0",
+                  backgroundColor: "#fff",
+                  zIndex: tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky
+                    ? "1"
+                    : "",
                 }}
               >
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setColumnId((prev) =>
-                      prev === column.id ? "" : column.id
-                    );
+                <div
+                  className="table-filter-cell cell-data"
+                  onMouseEnter={(e) => {
+                    setCurrentColumnWidth(e.relatedTarget.offsetWidth);
                   }}
                 >
-                  {column.label}
-                </span>
-                {!disableFilters && (
-                  <FilterGenerator
-                    field={column}
-                    name={column.slug}
-                    onChange={filterChangeHandler}
-                    filters={filters}
-                    tableSlug={tableSlug}
-                  />
-                )}
-                {columnId === column?.id && (
-                  <div className="cell-popup" ref={popupRef}>
-                    {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
-                    <div
-                      className="cell-popup-item"
-                      onClick={() => handlePin(column?.id, index)}
-                    >
-                      <PinIcon
-                        pinned={
-                          tableSettings?.[pageName]?.find(
-                            (item) => item?.id === column?.id
-                          )?.isStiky
-                        }
-                      />
-                      <span>Pin column</span>
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setColumnId((prev) =>
+                        prev === column.id ? "" : column.id
+                      );
+                    }}
+                  >
+                    {column.label}
+                  </span>
+                  {!disableFilters && (
+                    <FilterGenerator
+                      field={column}
+                      name={column.slug}
+                      onChange={filterChangeHandler}
+                      filters={filters}
+                      tableSlug={tableSlug}
+                    />
+                  )}
+                  {columnId === column?.id && (
+                    <div className="cell-popup" ref={popupRef}>
+                      {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
+                      <div
+                        className="cell-popup-item"
+                        onClick={() => handlePin(column?.id, index)}
+                      >
+                        <PinIcon
+                          pinned={
+                            tableSettings?.[pageName]?.find(
+                              (item) => item?.id === column?.id
+                            )?.isStiky
+                          }
+                        />
+                        <span>Pin column</span>
+                      </div>
+                      <div
+                        className="cell-popup-item"
+                        onClick={() => handleAutoSize(column?.id, index)}
+                      >
+                        <ResizeIcon />
+                        <span>Autosize</span>
+                      </div>
+                      {/* </OutsideClickHandler> */}
                     </div>
-                    <div
-                      className="cell-popup-item"
-                      onClick={() => handleAutoSize(column?.id, index)}
-                    >
-                      <ResizeIcon />
-                      <span>Autosize</span>
-                    </div>
-                    {/* </OutsideClickHandler> */}
-                  </div>
-                )}
-              </div>
-            </CTableHeadCell>
-          ))}
+                  )}
+                </div>
+              </CTableHeadCell>
+            )
+          )}
 
           <PermissionWrapperV2
-            tabelSlug={tableSlug}
+            tableSlug={tableSlug}
             type={["update", "delete"]}
           >
             {(onDeleteClick || onEditClick) && (
@@ -326,39 +326,41 @@ const DataTable = ({
             <CTableCell align="center">
               {(currentPage - 1) * 10 + rowIndex + 1}
             </CTableCell>
-            {(filteredColumns?.length ? filteredColumns : columns).map((column, index) => (
-              <CTableCell
-                key={column.id}
-                className={`overflow-ellipsis ${tableHeight}`}
-                style={{
-                  padding: "8px 12px 4px",
-                  position: tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
-                  )?.isStiky
-                    ? "sticky"
-                    : "relative",
-                  left: tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
-                  )?.isStiky
-                    ? calculateWidth(column?.id, index)
-                    : "0",
-                  backgroundColor: "#fff",
-                  zIndex: tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
-                  )?.isStiky
-                    ? "1"
-                    : "",
-                }}
-              >
-                {column.render ? (
-                  column.render(get(row, column.slug, row), row, column)
-                ) : (
-                  <CellElementGenerator field={column} row={row} />
-                )}
-              </CTableCell>
-            ))}
+            {(filteredColumns?.length ? filteredColumns : columns).map(
+              (column, index) => (
+                <CTableCell
+                  key={column.id}
+                  className={`overflow-ellipsis ${tableHeight}`}
+                  style={{
+                    padding: "8px 12px 4px",
+                    position: tableSettings?.[pageName]?.find(
+                      (item) => item?.id === column?.id
+                    )?.isStiky
+                      ? "sticky"
+                      : "relative",
+                    left: tableSettings?.[pageName]?.find(
+                      (item) => item?.id === column?.id
+                    )?.isStiky
+                      ? calculateWidth(column?.id, index)
+                      : "0",
+                    backgroundColor: "#fff",
+                    zIndex: tableSettings?.[pageName]?.find(
+                      (item) => item?.id === column?.id
+                    )?.isStiky
+                      ? "1"
+                      : "",
+                  }}
+                >
+                  {column.render ? (
+                    column.render(get(row, column.slug, row), row, column)
+                  ) : (
+                    <CellElementGenerator field={column} row={row} />
+                  )}
+                </CTableCell>
+              )
+            )}
             <PermissionWrapperV2
-              tabelSlug={tableSlug}
+              tableSlug={tableSlug}
               type={["update", "delete"]}
             >
               {(onDeleteClick || onEditClick) && (
@@ -379,16 +381,13 @@ const DataTable = ({
                         <Edit color="success" />
                       </RectangleIconButton>
                     )}
-                    {onDeleteClick && (
-                      <DeleteWrapperModal
-                        // id={row.guid}
-                        onDelete={() => onDeleteClick(row, rowIndex)}
-                      >
-                        <RectangleIconButton color="error">
-                          <Delete color="error" />
-                        </RectangleIconButton>
-                      </DeleteWrapperModal>
-                    )}
+
+                    <RectangleIconButton
+                      color="error"
+                      onClick={() => onDeleteClick(row, rowIndex)}
+                    >
+                      <Delete color="error" />
+                    </RectangleIconButton>
                   </div>
                 </CTableCell>
               )}

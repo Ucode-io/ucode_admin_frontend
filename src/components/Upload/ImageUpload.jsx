@@ -2,24 +2,21 @@ import AddCircleOutlineIcon from "@mui/icons-material/Upload";
 import { useState } from "react";
 import { useRef } from "react";
 import ImageViewer from "react-simple-image-viewer";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, InputAdornment, Tooltip } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "./Gallery/style.scss";
 import fileService from "../../services/fileService";
+import { useNavigate } from "react-router-dom";
+import { Lock } from "@mui/icons-material";
 
-const ImageUpload = ({
-  value,
-  onChange,
-  className = "",
-  disabled,
-  tabIndex,
-}) => {
+const ImageUpload = ({ value, onChange, className = "", disabled, tabIndex }) => {
   const inputRef = useRef(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const imageClickHandler = (index) => {
     setPreviewVisible(true);
+    window.open(value, "_blank");
   };
 
   const inputChangeHandler = (e) => {
@@ -50,11 +47,7 @@ const ImageUpload = ({
     <div className={`Gallery ${className}`}>
       {value && (
         <div className="block" onClick={() => imageClickHandler()}>
-          <button
-            className="close-btn"
-            type="button"
-            onClick={(e) => closeButtonHandler(e)}
-          >
+          <button className="close-btn" type="button" onClick={(e) => closeButtonHandler(e)}>
             <CancelIcon />
           </button>
           <img src={value} className="img" alt="" />
@@ -65,11 +58,29 @@ const ImageUpload = ({
         <div
           className="add-block block"
           onClick={() => inputRef.current.click()}
+          style={
+            disabled
+              ? {
+                  background: "#c0c0c039",
+                }
+              : {
+                  background: "inherit",
+                  color: "inherit",
+                }
+          }
         >
           <div className="add-icon">
             {!loading ? (
               <>
-                <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
+                {disabled ? (
+                  <Tooltip title="This field is disabled for this role!">
+                    <InputAdornment position="start">
+                      <Lock style={{ fontSize: "20px" }} />
+                    </InputAdornment>
+                  </Tooltip>
+                ) : (
+                  <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
+                )}
                 {/* <p>Max size: 4 MB</p> */}
               </>
             ) : (
@@ -77,19 +88,11 @@ const ImageUpload = ({
             )}
           </div>
 
-          <input
-            type="file"
-            className="hidden"
-            ref={inputRef}
-            tabIndex={tabIndex}
-            autoFocus={tabIndex === 1}
-            onChange={inputChangeHandler}
-            disabled={disabled}
-          />
+          <input type="file" className="hidden" ref={inputRef} tabIndex={tabIndex} autoFocus={tabIndex === 1} onChange={inputChangeHandler} disabled={disabled} />
         </div>
       )}
 
-      {previewVisible && (
+      {/* {previewVisible && (
         <ImageViewer
           src={[value]}
           currentIndex={0}
@@ -97,7 +100,7 @@ const ImageUpload = ({
           closeOnClickOutside={true}
           onClose={() => setPreviewVisible(false)}
         />
-      )}
+      )} */}
     </div>
   );
 };

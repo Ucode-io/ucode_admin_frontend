@@ -1,29 +1,55 @@
-import { CircularProgress } from "@mui/material"
-import { forwardRef } from "react"
-import "./style.scss"
+import { CircularProgress } from "@mui/material";
+import { forwardRef } from "react";
+import "./style.scss";
+import DeleteWrapperModal from "../../DeleteWrapperModal";
 
-const RectangleIconButton = forwardRef(({
-  color,
-  children,
-  loader,
-  className,
-  size="",
-  onClick = () => {},
-  ...props
-}, ref) => {
-  return (
-    <div
-      className={`RectangleIconButton ${color} ${className} ${size}`}
-      onClick={(e) => {
-        e.stopPropagation()
-        onClick(e)
-      }}
-      ref={ref}
-      {...props}
-    >
-      {loader ? <CircularProgress size={14} /> : children}
-    </div>
-  )
-})
+const RectangleIconButton = forwardRef(
+  (
+    {
+      color,
+      children,
+      loader,
+      className,
+      size = "",
+      onClick = () => {},
+      ...props
+    },
+    ref
+  ) => {
+    return color === "error" ? (
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <DeleteWrapperModal
+          onDelete={(e) => {
+            onClick(e);
+          }}
+        >
+          <div
+            className={`RectangleIconButton ${color} ${className} ${size}`}
+            ref={ref}
+            {...props}
+          >
+            {loader ? <CircularProgress size={14} /> : children}
+          </div>
+        </DeleteWrapperModal>
+      </div>
+    ) : (
+      <div
+        className={`RectangleIconButton ${color} ${className} ${size}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(e);
+        }}
+        ref={ref}
+        {...props}
+      >
+        {loader ? <CircularProgress size={14} /> : children}
+      </div>
+    );
+  }
+);
 
-export default RectangleIconButton
+export default RectangleIconButton;

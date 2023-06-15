@@ -10,7 +10,10 @@ const LogoDisplay = ({ url, name }) => {
     )
 
   return (
-    <div className="LogoDisplay">
+    <div className="LogoDisplay" onClick={(e) => {
+      e.stopPropagation()
+      window.open(url, "_blank")
+    }}>
       <img src={url} className="logo-image" alt="logo" />
     </div>
   )

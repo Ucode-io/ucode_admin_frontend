@@ -1,7 +1,8 @@
-import { Autocomplete, TextField } from "@mui/material";
+import { Lock } from "@mui/icons-material";
+import { Autocomplete, InputAdornment, TextField, Tooltip } from "@mui/material";
 import { useMemo } from "react";
 
-const CAutoCompleteSelect = ({ options, value, onChange, tabIndex }) => {
+const CAutoCompleteSelect = ({ options, value, onChange, tabIndex, disabled }) => {
   const computedValue = useMemo(() => {
     return options?.find((option) => option?.value === value) ?? null;
   }, [options, value]);
@@ -20,8 +21,6 @@ const CAutoCompleteSelect = ({ options, value, onChange, tabIndex }) => {
         renderInput={(params) => (
           <TextField
             {...params}
-            // autoFocus={tabIndex === 1}
-            // InputProps={{ inputProps: { tabIndex } }}
             size="small"
           />
         )}

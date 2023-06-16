@@ -17,10 +17,11 @@ import {
 } from "../../../../../services/customErrorMessageService";
 import HFNumberField from "../../../../../components/FormElements/HFNumberField";
 import { useQueryClient } from "react-query";
+import HFTextArea from "../../../../../components/FormElements/HFTextArea";
 
 const CustomErrorsSettings = ({
   closeSettingsBlock = () => {},
-  relation,
+  customError,
   getRelationFields,
   formType,
   height,
@@ -132,16 +133,9 @@ const CustomErrorsSettings = ({
   useEffect(() => {
     if (formType === "CREATE") return;
     reset({
-      ...relation,
-      table_from: relation?.table_from?.slug ?? "",
-      table_to: relation?.table_to?.slug ?? "",
-      type: relation?.type ?? "",
-      id: relation?.id ?? "",
-      editable: relation?.editable ?? false,
-      summaries: relation?.summaries ?? [],
-      view_fields: relation?.view_fields?.map((field) => field.id) ?? [],
+      ...customError,
     });
-  }, [relation]);
+  }, [customError]);
 
   return (
     <div className={styles.settingsBlock}>
@@ -171,7 +165,7 @@ const CustomErrorsSettings = ({
               />
             </FRow>
             <FRow label="Message" required>
-              <HFTextField
+              <HFTextArea
                 name="message"
                 control={control}
                 placeholder="Type Message"

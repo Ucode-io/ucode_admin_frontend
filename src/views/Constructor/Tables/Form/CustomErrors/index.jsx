@@ -8,14 +8,21 @@ import constructorRelationService from "../../../../../services/constructorRelat
 import { Drawer } from "@mui/material";
 import TableRowButton from "../../../../../components/TableRowButton";
 import CustomErrorsSettings from "./CustomErrorsSettings";
-import { useCustomErrorListQuery } from "../../../../../services/customErrorMessageService";
+import {
+  useCustomErrorDeleteMutation,
+  useCustomErrorListQuery,
+} from "../../../../../services/customErrorMessageService";
 import constructorObjectService from "../../../../../services/constructorObjectService";
+import { store } from "../../../../../store";
+import { useQueryClient } from "react-query";
 
 const CustomErrors = ({ mainForm, getRelationFields }) => {
   const [drawerState, setDrawerState] = useState(null);
   const [languages, setLanguages] = useState(null);
   const [loader, setLoader] = useState(false);
   const { id } = useParams();
+  const queryClient = useQueryClient();
+  const authStore = store.getState().auth;
 
   console.log("tableSlug", id);
 
@@ -59,12 +66,21 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
     setLoader(false);
   };
 
+  const { mutate: deleteCustomError, isLoading: deleteLoading } =
+    useCustomErrorDeleteMutation({
+      projectId: authStore.projectId,
+      onSuccess: () => {
+        queryClient.refetchQueries(["CUSTOM_ERROR_MESSAGE"]);
+      },
+    });
+
   const deleteField = (field, index) => {
     if (!id) updateRelations();
     else {
-      constructorRelationService
-        .delete(field.id)
-        .then((res) => updateRelations());
+      deleteCustomError(field.id);
+      // constructorRelationService
+      //   .delete(field.id)
+      //   .then((res) => updateRelations());
     }
   };
 
@@ -72,18 +88,18 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
     () => [
       {
         id: 1,
-        label: "Table from",
-        slug: "table_from.label",
+        label: "Code",
+        slug: "code",
       },
       {
         id: 2,
-        label: "Table to",
-        slug: "table_to.label",
+        label: "Action type",
+        slug: "action_type",
       },
       {
         id: 3,
-        label: "Relation type",
-        slug: "type",
+        label: "Message",
+        slug: "message",
       },
     ],
     []
@@ -92,12 +108,12 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
   return (
     <TableCard>
       <DataTable
-        data={relations}
+        data={customErrors?.custom_error_messages}
         removableHeight={false}
         tableSlug={"app"}
         columns={columns}
         disablePagination
-        loader={loader}
+        loader={loader || deleteLoading}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
         dataLength={1}
@@ -116,7 +132,7 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
         orientation="horizontal"
       >
         <CustomErrorsSettings
-          relation={drawerState}
+          customError={drawerState}
           closeSettingsBlock={() => setDrawerState(null)}
           getRelationFields={getRelationFields}
           formType={drawerState}

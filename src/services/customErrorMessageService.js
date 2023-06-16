@@ -29,10 +29,7 @@ const customErrorMessageService = {
         "project-id": data.project_id,
       },
     }),
-  delete: ({ id, projectId }) =>
-    request.delete(`/custom-error-message/${id}`, {
-      params: { "project-id": projectId },
-    }),
+  delete: (id) => request.delete(`/custom-error-message/${id}`),
 };
 
 export const useCustomErrorListQuery = ({ params = {}, queryParams } = {}) => {
@@ -74,12 +71,9 @@ export const useCustomErrorCreateMutation = (mutationSettings) => {
   );
 };
 
-export const useCustomErrorDeleteMutation = ({
-  projectId,
-  mutationSettings,
-}) => {
+export const useCustomErrorDeleteMutation = (mutationSettings) => {
   return useMutation(
-    (id) => customErrorMessageService.delete({ id, projectId }),
+    (id) => customErrorMessageService.delete(id),
     mutationSettings
   );
 };

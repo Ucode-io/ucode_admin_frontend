@@ -69,6 +69,7 @@ const HFTextArea = ({
             width: "100%",
             border: "1px solid #d4d2d2",
             borderRadius: "4px",
+            minHeight: "120px",
           }}
           InputProps={{
             readOnly: disabled,

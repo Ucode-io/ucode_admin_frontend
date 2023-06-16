@@ -32,7 +32,7 @@ import { listToMap } from "../../../../utils/listToMap";
 import Actions from "./Actions";
 import { generateGUID } from "../../../../utils/generateID";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
-import layoutService from "../../../../services/layoutService";
+import CustomErrors from "./CustomErrors";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -208,18 +208,7 @@ const ConstructorTablesFormPage = () => {
       table_slug: data.slug,
     });
 
-    const updateLayoutData = layoutService.update({
-      layouts: data.layouts,
-      table_id: id,
-      project_id: projectId,
-    });
-
-    Promise.all([
-      updateTableData,
-      updateSectionData,
-      updateViewRelationsData,
-      updateLayoutData,
-    ])
+    Promise.all([updateTableData, updateSectionData, updateViewRelationsData])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
         navigate(-1);
@@ -232,7 +221,6 @@ const ConstructorTablesFormPage = () => {
       ...data,
       sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
-      layouts: data.layouts,
     };
 
     // return;
@@ -264,7 +252,7 @@ const ConstructorTablesFormPage = () => {
               <Tab>Fields</Tab>
               {id && <Tab>Relations</Tab>}
               {id && <Tab>Actions</Tab>}
-              {/* <Tab>Custom errors</Tab> */}
+              <Tab>Custom errors</Tab>
             </TabList>
           </HeaderSettings>
 
@@ -293,6 +281,9 @@ const ConstructorTablesFormPage = () => {
               <Actions mainForm={mainForm} />
             </TabPanel>
           )}
+          <TabPanel>
+            <CustomErrors mainForm={mainForm} />
+          </TabPanel>
           {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
         </Tabs>
       </div>

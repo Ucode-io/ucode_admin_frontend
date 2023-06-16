@@ -6,8 +6,7 @@ import axios from "axios";
 
 function FunctionPath({ control, watch, functions }) {
   // request needed
-  
-  
+
   return (
     <>
       <>
@@ -16,7 +15,11 @@ function FunctionPath({ control, watch, functions }) {
         </div>
         <div className="p-2">
           <div className={styles.input_control}>
-            <HFSelect control={control} name={"function_path"} options={functions} />
+            <HFSelect
+              control={control}
+              name={"function_path"}
+              options={functions}
+            />
           </div>
         </div>
       </>

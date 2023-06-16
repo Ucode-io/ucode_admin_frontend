@@ -11,12 +11,13 @@ const RectangleIconButton = forwardRef(
       loader,
       className,
       size = "",
+      type = "delete",
       onClick = () => {},
       ...props
     },
     ref
   ) => {
-    return color === "error" ? (
+    return type === "delete" && color === "error" ? (
       <div
         onClick={(e) => {
           e.stopPropagation();

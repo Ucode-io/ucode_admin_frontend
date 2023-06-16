@@ -38,7 +38,6 @@ import TableActions from "../Actions/TableActions";
 import FunctionPath from "./FunctionPath";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
 
-
 const relationViewTypes = [
   {
     label: "Table",
@@ -156,7 +155,7 @@ const RelationSettings = ({
       },
     }
   );
-  
+
   const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
@@ -373,7 +372,7 @@ const RelationSettings = ({
               computedTablesList={computedTablesList}
             />
           )}
-          
+
           <FunctionPath control={control} watch={watch} functions={functions} />
 
           <DefaultValueBlock

@@ -414,6 +414,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                     </RectangleIconButton>
                     <RectangleIconButton
                       color="error"
+                      type="exit"
                       onClick={() => {
                         setFormVisible(false);
                         if (fields.length > dataLength) {

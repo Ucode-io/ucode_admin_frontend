@@ -1,11 +1,12 @@
+
 // export const fieldTypes = [
 //   "SINGLE_LINE",
 //   "MULTI_LINE",
 //   "EMAIL",
 //   "PHONE",
-//   "INTERNATIONAL_PHONE",
 //   "PICK_LIST",
 //   "MULTISELECT",
+//   "MAP"
 //   "DATE",
 //   "DATE_TIME",
 //   "NUMBER",
@@ -30,9 +31,11 @@ export const fieldTypes = [
   "CHECKBOX",
   "EMAIL",
   "MULTISELECT",
+  "MAP",
   "SWITCH",
   "PHOTO",
   "PHONE",
+  "INTERNATION_PHONE",
   "ICON",
   "PASSWORD",
   "FORMULA",
@@ -84,11 +87,11 @@ export const fieldTypesOptions = [
         label: "Number",
         value: "NUMBER",
       },
-      // {
-      //   icon: "hashtag.svg",
-      //   label: "Float",
-      //   value: "FLOAT",
-      // },
+      {
+        icon: "hashtag.svg",
+        label: "Float",
+        value: "FLOAT",
+      },
     ],
   },
   {
@@ -118,13 +121,24 @@ export const fieldTypesOptions = [
         label: "Multi select",
         value: "MULTISELECT",
       },
-      // {
-      //   icon: "list-check.svg",
-      //   label: "Multi select V2",
-      //   value: "MULTISELECT_V2",
-      // },
+      {
+        icon: "list-check.svg",
+        label: "Multi select V2",
+        value: "MULTISELECT_V2",
+      },
     ],
   },
+  {
+    label: "Map",
+    options: [
+      {
+        icon: "map-pin.svg",
+        label: "Map",
+        value: "MAP",
+      },
+    ],
+  },
+
   {
     label: "File",
     options: [
@@ -132,6 +146,11 @@ export const fieldTypesOptions = [
         icon: "image.svg",
         label: "Photo",
         value: "PHOTO",
+      },
+      {
+        icon: "image.svg",
+        label: "Custom Image",
+        value: "CUSTOM_IMAGE",
       },
       {
         icon: "video.svg",
@@ -181,7 +200,7 @@ export const fieldTypesOptions = [
       {
         icon: "phone.svg",
         label: "Internation Phone",
-        value: "INTERNATIONAL_PHONE",
+        value: "INTERNATION_PHONE",
       },
       {
         icon: "envelope.svg",

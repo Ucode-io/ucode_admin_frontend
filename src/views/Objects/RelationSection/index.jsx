@@ -5,7 +5,12 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import IconGenerator from "../../../components/IconPicker/IconGenerator";
@@ -27,7 +32,15 @@ import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUplo
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
-const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tableSlug: tableSlugFromProps, id: idFromProps, limit, setLimit }) => {
+const RelationSection = ({
+  selectedTabIndex,
+  setSelectedTabIndex,
+  relations,
+  tableSlug: tableSlugFromProps,
+  id: idFromProps,
+  limit,
+  setLimit,
+}) => {
   const filteredRelations = useMemo(() => {
     const rel = relations?.filter((relation) => relation?.relatedTable);
     return rel?.filter((item) => {
@@ -39,8 +52,11 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
 
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
-  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
+    useState(null);
+  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
+    {}
+  );
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -59,7 +75,9 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
   const tables = useSelector((state) => state?.auth?.tables);
 
   useEffect(() => {
-    queryTab ? setSelectedTabIndex(parseInt(queryTab) - 1) : setSelectedTabIndex(0);
+    queryTab
+      ? setSelectedTabIndex(parseInt(queryTab) - 1)
+      : setSelectedTabIndex(0);
   }, [queryTab]);
 
   const handleHeightControl = (val) => {
@@ -162,18 +180,21 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
 
   const { mutate: updateMultipleObject } = useMutation(
     (values) =>
-      constructorObjectService.updateMultipleObject(relations[selectedTabIndex]?.relatedTable, {
-        data: {
-          objects: values.multi.map((item) => ({
-            ...item,
-            guid: item?.guid ?? "",
-            doctors_id_2: getValue(item, "doctors_id_2"),
-            doctors_id_3: getValue(item, "doctors_id_3"),
-            specialities_id: getValue(item, "specialities_id"),
-            [fieldSlug]: id,
-          })),
-        },
-      }),
+      constructorObjectService.updateMultipleObject(
+        relations[selectedTabIndex]?.relatedTable,
+        {
+          data: {
+            objects: values.multi.map((item) => ({
+              ...item,
+              guid: item?.guid ?? "",
+              doctors_id_2: getValue(item, "doctors_id_2"),
+              doctors_id_3: getValue(item, "doctors_id_3"),
+              specialities_id: getValue(item, "specialities_id"),
+              [fieldSlug]: id,
+            })),
+          },
+        }
+      ),
     {
       onSuccess: () => {
         setShouldGet((p) => !p);
@@ -203,11 +224,16 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
           data: {
             offset: 0,
             limit: 0,
-            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]: idFromParams,
+            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
+              idFromParams,
           },
         })
         .then((res) => {
-          setJwtObjects(res?.data?.fields?.filter((item) => item?.attributes?.object_id_from_jwt === true));
+          setJwtObjects(
+            res?.data?.fields?.filter(
+              (item) => item?.attributes?.object_id_from_jwt === true
+            )
+          );
         })
         .catch((a) => console.log("error", a));
   }, [selectedRelation]);
@@ -236,15 +262,24 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
   return (
     <>
       {selectedManyToManyRelation && (
-        <ManyToManyRelationCreateModal relation={selectedManyToManyRelation} closeModal={() => setSelectedManyToManyRelation(null)} limit={limit} setLimit={setLimit} />
+        <ManyToManyRelationCreateModal
+          relation={selectedManyToManyRelation}
+          closeModal={() => setSelectedManyToManyRelation(null)}
+          limit={limit}
+          setLimit={setLimit}
+        />
       )}
       {filteredRelations.length ? (
         <Card className={styles.card}>
-          <Tabs selectedIndex={selectedTabIndex} onSelect={(index) => setSelectedTabIndex(index)}>
+          <Tabs
+            selectedIndex={selectedTabIndex}
+            onSelect={(index) => setSelectedTabIndex(index)}
+          >
             <div className={styles.cardHeader}>
               <TabList className={styles.tabList}>
                 {filteredRelations?.map((relation, index) =>
-                  relation?.permission && relation.permission?.view_permission === true ? (
+                  relation?.permission &&
+                  relation.permission?.view_permission === true ? (
                     <Tab key={index}>
                       {/* {relation?.view_relation_type === "FILE" ? (
                       <>
@@ -268,8 +303,16 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}
                 /> */}
-                <PermissionWrapperV2 tableSlug={filteredRelations?.[0]?.relatedTable} type={"write"}>
-                  <RectangleIconButton color="success" size="small" onClick={navigateToCreatePage} disabled={!id}>
+                <PermissionWrapperV2
+                  tableSlug={filteredRelations?.[0]?.relatedTable}
+                  type={"write"}
+                >
+                  <RectangleIconButton
+                    color="success"
+                    size="small"
+                    onClick={navigateToCreatePage}
+                    disabled={!id}
+                  >
                     <Add style={{ color: "#007AFF" }} />
                   </RectangleIconButton>
                 </PermissionWrapperV2>
@@ -317,6 +360,7 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
                     </RectangleIconButton>
                     <RectangleIconButton
                       color="error"
+                      type="exit"
                       onClick={() => {
                         setFormVisible(false);
                         if (fields.length > dataLength) {
@@ -333,7 +377,10 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
                   </>
                 ) : (
                   fields.length > 0 && (
-                    <PermissionWrapperV2 type="edit" tableSlug={filteredRelations?.[0]?.relatedTable}>
+                    <PermissionWrapperV2
+                      type="edit"
+                      tableSlug={filteredRelations?.[0]?.relatedTable}
+                    >
                       <RectangleIconButton
                         color="success"
                         size="small"
@@ -351,10 +398,16 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
                 <DocumentGeneratorButton />
 
                 {filteredRelations[selectedTabIndex].multiple_insert && (
-                  <MultipleInsertButton view={filteredRelations[selectedTabIndex]} tableSlug={filteredRelations[selectedTabIndex].relatedTable} />
+                  <MultipleInsertButton
+                    view={filteredRelations[selectedTabIndex]}
+                    tableSlug={filteredRelations[selectedTabIndex].relatedTable}
+                  />
                 )}
 
-                <RectangleIconButton color="white" onClick={() => setHeightControl(!heightControl)}>
+                <RectangleIconButton
+                  color="white"
+                  onClick={() => setHeightControl(!heightControl)}
+                >
                   <div style={{ position: "relative" }}>
                     <span
                       style={{
@@ -368,9 +421,15 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
                     {heightControl && (
                       <div className={style.heightControl}>
                         {tableHeightOptions.map((el) => (
-                          <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
+                          <div
+                            key={el.value}
+                            className={style.heightControl_item}
+                            onClick={() => handleHeightControl(el.value)}
+                          >
                             {el.label}
-                            {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
+                            {tableHeight === el.value ? (
+                              <CheckIcon color="primary" />
+                            ) : null}
                           </div>
                         ))}
                       </div>
@@ -378,7 +437,11 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
                   </div>
                 </RectangleIconButton>
 
-                <RectangleIconButton color="success" size="small" onClick={() => setMoreShowButton(!moreShowButton)}>
+                <RectangleIconButton
+                  color="success"
+                  size="small"
+                  onClick={() => setMoreShowButton(!moreShowButton)}
+                >
                   <div style={{ position: "relative" }}>
                     <span
                       style={{
@@ -390,7 +453,10 @@ const RelationSection = ({ selectedTabIndex, setSelectedTabIndex, relations, tab
                       <MoreVertIcon color="primary" />
                     </span>
                     {moreShowButton && (
-                      <div className={style.heightControl} style={{ minWidth: "auto" }}>
+                      <div
+                        className={style.heightControl}
+                        style={{ minWidth: "auto" }}
+                      >
                         <div
                           className={style.heightControl_item}
                           style={{

@@ -135,6 +135,14 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
     name: autoFiltersFieldFroms,
   });
 
+  useEffect(() => {
+    setLocalValue(
+      localValue?.filter((item) => {
+        return item?.clients_id === filtersHandler[0];
+      })
+    );
+  }, [filtersHandler]);
+
   const autoFiltersValue = useMemo(() => {
     const result = {};
     filtersHandler?.forEach((value, index) => {
@@ -275,13 +283,13 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
     }
   };
 
-  // useEffect(() => {
-  //   if (computedValue && localValue) {
-  //     if (computedValue[0]?.guid !== localValue[0]?.guid) {
-  //       setLocalValue([]);
-  //     }
-  //   }
-  // }, [computedValue, localValue]);
+  useEffect(() => {
+    setLocalValue(
+      localValue?.filter((item) => {
+        return item?.[autoFiltersFieldFroms] === filtersHandler[0];
+      })
+    );
+  }, [filtersHandler]);
 
   useEffect(() => {
     const val = computedValue[computedValue.length - 1];

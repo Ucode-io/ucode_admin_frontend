@@ -1,31 +1,31 @@
-import RectangleIconButton from "../Buttons/RectangleIconButton"
-import { Download, Delete, Visibility } from "@mui/icons-material"
-import FileIcon from "../FileIcon"
-import { useState } from "react"
-import subtaskService from "../../services/subtaskService"
-import { biteToKilobite } from "../../utils/biteToKilobite"
-import useDownloader from "../../hooks/useDownloader"
+import RectangleIconButton from "../Buttons/RectangleIconButton";
+import { Download, Delete, Visibility } from "@mui/icons-material";
+import FileIcon from "../FileIcon";
+import { useState } from "react";
+import subtaskService from "../../services/subtaskService";
+import { biteToKilobite } from "../../utils/biteToKilobite";
+import useDownloader from "../../hooks/useDownloader";
+import DeleteWrapperModal from "../DeleteWrapperModal";
 
 const AttachFileRow = ({ subtaskId, file, removeFile, openFile }) => {
-  const [loader, setLoader] = useState(false)
-  const [download, downloadLoader] = useDownloader()
+  const [loader, setLoader] = useState(false);
+  const [download, downloadLoader] = useDownloader();
 
   const deleteHandler = () => {
-    setLoader(true)
+    setLoader(true);
 
     subtaskService
       .deleteAttachFile(subtaskId, file.id)
       .then((res) => {
-        removeFile(file.id)
+        removeFile(file.id);
       })
-      .catch(() => setLoader(false))
-  }
+      .catch(() => setLoader(false));
+  };
 
   const downloadHandler = () => {
-    console.log("FILE ==>", file)
+    console.log("FILE ==>", file);
 
-
-    download({fileId: file.id, fileName: file.name})
+    download({ fileId: file.id, fileName: file.name });
 
     // const downloadLink =
     //   process.env.REACT_APP_CDN_API_URL + "/file/" + file.id + "/download"
@@ -33,7 +33,7 @@ const AttachFileRow = ({ subtaskId, file, removeFile, openFile }) => {
     // axios({
     //   method: 'get',
     //   url: downloadLink,
-    //   responseType: 'blob', 
+    //   responseType: 'blob',
     // }).then((res) => {
     //   const imageObjectURL = URL.createObjectURL(res.data)
     //   console.log(imageObjectURL)
@@ -47,14 +47,13 @@ const AttachFileRow = ({ subtaskId, file, removeFile, openFile }) => {
 
     // fetch(downloadLink)
     //   .then((response) => response.blob())
-      
 
     // window.open(downloadLink, "_blank")
-  }
+  };
 
   const openHandler = () => {
-    openFile(file)
-  }
+    openFile(file);
+  };
 
   return (
     <div className="AttachFileRow silver-bottom-border">
@@ -71,19 +70,25 @@ const AttachFileRow = ({ subtaskId, file, removeFile, openFile }) => {
         <RectangleIconButton color="primary" onClick={openHandler}>
           <Visibility color="primary" />
         </RectangleIconButton>
-        <RectangleIconButton loader={downloadLoader} color="primary" onClick={downloadHandler}>
+        <RectangleIconButton
+          loader={downloadLoader}
+          color="primary"
+          onClick={downloadHandler}
+        >
           <Download color="primary" />
         </RectangleIconButton>
-        <RectangleIconButton
-          loader={loader}
-          color="error"
-          onClick={deleteHandler}
-        >
-          <Delete color="error" />
-        </RectangleIconButton>
+        {deleteHandler && (
+          <RectangleIconButton
+            loader={loader}
+            color="error"
+            onClick={deleteHandler}
+          >
+            <Delete color="error" />
+          </RectangleIconButton>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AttachFileRow
+export default AttachFileRow;

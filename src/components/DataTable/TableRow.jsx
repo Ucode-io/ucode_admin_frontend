@@ -7,6 +7,7 @@ import TableRowForm from "./TableRowForm";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import DeleteWrapperModal from "../DeleteWrapperModal";
 
 const TableRow = ({
   row,
@@ -35,6 +36,7 @@ const TableRow = ({
   relationAction,
   onChecked,
   relationFields,
+  data,
 }) => {
   const colorCell = (num) => {
     if (num === 0) {
@@ -45,7 +47,7 @@ const TableRow = ({
     }
     return "transparent";
   };
-  
+
   if (formVisible)
     return (
       <TableRowForm
@@ -71,6 +73,7 @@ const TableRow = ({
         calculateWidth={calculateWidth}
         tableSlug={tableSlug}
         relationFields={relationFields}
+        data={data}
       />
     );
   return (
@@ -82,10 +85,20 @@ const TableRow = ({
           }}
         >
           <CTableCell align="center" className="data_table__number_cell">
-            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
+            <span className="data_table__row_number">
+              {(currentPage - 1) * limit + rowIndex + 1}
+            </span>
             {onCheckboxChange && (
-              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
-                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
+              <div
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
+              >
+                <Checkbox
+                  checked={isChecked(row)}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </div>
             )}
           </CTableCell>
@@ -97,10 +110,22 @@ const TableRow = ({
               style={{
                 minWidth: "max-content",
                 padding: "0 4px",
-                position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? calculateWidth(column?.id, index)
+                  : "0",
                 backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
               }}
             >
               <CellElementGenerator field={column} row={row} />
@@ -108,8 +133,16 @@ const TableRow = ({
           ))}
           <td>
             <div style={{ display: "flex", gap: "5px", padding: "3px" }}>
-              <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type="delete">
-                <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
+              <PermissionWrapperV2
+                tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+                type="delete"
+              >
+                <RectangleIconButton
+                  color="error"
+                  onClick={() => {
+                    row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex);
+                  }}
+                >
                   <Delete color="error" />
                 </RectangleIconButton>
               </PermissionWrapperV2>
@@ -118,17 +151,28 @@ const TableRow = ({
             </div>
           </td>
         </CTableRow>
-      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" || !relationAction?.action_relations ? (
+      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
+        !relationAction?.action_relations ? (
         <CTableRow
           onClick={() => {
             onRowClick(row, rowIndex);
           }}
         >
           <CTableCell align="center" className="data_table__number_cell">
-            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
+            <span className="data_table__row_number">
+              {(currentPage - 1) * limit + rowIndex + 1}
+            </span>
             {onCheckboxChange && (
-              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
-                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
+              <div
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
+              >
+                <Checkbox
+                  checked={isChecked(row)}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </div>
             )}
           </CTableCell>
@@ -140,18 +184,38 @@ const TableRow = ({
               style={{
                 minWidth: "max-content",
                 padding: "0 4px",
-                position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? calculateWidth(column?.id, index)
+                  : "0",
                 backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
                 backgroundColor: colorCell(row?.difference),
               }}
             >
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type="delete">
-            <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
+          <PermissionWrapperV2
+            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+            type="delete"
+          >
+            <RectangleIconButton
+              color="error"
+              onClick={() =>
+                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              }
+            >
               <Delete color="error" />
             </RectangleIconButton>
           </PermissionWrapperV2>
@@ -163,10 +227,20 @@ const TableRow = ({
           }}
         >
           <CTableCell align="center" className="data_table__number_cell">
-            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
+            <span className="data_table__row_number">
+              {(currentPage - 1) * limit + rowIndex + 1}
+            </span>
             {onCheckboxChange && (
-              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
-                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
+              <div
+                className={`data_table__row_checkbox ${
+                  isChecked(row) ? "checked" : ""
+                }`}
+              >
+                <Checkbox
+                  checked={isChecked(row)}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </div>
             )}
           </CTableCell>
@@ -178,17 +252,37 @@ const TableRow = ({
               style={{
                 minWidth: "max-content",
                 padding: "0 4px",
-                position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? calculateWidth(column?.id, index)
+                  : "0",
                 backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
               }}
             >
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type="delete">
-            <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
+          <PermissionWrapperV2
+            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+            type="delete"
+          >
+            <RectangleIconButton
+              color="error"
+              onClick={() =>
+                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              }
+            >
               <Delete color="error" />
             </RectangleIconButton>
           </PermissionWrapperV2>

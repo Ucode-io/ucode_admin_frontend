@@ -24,7 +24,21 @@ import InventoryBarCode from "../FormElements/InventoryBarcode";
 
 const parser = new Parser();
 
-const CellFormElementGenerator = ({ field, fields, isBlackBg = false, watch, columns = [], row, control, setFormValue, shouldWork = false, index, relationfields, ...props }) => {
+const CellFormElementGenerator = ({
+  field,
+  fields,
+  isBlackBg = false,
+  watch,
+  columns = [],
+  row,
+  control,
+  setFormValue,
+  shouldWork = false,
+  index,
+  relationfields,
+  data,
+  ...props
+}) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -91,6 +105,7 @@ const CellFormElementGenerator = ({ field, fields, isBlackBg = false, watch, col
           index={index}
           defaultValue={defaultValue}
           relationfields={relationfields}
+          data={data}
         />
       );
 

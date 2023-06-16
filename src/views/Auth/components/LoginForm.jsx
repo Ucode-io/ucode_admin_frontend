@@ -78,7 +78,7 @@ const LoginForm = () => {
     ],
     () => {
       return clientTypeServiceV2.getList(
-        { 'project-id': selectedProjectID },
+        { "project-id": selectedProjectID },
         { "environment-id": selectedEnvID }
       );
     },
@@ -100,7 +100,10 @@ const LoginForm = () => {
     ],
     () => {
       return connectionServiceV2.getList(
-        { "project-id": selectedProjectID, client_type_id: selectedClientTypeID },
+        {
+          "project-id": selectedProjectID,
+          client_type_id: selectedClientTypeID,
+        },
         { "environment-id": selectedEnvID }
       );
     },
@@ -109,6 +112,30 @@ const LoginForm = () => {
       select: (res) => res.data.response ?? [],
     }
   );
+  useEffect(() => {
+    if (computedCompanies?.length === 1) {
+      setValue("company_id", computedCompanies[0]?.value);
+    }
+  }, [computedCompanies]);
+
+  useEffect(() => {
+    if (computedProjects?.length === 1) {
+      setValue("project_id", computedProjects[0]?.value);
+    }
+  }, [computedProjects]);
+
+  useEffect(() => {
+    if (computedEnvironments?.length === 1) {
+      setValue("environment_id", computedEnvironments[0]?.value);
+    }
+  }, [computedEnvironments]);
+
+  useEffect(() => {
+    if (computedClientTypes?.length === 1) {
+      setValue("client_type", computedClientTypes[0]?.value);
+    }
+  }, [computedClientTypes]);
+
   const multiCompanyLogin = (data) => {
     setLoading(true);
 

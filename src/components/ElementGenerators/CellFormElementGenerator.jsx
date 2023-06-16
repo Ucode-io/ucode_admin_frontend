@@ -147,7 +147,7 @@ const CellFormElementGenerator = ({
         <InventoryBarCode
           // relatedTable={relatedTable}
           control={control}
-          name={field.slug}
+          name={computedSlug}
           fullWidth
           setFormValue={setFormValue}
           required={field.required}

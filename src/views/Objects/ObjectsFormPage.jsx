@@ -176,7 +176,7 @@ const ObjectsFormPage = () => {
     if (id) update(data);
     else {
       create(data);
-      dispatch(fetchConstructorTableListAction(appId));
+      // dispatch(fetchConstructorTableListAction(appId));
     }
   };
 

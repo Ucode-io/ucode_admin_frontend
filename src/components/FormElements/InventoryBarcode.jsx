@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -34,32 +34,50 @@ const InventoryBarCode = ({
   const [elmValue, setElmValue] = useState("");
   const time = useRef();
 
-  useDebouncedWatch(
-    () => {
-      if (elmValue.length >= field.attributes?.length) {
-        constructorFunctionService
-          .invoke({
-            function_id: field?.attributes?.function,
-            object_ids: [id, elmValue],
-            attributes: {
-              barcode: elmValue,
-            },
-          })
-          .then((res) => {
-            if (res === "Updated successfully!") {
-              dispatch(showAlert("Успешно обновлено!", "success"));
-            }
-          })
-          .finally(() => {
-            setFormValue(name, "");
-            setElmValue("");
-            queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
-          });
+  const sendRequestOpenFaas = () => {
+    constructorFunctionService
+      .invoke({
+        function_id: field?.attributes?.function,
+        object_ids: [id, elmValue],
+        attributes: {
+          barcode: elmValue,
+        },
+      })
+      .then((res) => {
+        if (res === "Updated successfully!") {
+          dispatch(showAlert("Успешно обновлено!", "success"));
+        }
+      })
+      .finally(() => {
+        // setFormValue(name, "");
+        // setElmValue("");
+        queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
+      });
+  };
+
+  // useDebouncedWatch(
+  //   () => {
+  //     if (elmValue.length >= field.attributes?.length && !field.attributes?.pressEnter && field.attributes?.automatic) {
+  //       sendRequestOpenFaas();
+  //     }
+  //   },
+  //   [elmValue],
+  //   300
+  // );
+
+  useEffect(() => {
+    if (elmValue.length >= field.attributes?.length && !field.attributes?.pressEnter && field.attributes?.automatic) {
+      sendRequestOpenFaas();
+    }
+  }, [elmValue]);
+
+  const keyPress = (e) => {
+    if (e.keyCode == 13) {
+      if (field.attributes?.pressEnter) {
+        sendRequestOpenFaas();
       }
-    },
-    [elmValue],
-    300
-  );
+    }
+  };
 
   return (
     <Controller
@@ -77,42 +95,37 @@ const InventoryBarCode = ({
             value={value}
             onChange={(e) => {
               const currentTime = new Date().getTime();
-
-              if (
-                currentTime - time.current > 50 &&
-                !field.attributes?.automatic
-              )
-                onChange(
-                  e.target.value.substring(value.length, e.target.value.length)
-                );
-              else {
+              if (currentTime - time.current > 50 && !field.attributes?.automatic) {
+                onChange(e.target.value.substring(value.length, e.target.value.length));
+              } else {
                 onChange(e.target.value);
               }
               setElmValue(e.target.value);
               time.current = currentTime;
             }}
+            onKeyDown={(e) => keyPress(e)}
             name={name}
             error={error}
             fullWidth={fullWidth}
             InputProps={{
               readOnly: disabled,
               style: disabled
-                      ? {
-                          background: "#c0c0c039",
-                          paddingRight: "0px",
-                        }
-                      : {
-                          background: "#fff",
-                          color: "#fff"
-                        },
+                ? {
+                    background: "#c0c0c039",
+                    paddingRight: "0px",
+                  }
+                : {
+                    background: "#fff",
+                    color: "#000",
+                  },
 
-                    endAdornment: disabled && (
-                      <Tooltip title="This field is disabled for this role!">
-                        <InputAdornment position="start">
-                          <Lock style={{ fontSize: "20px" }} />
-                        </InputAdornment>
-                      </Tooltip>
-                    ),
+              endAdornment: disabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
             }}
             helperText={!disabledHelperText && error?.message}
             {...props}

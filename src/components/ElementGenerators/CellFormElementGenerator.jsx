@@ -19,23 +19,12 @@ import CellElementGenerator from "./CellElementGenerator";
 import CellManyToManyRelationElement from "./CellManyToManyRelationElement";
 import CellRelationFormElement from "./CellRelationFormElement";
 import HFFloatField from "../FormElements/HFFloatField";
+import FRow from "../FormElements/FRow";
+import InventoryBarCode from "../FormElements/InventoryBarcode";
 
 const parser = new Parser();
 
-const CellFormElementGenerator = ({
-  field,
-  fields,
-  isBlackBg = false,
-  watch,
-  columns = [],
-  row,
-  control,
-  setFormValue,
-  shouldWork = false,
-  index,
-  relationfields,
-  ...props
-}) => {
+const CellFormElementGenerator = ({ field, fields, isBlackBg = false, watch, columns = [], row, control, setFormValue, shouldWork = false, index, relationfields, ...props }) => {
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -52,10 +41,7 @@ const CellFormElementGenerator = ({
     }
   });
 
-  const computedSlug = useMemo(
-    () => `multi.${index}.${field.slug}`,
-    [field.slug, index]
-  );
+  const computedSlug = useMemo(() => `multi.${index}.${field.slug}`, [field.slug, index]);
 
   const changedValue = useWatch({
     control,
@@ -63,21 +49,16 @@ const CellFormElementGenerator = ({
   });
 
   const isDisabled = useMemo(() => {
-    return (
-      field.attributes?.disabled ||
-      !field.attributes?.field_permission?.edit_permission
-    );
+    return field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
   }, [field]);
 
   const defaultValue = useMemo(() => {
-    const defaultValue =
-      field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
     if (!defaultValue) return undefined;
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field.relation_type === "Many2One") return defaultValue[0];
-    if (field.type === "MULTISELECT" || field.id?.includes("#"))
-      return defaultValue;
+    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
@@ -90,11 +71,7 @@ const CellFormElementGenerator = ({
 
   useEffect(() => {
     if (columns.length && changedValue !== undefined && changedValue !== null) {
-      columns.forEach(
-        (i, rowIndex) =>
-          selectedRow.includes(i.guid) &&
-          setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue)
-      );
+      columns.forEach((i, rowIndex) => selectedRow.includes(i.guid) && setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue));
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
 
@@ -150,6 +127,22 @@ const CellFormElementGenerator = ({
         />
       );
 
+    case "SCAN_BARCODE":
+      return (
+        <InventoryBarCode
+          // relatedTable={relatedTable}
+          control={control}
+          name={field.slug}
+          fullWidth
+          setFormValue={setFormValue}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          field={field}
+          disabled={isDisabled}
+          {...props}
+        />
+      );
     case "PHONE":
       return (
         <HFTextFieldWithMask
@@ -332,30 +325,12 @@ const CellFormElementGenerator = ({
 
     case "CHECKBOX":
       return (
-        <HFCheckbox
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          required={field.required}
-          defaultValue={defaultValue}
-          {...props}
-        />
+        <HFCheckbox disabled={isDisabled} isFormEdit isBlackBg={isBlackBg} control={control} name={computedSlug} required={field.required} defaultValue={defaultValue} {...props} />
       );
 
     case "SWITCH":
       return (
-        <HFSwitch
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          required={field.required}
-          defaultValue={defaultValue}
-          {...props}
-        />
+        <HFSwitch disabled={isDisabled} isFormEdit isBlackBg={isBlackBg} control={control} name={computedSlug} required={field.required} defaultValue={defaultValue} {...props} />
       );
 
     case "EMAIL":
@@ -381,16 +356,7 @@ const CellFormElementGenerator = ({
       );
 
     case "ICON":
-      return (
-        <HFIconPicker
-          isFormEdit
-          control={control}
-          name={computedSlug}
-          required={field.required}
-          defaultValue={defaultValue}
-          {...props}
-        />
-      );
+      return <HFIconPicker isFormEdit control={control} name={computedSlug} required={field.required} defaultValue={defaultValue} {...props} />;
 
     default:
       return (

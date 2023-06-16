@@ -30,6 +30,9 @@ const InventoryBarcodeAttributes = ({ control }) => {
         <FRow label={"Automatic"}>
           <HFSwitch control={control} name={"attributes.automatic"} />
         </FRow>
+        <FRow label={"Press enter (If this ON you should click enter to send query)"}>
+          <HFSwitch control={control} name={"attributes.pressEnter"} />
+        </FRow>
         <FRow label="Length">
           <HFTextField
             type="number"

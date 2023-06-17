@@ -9,6 +9,8 @@ import HFSelect from "../../components/FormElements/HFSelect";
 import menuSettingsService from "../../services/menuSettingsService";
 import { useWebPagesListQuery } from "../../services/webpageService";
 import { store } from "../../store";
+import HFTextField from "../../components/FormElements/HFTextField";
+import HFIconPicker from "../../components/FormElements/HFIconPicker";
 
 const WebPageLinkModal = ({ closeModal, loading, selectedFolder }) => {
   const { projectId } = useParams();
@@ -99,6 +101,16 @@ const WebPageLinkModal = ({ closeModal, loading, selectedFolder }) => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="form">
+            <Box display={"flex"} columnGap={"16px"} className="form-elements">
+              <HFIconPicker name="icon" control={control} />
+              <HFTextField
+                autoFocus
+                fullWidth
+                label="Title"
+                control={control}
+                name="label"
+              />
+            </Box>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFSelect
                 fullWidth

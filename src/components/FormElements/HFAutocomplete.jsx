@@ -16,6 +16,7 @@ const HFAutocomplete = ({
   placeholder,
   required = false,
   onChange = () => {},
+  onFieldChange = () => {},
   rules = {},
   defaultValue = null,
   ...props
@@ -55,6 +56,7 @@ const HFAutocomplete = ({
                 onChange(val?.value);
                 onFormChange(val?.value);
               }}
+              onFieldChange={onFieldChange}
               options={computedOptions}
             />
             {!disabledHelperText && error?.message && (

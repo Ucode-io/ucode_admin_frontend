@@ -18,7 +18,6 @@ import { useQueryClient } from "react-query";
 
 const CustomErrors = ({ mainForm, getRelationFields }) => {
   const [drawerState, setDrawerState] = useState(null);
-  const [languages, setLanguages] = useState(null);
   const [loader, setLoader] = useState(false);
   const { id } = useParams();
   const queryClient = useQueryClient();
@@ -37,19 +36,6 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
       table_id: id,
     },
   });
-
-  const getLanguageOptions = () => {
-    constructorObjectService
-      .getList("setting.languages", { data: {} })
-      .then((res) => {
-        console.log("res", res);
-        setLanguages(res.data?.response);
-      });
-  };
-
-  useEffect(() => {
-    getLanguageOptions();
-  }, []);
 
   console.log("customErrors", customErrors);
 
@@ -137,7 +123,7 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
           getRelationFields={getRelationFields}
           formType={drawerState}
           height={`calc(100vh - 48px)`}
-          languages={languages}
+          mainForm={mainForm}
         />
       </Drawer>
     </TableCard>

@@ -1,13 +1,11 @@
 import { Close } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { Divider, IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
-import HFTextField from "../../../../../components/FormElements/HFTextField";
-import constructorRelationService from "../../../../../services/constructorRelationService";
 import styles from "./style.module.scss";
 import { store } from "../../../../../store";
 import actionTypes from "./mock/ActionTypes";
@@ -18,6 +16,8 @@ import {
 import HFNumberField from "../../../../../components/FormElements/HFNumberField";
 import { useQueryClient } from "react-query";
 import HFTextArea from "../../../../../components/FormElements/HFTextArea";
+import HFAutocomplete from "../../../../../components/FormElements/HFAutocomplete";
+import constructorObjectService from "../../../../../services/constructorObjectService";
 
 const CustomErrorsSettings = ({
   closeSettingsBlock = () => {},
@@ -25,13 +25,14 @@ const CustomErrorsSettings = ({
   getRelationFields,
   formType,
   height,
-  languages,
+
+  mainForm,
 }) => {
   const authStore = store.getState().auth;
-  const { appId, slug, id } = useParams();
-  const [loader, setLoader] = useState(false);
-  const [formLoader, setFormLoader] = useState(false);
   const queryClient = useQueryClient();
+  const { id } = useParams();
+  const [errorIds, setErrorIds] = useState(null);
+  const [languages, setLanguages] = useState(null);
 
   const { handleSubmit, control, reset, watch } = useForm({
     defaultValues: {
@@ -39,9 +40,45 @@ const CustomErrorsSettings = ({
       table_id: id,
     },
   });
-  const values = watch();
-  console.log("values", values);
-  console.log("languages", languages);
+
+  const fieldsList = useMemo(() => {
+    return mainForm.getValues("fields") ?? [];
+  }, []);
+
+  const getErrorIdOptions = (search, id) => {
+    constructorObjectService
+      .getList("object_builder.custom_error", {
+        data: {
+          limit: 10,
+          search: search,
+          view_fields: ["title"],
+          additional_request: {
+            additional_field: "guid",
+            additional_values: [id],
+          },
+        },
+      })
+      .then((res) => {
+        setErrorIds(res.data?.response);
+      });
+  };
+  const getLanguageOptions = (search, id) => {
+    constructorObjectService
+      .getList("setting.languages", {
+        data: {
+          limit: 10,
+          search: search,
+          view_fields: ["name"],
+          additional_request: {
+            additional_field: "guid",
+            additional_values: [id],
+          },
+        },
+      })
+      .then((res) => {
+        setLanguages(res.data?.response);
+      });
+  };
 
   const computedLanguageOptions = useMemo(() => {
     return languages?.map((item) => ({
@@ -50,16 +87,12 @@ const CustomErrorsSettings = ({
     }));
   }, [languages]);
 
-  console.log("computedLanguageOptions", computedLanguageOptions);
-
-  const updateRelations = async () => {
-    setLoader(true);
-
-    await getRelationFields();
-
-    closeSettingsBlock(null);
-    setLoader(false);
-  };
+  const computedErrorIdsOptions = useMemo(() => {
+    return errorIds?.map((item) => ({
+      value: item.guid,
+      label: item.title,
+    }));
+  }, [errorIds]);
 
   const { mutate: create, isLoading: createLoading } =
     useCustomErrorCreateMutation({
@@ -78,52 +111,11 @@ const CustomErrorsSettings = ({
     });
 
   const submitHandler = (values) => {
-    // const data = {
-    //   ...values,
-    //   relation_table_slug: slug,
-    //   // compute columns
-    //   columns: values.columnsList
-    //     ?.filter((el) => el.is_checked)
-    //     ?.map((el) => el.id),
-
-    //   // compute filters
-    //   quick_filters: values.filtersList
-    //     ?.filter((el) => el.is_checked)
-    //     ?.map((el) => ({
-    //       field_id: el.id,
-    //       default_value: "",
-    //     })),
-
-    //   // compute default value
-    //   default_values: values?.default_values
-    //     ? Array.isArray(values.default_values)
-    //       ? values.default_values
-    //       : [values.default_values]
-    //     : [],
-    // };
-
-    // delete data?.field_name;
-    // delete data?.formula_name;
-
-    setFormLoader(true);
-
     if (formType === "CREATE") {
-      // constructorRelationService
-      //   .create(values)
-      //   .then((res) => {
-      //     updateRelations();
-      //   })
-      //   .finally(() => setFormLoader(false));
       create({
         ...values,
       });
     } else {
-      // constructorRelationService
-      //   .update(values)
-      //   .then((res) => {
-      //     updateRelations();
-      //   })
-      //   .finally(() => setFormLoader(false));
       update({
         ...values,
       });
@@ -132,6 +124,8 @@ const CustomErrorsSettings = ({
 
   useEffect(() => {
     if (formType === "CREATE") return;
+    getLanguageOptions(undefined, customError?.language_id);
+    getErrorIdOptions(undefined, customError?.error_id);
     reset({
       ...customError,
     });
@@ -173,16 +167,43 @@ const CustomErrorsSettings = ({
                 required
               />
             </FRow>
-            <FRow label="Error id" required>
-              <HFTextField
+            <Divider className="my-1" />
+
+            <h2>Fields list:</h2>
+
+            {fieldsList.map((field) => (
+              <div>
+                {field.label} - <strong>{field.slug}</strong>{" "}
+              </div>
+            ))}
+
+            <Divider className="my-1" />
+            <FRow label="Error id">
+              <HFAutocomplete
                 name="error_id"
                 control={control}
                 placeholder="Type Error id"
                 fullWidth
-                required
+                options={computedErrorIdsOptions}
+                onFieldChange={(e) => {
+                  getErrorIdOptions(e.target.value);
+                }}
               />
             </FRow>
             <FRow label="Languages" required>
+              <HFAutocomplete
+                name="language_id"
+                control={control}
+                placeholder="Type language"
+                fullWidth
+                required
+                options={computedLanguageOptions}
+                onFieldChange={(e) => {
+                  getLanguageOptions(e.target.value);
+                }}
+              />
+            </FRow>
+            {/* <FRow label="Languages" required>
               <HFSelect
                 name="language_id"
                 control={control}
@@ -191,7 +212,7 @@ const CustomErrorsSettings = ({
                 autoFocus
                 required
               />
-            </FRow>
+            </FRow> */}
             <FRow label="Action type" required>
               <HFSelect
                 name="action_type"

@@ -281,9 +281,11 @@ const ConstructorTablesFormPage = () => {
               <Actions mainForm={mainForm} />
             </TabPanel>
           )}
-          <TabPanel>
-            <CustomErrors mainForm={mainForm} />
-          </TabPanel>
+          {id && (
+            <TabPanel>
+              <CustomErrors mainForm={mainForm} />
+            </TabPanel>
+          )}
           {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
         </Tabs>
       </div>

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Controller } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { InputAdornment, TextField, Tooltip } from "@mui/material";
 
@@ -29,7 +29,7 @@ const InventoryBarCode = ({
 }) => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const { id } = useParams();
   const [elmValue, setElmValue] = useState("");
   const time = useRef();
@@ -44,9 +44,13 @@ const InventoryBarCode = ({
         },
       })
       .then((res) => {
-        if (res === "Updated successfully!") {
-          dispatch(showAlert("Успешно обновлено!", "success"));
-        }
+        dispatch(showAlert("Успешно!", "success"));
+
+        navigate("/reloadRelations", {
+          state: {
+            redirectUrl: window.location.pathname
+          },
+        });
       })
       .finally(() => {
         // setFormValue(name, "");

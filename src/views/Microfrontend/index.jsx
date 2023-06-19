@@ -14,7 +14,7 @@ const Microfrontend = () => {
   const { microfrontendId } = useParams()  
 
   const { data, isLoading } = useQuery(
-    ["GET_MICROFRONTEND_BY_ID"],
+    ["GET_MICROFRONTEND_BY_ID", microfrontendId],
     () => {
       return microfrontendService.getById(microfrontendId);
     }

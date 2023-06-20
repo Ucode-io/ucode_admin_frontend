@@ -33,6 +33,7 @@ import Actions from "./Actions";
 import { generateGUID } from "../../../../utils/generateID";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import CustomErrors from "./CustomErrors";
+import layoutService from "../../../../services/layoutService";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -208,7 +209,14 @@ const ConstructorTablesFormPage = () => {
       table_slug: data.slug,
     });
 
-    Promise.all([updateTableData, updateSectionData, updateViewRelationsData])
+    const updateLayoutData = layoutService.update({
+      layouts: data.layouts,
+      table_id: id,
+      project_id: projectId,
+    });
+
+
+    Promise.all([updateTableData, updateSectionData, updateViewRelationsData, updateLayoutData])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
         navigate(-1);
@@ -221,6 +229,7 @@ const ConstructorTablesFormPage = () => {
       ...data,
       sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
+      layouts: data.layouts,
     };
 
     // return;

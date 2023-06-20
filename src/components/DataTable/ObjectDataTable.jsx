@@ -34,6 +34,7 @@ const ObjectDataTable = ({
   onPaginationChange = () => {},
   pagesCount = 1,
   columns = [],
+  relatedTableSlug,
   watch,
   control,
   setFormValue,
@@ -58,6 +59,7 @@ const ObjectDataTable = ({
   relationAction,
   onChecked,
   defaultLimit,
+  title,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -313,7 +315,7 @@ const ObjectDataTable = ({
           ))}
 
           <PermissionWrapperV2
-            tabelSlug={tableSlug}
+            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
             type={["update", "delete"]}
           >
             {(onDeleteClick || onEditClick) && (
@@ -326,6 +328,7 @@ const ObjectDataTable = ({
         loader={loader}
         columnsCount={columns.length}
         dataLength={dataLength || data?.length}
+        title={title}
       >
         {(isRelationTable ? fields : data)?.map((row, rowIndex) => (
           <TableRow
@@ -336,6 +339,8 @@ const ObjectDataTable = ({
             row={row}
             formVisible={formVisible}
             rowIndex={rowIndex}
+            isRelationTable={isRelationTable}
+            relatedTableSlug={relatedTableSlug}
             onRowClick={onRowClick}
             isChecked={isChecked}
             onCheckboxChange={onCheckboxChange}
@@ -352,6 +357,7 @@ const ObjectDataTable = ({
             relationAction={relationAction}
             onChecked={onChecked}
             relationFields={fields}
+            data={data}
           />
         ))}
         {!!summaries?.length && (

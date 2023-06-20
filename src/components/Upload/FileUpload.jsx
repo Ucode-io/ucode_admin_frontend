@@ -2,11 +2,12 @@ import AddCircleOutlineIcon from "@mui/icons-material/Upload";
 import { useState } from "react";
 import { useRef } from "react";
 import ImageViewer from "react-simple-image-viewer";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, InputAdornment, Tooltip } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import "./Gallery/style.scss";
 import fileService from "../../services/fileService";
 import DownloadIcon from "@mui/icons-material/Download";
+import { Lock } from "@mui/icons-material";
 
 const FileUpload = ({
   value,
@@ -75,11 +76,29 @@ const FileUpload = ({
         <div
           className="add-block block"
           onClick={() => inputRef.current.click()}
+          style={
+            disabled
+              ? {
+                  background: "#c0c0c039",
+                }
+              : {
+                background: "inherit",
+                color: "inherit",
+                }
+          }
         >
           <div className="add-icon">
             {!loading ? (
               <>
-                <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
+                {disabled ? (
+                  <Tooltip title="This field is disabled for this role!">
+                    <InputAdornment position="start">
+                      <Lock style={{ fontSize: "20px" }} />
+                    </InputAdornment>
+                  </Tooltip>
+                ) : (
+                  <AddCircleOutlineIcon style={{ fontSize: "35px" }} />
+                )}
                 {/* <p>Max size: 4 MB</p> */}
               </>
             ) : (

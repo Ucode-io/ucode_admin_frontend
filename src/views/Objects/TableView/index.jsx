@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 
 import constructorObjectService from "../../../services/constructorObjectService";
@@ -16,6 +16,7 @@ import layoutService from "../../../services/layoutService";
 import applicationService from "../../../services/applicationService";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import { store } from "../../../store";
+import { mergeStringAndState } from "../../../utils/jsonPath";
 
 const TableView = ({
   tab,
@@ -36,6 +37,7 @@ const TableView = ({
 }) => {
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
+  const navigate = useNavigate();
   const { tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
@@ -70,6 +72,7 @@ const TableView = ({
         shouldGet,
       },
     ],
+
     queryFn: () => {
       return constructorObjectService.getList(tableSlug, {
         data: {
@@ -87,7 +90,9 @@ const TableView = ({
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
+        pageCount: isNaN(res.data?.count)
+          ? 1
+          : Math.ceil(res.data?.count / limit),
       };
     },
   });
@@ -122,9 +127,10 @@ const TableView = ({
     }
   }, [tableData, reset]);
 
-  const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
-    tableSlug,
-  });
+  const { data: { custom_events: customEvents = [] } = {} } =
+    useCustomActionsQuery({
+      tableSlug,
+    });
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -151,27 +157,48 @@ const TableView = ({
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
+          layout.type === "PopupLayout"
+            ? setLayoutType("PopupLayout")
+            : setLayoutType("SimpleLayout");
         });
       });
   }, [menuItem.id]);
 
   const navigateToEditPage = (row) => {
-    if (layoutType === "PopupLayout") {
-      setOpen(true);
+    if (view?.navigate?.params?.length || view?.navigate?.url) {
+      const params = view.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&&");
+      const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
+      navigate(result);
     } else {
       navigateToForm(tableSlug, "EDIT", row);
     }
   };
 
-  console.log("sssssssss", layoutType);
+  useEffect(() => {
+    refetch();
+  }, [view?.quick_filters?.length]);
 
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
+      {(view?.quick_filters?.length > 0 ||
+        (new_list[tableSlug] &&
+          new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>{t("filters")}</p>
-          <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
+          <FastFilter
+            view={view}
+            fieldsMap={fieldsMap}
+            getFilteredFilterFields={getFilteredFilterFields}
+            isVertical
+          />
         </div>
       )}
       <ObjectDataTable

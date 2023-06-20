@@ -1,47 +1,59 @@
-import { Add, Delete } from "@mui/icons-material"
-import { useFieldArray, useWatch } from "react-hook-form"
-import { generateID } from "../../utils/generateID"
-import RectangleIconButton from "../Buttons/RectangleIconButton"
-import HFColorPicker from "../FormElements/HFColorPicker"
-import HFIconPicker from "../FormElements/HFIconPicker"
-import HFTextField from "../FormElements/HFTextField"
-import styles from "./style.module.scss"
+import { Add, Delete } from "@mui/icons-material";
+import { useFieldArray, useWatch } from "react-hook-form";
+import { generateID } from "../../utils/generateID";
+import RectangleIconButton from "../Buttons/RectangleIconButton";
+import HFColorPicker from "../FormElements/HFColorPicker";
+import HFIconPicker from "../FormElements/HFIconPicker";
+import HFTextField from "../FormElements/HFTextField";
+import styles from "./style.module.scss";
+import DeleteWrapperModal from "../DeleteWrapperModal";
 
 const SelectOptionsCreator = ({ control, name }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name,
-    keyName: "key"
-  })
-  
+    keyName: "key",
+  });
+
   const hasIcon = useWatch({
     control,
-    name: 'attributes.has_icon',
-  })
-  
+    name: "attributes.has_icon",
+  });
+
   const hasColor = useWatch({
     control,
-    name: 'attributes.has_color',
-  })
+    name: "attributes.has_color",
+  });
 
   const addNewOption = () => {
     const newOption = {
       id: generateID(),
-      value: '',
-      icon: '',
-      color: ''
-    }
-    append(newOption)
-  }
+      value: "",
+      icon: "",
+      color: "",
+    };
+    append(newOption);
+  };
 
   return (
-    <div className={styles.wrapper} >
+    <div className={styles.wrapper}>
       {Boolean(fields?.length) && (
         <div className={styles.block}>
           {fields.map((field, index) => (
             <div className={styles.row} key={field.id}>
-              {hasColor && <HFColorPicker control={control} name={`${name}[${index}].color`} />}
-              {hasIcon && <HFIconPicker shape="rectangle" control={control} name={`${name}[${index}].icon`} />}
+              {hasColor && (
+                <HFColorPicker
+                  control={control}
+                  name={`${name}[${index}].color`}
+                />
+              )}
+              {hasIcon && (
+                <HFIconPicker
+                  shape="rectangle"
+                  control={control}
+                  name={`${name}[${index}].icon`}
+                />
+              )}
               <HFTextField
                 placeholder={`Option ${index + 1} label`}
                 disabledHelperText
@@ -73,7 +85,7 @@ const SelectOptionsCreator = ({ control, name }) => {
         Add Options
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SelectOptionsCreator
+export default SelectOptionsCreator;

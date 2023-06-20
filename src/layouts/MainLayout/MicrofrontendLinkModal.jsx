@@ -82,7 +82,6 @@ const MicrofrontendLinkModal = ({ closeModal, loading, selectedFolder }) => {
       value: item.id,
     }));
   }, [list]);
-  console.log("microfrontendOptions", microfrontendOptions);
 
   return (
     <div>

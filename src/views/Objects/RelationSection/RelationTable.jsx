@@ -55,12 +55,21 @@ const RelationTable = forwardRef(
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState();
     const isPermissions = useSelector((state) => state?.auth?.permissions);
+    const rowClickType = relation?.action_relations?.find(
+      (item) => item.key === "click"
+    );
     const filterChangeHandler = (value, name) => {
       setFilters({
         ...filters,
         [name]: value ?? undefined,
       });
     };
+
+    useEffect(() => {
+      if (relation?.default_editable) {
+        setFormVisible(true);
+      }
+    }, [relation?.default_editable]);
 
     const onCheckboxChange = (val, row) => {
       if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -132,9 +141,10 @@ const RelationTable = forwardRef(
         enabled: !!relatedTableSlug && !!appId,
         select: ({ data }) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
-          const pageCount = isNaN(data.count)
-            ? 1
-            : Math.ceil(data.count / limit);
+          const pageCount =
+            isNaN(data?.count) || tableData.length === 0
+              ? 1
+              : Math.ceil(data.count / limit);
           setDataLength(tableData.length);
 
           const fieldsMap = listToMap(data.fields);
@@ -202,7 +212,10 @@ const RelationTable = forwardRef(
       });
 
     const navigateToEditPage = (row) => {
+      // if (rowClickType.value === "detail_page") {
       navigateToForm(relatedTableSlug, "EDIT", row);
+      // } else {
+      // }
     };
 
     const navigateToTablePage = () => {
@@ -282,6 +295,8 @@ const RelationTable = forwardRef(
               columns={columns}
               setFormValue={setFormValue}
               control={control}
+              relatedTableSlug={relatedTableSlug}
+              tableSlug={tableSlug}
               removableHeight={290}
               disableFilters
               pagesCount={pageCount}
@@ -308,6 +323,7 @@ const RelationTable = forwardRef(
               isChecked={(row) => selectedObjects?.includes(row.guid)}
               onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}
+              title={"Сначала нужно создать объект"}
             />
           ) : (
             ""

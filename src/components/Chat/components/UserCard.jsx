@@ -5,7 +5,6 @@ import styles from "../index.module.scss";
 const UserCard = ({ item, idx, setOnRequest, updateArrayFunc }) => {
   const navigate = useNavigate();
   const { appId } = useParams();
-  console.log("item", item);
   return (
     <Box
       className={styles.card}

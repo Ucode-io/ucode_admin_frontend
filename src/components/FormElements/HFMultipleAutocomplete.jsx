@@ -1,13 +1,5 @@
-import { Close } from "@mui/icons-material";
-import {
-  Autocomplete,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  TextField,
-  Dialog,
-  createFilterOptions,
-} from "@mui/material";
+import { Close, Lock } from "@mui/icons-material";
+import { Autocomplete, FormControl, FormHelperText, InputLabel, TextField, Dialog, createFilterOptions, Tooltip, InputAdornment } from "@mui/material";
 import { useState } from "react";
 import { useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -67,10 +59,7 @@ const HFMultipleAutocomplete = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({
-        field: { onChange: onFormChange, value },
-        fieldState: { error },
-      }) => {
+      render={({ field: { onChange: onFormChange, value }, fieldState: { error } }) => {
         return (
           <AutoCompleteElement
             value={value}
@@ -130,12 +119,7 @@ const AutoCompleteElement = ({
   const computedValue = useMemo(() => {
     if (!value?.length) return [];
 
-    if (isMultiSelect)
-      return (
-        value?.map((el) =>
-          localOptions?.find((option) => option.value === el)
-        ) ?? []
-      );
+    if (isMultiSelect) return value?.map((el) => localOptions?.find((option) => option.value === el)) ?? [];
     else return [localOptions?.find((option) => option.value === value[0])];
   }, [value, localOptions, isMultiSelect]);
 
@@ -165,13 +149,7 @@ const AutoCompleteElement = ({
         multiple
         value={computedValue}
         options={localOptions}
-        popupIcon={
-          isBlackBg ? (
-            <ArrowDropDownIcon style={{ color: "#fff" }} />
-          ) : (
-            <ArrowDropDownIcon />
-          )
-        }
+        popupIcon={isBlackBg ? <ArrowDropDownIcon style={{ color: "#fff" }} /> : <ArrowDropDownIcon />}
         getOptionLabel={(option) => option?.label ?? option?.value}
         isOptionEqualToValue={(option, value) => option?.value === value?.value}
         onChange={changeHandler}
@@ -198,9 +176,24 @@ const AutoCompleteElement = ({
               classes: {
                 input: isBlackBg ? classes.input : "",
               },
-              style: { background: isBlackBg ? "#2A2D34" : "" },
+              style: disabled
+                ? {
+                    background: "#c0c0c039"
+                  }
+                : {
+                    background: isBlackBg ? "#2A2D34" : "inherit",
+                    color: isBlackBg ? "#fff" : "inherit",
+                  },
+
+              endAdornment: disabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
             }}
-            className={isFormEdit ? "custom_textfield" : ""}
+            className={`${isFormEdit ? "custom_textfield" : ""} multiSelectInput`}
             size="small"
           />
         )}
@@ -209,38 +202,18 @@ const AutoCompleteElement = ({
         renderTags={(values, getTagProps) => (
           <div className={styles.valuesWrapper}>
             {values?.map((el, index) => (
-              <div
-                key={el?.value}
-                className={styles.multipleAutocompleteTags}
-                style={
-                  hasColor
-                    ? { color: el?.color, background: `${el?.color}30` }
-                    : {}
-                }
-              >
+              <div key={el?.value} className={styles.multipleAutocompleteTags} style={hasColor ? { color: el?.color, background: `${el?.color}30` } : {}}>
                 {hasIcon && <IconGenerator icon={el?.icon} />}
                 <p className={styles.value}>{el?.label ?? el?.value}</p>
-                {field?.attributes?.disabled === false && editPermission && (
-                  <Close
-                    fontSize="10"
-                    onClick={getTagProps({ index })?.onDelete}
-                  />
-                )}
+                {field?.attributes?.disabled === false && editPermission && <Close fontSize="10" onClick={getTagProps({ index })?.onDelete} />}
               </div>
             ))}
           </div>
         )}
       />
-      {!disabledHelperText && error?.message && (
-        <FormHelperText error>{error?.message}</FormHelperText>
-      )}
+      {!disabledHelperText && error?.message && <FormHelperText error>{error?.message}</FormHelperText>}
       <Dialog open={!!dialogState} onClose={handleClose}>
-        <AddOptionBlock
-          dialogState={dialogState}
-          addNewOption={addNewOption}
-          handleClose={handleClose}
-          field={field}
-        />
+        <AddOptionBlock dialogState={dialogState} addNewOption={addNewOption} handleClose={handleClose} field={field} />
       </Dialog>
     </FormControl>
   );
@@ -295,9 +268,7 @@ const AddOptionBlock = ({ field, dialogState, handleClose, addNewOption }) => {
           <h4>Color</h4>
         </div>
         <div className={styles.icon_picker}>
-          {hasIcon && (
-            <HFIconPicker shape="rectangle" control={control} name="icon" />
-          )}
+          {hasIcon && <HFIconPicker shape="rectangle" control={control} name="icon" />}
           <h4>Icon</h4>
         </div>
       </div>

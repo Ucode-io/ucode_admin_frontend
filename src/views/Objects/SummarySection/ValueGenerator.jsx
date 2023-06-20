@@ -1,6 +1,4 @@
-import { get } from "@ngard/tiny-get";
-import React, { memo, useMemo } from "react";
-import { getRelationFieldTableCellLabel } from "../../../utils/getRelationFieldLabel";
+import React, { useEffect, useState } from "react";
 import { numberWithSpaces } from "../../../utils/formatNumbers";
 import { parseBoolean } from "../../../utils/parseBoolean";
 import { formatDate } from "../../../utils/dateFormatter";
@@ -9,12 +7,30 @@ import MultiselectCellColoredElement from "../../../components/ElementGenerators
 import IconGenerator from "../../../components/IconPicker";
 import LogoDisplay from "../../../components/LogoDisplay";
 import { useWatch } from "react-hook-form";
+import constructorObjectService from "../../../services/constructorObjectService";
 
 function ValueGenerator({ field, control }) {
+  const [data, setData] = useState();
+
   const value = useWatch({
     control,
     name: field.slug,
   });
+
+  useEffect(() => {
+    if (field?.id.includes("#")) {
+      constructorObjectService
+        .getById(field?.id.split("#")[0], value)
+        .then((res) => {
+          setData(res?.data?.response);
+        });
+    }
+  }, [value]);
+
+  const view = field?.attributes?.view_fields;
+
+  const computedSlug = view?.find((item) => item).slug;
+
   switch (field.type) {
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;
@@ -81,7 +97,7 @@ function ValueGenerator({ field, control }) {
 
     default:
       if (typeof value === "object") return JSON.stringify(value);
-      return value;
+      return data?.[computedSlug] || value;
   }
 }
 

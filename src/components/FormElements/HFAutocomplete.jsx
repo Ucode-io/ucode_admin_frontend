@@ -9,12 +9,14 @@ const HFAutocomplete = ({
   isBlackBg,
   label,
   tabIndex,
+  disabled,
   width = "100%",
   options = [],
   disabledHelperText,
   placeholder,
   required = false,
   onChange = () => {},
+  onFieldChange = () => {},
   rules = {},
   defaultValue = null,
   ...props
@@ -48,11 +50,13 @@ const HFAutocomplete = ({
             <CAutoCompleteSelect
               value={value}
               tabIndex={tabIndex}
+              disabled={disabled}
               isBlackBg={isBlackBg}
               onChange={(val) => {
                 onChange(val?.value);
                 onFormChange(val?.value);
               }}
+              onFieldChange={onFieldChange}
               options={computedOptions}
             />
             {!disabledHelperText && error?.message && (

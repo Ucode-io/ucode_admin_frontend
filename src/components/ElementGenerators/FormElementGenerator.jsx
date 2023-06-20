@@ -65,9 +65,7 @@ const FormElementGenerator = ({
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
 
-    const defaultValue = field.attributes?.defaultValue
-      ? field.attributes?.defaultValue
-      : field.attributes?.default_values;
+    const defaultValue = field.attributes?.defaultValue ? field.attributes?.defaultValue : field.attributes?.default_values;
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
@@ -179,6 +177,25 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
+      
+      case "INTERNATIONAL_PHONE":
+        return (
+          <FRow label={field.label} required={field.required}>
+            <HFInternationPhone
+              control={control}
+              name={computedSlug}
+              tabIndex={field?.tabIndex}
+              fullWidth
+              required={field.required}
+              placeholder={field.attributes?.placeholder}
+              mask={"(99) 999-99-99"}
+              defaultValue={defaultValue}
+              disabled={isDisabled}
+              {...props}
+            />
+          </FRow>
+        );
+  
 
     case "INTERNATION_PHONE":
       return (
@@ -504,7 +521,7 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
-
+      
     case "CUSTOM_IMAGE":
       return (
         <FRow label={field.label} required={field.required}>

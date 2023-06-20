@@ -145,7 +145,7 @@ const AppsPage = () => {
                   </RectangleIconButton>
                 </CTableCell>
                 <PermissionWrapperV2 tabelSlug="app" type="delete">
-                  <PermissionWrapperApp permission={element.permission.delete}>
+                  <PermissionWrapperApp permission={element.permission?.delete}>
                     <CTableCell>
                       <DeleteWrapperModal
                         id={element.id}

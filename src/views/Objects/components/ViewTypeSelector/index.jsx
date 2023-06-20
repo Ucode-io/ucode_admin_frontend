@@ -198,6 +198,7 @@ const ViewTabSelector = ({
       >
         <ViewSettings
           closeModal={closeModal}
+          isChanged={isChanged}
           setIsChanged={setIsChanged}
           viewData={selectedView}
           typeNewView={typeNewView}

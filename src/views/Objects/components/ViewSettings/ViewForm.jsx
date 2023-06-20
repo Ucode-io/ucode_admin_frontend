@@ -1,4 +1,4 @@
-import { Delete, FilterAlt, JoinInner, TableChart } from "@mui/icons-material";
+import { Delete, FilterAlt, JoinInner, TableChart, AltRoute } from "@mui/icons-material";
 import InfoIcon from "@mui/icons-material/Info";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,25 +24,42 @@ import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import ChartAccounts from "./ChartAccounts";
 import ChartAccountsWrapper from "@/views/Objects/components/ViewSettings/ChartAccountsWrapper";
 import constructorFieldService from "@/services/constructorFieldService";
+import HFSwitch from "../../../../components/FormElements/HFSwitch";
+import NavigateSettings from "./NavigateSettings";
 
-const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsChanged, closeModal, columns, relationColumns }) => {
+const ViewForm = ({
+  initialValues,
+  typeNewView,
+  closeForm,
+  refetchViews,
+  setIsChanged,
+  closeModal,
+  columns,
+  relationColumns,
+}) => {
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
+  console.log('initialValues', initialValues);
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
-  const relationObjValue = initialValues?.attributes?.balance?.table_slug + "#" + initialValues?.attributes?.balance?.table_id;
-  const numberFieldValue = initialValues?.attributes?.balance?.field_slug + "#" + initialValues?.attributes?.balance?.field_id;
+  const navigate = initialValues?.navigate;
+  const relationObjValue =
+    initialValues?.attributes?.balance?.table_slug +
+    "#" +
+    initialValues?.attributes?.balance?.table_id;
+  const numberFieldValue =
+    initialValues?.attributes?.balance?.field_slug +
+    "#" +
+    initialValues?.attributes?.balance?.field_id;
   const financialFiledId = initialValues?.attributes?.percent?.field_id;
   const form = useForm();
   const type = form.watch("type");
   const relationObjInput = form.watch("relation_obj");
   const numberFieldInput = form.watch("number_field");
-  console.log("relationObjInput", relationObjInput);
-  console.log("numberFieldInput", numberFieldInput);
-
+  console.log('navigate', navigate);
   useEffect(() => {
     if (relationObjInput && numberFieldInput) {
       setIsBalanceExist(true);
@@ -104,7 +121,19 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
 
   useEffect(() => {
     form.reset({
-      ...getInitialValues(initialValues, tableSlug, columns, typeNewView, relationColumns, financialValues, financialTypee, financialFiledId, relationObjValue, numberFieldValue),
+      ...getInitialValues(
+        initialValues,
+        tableSlug,
+        columns,
+        typeNewView,
+        relationColumns,
+        financialValues,
+        financialTypee,
+        financialFiledId,
+        relationObjValue,
+        numberFieldValue,
+        navigate
+      ),
       filters: [],
     });
   }, [initialValues, tableSlug, form, typeNewView]);
@@ -121,7 +150,15 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
       ?.map((el) => ({ field_id: el.id }));
 
     // form.setValue('columns', computeColumns(formColumns, computedColumns))
-    form.setValue("quick_filters", computeQuickFilters(formQuickFilters, type === "CALENDAR" || type === "GANTT" ? [...columns, ...relationColumns] : columns));
+    form.setValue(
+      "quick_filters",
+      computeQuickFilters(
+        formQuickFilters,
+        type === "CALENDAR" || type === "GANTT"
+          ? [...columns, ...relationColumns]
+          : columns
+      )
+    );
   }, [type, form]);
 
   const onSubmit = (values) => {
@@ -144,7 +181,6 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
       constructorViewService
         .create(computedValues)
         .then(() => {
-          closeForm();
           refetchViews();
           setIsChanged(true);
         })
@@ -155,7 +191,6 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
       constructorViewService
         .update(computedValues)
         .then(() => {
-          closeForm();
           refetchViews();
           setIsChanged(true);
         })
@@ -163,7 +198,6 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
           setBtnLoader(false);
         });
     }
-    closeForm();
   };
 
   const deleteView = () => {
@@ -176,18 +210,37 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
       })
       .catch(() => setDeleteBtnLoader(false));
   };
-
+  
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
         <Tabs>
           <div className={styles.section}>
-            <TabList style={{marginBottom: '1px'}}>
-              <Tab>Information</Tab>
-              <Tab>Quick filters</Tab>
-              <Tab>Columns</Tab>
-              {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
-              {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
+            <TabList>
+              <Tab>
+                <InfoIcon /> Info
+              </Tab>
+              <Tab>
+                <FilterAlt /> Quick filters
+              </Tab>
+              <Tab>
+                <TableChart />
+                Columns
+              </Tab>
+              <Tab>
+                <AltRoute />
+                Navigation
+              </Tab>
+              {type !== "FINANCE CALENDAR" && (
+                <Tab>
+                  <JoinInner /> Group by
+                </Tab>
+              )}
+              {type === "FINANCE CALENDAR" && (
+                <Tab>
+                  <MonetizationOnIcon /> Chart of accaunts
+                </Tab>
+              )}
             </TabList>
             <TabPanel>
               <div className={styles.section}>
@@ -204,14 +257,26 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
 
                   <div className={styles.formRow}>
                     <FRow label="Тип">
-                      <HFSelect options={computedViewTypes} defaultValue={typeNewView} control={form.control} name="type" fullWidth />
+                      <HFSelect
+                        options={computedViewTypes}
+                        defaultValue={typeNewView}
+                        control={form.control}
+                        name="type"
+                        fullWidth
+                      />
                     </FRow>
                   </div>
-                  <div className={styles.formRow}>
-                    <FRow label="Default limit">
-                      <HFTextField control={form.control} fullWidth name="default_limit" />
-                    </FRow>
-                  </div>
+                  <FRow label="Default limit">
+                    <HFTextField control={form.control} name="default_limit" />
+                  </FRow>
+                  <FRow label="Изменение по умолчанию">
+                    <HFSwitch
+                      control={form.control}
+                      name="default_editable"
+                      required
+                      value={form.watch("default_editable")}
+                    />
+                  </FRow>
                 </div>
               </div>
 
@@ -229,6 +294,9 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
             <TabPanel>
               <ColumnsTab form={form} />
             </TabPanel>
+            <TabPanel>
+              <NavigateSettings form={form} />
+            </TabPanel>
             {type !== "FINANCE CALENDAR" && (
               <TabPanel>
                 <GroupsTab columns={computedColumns} form={form} />
@@ -242,8 +310,15 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
       </div>
 
       <div className={styles.formFooter}>
-        {initialValues !== "NEW" && <CancelButton loading={deleteBtnLoader} onClick={deleteView} title={"Delete"} icon={<Delete />} />}
-        <CancelButton onClick={closeModal} />
+        {initialValues !== "NEW" && (
+          <CancelButton
+            loading={deleteBtnLoader}
+            onClick={deleteView}
+            title={"Delete"}
+            icon={<Delete />}
+          />
+        )}
+        {/* <CancelButton onClick={closeModal} /> */}
         <SaveButton onClick={form.handleSubmit(onSubmit)} loading={btnLoader} />
       </div>
     </div>
@@ -260,8 +335,10 @@ const getInitialValues = (
   financialTypee,
   financialFiledId,
   relationObjValue,
-  numberFieldValue
+  numberFieldValue,
+  navigate
 ) => {
+  console.log('navigate', navigate);
   if (initialValues === "NEW")
     return {
       type: typeNewView,
@@ -280,6 +357,12 @@ const getInitialValues = (
       columns: columns?.map((el) => ({ ...el, is_checked: true })) ?? [],
       quick_filters: columns ?? [],
       group_fields: [],
+      navigate: {
+        params: [],
+        url: '',
+        headers: [],
+        cookies: []
+      },
       table_slug: tableSlug,
       updated_fields: [],
       multiple_insert: false,
@@ -306,6 +389,12 @@ const getInitialValues = (
       initialValues?.group_fields,
       initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT" ? [...columns, ...relationColumns] : columns
     ),
+    navigate: {
+      params: navigate?.params,
+      url: navigate?.url,
+      headers: [],
+      cookies: []
+    }, 
     table_slug: tableSlug,
     id: initialValues?.id,
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",
@@ -330,7 +419,8 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
         ...columns.find((el) => el.id === id),
         is_checked: true,
       })) ?? [];
-  const unselectedColumns = columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+  const unselectedColumns =
+    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
   return [...selectedColumns, ...unselectedColumns];
 };
 
@@ -367,12 +457,19 @@ const computeQuickFilters = (quickFilters = [], columns) => {
         ...filter,
         is_checked: true,
       })) ?? [];
-  const unselectedQuickFilters = columns?.filter((el) => !quickFilters?.find((filter) => filter.field_id === el.id)) ?? [];
+  const unselectedQuickFilters =
+    columns?.filter(
+      (el) => !quickFilters?.find((filter) => filter.field_id === el.id)
+    ) ?? [];
   return [...selectedQuickFilters, ...unselectedQuickFilters];
 };
 
 const computeGroupFields = (groupFields = [], columns) => {
-  return groupFields?.filter((groupFieldID) => columns?.some((column) => column.id === groupFieldID)) ?? [];
+  return (
+    groupFields?.filter((groupFieldID) =>
+      columns?.some((column) => column.id === groupFieldID)
+    ) ?? []
+  );
 };
 
 export default ViewForm;

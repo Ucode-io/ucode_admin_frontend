@@ -1,12 +1,13 @@
-import { Delete, Edit } from "@mui/icons-material"
-import { Collapse, Switch } from "@mui/material"
-import { useMemo, useState } from "react"
-import { useParams } from "react-router-dom"
-import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton"
-import CollapseIcon from "../../../../components/CollapseIcon"
-import CreateRow from "../../../../components/CreateRow"
-import CreateRowButton from "../../../../components/CreateRowButton"
-import permissionService from "../../../../services/auth/permissionService"
+import { Delete, Edit } from "@mui/icons-material";
+import { Collapse, Switch } from "@mui/material";
+import { useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
+import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
+import CollapseIcon from "../../../../components/CollapseIcon";
+import CreateRow from "../../../../components/CreateRow";
+import CreateRowButton from "../../../../components/CreateRowButton";
+import permissionService from "../../../../services/auth/permissionService";
+import DeleteWrapperModal from "../../../../components/DeleteWrapperModal";
 
 const PermissionsRecursiveBlock = ({
   permissions,
@@ -21,75 +22,75 @@ const PermissionsRecursiveBlock = ({
   selectedPermissions,
   disableActions,
 }) => {
-  const { platformId } = useParams()
-  const [createFormVisible, setCreateFormVisible] = useState(false)
-  const [editFormVisible, setEditFormVisible] = useState(false)
-  const [childBlockVisible, setChildBlockVisible] = useState(false)
-  const [formLoader, setFormLoader] = useState(false)
-  const [deleteLoader, setDeleteLoader] = useState(false)
+  const { platformId } = useParams();
+  const [createFormVisible, setCreateFormVisible] = useState(false);
+  const [editFormVisible, setEditFormVisible] = useState(false);
+  const [childBlockVisible, setChildBlockVisible] = useState(false);
+  const [formLoader, setFormLoader] = useState(false);
+  const [deleteLoader, setDeleteLoader] = useState(false);
 
   const computedPermissions = useMemo(() => {
-    return permissions.filter((el) => el.parent_id === permission.id)
-  }, [permissions, permission.id])
+    return permissions.filter((el) => el.parent_id === permission.id);
+  }, [permissions, permission.id]);
 
   const isActive = useMemo(() => {
-    return selectedPermission === permission.id
-  }, [selectedPermission, permission.id])
+    return selectedPermission === permission.id;
+  }, [selectedPermission, permission.id]);
 
   const rowClickHandler = () => {
-    setSelectedPermission(permission.id)
-  }
+    setSelectedPermission(permission.id);
+  };
 
   const createPermission = ({ title }) => {
-    setFormLoader(true)
+    setFormLoader(true);
 
     const data = {
       client_platform_id: platformId,
       name: title,
       parent_id: permission.id,
-    }
+    };
 
     permissionService
       .create(data)
       .then((res) => {
-        addPermission(res)
-        setCreateFormVisible(false)
-        setChildBlockVisible(true)
+        addPermission(res);
+        setCreateFormVisible(false);
+        setChildBlockVisible(true);
       })
-      .finally(() => setFormLoader(false))
-  }
+      .finally(() => setFormLoader(false));
+  };
 
   const updateHandler = ({ title }) => {
-    setFormLoader(true)
+    setFormLoader(true);
 
     const data = {
       ...permission,
       name: title,
-    }
+    };
 
     permissionService
       .update(data)
       .then((res) => {
-        updatePermission(res)
-        setEditFormVisible(false)
+        updatePermission(res);
+        setEditFormVisible(false);
       })
-      .finally(() => setFormLoader(false))
-  }
+      .finally(() => setFormLoader(false));
+  };
 
   const deleteHandler = () => {
-    setDeleteLoader(true)
+    setDeleteLoader(true);
 
     permissionService
       .delete(permission.id)
       .then(() => {
-        deletePermission(permission.id)
+        deletePermission(permission.id);
       })
-      .catch(() => setDeleteLoader(false))
-  }
+      .catch(() => setDeleteLoader(false));
+  };
 
   const isChecked = useMemo(() => {
-    return selectedPermissions?.includes(permission.id)
-  }, [selectedPermissions, permission.id])
+    return selectedPermissions?.includes(permission.id);
+  }, [selectedPermissions, permission.id]);
 
   return (
     <>
@@ -112,8 +113,8 @@ const PermissionsRecursiveBlock = ({
               style={{ opacity: computedPermissions?.length ? 1 : 0 }}
               isOpen={childBlockVisible}
               onClick={(e) => {
-                e.stopPropagation()
-                setChildBlockVisible((prev) => !prev)
+                e.stopPropagation();
+                setChildBlockVisible((prev) => !prev);
               }}
             />
             <div className="title">{permission.name}</div>
@@ -141,7 +142,10 @@ const PermissionsRecursiveBlock = ({
                   </RectangleIconButton>{" "}
                 </>
               ) : (
-                <Switch checked={isChecked} onChange={(_, val) => onSwitchChange(permission.id, val)} />
+                <Switch
+                  checked={isChecked}
+                  onChange={(_, val) => onSwitchChange(permission.id, val)}
+                />
               )}
             </div>
           </>
@@ -157,7 +161,7 @@ const PermissionsRecursiveBlock = ({
           setVisible={setCreateFormVisible}
         />
       </Collapse>
-        
+
       <Collapse in={childBlockVisible && !editFormVisible}>
         {computedPermissions.map((el) => (
           <PermissionsRecursiveBlock
@@ -177,7 +181,7 @@ const PermissionsRecursiveBlock = ({
         ))}
       </Collapse>
     </>
-  )
-}
+  );
+};
 
-export default PermissionsRecursiveBlock
+export default PermissionsRecursiveBlock;

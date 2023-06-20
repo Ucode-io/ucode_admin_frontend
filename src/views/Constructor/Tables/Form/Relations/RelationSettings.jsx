@@ -349,6 +349,7 @@ const RelationSettings = ({
               label={"Default editable"}
             />
             <HFSwitch control={control} name="creatable" label={"Creatable"} />
+            <HFSwitch control={control} name="relation_buttons" label={"Relation Buttons"} />
 
             {values.type === "Many2Many" && (
               <FRow label="Relate field type" required>

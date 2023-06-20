@@ -59,15 +59,15 @@ const InventoryBarCode = ({
       });
   };
 
-  // useDebouncedWatch(
-  //   () => {
-  //     if (elmValue.length >= field.attributes?.length && !field.attributes?.pressEnter && field.attributes?.automatic) {
-  //       sendRequestOpenFaas();
-  //     }
-  //   },
-  //   [elmValue],
-  //   300
-  // );
+  useDebouncedWatch(
+    () => {
+      if (elmValue.length >= field.attributes?.length && !field.attributes?.pressEnter && field.attributes?.automatic) {
+        sendRequestOpenFaas();
+      }
+    },
+    [elmValue],
+    300
+  );
 
   useEffect(() => {
     if (elmValue.length >= field.attributes?.length && !field.attributes?.pressEnter && field.attributes?.automatic) {

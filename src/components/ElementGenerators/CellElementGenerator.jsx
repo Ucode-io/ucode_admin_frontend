@@ -24,7 +24,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     return result;
   }, [row, field]);
-  
+
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {

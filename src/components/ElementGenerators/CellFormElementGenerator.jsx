@@ -21,6 +21,7 @@ import CellRelationFormElement from "./CellRelationFormElement";
 import HFFloatField from "../FormElements/HFFloatField";
 import FRow from "../FormElements/FRow";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
+import HFPassword from "../FormElements/HFPassword";
 
 const parser = new Parser();
 
@@ -82,7 +83,7 @@ const CellFormElementGenerator = ({
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [field, row, setFormValue, computedSlug]);
-
+  console.log('field', field);
   useEffect(() => {
     if (columns.length && changedValue !== undefined && changedValue !== null) {
       columns.forEach((i, rowIndex) => selectedRow.includes(i.guid) && setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue));
@@ -136,6 +137,23 @@ const CellFormElementGenerator = ({
           name={computedSlug}
           fullWidth
           required={field.required}
+          placeholder={field.attributes?.placeholder}
+          {...props}
+          defaultValue={defaultValue}
+        />
+      );
+    case "PASSWORD":
+      return (
+        <HFPassword
+          isDisabled={isDisabled}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          field={field}
+          required={field.required}
+          type='password'
           placeholder={field.attributes?.placeholder}
           {...props}
           defaultValue={defaultValue}

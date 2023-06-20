@@ -172,7 +172,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
   const navigate = useNavigate();
   const { appId } = useParams();
-  console.log("sssssssss", menuItem);
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;

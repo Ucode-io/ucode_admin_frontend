@@ -77,8 +77,6 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
 
   const {id} = useParams();
 
-  console.log('sssss222222', id)
-
   return (
     <Box sx={{ width: "100%", height: "100vh", background: "#fff" }}>
       <TableCard>

@@ -1,11 +1,12 @@
+
 // export const fieldTypes = [
 //   "SINGLE_LINE",
 //   "MULTI_LINE",
 //   "EMAIL",
 //   "PHONE",
-//   "INTERNATIONAL_PHONE",
 //   "PICK_LIST",
 //   "MULTISELECT",
+//   "MAP"
 //   "DATE",
 //   "DATE_TIME",
 //   "NUMBER",
@@ -30,6 +31,7 @@ export const fieldTypes = [
   "CHECKBOX",
   "EMAIL",
   "MULTISELECT",
+  "MAP",
   "SWITCH",
   "PHOTO",
   "PHONE",
@@ -136,16 +138,6 @@ export const fieldTypesOptions = [
       },
     ],
   },
-  {
-    label: "Map",
-    options: [
-      {
-        icon: "map-pin.svg",
-        label: "Map",
-        value: "MAP",
-      },
-    ],
-  },
 
   {
     label: "File",
@@ -208,7 +200,7 @@ export const fieldTypesOptions = [
       {
         icon: "phone.svg",
         label: "Internation Phone",
-        value: "INTERNATIONAL_PHONE",
+        value: "INTERNATION_PHONE",
       },
       {
         icon: "envelope.svg",

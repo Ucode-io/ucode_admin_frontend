@@ -72,7 +72,6 @@ const TableView = ({
         shouldGet,
       },
     ],
-
     queryFn: () => {
       return constructorObjectService.getList(tableSlug, {
         data: {

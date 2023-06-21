@@ -28,12 +28,17 @@ const useFilters = (tableSlug, viewId) => {
   )
 
   const filters = useMemo(() => {
-    const filterObject = { ...filtersFromLocation, ...filtersFromRedux }
+    const filterObject = { ...filtersFromLocation, ...filtersFromRedux };
     return Object.entries(filterObject).reduce(
-      (a, [k, v]) => (v ? ((a[k] = v), a) : a),
+      (a, [k, v]) => {
+        if (v !== undefined || v !== null) {
+          a[k] = v;
+        }
+        return a;
+      },
       {}
-    )
-  }, [filtersFromRedux, filtersFromLocation])
+    );
+  }, [filtersFromRedux, filtersFromLocation]);
 
   const dataFilters = useMemo(() => {
     const filterObject = { ...filtersFromLocation, ...filtersFromRedux }

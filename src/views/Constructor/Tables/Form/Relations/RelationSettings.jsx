@@ -1,3 +1,4 @@
+import listToOptions from "@/utils/listToOptions";
 import {
   Close,
   DragIndicator,
@@ -8,7 +9,7 @@ import {
 } from "@mui/icons-material";
 import { Checkbox, IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
@@ -20,22 +21,21 @@ import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import RingLoaderWithWrapper from "../../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
-import applicationService from "../../../../../services/applicationService";
+import constructorFunctionService from "../../../../../services/constructorFunctionService";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
+import constructorTableService from "../../../../../services/constructorTableService";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import { relationTyes } from "../../../../../utils/constants/relationTypes";
+import TableActions from "../Actions/TableActions";
 import AutoFiltersBlock from "./AutoFiltersBlock";
-import DefaultValueBlock from "./DefaultValueBlock";
-import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import CascadingRelationSettings from "./CascadingRelationSettings.jsx";
 import CascadingTreeBlock from "./CascadingTreeBlock";
-import styles from "./style.module.scss";
-import SummaryBlock from "./SummaryBlock";
-import { useSelector } from "react-redux";
-import listToOptions from "@/utils/listToOptions";
-import TableActions from "../Actions/TableActions";
+import DefaultValueBlock from "./DefaultValueBlock";
+import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import FunctionPath from "./FunctionPath";
+import SummaryBlock from "./SummaryBlock";
+import styles from "./style.module.scss";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
 
 const relationViewTypes = [
@@ -175,8 +175,8 @@ const RelationSettings = ({
     }));
   }, [values.columnsList]);
 
-  const { data: app } = useQuery(["GET_TABLE_LIST", appId], () => {
-    return applicationService.getById(appId);
+  const { data: app } = useQuery(["GET_TABLE_LIST"], () => {
+    return constructorTableService.getList();
   });
 
   const computedTablesList = useMemo(() => {

@@ -38,6 +38,7 @@ import Microfrontend from "../views/Microfrontend";
 import MicrofrontendPage from "../views/Constructor/Microfrontend";
 import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
 import WebPage from "../views/WebPage";
+import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -111,6 +112,9 @@ const Router = () => {
         <Route path=":appId/api-key" element={<ApiKeyPage />} />
         <Route path=":appId/api-key/create" element={<ApiKeysForm />} />
         <Route path=":appId/api-key/:apiKeyId" element={<ApiKeysForm />} />
+
+
+        <Route path=":appId/microfrontend-playground" element={<MicrofrontendPlayground />} />
 
         <Route
           path=":appId/page/:microfrontendId"

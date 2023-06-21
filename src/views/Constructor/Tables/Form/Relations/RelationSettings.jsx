@@ -36,7 +36,6 @@ import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import FunctionPath from "./FunctionPath";
 import SummaryBlock from "./SummaryBlock";
 import styles from "./style.module.scss";
-import constructorFunctionService from "../../../../../services/constructorFunctionService";
 
 const relationViewTypes = [
   {

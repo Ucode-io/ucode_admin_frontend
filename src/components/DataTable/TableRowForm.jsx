@@ -80,7 +80,7 @@ const TableRowForm = ({
             minWidth: "max-content",
           }}
         >
-          <CellFormElementGenerator
+          {/* <CellFormElementGenerator
             tableSlug={tableSlug}
             watch={watch}
             fields={columns}
@@ -91,7 +91,7 @@ const TableRowForm = ({
             setFormValue={setFormValue}
             relationfields={relationFields}
             data={data}
-          />
+          /> */}
         </CTableCell>
       ))}
       <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>

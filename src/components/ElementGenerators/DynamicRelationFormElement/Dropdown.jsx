@@ -32,7 +32,7 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
     search: searchText,
   };
 
-  const { data: objectsList, isLoading: loader } = useQuery(
+  const { data: objectsList1, isLoading: loader } = useQuery(
     ["GET_OPENFAAS_LIST", selectedTable?.slug, queryPayload],
     () => {
       if (!selectedTable?.slug) return null;
@@ -48,6 +48,28 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
       );
     },
     {
+      enabled: !!field?.attributes?.function_path,
+      select: (res) => {
+        return (
+          res?.data?.response?.map((el) => ({
+            value: el.guid,
+            label: getLabelWithViewFields(selectedTable.view_fields, el),
+          })) ?? []
+        );
+      },
+    }
+  );
+  
+  const { data: objectsList2 = [], isLoading: loader2 } = useQuery(
+    ["GET_OBJECT_LIST_QUERY", selectedTable?.slug, queryPayload],
+    () => {
+      if (!selectedTable?.slug) return null;
+      return constructorObjectService.getList(selectedTable?.slug, {
+        data: queryPayload,
+      });
+    },
+    {
+      enabled: !field?.attributes?.function_path,
       select: (res) => {
         return (
           res?.data?.response?.map((el) => ({
@@ -59,6 +81,9 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
     }
   );
 
+const objectsList = useMemo(() => {
+  return objectsList1 ?? objectsList2
+}, [objectsList2, objectsList1])
   // useDebouncedWatch(
   //   () => {
   //     // if (elmValue.length >= field.attributes?.length) {

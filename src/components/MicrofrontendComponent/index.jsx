@@ -2,8 +2,9 @@ import { Suspense } from "react";
 import { lazy } from "react";
 // import empty from "remote_empty_app/empty";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
+import SafeComponent from "../SafeComponent";
 
-const empty = lazy(() => import('remote_empty_app/empty'));
+const empty = lazy(() => import("remote_empty_app/empty"));
 
 const EMPTY = empty;
 
@@ -23,10 +24,13 @@ const MicrofrontendComponent = ({ link }) => {
   });
 
   return (
-    
-    <Suspense fallback={<RingLoaderWithWrapper style={{ height: "100vh" }} />}>
-      <RemoteButton text="Hello microfrontend" />
-    </Suspense>
+    <SafeComponent>
+      <Suspense
+        fallback={<RingLoaderWithWrapper style={{ height: "100vh" }} />}
+      >
+        <RemoteButton />
+      </Suspense>
+    </SafeComponent>
   );
 };
 export default MicrofrontendComponent;

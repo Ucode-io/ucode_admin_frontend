@@ -1,0 +1,59 @@
+import React, { useState } from "react";
+import HFTextField from "./HFTextField";
+import { IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+
+function HFPassword({
+  isDisabled,
+  isFormEdit,
+  isBlackBg,
+  control,
+  name,
+  fullWidth,
+  required,
+  placeholder,
+  props,
+  field,
+  defaultValue,
+}) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const getType = () => {
+    return showPassword ? "text" : "password";
+  };
+
+  return (
+    <HFTextField
+      isDisabled={isDisabled}
+      isFormEdit
+      isBlackBg={isBlackBg}
+      control={control}
+      name={name}
+      fullWidth
+      field={field}
+      required={field.required}
+      type={getType()}
+      placeholder={field.attributes?.placeholder}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              aria-label="toggle password visibility"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? <Visibility /> : <VisibilityOff />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+      {...props}
+      defaultValue={defaultValue}
+    />
+  );
+}
+
+export default HFPassword;

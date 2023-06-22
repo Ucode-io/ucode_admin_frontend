@@ -21,6 +21,7 @@ import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import RingLoaderWithWrapper from "../../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
+import applicationService from "../../../../../services/applicationSercixe";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorRelationService from "../../../../../services/constructorRelationService";
@@ -33,9 +34,10 @@ import CascadingRelationSettings from "./CascadingRelationSettings.jsx";
 import CascadingTreeBlock from "./CascadingTreeBlock";
 import DefaultValueBlock from "./DefaultValueBlock";
 import DynamicRelationsBlock from "./DynamicRelationsBlock";
-import FunctionPath from "./FunctionPath";
+import RowBlock from "./RowClickForm";
 import SummaryBlock from "./SummaryBlock";
 import styles from "./style.module.scss";
+import FunctionPath from "./FunctionPath";
 
 const relationViewTypes = [
   {
@@ -72,6 +74,7 @@ const RelationSettings = ({
     },
   });
   const values = watch();
+  console.log('ssssssss', values)
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
     if (values.table_to === slug) return values.table_from;
@@ -158,7 +161,7 @@ const RelationSettings = ({
   const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
-      return constructorFunctionService.getListV2({});
+      return constructorFunctionService.getListV2();
     },
     {
       select: (res) => {
@@ -340,6 +343,13 @@ const RelationSettings = ({
             </FRow>
 
             <HFSwitch control={control} name="is_editable" label={"Editable"} />
+            <HFSwitch
+              control={control}
+              name="default_editable"
+              label={"Default editable"}
+            />
+            <HFSwitch control={control} name="creatable" label={"Creatable"} />
+            <HFSwitch control={control} name="relation_buttons" label={"Relation Buttons"} />
 
             {values.type === "Many2Many" && (
               <FRow label="Relate field type" required>
@@ -372,7 +382,7 @@ const RelationSettings = ({
             />
           )}
 
-          <FunctionPath control={control} watch={watch} functions={functions} />
+          <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue}/>
 
           <DefaultValueBlock
             control={control}

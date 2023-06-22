@@ -1,142 +1,135 @@
 import { Close } from "@mui/icons-material";
-import { Divider, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
+import HFTextField from "../../../../../components/FormElements/HFTextField";
+import applicationService from "../../../../../services/applicationSercixe";
+import constructorRelationService from "../../../../../services/constructorRelationService";
+import { relationTyes } from "../../../../../utils/constants/relationTypes";
 import styles from "./style.module.scss";
-import { store } from "../../../../../store";
-import actionTypes from "./mock/ActionTypes";
-import {
-  useCustomErrorCreateMutation,
-  useCustomErrorUpdateMutation,
-} from "../../../../../services/customErrorMessageService";
-import HFNumberField from "../../../../../components/FormElements/HFNumberField";
-import { useQueryClient } from "react-query";
-import HFTextArea from "../../../../../components/FormElements/HFTextArea";
-import HFAutocomplete from "../../../../../components/FormElements/HFAutocomplete";
-import constructorObjectService from "../../../../../services/constructorObjectService";
+import RowBlock from "../Relations/RowClickForm";
 
 const CustomErrorsSettings = ({
   closeSettingsBlock = () => {},
-  customError,
+  relation,
   getRelationFields,
   formType,
   height,
-
-  mainForm,
 }) => {
-  const authStore = store.getState().auth;
-  const queryClient = useQueryClient();
-  const { id } = useParams();
-  const [errorIds, setErrorIds] = useState(null);
-  const [languages, setLanguages] = useState(null);
+  const { appId, slug } = useParams();
+  const [loader, setLoader] = useState(false);
+  const [formLoader, setFormLoader] = useState(false);
 
   const { handleSubmit, control, reset, watch } = useForm({
     defaultValues: {
-      project_id: authStore.projectId,
-      table_id: id,
+      table_from: slug,
+      auto_filters: [],
+      action_relations: [],
     },
   });
+  const values = watch();
 
-  const fieldsList = useMemo(() => {
-    return mainForm.getValues("fields") ?? [];
+  const { data: app } = useQuery(["GET_TABLE_LIST", appId], () => {
+    return applicationService.getById(appId);
+  });
+
+  const computedTablesList = useMemo(() => {
+    return app?.tables?.map((table) => ({
+      value: table.slug,
+      label: table.label,
+    }));
+  }, [app]);
+
+  const isRecursiveRelation = useMemo(() => {
+    return values.type === "Recursive";
+  }, [values.type]);
+
+  const computedRelationsTypesList = useMemo(() => {
+    return relationTyes.map((type) => ({
+      value: type,
+      label: type,
+    }));
   }, []);
 
-  const getErrorIdOptions = (search, id) => {
-    constructorObjectService
-      .getList("object_builder.custom_error", {
-        data: {
-          limit: 10,
-          search: search,
-          view_fields: ["title"],
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [id],
-          },
-        },
-      })
-      .then((res) => {
-        setErrorIds(res.data?.response);
-      });
+  const updateRelations = async () => {
+    setLoader(true);
+
+    await getRelationFields();
+
+    closeSettingsBlock(null);
+    setLoader(false);
   };
-  const getLanguageOptions = (search, id) => {
-    constructorObjectService
-      .getList("setting.languages", {
-        data: {
-          limit: 10,
-          search: search,
-          view_fields: ["name"],
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [id],
-          },
-        },
-      })
-      .then((res) => {
-        setLanguages(res.data?.response);
-      });
-  };
-
-  const computedLanguageOptions = useMemo(() => {
-    return languages?.map((item) => ({
-      value: item.id,
-      label: item.name,
-    }));
-  }, [languages]);
-
-  const computedErrorIdsOptions = useMemo(() => {
-    return errorIds?.map((item) => ({
-      value: item.guid,
-      label: item.title,
-    }));
-  }, [errorIds]);
-
-  const { mutate: create, isLoading: createLoading } =
-    useCustomErrorCreateMutation({
-      onSuccess: () => {
-        closeSettingsBlock(null);
-        queryClient.refetchQueries(["CUSTOM_ERROR_MESSAGE"]);
-      },
-    });
-
-  const { mutate: update, isLoading: updateLoading } =
-    useCustomErrorUpdateMutation({
-      onSuccess: () => {
-        closeSettingsBlock(null);
-        queryClient.refetchQueries(["CUSTOM_ERROR_MESSAGE"]);
-      },
-    });
 
   const submitHandler = (values) => {
+    const data = {
+      ...values,
+      relation_table_slug: slug,
+      // compute columns
+      columns: values.columnsList
+        ?.filter((el) => el.is_checked)
+        ?.map((el) => el.id),
+
+      // compute filters
+      quick_filters: values.filtersList
+        ?.filter((el) => el.is_checked)
+        ?.map((el) => ({
+          field_id: el.id,
+          default_value: "",
+        })),
+
+      // compute default value
+      default_values: values?.default_values
+        ? Array.isArray(values.default_values)
+          ? values.default_values
+          : [values.default_values]
+        : [],
+    };
+
+    delete data?.field_name;
+    delete data?.formula_name;
+
+    setFormLoader(true);
+
     if (formType === "CREATE") {
-      create({
-        ...values,
-      });
+      constructorRelationService
+        .create(data)
+        .then((res) => {
+          updateRelations();
+        })
+        .finally(() => setFormLoader(false));
     } else {
-      update({
-        ...values,
-      });
+      constructorRelationService
+        .update(data)
+        .then((res) => {
+          updateRelations();
+        })
+        .finally(() => setFormLoader(false));
     }
   };
 
   useEffect(() => {
     if (formType === "CREATE") return;
-    getLanguageOptions(undefined, customError?.language_id);
-    getErrorIdOptions(undefined, customError?.error_id);
     reset({
-      ...customError,
+      ...relation,
+      table_from: relation?.table_from?.slug ?? "",
+      table_to: relation?.table_to?.slug ?? "",
+      type: relation?.type ?? "",
+      id: relation?.id ?? "",
+      editable: relation?.editable ?? false,
+      summaries: relation?.summaries ?? [],
+      view_fields: relation?.view_fields?.map((field) => field.id) ?? [],
     });
-  }, [customError]);
+  }, [relation]);
 
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
-        <h2>
-          {formType === "CREATE" ? "Create" : "Edit"} Custom Error Message
-        </h2>
+        <h2>{formType === "CREATE" ? "Create" : "Edit"} relation</h2>
 
         <IconButton onClick={closeSettingsBlock}>
           <Close />
@@ -150,7 +143,7 @@ const CustomErrorsSettings = ({
         >
           <div className="p-2">
             <FRow label="Code" required>
-              <HFNumberField
+              <HFTextField
                 name="code"
                 control={control}
                 placeholder="Type code"
@@ -159,7 +152,7 @@ const CustomErrorsSettings = ({
               />
             </FRow>
             <FRow label="Message" required>
-              <HFTextArea
+              <HFTextField
                 name="message"
                 control={control}
                 placeholder="Type Message"
@@ -167,65 +160,18 @@ const CustomErrorsSettings = ({
                 required
               />
             </FRow>
-            <Divider className="my-1" />
-
-            <h2>Fields list:</h2>
-
-            {fieldsList.map((field) => (
-              <div>
-                {field.label} - <strong>{field.slug}</strong>{" "}
-              </div>
-            ))}
-
-            <Divider className="my-1" />
-            <FRow label="Error id">
-              <HFAutocomplete
+            <FRow label="Error id" required>
+              <HFTextField
                 name="error_id"
                 control={control}
                 placeholder="Type Error id"
                 fullWidth
-                options={computedErrorIdsOptions}
-                onFieldChange={(e) => {
-                  getErrorIdOptions(e.target.value);
-                }}
-              />
-            </FRow>
-            <FRow label="Languages" required>
-              <HFAutocomplete
-                name="language_id"
-                control={control}
-                placeholder="Type language"
-                fullWidth
-                required
-                options={computedLanguageOptions}
-                onFieldChange={(e) => {
-                  getLanguageOptions(e.target.value);
-                }}
-              />
-            </FRow>
-            {/* <FRow label="Languages" required>
-              <HFSelect
-                name="language_id"
-                control={control}
-                placeholder="Languages"
-                options={computedLanguageOptions}
-                autoFocus
-                required
-              />
-            </FRow> */}
-            <FRow label="Action type" required>
-              <HFSelect
-                name="action_type"
-                control={control}
-                placeholder="Action type"
-                options={actionTypes}
-                autoFocus
                 required
               />
             </FRow>
           </div>
 
-          {/* <RowBlock control={control} /> */}
+          <RowBlock control={control} />
 
           <div className={styles.settingsFooter}>
             <PrimaryButton
@@ -233,7 +179,7 @@ const CustomErrorsSettings = ({
               className={styles.button}
               style={{ width: "100%" }}
               onClick={handleSubmit(submitHandler)}
-              loader={createLoading || updateLoading}
+              loader={formLoader || loader}
             >
               Сохранить
             </PrimaryButton>

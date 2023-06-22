@@ -30,6 +30,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDownloadButton";
 import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUploadButton";
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const RelationSection = ({
   selectedTabIndex,
@@ -105,7 +106,6 @@ const RelationSection = ({
     control,
     name: "multi",
   });
-
   useEffect(() => {
     update();
   }, []);
@@ -114,7 +114,6 @@ const RelationSection = ({
 
   useEffect(() => {
     setSelectedObjects([]);
-    setFormVisible(false);
   }, [selectedTabIndex]);
 
   useEffect(() => {
@@ -299,19 +298,24 @@ const RelationSection = ({
               </TabList>
 
               <div className="flex gap-2">
-                <CustomActionsButton
+                {/* <CustomActionsButton
                   tableSlug={selectedRelation?.relatedTable}
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}
-                />
-                <RectangleIconButton
-                  color="success"
-                  size="small"
-                  onClick={navigateToCreatePage}
-                  disabled={!id}
+                /> */}
+                <PermissionWrapperV2
+                  tableSlug={filteredRelations?.[0]?.relatedTable}
+                  type={"write"}
                 >
-                  <Add style={{ color: "#007AFF" }} />
-                </RectangleIconButton>
+                  <RectangleIconButton
+                    color="success"
+                    size="small"
+                    onClick={navigateToCreatePage}
+                    disabled={!id}
+                  >
+                    <Add style={{ color: "#007AFF" }} />
+                  </RectangleIconButton>
+                </PermissionWrapperV2>
 
                 {/*<RectangleIconButton
                     color="white"
@@ -356,6 +360,7 @@ const RelationSection = ({
                     </RectangleIconButton>
                     <RectangleIconButton
                       color="error"
+                      type="exit"
                       onClick={() => {
                         setFormVisible(false);
                         if (fields.length > dataLength) {
@@ -372,16 +377,21 @@ const RelationSection = ({
                   </>
                 ) : (
                   fields.length > 0 && (
-                    <RectangleIconButton
-                      color="success"
-                      size="small"
-                      onClick={() => {
-                        setFormVisible(true);
-                        reset();
-                      }}
+                    <PermissionWrapperV2
+                      type="edit"
+                      tableSlug={filteredRelations?.[0]?.relatedTable}
                     >
-                      <Edit color="primary" />
-                    </RectangleIconButton>
+                      <RectangleIconButton
+                        color="success"
+                        size="small"
+                        onClick={() => {
+                          setFormVisible(true);
+                          reset();
+                        }}
+                      >
+                        <Edit color="primary" />
+                      </RectangleIconButton>
+                    </PermissionWrapperV2>
                   )
                 )}
 

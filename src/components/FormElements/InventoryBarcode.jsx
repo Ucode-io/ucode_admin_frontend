@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Controller } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { InputAdornment, TextField, Tooltip } from "@mui/material";
@@ -33,6 +33,11 @@ const InventoryBarCode = ({
   const { id } = useParams();
   const [elmValue, setElmValue] = useState("");
   const time = useRef();
+  
+  const barcode = useWatch({
+    control,
+    name: name,
+  });
 
   const sendRequestOpenFaas = () => {
     constructorFunctionService
@@ -40,7 +45,7 @@ const InventoryBarCode = ({
         function_id: field?.attributes?.function,
         object_ids: [id, elmValue],
         attributes: {
-          barcode: elmValue,
+          barcode: elmValue.length > 0 ? elmValue : barcode,
         },
       })
       .then((res) => {

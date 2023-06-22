@@ -8,11 +8,11 @@ import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
-import applicationService from "../../../../../services/applicationSercixe";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import { relationTyes } from "../../../../../utils/constants/relationTypes";
 import styles from "./style.module.scss";
 import RowBlock from "../Relations/RowClickForm";
+import applicationService from "../../../../../services/applicationService";
 
 const CustomErrorsSettings = ({
   closeSettingsBlock = () => {},

@@ -78,8 +78,16 @@ function LayoutTabs({
         // viewRelationsFieldArray.replace(result)
         viewRelationsFieldArray.move(dropResult.removedIndex, dropResult.addedIndex);
       }
+
+    appendSectionTab(result);
   };
 
+  let a = useWatch({
+    control: mainForm.control,
+    name: "layouts",
+  })
+
+  console.log('qqqqqqqqqqq', a)
   // const removeViewRelation = (index, relation) => {
   //   viewRelationsFieldArray.remove(index);
   // };
@@ -107,8 +115,8 @@ function LayoutTabs({
   // };
 
   const allTabs = useMemo(() => {
-    return [...sectionTabs, ...computedViewRelations];
-  }, [sectionTabs, computedViewRelations]);
+    return [...sectionTabs];
+  }, [sectionTabs]);
 
   useEffect(() => {
     setSelectedTab(allTabs[0] ?? {});
@@ -137,8 +145,8 @@ function LayoutTabs({
               ))} */}
 
               {allTabs?.map((tab, index) => (
-                <Draggable 
-                  key={tab.id} 
+                <Draggable
+                  key={tab.id}
                   // onDrag={() => handleTabsDrag(index)}
                 >
                   <div

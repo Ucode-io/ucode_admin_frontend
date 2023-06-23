@@ -187,7 +187,7 @@ const ConstructorTablesFormPage = () => {
       view_relations: data.view_relations,
       table_slug: data.slug,
     });
-
+    
     const updateLayoutData = layoutService.update({
       layouts: data.layouts,
       table_id: id,

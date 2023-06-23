@@ -40,7 +40,7 @@ const ObjectsFormPage = () => {
   const [tableRelations, setTableRelations] = useState([]);
 
   const tableInfo = store.getState().menu.menuItem;
-console.log('ssssssss', sections)
+
   const computedSections = useMemo(() => {
     let tabIndex = 1;
     return (

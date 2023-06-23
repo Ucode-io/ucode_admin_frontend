@@ -281,9 +281,9 @@ const NewRelationSection = ({
         setData(layout);
       });
   }, [tableSlug, menuItem.table_id]);
-
-  console.log('ssssssss', data)
-  // if (!data?.length) return null;
+  
+  // ifc (!data?.length) return null;
+  console.log('ssssssssss', data)
   return (
     <>
       {selectedManyToManyRelation && (

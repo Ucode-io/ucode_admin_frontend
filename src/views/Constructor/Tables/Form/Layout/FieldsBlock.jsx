@@ -84,7 +84,7 @@ const FieldsBlock = ({
       if (relation.view_relation_type === "FILE") {
         return !viewRelations?.some((viewRelation) => viewRelation.view_relation_type === "FILE");
       } else {
-        return !viewRelations?.some((viewRelation) => viewRelation.relation_id === relation.id);
+        return !viewRelations?.some((viewRelation) => viewRelation?.relation_id === relation?.id);
       }
     });
   }, [tableRelations, viewRelations]);

@@ -34,14 +34,8 @@ import CascadingTreeBlock from "./CascadingTreeBlock";
 import DefaultValueBlock from "./DefaultValueBlock";
 import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import FunctionPath from "./FunctionPath";
-import constructorFunctionService from "../../../../../services/constructorFunctionService";
-import constructorTableService from "../../../../../services/constructorTableService";
 import SummaryBlock from "./SummaryBlock";
 import styles from "./style.module.scss";
-import RowBlock from "./RowClickForm";
-import SummaryBlock from "./SummaryBlock";
-import styles from "./style.module.scss";
-import FunctionPath from "./FunctionPath";
 
 const relationViewTypes = [
   {

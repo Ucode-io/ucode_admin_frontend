@@ -30,6 +30,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDownloadButton";
 import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUploadButton";
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const RelationSection = ({
   selectedTabIndex,
@@ -114,7 +115,6 @@ const RelationSection = ({
 
   useEffect(() => {
     setSelectedObjects([]);
-    setFormVisible(false);
   }, [selectedTabIndex]);
 
   useEffect(() => {
@@ -299,7 +299,7 @@ const RelationSection = ({
               </TabList>
 
               <div className="flex gap-2">
-                <CustomActionsButton
+                {/* <CustomActionsButton
                   tableSlug={selectedRelation?.relatedTable}
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}

@@ -8,6 +8,7 @@ import RectangleIconButton from "../Buttons/RectangleIconButton";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import DeleteWrapperModal from "../DeleteWrapperModal";
+import { useNavigate } from "react-router-dom";
 
 const TableRow = ({
   row,
@@ -38,7 +39,7 @@ const TableRow = ({
   relationFields,
   data,
 }) => {
-  
+  const navigate = useNavigate();
   if (formVisible)
     return (
       <TableRowForm
@@ -67,6 +68,7 @@ const TableRow = ({
         data={data}
       />
     );
+    
   return (
     <>
       {relationAction === undefined ? (
@@ -131,7 +133,13 @@ const TableRow = ({
                 <RectangleIconButton
                   color="error"
                   onClick={() => {
-                    row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex);
+                     onDeleteClick(row, rowIndex) 
+                      remove(rowIndex);
+                      navigate("/reloadRelations", {
+                        state: {
+                          redirectUrl: window.location.pathname,
+                        },
+                      });
                   }}
                 >
                   <Delete color="error" />
@@ -202,8 +210,15 @@ const TableRow = ({
           >
             <RectangleIconButton
               color="error"
-              onClick={() =>
-                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              onClick={() =>{
+                 onDeleteClick(row, rowIndex) 
+                 remove(rowIndex)
+                 navigate("/reloadRelations", {
+                  state: {
+                    redirectUrl: window.location.pathname,
+                  },
+                });
+              }
               }
             >
               <Delete color="error" />
@@ -270,7 +285,15 @@ const TableRow = ({
             <RectangleIconButton
               color="error"
               onClick={() =>
-                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+               {
+                onDeleteClick(row, rowIndex) 
+                remove(rowIndex)
+                navigate("/reloadRelations", {
+                  state: {
+                    redirectUrl: window.location.pathname,
+                  },
+                });
+               }
               }
             >
               <Delete color="error" />

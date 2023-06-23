@@ -1,8 +1,20 @@
 import { Lock } from "@mui/icons-material";
-import { Autocomplete, InputAdornment, TextField, Tooltip } from "@mui/material";
+import {
+  Autocomplete,
+  InputAdornment,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import { useMemo } from "react";
 
-const CAutoCompleteSelect = ({ options, value, onChange, tabIndex, disabled }) => {
+const CAutoCompleteSelect = ({
+  options,
+  value,
+  onChange,
+  onFieldChange,
+  tabIndex,
+  disabled,
+}) => {
   const computedValue = useMemo(() => {
     return options?.find((option) => option?.value === value) ?? null;
   }, [options, value]);
@@ -22,6 +34,7 @@ const CAutoCompleteSelect = ({ options, value, onChange, tabIndex, disabled }) =
           <TextField
             {...params}
             size="small"
+            onChange={(e) => onFieldChange(e)}
           />
         )}
       />

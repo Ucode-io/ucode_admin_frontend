@@ -65,9 +65,7 @@ const FormElementGenerator = ({
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
 
-    const defaultValue = field.attributes?.defaultValue
-      ? field.attributes?.defaultValue
-      : field.attributes?.default_values;
+    const defaultValue = field.attributes?.defaultValue ? field.attributes?.defaultValue : field.attributes?.default_values;
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];

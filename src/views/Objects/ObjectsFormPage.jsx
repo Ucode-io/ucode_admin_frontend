@@ -176,7 +176,7 @@ const ObjectsFormPage = () => {
     if (id) update(data);
     else {
       create(data);
-      dispatch(fetchConstructorTableListAction(appId));
+      // dispatch(fetchConstructorTableListAction(appId));
     }
   };
 
@@ -205,7 +205,7 @@ const ObjectsFormPage = () => {
   //   setFormValue("time_end", startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined);
   // }, [serviceTime, startTime]);
 
-  if (loader) return <PageFallback />;
+  // if (loader) return <PageFallback />;
   return (
     <div className={styles.formPage}>
       <FiltersBlock

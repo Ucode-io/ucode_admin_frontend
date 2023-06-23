@@ -12,9 +12,6 @@ import styles from "./style.module.scss";
 import constructorFunctionService from "../../../services/constructorFunctionService";
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch";
 import constructorFunctionServiceV2 from "../../../services/contructorFunctionServiceV2";
-import useDebouncedWatch from "../../../hooks/useDebouncedWatch";
-import constructorFunctionService from "../../../services/constructorFunctionService";
-import constructorFunctionServiceV2 from "../../../services/constructorFunctionServiceV2";
 import request from "../../../utils/request";
 
 const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {

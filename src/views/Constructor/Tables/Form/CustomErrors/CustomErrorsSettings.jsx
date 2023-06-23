@@ -21,7 +21,6 @@ import constructorObjectService from "../../../../../services/constructorObjectS
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import { relationTyes } from "../../../../../utils/constants/relationTypes";
-import styles from "./style.module.scss";
 import RowBlock from "../Relations/RowClickForm";
 import applicationService from "../../../../../services/applicationService";
 

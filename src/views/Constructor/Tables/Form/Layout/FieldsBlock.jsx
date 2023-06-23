@@ -100,7 +100,7 @@ const FieldsBlock = ({
 
   const handleNameChange = (event, index, oldId) => {
     updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
-  }
+  };
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -185,12 +185,15 @@ const FieldsBlock = ({
                   <Draggable key={index} style={{ overflow: "visible", width: "fit-content" }}>
                     <div className={`${styles.sectionFieldRow} ${styles.relation}`}>
                       <OutlinedInput
-                      value={tab.label}
+                        value={tab.label}
                         onClick={(e) => e.stopPropagation()}
                         size="small"
                         onChange={(e) => handleNameChange(e, index, tab.id)}
                         style={{ border: "none", outline: "none", fontWeight: 500, minWidth: 100, background: "transparent" }}
                       />
+                      <Button onClick={() => removeSectionTab(index)}>
+                        <Close />
+                      </Button>
                     </div>
                   </Draggable>
                 ))}

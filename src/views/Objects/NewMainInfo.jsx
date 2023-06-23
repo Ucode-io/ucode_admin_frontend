@@ -25,14 +25,14 @@ const MainInfo = ({
   const fieldsList = useMemo(() => {
     const fields = [];
 
-    computedSections?.forEach((section) => {
-      section.fields?.forEach((field) => {
+    relation?.tabs.sections?.forEach((section) => {
+      section.forEach((field) => {
         fields.push(field);
       });
     });
     return fields;
-  }, [computedSections]);
-  console.log('computedSections', computedSections);
+  }, [relation]);
+  console.log('fieldsList', fieldsList);
   return (
     <div className={styles.newcontainer}>
       {isShow ? (

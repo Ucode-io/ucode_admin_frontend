@@ -269,6 +269,7 @@ const NewRelationSection = ({
       });
   }, [tableSlug, menuItem.table_id]);
 
+  console.log('ssssssss', data)
   // if (!data?.length) return null;
   return (
     <>

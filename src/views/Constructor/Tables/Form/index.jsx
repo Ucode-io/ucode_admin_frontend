@@ -198,25 +198,29 @@ const ConstructorTablesFormPage = () => {
 
     const updateTableData = constructorTableService.update(data, projectId);
 
-    const updateSectionData = constructorSectionService.update({
-      sections: addOrderNumberToSections(data.sections),
-      table_slug: data.slug,
-      table_id: id,
-    });
+    // const updateSectionData = constructorSectionService.update({
+    //   sections: addOrderNumberToSections(data.sections),
+    //   table_slug: data.slug,
+    //   table_id: id,
+    // });
 
     const updateViewRelationsData = constructorViewRelationService.update({
       view_relations: data.view_relations,
       table_slug: data.slug,
     });
-
+    
     const updateLayoutData = layoutService.update({
       layouts: data.layouts,
       table_id: id,
       project_id: projectId,
     });
 
-
-    Promise.all([updateTableData, updateSectionData, updateViewRelationsData, updateLayoutData])
+    Promise.all([
+      updateTableData,
+      // updateSectionData,
+      updateViewRelationsData,
+      updateLayoutData,
+    ])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
         navigate(-1);

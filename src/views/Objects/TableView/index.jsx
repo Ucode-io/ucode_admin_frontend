@@ -146,7 +146,7 @@ const TableView = ({
     }
   };
 
-  const [layoutType, setLayoutType] = useState(null);
+  const [layoutType, setLayoutType] = useState("SimpleLayout");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -164,16 +164,16 @@ const TableView = ({
   }, [menuItem.id]);
 
   const navigateToEditPage = (row) => {
+    if (layoutType === "PopupLayout") {
+      setOpen(true);
+    } else {
+      navigateToDetailPage(row);
+    }
+  };
+
+  const navigateToDetailPage = (row) => {
     if (view?.navigate?.params?.length || view?.navigate?.url) {
-      const params = view.navigate?.params
-        ?.map(
-          (param) =>
-            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-              param.value,
-              row
-            )}`
-        )
-        .join("&&");
+      const params = view.navigate?.params?.map((param) => `${mergeStringAndState(param.key, row)}=${mergeStringAndState(param.value, row)}`).join("&&");
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
@@ -192,12 +192,7 @@ const TableView = ({
           new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>{t("filters")}</p>
-          <FastFilter
-            view={view}
-            fieldsMap={fieldsMap}
-            getFilteredFilterFields={getFilteredFilterFields}
-            isVertical
-          />
+          <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
         </div>
       )}
       <ObjectDataTable

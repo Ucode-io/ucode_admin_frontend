@@ -74,7 +74,7 @@ const HFMapField = ({
 
         return (
           <Box sx={{ width: "265px", overflow: "hidden", position: "relative" }}>
-            <YMaps query={{ load: "package.full", apikey: "1e36415e-d69c-4ac7-a475-421ac7416d16" }}>
+            <YMaps query={{ load: "package.full", apikey: "a5d9ae45-31f8-4178-81a4-15ddca3ddc51" }}>
               <Map
                 style={{ width: "265px", height: "200px", boxSizing: "border-box" }}
                 defaultState={{

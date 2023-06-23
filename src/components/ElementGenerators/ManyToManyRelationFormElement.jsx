@@ -154,32 +154,6 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, control, error
     }
   );
 
-  // useDebouncedWatch(
-  //   () => {
-  //     // if (elmValue.length >= field.attributes?.length) {
-  //     constructorFunctionService
-  //       .invoke({
-  //         function_id: field?.attributes?.function,
-  //         // object_ids: [id, elmValue],
-  //         attributes: {
-  //           // barcode: elmValue,
-  //         },
-  //       })
-  //       .then((res) => {
-  //         if (res === "Updated successfully!") {
-  //           console.log("Успешно обновлено!", "success");
-  //         }
-  //       })
-  //       .finally(() => {
-  //         // setFormValue(name, "");
-  //         // setElmValue("");
-  //         // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
-  //       });
-  //     // }
-  //   },
-  //   [],
-  //   300
-  // );
 
   const computedValue = useMemo(() => {
     if (!value) return undefined;

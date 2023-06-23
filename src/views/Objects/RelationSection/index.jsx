@@ -57,6 +57,7 @@ const RelationSection = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -65,6 +66,7 @@ const RelationSection = ({
   const [dataLength, setDataLength] = useState(0);
   const [heightControl, setHeightControl] = useState(false);
   const [moreShowButton, setMoreShowButton] = useState(false);
+  // const [selectedRelation, setSelectedRelation] = useState({});
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   let [searchParams] = useSearchParams();
@@ -273,7 +275,9 @@ const RelationSection = ({
         <Card className={styles.card}>
           <Tabs
             selectedIndex={selectedTabIndex}
-            onSelect={(index) => setSelectedTabIndex(index)}
+            onSelect={(index) => {
+              setSelectedTabIndex(index)
+            }}
           >
             <div className={styles.cardHeader}>
               <TabList className={styles.tabList}>
@@ -303,6 +307,7 @@ const RelationSection = ({
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}
                 /> */}
+                {selectedRelation?.relation_buttons && 
                 <PermissionWrapperV2
                   tableSlug={filteredRelations?.[0]?.relatedTable}
                   type={"write"}
@@ -316,6 +321,7 @@ const RelationSection = ({
                     <Add style={{ color: "#007AFF" }} />
                   </RectangleIconButton>
                 </PermissionWrapperV2>
+                }
 
                 {/*<RectangleIconButton
                     color="white"
@@ -377,7 +383,8 @@ const RelationSection = ({
                   </>
                 ) : (
                   fields.length > 0 && (
-                    <PermissionWrapperV2
+                    selectedRelation?.relation_buttons && 
+                      <PermissionWrapperV2
                       type="edit"
                       tableSlug={filteredRelations?.[0]?.relatedTable}
                     >

@@ -34,10 +34,9 @@ import CascadingTreeBlock from "./CascadingTreeBlock";
 import DefaultValueBlock from "./DefaultValueBlock";
 import DynamicRelationsBlock from "./DynamicRelationsBlock";
 import FunctionPath from "./FunctionPath";
-import constructorFunctionService from "../../../../../services/constructorFunctionService";
-import constructorTableService from "../../../../../services/constructorTableService";
 import SummaryBlock from "./SummaryBlock";
 import styles from "./style.module.scss";
+
 const relationViewTypes = [
   {
     label: "Table",
@@ -341,6 +340,13 @@ const RelationSettings = ({
             </FRow>
 
             <HFSwitch control={control} name="is_editable" label={"Editable"} />
+            <HFSwitch
+              control={control}
+              name="default_editable"
+              label={"Default editable"}
+            />
+            <HFSwitch control={control} name="creatable" label={"Creatable"} />
+            <HFSwitch control={control} name="relation_buttons" label={"Relation Buttons"} />
 
             {values.type === "Many2Many" && (
               <FRow label="Relate field type" required>

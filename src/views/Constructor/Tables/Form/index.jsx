@@ -233,7 +233,6 @@ const ConstructorTablesFormPage = () => {
       ...data,
       sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
-      layouts: data.layouts,
     };
 
     // return;

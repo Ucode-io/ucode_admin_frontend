@@ -33,6 +33,11 @@ import CascadingRelationSettings from "./CascadingRelationSettings.jsx";
 import CascadingTreeBlock from "./CascadingTreeBlock";
 import DefaultValueBlock from "./DefaultValueBlock";
 import DynamicRelationsBlock from "./DynamicRelationsBlock";
+import FunctionPath from "./FunctionPath";
+import constructorFunctionService from "../../../../../services/constructorFunctionService";
+import constructorTableService from "../../../../../services/constructorTableService";
+import SummaryBlock from "./SummaryBlock";
+import styles from "./style.module.scss";
 import RowBlock from "./RowClickForm";
 import SummaryBlock from "./SummaryBlock";
 import styles from "./style.module.scss";
@@ -73,7 +78,6 @@ const RelationSettings = ({
     },
   });
   const values = watch();
-  console.log('ssssssss', values)
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
     if (values.table_to === slug) return values.table_from;
@@ -160,7 +164,7 @@ const RelationSettings = ({
   const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
-      return constructorFunctionService.getListV2();
+      return constructorFunctionService.getListV2({});
     },
     {
       select: (res) => {
@@ -177,7 +181,7 @@ const RelationSettings = ({
   }, [values.columnsList]);
 
   const { data: app } = useQuery(["GET_TABLE_LIST"], () => {
-    return constructorTableService.getList();
+    return constructorTableService.getList()
   });
 
   const computedTablesList = useMemo(() => {
@@ -381,7 +385,7 @@ const RelationSettings = ({
             />
           )}
 
-          <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue}/>
+          <FunctionPath control={control} watch={watch} functions={functions} />
 
           <DefaultValueBlock
             control={control}

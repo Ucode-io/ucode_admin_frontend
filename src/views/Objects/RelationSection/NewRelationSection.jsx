@@ -36,7 +36,7 @@ const NewRelationSection = ({
   id: idFromProps,
   limit,
   setLimit,
-  computedSections,
+  // computedSections,
   relatedTable,
   control,
   handleSubmit,
@@ -212,6 +212,19 @@ const NewRelationSection = ({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
+  const  computedSections = useMemo(() => {
+    const sections = [];
+    
+    data?.map((relation) => {
+      relation?.tabs?.[selectedTabIndex]?.sections?.map((el) => {
+        if(!sections?.[el]) {
+          sections.push(el)
+        }
+      })
+    })
+    return sections
+  }, [data, selectedTabIndex])
+
   // useEffect(() => {
   //   selectedRelation &&
   //     constructorObjectService
@@ -268,8 +281,9 @@ const NewRelationSection = ({
         setData(layout);
       });
   }, [tableSlug, menuItem.table_id]);
-
-  // if (!data?.length) return null;
+  
+  // ifc (!data?.length) return null;
+  console.log('ssssssssss', data)
   return (
     <>
       {selectedManyToManyRelation && (

@@ -1,21 +1,18 @@
 import { Delete } from "@mui/icons-material";
-import { Box, FormControlLabel, Switch } from "@mui/material";
+import { Box, Button, FormControlLabel, Switch } from "@mui/material";
 import React, { useEffect } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import { CTable, CTableCell, CTableHead, CTableRow } from "../../../../../components/CTable";
-import DeleteWrapperModal from "../../../../../components/DeleteWrapperModal";
 import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
 import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/PermissionWrapperV2";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
 import layoutService from "../../../../../services/layoutService";
-import { store } from "../../../../../store";
-import { useParams } from "react-router-dom";
 
-function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm }) {
-  const menuItem = store.getState().menu.menuItem;
-  const { slug } = useParams();
+function NewlayoutList({ setSelectedLayout, mainForm }) {
+  const { slug, id } = useParams();
 
   useEffect(() => {
     layoutService
@@ -70,13 +67,6 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
     mainForm.setValue("layouts", newLayout);
   };
 
-  const computedLayouts = useWatch({
-    control: mainForm.control,
-    name: "layouts",
-  });
-
-  const {id} = useParams();
-
   return (
     <Box sx={{ width: "100%", height: "100vh", background: "#fff" }}>
       <TableCard>
@@ -84,15 +74,13 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Layouts</CTableCell>
-            {/* <CTableCell width={60}></CTableCell> */}
             <PermissionWrapperV2 tabelSlug="app" type="delete">
               <CTableCell width={60} />
             </PermissionWrapperV2>
           </CTableHead>
 
-          {/* <CTableBody  columnsCount={4} > */}
-          {computedLayouts?.map((element, index) => (
-            <CTableRow key={element.id} onClick={() => navigateToEditForm(element)}>
+          {layouts?.map((element, index) => (
+            <CTableRow key={element.id}>
               <CTableCell>{index + 1}</CTableCell>
               <CTableCell>
                 <Box style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -104,41 +92,28 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
                   />
 
                   <Box style={{ display: "flex", alignItems: "center" }}>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                          onChange={() => setDefault(index)}
-                          checked={element.is_default ?? false}
-                        />
-                      }
-                      label={"Default"}
-                    />
-
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                          onChange={(e) => setModal(index, e)}
-                          checked={element.type === "SimpleLayout" ? false : true}
-                        />
-                      }
-                      label={"Modal"}
-                    />
+                    <FormControlLabel control={<Switch onChange={() => setDefault(index)} checked={element.is_default ?? false} />} label={"Default"} />
+                    <FormControlLabel control={<Switch onChange={(e) => setModal(index, e)} checked={element.type === "SimpleLayout" ? false : true} />} label={"Modal"} />
                   </Box>
                 </Box>
               </CTableCell>
-              <PermissionWrapperV2 tabelSlug="app" type="delete">
+              <PermissionWrapperV2 tabelSlug="app" type="delete, edit">
                 <CTableCell>
-                  <DeleteWrapperModal onDelete={() => remove(index)}>
-                    <RectangleIconButton color="error">
-                      <Delete color="error" />
-                    </RectangleIconButton>
-                  </DeleteWrapperModal>
+                  <Button
+                    onClick={(e) => {
+                      remove(index);
+                    }}
+                  >
+                    delete
+                  </Button>
+
+                  <Button
+                    onClick={(e) => {
+                      navigateToEditForm(element);
+                    }}
+                  >
+                    edit
+                  </Button>
                 </CTableCell>
               </PermissionWrapperV2>
             </CTableRow>
@@ -146,7 +121,6 @@ function NewlayoutList({ setSelectedLayout, selectedLayout, layoutForm, mainForm
           <PermissionWrapperV2 tabelSlug="app" type="write">
             <TableRowButton colSpan={4} onClick={() => append({ table_id: id, type: "SimpleLayout", label: "New" })} />
           </PermissionWrapperV2>
-          {/* </CTableBody> */}
         </CTable>
       </TableCard>
     </Box>

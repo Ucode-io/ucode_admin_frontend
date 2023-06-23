@@ -9,6 +9,9 @@ import { getLabelWithViewFields } from "../../../utils/getRelationFieldLabel";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import SearchInput from "../../SearchInput";
 import styles from "./style.module.scss";
+import constructorFunctionService from "../../../services/constructorFunctionService";
+import useDebouncedWatch from "../../../hooks/useDebouncedWatch";
+import constructorFunctionServiceV2 from "../../../services/contructorFunctionServiceV2";
 import useDebouncedWatch from "../../../hooks/useDebouncedWatch";
 import constructorFunctionService from "../../../services/constructorFunctionService";
 import constructorFunctionServiceV2 from "../../../services/constructorFunctionServiceV2";
@@ -59,6 +62,7 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
       },
     }
   );
+
   
   const { data: objectsList2 = [], isLoading: loader2 } = useQuery(
     ["GET_OBJECT_LIST_QUERY", selectedTable?.slug, queryPayload],
@@ -87,6 +91,7 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
       },
     }
   );
+
 
 const objectsList = useMemo(() => {
   return objectsList1 ?? objectsList2

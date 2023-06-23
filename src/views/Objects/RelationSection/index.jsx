@@ -106,6 +106,7 @@ const RelationSection = ({
     control,
     name: "multi",
   });
+
   useEffect(() => {
     update();
   }, []);
@@ -302,20 +303,15 @@ const RelationSection = ({
                   tableSlug={selectedRelation?.relatedTable}
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}
-                /> */}
-                <PermissionWrapperV2
-                  tableSlug={filteredRelations?.[0]?.relatedTable}
-                  type={"write"}
+                />
+                <RectangleIconButton
+                  color="success"
+                  size="small"
+                  onClick={navigateToCreatePage}
+                  disabled={!id}
                 >
-                  <RectangleIconButton
-                    color="success"
-                    size="small"
-                    onClick={navigateToCreatePage}
-                    disabled={!id}
-                  >
-                    <Add style={{ color: "#007AFF" }} />
-                  </RectangleIconButton>
-                </PermissionWrapperV2>
+                  <Add style={{ color: "#007AFF" }} />
+                </RectangleIconButton>
 
                 {/*<RectangleIconButton
                     color="white"
@@ -360,7 +356,6 @@ const RelationSection = ({
                     </RectangleIconButton>
                     <RectangleIconButton
                       color="error"
-                      type="exit"
                       onClick={() => {
                         setFormVisible(false);
                         if (fields.length > dataLength) {
@@ -377,21 +372,16 @@ const RelationSection = ({
                   </>
                 ) : (
                   fields.length > 0 && (
-                    <PermissionWrapperV2
-                      type="edit"
-                      tableSlug={filteredRelations?.[0]?.relatedTable}
+                    <RectangleIconButton
+                      color="success"
+                      size="small"
+                      onClick={() => {
+                        setFormVisible(true);
+                        reset();
+                      }}
                     >
-                      <RectangleIconButton
-                        color="success"
-                        size="small"
-                        onClick={() => {
-                          setFormVisible(true);
-                          reset();
-                        }}
-                      >
-                        <Edit color="primary" />
-                      </RectangleIconButton>
-                    </PermissionWrapperV2>
+                      <Edit color="primary" />
+                    </RectangleIconButton>
                   )
                 )}
 

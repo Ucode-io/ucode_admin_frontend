@@ -82,12 +82,6 @@ function LayoutTabs({
     appendSectionTab(result);
   };
 
-  let a = useWatch({
-    control: mainForm.control,
-    name: "layouts",
-  })
-
-  console.log('qqqqqqqqqqq', a)
   // const removeViewRelation = (index, relation) => {
   //   viewRelationsFieldArray.remove(index);
   // };
@@ -121,6 +115,13 @@ function LayoutTabs({
   useEffect(() => {
     setSelectedTab(allTabs[0] ?? {});
   }, [allTabs]);
+
+  let a = useWatch({
+    control: mainForm.control,
+    name: "layouts",
+  })
+
+  console.log('qqqqqqqqq', a)
 
   // const selectedLayout = mainForm.watch("selectedLayout");
 

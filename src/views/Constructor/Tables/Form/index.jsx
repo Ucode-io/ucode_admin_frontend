@@ -14,13 +14,7 @@ import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
 import constructorRelationService from "../../../../services/constructorRelationService";
-import {
-  computeSections,
-  computeSectionsOnSubmit,
-  computeSummarySection,
-  computeViewRelations,
-  computeViewRelationsOnSubmit,
-} from "../utils";
+import { computeSections, computeSectionsOnSubmit, computeSummarySection, computeViewRelations, computeViewRelationsOnSubmit } from "../utils";
 import { addOrderNumberToSections } from "../../../../utils/sectionsOrderNumber";
 import HeaderSettings from "../../../../components/HeaderSettings";
 import Footer from "../../../../components/Footer";
@@ -93,12 +87,7 @@ const ConstructorTablesFormPage = () => {
     });
 
     try {
-      const [
-        tableData,
-        { sections = [] },
-        { relations: viewRelations = [] },
-        { custom_events: actions = [] },
-      ] = await Promise.all([
+      const [tableData, { sections = [] }, { relations: viewRelations = [] }, { custom_events: actions = [] }] = await Promise.all([
         getTableData,
         getSectionsData,
         getViewRelations,
@@ -132,17 +121,13 @@ const ConstructorTablesFormPage = () => {
         relation_table_slug: slug,
       });
 
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
-        getRelations,
-        getFieldsData,
-      ]);
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
 
       mainForm.setValue("fields", fields);
 
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug:
-          relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -150,13 +135,11 @@ const ConstructorTablesFormPage = () => {
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" &&
-            relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" &&
-            relation.table_from?.slug === slug)
+          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
         )
           layoutRelations.push(relation);
         else tableRelations.push(relation);
@@ -167,10 +150,7 @@ const ConstructorTablesFormPage = () => {
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
-            ? relation[relation.relatedTableSlug]?.label
-            : relation?.title,
+        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -208,9 +188,30 @@ const ConstructorTablesFormPage = () => {
       view_relations: data.view_relations,
       table_slug: data.slug,
     });
-    
+
+    const computedLayouts = data.layouts.map((layout) => ({
+      ...layout,
+      tabs: layout.tabs.map((tab) => {
+        if (tab.type === "Many2Many" || tab.type === "Many2Dynamic" || tab.type === "One2Many" || tab.type === "Recursive" || tab.type === "Many2One") {
+          return {
+            order: tab?.order,
+            label: tab.title,
+            type: "relation",
+            layout_id: layout.id,
+            relation: {
+              ...tab,
+            },
+          };
+        } else {
+          return {
+            ...tab,
+          };
+        }
+      }),
+    }));
+
     const updateLayoutData = layoutService.update({
-      layouts: data.layouts,
+      layouts: computedLayouts,
       table_id: id,
       project_id: projectId,
     });
@@ -230,7 +231,7 @@ const ConstructorTablesFormPage = () => {
 
   const onSubmit = (data) => {
     const computedData = {
-      ...data,
+      ...data, 
       sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
     };
@@ -251,13 +252,7 @@ const ConstructorTablesFormPage = () => {
     <>
       <div className="pageWithStickyFooter">
         <Tabs direction={"ltr"}>
-          <HeaderSettings
-            title="Objects"
-            subtitle={id ? mainForm.getValues("label") : "Добавить"}
-            icon={mainForm.getValues("icon")}
-            backButtonLink={-1}
-            sticky
-          >
+          <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Добавить"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
             <TabList>
               <Tab>Details</Tab>
               <Tab>Layouts</Tab>
@@ -282,10 +277,7 @@ const ConstructorTablesFormPage = () => {
 
           {id && (
             <TabPanel>
-              <Relations
-                mainForm={mainForm}
-                getRelationFields={getRelationFields}
-              />
+              <Relations mainForm={mainForm} getRelationFields={getRelationFields} />
             </TabPanel>
           )}
           {id && (
@@ -307,11 +299,7 @@ const ConstructorTablesFormPage = () => {
             <SecondaryButton onClick={() => navigate(-1)} color="error">
               Закрыть
             </SecondaryButton>
-            <PrimaryButton
-              loader={btnLoader}
-              onClick={mainForm.handleSubmit(onSubmit)}
-              loading={btnLoader}
-            >
+            <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
               <Save /> Сохранить
             </PrimaryButton>
           </>

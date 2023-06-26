@@ -113,21 +113,23 @@ const Router = () => {
         <Route path=":appId/api-key/create" element={<ApiKeysForm />} />
         <Route path=":appId/api-key/:apiKeyId" element={<ApiKeysForm />} />
 
-
-        <Route path=":appId/microfrontend-playground" element={<MicrofrontendPlayground />} />
+        <Route
+          path=":appId/microfrontend-playground"
+          element={<MicrofrontendPlayground />}
+        />
 
         <Route
-          path=":appId/page/:microfrontendId"
+          path=":appId/page/:microfrontendId/:menuId"
           element={<Microfrontend />}
         />
 
         <Route
-          path=":appId/web-page/:webPageId"
+          path=":appId/web-page/:webPageId/:menuId"
           element={<WebPage />}
         />
 
         <Route
-          path=":appId/object/:tableSlug"
+          path=":appId/object/:tableSlug/:menuId"
           element={<ReloadWrapper component={ObjectsPage} />}
         />
 

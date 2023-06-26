@@ -32,7 +32,7 @@ console.log('computedSections', computedSections)
     });
     return fields;
   }, [relation]);
-  console.log('fieldsList', fieldsList);
+
   return (
     <div className={styles.newcontainer}>
       {isShow ? (

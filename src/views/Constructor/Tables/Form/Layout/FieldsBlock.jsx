@@ -35,11 +35,19 @@ const FieldsBlock = ({
     name: "layoutRelations",
     keyName: "key",
   });
+  
 
   const sections = useWatch({
     control: mainForm.control,
     name: `sections`,
   });
+
+  const test = useWatch({
+    control: mainForm.control,
+  });
+
+  console.log('test', test)
+
 
   const summarySectionFields = useWatch({
     control: mainForm.control,
@@ -102,7 +110,6 @@ const FieldsBlock = ({
     updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
   };
 
-  console.log('sssssss', tableRelations)
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -171,7 +178,7 @@ const FieldsBlock = ({
           <TabPanel>
             <div className={styles.fieldsBlock}>
               <Container groupName="table_relation" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }} getChildPayload={(i) => unusedTableRelations[i]}>
-                {tableRelations?.map((relation) => (
+                {relations?.map((relation) => (
                   <Draggable key={relation.id} style={{ overflow: "visible", width: "fit-content" }}>
                     <div className={`${styles.sectionFieldRow} ${styles.relation}`}>{relation.title ?? relation[relation.relatedTableSlug]?.label}</div>
                   </Draggable>

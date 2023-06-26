@@ -40,7 +40,6 @@ const NewRelationSection = ({
   relatedTable,
   control,
   handleSubmit,
-  onSubmit,
   reset,
   setFormValue,
   watch,
@@ -53,6 +52,8 @@ const NewRelationSection = ({
       return item?.type;
     });
   }, [data]);
+
+   
 
   const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
@@ -79,6 +80,10 @@ const NewRelationSection = ({
   const myRef = useRef();
   const navigate = useNavigate();
   const tables = useSelector((state) => state?.auth?.tables);
+
+  const getRelatedTabeSlug = useMemo(() => {
+    return relations?.find((el) => el?.id === selectedTab?.relation_id);
+ }, [relations, selectedTab])
 
   useEffect(() => {
     if (data?.[0]?.tabs?.length > 0) {
@@ -111,6 +116,7 @@ const NewRelationSection = ({
   //     multi: [],
   //   },
   // });
+  
 
   const { fields, remove, append, update } = useFieldArray({
     control,
@@ -151,7 +157,7 @@ const NewRelationSection = ({
       mapped[keys[0]] = values[0];
     });
     const relation = filteredRelations[selectedTabIndex];
-    if (relation.type === "Many2Many") setSelectedManyToManyRelation(relation);
+    if (getRelatedTabeSlug?.type === "Many2Many") setSelectedManyToManyRelation(getRelatedTabeSlug);
     else {
       append(mapped);
       setFormVisible(true);
@@ -176,9 +182,17 @@ const NewRelationSection = ({
       value: "large",
     },
   ];
+
+  
+
+  const relationFieldSlug = useMemo(() => {
+    return relations.find((item) => item?.type === "Many2Dynamic");
+  }, [relations]);
+
+
   const { mutate: updateMultipleObject } = useMutation(
     (values) =>
-      constructorObjectService.updateMultipleObject(relations[selectedTabIndex]?.relatedTable, {
+      constructorObjectService.updateMultipleObject(getRelatedTabeSlug.relatedTable, {
         data: {
           objects: values.multi.map((item) => ({
             ...item,
@@ -191,26 +205,26 @@ const NewRelationSection = ({
         },
       }),
     {
+      enabled: !getRelatedTabeSlug?.relatedTable,
       onSuccess: () => {
         setShouldGet((p) => !p);
         setFormVisible(false);
       },
     }
   );
-  // const onSubmit = (data) => {
-  //   updateMultipleObject(data);
-  //   navigate("/reloadRelations", {
-  //     state: {
-  //       redirectUrl: window.location.pathname,
-  //     },
-  //   });
-  // };
+  const onSubmit = (data) => {
+    updateMultipleObject(data);
+    navigate("/reloadRelations", {
+      state: {
+        redirectUrl: window.location.pathname,
+      },
+    });
+  };
 
   /*****************************JWT START*************************/
+  
 
-  const relationFieldSlug = useMemo(() => {
-    return relations.find((item) => item?.type === "Many2Dynamic");
-  }, [relations]);
+  console.log('getRelatedTabeSlug', getRelatedTabeSlug)
 
   const computedSections = useMemo(() => {
     const sections = [];
@@ -225,26 +239,26 @@ const NewRelationSection = ({
     return sections;
   }, [data, selectedTabIndex]);
 
-  // useEffect(() => {
-  //   selectedRelation &&
-  //     constructorObjectService
-  //       .getList(selectedRelation?.relatedTable, {
-  //         data: {
-  //           offset: 0,
-  //           limit: 0,
-  //           [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
-  //             idFromParams,
-  //         },
-  //       })
-  //       .then((res) => {
-  //         setJwtObjects(
-  //           res?.data?.fields?.filter(
-  //             (item) => item?.attributes?.object_id_from_jwt === true
-  //           )
-  //         );
-  //       })
-  //       .catch((a) => console.log("error", a));
-  // }, [selectedRelation]);
+  useEffect(() => {
+    getRelatedTabeSlug &&
+      constructorObjectService
+        .getList(getRelatedTabeSlug?.relatedTable, {
+          data: {
+            offset: 0,
+            limit: 0,
+            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
+              idFromParams,
+          },
+        })
+        .then((res) => {
+          setJwtObjects(
+            res?.data?.fields?.filter(
+              (item) => item?.attributes?.object_id_from_jwt === true
+            )
+          );
+        })
+        .catch((a) => console.log("error", a));
+  }, [selectedRelation]);
 
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {
@@ -281,8 +295,9 @@ const NewRelationSection = ({
         setData(layout);
       });
   }, [tableSlug, menuItem.table_id]);
+  console.log('data', data)
 
-  // ifc (!data?.length) return null;
+  // ifcc (!data?.length) return null;
   return (
     <>
       {selectedManyToManyRelation && (
@@ -473,13 +488,14 @@ const NewRelationSection = ({
                       reset={reset}
                       selectedTabIndex={selectedTabIndex}
                       watch={watch}
+                      selectedTab={selectedTab}
                       control={control}
                       setFormValue={setFormValue}
                       fields={fields}
                       setFormVisible={setFormVisible}
                       formVisible={formVisible}
                       key={selectedTab.id}
-                      relation={selectedTab}
+                      relation={relations}
                       createFormVisible={relationsCreateFormVisible}
                       setCreateFormVisible={setCreateFormVisible}
                       selectedObjects={selectedObjects}

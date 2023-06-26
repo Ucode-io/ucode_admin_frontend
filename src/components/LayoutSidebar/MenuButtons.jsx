@@ -386,6 +386,17 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
+            <MenuItemComponent
+              icon={<WebIcon size={13} />}
+              title="Добавить web-page"
+              onClick={(e) => {
+                e.stopPropagation();
+                setWebPageModal({
+                  id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+                });
+                handleCloseNotify();
+              }}
+            />
             <Divider
               style={{
                 marginBottom: "4px",

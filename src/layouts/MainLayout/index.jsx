@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import useSidebarElements from "../../hooks/useSidebarElements";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
-import RouterTabsBlock from "./RouterTabsBlock";
 import styles from "./style.module.scss";
 import projectService from "@/services/projectService";
 import Favicon from "react-favicon";
 import environmentService from "../../services/environmentService";
 import LayoutSidebar from "../../components/LayoutSidebar";
-import Sidebar from "../../components/Sidebar";
 
 const MainLayout = ({ setFavicon, favicon }) => {
   const projectId = useSelector((state) => state.auth.projectId);
@@ -18,8 +15,6 @@ const MainLayout = ({ setFavicon, favicon }) => {
   const { appId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { elements } = useSidebarElements();
-  const [selectedTable, setSelectedTable] = useState(null);
 
   // useEffect(() => {
   //   dispatch(fetchConstructorTableListAction(appId));
@@ -66,8 +61,6 @@ const MainLayout = ({ setFavicon, favicon }) => {
         appId={appId}
         environment={environment}
         getAppById={getAppById}
-        setSelectedTable={setSelectedTable}
-        selectedTable={selectedTable}
       />
       <div className={styles.content}>
         {/* <RouterTabsBlock selectedTable={selectedTable} /> */}

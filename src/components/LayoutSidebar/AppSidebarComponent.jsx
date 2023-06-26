@@ -34,13 +34,19 @@ const AppSidebar = ({
       setSubMenuIsOpen(true);
       navigate(`/main/${element.id}`);
     } else if (element.type === "TABLE") {
-      navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
+      navigate(
+        `/main/${appId}/object/${element?.data?.table?.slug}/${element.id}`
+      );
       setSubMenuIsOpen(false);
     } else if (element.type === "MICROFRONTEND") {
-      navigate(`/main/${appId}/page/${element?.data?.microfrontend?.id}`);
+      navigate(
+        `/main/${appId}/page/${element?.data?.microfrontend?.id}/${element.id}`
+      );
       setSubMenuIsOpen(false);
     } else if (element.type === "WEBPAGE") {
-      navigate(`/main/${appId}/web-page/${element?.data?.webpage?.id}`);
+      navigate(
+        `/main/${appId}/web-page/${element?.data?.webpage?.id}/${element.id}`
+      );
       setSubMenuIsOpen(false);
     }
   };

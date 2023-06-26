@@ -12,18 +12,7 @@ import TableRowButton from "../../../../../components/TableRowButton";
 import layoutService from "../../../../../services/layoutService";
 
 function NewlayoutList({ setSelectedLayout, mainForm }) {
-  const { slug, id } = useParams();
-
-  useEffect(() => {
-    layoutService
-      .getList({
-        "table-slug": slug,
-      })
-      .then((res) => {
-        mainForm.setValue("layouts", res?.layouts ?? []);
-      });
-  }, [slug]);
-
+  const { id } = useParams();
   const {
     fields: layouts,
     append,

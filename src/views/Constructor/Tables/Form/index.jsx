@@ -86,12 +86,21 @@ const ConstructorTablesFormPage = () => {
       table_slug: slug,
     });
 
+    const getLayouts = layoutService
+      .getList({
+        "table-slug": slug,
+      })
+      .then((res) => {
+        mainForm.setValue("layouts", res?.layouts ?? []);
+      });
+
     try {
       const [tableData, { sections = [] }, { relations: viewRelations = [] }, { custom_events: actions = [] }] = await Promise.all([
         getTableData,
         getSectionsData,
         getViewRelations,
         getActions,
+        getLayouts
       ]);
 
       const data = {
@@ -191,13 +200,14 @@ const ConstructorTablesFormPage = () => {
 
     const computedLayouts = data.layouts.map((layout) => ({
       ...layout,
-      tabs: layout.tabs.map((tab) => {
-        if (tab.type === "Many2Many" || tab.type === "Many2Dynamic" || tab.type === "One2Many" || tab.type === "Recursive" || tab.type === "Many2One") {
+      tabs: layout?.tabs?.map((tab) => {
+        if (tab?.type === "Many2Many" || tab?.type === "Many2Dynamic" || tab?.type === "One2Many" || tab?.type === "Recursive" || tab?.type === "Many2One") {
           return {
-            order: tab?.order,
+            order: tab?.order ?? 0,
             label: tab.title,
             type: "relation",
             layout_id: layout.id,
+            relation_id: tab.id,
             relation: {
               ...tab,
             },
@@ -231,7 +241,7 @@ const ConstructorTablesFormPage = () => {
 
   const onSubmit = (data) => {
     const computedData = {
-      ...data, 
+      ...data,
       sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       view_relations: computeViewRelationsOnSubmit(data.view_relations),
     };

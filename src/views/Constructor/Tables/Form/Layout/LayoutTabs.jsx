@@ -68,7 +68,8 @@ function LayoutTabs({
 
   const onDrop = (dropResult) => {
     const result = applyDrag(computedViewRelations, dropResult);
-    if (result)
+    if (result) {
+      appendSectionTab(result?.find(el => el?.id ));
       if (result.length > computedViewRelations?.length) {
         viewRelationsFieldArray.insert(
           dropResult?.addedIndex,
@@ -78,8 +79,7 @@ function LayoutTabs({
         // viewRelationsFieldArray.replace(result)
         viewRelationsFieldArray.move(dropResult.removedIndex, dropResult.addedIndex);
       }
-
-    appendSectionTab(result);
+    }
   };
 
   // const removeViewRelation = (index, relation) => {
@@ -116,14 +116,7 @@ function LayoutTabs({
     setSelectedTab(allTabs[0] ?? {});
   }, [allTabs]);
 
-  let a = useWatch({
-    control: mainForm.control,
-    name: "layouts",
-  })
-
-  console.log('qqqqqqqqq', a)
-
-  // const selectedLayout = mainForm.watch("selectedLayout");
+  console.log("ssssssss", allTabs);
 
   const selectedLayoutIndex = useMemo(() => {
     if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
@@ -135,7 +128,13 @@ function LayoutTabs({
       <Card>
         <div className={styles.cardHeader}>
           <div className={styles.tabList}>
-            <Container groupName="table_relation" dropPlaceholder={{ className: "drag-row-drop-preview" }} orientation="horizontal" onDrop={onDrop}>
+            <Container
+              groupName="table_relation"
+              style={{ display: "flex", alignItems: "center" }}
+              dropPlaceholder={{ className: "drag-row-drop-preview" }}
+              orientation="horizontal"
+              onDrop={onDrop}
+            >
               {/* {tabs.map((tab, index) => (
                 <Draggable key={tab.id} onDrag={() => handleTabsDrag(index)}>
                   <div className={`${styles.tab} ${selectedTab === index ? styles.active : ""}`} onClick={() => setSelectedTabIndex(index)}>
@@ -148,6 +147,10 @@ function LayoutTabs({
               {allTabs?.map((tab, index) => (
                 <Draggable
                   key={tab.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
                   // onDrag={() => handleTabsDrag(index)}
                 >
                   <div
@@ -157,9 +160,8 @@ function LayoutTabs({
                       setSelectedTab(tab);
                     }}
                   >
-                    {/* {tab?.type === "sectionTab" ? tab?.title : tab?.table_from?.label} */}
                     {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label}
-                    {/* <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab)} onDeleteClick={() => removeViewRelation(index, tab)} /> */}
+                    {tab?.type === "relation" && <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab)} onDeleteClick={() => removeSectionTab(index, tab)} />}
                   </div>
                 </Draggable>
               ))}

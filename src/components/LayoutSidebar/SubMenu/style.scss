@@ -5,9 +5,12 @@
     background-color: #fff;
     border-right: 1px solid rgba(192, 192, 192, 0.562);
     transition-property: width;
-    transition-timing-function: linear;
     transition-duration: .3s;
     overflow-x: hidden;
+
+    .body {
+        display: block;
+    }
 
     .search {
         display: flex;
@@ -387,8 +390,11 @@
 
     &.right-side-closed {
         // min-width: 72px;
-        width: 72px;
-        display: none;
+        width: 0;
+
+        .body {
+            display: none;
+        }
 
         .header {
 

@@ -9,14 +9,10 @@ import "./style.scss";
 const SubMenu = ({
   child,
   environment,
-  setSelectedTable,
-  selectedTable,
-  element,
   subMenuIsOpen,
   openFolderCreateModal,
   setFolderModalType,
   setTableModal,
-  selectedFolder,
   setSubMenuIsOpen,
   setSubSearchText,
   handleOpenNotify,
@@ -24,7 +20,11 @@ const SubMenu = ({
   selectedApp,
 }) => {
   return (
-    <div className={`SubMenu ${!subMenuIsOpen ? "right-side-closed" : ""}`}>
+    <div
+      className={`SubMenu ${
+        !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
+      }`}
+    >
       <div className="header" onClick={() => {}}>
         {subMenuIsOpen && <h2>{selectedApp?.label}</h2>}{" "}
         <Box className="buttons">
@@ -33,7 +33,6 @@ const SubMenu = ({
               size={13}
               onClick={(e) => {
                 handleOpenNotify(e, "FOLDER");
-                setSelectedTable(element);
                 setElement(selectedApp);
               }}
               style={{
@@ -44,7 +43,6 @@ const SubMenu = ({
               size={13}
               onClick={(e) => {
                 handleOpenNotify(e, "CREATE_TO_FOLDER");
-                setSelectedTable(element);
                 setElement(selectedApp);
               }}
               style={{
@@ -93,11 +91,8 @@ const SubMenu = ({
                   openFolderCreateModal={openFolderCreateModal}
                   environment={environment}
                   setFolderModalType={setFolderModalType}
-                  setSelectedTable={setSelectedTable}
                   sidebarIsOpen={subMenuIsOpen}
                   setTableModal={setTableModal}
-                  selectedFolder={selectedFolder}
-                  selectedTable={selectedTable}
                   handleOpenNotify={handleOpenNotify}
                   setElement={setElement}
                 />

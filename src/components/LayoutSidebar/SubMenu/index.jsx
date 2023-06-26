@@ -34,7 +34,7 @@ const SubMenu = ({
               onClick={(e) => {
                 handleOpenNotify(e, "FOLDER");
                 setSelectedTable(element);
-                setElement(element);
+                setElement(selectedApp);
               }}
               style={{
                 color: environment?.data?.color,
@@ -45,7 +45,7 @@ const SubMenu = ({
               onClick={(e) => {
                 handleOpenNotify(e, "CREATE_TO_FOLDER");
                 setSelectedTable(element);
-                setElement(element);
+                setElement(selectedApp);
               }}
               style={{
                 color: environment?.data?.color,

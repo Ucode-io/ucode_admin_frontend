@@ -35,11 +35,19 @@ const FieldsBlock = ({
     name: "layoutRelations",
     keyName: "key",
   });
+  
 
   const sections = useWatch({
     control: mainForm.control,
     name: `sections`,
   });
+
+  const test = useWatch({
+    control: mainForm.control,
+  });
+
+  console.log('test', test)
+
 
   const summarySectionFields = useWatch({
     control: mainForm.control,
@@ -101,6 +109,7 @@ const FieldsBlock = ({
   const handleNameChange = (event, index, oldId) => {
     updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
   };
+
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -126,11 +135,11 @@ const FieldsBlock = ({
                 onDrop={onDrop}
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
-                  ...unusedFields[i],
-                  field_name: unusedFields[i]?.label ?? unusedFields[i]?.title,
+                  ...fields[i],
+                  field_name: fields[i]?.label ?? fields[i]?.title,
                 })}
               >
-                {unusedFields?.map((field, index) => (
+                {fields?.map((field) => (
                   <Draggable key={field.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator field={field} control={mainForm.control} disabledHelperText />
@@ -169,7 +178,7 @@ const FieldsBlock = ({
           <TabPanel>
             <div className={styles.fieldsBlock}>
               <Container groupName="table_relation" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }} getChildPayload={(i) => unusedTableRelations[i]}>
-                {unusedTableRelations?.map((relation) => (
+                {relations?.map((relation) => (
                   <Draggable key={relation.id} style={{ overflow: "visible", width: "fit-content" }}>
                     <div className={`${styles.sectionFieldRow} ${styles.relation}`}>{relation.title ?? relation[relation.relatedTableSlug]?.label}</div>
                   </Draggable>

@@ -9,15 +9,7 @@ import RectangleIconButton from "../../../../../components/Buttons/RectangleIcon
 import { Add } from "@mui/icons-material";
 import ButtonsPopover from "../../../../../components/ButtonsPopover";
 
-function DetailTabs({
-  control,
-  layoutForm,
-  openFieldsBlock,
-  openFieldSettingsBlock,
-  openRelationSettingsBlock,
-  selectedTab,
-  handleTabSelection,
-}) {
+function DetailTabs({ control, layoutForm, openFieldsBlock, openFieldSettingsBlock, openRelationSettingsBlock, selectedTab, handleTabSelection }) {
   const {
     fields: tabs,
     insert,
@@ -44,13 +36,7 @@ function DetailTabs({
       <TabList>
         {tabs?.map((item, index) => (
           <>
-            <Tab
-              key={item.key}
-              className={`${styles.tabs_item} ${
-                selectedTab === index ? "custom-selected-tab" : "custom_tab"
-              }`}
-              onClick={() => handleTabSelection(index)}
-            >
+            <Tab key={item.key} className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`} onClick={() => handleTabSelection(index)}>
               <HFTextField
                 control={control}
                 // style={{width: '120px', border: '0px solid #fff', boxShadow: 'none'}}

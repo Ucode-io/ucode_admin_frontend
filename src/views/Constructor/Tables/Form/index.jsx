@@ -14,13 +14,7 @@ import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
 import constructorRelationService from "../../../../services/constructorRelationService";
-import {
-  computeSections,
-  computeSectionsOnSubmit,
-  computeSummarySection,
-  computeViewRelations,
-  computeViewRelationsOnSubmit,
-} from "../utils";
+import { computeSections, computeSectionsOnSubmit, computeSummarySection, computeViewRelations, computeViewRelationsOnSubmit } from "../utils";
 import { addOrderNumberToSections } from "../../../../utils/sectionsOrderNumber";
 import HeaderSettings from "../../../../components/HeaderSettings";
 import Footer from "../../../../components/Footer";
@@ -92,17 +86,21 @@ const ConstructorTablesFormPage = () => {
       table_slug: slug,
     });
 
+    const getLayouts = layoutService
+      .getList({
+        "table-slug": slug,
+      })
+      .then((res) => {
+        mainForm.setValue("layouts", res?.layouts ?? []);
+      });
+
     try {
-      const [
-        tableData,
-        { sections = [] },
-        { relations: viewRelations = [] },
-        { custom_events: actions = [] },
-      ] = await Promise.all([
+      const [tableData, { sections = [] }, { relations: viewRelations = [] }, { custom_events: actions = [] }] = await Promise.all([
         getTableData,
         getSectionsData,
         getViewRelations,
         getActions,
+        getLayouts,
       ]);
 
       const data = {
@@ -132,17 +130,13 @@ const ConstructorTablesFormPage = () => {
         relation_table_slug: slug,
       });
 
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
-        getRelations,
-        getFieldsData,
-      ]);
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
 
       mainForm.setValue("fields", fields);
 
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug:
-          relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -150,35 +144,32 @@ const ConstructorTablesFormPage = () => {
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" &&
-            relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" &&
-            relation.table_from?.slug === slug)
-        )
+          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
+        ) {
           layoutRelations.push(relation);
-        else tableRelations.push(relation);
+        } else {
+          tableRelations.push(relation);
+        }
       });
+
       const layoutRelationsFields = layoutRelations.map((relation) => ({
         ...relation,
         id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
-            ? relation[relation.relatedTableSlug]?.label
-            : relation?.title,
+        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
       mainForm.setValue("relationsMap", listToMap(relations));
-
       mainForm.setValue("layoutRelations", layoutRelationsFields);
       mainForm.setValue("tableRelations", tableRelations);
-
+      console.log("tableRelations", layoutRelations);
       resolve();
     });
   };
@@ -198,29 +189,47 @@ const ConstructorTablesFormPage = () => {
 
     const updateTableData = constructorTableService.update(data, projectId);
 
-    // const updateSectionData = constructorSectionService.update({
-    //   sections: addOrderNumberToSections(data.sections),
-    //   table_slug: data.slug,
-    //   table_id: id,
-    // });
+    const updateSectionData = constructorSectionService.update({
+      sections: addOrderNumberToSections(data.sections),
+      table_slug: data.slug,
+      table_id: id,
+    });
 
     const updateViewRelationsData = constructorViewRelationService.update({
       view_relations: data.view_relations,
       table_slug: data.slug,
     });
-    
+
+    const computedLayouts = data.layouts.map((layout) => ({
+      ...layout,
+      summary_fields: layout?.summary_fields,
+      tabs: layout?.tabs?.map((tab) => {
+        if (tab?.type === "Many2Many" || tab?.type === "Many2Dynamic" || tab?.type === "One2Many" || tab?.type === "Recursive" || tab?.type === "Many2One") {
+          return {
+            order: tab?.order ?? 0,
+            label: tab.title,
+            type: "relation",
+            layout_id: layout.id,
+            relation_id: tab.id,
+            relation: {
+              ...tab,
+            },
+          };
+        } else {
+          return {
+            ...tab,
+          };
+        }
+      }),
+    }));
+
     const updateLayoutData = layoutService.update({
-      layouts: data.layouts,
+      layouts: computedLayouts,
       table_id: id,
       project_id: projectId,
     });
 
-    Promise.all([
-      updateTableData,
-      // updateSectionData,
-      updateViewRelationsData,
-      updateLayoutData,
-    ])
+    Promise.all([updateTableData, updateSectionData, updateViewRelationsData, updateLayoutData])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
         navigate(-1);
@@ -251,13 +260,7 @@ const ConstructorTablesFormPage = () => {
     <>
       <div className="pageWithStickyFooter">
         <Tabs direction={"ltr"}>
-          <HeaderSettings
-            title="Objects"
-            subtitle={id ? mainForm.getValues("label") : "Добавить"}
-            icon={mainForm.getValues("icon")}
-            backButtonLink={-1}
-            sticky
-          >
+          <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Добавить"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
             <TabList>
               <Tab>Details</Tab>
               <Tab>Layouts</Tab>
@@ -282,10 +285,7 @@ const ConstructorTablesFormPage = () => {
 
           {id && (
             <TabPanel>
-              <Relations
-                mainForm={mainForm}
-                getRelationFields={getRelationFields}
-              />
+              <Relations mainForm={mainForm} getRelationFields={getRelationFields} />
             </TabPanel>
           )}
           {id && (
@@ -307,11 +307,7 @@ const ConstructorTablesFormPage = () => {
             <SecondaryButton onClick={() => navigate(-1)} color="error">
               Закрыть
             </SecondaryButton>
-            <PrimaryButton
-              loader={btnLoader}
-              onClick={mainForm.handleSubmit(onSubmit)}
-              loading={btnLoader}
-            >
+            <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
               <Save /> Сохранить
             </PrimaryButton>
           </>

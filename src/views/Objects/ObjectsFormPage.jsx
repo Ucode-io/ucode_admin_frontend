@@ -1,6 +1,6 @@
 import { Save } from "@mui/icons-material";
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -24,6 +24,7 @@ import SummarySectionValue from "./SummarySection/SummarySectionValue";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
+import layoutService from "../../services/layoutService";
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
@@ -38,6 +39,17 @@ const ObjectsFormPage = () => {
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
+  const [summary, setSummary] = useState([]);
+
+  const {
+    handleSubmit,
+    control,
+    reset,
+    setValue: setFormValue,
+    watch,
+  } = useForm({
+    defaultValues: state,
+  });
 
   const tableInfo = store.getState().menu.menuItem;
 
@@ -67,6 +79,11 @@ const ObjectsFormPage = () => {
       table_slug: tableSlug,
     });
 
+    const getLayout = layoutService.getList({
+      "table-slug": tableSlug,
+      awdawdawd: "awdawdawd",
+    });
+
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     const getRelations = constructorViewRelationService.getList({
@@ -74,9 +91,17 @@ const ObjectsFormPage = () => {
     });
 
     try {
-      const [{ sections = [] }, { data = {} }, { relations: view_relations = [] }] = await Promise.all([getSections, getFormData, getRelations]);
+      const [{ sections = [] }, { data = {} }, { relations: view_relations = [] }, { layouts: layout = [] }] = await Promise.all([
+        getSections,
+        getFormData,
+        getRelations,
+        getLayout,
+      ]);
 
       setSections(sortSections(sections));
+
+      setSummary(layout?.find((el) => el.is_default === true)?.summary_fields ?? []);
+
 
       // setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? el?.view_relation_type === 'FILE' ? el : {}))
 
@@ -94,7 +119,7 @@ const ObjectsFormPage = () => {
       );
 
       reset(data.response ?? {});
-
+      console.log();
       // const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)
 
       // if (!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response)
@@ -141,7 +166,7 @@ const ObjectsFormPage = () => {
 
   const update = (data) => {
     setBtnLoader(true);
-
+    console.log("yeeeees update");
     constructorObjectService
       .update(tableSlug, { data })
       .then(() => {
@@ -154,7 +179,7 @@ const ObjectsFormPage = () => {
 
   const create = (data) => {
     setBtnLoader(true);
-
+    console.log("yeeeees create");
     constructorObjectService
       .create(tableSlug, { data })
       .then((res) => {
@@ -186,16 +211,6 @@ const ObjectsFormPage = () => {
     else getFields();
   }, [id, tableInfo, tableSlug]);
 
-  const {
-    handleSubmit,
-    control,
-    reset,
-    setValue: setFormValue,
-    watch,
-  } = useForm({
-    defaultValues: state,
-  });
-
   // Automatic setValue for End of Session
 
   // const serviceTime = watch("service_time");
@@ -206,6 +221,8 @@ const ObjectsFormPage = () => {
   // }, [serviceTime, startTime]);
 
   // if (loader) return <PageFallback />;
+
+  console.log('summary', summary)
   return (
     <div className={styles.formPage}>
       <FiltersBlock
@@ -215,7 +232,7 @@ const ObjectsFormPage = () => {
         hasBackground={true}
       >
         <FormPageBackButton />
-        <SummarySectionValue computedSummary={computedSummary} control={control} sections={sections} />
+        <SummarySectionValue computedSummary={summary} control={control} sections={sections} />
       </FiltersBlock>
       <div className={styles.formArea}>
         {/* <MainInfo

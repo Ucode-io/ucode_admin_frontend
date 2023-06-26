@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -21,6 +14,7 @@ import styles from "./style.module.scss";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import { useSelector } from "react-redux";
+import { useWatch } from "react-hook-form";
 
 const RelationTable = forwardRef(
   (
@@ -44,6 +38,7 @@ const RelationTable = forwardRef(
       fields,
       setFormVisible,
       formVisible,
+      selectedTab,
     },
     ref
   ) => {
@@ -55,9 +50,7 @@ const RelationTable = forwardRef(
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState();
     const isPermissions = useSelector((state) => state?.auth?.permissions);
-    const rowClickType = relation?.action_relations?.find(
-      (item) => item.key === "click"
-    );
+    const rowClickType = relation?.action_relations?.find((item) => item.key === "click");
     const filterChangeHandler = (value, name) => {
       setFilters({
         ...filters,
@@ -65,11 +58,15 @@ const RelationTable = forwardRef(
       });
     };
 
+    const getRelatedTabeSlug = useMemo(() => {
+      return relation?.find((el) => el?.id === selectedTab?.relation_id);
+    }, [relation, selectedTab]);
+
     useEffect(() => {
-      if (relation?.default_editable) {
+      if (getRelatedTabeSlug?.default_editable) {
         setFormVisible(true);
       }
-    }, [relation?.default_editable]);
+    }, [getRelatedTabeSlug?.default_editable]);
 
     const onCheckboxChange = (val, row) => {
       if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -88,35 +85,24 @@ const RelationTable = forwardRef(
     const computedFilters = useMemo(() => {
       const relationFilter = {};
 
-      if (relation.type === "Many2Many")
-        relationFilter[`${tableSlug}_ids`] = id;
-      else if (relation.type === "Many2Dynamic")
-        relationFilter[`${relation?.relation_field_slug}.${tableSlug}_id`] = id;
+      if (getRelatedTabeSlug.type === "Many2Many") relationFilter[`${tableSlug}_ids`] = id;
+      else if (getRelatedTabeSlug.type === "Many2Dynamic") relationFilter[`${getRelatedTabeSlug?.relation_field_slug}.${tableSlug}_id`] = id;
       else relationFilter[`${tableSlug}_id`] = id;
 
       return {
         ...filters,
         ...relationFilter,
       };
-    }, [filters, tableSlug, id, relation.type, relation.relation_field_slug]);
+    }, [filters, tableSlug, id, getRelatedTabeSlug.type, getRelatedTabeSlug.relation_field_slug]);
 
     //============VIEW PERMISSION=========
     const viewPermission = useMemo(() => {
-      if (relation?.permission?.view_permission) return true;
+      if (getRelatedTabeSlug?.permission?.view_permission) return true;
       else return false;
-    }, [relation?.permission?.view_permission]);
+    }, [getRelatedTabeSlug?.permission?.view_permission]);
 
-    const relatedTableSlug = relation?.relatedTable;
-    const {
-      data: {
-        tableData = [],
-        pageCount = 1,
-        columns = [],
-        quickFilters = [],
-        fieldsMap = {},
-      } = {},
-      isLoading: dataFetchingLoading,
-    } = useQuery(
+    const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
+    const { data: { tableData = [], pageCount = 1, columns = [], quickFilters = [], fieldsMap = {} } = {}, isLoading: dataFetchingLoading } = useQuery(
       [
         "GET_OBJECT_LIST",
         relatedTableSlug,
@@ -141,25 +127,16 @@ const RelationTable = forwardRef(
         enabled: !!relatedTableSlug && !!appId,
         select: ({ data }) => {
           const tableData = id ? objectToArray(data.response ?? {}) : [];
-          const pageCount =
-            isNaN(data?.count) || tableData.length === 0
-              ? 1
-              : Math.ceil(data.count / limit);
+          const pageCount = isNaN(data?.count) || tableData.length === 0 ? 1 : Math.ceil(data.count / limit);
           setDataLength(tableData.length);
 
           const fieldsMap = listToMap(data.fields);
 
-          setFieldSlug(
-            Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)
-              ?.slug
-          );
+          setFieldSlug(Object.values(fieldsMap).find((i) => i.table_slug === tableSlug)?.slug);
 
-          const columns = relation.columns
-            ?.map((id, index) => fieldsMap[id])
-            ?.filter((el) => el);
-          const quickFilters = relation.quick_filters
-            ?.map(({ field_id }) => fieldsMap[field_id])
-            ?.filter((el) => el);
+          const columns = getRelatedTabeSlug.columns?.map((id, index) => fieldsMap[id])?.filter((el) => el);
+
+          const quickFilters = getRelatedTabeSlug.quick_filters?.map(({ field_id }) => fieldsMap[field_id])?.filter((el) => el);
           return {
             tableData,
             pageCount,
@@ -172,9 +149,9 @@ const RelationTable = forwardRef(
     );
 
     useEffect(() => {
-      if (isNaN(parseInt(relation?.default_limit))) setLimit(10);
-      else setLimit(parseInt(relation?.default_limit));
-    }, [relation?.default_limit]);
+      if (isNaN(parseInt(getRelatedTabeSlug?.default_limit))) setLimit(10);
+      else setLimit(parseInt(getRelatedTabeSlug?.default_limit));
+    }, [getRelatedTabeSlug?.default_limit]);
 
     // useEffect(() => {
     //   setTimeout(() => {
@@ -186,7 +163,7 @@ const RelationTable = forwardRef(
 
     const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {
-        if (relation.type === "Many2Many") {
+        if (getRelatedTabeSlug.type === "Many2Many") {
           const data = {
             id_from: id,
             id_to: [row.guid],
@@ -206,10 +183,9 @@ const RelationTable = forwardRef(
       }
     );
 
-    const { data: { custom_events: customEvents = [] } = {} } =
-      useCustomActionsQuery({
-        tableSlug: relatedTableSlug,
-      });
+    const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
+      tableSlug: relatedTableSlug,
+    });
 
     const navigateToEditPage = (row) => {
       // if (rowClickType.value === "detail_page") {
@@ -221,7 +197,7 @@ const RelationTable = forwardRef(
     const navigateToTablePage = () => {
       navigate(`/main/${appId}/object/${relatedTableSlug}`, {
         state: {
-          [`${tableSlug}_${relation.type === "Many2Many" ? "ids" : "id"}`]: id,
+          [`${tableSlug}_${getRelatedTabeSlug.type === "Many2Many" ? "ids" : "id"}`]: id,
         },
       });
     };
@@ -266,23 +242,17 @@ const RelationTable = forwardRef(
             {quickFilters.map((field) => (
               <FRow key={field.id}>
                 {/* label={field.label} */}
-                <Filter
-                  field={field}
-                  name={field.slug}
-                  tableSlug={relatedTableSlug}
-                  filters={filters}
-                  onChange={filterChangeHandler}
-                />
+                <Filter field={field} name={field.slug} tableSlug={relatedTableSlug} filters={filters} onChange={filterChangeHandler} />
               </FRow>
             ))}
           </div>
         )}
 
         <div className={styles.tableBlock}>
-          {viewPermission ? (
+          {viewPermission && (
             <ObjectDataTable
-              defaultLimit={relation?.default_limit}
-              relationAction={relation}
+              defaultLimit={getRelatedTabeSlug?.default_limit}
+              relationAction={getRelatedTabeSlug}
               remove={remove}
               watch={watch}
               isRelationTable={true}
@@ -306,27 +276,17 @@ const RelationTable = forwardRef(
               onPaginationChange={setCurrentPage}
               filters={filters}
               filterChangeHandler={filterChangeHandler}
-              paginationExtraButton={
-                id && (
-                  <SecondaryButton onClick={navigateToTablePage}>
-                    Все
-                  </SecondaryButton>
-                )
-              }
-              createFormVisible={createFormVisible[relation.id]}
-              setCreateFormVisible={(val) =>
-                setCreateFormVisible(relation.id, val)
-              }
+              paginationExtraButton={id && <SecondaryButton onClick={navigateToTablePage}>Все</SecondaryButton>}
+              createFormVisible={createFormVisible[getRelatedTabeSlug.id]}
+              setCreateFormVisible={(val) => setCreateFormVisible(relation.id, val)}
               limit={limit}
               setLimit={setLimit}
-              summaries={relation.summaries}
+              summaries={getRelatedTabeSlug.summaries}
               isChecked={(row) => selectedObjects?.includes(row.guid)}
               onCheckboxChange={!!customEvents?.length && onCheckboxChange}
               onChecked={onChecked}
               title={"Сначала нужно создать объект"}
             />
-          ) : (
-            ""
           )}
         </div>
       </div>

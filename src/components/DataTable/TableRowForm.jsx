@@ -7,6 +7,7 @@ import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenera
 import CellCheckboxOrOrderNumBlock from "./CellCheckboxOrOrderNumBlock";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import DeleteWrapperModal from "../DeleteWrapperModal";
+import { useNavigate } from "react-router-dom";
 
 const TableRowForm = ({
   onCheckboxChange,
@@ -31,6 +32,8 @@ const TableRowForm = ({
   relationFields,
   data,
 }) => {
+  const navigate = useNavigate();
+  
   return (
     <CTableRow>
       <CellCheckboxOrOrderNumBlock
@@ -101,7 +104,15 @@ const TableRowForm = ({
           <RectangleIconButton
             color="error"
             onClick={() =>
-              row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+              {
+                onDeleteClick(row, rowIndex) 
+                 remove(rowIndex)
+                 navigate("/reloadRelations", {
+                  state: {
+                    redirectUrl: window.location.pathname,
+                  },
+                });
+              }
             }
           >
             <Delete color="error" />

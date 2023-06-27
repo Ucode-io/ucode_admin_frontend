@@ -8,8 +8,15 @@ import SaveButton from "../../components/Buttons/SaveButton";
 import HFSelect from "../../components/FormElements/HFSelect";
 import constructorTableService from "../../services/constructorTableService";
 import menuSettingsService from "../../services/menuSettingsService";
+import HFIconPicker from "../../components/FormElements/HFIconPicker";
+import HFTextField from "../../components/FormElements/HFTextField";
 
-const TableLinkModal = ({ closeModal, loading, selectedFolder }) => {
+const TableLinkModal = ({
+  closeModal,
+  loading,
+  selectedFolder,
+  getMenuList,
+}) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
   const [tables, setTables] = useState();
@@ -47,6 +54,7 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder }) => {
       .then(() => {
         closeModal();
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);
+        getMenuList();
       })
       .catch((err) => {
         console.log(err);
@@ -100,6 +108,16 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder }) => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="form">
+            {/* <Box display={"flex"} columnGap={"16px"} className="form-elements">
+              <HFIconPicker name="icon" control={control} />
+              <HFTextField
+                autoFocus
+                fullWidth
+                label="Title"
+                control={control}
+                name="label"
+              />
+            </Box> */}
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFSelect
                 fullWidth

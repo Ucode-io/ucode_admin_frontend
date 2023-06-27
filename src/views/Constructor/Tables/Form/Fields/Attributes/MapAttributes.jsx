@@ -15,6 +15,9 @@ const MapAttributes = ({ control }) => {
         <FRow label="Longitude">
           <HFTextField name="attributes.long" control={control} fullWidth />
         </FRow>
+        <FRow label="Api key">
+          <HFTextField name="attributes.apiKey" control={control} fullWidth />
+        </FRow>
       </div>
     </>
   );

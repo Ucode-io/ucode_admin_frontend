@@ -12,11 +12,15 @@ import { store } from "../../store";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 
-const WebPageLinkModal = ({ closeModal, loading, selectedFolder }) => {
+const WebPageLinkModal = ({
+  closeModal,
+  loading,
+  selectedFolder,
+  getMenuList,
+}) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
   const authStore = store.getState().auth;
-  console.log("selectedFolder", selectedFolder);
 
   const onSubmit = (data) => {
     if (selectedFolder.type === "WEBPAGE") {
@@ -51,6 +55,7 @@ const WebPageLinkModal = ({ closeModal, loading, selectedFolder }) => {
       .then(() => {
         closeModal();
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);
+        getMenuList();
       })
       .catch((err) => {
         console.log(err);

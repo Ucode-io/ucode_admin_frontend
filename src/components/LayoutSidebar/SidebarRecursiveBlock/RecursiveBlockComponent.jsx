@@ -12,6 +12,7 @@ import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
+import { store } from "../../../store";
 
 const RecursiveBlock = ({
   index,
@@ -19,22 +20,20 @@ const RecursiveBlock = ({
   openFolderCreateModal,
   environment,
   setFolderModalType,
-  setSelectedTable,
   level = 1,
   sidebarIsOpen,
   setTableModal,
-  selectedTable,
   handleOpenNotify,
   setElement,
 }) => {
-  const { tableSlug } = useParams();
-  const { appId } = useParams();
+  const { appId, tableSlug } = useParams();
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
   const [child, setChild] = useState();
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
+  const menuItem = store.getState().menu.menuItem;
 
   const { isLoading } = useMenuListQuery({
     params: {
@@ -52,10 +51,10 @@ const RecursiveBlock = ({
 
   const activeStyle = {
     backgroundColor:
-      selectedTable?.id === element?.id
+      menuItem.id === element?.id
         ? environment?.data?.active_background || "#007AFF"
         : "#fff",
-    color: selectedTable?.id === element?.id ? "#fff" : "#007AFF",
+    color: menuItem.id === element?.id ? "#fff" : "#007AFF",
     paddingLeft: level * 2 * 5,
     display:
       element.id === "0" ||
@@ -66,6 +65,8 @@ const RecursiveBlock = ({
     setChildBlockVisible((prev) => !prev);
     setCheck(true);
     setId(element?.id);
+    element.type === "FOLDER" &&
+      navigate(`/main/${appId}/page/c57eedc3-a954-4262-a0af-376c65b5a284`);
   };
   useEffect(() => {
     if (
@@ -97,7 +98,6 @@ const RecursiveBlock = ({
             element.type === "WEBPAGE" &&
               navigate(`/main/${appId}/web-page/${element?.data?.webpage?.id}`);
             clickHandler();
-            setSelectedTable(element);
             setElement(element);
             dispatch(menuActions.setMenuItem(element));
           }}
@@ -106,7 +106,7 @@ const RecursiveBlock = ({
             className="label"
             style={{
               color:
-                selectedTable?.id === element?.id
+                menuItem.id === element?.id
                   ? environment?.data?.active_color
                   : environment?.data?.color,
               opacity: element?.isChild && 0.6,
@@ -134,12 +134,11 @@ const RecursiveBlock = ({
                     onClick={(e) => {
                       e?.stopPropagation();
                       handleOpenNotify(e, "FOLDER");
-                      setSelectedTable(element);
                       setElement(element);
                     }}
                     style={{
                       color:
-                        selectedTable?.id === element?.id
+                        menuItem.id === element?.id
                           ? environment?.data?.active_color
                           : environment?.data?.color,
                     }}
@@ -153,12 +152,11 @@ const RecursiveBlock = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       handleOpenNotify(e, "CREATE_TO_FOLDER");
-                      setSelectedTable(element);
                       setElement(element);
                     }}
                     style={{
                       color:
-                        selectedTable?.id === element?.id
+                        menuItem.id === element?.id
                           ? environment?.data?.active_color
                           : environment?.data?.color,
                     }}
@@ -180,12 +178,11 @@ const RecursiveBlock = ({
               onClick={(e) => {
                 e.stopPropagation();
                 handleOpenNotify(e, "TABLE");
-                setSelectedTable(element);
                 setElement(element);
               }}
               style={{
                 color:
-                  selectedTable?.id === element?.id
+                  menuItem.id === element?.id
                     ? environment?.data?.active_color
                     : environment?.data?.color,
               }}
@@ -197,12 +194,11 @@ const RecursiveBlock = ({
               onClick={(e) => {
                 e.stopPropagation();
                 handleOpenNotify(e, "MICROFRONTEND");
-                setSelectedTable(element);
                 setElement(element);
               }}
               style={{
                 color:
-                  selectedTable?.id === element?.id
+                  menuItem.id === element?.id
                     ? environment?.data?.active_color
                     : environment?.data?.color,
               }}
@@ -214,12 +210,11 @@ const RecursiveBlock = ({
               onClick={(e) => {
                 e.stopPropagation();
                 handleOpenNotify(e, "WEBPAGE");
-                setSelectedTable(element);
                 setElement(element);
               }}
               style={{
                 color:
-                  selectedTable?.id === element?.id
+                  menuItem.id === element?.id
                     ? environment?.data?.active_color
                     : environment?.data?.color,
               }}
@@ -237,10 +232,8 @@ const RecursiveBlock = ({
             openFolderCreateModal={openFolderCreateModal}
             environment={environment}
             setFolderModalType={setFolderModalType}
-            setSelectedTable={setSelectedTable}
             sidebarIsOpen={sidebarIsOpen}
             setTableModal={setTableModal}
-            selectedTable={selectedTable}
             handleOpenNotify={handleOpenNotify}
             setElement={setElement}
           />

@@ -24,8 +24,6 @@ const ButtonsMenu = ({
   setTableModal,
   setMicrofrontendModal,
   setWebPageModal,
-  selectedTable,
-  selectedApp,
 }) => {
   const { mutateAsync: createMenu, isLoading: createLoading } =
     useMenuCreateMutation();
@@ -154,7 +152,7 @@ const ButtonsMenu = ({
               title="Добавить table"
               onClick={(e) => {
                 e.stopPropagation();
-                setTableModal(selectedApp);
+                setTableModal(element);
                 handleCloseNotify();
               }}
             />
@@ -163,7 +161,7 @@ const ButtonsMenu = ({
               title="Добавить microfrontend"
               onClick={(e) => {
                 e.stopPropagation();
-                setMicrofrontendModal(selectedApp);
+                setMicrofrontendModal(element);
                 handleCloseNotify();
               }}
             />
@@ -172,7 +170,7 @@ const ButtonsMenu = ({
               title="Добавить web-page"
               onClick={(e) => {
                 e.stopPropagation();
-                setWebPageModal(selectedApp);
+                setWebPageModal(element);
                 handleCloseNotify();
               }}
             />
@@ -187,7 +185,7 @@ const ButtonsMenu = ({
               title="Добавить папку"
               onClick={(e) => {
                 e.stopPropagation();
-                openFolderCreateModal("create", selectedApp);
+                openFolderCreateModal("create", element);
                 handleCloseNotify();
               }}
             />
@@ -383,6 +381,17 @@ const ButtonsMenu = ({
               onClick={(e) => {
                 e.stopPropagation();
                 setMicrofrontendModal({
+                  id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+                });
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<WebIcon size={13} />}
+              title="Добавить web-page"
+              onClick={(e) => {
+                e.stopPropagation();
+                setWebPageModal({
                   id: "c57eedc3-a954-4262-a0af-376c65b5a284",
                 });
                 handleCloseNotify();

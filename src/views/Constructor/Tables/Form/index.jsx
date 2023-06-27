@@ -132,6 +132,8 @@ const ConstructorTablesFormPage = () => {
 
       const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
 
+      // remove fields which type 
+
       mainForm.setValue("fields", fields);
 
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({

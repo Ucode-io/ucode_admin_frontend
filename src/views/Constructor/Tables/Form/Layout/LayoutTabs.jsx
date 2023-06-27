@@ -167,7 +167,7 @@ function LayoutTabs({
                         {tab?.type === "section" ? (
                           <ButtonsPopover onEditClick={() => openFieldsBlock("RELATION")} onDeleteClick={() => removeSectionTab(index, tab)} />
                         ) : (
-                          <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab)} onDeleteClick={() => removeSectionTab(index, tab)} />
+                          <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab.relation ?? tab)} onDeleteClick={() => removeSectionTab(index, tab)} />
                         )}
                       </div>
                     </Draggable>

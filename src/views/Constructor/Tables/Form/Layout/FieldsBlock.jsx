@@ -30,12 +30,18 @@ const FieldsBlock = ({
     keyName: "key",
   });
 
+  const allFields = useMemo(() => {
+    return fields?.filter(
+      (field) => field.type !== "LOOKUP" && field.type !== "LOOKUPS" && field.type !== "DYNAMIC"
+    );
+  }, [fields]);
+
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
     name: "layoutRelations",
     keyName: "key",
   });
-  
+
   const sections = useWatch({
     control: mainForm.control,
     name: `sections`,
@@ -102,6 +108,8 @@ const FieldsBlock = ({
     updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
   };
 
+  console.log('sssssssss', allFields)
+
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -131,7 +139,7 @@ const FieldsBlock = ({
                   field_name: fields[i]?.label ?? fields[i]?.title,
                 })}
               >
-                {fields?.map((field) => (
+                {allFields?.map((field) => (
                   <Draggable key={field.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator field={field} control={mainForm.control} disabledHelperText />

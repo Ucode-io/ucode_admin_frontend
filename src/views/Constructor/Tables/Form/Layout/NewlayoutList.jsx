@@ -1,4 +1,4 @@
-import { Delete } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import { Box, Button, FormControlLabel, Switch } from "@mui/material";
 import React, { useEffect } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
@@ -12,18 +12,7 @@ import TableRowButton from "../../../../../components/TableRowButton";
 import layoutService from "../../../../../services/layoutService";
 
 function NewlayoutList({ setSelectedLayout, mainForm }) {
-  const { slug, id } = useParams();
-
-  useEffect(() => {
-    layoutService
-      .getList({
-        "table-slug": slug,
-      })
-      .then((res) => {
-        mainForm.setValue("layouts", res?.layouts ?? []);
-      });
-  }, [slug]);
-
+  const { id } = useParams();
   const {
     fields: layouts,
     append,
@@ -97,25 +86,21 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
                   </Box>
                 </Box>
               </CTableCell>
-              <PermissionWrapperV2 tabelSlug="app" type="delete, edit">
-                <CTableCell>
-                  <Button
-                    onClick={(e) => {
-                      remove(index);
-                    }}
-                  >
-                    delete
-                  </Button>
 
-                  <Button
-                    onClick={(e) => {
-                      navigateToEditForm(element);
-                    }}
-                  >
-                    edit
-                  </Button>
-                </CTableCell>
-              </PermissionWrapperV2>
+              <CTableCell>
+                <Box style={{ display: "flex", gap: "5px" }}>
+                  <PermissionWrapperV2 tabelSlug={"app"} type="edit">
+                    <RectangleIconButton color="success" onClick={() => navigateToEditForm(element)}>
+                      <Edit color="success" />
+                    </RectangleIconButton>
+                  </PermissionWrapperV2>
+                  <PermissionWrapperV2 tabelSlug={"app"} type="delete">
+                    <RectangleIconButton color="error" onClick={() => remove(index)}>
+                      <Delete color="error" />
+                    </RectangleIconButton>
+                  </PermissionWrapperV2>
+                </Box>
+              </CTableCell>
             </CTableRow>
           ))}
           <PermissionWrapperV2 tabelSlug="app" type="write">

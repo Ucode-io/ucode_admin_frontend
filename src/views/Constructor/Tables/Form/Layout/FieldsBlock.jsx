@@ -30,6 +30,12 @@ const FieldsBlock = ({
     keyName: "key",
   });
 
+  const allFields = useMemo(() => {
+    return fields?.filter(
+      (field) => field.type !== "LOOKUP" && field.type !== "LOOKUPS" && field.type !== "DYNAMIC"
+    );
+  }, [fields]);
+
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
     name: "layoutRelations",
@@ -93,7 +99,7 @@ const FieldsBlock = ({
     return relations?.filter((relation) => !usedFields.includes(relation.id));
   }, [relations, usedFields]);
 
-  const onDrop = (dropResult, colNumber) => {
+  const onDrop = (dropResult) => {
     const result = applyDrag(fields, dropResult);
     if (!result) return;
   };
@@ -101,6 +107,9 @@ const FieldsBlock = ({
   const handleNameChange = (event, index, oldId) => {
     updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
   };
+
+  console.log('sssssssss', allFields)
+
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -126,11 +135,11 @@ const FieldsBlock = ({
                 onDrop={onDrop}
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
-                  ...unusedFields[i],
-                  field_name: unusedFields[i]?.label ?? unusedFields[i]?.title,
+                  ...fields[i],
+                  field_name: fields[i]?.label ?? fields[i]?.title,
                 })}
               >
-                {unusedFields?.map((field, index) => (
+                {allFields?.map((field) => (
                   <Draggable key={field.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator field={field} control={mainForm.control} disabledHelperText />
@@ -168,8 +177,8 @@ const FieldsBlock = ({
 
           <TabPanel>
             <div className={styles.fieldsBlock}>
-              <Container groupName="table_relation" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }} getChildPayload={(i) => unusedTableRelations[i]}>
-                {unusedTableRelations?.map((relation) => (
+              <Container groupName="table_relation" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }} getChildPayload={(i) => tableRelations[i]}>
+                {tableRelations?.map((relation) => (
                   <Draggable key={relation.id} style={{ overflow: "visible", width: "fit-content" }}>
                     <div className={`${styles.sectionFieldRow} ${styles.relation}`}>{relation.title ?? relation[relation.relatedTableSlug]?.label}</div>
                   </Draggable>

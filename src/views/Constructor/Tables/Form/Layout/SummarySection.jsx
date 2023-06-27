@@ -17,9 +17,16 @@ const SummarySection = ({
   openFieldsBlock,
   openRelationSettingsBlock,
 }) => {
+
+  const getSelectedLayoutIndex = useMemo(() => {
+    return mainForm.getValues().layouts.findIndex(
+      (layout) => layout.id === selectedLayout.id
+    );
+  }, [mainForm, selectedLayout]);
+
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
     control: mainForm.control,
-    name: "summary_section.fields",
+    name: `layouts.${getSelectedLayoutIndex}.summary_fields`,
     keyName: "key",
   });
 
@@ -67,7 +74,7 @@ const SummarySection = ({
           <h2>{selectedLayout?.label}</h2>
       </div>
       <Container
-        style={{ minHeight: 20, minWidth: "100%" }}
+        style={{ minHeight: 20, minWidth: "100%", display: "flex" }}
         groupName="1"
         dragClass="drag-row"
         orientation="horizontal"

@@ -22,6 +22,7 @@ import HFFloatField from "../FormElements/HFFloatField";
 import FRow from "../FormElements/FRow";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFPassword from "../FormElements/HFPassword";
+import HFModalMap from "../FormElements/HFModalMap";
 
 const parser = new Parser();
 
@@ -83,7 +84,7 @@ const CellFormElementGenerator = ({
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [field, row, setFormValue, computedSlug]);
-  console.log('field', field);
+
   useEffect(() => {
     if (columns.length && changedValue !== undefined && changedValue !== null) {
       columns.forEach((i, rowIndex) => selectedRow.includes(i.guid) && setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue));
@@ -390,6 +391,8 @@ const CellFormElementGenerator = ({
 
     case "ICON":
       return <HFIconPicker isFormEdit control={control} name={computedSlug} required={field.required} defaultValue={defaultValue} {...props} />;
+    case "MAP":
+      return <HFModalMap control={control} field={field} defaultValue={defaultValue} isFormEdit name={computedSlug} required={field?.required} />
 
     default:
       return (

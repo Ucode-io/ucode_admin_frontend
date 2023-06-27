@@ -121,6 +121,7 @@ const FormElementGenerator = ({
         <RelationFormElement
           control={control}
           field={field}
+          name={field?.slug}
           setFormValue={setFormValue}
           formTableSlug={formTableSlug}
           defaultValue={defaultValue}

@@ -307,7 +307,7 @@ const RelationSection = ({
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}
                 /> */}
-                {/* {selectedRelation?.relation_buttons &&  */}
+                {!selectedRelation?.relation_buttons && 
                 <PermissionWrapperV2
                   tableSlug={filteredRelations?.[0]?.relatedTable}
                   type={"write"}
@@ -321,7 +321,7 @@ const RelationSection = ({
                     <Add style={{ color: "#007AFF" }} />
                   </RectangleIconButton>
                 </PermissionWrapperV2>
-                {/* } */}
+                 } 
 
                 {/*<RectangleIconButton
                     color="white"
@@ -383,7 +383,7 @@ const RelationSection = ({
                   </>
                 ) : (
                   fields.length > 0 && (
-                    // selectedRelation?.relation_buttons && 
+                    !selectedRelation?.relation_buttons && 
                       <PermissionWrapperV2
                       type="edit"
                       tableSlug={filteredRelations?.[0]?.relatedTable}

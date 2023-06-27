@@ -110,11 +110,11 @@ const Router = () => {
         <Route path=":appId/api-key/create" element={<ApiKeysForm />} />
         <Route path=":appId/api-key/:apiKeyId" element={<ApiKeysForm />} />
 
-        <Route path=":appId/page/:microfrontendId/:menuId" element={<></>} />
-        <Route path=":appId/web-page/:webpageId/:menuId" element={<></>} />
+        <Route path=":appId/page/:microfrontendId" element={<></>} />
+        <Route path=":appId/web-page/:webpageId" element={<></>} />
 
         <Route
-          path=":appId/object/:tableSlug/:menuId"
+          path=":appId/object/:tableSlug"
           element={<ReloadWrapper component={ObjectsPage} />}
         />
 

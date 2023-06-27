@@ -12,6 +12,7 @@ import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
+import { store } from "../../../store";
 
 const RecursiveBlock = ({
   index,
@@ -25,13 +26,14 @@ const RecursiveBlock = ({
   handleOpenNotify,
   setElement,
 }) => {
-  const { appId, tableSlug, menuId } = useParams();
+  const { appId, tableSlug } = useParams();
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
   const [child, setChild] = useState();
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
+  const menuItem = store.getState().menu.menuItem;
 
   const { isLoading } = useMenuListQuery({
     params: {
@@ -49,10 +51,10 @@ const RecursiveBlock = ({
 
   const activeStyle = {
     backgroundColor:
-      menuId === element?.id
+      menuItem.id === element?.id
         ? environment?.data?.active_background || "#007AFF"
         : "#fff",
-    color: menuId === element?.id ? "#fff" : "#007AFF",
+    color: menuItem.id === element?.id ? "#fff" : "#007AFF",
     paddingLeft: level * 2 * 5,
     display:
       element.id === "0" ||
@@ -64,9 +66,7 @@ const RecursiveBlock = ({
     setCheck(true);
     setId(element?.id);
     element.type === "FOLDER" &&
-      navigate(
-        `/main/${appId}/page/c57eedc3-a954-4262-a0af-376c65b5a284/${element?.id}`
-      );
+      navigate(`/main/${appId}/page/c57eedc3-a954-4262-a0af-376c65b5a284`);
   };
   useEffect(() => {
     if (
@@ -90,17 +90,13 @@ const RecursiveBlock = ({
           onClick={(e) => {
             e.stopPropagation();
             element.type === "TABLE" &&
-              navigate(
-                `/main/${appId}/object/${element?.data?.table?.slug}/${element.id}`
-              );
+              navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
             element.type === "MICROFRONTEND" &&
               navigate(
-                `/main/${appId}/page/${element?.data?.microfrontend?.id}/${element.id}`
+                `/main/${appId}/page/${element?.data?.microfrontend?.id}`
               );
             element.type === "WEBPAGE" &&
-              navigate(
-                `/main/${appId}/web-page/${element?.data?.webpage?.id}/${element.id}`
-              );
+              navigate(`/main/${appId}/web-page/${element?.data?.webpage?.id}`);
             clickHandler();
             setElement(element);
             dispatch(menuActions.setMenuItem(element));
@@ -110,7 +106,7 @@ const RecursiveBlock = ({
             className="label"
             style={{
               color:
-                menuId === element?.id
+                menuItem.id === element?.id
                   ? environment?.data?.active_color
                   : environment?.data?.color,
               opacity: element?.isChild && 0.6,
@@ -142,7 +138,7 @@ const RecursiveBlock = ({
                     }}
                     style={{
                       color:
-                        menuId === element?.id
+                        menuItem.id === element?.id
                           ? environment?.data?.active_color
                           : environment?.data?.color,
                     }}
@@ -160,7 +156,7 @@ const RecursiveBlock = ({
                     }}
                     style={{
                       color:
-                        menuId === element?.id
+                        menuItem.id === element?.id
                           ? environment?.data?.active_color
                           : environment?.data?.color,
                     }}
@@ -186,7 +182,7 @@ const RecursiveBlock = ({
               }}
               style={{
                 color:
-                  menuId === element?.id
+                  menuItem.id === element?.id
                     ? environment?.data?.active_color
                     : environment?.data?.color,
               }}
@@ -202,7 +198,7 @@ const RecursiveBlock = ({
               }}
               style={{
                 color:
-                  menuId === element?.id
+                  menuItem.id === element?.id
                     ? environment?.data?.active_color
                     : environment?.data?.color,
               }}
@@ -218,7 +214,7 @@ const RecursiveBlock = ({
               }}
               style={{
                 color:
-                  menuId === element?.id
+                  menuItem.id === element?.id
                     ? environment?.data?.active_color
                     : environment?.data?.color,
               }}

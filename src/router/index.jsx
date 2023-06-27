@@ -119,17 +119,14 @@ const Router = () => {
         />
 
         <Route
-          path=":appId/page/:microfrontendId/:menuId"
+          path=":appId/page/:microfrontendId"
           element={<Microfrontend />}
         />
 
-        <Route
-          path=":appId/web-page/:webPageId/:menuId"
-          element={<WebPage />}
-        />
+        <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
 
         <Route
-          path=":appId/object/:tableSlug/:menuId"
+          path=":appId/object/:tableSlug"
           element={<ReloadWrapper component={ObjectsPage} />}
         />
 

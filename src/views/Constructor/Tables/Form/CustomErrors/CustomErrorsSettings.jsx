@@ -58,7 +58,7 @@ const CustomErrorsSettings = ({
           view_fields: ["title"],
           additional_request: {
             additional_field: "guid",
-            additional_values: [id],
+            additional_values: [id || ""],
           },
         },
       })
@@ -75,7 +75,7 @@ const CustomErrorsSettings = ({
           view_fields: ["name"],
           additional_request: {
             additional_field: "guid",
-            additional_values: [id],
+            additional_values: [id || ""],
           },
         },
       })

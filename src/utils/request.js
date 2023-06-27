@@ -65,7 +65,9 @@ const errorHandler = (error, hooks) => {
 };
 
 const customMessageHandler = (res, hooks) => {
-  console.log("res", res.data.custom_message?.length);
+  if (res.data.custom_message?.length) {
+    store.dispatch(showAlert(res.data.custom_message, "success"));
+  }
 };
 
 request.interceptors.request.use(

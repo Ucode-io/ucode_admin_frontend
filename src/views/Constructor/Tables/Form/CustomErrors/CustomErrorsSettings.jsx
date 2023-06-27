@@ -25,7 +25,6 @@ const CustomErrorsSettings = ({
   getRelationFields,
   formType,
   height,
-
   mainForm,
 }) => {
   const authStore = store.getState().auth;
@@ -203,16 +202,6 @@ const CustomErrorsSettings = ({
                 }}
               />
             </FRow>
-            {/* <FRow label="Languages" required>
-              <HFSelect
-                name="language_id"
-                control={control}
-                placeholder="Languages"
-                options={computedLanguageOptions}
-                autoFocus
-                required
-              />
-            </FRow> */}
             <FRow label="Action type" required>
               <HFSelect
                 name="action_type"

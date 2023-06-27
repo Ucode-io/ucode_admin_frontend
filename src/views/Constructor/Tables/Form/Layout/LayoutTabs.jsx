@@ -69,7 +69,7 @@ function LayoutTabs({
   const onDrop = (dropResult) => {
     const result = applyDrag(computedViewRelations, dropResult);
     if (result) {
-      appendSectionTab(result?.find((el) => el?.id));
+      appendSectionTab(dropResult?.payload);
       if (result.length > computedViewRelations?.length) {
         viewRelationsFieldArray.insert(
           dropResult?.addedIndex,
@@ -121,6 +121,8 @@ function LayoutTabs({
     return mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
   }, [mainForm, selectedLayout]);
 
+  console.log("alkwnmdlkawdmaw", allTabs);
+
   return (
     <div className={styles.relationsBlock}>
       <Card>
@@ -161,8 +163,12 @@ function LayoutTabs({
                           setSelectedTab(tab);
                         }}
                       >
-                        {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label}
-                        {tab?.type === "relation" && <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab)} onDeleteClick={() => removeSectionTab(index, tab)} />}
+                        {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label ?? tab?.relation?.table_from?.label}
+                        {tab?.type === "section" ? (
+                          <ButtonsPopover onEditClick={() => openFieldsBlock("RELATION")} onDeleteClick={() => removeSectionTab(index, tab)} />
+                        ) : (
+                          <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab)} onDeleteClick={() => removeSectionTab(index, tab)} />
+                        )}
                       </div>
                     </Draggable>
                   )

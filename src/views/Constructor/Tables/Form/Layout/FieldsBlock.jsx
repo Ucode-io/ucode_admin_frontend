@@ -36,18 +36,10 @@ const FieldsBlock = ({
     keyName: "key",
   });
   
-
   const sections = useWatch({
     control: mainForm.control,
     name: `sections`,
   });
-
-  const test = useWatch({
-    control: mainForm.control,
-  });
-
-  console.log('test', test)
-
 
   const summarySectionFields = useWatch({
     control: mainForm.control,
@@ -101,7 +93,7 @@ const FieldsBlock = ({
     return relations?.filter((relation) => !usedFields.includes(relation.id));
   }, [relations, usedFields]);
 
-  const onDrop = (dropResult, colNumber) => {
+  const onDrop = (dropResult) => {
     const result = applyDrag(fields, dropResult);
     if (!result) return;
   };
@@ -177,8 +169,8 @@ const FieldsBlock = ({
 
           <TabPanel>
             <div className={styles.fieldsBlock}>
-              <Container groupName="table_relation" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }} getChildPayload={(i) => unusedTableRelations[i]}>
-                {relations?.map((relation) => (
+              <Container groupName="table_relation" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }} getChildPayload={(i) => tableRelations[i]}>
+                {tableRelations?.map((relation) => (
                   <Draggable key={relation.id} style={{ overflow: "visible", width: "fit-content" }}>
                     <div className={`${styles.sectionFieldRow} ${styles.relation}`}>{relation.title ?? relation[relation.relatedTableSlug]?.label}</div>
                   </Draggable>

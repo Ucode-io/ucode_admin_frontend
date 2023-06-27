@@ -1,5 +1,9 @@
 @use '/src/scss/colors';
 
+.addButton {
+  color: colors.$grey;
+}
+
 .header {
   height: 56px;
   background-color: #fff;
@@ -51,11 +55,10 @@
 
 
   }
-  
+
   .rightSide {
     display: flex;
     align-items: center;
     gap: 8px;
   }
 }
-

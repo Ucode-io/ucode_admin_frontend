@@ -1,10 +1,12 @@
-import { useNavigate } from "react-router-dom"
-import AppSelector from "../AppSelector"
-import BackButton from "../BackButton"
-import IconGenerator from "../IconPicker/IconGenerator"
-import ProfilePanel from "../ProfilePanel"
-import styles from "./style.module.scss"
-
+import { useNavigate } from "react-router-dom";
+import AppSelector from "../AppSelector";
+import BackButton from "../BackButton";
+import IconGenerator from "../IconPicker/IconGenerator";
+import ProfilePanel from "../ProfilePanel";
+import styles from "./style.module.scss";
+import { IconButton } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import RectangleIconButton from "../Buttons/RectangleIconButton";
 const HeaderSettings = ({
   title = "",
   subtitle,
@@ -16,7 +18,7 @@ const HeaderSettings = ({
   sticky,
   ...props
 }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div
@@ -41,11 +43,18 @@ const HeaderSettings = ({
       </div>
 
       <div className={styles.rightSide}>
-        <AppSelector />
+        <RectangleIconButton
+          color="primary"
+          className={`${styles.addButton}`}
+          onClick={() => navigate("/main/c57eedc3-a954-4262-a0af-376c65b5a284")}
+        >
+          <MenuIcon />
+        </RectangleIconButton>
+        {/* <AppSelector /> */}
         <ProfilePanel />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HeaderSettings
+export default HeaderSettings;

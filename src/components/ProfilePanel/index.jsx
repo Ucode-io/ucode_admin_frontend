@@ -8,6 +8,7 @@ import { authActions } from "../../store/auth/auth.slice";
 import UserAvatar from "../UserAvatar";
 import styles from "./style.module.scss";
 import KeyIcon from "@mui/icons-material/Key";
+import AnalyticsIcon from "@mui/icons-material/Analytics";
 
 const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
   const [anchorProfileEl, setProfileAnchorEl] = useState(null);
@@ -64,6 +65,26 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
             <Settings className={styles.dragIcon} />
 
             <p className={styles.itemText}>Profile settings</p>
+          </div>
+          <div
+            className={styles.menuItem}
+            onClick={() => {
+              navigate(`/analytics/dashboard`);
+            }}
+          >
+            <AnalyticsIcon className={styles.dragIcon} />
+
+            <p className={styles.itemText}>Аналитика</p>
+          </div>
+          <div
+            className={styles.menuItem}
+            onClick={() => {
+              navigate(`/settings/constructor/apps`);
+            }}
+          >
+            <Settings className={styles.dragIcon} />
+
+            <p className={styles.itemText}>Настройки</p>
           </div>
 
           <div className={styles.menuItem} onClick={logoutClickHandler}>

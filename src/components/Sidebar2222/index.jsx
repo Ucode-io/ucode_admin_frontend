@@ -9,6 +9,7 @@ import ChildBlock from "./ChildBlock";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { mainActions } from "../../store/main/main.slice";
+import ProfilePanel from "../ProfilePanel";
 
 const Sidebar2222 = ({ favicon }) => {
   const sidebarIsOpen = useSelector(
@@ -67,8 +68,9 @@ const Sidebar2222 = ({ favicon }) => {
                   to={element.path}
                   exact={0}
                   className={({ isActive }) =>
-                    `nav-element ${isActive &&
-                    (element.children ? "active-with-child" : "active")
+                    `nav-element ${
+                      isActive &&
+                      (element.children ? "active-with-child" : "active")
                     }`
                   }
                   onClick={(e) => {
@@ -83,8 +85,9 @@ const Sidebar2222 = ({ favicon }) => {
                   <div className="label">{element.title}</div>
                   {element.children && (
                     <div
-                      className={`arrow-icon ${openedBlock === element.id ? "open" : ""
-                        }`}
+                      className={`arrow-icon ${
+                        openedBlock === element.id ? "open" : ""
+                      }`}
                     >
                       <ExpandMoreIcon />
                     </div>
@@ -102,24 +105,7 @@ const Sidebar2222 = ({ favicon }) => {
         </div>
 
         <div className="sidebar-footer">
-          {/* <div className="parent-block">
-            <NavLink
-              className="nav-element"
-              to="/home/profile"
-              style={{ padding: "10px 0px" }}
-            >
-              <div className="profile-avatar">{'K'}</div>
-              <div className="label">Shaxsiy ma'lumotlar</div>
-            </NavLink>
-          </div> */}
-          {/* <div className="parent-block">
-            <div className="nav-element" onClick={logoutHandler}>
-              <div className="icon">
-                <ExitToAppIcon />
-              </div>
-              <div className="label" >Logout</div>
-            </div>
-          </div> */}
+          <ProfilePanel />
         </div>
       </div>
     </div>

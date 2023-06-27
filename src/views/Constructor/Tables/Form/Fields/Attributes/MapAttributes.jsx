@@ -1,5 +1,4 @@
 import FRow from "../../../../../../components/FormElements/FRow";
-import HFNumberField from "../../../../../../components/FormElements/HFNumberField";
 import HFTextField from "../../../../../../components/FormElements/HFTextField";
 import styles from "./style.module.scss";
 
@@ -15,6 +14,9 @@ const MapAttributes = ({ control }) => {
         </FRow>
         <FRow label="Longitude">
           <HFTextField name="attributes.long" control={control} fullWidth />
+        </FRow>
+        <FRow label="Api key">
+          <HFTextField name="attributes.apiKey" control={control} fullWidth />
         </FRow>
       </div>
     </>

@@ -1,12 +1,14 @@
 import { store } from "../../store";
+export const websocketURL = `${import.meta.env.VITE_WEBSOCKET_URL}`;
 
 let webSocket;
 let chatSocket;
 
 function connectSocket(sendMessage, chat_id, platformType, userId) {
+  console.log("websocketURL", websocketURL);
   const authStore = store.getState().auth;
   const ws = new WebSocket(
-    `wss://test.chat.u-code.io/ws/${chat_id}/${
+    `${websocketURL}/ws/${chat_id}/${
       platformType === "websites" ? authStore.userId : userId
     }?sender_name=Admin`
   );
@@ -57,9 +59,7 @@ function connectSocket(sendMessage, chat_id, platformType, userId) {
 function connectChatSocket() {
   const authStore = store.getState().auth;
   const environmentId = authStore.environmentId;
-  const wsChat = new WebSocket(
-    `wss://test.chat.u-code.io/ws/rooms/${environmentId}`
-  );
+  const wsChat = new WebSocket(`${websocketURL}/ws/rooms/${environmentId}`);
 
   wsChat.onopen = function () {
     console.log("Get list connected");

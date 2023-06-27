@@ -33,15 +33,21 @@ const FastFilterButton = ({ view, fieldsMap }) => {
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
-      <RectangleIconButton
-        color="white"
+      <div
+        style={{ display: "flex", alignItems: "center", gap: 5, color: "#A8A8A8", cursor: "pointer",
+        fontSize: '13px',
+        fontWeight: 500,
+        lineHeight: '16px',
+        letterSpacing: '0em',
+        textAlign: 'left'
+         }}
         size={!!selectedFiltersNumber ? "long" : ""}
         onClick={(e) => setAnchorEl(e.target)}
       >
         <FilterAlt
-          style={{ marginTop: 5 }}
-          color={!!selectedFiltersNumber ? "primary" : ""}
+          color={!!selectedFiltersNumber ? "primary" : "#A8A8A8"}
         />
+        Filter
         {!!selectedFiltersNumber && (
           <>
             <strong>
@@ -58,7 +64,7 @@ const FastFilterButton = ({ view, fieldsMap }) => {
             />
           </>
         )}
-      </RectangleIconButton>
+      </div>
 
       {!!selectedOrdersNumber && (
         <RectangleIconButton color="white" size="long">

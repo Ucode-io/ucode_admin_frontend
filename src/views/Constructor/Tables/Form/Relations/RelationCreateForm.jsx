@@ -9,7 +9,7 @@ import constructorFieldService from "../../../../../services/constructorFieldSer
 import listToOptions from "../../../../../utils/listToOptions";
 import HFMultipleSelect from "../../../../../components/FormElements/HFMultipleSelect";
 import { useParams } from "react-router-dom";
-import applicationService from "../../../../../services/applicationSercixe";
+import applicationService from "../../../../../services/applicationService";
 import style from "./style.module.scss";
 import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
 import constructorObjectService from "../../../../../services/constructorObjectService";

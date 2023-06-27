@@ -172,5 +172,6 @@
   "enter.client_type": "Select client type",
   "showing": "Showing",
   "excel.upload": "Excel upload",
-  "excel.download": "Excel download"
+  "excel.download": "Excel download",
+  "select.environment": "Select environment"
 }

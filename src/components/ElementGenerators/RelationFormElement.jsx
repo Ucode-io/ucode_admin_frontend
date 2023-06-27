@@ -17,6 +17,8 @@ import CascadingElement from "./CascadingElement";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import GroupCascading from "./GroupCascading/index";
 import styles from "./style.module.scss";
+import constructorFunctionServiceV2 from "../../services/contructorFunctionServiceV2";
+import request from "../../utils/request";
 
 const RelationFormElement = ({
   control,
@@ -38,8 +40,6 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
-  
-  console.log('defaultValue', defaultValue)
   if (!isLayout)
     return (
       <FRow label={field?.label ?? field?.title} required={field.required}>
@@ -127,7 +127,7 @@ const AutoCompleteElement = ({
   disabledHelperText,
   control,
   name,
-  defaultValue, 
+  defaultValue,
   setFormValue = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");
@@ -148,6 +148,14 @@ const AutoCompleteElement = ({
     name: autoFiltersFieldFroms,
   });
 
+  useEffect(() => {
+    setLocalValue(
+      localValue?.filter((item) => {
+        return item?.clients_id === filtersHandler[0];
+      })
+    );
+  }, [filtersHandler]);
+
   const autoFiltersValue = useMemo(() => {
     const result = {};
     filtersHandler?.forEach((value, index) => {
@@ -158,36 +166,25 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler]);
 
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      if (!tableSlug) return null;
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [id],
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
           },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
-        },
-      });
+        }
+      );
     },
     {
       select: (res) => {
-        const options = res?.data?.response ?? [];
-        const slugOptions =
-          res?.table_slug === tableSlug ? res?.data?.response : [];
-
-        return {
-          options,
-          slugOptions,
-        };
+        return res?.data?.response ?? [];
       },
     }
   );
-
   const getValueData = async () => {
     try {
       const id = value;
@@ -204,7 +201,6 @@ const AutoCompleteElement = ({
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
-
 
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
@@ -229,6 +225,14 @@ const AutoCompleteElement = ({
   };
 
   useEffect(() => {
+    setLocalValue(
+      localValue?.filter((item) => {
+        return item?.[autoFiltersFieldFroms] === filtersHandler[0];
+      })
+    );
+  }, [filtersHandler]);
+
+  useEffect(() => {
     const val = computedValue[computedValue.length - 1];
     if (!field?.attributes?.autofill || !val) return;
     field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
@@ -248,12 +252,14 @@ const AutoCompleteElement = ({
 
   return (
     <div className={styles.autocompleteWrapper}>
-      <div
-        className={styles.createButton}
-        onClick={() => navigateToForm(tableSlug)}
-      >
-        Создать новый
-      </div>
+      {field.attributes?.creatable && (
+        <div
+          className={styles.createButton}
+          onClick={() => navigateToForm(tableSlug)}
+        >
+          Создать новый
+        </div>
+      )}
       {field?.attributes?.cascadings?.length === 4 ? (
         <CascadingSection
           field={field}

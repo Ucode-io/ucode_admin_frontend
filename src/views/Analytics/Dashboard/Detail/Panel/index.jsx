@@ -1,12 +1,12 @@
-import { Delete, Edit } from "@mui/icons-material"
-import { useMutation, useQuery } from "react-query"
-import { useLocation, useNavigate } from "react-router-dom"
-import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton"
-import DeleteWrapperModal from "../../../../../components/DeleteWrapperModal"
-import panelService from "../../../../../services/analytics/panelService"
-import request from "../../../../../utils/request"
-import PanelViews from "../PanelViews"
-import styles from "./style.module.scss"
+import { Delete, Edit } from "@mui/icons-material";
+import { useMutation, useQuery } from "react-query";
+import { useLocation, useNavigate } from "react-router-dom";
+import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
+import DeleteWrapperModal from "../../../../../components/DeleteWrapperModal";
+import panelService from "../../../../../services/analytics/panelService";
+import request from "../../../../../utils/request";
+import PanelViews from "../PanelViews";
+import styles from "./style.module.scss";
 
 const Panel = ({
   panel = {},
@@ -14,8 +14,8 @@ const Panel = ({
   variablesValue = {},
   refetch,
 }) => {
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   // const [currentPage, setCurrentPage] = useState(1)
 
   const { data, isLoading } = useQuery(
@@ -31,24 +31,24 @@ const Panel = ({
       return request.post("/query", {
         data: variablesValue,
         query: panel.query,
-      })
+      });
     }
-  )
+  );
 
   const { mutate: deletePanel, isLoading: deleteLoading } = useMutation(
     () => {
-      return panelService.delete(panel.id)
+      return panelService.delete(panel.id);
     },
     {
       onSuccess: () => {
-        refetch()
+        refetch();
       },
     }
-  )
+  );
 
   const navigateToEditPage = (e) => {
-    navigate(`${pathname}/panel/${panel.id}`)
-  }
+    navigate(`${pathname}/panel/${panel.id}`);
+  };
 
   return (
     <div className={styles.panel}>
@@ -64,16 +64,17 @@ const Panel = ({
               <Edit color="primary" />
             </RectangleIconButton>
 
-            <DeleteWrapperModal onDelete={deletePanel}>
-              <RectangleIconButton
-                className={styles.editButton}
-                onClick={navigateToEditPage}
-                loader={deleteLoading}
-                color="error"
-              >
-                <Delete color="error" />
-              </RectangleIconButton>
-            </DeleteWrapperModal>
+            <RectangleIconButton
+              className={styles.editButton}
+              onClick={() => {
+                navigateToEditPage();
+                deletePanel();
+              }}
+              loader={deleteLoading}
+              color="error"
+            >
+              <Delete color="error" />
+            </RectangleIconButton>
           </div>
         </div>
       )}
@@ -82,7 +83,7 @@ const Panel = ({
       <PanelViews panel={panel} data={data} isLoading={isLoading} />
       {/* </div> */}
     </div>
-  )
-}
+  );
+};
 
-export default Panel
+export default Panel;

@@ -32,12 +32,14 @@ import { listToMap } from "../../../../utils/listToMap";
 import Actions from "./Actions";
 import { generateGUID } from "../../../../utils/generateID";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
+import CustomErrors from "./CustomErrors";
+import layoutService from "../../../../services/layoutService";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id, slug, appId } = useParams();
-  const projectId = useSelector(state => state.auth.projectId)
+  const projectId = useSelector((state) => state.auth.projectId);
 
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
@@ -196,18 +198,29 @@ const ConstructorTablesFormPage = () => {
 
     const updateTableData = constructorTableService.update(data, projectId);
 
-    const updateSectionData = constructorSectionService.update({
-      sections: addOrderNumberToSections(data.sections),
-      table_slug: data.slug,
-      table_id: id,
-    });
+    // const updateSectionData = constructorSectionService.update({
+    //   sections: addOrderNumberToSections(data.sections),
+    //   table_slug: data.slug,
+    //   table_id: id,
+    // });
 
     const updateViewRelationsData = constructorViewRelationService.update({
       view_relations: data.view_relations,
       table_slug: data.slug,
     });
+    
+    const updateLayoutData = layoutService.update({
+      layouts: data.layouts,
+      table_id: id,
+      project_id: projectId,
+    });
 
-    Promise.all([updateTableData, updateSectionData, updateViewRelationsData])
+    Promise.all([
+      updateTableData,
+      // updateSectionData,
+      updateViewRelationsData,
+      updateLayoutData,
+    ])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
         navigate(-1);
@@ -251,6 +264,7 @@ const ConstructorTablesFormPage = () => {
               <Tab>Fields</Tab>
               {id && <Tab>Relations</Tab>}
               {id && <Tab>Actions</Tab>}
+              <Tab>Custom errors</Tab>
             </TabList>
           </HeaderSettings>
 
@@ -277,6 +291,11 @@ const ConstructorTablesFormPage = () => {
           {id && (
             <TabPanel>
               <Actions mainForm={mainForm} />
+            </TabPanel>
+          )}
+          {id && (
+            <TabPanel>
+              <CustomErrors mainForm={mainForm} />
             </TabPanel>
           )}
           {/* <Actions eventLabel={mainForm.getValues("label")} /> */}

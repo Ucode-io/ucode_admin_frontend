@@ -12,6 +12,8 @@ import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import styles from "./style.module.scss";
+import constructorFunctionService from "../../services/constructorFunctionService";
+import request from "../../utils/request";
 
 const ManyToManyRelationFormElement = ({
   control,
@@ -139,23 +141,27 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler]);
 
   const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          view_fields:
-            field?.view_fields?.map((field) => field.slug) ??
-            field?.attributes?.view_fields?.map((field) => field.slug),
-          additional_request: {
-            additional_field: "guid",
-            additional_values: value,
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            ...autoFiltersValue,
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+            additional_request: {
+              additional_field: "guid",
+              additional_values: value,
+            },
+            // additional_ids: value,
+            search: debouncedValue,
+            limit: 10,
           },
-          // additional_ids: value,
-          search: debouncedValue,
-          limit: 10,
-        },
-      });
+        }
+      );
     },
     {
       select: (res) => {

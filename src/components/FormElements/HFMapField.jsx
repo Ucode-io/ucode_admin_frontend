@@ -1,10 +1,11 @@
 import { Box } from "@mui/material";
 import { Map, Placemark, YMaps } from "@pbe/react-yandex-maps";
 import { toNumber } from "lodash-es";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
+import styles from "./style.module.scss";
 
-const HFMapField = ({   
+const HFMapField = ({
   control,
   name,
   tabIndex,
@@ -15,44 +16,88 @@ const HFMapField = ({
   field,
   ...props
 }) => {
-  const mapRef = useRef()
+  const mapRef = useRef();
+  const [selectedCoordinates, setSelectedCoordinates] = useState({
+    lat: "",
+    long: "",
+  });
 
   useEffect(() => {
-    mapRef?.current?.panTo(
-      [
-        parseFloat(field?.attributes?.lat),
-        parseFloat(field?.attributes?.long),
-      ],
-      { flying: 1 }
-    )
-  }, [])
-  
-  
+    const handleGeolocationError = (error) => {
+      console.error("Error getting current location:", error);
+    };
+
+    const handleGeolocationSuccess = (position) => {
+      const { latitude, longitude } = position.coords;
+      setSelectedCoordinates({ lat: latitude, long: longitude });
+    };
+
+    const getCurrentLocation = () => {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          handleGeolocationSuccess,
+          handleGeolocationError
+        );
+      } else {
+        console.error("Geolocation is not supported in this browser.");
+      }
+    };
+
+    getCurrentLocation();
+  }, []);
+
   return (
     <Controller
-    control={control}
-    name={name}
-    defaultValue=""
-    rules={{
-      required: required ? "This is required field" : false,
-      ...rules,
-    }}
-    render={({ field: { onChange, value }, fieldState: { error } }) => (
-      <Box sx={{ width: '250px', overflow: 'hidden' }}>
-      <YMaps query={{ load: "package.full" }}>
-        <Map style={{ width: '250px', height: '200px'}} defaultState={{
-          center: [toNumber(field?.attributes?.lat), toNumber(field?.attributes?.long)],
-          zoom: toNumber(7),
-          
-        }}
-          instanceRef={mapRef}
-        >
-          <Placemark geometry={[toNumber(field?.attributes?.lat), toNumber(field?.attributes?.long)]} />
-        </Map>
-      </YMaps>
-      </Box>
-      )}
-    ></Controller>
+      control={control}
+      name={name}
+      defaultValue=""
+      rules={{
+        required: required ? "This is a required field" : false,
+        ...rules,
+      }}
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        let lat = value ? value.split(",")[0] : selectedCoordinates.lat;
+        let long = value ? value.split(",")[1] : selectedCoordinates.long;
+        if (!lat && !long) {
+          const attributesLat = toNumber(field?.attributes?.lat);
+          const attributesLong = toNumber(field?.attributes?.long);
+          if (attributesLat && attributesLong) {
+            lat = attributesLat;
+            long = attributesLong;
+          }
+        }
+
+        const handleClick = (clickedLat, clickedLng) => {
+          setSelectedCoordinates({ lat: clickedLat, long: clickedLng });
+          onChange(`${clickedLat},${clickedLng}`);
+        };
+
+        return (
+          <Box sx={{ width: "265px", overflow: "hidden", position: "relative" }}>
+            <YMaps query={{ load: "package.full", apikey: field?.attributes?.apiKey }}>
+              <Map
+                style={{ width: "265px", height: "200px", boxSizing: "border-box" }}
+                defaultState={{
+                  center: [lat, long],
+                  zoom: 7,
+                }}
+                instanceRef={mapRef}
+                onClick={(e) => {
+                  const [clickedLat, clickedLng] = e.get("coords");
+                  handleClick(clickedLat, clickedLng);
+                  setSelectedCoordinates({ lat: clickedLat, long: clickedLng });
+                }}
+                options={{
+                  suppressMapOpenBlock: true,
+                }}
+              >
+                <Placemark geometry={[lat, long]} />
+              </Map>
+            </YMaps>
+          </Box>
+        );
+      }}
+    />
   );
 };
 

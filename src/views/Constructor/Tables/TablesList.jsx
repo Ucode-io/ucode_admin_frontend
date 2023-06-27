@@ -17,7 +17,7 @@ import HFCheckbox from "../../../components/FormElements/HFCheckbox";
 import HFSwitch from "../../../components/FormElements/HFSwitch";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
-import applicationService from "../../../services/applicationSercixe";
+import applicationService from "../../../services/applicationService";
 import constructorTableService from "../../../services/constructorTableService";
 import ImportModal from "./ImportModal";
 
@@ -27,7 +27,7 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
   const [loader, setLoader] = useState(false);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [modalLoader, setModalLoader] = useState();
-  const projectId = useSelector(state => state.auth.projectId)
+  const projectId = useSelector((state) => state.auth.projectId);
 
   const { fields: list, remove } = useFieldArray({
     control: mainForm.control,
@@ -94,7 +94,8 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
         })) ?? [];
 
     try {
-      if (list[index]?.is_own_table) await constructorTableService.delete(id, projectId);
+      if (list[index]?.is_own_table)
+        await constructorTableService.delete(id, projectId);
       else {
         await applicationService.update({
           ...appData,
@@ -177,11 +178,9 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
                   />
                 </CTableCell>
                 <CTableCell>
-                  <DeleteWrapperModal id={element.id} onDelete={deleteTable}>
-                    <RectangleIconButton color="error">
-                      <Delete color="error" />
-                    </RectangleIconButton>
-                  </DeleteWrapperModal>
+                  <RectangleIconButton color="error" onClick={deleteTable}>
+                    <Delete color="error" />
+                  </RectangleIconButton>
                 </CTableCell>
               </CTableRow>
             ))}

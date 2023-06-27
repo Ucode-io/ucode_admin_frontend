@@ -1,50 +1,46 @@
+import { Save } from "@mui/icons-material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import SecondaryButton from "../../components/Buttons/SecondaryButton";
+import FiltersBlock from "../../components/FiltersBlock";
+import Footer from "../../components/Footer";
 import PageFallback from "../../components/PageFallback";
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
+import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import constructorSectionService from "../../services/constructorSectionService";
-import { sortByOrder } from "../../utils/sortByOrder";
-import MainInfo from "./MainInfo";
-import RelationSection from "./RelationSection";
-import styles from "./style.module.scss";
-import Footer from "../../components/Footer";
-import useTabRouter from "../../hooks/useTabRouter";
-import { Save } from "@mui/icons-material";
-import SecondaryButton from "../../components/Buttons/SecondaryButton";
-import { useQueryClient } from "react-query";
-import { sortSections } from "../../utils/sectionsOrderNumber";
 import constructorViewRelationService from "../../services/constructorViewRelationService";
-import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import FiltersBlock from "../../components/FiltersBlock";
-import DocumentGeneratorButton from "./components/DocumentGeneratorButton";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
+import { store } from "../../store";
 import { showAlert } from "../../store/alert/alert.thunk";
-import SummarySection from "./SummarySection/SummarySection";
-import BackButton from "../../components/BackButton";
-import FormPageBackButton from "./components/FormPageBackButton";
-import { addMinutes } from "date-fns";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
+import { sortSections } from "../../utils/sectionsOrderNumber";
+import { sortByOrder } from "../../utils/sortByOrder";
+import NewRelationSection from "./RelationSection/NewRelationSection";
+import SummarySectionValue from "./SummarySection/SummarySectionValue";
+import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
+import FormPageBackButton from "./components/FormPageBackButton";
+import styles from "./style.module.scss";
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { pathname, state = {} } = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { removeTab, navigateToForm } = useTabRouter();
   const queryClient = useQueryClient();
-  const tablesList = useSelector((state) => state.constructorTable.list);
   const isUserId = useSelector((state) => state?.auth?.userId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
-  const tableInfo = useMemo(() => {
-    return tablesList.find((el) => el.slug === tableSlug);
-  }, [tablesList, tableSlug]);
+
+  const tableInfo = store.getState().menu.menuItem;
+
   const computedSections = useMemo(() => {
     let tabIndex = 1;
     return (
@@ -65,6 +61,7 @@ const ObjectsFormPage = () => {
   const computedSummary = useMemo(() => {
     return sections.find((item) => item.is_summary_section);
   }, [sections]);
+
   const getAllData = async () => {
     const getSections = constructorSectionService.getList({
       table_slug: tableSlug,
@@ -77,11 +74,7 @@ const ObjectsFormPage = () => {
     });
 
     try {
-      const [
-        { sections = [] },
-        { data = {} },
-        { relations: view_relations = [] },
-      ] = await Promise.all([getSections, getFormData, getRelations]);
+      const [{ sections = [] }, { data = {} }, { relations: view_relations = [] }] = await Promise.all([getSections, getFormData, getRelations]);
 
       setSections(sortSections(sections));
 
@@ -96,10 +89,7 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
 
@@ -126,8 +116,7 @@ const ObjectsFormPage = () => {
         // relation_table_slug: tableSlug
       });
 
-      const [{ sections = [] }, { relations: view_relations = [] }] =
-        await Promise.all([getSections, getRelations]);
+      const [{ sections = [] }, { relations: view_relations = [] }] = await Promise.all([getSections, getRelations]);
 
       setSections(sortSections(sections));
 
@@ -140,10 +129,7 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
     } catch (error) {
@@ -177,11 +163,10 @@ const ObjectsFormPage = () => {
           table_slug: tableSlug,
           user_id: isUserId,
         });
-        navigate(-1)
+        navigate(-1);
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
-        if (tableRelations?.length)
-          navigateToForm(tableSlug, "EDIT", res.data?.data);
+        if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
@@ -191,7 +176,7 @@ const ObjectsFormPage = () => {
     if (id) update(data);
     else {
       create(data);
-      dispatch(fetchConstructorTableListAction(appId));
+      // dispatch(fetchConstructorTableListAction(appId));
     }
   };
 
@@ -199,7 +184,7 @@ const ObjectsFormPage = () => {
     if (!tableInfo) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo]);
+  }, [id, tableInfo, tableSlug]);
 
   const {
     handleSubmit,
@@ -213,19 +198,14 @@ const ObjectsFormPage = () => {
 
   // Automatic setValue for End of Session
 
-  const serviceTime = watch("service_time");
-  const startTime = watch("date_start");
+  // const serviceTime = watch("service_time");
+  // const startTime = watch("date_start");
 
-  useEffect(() => {
-    setFormValue(
-      "time_end",
-      startTime && serviceTime
-        ? addMinutes(new Date(startTime), parseInt(serviceTime))
-        : undefined
-    );
-  }, [serviceTime, startTime]);
+  // useEffect(() => {
+  //   setFormValue("time_end", startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined);
+  // }, [serviceTime, startTime]);
 
-  if (loader) return <PageFallback />;
+  // if (loader) return <PageFallback />;
   return (
     <div className={styles.formPage}>
       <FiltersBlock
@@ -235,14 +215,10 @@ const ObjectsFormPage = () => {
         hasBackground={true}
       >
         <FormPageBackButton />
-        <SummarySection
-          computedSummary={computedSummary}
-          control={control}
-          sections={sections}
-        />
+        <SummarySectionValue computedSummary={computedSummary} control={control} sections={sections} />
       </FiltersBlock>
       <div className={styles.formArea}>
-        <MainInfo
+        {/* <MainInfo
           control={control}
           computedSections={computedSections}
           setFormValue={setFormValue}
@@ -255,7 +231,26 @@ const ObjectsFormPage = () => {
             relations={tableRelations}
             control={control}
           />
-        </div>
+        </div> */}
+        {/* <DetailTabs
+          control={control}
+          // selectedTab={selectedTab}
+          // handleTabSelection={handleTabSelection}
+        /> */}
+        <NewRelationSection
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          relations={tableRelations}
+          control={control}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          reset={reset}
+          setFormValue={setFormValue}
+          watch={watch}
+          computedSections={computedSections}
+          relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
+          id={id}
+        />
       </div>
       <Footer
         extra={
@@ -265,11 +260,7 @@ const ObjectsFormPage = () => {
             </SecondaryButton>
 
             <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
-              <FormCustomActionButton
-                control={control?._formValues}
-                tableSlug={tableSlug}
-                id={id}
-              />
+              <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
 
               {/* {customEvents?.map((event) => (
                 <PrimaryButton
@@ -280,11 +271,7 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
               <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                <PrimaryButton
-                  loader={btnLoader}
-                  id="submit"
-                  onClick={handleSubmit(onSubmit)}
-                >
+                <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
                   <Save />
                   Сохранить
                 </PrimaryButton>

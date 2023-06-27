@@ -5,7 +5,7 @@ import {
   Settings,
   TableChart,
 } from "@mui/icons-material";
-import { Modal, Popover } from "@mui/material";
+import { Button, Modal, Popover } from "@mui/material";
 import { useState } from "react";
 import { useQueryClient } from "react-query";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
@@ -19,13 +19,17 @@ import AddIcon from "@mui/icons-material/Add";
 import { viewTypes } from "../../../../utils/constants/viewTypes";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { useTranslation } from "react-i18next";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ViewTypeList from "../ViewTypeList";
+import MoreButtonViewType from "./MoreButtonViewType";
 
 const ViewTabSelector = ({
   selectedTabIndex,
   setSelectedTabIndex,
   views = [],
+  selectedTable,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const queryClient = useQueryClient();
@@ -69,6 +73,29 @@ const ViewTabSelector = ({
   return (
     <>
       <div className={style.selector} style={{ minWidth: "fit-content" }}>
+        <div className={style.leftSide}>
+          <div className={style.button}>
+            <Button style={{ height: "100%" }} onClick={() => navigate(-1)}>
+              <ArrowBackIcon style={{ color: "#000" }} />
+            </Button>
+          </div>
+
+          <div className={style.title}>
+            <IconGenerator
+              className={style.icon}
+              icon={
+                selectedTable?.isChild
+                  ? selectedTable?.icon
+                  : selectedTable?.icon
+              }
+            />
+            <h3>
+              {selectedTable?.isChild
+                ? selectedTable?.label
+                : selectedTable?.title}
+            </h3>
+          </div>
+        </div>
         {views.map((view, index) => (
           <div
             onClick={() => setSelectedTabIndex(index)}
@@ -96,13 +123,15 @@ const ViewTabSelector = ({
             )}
             <span>{view.name ? view.name : view.type}</span>
 
-            {selectedTabIndex === index && (
-              <ButtonsPopover
-                className={""}
-                onEditClick={() => openModal(view)}
-                onDeleteClick={() => deleteView(view.id)}
-              />
-            )}
+            <div className={style.popoverElement}>
+              {/* {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />} */}
+              {selectedTabIndex === index && (
+                <MoreButtonViewType
+                  onEditClick={() => openModal(view)}
+                  onDeleteClick={() => deleteView(view.id)}
+                />
+              )}
+            </div>
           </div>
         ))}
 
@@ -117,7 +146,7 @@ const ViewTabSelector = ({
           onClick={handleClick}
         >
           <AddIcon className={style.icon} />
-          {t('add')}
+          {t("add")}
         </div>
 
         <Popover
@@ -130,7 +159,7 @@ const ViewTabSelector = ({
             horizontal: "left",
           }}
         >
-          <div className={style.viewTypes}>
+          {/* <div className={style.viewTypes}>
             {computedViewTypes.map((type, index) => (
               <button
                 onClick={() => {
@@ -140,40 +169,25 @@ const ViewTabSelector = ({
                   setTypeNewView(type.value);
                 }}
               >
-                {type.value === "TABLE" && (
-                  <TableChart className={style.icon} />
-                )}
-                {type.value === "CALENDAR" && (
-                  <CalendarMonth className={style.icon} />
-                )}
-                {type.value === "CALENDAR HOUR" && (
-                  <IconGenerator
-                    className={style.icon}
-                    icon="chart-gantt.svg"
-                  />
-                )}
-                {type.value === "GANTT" && (
-                  <IconGenerator
-                    className={style.icon}
-                    icon="chart-gantt.svg"
-                  />
-                )}
-                {type.value === "TREE" && (
-                  <AccountTree className={style.icon} />
-                )}
-                {type.value === "BOARD" && (
-                  <IconGenerator
-                    className={style.icon}
-                    icon="brand_trello.svg"
-                  />
-                )}
-                {type.value === "FINANCE CALENDAR" && (
-                  <MonetizationOnIcon className={style.icon} />
-                )}
+                {type.value === "TABLE" && <TableChart className={style.icon} />}
+                {type.value === "CALENDAR" && <CalendarMonth className={style.icon} />}
+                {type.value === "CALENDAR HOUR" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+                {type.value === "GANTT" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+                {type.value === "TREE" && <AccountTree className={style.icon} />}
+                {type.value === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
+                {type.value === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
                 {type.label}
               </button>
             ))}
-          </div>
+          </div> */}
+
+          <ViewTypeList
+            computedViewTypes={computedViewTypes}
+            handleClose={handleClose}
+            openModal={openModal}
+            setSelectedView={setSelectedView}
+            setTypeNewView={setTypeNewView}
+          />
         </Popover>
       </div>
 
@@ -184,6 +198,7 @@ const ViewTabSelector = ({
       >
         <ViewSettings
           closeModal={closeModal}
+          isChanged={isChanged}
           setIsChanged={setIsChanged}
           viewData={selectedView}
           typeNewView={typeNewView}

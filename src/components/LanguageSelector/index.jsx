@@ -45,7 +45,7 @@ const LanguageSelector = () => {
   return (
     <div>
       <RectangleIconButton color="primary" onClick={handleClick}>
-        <img style={{ width: "18px" }} src={activeLang.icon} alt="" />
+        <img style={{ width: "18px" }} src={activeLang?.icon} alt="" />
       </RectangleIconButton>
 
       <Menu

@@ -1,55 +1,57 @@
-import { Menu } from "@mui/material"
-import { useState } from "react"
-import { useSelector } from "react-redux"
-import RectangleIconButton from "../Buttons/RectangleIconButton"
-import IconGenerator from "../IconPicker/IconGenerator"
-import styles from "./style.module.scss"
-import DashboardIcon from "@mui/icons-material/Dashboard"
-import { staticApps } from "./staticApps"
-import { useLocation, useNavigate } from "react-router-dom"
-import { useMemo } from "react"
-import { useDispatch } from "react-redux"
-import { tabRouterActions } from "../../store/tabRouter/tabRouter.slice"
-import { useAliveController } from "react-activation"
+import { Menu } from "@mui/material";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import RectangleIconButton from "../Buttons/RectangleIconButton";
+import IconGenerator from "../IconPicker/IconGenerator";
+import styles from "./style.module.scss";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import { staticApps } from "./staticApps";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useMemo } from "react";
+import { useDispatch } from "react-redux";
+import { tabRouterActions } from "../../store/tabRouter/tabRouter.slice";
+import { useAliveController } from "react-activation";
 
 const AppSelector = () => {
-  const [anchorEl, setAnchorEl] = useState(null)
-  const menuVisible = Boolean(anchorEl)
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const { clear } = useAliveController()
+  const [anchorEl, setAnchorEl] = useState(null);
+  const menuVisible = Boolean(anchorEl);
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { clear } = useAliveController();
 
-  const applications = useSelector((state) => state.application.list)
+  const applications = useSelector((state) => state.application.list);
 
   const computedList = useMemo(() => {
-    return [...applications, ...staticApps]
-  }, [applications])
+    return [...applications, ...staticApps];
+  }, [applications]);
+
+  console.log("computedList", computedList);
 
   const activeApp = useMemo(() => {
     if (pathname.includes("/main")) {
-      return pathname.split("/")[2]
+      return pathname.split("/")[2];
     }
 
-    return pathname.split("/")[1]
-  }, [pathname])
+    return pathname.split("/")[1];
+  }, [pathname]);
 
   const openMenu = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const closeMenu = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
   const rowClickHandler = (table) => {
-    if (table.type === "static") navigate(`/${table.id}`)
-    else navigate(`/main/${table.id}`)
+    if (table.type === "static") navigate(`/${table.id}`);
+    else navigate(`/main/${table.id}`);
 
-    dispatch(tabRouterActions.clear())
-    clear()
-    closeMenu()
-  }
+    dispatch(tabRouterActions.clear());
+    clear();
+    closeMenu();
+  };
 
   return (
     <div>
@@ -87,7 +89,7 @@ const AppSelector = () => {
         </div>
       </Menu>
     </div>
-  )
-}
+  );
+};
 
-export default AppSelector
+export default AppSelector;

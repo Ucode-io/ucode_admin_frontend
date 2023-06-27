@@ -23,7 +23,7 @@
 }
 
 .card {
-  min-width: 1000px;
+  min-width: 700px;
   border: none;
 
   .header {
@@ -178,8 +178,8 @@
     overflow: auto;
 
     .section {
-      border: 1px solid #e5e9eb;
-      border-radius: 6px;
+      border: 0;
+      border-radius: 0;
 
       .sectionHeader {
         padding: 16px 12px;
@@ -202,6 +202,9 @@
           display: flex;
           align-items: center;
           gap: 30px;
+          fieldset {
+            border-radius: 6px;
+          }
         }
       }
     }
@@ -408,4 +411,8 @@
       }
     }
   }
+}
+
+.switchControls {
+  display: flex;
 }

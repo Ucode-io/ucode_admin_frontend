@@ -10,7 +10,7 @@ import HFSelect from "../../../../components/FormElements/HFSelect";
 import GroupCascading from "../../../../components/ElementGenerators/GroupCascading";
 import { Controller, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
-import applicationService from "../../../../services/applicationSercixe";
+import applicationService from "../../../../services/applicationService";
 import constructorFieldService from "../../../../services/constructorFieldService";
 
 

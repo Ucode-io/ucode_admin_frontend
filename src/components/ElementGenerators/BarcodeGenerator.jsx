@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Barcode from "react-barcode";
 import styles from "./style.module.scss";
 import { Controller } from "react-hook-form";
-import { TextField } from "@mui/material";
+import { InputAdornment, TextField, Tooltip } from "@mui/material";
 import BarcodeGenerateButton from "./BarcodeGenerateButton";
 import PrintIcon from "@mui/icons-material/Print";
 import Dialog from "@mui/material/Dialog";
@@ -10,6 +10,7 @@ import FRow from "../FormElements/FRow";
 import ClearIcon from "@mui/icons-material/Clear";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import ReactToPrint from "react-to-print";
+import { Lock } from "@mui/icons-material";
 const pageStyle = `
   @page {
     size: 30mm 20mm;
@@ -81,8 +82,20 @@ const BarcodeGenerator = ({
                     style: disabled
                       ? {
                           background: "#c0c0c039",
+                          paddingRight: "0px",
                         }
-                      : {},
+                      : {
+                          background: "#fff",
+                          color: "#fff"
+                        },
+
+                    endAdornment: disabled && (
+                      <Tooltip title="This field is disabled for this role!">
+                        <InputAdornment position="start">
+                          <Lock style={{ fontSize: "20px" }} />
+                        </InputAdornment>
+                      </Tooltip>
+                    ),
                   }}
                   helperText={!disabledHelperText && error?.message}
                   {...props}
@@ -103,17 +116,9 @@ const BarcodeGenerator = ({
                     </button>
                     <div className={styles.barcode_input_layer}>
                       <FRow label="Print Count">
-                        <input
-                          type="number"
-                          value={count}
-                          placeholder="Count"
-                          className={styles.count_control}
-                          onChange={(e) => setCount(e.target.value)}
-                        />
+                        <input type="number" value={count} placeholder="Count" className={styles.count_control} onChange={(e) => setCount(e.target.value)} />
                       </FRow>
-                      <PrimaryButton className={styles.barcode_print}>
-                        Print
-                      </PrimaryButton>
+                      <PrimaryButton className={styles.barcode_print}>Print</PrimaryButton>
                     </div>
                   </div>
                 </Dialog>
@@ -131,14 +136,7 @@ const BarcodeGenerator = ({
                 )}
               </div>
 
-              {field?.attributes?.disabled === false ? (
-                <BarcodeGenerateButton
-                  onChange={onChange}
-                  tableSlug={formTableSlug}
-                />
-              ) : (
-                ""
-              )}
+              {field?.attributes?.disabled === false ? <BarcodeGenerateButton onChange={onChange} tableSlug={formTableSlug} /> : ""}
             </>
           );
         }}

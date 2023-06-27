@@ -101,19 +101,22 @@ const FieldSettings = ({
     control: mainForm.control,
     name: "layoutRelations",
   });
+  
+  const selectedAutofillSlug = selectedAutofillTableSlug?.split('#')?.[0];
+  const selectedAutofillFieldSlug = selectedAutofillTableSlug?.split('#')?.[1]
 
   const computedRelationTables = useMemo(() => {
     return layoutRelations?.map((table) => ({
-      value: table.id?.split("#")?.[0],
+      value: `${table.id?.split("#")?.[0]}#${table?.field_from}`,
       label: table.label,
     }));
   }, [layoutRelations]);
   const { data: computedRelationFields } = useQuery(
-    ["GET_TABLE_FIELDS", selectedAutofillTableSlug],
+    ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
-      if (!selectedAutofillTableSlug) return [];
+      if (!selectedAutofillSlug) return [];
       return constructorFieldService.getList({
-        table_slug: selectedAutofillTableSlug,
+        table_slug: selectedAutofillSlug,
         with_one_relation: true,
       });
     },
@@ -140,6 +143,7 @@ const FieldSettings = ({
       slug: "",
       table_id: id,
       type: "",
+      relation_field: selectedAutofillFieldSlug
     };
 
     if (formType !== "CREATE") {
@@ -219,13 +223,20 @@ const FieldSettings = ({
           </div>
 
           <div className="p-2">
-            <FRow label="Placeholder">
+            {/* <FRow label="Placeholder">
               <HFTextField
                 fullWidth
                 name="attributes.placeholder"
                 control={control}
               />
-            </FRow>
+            </FRow> */}
+
+            <HFSwitch
+              control={control}
+              name="attributes.show_label"
+              label="Show label"
+              className="mb-1"
+            />
 
             <DefaultValueBlock control={control} />
 
@@ -268,6 +279,20 @@ const FieldSettings = ({
               name="attributes.creatable"
               label="Can create"
             />
+            <FRow label="Validation">
+              <HFTextField
+                fullWidth
+                name="attributes.validation"
+                control={control}
+              />
+            </FRow>
+            <FRow label="Validation message">
+              <HFTextField
+                fullWidth
+                name="attributes.validation_message"
+                control={control}
+              />
+            </FRow>
           </div>
 
           <div className={styles.settingsBlockHeader}>

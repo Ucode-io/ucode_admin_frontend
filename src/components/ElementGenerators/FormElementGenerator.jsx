@@ -26,7 +26,9 @@ import { useSelector } from "react-redux";
 import CodabarBarcode from "./CodabarBarcode";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFFloatField from "../FormElements/HFFloatField";
+import HFInternationPhone from "../FormElements/HFInternationPhone";
 import HFMapField from "../FormElements/HFMapField";
+import HFCustomImage from "../FormElements/HFCustomImage";
 
 const parser = new Parser();
 
@@ -143,14 +145,14 @@ const FormElementGenerator = ({
       );
     case "SINGLE_LINE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label} 
             defaultValue={defaultValue}
             disabled={isDisabled}
             {...props}
@@ -160,8 +162,45 @@ const FormElementGenerator = ({
 
     case "PHONE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextFieldWithMask
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            required={field.required}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
+            mask={"(99) 999-99-99"}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
+      
+      case "INTERNATIONAL_PHONE":
+        return (
+          <FRow label={field.label} required={field.required}>
+            <HFInternationPhone
+              control={control}
+              name={computedSlug}
+              tabIndex={field?.tabIndex}
+              fullWidth
+              required={field.required}
+              placeholder={field.attributes?.placeholder}
+              mask={"(99) 999-99-99"}
+              defaultValue={defaultValue}
+              disabled={isDisabled}
+              {...props}
+            />
+          </FRow>
+        );
+  
+
+    case "INTERNATION_PHONE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFInternationPhone
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
@@ -196,7 +235,7 @@ const FormElementGenerator = ({
 
     case "MULTI_LINE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextEditor
             control={control}
             name={computedSlug}
@@ -205,7 +244,7 @@ const FormElementGenerator = ({
             multiline
             rows={4}
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={field.defaultValue}
             disabled={isDisabled}
             {...props}
@@ -267,7 +306,7 @@ const FormElementGenerator = ({
 
     case "NUMBER":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFNumberField
             control={control}
             name={computedSlug}
@@ -275,7 +314,7 @@ const FormElementGenerator = ({
             fullWidth
             type="number"
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             disabled={isDisabled}
             {...props}
@@ -348,7 +387,7 @@ const FormElementGenerator = ({
 
     case "EMAIL":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={computedSlug}
@@ -360,7 +399,7 @@ const FormElementGenerator = ({
             }}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             tabIndex={field?.tabIndex}
             disabled={isDisabled}
@@ -482,6 +521,23 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
+      
+    case "CUSTOM_IMAGE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFCustomImage
+            control={control}
+            name={computedSlug}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            tabIndex={field?.tabIndex}
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
 
     case "ICON":
       return (
@@ -579,14 +635,14 @@ const FormElementGenerator = ({
 
     case "PASSWORD":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field?.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             disabled={field.attributes?.disabled}
             type="password"
@@ -597,14 +653,14 @@ const FormElementGenerator = ({
 
     default:
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field?.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             disabled={isDisabled}
             {...props}

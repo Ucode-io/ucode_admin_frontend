@@ -37,6 +37,7 @@ const CellRelationFormElement = ({
   index,
   defaultValue = null,
   relationfields,
+  data,
 }) => {
   const classes = useStyles();
 
@@ -93,6 +94,7 @@ const CellRelationFormElement = ({
               control={control}
               index={index}
               relationfields={relationfields}
+              data={data}
             />
           );
         }}
@@ -116,10 +118,10 @@ const AutoCompleteElement = ({
   index,
   control,
   relationfields,
+  data,
   setFormValue = () => {},
 }) => {
   const { navigateToForm } = useTabRouter();
-  const pathname = useLocation();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
@@ -148,9 +150,21 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const getIds = useMemo(() => {
+  // const getIds = useMemo(() => {
+  //   let val = [];
+  //   relationfields
+  //     ?.filter((item) => {
+  //       return item[field?.slug];
+  //     })
+  //     .map((item) => {
+  //       return !val.includes(item[field?.slug]) && val.push(item[field?.slug]);
+  //     });
+  //   return val;
+  // }, [relationfields, field]);
+
+  const getIdsFromData = useMemo(() => {
     let val = [];
-    relationfields
+    data
       ?.filter((item) => {
         return item[field?.slug];
       })
@@ -158,7 +172,7 @@ const AutoCompleteElement = ({
         return !val.includes(item[field?.slug]) && val.push(item[field?.slug]);
       });
     return val;
-  }, [relationfields, field]);
+  }, [data, field]);
 
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
@@ -170,7 +184,7 @@ const AutoCompleteElement = ({
           limit: 10,
           additional_request: {
             additional_field: "guid",
-            additional_values: getIds,
+            additional_values: getIdsFromData,
           },
           search: debouncedValue.trim(),
         },
@@ -178,7 +192,7 @@ const AutoCompleteElement = ({
     },
     {
       select: (res) => {
-        return res?.data?.response ?? []
+        return res?.data?.response ?? [];
       },
     }
   );
@@ -186,12 +200,12 @@ const AutoCompleteElement = ({
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
-  
+
   // const computedOptions = useMemo(() => {
   //   let uniqueObjArray = [
   //     ...new Map(options.map((item) => [item["title"], item])).values(),
   // ]
-  // return uniqueObjArray  
+  // return uniqueObjArray
   // }, [options])
 
   const changeHandler = (value) => {

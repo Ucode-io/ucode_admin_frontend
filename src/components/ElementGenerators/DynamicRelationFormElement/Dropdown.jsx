@@ -9,6 +9,10 @@ import { getLabelWithViewFields } from "../../../utils/getRelationFieldLabel";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import SearchInput from "../../SearchInput";
 import styles from "./style.module.scss";
+import constructorFunctionService from "../../../services/constructorFunctionService";
+import useDebouncedWatch from "../../../hooks/useDebouncedWatch";
+import constructorFunctionServiceV2 from "../../../services/contructorFunctionServiceV2";
+import request from "../../../utils/request";
 
 const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
   const [selectedTable, setSelectedTable] = useState(null);
@@ -28,15 +32,23 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
     search: searchText,
   };
 
-  const { data: objectsList = [], isLoading: loader } = useQuery(
-    ["GET_OBJECT_LIST_QUERY", selectedTable?.slug, queryPayload],
+  const { data: objectsList1, isLoading: loader } = useQuery(
+    ["GET_OPENFAAS_LIST", selectedTable?.slug, queryPayload],
     () => {
       if (!selectedTable?.slug) return null;
-      return constructorObjectService.getList(selectedTable?.slug, {
-        data: queryPayload,
-      });
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            ...queryPayload,
+            table_slug: selectedTable?.slug,
+          },
+        }
+      );
     },
     {
+      enabled: !!field?.attributes?.function_path,
       select: (res) => {
         return (
           res?.data?.response?.map((el) => ({
@@ -47,6 +59,67 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
       },
     }
   );
+
+  
+  const { data: objectsList2 = [], isLoading: loader2 } = useQuery(
+    ["GET_OBJECT_LIST_QUERY", selectedTable?.slug, queryPayload],
+    () => {
+      if (!selectedTable?.slug) return null;
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            ...queryPayload,
+            table_slug: selectedTable?.slug,
+          },
+        }
+      );
+    },
+    {
+      enabled: !field?.attributes?.function_path,
+      select: (res) => {
+        return (
+          res?.data?.response?.map((el) => ({
+            value: el.guid,
+            label: getLabelWithViewFields(selectedTable.view_fields, el),
+          })) ?? []
+        );
+      },
+    }
+  );
+
+
+const objectsList = useMemo(() => {
+  return objectsList1 ?? objectsList2
+}, [objectsList2, objectsList1])
+  // useDebouncedWatch(
+  //   () => {
+  //     // if (elmValue.length >= field.attributes?.length) {
+  //       constructorFunctionService
+  //         .invoke({
+  //           function_id: field?.attributes?.function,
+  //           // object_ids: [id, elmValue],
+  //           attributes: {
+  //             // barcode: elmValue,
+  //           },
+  //         })
+  //         .then((res) => {
+  //           if (res === "Updated successfully!") {
+  //             console.log("Успешно обновлено!", "success");
+  //           }
+  //         })
+  //         .finally(() => {
+  //           // setFormValue(name, "");
+  //           // setElmValue("");
+  //           // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
+  //         });
+  //     // }
+  //   },
+  //   [],
+  //   300
+  // );
+
 
   useEffect(() => {
     setSearchText("");

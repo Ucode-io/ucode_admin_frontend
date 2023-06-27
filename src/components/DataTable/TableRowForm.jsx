@@ -5,6 +5,9 @@ import { CTableCell, CTableRow } from "../CTable";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
 import CellCheckboxOrOrderNumBlock from "./CellCheckboxOrOrderNumBlock";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import DeleteWrapperModal from "../DeleteWrapperModal";
+import { useNavigate } from "react-router-dom";
 
 const TableRowForm = ({
   onCheckboxChange,
@@ -17,6 +20,8 @@ const TableRowForm = ({
   control,
   currentPage,
   rowIndex,
+  relatedTableSlug,
+  isRelationTable,
   columns,
   tableSettings,
   tableSlug,
@@ -25,7 +30,10 @@ const TableRowForm = ({
   calculateWidth,
   limit = 10,
   relationFields,
+  data,
 }) => {
+  const navigate = useNavigate();
+  
   return (
     <CTableRow>
       <CellCheckboxOrOrderNumBlock
@@ -74,7 +82,7 @@ const TableRowForm = ({
             minWidth: "max-content",
           }}
         >
-          <CellFormElementGenerator
+          {/* <CellFormElementGenerator
             tableSlug={tableSlug}
             watch={watch}
             fields={columns}
@@ -84,18 +92,32 @@ const TableRowForm = ({
             control={control}
             setFormValue={setFormValue}
             relationfields={relationFields}
-          />
+            data={data}
+          /> */}
         </CTableCell>
       ))}
       <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>
-        <RectangleIconButton
-          color="error"
-          onClick={() =>
-            row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-          }
+        <PermissionWrapperV2
+          type="delete"
+          tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
         >
-          <Delete color="error" />
-        </RectangleIconButton>
+          <RectangleIconButton
+            color="error"
+            onClick={() =>
+              {
+                onDeleteClick(row, rowIndex) 
+                 remove(rowIndex)
+                 navigate("/reloadRelations", {
+                  state: {
+                    redirectUrl: window.location.pathname,
+                  },
+                });
+              }
+            }
+          >
+            <Delete color="error" />
+          </RectangleIconButton>
+        </PermissionWrapperV2>
       </CTableCell>
     </CTableRow>
   );

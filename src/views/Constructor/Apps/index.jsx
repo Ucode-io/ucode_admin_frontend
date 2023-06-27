@@ -23,6 +23,8 @@ import exportToJsonService from "../../../services/exportToJson";
 import useDownloader from "../../../hooks/useDownloader";
 import { useRef } from "react";
 import fileService from "../../../services/fileService";
+import PermissionWrapper from "../../../components/PermissionWrapper";
+import PermissionWrapperApp from "../../../components/PermissionWrapper/PermissionWrapperApp";
 
 const AppsPage = () => {
   const navigate = useNavigate();
@@ -143,13 +145,18 @@ const AppsPage = () => {
                   </RectangleIconButton>
                 </CTableCell>
                 <PermissionWrapperV2 tabelSlug="app" type="delete">
-                  <CTableCell>
-                    <DeleteWrapperModal id={element.id} onDelete={deleteTable}>
-                      <RectangleIconButton color="error">
-                        <Delete color="error" />
-                      </RectangleIconButton>
-                    </DeleteWrapperModal>
-                  </CTableCell>
+                  <PermissionWrapperApp permission={element.permission?.delete}>
+                    <CTableCell>
+                      <DeleteWrapperModal
+                        id={element.id}
+                        onDelete={deleteTable}
+                      >
+                        <RectangleIconButton color="error">
+                          <Delete color="error" />
+                        </RectangleIconButton>
+                      </DeleteWrapperModal>
+                    </CTableCell>
+                  </PermissionWrapperApp>
                 </PermissionWrapperV2>
               </CTableRow>
             ))}

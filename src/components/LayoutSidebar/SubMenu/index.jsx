@@ -5,7 +5,8 @@ import { BsThreeDots } from "react-icons/bs";
 import SearchInput from "../../SearchInput";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
-
+import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
+import PushPinIcon from "@mui/icons-material/PushPin";
 const SubMenu = ({
   child,
   environment,
@@ -18,6 +19,9 @@ const SubMenu = ({
   handleOpenNotify,
   setElement,
   selectedApp,
+  isLoading,
+  setPin,
+  pin,
 }) => {
   return (
     <div
@@ -50,6 +54,16 @@ const SubMenu = ({
                   color: environment?.data?.color,
                 }}
               />
+              <PushPinIcon
+                size={13}
+                onClick={() => {
+                  setPin((prev) => !prev);
+                }}
+                style={{
+                  rotate: pin ? "" : "45deg",
+                  color: environment?.data?.color,
+                }}
+              />
             </div>
             <div className="close-btn" onClick={() => setSubMenuIsOpen(false)}>
               <ClearIcon />
@@ -77,29 +91,35 @@ const SubMenu = ({
                 }}
               />
             </Box>
-            <div
-              className="nav-block"
-              style={{
-                // height: `calc(100vh - ${57}px)`,
-                background: environment?.data?.background,
-              }}
-            >
-              <div className="menu-element">
-                {child?.map((element, index) => (
-                  <RecursiveBlock
-                    key={index}
-                    element={element}
-                    openFolderCreateModal={openFolderCreateModal}
-                    environment={environment}
-                    setFolderModalType={setFolderModalType}
-                    sidebarIsOpen={subMenuIsOpen}
-                    setTableModal={setTableModal}
-                    handleOpenNotify={handleOpenNotify}
-                    setElement={setElement}
-                  />
-                ))}
+            {isLoading ? (
+              <RingLoaderWithWrapper />
+            ) : (
+              <div
+                className="nav-block"
+                style={{
+                  // height: `calc(100vh - ${57}px)`,
+                  background: environment?.data?.background,
+                }}
+              >
+                <div className="menu-element">
+                  {child?.map((element, index) => (
+                    <RecursiveBlock
+                      key={index}
+                      element={element}
+                      openFolderCreateModal={openFolderCreateModal}
+                      environment={environment}
+                      setFolderModalType={setFolderModalType}
+                      sidebarIsOpen={subMenuIsOpen}
+                      setTableModal={setTableModal}
+                      handleOpenNotify={handleOpenNotify}
+                      setElement={setElement}
+                      pin={pin}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </Box>
       </div>

@@ -157,12 +157,12 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const exportToPDF = async () => {
     if (!selectedTemplate) return;
     setPdfLoader(true);
-
+  
     try {
       let html = redactorRef.current.getData();
-
+  
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><style>${contentStyles}</style>`;
-
+  
       fields.forEach((field) => {
         html = html.replaceAll(
           `{ ${field.label} }`,
@@ -203,7 +203,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
           pointToMillimeter(selectedPaperSize.width) + extraWidth
         }mm" >${tempElement.innerHTML}</div>`,
       });
-
+  
       queryClient.refetchQueries([
         "GET_OBJECT_FILES",
         { tableSlug, selectLinkedObject },

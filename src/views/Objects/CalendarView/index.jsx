@@ -36,6 +36,7 @@ const CalendarView = ({
   selectedTabIndex,
   setSelectedTabIndex,
   views,
+  selectedTable
 }) => {
   const { t } = useTranslation()
   const { tableSlug } = useParams();
@@ -258,6 +259,7 @@ const CalendarView = ({
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
+          selectedTable={selectedTable}
         />
         <CRangePicker value={dateFilters} onChange={setDateFilters} />
       </FiltersBlock>

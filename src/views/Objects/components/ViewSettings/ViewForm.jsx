@@ -1,4 +1,4 @@
-import { Delete, FilterAlt, JoinInner, TableChart } from "@mui/icons-material";
+import { Delete, FilterAlt, JoinInner, TableChart, AltRoute } from "@mui/icons-material";
 import InfoIcon from "@mui/icons-material/Info";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -25,6 +25,7 @@ import ChartAccounts from "./ChartAccounts";
 import ChartAccountsWrapper from "@/views/Objects/components/ViewSettings/ChartAccountsWrapper";
 import constructorFieldService from "@/services/constructorFieldService";
 import HFSwitch from "../../../../components/FormElements/HFSwitch";
+import NavigateSettings from "./NavigateSettings";
 
 const ViewForm = ({
   initialValues,
@@ -43,6 +44,7 @@ const ViewForm = ({
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
+  const navigate = initialValues?.navigate;
   const relationObjValue =
     initialValues?.attributes?.balance?.table_slug +
     "#" +
@@ -106,22 +108,10 @@ const ViewForm = ({
       // send balance field if relation_obj is selected
       ...(isBalanceExist && {
         balance: {
-          table_slug:
-            data?.relation_obj?.split("#")?.[0] !== "undefined"
-              ? data?.relation_obj?.split("#")?.[0]
-              : undefined,
-          table_id:
-            data?.relation_obj?.split("#")?.[1] !== "undefined"
-              ? data?.relation_obj?.split("#")?.[1]
-              : undefined,
-          field_id:
-            data?.number_field?.split("#")?.[1] !== "undefined"
-              ? data?.number_field?.split("#")?.[1]
-              : undefined,
-          field_slug:
-            data?.number_field?.split("#")?.[0] !== "undefined"
-              ? data?.number_field?.split("#")?.[0]
-              : undefined,
+          table_slug: data?.relation_obj?.split("#")?.[0] !== "undefined" ? data?.relation_obj?.split("#")?.[0] : undefined,
+          table_id: data?.relation_obj?.split("#")?.[1] !== "undefined" ? data?.relation_obj?.split("#")?.[1] : undefined,
+          field_id: data?.number_field?.split("#")?.[1] !== "undefined" ? data?.number_field?.split("#")?.[1] : undefined,
+          field_slug: data?.number_field?.split("#")?.[0] !== "undefined" ? data?.number_field?.split("#")?.[0] : undefined,
         },
       }),
     };
@@ -139,7 +129,8 @@ const ViewForm = ({
         financialTypee,
         financialFiledId,
         relationObjValue,
-        numberFieldValue
+        numberFieldValue,
+        navigate
       ),
       filters: [],
     });
@@ -193,6 +184,7 @@ const ViewForm = ({
       constructorViewService
         .create(computedValues)
         .then(() => {
+          closeForm();
           refetchViews();
           setIsChanged(true);
         })
@@ -203,6 +195,7 @@ const ViewForm = ({
       constructorViewService
         .update(computedValues)
         .then(() => {
+          closeForm();
           refetchViews();
           setIsChanged(true);
         })
@@ -210,6 +203,7 @@ const ViewForm = ({
           setBtnLoader(false);
         });
     }
+    closeForm();
   };
 
   const deleteView = () => {
@@ -222,49 +216,33 @@ const ViewForm = ({
       })
       .catch(() => setDeleteBtnLoader(false));
   };
-
+  
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
         <Tabs>
           <div className={styles.section}>
-            <TabList>
-              <Tab>
-                <InfoIcon /> Info
-              </Tab>
-              <Tab>
-                <FilterAlt /> Quick filters
-              </Tab>
-              <Tab>
-                <TableChart />
-                Columns
-              </Tab>
-              {type !== "FINANCE CALENDAR" && (
-                <Tab>
-                  <JoinInner /> Group by
-                </Tab>
-              )}
-              {type === "FINANCE CALENDAR" && (
-                <Tab>
-                  <MonetizationOnIcon /> Chart of accaunts
-                </Tab>
-              )}
+            <TabList style={{marginBottom: '1px'}}>
+              <Tab>Information</Tab>
+              <Tab>Quick filters</Tab>
+              <Tab>Columns</Tab>
+              {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
+              {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
             </TabList>
             <TabPanel>
               <div className={styles.section}>
-                <div className={styles.sectionHeader}>
+                {/* <div className={styles.sectionHeader}>
                   <div className={styles.sectionTitle}>Main info</div>
-                </div>
+                </div> */}
 
                 <div className={styles.sectionBody}>
                   <div className={styles.formRow}>
                     <FRow label="Название">
-                      <HFTextField
-                        control={form.control}
-                        name="name"
-                        fullWidth
-                      />
+                      <HFTextField control={form.control} name="name" fullWidth />
                     </FRow>
+                  </div>
+
+                  <div className={styles.formRow}>
                     <FRow label="Тип">
                       <HFSelect
                         options={computedViewTypes}
@@ -309,6 +287,9 @@ const ViewForm = ({
             <TabPanel>
               <ColumnsTab form={form} />
             </TabPanel>
+            <TabPanel>
+              <NavigateSettings form={form} />
+            </TabPanel>
             {type !== "FINANCE CALENDAR" && (
               <TabPanel>
                 <GroupsTab columns={computedColumns} form={form} />
@@ -347,8 +328,10 @@ const getInitialValues = (
   financialTypee,
   financialFiledId,
   relationObjValue,
-  numberFieldValue
+  numberFieldValue,
+  navigate
 ) => {
+  console.log('navigate', navigate);
   if (initialValues === "NEW")
     return {
       type: typeNewView,
@@ -367,6 +350,12 @@ const getInitialValues = (
       columns: columns?.map((el) => ({ ...el, is_checked: true })) ?? [],
       quick_filters: columns ?? [],
       group_fields: [],
+      navigate: {
+        params: [],
+        url: '',
+        headers: [],
+        cookies: []
+      },
       table_slug: tableSlug,
       updated_fields: [],
       multiple_insert: false,
@@ -400,6 +389,12 @@ const getInitialValues = (
         ? [...columns, ...relationColumns]
         : columns
     ),
+    navigate: {
+      params: navigate?.params,
+      url: navigate?.url,
+      headers: [],
+      cookies: []
+    }, 
     table_slug: tableSlug,
     id: initialValues?.id,
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",

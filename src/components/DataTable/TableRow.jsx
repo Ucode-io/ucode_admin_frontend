@@ -3,13 +3,11 @@ import { Delete } from "@mui/icons-material";
 
 import { CTableCell, CTableRow } from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import TableRowForm from "./TableRowForm";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
-import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import DeleteWrapperModal from "../DeleteWrapperModal";
 import { useNavigate } from "react-router-dom";
-
 const TableRow = ({
   row,
   key,
@@ -18,8 +16,6 @@ const TableRow = ({
   onRowClick,
   onDeleteClick,
   checkboxValue,
-  isRelationTable,
-  relatedTableSlug,
   onCheckboxChange,
   currentPage,
   columns,
@@ -37,8 +33,16 @@ const TableRow = ({
   relationAction,
   onChecked,
   relationFields,
-  data,
 }) => {
+  const colorCell = (num) => {
+    if (num === 0) {
+      return "rgba(3, 172, 19,0.5)";
+    }
+    if (num < 0 || num > 0) {
+      return "rgba(254 , 0, 0,0.5)";
+    }
+    return "transparent";
+  };
   const navigate = useNavigate();
   if (formVisible)
     return (
@@ -46,8 +50,6 @@ const TableRow = ({
         onDeleteClick={onDeleteClick}
         remove={remove}
         watch={watch}
-        relatedTableSlug={relatedTableSlug}
-        isRelationTable={isRelationTable}
         onCheckboxChange={onCheckboxChange}
         checkboxValue={checkboxValue}
         row={row}
@@ -65,10 +67,9 @@ const TableRow = ({
         calculateWidth={calculateWidth}
         tableSlug={tableSlug}
         relationFields={relationFields}
-        data={data}
       />
     );
-    
+
   return (
     <>
       {relationAction === undefined ? (
@@ -126,21 +127,12 @@ const TableRow = ({
           ))}
           <td>
             <div style={{ display: "flex", gap: "5px", padding: "3px" }}>
-              <PermissionWrapperV2
-                tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-                type="delete"
-              >
+              <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
                 <RectangleIconButton
                   color="error"
-                  onClick={() => {
-                     onDeleteClick(row, rowIndex) 
-                      remove(rowIndex);
-                      navigate("/reloadRelations", {
-                        state: {
-                          redirectUrl: window.location.pathname,
-                        },
-                      });
-                  }}
+                  onClick={() =>
+                    row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
+                  }
                 >
                   <Delete color="error" />
                 </RectangleIconButton>
@@ -193,33 +185,29 @@ const TableRow = ({
                 )?.isStiky
                   ? calculateWidth(column?.id, index)
                   : "0",
-                backgroundColor: "#fff",
                 zIndex: tableSettings?.[pageName]?.find(
                   (item) => item?.id === column?.id
                 )?.isStiky
                   ? "1"
                   : "",
+                backgroundColor: colorCell(row?.difference) || "#fff",
               }}
             >
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2
-            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-            type="delete"
-          >
+          <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
             <RectangleIconButton
               color="error"
-              onClick={() =>{
-                 onDeleteClick(row, rowIndex) 
-                 remove(rowIndex)
-                 navigate("/reloadRelations", {
+              onClick={() => {
+                onDeleteClick(row, rowIndex);
+                remove(rowIndex);
+                navigate("/reloadRelations", {
                   state: {
                     redirectUrl: window.location.pathname,
                   },
                 });
-              }
-              }
+              }}
             >
               <Delete color="error" />
             </RectangleIconButton>
@@ -278,23 +266,18 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2
-            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
-            type="delete"
-          >
+          <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
             <RectangleIconButton
               color="error"
-              onClick={() =>
-               {
-                onDeleteClick(row, rowIndex) 
-                remove(rowIndex)
+              onClick={() => {
+                onDeleteClick(row, rowIndex);
+                remove(rowIndex);
                 navigate("/reloadRelations", {
                   state: {
                     redirectUrl: window.location.pathname,
                   },
                 });
-               }
-              }
+              }}
             >
               <Delete color="error" />
             </RectangleIconButton>

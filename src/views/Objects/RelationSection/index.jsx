@@ -108,6 +108,7 @@ const RelationSection = ({
     control,
     name: "multi",
   });
+
   useEffect(() => {
     update();
   }, []);
@@ -366,7 +367,6 @@ const RelationSection = ({
                     </RectangleIconButton>
                     <RectangleIconButton
                       color="error"
-                      type="exit"
                       onClick={() => {
                         setFormVisible(false);
                         if (fields.length > dataLength) {
@@ -400,6 +400,7 @@ const RelationSection = ({
                       </RectangleIconButton>
                     </PermissionWrapperV2>
                   )
+
                 )}
 
                 <DocumentGeneratorButton />

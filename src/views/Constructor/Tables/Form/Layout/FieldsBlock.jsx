@@ -1,5 +1,5 @@
-import { Close } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { Add, Close } from "@mui/icons-material";
+import { Button, IconButton, Input, OutlinedInput } from "@mui/material";
 import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
@@ -7,6 +7,9 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import styles from "./style.module.scss";
+import { generateGUID, generateID } from "../../../../../utils/generateID";
+import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
+import HFTextField from "../../../../../components/FormElements/HFTextField";
 
 const FieldsBlock = ({
   mainForm,
@@ -14,12 +17,24 @@ const FieldsBlock = ({
   selectedSettingsTab,
   setSelectedSettingsTab,
   closeSettingsBlock,
+  sectionTabs,
+  insertSectionTab,
+  removeSectionTab,
+  moveSectionTab,
+  updateSectionTab,
+  appendSectionTab,
 }) => {
   const { fields } = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
   });
+
+  const allFields = useMemo(() => {
+    return fields?.filter(
+      (field) => field.type !== "LOOKUP" && field.type !== "LOOKUPS" && field.type !== "DYNAMIC"
+    );
+  }, [fields]);
 
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
@@ -49,13 +64,11 @@ const FieldsBlock = ({
 
   const usedFields = useMemo(() => {
     const list = [];
-
     sections?.forEach((section) => {
       section.fields?.forEach((field) => {
         list.push(field.id);
       });
     });
-
     return list;
   }, [sections]);
 
@@ -64,7 +77,6 @@ const FieldsBlock = ({
   }, [summarySectionFields]);
 
   const unusedFields = useMemo(() => {
-    console.log("ss =>", usedFields, usedSummarySectionFields, fields);
     return fields?.filter(
       (field) =>
         field.type !== "LOOKUP" &&
@@ -85,20 +97,25 @@ const FieldsBlock = ({
           (viewRelation) => viewRelation.view_relation_type === "FILE"
         );
       } else {
-        return !viewRelations?.some(
-          (viewRelation) => viewRelation.relation_id === relation.id
-        );
+        return !viewRelations?.some((viewRelation) => viewRelation?.relation_id === relation?.id);
       }
     });
   }, [tableRelations, viewRelations]);
+
   const unusedRelations = useMemo(() => {
     return relations?.filter((relation) => !usedFields.includes(relation.id));
   }, [relations, usedFields]);
 
-  const onDrop = (dropResult, colNumber) => {
+  const onDrop = (dropResult) => {
     const result = applyDrag(fields, dropResult);
     if (!result) return;
   };
+
+  const handleNameChange = (event, index, oldId) => {
+    updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
+  };
+
+  console.log('sssssssss', allFields)
 
   return (
     <div className={styles.settingsBlock}>
@@ -117,8 +134,8 @@ const FieldsBlock = ({
         >
           <TabList>
             <Tab>Form fields</Tab>
-            {/* <Tab>Input relation fields</Tab> */}
-            <Tab>Table fields</Tab>
+            <Tab>Relation tabs</Tab>
+            <Tab>Section Tabs</Tab>
           </TabList>
 
           <TabPanel>
@@ -132,7 +149,7 @@ const FieldsBlock = ({
                   field_name: fields[i]?.label ?? fields[i]?.title,
                 })}
               >
-                {fields?.map((field, index) => (
+                {allFields?.map((field) => (
                   <Draggable key={field.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator
@@ -168,7 +185,7 @@ const FieldsBlock = ({
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator
                         field={relation}
-                        control={layoutForm.control}
+                        control={mainForm.control}
                         disabledHelperText
                       />
                     </div>
@@ -199,6 +216,54 @@ const FieldsBlock = ({
                     </div>
                   </Draggable>
                 ))}
+              </Container>
+            </div>
+          </TabPanel>
+
+          <TabPanel>
+            <div className={styles.fieldsBlock}>
+              <Container
+                groupName="section_tabs"
+                onDrop={onDrop}
+                dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                getChildPayload={(i) => unusedTableRelations[i]}
+              >
+                {sectionTabs?.map((tab, index) => (
+                  <Draggable
+                    key={index}
+                    style={{ overflow: "visible", width: "fit-content" }}
+                  >
+                    <div
+                      className={`${styles.sectionFieldRow} ${styles.relation}`}
+                    >
+                      <OutlinedInput
+                        value={tab.label}
+                        onClick={(e) => e.stopPropagation()}
+                        size="small"
+                        onChange={(e) => handleNameChange(e, index, tab.id)}
+                        style={{
+                          border: "none",
+                          outline: "none",
+                          fontWeight: 500,
+                          minWidth: 100,
+                          background: "transparent",
+                        }}
+                      />
+                      <Button onClick={() => removeSectionTab(index)}>
+                        <Close />
+                      </Button>
+                    </div>
+                  </Draggable>
+                ))}
+
+                <Button
+                  onClick={() =>
+                    appendSectionTab({ type: "section", id: generateGUID() })
+                  }
+                >
+                  <Add />
+                  Add Section tab
+                </Button>
               </Container>
             </div>
           </TabPanel>

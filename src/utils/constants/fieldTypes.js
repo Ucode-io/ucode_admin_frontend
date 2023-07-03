@@ -1,4 +1,3 @@
-
 // export const fieldTypes = [
 //   "SINGLE_LINE",
 //   "MULTI_LINE",
@@ -40,7 +39,7 @@ export const fieldTypes = [
   "PASSWORD",
   "FORMULA",
   "DENTIST",
-  'COLOR'
+  "COLOR",
 ];
 
 export const fieldTypesOptions = [

@@ -33,6 +33,7 @@ import Actions from "./Actions";
 import { generateGUID } from "../../../../utils/generateID";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import CustomErrors from "./CustomErrors";
+import layoutService from "../../../../services/layoutService";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -91,6 +92,14 @@ const ConstructorTablesFormPage = () => {
       table_slug: slug,
     });
 
+    const getLayouts = layoutService
+      .getList({
+        "table-slug": slug,
+      })
+      .then((res) => {
+        mainForm.setValue("layouts", res?.layouts ?? []);
+      });
+
     try {
       const [
         tableData,
@@ -102,6 +111,7 @@ const ConstructorTablesFormPage = () => {
         getSectionsData,
         getViewRelations,
         getActions,
+        getLayouts,
       ]);
 
       const data = {
@@ -136,6 +146,8 @@ const ConstructorTablesFormPage = () => {
         getFieldsData,
       ]);
 
+      // remove fields which type 
+
       mainForm.setValue("fields", fields);
 
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
@@ -154,12 +166,14 @@ const ConstructorTablesFormPage = () => {
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" &&
-            relation.table_from?.slug === slug)
-        )
+          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
+        ) {
           layoutRelations.push(relation);
-        else tableRelations.push(relation);
+        } else {
+          tableRelations.push(relation);
+        }
       });
+
       const layoutRelationsFields = layoutRelations.map((relation) => ({
         ...relation,
         id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
@@ -174,10 +188,9 @@ const ConstructorTablesFormPage = () => {
 
       mainForm.setValue("relations", relations);
       mainForm.setValue("relationsMap", listToMap(relations));
-
       mainForm.setValue("layoutRelations", layoutRelationsFields);
       mainForm.setValue("tableRelations", tableRelations);
-
+      console.log("tableRelations", layoutRelations);
       resolve();
     });
   };
@@ -208,7 +221,41 @@ const ConstructorTablesFormPage = () => {
       table_slug: data.slug,
     });
 
-    Promise.all([updateTableData, updateSectionData, updateViewRelationsData])
+    const computedLayouts = data.layouts.map((layout) => ({
+      ...layout,
+      summary_fields: layout?.summary_fields,
+      tabs: layout?.tabs?.map((tab) => {
+        if (tab?.type === "Many2Many" || tab?.type === "Many2Dynamic" || tab?.type === "One2Many" || tab?.type === "Recursive" || tab?.type === "Many2One") {
+          return {
+            order: tab?.order ?? 0,
+            label: tab.title,
+            type: "relation",
+            layout_id: layout.id,
+            relation_id: tab.id,
+            relation: {
+              ...tab,
+            },
+          };
+        } else {
+          return {
+            ...tab,
+          };
+        }
+      }),
+    }));
+
+    const updateLayoutData = layoutService.update({
+      layouts: computedLayouts,
+      table_id: id,
+      project_id: projectId,
+    });
+
+    Promise.all([
+      updateTableData,
+      updateSectionData,
+      updateViewRelationsData,
+      updateLayoutData,
+    ])
       .then(() => {
         dispatch(constructorTableActions.setDataById(data));
         navigate(-1);
@@ -252,7 +299,7 @@ const ConstructorTablesFormPage = () => {
               <Tab>Fields</Tab>
               {id && <Tab>Relations</Tab>}
               {id && <Tab>Actions</Tab>}
-              {/* <Tab>Custom errors</Tab> */}
+              <Tab>Custom errors</Tab>
             </TabList>
           </HeaderSettings>
 
@@ -281,9 +328,11 @@ const ConstructorTablesFormPage = () => {
               <Actions mainForm={mainForm} />
             </TabPanel>
           )}
-          {/* <TabPanel>
-            <CustomErrors mainForm={mainForm} />
-          </TabPanel> */}
+          {id && (
+            <TabPanel>
+              <CustomErrors mainForm={mainForm} />
+            </TabPanel>
+          )}
           {/* <Actions eventLabel={mainForm.getValues("label")} /> */}
         </Tabs>
       </div>

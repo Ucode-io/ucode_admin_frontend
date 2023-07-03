@@ -43,12 +43,14 @@
     font-size: 20px;
     margin-bottom: 10px;
   }
+
   .dialog_content {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
+
   .color_picker {
     width: 90px;
     margin-left: 10px;
@@ -56,6 +58,7 @@
     align-items: center;
     justify-content: space-between;
   }
+
   .icon_picker {
     width: 90px;
     margin-right: 20px;
@@ -71,6 +74,7 @@
     justify-content: space-between;
     margin: 15px 0 10px;
   }
+
   .input_control {
     width: 140px;
     min-height: 30px;
@@ -80,6 +84,7 @@
       margin-right: 20px;
     }
   }
+
   .submit_btn {
     width: 120px;
     height: 34px;
@@ -87,6 +92,7 @@
     margin-right: 20px;
   }
 }
+
 .btn_loader {
   width: 20px;
   height: 20px;
@@ -96,16 +102,17 @@
 .numberField {
   padding: 8.5px 14px;
   width: 100%;
-  border:1px solid #d4d2d2;
+  border: 1px solid #d4d2d2;
   border-radius: 4px;
 }
+
 .phoneNumber {
-  
+
   input {
     height: 35px;
     border: 1px solid #eee;
     padding: 3px;
-    
+
     &:focus {
       border: 1px solid #1a9aef;
     }

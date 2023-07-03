@@ -50,7 +50,7 @@ function NotificationContent({ notifications, handleCloseNotify }) {
             table_slug: tableSlug,
             user_id: isUserId,
           });
-          dispatch(fetchConstructorTableListAction(appId));
+          // dispatch(fetchConstructorTableListAction(appId));
           if (tableSlug) {
             navigate(
               `/main/b30c2225-de53-448a-938c-0c6924faebde/object/${tableSlug}/${item?.id}`

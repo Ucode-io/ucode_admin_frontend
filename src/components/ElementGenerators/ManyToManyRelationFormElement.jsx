@@ -65,7 +65,11 @@ const ManyToManyRelationFormElement = ({
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FEditableRow label={value} onLabelChange={onChange} required={field.required}>
+        <FEditableRow
+          label={value}
+          onLabelChange={onChange}
+          required={field.required}
+        >
           <Controller
             control={control}
             name={`${tableSlug}_id`}
@@ -104,7 +108,16 @@ const ManyToManyRelationFormElement = ({
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
-const AutoCompleteElement = ({ field, value, tableSlug, setValue, control, error, disabled, disabledHelperText }) => {
+const AutoCompleteElement = ({
+  field,
+  value,
+  tableSlug,
+  setValue,
+  control,
+  error,
+  disabled,
+  disabledHelperText,
+}) => {
   const { navigateToForm } = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
   const [inputValue, setInputValue] = useState("");
@@ -132,20 +145,25 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, control, error
   const { data: options } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
-        params: {},
-        data: {
-          ...autoFiltersValue,
-          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
-          additional_request: {
-            additional_field: "guid",
-            additional_values: value,
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            ...autoFiltersValue,
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+            additional_request: {
+              additional_field: "guid",
+              additional_values: value,
+            },
+            // additional_ids: value,
+            search: debouncedValue,
+            limit: 10,
           },
-          // additional_ids: value,
-          search: debouncedValue,
-          limit: 10,
-        },
-      });
+        }
+      );
     },
     {
       select: (res) => {
@@ -153,7 +171,6 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, control, error
       },
     }
   );
-
 
   const computedValue = useMemo(() => {
     if (!value) return undefined;
@@ -196,7 +213,10 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, control, error
 
   return (
     <div className={styles.autocompleteWrapper}>
-      <div className={styles.createButton} onClick={() => navigateToForm(tableSlug)}>
+      <div
+        className={styles.createButton}
+        onClick={() => navigateToForm(tableSlug)}
+      >
         Создать новый
       </div>
 
@@ -208,7 +228,10 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, control, error
           changeHandler(newValue);
         }}
         noOptionsText={
-          <span onClick={() => navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
+          <span
+            onClick={() => navigateToForm(tableSlug)}
+            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+          >
             Создать новый
           </span>
         }
@@ -230,8 +253,13 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, control, error
             <>
               <div className={styles.valuesWrapper}>
                 {values?.map((el, index) => (
-                  <div key={el.value} className={styles.multipleAutocompleteTags}>
-                    <p className={styles.value}>{getOptionLabel(values[index])}</p>
+                  <div
+                    key={el.value}
+                    className={styles.multipleAutocompleteTags}
+                  >
+                    <p className={styles.value}>
+                      {getOptionLabel(values[index])}
+                    </p>
                     <IconGenerator
                       icon="arrow-up-right-from-square.svg"
                       style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -243,7 +271,11 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, control, error
                       }}
                     />
 
-                    <Close fontSize="12" onClick={getTagProps({ index })?.onDelete} style={{ cursor: "pointer" }} />
+                    <Close
+                      fontSize="12"
+                      onClick={getTagProps({ index })?.onDelete}
+                      style={{ cursor: "pointer" }}
+                    />
                   </div>
                 ))}
               </div>

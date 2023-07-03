@@ -1,6 +1,6 @@
 import { Controller, useWatch } from "react-hook-form";
-import { NumericFormat } from "react-number-format";
-import styles from "./style.module.scss";
+import { NumericFormat } from 'react-number-format';
+import styles from './style.module.scss';
 import { Box } from "@mui/material";
 import { Lock } from "@mui/icons-material";
 
@@ -17,12 +17,12 @@ const HFNumberField = ({
   defaultValue = "",
   tabIndex,
   disabled,
-  type = "text",
+  type = 'text',
   ...props
 }) => {
   const value = useWatch({
     control,
-    // name,
+    name,
   });
 
   return (
@@ -31,12 +31,25 @@ const HFNumberField = ({
       name={name}
       defaultValue={defaultValue}
       rules={{
-        required: required ? "This is required field" : false,
+        required: required ? "This is a required field" : false,
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
-          <Box style={disabled ? { background: "#DEDEDE", display: "flex", borderRadius: "4px" } : { background: isBlackBg ? "#2A2D34" : "", color: isBlackBg ? "#fff" : "" }}>
+          <Box
+            style={
+              disabled
+                ? {
+                    background: "#DEDEDE",
+                    display: "flex",
+                    borderRadius: "4px",
+                  }
+                : {
+                    background: isBlackBg ? "#2A2D34" : "",
+                    color: isBlackBg ? "#fff" : "",
+                  }
+            }
+          >
             <NumericFormat
               thousandsGroupStyle="thousand"
               thousandSeparator=" "
@@ -52,19 +65,41 @@ const HFNumberField = ({
                 const valueWithoutSpaces = val.replaceAll(" ", "");
                 if (!valueWithoutSpaces) onChange("");
                 else {
-                  if (valueWithoutSpaces.at(-1) === ".") onChange(valueWithoutSpaces);
-                  else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : "");
+                  if (valueWithoutSpaces.at(-1) === ".")
+                    onChange(valueWithoutSpaces);
+                  else
+                    onChange(
+                      !isNaN(Number(valueWithoutSpaces))
+                        ? Number(valueWithoutSpaces)
+                        : ""
+                    );
                 }
               }}
-              className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
+              className={`${isFormEdit ? "custom_textfield" : ""} ${
+                styles.numberField
+              }`}
               name={name}
               readOnly={disabled}
-              style={disabled ? { background: "#c0c0c039", borderRight: 0 } : { background: isBlackBg ? "#2A2D34" : "", color: isBlackBg ? "#fff" : "" }}
+              style={
+                disabled
+                  ? { background: "#c0c0c039", borderRight: 0 }
+                  : {
+                      background: isBlackBg ? "#2A2D34" : "",
+                      color: isBlackBg ? "#fff" : "",
+                    }
+              }
               {...props}
             />
 
             {disabled && (
-              <Box style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "5px" }}>
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "5px",
+                }}
+              >
                 <Lock style={{ fontSize: "20px" }} />
               </Box>
             )}

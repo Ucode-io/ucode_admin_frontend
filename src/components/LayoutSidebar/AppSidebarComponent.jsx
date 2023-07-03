@@ -25,7 +25,6 @@ const AppSidebar = ({
   const { appId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const clickHandler = () => {
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
@@ -67,7 +66,8 @@ const AppSidebar = ({
           icon={
             element?.icon ||
             element?.data?.microfrontend?.icon ||
-            element?.data?.webpage?.icon
+            element?.data?.webpage?.icon ||
+            "folder.svg"
           }
           size={18}
           className="folder-icon"

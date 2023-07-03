@@ -391,6 +391,7 @@
     &.right-side-closed {
         // min-width: 72px;
         width: 0;
+        border: none;
 
         .body {
             display: none;

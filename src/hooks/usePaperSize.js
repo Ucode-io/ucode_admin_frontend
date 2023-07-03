@@ -19,7 +19,7 @@ const paperSizes = [
     height: 420
   },
   {
-    name: 'A',
+    name: '10x10',
     width: 283,
     height: 283
   },

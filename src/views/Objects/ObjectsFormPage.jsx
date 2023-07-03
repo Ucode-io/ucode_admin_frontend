@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PageFallback from "../../components/PageFallback";
@@ -22,11 +22,13 @@ import DocumentGeneratorButton from "./components/DocumentGeneratorButton";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import { showAlert } from "../../store/alert/alert.thunk";
-import SummarySection from "./SummarySection/SummarySection";
 import BackButton from "../../components/BackButton";
 import FormPageBackButton from "./components/FormPageBackButton";
 import { addMinutes } from "date-fns";
 import { fetchConstructorTableListAction } from "../../store/constructorTable/constructorTable.thunk";
+import SummarySectionValue from "./SummarySection/SummarySectionValue";
+import DetailTabs from "../Constructor/Tables/Form/Layout/DetailPage";
+import NewRelationSection from "./RelationSection/NewRelationSection";
 
 const ObjectsFormPage = () => {
   const { tableSlug, id, appId } = useParams();
@@ -42,9 +44,15 @@ const ObjectsFormPage = () => {
   const [btnLoader, setBtnLoader] = useState(false);
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const handleTabSelection = (tabIndex) => {
+    setSelectedTab(tabIndex);
+  };
+
   const tableInfo = useMemo(() => {
     return tablesList.find((el) => el.slug === tableSlug);
   }, [tablesList, tableSlug]);
+
   const computedSections = useMemo(() => {
     let tabIndex = 1;
     return (
@@ -65,6 +73,7 @@ const ObjectsFormPage = () => {
   const computedSummary = useMemo(() => {
     return sections.find((item) => item.is_summary_section);
   }, [sections]);
+
   const getAllData = async () => {
     const getSections = constructorSectionService.getList({
       table_slug: tableSlug,
@@ -199,7 +208,7 @@ const ObjectsFormPage = () => {
     if (!tableInfo) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo]);
+  }, [id, tableInfo, tableSlug]);
 
   const {
     handleSubmit,
@@ -213,17 +222,12 @@ const ObjectsFormPage = () => {
 
   // Automatic setValue for End of Session
 
-  const serviceTime = watch("service_time");
-  const startTime = watch("date_start");
+  // const serviceTime = watch("service_time");
+  // const startTime = watch("date_start");
 
-  useEffect(() => {
-    setFormValue(
-      "time_end",
-      startTime && serviceTime
-        ? addMinutes(new Date(startTime), parseInt(serviceTime))
-        : undefined
-    );
-  }, [serviceTime, startTime]);
+  // useEffect(() => {
+  //   setFormValue("time_end", startTime && serviceTime ? addMinutes(new Date(startTime), parseInt(serviceTime)) : undefined);
+  // }, [serviceTime, startTime]);
 
   if (loader) return <PageFallback />;
   return (
@@ -235,15 +239,14 @@ const ObjectsFormPage = () => {
         hasBackground={true}
       >
         <FormPageBackButton />
-        <SummarySection
+        <SummarySectionValue
           computedSummary={computedSummary}
           control={control}
           sections={sections}
-          computedSections={computedSections}
         />
       </FiltersBlock>
       <div className={styles.formArea}>
-        <MainInfo
+        {/* <MainInfo
           control={control}
           computedSections={computedSections}
           setFormValue={setFormValue}
@@ -256,7 +259,26 @@ const ObjectsFormPage = () => {
             relations={tableRelations}
             control={control}
           />
-        </div>
+        </div> */}
+        {/* <DetailTabs
+          control={control}
+          // selectedTab={selectedTab}
+          // handleTabSelection={handleTabSelection}
+        /> */}
+        <NewRelationSection
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          relations={tableRelations}
+          control={control}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          reset={reset}
+          setFormValue={setFormValue}
+          watch={watch}
+          computedSections={computedSections}
+          relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
+          id={id}
+        />
       </div>
       <Footer
         extra={
@@ -265,7 +287,7 @@ const ObjectsFormPage = () => {
               Закрыть
             </SecondaryButton>
 
-            <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+            <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
               <FormCustomActionButton
                 control={control?._formValues}
                 tableSlug={tableSlug}

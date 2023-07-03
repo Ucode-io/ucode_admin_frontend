@@ -1,23 +1,23 @@
 import { Collapse } from "@mui/material";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { mainActions } from "../../../../../store/main/main.slice";
-import RelationsBlock from "./RelationsBlock";
-import SectionsBlock from "./SectionsBlock";
+import NewLayoutSettings from "./NewLayoutSettings";
+import NewlayoutList from "./NewlayoutList";
 import SettingsBlock from "./SettingsBlock";
-import SummarySection from "./SummarySection.jsx";
 import styles from "./style.module.scss";
 
 const Layout = ({ mainForm, getRelationFields }) => {
   const dispatch = useDispatch();
   const layoutForm = useForm({ mode: "onChange" });
   const [settingsBlockVisible, setSettingsBlockVisible] = useState(false);
-
+  const [selectedLayout, setSelectedLayout] = useState({});
   const [selectedField, setSelectedField] = useState(null);
   const [selectedRelation, setSelectedRelation] = useState(null);
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState({});
 
   const openFieldsBlock = (type) => {
     setSelectedField(null);
@@ -48,19 +48,53 @@ const Layout = ({ mainForm, getRelationFields }) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(false));
   }, [dispatch]);
 
+  const selectedLayoutIndex = useMemo(() => {
+    if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
+    return mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
+  }, [selectedLayout]);
+
+  const {
+    fields: sectionTabs,
+    insert: insertSectionTab,
+    update: updateSectionTab,
+    remove: removeSectionTab,
+    move: moveSectionTab,
+    append: appendSectionTab,
+  } = useFieldArray({
+    control: mainForm.control,
+    name: `layouts.${selectedLayoutIndex}.tabs`,
+    keyName: "key"
+  });
+
+  useEffect(() => {
+    updateSectionTab()
+  }, [selectedLayoutIndex])
+
   return (
     <>
-      <div className={styles.summary_section_layer}>
-        <SummarySection
+      {selectedLayout.id ? (
+        <NewLayoutSettings
           mainForm={mainForm}
+          selectedLayout={selectedLayout}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
+          setSelectedLayout={setSelectedLayout}
           layoutForm={layoutForm}
           openFieldsBlock={openFieldsBlock}
           openFieldSettingsBlock={openFieldSettingsBlock}
           openRelationSettingsBlock={openRelationSettingsBlock}
+          sectionTabs={sectionTabs}
+          insertSectionTab={insertSectionTab}
+          removeSectionTab={removeSectionTab}
+          moveSectionTab={moveSectionTab}
+          appendSectionTab={appendSectionTab}
         />
-      </div>
+      ) : (
+        <NewlayoutList setSelectedLayout={setSelectedLayout} selectedLayout={selectedLayout} layoutForm={layoutForm} mainForm={mainForm} />
+      )}
+
       <div className={styles.page}>
-        <SectionsBlock
+        {/* <SectionsBlock
           mainForm={mainForm}
           layoutForm={layoutForm}
           openFieldsBlock={openFieldsBlock}
@@ -72,14 +106,11 @@ const Layout = ({ mainForm, getRelationFields }) => {
           mainForm={mainForm}
           openFieldsBlock={openFieldsBlock}
           openRelationSettingsBlock={openRelationSettingsBlock}
-        />
+        /> */}
 
-        <Collapse
-          in={settingsBlockVisible}
-          unmountOnExit
-          orientation="horizontal"
-        >
+        <Collapse in={settingsBlockVisible} unmountOnExit orientation="horizontal">
           <SettingsBlock
+            updateSectionTab={updateSectionTab}
             mainForm={mainForm}
             layoutForm={layoutForm}
             closeSettingsBlock={closeSettingsBlock}
@@ -88,6 +119,11 @@ const Layout = ({ mainForm, getRelationFields }) => {
             selectedSettingsTab={selectedSettingsTab}
             setSelectedSettingsTab={setSelectedSettingsTab}
             getRelationFields={getRelationFields}
+            sectionTabs={sectionTabs}
+            insertSectionTab={insertSectionTab}
+            removeSectionTab={removeSectionTab}
+            moveSectionTab={moveSectionTab}
+            appendSectionTab={appendSectionTab}
           />
         </Collapse>
       </div>

@@ -2,7 +2,9 @@ import { Lock } from "@mui/icons-material";
 import { InputAdornment, TextField, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Controller } from "react-hook-form";
-import InputMask from "react-input-mask";
+import PhoneInput from "react-phone-number-input";
+import styles from "./style.module.scss";
+import "react-phone-number-input/style.css";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -38,44 +40,45 @@ const HFTextFieldWithMask = ({
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <InputMask mask={mask} value={value ?? undefined} onChange={(e) => onChange(e.target.value)} disabled={disabled}>
-          {(inputProps) => (
-            <TextField
-              size="small"
-              name={name}
-              error={error}
-              helperText={!disabledHelperText && error?.message}
-              placeholder={placeholder}
-              className={isFormEdit ? "custom_textfield" : ""}
-              autoFocus={tabIndex === 1}
-              {...props}
-              InputProps={{
-                ...inputProps,
-                readOnly: disabled,
-                inputProps: { tabIndex },
-                classes: {
-                  input: isBlackBg ? classes.input : "",
-                },
-                style: disabled
-                  ? {
-                      background: "#c0c0c039",
-                      paddingRight: "0",
-                    }
-                  : {
-                      background: isBlackBg ? "#2A2D34" : "inherit",
-                      color: isBlackBg ? "#fff" : "inherit",
-                    },
-                endAdornment: disabled && (
-                  <Tooltip title="This field is disabled for this role!">
-                    <InputAdornment position="start">
-                      <Lock style={{ fontSize: "20px" }} />
-                    </InputAdornment>
-                  </Tooltip>
-                ),
-              }}
-            />
-          )}
-        </InputMask>
+        // <InputMask
+        //   mask={mask}
+        //   value={value ?? undefined}
+        //   onChange={(e) => onChange(e.target.value)}
+        //   disabled={disabled}
+        // >
+        //   {(inputProps) => (
+        //     <TextField
+        //       size="small"
+        //       name={name}
+        //       error={error}
+        //       helperText={!disabledHelperText && error?.message}
+        //       placeholder={placeholder}
+        //       className={isFormEdit ? "custom_textfield" : ""}
+        //       autoFocus={tabIndex === 1}
+        //       {...props}
+        //       InputProps={{
+        //         ...inputProps,
+        //         inputProps: { tabIndex },
+        //         classes: {
+        //           input: isBlackBg ? classes.input : "",
+        //         },
+        //         style: {
+        //           background: isBlackBg ? "#2A2D34" : "",
+        //           color: isBlackBg ? "#fff" : "",
+        //         },
+        //       }}
+        //     />
+        //   )}
+        // </InputMask>
+        <PhoneInput
+          placeholder="Enter phone number"
+          value={value}
+          onChange={onChange}
+          defaultCountry="UZ"
+          international
+          className={styles.phoneNumber}
+          name={name}
+        />
       )}
     ></Controller>
   );

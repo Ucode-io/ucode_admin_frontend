@@ -1,8 +1,8 @@
 import { makeStyles } from "@mui/styles";
 import { Controller } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
-import styles from './style.module.scss'
-import 'react-phone-number-input/style.css'
+import styles from "./style.module.scss";
+import "react-phone-number-input/style.css";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -28,7 +28,6 @@ const HFInternationPhone = ({
   ...props
 }) => {
   const classes = useStyles();
-
   return (
     <Controller
       control={control}

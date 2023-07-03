@@ -42,7 +42,7 @@ $main-color: #0365F2;
       }
 
     }
-    
+
     .cloes-btn {
       color: #6e8bb8;
       cursor: pointer;
@@ -65,10 +65,11 @@ $main-color: #0365F2;
       border-radius: 2px;
       background: #6e8bb77e;
     }
-    
+
     .sidebar-footer {
       padding-top: 10px;
-      border-top: 1px solid rgba(192, 192, 192, 0.294);
+      // border-top: 1px solid rgba(192, 192, 192, 0.294);
+      width: fit-content;
     }
 
     .parent-block {
@@ -84,7 +85,7 @@ $main-color: #0365F2;
         cursor: pointer;
         min-height: 45px;
         background-color: #6E8BB733;
-        
+
 
         &:hover {
           background-color: #6e8bb745;
@@ -130,7 +131,7 @@ $main-color: #0365F2;
           font-weight: 500;
           line-height: 24px;
           flex: 1;
-          white-space:nowrap;
+          white-space: nowrap;
         }
 
         .arrow-icon {
@@ -166,7 +167,7 @@ $main-color: #0365F2;
           padding-left: 10px;
           white-space: normal;
         }
-        
+
         &.opened {
           // display: block;
         }
@@ -196,7 +197,7 @@ $main-color: #0365F2;
       .label {
         display: none;
       }
-      
+
       .arrow-icon {
         display: none;
       }

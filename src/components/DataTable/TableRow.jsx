@@ -68,7 +68,7 @@ const TableRow = ({
         data={data}
       />
     );
-    
+
   return (
     <>
       {relationAction === undefined ? (
@@ -133,13 +133,13 @@ const TableRow = ({
                 <RectangleIconButton
                   color="error"
                   onClick={() => {
-                     onDeleteClick(row, rowIndex) 
-                      remove(rowIndex);
-                      navigate("/reloadRelations", {
-                        state: {
-                          redirectUrl: window.location.pathname,
-                        },
-                      });
+                    onDeleteClick(row, rowIndex);
+                    remove(rowIndex);
+                    navigate("/reloadRelations", {
+                      state: {
+                        redirectUrl: window.location.pathname,
+                      },
+                    });
                   }}
                 >
                   <Delete color="error" />
@@ -193,7 +193,6 @@ const TableRow = ({
                 )?.isStiky
                   ? calculateWidth(column?.id, index)
                   : "0",
-                backgroundColor: "#fff",
                 zIndex: tableSettings?.[pageName]?.find(
                   (item) => item?.id === column?.id
                 )?.isStiky
@@ -210,16 +209,15 @@ const TableRow = ({
           >
             <RectangleIconButton
               color="error"
-              onClick={() =>{
-                 onDeleteClick(row, rowIndex) 
-                 remove(rowIndex)
-                 navigate("/reloadRelations", {
+              onClick={() => {
+                onDeleteClick(row, rowIndex);
+                remove(rowIndex);
+                navigate("/reloadRelations", {
                   state: {
                     redirectUrl: window.location.pathname,
                   },
                 });
-              }
-              }
+              }}
             >
               <Delete color="error" />
             </RectangleIconButton>
@@ -284,17 +282,15 @@ const TableRow = ({
           >
             <RectangleIconButton
               color="error"
-              onClick={() =>
-               {
-                onDeleteClick(row, rowIndex) 
-                remove(rowIndex)
+              onClick={() => {
+                onDeleteClick(row, rowIndex);
+                remove(rowIndex);
                 navigate("/reloadRelations", {
                   state: {
                     redirectUrl: window.location.pathname,
                   },
                 });
-               }
-              }
+              }}
             >
               <Delete color="error" />
             </RectangleIconButton>

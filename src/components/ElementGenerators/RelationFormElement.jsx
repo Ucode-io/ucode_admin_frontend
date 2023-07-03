@@ -75,7 +75,11 @@ const RelationFormElement = ({
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FEditableRow label={value} onLabelChange={onChange} required={field.required}>
+        <FEditableRow
+          label={value}
+          onLabelChange={onChange}
+          required={field.required}
+        >
           <Controller
             control={control}
             name={`${tableSlug}_id`}
@@ -116,7 +120,19 @@ const RelationFormElement = ({
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
-const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disabled, disabledHelperText, control, name, defaultValue, setFormValue = () => {} }) => {
+const AutoCompleteElement = ({
+  field,
+  value,
+  tableSlug,
+  setValue,
+  error,
+  disabled,
+  disabledHelperText,
+  control,
+  name,
+  defaultValue,
+  setFormValue = () => {},
+}) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
@@ -155,22 +171,28 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
   const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
-        data: {
-          table_slug: tableSlug,
-          ...autoFiltersValue,
-          search: debouncedValue,
-          limit: 10,
-          offset: 0,
-          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
-        },
-      });
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
+            search: debouncedValue,
+            limit: 10,
+            offset: 0,
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+          },
+        }
+      );
     },
     {
       enabled: !!field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
 
         return {
           options,
@@ -183,25 +205,23 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
   const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
-      if (!tableSlug) return null;
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: [id],
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
           },
-          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
-          search: debouncedValue.trim(),
-          limit: 10,
-        },
-      });
+        }
+      );
     },
     {
       enabled: !field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
         return {
           options,
           slugOptions,
@@ -312,7 +332,10 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
-        <div className={styles.createButton} onClick={() => navigateToForm(tableSlug)}>
+        <div
+          className={styles.createButton}
+          onClick={() => navigateToForm(tableSlug)}
+        >
           Создать новый
         </div>
       )}
@@ -358,7 +381,10 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
             changeHandler(newValue);
           }}
           noOptionsText={
-            <span onClick={() => navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
+            <span
+              onClick={() => navigateToForm(tableSlug)}
+              style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+            >
               Создать новый
             </span>
           }

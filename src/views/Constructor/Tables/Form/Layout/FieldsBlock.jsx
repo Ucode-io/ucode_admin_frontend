@@ -1,5 +1,5 @@
-import { Close } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { Add, Close } from "@mui/icons-material";
+import { Button, IconButton, Input, OutlinedInput } from "@mui/material";
 import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
@@ -7,6 +7,9 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import styles from "./style.module.scss";
+import { generateGUID, generateID } from "../../../../../utils/generateID";
+import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
+import HFTextField from "../../../../../components/FormElements/HFTextField";
 
 const FieldsBlock = ({
   mainForm,
@@ -14,6 +17,12 @@ const FieldsBlock = ({
   selectedSettingsTab,
   setSelectedSettingsTab,
   closeSettingsBlock,
+  sectionTabs,
+  insertSectionTab,
+  removeSectionTab,
+  moveSectionTab,
+  updateSectionTab,
+  appendSectionTab,
 }) => {
   const { fields } = useFieldArray({
     control: mainForm.control,
@@ -49,13 +58,11 @@ const FieldsBlock = ({
 
   const usedFields = useMemo(() => {
     const list = [];
-
     sections?.forEach((section) => {
       section.fields?.forEach((field) => {
         list.push(field.id);
       });
     });
-
     return list;
   }, [sections]);
 
@@ -64,7 +71,6 @@ const FieldsBlock = ({
   }, [summarySectionFields]);
 
   const unusedFields = useMemo(() => {
-    console.log("ss =>", usedFields, usedSummarySectionFields, fields);
     return fields?.filter(
       (field) =>
         field.type !== "LOOKUP" &&
@@ -91,6 +97,7 @@ const FieldsBlock = ({
       }
     });
   }, [tableRelations, viewRelations]);
+
   const unusedRelations = useMemo(() => {
     return relations?.filter((relation) => !usedFields.includes(relation.id));
   }, [relations, usedFields]);
@@ -100,6 +107,13 @@ const FieldsBlock = ({
     if (!result) return;
   };
 
+  const handleNameChange = (event, index, oldId) => {
+    updateSectionTab(index, {
+      label: event.target.value,
+      type: "section",
+      id: oldId,
+    });
+  };
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -117,8 +131,8 @@ const FieldsBlock = ({
         >
           <TabList>
             <Tab>Form fields</Tab>
-            {/* <Tab>Input relation fields</Tab> */}
-            <Tab>Table fields</Tab>
+            <Tab>Relation tabs</Tab>
+            <Tab>Section Tabs</Tab>
           </TabList>
 
           <TabPanel>
@@ -168,7 +182,7 @@ const FieldsBlock = ({
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator
                         field={relation}
-                        control={layoutForm.control}
+                        control={mainForm.control}
                         disabledHelperText
                       />
                     </div>
@@ -199,6 +213,51 @@ const FieldsBlock = ({
                     </div>
                   </Draggable>
                 ))}
+              </Container>
+            </div>
+          </TabPanel>
+
+          <TabPanel>
+            <div className={styles.fieldsBlock}>
+              <Container
+                groupName="section_tabs"
+                onDrop={onDrop}
+                dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                getChildPayload={(i) => unusedTableRelations[i]}
+              >
+                {sectionTabs?.map((tab, index) => (
+                  <Draggable
+                    key={index}
+                    style={{ overflow: "visible", width: "fit-content" }}
+                  >
+                    <div
+                      className={`${styles.sectionFieldRow} ${styles.relation}`}
+                    >
+                      <OutlinedInput
+                        value={tab.label}
+                        onClick={(e) => e.stopPropagation()}
+                        size="small"
+                        onChange={(e) => handleNameChange(e, index, tab.id)}
+                        style={{
+                          border: "none",
+                          outline: "none",
+                          fontWeight: 500,
+                          minWidth: 100,
+                          background: "transparent",
+                        }}
+                      />
+                    </div>
+                  </Draggable>
+                ))}
+
+                <Button
+                  onClick={() =>
+                    appendSectionTab({ type: "section", id: generateGUID() })
+                  }
+                >
+                  <Add />
+                  Add Section tab
+                </Button>
               </Container>
             </div>
           </TabPanel>

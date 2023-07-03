@@ -73,7 +73,7 @@ const RelationSettings = ({
     },
   });
   const values = watch();
-  console.log('ssssssss', values)
+  console.log("ssssssss", values);
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
     if (values.table_to === slug) return values.table_from;
@@ -168,7 +168,6 @@ const RelationSettings = ({
       },
     }
   );
-
 
   const computedFieldsListOptions = useMemo(() => {
     return values.columnsList?.map((field) => ({
@@ -349,7 +348,11 @@ const RelationSettings = ({
               label={"Default editable"}
             />
             <HFSwitch control={control} name="creatable" label={"Creatable"} />
-            <HFSwitch control={control} name="relation_buttons" label={"Relation Buttons"} />
+            <HFSwitch
+              control={control}
+              name="relation_buttons"
+              label={"Relation Buttons"}
+            />
 
             {values.type === "Many2Many" && (
               <FRow label="Relate field type" required>
@@ -382,7 +385,14 @@ const RelationSettings = ({
             />
           )}
 
-          <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue}/>
+          <FunctionPath control={control} watch={watch} functions={functions} />
+
+          <FunctionPath
+            control={control}
+            watch={watch}
+            functions={functions}
+            setValue={setValue}
+          />
 
           <DefaultValueBlock
             control={control}

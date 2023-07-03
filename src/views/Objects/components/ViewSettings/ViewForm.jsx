@@ -252,9 +252,9 @@ const ViewForm = ({
             </TabList>
             <TabPanel>
               <div className={styles.section}>
-                <div className={styles.sectionHeader}>
+                {/* <div className={styles.sectionHeader}>
                   <div className={styles.sectionTitle}>Main info</div>
-                </div>
+                </div> */}
 
                 <div className={styles.sectionBody}>
                   <div className={styles.formRow}>

@@ -2,17 +2,15 @@ import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { Box } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import brandLogo from "../../../builder_config/assets/company-logo.svg";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
-import constructorTableService from "../../services/constructorTableService";
 import menuService, { useMenuListQuery } from "../../services/menuService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
-import { tableFolderListToNested } from "../../utils/tableFolderListToNestedLIst";
 import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
 import FolderModal from "./FolderModalComponent";
@@ -27,8 +25,9 @@ import { applyDrag } from "../../utils/applyDrag";
 import { Container } from "react-smooth-dnd";
 import ButtonsMenu from "./MenuButtons";
 import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
+import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 
-const LayoutSidebar = ({ favicon, appId, environment, getAppById }) => {
+const LayoutSidebar = ({ favicon, appId, environment }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -51,6 +50,7 @@ const LayoutSidebar = ({ favicon, appId, environment, getAppById }) => {
   const [searchText, setSearchText] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
+  const [pin, setPin] = useState(false);
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openSidebarMenu = Boolean(menu?.event);
 
@@ -129,10 +129,6 @@ const LayoutSidebar = ({ favicon, appId, environment, getAppById }) => {
       });
   };
 
-  const { data: tableFolder } = useQuery(["GET_TABLE_FOLDER"], () => {
-    return constructorTableService.getFolderList();
-  });
-
   const getMenuList = () => {
     menuSettingsService
       .getList({
@@ -141,6 +137,9 @@ const LayoutSidebar = ({ favicon, appId, environment, getAppById }) => {
       })
       .then((res) => {
         setMenuList(res);
+      })
+      .finally((error) => {
+        console.log("error", error);
       });
   };
 
@@ -151,25 +150,6 @@ const LayoutSidebar = ({ favicon, appId, environment, getAppById }) => {
   const switchRightSideVisible = () => {
     setSidebarIsOpen(!sidebarIsOpen);
   };
-
-  const files = useMemo(() => {
-    return [
-      ...(tableFolder?.folders?.map((item) => ({
-        ...item,
-        parent_id: item?.parent_id ? item?.parent_id : "0",
-      })) ?? []),
-      {
-        id: "0",
-        title: "Root",
-      },
-    ];
-  }, [tableFolder?.folders]);
-
-  const computedFolderList = useMemo(() => {
-    return tableFolderListToNested([...(files ?? [])], {
-      undefinedChildren: true,
-    });
-  }, [files]);
 
   useEffect(() => {
     getMenuList();
@@ -250,63 +230,59 @@ const LayoutSidebar = ({ favicon, appId, environment, getAppById }) => {
               />
             </Box>
 
-            <MenuButtonComponent
-              title={"Chat"}
-              icon={<ChatBubbleIcon />}
-              openFolderCreateModal={openFolderCreateModal}
-              onClick={(e) => {
-                handleRouter();
-              }}
-              sidebarIsOpen={sidebarIsOpen}
-            />
-            <div
-              className="nav-block"
-              style={{
-                // height: `calc(100vh - ${57}px)`,
-                background: environment?.data?.background,
-              }}
-            >
-              <div className="menu-element">
-                <Container
-                  dragHandleSelector=".column-drag-handle"
-                  onDrop={onDrop}
+            {!menuList?.menus ? (
+              <RingLoaderWithWrapper />
+            ) : (
+              <>
+                <MenuButtonComponent
+                  title={"Chat"}
+                  icon={<ChatBubbleIcon />}
+                  openFolderCreateModal={openFolderCreateModal}
+                  onClick={(e) => {
+                    handleRouter();
+                  }}
+                  sidebarIsOpen={sidebarIsOpen}
+                />
+                <div
+                  className="nav-block"
+                  style={{
+                    background: environment?.data?.background,
+                  }}
                 >
-                  {menuList?.menus &&
-                    menuList?.menus?.map((element, index) => (
-                      <AppSidebar
-                        key={index}
-                        element={element}
-                        sidebarIsOpen={sidebarIsOpen}
-                        setElement={setElement}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        subMenuIsOpen={subMenuIsOpen}
-                        handleOpenNotify={handleOpenNotify}
-                        setSelectedApp={setSelectedApp}
-                        environment={environment}
-                        selectedApp={selectedApp}
-                      />
-                    ))}
-                  {folderModalType === "folder" && (
-                    <FolderModal
-                      closeModal={closeFolderModal}
-                      modalType={folderModalType}
-                      menuList={menuList}
-                      element={element}
-                    />
-                  )}
-                </Container>
-              </div>
-              {/* <div className="sidebar-footer"></div> */}
-            </div>
-            <MenuButtonComponent
-              title={"Create"}
-              icon={<AddIcon />}
-              openFolderCreateModal={openFolderCreateModal}
-              onClick={(e) => {
-                handleOpenNotify(e, "ROOT");
-              }}
-              sidebarIsOpen={sidebarIsOpen}
-            />
+                  <div className="menu-element">
+                    <Container
+                      dragHandleSelector=".column-drag-handle"
+                      onDrop={onDrop}
+                    >
+                      {menuList?.menus &&
+                        menuList?.menus?.map((element, index) => (
+                          <AppSidebar
+                            key={index}
+                            element={element}
+                            sidebarIsOpen={sidebarIsOpen}
+                            setElement={setElement}
+                            setSubMenuIsOpen={setSubMenuIsOpen}
+                            subMenuIsOpen={subMenuIsOpen}
+                            handleOpenNotify={handleOpenNotify}
+                            setSelectedApp={setSelectedApp}
+                            environment={environment}
+                            selectedApp={selectedApp}
+                          />
+                        ))}
+                    </Container>
+                  </div>
+                </div>
+                <MenuButtonComponent
+                  title={"Create"}
+                  icon={<AddIcon />}
+                  openFolderCreateModal={openFolderCreateModal}
+                  onClick={(e) => {
+                    handleOpenNotify(e, "ROOT");
+                  }}
+                  sidebarIsOpen={sidebarIsOpen}
+                />
+              </>
+            )}
           </div>
 
           <MenuButtonComponent
@@ -356,8 +332,6 @@ const LayoutSidebar = ({ favicon, appId, environment, getAppById }) => {
           <FolderModal
             closeModal={closeFolderModal}
             modalType={folderModalType}
-            getAppById={getAppById}
-            computedFolderList={computedFolderList}
             menuList={menuList}
             element={element}
             getMenuList={getMenuList}
@@ -376,6 +350,9 @@ const LayoutSidebar = ({ favicon, appId, environment, getAppById }) => {
         handleOpenNotify={handleOpenNotify}
         setElement={setElement}
         selectedApp={selectedApp}
+        isLoading={isLoading}
+        setPin={setPin}
+        pin={pin}
       />
       <ButtonsMenu
         element={element}

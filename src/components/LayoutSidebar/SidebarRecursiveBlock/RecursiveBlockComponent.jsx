@@ -25,6 +25,8 @@ const RecursiveBlock = ({
   setTableModal,
   handleOpenNotify,
   setElement,
+  pin,
+  setSubMenuIsOpen,
 }) => {
   const { appId, tableSlug } = useParams();
   const dispatch = useDispatch();
@@ -62,6 +64,9 @@ const RecursiveBlock = ({
   };
 
   const clickHandler = () => {
+    if (!pin) {
+      setSubMenuIsOpen(false);
+    }
     setChildBlockVisible((prev) => !prev);
     setCheck(true);
     setId(element?.id);
@@ -236,6 +241,8 @@ const RecursiveBlock = ({
             setTableModal={setTableModal}
             handleOpenNotify={handleOpenNotify}
             setElement={setElement}
+            pin={pin}
+            setSubMenuIsOpen={setSubMenuIsOpen}
           />
         ))}
       </Collapse>

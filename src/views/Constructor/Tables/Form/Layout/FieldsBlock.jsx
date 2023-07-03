@@ -30,6 +30,12 @@ const FieldsBlock = ({
     keyName: "key",
   });
 
+  const allFields = useMemo(() => {
+    return fields?.filter(
+      (field) => field.type !== "LOOKUP" && field.type !== "LOOKUPS" && field.type !== "DYNAMIC"
+    );
+  }, [fields]);
+
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
     name: "layoutRelations",
@@ -91,9 +97,7 @@ const FieldsBlock = ({
           (viewRelation) => viewRelation.view_relation_type === "FILE"
         );
       } else {
-        return !viewRelations?.some(
-          (viewRelation) => viewRelation.relation_id === relation.id
-        );
+        return !viewRelations?.some((viewRelation) => viewRelation?.relation_id === relation?.id);
       }
     });
   }, [tableRelations, viewRelations]);
@@ -102,18 +106,17 @@ const FieldsBlock = ({
     return relations?.filter((relation) => !usedFields.includes(relation.id));
   }, [relations, usedFields]);
 
-  const onDrop = (dropResult, colNumber) => {
+  const onDrop = (dropResult) => {
     const result = applyDrag(fields, dropResult);
     if (!result) return;
   };
 
   const handleNameChange = (event, index, oldId) => {
-    updateSectionTab(index, {
-      label: event.target.value,
-      type: "section",
-      id: oldId,
-    });
+    updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
   };
+
+  console.log('sssssssss', allFields)
+
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -146,7 +149,7 @@ const FieldsBlock = ({
                   field_name: fields[i]?.label ?? fields[i]?.title,
                 })}
               >
-                {fields?.map((field, index) => (
+                {allFields?.map((field) => (
                   <Draggable key={field.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator
@@ -246,6 +249,9 @@ const FieldsBlock = ({
                           background: "transparent",
                         }}
                       />
+                      <Button onClick={() => removeSectionTab(index)}>
+                        <Close />
+                      </Button>
                     </div>
                   </Draggable>
                 ))}

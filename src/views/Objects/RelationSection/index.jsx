@@ -32,7 +32,7 @@ import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUplo
 import MultipleInsertButton from "@/views/Objects/components/MultipleInsertForm";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
-const   RelationSection = ({
+const RelationSection = ({
   selectedTabIndex,
   setSelectedTabIndex,
   relations,
@@ -108,7 +108,7 @@ const   RelationSection = ({
     control,
     name: "multi",
   });
-  
+
   useEffect(() => {
     update();
   }, []);
@@ -274,7 +274,7 @@ const   RelationSection = ({
       )}
       {filteredRelations.length ? (
         <Card className={styles.card}>
-          <Tabs 
+          <Tabs
             selectedIndex={selectedTabIndex}
             onSelect={(index) => {
               setSelectedTabIndex(index)
@@ -367,7 +367,6 @@ const   RelationSection = ({
                     </RectangleIconButton>
                     <RectangleIconButton
                       color="error"
-                      type="exit"
                       onClick={() => {
                         setFormVisible(false);
                         if (fields.length > dataLength) {
@@ -401,6 +400,7 @@ const   RelationSection = ({
                       </RectangleIconButton>
                     </PermissionWrapperV2>
                   )
+
                 )}
 
                 <DocumentGeneratorButton />

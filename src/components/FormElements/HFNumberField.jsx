@@ -1,6 +1,6 @@
 import { Controller, useWatch } from "react-hook-form";
-import { NumericFormat } from "react-number-format";
-import styles from "./style.module.scss";
+import { NumericFormat } from 'react-number-format';
+import styles from './style.module.scss';
 import { Box } from "@mui/material";
 import { Lock } from "@mui/icons-material";
 
@@ -17,12 +17,12 @@ const HFNumberField = ({
   defaultValue = "",
   tabIndex,
   disabled,
-  type = "text",
+  type = 'text',
   ...props
 }) => {
   const value = useWatch({
     control,
-    // name,
+    name,
   });
 
   return (
@@ -31,7 +31,7 @@ const HFNumberField = ({
       name={name}
       defaultValue={defaultValue}
       rules={{
-        required: required ? "This is required field" : false,
+        required: required ? "This is a required field" : false,
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => {

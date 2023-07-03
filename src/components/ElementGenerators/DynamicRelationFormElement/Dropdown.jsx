@@ -60,13 +60,21 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
     }
   );
 
+  
   const { data: objectsList2 = [], isLoading: loader2 } = useQuery(
     ["GET_OBJECT_LIST_QUERY", selectedTable?.slug, queryPayload],
     () => {
       if (!selectedTable?.slug) return null;
-      return constructorObjectService.getList(selectedTable?.slug, {
-        data: queryPayload,
-      });
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {},
+          data: {
+            ...queryPayload,
+            table_slug: selectedTable?.slug,
+          },
+        }
+      );
     },
     {
       enabled: !field?.attributes?.function_path,

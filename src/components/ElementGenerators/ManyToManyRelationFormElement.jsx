@@ -158,6 +158,9 @@ const AutoCompleteElement = ({
               additional_field: "guid",
               additional_values: value,
             },
+            // additional_ids: value,
+            search: debouncedValue,
+            limit: 10,
           },
         }
       );

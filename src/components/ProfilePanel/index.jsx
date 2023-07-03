@@ -27,7 +27,9 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
   const openMenu = (event) => {
     setProfileAnchorEl(event.currentTarget);
     setAnchorEl(event.currentTarget);
+
   };
+  
   const logoutClickHandler = () => {
     dispatch(authActions.logout());
     closeMenu();

@@ -7,8 +7,6 @@ import ButtonsPopover from "../../../../../components/ButtonsPopover";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import { useDispatch } from "react-redux";
-import { showAlert } from "../../../../../store/alert/alert.thunk";
 
 const SummarySection = ({
   mainForm,
@@ -19,9 +17,16 @@ const SummarySection = ({
   openFieldsBlock,
   openRelationSettingsBlock,
 }) => {
+
+  const getSelectedLayoutIndex = useMemo(() => {
+    return mainForm.getValues().layouts.findIndex(
+      (layout) => layout.id === selectedLayout.id
+    );
+  }, [mainForm, selectedLayout]);
+
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
     control: mainForm.control,
-    name: "summary_section.fields",
+    name: `layouts.${getSelectedLayoutIndex}.summary_fields`,
     keyName: "key",
   });
 
@@ -39,38 +44,14 @@ const SummarySection = ({
     return map;
   }, [fieldsList]);
 
-  const checkDuplicate = (result) => {
-    const ids = new Set();
-
-    for (let i = 0; i < result?.length; i++) {
-      const obj = result[i];
-      const id = obj.id;
-
-      if (ids.has(id)) {
-        return true;
-      }
-
-      ids.add(id);
-    }
-
-    return false;
-  };
-
-  const dispatch = useDispatch();
-
   const onDrop = (dropResult) => {
     const result = applyDrag(sections, dropResult);
 
-    if (checkDuplicate(result)) {
-      dispatch(showAlert("Поле уже добавлено в секцию"));
-    } else {
-      if (result) {
-        sectionsFieldArray.move(dropResult.removedIndex, dropResult.addedIndex);
-        sectionsFieldArray.replace(result);
-      }
+    if (result) {
+      sectionsFieldArray.move(dropResult.removedIndex, dropResult.addedIndex);
+      sectionsFieldArray.replace(result);
     }
   };
-
   const removeField = (index, colNumber) => {
     sectionsFieldArray.remove(index);
   };
@@ -95,7 +76,7 @@ const SummarySection = ({
         <h2>{selectedLayout?.label}</h2>
       </div>
       <Container
-        style={{ minHeight: 20, minWidth: "100%" }}
+        style={{ minHeight: 20, minWidth: "100%", display: "flex" }}
         groupName="1"
         dragClass="drag-row"
         orientation="horizontal"

@@ -19,20 +19,20 @@ const MainInfo = ({
   selectedTab,
   selectedIndex
 }) => {
-
+console.log('computedSections', computedSections) 
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
   const fieldsList = useMemo(() => {
     const fields = [];
 
-    computedSections?.forEach((section) => {
-      section.fields?.forEach((field) => {
+    relation?.tabs.sections?.forEach((section) => {
+      section.forEach((field) => {
         fields.push(field);
       });
     });
     return fields;
-  }, [computedSections]);
-  console.log('computedSections', computedSections);
+  }, [relation]);
+
   return (
     <div className={styles.newcontainer}>
       {isShow ? (

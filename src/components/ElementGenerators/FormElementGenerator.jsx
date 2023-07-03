@@ -31,6 +31,7 @@ import { InputAdornment, Tooltip } from "@mui/material";
 import { Lock } from "@mui/icons-material";
 import { is } from "date-fns/locale";
 import HFMapField from "../FormElements/HFMapField";
+import HFCustomImage from "../FormElements/HFCustomImage";
 
 const parser = new Parser();
 
@@ -38,7 +39,6 @@ const FormElementGenerator = ({
   field = {},
   control,
   setFormValue,
-  checkPermission,
   formTableSlug,
   fieldsList,
   relatedTable,
@@ -89,11 +89,9 @@ const FormElementGenerator = ({
     );
   }, [field]);
 
-  if (checkPermission) {
-    if (!field.attributes?.field_permission?.view_permission) {
-      return null;
-    }
-  }
+  // if (!field.attributes?.field_permission?.view_permission) {
+  //   return null
+  // }
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
@@ -154,23 +152,16 @@ const FormElementGenerator = ({
       );
     case "SINGLE_LINE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label} 
             defaultValue={defaultValue}
             disabled={isDisabled}
-            rules={{
-              pattern: {
-                value: new RegExp(field?.attributes?.validation),
-                message:
-                  field?.attributes?.validation_message || "Incorrect value",
-              },
-            }}
             {...props}
           />
         </FRow>
@@ -178,14 +169,14 @@ const FormElementGenerator = ({
 
     case "PHONE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextFieldWithMask
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             mask={"(99) 999-99-99"}
             defaultValue={defaultValue}
             disabled={isDisabled}
@@ -250,7 +241,7 @@ const FormElementGenerator = ({
 
     case "MULTI_LINE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextEditor
             control={control}
             name={computedSlug}
@@ -259,7 +250,7 @@ const FormElementGenerator = ({
             multiline
             rows={4}
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={field.defaultValue}
             disabled={isDisabled}
             {...props}
@@ -321,7 +312,7 @@ const FormElementGenerator = ({
 
     case "NUMBER":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFNumberField
             control={control}
             name={computedSlug}
@@ -329,7 +320,7 @@ const FormElementGenerator = ({
             fullWidth
             type="number"
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             disabled={isDisabled}
             {...props}
@@ -402,7 +393,7 @@ const FormElementGenerator = ({
 
     case "EMAIL":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={computedSlug}
@@ -414,7 +405,7 @@ const FormElementGenerator = ({
             }}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             tabIndex={field?.tabIndex}
             disabled={isDisabled}
@@ -494,7 +485,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={isDisabled}
+            // disabled={isDisabled}
             formTableSlug={formTableSlug}
             {...props}
           />
@@ -513,7 +504,7 @@ const FormElementGenerator = ({
             required={field.required}
             placeholder={field.attributes?.placeholder}
             defaultValue={defaultValue}
-            disabled={isDisabled}
+            // disabled={isDisabled}
             formTableSlug={formTableSlug}
             {...props}
           />
@@ -583,22 +574,9 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             InputProps={{
               readOnly: true,
-              style: isDisabled
-                ? {
-                    background: "#c0c0c039",
-                    paddingRight: "0",
-                  }
-                : {
-                    background: "inherit",
-                    color: "inherit",
-                  },
-              endAdornment: isDisabled && (
-                <Tooltip title="This field is disabled for this role!">
-                  <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
-                  </InputAdornment>
-                </Tooltip>
-              ),
+              style: {
+                background: "#c0c0c039",
+              },
             }}
             {...props}
           />
@@ -619,15 +597,7 @@ const FormElementGenerator = ({
               readOnly: true,
               style: {
                 background: "#c0c0c039",
-                paddingRight: "0",
               },
-              endAdornment: isDisabled && (
-                <Tooltip title="This field is disabled for this role!">
-                  <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
-                  </InputAdornment>
-                </Tooltip>
-              ),
             }}
             {...props}
           />
@@ -646,7 +616,6 @@ const FormElementGenerator = ({
             tabIndex={field?.tabIndex}
             fieldsList={fieldsList}
             field={field}
-            disabled={isDisabled}
             defaultValue={defaultValue}
           />
         </FRow>
@@ -665,15 +634,6 @@ const FormElementGenerator = ({
             defaultValue={defaultValue}
             type="color"
             disabled={isDisabled}
-            InputProps={{
-              endAdornment: isDisabled && (
-                <Tooltip title="This field is disabled for this role!">
-                  <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
-                  </InputAdornment>
-                </Tooltip>
-              ),
-            }}
             {...props}
           />
         </FRow>
@@ -681,36 +641,17 @@ const FormElementGenerator = ({
 
     case "PASSWORD":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field?.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             disabled={field.attributes?.disabled}
             type="password"
-            InputProps={{
-              style: isDisabled
-                ? {
-                    background: "#c0c0c039",
-                    paddingRight: "0px",
-                  }
-                : {
-                    background: "#fff",
-                    color: "#fff",
-                  },
-
-              endAdornment: isDisabled && (
-                <Tooltip title="This field is disabled for this role!">
-                  <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
-                  </InputAdornment>
-                </Tooltip>
-              ),
-            }}
             {...props}
           />
         </FRow>
@@ -718,14 +659,14 @@ const FormElementGenerator = ({
 
     default:
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field?.label : ''} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field.attributes?.placeholder}
+            placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             disabled={isDisabled}
             InputProps={{

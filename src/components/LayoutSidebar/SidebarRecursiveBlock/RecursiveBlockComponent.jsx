@@ -8,10 +8,10 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Draggable } from "react-smooth-dnd";
 import { useMenuListQuery } from "../../../services/menuService";
-import IconGenerator from "../../IconPicker/IconGenerator";
-import "../style.scss";
-import MenuIcon from "../MenuIcon";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import IconGenerator from "../../IconPicker/IconGenerator";
+import MenuIcon from "../MenuIcon";
+import "../style.scss";
 import { store } from "../../../store";
 
 const RecursiveBlock = ({

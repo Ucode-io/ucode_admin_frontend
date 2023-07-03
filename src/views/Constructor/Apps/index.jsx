@@ -121,7 +121,7 @@ const AppsPage = () => {
             <CTableCell>Название</CTableCell>
             <CTableCell>Описание</CTableCell>
             <CTableCell width={60}></CTableCell>
-            <PermissionWrapperV2 tableSlug="app" type="delete">
+            <PermissionWrapperV2 tabelSlug="app" type="delete">
               <CTableCell width={60} />
             </PermissionWrapperV2>
           </CTableHead>
@@ -144,16 +144,23 @@ const AppsPage = () => {
                     <FileDownloadIcon />
                   </RectangleIconButton>
                 </CTableCell>
-                <PermissionWrapperV2 tableSlug="app" type="delete">
-                  <CTableCell>
-                    <RectangleIconButton color="error" onClick={deleteTable}>
-                      <Delete color="error" />
-                    </RectangleIconButton>
-                  </CTableCell>
+                <PermissionWrapperV2 tabelSlug="app" type="delete">
+                  <PermissionWrapperApp permission={element.permission?.delete}>
+                    <CTableCell>
+                      <DeleteWrapperModal
+                        id={element.id}
+                        onDelete={deleteTable}
+                      >
+                        <RectangleIconButton color="error">
+                          <Delete color="error" />
+                        </RectangleIconButton>
+                      </DeleteWrapperModal>
+                    </CTableCell>
+                  </PermissionWrapperApp>
                 </PermissionWrapperV2>
               </CTableRow>
             ))}
-            <PermissionWrapperV2 tableSlug="app" type="write">
+            <PermissionWrapperV2 tabelSlug="app" type="write">
               <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
             </PermissionWrapperV2>
           </CTableBody>

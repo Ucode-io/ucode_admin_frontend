@@ -35,25 +35,17 @@ import {
 } from "@mui/icons-material";
 import { useFieldArray, useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
-import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
-import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
-import { endOfMonth, startOfMonth } from "date-fns";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import Menu from "@mui/material/Menu";
-import { useTranslation } from "react-i18next";
 import HexagonIcon from "@mui/icons-material/Hexagon";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
+import { Menu } from "@mui/material";
+import { endOfMonth, startOfMonth } from "date-fns";
+import { useTranslation } from "react-i18next";
+import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
+import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
 import LanguagesNavbar from "./LanguagesNavbar";
 import SearchInput from "../../components/SearchInput";
 
-const ViewsWithGroups = ({
-  views,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  view,
-  fieldsMap,
-  selectedTable,
-}) => {
+const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
@@ -62,8 +54,7 @@ const ViewsWithGroups = ({
   const [shouldGet, setShouldGet] = useState(false);
   const [heightControl, setHeightControl] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
-  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
-    useState(false);
+  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
   const [res, setRes] = [
     {
       balance: [],
@@ -87,12 +78,6 @@ const ViewsWithGroups = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  useEffect(() => {
-    if (view?.default_editable) {
-      setFormVisible(true);
-    }
-  }, [view?.default_editable]);
 
   const tableHeightOptions = [
     {
@@ -197,17 +182,11 @@ const ViewsWithGroups = ({
     }
   }, [dateFilters, tableSlug]);
 
-  const { appId } = useParams();
   const navigate = useNavigate();
-
-  const tables = useSelector((state) => state.constructorTable.list);
-
-  const tableInfo = useMemo(() => {
-    return tables?.find((table) => table.slug === tableSlug);
-  }, [tables, tableSlug]);
+  const { appId } = useParams();
 
   const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${tableInfo?.id}/${tableInfo?.slug}`;
+    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
   };
 
@@ -217,7 +196,10 @@ const ViewsWithGroups = ({
         extra={
           <>
             {/* {view.type === "TABLE" && (
-              <RectangleIconButton color="white" onClick={() => setHeightControl(!heightControl)}>
+              <RectangleIconButton
+                color="white"
+                onClick={() => setHeightControl(!heightControl)}
+              >
                 <div style={{ position: "relative" }}>
                   <span
                     style={{
@@ -231,9 +213,15 @@ const ViewsWithGroups = ({
                   {heightControl && (
                     <div className={style.heightControl}>
                       {tableHeightOptions.map((el) => (
-                        <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
+                        <div
+                          key={el.value}
+                          className={style.heightControl_item}
+                          onClick={() => handleHeightControl(el.value)}
+                        >
                           {el.label}
-                          {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
+                          {tableHeight === el.value ? (
+                            <CheckIcon color="primary" />
+                          ) : null}
                         </div>
                       ))}
                     </div>
@@ -284,19 +272,30 @@ const ViewsWithGroups = ({
             >
               <div className={style.menuBar}>
                 <ExcelButtons fieldsMap={fieldsMap} />
-                <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)}>
-                  <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
-                    <Description className={style.icon} style={{ color: "#6E8BB7" }} />
+                <div
+                  className={style.template}
+                  onClick={() => setSelectedTabIndex(views?.length)}
+                >
+                  <div
+                    className={`${style.element} ${
+                      selectedTabIndex === views?.length ? style.active : ""
+                    }`}
+                  >
+                    <Description
+                      className={style.icon}
+                      style={{ color: "#6E8BB7" }}
+                    />
                   </div>
-                  <span>{t("template")}</span>
+                  <span>{ t('template') }</span>
                 </div>
-                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
                   <SettingsButton />
                 </PermissionWrapperV2>
               </div>
             </Menu> */}
 
             <LanguagesNavbar />
+
             <Button variant="outlined">
               <HexagonIcon />
               Automation
@@ -311,15 +310,8 @@ const ViewsWithGroups = ({
           </>
         }
       >
-        <ViewTabSelector
-          selectedTabIndex={selectedTabIndex}
-          setSelectedTabIndex={setSelectedTabIndex}
-          views={views}
-          selectedTable={selectedTable}
-        />
-        {view?.type === "FINANCE CALENDAR" && (
-          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-        )}
+        <ViewTabSelector selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} />
+        {view?.type === "FINANCE CALENDAR" && <CRangePickerNew onChange={setDateFilters} value={dateFilters} />}
       </FiltersBlock>
 
       <div className={style.extraNavbar}>
@@ -442,11 +434,7 @@ const ViewsWithGroups = ({
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tabelSlug={tableSlug} type="write">
-                <RectangleIconButton
-                  color="success"
-                  size="small"
-                  onClick={navigateToCreatePage}
-                >
+                <RectangleIconButton color="success" size="small" onClick={navigateToCreatePage}>
                   <AddIcon style={{ color: "#007AFF" }} />
                 </RectangleIconButton>
                 {formVisible ? (
@@ -556,6 +544,7 @@ const ViewsWithGroups = ({
                       tab={tab}
                       selectedObjects={selectedObjects}
                       setSelectedObjects={setSelectedObjects}
+                      menuItem={menuItem}
                     />
                   )}
                 </TabPanel>
@@ -586,6 +575,7 @@ const ViewsWithGroups = ({
                       setDataLength={setDataLength}
                       shouldGet={shouldGet}
                       reset={reset}
+                      menuItem={menuItem}
                       fields={fields}
                       setFormValue={setFormValue}
                       control={control}

@@ -1,10 +1,13 @@
 import { Close } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
-import { useState } from "react";
-import { useEffect, useMemo } from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FlashOnIcon from "@mui/icons-material/FlashOn";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { Accordion, AccordionDetails, AccordionSummary, Card, IconButton } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFIconPicker from "../../../../../components/FormElements/HFIconPicker";
@@ -12,25 +15,17 @@ import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import constructorFieldService from "../../../../../services/constructorFieldService";
-import constructorRelationService from "../../../../../services/constructorRelationService";
 import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes";
 import { generateGUID } from "../../../../../utils/generateID";
-import listToOptions from "../../../../../utils/listToOptions";
 import Attributes from "./Attributes";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import styles from "./style.module.scss";
 
-const FieldSettings = ({
-  closeSettingsBlock,
-  mainForm,
-  field,
-  formType,
-  height,
-  onSubmit = () => {},
-}) => {
+const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, onSubmit = () => {} }) => {
   const { id } = useParams();
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
@@ -101,9 +96,9 @@ const FieldSettings = ({
     control: mainForm.control,
     name: "layoutRelations",
   });
-  
-  const selectedAutofillSlug = selectedAutofillTableSlug?.split('#')?.[0];
-  const selectedAutofillFieldSlug = selectedAutofillTableSlug?.split('#')?.[1]
+
+  const selectedAutofillSlug = selectedAutofillTableSlug?.split("#")?.[0];
+  const selectedAutofillFieldSlug = selectedAutofillTableSlug?.split("#")?.[1];
 
   const computedRelationTables = useMemo(() => {
     return layoutRelations?.map((table) => ({
@@ -123,9 +118,7 @@ const FieldSettings = ({
     {
       select: (res) =>
         [...res?.fields, ...res?.data?.one_relation_fields]
-          ?.filter(
-            (field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP"
-          )
+          ?.filter((field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP")
           .map((el) => ({
             value: el?.path_slug ? el?.path_slug : el?.slug,
             label: el?.label,
@@ -143,7 +136,7 @@ const FieldSettings = ({
       slug: "",
       table_id: id,
       type: "",
-      relation_field: selectedAutofillFieldSlug
+      relation_field: selectedAutofillFieldSlug,
     };
 
     if (formType !== "CREATE") {
@@ -167,165 +160,116 @@ const FieldSettings = ({
       </div>
 
       <div className={styles.settingsBlockBody} style={{ height }}>
-        <form
-          onSubmit={handleSubmit(submitHandler)}
-          className={styles.fieldSettingsForm}
-        >
-          <div className="p-2">
-            <FRow label="Field Label and icon" required>
-              <div className="flex align-center gap-1">
-                <HFIconPicker
-                  control={control}
-                  name="attributes.icon"
-                  shape="rectangle"
-                />
-                <HFTextField
-                  disabledHelperText
-                  fullWidth
-                  name="label"
-                  control={control}
-                  placeholder="Field Label"
-                  autoFocus
-                  required
-                />
-              </div>
-            </FRow>
+        <form onSubmit={handleSubmit(submitHandler)} className={styles.fieldSettingsForm}>
+          <Tabs direction={"ltr"} selectedIndex={selectedTab} onSelect={setSelectedTab}>
+            <div>
+              <Card>
+                <TabList style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: "3px solid #E5E9EB" }}>
+                  <Tab style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "10px" }} selectedClassName={styles.selectedTab}>
+                    <SettingsIcon style={{ width: "20px", height: "20px" }} />
+                  </Tab>
+                  <Tab style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "10px" }} selectedClassName={styles.selectedTab}>
+                    <FlashOnIcon style={{ width: "20px", height: "20px" }} />
+                  </Tab>
+                </TabList>
 
-            <FRow label="Field SLUG" required>
-              <HFTextField
-                disabledHelperText
-                fullWidth
-                name="slug"
-                control={control}
-                placeholder="Field SLUG"
-                required
-                withTrim
-              />
-            </FRow>
+                <TabPanel>
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                      <h2>Field settings</h2>
+                    </AccordionSummary>
+                    <AccordionDetails style={{ padding: 0 }}>
+                      <div className="p-2">
+                        <FRow label="Field Label and icon" required>
+                          <div className="flex align-center gap-1">
+                            <HFIconPicker control={control} name="attributes.icon" shape="rectangle" />
+                            <HFTextField disabledHelperText fullWidth name="label" control={control} placeholder="Field Label" autoFocus required />
+                          </div>
+                        </FRow>
 
-            <FRow label="Field type" required>
-              <HFSelect
-                disabledHelperText
-                name="type"
-                control={control}
-                options={fieldTypesOptions}
-                optionType="GROUP"
-                placeholder="Type"
-                required
-              />
-            </FRow>
-          </div>
+                        <FRow label="Field SLUG" required>
+                          <HFTextField disabledHelperText fullWidth name="slug" control={control} placeholder="Field SLUG" required withTrim />
+                        </FRow>
 
-          <Attributes control={control} watch={watch} mainForm={mainForm} />
+                        <FRow label="Field type" required>
+                          <HFSelect disabledHelperText name="type" control={control} options={fieldTypesOptions} optionType="GROUP" placeholder="Type" required />
+                        </FRow>
+                      </div>
 
-          <div className={styles.settingsBlockHeader}>
-            <h2>Appearance</h2>
-          </div>
+                      <Attributes control={control} watch={watch} mainForm={mainForm} />
+                    </AccordionDetails>
+                  </Accordion>
 
-          <div className="p-2">
-            <FRow label="Placeholder">
-              <HFTextField
-                fullWidth
-                name="attributes.placeholder"
-                control={control}
-              />
-            </FRow>
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                      <h2>Appearance</h2>
+                    </AccordionSummary>
+                    <AccordionDetails style={{ padding: 0 }}>
+                      <div className="p-2">
+                        <HFSwitch control={control} name="attributes.show_label" label="Show label" className="mb-1" />
 
-            <DefaultValueBlock control={control} />
+                        <DefaultValueBlock control={control} />
 
-            <HFSwitch
-              control={control}
-              name="attributes.showTooltip"
-              label="Show tooltip"
-              className="mb-1"
-            />
+                        <HFSwitch control={control} name="attributes.showTooltip" label="Show tooltip" className="mb-1" />
 
-            {showTooltip && (
-              <FRow label="Tooltip text">
-                <HFTextField
-                  fullWidth
-                  name="attributes.tooltipText"
-                  control={control}
-                />
-              </FRow>
-            )}
-          </div>
+                        {showTooltip && (
+                          <FRow label="Tooltip text">
+                            <HFTextField fullWidth name="attributes.tooltipText" control={control} />
+                          </FRow>
+                        )}
+                      </div>
+                    </AccordionDetails>
+                  </Accordion>
+                </TabPanel>
 
-          <div className={styles.settingsBlockHeader}>
-            <h2>Validation</h2>
-          </div>
+                <TabPanel>
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                      <h2>Validation</h2>
+                    </AccordionSummary>
+                    <AccordionDetails style={{ padding: 0 }}>
+                      <div className="p-2">
+                        <HFSwitch control={control} name="attributes.disabled" label="Disabled" />
+                        <HFSwitch control={control} name="required" label="Required" />
+                        <HFSwitch control={control} name="unique" label="Avoid duplicate values" />
+                        <HFSwitch control={control} name="attributes.creatable" label="Can create" />
+                        <FRow label="Validation">
+                          <HFTextField fullWidth name="attributes.validation" control={control} />
+                        </FRow>
+                        <FRow label="Validation message">
+                          <HFTextField fullWidth name="attributes.validation_message" control={control} />
+                        </FRow>
+                      </div>
+                    </AccordionDetails>
+                  </Accordion>
 
-          <div className="p-2">
-            <HFSwitch
-              control={control}
-              name="attributes.disabled"
-              label="Disabled"
-            />
-            <HFSwitch control={control} name="required" label="Required" />
-            <HFSwitch
-              control={control}
-              name="unique"
-              label="Avoid duplicate values"
-            />
-            <HFSwitch
-              control={control}
-              name="attributes.creatable"
-              label="Can create"
-            />
-            <FRow label="Validation">
-              <HFTextField
-                fullWidth
-                name="attributes.validation"
-                control={control}
-              />
-            </FRow>
-            <FRow label="Validation message">
-              <HFTextField
-                fullWidth
-                name="attributes.validation_message"
-                control={control}
-              />
-            </FRow>
-          </div>
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                      <h2>Autofill settings</h2>
+                    </AccordionSummary>
+                    <AccordionDetails style={{ padding: 0 }}>
+                      <div className="p-2">
+                        <FRow label="Autofill table">
+                          <HFSelect disabledHelperText name="autofill_table" control={control} options={computedRelationTables} placeholder="Type" />
+                        </FRow>
 
-          <div className={styles.settingsBlockHeader}>
-            <h2>Autofill settings</h2>
-          </div>
-
-          <div className="p-2">
-            <FRow label="Autofill table">
-              <HFSelect
-                disabledHelperText
-                name="autofill_table"
-                control={control}
-                options={computedRelationTables}
-                placeholder="Type"
-              />
-            </FRow>
-
-            <FRow label="Autofill field">
-              <HFSelect
-                disabledHelperText
-                name="autofill_field"
-                control={control}
-                options={computedRelationFields}
-                placeholder="Type"
-              />
-            </FRow>
-            <FRow label="Automatic">
-              <HFSwitch control={control} name="automatic" label="automatic" />
-            </FRow>
-          </div>
+                        <FRow label="Autofill field">
+                          <HFSelect disabledHelperText name="autofill_field" control={control} options={computedRelationFields} placeholder="Type" />
+                        </FRow>
+                        <FRow label="Automatic">
+                          <HFSwitch control={control} name="automatic" label="automatic" />
+                        </FRow>
+                      </div>
+                    </AccordionDetails>
+                  </Accordion>
+                </TabPanel>
+              </Card>
+            </div>
+          </Tabs>
         </form>
 
         <div className={styles.settingsFooter}>
-          <PrimaryButton
-            size="large"
-            className={styles.button}
-            style={{ width: "100%" }}
-            onClick={handleSubmit(submitHandler)}
-            loader={formLoader}
-          >
+          <PrimaryButton size="large" className={styles.button} style={{ width: "100%" }} onClick={handleSubmit(submitHandler)} loader={formLoader}>
             Сохранить
           </PrimaryButton>
         </div>

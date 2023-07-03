@@ -70,7 +70,7 @@ const Sidebar = ({ elements = [], environment }) => {
           tables: computedTables,
         })
         .then(() => {
-          dispatch(fetchConstructorTableListAction(appId));
+          // dispatch(fetchConstructorTableListAction(appId));
         });
     }
   };

@@ -90,7 +90,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
           appendSectionTab={appendSectionTab}
         />
       ) : (
-        <NewlayoutList setSelectedLayout={setSelectedLayout} selectedLayout={selectedLayout} layoutForm={layoutForm} mainForm={mainForm} />
+        <NewlayoutList setSelectedLayout={setSelectedLayout} mainForm={mainForm}/>
       )}
 
       <div className={styles.page}>

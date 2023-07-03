@@ -42,7 +42,7 @@ const RelationTable = ({ relation = {} }) => {
     },
     {
       select: (res) => {
-        return listToMap(res.data?.fields);
+        return listToMap(res?.data?.fields);
         // return res?.data?.fields ?? []
       },
     }

@@ -74,7 +74,6 @@ const ObjectDataTable = ({
 
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
-
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
 
@@ -357,7 +356,6 @@ const ObjectDataTable = ({
             relationAction={relationAction}
             onChecked={onChecked}
             relationFields={fields}
-            data={data}
           />
         ))}
         {!!summaries?.length && (

@@ -14,19 +14,19 @@ const MainLayout = ({ setFavicon, favicon }) => {
   const { appId } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const keyDownHandler = (event) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        navigate(-1);
-      }
-    };
+  // useEffect(() => {
+  //   const keyDownHandler = (event) => {
+  //     if (event.key === "Escape") {
+  //       event.preventDefault();
+  //       navigate(-1);
+  //     }
+  //   };
 
-    document.addEventListener("keydown", keyDownHandler);
-    return () => {
-      document.removeEventListener("keydown", keyDownHandler);
-    };
-  }, []);
+  //   document.addEventListener("keydown", keyDownHandler);
+  //   return () => {
+  //     document.removeEventListener("keydown", keyDownHandler);
+  //   };
+  // }, []);
 
   const { data: environment } = useQuery(["GET_ENVIRONMENT", envId], () => {
     return environmentService.getEnvironments(envId);

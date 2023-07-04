@@ -92,10 +92,10 @@ const ObjectsFormPage = () => {
 
     try {
       const [
-        // { sections = [] }, 
-        { data = {} }, 
-        { relations: view_relations = [] }, 
-        { layouts: layout = [] }
+        // { sections = [] },
+        { data = {} },
+        { relations: view_relations = [] },
+        { layouts: layout = [] },
       ] = await Promise.all([
         // getSections,
         getFormData,
@@ -106,7 +106,6 @@ const ObjectsFormPage = () => {
       setSections(sortSections(sections));
 
       setSummary(layout?.find((el) => el.is_default === true)?.summary_fields ?? []);
-
 
       // setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? el?.view_relation_type === 'FILE' ? el : {}))
 
@@ -119,13 +118,10 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
-      console.log('ssssssssqqqqq', data)
+      console.log("ssssssssqqqqq", data);
 
       reset(data.response ?? {});
       // const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)
@@ -149,8 +145,7 @@ const ObjectsFormPage = () => {
         // relation_table_slug: tableSlug
       });
 
-      const [{ sections = [] }, { relations: view_relations = [] }] =
-        await Promise.all([getSections, getRelations]);
+      const [{ sections = [] }, { relations: view_relations = [] }] = await Promise.all([getSections, getRelations]);
 
       setSections(sortSections(sections));
 
@@ -163,10 +158,7 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
     } catch (error) {
@@ -201,13 +193,12 @@ const ObjectsFormPage = () => {
         navigate(-1);
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
-        if (tableRelations?.length)
-          navigateToForm(tableSlug, "EDIT", res.data?.data);
+        if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
   };
-  
+
   const onSubmit = (data) => {
     if (id) update(data);
     else {
@@ -233,7 +224,7 @@ const ObjectsFormPage = () => {
 
   // if (loader) return <PageFallback />;
 
-  console.log('summary', summary)
+  console.log("summary", summary);
   return (
     <div className={styles.formPage}>
       <FiltersBlock
@@ -299,11 +290,7 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
               <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                <PrimaryButton
-                  loader={btnLoader}
-                  id="submit"
-                  onClick={handleSubmit(onSubmit)}
-                >
+                <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
                   <Save />
                   Сохранить
                 </PrimaryButton>

@@ -223,9 +223,6 @@ const NewRelationSection = ({
 
   /*****************************JWT START*************************/
   
-
-  console.log('getRelatedTabeSlug', getRelatedTabeSlug)
-
   const computedSections = useMemo(() => {
     const sections = [];
 

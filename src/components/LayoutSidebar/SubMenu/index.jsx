@@ -7,6 +7,9 @@ import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrapper";
 import PushPinIcon from "@mui/icons-material/PushPin";
+import { useDispatch, useSelector } from "react-redux";
+import { mainActions } from "../../../store/main/main.slice";
+
 const SubMenu = ({
   child,
   environment,
@@ -20,9 +23,13 @@ const SubMenu = ({
   setElement,
   selectedApp,
   isLoading,
-  setPin,
-  pin,
 }) => {
+  const dispatch = useDispatch();
+  const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+
+  const setPinIsEnabledFunc = (val) => {
+    dispatch(mainActions.setPinIsEnabled(val));
+  };
   return (
     <div
       className={`SubMenu ${
@@ -57,10 +64,11 @@ const SubMenu = ({
               <PushPinIcon
                 size={13}
                 onClick={() => {
-                  setPin((prev) => !prev);
+                  if (!pinIsEnabled) setPinIsEnabledFunc(true);
+                  else setPinIsEnabledFunc(false);
                 }}
                 style={{
-                  rotate: pin ? "" : "45deg",
+                  rotate: pinIsEnabled ? "" : "45deg",
                   color: environment?.data?.color,
                 }}
               />
@@ -113,7 +121,6 @@ const SubMenu = ({
                       setTableModal={setTableModal}
                       handleOpenNotify={handleOpenNotify}
                       setElement={setElement}
-                      pin={pin}
                       setSubMenuIsOpen={setSubMenuIsOpen}
                     />
                   ))}

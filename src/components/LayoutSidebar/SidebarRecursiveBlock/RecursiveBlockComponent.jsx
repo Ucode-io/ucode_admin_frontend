@@ -4,7 +4,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Draggable } from "react-smooth-dnd";
 import { useMenuListQuery } from "../../../services/menuService";
@@ -25,7 +25,6 @@ const RecursiveBlock = ({
   setTableModal,
   handleOpenNotify,
   setElement,
-  pin,
   setSubMenuIsOpen,
 }) => {
   const { appId, tableSlug } = useParams();
@@ -36,6 +35,7 @@ const RecursiveBlock = ({
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const menuItem = store.getState().menu.menuItem;
+  const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
 
   const { isLoading } = useMenuListQuery({
     params: {
@@ -64,14 +64,14 @@ const RecursiveBlock = ({
   };
 
   const clickHandler = () => {
-    if (!pin) {
+    if (!pinIsEnabled && element.type !== "FOLDER") {
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
     setCheck(true);
     setId(element?.id);
     element.type === "FOLDER" &&
-      navigate(`/main/${appId}/page/c57eedc3-a954-4262-a0af-376c65b5a284`);
+      navigate(`/main/${appId}/web-page/c57eedc3-a954-4262-a0af-376c65b5a284`);
   };
   useEffect(() => {
     if (
@@ -241,7 +241,6 @@ const RecursiveBlock = ({
             setTableModal={setTableModal}
             handleOpenNotify={handleOpenNotify}
             setElement={setElement}
-            pin={pin}
             setSubMenuIsOpen={setSubMenuIsOpen}
           />
         ))}

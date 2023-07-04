@@ -33,8 +33,8 @@ const AppSidebar = ({
       setSubMenuIsOpen(true);
       navigate(`/main/${element.id}`);
     } else if (element.type === "TABLE") {
-      navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
       setSubMenuIsOpen(false);
+      navigate(`/main/${element?.id}/object/${element?.data?.table?.slug}`);
     } else if (element.type === "MICROFRONTEND") {
       navigate(`/main/${appId}/page/${element?.data?.microfrontend?.id}`);
       setSubMenuIsOpen(false);

@@ -19,7 +19,6 @@ const MainInfo = ({
   selectedTab,
   selectedIndex
 }) => {
-console.log('computedSections', computedSections) 
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
   const fieldsList = useMemo(() => {

@@ -64,14 +64,14 @@ const RecursiveBlock = ({
   };
 
   const clickHandler = () => {
-    if (!pin) {
+    if (!pin && element.type !== "FOLDER") {
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
     setCheck(true);
     setId(element?.id);
     element.type === "FOLDER" &&
-      navigate(`/main/${appId}/page/c57eedc3-a954-4262-a0af-376c65b5a284`);
+      navigate(`/main/${appId}/web-page/c57eedc3-a954-4262-a0af-376c65b5a284`);
   };
   useEffect(() => {
     if (

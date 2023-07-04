@@ -61,21 +61,24 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const handleCloseNotify = () => {
     setMenu(null);
   };
-
+  console.log("element", selectedApp);
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: appId,
       search: subSearchText,
     },
     queryParams: {
-      cacheTime: 10,
+      // cacheTime: 10,
       enabled: Boolean(appId),
       onSuccess: (res) => {
         setChild(res.menus);
-        setSubMenuIsOpen(true);
+        if (selectedApp?.type === "FOLDER") {
+          setSubMenuIsOpen(true);
+        }
       },
     },
   });
+
   const handleRouter = () => {
     navigate(`/main/${appId}/chat`);
   };

@@ -71,9 +71,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
       enabled: Boolean(appId),
       onSuccess: (res) => {
         setChild(res.menus);
-        if (selectedApp?.type === "FOLDER") {
-          setSubMenuIsOpen(true);
-        }
+        setSubMenuIsOpen(true);
       },
     },
   });

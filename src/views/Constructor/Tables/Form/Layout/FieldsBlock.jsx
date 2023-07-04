@@ -145,8 +145,8 @@ const FieldsBlock = ({
                 onDrop={onDrop}
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
-                  ...fields[i],
-                  field_name: fields[i]?.label ?? fields[i]?.title,
+                  ...allFields[i],
+                  field_name: allFields[i]?.label ?? allFields[i]?.title,
                 })}
               >
                 {allFields?.map((field) => (

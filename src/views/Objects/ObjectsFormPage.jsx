@@ -70,14 +70,14 @@ const ObjectsFormPage = () => {
     );
   }, [sections]);
 
-  const computedSummary = useMemo(() => {
-    return sections.find((item) => item.is_summary_section);
-  }, [sections]);
+  // const computedSummary = useMemo(() => {
+  //   return sections.find((item) => item.is_summary_section);
+  // }, [sections]);
 
   const getAllData = async () => {
-    const getSections = constructorSectionService.getList({
-      table_slug: tableSlug,
-    });
+    // const getSections = constructorSectionService.getList({
+    //   table_slug: tableSlug,
+    // });
 
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
@@ -91,8 +91,13 @@ const ObjectsFormPage = () => {
     });
 
     try {
-      const [{ sections = [] }, { data = {} }, { relations: view_relations = [] }, { layouts: layout = [] }] = await Promise.all([
-        getSections,
+      const [
+        // { sections = [] }, 
+        { data = {} }, 
+        { relations: view_relations = [] }, 
+        { layouts: layout = [] }
+      ] = await Promise.all([
+        // getSections,
         getFormData,
         getRelations,
         getLayout,
@@ -120,9 +125,9 @@ const ObjectsFormPage = () => {
               : relation.table_from?.slug,
         }))
       );
+      console.log('ssssssssqqqqq', data)
 
       reset(data.response ?? {});
-      console.log();
       // const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)
 
       // if (!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response)
@@ -173,7 +178,6 @@ const ObjectsFormPage = () => {
 
   const update = (data) => {
     setBtnLoader(true);
-    console.log("yeeeees update");
     constructorObjectService
       .update(tableSlug, { data })
       .then(() => {
@@ -186,7 +190,6 @@ const ObjectsFormPage = () => {
 
   const create = (data) => {
     setBtnLoader(true);
-    console.log("yeeeees create");
     constructorObjectService
       .create(tableSlug, { data })
       .then((res) => {
@@ -204,7 +207,7 @@ const ObjectsFormPage = () => {
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
   };
-
+  
   const onSubmit = (data) => {
     if (id) update(data);
     else {

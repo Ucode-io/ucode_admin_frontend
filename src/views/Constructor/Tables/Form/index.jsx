@@ -1,39 +1,35 @@
+import { Save } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { Tab, TabList, Tabs, TabPanel } from "react-tabs";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
+import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
+import Footer from "../../../../components/Footer";
+import HeaderSettings from "../../../../components/HeaderSettings";
 import PageFallback from "../../../../components/PageFallback";
-import constructorSectionService from "../../../../services/constructorSectionService";
+import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import constructorFieldService from "../../../../services/constructorFieldService";
+import constructorRelationService from "../../../../services/constructorRelationService";
 import constructorTableService from "../../../../services/constructorTableService";
+import constructorViewRelationService from "../../../../services/constructorViewRelationService";
+import layoutService from "../../../../services/layoutService";
 import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice";
 import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk";
+import { generateGUID } from "../../../../utils/generateID";
+import { listToMap } from "../../../../utils/listToMap";
+import {
+  computeSectionsOnSubmit,
+  computeViewRelations,
+  computeViewRelationsOnSubmit
+} from "../utils";
+import Actions from "./Actions";
+import CustomErrors from "./CustomErrors";
 import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
-import constructorRelationService from "../../../../services/constructorRelationService";
-import {
-  computeSections,
-  computeSectionsOnSubmit,
-  computeSummarySection,
-  computeViewRelations,
-  computeViewRelationsOnSubmit,
-} from "../utils";
-import { addOrderNumberToSections } from "../../../../utils/sectionsOrderNumber";
-import HeaderSettings from "../../../../components/HeaderSettings";
-import Footer from "../../../../components/Footer";
-import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
-import { Save } from "@mui/icons-material";
-import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
-import constructorViewRelationService from "../../../../services/constructorViewRelationService";
-import { listToMap } from "../../../../utils/listToMap";
-import Actions from "./Actions";
-import { generateGUID } from "../../../../utils/generateID";
-import constructorCustomEventService from "../../../../services/constructorCustomEventService";
-import CustomErrors from "./CustomErrors";
-import layoutService from "../../../../services/layoutService";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();

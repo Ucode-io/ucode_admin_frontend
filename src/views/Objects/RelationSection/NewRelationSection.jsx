@@ -53,13 +53,10 @@ const NewRelationSection = ({
     });
   }, [data]);
 
-   
-
   const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
-
   const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
   const [shouldGet, setShouldGet] = useState(false);
@@ -116,12 +113,12 @@ const NewRelationSection = ({
   //     multi: [],
   //   },
   // });
-  
 
   const { fields, remove, append, update } = useFieldArray({
     control,
     name: "multi",
   });
+
   useEffect(() => {
     update();
   }, []);
@@ -320,7 +317,7 @@ const NewRelationSection = ({
                         </>
                       )}
                       <div className="flex align-center gap-2 text-nowrap">
-                        <IconGenerator icon={el?.icon} /> {el.label}
+                        <IconGenerator icon={el?.icon} /> {el?.label ?? el?.title}
                       </div>
                     </Tab>
                   ))}

@@ -421,3 +421,27 @@
 .switchControls {
   display: flex;
 }
+
+.navigateWrap {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 200px;
+  height: 35px;
+  background: #0e73f6;
+  border: none;
+  color: #fff;
+  border-radius: 5px;
+  margin: 15px 0 0 0;
+}

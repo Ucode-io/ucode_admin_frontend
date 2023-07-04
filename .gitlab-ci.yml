@@ -24,7 +24,6 @@ build-prod:
   only:
     - master
 
-
 deploy-staging:
   stage: deploy
   extends: .deploy_template
@@ -60,3 +59,4 @@ rollback-prod:
     NAMESPACE: ucode-prod
     K8SCONFIGJSON: $UCODE_KUBECONFIG
   when: manual
+

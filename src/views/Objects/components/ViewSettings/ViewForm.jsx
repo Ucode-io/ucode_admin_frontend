@@ -226,6 +226,7 @@ const ViewForm = ({
               <Tab>Information</Tab>
               <Tab>Quick filters</Tab>
               <Tab>Columns</Tab>
+              <Tab>Navigation</Tab>
               {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
               {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
             </TabList>

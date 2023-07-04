@@ -1,14 +1,15 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { get } from "@ngard/tiny-get";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
+
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
-import request from "../../utils/request";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
@@ -16,6 +17,10 @@ import CascadingElement from "./CascadingElement";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import GroupCascading from "./GroupCascading/index";
 import styles from "./style.module.scss";
+import useDebouncedWatch from "../../hooks/useDebouncedWatch";
+import constructorFunctionService from "../../services/constructorFunctionService";
+import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
+import request from "../../utils/request";
 
 const RelationFormElement = ({
   control,
@@ -211,33 +216,6 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
     }
     return optionsFromLocale ?? [];
   }, [optionsFromFunctions, optionsFromLocale]);
-
-  // useDebouncedWatch(
-  //   () => {
-  //     // if (elmValue.length >= field.attributes?.length) {
-  //     constructorFunctionService
-  //       .invoke({
-  //         function_id: field?.attributes?.function,
-  //         // object_ids: [id, elmValue],
-  //         attributes: {
-  //           // barcode: elmValue,
-  //         },
-  //       })
-  //       .then((res) => {
-  //         if (res === "Updated successfully!") {
-  //           console.log("Успешно обновлено!", "success");
-  //         }
-  //       })
-  //       .finally(() => {
-  //         // setFormValue(name, "");
-  //         // setElmValue("");
-  //         // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
-  //       });
-  //     // }
-  //   },
-  //   [],
-  //   300
-  // );
 
   const getValueData = async () => {
     try {

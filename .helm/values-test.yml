@@ -88,13 +88,13 @@ ingress:
 
       type: web
       hosts:
-        - host: "app.ucode.run"
+        - host: "test.app.u-code.io"
           path: /
           servicePort: 80
       tls:
-        - secretName: ucode-star
+        - secretName: react-app-tls
           hosts:
-            - "app.ucode.run"
+            - "test.app.u-code.io"
 
 resources:
   {}
@@ -121,7 +121,7 @@ affinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
         - matchExpressions:
-            - key: kubernetes.io/ucode-test
+            - key: kubernetes.io/env-test
               operator: In
               values:
                 - "true"

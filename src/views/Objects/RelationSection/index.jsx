@@ -308,7 +308,7 @@ const RelationSection = ({
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}
                 /> */}
-                {selectedRelation?.relation_buttons && 
+                {!selectedRelation?.relation_buttons && 
                 <PermissionWrapperV2
                   tableSlug={filteredRelations?.[0]?.relatedTable}
                   type={"write"}
@@ -383,7 +383,7 @@ const RelationSection = ({
                   </>
                 ) : (
                   fields.length > 0 && (
-                    selectedRelation?.relation_buttons && 
+                    !selectedRelation?.relation_buttons && 
                       <PermissionWrapperV2
                       type="edit"
                       tableSlug={filteredRelations?.[0]?.relatedTable}

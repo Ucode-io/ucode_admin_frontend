@@ -49,15 +49,15 @@ const ConstructorTablesFormPage = () => {
       show_in_menu: true,
       fields: [],
       app_id: appId,
-      sections: [
-        {
-          column: "SINGLE",
-          fields: [],
-          label: "Детали",
-          id: generateGUID(),
-          icon: "circle-info.svg",
-        },
-      ],
+      // sections: [
+      //   {
+      //     column: "SINGLE",
+      //     fields: [],
+      //     label: "Детали",
+      //     id: generateGUID(),
+      //     icon: "circle-info.svg",
+      //   },
+      // ],
       summary_section: {
         id: generateGUID(),
         label: "Summary",
@@ -84,9 +84,9 @@ const ConstructorTablesFormPage = () => {
       table_slug: slug,
     });
 
-    const getSectionsData = constructorSectionService.getList({
-      table_slug: slug,
-    });
+    // const getSectionsData = constructorSectionService.getList({
+    //   table_slug: slug,
+    // });
 
     const getActions = constructorCustomEventService.getList({
       table_slug: slug,
@@ -103,12 +103,12 @@ const ConstructorTablesFormPage = () => {
     try {
       const [
         tableData,
-        { sections = [] },
+        // { sections = [] },
         { relations: viewRelations = [] },
         { custom_events: actions = [] },
       ] = await Promise.all([
         getTableData,
-        getSectionsData,
+        // getSectionsData,
         getViewRelations,
         getActions,
         getLayouts,
@@ -118,8 +118,8 @@ const ConstructorTablesFormPage = () => {
         ...mainForm.getValues(),
         ...tableData,
         fields: [],
-        sections: computeSections(sections),
-        summary_section: computeSummarySection(sections),
+        // sections: computeSections(sections),
+        // summary_section: computeSummarySection(sections),
         view_relations: computeViewRelations(viewRelations),
         actions,
       };
@@ -210,11 +210,11 @@ const ConstructorTablesFormPage = () => {
 
     const updateTableData = constructorTableService.update(data, projectId);
 
-    const updateSectionData = constructorSectionService.update({
-      sections: addOrderNumberToSections(data.sections),
-      table_slug: data.slug,
-      table_id: id,
-    });
+    // const updateSectionData = constructorSectionService.update({
+    //   sections: addOrderNumberToSections(data.sections),
+    //   table_slug: data.slug,
+    //   table_id: id,
+    // });
 
     const updateViewRelationsData = constructorViewRelationService.update({
       view_relations: data.view_relations,
@@ -252,7 +252,7 @@ const ConstructorTablesFormPage = () => {
 
     Promise.all([
       updateTableData,
-      updateSectionData,
+      // updateSectionData,
       updateViewRelationsData,
       updateLayoutData,
     ])

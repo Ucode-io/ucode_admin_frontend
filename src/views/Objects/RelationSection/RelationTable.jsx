@@ -85,15 +85,15 @@ const RelationTable = forwardRef(
     const computedFilters = useMemo(() => {
       const relationFilter = {};
 
-      if (getRelatedTabeSlug.type === "Many2Many") relationFilter[`${tableSlug}_ids`] = id;
-      else if (getRelatedTabeSlug.type === "Many2Dynamic") relationFilter[`${getRelatedTabeSlug?.relation_field_slug}.${tableSlug}_id`] = id;
+      if (getRelatedTabeSlug?.type === "Many2Many") relationFilter[`${tableSlug}_ids`] = id;
+      else if (getRelatedTabeSlug?.type === "Many2Dynamic") relationFilter[`${getRelatedTabeSlug?.relation_field_slug}.${tableSlug}_id`] = id;
       else relationFilter[`${tableSlug}_id`] = id;
 
       return {
         ...filters,
         ...relationFilter,
       };
-    }, [filters, tableSlug, id, getRelatedTabeSlug.type, getRelatedTabeSlug.relation_field_slug]);
+    }, [filters, tableSlug, id, getRelatedTabeSlug?.type, getRelatedTabeSlug?.relation_field_slug]);
 
     //============VIEW PERMISSION=========
     const viewPermission = useMemo(() => {

@@ -70,14 +70,14 @@ const ObjectsFormPage = () => {
     );
   }, [sections]);
 
-  const computedSummary = useMemo(() => {
-    return sections.find((item) => item.is_summary_section);
-  }, [sections]);
+  // const computedSummary = useMemo(() => {
+  //   return sections.find((item) => item.is_summary_section);
+  // }, [sections]);
 
   const getAllData = async () => {
-    const getSections = constructorSectionService.getList({
-      table_slug: tableSlug,
-    });
+    // const getSections = constructorSectionService.getList({
+    //   table_slug: tableSlug,
+    // });
 
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
@@ -91,8 +91,13 @@ const ObjectsFormPage = () => {
     });
 
     try {
-      const [{ sections = [] }, { data = {} }, { relations: view_relations = [] }, { layouts: layout = [] }] = await Promise.all([
-        getSections,
+      const [
+        // { sections = [] },
+        { data = {} },
+        { relations: view_relations = [] },
+        { layouts: layout = [] },
+      ] = await Promise.all([
+        // getSections,
         getFormData,
         getRelations,
         getLayout,
@@ -101,7 +106,6 @@ const ObjectsFormPage = () => {
       setSections(sortSections(sections));
 
       setSummary(layout?.find((el) => el.is_default === true)?.summary_fields ?? []);
-
 
       // setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? el?.view_relation_type === 'FILE' ? el : {}))
 
@@ -114,15 +118,12 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
+      console.log("ssssssssqqqqq", data);
 
       reset(data.response ?? {});
-      console.log();
       // const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)
 
       // if (!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response)
@@ -144,8 +145,7 @@ const ObjectsFormPage = () => {
         // relation_table_slug: tableSlug
       });
 
-      const [{ sections = [] }, { relations: view_relations = [] }] =
-        await Promise.all([getSections, getRelations]);
+      const [{ sections = [] }, { relations: view_relations = [] }] = await Promise.all([getSections, getRelations]);
 
       setSections(sortSections(sections));
 
@@ -158,10 +158,7 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
     } catch (error) {
@@ -173,7 +170,6 @@ const ObjectsFormPage = () => {
 
   const update = (data) => {
     setBtnLoader(true);
-    console.log("yeeeees update");
     constructorObjectService
       .update(tableSlug, { data })
       .then(() => {
@@ -186,7 +182,6 @@ const ObjectsFormPage = () => {
 
   const create = (data) => {
     setBtnLoader(true);
-    console.log("yeeeees create");
     constructorObjectService
       .create(tableSlug, { data })
       .then((res) => {
@@ -198,8 +193,7 @@ const ObjectsFormPage = () => {
         navigate(-1);
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
-        if (tableRelations?.length)
-          navigateToForm(tableSlug, "EDIT", res.data?.data);
+        if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
@@ -230,7 +224,7 @@ const ObjectsFormPage = () => {
 
   // if (loader) return <PageFallback />;
 
-  console.log('summary', summary)
+  console.log("summary", summary);
   return (
     <div className={styles.formPage}>
       <FiltersBlock
@@ -296,11 +290,7 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
               <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                <PrimaryButton
-                  loader={btnLoader}
-                  id="submit"
-                  onClick={handleSubmit(onSubmit)}
-                >
+                <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
                   <Save />
                   Сохранить
                 </PrimaryButton>

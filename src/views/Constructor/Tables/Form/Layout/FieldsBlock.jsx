@@ -115,7 +115,7 @@ const FieldsBlock = ({
     updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
   };
 
-  console.log('sssssssss', allFields)
+  console.log('sssssssss', tableRelations)
 
   return (
     <div className={styles.settingsBlock}>
@@ -145,8 +145,8 @@ const FieldsBlock = ({
                 onDrop={onDrop}
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
-                  ...fields[i],
-                  field_name: fields[i]?.label ?? fields[i]?.title,
+                  ...allFields[i],
+                  field_name: allFields[i]?.label ?? allFields[i]?.title,
                 })}
               >
                 {allFields?.map((field) => (
@@ -201,9 +201,9 @@ const FieldsBlock = ({
                 groupName="table_relation"
                 onDrop={onDrop}
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
-                getChildPayload={(i) => unusedTableRelations[i]}
+                getChildPayload={(i) => tableRelations[i]}
               >
-                {unusedTableRelations?.map((relation) => (
+                {tableRelations?.map((relation) => (
                   <Draggable
                     key={relation.id}
                     style={{ overflow: "visible", width: "fit-content" }}

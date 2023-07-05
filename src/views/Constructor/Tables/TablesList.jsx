@@ -1,25 +1,17 @@
 import { Delete } from "@mui/icons-material";
-import { Checkbox } from "@mui/material";
 import { useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableHead,
-  CTableRow,
-} from "../../../components/CTable";
-import DeleteWrapperModal from "../../../components/DeleteWrapperModal";
-import HFCheckbox from "../../../components/FormElements/HFCheckbox";
+import { CTable, CTableBody, CTableCell, CTableHead, CTableRow } from "../../../components/CTable";
 import HFSwitch from "../../../components/FormElements/HFSwitch";
 import TableCard from "../../../components/TableCard";
 import TableRowButton from "../../../components/TableRowButton";
 import applicationService from "../../../services/applicationService";
 import constructorTableService from "../../../services/constructorTableService";
 import ImportModal from "./ImportModal";
+import DeleteWrapperModal from "../../../components/DeleteWrapperModal";
 
 const TablesList = ({ mainForm, appData, getData, setIds }) => {
   const navigate = useNavigate();
@@ -93,9 +85,10 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
           is_own_table: Boolean(table.is_own_table),
         })) ?? [];
 
+        console.log('sssssssss', list, id)
+
     try {
-      if (list[index]?.is_own_table)
-        await constructorTableService.delete(id, projectId);
+      if (list[index]?.is_own_table) await constructorTableService.delete(id, projectId);
       else {
         await applicationService.update({
           ...appData,
@@ -120,15 +113,13 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
   // };
 
   const switchChangeHandler = (val, index) => {
-    const computedTableIds = mainForm
-      .getValues("tables")
-      ?.map((table, tableIndex) => {
-        return {
-          table_id: table.id,
-          is_visible: tableIndex !== index ? Boolean(table.is_visible) : val,
-          is_own_table: Boolean(table.is_own_table),
-        };
-      });
+    const computedTableIds = mainForm.getValues("tables")?.map((table, tableIndex) => {
+      return {
+        table_id: table.id,
+        is_visible: tableIndex !== index ? Boolean(table.is_visible) : val,
+        is_own_table: Boolean(table.is_own_table),
+      };
+    });
     applicationService.update({
       ...appData,
       tables: computedTableIds,
@@ -137,13 +128,7 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
 
   return (
     <>
-      {importModalVisible && (
-        <ImportModal
-          closeModal={closeImportModal}
-          importTable={importTable}
-          btnLoader={modalLoader}
-        />
-      )}
+      {importModalVisible && <ImportModal closeModal={closeImportModal} importTable={importTable} btnLoader={modalLoader} />}
       <TableCard>
         <CTable disablePagination removableHeight={120}>
           <CTableHead>
@@ -156,10 +141,7 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
           </CTableHead>
           <CTableBody columnsCount={4} dataLength={1} loader={loader}>
             {list?.map((element, index) => (
-              <CTableRow
-                key={element.id}
-                onClick={() => navigateToEditForm(element.id, element.slug)}
-              >
+              <CTableRow key={element.id} onClick={() => navigateToEditForm(element.id, element.slug)}>
                 {/* <CTableCell width={5}>
                   <Checkbox
                     onClick={(e) => e.stopPropagation()}
@@ -178,23 +160,15 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
                   />
                 </CTableCell>
                 <CTableCell>
-                  <RectangleIconButton color="error" onClick={deleteTable}>
+                  <RectangleIconButton color="error" onClick={() => deleteTable(element.id)} >
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>
               </CTableRow>
             ))}
 
-            <TableRowButton
-              colSpan={5}
-              onClick={openImportModal}
-              title="Импортировать из других приложений"
-            />
-            <TableRowButton
-              colSpan={5}
-              onClick={navigateToCreateForm}
-              title="Создать новый"
-            />
+            <TableRowButton colSpan={5} onClick={openImportModal} title="Импортировать из других приложений" />
+            <TableRowButton colSpan={5} onClick={navigateToCreateForm} title="Создать новый" />
           </CTableBody>
         </CTable>
       </TableCard>

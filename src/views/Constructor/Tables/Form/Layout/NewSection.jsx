@@ -1,12 +1,10 @@
 import { Add, Delete } from "@mui/icons-material";
 import { Card } from "@mui/material";
 import { useFieldArray } from "react-hook-form";
-import { useParams } from "react-router-dom";
 import { Container, Draggable } from "react-smooth-dnd";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import ButtonsPopover from "../../../../../components/ButtonsPopover";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
-import HFIconPicker from "../../../../../components/FormElements/HFIconPicker";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import styles from "./style.module.scss";
@@ -15,19 +13,14 @@ const NewSection = ({
   mainForm,
   index,
   layoutForm,
-  selectedTab,
   fieldsMap,
   openFieldSettingsBlock,
-  sectionsFieldArray,
-  selectedLayout,
   openFieldsBlock,
   openRelationSettingsBlock,
   selectedLayoutIndex,
   selectedTabIndex,
-  section,
-  removeSection
+  removeSection,
 }) => {
-
   const sectionFields = useFieldArray({
     control: mainForm.control,
     name: `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.fields`,
@@ -63,9 +56,13 @@ const NewSection = ({
     }
   };
 
-  const removeField = (index, colNumber) => {
+  const removeField = (indexField, colNumber) => {
     const { remove } = sectionFields;
-    remove(index);
+    remove(indexField);
+  };
+
+  const deleteSection = () => {
+    removeSection(index);
   };
 
   return (
@@ -145,7 +142,7 @@ const NewSection = ({
         </Container>
       </div>
       <div className={styles.newSectionDelete}>
-        <RectangleIconButton color="error" onClick={() => removeSection(index)}>
+        <RectangleIconButton color="error" onClick={deleteSection}>
           <Delete color="error" />
         </RectangleIconButton>
       </div>

@@ -101,7 +101,7 @@ const NewSection = ({
 
       <div className={styles.newsectionCardBody}>
         <Container
-          style={{ minHeight: 50, width: "100%", display: "flex", flexDirection: "row", alignItems: "center" }}
+          style={{ minHeight: 50, width: "100%", display: "flex", flexDirection: "row", alignItems: "center", overflowX: "scroll" }}
           groupName="1"
           dragClass="drag-row"
           orientation="horizontal"
@@ -110,7 +110,7 @@ const NewSection = ({
           getChildPayload={(index) => sectionFields.fields[index]}
         >
           {sectionFields?.fields?.map((field, fieldIndex) => (
-            <Draggable key={field.key}>
+            <Draggable key={field.key} style={{ minWidth: "300px" }}>
               <div className={styles.newsectionCardRow}>
                 <FormElementGenerator
                   control={layoutForm.control}

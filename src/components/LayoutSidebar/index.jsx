@@ -1,12 +1,11 @@
 import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import MenuOpenIcon from "@mui/icons-material/MenuOpen";
-import { Box } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import brandLogo from "../../../builder_config/assets/company-logo.svg";
+import brandLogo from "../../../builder_config/assets/Udevs.svg";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import menuService, { useMenuListQuery } from "../../services/menuService";
 import projectService from "../../services/projectService";
@@ -26,6 +25,7 @@ import { Container } from "react-smooth-dnd";
 import ButtonsMenu from "./MenuButtons";
 import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
+import { OpenCloseSvg } from "../../assets/icons/icon";
 
 const LayoutSidebar = ({ favicon, appId, environment }) => {
   const sidebarIsOpen = useSelector(
@@ -60,7 +60,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const handleCloseNotify = () => {
     setMenu(null);
   };
-  console.log("element", selectedApp);
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: appId,
@@ -195,7 +194,12 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         >
           <div className="brand">
             <div className="brand-logo" onClick={switchRightSideVisible}>
-              <img src={favicon ?? brandLogo} alt="logo" />
+              <img
+                src={favicon ?? brandLogo}
+                alt="logo"
+                width={"40px"}
+                height={"40px"}
+              />
             </div>
             {sidebarIsOpen && (
               <h2
@@ -208,7 +212,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
             )}{" "}
           </div>
           <div className="cloes-btn" onClick={switchRightSideVisible}>
-            <MenuOpenIcon />
+            <OpenCloseSvg />
           </div>
         </div>
 
@@ -283,6 +287,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                   }}
                   sidebarIsOpen={sidebarIsOpen}
                 />
+                <Divider />
               </>
             )}
           </div>

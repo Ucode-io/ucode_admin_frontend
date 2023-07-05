@@ -96,7 +96,7 @@ const DynamicRelationFormElement = ({
   return (
     <>
       <FEditableRow
-        label={field?.label ?? field.title}
+        label={field?.label ?? field.title ?? " "}
         onLabelChange={onChange}
         required={field.required}
       >

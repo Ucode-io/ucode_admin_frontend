@@ -45,7 +45,7 @@ const RelationFormElement = ({
 
   if (!isLayout) {
     return (
-      <FRow label={field?.label ?? field?.title} required={field.required}>
+      <FRow label={field?.label ?? field?.title ?? " "} required={field.required}>
         <Controller
           control={control}
           name={(name || field.slug) ?? `${tableSlug}_id`}

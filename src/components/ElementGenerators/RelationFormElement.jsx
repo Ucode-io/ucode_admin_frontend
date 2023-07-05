@@ -1,14 +1,15 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { get } from "@ngard/tiny-get";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
+
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
-import request from "../../utils/request";
 import FEditableRow from "../FormElements/FEditableRow";
 import FRow from "../FormElements/FRow";
 import IconGenerator from "../IconPicker/IconGenerator";
@@ -16,6 +17,10 @@ import CascadingElement from "./CascadingElement";
 import CascadingSection from "./CascadingSection/CascadingSection";
 import GroupCascading from "./GroupCascading/index";
 import styles from "./style.module.scss";
+import useDebouncedWatch from "../../hooks/useDebouncedWatch";
+import constructorFunctionService from "../../services/constructorFunctionService";
+import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
+import request from "../../utils/request";
 
 const RelationFormElement = ({
   control,
@@ -40,7 +45,6 @@ const RelationFormElement = ({
 
   if (!isLayout) {
     return (
-      console.log('ssssssss', field),
       <FRow label={field?.label ?? field?.title} required={field.required}>
         <Controller
           control={control}
@@ -72,7 +76,11 @@ const RelationFormElement = ({
       name={`sections[${sectionIndex}].fields[${fieldIndex}].field_name`}
       defaultValue={field.label}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <FEditableRow label={value} onLabelChange={onChange} required={field.required}>
+        <FEditableRow
+          label={value}
+          onLabelChange={onChange}
+          required={field.required}
+        >
           <Controller
             control={control}
             name={`${tableSlug}_id`}
@@ -113,7 +121,19 @@ const RelationFormElement = ({
 
 // ============== AUTOCOMPLETE ELEMENT =====================
 
-const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disabled, disabledHelperText, control, name, defaultValue, setFormValue = () => {} }) => {
+const AutoCompleteElement = ({
+  field,
+  value,
+  tableSlug,
+  setValue,
+  error,
+  disabled,
+  disabledHelperText,
+  control,
+  name,
+  defaultValue,
+  setFormValue = () => {},
+}) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
@@ -152,22 +172,28 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
   const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
-        data: {
-          table_slug: tableSlug,
-          ...autoFiltersValue,
-          search: debouncedValue,
-          limit: 10,
-          offset: 0,
-          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
-        },
-      });
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
+            search: debouncedValue,
+            limit: 10,
+            offset: 0,
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+          },
+        }
+      );
     },
     {
       enabled: !!field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
 
         return {
           options,
@@ -198,7 +224,8 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
       enabled: !field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
         return {
           options,
           slugOptions,
@@ -213,33 +240,6 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
     }
     return optionsFromLocale ?? [];
   }, [optionsFromFunctions, optionsFromLocale]);
-
-  // useDebouncedWatch(
-  //   () => {
-  //     // if (elmValue.length >= field.attributes?.length) {
-  //     constructorFunctionService
-  //       .invoke({
-  //         function_id: field?.attributes?.function,
-  //         // object_ids: [id, elmValue],
-  //         attributes: {
-  //           // barcode: elmValue,
-  //         },
-  //       })
-  //       .then((res) => {
-  //         if (res === "Updated successfully!") {
-  //           console.log("Успешно обновлено!", "success");
-  //         }
-  //       })
-  //       .finally(() => {
-  //         // setFormValue(name, "");
-  //         // setElmValue("");
-  //         // queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
-  //       });
-  //     // }
-  //   },
-  //   [],
-  //   300
-  // );
 
   const getValueData = async () => {
     try {
@@ -309,7 +309,10 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
-        <div className={styles.createButton} onClick={() => navigateToForm(tableSlug)}>
+        <div
+          className={styles.createButton}
+          onClick={() => navigateToForm(tableSlug)}
+        >
           Создать новый
         </div>
       )}
@@ -355,7 +358,10 @@ const AutoCompleteElement = ({ field, value, tableSlug, setValue, error, disable
             changeHandler(newValue);
           }}
           noOptionsText={
-            <span onClick={() => navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
+            <span
+              onClick={() => navigateToForm(tableSlug)}
+              style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+            >
               Создать новый
             </span>
           }

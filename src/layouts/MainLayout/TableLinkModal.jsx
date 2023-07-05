@@ -10,6 +10,7 @@ import constructorTableService from "../../services/constructorTableService";
 import menuSettingsService from "../../services/menuSettingsService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
+import HFAutocomplete from "../../components/FormElements/HFAutocomplete";
 
 const TableLinkModal = ({
   closeModal,
@@ -74,10 +75,14 @@ const TableLinkModal = ({
       });
   };
 
-  const getTables = () => {
-    constructorTableService.getList().then((res) => {
-      setTables(res);
-    });
+  const getTables = (search) => {
+    constructorTableService
+      .getList({
+        search: search || undefined,
+      })
+      .then((res) => {
+        setTables(res);
+      });
   };
 
   useEffect(() => {
@@ -119,12 +124,23 @@ const TableLinkModal = ({
               />
             </Box> */}
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              <HFSelect
+              {/* <HFSelect
                 fullWidth
                 label="Tables"
                 control={control}
                 name="table_id"
                 options={tableOptions}
+              /> */}
+              <HFAutocomplete
+                name="table_id"
+                control={control}
+                placeholder="Tables"
+                fullWidth
+                required
+                options={tableOptions}
+                onFieldChange={(e) => {
+                  getTables(e.target.value);
+                }}
               />
             </Box>
 

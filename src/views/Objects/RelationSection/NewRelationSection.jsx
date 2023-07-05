@@ -57,12 +57,19 @@ const NewRelationSection = ({
     });
   }, [data]);
 
-  const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
+  const {
+    tableSlug: tableSlugFromParams,
+    id: idFromParams,
+    appId,
+  } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
-  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
+    useState(null);
+  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
+    {}
+  );
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -84,7 +91,7 @@ const NewRelationSection = ({
 
   const getRelatedTabeSlug = useMemo(() => {
     return relations?.find((el) => el?.id === selectedTab?.relation_id);
- }, [relations, selectedTab])
+  }, [relations, selectedTab]);
 
   useEffect(() => {
     if (data?.[0]?.tabs?.length > 0) {
@@ -93,7 +100,9 @@ const NewRelationSection = ({
   }, [data]);
 
   useEffect(() => {
-    queryTab ? setSelectedTabIndex(parseInt(queryTab) - 1) : setSelectedTabIndex(0);
+    queryTab
+      ? setSelectedTabIndex(parseInt(queryTab) - 1)
+      : setSelectedTabIndex(0);
   }, [queryTab]);
 
   const handleHeightControl = (val) => {
@@ -158,7 +167,8 @@ const NewRelationSection = ({
       mapped[keys[0]] = values[0];
     });
     const relation = filteredRelations[selectedTabIndex];
-    if (getRelatedTabeSlug?.type === "Many2Many") setSelectedManyToManyRelation(getRelatedTabeSlug);
+    if (getRelatedTabeSlug?.type === "Many2Many")
+      setSelectedManyToManyRelation(getRelatedTabeSlug);
     else {
       append(mapped);
       setFormVisible(true);
@@ -188,21 +198,23 @@ const NewRelationSection = ({
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
 
-
   const { mutate: updateMultipleObject } = useMutation(
     (values) =>
-      constructorObjectService.updateMultipleObject(getRelatedTabeSlug.relatedTable, {
-        data: {
-          objects: values.multi.map((item) => ({
-            ...item,
-            guid: item?.guid ?? "",
-            doctors_id_2: getValue(item, "doctors_id_2"),
-            doctors_id_3: getValue(item, "doctors_id_3"),
-            specialities_id: getValue(item, "specialities_id"),
-            [fieldSlug]: id,
-          })),
-        },
-      }),
+      constructorObjectService.updateMultipleObject(
+        getRelatedTabeSlug.relatedTable,
+        {
+          data: {
+            objects: values.multi.map((item) => ({
+              ...item,
+              guid: item?.guid ?? "",
+              doctors_id_2: getValue(item, "doctors_id_2"),
+              doctors_id_3: getValue(item, "doctors_id_3"),
+              specialities_id: getValue(item, "specialities_id"),
+              [fieldSlug]: id,
+            })),
+          },
+        }
+      ),
     {
       enabled: !getRelatedTabeSlug?.relatedTable,
       onSuccess: () => {
@@ -221,7 +233,7 @@ const NewRelationSection = ({
   };
 
   /*****************************JWT START*************************/
-  
+
   const computedSections = useMemo(() => {
     const sections = [];
     data?.map((relation) => {
@@ -286,7 +298,9 @@ const NewRelationSection = ({
         "table-slug": tableSlug,
       })
       .then((res) => {
-        const layout = res?.layouts?.filter((layout) => layout?.is_default === true);
+        const layout = res?.layouts?.filter(
+          (layout) => layout?.is_default === true
+        );
         setData(layout);
       });
   }, [tableSlug, menuItem.table_id]);
@@ -294,7 +308,12 @@ const NewRelationSection = ({
   return (
     <>
       {selectedManyToManyRelation && (
-        <ManyToManyRelationCreateModal relation={selectedManyToManyRelation} closeModal={() => setSelectedManyToManyRelation(null)} limit={limit} setLimit={setLimit} />
+        <ManyToManyRelationCreateModal
+          relation={selectedManyToManyRelation}
+          closeModal={() => setSelectedManyToManyRelation(null)}
+          limit={limit}
+          setLimit={setLimit}
+        />
       )}
       {data?.length ? (
         <Card className={styles.card}>
@@ -317,15 +336,25 @@ const NewRelationSection = ({
                         </>
                       )}
                       <div className="flex align-center gap-2 text-nowrap">
-                        <IconGenerator icon={el?.icon} /> {el?.label ?? el?.title}
+                        <IconGenerator icon={el?.icon} />{" "}
+                        {el?.label ?? el?.title}
                       </div>
                     </Tab>
                   ))}
                 </TabList>
 
                 <div className="flex gap-2">
-                  <CustomActionsButton tableSlug={selectedRelation?.relatedTable} selectedObjects={selectedObjects} setSelectedObjects={setSelectedObjects} />
-                  <RectangleIconButton color="success" size="small" onClick={navigateToCreatePage} disabled={!id}>
+                  <CustomActionsButton
+                    tableSlug={selectedRelation?.relatedTable}
+                    selectedObjects={selectedObjects}
+                    setSelectedObjects={setSelectedObjects}
+                  />
+                  <RectangleIconButton
+                    color="success"
+                    size="small"
+                    onClick={navigateToCreatePage}
+                    disabled={!id}
+                  >
                     <Add style={{ color: "#007AFF" }} />
                   </RectangleIconButton>
 
@@ -372,10 +401,18 @@ const NewRelationSection = ({
                   <DocumentGeneratorButton />
 
                   {data[selectedTabIndex]?.multiple_insert && (
-                    <MultipleInsertButton view={filteredRelations[selectedTabIndex]} tableSlug={filteredRelations[selectedTabIndex].relatedTable} />
+                    <MultipleInsertButton
+                      view={filteredRelations[selectedTabIndex]}
+                      tableSlug={
+                        filteredRelations[selectedTabIndex].relatedTable
+                      }
+                    />
                   )}
 
-                  <RectangleIconButton color="white" onClick={() => setHeightControl(!heightControl)}>
+                  <RectangleIconButton
+                    color="white"
+                    onClick={() => setHeightControl(!heightControl)}
+                  >
                     <div style={{ position: "relative" }}>
                       <span
                         style={{
@@ -389,9 +426,15 @@ const NewRelationSection = ({
                       {heightControl && (
                         <div className={style.heightControl}>
                           {tableHeightOptions.map((el) => (
-                            <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
+                            <div
+                              key={el.value}
+                              className={style.heightControl_item}
+                              onClick={() => handleHeightControl(el.value)}
+                            >
                               {el.label}
-                              {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
+                              {tableHeight === el.value ? (
+                                <CheckIcon color="primary" />
+                              ) : null}
                             </div>
                           ))}
                         </div>
@@ -399,7 +442,11 @@ const NewRelationSection = ({
                     </div>
                   </RectangleIconButton>
 
-                  <RectangleIconButton color="success" size="small" onClick={() => setMoreShowButton(!moreShowButton)}>
+                  <RectangleIconButton
+                    color="success"
+                    size="small"
+                    onClick={() => setMoreShowButton(!moreShowButton)}
+                  >
                     <div style={{ position: "relative" }}>
                       <span
                         style={{
@@ -411,7 +458,10 @@ const NewRelationSection = ({
                         <MoreVertIcon color="primary" />
                       </span>
                       {moreShowButton && (
-                        <div className={style.heightControl} style={{ minWidth: "auto" }}>
+                        <div
+                          className={style.heightControl}
+                          style={{ minWidth: "auto" }}
+                        >
                           <div
                             className={style.heightControl_item}
                             style={{
@@ -501,63 +551,6 @@ const NewRelationSection = ({
                   )}
                 </TabPanel>
               ))}
-
-              {/* {!selectedTab?.relation_id ? (
-                <TabPanel>
-                  <NewMainInfo
-                    control={control}
-                    computedSections={computedSections}
-                    setFormValue={setFormValue}
-                    relatedTable={relatedTable}
-                    relation={relation}
-                    selectedIndex={selectedIndex}
-                  />
-                </TabPanel>
-              ) : (
-                filteredRelations?.map((relation) => (
-                  <TabPanel key={relation.id}>
-                    {relation?.relatedTable === "file" ? (
-                      <FilesSection
-                        shouldGet={shouldGet}
-                        setFormValue={setFormValue}
-                        remove={remove}
-                        reset={reset}
-                        watch={watch}
-                        control={control}
-                        formVisible={formVisible}
-                        relation={relation}
-                        key={relation.id}
-                        createFormVisible={relationsCreateFormVisible}
-                        setCreateFormVisible={setCreateFormVisible}
-                      />
-                    ) : (
-                      <RelationTable
-                        ref={myRef}
-                        setFieldSlug={setFieldSlug}
-                        setDataLength={setDataLength}
-                        shouldGet={shouldGet}
-                        remove={remove}
-                        reset={reset}
-                        selectedTabIndex={selectedTabIndex}
-                        watch={watch}
-                        control={control}
-                        setFormValue={setFormValue}
-                        fields={fields}
-                        setFormVisible={setFormVisible}
-                        formVisible={formVisible}
-                        key={relation.id}
-                        relation={relation}
-                        createFormVisible={relationsCreateFormVisible}
-                        setCreateFormVisible={setCreateFormVisible}
-                        selectedObjects={selectedObjects}
-                        setSelectedObjects={setSelectedObjects}
-                        tableSlug={tableSlug}
-                        id={id}
-                      />
-                    )}
-                  </TabPanel>
-                ))
-              )} */}
             </Tabs>
           ))}
         </Card>

@@ -125,6 +125,7 @@ const MicrofrontendLinkModal = ({
                 control={control}
                 name="microfrontend_id"
                 options={microfrontendOptions}
+                required
               />
             </Box>
 

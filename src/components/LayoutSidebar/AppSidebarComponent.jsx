@@ -1,4 +1,10 @@
-import { Box, ListItemButton, ListItemText, Tooltip } from "@mui/material";
+import {
+  Box,
+  Divider,
+  ListItemButton,
+  ListItemText,
+  Tooltip,
+} from "@mui/material";
 import { useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,10 +25,8 @@ const AppSidebar = ({
   setSubMenuIsOpen,
   handleOpenNotify,
   setSelectedApp,
-  environment,
   selectedApp,
 }) => {
-  const { appId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const clickHandler = () => {
@@ -33,21 +37,21 @@ const AppSidebar = ({
       setSubMenuIsOpen(true);
       navigate(`/main/${element.id}`);
     } else if (element.type === "TABLE") {
-      navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
       setSubMenuIsOpen(false);
+      navigate(`/main/${element?.id}/object/${element?.data?.table?.slug}`);
     } else if (element.type === "MICROFRONTEND") {
-      navigate(`/main/${appId}/page/${element?.data?.microfrontend?.id}`);
+      navigate(`/main/${element?.id}/page/${element?.data?.microfrontend?.id}`);
       setSubMenuIsOpen(false);
     } else if (element.type === "WEBPAGE") {
-      navigate(`/main/${appId}/web-page/${element?.data?.webpage?.id}`);
+      navigate(`/main/${element?.id}/web-page/${element?.data?.webpage?.id}`);
       setSubMenuIsOpen(false);
     }
   };
+  const favourite = element?.id === "c57eedc3-a954-4262-a0af-376c65b5a282";
 
   useEffect(() => {
     setElement(element);
   }, [element]);
-
   return (
     <Draggable key={index}>
       <ListItemButton
@@ -59,7 +63,10 @@ const AppSidebar = ({
         className="parent-folder column-drag-handle"
         style={{
           background: selectedApp?.id === element.id ? "#007AFF" : "",
-          color: selectedApp?.id === element.id ? "#fff" : "",
+          color: selectedApp?.id === element.id ? "#fff" : "#A8A8A8",
+          borderTop: favourite && "1px solid #F0F0F0",
+          borderBottom: favourite && "1px solid #F0F0F0",
+          padding: favourite && "18px 12px",
         }}
       >
         <IconGenerator
@@ -115,11 +122,25 @@ const AppSidebar = ({
               handleOpenNotify(e, "TABLE");
               setElement(element);
             }}
-            style={{
-              color:
-                selectedApp?.id === element?.id
-                  ? environment?.data?.active_color
-                  : environment?.data?.color,
+          />
+        )}
+        {element?.type === "MICROFRONTEND" && (
+          <MenuIcon
+            title="Microfrontend settings"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenNotify(e, "MICROFRONTEND");
+              setElement(element);
+            }}
+          />
+        )}
+        {element?.type === "WEBPAGE" && (
+          <MenuIcon
+            title="Webpage settings"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenNotify(e, "WEBPAGE");
+              setElement(element);
             }}
           />
         )}

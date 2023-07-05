@@ -9,15 +9,27 @@ import { Box, Tooltip } from "@mui/material";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import NewFormCard from "./components/NewFormCard";
 
-const MainInfo = ({ computedSections, control, setFormValue, relatedTable, relation, selectedTabIndex, selectedTab, selectedIndex }) => {
+const MainInfo = ({
+  computedSections,
+  control,
+  setFormValue,
+  relatedTable,
+  relation,
+  selectedTabIndex,
+  selectedTab,
+  selectedIndex,
+}) => {
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
+
   const fieldsList = useMemo(() => {
     const fields = [];
 
-    relation?.tabs.sections?.forEach((section) => {
-      section.forEach((field) => {
-        fields.push(field);
+    relation?.tabs?.forEach((tab) => {
+      tab?.sections?.forEach((section) => {
+        section?.fields?.forEach((field) => {
+          fields.push(field);
+        });
       });
     });
     return fields;
@@ -28,10 +40,15 @@ const MainInfo = ({ computedSections, control, setFormValue, relatedTable, relat
       {isShow ? (
         <div className={styles.newmainCardSide}>
           {computedSections.map((section) => (
-            <NewFormCard key={section.id} title={section.label} className={styles.formCard} icon={section.icon}>
+            <NewFormCard
+              key={section.id}
+              title={section.label}
+              className={styles.formCard}
+              icon={section.icon}
+            >
               <div className={styles.newformColumn}>
                 {section.fields?.map((field) => (
-                  <Box style={{minWidth: '300px'}}>
+                  <Box style={{ minWidth: "300px" }}>
                     <FormElementGenerator
                       key={field.id}
                       field={field}

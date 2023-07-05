@@ -1,4 +1,10 @@
-import { Box, ListItemButton, ListItemText, Tooltip } from "@mui/material";
+import {
+  Box,
+  Divider,
+  ListItemButton,
+  ListItemText,
+  Tooltip,
+} from "@mui/material";
 import { useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router-dom";
@@ -41,11 +47,11 @@ const AppSidebar = ({
       setSubMenuIsOpen(false);
     }
   };
+  const favourite = element?.id === "c57eedc3-a954-4262-a0af-376c65b5a282";
 
   useEffect(() => {
     setElement(element);
   }, [element]);
-
   return (
     <Draggable key={index}>
       <ListItemButton
@@ -57,7 +63,10 @@ const AppSidebar = ({
         className="parent-folder column-drag-handle"
         style={{
           background: selectedApp?.id === element.id ? "#007AFF" : "",
-          color: selectedApp?.id === element.id ? "#fff" : "",
+          color: selectedApp?.id === element.id ? "#fff" : "#A8A8A8",
+          borderTop: favourite && "1px solid #F0F0F0",
+          borderBottom: favourite && "1px solid #F0F0F0",
+          padding: favourite && "18px 12px",
         }}
       >
         <IconGenerator

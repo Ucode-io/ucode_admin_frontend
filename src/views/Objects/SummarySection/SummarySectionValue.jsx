@@ -1,7 +1,5 @@
-import { useWatch } from "react-hook-form";
-import FormElementGenerator from "../../../components/ElementGenerators/FormElementGenerator";
-import styles from "./style.module.scss";
 import ValueGenerator from "./ValueGenerator.jsx";
+import styles from "./style.module.scss";
 
 const SummarySectionValue = ({ control, computedSummary }) => {
   return (

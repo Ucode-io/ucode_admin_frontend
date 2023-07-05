@@ -8,7 +8,7 @@ COPY . ./
 RUN mv .env.production .env
 RUN yarn install --network-timeout 1000000000
 
-RUN yarn build --mode staging
+RUN yarn build
 
 FROM nginx:alpine
 COPY --from=builder /app/build /build

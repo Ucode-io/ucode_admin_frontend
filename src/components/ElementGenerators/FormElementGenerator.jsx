@@ -27,6 +27,9 @@ import CodabarBarcode from "./CodabarBarcode";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFFloatField from "../FormElements/HFFloatField";
 import HFInternationPhone from "../FormElements/HFInternationPhone";
+import { InputAdornment, Tooltip } from "@mui/material";
+import { Lock } from "@mui/icons-material";
+import { is } from "date-fns/locale";
 import HFMapField from "../FormElements/HFMapField";
 import HFCustomImage from "../FormElements/HFCustomImage";
 
@@ -65,7 +68,9 @@ const FormElementGenerator = ({
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
 
-    const defaultValue = field.attributes?.defaultValue ? field.attributes?.defaultValue : field.attributes?.default_values;
+    const defaultValue = field.attributes?.defaultValue
+      ? field.attributes?.defaultValue
+      : field.attributes?.default_values;
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
@@ -75,6 +80,7 @@ const FormElementGenerator = ({
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
+  // console.log('defaultValue', defaultValue)
 
   const isDisabled = useMemo(() => {
     return (
@@ -115,6 +121,7 @@ const FormElementGenerator = ({
         <RelationFormElement
           control={control}
           field={field}
+          name={field?.slug}
           setFormValue={setFormValue}
           formTableSlug={formTableSlug}
           defaultValue={defaultValue}
@@ -177,25 +184,24 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
-      
-      case "INTERNATIONAL_PHONE":
-        return (
-          <FRow label={field.label} required={field.required}>
-            <HFInternationPhone
-              control={control}
-              name={computedSlug}
-              tabIndex={field?.tabIndex}
-              fullWidth
-              required={field.required}
-              placeholder={field.attributes?.placeholder}
-              mask={"(99) 999-99-99"}
-              defaultValue={defaultValue}
-              disabled={isDisabled}
-              {...props}
-            />
-          </FRow>
-        );
-  
+
+    case "INTERNATIONAL_PHONE":
+      return (
+        <FRow label={field.label} required={field.required}>
+          <HFInternationPhone
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            required={field.required}
+            placeholder={field.attributes?.placeholder}
+            mask={"(99) 999-99-99"}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
 
     case "INTERNATION_PHONE":
       return (
@@ -521,23 +527,23 @@ const FormElementGenerator = ({
           />
         </FRow>
       );
-      
-    case "CUSTOM_IMAGE":
-      return (
-        <FRow label={field.label} required={field.required}>
-          <HFCustomImage
-            control={control}
-            name={computedSlug}
-            fullWidth
-            required={field.required}
-            placeholder={field.attributes?.placeholder}
-            defaultValue={defaultValue}
-            tabIndex={field?.tabIndex}
-            disabled={isDisabled}
-            {...props}
-          />
-        </FRow>
-      );
+
+    // case "CUSTOM_IMAGE":
+    //   return (
+    //     <FRow label={field.label} required={field.required}>
+    //       <HFCustomImage
+    //         control={control}
+    //         name={computedSlug}
+    //         fullWidth
+    //         required={field.required}
+    //         placeholder={field.attributes?.placeholder}
+    //         defaultValue={defaultValue}
+    //         tabIndex={field?.tabIndex}
+    //         disabled={isDisabled}
+    //         {...props}
+    //       />
+    //     </FRow>
+    //   );
 
     case "ICON":
       return (
@@ -663,6 +669,25 @@ const FormElementGenerator = ({
             placeholder={field?.attributes?.show_label ? '' : field.label}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            InputProps={{
+              style: isDisabled
+                ? {
+                    background: "#c0c0c039",
+                    paddingRight: "0px",
+                  }
+                : {
+                    background: "inherit",
+                    color: "inherit",
+                  },
+
+              endAdornment: isDisabled && (
+                <Tooltip title="This field is disabled for this role!">
+                  <InputAdornment position="start">
+                    <Lock style={{ fontSize: "20px" }} />
+                  </InputAdornment>
+                </Tooltip>
+              ),
+            }}
             {...props}
           />
         </FRow>

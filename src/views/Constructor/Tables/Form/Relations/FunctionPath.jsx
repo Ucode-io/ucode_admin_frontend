@@ -17,7 +17,11 @@ function FunctionPath({ control, watch, functions, setValue }) {
       </div>
       <div className="p-2">
         <div className={styles.input_control}>
-          <HFSelect control={control} name="function_path" options={functions} />
+          <HFSelect
+            control={control}
+            name="function_path"
+            options={functions}
+          />
 
           <Button onClick={clear}>Clear Function</Button>
         </div>

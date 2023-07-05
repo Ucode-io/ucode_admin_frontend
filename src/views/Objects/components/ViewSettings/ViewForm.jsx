@@ -58,7 +58,6 @@ const ViewForm = ({
   const type = form.watch("type");
   const relationObjInput = form.watch("relation_obj");
   const numberFieldInput = form.watch("number_field");
-
   useEffect(() => {
     if (relationObjInput && numberFieldInput) {
       setIsBalanceExist(true);
@@ -164,7 +163,8 @@ const ViewForm = ({
     setBtnLoader(true);
     const computedValues = {
       ...values,
-      columns: values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
+      columns:
+        values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
       quick_filters:
         values.quick_filters
           ?.filter((el) => el.is_checked)
@@ -172,7 +172,11 @@ const ViewForm = ({
             field_id: el.id,
             default_value: el.default_value ?? "",
           })) ?? [],
-      attributes: computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
+      attributes: computeFinancialAcc(
+        values.chartOfAccounts,
+        values?.group_by_field_selected?.slug,
+        values
+      ),
       app_id: appId,
     };
 
@@ -222,6 +226,7 @@ const ViewForm = ({
               <Tab>Information</Tab>
               <Tab>Quick filters</Tab>
               <Tab>Columns</Tab>
+              <Tab>Navigation</Tab>
               {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
               {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
             </TabList>
@@ -265,11 +270,17 @@ const ViewForm = ({
 
               <MultipleInsertSettings form={form} columns={columns} />
 
-              {type === "CALENDAR" && <CalendarSettings form={form} columns={columns} />}
+              {type === "CALENDAR" && (
+                <CalendarSettings form={form} columns={columns} />
+              )}
 
-              {type === "CALENDAR HOUR" && <CalendarHourSettings form={form} columns={columns} />}
+              {type === "CALENDAR HOUR" && (
+                <CalendarHourSettings form={form} columns={columns} />
+              )}
 
-              {type === "GANTT" && <GanttSettings form={form} columns={columns} />}
+              {type === "GANTT" && (
+                <GanttSettings form={form} columns={columns} />
+              )}
             </TabPanel>
             <TabPanel>
               <QuickFiltersTab form={form} />
@@ -367,10 +378,17 @@ const getInitialValues = (
     },
     columns: computeColumns(initialValues?.columns, columns),
     quick_filters:
-      computeQuickFilters(initialValues?.quick_filters, initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT" ? [...columns, ...relationColumns] : columns) ?? [],
+      computeQuickFilters(
+        initialValues?.quick_filters,
+        initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT"
+          ? [...columns, ...relationColumns]
+          : columns
+      ) ?? [],
     group_fields: computeGroupFields(
       initialValues?.group_fields,
-      initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT" ? [...columns, ...relationColumns] : columns
+      initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT"
+        ? [...columns, ...relationColumns]
+        : columns
     ),
     navigate: {
       params: navigate?.params,

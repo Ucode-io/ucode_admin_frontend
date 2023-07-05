@@ -7,6 +7,7 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import TableRowForm from "./TableRowForm";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
+import { useNavigate } from "react-router-dom";
 const TableRow = ({
   row,
   key,
@@ -42,6 +43,7 @@ const TableRow = ({
     }
     return "transparent";
   };
+  const navigate = useNavigate();
   if (formVisible)
     return (
       <TableRowForm
@@ -197,9 +199,15 @@ const TableRow = ({
           <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
             <RectangleIconButton
               color="error"
-              onClick={() =>
-                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-              }
+              onClick={() => {
+                onDeleteClick(row, rowIndex);
+                remove(rowIndex);
+                navigate("/reloadRelations", {
+                  state: {
+                    redirectUrl: window.location.pathname,
+                  },
+                });
+              }}
             >
               <Delete color="error" />
             </RectangleIconButton>
@@ -261,9 +269,15 @@ const TableRow = ({
           <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
             <RectangleIconButton
               color="error"
-              onClick={() =>
-                row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-              }
+              onClick={() => {
+                onDeleteClick(row, rowIndex);
+                remove(rowIndex);
+                navigate("/reloadRelations", {
+                  state: {
+                    redirectUrl: window.location.pathname,
+                  },
+                });
+              }}
             >
               <Delete color="error" />
             </RectangleIconButton>

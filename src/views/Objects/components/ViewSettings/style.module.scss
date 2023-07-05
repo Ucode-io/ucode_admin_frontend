@@ -54,10 +54,11 @@
   min-width: 500px;
   border: none;
 
-  .wrapper{
+  .wrapper {
     display: flex;
     align-items: center;
   }
+
   .header {
     display: flex;
     justify-content: space-between;
@@ -83,7 +84,7 @@
       padding: 16px 24px;
       gap: 8px;
 
-      button{
+      button {
         margin: 0;
         display: flex;
         align-items: center;
@@ -202,6 +203,7 @@
           display: flex;
           align-items: center;
           gap: 30px;
+
           fieldset {
             border-radius: 6px;
           }
@@ -309,11 +311,13 @@
     justify-content: center;
     align-items: center;
     position: relative;
-    button{
+
+    button {
       margin: 0;
       z-index: 1;
     }
-    span{
+
+    span {
       display: block;
       border-radius: 50%;
       background-color: #F76659;
@@ -397,7 +401,8 @@
     display: flex;
     align-items: center;
     width: max-content;
-    svg{
+
+    svg {
       margin-right: 8px;
       width: 24px;
       height: 24px;
@@ -406,7 +411,7 @@
     p {
 
 
-      &:hover{
+      &:hover {
         color: #0e73f6;
       }
     }
@@ -415,4 +420,28 @@
 
 .switchControls {
   display: flex;
+}
+
+.navigateWrap {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 200px;
+  height: 35px;
+  background: #0e73f6;
+  border: none;
+  color: #fff;
+  border-radius: 5px;
+  margin: 15px 0 0 0;
 }

@@ -295,7 +295,6 @@ const NewRelationSection = ({
         setData(layout);
       });
   }, [tableSlug, menuItem.table_id]);
-  console.log('data', data)
 
   // ifcc (!data?.length) return null;
   return (

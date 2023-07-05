@@ -57,6 +57,7 @@ const RelationSection = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -65,6 +66,7 @@ const RelationSection = ({
   const [dataLength, setDataLength] = useState(0);
   const [heightControl, setHeightControl] = useState(false);
   const [moreShowButton, setMoreShowButton] = useState(false);
+  // const [selectedRelation, setSelectedRelation] = useState({});
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   let [searchParams] = useSearchParams();
@@ -274,7 +276,9 @@ const RelationSection = ({
         <Card className={styles.card}>
           <Tabs
             selectedIndex={selectedTabIndex}
-            onSelect={(index) => setSelectedTabIndex(index)}
+            onSelect={(index) => {
+              setSelectedTabIndex(index)
+            }}
           >
             <div className={styles.cardHeader}>
               <TabList className={styles.tabList}>
@@ -303,15 +307,22 @@ const RelationSection = ({
                   tableSlug={selectedRelation?.relatedTable}
                   selectedObjects={selectedObjects}
                   setSelectedObjects={setSelectedObjects}
-                />
-                <RectangleIconButton
-                  color="success"
-                  size="small"
-                  onClick={navigateToCreatePage}
-                  disabled={!id}
+                /> */}
+                {!selectedRelation?.relation_buttons && 
+                <PermissionWrapperV2
+                  tableSlug={filteredRelations?.[0]?.relatedTable}
+                  type={"write"}
                 >
-                  <Add style={{ color: "#007AFF" }} />
-                </RectangleIconButton>
+                  <RectangleIconButton
+                    color="success"
+                    size="small"
+                    onClick={navigateToCreatePage}
+                    disabled={!id}
+                  >
+                    <Add style={{ color: "#007AFF" }} />
+                  </RectangleIconButton>
+                </PermissionWrapperV2>
+                 } 
 
                 {/*<RectangleIconButton
                     color="white"
@@ -372,17 +383,24 @@ const RelationSection = ({
                   </>
                 ) : (
                   fields.length > 0 && (
-                    <RectangleIconButton
-                      color="success"
-                      size="small"
-                      onClick={() => {
-                        setFormVisible(true);
-                        reset();
-                      }}
+                    !selectedRelation?.relation_buttons && 
+                      <PermissionWrapperV2
+                      type="edit"
+                      tableSlug={filteredRelations?.[0]?.relatedTable}
                     >
-                      <Edit color="primary" />
-                    </RectangleIconButton>
+                      <RectangleIconButton
+                        color="success"
+                        size="small"
+                        onClick={() => {
+                          setFormVisible(true);
+                          reset();
+                        }}
+                      >
+                        <Edit color="primary" />
+                      </RectangleIconButton>
+                    </PermissionWrapperV2>
                   )
+
                 )}
 
                 <DocumentGeneratorButton />

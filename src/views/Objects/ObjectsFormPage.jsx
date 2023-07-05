@@ -114,7 +114,10 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
+          relatedTable:
+            relation.table_from?.slug === tableSlug
+              ? relation.table_to?.slug
+              : relation.table_from?.slug,
         }))
       );
 
@@ -141,7 +144,8 @@ const ObjectsFormPage = () => {
         // relation_table_slug: tableSlug
       });
 
-      const [{ sections = [] }, { relations: view_relations = [] }] = await Promise.all([getSections, getRelations]);
+      const [{ sections = [] }, { relations: view_relations = [] }] =
+        await Promise.all([getSections, getRelations]);
 
       setSections(sortSections(sections));
 
@@ -154,7 +158,10 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
+          relatedTable:
+            relation.table_from?.slug === tableSlug
+              ? relation.table_to?.slug
+              : relation.table_from?.slug,
         }))
       );
     } catch (error) {
@@ -191,7 +198,8 @@ const ObjectsFormPage = () => {
         navigate(-1);
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
-        if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
+        if (tableRelations?.length)
+          navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
@@ -288,7 +296,11 @@ const ObjectsFormPage = () => {
                 </PrimaryButton>
               ))} */}
               <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
+                <PrimaryButton
+                  loader={btnLoader}
+                  id="submit"
+                  onClick={handleSubmit(onSubmit)}
+                >
                   <Save />
                   Сохранить
                 </PrimaryButton>

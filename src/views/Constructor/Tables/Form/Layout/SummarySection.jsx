@@ -1,4 +1,4 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -70,8 +70,10 @@ const SummarySection = ({
   return (
     <div className={styles.summarySection}>
       <div className={styles.summaySectionTitle}>
-          <span onClick={() => setSelectedLayout({})}><ArrowBackIcon/></span>
-          <h2>{selectedLayout?.label}</h2>
+        <span onClick={() => setSelectedLayout({})}>
+          <ArrowBackIcon />
+        </span>
+        <h2>{selectedLayout?.label}</h2>
       </div>
       <Container
         style={{ minHeight: 20, minWidth: "100%", display: "flex" }}

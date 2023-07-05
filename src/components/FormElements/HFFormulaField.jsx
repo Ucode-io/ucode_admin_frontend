@@ -55,7 +55,7 @@ const HFFormulaField = ({ control, name, tabIndex, rules = {}, setFormValue = ()
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
-          value={formulaIsVisible ? formula : typeof value === "number" ? numberWithSpaces(value) : ""}
+          value={formulaIsVisible ? formula : typeof value === "number" ? numberWithSpaces(parseFloat(value).toFixed(2)) : ""}
           name={name}
           onChange={(e) => {
             const val = e.target.value;

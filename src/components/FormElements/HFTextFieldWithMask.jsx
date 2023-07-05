@@ -1,8 +1,10 @@
+import { Lock } from "@mui/icons-material";
+import { InputAdornment, TextField, Tooltip } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Controller } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
-import styles from './style.module.scss'
-import 'react-phone-number-input/style.css'
+import styles from "./style.module.scss";
+import "react-phone-number-input/style.css";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -11,8 +13,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-
-
 
 const HFTextFieldWithMask = ({
   control,
@@ -78,7 +78,7 @@ const HFTextFieldWithMask = ({
           international
           className={styles.phoneNumber}
           name={name}
-          />
+        />
       )}
     ></Controller>
   );

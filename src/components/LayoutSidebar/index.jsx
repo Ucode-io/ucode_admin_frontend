@@ -32,7 +32,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     (state) => state.main.settingsSidebarIsOpen
   );
   const projectId = useSelector((state) => state.auth.projectId);
-
+  const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -71,7 +71,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
       enabled: Boolean(appId),
       onSuccess: (res) => {
         setChild(res.menus);
-        setSubMenuIsOpen(true);
       },
     },
   });
@@ -158,6 +157,10 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   useEffect(() => {
     setSelectedApp(menuList?.menus?.find((item) => item?.id === appId));
   }, [menuList]);
+
+  useEffect(() => {
+    if (selectedApp?.type === "FOLDER" && pinIsEnabled) setSubMenuIsOpen(true);
+  }, [selectedApp]);
 
   const { data: projectInfo } = useQuery(
     ["GET_PROJECT_BY_ID", projectId],
@@ -265,7 +268,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                             subMenuIsOpen={subMenuIsOpen}
                             handleOpenNotify={handleOpenNotify}
                             setSelectedApp={setSelectedApp}
-                            environment={environment}
                             selectedApp={selectedApp}
                           />
                         ))}

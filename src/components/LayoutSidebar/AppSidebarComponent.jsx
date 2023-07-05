@@ -19,10 +19,8 @@ const AppSidebar = ({
   setSubMenuIsOpen,
   handleOpenNotify,
   setSelectedApp,
-  environment,
   selectedApp,
 }) => {
-  const { appId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const clickHandler = () => {
@@ -36,10 +34,10 @@ const AppSidebar = ({
       setSubMenuIsOpen(false);
       navigate(`/main/${element?.id}/object/${element?.data?.table?.slug}`);
     } else if (element.type === "MICROFRONTEND") {
-      navigate(`/main/${appId}/page/${element?.data?.microfrontend?.id}`);
+      navigate(`/main/${element?.id}/page/${element?.data?.microfrontend?.id}`);
       setSubMenuIsOpen(false);
     } else if (element.type === "WEBPAGE") {
-      navigate(`/main/${appId}/web-page/${element?.data?.webpage?.id}`);
+      navigate(`/main/${element?.id}/web-page/${element?.data?.webpage?.id}`);
       setSubMenuIsOpen(false);
     }
   };
@@ -115,11 +113,25 @@ const AppSidebar = ({
               handleOpenNotify(e, "TABLE");
               setElement(element);
             }}
-            style={{
-              color:
-                selectedApp?.id === element?.id
-                  ? environment?.data?.active_color
-                  : environment?.data?.color,
+          />
+        )}
+        {element?.type === "MICROFRONTEND" && (
+          <MenuIcon
+            title="Microfrontend settings"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenNotify(e, "MICROFRONTEND");
+              setElement(element);
+            }}
+          />
+        )}
+        {element?.type === "WEBPAGE" && (
+          <MenuIcon
+            title="Webpage settings"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleOpenNotify(e, "WEBPAGE");
+              setElement(element);
             }}
           />
         )}

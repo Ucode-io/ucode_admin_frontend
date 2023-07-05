@@ -211,7 +211,7 @@ const ObjectsFormPage = () => {
     if (!tableInfo) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo, tableSlug]);
+  }, [id, tableInfo, selectedTabIndex]);
 
   // Automatic setValue for End of Session
 
@@ -224,7 +224,6 @@ const ObjectsFormPage = () => {
 
   // if (loader) return <PageFallback />;
 
-  console.log("summary", summary);
   return (
     <div className={styles.formPage}>
       <FiltersBlock

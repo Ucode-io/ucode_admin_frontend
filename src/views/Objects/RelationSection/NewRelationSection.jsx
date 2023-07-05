@@ -180,8 +180,6 @@ const NewRelationSection = ({
     },
   ];
 
-  
-
   const relationFieldSlug = useMemo(() => {
     return relations.find((item) => item?.type === "Many2Dynamic");
   }, [relations]);
@@ -222,7 +220,6 @@ const NewRelationSection = ({
   
   const computedSections = useMemo(() => {
     const sections = [];
-
     data?.map((relation) => {
       relation?.tabs?.[selectedTabIndex]?.sections?.map((el) => {
         if (!sections?.[el]) {
@@ -231,7 +228,7 @@ const NewRelationSection = ({
       });
     });
     return sections;
-  }, [data, selectedTabIndex]);
+  }, [data]);
 
   useEffect(() => {
     getRelatedTabeSlug &&
@@ -298,13 +295,13 @@ const NewRelationSection = ({
       )}
       {data?.length ? (
         <Card className={styles.card}>
-          {data?.map((relation, index) => (
-            <Tabs className={"react_detail"} selectedIndex={selectedTabIndex} onSelect={(index) => setSelectedTabIndex(index)}>
+          {data?.map((relation) => (
+            <Tabs key={relation.id} className={"react_detail"} selectedIndex={selectedTabIndex} onSelect={(index) => setSelectedTabIndex(index)}>
               <div className={styles.cardHeader}>
                 <TabList className={styles.tabList}>
                   {relation?.tabs?.map((el, index) => (
                     <Tab
-                      key={index}
+                      key={el.id}
                       className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
                       onClick={() => {
                         setSelectedIndex(index);
@@ -447,7 +444,7 @@ const NewRelationSection = ({
               </div>
 
               {relation?.tabs?.map((el, index) => (
-                <TabPanel>
+                <TabPanel key={el.id}>
                   {!selectedTab?.relation_id ? (
                     <NewMainInfo
                       control={control}

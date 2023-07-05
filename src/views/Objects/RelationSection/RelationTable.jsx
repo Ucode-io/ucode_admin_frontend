@@ -128,7 +128,7 @@ const RelationTable = forwardRef(
       {
         enabled: !!relatedTableSlug && !!appId,
         select: ({ data }) => {
-          console.log('select data => ', data)
+          console.log("select data => ", data);
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount = isNaN(data?.count) || tableData.length === 0 ? 1 : Math.ceil(data.count / limit);
           setDataLength(tableData.length);
@@ -157,13 +157,10 @@ const RelationTable = forwardRef(
     }, [getRelatedTabeSlug?.default_limit]);
 
     useEffect(() => {
-      setTimeout(() => {
-        console.log('data', tableData)
-        reset({
-          multi: tableData?.length ? tableData.map((i) => i) : [],
-        });
-      }, 0);
-    }, [tableData, reset, selectedTabIndex]);
+      reset({
+        multi: tableData?.length ? tableData.map((i) => i) : [],
+      });
+    }, [tableData]);
 
     const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {
@@ -238,7 +235,7 @@ const RelationTable = forwardRef(
       }),
       [pageCount, filters, currentPage, limit]
     );
-
+    
     return (
       <div className={styles.relationTable} ref={tableRef}>
         {!!quickFilters?.length && (

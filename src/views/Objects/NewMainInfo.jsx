@@ -31,7 +31,7 @@ const MainInfo = ({ computedSections, control, setFormValue, relatedTable, relat
             <NewFormCard key={section.id} title={section.label} className={styles.formCard} icon={section.icon}>
               <div className={styles.newformColumn}>
                 {section.fields?.map((field) => (
-                  <Box style={{minWidth: '300px'}}>
+                  <Box style={{minWidth: '250px', display: 'flex', alignItems: 'flex-start'}}>
                     <FormElementGenerator
                       key={field.id}
                       field={field}

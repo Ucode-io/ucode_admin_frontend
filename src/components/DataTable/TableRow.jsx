@@ -34,15 +34,6 @@ const TableRow = ({
   onChecked,
   relationFields,
 }) => {
-  const colorCell = (num) => {
-    if (num === 0) {
-      return "rgba(3, 172, 19,0.5)";
-    }
-    if (num < 0 || num > 0) {
-      return "rgba(254 , 0, 0,0.5)";
-    }
-    return "transparent";
-  };
   const navigate = useNavigate();
   if (formVisible)
     return (
@@ -79,20 +70,10 @@ const TableRow = ({
           }}
         >
           <CTableCell align="center" className="data_table__number_cell">
-            <span className="data_table__row_number">
-              {(currentPage - 1) * limit + rowIndex + 1}
-            </span>
+            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
             {onCheckboxChange && (
-              <div
-                className={`data_table__row_checkbox ${
-                  isChecked(row) ? "checked" : ""
-                }`}
-              >
-                <Checkbox
-                  checked={isChecked(row)}
-                  onChange={(_, val) => onCheckboxChange(val, row)}
-                  onClick={(e) => e.stopPropagation()}
-                />
+              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
+                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
               </div>
             )}
           </CTableCell>
@@ -104,22 +85,10 @@ const TableRow = ({
               style={{
                 minWidth: "max-content",
                 padding: "0 4px",
-                position: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "sticky"
-                  : "relative",
-                left: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? calculateWidth(column?.id, index)
-                  : "0",
+                position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
+                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
                 backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "1"
-                  : "",
+                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
               }}
             >
               <CellElementGenerator field={column} row={row} />
@@ -128,12 +97,7 @@ const TableRow = ({
           <td>
             <div style={{ display: "flex", gap: "5px", padding: "3px" }}>
               <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
-                <RectangleIconButton
-                  color="error"
-                  onClick={() =>
-                    row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-                  }
-                >
+                <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
                   <Delete color="error" />
                 </RectangleIconButton>
               </PermissionWrapperV2>
@@ -142,28 +106,17 @@ const TableRow = ({
             </div>
           </td>
         </CTableRow>
-      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
-        !relationAction?.action_relations ? (
+      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" || !relationAction?.action_relations ? (
         <CTableRow
           onClick={() => {
             onRowClick(row, rowIndex);
           }}
         >
           <CTableCell align="center" className="data_table__number_cell">
-            <span className="data_table__row_number">
-              {(currentPage - 1) * limit + rowIndex + 1}
-            </span>
+            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
             {onCheckboxChange && (
-              <div
-                className={`data_table__row_checkbox ${
-                  isChecked(row) ? "checked" : ""
-                }`}
-              >
-                <Checkbox
-                  checked={isChecked(row)}
-                  onChange={(_, val) => onCheckboxChange(val, row)}
-                  onClick={(e) => e.stopPropagation()}
-                />
+              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
+                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
               </div>
             )}
           </CTableCell>
@@ -175,22 +128,9 @@ const TableRow = ({
               style={{
                 minWidth: "max-content",
                 padding: "0 4px",
-                position: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "sticky"
-                  : "relative",
-                left: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? calculateWidth(column?.id, index)
-                  : "0",
-                zIndex: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "1"
-                  : "",
-                backgroundColor: colorCell(row?.difference) || "#fff",
+                position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
+                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
+                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
               }}
             >
               <CellElementGenerator field={column} row={row} />
@@ -220,20 +160,10 @@ const TableRow = ({
           }}
         >
           <CTableCell align="center" className="data_table__number_cell">
-            <span className="data_table__row_number">
-              {(currentPage - 1) * limit + rowIndex + 1}
-            </span>
+            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
             {onCheckboxChange && (
-              <div
-                className={`data_table__row_checkbox ${
-                  isChecked(row) ? "checked" : ""
-                }`}
-              >
-                <Checkbox
-                  checked={isChecked(row)}
-                  onChange={(_, val) => onCheckboxChange(val, row)}
-                  onClick={(e) => e.stopPropagation()}
-                />
+              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
+                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
               </div>
             )}
           </CTableCell>
@@ -245,22 +175,10 @@ const TableRow = ({
               style={{
                 minWidth: "max-content",
                 padding: "0 4px",
-                position: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "sticky"
-                  : "relative",
-                left: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? calculateWidth(column?.id, index)
-                  : "0",
+                position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
+                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
                 backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "1"
-                  : "",
+                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
               }}
             >
               <CellElementGenerator field={column} row={row} />

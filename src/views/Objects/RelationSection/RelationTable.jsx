@@ -15,6 +15,7 @@ import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import { useSelector } from "react-redux";
 import { useWatch } from "react-hook-form";
+import PageFallback from "../../../components/PageFallback";
 
 const RelationTable = forwardRef(
   (
@@ -26,6 +27,7 @@ const RelationTable = forwardRef(
       remove,
       setCreateFormVisible,
       watch,
+      loader,
       selectedObjects,
       setSelectedObjects,
       tableSlug,
@@ -57,8 +59,6 @@ const RelationTable = forwardRef(
         [name]: value ?? undefined,
       });
     };
-
-    console.log("ssssssssss", fields);
 
     const getRelatedTabeSlug = useMemo(() => {
       return relation?.find((el) => el?.id === selectedTab?.relation_id);
@@ -128,7 +128,6 @@ const RelationTable = forwardRef(
       {
         enabled: !!relatedTableSlug && !!appId,
         select: ({ data }) => {
-          console.log("select data => ", data);
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount = isNaN(data?.count) || tableData.length === 0 ? 1 : Math.ceil(data.count / limit);
           setDataLength(tableData.length);
@@ -157,11 +156,15 @@ const RelationTable = forwardRef(
     }, [getRelatedTabeSlug?.default_limit]);
 
     useEffect(() => {
-      reset({
-        multi: tableData?.length ? tableData.map((i) => i) : [],
-      });
-    }, [tableData]);
+      setFormValue("multi", tableData);
+    }, [selectedTab, tableData]);
 
+    const a = useWatch({
+      control
+    });
+
+    console.log('awdawdawdawd', a)
+ 
     const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {
         if (getRelatedTabeSlug.type === "Many2Many") {
@@ -235,7 +238,7 @@ const RelationTable = forwardRef(
       }),
       [pageCount, filters, currentPage, limit]
     );
-    
+    if(loader) return <PageFallback />
     return (
       <div className={styles.relationTable} ref={tableRef}>
         {!!quickFilters?.length && (

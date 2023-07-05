@@ -8,8 +8,9 @@ import IconGenerator from "@/components/IconPicker/IconGenerator";
 import { Box, Tooltip } from "@mui/material";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import NewFormCard from "./components/NewFormCard";
+import PageFallback from "../../components/PageFallback";
 
-const MainInfo = ({ computedSections, control, setFormValue, relatedTable, relation, selectedTabIndex, selectedTab, selectedIndex }) => {
+const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTable, relation, selectedTabIndex, selectedTab, selectedIndex }) => {
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
   const fieldsList = useMemo(() => {
@@ -22,6 +23,8 @@ const MainInfo = ({ computedSections, control, setFormValue, relatedTable, relat
     });
     return fields;
   }, [relation]);
+
+  if(loader) return <PageFallback />
 
   return (
     <div className={styles.newcontainer}>

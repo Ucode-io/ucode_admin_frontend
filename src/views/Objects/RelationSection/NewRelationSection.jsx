@@ -27,11 +27,13 @@ import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import styles from "./style.module.scss";
 import { store } from "../../../store";
+import PageFallback from "../../../components/PageFallback";
 
 const NewRelationSection = ({
   selectedTabIndex,
   setSelectedTabIndex,
   relations,
+  loader,
   tableSlug: tableSlugFromProps,
   id: idFromProps,
   limit,
@@ -43,6 +45,8 @@ const NewRelationSection = ({
   reset,
   setFormValue,
   watch,
+  setSelectTab,
+  selectedTab
 }) => {
   const [data, setData] = useState([]);
 
@@ -69,7 +73,7 @@ const NewRelationSection = ({
   const [moreShowButton, setMoreShowButton] = useState(false);
   const [defaultValuesFromJwt, setDefaultValuesFromJwt] = useState({});
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedTab, setSelectTab] = useState();
+
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
   let [searchParams] = useSearchParams();
   const dispatch = useDispatch();
@@ -209,11 +213,11 @@ const NewRelationSection = ({
   );
   const onSubmit = (data) => {
     updateMultipleObject(data);
-    navigate("/reloadRelations", {
-      state: {
-        redirectUrl: window.location.pathname,
-      },
-    });
+    // navigate("/reloadRelations", {
+    //   state: {
+    //     redirectUrl: window.location.pathname,
+    //   },
+    // });
   };
 
   /*****************************JWT START*************************/
@@ -286,7 +290,6 @@ const NewRelationSection = ({
         setData(layout);
       });
   }, [tableSlug, menuItem.table_id]);
-
   // ifcc (!data?.length) return null;
   return (
     <>
@@ -448,6 +451,7 @@ const NewRelationSection = ({
                   {!selectedTab?.relation_id ? (
                     <NewMainInfo
                       control={control}
+                      loader={loader}
                       computedSections={computedSections}
                       setFormValue={setFormValue}
                       relatedTable={relatedTable}
@@ -471,6 +475,7 @@ const NewRelationSection = ({
                   ) : (
                     <RelationTable
                       ref={myRef}
+                      loader={loader}
                       setFieldSlug={setFieldSlug}
                       setDataLength={setDataLength}
                       shouldGet={shouldGet}

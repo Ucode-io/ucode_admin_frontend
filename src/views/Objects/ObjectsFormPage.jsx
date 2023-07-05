@@ -121,7 +121,7 @@ const ObjectsFormPage = () => {
           relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
-      console.log("ssssssssqqqqq", data);
+      
 
       reset(data.response ?? {});
       // const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)

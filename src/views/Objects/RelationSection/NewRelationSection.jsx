@@ -9,7 +9,7 @@ import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Card } from "@mui/material";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, useWatch } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";

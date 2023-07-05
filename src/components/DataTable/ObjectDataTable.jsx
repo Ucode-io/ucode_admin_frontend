@@ -201,7 +201,7 @@ const ObjectDataTable = ({
     }
   }, [formVisible]);
 
-  console.log('ssssssss', fields)
+  console.log('viewPermission', fields)
 
   return (
     <CTable

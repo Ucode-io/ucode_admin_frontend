@@ -40,6 +40,7 @@ const ObjectsFormPage = () => {
   const [sections, setSections] = useState([]);
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
+  const [selectedTab, setSelectTab] = useState();
 
   const {
     handleSubmit,
@@ -78,10 +79,9 @@ const ObjectsFormPage = () => {
     // const getSections = constructorSectionService.getList({
     //   table_slug: tableSlug,
     // });
-
+    setLoader(true);
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
-      awdawdawd: "awdawdawd",
     });
 
     const getFormData = constructorObjectService.getById(tableSlug, id);
@@ -121,9 +121,8 @@ const ObjectsFormPage = () => {
           relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
-      
 
-      reset(data.response ?? {});
+      if (!selectedTab?.relation_id) reset(data?.response ?? {});
       // const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)
 
       // if (!hasCurrentTab) addNewTab(appId, tableSlug, id, data.response)
@@ -211,7 +210,7 @@ const ObjectsFormPage = () => {
     if (!tableInfo) return;
     if (id) getAllData();
     else getFields();
-  }, [id, tableInfo, tableSlug]);
+  }, [id, tableInfo, selectedTabIndex]);
 
   // Automatic setValue for End of Session
 
@@ -224,7 +223,6 @@ const ObjectsFormPage = () => {
 
   // if (loader) return <PageFallback />;
 
-  console.log("summary", summary);
   return (
     <div className={styles.formPage}>
       <FiltersBlock
@@ -266,6 +264,9 @@ const ObjectsFormPage = () => {
           reset={reset}
           setFormValue={setFormValue}
           watch={watch}
+          loader={loader}
+          setSelectTab={setSelectTab}
+          selectedTab={selectedTab}
           computedSections={computedSections}
           relatedTable={tableRelations[selectedTabIndex]?.relatedTable}
           id={id}

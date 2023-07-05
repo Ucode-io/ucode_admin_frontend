@@ -100,8 +100,10 @@ const RecursiveBlock = ({
               navigate(
                 `/main/${appId}/page/${element?.data?.microfrontend?.id}`
               );
-            element.type === "WEBPAGE" &&
+            if (element.type === "WEBPAGE") {
               navigate(`/main/${appId}/web-page/${element?.data?.webpage?.id}`);
+              window.location.reload();
+            }
             clickHandler();
             setElement(element);
             dispatch(menuActions.setMenuItem(element));

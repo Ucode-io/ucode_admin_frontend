@@ -1,5 +1,5 @@
 import { Logout, Settings } from "@mui/icons-material";
-import { Menu } from "@mui/material";
+import { Divider, Menu } from "@mui/material";
 import { useState } from "react";
 import { useAliveController } from "react-activation";
 import { useDispatch } from "react-redux";
@@ -27,9 +27,8 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
   const openMenu = (event) => {
     setProfileAnchorEl(event.currentTarget);
     setAnchorEl(event.currentTarget);
-
   };
-  
+
   const logoutClickHandler = () => {
     dispatch(authActions.logout());
     closeMenu();
@@ -54,7 +53,7 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
       >
         <div className={styles.scrollBlocksss}>
           <div className={styles.menuItem} onClick={handleClick}>
-            <KeyIcon className={styles.dragIcon} />
+            {/* <KeyIcon className={styles.dragIcon} /> */}
 
             <p className={styles.itemText}>Api Keys</p>
           </div>
@@ -64,7 +63,7 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
               navigate(`/settings/auth/matrix/profile/crossed`);
             }}
           >
-            <Settings className={styles.dragIcon} />
+            {/* <Settings className={styles.dragIcon} /> */}
 
             <p className={styles.itemText}>Profile settings</p>
           </div>
@@ -74,7 +73,7 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
               navigate(`/analytics/dashboard`);
             }}
           >
-            <AnalyticsIcon className={styles.dragIcon} />
+            {/* <AnalyticsIcon className={styles.dragIcon} /> */}
 
             <p className={styles.itemText}>Аналитика</p>
           </div>
@@ -84,15 +83,23 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
               navigate(`/settings/constructor/apps`);
             }}
           >
-            <Settings className={styles.dragIcon} />
+            {/* <Settings className={styles.dragIcon} /> */}
 
             <p className={styles.itemText}>Настройки</p>
           </div>
 
           <div className={styles.menuItem} onClick={logoutClickHandler}>
-            <Logout className={styles.dragIcon} />
+            {/* <Logout className={styles.dragIcon} /> */}
 
             <p className={styles.itemText}>Logout</p>
+          </div>
+        </div>
+        <Divider />
+        <div className={styles.scrollBlocksss}>
+          <div className={styles.menuItem} onClick={handleClick}>
+            {/* <KeyIcon className={styles.dragIcon} /> */}
+
+            <p className={styles.itemText}>Menu settings</p>
           </div>
         </div>
       </Menu>

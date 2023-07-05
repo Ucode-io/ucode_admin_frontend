@@ -37,7 +37,7 @@ const ManyToManyRelationFormElement = ({
 
   if (!isLayout)
     return (
-      <FRow label={field.label} required={field.required}>
+      <FRow label={field.label ?? " "} required={field.required}>
         <Controller
           control={control}
           name={name || `${tableSlug}_ids`}

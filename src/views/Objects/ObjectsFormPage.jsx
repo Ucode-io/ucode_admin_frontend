@@ -135,16 +135,21 @@ const ObjectsFormPage = () => {
 
   const getFields = async () => {
     try {
-      const getSections = constructorSectionService.getList({
-        table_slug: tableSlug,
-      });
+      // const getSections = constructorSectionService.getList({
+      //   table_slug: tableSlug,
+      // });
 
       const getRelations = constructorViewRelationService.getList({
         table_slug: tableSlug,
         // relation_table_slug: tableSlug
       });
 
-      const [{ sections = [] }, { relations: view_relations = [] }] = await Promise.all([getSections, getRelations]);
+      const [
+        // { sections = [] }, 
+        { relations: view_relations = [] }
+      ] = await Promise.all([
+        // getSections, 
+        getRelations]);
 
       setSections(sortSections(sections));
 

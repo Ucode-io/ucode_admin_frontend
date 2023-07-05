@@ -13,12 +13,15 @@ import PageFallback from "../../components/PageFallback";
 const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTable, relation, selectedTabIndex, selectedTab, selectedIndex }) => {
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
+
   const fieldsList = useMemo(() => {
     const fields = [];
 
-    relation?.tabs.sections?.forEach((section) => {
-      section.forEach((field) => {
-        fields.push(field);
+    relation?.tabs?.forEach((tab) => {
+      tab?.sections?.forEach((section) => {
+        section?.fields?.forEach((field) => {
+          fields.push(field);
+        });
       });
     });
     return fields;
@@ -31,7 +34,12 @@ const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTabl
       {isShow ? (
         <div className={styles.newmainCardSide}>
           {computedSections.map((section) => (
-            <NewFormCard key={section.id} title={section.label} className={styles.formCard} icon={section.icon}>
+            <NewFormCard
+              key={section.id}
+              title={section.label}
+              className={styles.formCard}
+              icon={section.icon}
+            >
               <div className={styles.newformColumn}>
                 {section.fields?.map((field) => (
                   <Box style={{minWidth: '250px', display: 'flex', alignItems: 'flex-start'}}>

@@ -284,6 +284,10 @@ const NewRelationSection = ({
         setData(layout);
       });
   }, [tableSlug, menuItem.table_id]);
+
+  const a = useWatch({
+    control,
+  })
   // ifcc (!data?.length) return null;
   return (
     <>
@@ -308,7 +312,6 @@ const NewRelationSection = ({
                       key={el.id}
                       className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
                       onClick={() => {
-                        console.log("awdawdawdaw", el);
                         setSelectedIndex(index);
                         onSelect(el);
                       }}

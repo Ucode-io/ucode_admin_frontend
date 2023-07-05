@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
-import HFSelect from "../../components/FormElements/HFSelect";
 import constructorTableService from "../../services/constructorTableService";
 import menuSettingsService from "../../services/menuSettingsService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
@@ -61,6 +60,7 @@ const TableLinkModal = ({
         console.log(err);
       });
   };
+
   const updateType = (data, selectedFolder) => {
     menuSettingsService
       .update({
@@ -113,7 +113,7 @@ const TableLinkModal = ({
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="form">
-            {/* <Box display={"flex"} columnGap={"16px"} className="form-elements">
+            <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
               <HFTextField
                 autoFocus
@@ -122,15 +122,8 @@ const TableLinkModal = ({
                 control={control}
                 name="label"
               />
-            </Box> */}
+            </Box>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              {/* <HFSelect
-                fullWidth
-                label="Tables"
-                control={control}
-                name="table_id"
-                options={tableOptions}
-              /> */}
               <HFAutocomplete
                 name="table_id"
                 control={control}

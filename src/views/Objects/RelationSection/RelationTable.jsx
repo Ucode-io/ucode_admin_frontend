@@ -58,6 +58,8 @@ const RelationTable = forwardRef(
       });
     };
 
+    console.log("ssssssssss", fields);
+
     const getRelatedTabeSlug = useMemo(() => {
       return relation?.find((el) => el?.id === selectedTab?.relation_id);
     }, [relation, selectedTab]);
@@ -126,6 +128,7 @@ const RelationTable = forwardRef(
       {
         enabled: !!relatedTableSlug && !!appId,
         select: ({ data }) => {
+          console.log('select data => ', data)
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount = isNaN(data?.count) || tableData.length === 0 ? 1 : Math.ceil(data.count / limit);
           setDataLength(tableData.length);
@@ -153,13 +156,14 @@ const RelationTable = forwardRef(
       else setLimit(parseInt(getRelatedTabeSlug?.default_limit));
     }, [getRelatedTabeSlug?.default_limit]);
 
-    // useEffect(() => {
-    //   setTimeout(() => {
-    //     reset({
-    //       multi: tableData?.length ? tableData.map((i) => i) : [],
-    //     });
-    //   }, 0);
-    // }, [tableData, reset, selectedTabIndex]);
+    useEffect(() => {
+      setTimeout(() => {
+        console.log('data', tableData)
+        reset({
+          multi: tableData?.length ? tableData.map((i) => i) : [],
+        });
+      }, 0);
+    }, [tableData, reset, selectedTabIndex]);
 
     const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {

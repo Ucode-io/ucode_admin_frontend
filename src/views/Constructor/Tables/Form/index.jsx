@@ -235,6 +235,10 @@ const ConstructorTablesFormPage = () => {
         } else {
           return {
             ...tab,
+            sections: tab?.sections?.map((section, index) => ({
+              ...section,
+              order: index,
+            })),
           };
         }
       }),

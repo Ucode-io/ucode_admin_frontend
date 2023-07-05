@@ -65,8 +65,6 @@ const NewSection = ({
     removeSection(index);
   };
 
-  console.log('sectionFields?.fields', sectionFields?.fields)
-
   return (
     <Card className={`${styles.newsectionCard}`}>
       <div className={styles.newsectionCardHeader}>

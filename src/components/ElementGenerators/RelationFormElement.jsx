@@ -43,8 +43,9 @@ const RelationFormElement = ({
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
 
-  if (!isLayout)
+  if (!isLayout) {
     return (
+      console.log('ssssssss', field),
       <FRow label={field?.label ?? field?.title} required={field.required}>
         <Controller
           control={control}
@@ -68,6 +69,7 @@ const RelationFormElement = ({
         />
       </FRow>
     );
+  }
 
   return (
     <Controller

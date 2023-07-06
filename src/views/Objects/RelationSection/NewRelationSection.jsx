@@ -285,9 +285,6 @@ const NewRelationSection = ({
       });
   }, [tableSlug, menuItem.table_id]);
 
-  const a = useWatch({
-    control,
-  })
   // ifcc (!data?.length) return null;
   return (
     <>

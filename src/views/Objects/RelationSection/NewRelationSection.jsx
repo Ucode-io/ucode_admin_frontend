@@ -285,7 +285,8 @@ const NewRelationSection = ({
       });
   }, [tableSlug, menuItem.table_id]);
 
-  // ifcc (!data?.length) return null;
+  // if (!data?.length) return <PageFallback />;
+  // if (loader) return <PageFallback />;
   return (
     <>
       {selectedManyToManyRelation && (
@@ -446,7 +447,7 @@ const NewRelationSection = ({
                 </div>
               </div>
 
-              {relation?.tabs?.map(
+              {loader ? <PageFallback/> : relation?.tabs?.map(
                 (el, index) => (
                   console.log("TabPanel", el),
                   (

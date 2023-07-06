@@ -201,8 +201,6 @@ const ObjectDataTable = ({
     }
   }, [formVisible]);
 
-  console.log('viewPermission', fields)
-
   return (
     <CTable
       disablePagination={disablePagination}

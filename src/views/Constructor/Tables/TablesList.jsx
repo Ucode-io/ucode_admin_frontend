@@ -84,9 +84,6 @@ const TablesList = ({ mainForm, appData, getData, setIds }) => {
           is_visible: Boolean(table.is_visible),
           is_own_table: Boolean(table.is_own_table),
         })) ?? [];
-
-        console.log('sssssssss', list, id)
-
     try {
       if (list[index]?.is_own_table) await constructorTableService.delete(id, projectId);
       else {

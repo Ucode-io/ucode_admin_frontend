@@ -271,7 +271,7 @@ const RelationTable = forwardRef(
               control={control}
               relatedTableSlug={relatedTableSlug}
               tableSlug={tableSlug}
-              removableHeight={290}
+              removableHeight={230}
               disableFilters
               pagesCount={pageCount}
               currentPage={currentPage}

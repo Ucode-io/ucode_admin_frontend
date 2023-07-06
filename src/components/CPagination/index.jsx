@@ -37,6 +37,7 @@ const CPagination = ({
         justifyContent: "space-between",
         alignItems: "center",
         marginTop: "15px",
+        paddingRight: "15px",
       }}
     >
       <div>

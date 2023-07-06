@@ -281,7 +281,6 @@ const ConstructorTablesFormPage = () => {
     if (!id) setLoader(false);
     else getData();
   }, [id]);
-  console.log("ssssss computedLayouts", mainForm.getValues("layouts"));
   if (loader) return <PageFallback />;
 
   return (

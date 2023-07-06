@@ -1,47 +1,46 @@
 .card {
-    background-color: #fff;
-    // border-radius: 8px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    width: 100%;
-  
-    .header {
+  background-color: #fff;
+  // border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  .header {
     //   box-shadow: inset 0px -1px 0px #e5e9eb;
-      padding: 11px 8px;
+    padding: 11px 8px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    min-height: 56px;
+    width: 200px;
+
+    .headerLeftSide {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      min-height: 56px;
-      width: 200px;
-  
-      .headerLeftSide {
+      gap: 8px;
+
+      .iconBlock {
+        width: 24px;
+        height: 24px;
+        background: rgba(0, 0, 0, 0.08);
+        border-radius: 6px;
         display: flex;
         align-items: center;
-        gap: 8px;
-  
-        .iconBlock {
-          width: 24px;
-          height: 24px;
-          background: rgba(0, 0, 0, 0.08);
-          border-radius: 6px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
+        justify-content: center;
       }
     }
-  
-    .body {
-      padding: 8px;
-      display: flex;
-      gap: 50px;
-      width: calc(100% - 220px);
-    }
   }
-  
-  .title {
-    font-size: 16px;
-    line-height: 24px;
+
+  .body {
+    padding: 8px;
+    display: flex;
+    gap: 50px;
+    width: calc(100% - 220px);
   }
-  
+}
+
+.title {
+  font-size: 16px;
+  line-height: 24px;
+}

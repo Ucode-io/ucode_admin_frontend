@@ -19,6 +19,19 @@ const Layout = ({ mainForm, getRelationFields }) => {
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0);
   const [selectedTab, setSelectedTab] = useState({});
 
+  const selectedLayoutIndex = useMemo(() => {
+    if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
+    const selectedLayoutIndex = mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
+    if (selectedLayoutIndex === -1) return "notSelected";
+    return selectedLayoutIndex;
+  }, [selectedLayout, selectedTab]);
+
+  const selectedTabIndex = useMemo(() => {
+    const selectedTabIndex = mainForm.getValues(`layouts.${selectedLayoutIndex}.tabs`)?.findIndex((tab) => tab?.id === selectedTab?.id);
+    if (selectedTabIndex === -1) return "notSelected";
+    return selectedTabIndex;
+  }, [selectedTab, selectedLayout]);
+
   const openFieldsBlock = (type) => {
     setSelectedField(null);
     setSelectedRelation(null);
@@ -48,10 +61,10 @@ const Layout = ({ mainForm, getRelationFields }) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(false));
   }, [dispatch]);
 
-  const selectedLayoutIndex = useMemo(() => {
-    if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
-    return mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
-  }, [selectedLayout]);
+  // const selectedLayoutIndex = useMemo(() => {
+  //   if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
+  //   return mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
+  // }, [selectedLayout]);
 
   const {
     fields: sectionTabs,
@@ -63,12 +76,12 @@ const Layout = ({ mainForm, getRelationFields }) => {
   } = useFieldArray({
     control: mainForm.control,
     name: `layouts.${selectedLayoutIndex}.tabs`,
-    keyName: "key"
+    keyName: "key",
   });
 
   useEffect(() => {
-    updateSectionTab()
-  }, [selectedLayoutIndex])
+    updateSectionTab();
+  }, [selectedLayoutIndex]);
 
   return (
     <>
@@ -90,7 +103,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
           appendSectionTab={appendSectionTab}
         />
       ) : (
-        <NewlayoutList setSelectedLayout={setSelectedLayout} mainForm={mainForm}/>
+        <NewlayoutList setSelectedLayout={setSelectedLayout} mainForm={mainForm} />
       )}
 
       <div className={styles.page}>
@@ -124,6 +137,9 @@ const Layout = ({ mainForm, getRelationFields }) => {
             removeSectionTab={removeSectionTab}
             moveSectionTab={moveSectionTab}
             appendSectionTab={appendSectionTab}
+            selectedTab={selectedTab}
+            selectedTabIndex={selectedTabIndex}
+            selectedLayoutIndex={selectedLayoutIndex}
           />
         </Collapse>
       </div>

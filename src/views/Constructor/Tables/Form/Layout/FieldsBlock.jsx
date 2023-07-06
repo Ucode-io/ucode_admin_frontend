@@ -1,15 +1,14 @@
 import { Add, Close } from "@mui/icons-material";
-import { Button, IconButton, Input, OutlinedInput } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
-import { applyDrag } from "../../../../../utils/applyDrag";
-import styles from "./style.module.scss";
-import { generateGUID, generateID } from "../../../../../utils/generateID";
-import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
+import { applyDrag } from "../../../../../utils/applyDrag";
+import { generateGUID } from "../../../../../utils/generateID";
+import styles from "./style.module.scss";
 
 const FieldsBlock = ({
   mainForm,
@@ -23,6 +22,8 @@ const FieldsBlock = ({
   moveSectionTab,
   updateSectionTab,
   appendSectionTab,
+  selectedTabIndex,
+  selectedLayoutIndex,
 }) => {
   const { fields } = useFieldArray({
     control: mainForm.control,
@@ -102,10 +103,21 @@ const FieldsBlock = ({
     if (!result) return;
   };
 
-  const handleNameChange = (event, index, oldId) => {
-    updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
-  };
-  console.log("sssssssss tableRelations", tableRelations);
+  // let watch = useWatch({
+  //   control: mainForm.control,
+  //   name: `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}`,
+  // });
+
+  // const handleNameChange = (event) => {
+  //   mainForm.setValue(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.label`, event.target.value);
+  //   updateSectionTab(index, { label: event.target.value, ...watch });
+  // };
+
+  // const updateOptions = useDebounce((value, index) => {
+  //   sectionTabs[index].label = value;
+  //   console.log('ssssssss index', value)
+  // }, 300);
+
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -191,11 +203,11 @@ const FieldsBlock = ({
                     return (
                       <Draggable key={index} style={{ overflow: "visible", width: "fit-content" }}>
                         <div className={`${styles.sectionFieldRow} ${styles.relation}`}>
-                          <OutlinedInput
+                          {/* <OutlinedInput
                             value={tab.label}
                             onClick={(e) => e.stopPropagation()}
                             size="small"
-                            onChange={(e) => handleNameChange(e, index, tab.id)}
+                            onChange={(e) => updateOptions(e.target.value, index)}
                             style={{
                               border: "none",
                               outline: "none",
@@ -203,7 +215,16 @@ const FieldsBlock = ({
                               minWidth: 100,
                               background: "transparent",
                             }}
+                          /> */}
+
+                          <HFTextField
+                            control={mainForm.control}
+                            name={`layouts.${selectedLayoutIndex}.tabs.${index}.label`}
+                            size="small"
+                            variant="outlined"
+                            style={{ width: 200 }}
                           />
+
                           <Button onClick={() => removeSectionTab(index)}>
                             <Close />
                           </Button>

@@ -1,21 +1,16 @@
-import { Logout, Settings } from "@mui/icons-material";
 import { Divider, Menu } from "@mui/material";
 import { useState } from "react";
-import { useAliveController } from "react-activation";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { authActions } from "../../store/auth/auth.slice";
 import UserAvatar from "../UserAvatar";
 import styles from "./style.module.scss";
-import KeyIcon from "@mui/icons-material/Key";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
 
-const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
+const ProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
   const [anchorProfileEl, setProfileAnchorEl] = useState(null);
   const menuVisible = Boolean(anchorEl || anchorProfileEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { clear } = useAliveController();
   const { appId } = useParams();
 
   const handleClick = () => {
@@ -26,7 +21,6 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
   };
   const openMenu = (event) => {
     setProfileAnchorEl(event.currentTarget);
-    setAnchorEl(event.currentTarget);
   };
 
   const logoutClickHandler = () => {
@@ -95,13 +89,6 @@ const ProfilePanel = ({ anchorEl, setAnchorEl }) => {
           </div>
         </div>
         <Divider />
-        <div className={styles.scrollBlocksss}>
-          <div className={styles.menuItem} onClick={handleClick}>
-            {/* <KeyIcon className={styles.dragIcon} /> */}
-
-            <p className={styles.itemText}>Menu settings</p>
-          </div>
-        </div>
       </Menu>
     </div>
   );

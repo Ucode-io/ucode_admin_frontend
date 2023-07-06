@@ -26,6 +26,7 @@ import ButtonsMenu from "./MenuButtons";
 import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import { OpenCloseSvg } from "../../assets/icons/icon";
+import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
 
 const LayoutSidebar = ({ favicon, appId, environment }) => {
   const sidebarIsOpen = useSelector(
@@ -44,6 +45,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const [tableModal, setTableModalOpen] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
   const [webPageModal, setWebPageModalOpen] = useState(false);
+  const [menuSettingModal, setMenuSettingModalOpen] = useState(false);
   const [selectedApp, setSelectedApp] = useState();
   const [child, setChild] = useState();
   const [element, setElement] = useState();
@@ -101,6 +103,12 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   };
   const closeWebPageModal = () => {
     setWebPageModalOpen(null);
+  };
+  const handleMenuSettingModalOpen = (element) => {
+    setMenuSettingModalOpen(true);
+  };
+  const closeMenuSettingModal = () => {
+    setMenuSettingModalOpen(null);
   };
   const closeModal = () => {
     setModalType(null);
@@ -298,7 +306,12 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
             onClick={(e) => {
               anchorEl ? setAnchorEl(null) : openMenu(e);
             }}
-            children={<ProfilePanel anchorEl={anchorEl} />}
+            children={
+              <ProfilePanel
+                anchorEl={anchorEl}
+                handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+              />
+            }
             sidebarIsOpen={sidebarIsOpen}
           />
         </Box>
@@ -373,6 +386,9 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         setWebPageModal={setWebPageModal}
         deleteFolder={deleteFolder}
       />
+      {menuSettingModal && (
+        <MenuSettingModal closeModal={closeMenuSettingModal} />
+      )}
     </>
   );
 };

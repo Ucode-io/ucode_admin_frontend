@@ -91,6 +91,7 @@
     top: -5px;
   }
 }
+
 .notifyMenu {
   width: 240px;
   min-height: 140px;
@@ -99,6 +100,7 @@
     &::-webkit-scrollbar {
       width: 8px;
     }
+
     &::-webkit-scrollbar-thumb {
       background: #869bb9;
       border-radius: 10px;
@@ -120,6 +122,7 @@
     margin-top: 5px;
   }
 }
+
 .notifyMenuItemEmpty {
   text-align: center;
   margin-top: 16px;
@@ -134,6 +137,7 @@
     margin-top: 10px;
   }
 }
+
 .notifyMenuIndex {
   color: #000;
   font-size: 14px;
@@ -177,6 +181,7 @@
       top: -5px;
     }
   }
+
   .notifyTabsLinksActive {
     border: 1px solid #eee;
     border-bottom: none;
@@ -214,4 +219,45 @@
   overflow: auto;
   height: 160px;
   width: 100%;
+}
+
+
+
+.modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .menu {
+    min-width: 770px;
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+      box-shadow: inset 0px -1px 0px #e5e9eb;
+    }
+  }
+
+  .block {
+    display: flex;
+    align-items: center;
+
+    .section {
+      width: 50%;
+
+
+      .card {
+        padding: 16px;
+
+        .text {
+          color: #747474;
+          font-size: 13px;
+          font-weight: 500;
+          margin-bottom: 12px;
+        }
+      }
+    }
+  }
 }

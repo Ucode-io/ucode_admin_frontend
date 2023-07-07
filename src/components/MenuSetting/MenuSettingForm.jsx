@@ -4,7 +4,6 @@ import { Left } from "../../assets/icons/icon";
 import NewColorInput from "../FormElements/HFNewColorPicker";
 import { useForm } from "react-hook-form";
 import HFTextField from "../FormElements/HFTextField";
-import FRow from "../FormElements/FRow";
 import { useMenuTemplateCreateMutation } from "../../services/menuTemplateService";
 
 const MenuSettingForm = ({ setModalType, setCheck }) => {
@@ -17,12 +16,10 @@ const MenuSettingForm = ({ setModalType, setCheck }) => {
     },
   });
 
-  console.log("watch", watch());
-
   const { mutate: create, isLoading: createLoading } =
     useMenuTemplateCreateMutation({
       onSuccess: (res) => {
-        setCheck(res?.id);
+        setCheck(res);
         setModalType("CUSTOMIZE");
       },
     });

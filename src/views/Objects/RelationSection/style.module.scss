@@ -5,18 +5,18 @@
   width: 100%;
 
   .cardHeader {
-    height: 56px;
+    // height: 56px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px 0 30px;
+    padding: 0 12px;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
     // border-bottom: 1px solid #e5e9eb;  
   }
   .tabList {
     width: calc(100% - 200px);
-    overflow-x: auto;
+    overflow-x: scroll;
     display: flex;
     align-items: center;
     
@@ -24,8 +24,7 @@
   .tabs_item {
     border-radius: 4px;
     cursor: pointer;
-    min-width: 90px;
-    max-width: 140px;
+    // min-width: 90px;
     display: flex;
     align-items: center;
     justify-content: center;

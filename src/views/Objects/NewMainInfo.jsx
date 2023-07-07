@@ -5,32 +5,29 @@ import FormElementGenerator from "../../components/ElementGenerators/FormElement
 import FormCard from "./components/FormCard";
 import styles from "./style.module.scss";
 import IconGenerator from "@/components/IconPicker/IconGenerator";
-import { Tooltip } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 import NewFormCard from "./components/NewFormCard";
+import PageFallback from "../../components/PageFallback";
 
-const MainInfo = ({
-  computedSections,
-  control,
-  setFormValue,
-  relatedTable,
-  relation,
-  selectedTabIndex,
-  selectedTab,
-  selectedIndex
-}) => {
+const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTable, relation, selectedTabIndex, selectedTab, selectedIndex }) => {
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
+
   const fieldsList = useMemo(() => {
     const fields = [];
 
-    relation?.tabs.sections?.forEach((section) => {
-      section.forEach((field) => {
-        fields.push(field);
+    relation?.tabs?.forEach((tab) => {
+      tab?.sections?.forEach((section) => {
+        section?.fields?.forEach((field) => {
+          fields.push(field);
+        });
       });
     });
     return fields;
   }, [relation]);
+
+  if(loader) return <PageFallback />
 
   return (
     <div className={styles.newcontainer}>
@@ -45,15 +42,17 @@ const MainInfo = ({
             >
               <div className={styles.newformColumn}>
                 {section.fields?.map((field) => (
-                  <FormElementGenerator
-                    key={field.id}
-                    field={field}
-                    control={control}
-                    setFormValue={setFormValue}
-                    fieldsList={fieldsList}
-                    formTableSlug={tableSlug}
-                    relatedTable={relatedTable}
-                  />
+                  <Box style={{display: 'flex', alignItems: 'flex-start'}}>
+                    <FormElementGenerator
+                      key={field.id}
+                      field={field}
+                      control={control}
+                      setFormValue={setFormValue}
+                      fieldsList={fieldsList}
+                      formTableSlug={tableSlug}
+                      relatedTable={relatedTable}
+                    />
+                  </Box>
                 ))}
               </div>
             </NewFormCard>

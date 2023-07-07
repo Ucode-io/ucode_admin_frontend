@@ -34,6 +34,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SettingsIcon from "@mui/icons-material/Settings";
 import BrushIcon from "@mui/icons-material/Brush";
+import { F } from "@formulajs/formulajs";
 
 const relationViewTypes = [
   {
@@ -279,7 +280,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                 </TabList>
 
                 <TabPanel>
-                  <Accordion>
+                  <Accordion defaultExpanded>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                       <h2>Relation settings</h2>
                     </AccordionSummary>
@@ -306,7 +307,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                     </AccordionDetails>
                   </Accordion>
 
-                  <Accordion>
+                  <Accordion defaultExpanded>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                       <h2>Additional settings</h2>
                     </AccordionSummary>
@@ -339,12 +340,14 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                         {/* <h2>Default limit</h2> */}
                         <div className="p-2">
                           <div className={styles.default_limit}>
-                            <HFTextField control={control} name="default_limit" fullWidth />
+                            <FRow label="Default limit">
+                              <HFTextField control={control} name="default_limit" fullWidth />
+                            </FRow>
                           </div>
                         </div>
                         {/* </div> */}
 
-                        {fieldsLoading ? (
+                        {/* {fieldsLoading ? (
                           <RingLoaderWithWrapper />
                         ) : (
                           <Container lockAxis="y" onDrop={onFilterPositionChange}>
@@ -367,7 +370,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                               </Draggable>
                             ))}
                           </Container>
-                        )}
+                        )} */}
                       </div>
                     </AccordionDetails>
                   </Accordion>
@@ -405,25 +408,17 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                 </TabPanel>
 
                 <TabPanel>
-                  <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                      <h2>Display type</h2>
-                    </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}></AccordionDetails>
-                  </Accordion>
-
-                  <Accordion>
+                  <Accordion defaultExpanded>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                       <h2>Cascade</h2>
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
                       <CascadingRelationSettings slug={relation?.table_to?.slug} field_slug={relation?.field_from} control={control} watch={watch} setValue={setValue} />
                       <CascadingTreeBlock slug={relation?.table_to?.slug} field_slug={relation?.field_from} control={control} watch={watch} setValue={setValue} />
-                      <SummaryBlock control={control} computedFieldsListOptions={computedFieldsListOptions} />
                     </AccordionDetails>
                   </Accordion>
 
-                  <Accordion>
+                  <Accordion defaultExpanded>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                       <h2>Columns</h2>
                     </AccordionSummary>
@@ -464,6 +459,13 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
 
                   <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                      <h2>Display type</h2>
+                    </AccordionSummary>
+                    <AccordionDetails style={{ padding: 0 }}></AccordionDetails>
+                  </Accordion>
+
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                       <h2>Filters</h2>
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
@@ -477,6 +479,31 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                           onChange={(e, val) => setOnlyCheckedFiltersVisible(val)}
                         />
                       </div>
+
+                      {fieldsLoading ? (
+                        <RingLoaderWithWrapper />
+                      ) : (
+                        <Container lockAxis="y" onDrop={onFilterPositionChange}>
+                          {computedFiltersList?.map((field, index) => (
+                            <Draggable key={field.id}>
+                              <div className={styles.draggableRow}>
+                                <IconButton className={styles.dragButton}>
+                                  <DragIndicator />
+                                </IconButton>
+
+                                <p className={styles.label}>{field.label}</p>
+
+                                <HFCheckbox
+                                  control={control}
+                                  name={`filtersList[${index}].is_checked`}
+                                  icon={<PushPinOutlined style={{ transform: "rotate(45deg)" }} />}
+                                  checkedIcon={<PushPin />}
+                                />
+                              </div>
+                            </Draggable>
+                          ))}
+                        </Container>
+                      )}
                     </AccordionDetails>
                   </Accordion>
 
@@ -484,12 +511,14 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                       <h2>Summary</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}></AccordionDetails>
+                    <AccordionDetails style={{ padding: 0 }}>
+                      <SummaryBlock control={control} computedFieldsListOptions={computedFieldsListOptions} />
+                    </AccordionDetails>
                   </Accordion>
                 </TabPanel>
 
                 <TabPanel>
-                  <Accordion>
+                  <Accordion defaultExpanded>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                       <h2>Settings</h2>
                     </AccordionSummary>
@@ -498,7 +527,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                       <HFSwitch control={control} name="default_editable" label={"Default editable"} />
                       <HFSwitch control={control} name="creatable" label={"Creatable"} />
                       <HFSwitch control={control} name="relation_buttons" label={"Relation Buttons"} />
-                      
+
                       <DefaultValueBlock control={control} watch={watch} columnsList={values.columnsList} />
 
                       <AutoFiltersBlock control={control} watch={watch} />
@@ -507,12 +536,12 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                     </AccordionDetails>
                   </Accordion>
 
-                  <Accordion>
+                  <Accordion defaultExpanded>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                       <h2>Function</h2>
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
-                      <FunctionPath control={control} watch={watch} functions={functions} />
+                      <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue}/>
                     </AccordionDetails>
                   </Accordion>
 

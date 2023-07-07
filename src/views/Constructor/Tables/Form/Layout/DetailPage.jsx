@@ -58,16 +58,14 @@ function DetailTabs({ control, layoutForm, openFieldsBlock, openFieldSettingsBlo
       </TabList>
 
       {tabs?.map((item, index) => (
-        <TabPanel key={item.key} selectedTab={selectedTab} index={index}>
-          {selectedTab === index && (
-            <NewSectionsBlock
-              mainForm={control}
-              layoutForm={layoutForm}
-              openFieldsBlock={openFieldsBlock}
-              openFieldSettingsBlock={openFieldSettingsBlock}
-              openRelationSettingsBlock={openRelationSettingsBlock}
-            />
-          )}
+        <TabPanel key={item.id} selectedTab={selectedTab} index={index}>
+          <NewSectionsBlock
+            mainForm={control}
+            layoutForm={layoutForm}
+            openFieldsBlock={openFieldsBlock}
+            openFieldSettingsBlock={openFieldSettingsBlock}
+            openRelationSettingsBlock={openRelationSettingsBlock}
+          />
         </TabPanel>
       ))}
     </Tabs>

@@ -110,6 +110,7 @@ const FolderCreateModal = ({
                 label="Title"
                 control={control}
                 name="label"
+                required
               />
             </Box>
 

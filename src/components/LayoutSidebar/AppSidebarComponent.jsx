@@ -26,6 +26,7 @@ const AppSidebar = ({
   handleOpenNotify,
   setSelectedApp,
   selectedApp,
+  menuTemplate,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ const AppSidebar = ({
     }
   };
   const favourite = element?.id === "c57eedc3-a954-4262-a0af-376c65b5a282";
+  const menuStyle = menuTemplate?.menu_template;
 
   useEffect(() => {
     setElement(element);
@@ -63,7 +65,10 @@ const AppSidebar = ({
         }}
         className="parent-folder column-drag-handle"
         style={{
-          background: selectedApp?.id === element.id ? "#007AFF" : "",
+          background:
+            selectedApp?.id === element.id
+              ? menuStyle?.active_background
+              : menuStyle?.background || "",
           color: selectedApp?.id === element.id ? "#fff" : "#A8A8A8",
           borderTop: favourite && "1px solid #F0F0F0",
           borderBottom: favourite && "1px solid #F0F0F0",
@@ -77,8 +82,20 @@ const AppSidebar = ({
             element?.data?.webpage?.icon ||
             "folder.svg"
           }
-          size={18}
+          size={
+            menuTemplate?.icon_size === "SMALL"
+              ? 10
+              : menuTemplate?.icon_size === "MEDIUM"
+              ? 15
+              : 18 || 18
+          }
           className="folder-icon"
+          style={{
+            color:
+              selectedApp?.id === element.id
+                ? menuStyle?.active_text
+                : menuStyle?.text || "",
+          }}
         />
         {sidebarIsOpen && (
           <ListItemText
@@ -87,6 +104,12 @@ const AppSidebar = ({
               element?.data?.microfrontend?.name ||
               element?.data?.webpage?.title
             }
+            style={{
+              color:
+                selectedApp?.id === element.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
+            }}
           />
         )}
         {element?.type === "FOLDER" && sidebarIsOpen ? (
@@ -98,6 +121,12 @@ const AppSidebar = ({
                   onClick={(e) => {
                     handleOpenNotify(e, "FOLDER");
                   }}
+                  style={{
+                    color:
+                      selectedApp?.id === element.id
+                        ? menuStyle?.active_text
+                        : menuStyle?.text || "",
+                  }}
                 />
               </Box>
             </Tooltip>
@@ -108,7 +137,15 @@ const AppSidebar = ({
                   handleOpenNotify(e, "CREATE_TO_FOLDER");
                 }}
               >
-                <AddIcon size={13} />
+                <AddIcon
+                  size={13}
+                  style={{
+                    color:
+                      selectedApp?.id === element.id
+                        ? menuStyle?.active_text
+                        : menuStyle?.text || "",
+                  }}
+                />
               </Box>
             </Tooltip>
           </>
@@ -123,6 +160,12 @@ const AppSidebar = ({
               handleOpenNotify(e, "TABLE");
               setElement(element);
             }}
+            style={{
+              color:
+                selectedApp?.id === element.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
+            }}
           />
         )}
         {element?.type === "MICROFRONTEND" && (
@@ -132,6 +175,12 @@ const AppSidebar = ({
               e.stopPropagation();
               handleOpenNotify(e, "MICROFRONTEND");
               setElement(element);
+            }}
+            style={{
+              color:
+                selectedApp?.id === element.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
             }}
           />
         )}
@@ -143,10 +192,23 @@ const AppSidebar = ({
               handleOpenNotify(e, "WEBPAGE");
               setElement(element);
             }}
+            style={{
+              color:
+                selectedApp?.id === element.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
+            }}
           />
         )}
         {sidebarIsOpen && element?.type === "FOLDER" ? (
-          <KeyboardArrowRightIcon />
+          <KeyboardArrowRightIcon
+            style={{
+              color:
+                selectedApp?.id === element.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
+            }}
+          />
         ) : (
           ""
         )}

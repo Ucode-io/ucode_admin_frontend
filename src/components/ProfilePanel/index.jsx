@@ -89,6 +89,12 @@ const ProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
           </div>
         </div>
         <Divider />
+        <div className={styles.scrollBlocksss}>
+          <div className={styles.menuItem} onClick={handleMenuSettingModalOpen}>
+            {/* <KeyIcon className={styles.dragIcon} /> */}
+            <p className={styles.itemText}>Menu settings</p>
+          </div>
+        </div>
       </Menu>
     </div>
   );

@@ -124,7 +124,7 @@ $main-color: #0365F2;
 
     &.active-with-child {
       color: #0365F2;
-      background-color: #fff !important;
+      background-color: #fff;
 
       &:hover {
         background-color: #A8A8A81A !important;
@@ -291,7 +291,7 @@ $main-color: #0365F2;
 
         &.active-with-child {
           color: #0365F2;
-          background-color: #fff !important;
+          background-color: #fff;
 
           &:hover {
             background-color: #A8A8A81A !important;

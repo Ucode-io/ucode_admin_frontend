@@ -23,6 +23,7 @@ const SubMenu = ({
   setElement,
   selectedApp,
   isLoading,
+  menuStyle,
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -35,6 +36,9 @@ const SubMenu = ({
       className={`SubMenu ${
         !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
       }`}
+      style={{
+        background: menuStyle?.background || "#fff",
+      }}
     >
       <div className="body">
         <div className="header" onClick={() => {}}>
@@ -48,7 +52,7 @@ const SubMenu = ({
                   setElement(selectedApp);
                 }}
                 style={{
-                  color: environment?.data?.color,
+                  color: menuStyle?.text,
                 }}
               />
               <AddIcon
@@ -58,7 +62,7 @@ const SubMenu = ({
                   setElement(selectedApp);
                 }}
                 style={{
-                  color: environment?.data?.color,
+                  color: menuStyle?.text,
                 }}
               />
               <PushPinIcon
@@ -69,7 +73,7 @@ const SubMenu = ({
                 }}
                 style={{
                   rotate: pinIsEnabled ? "" : "45deg",
-                  color: environment?.data?.color,
+                  color: menuStyle?.text,
                 }}
               />
             </div>
@@ -122,6 +126,7 @@ const SubMenu = ({
                       handleOpenNotify={handleOpenNotify}
                       setElement={setElement}
                       setSubMenuIsOpen={setSubMenuIsOpen}
+                      menuStyle={menuStyle}
                     />
                   ))}
                 </div>

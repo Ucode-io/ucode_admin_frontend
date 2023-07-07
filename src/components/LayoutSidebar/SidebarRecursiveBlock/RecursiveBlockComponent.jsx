@@ -85,157 +85,159 @@ const RecursiveBlock = ({
       setChildBlockVisible(true);
     }
   }, []);
-  console.log('elemeent', element);
+  console.log("elemeent", element);
   return (
     <Draggable key={index}>
       <div className="parent-block column-drag-handle" key={index}>
-      {element?.data?.permission?.read && (
-                <Button
-                key={index}
-                style={activeStyle}
-                className={`nav-element ${
-                  element.isChild &&
-                  (tableSlug !== element.slug ? "active-with-child" : "active")
-                }`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  element.type === "TABLE" &&
-                    navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
-                  element.type === "MICROFRONTEND" &&
-                    navigate(
-                      `/main/${appId}/page/${element?.data?.microfrontend?.id}`
-                    );
-                  if (element.type === "WEBPAGE") {
-                    navigate(`/main/${appId}/web-page/${element?.data?.webpage?.id}`);
-                    window.location.reload();
-                  }
-                  clickHandler();
-                  setElement(element);
-                  dispatch(menuActions.setMenuItem(element));
-                }}
-              >
-                <div
-                  className="label"
-                  style={{
-                    color:
-                      menuItem?.id === element?.id
-                        ? menuStyle?.active_text
-                        : menuStyle?.text || "",
-                    opacity: element?.isChild && 0.6,
-                  }}
-                >
-                  <IconGenerator
-                    icon={
-                      element?.icon ||
-                      element?.data?.microfrontend?.icon ||
-                      element?.data?.webpage?.icon
-                    }
-                    size={18}
-                  />
-      
-                  {(sidebarIsOpen && element?.label) ||
-                    element?.data?.microfrontend?.name ||
-                    element?.data?.webpage?.title}
-                </div>
-                {element?.type === "FOLDER" && sidebarIsOpen ? (
-                  <Box className="icon_group">
-                    <Tooltip title="Folder settings" placement="top">
-                      <Box className="extra_icon">
-                        <BsThreeDots
-                          size={13}
-                          onClick={(e) => {
-                            e?.stopPropagation();
-                            handleOpenNotify(e, "FOLDER");
-                            setElement(element);
-                          }}
-                          style={{
-                            color:
-                              menuItem?.id === element?.id
-                                ? menuStyle?.active_text
-                                : menuStyle?.text || "",
-                          }}
-                        />
-                      </Box>
-                    </Tooltip>
-                    <Tooltip title="Create folder" placement="top">
-                      <Box className="extra_icon">
-                       {element?.data?.permission?.write && (
-                         <AddIcon
-                         size={13}
-                         onClick={(e) => {
-                           e.stopPropagation();
-                           handleOpenNotify(e, "CREATE_TO_FOLDER");
-                           setElement(element);
-                         }}
-                         style={{
-                           color:
-                             menuItem?.id === element?.id
-                               ? menuStyle?.active_text
-                               : menuStyle?.text || "",
-                         }}
-                       />
-                       )}
-                      </Box>
-                    </Tooltip>
-                    {childBlockVisible ? (
-                      <KeyboardArrowDownIcon />
-                    ) : (
-                      <KeyboardArrowRightIcon />
+        {element?.data?.permission?.read && (
+          <Button
+            key={index}
+            style={activeStyle}
+            className={`nav-element ${
+              element.isChild &&
+              (tableSlug !== element.slug ? "active-with-child" : "active")
+            }`}
+            onClick={(e) => {
+              e.stopPropagation();
+              element.type === "TABLE" &&
+                navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
+              element.type === "MICROFRONTEND" &&
+                navigate(
+                  `/main/${appId}/page/${element?.data?.microfrontend?.id}`
+                );
+              if (element.type === "WEBPAGE") {
+                navigate(
+                  `/main/${appId}/web-page/${element?.data?.webpage?.id}`
+                );
+                window.location.reload();
+              }
+              clickHandler();
+              setElement(element);
+              dispatch(menuActions.setMenuItem(element));
+            }}
+          >
+            <div
+              className="label"
+              style={{
+                color:
+                  menuItem?.id === element?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
+                opacity: element?.isChild && 0.6,
+              }}
+            >
+              <IconGenerator
+                icon={
+                  element?.icon ||
+                  element?.data?.microfrontend?.icon ||
+                  element?.data?.webpage?.icon
+                }
+                size={18}
+              />
+
+              {(sidebarIsOpen && element?.label) ||
+                element?.data?.microfrontend?.name ||
+                element?.data?.webpage?.title}
+            </div>
+            {element?.type === "FOLDER" && sidebarIsOpen ? (
+              <Box className="icon_group">
+                <Tooltip title="Folder settings" placement="top">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        e?.stopPropagation();
+                        handleOpenNotify(e, "FOLDER");
+                        setElement(element);
+                      }}
+                      style={{
+                        color:
+                          menuItem?.id === element?.id
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+                <Tooltip title="Create folder" placement="top">
+                  <Box className="extra_icon">
+                    {element?.data?.permission?.write && (
+                      <AddIcon
+                        size={13}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenNotify(e, "CREATE_TO_FOLDER");
+                          setElement(element);
+                        }}
+                        style={{
+                          color:
+                            menuItem?.id === element?.id
+                              ? menuStyle?.active_text
+                              : menuStyle?.text || "",
+                        }}
+                      />
                     )}
                   </Box>
+                </Tooltip>
+                {childBlockVisible ? (
+                  <KeyboardArrowDownIcon />
                 ) : (
-                  ""
+                  <KeyboardArrowRightIcon />
                 )}
-                {element?.type === "TABLE" && (
-                  <MenuIcon
-                    title="Table settings"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenNotify(e, "TABLE");
-                      setElement(element);
-                    }}
-                    style={{
-                      color:
-                        menuItem?.id === element?.id
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "",
-                    }}
-                  />
-                )}
-                {element?.type === "MICROFRONTEND" && (
-                  <MenuIcon
-                    title="Microfrontend settings"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenNotify(e, "MICROFRONTEND");
-                      setElement(element);
-                    }}
-                    style={{
-                      color:
-                        menuItem?.id === element?.id
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "",
-                    }}
-                  />
-                )}
-                {element?.type === "WEBPAGE" && (
-                  <MenuIcon
-                    title="Webpage settings"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenNotify(e, "WEBPAGE");
-                      setElement(element);
-                    }}
-                    style={{
-                      color:
-                        menuItem?.id === element?.id
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "",
-                    }}
-                  />
-                )}
-              </Button>
-      )}
+              </Box>
+            ) : (
+              ""
+            )}
+            {element?.type === "TABLE" && (
+              <MenuIcon
+                title="Table settings"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenNotify(e, "TABLE");
+                  setElement(element);
+                }}
+                style={{
+                  color:
+                    menuItem?.id === element?.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text || "",
+                }}
+              />
+            )}
+            {element?.type === "MICROFRONTEND" && (
+              <MenuIcon
+                title="Microfrontend settings"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenNotify(e, "MICROFRONTEND");
+                  setElement(element);
+                }}
+                style={{
+                  color:
+                    menuItem?.id === element?.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text || "",
+                }}
+              />
+            )}
+            {element?.type === "WEBPAGE" && (
+              <MenuIcon
+                title="Webpage settings"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenNotify(e, "WEBPAGE");
+                  setElement(element);
+                }}
+                style={{
+                  color:
+                    menuItem?.id === element?.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text || "",
+                }}
+              />
+            )}
+          </Button>
+        )}
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>

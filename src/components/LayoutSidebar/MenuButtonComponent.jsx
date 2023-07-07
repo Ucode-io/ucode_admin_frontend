@@ -16,12 +16,7 @@ const MenuButtonComponent = ({
       style={style}
     >
       {children}
-      <div
-        className={sidebarIsOpen ? `open-label` : "label"}
-        style={{
-          color: "#000",
-        }}
-      >
+      <div className={sidebarIsOpen ? `open-label` : "label"} style={style}>
         {icon}
         {sidebarIsOpen && title}
       </div>

@@ -42,7 +42,15 @@ const SubMenu = ({
     >
       <div className="body">
         <div className="header" onClick={() => {}}>
-          {subMenuIsOpen && <h2>{selectedApp?.label}</h2>}{" "}
+          {subMenuIsOpen && (
+            <h2
+              style={{
+                color: menuStyle?.text || "#000",
+              }}
+            >
+              {selectedApp?.label}
+            </h2>
+          )}{" "}
           <Box className="buttons">
             <div className="dots">
               <BsThreeDots

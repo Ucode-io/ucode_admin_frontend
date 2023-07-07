@@ -30,7 +30,6 @@ const MenuSettingForm = ({ setModalType }) => {
     });
   };
 
-  console.log("watch", watch());
   return (
     <Box className={styles.color}>
       <div className={styles.header}>

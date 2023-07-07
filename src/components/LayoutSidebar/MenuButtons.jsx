@@ -83,7 +83,7 @@ const ButtonsMenu = ({
       >
         {menuType === "FOLDER" ? (
           <Box className="menu">
-            {element?.data?.permission?.write && (
+            {element?.data?.permission?.update && (
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
                 title="Изменить папку"

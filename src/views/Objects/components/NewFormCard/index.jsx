@@ -1,5 +1,5 @@
-import IconGenerator from "../../../../components/IconPicker/IconGenerator"
-import styles from "./style.module.scss"
+import IconGenerator from "../../../../components/IconPicker/IconGenerator";
+import styles from "./style.module.scss";
 
 const NewFormCard = ({ title, children, icon, extra }) => {
   return (
@@ -9,17 +9,14 @@ const NewFormCard = ({ title, children, icon, extra }) => {
           {/* {icon && <div className={styles.iconBlock} >
             <IconGenerator icon={icon} size={14}  />
           </div>} */}
-          <h4 className={styles.title}>
-            {title}
-          </h4>
+          <h4 className={styles.title}>{title}</h4>
         </div>
 
-        <div className={styles.headerRightSide}>{extra}</div>
-
+        {extra && <div className={styles.headerRightSide}>{extra}</div>}
       </div>
       <div className={styles.body}>{children}</div>
     </div>
-  )
-}
+  );
+};
 
-export default NewFormCard
+export default NewFormCard;

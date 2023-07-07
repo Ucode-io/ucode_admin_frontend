@@ -6,7 +6,7 @@
 
 .formArea {
   display: flex;
-  height: calc(100vh - 160px);
+  height: calc(100vh - 100px);
 }
 
 .mainCardSide {
@@ -22,7 +22,7 @@
 }
 .newmainCardSide {
   width: 100%;
-  height: calc(100vh - 250px);
+  height: calc(100vh - 180px);
   background: #fff;
   // padding: 8px;
   padding-top: 0;
@@ -49,9 +49,9 @@
 .newformColumn {
   // flex: 1;
   width: 100%;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
+  display: grid;
+  align-items: flex-start;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 20px;
 }
 
@@ -171,9 +171,10 @@
   flex-direction: column;
   // flex-direction: column;
   background: #fff;
-  border-right: 1px solid #e5e9eb;
+  // border-right: 1px solid #e5e9eb;
   position: relative;
   padding: 16px;
+  padding-right: 0;
 
   .newheader {
     width: 100%;

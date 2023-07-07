@@ -57,69 +57,96 @@ const AppSidebar = ({
   }, [element]);
   return (
     <Draggable key={index}>
-      <ListItemButton
-        key={index}
-        onClick={(e) => {
-          e.stopPropagation();
-          clickHandler();
-        }}
-        className="parent-folder column-drag-handle"
-        style={{
-          background:
-            selectedApp?.id === element.id
-              ? menuStyle?.active_background
-              : menuStyle?.background || "",
-          color: selectedApp?.id === element.id ? "#000" : "#A8A8A8",
-          borderTop: favourite && "1px solid #F0F0F0",
-          borderBottom: favourite && "1px solid #F0F0F0",
-          padding: favourite && "18px 12px",
-        }}
-      >
-        <IconGenerator
-          icon={
-            element?.icon ||
-            element?.data?.microfrontend?.icon ||
-            element?.data?.webpage?.icon ||
-            "folder.svg"
-          }
-          size={
-            menuTemplate?.icon_size === "SMALL"
-              ? 10
-              : menuTemplate?.icon_size === "MEDIUM"
-              ? 15
-              : 18 || 18
-          }
-          className="folder-icon"
-          style={{
-            color:
-              selectedApp?.id === element.id
-                ? menuStyle?.active_text
-                : menuStyle?.text || "",
-          }}
-        />
-        {sidebarIsOpen && (
-          <ListItemText
-            primary={
-              element?.label ||
-              element?.data?.microfrontend?.name ||
-              element?.data?.webpage?.title
-            }
-            style={{
-              color:
-                selectedApp?.id === element.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
-            }}
-          />
-        )}
-        {element?.type === "FOLDER" && sidebarIsOpen ? (
-          <>
-            <Tooltip title="Folder settings" placement="top">
-              <Box className="extra_icon">
-                <BsThreeDots
-                  size={13}
+      {element?.data?.permission?.read && (
+              <ListItemButton
+              key={index}
+              onClick={(e) => {
+                e.stopPropagation();
+                clickHandler();
+              }}
+              className="parent-folder column-drag-handle"
+              style={{
+                background: selectedApp?.id === element.id ? "#007AFF" : "",
+                color: selectedApp?.id === element.id ? "#fff" : "#A8A8A8",
+                borderTop: favourite && "1px solid #F0F0F0",
+                borderBottom: favourite && "1px solid #F0F0F0",
+                padding: favourite && "18px 12px",
+              }}
+            >
+              <IconGenerator
+                icon={
+                  element?.icon ||
+                  element?.data?.microfrontend?.icon ||
+                  element?.data?.webpage?.icon ||
+                  "folder.svg"
+                }
+                size={18}
+                className="folder-icon"
+              />
+              {sidebarIsOpen && (
+                <ListItemText
+                  primary={
+                    element?.label ||
+                    element?.data?.microfrontend?.name ||
+                    element?.data?.webpage?.title
+                  }
+                />
+              )}
+              {element?.type === "FOLDER" && sidebarIsOpen ? (
+                <>
+                  <Tooltip title="Folder settings" placement="top">
+                    <Box className="extra_icon">
+                      <BsThreeDots
+                        size={13}
+                        onClick={(e) => {
+                          handleOpenNotify(e, "FOLDER");
+                        }}
+                      />
+                    </Box>
+                  </Tooltip>
+                 {element?.data?.permission?.create && (
+                  <Tooltip title="Create folder" placement="top">
+                     <Box
+                     className="extra_icon"
+                     onClick={(e) => {
+                       handleOpenNotify(e, "CREATE_TO_FOLDER");
+                     }}
+                   >
+                     <AddIcon size={13} />
+                   </Box>
+                  </Tooltip>
+                 )}
+                </>
+              ) : (
+                ""
+              )}
+              {element?.type === "TABLE" && (
+                <MenuIcon
+                  title="Table settings"
                   onClick={(e) => {
-                    handleOpenNotify(e, "FOLDER");
+                    e.stopPropagation();
+                    handleOpenNotify(e, "TABLE");
+                    setElement(element);
+                  }}
+                />
+              )}
+              {element?.type === "MICROFRONTEND" && (
+                <MenuIcon
+                  title="Microfrontend settings"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenNotify(e, "MICROFRONTEND");
+                    setElement(element);
+                  }}
+                />
+              )}
+              {element?.type === "WEBPAGE" && (
+                <MenuIcon
+                  title="Webpage settings"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenNotify(e, "WEBPAGE");
+                    setElement(element);
                   }}
                   style={{
                     color:
@@ -128,91 +155,14 @@ const AppSidebar = ({
                         : menuStyle?.text || "",
                   }}
                 />
-              </Box>
-            </Tooltip>
-            <Tooltip title="Create folder" placement="top">
-              <Box
-                className="extra_icon"
-                onClick={(e) => {
-                  handleOpenNotify(e, "CREATE_TO_FOLDER");
-                }}
-              >
-                <AddIcon
-                  size={13}
-                  style={{
-                    color:
-                      selectedApp?.id === element.id
-                        ? menuStyle?.active_text
-                        : menuStyle?.text || "",
-                  }}
-                />
-              </Box>
-            </Tooltip>
-          </>
-        ) : (
-          ""
-        )}
-        {element?.type === "TABLE" && (
-          <MenuIcon
-            title="Table settings"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleOpenNotify(e, "TABLE");
-              setElement(element);
-            }}
-            style={{
-              color:
-                selectedApp?.id === element.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
-            }}
-          />
-        )}
-        {element?.type === "MICROFRONTEND" && (
-          <MenuIcon
-            title="Microfrontend settings"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleOpenNotify(e, "MICROFRONTEND");
-              setElement(element);
-            }}
-            style={{
-              color:
-                selectedApp?.id === element.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
-            }}
-          />
-        )}
-        {element?.type === "WEBPAGE" && (
-          <MenuIcon
-            title="Webpage settings"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleOpenNotify(e, "WEBPAGE");
-              setElement(element);
-            }}
-            style={{
-              color:
-                selectedApp?.id === element.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
-            }}
-          />
-        )}
-        {sidebarIsOpen && element?.type === "FOLDER" ? (
-          <KeyboardArrowRightIcon
-            style={{
-              color:
-                selectedApp?.id === element.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text || "",
-            }}
-          />
-        ) : (
-          ""
-        )}
-      </ListItemButton>
+              )}
+              {sidebarIsOpen && element?.type === "FOLDER" ? (
+                <KeyboardArrowRightIcon />
+              ) : (
+                ""
+              )}
+            </ListItemButton>
+      )}
     </Draggable>
   );
 };

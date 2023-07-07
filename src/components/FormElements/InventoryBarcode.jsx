@@ -51,16 +51,16 @@ const InventoryBarCode = ({
       .then((res) => {
         dispatch(showAlert("Успешно!", "success"));
 
-        navigate("/reloadRelations", {
-          state: {
-            redirectUrl: window.location.pathname
-          },
-        });
+        // navigate("/reloadRelations", {
+        //   state: {
+        //     redirectUrl: window.location.pathname
+        //   },
+        // });
       })
       .finally(() => {
         // setFormValue(name, "");
         // setElmValue("");
-        queryClient.refetchQueries(["GET_OBJECT_LIST", relatedTable]);
+        queryClient.refetchQueries(["GET_OBJECT_LIST"]);
       });
   };
 

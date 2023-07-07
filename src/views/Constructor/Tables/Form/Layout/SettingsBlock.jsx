@@ -13,10 +13,12 @@ const SettingsBlock = ({
   selectedRelation,
   getRelationFields,
   sectionTabs,
+  selectedTabIndex,
   insertSectionTab,
   removeSectionTab,
   moveSectionTab,
   appendSectionTab,
+  selectedLayoutIndex,
 }) => {
   if (selectedField) {
     return <FieldSettings field={selectedField} mainForm={mainForm} closeSettingsBlock={closeSettingsBlock} />;
@@ -39,6 +41,8 @@ const SettingsBlock = ({
       removeSectionTab={removeSectionTab}
       moveSectionTab={moveSectionTab}
       appendSectionTab={appendSectionTab}
+      selectedTabIndex={selectedTabIndex}
+      selectedLayoutIndex={selectedLayoutIndex}
     />
   );
 };

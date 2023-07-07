@@ -1,15 +1,14 @@
 import { Add, Close } from "@mui/icons-material";
-import { Button, IconButton, Input, OutlinedInput } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import FormElementGenerator from "../../../../../components/ElementGenerators/FormElementGenerator";
-import { applyDrag } from "../../../../../utils/applyDrag";
-import styles from "./style.module.scss";
-import { generateGUID, generateID } from "../../../../../utils/generateID";
-import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
+import { applyDrag } from "../../../../../utils/applyDrag";
+import { generateGUID } from "../../../../../utils/generateID";
+import styles from "./style.module.scss";
 
 const FieldsBlock = ({
   mainForm,
@@ -23,6 +22,8 @@ const FieldsBlock = ({
   moveSectionTab,
   updateSectionTab,
   appendSectionTab,
+  selectedTabIndex,
+  selectedLayoutIndex,
 }) => {
   const { fields } = useFieldArray({
     control: mainForm.control,
@@ -31,9 +32,7 @@ const FieldsBlock = ({
   });
 
   const allFields = useMemo(() => {
-    return fields?.filter(
-      (field) => field.type !== "LOOKUP" && field.type !== "LOOKUPS" && field.type !== "DYNAMIC"
-    );
+    return fields?.filter((field) => field.type !== "LOOKUP" && field.type !== "LOOKUPS" && field.type !== "DYNAMIC");
   }, [fields]);
 
   const { fields: relations } = useFieldArray({
@@ -78,12 +77,7 @@ const FieldsBlock = ({
 
   const unusedFields = useMemo(() => {
     return fields?.filter(
-      (field) =>
-        field.type !== "LOOKUP" &&
-        field.type !== "LOOKUPS" &&
-        field.type !== "DYNAMIC" &&
-        (!usedFields.includes(field.id) ||
-          !usedSummarySectionFields.includes(field.id))
+      (field) => field.type !== "LOOKUP" && field.type !== "LOOKUPS" && field.type !== "DYNAMIC" && (!usedFields.includes(field.id) || !usedSummarySectionFields.includes(field.id))
     );
   }, [usedFields, fields, usedSummarySectionFields]);
 
@@ -93,9 +87,7 @@ const FieldsBlock = ({
 
     return [...relations]?.filter((relation) => {
       if (relation.view_relation_type === "FILE") {
-        return !viewRelations?.some(
-          (viewRelation) => viewRelation.view_relation_type === "FILE"
-        );
+        return !viewRelations?.some((viewRelation) => viewRelation.view_relation_type === "FILE");
       } else {
         return !viewRelations?.some((viewRelation) => viewRelation?.relation_id === relation?.id);
       }
@@ -111,11 +103,20 @@ const FieldsBlock = ({
     if (!result) return;
   };
 
-  const handleNameChange = (event, index, oldId) => {
-    updateSectionTab(index, { label: event.target.value, type: "section", id: oldId });
-  };
+  // let watch = useWatch({
+  //   control: mainForm.control,
+  //   name: `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}`,
+  // });
 
-  console.log('sssssssss', tableRelations)
+  // const handleNameChange = (event) => {
+  //   mainForm.setValue(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.label`, event.target.value);
+  //   updateSectionTab(index, { label: event.target.value, ...watch });
+  // };
+
+  // const updateOptions = useDebounce((value, index) => {
+  //   sectionTabs[index].label = value;
+  //   console.log('ssssssss index', value)
+  // }, 300);
 
   return (
     <div className={styles.settingsBlock}>
@@ -128,10 +129,7 @@ const FieldsBlock = ({
       </div>
 
       <div className={styles.settingsBlockBody}>
-        <Tabs
-          selectedIndex={selectedSettingsTab}
-          onSelect={setSelectedSettingsTab}
-        >
+        <Tabs selectedIndex={selectedSettingsTab} onSelect={setSelectedSettingsTab}>
           <TabList>
             <Tab>Form fields</Tab>
             <Tab>Relation tabs</Tab>
@@ -152,12 +150,7 @@ const FieldsBlock = ({
                 {allFields?.map((field) => (
                   <Draggable key={field.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
-                      <FormElementGenerator
-                        field={field}
-                        control={layoutForm.control}
-                        checkPermission={false}
-                        disabledHelperText
-                      />
+                      <FormElementGenerator field={field} control={layoutForm.control} checkPermission={false} disabledHelperText />
                     </div>
                   </Draggable>
                 ))}
@@ -175,19 +168,14 @@ const FieldsBlock = ({
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
                   ...unusedRelations[i],
-                  field_name:
-                    unusedRelations[i]?.label ?? unusedFields[i]?.title,
+                  field_name: unusedRelations[i]?.label ?? unusedFields[i]?.title,
                   relation_type: unusedRelations[i].type,
                 })}
               >
                 {unusedRelations?.map((relation) => (
                   <Draggable key={relation.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
-                      <FormElementGenerator
-                        field={relation}
-                        control={mainForm.control}
-                        disabledHelperText
-                      />
+                      <FormElementGenerator field={relation} control={mainForm.control} disabledHelperText />
                     </div>
                   </Draggable>
                 ))}
@@ -197,23 +185,10 @@ const FieldsBlock = ({
 
           <TabPanel>
             <div className={styles.fieldsBlock}>
-              <Container
-                groupName="table_relation"
-                onDrop={onDrop}
-                dropPlaceholder={{ className: "drag-row-drop-preview" }}
-                getChildPayload={(i) => tableRelations[i]}
-              >
+              <Container groupName="table_relation" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }} getChildPayload={(i) => tableRelations[i]}>
                 {tableRelations?.map((relation) => (
-                  <Draggable
-                    key={relation.id}
-                    style={{ overflow: "visible", width: "fit-content" }}
-                  >
-                    <div
-                      className={`${styles.sectionFieldRow} ${styles.relation}`}
-                    >
-                      {relation.title ??
-                        relation[relation.relatedTableSlug]?.label}
-                    </div>
+                  <Draggable key={relation.id} style={{ overflow: "visible", width: "fit-content" }}>
+                    <div className={`${styles.sectionFieldRow} ${styles.relation}`}>{relation.title ?? relation[relation.relatedTableSlug]?.label}</div>
                   </Draggable>
                 ))}
               </Container>
@@ -222,45 +197,43 @@ const FieldsBlock = ({
 
           <TabPanel>
             <div className={styles.fieldsBlock}>
-              <Container
-                groupName="section_tabs"
-                onDrop={onDrop}
-                dropPlaceholder={{ className: "drag-row-drop-preview" }}
-                getChildPayload={(i) => unusedTableRelations[i]}
-              >
-                {sectionTabs?.map((tab, index) => (
-                  <Draggable
-                    key={index}
-                    style={{ overflow: "visible", width: "fit-content" }}
-                  >
-                    <div
-                      className={`${styles.sectionFieldRow} ${styles.relation}`}
-                    >
-                      <OutlinedInput
-                        value={tab.label}
-                        onClick={(e) => e.stopPropagation()}
-                        size="small"
-                        onChange={(e) => handleNameChange(e, index, tab.id)}
-                        style={{
-                          border: "none",
-                          outline: "none",
-                          fontWeight: 500,
-                          minWidth: 100,
-                          background: "transparent",
-                        }}
-                      />
-                      <Button onClick={() => removeSectionTab(index)}>
-                        <Close />
-                      </Button>
-                    </div>
-                  </Draggable>
-                ))}
+              <Container groupName="section_tabs" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }} getChildPayload={(i) => unusedTableRelations[i]}>
+                {sectionTabs?.map((tab, index) => {
+                  if (tab.type === "section")
+                    return (
+                      <Draggable key={index} style={{ overflow: "visible", width: "fit-content" }}>
+                        <div className={`${styles.sectionFieldRow} ${styles.relation}`}>
+                          {/* <OutlinedInput
+                            value={tab.label}
+                            onClick={(e) => e.stopPropagation()}
+                            size="small"
+                            onChange={(e) => updateOptions(e.target.value, index)}
+                            style={{
+                              border: "none",
+                              outline: "none",
+                              fontWeight: 500,
+                              minWidth: 100,
+                              background: "transparent",
+                            }}
+                          /> */}
 
-                <Button
-                  onClick={() =>
-                    appendSectionTab({ type: "section", id: generateGUID() })
-                  }
-                >
+                          <HFTextField
+                            control={mainForm.control}
+                            name={`layouts.${selectedLayoutIndex}.tabs.${index}.label`}
+                            size="small"
+                            variant="outlined"
+                            style={{ width: 200 }}
+                          />
+
+                          <Button onClick={() => removeSectionTab(index)}>
+                            <Close />
+                          </Button>
+                        </div>
+                      </Draggable>
+                    );
+                })}
+
+                <Button onClick={() => appendSectionTab({ type: "section", id: generateGUID() })}>
                   <Add />
                   Add Section tab
                 </Button>

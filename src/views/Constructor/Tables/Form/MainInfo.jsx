@@ -50,6 +50,12 @@ const MainInfo = ({ control }) => {
           <FRow label="Показать в меню">
             <HFSwitch control={control} name="show_in_menu" required />
           </FRow>
+          <FRow label="Кеш">
+            <HFSwitch control={control} name="is_cached" required />
+          </FRow>
+          <FRow label="Софт Удаление">
+            <HFSwitch control={control} name="soft_delete" required />
+          </FRow>
         </div>
 
         <FRow label="Название">

@@ -15,6 +15,7 @@ import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import { useSelector } from "react-redux";
 import { useWatch } from "react-hook-form";
+import PageFallback from "../../../components/PageFallback";
 
 const RelationTable = forwardRef(
   (
@@ -26,6 +27,7 @@ const RelationTable = forwardRef(
       remove,
       setCreateFormVisible,
       watch,
+      loader,
       selectedObjects,
       setSelectedObjects,
       tableSlug,
@@ -153,14 +155,16 @@ const RelationTable = forwardRef(
       else setLimit(parseInt(getRelatedTabeSlug?.default_limit));
     }, [getRelatedTabeSlug?.default_limit]);
 
-    // useEffect(() => {
-    //   setTimeout(() => {
-    //     reset({
-    //       multi: tableData?.length ? tableData.map((i) => i) : [],
-    //     });
-    //   }, 0);
-    // }, [tableData, reset, selectedTabIndex]);
+    useEffect(() => {
+      setFormValue("multi", tableData);
+    }, [selectedTab, tableData]);
 
+    const a = useWatch({
+      control
+    });
+
+    console.log('awdawdawdawd', a)
+ 
     const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {
         if (getRelatedTabeSlug.type === "Many2Many") {
@@ -234,7 +238,7 @@ const RelationTable = forwardRef(
       }),
       [pageCount, filters, currentPage, limit]
     );
-
+    if(loader) return <PageFallback />
     return (
       <div className={styles.relationTable} ref={tableRef}>
         {!!quickFilters?.length && (
@@ -267,7 +271,7 @@ const RelationTable = forwardRef(
               control={control}
               relatedTableSlug={relatedTableSlug}
               tableSlug={tableSlug}
-              removableHeight={290}
+              removableHeight={230}
               disableFilters
               pagesCount={pageCount}
               currentPage={currentPage}

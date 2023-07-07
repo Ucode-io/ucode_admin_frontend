@@ -61,9 +61,9 @@ const AutoFiltersBlock = ({ control, watch }) => {
 
   return (
     <>
-      <div className={styles.settingsBlockHeader}>
+      {/* <div className={styles.settingsBlockHeader}>
         <h2>AutoFilters</h2>
-      </div>
+      </div> */}
       <div className="p-2">
         {fields.map((field, index) => (
           <div className="flex align-center gap-2 mb-2" key={field.id}>

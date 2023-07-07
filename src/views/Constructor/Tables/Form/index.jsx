@@ -19,11 +19,7 @@ import { constructorTableActions } from "../../../../store/constructorTable/cons
 import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk";
 import { generateGUID } from "../../../../utils/generateID";
 import { listToMap } from "../../../../utils/listToMap";
-import {
-  computeSectionsOnSubmit,
-  computeViewRelations,
-  computeViewRelationsOnSubmit
-} from "../utils";
+import { computeSectionsOnSubmit, computeViewRelations, computeViewRelationsOnSubmit } from "../utils";
 import Actions from "./Actions";
 import CustomErrors from "./CustomErrors";
 import Fields from "./Fields";
@@ -137,19 +133,15 @@ const ConstructorTablesFormPage = () => {
         relation_table_slug: slug,
       });
 
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([
-        getRelations,
-        getFieldsData,
-      ]);
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
 
-      // remove fields which type 
+      // remove fields which type
 
       mainForm.setValue("fields", fields);
 
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug:
-          relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -157,8 +149,7 @@ const ConstructorTablesFormPage = () => {
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" &&
-            relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
@@ -176,17 +167,13 @@ const ConstructorTablesFormPage = () => {
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label:
-          relation?.label ?? relation[relation.relatedTableSlug]?.label
-            ? relation[relation.relatedTableSlug]?.label
-            : relation?.title,
+        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
       mainForm.setValue("relationsMap", listToMap(relations));
       mainForm.setValue("layoutRelations", layoutRelationsFields);
       mainForm.setValue("tableRelations", tableRelations);
-      console.log("tableRelations", layoutRelations);
       resolve();
     });
   };
@@ -221,10 +208,20 @@ const ConstructorTablesFormPage = () => {
       ...layout,
       summary_fields: layout?.summary_fields,
       tabs: layout?.tabs?.map((tab) => {
-        if (tab?.type === "Many2Many" || tab?.type === "Many2Dynamic" || tab?.type === "One2Many" || tab?.type === "Recursive" || tab?.type === "Many2One") {
+        if (
+          tab.type === "Many2Many" ||
+          tab.type === "Many2Dynamic" ||
+          tab.type === "Recursive" ||
+          tab.type === "Many2One" ||
+          tab.relation_type === "Many2Many" ||
+          tab.relation_type === "Many2Dynamic" ||
+          tab.relation_type === "Recursive" ||
+          tab.relation_type === "Many2One"
+        ) {
           return {
             order: tab?.order ?? 0,
-            label: tab.title,
+            label: tab.title ?? tab.label,
+            field_name: tab?.title ?? tab.label,
             type: "relation",
             layout_id: layout.id,
             relation_id: tab.id,
@@ -238,6 +235,11 @@ const ConstructorTablesFormPage = () => {
             sections: tab?.sections?.map((section, index) => ({
               ...section,
               order: index,
+              fields: section?.fields?.map((field, index) => ({
+                ...field,
+                order: index,
+                field_name: field?.title ?? field.label,
+              })),
             })),
           };
         }
@@ -279,20 +281,13 @@ const ConstructorTablesFormPage = () => {
     if (!id) setLoader(false);
     else getData();
   }, [id]);
-
   if (loader) return <PageFallback />;
 
   return (
     <>
       <div className="pageWithStickyFooter">
         <Tabs direction={"ltr"}>
-          <HeaderSettings
-            title="Objects"
-            subtitle={id ? mainForm.getValues("label") : "Добавить"}
-            icon={mainForm.getValues("icon")}
-            backButtonLink={-1}
-            sticky
-          >
+          <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Добавить"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
             <TabList>
               <Tab>Details</Tab>
               <Tab>Layouts</Tab>
@@ -317,10 +312,7 @@ const ConstructorTablesFormPage = () => {
 
           {id && (
             <TabPanel>
-              <Relations
-                mainForm={mainForm}
-                getRelationFields={getRelationFields}
-              />
+              <Relations mainForm={mainForm} getRelationFields={getRelationFields} />
             </TabPanel>
           )}
           {id && (
@@ -342,11 +334,7 @@ const ConstructorTablesFormPage = () => {
             <SecondaryButton onClick={() => navigate(-1)} color="error">
               Закрыть
             </SecondaryButton>
-            <PrimaryButton
-              loader={btnLoader}
-              onClick={mainForm.handleSubmit(onSubmit)}
-              loading={btnLoader}
-            >
+            <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
               <Save /> Сохранить
             </PrimaryButton>
           </>

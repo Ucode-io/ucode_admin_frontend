@@ -33,9 +33,9 @@ const DefaultValueBlock = ({control, watch, columnsList}) => {
     if (!relation.table_to || !relation.table_from) return null;
     return (
         <>
-            <div className={styles.settingsBlockHeader}>
+            {/* <div className={styles.settingsBlockHeader}>
                 <h2>Default value</h2>
-            </div>
+            </div> */}
 
             <div className="p-2">
                 <FormElementGenerator

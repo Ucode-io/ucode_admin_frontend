@@ -40,9 +40,9 @@ const SummaryBlock = ({ control, computedFieldsListOptions }) => {
 
   return (
     <>
-      <div className={styles.settingsBlockHeader}>
+      {/* <div className={styles.settingsBlockHeader}>
         <h2>Summary</h2>
-      </div>
+      </div> */}
 
       <div className="p-2">
         {summaries?.map((summary, index) => (

@@ -100,7 +100,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
   switch (field.type) {
     case "SCAN_BARCODE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <InventoryBarCode
             relatedTable={relatedTable}
             control={control}
@@ -135,7 +135,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "PHONE":
       return (
-        <FRow label={field?.attributes?.show_label ? field.label : ""} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : " "} required={field.required}>
           <HFTextFieldWithMask
             control={control}
             name={computedSlug}
@@ -153,7 +153,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "INTERNATIONAL_PHONE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFInternationPhone
             control={control}
             name={computedSlug}
@@ -171,7 +171,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "INTERNATION_PHONE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFInternationPhone
             control={control}
             name={computedSlug}
@@ -189,7 +189,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "PICK_LIST":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFAutocomplete
             control={control}
             tabIndex={field?.tabIndex}
@@ -207,7 +207,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "MULTI_LINE":
       return (
-        <FRow label={field?.attributes?.show_label ? field.label : ""} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : " "} required={field.required}>
           <HFTextEditor
             control={control}
             name={computedSlug}
@@ -226,7 +226,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "DATE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFDatePicker
             control={control}
             name={computedSlug}
@@ -245,7 +245,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "DATE_TIME":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFDateTimePicker
             control={control}
             name={computedSlug}
@@ -262,7 +262,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "TIME":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFTimePicker
             control={control}
             name={computedSlug}
@@ -278,7 +278,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "NUMBER":
       return (
-        <FRow label={field?.attributes?.show_label ? field.label : ""} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : " "} required={field.required}>
           <HFNumberField
             control={control}
             name={computedSlug}
@@ -295,7 +295,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
       );
     case "FLOAT":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFFloatField
             control={control}
             name={computedSlug}
@@ -327,7 +327,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "MULTISELECT":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFMultipleAutocomplete
             control={control}
             name={computedSlug}
@@ -359,7 +359,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "EMAIL":
       return (
-        <FRow label={field?.attributes?.show_label ? field.label : ""} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field.label : " "} required={field.required}>
           <HFTextField
             control={control}
             name={computedSlug}
@@ -382,13 +382,13 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "PHOTO":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFImageUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
         </FRow>
       );
     case "MAP":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFMapField
             control={control}
             name={computedSlug}
@@ -404,20 +404,20 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "VIDEO":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFVideoUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
         </FRow>
       );
     case "FILE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFFileUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
         </FRow>
       );
 
     case "BARCODE":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <BarcodeGenerator
             control={control}
             field={field}
@@ -436,7 +436,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "CODABAR":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <CodabarBarcode
             control={control}
             name={field.slug}
@@ -455,7 +455,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "DENTIST":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFDentist
             control={control}
             name={computedSlug}
@@ -489,7 +489,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "ICON":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFIconPicker control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
         </FRow>
       );
@@ -497,7 +497,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     case "FORMULA":
     case "INCREMENT_ID":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}
@@ -518,7 +518,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
       );
     case "INCREMENT_NUMBER":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}
@@ -540,7 +540,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "FORMULA_FRONTEND":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFFormulaField
             setFormValue={setFormValue}
             control={control}
@@ -557,7 +557,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "COLOR":
       return (
-        <FRow label={field.label} required={field.required}>
+        <FRow label={field.label ?? " "} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}
@@ -575,7 +575,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     case "PASSWORD":
       return (
-        <FRow label={field?.attributes?.show_label ? field?.label : ""} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field?.label : " "} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}
@@ -593,7 +593,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     default:
       return (
-        <FRow label={field?.attributes?.show_label ? field?.label : ""} required={field.required}>
+        <FRow label={field?.attributes?.show_label ? field?.label : " "} required={field.required}>
           <HFTextField
             control={control}
             name={field.slug}

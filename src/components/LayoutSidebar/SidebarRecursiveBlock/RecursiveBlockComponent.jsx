@@ -60,7 +60,7 @@ const RecursiveBlock = ({
     color:
       menuItem?.id === element?.id
         ? menuStyle?.active_text
-        : menuStyle?.text || "",
+        : menuStyle?.text || "#000",
     paddingLeft: level * 2 * 5,
     display:
       element.id === "0" ||

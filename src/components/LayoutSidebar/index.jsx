@@ -275,7 +275,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                             : menuTemplate?.icon_size === "MEDIUM"
                             ? 15
                             : 18 || 18,
-                        color: menuStyle?.text,
+                        color: menuStyle?.text || "#000",
                       }}
                     />
                   }
@@ -341,7 +341,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                   sidebarIsOpen={sidebarIsOpen}
                   style={{
                     background: menuStyle?.background || "#fff",
-                    color: menuStyle?.text || "#fff",
+                    color: menuStyle?.text || "#000",
                   }}
                 />
                 <Divider />
@@ -364,7 +364,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
             }
             style={{
               background: menuStyle?.background || "#fff",
-              color: menuStyle?.text || "#fff",
+              color: menuStyle?.text || "#000",
             }}
             sidebarIsOpen={sidebarIsOpen}
           />

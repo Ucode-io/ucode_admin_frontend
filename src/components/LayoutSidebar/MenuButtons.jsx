@@ -83,22 +83,26 @@ const ButtonsMenu = ({
       >
         {menuType === "FOLDER" ? (
           <Box className="menu">
-            <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
-              title="Изменить папку"
-              onClick={(e) => {
-                e.stopPropagation();
-                openFolderCreateModal("update", element);
-                handleCloseNotify();
-              }}
-            />
+            {element?.data?.permission?.write && (
+              <MenuItemComponent
+                icon={<RiPencilFill size={13} />}
+                title="Изменить папку"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openFolderCreateModal("update", element);
+                  handleCloseNotify();
+                }}
+              />
+            )}
+
             <Divider
               style={{
                 marginBottom: "4px",
                 marginTop: "4px",
               }}
             />
-            <MenuItemComponent
+            {element?.data?.permission?.delete && (
+              <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
               title="Удалить папку"
               onClick={(e) => {
@@ -107,15 +111,18 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
-            <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
-              title="Переместить folder"
-              onClick={(e) => {
-                e.stopPropagation();
-                setFolderModalType("folder", element);
-                handleCloseNotify();
-              }}
-            />
+            )}
+           {element?.data?.permission?.menu_settings &&  (
+             <MenuItemComponent
+             icon={<RiPencilFill size={13} />}
+             title="Переместить folder"
+             onClick={(e) => {
+               e.stopPropagation();
+               setFolderModalType("folder", element);
+               handleCloseNotify();
+             }}
+           />
+           )}
             {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
               <>
                 <Divider
@@ -124,15 +131,17 @@ const ButtonsMenu = ({
                     marginTop: "4px",
                   }}
                 />
-                <MenuItemComponent
-                  icon={<StarBorderIcon size={13} />}
-                  title="Favourite"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCloseNotify();
-                    onFavourite(element, "FOLDER");
-                  }}
-                />
+               {element?.data?.permission?.menu_settings && (
+                 <MenuItemComponent
+                 icon={<StarBorderIcon size={13} />}
+                 title="Favourite"
+                 onClick={(e) => {
+                   e.stopPropagation();
+                   handleCloseNotify();
+                   onFavourite(element, "FOLDER");
+                 }}
+               />
+               )}
               </>
             )}
           </Box>

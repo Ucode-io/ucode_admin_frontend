@@ -55,12 +55,12 @@ const RecursiveBlock = ({
   const activeStyle = {
     backgroundColor:
       menuItem?.id === element?.id
-        ? menuStyle.active_background
-        : menuStyle.background || "#fff",
+        ? menuStyle?.active_background
+        : menuStyle?.background || "#fff",
     color:
       menuItem?.id === element?.id
         ? menuStyle?.active_text
-        : menuStyle.text || "",
+        : menuStyle?.text || "",
     paddingLeft: level * 2 * 5,
     display:
       element.id === "0" ||
@@ -119,7 +119,7 @@ const RecursiveBlock = ({
               color:
                 menuItem?.id === element?.id
                   ? menuStyle?.active_text
-                  : menuStyle.text || "",
+                  : menuStyle?.text || "",
               opacity: element?.isChild && 0.6,
             }}
           >
@@ -151,7 +151,7 @@ const RecursiveBlock = ({
                       color:
                         menuItem?.id === element?.id
                           ? menuStyle?.active_text
-                          : menuStyle.text || "",
+                          : menuStyle?.text || "",
                     }}
                   />
                 </Box>
@@ -169,7 +169,7 @@ const RecursiveBlock = ({
                       color:
                         menuItem?.id === element?.id
                           ? menuStyle?.active_text
-                          : menuStyle.text || "",
+                          : menuStyle?.text || "",
                     }}
                   />
                 </Box>
@@ -195,7 +195,7 @@ const RecursiveBlock = ({
                 color:
                   menuItem?.id === element?.id
                     ? menuStyle?.active_text
-                    : menuStyle.text || "",
+                    : menuStyle?.text || "",
               }}
             />
           )}
@@ -211,7 +211,7 @@ const RecursiveBlock = ({
                 color:
                   menuItem?.id === element?.id
                     ? menuStyle?.active_text
-                    : menuStyle.text || "",
+                    : menuStyle?.text || "",
               }}
             />
           )}
@@ -227,7 +227,7 @@ const RecursiveBlock = ({
                 color:
                   menuItem?.id === element?.id
                     ? menuStyle?.active_text
-                    : menuStyle.text || "",
+                    : menuStyle?.text || "",
               }}
             />
           )}

@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import brandLogo from "../../../builder_config/assets/Udevs.svg";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import menuService, { useMenuListQuery } from "../../services/menuService";
 import projectService from "../../services/projectService";
@@ -25,7 +24,7 @@ import { Container } from "react-smooth-dnd";
 import ButtonsMenu from "./MenuButtons";
 import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
-import { OpenCloseSvg, UdevsLogo } from "../../assets/icons/icon";
+import { UdevsLogo } from "../../assets/icons/icon";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
 import {
   useMenuSettingGetByIdQuery,
@@ -143,7 +142,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         console.log(err);
       });
   };
-  console.log("root", root);
 
   const getMenuList = () => {
     menuSettingsService
@@ -193,8 +191,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     }
   );
 
-  console.log("menuTemplate", menuTemplate);
-
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList?.menus, dropResult);
     if (result) {
@@ -224,14 +220,14 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         >
           <div className="brand">
             <UdevsLogo
-              fill={menuStyle?.text}
+              fill={menuStyle?.text || "#000"}
               // onClick={switchRightSideVisible}
             />
             {sidebarIsOpen && (
               <h2
                 style={{
                   marginLeft: "8px",
-                  color: menuStyle?.text,
+                  color: menuStyle?.text || "#000",
                 }}
               >
                 {projectInfo?.title}
@@ -279,6 +275,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                             : menuTemplate?.icon_size === "MEDIUM"
                             ? 15
                             : 18 || 18,
+                        color: menuStyle?.text,
                       }}
                     />
                   }
@@ -289,13 +286,14 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                   sidebarIsOpen={sidebarIsOpen}
                   style={{
                     background: menuStyle?.background || "#fff",
+                    color: menuStyle?.text || "",
                   }}
                 />
                 <div
                   className="nav-block"
                   style={{
                     background: menuStyle?.background || "#fff",
-                    color: menuStyle?.color || "#fff",
+                    color: menuStyle?.text || "#fff",
                   }}
                 >
                   <div className="menu-element">
@@ -332,6 +330,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                             : menuTemplate?.icon_size === "MEDIUM"
                             ? 15
                             : 18 || 18,
+                        color: menuStyle?.text,
                       }}
                     />
                   }
@@ -342,7 +341,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                   sidebarIsOpen={sidebarIsOpen}
                   style={{
                     background: menuStyle?.background || "#fff",
-                    color: menuStyle?.color || "#fff",
+                    color: menuStyle?.text || "#fff",
                   }}
                 />
                 <Divider />
@@ -364,6 +363,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
             }
             style={{
               background: menuStyle?.background || "#fff",
+              color: menuStyle?.text || "#fff",
             }}
             sidebarIsOpen={sidebarIsOpen}
           />

@@ -38,14 +38,11 @@ const MenuSettingModal = ({ closeModal }) => {
   const { control, reset, handleSubmit, setValue } = useForm({
     defaultValues: {},
   });
-  console.log("menuTemplate", menuTemplate);
   useEffect(() => {
     if (menuTemplate) {
       setSelectedTemplate(menuTemplate?.menu_template);
     }
   }, [menuTemplate]);
-
-  console.log("selectedTemplate", selectedTemplate);
 
   const handleTypeChange = (event) => {
     setType(event.target.value);
@@ -53,15 +50,6 @@ const MenuSettingModal = ({ closeModal }) => {
   const handleSizeChange = (event) => {
     setSize(event.target.value);
   };
-  console.log("type", type);
-
-  const colors = [
-    { color: selectedTemplate?.background },
-    { color: selectedTemplate?.active_background },
-    { color: selectedTemplate?.text },
-    { color: selectedTemplate?.active_text },
-  ];
-  console.log("modalType", modalType);
 
   const { mutate: create, isLoading: createLoading } =
     useMenuSettingUpdateMutation({

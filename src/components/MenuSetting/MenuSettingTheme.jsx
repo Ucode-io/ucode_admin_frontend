@@ -7,7 +7,7 @@ import {
   Button,
 } from "@mui/material";
 import styles from "./style.module.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ThemeCard from "./ThemeCard";
 import { Left } from "../../assets/icons/icon";
 import {
@@ -17,9 +17,15 @@ import {
 import { useQueryClient } from "react-query";
 import RingLoader from "../Loaders/RingLoader";
 
-const MenuSettingTheme = ({ setModalType, setSelectedTemplate }) => {
+const MenuSettingTheme = ({
+  setModalType,
+  setSelectedTemplate,
+  check,
+  setCheck,
+}) => {
   const queryClient = useQueryClient();
   const [template, setTemplate] = useState("");
+  console.log("template", template);
 
   const handleTemplateChange = (event) => {
     setTemplate(event.target.value);
@@ -35,7 +41,12 @@ const MenuSettingTheme = ({ setModalType, setSelectedTemplate }) => {
     deleteCustomError(id);
   };
   const { data: templates, isLoading } = useMenuTemplateListQuery({});
-
+  useEffect(() => {
+    if (check) {
+      setTemplate(check);
+      setCheck(false);
+    }
+  }, []);
   return (
     <>
       <div className={styles.header}>
@@ -62,6 +73,12 @@ const MenuSettingTheme = ({ setModalType, setSelectedTemplate }) => {
                 {templates?.menu_templates?.map((item) => (
                   <FormControlLabel
                     value={item?.id}
+                    defaultChecked={
+                      item?.id === "7545c040-c56a-423e-b764-7205157d79fb"
+                    }
+                    checked={
+                      item?.id === "7545c040-c56a-423e-b764-7205157d79fb"
+                    }
                     key={item?.id}
                     control={<Radio />}
                     label={

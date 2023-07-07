@@ -32,6 +32,7 @@ const MenuSettingModal = ({ closeModal }) => {
   const [modalType, setModalType] = useState("SETTING");
   const [type, setType] = useState(menuTemplate?.icon_style || "");
   const [size, setSize] = useState(menuTemplate?.icon_size || "");
+  const [check, setCheck] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const queryClient = useQueryClient();
 
@@ -210,7 +211,7 @@ const MenuSettingModal = ({ closeModal }) => {
                 </Box>
                 <Box className={styles.sidebarsection}>
                   <Box className={styles.sidebar}>
-                    {type === "SIMPLE" ? (
+                    {type === "MODERN" ? (
                       <div
                         className={styles.menu}
                         style={{
@@ -352,10 +353,12 @@ const MenuSettingModal = ({ closeModal }) => {
             <MenuSettingTheme
               setModalType={setModalType}
               setSelectedTemplate={setSelectedTemplate}
+              check={check}
+              setCheck={setCheck}
             />
           )}
           {modalType === "MENUFORM" && (
-            <MenuSettingForm setModalType={setModalType} />
+            <MenuSettingForm setModalType={setModalType} setCheck={setCheck} />
           )}
         </Card>
       </Modal>

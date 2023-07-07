@@ -242,6 +242,20 @@
         }
     }
 
+    .formcolorinput {
+        width: 100% !important;
+
+        div {
+            width: 100% !important;
+            padding: 0 5px;
+        }
+
+        fieldset {
+            border-radius: 6px;
+            border: none;
+        }
+    }
+
     .colorpicker {
         padding: 8px;
         border-radius: 6px;
@@ -252,6 +266,7 @@
 
 
         div {
+
             width: 31.5px;
 
             &::after {

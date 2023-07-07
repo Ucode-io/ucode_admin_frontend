@@ -51,13 +51,15 @@ const ProfilePanel = ({
         classes={{ list: styles.menu, paper: styles.paper }}
       >
         <div className={styles.scrollBlocksss}>
-          <div className={styles.menuItem}>
-            <span className={styles.avatar}>
-              {projectInfo?.title?.charAt(0).toUpperCase()}
-            </span>
+          {projectInfo && (
+            <div className={styles.menuItem}>
+              <span className={styles.avatar}>
+                {projectInfo?.title?.charAt(0).toUpperCase()}
+              </span>
 
-            <p className={styles.itemText}>{projectInfo?.title}</p>
-          </div>
+              <p className={styles.itemText}>{projectInfo?.title}</p>
+            </div>
+          )}
           <div className={styles.menuItem} onClick={handleClick}>
             {/* <KeyIcon className={styles.dragIcon} /> */}
 
@@ -101,12 +103,20 @@ const ProfilePanel = ({
           </div>
         </div>
         <Divider />
-        <div className={styles.scrollBlocksss}>
-          <div className={styles.menuItem} onClick={handleMenuSettingModalOpen}>
-            {/* <KeyIcon className={styles.dragIcon} /> */}
-            <p className={styles.itemText}>Menu settings</p>
+        {projectInfo && (
+          <div className={styles.scrollBlocksss}>
+            <div
+              className={styles.menuItem}
+              onClick={() => {
+                handleMenuSettingModalOpen();
+                closeMenu();
+              }}
+            >
+              {/* <KeyIcon className={styles.dragIcon} /> */}
+              <p className={styles.itemText}>Menu settings</p>
+            </div>
           </div>
-        </div>
+        )}
       </Menu>
     </div>
   );

@@ -123,6 +123,7 @@ const WebPageLinkModal = ({
                 control={control}
                 name="webpage_id"
                 options={microfrontendOptions}
+                required
               />
             </Box>
 

@@ -5,11 +5,11 @@ import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
-import HFSelect from "../../components/FormElements/HFSelect";
 import constructorTableService from "../../services/constructorTableService";
 import menuSettingsService from "../../services/menuSettingsService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
+import HFAutocomplete from "../../components/FormElements/HFAutocomplete";
 
 const TableLinkModal = ({
   closeModal,
@@ -60,6 +60,7 @@ const TableLinkModal = ({
         console.log(err);
       });
   };
+
   const updateType = (data, selectedFolder) => {
     menuSettingsService
       .update({
@@ -74,10 +75,14 @@ const TableLinkModal = ({
       });
   };
 
-  const getTables = () => {
-    constructorTableService.getList().then((res) => {
-      setTables(res);
-    });
+  const getTables = (search) => {
+    constructorTableService
+      .getList({
+        search: search || undefined,
+      })
+      .then((res) => {
+        setTables(res);
+      });
   };
 
   useEffect(() => {
@@ -108,7 +113,7 @@ const TableLinkModal = ({
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="form">
-            {/* <Box display={"flex"} columnGap={"16px"} className="form-elements">
+            <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
               <HFTextField
                 autoFocus
@@ -117,14 +122,18 @@ const TableLinkModal = ({
                 control={control}
                 name="label"
               />
-            </Box> */}
+            </Box>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
-              <HFSelect
-                fullWidth
-                label="Tables"
-                control={control}
+              <HFAutocomplete
                 name="table_id"
+                control={control}
+                placeholder="Tables"
+                fullWidth
+                required
                 options={tableOptions}
+                onFieldChange={(e) => {
+                  getTables(e.target.value);
+                }}
               />
             </Box>
 

@@ -1,7 +1,6 @@
 import "./style.scss";
 import menuElements from "./elements";
-import brandLogo from "../../../builder_config/assets/company-logo.svg";
-import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import brandLogo from "../../../builder_config/assets/Udevs.svg";
 import { useState, useEffect } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { NavLink } from "react-router-dom";
@@ -10,6 +9,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { mainActions } from "../../store/main/main.slice";
 import ProfilePanel from "../ProfilePanel";
+import { OpenCloseSvg } from "../../assets/icons/icon";
 
 const Sidebar2222 = ({ favicon }) => {
   const sidebarIsOpen = useSelector(
@@ -47,12 +47,17 @@ const Sidebar2222 = ({ favicon }) => {
       <div className="header">
         <div className="brand">
           <div className="brand-logo" onClick={switchRightSideVisible}>
-            <img src={favicon ?? brandLogo} alt="logo" />
+            <img
+              src={favicon ?? brandLogo}
+              alt="logo"
+              width={"40px"}
+              height={"40px"}
+            />
           </div>
           <div className="brand-name">SETTINGS</div>
         </div>
         <div className="cloes-btn" onClick={switchRightSideVisible}>
-          <MenuOpenIcon />
+          <OpenCloseSvg />
         </div>
       </div>
 

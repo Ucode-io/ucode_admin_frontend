@@ -33,7 +33,7 @@ $main-color: #0365F2;
 
   .MuiButtonBase-root {
     padding: 12px;
-    border-top: 1px solid #F0F0F0;
+    // border-top: 1px solid #F0F0F0;
 
 
     span {
@@ -93,7 +93,7 @@ $main-color: #0365F2;
     align-items: center;
     width: 100%;
     border-radius: 0;
-    padding: 8px 12px;
+    padding: 10px 12px;
     color: #6e8bb7;
     cursor: default;
     border: 0;
@@ -124,7 +124,7 @@ $main-color: #0365F2;
 
     &.active-with-child {
       color: #0365F2;
-      background-color: #fff !important;
+      background-color: #fff;
 
       &:hover {
         background-color: #A8A8A81A !important;
@@ -291,7 +291,7 @@ $main-color: #0365F2;
 
         &.active-with-child {
           color: #0365F2;
-          background-color: #fff !important;
+          background-color: #fff;
 
           &:hover {
             background-color: #A8A8A81A !important;

@@ -1,12 +1,11 @@
 import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import MenuOpenIcon from "@mui/icons-material/MenuOpen";
-import { Box } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import brandLogo from "../../../builder_config/assets/company-logo.svg";
+import brandLogo from "../../../builder_config/assets/Udevs.svg";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import menuService, { useMenuListQuery } from "../../services/menuService";
 import projectService from "../../services/projectService";
@@ -26,13 +25,19 @@ import { Container } from "react-smooth-dnd";
 import ButtonsMenu from "./MenuButtons";
 import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
+import { OpenCloseSvg, UdevsLogo } from "../../assets/icons/icon";
+import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
+import {
+  useMenuSettingGetByIdQuery,
+  useMenuSettingListQuery,
+} from "../../services/menuSettingService";
 
 const LayoutSidebar = ({ favicon, appId, environment }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
   const projectId = useSelector((state) => state.auth.projectId);
-
+  const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -44,13 +49,14 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const [tableModal, setTableModalOpen] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
   const [webPageModal, setWebPageModalOpen] = useState(false);
+  const [menuSettingModal, setMenuSettingModalOpen] = useState(false);
   const [selectedApp, setSelectedApp] = useState();
   const [child, setChild] = useState();
   const [element, setElement] = useState();
   const [searchText, setSearchText] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
-  const [pin, setPin] = useState(false);
+  const [root, setRoot] = useState("");
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openSidebarMenu = Boolean(menu?.event);
 
@@ -61,21 +67,24 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const handleCloseNotify = () => {
     setMenu(null);
   };
-
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: appId,
       search: subSearchText,
     },
     queryParams: {
-      cacheTime: 10,
+      // cacheTime: 10,
       enabled: Boolean(appId),
       onSuccess: (res) => {
         setChild(res.menus);
-        setSubMenuIsOpen(true);
       },
     },
   });
+  const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+    menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
+  });
+  const menuStyle = menuTemplate?.menu_template;
+
   const handleRouter = () => {
     navigate(`/main/${appId}/chat`);
   };
@@ -104,6 +113,12 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const closeWebPageModal = () => {
     setWebPageModalOpen(null);
   };
+  const handleMenuSettingModalOpen = (element) => {
+    setMenuSettingModalOpen(true);
+  };
+  const closeMenuSettingModal = () => {
+    setMenuSettingModalOpen(null);
+  };
   const closeModal = () => {
     setModalType(null);
   };
@@ -128,6 +143,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         console.log(err);
       });
   };
+  console.log("root", root);
 
   const getMenuList = () => {
     menuSettingsService
@@ -146,6 +162,13 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
   };
+  useEffect(() => {
+    if (menuTemplate?.icon_style === "SIMPLE") {
+      setSidebarIsOpen(false);
+    } else {
+      setSidebarIsOpen(true);
+    }
+  }, [menuTemplate]);
 
   const switchRightSideVisible = () => {
     setSidebarIsOpen(!sidebarIsOpen);
@@ -159,12 +182,18 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     setSelectedApp(menuList?.menus?.find((item) => item?.id === appId));
   }, [menuList]);
 
+  useEffect(() => {
+    if (selectedApp?.type === "FOLDER" && pinIsEnabled) setSubMenuIsOpen(true);
+  }, [selectedApp]);
+
   const { data: projectInfo } = useQuery(
     ["GET_PROJECT_BY_ID", projectId],
     () => {
       return projectService.getById(projectId);
     }
   );
+
+  console.log("menuTemplate", menuTemplate);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList?.menus, dropResult);
@@ -183,30 +212,35 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     <>
       <div
         className={`LayoutSidebar ${!sidebarIsOpen ? "right-side-closed" : ""}`}
+        style={{
+          background: menuStyle?.background || "#fff",
+        }}
       >
         <div
           className="header"
           onClick={() => {
-            switchRightSideVisible();
+            // switchRightSideVisible();
           }}
         >
           <div className="brand">
-            <div className="brand-logo" onClick={switchRightSideVisible}>
-              <img src={favicon ?? brandLogo} alt="logo" />
-            </div>
+            <UdevsLogo
+              fill={menuStyle?.text}
+              // onClick={switchRightSideVisible}
+            />
             {sidebarIsOpen && (
               <h2
                 style={{
                   marginLeft: "8px",
+                  color: menuStyle?.text,
                 }}
               >
                 {projectInfo?.title}
               </h2>
-            )}{" "}
+            )}
           </div>
-          <div className="cloes-btn" onClick={switchRightSideVisible}>
-            <MenuOpenIcon />
-          </div>
+          {/* <div className="cloes-btn">
+            <OpenCloseSvg fill={menuStyle?.text} />
+          </div> */}
         </div>
 
         <Box
@@ -236,17 +270,32 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
               <>
                 <MenuButtonComponent
                   title={"Chat"}
-                  icon={<ChatBubbleIcon />}
+                  icon={
+                    <ChatBubbleIcon
+                      style={{
+                        width:
+                          menuTemplate?.icon_size === "SMALL"
+                            ? 10
+                            : menuTemplate?.icon_size === "MEDIUM"
+                            ? 15
+                            : 18 || 18,
+                      }}
+                    />
+                  }
                   openFolderCreateModal={openFolderCreateModal}
                   onClick={(e) => {
                     handleRouter();
                   }}
                   sidebarIsOpen={sidebarIsOpen}
+                  style={{
+                    background: menuStyle?.background || "#fff",
+                  }}
                 />
                 <div
                   className="nav-block"
                   style={{
-                    background: environment?.data?.background,
+                    background: menuStyle?.background || "#fff",
+                    color: menuStyle?.color || "#fff",
                   }}
                 >
                   <div className="menu-element">
@@ -265,8 +314,8 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                             subMenuIsOpen={subMenuIsOpen}
                             handleOpenNotify={handleOpenNotify}
                             setSelectedApp={setSelectedApp}
-                            environment={environment}
                             selectedApp={selectedApp}
+                            menuTemplate={menuTemplate}
                           />
                         ))}
                     </Container>
@@ -274,13 +323,29 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                 </div>
                 <MenuButtonComponent
                   title={"Create"}
-                  icon={<AddIcon />}
+                  icon={
+                    <AddIcon
+                      style={{
+                        width:
+                          menuTemplate?.icon_size === "SMALL"
+                            ? 10
+                            : menuTemplate?.icon_size === "MEDIUM"
+                            ? 15
+                            : 18 || 18,
+                      }}
+                    />
+                  }
                   openFolderCreateModal={openFolderCreateModal}
                   onClick={(e) => {
                     handleOpenNotify(e, "ROOT");
                   }}
                   sidebarIsOpen={sidebarIsOpen}
+                  style={{
+                    background: menuStyle?.background || "#fff",
+                    color: menuStyle?.color || "#fff",
+                  }}
                 />
+                <Divider />
               </>
             )}
           </div>
@@ -291,7 +356,15 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
             onClick={(e) => {
               anchorEl ? setAnchorEl(null) : openMenu(e);
             }}
-            children={<ProfilePanel anchorEl={anchorEl} />}
+            children={
+              <ProfilePanel
+                anchorEl={anchorEl}
+                handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+              />
+            }
+            style={{
+              background: menuStyle?.background || "#fff",
+            }}
             sidebarIsOpen={sidebarIsOpen}
           />
         </Box>
@@ -351,8 +424,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         setElement={setElement}
         selectedApp={selectedApp}
         isLoading={isLoading}
-        setPin={setPin}
-        pin={pin}
+        menuStyle={menuStyle}
       />
       <ButtonsMenu
         element={element}
@@ -368,6 +440,9 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         setWebPageModal={setWebPageModal}
         deleteFolder={deleteFolder}
       />
+      {menuSettingModal && (
+        <MenuSettingModal closeModal={closeMenuSettingModal} />
+      )}
     </>
   );
 };

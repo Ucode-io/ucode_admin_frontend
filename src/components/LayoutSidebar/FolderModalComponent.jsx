@@ -98,7 +98,11 @@ const FolderModal = ({
             {modalType === "typeCreate" ? (
               <CreateButton onClick={() => createType()} loading={loading} />
             ) : (
-              <SaveButton onClick={() => createType()} loading={loading} />
+              <SaveButton
+                onClick={() => createType()}
+                loading={loading}
+                disabled={!folder}
+              />
             )}
           </div>
         </Card>

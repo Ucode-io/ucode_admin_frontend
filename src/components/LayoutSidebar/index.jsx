@@ -359,6 +359,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
               <ProfilePanel
                 anchorEl={anchorEl}
                 handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+                projectInfo={projectInfo}
               />
             }
             style={{

@@ -25,7 +25,6 @@ const MenuSettingTheme = ({
 }) => {
   const queryClient = useQueryClient();
   const [template, setTemplate] = useState("");
-  console.log("template", template);
 
   const handleTemplateChange = (event) => {
     setTemplate(event.target.value);
@@ -43,7 +42,8 @@ const MenuSettingTheme = ({
   const { data: templates, isLoading } = useMenuTemplateListQuery({});
   useEffect(() => {
     if (check) {
-      setTemplate(check);
+      setTemplate(check?.id);
+      setSelectedTemplate(check);
       setCheck(false);
     }
   }, []);

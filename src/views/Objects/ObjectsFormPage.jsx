@@ -227,7 +227,7 @@ const ObjectsFormPage = () => {
   // }, [serviceTime, startTime]);
 
   // if (loader) return <PageFallback />;
-
+console.log('ssssssss', tableInfo)
   return (
     <div className={styles.formPage}>
       <FiltersBlock
@@ -237,6 +237,11 @@ const ObjectsFormPage = () => {
         hasBackground={true}
       >
         <FormPageBackButton />
+
+        <div className={styles.subTitle}>
+          <h3>{tableInfo?.data?.table?.subtitle_field_slug}</h3>
+        </div>
+
         <SummarySectionValue computedSummary={summary} control={control} sections={sections} />
       </FiltersBlock>
       <div className={styles.formArea}>

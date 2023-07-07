@@ -76,8 +76,9 @@ const NewSection = ({
           /> */}
 
           <HFTextField
-            disabledHelperText
+            
             placeholder="Label"
+            required={index === 0}
             control={mainForm.control}
             name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`}
             size="small"
@@ -101,7 +102,7 @@ const NewSection = ({
 
       <div className={styles.newsectionCardBody}>
         <Container
-          style={{ minHeight: 50, width: "100%", display: "flex", flexDirection: "row", alignItems: "center", overflowX: "scroll" }}
+          style={{ minHeight: 50, width: "100%", display: "flex", flexDirection: "row", alignItems: "flex-start", overflowX: "scroll" }}
           groupName="1"
           dragClass="drag-row"
           orientation="horizontal"

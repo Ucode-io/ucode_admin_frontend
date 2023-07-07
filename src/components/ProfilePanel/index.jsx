@@ -5,8 +5,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { authActions } from "../../store/auth/auth.slice";
 import UserAvatar from "../UserAvatar";
 import styles from "./style.module.scss";
+import { store } from "../../store";
 
-const ProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
+const ProfilePanel = ({
+  anchorEl,
+  handleMenuSettingModalOpen,
+  projectInfo,
+}) => {
   const [anchorProfileEl, setProfileAnchorEl] = useState(null);
   const menuVisible = Boolean(anchorEl || anchorProfileEl);
   const dispatch = useDispatch();
@@ -46,6 +51,13 @@ const ProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
         classes={{ list: styles.menu, paper: styles.paper }}
       >
         <div className={styles.scrollBlocksss}>
+          <div className={styles.menuItem}>
+            <span className={styles.avatar}>
+              {projectInfo?.title?.charAt(0).toUpperCase()}
+            </span>
+
+            <p className={styles.itemText}>{projectInfo?.title}</p>
+          </div>
           <div className={styles.menuItem} onClick={handleClick}>
             {/* <KeyIcon className={styles.dragIcon} /> */}
 

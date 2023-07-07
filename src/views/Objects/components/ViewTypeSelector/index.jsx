@@ -101,8 +101,8 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
         </div> */}
 
         <div className={style.element} aria-describedby={id} variant="contained" onClick={handleClick}>
-          <AddIcon className={style.icon} />
-          {t("add")}
+          <AddIcon className={style.icon} style={{color: "#000"}}/>
+          <strong style={{color: "#000"}}>{t("add")}</strong>
         </div>
 
         <Popover

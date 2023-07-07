@@ -42,7 +42,7 @@ const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTabl
             >
               <div className={styles.newformColumn}>
                 {section.fields?.map((field) => (
-                  <Box style={{minWidth: '250px', display: 'flex', alignItems: 'flex-start'}}>
+                  <Box style={{display: 'flex', alignItems: 'flex-start'}}>
                     <FormElementGenerator
                       key={field.id}
                       field={field}

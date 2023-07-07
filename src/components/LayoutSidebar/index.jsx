@@ -161,7 +161,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
   };
   useEffect(() => {
-    if (menuTemplate?.icon_style === "SIMPLE") {
+    if (menuTemplate?.icon_style === "MODERN") {
       setSidebarIsOpen(false);
     } else {
       setSidebarIsOpen(true);

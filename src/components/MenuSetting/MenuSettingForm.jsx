@@ -7,7 +7,7 @@ import HFTextField from "../FormElements/HFTextField";
 import FRow from "../FormElements/FRow";
 import { useMenuTemplateCreateMutation } from "../../services/menuTemplateService";
 
-const MenuSettingForm = ({ setModalType }) => {
+const MenuSettingForm = ({ setModalType, setCheck }) => {
   const { control, reset, handleSubmit, watch } = useForm({
     defaultValues: {
       background: "#000",
@@ -17,9 +17,12 @@ const MenuSettingForm = ({ setModalType }) => {
     },
   });
 
+  console.log("watch", watch());
+
   const { mutate: create, isLoading: createLoading } =
     useMenuTemplateCreateMutation({
-      onSuccess: () => {
+      onSuccess: (res) => {
+        setCheck(res?.id);
         setModalType("CUSTOMIZE");
       },
     });
@@ -49,7 +52,13 @@ const MenuSettingForm = ({ setModalType }) => {
           </Typography>
           <Box className={styles.colorpicker}>
             <NewColorInput control={control} name="background" />
-            <p>{watch("background")}</p>
+            <HFTextField
+              control={control}
+              name="background"
+              fullWidth
+              className={styles.formcolorinput}
+            />
+            {/* <p>{watch("background")}</p> */}
           </Box>
         </Box>
         <Box className={styles.formcard}>
@@ -58,7 +67,13 @@ const MenuSettingForm = ({ setModalType }) => {
           </Typography>
           <Box className={styles.colorpicker}>
             <NewColorInput control={control} name="active_background" />
-            <p>{watch("active_background")}</p>
+            <HFTextField
+              control={control}
+              name="active_background"
+              fullWidth
+              className={styles.formcolorinput}
+            />
+            {/* <p>{watch("active_background")}</p> */}
           </Box>
         </Box>
         <Box className={styles.formcard}>
@@ -67,7 +82,13 @@ const MenuSettingForm = ({ setModalType }) => {
           </Typography>
           <Box className={styles.colorpicker}>
             <NewColorInput control={control} name="text" />
-            <p>{watch("text")}</p>
+            <HFTextField
+              control={control}
+              name="text"
+              fullWidth
+              className={styles.formcolorinput}
+            />
+            {/* <p>{watch("text")}</p> */}
           </Box>
         </Box>
         <Box className={styles.formcard}>
@@ -75,8 +96,18 @@ const MenuSettingForm = ({ setModalType }) => {
             Active text
           </Typography>
           <Box className={styles.colorpicker}>
-            <NewColorInput control={control} name="active_text" />
-            <p>{watch("active_text")}</p>
+            <NewColorInput
+              control={control}
+              name="active_text"
+              defaultValue={watch("active_text")}
+            />
+            <HFTextField
+              control={control}
+              name="active_text"
+              fullWidth
+              className={styles.formcolorinput}
+            />
+            {/* <p>{watch("active_text")}</p> */}
           </Box>
         </Box>
         <Box className={styles.formcard}>

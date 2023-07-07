@@ -52,6 +52,8 @@ const AppSidebar = ({
   const favourite = element?.id === "c57eedc3-a954-4262-a0af-376c65b5a282";
   const menuStyle = menuTemplate?.menu_template;
 
+  console.log("menuStyle", menuStyle);
+
   useEffect(() => {
     setElement(element);
   }, [element]);
@@ -66,7 +68,7 @@ const AppSidebar = ({
         className="parent-folder column-drag-handle"
         style={{
           background:
-            selectedApp?.id === element.id
+            selectedApp?.id === element?.id
               ? menuStyle?.active_background
               : menuStyle?.background || "",
           color: selectedApp?.id === element.id ? "#000" : "#A8A8A8",

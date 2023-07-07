@@ -61,19 +61,6 @@ const SubMenu = ({
                 }}
                 style={{
                   color: menuStyle?.text,
-<<<<<<< HEAD
-                }}
-              />
-              <AddIcon
-                size={13}
-                onClick={(e) => {
-                  handleOpenNotify(e, "CREATE_TO_FOLDER");
-                  setElement(selectedApp);
-                }}
-                style={{
-                  color: menuStyle?.text,
-=======
->>>>>>> menu_permissions
                 }}
               />
               {selectedApp?.data?.permission?.write && (

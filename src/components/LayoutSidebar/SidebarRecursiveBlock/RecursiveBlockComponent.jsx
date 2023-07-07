@@ -158,22 +158,6 @@ const RecursiveBlock = ({
               </Tooltip>
               <Tooltip title="Create folder" placement="top">
                 <Box className="extra_icon">
-<<<<<<< HEAD
-                  <AddIcon
-                    size={13}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenNotify(e, "CREATE_TO_FOLDER");
-                      setElement(element);
-                    }}
-                    style={{
-                      color:
-                        menuItem?.id === element?.id
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "",
-                    }}
-                  />
-=======
                  {element?.data?.permission?.write && (
                    <AddIcon
                    size={13}
@@ -190,7 +174,6 @@ const RecursiveBlock = ({
                    }}
                  />
                  )}
->>>>>>> menu_permissions
                 </Box>
               </Tooltip>
               {childBlockVisible ? (

@@ -220,7 +220,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         >
           <div className="brand">
             <UdevsLogo
-              fill={menuStyle?.text || "#000"}
+              fill={menuStyle?.text || "#007AFF"}
               // onClick={switchRightSideVisible}
             />
             {sidebarIsOpen && (
@@ -275,7 +275,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                             : menuTemplate?.icon_size === "MEDIUM"
                             ? 15
                             : 18 || 18,
-                        color: menuStyle?.text || "#000",
+                        color: menuStyle?.text || "",
                       }}
                     />
                   }
@@ -293,7 +293,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                   className="nav-block"
                   style={{
                     background: menuStyle?.background || "#fff",
-                    color: menuStyle?.text || "#fff",
+                    color: menuStyle?.text || "#000",
                   }}
                 >
                   <div className="menu-element">
@@ -341,7 +341,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                   sidebarIsOpen={sidebarIsOpen}
                   style={{
                     background: menuStyle?.background || "#fff",
-                    color: menuStyle?.text || "#000",
+                    color: menuStyle?.text || "",
                   }}
                 />
                 <Divider />

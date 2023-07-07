@@ -70,9 +70,9 @@ const AppSidebar = ({
           style={{
             background:
               selectedApp?.id === element?.id
-                ? menuStyle?.active_background
-                : menuStyle?.background || "",
-            color: selectedApp?.id === element.id ? "#000" : "#A8A8A8",
+                ? menuStyle?.active_background || "#007AFF"
+                : menuStyle?.background,
+            color: selectedApp?.id === element.id ? "#fff" : "#A8A8A8",
             borderTop: favourite && "1px solid #F0F0F0",
             borderBottom: favourite && "1px solid #F0F0F0",
             padding: favourite && "18px 12px",

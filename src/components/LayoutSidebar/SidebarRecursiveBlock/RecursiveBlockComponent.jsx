@@ -26,6 +26,7 @@ const RecursiveBlock = ({
   handleOpenNotify,
   setElement,
   setSubMenuIsOpen,
+  menuStyle,
 }) => {
   const { appId, tableSlug } = useParams();
   const dispatch = useDispatch();
@@ -53,10 +54,13 @@ const RecursiveBlock = ({
 
   const activeStyle = {
     backgroundColor:
-      menuItem.id === element?.id
-        ? environment?.data?.active_background || "#007AFF"
-        : "#fff",
-    color: menuItem.id === element?.id ? "#fff" : "#007AFF",
+      menuItem?.id === element?.id
+        ? menuStyle?.active_background
+        : menuStyle?.background || "#fff",
+    color:
+      menuItem?.id === element?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text || "#000",
     paddingLeft: level * 2 * 5,
     display:
       element.id === "0" ||
@@ -113,9 +117,9 @@ const RecursiveBlock = ({
             className="label"
             style={{
               color:
-                menuItem.id === element?.id
-                  ? environment?.data?.active_color
-                  : environment?.data?.color,
+                menuItem?.id === element?.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
               opacity: element?.isChild && 0.6,
             }}
           >
@@ -145,29 +149,31 @@ const RecursiveBlock = ({
                     }}
                     style={{
                       color:
-                        menuItem.id === element?.id
-                          ? environment?.data?.active_color
-                          : environment?.data?.color,
+                        menuItem?.id === element?.id
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "",
                     }}
                   />
                 </Box>
               </Tooltip>
               <Tooltip title="Create folder" placement="top">
                 <Box className="extra_icon">
-                  <AddIcon
-                    size={13}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenNotify(e, "CREATE_TO_FOLDER");
-                      setElement(element);
-                    }}
-                    style={{
-                      color:
-                        menuItem.id === element?.id
-                          ? environment?.data?.active_color
-                          : environment?.data?.color,
-                    }}
-                  />
+                 {element?.data?.permission?.write && (
+                   <AddIcon
+                   size={13}
+                   onClick={(e) => {
+                     e.stopPropagation();
+                     handleOpenNotify(e, "CREATE_TO_FOLDER");
+                     setElement(element);
+                   }}
+                   style={{
+                     color:
+                       menuItem?.id === element?.id
+                         ? menuStyle?.active_text
+                         : menuStyle?.text || "",
+                   }}
+                 />
+                 )}
                 </Box>
               </Tooltip>
               {childBlockVisible ? (
@@ -189,9 +195,9 @@ const RecursiveBlock = ({
               }}
               style={{
                 color:
-                  menuItem.id === element?.id
-                    ? environment?.data?.active_color
-                    : environment?.data?.color,
+                  menuItem?.id === element?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
               }}
             />
           )}
@@ -205,9 +211,9 @@ const RecursiveBlock = ({
               }}
               style={{
                 color:
-                  menuItem.id === element?.id
-                    ? environment?.data?.active_color
-                    : environment?.data?.color,
+                  menuItem?.id === element?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
               }}
             />
           )}
@@ -221,9 +227,9 @@ const RecursiveBlock = ({
               }}
               style={{
                 color:
-                  menuItem.id === element?.id
-                    ? environment?.data?.active_color
-                    : environment?.data?.color,
+                  menuItem?.id === element?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
               }}
             />
           )}
@@ -244,6 +250,7 @@ const RecursiveBlock = ({
             handleOpenNotify={handleOpenNotify}
             setElement={setElement}
             setSubMenuIsOpen={setSubMenuIsOpen}
+            menuStyle={menuStyle}
           />
         ))}
       </Collapse>

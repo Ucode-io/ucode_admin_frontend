@@ -240,7 +240,7 @@ const MenuSettingModal = ({ closeModal }) => {
                               style={{
                                 color: element.active
                                   ? selectedTemplate?.active_text
-                                  : selectedTemplate.text,
+                                  : selectedTemplate?.text,
                               }}
                             />
                           </div>
@@ -272,14 +272,14 @@ const MenuSettingModal = ({ closeModal }) => {
                               style={{
                                 color: element.active
                                   ? selectedTemplate?.active_text
-                                  : selectedTemplate.text,
+                                  : selectedTemplate?.text,
                               }}
                             />
                             <p
                               style={{
                                 color: element.active
                                   ? selectedTemplate?.active_text
-                                  : selectedTemplate.text,
+                                  : selectedTemplate?.text,
                               }}
                             >
                               {element.title}
@@ -318,14 +318,14 @@ const MenuSettingModal = ({ closeModal }) => {
                             style={{
                               color: element.active
                                 ? selectedTemplate?.active_text
-                                : selectedTemplate.text,
+                                : selectedTemplate?.text,
                             }}
                           />
                           <p
                             style={{
                               color: element.active
                                 ? selectedTemplate?.active_text
-                                : selectedTemplate.text,
+                                : selectedTemplate?.text,
                             }}
                           >
                             {element.title}

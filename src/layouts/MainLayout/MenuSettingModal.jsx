@@ -30,8 +30,8 @@ const MenuSettingModal = ({ closeModal }) => {
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
   const [modalType, setModalType] = useState("SETTING");
-  const [type, setType] = useState(menuTemplate.icon_style || "");
-  const [size, setSize] = useState(menuTemplate.icon_size || "");
+  const [type, setType] = useState(menuTemplate?.icon_style || "");
+  const [size, setSize] = useState(menuTemplate?.icon_size || "");
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const queryClient = useQueryClient();
 

@@ -23,6 +23,7 @@ const SubMenu = ({
   setElement,
   selectedApp,
   isLoading,
+  menuStyle,
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -35,10 +36,21 @@ const SubMenu = ({
       className={`SubMenu ${
         !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
       }`}
+      style={{
+        background: menuStyle?.background || "#fff",
+      }}
     >
       <div className="body">
         <div className="header" onClick={() => {}}>
-          {subMenuIsOpen && <h2>{selectedApp?.label}</h2>}{" "}
+          {subMenuIsOpen && (
+            <h2
+              style={{
+                color: menuStyle?.text || "#000",
+              }}
+            >
+              {selectedApp?.label}
+            </h2>
+          )}{" "}
           <Box className="buttons">
             <div className="dots">
               <BsThreeDots
@@ -48,19 +60,21 @@ const SubMenu = ({
                   setElement(selectedApp);
                 }}
                 style={{
-                  color: environment?.data?.color,
+                  color: menuStyle?.text,
                 }}
               />
-              <AddIcon
-                size={13}
-                onClick={(e) => {
-                  handleOpenNotify(e, "CREATE_TO_FOLDER");
-                  setElement(selectedApp);
-                }}
-                style={{
-                  color: environment?.data?.color,
-                }}
-              />
+              {selectedApp?.data?.permission?.write && (
+                <AddIcon
+                  size={13}
+                  onClick={(e) => {
+                    handleOpenNotify(e, "CREATE_TO_FOLDER");
+                    setElement(selectedApp);
+                  }}
+                  style={{
+                    color: menuStyle?.text,
+                  }}
+                />
+              )}
               <PushPinIcon
                 size={13}
                 onClick={() => {
@@ -69,7 +83,7 @@ const SubMenu = ({
                 }}
                 style={{
                   rotate: pinIsEnabled ? "" : "45deg",
-                  color: environment?.data?.color,
+                  color: menuStyle?.text,
                 }}
               />
             </div>
@@ -122,6 +136,7 @@ const SubMenu = ({
                       handleOpenNotify={handleOpenNotify}
                       setElement={setElement}
                       setSubMenuIsOpen={setSubMenuIsOpen}
+                      menuStyle={menuStyle}
                     />
                   ))}
                 </div>

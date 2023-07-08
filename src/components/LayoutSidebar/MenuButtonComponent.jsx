@@ -7,11 +7,16 @@ const MenuButtonComponent = ({
   icon,
   children,
   sidebarIsOpen,
+  style,
 }) => {
   return (
-    <Button className="menu-button active-with-child" onClick={onClick}>
+    <Button
+      className="menu-button active-with-child"
+      onClick={onClick}
+      style={style}
+    >
       {children}
-      <div className={sidebarIsOpen ? `open-label` : "label"}>
+      <div className={sidebarIsOpen ? `open-label` : "label"} style={style}>
         {icon}
         {sidebarIsOpen && title}
       </div>

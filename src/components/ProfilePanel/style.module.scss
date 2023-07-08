@@ -57,5 +57,16 @@
     // &:hover {
     //   background: #F6F8F9;
     // }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #007AFF;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
   }
 }

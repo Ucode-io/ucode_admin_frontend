@@ -40,7 +40,6 @@ const AppSidebar = ({
     } else if (element.type === "WEBPAGE") {
       navigate(`/main/${element?.id}/web-page/${element?.data?.webpage?.id}`);
       setSubMenuIsOpen(false);
-      window.location.reload();
     }
   };
   const favourite = element?.id === "c57eedc3-a954-4262-a0af-376c65b5a282";

@@ -133,41 +133,39 @@ function LayoutTabs({
             onDrop={onDrop}
           >
             {allTabs?.map((tab, index) => (
-              <>
-                <Tab
+              <Tab
+                key={tab.id}
+                className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
+                onClick={() => {
+                  setSelectedTabIndex(index);
+                  setSelectedTab(tab);
+                }}
+              >
+                <Draggable
                   key={tab.id}
-                  className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
-                  onClick={() => {
-                    setSelectedTabIndex(index);
-                    setSelectedTab(tab);
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
                   }}
+                  // onDrag={() => handleTabsDrag(index)}
                 >
-                  <Draggable
-                    key={tab.id}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
+                  <div
+                    className={styles.tab}
+                    style={{ display: "flex", alignItems: "center" }}
+                    onClick={() => {
+                      setSelectedTabIndex(index);
+                      setSelectedTab(tab);
                     }}
-                    // onDrag={() => handleTabsDrag(index)}
                   >
-                    <div
-                      className={styles.tab}
-                      style={{ display: "flex", alignItems: "center" }}
-                      onClick={() => {
-                        setSelectedTabIndex(index);
-                        setSelectedTab(tab);
-                      }}
-                    >
-                      {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label ?? tab?.relation?.table_from?.label}
-                      {tab?.type === "section" ? (
-                        <ButtonsPopover onEditClick={() => openFieldsBlock("RELATION")} onDeleteClick={() => removeSectionTab(index, tab)} />
-                      ) : (
-                        <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab.relation ?? tab)} onDeleteClick={() => removeSectionTab(index, tab)} />
-                      )}
-                    </div>
-                  </Draggable>
-                </Tab>
-              </>
+                    {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label ?? tab?.relation?.table_from?.label}
+                    {tab?.type === "section" ? (
+                      <ButtonsPopover onEditClick={() => openFieldsBlock("RELATION")} onDeleteClick={() => removeSectionTab(index, tab)} />
+                    ) : (
+                      <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab.relation ?? tab)} onDeleteClick={() => removeSectionTab(index, tab)} />
+                    )}
+                  </div>
+                </Draggable>
+              </Tab>
             ))}
           </Container>
           <RectangleIconButton onClick={() => openFieldsBlock("RELATION")}>

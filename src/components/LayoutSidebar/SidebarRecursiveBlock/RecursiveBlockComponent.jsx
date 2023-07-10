@@ -74,8 +74,7 @@ const RecursiveBlock = ({
     setChildBlockVisible((prev) => !prev);
     setCheck(true);
     setId(element?.id);
-    element.type === "FOLDER" &&
-      navigate(`/main/${appId}/web-page/c57eedc3-a954-4262-a0af-376c65b5a284`);
+    element.type === "FOLDER" && navigate(`/main/${appId}`);
   };
   useEffect(() => {
     if (
@@ -85,7 +84,7 @@ const RecursiveBlock = ({
       setChildBlockVisible(true);
     }
   }, []);
-  console.log("elemeent", element);
+
   return (
     <Draggable key={index}>
       <div className="parent-block column-drag-handle" key={index}>

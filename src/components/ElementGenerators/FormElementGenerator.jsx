@@ -49,6 +49,8 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
       objectIdFromJWT = table?.object_id;
     }
   });
+
+  
   const computedSlug = useMemo(() => {
     if (field.id?.includes("@")) return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     return field?.slug;
@@ -68,7 +70,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
   // console.log('defaultValue', defaultValue)
-
+  console.log('isUserId', field)
   const isDisabled = useMemo(() => {
     return field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
   }, [field]);

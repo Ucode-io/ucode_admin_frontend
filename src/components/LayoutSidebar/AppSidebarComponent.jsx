@@ -1,13 +1,7 @@
-import {
-  Box,
-  Divider,
-  ListItemButton,
-  ListItemText,
-  Tooltip,
-} from "@mui/material";
+import { Box, ListItemButton, ListItemText, Tooltip } from "@mui/material";
 import { useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Draggable } from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
@@ -52,11 +46,10 @@ const AppSidebar = ({
   const favourite = element?.id === "c57eedc3-a954-4262-a0af-376c65b5a282";
   const menuStyle = menuTemplate?.menu_template;
 
-  console.log("menuStyle", menuStyle);
-
   useEffect(() => {
     setElement(element);
   }, [element]);
+
   return (
     <Draggable key={index}>
       {element?.data?.permission?.read && (
@@ -212,6 +205,8 @@ const AppSidebar = ({
                   selectedApp?.id === element.id
                     ? menuStyle?.active_text
                     : menuStyle?.text || "",
+                transform: selectedApp?.id === element.id && "rotate(90deg)",
+                transition: "0.3s",
               }}
             />
           ) : (

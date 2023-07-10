@@ -108,7 +108,6 @@ const RecursiveBlock = ({
                 navigate(
                   `/main/${appId}/web-page/${element?.data?.webpage?.id}`
                 );
-                window.location.reload();
               }
               clickHandler();
               setElement(element);

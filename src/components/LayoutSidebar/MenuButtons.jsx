@@ -83,7 +83,8 @@ const ButtonsMenu = ({
       >
         {menuType === "FOLDER" ? (
           <Box className="menu">
-              <MenuItemComponent
+              {element?.data?.permission?.update && (
+                <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
                 title="Изменить папку"
                 onClick={(e) => {
@@ -92,6 +93,7 @@ const ButtonsMenu = ({
                   handleCloseNotify();
                 }}
               />
+              )}
 
             <Divider
               style={{
@@ -99,24 +101,28 @@ const ButtonsMenu = ({
                 marginTop: "4px",
               }}
             />
+              {element?.data?.permission?.delete && (
+                <MenuItemComponent
+                icon={<BsFillTrashFill size={13} />}
+                title="Удалить папку"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteFolder(element);
+                  handleCloseNotify();
+                }}
+              />
+              )}
+             {element?.data?.permission?.menu_settings && (
               <MenuItemComponent
-              icon={<BsFillTrashFill size={13} />}
-              title="Удалить папку"
+              icon={<RiPencilFill size={13} />}
+              title="Переместить folder"
               onClick={(e) => {
                 e.stopPropagation();
-                deleteFolder(element);
+                setFolderModalType("folder", element);
                 handleCloseNotify();
               }}
             />
-             <MenuItemComponent
-             icon={<RiPencilFill size={13} />}
-             title="Переместить folder"
-             onClick={(e) => {
-               e.stopPropagation();
-               setFolderModalType("folder", element);
-               handleCloseNotify();
-             }}
-           />
+             )}
             {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
               <>
                 <Divider
@@ -125,15 +131,17 @@ const ButtonsMenu = ({
                     marginTop: "4px",
                   }}
                 />
-                 <MenuItemComponent
-                 icon={<StarBorderIcon size={13} />}
-                 title="Favourite"
-                 onClick={(e) => {
-                   e.stopPropagation();
-                   handleCloseNotify();
-                   onFavourite(element, "FOLDER");
-                 }}
-               />
+                {element?.data?.permission?.menu_settings && (
+                   <MenuItemComponent
+                   icon={<StarBorderIcon size={13} />}
+                   title="Favourite"
+                   onClick={(e) => {
+                     e.stopPropagation();
+                     handleCloseNotify();
+                     onFavourite(element, "FOLDER");
+                   }}
+                 />
+                )}
               </>
             )}
           </Box>
@@ -193,31 +201,38 @@ const ButtonsMenu = ({
           </Box>
         ) : menuType === "TABLE" ? (
           <Box className="menu">
-             <MenuItemComponent
-             icon={<RiPencilFill size={13} />}
-             title="Переместить table"
-             onClick={(e) => {
-               e.stopPropagation();
-               setFolderModalType("folder", element);
-               handleCloseNotify();
-             }}
-           />
-
-            <MenuItemComponent
+             {element?.data?.permission?.menu_settings && (
+              <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Изменить table"
+              title="Переместить table"
               onClick={(e) => {
                 e.stopPropagation();
-                setTableModal(element);
+                setFolderModalType("folder", element);
                 handleCloseNotify();
               }}
             />
+             )}
+
+             
+           {element?.data?.permission?.update && (
+             <MenuItemComponent
+             icon={<RiPencilFill size={13} />}
+             title="Изменить table"
+             onClick={(e) => {
+               e.stopPropagation();
+               setTableModal(element);
+               handleCloseNotify();
+             }}
+           />
+           )}
+
             <Divider
               style={{
                 marginBottom: "4px",
                 marginTop: "4px",
               }}
             />
+            {element?.data?.permission?.delete && (
               <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
               title="Удалить table"
@@ -227,6 +242,7 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
+            )}
             {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
               <>
                 <Divider
@@ -235,7 +251,8 @@ const ButtonsMenu = ({
                     marginTop: "4px",
                   }}
                 />
-                <MenuItemComponent
+                {element?.data?.permission?.menu_settings && (
+                  <MenuItemComponent
                   icon={<StarBorderIcon size={13} />}
                   title="Favourite"
                   onClick={(e) => {
@@ -244,6 +261,7 @@ const ButtonsMenu = ({
                     onFavourite(element, "TABLE");
                   }}
                 />
+                )}
               </>
             )}
           </Box>
@@ -258,21 +276,25 @@ const ButtonsMenu = ({
                handleCloseNotify();
              }}
            />
-             <MenuItemComponent
-             icon={<RiPencilFill size={13} />}
-             title="Изменить microfrontend"
-             onClick={(e) => {
-               e.stopPropagation();
-               setMicrofrontendModal(element);
-               handleCloseNotify();
-             }}
-           />
+             {element?.data?.permission?.menu_settings && (
+              <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Изменить microfrontend"
+              onClick={(e) => {
+                e.stopPropagation();
+                setMicrofrontendModal(element);
+                handleCloseNotify();
+              }}
+            />
+             )}
+
             <Divider
               style={{
                 marginBottom: "4px",
                 marginTop: "4px",
               }}
             />
+            {element?.data?.permission?.delete && (
               <MenuItemComponent
               icon={<BsFillTrashFill size={13} />}
               title="Удалить microfrontend"
@@ -282,6 +304,7 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
+            )}
             {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
               <>
                 <Divider
@@ -304,6 +327,7 @@ const ButtonsMenu = ({
           </Box>
         ) : menuType === "WEBPAGE" ? (
           <Box className="menu">
+            {element?.data?.permission?.menu_settings && (
               <MenuItemComponent
               icon={<RiPencilFill size={13} />}
               title="Переместить webpage"
@@ -313,6 +337,8 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
+            )}
+            {element?.data?.permission?.menu_settings && (
               <MenuItemComponent
               icon={<RiPencilFill size={13} />}
               title="Изменить webpage"
@@ -322,12 +348,14 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
+            )}
             <Divider
               style={{
                 marginBottom: "4px",
                 marginTop: "4px",
               }}
             />
+           {element?.data?.permission?.delete && (
              <MenuItemComponent
              icon={<BsFillTrashFill size={13} />}
              title="Удалить webpage"
@@ -337,6 +365,7 @@ const ButtonsMenu = ({
                handleCloseNotify();
              }}
            />
+           )}
             {element?.parent_id !== "c57eedc3-a954-4262-a0af-376c65b5a282" && (
               <>
                 <Divider
@@ -359,6 +388,7 @@ const ButtonsMenu = ({
           </Box>
         ) : (
           <Box className="menu">
+            {element?.data?.permission?.menu_settings && (
               <MenuItemComponent
               icon={<TableChartIcon size={13} />}
               title="Создать table"
@@ -368,6 +398,7 @@ const ButtonsMenu = ({
                 handleCloseNotify();
               }}
             />
+            )}
             <MenuItemComponent
               icon={<SyncAltIcon size={13} />}
               title="Добавить table"

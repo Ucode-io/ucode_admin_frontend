@@ -73,6 +73,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
     remove: removeSectionTab,
     move: moveSectionTab,
     append: appendSectionTab,
+    replace: replaceSectionTab,
   } = useFieldArray({
     control: mainForm.control,
     name: `layouts.${selectedLayoutIndex}.tabs`,
@@ -97,6 +98,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
           openFieldSettingsBlock={openFieldSettingsBlock}
           openRelationSettingsBlock={openRelationSettingsBlock}
           sectionTabs={sectionTabs}
+          replaceSectionTab={replaceSectionTab}
           insertSectionTab={insertSectionTab}
           removeSectionTab={removeSectionTab}
           moveSectionTab={moveSectionTab}

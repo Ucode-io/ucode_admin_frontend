@@ -55,13 +55,11 @@ const MainInfo = ({ control }) => {
   
   const loginRequired = useMemo(() => {
     if(login) {
-      if(email || phone || password) {
-        return false
-      } else {
         return true
+      } else {
+        return false
       }
-    } 
-  }, [login, email, phone, password])
+  }, [login])
 
   const computedFields = useMemo(() => {
     const computedRelations = relations.map((relation) => {
@@ -203,7 +201,6 @@ const MainInfo = ({ control }) => {
                 fullWidth
                 placeholder="login"
                 options={computedFields}
-                required
               />
             </Box>
             <Box
@@ -239,7 +236,6 @@ const MainInfo = ({ control }) => {
                 fullWidth
                 placeholder="email"
                 options={computedFields}
-                required={loginRequired}
               />
             </Box>
             <Box
@@ -257,7 +253,6 @@ const MainInfo = ({ control }) => {
                 fullWidth
                 placeholder="phone"
                 options={computedFields}
-                required={loginRequired}
               />
             </Box>
           </Box>

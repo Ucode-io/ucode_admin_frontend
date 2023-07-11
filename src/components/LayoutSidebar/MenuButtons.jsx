@@ -201,26 +201,30 @@ const ButtonsMenu = ({
           </Box>
         ) : menuType === "TABLE" ? (
           <Box className="menu">
-             <MenuItemComponent
-             icon={<RiPencilFill size={13} />}
-             title="Переместить table"
-             onClick={(e) => {
-               e.stopPropagation();
-               setFolderModalType("folder", element);
-               handleCloseNotify();
-             }}
-           />
-
-             
-            <MenuItemComponent
+             {element?.data?.permission?.menu_settings && (
+              <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Изменить table"
+              title="Переместить table"
               onClick={(e) => {
                 e.stopPropagation();
-                setTableModal(element);
+                setFolderModalType("folder", element);
                 handleCloseNotify();
               }}
             />
+             )}
+
+             
+           {element?.data?.permission?.update && (
+             <MenuItemComponent
+             icon={<RiPencilFill size={13} />}
+             title="Изменить table"
+             onClick={(e) => {
+               e.stopPropagation();
+               setTableModal(element);
+               handleCloseNotify();
+             }}
+           />
+           )}
 
             <Divider
               style={{

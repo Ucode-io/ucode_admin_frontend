@@ -20,6 +20,7 @@ function LayoutTabs({
   selectedLayout,
   setSelectedLayout,
   selectedTab,
+  replaceSectionTab,
   sectionTabs,
   insertSectionTab,
   setSelectedTab,
@@ -65,12 +66,20 @@ function LayoutTabs({
       })
       ?.filter((el) => el);
   }, [viewRelations, relationsMap]);
-
+  console.log("sectionTabs", sectionTabs);
   const onDrop = (dropResult) => {
-    const result = applyDrag(computedViewRelations, dropResult);
-    if (result) {
+    if (dropResult?.removedIndex === null && dropResult?.addedIndex === null && !!dropResult?.payload?.id) return;
+
+    const result = applyDrag(sectionTabs, dropResult);
+
+    if (sectionTabs.find((tab) => tab?.id === dropResult?.payload?.id)) {
+      replaceSectionTab(result);
+    } else {
       appendSectionTab(dropResult?.payload);
-      if (result.length > computedViewRelations?.length) {
+    }
+
+    if (result) {
+      if (result.length > sectionTabs?.length) {
         viewRelationsFieldArray.insert(
           dropResult?.addedIndex,
           dropResult.payload.view_relation_type === "FILE" ? { ...dropResult.payload, relation_id: dropResult.payload?.id } : { relation_id: dropResult.payload?.id }
@@ -131,23 +140,21 @@ function LayoutTabs({
             dropPlaceholder={{ className: "drag-row-drop-preview" }}
             orientation="horizontal"
             onDrop={onDrop}
+            getChildPayload={(i) => allTabs[i]}
           >
             {allTabs?.map((tab, index) => (
-              <Tab
+              <Draggable
                 key={tab.id}
-                className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
                 onClick={() => {
                   setSelectedTabIndex(index);
                   setSelectedTab(tab);
                 }}
+                // onDrag={() => handleTabsDrag(index)}
               >
-                <Draggable
+                <Tab
                   key={tab.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                  // onDrag={() => handleTabsDrag(index)}
+                  // className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
+                  className={`${styles.tabsItem} ${selectedTab?.id === tab?.id ? styles.active : ""}`}
                 >
                   <div
                     className={styles.tab}
@@ -164,8 +171,8 @@ function LayoutTabs({
                       <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab.relation ?? tab)} onDeleteClick={() => removeSectionTab(index, tab)} />
                     )}
                   </div>
-                </Draggable>
-              </Tab>
+                </Tab>
+              </Draggable>
             ))}
           </Container>
           <RectangleIconButton onClick={() => openFieldsBlock("RELATION")}>

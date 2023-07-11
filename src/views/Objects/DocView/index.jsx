@@ -145,10 +145,11 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const addNewTemplate = (template) => {
     refetch();
   };
-
+  
   //=========SET VARIABLE===========
   const setVariable = () => {
-    if (state && selectedOutputTable) {
+    if (state && selectedLinkedObject && selectedObject) {
+      console.log('sssssssss');
       exportToHTML();
     }
   };
@@ -284,8 +285,8 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   };
 
   useEffect(() => {
-    exportToHTML();
-  }, [state, selectedOutputTable]);
+    setVariable();
+  }, [state, selectedLinkedObject, selectedObject]);
 
   return (
     <div>

@@ -10,17 +10,8 @@ import FilterAutoComplete from "./FilterAutocomplete";
 import DateFilter from "./DateFilter";
 import BooleanFilter from "./BooleanFilter";
 
-const FilterGenerator = ({
-  field,
-  name,
-  filters = {},
-  onChange,
-  tableSlug,
-}) => {
-  const orderingType = useMemo(
-    () => filters.order?.[name],
-    [filters.order, name]
-  );
+const FilterGenerator = ({ field, name, filters = {}, onChange, tableSlug }) => {
+  const orderingType = useMemo(() => filters.order?.[name], [filters.order, name]);
 
   const onOrderingChange = (value) => {
     if (!value) return onChange(value, "order");
@@ -48,14 +39,9 @@ const FilterGenerator = ({
 
 export default FilterGenerator;
 
-export const Filter = ({
-  field = {},
-  name,
-  filters = {},
-  onChange,
-  tableSlug,
-}) => {
+export const Filter = ({ field = {}, name, filters = {}, onChange, tableSlug }) => {
   const [debouncedValue, setDebouncedValue] = useState("");
+  
   const computedOptions = useMemo(() => {
     if (!field.attributes?.options) return [];
     return field.attributes.options.map((option) => {
@@ -72,18 +58,13 @@ export const Filter = ({
     });
   }, [field.attributes?.options, field.type]);
 
-  if (field.type === "LOOKUP" || field.type === "LOOKUPS")
-    return (
-      <RelationFilter
-        field={field}
-        filters={filters}
-        onChange={onChange}
-        name={name}
-        tableSlug={tableSlug}
-      />
-    );
+  // if (field.type === "LOOKUP" || field.type === "LOOKUPS") return <RelationFilter field={field} filters={filters} onChange={onChange} name={name} tableSlug={tableSlug} />;
 
   switch (field.type) {
+    case "LOOKUP":
+    case "LOOKUPS":
+      return <RelationFilter field={field} filters={filters} onChange={onChange} name={name} tableSlug={tableSlug} />;
+
     case "PICK_LIST":
     case "MULTISELECT":
       return (
@@ -114,12 +95,9 @@ export const Filter = ({
       return null;
 
     case "DATE":
-      case "DATE_TIME":
+    case "DATE_TIME":
       return (
-        <DateFilter
-          value={filters[name]}
-          onChange={(val) => onChange(val, name)}
-        />
+        <DateFilter value={filters[name]} onChange={(val) => onChange(val, name)} />
         // <DatePicker
         //   inputFormat="dd.MM.yyyy"
         //   mask="__.__.____"
@@ -150,24 +128,9 @@ export const Filter = ({
       );
 
     case "SWITCH":
-      return (
-        <BooleanFilter
-          filters={filters}
-          onChange={onChange}
-          name={name}
-          field={field}
-        />
-      );
+      return <BooleanFilter filters={filters} onChange={onChange} name={name} field={field} />;
 
     default:
-      return (
-        <DefaultFilter
-          field={field}
-          filters={filters}
-          onChange={onChange}
-          name={name}
-          tableSlug={tableSlug}
-        />
-      );
+      return <DefaultFilter field={field} filters={filters} onChange={onChange} name={name} tableSlug={tableSlug} />;
   }
 };

@@ -209,8 +209,7 @@ const AutoCompleteElement = ({
   const computedValue = useMemo(() => {
     if (!value) return [];
 
-    return value
-      ?.map((id) => {
+    return value?.map((id) => {
         const option = options?.find((el) => el?.guid === id);
 
         if (!option) return null;

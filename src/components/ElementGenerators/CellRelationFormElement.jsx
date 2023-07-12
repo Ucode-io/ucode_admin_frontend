@@ -49,6 +49,7 @@ const CellRelationFormElement = ({
         name={name}
         defaultValue={defaultValue}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
+          console.log('kajnwdkjanwkdjawd', value)
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
@@ -195,11 +196,11 @@ const AutoCompleteElement = ({
       enabled: !!field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        // const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
 
         return {
           options,
-          slugOptions,
+          // slugOptions,
         };
       },
     }
@@ -226,10 +227,10 @@ const AutoCompleteElement = ({
       enabled: !field?.attributes?.function_path,
       select: (res) => {
         const options = res?.data?.response ?? [];
-        const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        // const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
         return {
           options,
-          slugOptions,
+          // slugOptions,
         };
       },
     }
@@ -237,15 +238,15 @@ const AutoCompleteElement = ({
 
   const options = useMemo(() => {
     if (field?.attributes?.function_path) {
-      return optionsFromFunctions ?? [];
+      return optionsFromFunctions?.options ?? [];
     }
-    return optionsFromLocale ?? [];
+    return optionsFromLocale?.options ?? [];
   }, [optionsFromFunctions, optionsFromLocale]);
 
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
-  }, [options, value]);
+  }, [options?.options, value, optionsFromFunctions, optionsFromLocale]);
 
   // const computedOptions = useMemo(() => {
   //   let uniqueObjArray = [
@@ -283,6 +284,8 @@ const AutoCompleteElement = ({
         }, 1);
     });
   }, [computedValue]);
+
+  console.log("options==>>", options);
 
   return (
     <div className={styles.autocompleteWrapper}>

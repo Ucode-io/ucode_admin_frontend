@@ -294,7 +294,7 @@ const ConstructorTablesFormPage = () => {
               <Tab>Fields</Tab>
               {id && <Tab>Relations</Tab>}
               {id && <Tab>Actions</Tab>}
-              <Tab>Custom errors</Tab>
+              {id && <Tab>Custom errors</Tab>}
             </TabList>
           </HeaderSettings>
 

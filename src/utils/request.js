@@ -64,6 +64,14 @@ const errorHandler = (error, hooks) => {
   }
 };
 
+const customMessageHandler = (res) => {
+  if (res.data.custom_message?.length && res.status < 400) {
+    store.dispatch(showAlert(res.data.custom_message, "success"));
+  } else if (res.data.custom_message?.length) {
+    store.dispatch(showAlert(res.data.custom_message, "error"));
+  }
+};
+
 request.interceptors.request.use(
   (config) => {
     const authStore = store.getState().auth;
@@ -85,16 +93,15 @@ request.interceptors.request.use(
         };
       }
     }
-
     return config;
   },
 
   (error) => errorHandler(error)
 );
 
-request.interceptors.response.use(
-  (response) => response.data.data,
-  errorHandler
-);
+request.interceptors.response.use((response) => {
+  customMessageHandler(response);
+  return response.data.data;
+}, errorHandler);
 
 export default request;

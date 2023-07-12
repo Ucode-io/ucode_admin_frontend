@@ -51,6 +51,8 @@ const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewVi
     }
   }, [isChanged]);
 
+  console.log('viewsviewsviewsviews', views)
+
   return (
     <Card className={styles.card}>
       <div className={styles.header}>
@@ -79,6 +81,7 @@ const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewVi
               closeModal={closeModal}
               setIsChanged={setIsChanged}
               columns={columns}
+              views={views}
               relationColumns={relationColumns}
             />
           )}

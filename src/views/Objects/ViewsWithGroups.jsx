@@ -20,7 +20,6 @@ import FastFilterButton from "./components/FastFilter/FastFilterButton";
 import { useDispatch, useSelector } from "react-redux";
 import { CheckIcon } from "../../assets/icons/icon";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
-import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import ExcelButtons from "./components/ExcelButtons";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MultipleInsertButton from "./components/MultipleInsertForm";
@@ -44,6 +43,7 @@ import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
 import LanguagesNavbar from "./LanguagesNavbar";
 import SearchInput from "../../components/SearchInput";
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 
 const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
   const { t } = useTranslation();
@@ -55,6 +55,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   const [heightControl, setHeightControl] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
   const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
+  console.log('jnkawjdnkajwda', tableSlug)
   const [res, setRes] = [
     {
       balance: [],
@@ -288,7 +289,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                   </div>
                   <span>{ t('template') }</span>
                 </div>
-                <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
                   <SettingsButton />
                 </PermissionWrapperV2>
               </div>
@@ -301,7 +302,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
               Automation
             </Button>
 
-            <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+            <PermissionWrapperV2 tableSlug={tableSlug} type="update">
               <Button variant="outlined" onClick={navigateToSettingsPage}>
                 <SettingsSuggestIcon />
                 {t("settings")}
@@ -409,7 +410,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                   </div>
                   <span>{t("template")}</span>
                 </div>
-                {/* <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+                {/* <PermissionWrapperV2 tableSlug={tableSlug} type="update">
                   <SettingsButton />
                 </PermissionWrapperV2> */}
               </div>
@@ -433,7 +434,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <PermissionWrapperV2 tabelSlug={tableSlug} type="write">
+              <PermissionWrapperV2 tableSlug={tableSlug} type="write">
                 <RectangleIconButton color="success" size="small" onClick={navigateToCreatePage}>
                   <AddIcon style={{ color: "#007AFF" }} />
                 </RectangleIconButton>

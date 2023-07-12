@@ -63,7 +63,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Layouts</CTableCell>
-            <PermissionWrapperV2 tabelSlug="app" type="delete">
+            <PermissionWrapperV2 tableSlug="app" type="delete">
               <CTableCell width={60} />
             </PermissionWrapperV2>
           </CTableHead>
@@ -89,12 +89,12 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
 
               <CTableCell>
                 <Box style={{ display: "flex", gap: "5px" }}>
-                  <PermissionWrapperV2 tabelSlug={"app"} type="edit">
+                  <PermissionWrapperV2 tableSlug={"app"} type="edit">
                     <RectangleIconButton color="success" onClick={() => navigateToEditForm(element)}>
                       <Edit color="success" />
                     </RectangleIconButton>
                   </PermissionWrapperV2>
-                  <PermissionWrapperV2 tabelSlug={"app"} type="delete">
+                  <PermissionWrapperV2 tableSlug={"app"} type="delete">
                     <RectangleIconButton color="error" onClick={() => remove(index)}>
                       <Delete color="error" />
                     </RectangleIconButton>
@@ -103,7 +103,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
               </CTableCell>
             </CTableRow>
           ))}
-          <PermissionWrapperV2 tabelSlug="app" type="write">
+          <PermissionWrapperV2 tableSlug="app" type="write">
             <TableRowButton colSpan={4} onClick={() => append({ table_id: id, type: "SimpleLayout", label: "New" })} />
           </PermissionWrapperV2>
         </CTable>

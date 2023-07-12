@@ -293,7 +293,7 @@ const ObjectsFormPage = () => {
               Закрыть
             </SecondaryButton>
 
-            <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+            <PermissionWrapperV2 tableSlug={tableSlug} type="update">
               <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
 
               {/* {customEvents?.map((event) => (

@@ -268,7 +268,7 @@ const AppsForm = () => {
                 >
                   Закрыть
                 </SecondaryButton>
-                <PermissionWrapperV2 tabelSlug="app" type="update">
+                <PermissionWrapperV2 tableSlug="app" type="update">
                   <PermissionWrapperApp
                     permission={
                       appId && appPermission

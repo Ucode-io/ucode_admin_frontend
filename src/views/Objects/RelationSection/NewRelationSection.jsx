@@ -1,4 +1,4 @@
-import { CheckIcon } from "@/assets/icons/icon";
+  import { CheckIcon } from "@/assets/icons/icon";
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
 import ExcelDownloadButton from "@/views/Objects/components/ExcelButtons/ExcelDownloadButton";
 import ExcelUploadButton from "@/views/Objects/components/ExcelButtons/ExcelUploadButton";

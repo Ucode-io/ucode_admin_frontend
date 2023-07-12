@@ -17,6 +17,7 @@ import applicationService from "../../../services/applicationService";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import { store } from "../../../store";
 import { mergeStringAndState } from "../../../utils/jsonPath";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const TableView = ({
   tab,
@@ -188,37 +189,39 @@ const TableView = ({
           <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
         </div>
       )}
-      <ObjectDataTable
-        defaultLimit={view?.default_limit}
-        formVisible={formVisible}
-        setFormVisible={setFormVisible}
-        isRelationTable={false}
-        removableHeight={isDocView ? 150 : 215}
-        currentPage={currentPage}
-        pagesCount={pageCount}
-        columns={columns}
-        limit={limit}
-        setLimit={setLimit}
-        onPaginationChange={setCurrentPage}
-        loader={tableLoader || deleteLoader}
-        data={tableData}
-        disableFilters
-        isChecked={(row) => selectedObjects?.includes(row.guid)}
-        onCheckboxChange={!!customEvents?.length && onCheckboxChange}
-        filters={filters}
-        filterChangeHandler={filterChangeHandler}
-        onRowClick={navigateToEditPage}
-        onDeleteClick={deleteHandler}
-        tableSlug={tableSlug}
-        tableStyle={{
-          borderRadius: 0,
-          border: "none",
-          borderBottom: "1px solid #E5E9EB",
-          width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "100%",
-        }}
-        isResizeble={true}
-        {...props}
-      />
+      <PermissionWrapperV2 tableSlug={tableSlug} type={'read'}>
+        <ObjectDataTable
+          defaultLimit={view?.default_limit}
+          formVisible={formVisible}
+          setFormVisible={setFormVisible}
+          isRelationTable={false}
+          removableHeight={isDocView ? 150 : 215}
+          currentPage={currentPage}
+          pagesCount={pageCount}
+          columns={columns}
+          limit={limit}
+          setLimit={setLimit}
+          onPaginationChange={setCurrentPage}
+          loader={tableLoader || deleteLoader}
+          data={tableData}
+          disableFilters
+          isChecked={(row) => selectedObjects?.includes(row.guid)}
+          onCheckboxChange={!!customEvents?.length && onCheckboxChange}
+          filters={filters}
+          filterChangeHandler={filterChangeHandler}
+          onRowClick={navigateToEditPage}
+          onDeleteClick={deleteHandler}
+          tableSlug={tableSlug}
+          tableStyle={{
+            borderRadius: 0,
+            border: "none",
+            borderBottom: "1px solid #E5E9EB",
+            width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "100%",
+          }}
+          isResizeble={true}
+          {...props}
+        />
+      </PermissionWrapperV2>
 
       <ModalDetailPage open={open} setOpen={setOpen} />
     </div>

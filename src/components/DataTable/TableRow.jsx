@@ -120,7 +120,7 @@ const TableRow = ({
           ))}
           <td>
             <div style={{ display: "flex", gap: "5px", padding: "3px" }}>
-              <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+              <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                 <RectangleIconButton
                   color="error"
                   onClick={() =>
@@ -188,7 +188,7 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+          <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
             <RectangleIconButton
               color="error"
               onClick={() => {

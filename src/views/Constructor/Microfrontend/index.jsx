@@ -91,7 +91,7 @@ const MicrofrontendPage = () => {
                 </CTableCell>
               </CTableRow>
             ))}
-            <PermissionWrapperV2 tabelSlug="app" type="write">
+            <PermissionWrapperV2 tableSlug="app" type="write">
               <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
             </PermissionWrapperV2>
           </CTableBody>

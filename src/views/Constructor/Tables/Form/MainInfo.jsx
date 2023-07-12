@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, useWatch } from "react-hook-form";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFIconPicker from "../../../../components/FormElements/HFIconPicker";
@@ -7,8 +7,14 @@ import HFSelect from "../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import listToOptions from "../../../../utils/listToOptions";
+import { Box } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 const MainInfo = ({ control }) => {
+  
+  const test = useParams();
+  
+
   const { fields } = useFieldArray({
     control,
     name: "fields",
@@ -20,6 +26,40 @@ const MainInfo = ({ control }) => {
     name: "layoutRelations",
     keyName: "key",
   });
+
+  const loginTable = useWatch({
+    control,
+    name: "is_login_table",
+  });
+  
+  const login = useWatch({
+    control,
+    name: "attributes.auth_info.login",
+  });
+  
+  const email = useWatch({
+    control,
+    name: "attributes.auth_info.email",
+  });
+  
+  const phone = useWatch({
+    control,
+    name: "attributes.auth_info.phone",
+  });
+  
+  const password = useWatch({
+    control,
+    name: "attributes.auth_info.password",
+  });
+  
+  
+  const loginRequired = useMemo(() => {
+    if(login) {
+        return true
+      } else {
+        return false
+      }
+  }, [login])
 
   const computedFields = useMemo(() => {
     const computedRelations = relations.map((relation) => {
@@ -46,9 +86,6 @@ const MainInfo = ({ control }) => {
         <div className="flex">
           <FRow label="Иконка">
             <HFIconPicker control={control} name="icon" required />
-          </FRow>
-          <FRow label="Показать в меню">
-            <HFSwitch control={control} name="show_in_menu" required />
           </FRow>
         </div>
 
@@ -91,6 +128,135 @@ const MainInfo = ({ control }) => {
             options={computedFields}
           />
         </FRow>
+
+        <Box sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}>
+          <FRow label="Login Table">
+            <HFSwitch
+              control={control}
+              name="is_login_table"
+              required
+            />
+          </FRow>
+          <FRow label="Показать в меню">
+            <HFSwitch control={control} name="show_in_menu" required />
+          </FRow>
+          <FRow label="Кеш">
+            <HFSwitch control={control} name="is_cached" required />
+          </FRow>
+          <FRow label="Софт Удаление">
+            <HFSwitch control={control} name="soft_delete" required />
+          </FRow>
+        </Box>
+
+        {loginTable && (
+          <Box>
+            <Box
+              sx={{
+                display: "flex",
+                width: "500px",
+                alignItems: "center",
+                margin: "10px 0",
+              }}
+            >
+              <FRow label="Тип пользователья" />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.client_type_id"
+                fullWidth
+                placeholder="client"
+                options={computedFields}
+                required
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                width: "500px",
+                alignItems: "center",
+                margin: "10px 0",
+              }}
+            >
+              <FRow label="Роли" />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.role_id"
+                fullWidth
+                placeholder="role"
+                options={computedFields}
+                required
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                width: "500px",
+                alignItems: "center",
+                margin: "10px 0",
+              }}
+            >
+              <FRow label="Логин" />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.login"
+                fullWidth
+                placeholder="login"
+                options={computedFields}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                width: "500px",
+                alignItems: "center",
+                margin: "10px 0",
+              }}
+            >
+              <FRow label="Пароль" />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.password"
+                fullWidth
+                placeholder="password"
+                options={computedFields}
+                required={loginRequired}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                width: "500px",
+                alignItems: "center",
+                margin: "10px 0",
+              }}
+            >
+              <FRow label="Почта" />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.email"
+                fullWidth
+                placeholder="email"
+                options={computedFields}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                width: "500px",
+                alignItems: "center",
+                margin: "10px 0",
+              }}
+            >
+              <FRow label="Телефон" />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.phone"
+                fullWidth
+                placeholder="phone"
+                options={computedFields}
+              />
+            </Box>
+          </Box>
+        )}
       </FormCard>
     </div>
   );

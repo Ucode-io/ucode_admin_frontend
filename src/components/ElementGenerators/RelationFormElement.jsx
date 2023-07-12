@@ -51,19 +51,32 @@ const RelationFormElement = ({
           name={(name || field.slug) ?? `${tableSlug}_id`}
           defaultValue={defaultValue}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
+           field?.attributes?.cascadings?.length >= 2 ? (
+            <CascadingElement
+            field={field}
+            tableSlug={tableSlug}
+            error={error}
+            disabledHelperText={disabledHelperText}
+            control={control}
+            setValue={onChange}
+            value={Array.isArray(value) ? value[0] : value}
+            name={name}
+          />
+           ) : (
             <AutoCompleteElement
-              value={Array.isArray(value) ? value[0] : value}
-              setValue={onChange}
-              field={field}
-              disabled={disabled}
-              tableSlug={tableSlug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              setFormValue={setFormValue}
-              control={control}
-              name={name}
-              defaultValue={defaultValue}
-            />
+            value={Array.isArray(value) ? value[0] : value}
+            setValue={onChange}
+            field={field}
+            disabled={disabled}
+            tableSlug={tableSlug}
+            error={error}
+            disabledHelperText={disabledHelperText}
+            setFormValue={setFormValue}
+            control={control}
+            name={name}
+            defaultValue={defaultValue}
+          />
+           )
           )}
         />
       </FRow>
@@ -86,18 +99,18 @@ const RelationFormElement = ({
             name={`${tableSlug}_id`}
             defaultValue={defaultValue}
             render={({ field: { onChange, value }, fieldState: { error } }) =>
-              field?.attributes?.cascadings?.length === 4 ? (
-                <CascadingElement
-                  field={field}
-                  tableSlug={tableSlug}
-                  error={error}
-                  disabledHelperText={disabledHelperText}
-                  control={control}
-                  setValue={onChange}
-                  value={Array.isArray(value) ? value[0] : value}
-                  name={name}
-                />
-              ) : (
+              // field?.attributes?.cascadings?.length ? (
+              //   <CascadingElement
+              //     field={field}
+              //     tableSlug={tableSlug}
+              //     error={error}
+              //     disabledHelperText={disabledHelperText}
+              //     control={control}
+              //     setValue={onChange}
+              //     value={Array.isArray(value) ? value[0] : value}
+              //     name={name}
+              //   />
+              // ) : (
                 <AutoCompleteElement
                   value={Array.isArray(value) ? value[0] : value}
                   setValue={onChange}
@@ -110,7 +123,7 @@ const RelationFormElement = ({
                   name={name}
                   defaultValue={defaultValue}
                 />
-              )
+              // )
             }
           />
         </FEditableRow>
@@ -305,7 +318,7 @@ const AutoCompleteElement = ({
   useEffect(() => {
     if (value) getValueData();
   }, [value]);
-
+  console.log('localValue', localValue);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

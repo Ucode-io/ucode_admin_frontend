@@ -8,7 +8,7 @@ import style from "./style.module.scss";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ButtonsPopover from "../../../../components/ButtonsPopover";
 import constructorViewService from "../../../../services/constructorViewService";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { viewTypes } from "../../../../utils/constants/viewTypes";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
@@ -18,9 +18,13 @@ import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
 import { useSelector } from "react-redux";
 import { store } from "../../../../store";
+import { Container, Draggable } from "react-smooth-dnd";
+import { applyDrag } from "../../../../utils/applyDrag";
 
 const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) => {
   const { t } = useTranslation();
+  const { tableSlug } = useParams();
+  const projectId = useSelector((state) => state.auth.projectId);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const queryClient = useQueryClient();
@@ -60,8 +64,22 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
       });
     });
   };
-  
+
   const selectedTable = store.getState().menu.menuItem;
+
+  const onDrop = (dropResult) => {
+    const result = applyDrag(views, dropResult);
+    if (!result) return;
+    const computedViews = result.map((el, index) => el.id);
+    const data = {
+      ids: computedViews,
+      project_id: projectId,
+      table_slug: tableSlug,
+    };
+    constructorViewService.changeViewOrder(data).then(() => {
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+    });
+  };
 
   return (
     <>
@@ -78,31 +96,41 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
             <h3>{selectedTable?.label ?? selectedTable?.title}</h3>
           </div>
         </div>
-        {views.map((view, index) => (
-          <div onClick={() => setSelectedTabIndex(index)} key={view.id} className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
-            {view.type === "TABLE" && <TableChart className={style.icon} />}
-            {view.type === "CALENDAR" && <CalendarMonth className={style.icon} />}
-            {view.type === "CALENDAR HOUR" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
-            {view.type === "GANTT" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
-            {view.type === "TREE" && <AccountTree className={style.icon} />}
-            {view.type === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
-            {view.type === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
-            <span>{view.name ? view.name : view.type}</span>
+        <Container
+          lockAxis="x"
+          onDrop={onDrop}
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+          style={{ display: "flex", alignItems: "center" }}
+          getChildPayload={(i) => views[i]}
+          orientation="horizontal"
+        >
+          {views.map((view, index) => (
+            <Draggable key={view.id}>
+              <div onClick={() => setSelectedTabIndex(index)} className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
+                {view.type === "TABLE" && <TableChart className={style.icon} />}
+                {view.type === "CALENDAR" && <CalendarMonth className={style.icon} />}
+                {view.type === "CALENDAR HOUR" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+                {view.type === "GANTT" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+                {view.type === "TREE" && <AccountTree className={style.icon} />}
+                {view.type === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
+                {view.type === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
+                <span>{view.name ? view.name : view.type}</span>
 
-            <div className={style.popoverElement}>
-              {/* {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />} */}
-              {selectedTabIndex === index && <MoreButtonViewType onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />}
-            </div>
-          </div>
-        ))}
-
+                <div className={style.popoverElement}>
+                  {/* {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />} */}
+                  {selectedTabIndex === index && <MoreButtonViewType onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />}
+                </div>
+              </div>
+            </Draggable>
+          ))}
+        </Container>
         {/* <div className={style.element} onClick={openModal}>
           <Settings className={style.icon} />
         </div> */}
 
         <div className={style.element} aria-describedby={id} variant="contained" onClick={handleClick}>
-          <AddIcon className={style.icon} style={{color: "#000"}}/>
-          <strong style={{color: "#000"}}>{t("add")}</strong>
+          <AddIcon className={style.icon} style={{ color: "#000" }} />
+          <strong style={{ color: "#000" }}>{t("add")}</strong>
         </div>
 
         <Popover

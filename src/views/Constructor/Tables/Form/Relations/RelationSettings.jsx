@@ -530,7 +530,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
 
                       <DefaultValueBlock control={control} watch={watch} columnsList={values.columnsList} />
 
-                      <AutoFiltersBlock control={control} watch={watch} />
+                      {/* <AutoFiltersBlock control={control} watch={watch} /> */}
 
                       <TableActions control={control} watch={watch} setValue={setValue} />
                     </AccordionDetails>

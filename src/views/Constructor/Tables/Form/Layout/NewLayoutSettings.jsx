@@ -13,6 +13,7 @@ function NewLayoutSettings({
   openFieldSettingsBlock,
   openRelationSettingsBlock,
   sectionTabs,
+  replaceSectionTab,
   insertSectionTab,
   selectedTab,
   removeSectionTab,
@@ -48,6 +49,7 @@ function NewLayoutSettings({
           openRelationSettingsBlock={openRelationSettingsBlock}
           selectedTab={selectedTab}
           setSelectedTab={setSelectedTab}
+          replaceSectionTab={replaceSectionTab}
           // handleTabSelection={handleTabSelection}
           sectionTabs={sectionTabs}
           insertSectionTab={insertSectionTab}

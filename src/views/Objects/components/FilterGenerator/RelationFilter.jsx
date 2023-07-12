@@ -7,7 +7,7 @@ import FilterAutoComplete from "./FilterAutocomplete";
 const RelationFilter = ({ field = {}, filters, name, onChange }) => {
   const [debouncedValue, setDebouncedValue] = useState("");
 
-  const value = filters[name];
+  // const value = filters[name];
 
   const {
     query: { data: options = [] },
@@ -17,7 +17,7 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
       view_fields: field?.view_fields?.map((field) => field.slug),
       search: debouncedValue,
       limit: 10,
-      additional_ids: value,
+      additional_ids: filters[name],
     },
     queryParams: {
       select: (res) => {
@@ -38,7 +38,7 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
     <FilterAutoComplete
       searchText={debouncedValue}
       setSearchText={setDebouncedValue}
-      value={value ?? []}
+      value={filters[name] ?? []}
       onChange={(val) => {
         onChange(val?.length ? val : undefined, name);
       }}

@@ -19,9 +19,7 @@ const FilterAutoComplete = ({
   const menuVisible = Boolean(anchorEl);
 
   const computedValue = useMemo(() => {
-    return value
-      ?.map((el) => options?.find((option) => option.value === el))
-      .filter((el) => el);
+    return value?.map((el) => options?.find((option) => option.value === el)).filter((el) => el);
   }, [value, options]);
 
   const openMenu = (event) => {
@@ -38,6 +36,7 @@ const FilterAutoComplete = ({
   };
 
   const rowClickHandler = (option) => {
+    closeMenu();
     if (value?.includes(option.value)) {
       onChange(value.filter((item) => item !== option.value));
     } else {
@@ -49,16 +48,18 @@ const FilterAutoComplete = ({
     e.stopPropagation();
     onChange(null);
   };
+
+  console.log('akwjndkajnwdjaw')
   return (
     <div className={styles.autocomplete}>
       <div className={styles.autocompleteButton} onClick={openMenu}>
         <div className={styles.autocompleteValue}>
-          {computedValue?.[0]?.label || (
+          {computedValue?.[0]?.label ?? (
             <span
               className={styles.placeholder}
               style={{ color: !value?.length ? "#909EAB" : "#000" }}
             >
-              {!value?.length ? label : value[0]}
+              {value[0] ?? label}
             </span>
           )}
         </div>

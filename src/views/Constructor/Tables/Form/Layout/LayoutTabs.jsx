@@ -134,47 +134,27 @@ function LayoutTabs({
     <>
       <Tabs className={"custom-tabs"} style={{ width: "100%" }}>
         <TabList>
-          <Container
-            groupName="table_relation"
-            style={{ display: "flex", alignItems: "center" }}
-            dropPlaceholder={{ className: "drag-row-drop-preview" }}
-            orientation="horizontal"
-            onDrop={onDrop}
-            getChildPayload={(i) => allTabs[i]}
-          >
-            {allTabs?.map((tab, index) => (
-              <Draggable
-                key={tab.id}
-                onClick={() => {
-                  setSelectedTabIndex(index);
-                  setSelectedTab(tab);
-                }}
-                // onDrag={() => handleTabsDrag(index)}
-              >
-                <Tab
-                  key={tab.id}
-                  // className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
-                  className={`${styles.tabsItem} ${selectedTab?.id === tab?.id ? styles.active : ""}`}
-                >
-                  <div
-                    className={styles.tab}
-                    style={{ display: "flex", alignItems: "center" }}
-                    onClick={() => {
-                      setSelectedTabIndex(index);
-                      setSelectedTab(tab);
-                    }}
-                  >
-                    {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label ?? tab?.relation?.table_from?.label}
-                    {tab?.type === "section" ? (
-                      <ButtonsPopover onEditClick={() => openFieldsBlock("RELATION")} onDeleteClick={() => removeSectionTab(index, tab)} />
-                    ) : (
-                      <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab.relation ?? tab)} onDeleteClick={() => removeSectionTab(index, tab)} />
-                    )}
-                  </div>
-                </Tab>
-              </Draggable>
-            ))}
-          </Container>
+          {allTabs?.map((tab, index) => (
+            <Tab
+              key={tab.id}
+              // className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
+              className={`${styles.tabsItem} ${selectedTab?.id === tab?.id ? styles.active : ""}`}
+              onClick={() => {
+                setSelectedTabIndex(index);
+                setSelectedTab(tab);
+              }}
+            >
+              <div className={styles.tab} style={{ display: "flex", alignItems: "center" }}>
+                {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label ?? tab?.relation?.table_from?.label}
+                {tab?.type === "section" ? (
+                  <ButtonsPopover onEditClick={() => openFieldsBlock("RELATION")} onDeleteClick={() => removeSectionTab(index, tab)} />
+                ) : (
+                  <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab.relation ?? tab)} onDeleteClick={() => removeSectionTab(index, tab)} />
+                )}
+              </div>
+            </Tab>
+          ))}
+
           <RectangleIconButton onClick={() => openFieldsBlock("RELATION")}>
             <Add />
           </RectangleIconButton>

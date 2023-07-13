@@ -9,11 +9,13 @@ import HFTextField from "../../../../components/FormElements/HFTextField";
 import listToOptions from "../../../../utils/listToOptions";
 import { Box } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import constructorObjectService from "../../../../services/constructorObjectService";
 
 const MainInfo = ({ control }) => {
   
-  const test = useParams();
-  
+  const {slug} = useParams();
+
 
   const { fields } = useFieldArray({
     control,
@@ -37,20 +39,21 @@ const MainInfo = ({ control }) => {
     name: "attributes.auth_info.login",
   });
   
-  const email = useWatch({
-    control,
-    name: "attributes.auth_info.email",
-  });
-  
-  const phone = useWatch({
-    control,
-    name: "attributes.auth_info.phone",
-  });
-  
-  const password = useWatch({
-    control,
-    name: "attributes.auth_info.password",
-  });
+  const { data: computedTableFields } = useQuery(
+    ["GET_OBJECT_LIST", slug],
+    () => {
+      return constructorObjectService.getList(slug, {
+        data: {
+          limit: 0, offset: 0
+        },
+      });
+    },
+    {
+      select: (res) => {
+        return res?.data?.fields ?? [];
+      },
+    }
+  );
   
   
   const loginRequired = useMemo(() => {
@@ -79,6 +82,16 @@ const MainInfo = ({ control }) => {
 
     return listToOptions([...fields, ...computedRelations], "label", "slug");
   }, [fields]);
+  
+  const computedLoginFields = useMemo(() => {
+    return computedTableFields?.map((item) => (
+      {
+        label: item?.label ?? '',
+        value: item?.slug ?? ''
+      }
+    ))
+
+  }, [computedTableFields]);
 
   return (
     <div className="p-2">
@@ -164,7 +177,7 @@ const MainInfo = ({ control }) => {
                 name="attributes.auth_info.client_type_id"
                 fullWidth
                 placeholder="client"
-                options={computedFields}
+                options={computedLoginFields}
                 required
               />
             </Box>
@@ -182,7 +195,7 @@ const MainInfo = ({ control }) => {
                 name="attributes.auth_info.role_id"
                 fullWidth
                 placeholder="role"
-                options={computedFields}
+                options={computedLoginFields}
                 required
               />
             </Box>
@@ -200,7 +213,7 @@ const MainInfo = ({ control }) => {
                 name="attributes.auth_info.login"
                 fullWidth
                 placeholder="login"
-                options={computedFields}
+                options={computedLoginFields}
               />
             </Box>
             <Box
@@ -217,7 +230,7 @@ const MainInfo = ({ control }) => {
                 name="attributes.auth_info.password"
                 fullWidth
                 placeholder="password"
-                options={computedFields}
+                options={computedLoginFields}
                 required={loginRequired}
               />
             </Box>
@@ -235,7 +248,7 @@ const MainInfo = ({ control }) => {
                 name="attributes.auth_info.email"
                 fullWidth
                 placeholder="email"
-                options={computedFields}
+                options={computedLoginFields}
               />
             </Box>
             <Box
@@ -252,7 +265,7 @@ const MainInfo = ({ control }) => {
                 name="attributes.auth_info.phone"
                 fullWidth
                 placeholder="phone"
-                options={computedFields}
+                options={computedLoginFields}
               />
             </Box>
           </Box>

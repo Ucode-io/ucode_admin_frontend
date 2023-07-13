@@ -21,7 +21,7 @@ import Attributes from "./Attributes";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import styles from "./style.module.scss";
 
-const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, onSubmit = () => {} }) => {
+const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, onSubmit = () => {}, getRelationFields }) => {
   const { id } = useParams();
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
@@ -46,6 +46,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
   });
 
   const createField = (field) => {
+
     const data = {
       ...field,
       id: generateGUID(),
@@ -61,6 +62,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
         .then((res) => {
           prepandFieldInForm(res);
           closeSettingsBlock(null);
+          getRelationFields();
         })
         .finally(() => setFormLoader(false));
     }
@@ -77,6 +79,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
         .then((res) => {
           updateFieldInform(field);
           closeSettingsBlock(null);
+          getRelationFields();
         })
         .finally(() => setFormLoader(false));
     }
@@ -101,7 +104,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
     name: "type",
   });
 
-  console.log('fieldType', fieldType);
+
   const selectedAutofillSlug = selectedAutofillTableSlug?.split("#")?.[0];
   const selectedAutofillFieldSlug = selectedAutofillTableSlug?.split("#")?.[1];
 

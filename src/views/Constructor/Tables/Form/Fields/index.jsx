@@ -12,7 +12,7 @@ import { generateGUID } from "../../../../../utils/generateID";
 import FieldSettings from "./FieldSettings";
 import styles from "./style.module.scss";
 
-const Fields = ({ mainForm }) => {
+const Fields = ({ mainForm, getRelationFields }) => {
   const { id, slug } = useParams();
   const [formLoader, setFormLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
@@ -144,6 +144,7 @@ const Fields = ({ mainForm }) => {
           formType={drawerState}
           mainForm={mainForm}
           height={`calc(100vh - 48px)`}
+          getRelationFields={getRelationFields}
         />
       </Drawer>
 

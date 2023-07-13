@@ -129,8 +129,6 @@ function LayoutTabs({
     return mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
   }, [mainForm, selectedLayout]);
 
-  console.log('kajwndkjawkdajw', selectedTab)
-
   return (
     <>
       <div className={"custom-tabs"} style={{ width: "100%" }}>

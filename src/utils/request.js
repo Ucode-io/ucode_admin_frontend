@@ -68,9 +68,13 @@ request.interceptors.request.use(
   (config) => {
     const authStore = store.getState().auth;
     const token = authStore.token;
-    const environmentId = authStore.environmentId;
     const resourceId = authStore.resourceId;
-    const projectId = authStore.projectId;
+    const companyStore = store.getState().company;
+    const environmentId = companyStore.environmentId;
+    const projectId = companyStore.projectId;
+
+    console.log("environmentId", environmentId);
+    console.log("token", token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
       config.headers["environment-id"] = environmentId;

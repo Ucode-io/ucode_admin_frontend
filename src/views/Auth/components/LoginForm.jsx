@@ -1,5 +1,5 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
-import { Box, InputAdornment } from "@mui/material";
+import { InputAdornment } from "@mui/material";
 import { useEffect, useMemo } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,26 +19,25 @@ import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import { firebaseCloudMessaging } from "../../../firebase/config";
 import DynamicFields from "./DynamicFields";
-import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
+import { companyActions } from "../../../store/company/company.slice";
+import RegisterForm from "./RegisterForm";
+import { store } from "../../../store";
+import { showAlert } from "../../../store/alert/alert.thunk";
 
-const LoginForm = () => {
+const LoginForm = ({ setIndex, index }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [clientTypes, setClientTypes] = useState([]);
-
-  useEffect(() => {
-    getFcmToken();
-  }, []);
+  const [formType, setFormType] = useState("LOGIN");
 
   const getFcmToken = async () => {
     const token = await firebaseCloudMessaging.init();
     localStorage.setItem("fcmToken", token);
   };
 
-  const [formType, setFormType] = useState("LOGIN");
-  const { control, handleSubmit, watch, setValue } = useForm();
+  const { control, handleSubmit, watch, setValue, reset } = useForm();
 
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
@@ -137,6 +136,11 @@ const LoginForm = () => {
     }
   }, [computedClientTypes]);
 
+  useEffect(() => {
+    getFcmToken();
+    reset();
+  }, [index]);
+
   const multiCompanyLogin = (data) => {
     setLoading(true);
 
@@ -147,25 +151,45 @@ const LoginForm = () => {
         setClientTypes(res.client_types);
         setCompanies(res.companies);
         setFormType("MULTI_COMPANY");
+        dispatch(companyActions.setCompanies(res.companies));
+      })
+      .catch(() => setLoading(false));
+  };
+
+  const register = (data) => {
+    setLoading(true);
+
+    authService
+      .register(data)
+      .then((res) => {
+        setLoading(false);
+        setIndex(0);
+        store.dispatch(showAlert("Успешно", "success"));
       })
       .catch(() => setLoading(false));
   };
 
   const onSubmit = (values) => {
     setLoading(true);
-    if (formType === "LOGIN") multiCompanyLogin(values);
+    if (formType === "LOGIN" && index === 0) multiCompanyLogin(values);
+    else if (index === 1) register(values);
     else dispatch(loginAction(values)).then(() => setLoading(false));
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-      <Tabs direction={"ltr"}>
+      <Tabs
+        direction={"ltr"}
+        selectedIndex={index}
+        onSelect={(index) => setIndex(index)}
+      >
         {formType === "LOGIN" ? (
           <div style={{ padding: "0 20px" }}>
             <TabList>
               <Tab>{t("login")}</Tab>
-              <Tab>{t("phone")}</Tab>
-              <Tab>{t("E-mail")}</Tab>
+              <Tab>{t("Register")}</Tab>
+              {/* <Tab>{t("phone")}</Tab> */}
+              {/* <Tab>{t("E-mail")}</Tab> */}
             </TabList>
 
             <div
@@ -212,20 +236,9 @@ const LoginForm = () => {
                   />
                 </div>
               </TabPanel>
-              {/* <TabPanel>
-                <div className={classes.formRow}>
-                  <p className={classes.label}>{t("login")}</p>
-                  <Box className={classes.phone}>
-                    <HFTextFieldWithMask
-                      isFormEdit
-                      control={control}
-                      name={"phoneNumber"}
-                      fullWidth
-                      // mask={"(99) 999-99-99"}
-                    />
-                  </Box>
-                </div>
-              </TabPanel> */}
+              <TabPanel>
+                <RegisterForm control={control} reset={reset} />
+              </TabPanel>
             </div>
           </div>
         ) : (

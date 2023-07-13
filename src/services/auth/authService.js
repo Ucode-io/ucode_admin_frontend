@@ -13,6 +13,7 @@ const authService = {
       headers: { "environment-id": data.environment_id },
     }),
   multiCompanyLogin: (data) => requestAuthV2.post("/multi-company/login", data),
+  register: (data) => requestAuth.post("/company", data),
   sendResetMessageToEmail: (data) =>
     requestAuth.post(`/user/send-message`, data),
   resetPassword: (data) => requestAuth.put(`/user/reset-password`, data),

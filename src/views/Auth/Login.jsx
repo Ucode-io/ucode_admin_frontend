@@ -2,17 +2,26 @@ import { useTranslation } from "react-i18next";
 import LanguageSelector from "../../components/LanguageSelector";
 import LoginForm from "./components/LoginForm";
 import styles from "./style.module.scss";
+import { useState } from "react";
 
 const Login = () => {
   const { t } = useTranslation();
+  const [index, setIndex] = useState(0);
+  console.log("index", index);
 
   return (
     <div className={styles.page}>
-      <div style={{ marginLeft: 'auto' }} ><LanguageSelector /></div>
-      <h1 className={styles.title}>{t("enter.to.system")}</h1>
-      <p className={styles.subtitle}>{t("fill.in.your.login.info")}</p>
+      <div style={{ marginLeft: "auto" }}>
+        <LanguageSelector />
+      </div>
+      <h1 className={styles.title}>
+        {index === 0 ? t("enter.to.system") : t("register.form")}
+      </h1>
+      <p className={styles.subtitle}>
+        {index === 0 ? t("fill.in.your.login.info") : t("register.form.desc")}
+      </p>
 
-      <LoginForm />
+      <LoginForm setIndex={setIndex} index={index} />
     </div>
   );
 };

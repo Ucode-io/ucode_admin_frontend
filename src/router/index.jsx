@@ -39,6 +39,7 @@ import MicrofrontendPage from "../views/Constructor/Microfrontend";
 import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
 import WebPage from "../views/WebPage";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
+import EnvironmentPage from "../views/Environments";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -107,6 +108,9 @@ const Router = () => {
 
         <Route path=":appId/chat" element={<Chat />}>
           <Route path=":chat_id" element={<Chat />} />
+        </Route>
+        <Route path=":appId/environments" element={<EnvironmentPage />}>
+          {/* <Route path=":environment_id" element={<Chat />} /> */}
         </Route>
 
         <Route path=":appId/api-key" element={<ApiKeyPage />} />

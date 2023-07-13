@@ -26,10 +26,8 @@ import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import { UdevsLogo } from "../../assets/icons/icon";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
-import {
-  useMenuSettingGetByIdQuery,
-  useMenuSettingListQuery,
-} from "../../services/menuSettingService";
+import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
+import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 
 const LayoutSidebar = ({ favicon, appId, environment }) => {
   const sidebarIsOpen = useSelector(
@@ -55,7 +53,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const [searchText, setSearchText] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
-  const [root, setRoot] = useState("");
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openSidebarMenu = Boolean(menu?.event);
 
@@ -168,10 +165,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     }
   }, [menuTemplate]);
 
-  const switchRightSideVisible = () => {
-    setSidebarIsOpen(!sidebarIsOpen);
-  };
-
   useEffect(() => {
     getMenuList();
   }, [searchText]);
@@ -244,7 +237,8 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            height: "calc(100% - 56px)",
+            height: "85vh",
+            overflow: "hidden",
           }}
         >
           <div>
@@ -263,7 +257,12 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
             {!menuList?.menus ? (
               <RingLoaderWithWrapper />
             ) : (
-              <>
+              <Box
+                style={{
+                  height: "100vh",
+                  overflow: "auto",
+                }}
+              >
                 <MenuButtonComponent
                   title={"Chat"}
                   icon={
@@ -345,30 +344,29 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                   }}
                 />
                 <Divider />
-              </>
+              </Box>
             )}
           </div>
-
-          <MenuButtonComponent
-            title={"Profile"}
-            openFolderCreateModal={openFolderCreateModal}
-            onClick={(e) => {
-              anchorEl ? setAnchorEl(null) : openMenu(e);
-            }}
-            children={
-              <ProfilePanel
-                anchorEl={anchorEl}
-                handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-                projectInfo={projectInfo}
-              />
-            }
-            style={{
-              background: menuStyle?.background || "#fff",
-              color: menuStyle?.text || "#000",
-            }}
-            sidebarIsOpen={sidebarIsOpen}
-          />
         </Box>
+        <MenuButtonComponent
+          title={"Profile"}
+          openFolderCreateModal={openFolderCreateModal}
+          onClick={(e) => {
+            anchorEl ? setAnchorEl(null) : openMenu(e);
+          }}
+          children={
+            <NewProfilePanel
+              anchorEl={anchorEl}
+              handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+              projectInfo={projectInfo}
+            />
+          }
+          style={{
+            background: menuStyle?.background || "#fff",
+            color: menuStyle?.text || "#000",
+          }}
+          sidebarIsOpen={sidebarIsOpen}
+        />
 
         {(modalType === "create" ||
           modalType === "parent" ||

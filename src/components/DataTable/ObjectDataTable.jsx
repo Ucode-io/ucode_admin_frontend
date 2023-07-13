@@ -230,6 +230,7 @@ const ObjectDataTable = ({
           <CellCheckboxNoSign formVisible={formVisible} data={data} />
 
           {columns.map((column, index) => (
+            column?.attributes?.field_permission?.view_permission && 
             <CTableHeadCell
               id={column.id}
               key={index}

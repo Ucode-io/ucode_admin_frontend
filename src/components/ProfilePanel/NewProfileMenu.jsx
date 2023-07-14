@@ -52,6 +52,9 @@ const NewProfilePanel = ({
   const handleEnvNavigate = () => {
     navigate(`/main/${appId}/environments`);
   };
+  const handleCompanyNavigate = () => {
+    navigate(`/main/${appId}/company`);
+  };
   const handleProjectNavigate = () => {
     navigate(`/main/${appId}/projects`);
   };
@@ -221,7 +224,7 @@ const NewProfilePanel = ({
               </>
             }
           />
-          <ProfileItem text={"Settings"} />
+          <ProfileItem text={"Settings"} onClick={handleCompanyNavigate} />
         </div>
         <Divider />
         <div className={styles.block}>

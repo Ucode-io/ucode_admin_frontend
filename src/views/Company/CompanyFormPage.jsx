@@ -10,62 +10,51 @@ import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
 import PageFallback from "../../components/PageFallback";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import { Box } from "@mui/material";
-import NewColorInput from "../../components/FormElements/HFNewColorPicker";
-import styles from "./style.module.scss";
-import {
-  useEnvironmentCreateMutation,
-  useEnvironmentGetByIdQuery,
-  useEnvironmentUpdateMutation,
-} from "../../services/environmentService";
 import { useQueryClient } from "react-query";
 import { store } from "../../store";
 import { showAlert } from "../../store/alert/alert.thunk";
+import {
+  useCompanyGetByIdQuery,
+  useCompanyUpdateMutation,
+} from "../../services/companyService";
 
-const EnvironmentForm = () => {
-  const { envId } = useParams();
+const CompanyForm = () => {
+  const { companyId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const project_id = store.getState().company.projectId;
+  console.log("companyId", companyId);
 
   const mainForm = useForm({
     defaultValues: {
-      description: "",
       name: "",
-      project_id: project_id,
+      company_id: companyId,
     },
   });
 
-  const { isLoading } = useEnvironmentGetByIdQuery({
-    envId: envId,
+  const { isLoading } = useCompanyGetByIdQuery({
+    companyId: companyId,
     queryParams: {
-      enabled: Boolean(envId),
+      enabled: Boolean(companyId),
       onSuccess: (res) => {
-        mainForm.reset(res);
+        mainForm.reset(res.company);
       },
     },
   });
 
-  const { mutateAsync: createEnv, isLoading: createLoading } =
-    useEnvironmentCreateMutation({
-      onSuccess: () => {
-        queryClient.refetchQueries(["ENVIRONMENT"]);
-        navigate(-1);
-        store.dispatch(showAlert("Успешно", "success"));
+  const { mutateAsync: updateCompany, isLoading: updateLoading } =
+    useCompanyUpdateMutation(
+      {
+        onSuccess: () => {
+          queryClient.refetchQueries(["COMPANY"]);
+          store.dispatch(showAlert("Успешно", "success"));
+          navigate(-1);
+        },
       },
-    });
-  const { mutateAsync: updateEnv, isLoading: updateLoading } =
-    useEnvironmentUpdateMutation({
-      onSuccess: () => {
-        queryClient.refetchQueries(["ENVIRONMENT"]);
-        navigate(-1);
-        store.dispatch(showAlert("Успешно", "success"));
-      },
-    });
+      { companyId }
+    );
 
   const onSubmit = (data) => {
-    if (envId) updateEnv(data);
-    else createEnv(data);
+    updateCompany(data);
   };
 
   if (updateLoading) return <PageFallback />;
@@ -73,9 +62,9 @@ const EnvironmentForm = () => {
   return (
     <div>
       <HeaderSettings
-        title="Environment"
+        title="Company"
         backButtonLink={-1}
-        subtitle={envId ? mainForm.watch("name") : "Новый"}
+        subtitle={companyId ? mainForm.watch("name") : "Новый"}
       ></HeaderSettings>
 
       <form
@@ -97,30 +86,6 @@ const EnvironmentForm = () => {
               required
             />
           </FRow>
-          <FRow
-            label={"Цвет"}
-            componentClassName="flex gap-2 align-center"
-            required
-          >
-            <Box className={styles.colorpicker}>
-              <NewColorInput control={mainForm.control} name="display_color" />
-              <HFTextField
-                control={mainForm.control}
-                name="display_color"
-                fullWidth
-                className={styles.formcolorinput}
-              />
-            </Box>
-          </FRow>
-          <FRow label="Описания">
-            <HFTextField
-              name="description"
-              control={mainForm.control}
-              multiline
-              rows={4}
-              fullWidth
-            />
-          </FRow>
         </FormCard>
       </form>
 
@@ -132,7 +97,7 @@ const EnvironmentForm = () => {
             </SecondaryButton>
             <PermissionWrapperV2 tabelSlug="app" type="update">
               <PrimaryButton
-                loader={createLoading}
+                loader={updateLoading}
                 onClick={mainForm.handleSubmit(onSubmit)}
               >
                 <Save /> Сохранить
@@ -145,4 +110,4 @@ const EnvironmentForm = () => {
   );
 };
 
-export default EnvironmentForm;
+export default CompanyForm;

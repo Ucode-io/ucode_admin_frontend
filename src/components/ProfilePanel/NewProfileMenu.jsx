@@ -44,16 +44,12 @@ const NewProfilePanel = ({
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
 
-  console.log("environmentItem", environmentItem);
-
-  console.log("environmentId", environmentId);
-  console.log("companyId", companyId);
-
-  console.log("projectId", projectId);
-  console.log("environments", environments);
-
   const handleClick = () => {
     navigate(`/main/${appId}/api-key`);
+  };
+
+  const handleEnvNavigate = () => {
+    navigate(`/main/${appId}/environments`);
   };
   const closeMenu = () => {
     setProfileAnchorEl(null);
@@ -151,7 +147,6 @@ const NewProfilePanel = ({
     queryParams: {
       enabled: Boolean(projectId),
       onSuccess: (res) => {
-        console.log("res", res);
         dispatch(companyActions.setEnvironments(res.environments));
       },
     },
@@ -242,7 +237,12 @@ const NewProfilePanel = ({
             <ProfileItem
               children={
                 <>
-                  <p className={styles.environmentavatar}>
+                  <p
+                    className={styles.environmentavatar}
+                    style={{
+                      background: environmentItem.display_color,
+                    }}
+                  >
                     {environmentItem?.name?.charAt(0).toUpperCase()}
                   </p>
                   {environmentItem?.name}
@@ -254,6 +254,7 @@ const NewProfilePanel = ({
         <Divider />
         <div className={styles.block}>
           <ProfileItem text={"Api Keys"} onClick={handleClick} />
+          <ProfileItem text={"Environments"} onClick={handleEnvNavigate} />
           <ProfileItem
             text={"Profile settings"}
             onClick={() => {

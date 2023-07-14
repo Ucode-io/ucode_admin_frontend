@@ -83,11 +83,9 @@ const MicrofrontendPage = () => {
                 <CTableCell>{element?.description}</CTableCell>
                 <CTableCell>{element?.path}</CTableCell>
                 <CTableCell>
-                  <DeleteWrapperModal id={element.id} onDelete={deleteTable}>
-                    <RectangleIconButton color="error">
-                      <Delete color="error" />
-                    </RectangleIconButton>
-                  </DeleteWrapperModal>
+                  <RectangleIconButton color="error" onClick={deleteTable}>
+                    <Delete color="error" />
+                  </RectangleIconButton>
                 </CTableCell>
               </CTableRow>
             ))}

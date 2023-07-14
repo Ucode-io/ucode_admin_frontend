@@ -52,7 +52,12 @@ const EnvironmentsList = ({
           <ProfileItem
             children={
               <>
-                <p className={styles.projectavatar}>
+                <p
+                  className={styles.projectavatar}
+                  style={{
+                    background: item?.display_color,
+                  }}
+                >
                   {item?.name?.charAt(0).toUpperCase()}
                 </p>
                 {item?.name}

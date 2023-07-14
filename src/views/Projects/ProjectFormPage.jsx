@@ -103,7 +103,6 @@ const EnvironmentForm = () => {
             required
           >
             <Box className={styles.colorpicker}>
-              <NewColorInput control={mainForm.control} name="display_color" />
               <HFTextField
                 control={mainForm.control}
                 name="display_color"

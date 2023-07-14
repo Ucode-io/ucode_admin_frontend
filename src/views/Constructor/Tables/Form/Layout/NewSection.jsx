@@ -76,7 +76,6 @@ const NewSection = ({
           /> */}
 
           <HFTextField
-            
             placeholder="Label"
             required={index === 0}
             control={mainForm.control}
@@ -121,6 +120,7 @@ const NewSection = ({
                   column={1}
                   fieldIndex={fieldIndex}
                   mainForm={mainForm}
+                  checkPermission={false}
                 />
                 <ButtonsPopover className={styles.deleteButton} onEditClick={() => openSettingsBlock(field)} onDeleteClick={() => removeField(fieldIndex, 1)} />
                 {/* <RectangleIconButton

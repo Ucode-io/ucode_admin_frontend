@@ -175,7 +175,7 @@ const FieldsBlock = ({
                 {unusedRelations?.map((relation) => (
                   <Draggable key={relation.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
-                      <FormElementGenerator field={relation} control={mainForm.control} disabledHelperText />
+                      <FormElementGenerator field={relation} control={mainForm.control} disabledHelperText checkPermission={false}/>
                     </div>
                   </Draggable>
                 ))}

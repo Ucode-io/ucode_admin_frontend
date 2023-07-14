@@ -4,15 +4,29 @@ import { Left } from "../../assets/icons/icon";
 import NewColorInput from "../FormElements/HFNewColorPicker";
 import { useForm } from "react-hook-form";
 import HFTextField from "../FormElements/HFTextField";
-import { useMenuTemplateCreateMutation } from "../../services/menuTemplateService";
+import {
+  useMenuTemplateCreateMutation,
+  useMenuTemplateGetByIdQuery,
+  useMenuTemplateUpdateMutation,
+} from "../../services/menuTemplateService";
 
-const MenuSettingForm = ({ setModalType, setCheck }) => {
+const MenuSettingForm = ({ setModalType, setCheck, formType }) => {
   const { control, reset, handleSubmit, watch } = useForm({
     defaultValues: {
       background: "#000",
       active_background: "#000",
       text: "#000",
       active_text: "#000",
+    },
+  });
+
+  const { isLoading } = useMenuTemplateGetByIdQuery({
+    templateId: formType,
+    queryParams: {
+      enabled: Boolean(formType),
+      onSuccess: (res) => {
+        reset(res);
+      },
     },
   });
 
@@ -23,11 +37,20 @@ const MenuSettingForm = ({ setModalType, setCheck }) => {
         setModalType("CUSTOMIZE");
       },
     });
+  const { mutate: update, isLoading: updateLoading } =
+    useMenuTemplateUpdateMutation({
+      onSuccess: (res) => {
+        setCheck(res);
+        setModalType("CUSTOMIZE");
+      },
+    });
 
   const submitHandler = (values) => {
-    create({
-      ...values,
-    });
+    if (formType) update({ ...values });
+    else
+      create({
+        ...values,
+      });
   };
 
   return (

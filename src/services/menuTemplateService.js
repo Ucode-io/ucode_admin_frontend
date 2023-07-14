@@ -7,8 +7,8 @@ const menuTemplateService = {
       params,
     });
   },
-  getByID: (params, platformId) =>
-    request.get(`/menu-template/${platformId}`, {
+  getByID: (params, templateId) =>
+    request.get(`/menu-template/${templateId}`, {
       params,
     }),
   update: (data) =>
@@ -38,13 +38,13 @@ export const useMenuTemplateListQuery = ({ params = {}, queryParams } = {}) => {
 
 export const useMenuTemplateGetByIdQuery = ({
   params = {},
-  platformId,
+  templateId,
   queryParams,
 }) => {
   return useQuery(
-    ["MENU_TEMPLATE_GET_BY_ID", { ...params, platformId }],
+    ["MENU_TEMPLATE_GET_BY_ID", { ...params, templateId }],
     () => {
-      return menuTemplateService.getByID(params, platformId);
+      return menuTemplateService.getByID(params, templateId);
     },
     queryParams
   );

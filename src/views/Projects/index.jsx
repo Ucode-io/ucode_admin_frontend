@@ -9,11 +9,9 @@ import {
 import FiltersBlock from "../../components/FiltersBlock";
 import HeaderSettings from "../../components/HeaderSettings";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import SearchInput from "../../components/SearchInput";
 import TableCard from "../../components/TableCard";
 import TableRowButton from "../../components/TableRowButton";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
-import DeleteWrapperModal from "../../components/DeleteWrapperModal";
 import { Delete } from "@mui/icons-material";
 import {
   useEnvironmentDeleteMutation,
@@ -22,7 +20,7 @@ import {
 import { store } from "../../store";
 import { useQueryClient } from "react-query";
 
-const EnvironmentPage = () => {
+const ProjectPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const location = useLocation();
@@ -123,4 +121,4 @@ const EnvironmentPage = () => {
   );
 };
 
-export default EnvironmentPage;
+export default ProjectPage;

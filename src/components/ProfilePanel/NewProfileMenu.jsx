@@ -51,6 +51,9 @@ const NewProfilePanel = ({
   const handleEnvNavigate = () => {
     navigate(`/main/${appId}/environments`);
   };
+  const handleProjectNavigate = () => {
+    navigate(`/main/${appId}/projects`);
+  };
   const closeMenu = () => {
     setProfileAnchorEl(null);
   };
@@ -255,6 +258,7 @@ const NewProfilePanel = ({
         <div className={styles.block}>
           <ProfileItem text={"Api Keys"} onClick={handleClick} />
           <ProfileItem text={"Environments"} onClick={handleEnvNavigate} />
+          <ProfileItem text={"Projects"} onClick={handleProjectNavigate} />
           <ProfileItem
             text={"Profile settings"}
             onClick={() => {

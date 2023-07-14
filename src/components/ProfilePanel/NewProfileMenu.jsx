@@ -43,6 +43,7 @@ const NewProfilePanel = ({
   const menuVisible = Boolean(anchorEl || anchorProfileEl);
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
+  console.log("companies", companies);
 
   const handleClick = () => {
     navigate(`/main/${appId}/api-key`);
@@ -176,29 +177,28 @@ const NewProfilePanel = ({
       >
         <div className={styles.block}>
           <div className={styles.companyblock}>
-            {projectInfo &&
-              companies?.map((item) => (
-                <ProfileItem
-                  children={
-                    <Tooltip title={item?.name}>
-                      <p
-                        className={
-                          item.id === companyId
-                            ? styles.avatarborder
-                            : styles.avatar
-                        }
-                        onClick={(e) => {
-                          handleCompanySelect(item, e);
-                        }}
-                      >
-                        {item?.name?.charAt(0).toUpperCase()}
-                      </p>
-                    </Tooltip>
-                  }
-                  type="company"
-                  className={styles.company}
-                />
-              ))}
+            {companies?.map((item) => (
+              <ProfileItem
+                children={
+                  <Tooltip title={item?.name}>
+                    <p
+                      className={
+                        item.id === companyId
+                          ? styles.avatarborder
+                          : styles.avatar
+                      }
+                      onClick={(e) => {
+                        handleCompanySelect(item, e);
+                      }}
+                    >
+                      {item?.name?.charAt(0).toUpperCase()}
+                    </p>
+                  </Tooltip>
+                }
+                type="company"
+                className={styles.company}
+              />
+            ))}
             <p
               className={styles.createbutton}
               onClick={() => {
@@ -279,17 +279,15 @@ const NewProfilePanel = ({
         </div>
         <Divider />
 
-        {projectInfo && (
-          <div className={styles.block}>
-            <ProfileItem
-              text={"Menu settings"}
-              onClick={() => {
-                handleMenuSettingModalOpen();
-                closeMenu();
-              }}
-            />
-          </div>
-        )}
+        <div className={styles.block}>
+          <ProfileItem
+            text={"Menu settings"}
+            onClick={() => {
+              handleMenuSettingModalOpen();
+              closeMenu();
+            }}
+          />
+        </div>
       </Menu>
 
       <ProjectList

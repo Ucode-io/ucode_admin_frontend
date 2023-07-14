@@ -6,6 +6,7 @@ import styles from "./style.module.scss";
 import { Tooltip } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
+import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 const HeaderSettings = ({
   title = "",
   subtitle,
@@ -54,7 +55,7 @@ const HeaderSettings = ({
           </RectangleIconButton>
         </Tooltip>
         {/* <AppSelector /> */}
-        <ProfilePanel />
+        <NewProfilePanel />
       </div>
     </div>
   );

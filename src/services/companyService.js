@@ -17,16 +17,13 @@ const companyService = {
       params,
     });
   },
-  getByID: (params, platformId) =>
-    request.get(`/company/${platformId}`, {
+  getByID: (params, companyId) =>
+    request.get(`/company/${companyId}`, {
       params,
     }),
-  update: (data) =>
-    request.put(`/company`, data, {
-      params: {
-        "project-id": data.project_id,
-      },
-    }),
+  update: (data, company_id) => {
+    return request.put(`/company/${company_id?.companyId}`, data);
+  },
   create: (data) =>
     request.post(`/company`, data, {
       params: {
@@ -65,21 +62,24 @@ export const useEnvironmentListQuery = ({ params = {}, queryParams } = {}) => {
 };
 
 export const useCompanyGetByIdQuery = ({
-  menuId,
+  companyId,
   params = {},
   queryParams,
 }) => {
   return useQuery(
-    ["COMPANY_GET_BY_ID", { ...params, menuId }],
+    ["COMPANY_GET_BY_ID", { ...params, companyId }],
     () => {
-      return companyService.getByID(params, menuId);
+      return companyService.getByID(params, companyId);
     },
     queryParams
   );
 };
 
-export const useCompanyUpdateMutation = (mutationSettings) => {
-  return useMutation((data) => companyService.update(data), mutationSettings);
+export const useCompanyUpdateMutation = (mutationSettings, company_id) => {
+  return useMutation(
+    (data) => companyService.update(data, company_id),
+    mutationSettings
+  );
 };
 
 export const useCompanyCreateMutation = (mutationSettings) => {

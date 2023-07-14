@@ -45,6 +45,8 @@ import ProjectPage from "../views/Projects";
 import ProjectForm from "../views/Projects/ProjectFormPage";
 import RedirectFormPage from "../views/Redirect/RedirectFormPage";
 import RedirectPage from "../views/Redirect";
+import CompanyPage from "../views/Company";
+import CompanyForm from "../views/Company/CompanyFormPage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -114,28 +116,30 @@ const Router = () => {
         <Route path=":appId/chat" element={<Chat />}>
           <Route path=":chat_id" element={<Chat />} />
         </Route>
-        <Route path=":appId/environments" element={<EnvironmentPage />} />
-        <Route
-          path=":appId/environments/:envId"
-          element={<EnvironmentForm />}
-        />
-        <Route
-          path=":appId/environments/create"
-          element={<EnvironmentForm />}
-        />
-        <Route path=":appId/projects" element={<ProjectPage />} />
-        <Route path=":appId/projects/:projectId" element={<ProjectForm />} />
-        <Route path=":appId/projects/create" element={<ProjectForm />} />
-        <Route path=":appId/redirects" element={<RedirectPage />} />
-        <Route
-          path=":appId/redirects/:redirectId"
-          element={<RedirectFormPage />}
-        />
-        <Route path=":appId/redirects/create" element={<RedirectFormPage />} />
-
-        <Route path=":appId/api-key" element={<ApiKeyPage />} />
-        <Route path=":appId/api-key/create" element={<ApiKeysForm />} />
-        <Route path=":appId/api-key/:apiKeyId" element={<ApiKeysForm />} />
+        <Route path=":appId/projects">
+          <Route index element={<ProjectPage />} />
+          <Route path="create" element={<ProjectForm />} />
+          <Route path=":projectId" element={<ProjectForm />} />
+        </Route>
+        <Route path=":appId/redirects">
+          <Route index element={<RedirectPage />} />
+          <Route path="create" element={<RedirectFormPage />} />
+          <Route path=":redirectId" element={<RedirectFormPage />} />
+        </Route>
+        <Route path=":appId/api-key">
+          <Route index element={<ApiKeyPage />} />
+          <Route path="create" element={<ApiKeysForm />} />
+          <Route path=":apiKeyId" element={<ApiKeysForm />} />
+        </Route>
+        <Route path=":appId/environments">
+          <Route index element={<EnvironmentPage />} />
+          <Route path="create" element={<EnvironmentForm />} />
+          <Route path=":envId" element={<EnvironmentForm />} />
+        </Route>
+        <Route path=":appId/company">
+          <Route index element={<CompanyPage />} />
+          <Route path=":companyId" element={<CompanyForm />} />
+        </Route>
 
         <Route
           path=":appId/microfrontend-playground"
@@ -181,18 +185,12 @@ const Router = () => {
         <Route path="constructor/apps" element={<AppsPage />} />
         <Route path="constructor/apps/create" element={<AppsForm />} />
         <Route path="constructor/apps/:appId" element={<AppsForm />} />
-        <Route
-          path="constructor/microfrontend"
-          element={<MicrofrontendPage />}
-        />
-        <Route
-          path="constructor/microfrontend/create"
-          element={<MicrofrontendForm />}
-        />
-        <Route
-          path="constructor/microfrontend/:microfrontendId"
-          element={<MicrofrontendForm />}
-        />
+
+        <Route path="constructor/microfrontend">
+          <Route index element={<MicrofrontendPage />} />
+          <Route path="create" element={<MicrofrontendForm />} />
+          <Route path=":microfrontendId" element={<MicrofrontendForm />} />
+        </Route>
 
         {/* <Route path="constructor/objects" element={<ConstructorTablesListPage />} /> */}
         <Route

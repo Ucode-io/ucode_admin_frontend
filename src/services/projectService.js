@@ -3,11 +3,12 @@ import request from "../utils/request";
 
 const projectService = {
   getList: (params) => request.get("/company-project", { params }),
-
-  getById: (projectId) => request.get(`/company-project/${projectId}`),
-
+  getByID: (params, projectId) =>
+    request.get(`/company-project/${projectId}`, {
+      params,
+    }),
   update: (data) =>
-    request.put(`/company-project`, data, {
+    request.put(`/company-project/${data.project_id}`, data, {
       params: {
         "project-id": data.project_id,
       },
@@ -25,17 +26,21 @@ export const useProjectListQuery = ({ params = {}, queryParams } = {}) => {
   return useQuery(
     ["PROJECT", params],
     () => {
-      return projectService.getProjectList(params);
+      return projectService.getList(params);
     },
     queryParams
   );
 };
 
-export const useProjectGetByIdQuery = ({ envId, params = {}, queryParams }) => {
+export const useProjectGetByIdQuery = ({
+  projectId,
+  params = {},
+  queryParams,
+}) => {
   return useQuery(
-    ["PROJECT_GET_BY_ID", { ...params, envId }],
+    ["PROJECT_GET_BY_ID", { ...params, projectId }],
     () => {
-      return projectService.getByID(params, envId);
+      return projectService.getByID(params, projectId);
     },
     queryParams
   );

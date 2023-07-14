@@ -10,62 +10,59 @@ import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
 import PageFallback from "../../components/PageFallback";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import { Box } from "@mui/material";
-import NewColorInput from "../../components/FormElements/HFNewColorPicker";
-import styles from "./style.module.scss";
-import {
-  useEnvironmentCreateMutation,
-  useEnvironmentGetByIdQuery,
-  useEnvironmentUpdateMutation,
-} from "../../services/environmentService";
 import { useQueryClient } from "react-query";
 import { store } from "../../store";
+import {
+  useProjectCreateMutation,
+  useProjectGetByIdQuery,
+  useProjectUpdateMutation,
+} from "../../services/projectService";
+import { showAlert } from "../../store/alert/alert.thunk";
 
-const microfrontendListPageLink = "/settings/constructor/microfrontend";
-
-const EnvironmentForm = () => {
-  const { envId } = useParams();
+const ProjectForm = () => {
+  const { projectId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const project_id = store.getState().company.projectId;
-  console.log("envId", envId);
+  const companyId = store.getState().company.companyId;
 
   const mainForm = useForm({
     defaultValues: {
-      description: "",
-      name: "",
-      project_id: project_id,
+      title: "",
+      company_id: companyId,
+      project_id: projectId,
     },
   });
 
-  const { isLoading } = useEnvironmentGetByIdQuery({
-    envId: envId,
+  const { isLoading } = useProjectGetByIdQuery({
+    projectId: projectId,
     queryParams: {
-      enabled: Boolean(envId),
+      enabled: Boolean(projectId),
       onSuccess: (res) => {
         mainForm.reset(res);
       },
     },
   });
 
-  const { mutateAsync: createEnv, isLoading: createLoading } =
-    useEnvironmentCreateMutation({
+  const { mutateAsync: createProject, isLoading: createLoading } =
+    useProjectCreateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["ENVIRONMENT"]);
+        queryClient.refetchQueries(["PROJECT"]);
+        store.dispatch(showAlert("Успешно", "success"));
         navigate(-1);
       },
     });
-  const { mutateAsync: updateEnv, isLoading: updateLoading } =
-    useEnvironmentUpdateMutation({
+  const { mutateAsync: updateProject, isLoading: updateLoading } =
+    useProjectUpdateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["ENVIRONMENT"]);
+        queryClient.refetchQueries(["PROJECT"]);
+        store.dispatch(showAlert("Успешно", "success"));
         navigate(-1);
       },
     });
 
   const onSubmit = (data) => {
-    if (envId) updateEnv(data);
-    else createEnv(data);
+    if (projectId) updateProject(data);
+    else createProject(data);
   };
 
   if (updateLoading) return <PageFallback />;
@@ -73,9 +70,9 @@ const EnvironmentForm = () => {
   return (
     <div>
       <HeaderSettings
-        title="Environment"
-        backButtonLink={microfrontendListPageLink}
-        subtitle={envId ? mainForm.watch("name") : "Новый"}
+        title="Projects"
+        backButtonLink={-1}
+        subtitle={projectId ? mainForm.watch("name") : "Новый"}
       ></HeaderSettings>
 
       <form
@@ -91,33 +88,10 @@ const EnvironmentForm = () => {
           >
             <HFTextField
               disabledHelperText
-              name="name"
+              name="title"
               control={mainForm.control}
               fullWidth
               required
-            />
-          </FRow>
-          <FRow
-            label={"Цвет"}
-            componentClassName="flex gap-2 align-center"
-            required
-          >
-            <Box className={styles.colorpicker}>
-              <HFTextField
-                control={mainForm.control}
-                name="display_color"
-                fullWidth
-                className={styles.formcolorinput}
-              />
-            </Box>
-          </FRow>
-          <FRow label="Описания">
-            <HFTextField
-              name="description"
-              control={mainForm.control}
-              multiline
-              rows={4}
-              fullWidth
             />
           </FRow>
         </FormCard>
@@ -126,10 +100,7 @@ const EnvironmentForm = () => {
       <Footer
         extra={
           <>
-            <SecondaryButton
-              onClick={() => navigate(microfrontendListPageLink)}
-              color="error"
-            >
+            <SecondaryButton onClick={() => navigate(-1)} color="error">
               Закрыть
             </SecondaryButton>
             <PermissionWrapperV2 tabelSlug="app" type="update">
@@ -147,4 +118,4 @@ const EnvironmentForm = () => {
   );
 };
 
-export default EnvironmentForm;
+export default ProjectForm;

@@ -41,6 +41,10 @@ import WebPage from "../views/WebPage";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
 import EnvironmentPage from "../views/Environments";
 import EnvironmentForm from "../views/Environments/EnvironmentFormPage";
+import ProjectPage from "../views/Projects";
+import ProjectForm from "../views/Projects/ProjectFormPage";
+import RedirectFormPage from "../views/Redirect/RedirectFormPage";
+import RedirectPage from "../views/Redirect";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -119,6 +123,15 @@ const Router = () => {
           path=":appId/environments/create"
           element={<EnvironmentForm />}
         />
+        <Route path=":appId/projects" element={<ProjectPage />} />
+        <Route path=":appId/projects/:projectId" element={<ProjectForm />} />
+        <Route path=":appId/projects/create" element={<ProjectForm />} />
+        <Route path=":appId/redirects" element={<RedirectPage />} />
+        <Route
+          path=":appId/redirects/:redirectId"
+          element={<RedirectFormPage />}
+        />
+        <Route path=":appId/redirects/create" element={<RedirectFormPage />} />
 
         <Route path=":appId/api-key" element={<ApiKeyPage />} />
         <Route path=":appId/api-key/create" element={<ApiKeysForm />} />

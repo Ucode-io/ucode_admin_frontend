@@ -35,7 +35,7 @@ import HFCustomImage from "../FormElements/HFCustomImage";
 
 const parser = new Parser();
 
-const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, fieldsList, relatedTable, ...props }) => {
+const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, fieldsList, checkPermission = true, relatedTable, ...props }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
   let relationTableSlug = "";
@@ -70,14 +70,14 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
   // console.log('defaultValue', defaultValue)
-  console.log('isUserId', field)
+  
   const isDisabled = useMemo(() => {
     return field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
   }, [field]);
 
-  // if (!field.attributes?.field_permission?.view_permission) {
-  //   return null
-  // }
+  if (!field.attributes?.field_permission?.view_permission && checkPermission) {
+    return null
+  }
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {

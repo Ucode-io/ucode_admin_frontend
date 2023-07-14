@@ -13,19 +13,19 @@ import TableCard from "../../components/TableCard";
 import TableRowButton from "../../components/TableRowButton";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
-import {
-  useEnvironmentDeleteMutation,
-  useEnvironmentListQuery,
-} from "../../services/environmentService";
 import { store } from "../../store";
 import { useQueryClient } from "react-query";
 import { showAlert } from "../../store/alert/alert.thunk";
+import {
+  useRedirectDeleteMutation,
+  useRedirectListQuery,
+} from "../../services/redirectService";
+import { format } from "date-fns";
 
-const EnvironmentPage = () => {
+const RedirectPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const location = useLocation();
-  const projectId = store.getState().company.projectId;
 
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
@@ -35,27 +35,24 @@ const EnvironmentPage = () => {
     navigate(`${location.pathname}/create`);
   };
 
-  const { data: environments, isLoading: environmentLoading } =
-    useEnvironmentListQuery({
-      params: {
-        project_id: projectId,
-      },
-    });
+  const { data: redirects, isLoading: redirectLoading } =
+    useRedirectListQuery();
 
-  const { mutateAsync: deleteEnv, isLoading: createLoading } =
-    useEnvironmentDeleteMutation({
+  const { mutateAsync: deleteRedirect, isLoading: createLoading } =
+    useRedirectDeleteMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["ENVIRONMENT"]);
         store.dispatch(showAlert("Успешно", "success"));
+        queryClient.refetchQueries(["REDIRECT"]);
       },
     });
 
-  const deleteEnvironment = (id) => {
-    deleteEnv(id);
+  const deleteRedirectElement = (id) => {
+    deleteRedirect(id);
   };
+
   return (
     <div>
-      <HeaderSettings title={"Environments"} />
+      <HeaderSettings title={"Redirects"} />
 
       <FiltersBlock>
         <div className="p-1">{/* <SearchInput /> */}</div>
@@ -65,47 +62,42 @@ const EnvironmentPage = () => {
         <CTable disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
-            <CTableCell>Название</CTableCell>
-            <CTableCell>Описание</CTableCell>
+            <CTableCell>From</CTableCell>
+            <CTableCell>To</CTableCell>
+            <CTableCell>Created at</CTableCell>
+            <CTableCell>Updated at</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody
-            loader={environmentLoading}
+            loader={redirectLoading}
             columnsCount={4}
-            dataLength={environments?.environments?.length}
+            dataLength={redirects?.redirect_urls?.length}
           >
-            {environments?.environments?.map((element, index) => (
+            {redirects?.redirect_urls?.map((element, index) => (
               <CTableRow
                 key={element.id}
                 onClick={() => navigateToEditForm(element.id)}
               >
                 <CTableCell>{index + 1}</CTableCell>
+                <CTableCell>{element?.from}</CTableCell>
+                <CTableCell>{element?.to}</CTableCell>
                 <CTableCell>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      columnGap: "8px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        background: element.display_color,
-                        width: "10px",
-                        height: "10px",
-                        display: "block",
-                        borderRadius: "50%",
-                      }}
-                    ></span>
-                    {element?.name}
-                  </div>
+                  {format(
+                    new Date(element?.created_at),
+                    "MMMM d, yyyy 'at' kk:mm"
+                  )}
                 </CTableCell>
-                <CTableCell>{element?.description}</CTableCell>
+                <CTableCell>
+                  {format(
+                    new Date(element?.updated_at),
+                    "MMMM d, yyyy 'at' kk:mm"
+                  )}
+                </CTableCell>
                 <CTableCell>
                   <RectangleIconButton
                     color="error"
                     onClick={() => {
-                      deleteEnvironment(element.id);
+                      deleteRedirectElement(element.id);
                     }}
                   >
                     <Delete color="error" />
@@ -114,7 +106,7 @@ const EnvironmentPage = () => {
               </CTableRow>
             ))}
             <PermissionWrapperV2 tabelSlug="app" type="write">
-              <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
+              <TableRowButton colSpan={6} onClick={navigateToCreateForm} />
             </PermissionWrapperV2>
           </CTableBody>
         </CTable>
@@ -123,4 +115,4 @@ const EnvironmentPage = () => {
   );
 };
 
-export default EnvironmentPage;
+export default RedirectPage;

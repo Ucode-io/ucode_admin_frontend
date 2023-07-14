@@ -10,74 +10,83 @@ import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
 import PageFallback from "../../components/PageFallback";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import { Box } from "@mui/material";
-import NewColorInput from "../../components/FormElements/HFNewColorPicker";
-import styles from "./style.module.scss";
-import {
-  useEnvironmentCreateMutation,
-  useEnvironmentGetByIdQuery,
-  useEnvironmentUpdateMutation,
-} from "../../services/environmentService";
 import { useQueryClient } from "react-query";
 import { store } from "../../store";
 import { showAlert } from "../../store/alert/alert.thunk";
+import {
+  useRedirectCreateMutation,
+  useRedirectGetByIdQuery,
+  useRedirectUpdateMutation,
+} from "../../services/redirectService";
 
-const microfrontendListPageLink = "/settings/constructor/microfrontend";
-
-const EnvironmentForm = () => {
-  const { envId } = useParams();
+const RedirectFormPage = () => {
+  const { redirectId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const project_id = store.getState().company.projectId;
 
   const mainForm = useForm({
     defaultValues: {
-      description: "",
-      name: "",
-      project_id: project_id,
+      defaultFrom: "/api/",
+      defaultTo: "/",
     },
   });
 
-  const { isLoading } = useEnvironmentGetByIdQuery({
-    envId: envId,
+  const { isLoading } = useRedirectGetByIdQuery({
+    redirectId: redirectId,
     queryParams: {
-      enabled: Boolean(envId),
+      enabled: Boolean(redirectId),
       onSuccess: (res) => {
-        mainForm.reset(res);
+        mainForm.reset({
+          ...res,
+          from: res.from.slice(5),
+          to: res.to.slice(1),
+          defaultFrom: "/api/",
+          defaultTo: "/",
+        });
       },
     },
   });
 
-  const { mutateAsync: createEnv, isLoading: createLoading } =
-    useEnvironmentCreateMutation({
+  const { mutateAsync: createRedirect, isLoading: createLoading } =
+    useRedirectCreateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["ENVIRONMENT"]);
-        navigate(-1);
+        queryClient.refetchQueries(["REDIRECT"]);
         store.dispatch(showAlert("Успешно", "success"));
+        navigate(-1);
       },
     });
-  const { mutateAsync: updateEnv, isLoading: updateLoading } =
-    useEnvironmentUpdateMutation({
+  const { mutateAsync: updateRedirect, isLoading: updateLoading } =
+    useRedirectUpdateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["ENVIRONMENT"]);
-        navigate(-1);
+        queryClient.refetchQueries(["REDIRECT"]);
         store.dispatch(showAlert("Успешно", "success"));
+        navigate(-1);
       },
     });
 
   const onSubmit = (data) => {
-    if (envId) updateEnv(data);
-    else createEnv(data);
+    if (redirectId)
+      updateRedirect({
+        ...data,
+        from: data.defaultFrom + data.from,
+        to: data.defaultTo + data.to,
+      });
+    else
+      createRedirect({
+        ...data,
+        from: data.defaultFrom + data.from,
+        to: data.defaultTo + data.to,
+      });
   };
 
-  if (updateLoading) return <PageFallback />;
+  if (isLoading) return <PageFallback />;
 
   return (
     <div>
       <HeaderSettings
-        title="Environment"
-        backButtonLink={microfrontendListPageLink}
-        subtitle={envId ? mainForm.watch("name") : "Новый"}
+        title="Redirects"
+        backButtonLink={-1}
+        subtitle={redirectId ? mainForm.watch("name") : "Новый"}
       ></HeaderSettings>
 
       <form
@@ -87,40 +96,51 @@ const EnvironmentForm = () => {
       >
         <FormCard title="Детали" maxWidth={500}>
           <FRow
-            label={"Названия"}
+            label={"From"}
             componentClassName="flex gap-2 align-center"
             required
           >
             <HFTextField
               disabledHelperText
-              name="name"
+              name="defaultFrom"
+              control={mainForm.control}
+              fullWidth
+              required
+              disabled={true}
+              style={{
+                width: "40%",
+              }}
+            />
+            <HFTextField
+              disabledHelperText
+              name="from"
               control={mainForm.control}
               fullWidth
               required
             />
           </FRow>
           <FRow
-            label={"Цвет"}
+            label={"To"}
             componentClassName="flex gap-2 align-center"
             required
           >
-            <Box className={styles.colorpicker}>
-              <NewColorInput control={mainForm.control} name="display_color" />
-              <HFTextField
-                control={mainForm.control}
-                name="display_color"
-                fullWidth
-                className={styles.formcolorinput}
-              />
-            </Box>
-          </FRow>
-          <FRow label="Описания">
             <HFTextField
-              name="description"
+              disabledHelperText
+              name="defaultTo"
               control={mainForm.control}
-              multiline
-              rows={4}
               fullWidth
+              required
+              disabled={true}
+              style={{
+                width: "40%",
+              }}
+            />
+            <HFTextField
+              disabledHelperText
+              name="to"
+              control={mainForm.control}
+              fullWidth
+              required
             />
           </FRow>
         </FormCard>
@@ -129,15 +149,12 @@ const EnvironmentForm = () => {
       <Footer
         extra={
           <>
-            <SecondaryButton
-              onClick={() => navigate(microfrontendListPageLink)}
-              color="error"
-            >
+            <SecondaryButton onClick={() => navigate(-1)} color="error">
               Закрыть
             </SecondaryButton>
             <PermissionWrapperV2 tabelSlug="app" type="update">
               <PrimaryButton
-                loader={createLoading}
+                loader={createLoading || updateLoading}
                 onClick={mainForm.handleSubmit(onSubmit)}
               >
                 <Save /> Сохранить
@@ -150,4 +167,4 @@ const EnvironmentForm = () => {
   );
 };
 
-export default EnvironmentForm;
+export default RedirectFormPage;

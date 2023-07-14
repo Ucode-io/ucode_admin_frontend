@@ -13,19 +13,19 @@ import TableCard from "../../components/TableCard";
 import TableRowButton from "../../components/TableRowButton";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
-import {
-  useEnvironmentDeleteMutation,
-  useEnvironmentListQuery,
-} from "../../services/environmentService";
 import { store } from "../../store";
 import { useQueryClient } from "react-query";
+import {
+  useProjectDeleteMutation,
+  useProjectListQuery,
+} from "../../services/projectService";
 import { showAlert } from "../../store/alert/alert.thunk";
 
-const EnvironmentPage = () => {
+const ProjectPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const location = useLocation();
-  const projectId = store.getState().company.projectId;
+  const companyId = store.getState().company.companyId;
 
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
@@ -35,27 +35,26 @@ const EnvironmentPage = () => {
     navigate(`${location.pathname}/create`);
   };
 
-  const { data: environments, isLoading: environmentLoading } =
-    useEnvironmentListQuery({
-      params: {
-        project_id: projectId,
-      },
-    });
+  const { data: projects, isLoading: projectLoading } = useProjectListQuery({
+    params: {
+      company_id: companyId,
+    },
+  });
 
-  const { mutateAsync: deleteEnv, isLoading: createLoading } =
-    useEnvironmentDeleteMutation({
+  const { mutateAsync: deleteProject, isLoading: createLoading } =
+    useProjectDeleteMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["ENVIRONMENT"]);
         store.dispatch(showAlert("Успешно", "success"));
+        queryClient.refetchQueries(["PROJECT"]);
       },
     });
 
-  const deleteEnvironment = (id) => {
-    deleteEnv(id);
+  const deleteProjectElement = (id) => {
+    deleteProject(id);
   };
   return (
     <div>
-      <HeaderSettings title={"Environments"} />
+      <HeaderSettings title={"Projects"} />
 
       <FiltersBlock>
         <div className="p-1">{/* <SearchInput /> */}</div>
@@ -66,46 +65,27 @@ const EnvironmentPage = () => {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>
-            <CTableCell>Описание</CTableCell>
+            {/* <CTableCell>Описание</CTableCell> */}
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody
-            loader={environmentLoading}
-            columnsCount={4}
-            dataLength={environments?.environments?.length}
+            loader={projectLoading}
+            columnsCount={2}
+            dataLength={projects?.projects?.length}
           >
-            {environments?.environments?.map((element, index) => (
+            {projects?.projects?.map((element, index) => (
               <CTableRow
-                key={element.id}
-                onClick={() => navigateToEditForm(element.id)}
+                key={element.project_id}
+                onClick={() => navigateToEditForm(element.project_id)}
               >
                 <CTableCell>{index + 1}</CTableCell>
-                <CTableCell>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      columnGap: "8px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        background: element.display_color,
-                        width: "10px",
-                        height: "10px",
-                        display: "block",
-                        borderRadius: "50%",
-                      }}
-                    ></span>
-                    {element?.name}
-                  </div>
-                </CTableCell>
-                <CTableCell>{element?.description}</CTableCell>
+                <CTableCell>{element?.title}</CTableCell>
+                {/* <CTableCell>{element?.description}</CTableCell> */}
                 <CTableCell>
                   <RectangleIconButton
                     color="error"
                     onClick={() => {
-                      deleteEnvironment(element.id);
+                      deleteProjectElement(element.project_id);
                     }}
                   >
                     <Delete color="error" />
@@ -123,4 +103,4 @@ const EnvironmentPage = () => {
   );
 };
 
-export default EnvironmentPage;
+export default ProjectPage;

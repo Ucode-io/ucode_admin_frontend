@@ -35,6 +35,7 @@ const MenuSettingModal = ({ closeModal }) => {
   const [check, setCheck] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const queryClient = useQueryClient();
+  const [formType, setFormType] = useState("");
 
   const { control, reset, handleSubmit, setValue } = useForm({
     defaultValues: {},
@@ -355,10 +356,15 @@ const MenuSettingModal = ({ closeModal }) => {
               setSelectedTemplate={setSelectedTemplate}
               check={check}
               setCheck={setCheck}
+              setFormType={setFormType}
             />
           )}
           {modalType === "MENUFORM" && (
-            <MenuSettingForm setModalType={setModalType} setCheck={setCheck} />
+            <MenuSettingForm
+              setModalType={setModalType}
+              setCheck={setCheck}
+              formType={formType}
+            />
           )}
         </Card>
       </Modal>

@@ -22,6 +22,7 @@ const MenuSettingTheme = ({
   setSelectedTemplate,
   check,
   setCheck,
+  setFormType,
 }) => {
   const queryClient = useQueryClient();
   const [template, setTemplate] = useState("");
@@ -82,7 +83,12 @@ const MenuSettingTheme = ({
                     key={item?.id}
                     control={<Radio />}
                     label={
-                      <ThemeCard item={item} deleteTemplate={deleteTemplate} />
+                      <ThemeCard
+                        item={item}
+                        deleteTemplate={deleteTemplate}
+                        setFormType={setFormType}
+                        setModalType={setModalType}
+                      />
                     }
                     onClick={() => {
                       setSelectedTemplate(item);
@@ -110,7 +116,10 @@ const MenuSettingTheme = ({
           style={{
             background: "#2D6CE51A",
           }}
-          onClick={() => setModalType("MENUFORM")}
+          onClick={() => {
+            setModalType("MENUFORM");
+            setFormType("");
+          }}
         >
           Create
         </Button>

@@ -66,7 +66,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return <span className="text-nowrap">{formatDate(value)}</span>;
 
     case "NUMBER":
-      return numberWithSpaces(value);
+      return numberWithSpaces(Math.trunc(value).toFixed(2)) || "";
 
     case "DATE_TIME":
       return (

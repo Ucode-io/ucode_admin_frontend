@@ -21,6 +21,7 @@ import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import constructorFunctionService from "../../services/constructorFunctionService";
 import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
 import request from "../../utils/request";
+import { useSelector } from "react-redux";
 
 const RelationFormElement = ({
   control,
@@ -136,9 +137,8 @@ const AutoCompleteElement = ({
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
-
-  console.log('defaultValue', field)
-
+  const isUserId = useSelector((state) => state?.auth?.userId);
+  const ids = field?.attributes?.is_user_id_default ? isUserId : undefined
   const [debouncedValue, setDebouncedValue] = useState("");
   const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
@@ -205,7 +205,7 @@ const AutoCompleteElement = ({
           ...autoFiltersValue,
           additional_request: {
             additional_field: "guid",
-            additional_values: [defaultValue ?? id],
+            additional_values: [ids],
           },
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
@@ -315,7 +315,7 @@ const AutoCompleteElement = ({
   useEffect(() => {
     setDefaultValue();
   }, [options, multipleInsertField]);
-
+  console.log('field', field);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

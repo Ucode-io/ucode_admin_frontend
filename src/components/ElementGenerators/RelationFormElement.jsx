@@ -21,6 +21,7 @@ import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import constructorFunctionService from "../../services/constructorFunctionService";
 import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
 import request from "../../utils/request";
+import { useSelector } from "react-redux";
 
 const RelationFormElement = ({
   control,
@@ -136,6 +137,7 @@ const AutoCompleteElement = ({
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
+  const isUserId = useSelector((state) => state?.auth?.userId);
 
   const [debouncedValue, setDebouncedValue] = useState("");
   const { navigateToForm } = useTabRouter();
@@ -193,7 +195,7 @@ const AutoCompleteElement = ({
       },
     }
   );
-
+    console.log('field', field);
   const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
@@ -203,7 +205,7 @@ const AutoCompleteElement = ({
           ...autoFiltersValue,
           additional_request: {
             additional_field: "guid",
-            additional_values: [id],
+            additional_values: [field?.attributes?.is_user_id_default ? isUserId : undefined],
           },
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
@@ -313,7 +315,7 @@ const AutoCompleteElement = ({
   useEffect(() => {
     setDefaultValue();
   }, [options, multipleInsertField]);
-
+  console.log('field', field);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

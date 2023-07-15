@@ -167,14 +167,6 @@ const AutoCompleteElement = ({
     name: autoFiltersFieldFroms,
   });
 
-  useEffect(() => {
-    setLocalValue(
-      localValue?.filter((item) => {
-        return item?.clients_id === filtersHandler[0];
-      })
-    );
-  }, [filtersHandler]);
-
   const autoFiltersValue = useMemo(() => {
     const result = {};
     filtersHandler?.forEach((value, index) => {
@@ -253,8 +245,10 @@ const AutoCompleteElement = ({
     if (field?.attributes?.function_path) {
       return optionsFromFunctions ?? [];
     }
-    return optionsFromLocale ?? [];
-  }, [optionsFromFunctions, optionsFromLocale]);
+    else {
+      return optionsFromLocale ?? []
+    };
+  }, [optionsFromFunctions, optionsFromLocale, field?.attributes?.function_path]);
 
   const getValueData = async () => {
     try {
@@ -268,6 +262,7 @@ const AutoCompleteElement = ({
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option);
   };
+  console.log('valuevalue', value);
   const computedValue = useMemo(() => {
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
@@ -294,6 +289,15 @@ const AutoCompleteElement = ({
       });
     }
   };
+  
+  
+  // useEffect(() => {
+  //   setLocalValue(
+  //     localValue?.filter((item) => {
+  //       return item?.clients_id === filtersHandler[0];
+  //     })
+  //   );
+  // }, [filtersHandler]);
 
   useEffect(() => {
     setLocalValue(
@@ -306,10 +310,12 @@ const AutoCompleteElement = ({
   useEffect(() => {
     const val = computedValue[computedValue.length - 1];
     if (!field?.attributes?.autofill || !val) return;
+
     field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
+
       automatic &&
         setTimeout(() => {
           setFormValue(setName.join("."), get(val, field_from));
@@ -317,10 +323,11 @@ const AutoCompleteElement = ({
     });
   }, [computedValue, field]);
 
+
   useEffect(() => {
     if (value) getValueData();
   }, [value]);
-  console.log('localValue', localValue);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

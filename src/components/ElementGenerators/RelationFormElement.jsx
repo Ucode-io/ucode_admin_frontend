@@ -138,7 +138,7 @@ const AutoCompleteElement = ({
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
   const isUserId = useSelector((state) => state?.auth?.userId);
-
+  const ids = field?.attributes?.is_user_id_default ? isUserId : undefined
   const [debouncedValue, setDebouncedValue] = useState("");
   const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
@@ -195,7 +195,7 @@ const AutoCompleteElement = ({
       },
     }
   );
-    console.log('field', field);
+
   const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
@@ -205,7 +205,7 @@ const AutoCompleteElement = ({
           ...autoFiltersValue,
           additional_request: {
             additional_field: "guid",
-            additional_values: [field?.attributes?.is_user_id_default ? isUserId : undefined],
+            additional_values: [ids],
           },
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),

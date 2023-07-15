@@ -16,7 +16,7 @@ const authService = {
   sendResetMessageToEmail: (data) =>
     requestAuth.post(`/user/send-message`, data),
   resetPassword: (data) => requestAuth.put(`/user/reset-password`, data),
-  refreshToken: (data) => requestAuthV2.put(`/refresh`, data),
+  refreshToken: (data) => requestAuthV2.put(`/v2/refresh`, data),
   updateToken: (data) => authRequestV2.put(`/v2/refresh`, data),
   sendCode: (data) => requestAuth.post(`/send-code`, data),
   verifyCode: (sms_id, otp, data) =>

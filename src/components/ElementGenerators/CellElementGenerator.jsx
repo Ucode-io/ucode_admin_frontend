@@ -107,7 +107,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return value ? numberWithSpaces(value) : "";
 
     case "FORMULA_FRONTEND":
-      return value ? numberWithSpaces(Math.trunc(value)?.toFixed(2)) : "";
+      return value ? numberWithSpaces(value.toFixed(1)) : "";
 
     // case "FORMULA_FRONTEND":
     //   return <FormulaCell field={field} row={row} />

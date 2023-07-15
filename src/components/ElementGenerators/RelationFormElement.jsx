@@ -36,6 +36,7 @@ const RelationFormElement = ({
   formTableSlug,
   disabled = false,
   defaultValue = null,
+  multipleInsertField,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -43,45 +44,31 @@ const RelationFormElement = ({
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
 
-  if (!isLayout) {
+  if (!isLayout)
     return (
-      <FRow label={field?.label ?? field?.title ?? " "} required={field.required}>
+      <FRow label={field?.label ?? field?.title} required={field.required}>
         <Controller
           control={control}
           name={(name || field.slug) ?? `${tableSlug}_id`}
           defaultValue={defaultValue}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
-           field?.attributes?.cascadings?.length >= 2 ? (
-            <CascadingElement
-            field={field}
-            tableSlug={tableSlug}
-            error={error}
-            disabledHelperText={disabledHelperText}
-            control={control}
-            setValue={onChange}
-            value={Array.isArray(value) ? value[0] : value}
-            name={name}
-          />
-           ) : (
             <AutoCompleteElement
-            value={Array.isArray(value) ? value[0] : value}
-            setValue={onChange}
-            field={field}
-            disabled={disabled}
-            tableSlug={tableSlug}
-            error={error}
-            disabledHelperText={disabledHelperText}
-            setFormValue={setFormValue}
-            control={control}
-            name={name}
-            defaultValue={defaultValue}
-          />
-           )
+              value={Array.isArray(value) ? value[0] : value}
+              setValue={onChange}
+              field={field}
+              disabled={disabled}
+              tableSlug={tableSlug}
+              error={error}
+              disabledHelperText={disabledHelperText}
+              setFormValue={setFormValue}
+              control={control}
+              name={name}
+              multipleInsertField={multipleInsertField}
+            />
           )}
         />
       </FRow>
     );
-  }
 
   return (
     <Controller
@@ -99,18 +86,18 @@ const RelationFormElement = ({
             name={`${tableSlug}_id`}
             defaultValue={defaultValue}
             render={({ field: { onChange, value }, fieldState: { error } }) =>
-              // field?.attributes?.cascadings?.length ? (
-              //   <CascadingElement
-              //     field={field}
-              //     tableSlug={tableSlug}
-              //     error={error}
-              //     disabledHelperText={disabledHelperText}
-              //     control={control}
-              //     setValue={onChange}
-              //     value={Array.isArray(value) ? value[0] : value}
-              //     name={name}
-              //   />
-              // ) : (
+              field?.attributes?.cascadings?.length === 2 ? (
+                <CascadingElement
+                  field={field}
+                  tableSlug={tableSlug}
+                  error={error}
+                  disabledHelperText={disabledHelperText}
+                  control={control}
+                  setValue={onChange}
+                  value={Array.isArray(value) ? value[0] : value}
+                  name={name}
+                />
+              ) : (
                 <AutoCompleteElement
                   value={Array.isArray(value) ? value[0] : value}
                   setValue={onChange}
@@ -121,9 +108,8 @@ const RelationFormElement = ({
                   disabledHelperText={disabledHelperText}
                   control={control}
                   name={name}
-                  defaultValue={defaultValue}
                 />
-              // )
+              )
             }
           />
         </FEditableRow>
@@ -144,13 +130,13 @@ const AutoCompleteElement = ({
   disabledHelperText,
   control,
   name,
-  defaultValue,
+  multipleInsertField,
   setFormValue = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
-
+  const validId = id ? [id] : [];
   const [debouncedValue, setDebouncedValue] = useState("");
   const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
@@ -253,6 +239,9 @@ const AutoCompleteElement = ({
       const id = value;
       const res = await constructorObjectService.getById(tableSlug, id);
       const data = res?.data?.response;
+      if (data.prepayment_balance) {
+        setFormValue("prepayment_balance", data.prepayment_balance || 0);
+      }
       setLocalValue(data ? [data] : null);
     } catch (error) {}
   };
@@ -260,11 +249,18 @@ const AutoCompleteElement = ({
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option);
   };
-  console.log('valuevalue', value);
   const computedValue = useMemo(() => {
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
+
+  const setDefaultValue = () => {
+    if (options?.slugOptions && multipleInsertField) {
+      const val = options?.slugOptions?.find((item) => item?.guid === id);
+      setValue(val?.guid ?? null);
+      setLocalValue(val ? [val] : null);
+    }
+  };
 
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
@@ -288,15 +284,6 @@ const AutoCompleteElement = ({
     }
   };
   
-  
-  // useEffect(() => {
-  //   setLocalValue(
-  //     localValue?.filter((item) => {
-  //       return item?.clients_id === filtersHandler[0];
-  //     })
-  //   );
-  // }, [filtersHandler]);
-
   useEffect(() => {
     setLocalValue(
       localValue?.filter((item) => {
@@ -308,12 +295,10 @@ const AutoCompleteElement = ({
   useEffect(() => {
     const val = computedValue[computedValue.length - 1];
     if (!field?.attributes?.autofill || !val) return;
-
     field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
-
       automatic &&
         setTimeout(() => {
           setFormValue(setName.join("."), get(val, field_from));
@@ -321,10 +306,13 @@ const AutoCompleteElement = ({
     });
   }, [computedValue, field]);
 
-
   useEffect(() => {
     if (value) getValueData();
   }, [value]);
+
+  useEffect(() => {
+    setDefaultValue();
+  }, [options, multipleInsertField]);
 
   return (
     <div className={styles.autocompleteWrapper}>

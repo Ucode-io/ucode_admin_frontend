@@ -65,7 +65,7 @@ function LayoutTabs({
       })
       ?.filter((el) => el);
   }, [viewRelations, relationsMap]);
-  console.log("sectionTabs", sectionTabs);
+  
   const onDrop = (dropResult) => {
     if (dropResult?.removedIndex === null && dropResult?.addedIndex === null && !!dropResult?.payload?.id) return;
 
@@ -128,8 +128,6 @@ function LayoutTabs({
     if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";
     return mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
   }, [mainForm, selectedLayout]);
-
-  console.log('kajwndkjawkdajw', selectedTab)
 
   return (
     <>

@@ -66,7 +66,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return <span className="text-nowrap">{formatDate(value)}</span>;
 
     case "NUMBER":
-      return numberWithSpaces(value.toFixed(1)) || "";
+      return numberWithSpaces(value?.toFixed(1)) || "";
 
     case "DATE_TIME":
       return (
@@ -107,7 +107,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return value ? numberWithSpaces(value) : "";
 
     case "FORMULA_FRONTEND":
-      return value ? numberWithSpaces(Math.trunc(value).toFixed(2)) : "";
+      return value ? numberWithSpaces(Math.trunc(value)?.toFixed(2)) : "";
 
     // case "FORMULA_FRONTEND":
     //   return <FormulaCell field={field} row={row} />

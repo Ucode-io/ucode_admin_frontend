@@ -328,7 +328,6 @@ const AutoCompleteElement = ({
     if (value) getValueData();
   }, [value]);
 
-  console.log('localValue', localValue);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

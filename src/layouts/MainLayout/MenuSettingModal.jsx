@@ -24,9 +24,14 @@ import {
   useMenuSettingUpdateMutation,
 } from "../../services/menuSettingService";
 import { useQueryClient } from "react-query";
+import { store } from "../../store";
 
 const MenuSettingModal = ({ closeModal }) => {
+  const selectedMenuTemplate = store.getState().menu.menuTemplate;
   const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+    params: {
+      template_id: selectedMenuTemplate?.id,
+    },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
   const [modalType, setModalType] = useState("SETTING");

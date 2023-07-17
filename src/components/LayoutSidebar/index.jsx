@@ -30,6 +30,7 @@ import {
   useMenuSettingGetByIdQuery,
   useMenuSettingListQuery,
 } from "../../services/menuSettingService";
+import { store } from "../../store";
 
 const LayoutSidebar = ({ favicon, appId, environment }) => {
   const sidebarIsOpen = useSelector(
@@ -37,6 +38,8 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   );
   const projectId = useSelector((state) => state.auth.projectId);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+  const selectedMenuTemplate = store.getState().menu.menuTemplate;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -80,8 +83,12 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     },
   });
   const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+    params: {
+      template_id: selectedMenuTemplate?.id,
+    },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
+  console.log("selectedMenuTemplate", selectedMenuTemplate);
   const menuStyle = menuTemplate?.menu_template;
 
   const handleRouter = () => {

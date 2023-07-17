@@ -1,15 +1,13 @@
 import { Delete, Edit } from "@mui/icons-material";
-import { Box, Button, FormControlLabel, Switch } from "@mui/material";
-import React, { useEffect } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
+import { Box, FormControlLabel, Switch } from "@mui/material";
+import React from "react";
+import { useFieldArray } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import { CTable, CTableCell, CTableHead, CTableRow } from "../../../../../components/CTable";
 import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
-import PermissionWrapperV2 from "../../../../../components/PermissionWrapper/PermissionWrapperV2";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
-import layoutService from "../../../../../services/layoutService";
 
 function NewlayoutList({ setSelectedLayout, mainForm }) {
   const { id } = useParams();
@@ -63,9 +61,7 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Layouts</CTableCell>
-            <PermissionWrapperV2 tableSlug="app" type="delete">
-              <CTableCell width={60} />
-            </PermissionWrapperV2>
+            <CTableCell width={60} />
           </CTableHead>
 
           {layouts?.map((element, index) => (
@@ -89,23 +85,19 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
 
               <CTableCell>
                 <Box style={{ display: "flex", gap: "5px" }}>
-                  <PermissionWrapperV2 tableSlug={"app"} type="edit">
-                    <RectangleIconButton color="success" onClick={() => navigateToEditForm(element)}>
-                      <Edit color="success" />
-                    </RectangleIconButton>
-                  </PermissionWrapperV2>
-                  <PermissionWrapperV2 tableSlug={"app"} type="delete">
-                    <RectangleIconButton color="error" onClick={() => remove(index)}>
-                      <Delete color="error" />
-                    </RectangleIconButton>
-                  </PermissionWrapperV2>
+                  <RectangleIconButton color="success" onClick={() => navigateToEditForm(element)}>
+                    <Edit color="success" />
+                  </RectangleIconButton>
+
+                  <RectangleIconButton color="error" onClick={() => remove(index)}>
+                    <Delete color="error" />
+                  </RectangleIconButton>
                 </Box>
               </CTableCell>
             </CTableRow>
           ))}
-          <PermissionWrapperV2 tableSlug="app" type="write">
-            <TableRowButton colSpan={4} onClick={() => append({ table_id: id, type: "SimpleLayout", label: "New" })} />
-          </PermissionWrapperV2>
+
+          <TableRowButton colSpan={4} onClick={() => append({ table_id: id, type: "SimpleLayout", label: "New" })} />
         </CTable>
       </TableCard>
     </Box>

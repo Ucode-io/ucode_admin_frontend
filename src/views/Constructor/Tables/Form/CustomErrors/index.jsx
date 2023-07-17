@@ -103,6 +103,7 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
         dataLength={1}
+        checkPermission={false}
         additionalRow={
           <TableRowButton
             colSpan={columns.length + 2}

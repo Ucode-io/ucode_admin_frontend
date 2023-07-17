@@ -108,9 +108,10 @@ const Fields = ({ mainForm }) => {
         data={fields}
         removableHeight={false}
         columns={columns}
+        checkPermission={false}
         disablePagination
         dataLength={1}
-        tableSlug={"app"} // talk with Backend
+        tableSlug={"app"}
         // loader={loader}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}

@@ -224,7 +224,7 @@ const MenuSettingModal = ({ closeModal }) => {
                           background: selectedTemplate?.background,
                         }}
                       >
-                        <UdevsLogo fill={selectedTemplate?.text} />
+                        <UdevsLogo fill={"#007AFF"} />
                         <Search className={styles.searchicon} />
                         {Sidebar.map((element) => (
                           <div
@@ -260,10 +260,7 @@ const MenuSettingModal = ({ closeModal }) => {
                           background: selectedTemplate?.background,
                         }}
                       >
-                        <UdevsLogo
-                          className={styles.logo}
-                          fill={selectedTemplate?.text}
-                        />
+                        <UdevsLogo className={styles.logo} fill={"#007AFF"} />
                         <ModernSidebar />
                         {Sidebar.map((element) => (
                           <div

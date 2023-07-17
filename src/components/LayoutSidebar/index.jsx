@@ -227,7 +227,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         >
           <div className="brand">
             <UdevsLogo
-              fill={menuStyle?.text || "#007AFF"}
+              fill={"#007AFF"}
               // onClick={switchRightSideVisible}
             />
             {sidebarIsOpen && (

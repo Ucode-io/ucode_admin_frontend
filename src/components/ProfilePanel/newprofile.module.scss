@@ -4,29 +4,73 @@
 .profilepaper {
     margin-top: 5px;
     margin-right: 10px;
-    left: 30px !important;
+    left: 50px !important;
 }
 
 
 .profilemenu {
     padding: 0 !important;
-    width: 200px;
+    width: 100%;
+    display: flex;
 
-    .block {
-        max-height: 350px;
-        overflow-y: auto;
-        padding: 8px;
-        max-width: 200px;
+    .leftblock {
+        border-right: 1px solid #F6F8F9;
 
-        &::-webkit-scrollbar {
-            display: none;
+        .block {
+            overflow-y: auto;
+            padding: 8px;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            .companyblock {
+                display: flex;
+                flex-direction: column;
+                row-gap: 8px;
+            }
         }
+    }
 
-        .companyblock {
-            display: flex;
-            column-gap: 8px;
-            overflow: scroll;
-            width: fit-content;
+    .centerblock {
+        border-right: 1px solid #F6F8F9;
+
+        .block {
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 8px;
+            max-width: 200px;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            .companyblock {
+                display: flex;
+                column-gap: 8px;
+                overflow: scroll;
+                width: fit-content;
+            }
+        }
+    }
+
+    .rightblock {
+        .block {
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 8px;
+            max-width: 200px;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            .companyblock {
+                display: flex;
+                column-gap: 8px;
+                overflow: scroll;
+                width: fit-content;
+            }
         }
     }
 

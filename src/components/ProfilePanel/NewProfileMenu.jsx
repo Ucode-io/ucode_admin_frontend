@@ -1,4 +1,4 @@
-import { Divider, Menu, Tooltip } from "@mui/material";
+import { Box, Divider, Menu, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -36,6 +36,7 @@ const NewProfilePanel = ({
   const environmentId = store.getState().company.environmentId;
   const projectItem = store.getState().company.projectItem;
   const user_id = store.getState().auth.userId;
+  const auth = store.getState().auth;
   const [anchorProfileEl, setProfileAnchorEl] = useState(null);
   const [projectListEl, setProjectListEl] = useState(null);
   const [environmentListEl, setEnvironmentListEl] = useState(null);
@@ -43,7 +44,6 @@ const NewProfilePanel = ({
   const menuVisible = Boolean(anchorEl || anchorProfileEl);
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
-  console.log("companies", companies);
 
   const handleClick = () => {
     navigate(`/main/${appId}/api-key`);
@@ -178,119 +178,140 @@ const NewProfilePanel = ({
         onClose={closeMenu}
         classes={{ list: styles.profilemenu, paper: styles.profilepaper }}
       >
-        <div className={styles.block}>
-          <div className={styles.companyblock}>
-            {companies?.map((item) => (
+        <Box className={styles.leftblock}>
+          <div className={styles.block}>
+            <div className={styles.companyblock}>
+              {companies?.map((item) => (
+                <ProfileItem
+                  children={
+                    <Tooltip title={item?.name}>
+                      <p
+                        className={
+                          item.id === companyId
+                            ? styles.avatarborder
+                            : styles.avatar
+                        }
+                        onClick={(e) => {
+                          handleCompanySelect(item, e);
+                        }}
+                      >
+                        {item?.name?.charAt(0).toUpperCase()}
+                      </p>
+                    </Tooltip>
+                  }
+                  type="company"
+                  className={styles.company}
+                />
+              ))}
+              <p
+                className={styles.createbutton}
+                onClick={() => {
+                  setCompanyModal(true);
+                }}
+              >
+                <PlusIcon fill={"#007AFF"} />
+              </p>
+            </div>
+          </div>
+        </Box>
+        <Box className={styles.centerblock}>
+          <div className={styles.block}>
+            <ProfileItem
+              children={
+                <>
+                  <p className={styles.companyavatar}>
+                    {companyItem?.name?.charAt(0).toUpperCase()}
+                  </p>
+                  {companyItem?.name}
+                </>
+              }
+            />
+            <ProfileItem text={"Settings"} onClick={handleCompanyNavigate} />
+          </div>
+          <Divider />
+          <div className={styles.block}>
+            {projectItem.project_id === projectId && (
               <ProfileItem
                 children={
-                  <Tooltip title={item?.name}>
+                  <>
+                    <p className={styles.projectavatar}>
+                      {projectItem?.title?.charAt(0).toUpperCase()}
+                    </p>
+                    {projectItem?.title}
+                  </>
+                }
+                onClick={openProjectList}
+              />
+            )}
+            <ProfileItem text={"Projects"} onClick={handleProjectNavigate} />
+            {environmentItem.id === environmentId && (
+              <ProfileItem
+                children={
+                  <>
                     <p
-                      className={
-                        item.id === companyId
-                          ? styles.avatarborder
-                          : styles.avatar
-                      }
-                      onClick={(e) => {
-                        handleCompanySelect(item, e);
+                      className={styles.environmentavatar}
+                      style={{
+                        background: environmentItem.display_color,
                       }}
                     >
-                      {item?.name?.charAt(0).toUpperCase()}
+                      {environmentItem?.name?.charAt(0).toUpperCase()}
                     </p>
-                  </Tooltip>
+                    {environmentItem?.name}
+                  </>
                 }
-                type="company"
-                className={styles.company}
+                onClick={openEnvironmentList}
               />
-            ))}
-            <p
-              className={styles.createbutton}
-              onClick={() => {
-                setCompanyModal(true);
-              }}
-            >
-              <PlusIcon fill={"#007AFF"} />
-            </p>
+            )}
+            <ProfileItem text={"Environments"} onClick={handleEnvNavigate} />
           </div>
-        </div>
-        <Divider />
-        <div className={styles.block}>
-          <ProfileItem
-            children={
-              <>
-                <p className={styles.companyavatar}>
-                  {companyItem?.name?.charAt(0).toUpperCase()}
-                </p>
-                {companyItem?.name}
-              </>
-            }
-          />
-          <ProfileItem text={"Settings"} onClick={handleCompanyNavigate} />
-        </div>
-        <Divider />
-        <div className={styles.block}>
-          <ProfileItem text={"Projects"} onClick={openProjectList} />
-          {projectItem.project_id === projectId && (
-            <ProfileItem
-              children={
-                <>
-                  <p className={styles.projectavatar}>
-                    {projectItem?.title?.charAt(0).toUpperCase()}
-                  </p>
-                  {projectItem?.title}
-                </>
-              }
-            />
-          )}
-          <ProfileItem text={"Environments"} onClick={openEnvironmentList} />
-          {environmentItem.id === environmentId && (
-            <ProfileItem
-              children={
-                <>
-                  <p
-                    className={styles.environmentavatar}
-                    style={{
-                      background: environmentItem.display_color,
-                    }}
-                  >
-                    {environmentItem?.name?.charAt(0).toUpperCase()}
-                  </p>
-                  {environmentItem?.name}
-                </>
-              }
-            />
-          )}
-        </div>
-        <Divider />
-        <div className={styles.block}>
-          <ProfileItem text={"Api Keys"} onClick={handleClick} />
-          <ProfileItem text={"Environments"} onClick={handleEnvNavigate} />
-          <ProfileItem text={"Projects"} onClick={handleProjectNavigate} />
-          <ProfileItem text={"Redirects"} onClick={handleRedirectNavigate} />
-          <ProfileItem
-            text={"Profile settings"}
-            onClick={() => {
-              navigate(`/settings/auth/matrix/profile/crossed`);
-            }}
-          />
-          <ProfileItem
-            text={"Настройки"}
-            onClick={() => {
-              navigate(`/settings/constructor/apps`);
-            }}
-          />
-          <ProfileItem text={"Logout"} onClick={logoutClickHandler} />
-        </div>
-        <Divider />
+          <Divider />
+          <div className={styles.block}>
+            <ProfileItem text={"Api Keys"} onClick={handleClick} />
+            <ProfileItem text={"Redirects"} onClick={handleRedirectNavigate} />
+          </div>
+          <Divider />
 
-        <div className={styles.block}>
-          <ProfileItem
-            text={"Menu settings"}
-            onClick={() => {
-              handleMenuSettingModalOpen();
-              closeMenu();
-            }}
-          />
-        </div>
+          <div className={styles.block}>
+            <ProfileItem
+              text={"Menu settings"}
+              onClick={() => {
+                handleMenuSettingModalOpen();
+                closeMenu();
+              }}
+            />
+          </div>
+        </Box>
+        <Box className={styles.centerblock}>
+          <div className={styles.block}>
+            <ProfileItem
+              children={
+                <>
+                  <p className={styles.companyavatar}>
+                    {auth?.userInfo?.name?.charAt(0).toUpperCase() ||
+                      auth?.userInfo?.login?.charAt(0).toUpperCase()}
+                  </p>
+                  {auth?.userInfo?.name || auth?.userInfo?.login}
+                </>
+              }
+            />
+          </div>
+          <Divider />
+          <div className={styles.block}>
+            <ProfileItem
+              text={"Profile settings"}
+              onClick={() => {
+                navigate(`/settings/auth/matrix/profile/crossed`);
+              }}
+            />
+            <ProfileItem
+              text={"Настройки"}
+              onClick={() => {
+                navigate(`/settings/constructor/apps`);
+              }}
+            />
+            <ProfileItem text={"Logout"} onClick={logoutClickHandler} />
+          </div>
+        </Box>
       </Menu>
 
       <ProjectList

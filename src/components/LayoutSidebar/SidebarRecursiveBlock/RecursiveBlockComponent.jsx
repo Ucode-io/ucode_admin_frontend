@@ -74,8 +74,7 @@ const RecursiveBlock = ({
     setChildBlockVisible((prev) => !prev);
     setCheck(true);
     setId(element?.id);
-    element.type === "FOLDER" &&
-      navigate(`/main/${appId}/web-page/c57eedc3-a954-4262-a0af-376c65b5a284`);
+    element.type === "FOLDER" && navigate(`/main/${appId}`);
   };
   useEffect(() => {
     if (

@@ -34,6 +34,7 @@ const TableView = ({
   selectedLinkedObject,
   selectedLinkedTableSlug,
   menuItem,
+  setFormValue,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -90,7 +91,9 @@ const TableView = ({
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
+        pageCount: isNaN(res.data?.count)
+          ? 1
+          : Math.ceil(res.data?.count / limit),
       };
     },
   });
@@ -125,9 +128,10 @@ const TableView = ({
     }
   }, [tableData, reset]);
 
-  const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
-    tableSlug,
-  });
+  const { data: { custom_events: customEvents = [] } = {} } =
+    useCustomActionsQuery({
+      tableSlug,
+    });
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -154,7 +158,9 @@ const TableView = ({
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
+          layout.type === "PopupLayout"
+            ? setLayoutType("PopupLayout")
+            : setLayoutType("SimpleLayout");
         });
       });
   }, [menuItem.id, tableSlug]);
@@ -169,7 +175,15 @@ const TableView = ({
 
   const navigateToDetailPage = (row) => {
     if (view?.navigate?.params?.length || view?.navigate?.url) {
-      const params = view.navigate?.params?.map((param) => `${mergeStringAndState(param.key, row)}=${mergeStringAndState(param.value, row)}`).join("&&");
+      const params = view.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&&");
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
@@ -183,17 +197,25 @@ const TableView = ({
 
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
+      {(view?.quick_filters?.length > 0 ||
+        (new_list[tableSlug] &&
+          new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>{t("filters")}</p>
-          <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
+          <FastFilter
+            view={view}
+            fieldsMap={fieldsMap}
+            getFilteredFilterFields={getFilteredFilterFields}
+            isVertical
+          />
         </div>
       )}
-      <PermissionWrapperV2 tableSlug={tableSlug} type={'read'}>
+      <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
         <ObjectDataTable
           defaultLimit={view?.default_limit}
           formVisible={formVisible}
           setFormVisible={setFormVisible}
+          setFormValue={setFormValue}
           isRelationTable={false}
           removableHeight={isDocView ? 150 : 215}
           currentPage={currentPage}

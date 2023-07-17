@@ -240,10 +240,10 @@ const NewProfilePanel = ({
                     {projectItem?.title}
                   </>
                 }
-                onClick={openProjectList}
+                onClick={handleProjectNavigate}
               />
             )}
-            <ProfileItem text={"Projects"} onClick={handleProjectNavigate} />
+            <ProfileItem text={"Projects"} onClick={openProjectList} />
             {environmentItem.id === environmentId && (
               <ProfileItem
                 children={
@@ -259,10 +259,10 @@ const NewProfilePanel = ({
                     {environmentItem?.name}
                   </>
                 }
-                onClick={openEnvironmentList}
+                onClick={handleEnvNavigate}
               />
             )}
-            <ProfileItem text={"Environments"} onClick={handleEnvNavigate} />
+            <ProfileItem text={"Environments"} onClick={openEnvironmentList} />
           </div>
           <Divider />
           <div className={styles.block}>

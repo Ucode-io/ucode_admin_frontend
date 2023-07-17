@@ -16,6 +16,8 @@ import {
 } from "../../services/menuTemplateService";
 import { useQueryClient } from "react-query";
 import RingLoader from "../Loaders/RingLoader";
+import { useDispatch } from "react-redux";
+import { menuActions } from "../../store/menuItem/menuItem.slice";
 
 const MenuSettingTheme = ({
   setModalType,
@@ -25,6 +27,7 @@ const MenuSettingTheme = ({
 }) => {
   const queryClient = useQueryClient();
   const [template, setTemplate] = useState("");
+  const dispatch = useDispatch();
 
   const handleTemplateChange = (event) => {
     setTemplate(event.target.value);
@@ -39,6 +42,7 @@ const MenuSettingTheme = ({
   const deleteTemplate = (id) => {
     deleteCustomError(id);
   };
+
   const { data: templates, isLoading } = useMenuTemplateListQuery({});
   useEffect(() => {
     if (check) {
@@ -47,6 +51,7 @@ const MenuSettingTheme = ({
       setCheck(false);
     }
   }, []);
+
   return (
     <>
       <div className={styles.header}>
@@ -86,6 +91,7 @@ const MenuSettingTheme = ({
                     }
                     onClick={() => {
                       setSelectedTemplate(item);
+                      dispatch(menuActions.setMenuLayout(item));
                     }}
                     className={
                       template === item?.id ? styles.active : styles.inactive

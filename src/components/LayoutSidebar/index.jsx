@@ -84,11 +84,11 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   });
   const { data: menuTemplate } = useMenuSettingGetByIdQuery({
     params: {
-      template_id: selectedMenuTemplate?.id,
+      template_id:
+        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
     },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
-  console.log("selectedMenuTemplate", selectedMenuTemplate);
   const menuStyle = menuTemplate?.menu_template;
 
   const handleRouter = () => {

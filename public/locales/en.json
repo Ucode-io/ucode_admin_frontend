@@ -173,5 +173,6 @@
   "showing": "Showing",
   "excel.upload": "Excel upload",
   "excel.download": "Excel download",
-  "select.environment": "Select environment"
+  "select.environment": "Select environment",
+  "enter.role": "Choose role"
 }

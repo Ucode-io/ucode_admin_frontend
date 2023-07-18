@@ -205,6 +205,6 @@
   "showing": "Показать",
   "excel.upload": "Загрузка Excel",
   "excel.download": "Скачать Excel",
-  "select.environment": "Select environment"
-
+  "select.environment": "Select environment",
+  "enter.role": "Выберите роль"
 }

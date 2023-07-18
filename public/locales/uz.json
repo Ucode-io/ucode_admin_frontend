@@ -201,5 +201,6 @@
   "enter.project": "Выберите проект",
   "client_type": "Тип пользователя",
   "enter.client_type": "Выберите тип пользователя",
-  "select.environment": "Select environment"
+  "select.environment": "Select environment",
+  "enter.role": "Выберите роль"
 }

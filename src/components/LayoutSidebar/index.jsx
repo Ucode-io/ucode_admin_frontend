@@ -28,6 +28,7 @@ import { UdevsLogo } from "../../assets/icons/icon";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
 import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
 import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
+import { store } from "../../store";
 
 const LayoutSidebar = ({ favicon, appId, environment }) => {
   const sidebarIsOpen = useSelector(
@@ -35,6 +36,8 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   );
   const projectId = useSelector((state) => state.auth.projectId);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+  const selectedMenuTemplate = store.getState().menu.menuTemplate;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -77,6 +80,10 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     },
   });
   const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+    params: {
+      template_id:
+        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+    },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
   const menuStyle = menuTemplate?.menu_template;
@@ -213,7 +220,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         >
           <div className="brand">
             <UdevsLogo
-              fill={menuStyle?.text || "#007AFF"}
+              fill={"#007AFF"}
               // onClick={switchRightSideVisible}
             />
             {sidebarIsOpen && (

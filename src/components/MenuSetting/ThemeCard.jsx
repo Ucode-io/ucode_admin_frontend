@@ -45,7 +45,7 @@ const ThemeCard = ({ item, deleteTemplate, setFormType, setModalType }) => {
                 background: item?.background,
               }}
             >
-              <UdevsLogo fill={item?.text} />
+              <UdevsLogo fill={"#007AFF"} />
               <Search className={styles.searchicon} />
               {Sidebar.map((element) => (
                 <div

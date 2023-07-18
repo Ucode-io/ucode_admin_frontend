@@ -1,13 +1,10 @@
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import LayersIcon from "@mui/icons-material/Layers";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import { Box, Divider, Menu, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { authActions } from "../../store/auth/auth.slice";
-import UserAvatar from "../UserAvatar";
-import styles from "./newprofile.module.scss";
-import { store } from "../../store";
-import { companyActions } from "../../store/company/company.slice";
-import ProfileItem from "./ProfileItem";
 import { PlusIcon } from "../../assets/icons/icon";
 import CompanyModal from "../../layouts/MainLayout/CompanyModal";
 import {
@@ -15,8 +12,15 @@ import {
   useEnvironmentListQuery,
   useProjectListQuery,
 } from "../../services/companyService";
-import ProjectList from "./ProjectList/ProjectsList";
+import { store } from "../../store";
+import { authActions } from "../../store/auth/auth.slice";
+import { companyActions } from "../../store/company/company.slice";
+import UserAvatar from "../UserAvatar";
 import EnvironmentsList from "./EnvironmentList/EnvironmentsList";
+import ProfileItem from "./ProfileItem";
+import ProjectList from "./ProjectList/ProjectsList";
+import ResourceList from "./ResourceList";
+import styles from "./newprofile.module.scss";
 
 const NewProfilePanel = ({
   anchorEl,
@@ -230,43 +234,66 @@ const NewProfilePanel = ({
                 </>
               }
             />
-            <ProfileItem text={"Settings"} onClick={handleCompanyNavigate} />
+            <ProfileItem
+              children={
+                <ApartmentIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Settings"}
+              onClick={handleCompanyNavigate}
+            />
           </div>
           <Divider />
           <div className={styles.block}>
             {projectItem.project_id === projectId && (
               <ProfileItem
                 children={
-                  <>
-                    <p className={styles.projectavatar}>
-                      {projectItem?.title?.charAt(0).toUpperCase()}
-                    </p>
-                    {projectItem?.title}
-                  </>
+                  <ResourceList
+                    item={projectItem?.title}
+                    className={styles.projectavatar}
+                    colorItem={projectItem}
+                  />
                 }
                 onClick={openProjectList}
               />
             )}
-            <ProfileItem text={"Projects"} onClick={handleProjectNavigate} />
+            <ProfileItem
+              children={
+                <LayersIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Projects"}
+              onClick={handleProjectNavigate}
+            />
             {environmentItem.id === environmentId && (
               <ProfileItem
                 children={
-                  <>
-                    <p
-                      className={styles.environmentavatar}
-                      style={{
-                        background: environmentItem.display_color,
-                      }}
-                    >
-                      {environmentItem?.name?.charAt(0).toUpperCase()}
-                    </p>
-                    {environmentItem?.name}
-                  </>
+                  <ResourceList
+                    item={environmentItem?.name}
+                    className={styles.environmentavatar}
+                    colorItem={environmentItem}
+                  />
                 }
                 onClick={openEnvironmentList}
               />
             )}
-            <ProfileItem text={"Environments"} onClick={handleEnvNavigate} />
+            <ProfileItem
+              children={
+                <LocalOfferIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Environments"}
+              onClick={handleEnvNavigate}
+            />
           </div>
           <Divider />
           <div className={styles.block}>

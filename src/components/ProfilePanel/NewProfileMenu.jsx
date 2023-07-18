@@ -147,6 +147,8 @@ const NewProfilePanel = ({
       enabled: Boolean(companyId),
       onSuccess: (res) => {
         dispatch(companyActions.setProjects(res.projects));
+        dispatch(companyActions.setProjectItem(res.projects[0]));
+        dispatch(companyActions.setProjectId(res.projects[0].project_id));
       },
     },
   });
@@ -158,6 +160,8 @@ const NewProfilePanel = ({
       enabled: Boolean(projectId),
       onSuccess: (res) => {
         dispatch(companyActions.setEnvironments(res.environments));
+        dispatch(companyActions.setEnvironmentItem(res.environments[0]));
+        dispatch(companyActions.setEnvironmentId(res.environments[0].id));
       },
     },
   });
@@ -240,10 +244,10 @@ const NewProfilePanel = ({
                     {projectItem?.title}
                   </>
                 }
-                onClick={handleProjectNavigate}
+                onClick={openProjectList}
               />
             )}
-            <ProfileItem text={"Projects"} onClick={openProjectList} />
+            <ProfileItem text={"Projects"} onClick={handleProjectNavigate} />
             {environmentItem.id === environmentId && (
               <ProfileItem
                 children={
@@ -259,10 +263,10 @@ const NewProfilePanel = ({
                     {environmentItem?.name}
                   </>
                 }
-                onClick={handleEnvNavigate}
+                onClick={openEnvironmentList}
               />
             )}
-            <ProfileItem text={"Environments"} onClick={openEnvironmentList} />
+            <ProfileItem text={"Environments"} onClick={handleEnvNavigate} />
           </div>
           <Divider />
           <div className={styles.block}>

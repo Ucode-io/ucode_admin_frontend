@@ -241,28 +241,26 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
             overflow: "hidden",
           }}
         >
-          <div>
-            <Box className="search">
-              <SearchInput
-                style={{
-                  borderRadius: "8px",
-                  width: "100%",
-                }}
-                onChange={(e) => {
-                  setSearchText(e);
-                }}
-              />
-            </Box>
-
+          <Box className="search">
+            <SearchInput
+              style={{
+                borderRadius: "8px",
+                width: "100%",
+              }}
+              onChange={(e) => {
+                setSearchText(e);
+              }}
+            />
+          </Box>
+          <div
+            style={{
+              overflow: "auto",
+            }}
+          >
             {!menuList?.menus ? (
               <RingLoaderWithWrapper />
             ) : (
-              <Box
-                style={{
-                  height: "100vh",
-                  overflow: "auto",
-                }}
-              >
+              <Box>
                 <MenuButtonComponent
                   title={"Chat"}
                   icon={

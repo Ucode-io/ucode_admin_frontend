@@ -71,6 +71,7 @@ const Actions = ({ mainForm }) => {
         onDeleteClick={deleteAction}
         onEditClick={openEditForm}
         dataLength={1}
+        checkPermission={false}
         disableFilters
         additionalRow={
           <TableRowButton

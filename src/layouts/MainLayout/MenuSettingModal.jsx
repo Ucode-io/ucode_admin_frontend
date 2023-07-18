@@ -24,9 +24,15 @@ import {
   useMenuSettingUpdateMutation,
 } from "../../services/menuSettingService";
 import { useQueryClient } from "react-query";
+import { store } from "../../store";
 
 const MenuSettingModal = ({ closeModal }) => {
+  const selectedMenuTemplate = store.getState().menu.menuTemplate;
   const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+    params: {
+      template_id:
+        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+    },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
   const [modalType, setModalType] = useState("SETTING");
@@ -218,7 +224,7 @@ const MenuSettingModal = ({ closeModal }) => {
                           background: selectedTemplate?.background,
                         }}
                       >
-                        <UdevsLogo fill={selectedTemplate?.text} />
+                        <UdevsLogo fill={"#007AFF"} />
                         <Search className={styles.searchicon} />
                         {Sidebar.map((element) => (
                           <div
@@ -254,10 +260,7 @@ const MenuSettingModal = ({ closeModal }) => {
                           background: selectedTemplate?.background,
                         }}
                       >
-                        <UdevsLogo
-                          className={styles.logo}
-                          fill={selectedTemplate?.text}
-                        />
+                        <UdevsLogo className={styles.logo} fill={"#007AFF"} />
                         <ModernSidebar />
                         {Sidebar.map((element) => (
                           <div

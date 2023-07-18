@@ -17,11 +17,10 @@ const SummarySection = ({
   openFieldsBlock,
   openRelationSettingsBlock,
 }) => {
-
   const getSelectedLayoutIndex = useMemo(() => {
-    return mainForm.getValues().layouts.findIndex(
-      (layout) => layout.id === selectedLayout.id
-    );
+    return mainForm
+      .getValues()
+      .layouts.findIndex((layout) => layout.id === selectedLayout.id);
   }, [mainForm, selectedLayout]);
 
   const { fields: sections, ...sectionsFieldArray } = useFieldArray({
@@ -43,6 +42,9 @@ const SummarySection = ({
     });
     return map;
   }, [fieldsList]);
+
+  console.log("sections", sections);
+  console.log("fieldsMap", fieldsMap);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(sections, dropResult);
@@ -89,13 +91,14 @@ const SummarySection = ({
               <div className={styles.field_summary_item}>
                 <FormElementGenerator
                   control={mainForm.control}
-                  field={fieldsMap[field.id] ?? field}
-                  isLayout={true}
-                  sectionIndex={fieldIndex}
-                  column={1}
-                  fieldIndex={fieldIndex}
-                  mainForm={mainForm}
-                  maxWidth={true}
+                  field={field}
+                  // field={fieldsMap[field?.id] ?? field}
+                  // isLayout={true}
+                  // sectionIndex={fieldIndex}
+                  // column={1}
+                  // fieldIndex={fieldIndex}
+                  // mainForm={mainForm}
+                  // maxWidth={true}
                 />
               </div>
               <ButtonsPopover

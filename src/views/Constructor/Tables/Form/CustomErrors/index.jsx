@@ -7,7 +7,6 @@ import TableCard from "../../../../../components/TableCard";
 import constructorRelationService from "../../../../../services/constructorRelationService";
 import { Drawer } from "@mui/material";
 import TableRowButton from "../../../../../components/TableRowButton";
-import CustomErrorsSettings from "./CustomErrorsSettings";
 import {
   useCustomErrorDeleteMutation,
   useCustomErrorListQuery,
@@ -15,6 +14,7 @@ import {
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import { store } from "../../../../../store";
 import { useQueryClient } from "react-query";
+import CustomErrorsSettings from "./CustomErrorsSettings";
 
 const CustomErrors = ({ mainForm, getRelationFields }) => {
   const [drawerState, setDrawerState] = useState(null);

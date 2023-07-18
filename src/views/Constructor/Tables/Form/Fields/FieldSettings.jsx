@@ -21,7 +21,7 @@ import Attributes from "./Attributes";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import styles from "./style.module.scss";
 
-const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, onSubmit = () => {} }) => {
+const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, onSubmit = () => {}, getRelationFields }) => {
   const { id } = useParams();
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
@@ -46,6 +46,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
   });
 
   const createField = (field) => {
+
     const data = {
       ...field,
       id: generateGUID(),
@@ -61,6 +62,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
         .then((res) => {
           prepandFieldInForm(res);
           closeSettingsBlock(null);
+          getRelationFields();
         })
         .finally(() => setFormLoader(false));
     }
@@ -77,6 +79,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
         .then((res) => {
           updateFieldInform(field);
           closeSettingsBlock(null);
+          getRelationFields();
         })
         .finally(() => setFormLoader(false));
     }
@@ -96,6 +99,11 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
     control: mainForm.control,
     name: "layoutRelations",
   });
+  const fieldType = useWatch({
+    control: control,
+    name: "type",
+  });
+
 
   const selectedAutofillSlug = selectedAutofillTableSlug?.split("#")?.[0];
   const selectedAutofillFieldSlug = selectedAutofillTableSlug?.split("#")?.[1];
@@ -194,6 +202,12 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
                         <FRow label="Field type" required>
                           <HFSelect disabledHelperText name="type" control={control} options={fieldTypesOptions} optionType="GROUP" placeholder="Type" required />
                         </FRow>
+                        
+                        {(fieldType === 'SINGLE_LINE' || fieldType === 'MULTI_LINE') && (
+                          <FRow style={{marginTop: '15px'}} label="Multi language">
+                            <HFSwitch control={control} name="enable_multilanguage" label="" className="mb-1" />
+                          </FRow>
+                        )}
                       </div>
 
                       <Attributes control={control} watch={watch} mainForm={mainForm} />

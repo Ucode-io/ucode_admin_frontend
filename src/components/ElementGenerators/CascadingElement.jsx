@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./style.module.scss";
 import { Autocomplete, InputAdornment, Menu, TextField } from "@mui/material";
 import CascadingItem from "./CascadingItem";
@@ -8,6 +8,7 @@ import useTabRouter from "../../hooks/useTabRouter";
 import CloseIcon from "@mui/icons-material/Close";
 import { getRelationFieldLabel } from "../../utils/getRelationFieldLabel";
 import { useQuery } from "react-query";
+import { get } from "@ngard/tiny-get";
 
 function CascadingElement({
   setValue,
@@ -18,6 +19,7 @@ function CascadingElement({
   row,
   index,
   name,
+  relationfields
 }) {
   const [values, setValues] = useState();
   const [inputValue, setInputValue] = useState();
@@ -30,6 +32,18 @@ function CascadingElement({
   const [dataFilter, setDataFilter] = useState([]);
   const [tablesSlug, setTablesSlug] = useState([]);
 
+  const getIds = useMemo(() => {
+    let val = [];
+    relationfields
+      ?.filter((item) => {
+        return item[field?.slug];
+      })
+      .map((item) => {
+        return val.push(item[field?.slug]);
+      });
+    return val;
+  }, [relationfields, field]);
+
   //==========OPTIONS REQUEST===========
   const { data: options } = useQuery(
     ["GET_OBJECT_LIST", tableSlug],
@@ -41,11 +55,11 @@ function CascadingElement({
             field?.attributes?.view_fields?.map((field) => field.slug),
           additional_request: {
             additional_field: "guid",
-            additional_values: value,
+            additional_values: getIds,
           },
-          additional_ids: value,
           search: "",
           limit: 10,
+          input: true
         },
       });
     },
@@ -55,6 +69,11 @@ function CascadingElement({
       },
     }
   );
+  
+  const computedData = useMemo(() => {
+    const findedOption = options?.find((el) => el?.guid === value);
+    return findedOption ? [findedOption] : [];
+  }, [options, value]);
 
   //=========COMPUTED VALUE FOR LOOKUPS========
   const computedValue = useMemo(() => {
@@ -76,6 +95,7 @@ function CascadingElement({
   //==========COMPUTED VALUE FOR LOOKUP===========
   const insideValue = useMemo(() => {
     let values = "";
+    if(!value) return '';
     const option = options?.find((el) => el?.guid === value);
     const slugs = field?.attributes?.view_fields?.map((i) => i.slug);
 
@@ -121,6 +141,25 @@ function CascadingElement({
     setDataFilter([]);
     setTablesSlug([]);
   };
+  
+  const clearButton = () =>{ 
+    setValue('');
+    setInputValue({});
+  }
+  
+  useEffect(() => {
+    const val = computedData[computedData.length - 1];
+    if (!field?.attributes?.autofill || !val) return;
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+      const setName = name.split(".");
+      setName.pop();
+      setName.push(field_to);
+      automatic &&
+        setTimeout(() => {
+          setFormValue(setName.join("."), get(val, field_from));
+        }, 1);
+    });
+  }, [computedData]);
 
   return (
     <div className={styles.cascading}>
@@ -198,8 +237,8 @@ function CascadingElement({
             }}
           />
         )}
-        {open && (
-          <button className={styles.cancel_icon} onClick={() => handleClose()}>
+        {value && (
+          <button className={styles.cancel_icon} onClick={() => clearButton()}>
             <CloseIcon />
           </button>
         )}
@@ -229,6 +268,7 @@ function CascadingElement({
           setDataFilter={setDataFilter}
           tablesSlug={tablesSlug}
           setTablesSlug={setTablesSlug}
+          name={name}
         />
       </Menu>
     </div>

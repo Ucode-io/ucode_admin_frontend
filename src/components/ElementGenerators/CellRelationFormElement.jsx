@@ -10,10 +10,11 @@ import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
 import IconGenerator from "../IconPicker/IconGenerator";
 import styles from "./style.module.scss";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
+import request from "../../utils/request";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -48,6 +49,7 @@ const CellRelationFormElement = ({
         name={name}
         defaultValue={defaultValue}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
+          console.log('kajnwdkjanwkdjawd', value)
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
@@ -87,6 +89,7 @@ const CellRelationFormElement = ({
               name={name}
               setValue={onChange}
               field={field}
+              defaultValue={defaultValue}
               tableSlug={field.table_slug}
               error={error}
               disabledHelperText={disabledHelperText}
@@ -111,6 +114,7 @@ const AutoCompleteElement = ({
   placeholder,
   tableSlug,
   name,
+  defaultValue,
   disabled,
   classes,
   isBlackBg,
@@ -125,7 +129,7 @@ const AutoCompleteElement = ({
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
-
+  const { id } = useParams();
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
@@ -174,32 +178,75 @@ const AutoCompleteElement = ({
     return val;
   }, [data, field]);
 
-  const { data: options } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
+  const { data: optionsFromFunctions } = useQuery(
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
         data: {
+          table_slug: tableSlug,
           ...autoFiltersValue,
-          view_fields: field?.view_fields?.map((f) => f.slug),
+          search: debouncedValue,
           limit: 10,
-          additional_request: {
-            additional_field: "guid",
-            additional_values: getIdsFromData,
-          },
-          search: debouncedValue.trim(),
+          offset: 0,
+          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
         },
       });
     },
     {
+      enabled: !!field?.attributes?.function_path,
       select: (res) => {
-        return res?.data?.response ?? [];
+        const options = res?.data?.response ?? [];
+        // const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+
+        return {
+          options,
+          // slugOptions,
+        };
       },
     }
   );
+
+  const { data: optionsFromLocale } = useQuery(
+    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
+    () => {
+      if (!tableSlug) return null;
+      return constructorObjectService.getList(tableSlug, {
+        data: {
+          ...autoFiltersValue,
+          additional_request: {
+            additional_field: "guid",
+            additional_values: [defaultValue ?? id],
+          },
+          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+          search: debouncedValue.trim(),
+          limit: 10,
+        },
+      });
+    },
+    {
+      enabled: !field?.attributes?.function_path,
+      select: (res) => {
+        const options = res?.data?.response ?? [];
+        // const slugOptions = res?.table_slug === tableSlug ? res?.data?.response : [];
+        return {
+          options,
+          // slugOptions,
+        };
+      },
+    }
+  );
+
+  const options = useMemo(() => {
+    if (field?.attributes?.function_path) {
+      return optionsFromFunctions?.options ?? [];
+    }
+    return optionsFromLocale?.options ?? [];
+  }, [optionsFromFunctions, optionsFromLocale]);
+
   const computedValue = useMemo(() => {
     const findedOption = options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
-  }, [options, value]);
+  }, [options?.options, value, optionsFromFunctions, optionsFromLocale]);
 
   // const computedOptions = useMemo(() => {
   //   let uniqueObjArray = [
@@ -238,6 +285,8 @@ const AutoCompleteElement = ({
     });
   }, [computedValue]);
 
+  console.log("options==>>", options);
+
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
@@ -251,21 +300,12 @@ const AutoCompleteElement = ({
         disabled={disabled}
         options={options ?? []}
         value={computedValue}
-        popupIcon={
-          isBlackBg ? (
-            <ArrowDropDownIcon style={{ color: "#fff" }} />
-          ) : (
-            <ArrowDropDownIcon />
-          )
-        }
+        popupIcon={isBlackBg ? <ArrowDropDownIcon style={{ color: "#fff" }} /> : <ArrowDropDownIcon />}
         onChange={(event, newValue) => {
           changeHandler(newValue);
         }}
         noOptionsText={
-          <span
-            onClick={() => navigateToForm(tableSlug)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-          >
+          <span onClick={() => navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
             Создать новый
           </span>
         }

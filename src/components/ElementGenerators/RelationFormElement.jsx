@@ -21,6 +21,7 @@ import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import constructorFunctionService from "../../services/constructorFunctionService";
 import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
 import request from "../../utils/request";
+import { useSelector } from "react-redux";
 
 const RelationFormElement = ({
   control,
@@ -36,6 +37,7 @@ const RelationFormElement = ({
   formTableSlug,
   disabled = false,
   defaultValue = null,
+  multipleInsertField,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -43,9 +45,9 @@ const RelationFormElement = ({
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
 
-  if (!isLayout) {
+  if (!isLayout)
     return (
-      <FRow label={field?.label ?? field?.title ?? " "} required={field.required}>
+      <FRow label={field?.label ?? field?.title} required={field.required}>
         <Controller
           control={control}
           name={(name || field.slug) ?? `${tableSlug}_id`}
@@ -62,13 +64,12 @@ const RelationFormElement = ({
               setFormValue={setFormValue}
               control={control}
               name={name}
-              defaultValue={defaultValue}
+              multipleInsertField={multipleInsertField}
             />
           )}
         />
       </FRow>
     );
-  }
 
   return (
     <Controller
@@ -86,7 +87,7 @@ const RelationFormElement = ({
             name={`${tableSlug}_id`}
             defaultValue={defaultValue}
             render={({ field: { onChange, value }, fieldState: { error } }) =>
-              field?.attributes?.cascadings?.length === 4 ? (
+              field?.attributes?.cascadings?.length === 2 ? (
                 <CascadingElement
                   field={field}
                   tableSlug={tableSlug}
@@ -108,7 +109,6 @@ const RelationFormElement = ({
                   disabledHelperText={disabledHelperText}
                   control={control}
                   name={name}
-                  defaultValue={defaultValue}
                 />
               )
             }
@@ -131,13 +131,14 @@ const AutoCompleteElement = ({
   disabledHelperText,
   control,
   name,
-  defaultValue,
+  multipleInsertField,
   setFormValue = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
-
+  const isUserId = useSelector((state) => state?.auth?.userId);
+  const ids = field?.attributes?.is_user_id_default ? isUserId : undefined
   const [debouncedValue, setDebouncedValue] = useState("");
   const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
@@ -151,14 +152,6 @@ const AutoCompleteElement = ({
     control,
     name: autoFiltersFieldFroms,
   });
-
-  useEffect(() => {
-    setLocalValue(
-      localValue?.filter((item) => {
-        return item?.clients_id === filtersHandler[0];
-      })
-    );
-  }, [filtersHandler]);
 
   const autoFiltersValue = useMemo(() => {
     const result = {};
@@ -202,7 +195,7 @@ const AutoCompleteElement = ({
       },
     }
   );
-
+  
   const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
@@ -212,7 +205,7 @@ const AutoCompleteElement = ({
           ...autoFiltersValue,
           additional_request: {
             additional_field: "guid",
-            additional_values: [id],
+            additional_values: [ids],
           },
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
@@ -238,14 +231,19 @@ const AutoCompleteElement = ({
     if (field?.attributes?.function_path) {
       return optionsFromFunctions ?? [];
     }
-    return optionsFromLocale ?? [];
-  }, [optionsFromFunctions, optionsFromLocale]);
+    else {
+      return optionsFromLocale ?? []
+    };
+  }, [optionsFromFunctions, optionsFromLocale, field?.attributes?.function_path]);
 
   const getValueData = async () => {
     try {
       const id = value;
       const res = await constructorObjectService.getById(tableSlug, id);
       const data = res?.data?.response;
+      if (data.prepayment_balance) {
+        setFormValue("prepayment_balance", data.prepayment_balance || 0);
+      }
       setLocalValue(data ? [data] : null);
     } catch (error) {}
   };
@@ -257,6 +255,14 @@ const AutoCompleteElement = ({
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
+
+  const setDefaultValue = () => {
+    if (options?.slugOptions && multipleInsertField) {
+      const val = options?.slugOptions?.find((item) => item?.guid === id);
+      setValue(val?.guid ?? null);
+      setLocalValue(val ? [val] : null);
+    }
+  };
 
   const changeHandler = (value, key = "") => {
     if (key === "cascading") {
@@ -279,7 +285,7 @@ const AutoCompleteElement = ({
       });
     }
   };
-
+  
   useEffect(() => {
     setLocalValue(
       localValue?.filter((item) => {
@@ -305,6 +311,10 @@ const AutoCompleteElement = ({
   useEffect(() => {
     if (value) getValueData();
   }, [value]);
+
+  useEffect(() => {
+    setDefaultValue();
+  }, [options, multipleInsertField]);
 
   return (
     <div className={styles.autocompleteWrapper}>

@@ -33,6 +33,7 @@ const TableRow = ({
   relationAction,
   onChecked,
   relationFields,
+  data,
 }) => {
   const navigate = useNavigate();
   if (formVisible)
@@ -58,6 +59,7 @@ const TableRow = ({
         calculateWidth={calculateWidth}
         tableSlug={tableSlug}
         relationFields={relationFields}
+        data={data}
       />
     );
 
@@ -78,25 +80,28 @@ const TableRow = ({
             )}
           </CTableCell>
 
-          {columns.map((column, index) => (
-            <CTableCell
-              key={column.id}
-              className={`overflow-ellipsis ${tableHeight}`}
-              style={{
-                minWidth: "max-content",
-                padding: "0 4px",
-                position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
-                backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
-              }}
-            >
-              <CellElementGenerator field={column} row={row} />
-            </CTableCell>
-          ))}
+          {columns.map(
+            (column, index) =>
+              column?.attributes?.field_permission?.view_permission && (
+                <CTableCell
+                  key={column.id}
+                  className={`overflow-ellipsis ${tableHeight}`}
+                  style={{
+                    minWidth: "max-content",
+                    padding: "0 4px",
+                    position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
+                    left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
+                    backgroundColor: "#fff",
+                    zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
+                  }}
+                >
+                  <CellElementGenerator field={column} row={row} />
+                </CTableCell>
+              )
+          )}
           <td>
             <div style={{ display: "flex", gap: "5px", padding: "3px" }}>
-              <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+              <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                 <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
                   <Delete color="error" />
                 </RectangleIconButton>
@@ -136,7 +141,7 @@ const TableRow = ({
               <CellElementGenerator field={column} row={row} />
             </CTableCell>
           ))}
-          <PermissionWrapperV2 tabelSlug={tableSlug} type="delete">
+          <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
             <RectangleIconButton
               color="error"
               onClick={() => {

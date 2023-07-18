@@ -7,8 +7,8 @@ import {
 } from "../../layouts/MainLayout/mock/sidebarElements";
 import IconGenerator from "../IconPicker/IconGenerator";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-const ThemeCard = ({ item, deleteTemplate }) => {
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+const ThemeCard = ({ item, deleteTemplate, setFormType, setModalType }) => {
   const colors = [
     { color: item?.background },
     { color: item?.active_background },
@@ -18,7 +18,16 @@ const ThemeCard = ({ item, deleteTemplate }) => {
   return (
     <>
       <Box>
-        {" "}
+        <IconButton
+          color="primary"
+          onClick={() => {
+            setFormType(item?.id);
+            setModalType("MENUFORM");
+          }}
+          className={styles.editbutton}
+        >
+          <ModeEditIcon />
+        </IconButton>
         <IconButton
           color="error"
           onClick={() => {
@@ -36,7 +45,7 @@ const ThemeCard = ({ item, deleteTemplate }) => {
                 background: item?.background,
               }}
             >
-              <UdevsLogo fill={item?.text} />
+              <UdevsLogo fill={"#007AFF"} />
               <Search className={styles.searchicon} />
               {Sidebar.map((element) => (
                 <div

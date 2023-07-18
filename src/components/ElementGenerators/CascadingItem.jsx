@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import constructorObjectService from "../../services/constructorObjectService";
 import { get } from "@ngard/tiny-get";
-import CascadingMany2Many from "./CascadingMany2Many";
+import CascadingMany2Many from "./CascadingSection/CascadingMany2Many";
 import CascadingMany2One from "./CascadingMany2One";
 import { useQuery } from "react-query";
 
@@ -44,7 +44,7 @@ function CascadingItem({
   //===========DATA FOR SERVICE FILTER==========
   const dataObject = useMemo(() => {
     const values = {};
-    tablesSlug?.map((item, index) => {
+    tablesSlug?.forEach((item, index) => {
       values[`${item}_id`] = dataFilter[index];
       values[`${item}_ids`] = dataFilter[index];
     });
@@ -60,6 +60,7 @@ function CascadingItem({
           view_fields: fields.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
           limit: 10,
+          input: true,
         },
       });
     },
@@ -72,18 +73,26 @@ function CascadingItem({
 
   //=============MAIN SETVALUE FUNCTION==========
   const handleClick = (item) => {
-    if (currentLevel === 4 && fields?.type === "LOOKUP") {
+    const cascadingLength = fields?.attributes?.cascadings?.length;
+
+    if (
+      cascadingLength &&
+      currentLevel === cascadingLength ||
+      fields?.type === "LOOKUP"
+    ) {
       setValue(item?.guid);
       setInputValue(item);
 
-      fields?.attributes?.autofill.forEach(({ field_from, field_to }) => {
+      fields?.attributes?.autofill?.forEach(({ field_from, field_to }) => {
         setFormValue(`multi.${index}.${field_to}`, get(item, field_from));
       });
+
       handleClose();
-    }
-    if (level < 4) {
+    } else if (cascadingLength && level < cascadingLength) {
       setDataFilter([...new Set(dataFilter), item?.guid]);
       setTitle([...title, item?.name]);
+
+      const cascading = fields?.attributes?.cascadings;
 
       const data =
         currentLevel === 3
@@ -92,8 +101,8 @@ function CascadingItem({
               [levelSlug]: item?.guid,
             };
       constructorObjectService
-        .getList(levelTableSlug, {
-          data: data,
+        .getList(cascading[cascadingLength - 1 - level]?.table_slug, {
+          data: { ...data, input: true },
         })
         .then((res) => {
           setValues(res?.data?.response);
@@ -136,24 +145,25 @@ function CascadingItem({
     setValue(item.guid);
     setInputValue(item);
     handleClose();
+
+    fields?.attributes?.autofill.forEach(({ field_from, field_to }) => {
+      setFormValue(`multi.${index}.${field_to}`, get(item, field_from));
+    });
   };
 
   useEffect(() => {
-    if (fields?.attributes?.cascadings?.length === 4) {
-      if (currentLevel === 1) {
-        setLevelSlug(fields?.attributes.cascadings[3].field_slug);
-        setLevelTableSlug(fields?.attributes.cascadings[2]?.table_slug);
-      } else if (currentLevel === 2) {
-        setLevelSlug(fields?.attributes.cascadings[2].field_slug);
-        setLevelTableSlug(fields?.attributes.cascadings[1]?.table_slug);
-      } else if (currentLevel === 3) {
-        setLevelSlug(fields?.attributes.cascadings[1].field_slug);
-        setLevelTableSlug(fields?.attributes.cascadings[0]?.table_slug);
-      } else if (currentLevel === 4) {
-        setLevelSlug(fields?.attributes.cascadings[0].field_slug);
+    if (fields?.attributes?.cascadings?.length) {
+      const cascadingIndex = fields.attributes.cascadings.length - currentLevel;
+      setLevelSlug(fields.attributes.cascadings[cascadingIndex].field_slug);
+
+      if (cascadingIndex > 0) {
+        setLevelTableSlug(
+          fields.attributes.cascadings[cascadingIndex - 1].table_slug
+        );
       }
     }
   }, [fields, currentLevel]);
+
 
   return (
     <>
@@ -172,6 +182,10 @@ function CascadingItem({
               field={field}
               confirmButton={confirmButton}
               onChecked={onChecked}
+              setDebouncedValue={setDebouncedValue}
+              searchServices={searchServices}
+              debouncedValue={debouncedValue}
+              handleServices={handleServices}
             />
           )
         : currentLevel === level && (
@@ -186,6 +200,7 @@ function CascadingItem({
               foundServices={foundServices}
               currentLevel={currentLevel}
               handleClick={handleClick}
+              // setState={setState}
               setDebouncedValue={setDebouncedValue}
               searchServices={searchServices}
               debouncedValue={debouncedValue}

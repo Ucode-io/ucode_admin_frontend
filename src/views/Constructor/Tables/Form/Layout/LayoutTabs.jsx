@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import styles from "./style.module.scss";
 import NewSectionsBlock from "./NewSectionsBlock";
 import { useFieldArray, useWatch } from "react-hook-form";
-import { Card, TextField } from "@mui/material";
+import { Button, Card, TextField } from "@mui/material";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
 import { Add } from "@mui/icons-material";
 import ButtonsPopover from "../../../../../components/ButtonsPopover";
@@ -20,6 +19,7 @@ function LayoutTabs({
   selectedLayout,
   setSelectedLayout,
   selectedTab,
+  replaceSectionTab,
   sectionTabs,
   insertSectionTab,
   setSelectedTab,
@@ -65,12 +65,20 @@ function LayoutTabs({
       })
       ?.filter((el) => el);
   }, [viewRelations, relationsMap]);
-
+  
   const onDrop = (dropResult) => {
-    const result = applyDrag(computedViewRelations, dropResult);
-    if (result) {
+    if (dropResult?.removedIndex === null && dropResult?.addedIndex === null && !!dropResult?.payload?.id) return;
+
+    const result = applyDrag(sectionTabs, dropResult);
+
+    if (sectionTabs.find((tab) => tab?.id === dropResult?.payload?.id)) {
+      replaceSectionTab(result);
+    } else {
       appendSectionTab(dropResult?.payload);
-      if (result.length > computedViewRelations?.length) {
+    }
+
+    if (result) {
+      if (result.length > sectionTabs?.length) {
         viewRelationsFieldArray.insert(
           dropResult?.addedIndex,
           dropResult.payload.view_relation_type === "FILE" ? { ...dropResult.payload, relation_id: dropResult.payload?.id } : { relation_id: dropResult.payload?.id }
@@ -123,41 +131,37 @@ function LayoutTabs({
 
   return (
     <>
-      <Tabs className={"custom-tabs"} style={{ width: "100%" }}>
-        <TabList>
+      <div className={"custom-tabs"} style={{ width: "100%" }}>
+        <div style={{display: 'flex', alignItems: 'center'}}>
           <Container
             groupName="table_relation"
-            style={{ display: "flex", alignItems: "center" }}
+            style={{ display: "flex", alignItems: "center", gap: '10px', padding: '0 16px' }}
             dropPlaceholder={{ className: "drag-row-drop-preview" }}
             orientation="horizontal"
             onDrop={onDrop}
+            getChildPayload={(i) => allTabs[i]}
           >
             {allTabs?.map((tab, index) => (
-              <>
-                <Tab
-                  key={tab.id}
-                  className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
+              <Draggable
+                key={tab.id}
+                onClick={() => {
+                  setSelectedTabIndex(index);
+                  setSelectedTab(tab);
+                }}
+                // onDrag={() => handleTabsDrag(index)}
+              >
+                <Button
                   onClick={() => {
                     setSelectedTabIndex(index);
                     setSelectedTab(tab);
                   }}
+                  style={{ padding: 0 }}
                 >
-                  <Draggable
-                    key={tab.id}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                    // onDrag={() => handleTabsDrag(index)}
+                  <div
+                    // className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`}
+                    className={`${styles.tabsItem} ${selectedTab?.id === tab?.id ? styles.active : ""}`}
                   >
-                    <div
-                      className={styles.tab}
-                      style={{ display: "flex", alignItems: "center" }}
-                      onClick={() => {
-                        setSelectedTabIndex(index);
-                        setSelectedTab(tab);
-                      }}
-                    >
+                    <div className={styles.tab} style={{ display: "flex", alignItems: "center" }}>
                       {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label ?? tab?.relation?.table_from?.label}
                       {tab?.type === "section" ? (
                         <ButtonsPopover onEditClick={() => openFieldsBlock("RELATION")} onDeleteClick={() => removeSectionTab(index, tab)} />
@@ -165,19 +169,19 @@ function LayoutTabs({
                         <ButtonsPopover onEditClick={() => openRelationSettingsBlock(tab.relation ?? tab)} onDeleteClick={() => removeSectionTab(index, tab)} />
                       )}
                     </div>
-                  </Draggable>
-                </Tab>
-              </>
+                  </div>
+                </Button>
+              </Draggable>
             ))}
           </Container>
           <RectangleIconButton onClick={() => openFieldsBlock("RELATION")}>
             <Add />
           </RectangleIconButton>
-        </TabList>
+        </div>
 
-        {allTabs?.map((item, index) => (
-          <TabPanel key={item.key} selectedTab={selectedTab} index={index}>
-            {selectedTab?.type === "section" ? (
+        {allTabs.map((tab, index) => {
+          if (tab.id === selectedTab?.id) {
+            return tab?.type === "section" ? (
               <NewSectionsBlock
                 mainForm={mainForm}
                 layoutForm={layoutForm}
@@ -191,10 +195,28 @@ function LayoutTabs({
               />
             ) : (
               <RelationTable relation={computedViewRelations[selectedTabIndex]} />
-            )}
-          </TabPanel>
-        ))}
-      </Tabs>
+            );
+          } else {
+            return null;
+          }
+        })}
+
+        {/* {selectedTab?.type === "section" ? (
+          <NewSectionsBlock
+            mainForm={mainForm}
+            layoutForm={layoutForm}
+            openFieldsBlock={openFieldsBlock}
+            openFieldSettingsBlock={openFieldSettingsBlock}
+            openRelationSettingsBlock={openRelationSettingsBlock}
+            selectedLayout={selectedLayout}
+            setSelectedLayout={setSelectedLayout}
+            selectedTab={selectedTab}
+            sectionTabs={sectionTabs}
+          />
+        ) : (
+          <RelationTable relation={computedViewRelations[selectedTabIndex]} />
+        )} */}
+      </div>
     </>
   );
 }

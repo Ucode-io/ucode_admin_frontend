@@ -1,7 +1,7 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
 import useTabRouter from "../../hooks/useTabRouter";
@@ -12,6 +12,9 @@ import styles from "./style.module.scss";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CascadingElement from "./CascadingElement";
 import { Close } from "@mui/icons-material";
+import useDebounce from "../../hooks/useDebounce";
+import request from "../../utils/request";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -66,6 +69,7 @@ const CellManyToManyRelationElement = ({
               value={value}
               classes={classes}
               name={name}
+              defaultValue={defaultValue}
               setValue={onChange}
               field={field}
               tableSlug={field.table_slug}
@@ -91,6 +95,7 @@ const AutoCompleteElement = ({
   tableSlug,
   name,
   disabled,
+  defaultValue,
   classes,
   isBlackBg,
   setValue,
@@ -99,9 +104,13 @@ const AutoCompleteElement = ({
   setFormValue = () => {},
 }) => {
   const { navigateToForm } = useTabRouter();
+  const [debouncedValue, setDebouncedValue] = useState("");
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
+  const { id } = useParams();
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+
 
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -124,32 +133,83 @@ const AutoCompleteElement = ({
     return result?.guid ? result : value;
   }, [autoFilters, filtersHandler, value]);
 
-  const { data: options } = useQuery(
-    [
-      "GET_OBJECT_LIST",
-      tableSlug.includes("doctors_") ? "doctors" : tableSlug,
-      autoFiltersValue,
-    ],
+  const { data: optionsFromFunctions } = useQuery(
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: {
-          ...autoFiltersValue,
-          guid: value
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
+            search: debouncedValue,
+            limit: 10,
+            offset: 0,
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+          },
         }
-      });
+      );
     },
     {
+      enabled: !!field?.attributes?.function_path,
       select: (res) => {
-        return res?.data?.response ?? [];
+        const options = res?.data?.response ?? [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
+
+        return {
+          options,
+          slugOptions,
+        };
       },
     }
   );
 
+  const { data: optionsFromLocale } = useQuery(
+    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
+    () => {
+      if (!tableSlug) return null;
+      return constructorObjectService.getList(tableSlug, {
+        data: {
+          ...autoFiltersValue,
+          additional_request: {
+            additional_field: "guid",
+            additional_values: [defaultValue ?? id],
+          },
+          view_fields: field.attributes?.view_fields?.map((f) => f.slug),
+          search: debouncedValue.trim(),
+          limit: 10,
+        },
+      });
+    },
+    {
+      enabled: !field?.attributes?.function_path,
+      select: (res) => {
+        const options = res?.data?.response ?? [];
+        const slugOptions =
+          res?.table_slug === tableSlug ? res?.data?.response : [];
+        return {
+          options,
+          slugOptions,
+        };
+      },
+    }
+  );
+
+  const options = useMemo(() => {
+    if (field?.attributes?.function_path) {
+      return optionsFromFunctions ?? [];
+    }
+    return optionsFromLocale ?? [];
+  }, [optionsFromFunctions, optionsFromLocale]);
+
+
   const computedValue = useMemo(() => {
     if (!value) return [];
 
-    return value
-      ?.map((id) => {
+    return value?.map((id) => {
         const option = options?.find((el) => el?.guid === id);
 
         if (!option) return null;

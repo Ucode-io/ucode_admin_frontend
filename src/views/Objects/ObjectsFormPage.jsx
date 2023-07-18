@@ -217,6 +217,11 @@ const ObjectsFormPage = () => {
     else getFields();
   }, [id, tableInfo, selectedTabIndex]);
 
+  const getSubtitleValue = useMemo(() => {
+    return watch(tableInfo?.data?.table?.subtitle_field_slug)
+  }, [tableInfo])
+
+
   // Automatic setValue for End of Session
 
   // const serviceTime = watch("service_time");
@@ -227,7 +232,6 @@ const ObjectsFormPage = () => {
   // }, [serviceTime, startTime]);
 
   // if (loader) return <PageFallback />;
-console.log('ssssssss', tableInfo)
   return (
     <div className={styles.formPage}>
       <FiltersBlock
@@ -239,7 +243,7 @@ console.log('ssssssss', tableInfo)
         <FormPageBackButton />
 
         <div className={styles.subTitle}>
-          <h3>{tableInfo?.data?.table?.subtitle_field_slug}</h3>
+          <h3>{getSubtitleValue}</h3>
         </div>
 
         <SummarySectionValue computedSummary={summary} control={control} sections={sections} />
@@ -289,7 +293,7 @@ console.log('ssssssss', tableInfo)
               Закрыть
             </SecondaryButton>
 
-            <PermissionWrapperV2 tabelSlug={tableSlug} type="update">
+            <PermissionWrapperV2 tableSlug={tableSlug} type="update">
               <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
 
               {/* {customEvents?.map((event) => (

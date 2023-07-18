@@ -26,6 +26,7 @@ import ChartAccountsWrapper from "@/views/Objects/components/ViewSettings/ChartA
 import constructorFieldService from "@/services/constructorFieldService";
 import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import NavigateSettings from "./NavigateSettings";
+import ViewsList from "./ViewsList";
 
 const ViewForm = ({
   initialValues,
@@ -36,6 +37,7 @@ const ViewForm = ({
   closeModal,
   columns,
   relationColumns,
+  views
 }) => {
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
@@ -159,6 +161,8 @@ const ViewForm = ({
     );
   }, [type, form]);
 
+  console.log('sssssss ViewsList?.length', ViewsList?.length)
+
   const onSubmit = (values) => {
     setBtnLoader(true);
     const computedValues = {
@@ -178,6 +182,7 @@ const ViewForm = ({
         values
       ),
       app_id: appId,
+      order: views?.length ?? 0,
     };
 
     if (initialValues === "NEW") {

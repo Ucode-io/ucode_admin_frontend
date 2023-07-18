@@ -21,7 +21,9 @@ import ProfileItem from "./ProfileItem";
 import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
 import styles from "./newprofile.module.scss";
-
+import KeyIcon from "@mui/icons-material/Key";
+import MoveUpIcon from "@mui/icons-material/MoveUp";
+import WidgetsIcon from "@mui/icons-material/Widgets";
 const NewProfilePanel = ({
   anchorEl,
   handleMenuSettingModalOpen,
@@ -297,13 +299,40 @@ const NewProfilePanel = ({
           </div>
           <Divider />
           <div className={styles.block}>
-            <ProfileItem text={"Api Keys"} onClick={handleClick} />
-            <ProfileItem text={"Redirects"} onClick={handleRedirectNavigate} />
+            <ProfileItem
+              children={
+                <KeyIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Api Keys"}
+              onClick={handleClick}
+            />
+            <ProfileItem
+              children={
+                <MoveUpIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Redirects"}
+              onClick={handleRedirectNavigate}
+            />
           </div>
           <Divider />
 
           <div className={styles.block}>
             <ProfileItem
+              children={
+                <WidgetsIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
               text={"Menu settings"}
               onClick={() => {
                 handleMenuSettingModalOpen();

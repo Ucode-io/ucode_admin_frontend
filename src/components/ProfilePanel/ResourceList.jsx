@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 const flexStyle = {
   display: "flex",
@@ -17,7 +17,18 @@ const ResourceList = ({ item, className, colorItem, ...props }) => {
         >
           {item?.charAt(0).toUpperCase()}
         </p>
-        {item}
+        <Tooltip title={item}>
+          <p
+            style={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              width: "90px",
+            }}
+          >
+            {item}
+          </p>
+        </Tooltip>
       </Box>
       <Box>
         <KeyboardArrowRightIcon

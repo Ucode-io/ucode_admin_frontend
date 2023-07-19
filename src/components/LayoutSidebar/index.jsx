@@ -26,10 +26,9 @@ import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import { UdevsLogo } from "../../assets/icons/icon";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
-import {
-  useMenuSettingGetByIdQuery,
-  useMenuSettingListQuery,
-} from "../../services/menuSettingService";
+import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
+import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
+import { store } from "../../store";
 
 const LayoutSidebar = ({ favicon, appId, environment }) => {
   const sidebarIsOpen = useSelector(
@@ -37,6 +36,8 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   );
   const projectId = useSelector((state) => state.auth.projectId);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+  const selectedMenuTemplate = store.getState().menu.menuTemplate;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -79,6 +80,10 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     },
   });
   const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+    params: {
+      template_id:
+        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+    },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
   const menuStyle = menuTemplate?.menu_template;
@@ -167,10 +172,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     }
   }, [menuTemplate]);
 
-  const switchRightSideVisible = () => {
-    setSidebarIsOpen(!sidebarIsOpen);
-  };
-
   useEffect(() => {
     getMenuList();
   }, [searchText]);
@@ -219,7 +220,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         >
           <div className="brand">
             <UdevsLogo
-              fill={menuStyle?.text || "#007AFF"}
+              fill={"#007AFF"}
               // onClick={switchRightSideVisible}
             />
             {sidebarIsOpen && (
@@ -243,26 +244,30 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            height: "calc(100% - 56px)",
+            height: "85vh",
+            overflow: "hidden",
           }}
         >
-          <div>
-            <Box className="search">
-              <SearchInput
-                style={{
-                  borderRadius: "8px",
-                  width: "100%",
-                }}
-                onChange={(e) => {
-                  setSearchText(e);
-                }}
-              />
-            </Box>
-
+          <Box className="search">
+            <SearchInput
+              style={{
+                borderRadius: "8px",
+                width: "100%",
+              }}
+              onChange={(e) => {
+                setSearchText(e);
+              }}
+            />
+          </Box>
+          <div
+            style={{
+              overflow: "auto",
+            }}
+          >
             {!menuList?.menus ? (
               <RingLoaderWithWrapper />
             ) : (
-              <>
+              <Box>
                 <MenuButtonComponent
                   title={"Chat"}
                   icon={
@@ -344,30 +349,29 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                   }}
                 />
                 <Divider />
-              </>
+              </Box>
             )}
           </div>
-
-          <MenuButtonComponent
-            title={"Profile"}
-            openFolderCreateModal={openFolderCreateModal}
-            onClick={(e) => {
-              anchorEl ? setAnchorEl(null) : openMenu(e);
-            }}
-            children={
-              <ProfilePanel
-                anchorEl={anchorEl}
-                handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-                projectInfo={projectInfo}
-              />
-            }
-            style={{
-              background: menuStyle?.background || "#fff",
-              color: menuStyle?.text || "#000",
-            }}
-            sidebarIsOpen={sidebarIsOpen}
-          />
         </Box>
+        <MenuButtonComponent
+          title={"Profile"}
+          openFolderCreateModal={openFolderCreateModal}
+          onClick={(e) => {
+            anchorEl ? setAnchorEl(null) : openMenu(e);
+          }}
+          children={
+            <NewProfilePanel
+              anchorEl={anchorEl}
+              handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+              projectInfo={projectInfo}
+            />
+          }
+          style={{
+            background: menuStyle?.background || "#fff",
+            color: menuStyle?.text || "#000",
+          }}
+          sidebarIsOpen={sidebarIsOpen}
+        />
 
         {(modalType === "create" ||
           modalType === "parent" ||

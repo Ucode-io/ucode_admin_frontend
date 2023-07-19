@@ -3,7 +3,7 @@ import request from "../utils/request";
 
 const projectService = {
   getList: (params) => request.get("/company-project", { params }),
-  getByID: (params, projectId) =>
+  getByID: (projectId, params) =>
     request.get(`/company-project/${projectId}`, {
       params,
     }),
@@ -32,11 +32,7 @@ export const useProjectListQuery = ({ params = {}, queryParams } = {}) => {
   );
 };
 
-export const useProjectGetByIdQuery = ({
-  projectId,
-  params = {},
-  queryParams,
-}) => {
+export const useProjectGetByIdQuery = ({ projectId, params = {}, queryParams }) => {
   return useQuery(
     ["PROJECT_GET_BY_ID", { ...params, projectId }],
     () => {

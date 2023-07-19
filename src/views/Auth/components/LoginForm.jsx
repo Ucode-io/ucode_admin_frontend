@@ -1,7 +1,6 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
 import { InputAdornment } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
@@ -10,30 +9,31 @@ import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
+import { firebaseCloudMessaging } from "../../../firebase/config";
 import authService from "../../../services/auth/authService";
 import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
 import connectionServiceV2 from "../../../services/auth/connectionService";
 import environmentService from "../../../services/environmentService";
-import { loginAction } from "../../../store/auth/auth.thunk";
-import listToOptions from "../../../utils/listToOptions";
-import classes from "../style.module.scss";
-import { firebaseCloudMessaging } from "../../../firebase/config";
-import DynamicFields from "./DynamicFields";
-import { companyActions } from "../../../store/company/company.slice";
-import RegisterForm from "./RegisterForm";
+import { useRoleListQuery } from "../../../services/roleServiceV2";
 import { store } from "../../../store";
 import { showAlert } from "../../../store/alert/alert.thunk";
-import AfterLoginModal from "./AfterLoginModal";
-import { useRoleListQuery } from "../../../services/roleServiceV2";
+import { loginAction } from "../../../store/auth/auth.thunk";
+import { companyActions } from "../../../store/company/company.slice";
+import listToOptions from "../../../utils/listToOptions";
+import classes from "../style.module.scss";
+import DynamicFields from "./DynamicFields";
+import RegisterForm from "./RegisterForm";
 
 const LoginForm = ({ setIndex, index }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [afterLoginModal, setAferLoginModal] = useState();
-  const [clientTypes, setClientTypes] = useState([]);
   const [formType, setFormType] = useState("LOGIN");
+
+  useEffect(() => {
+    getFcmToken();
+  }, []);
 
   const getFcmToken = async () => {
     const token = await firebaseCloudMessaging.init();
@@ -72,9 +72,8 @@ const LoginForm = ({ setIndex, index }) => {
         })),
     }
   );
-  console.log("selectedClientTypeID", selectedClientTypeID);
 
-  const { data: roles } = useRoleListQuery({
+  const { data: computedRoles } = useRoleListQuery({
     headers: { "environment-id": selectedEnvID },
     params: {
       "client-type-id": selectedClientTypeID,
@@ -83,7 +82,6 @@ const LoginForm = ({ setIndex, index }) => {
     queryParams: {
       enabled: !!selectedClientTypeID,
       select: (res) => {
-        console.log("res", res);
         return res?.data?.response?.map((row) => ({
           label: row.name,
           value: row.guid,
@@ -91,7 +89,6 @@ const LoginForm = ({ setIndex, index }) => {
       },
     },
   });
-  console.log("roles", roles);
 
   const { data: computedClientTypes = [] } = useQuery(
     [
@@ -152,12 +149,17 @@ const LoginForm = ({ setIndex, index }) => {
       setValue("environment_id", computedEnvironments[0]?.value);
     }
   }, [computedEnvironments]);
+  useEffect(() => {
+    if (computedRoles?.length === 1) {
+      setValue("role_id", computedRoles[0]?.value);
+    }
+  }, [computedRoles]);
 
-  // useEffect(() => {
-  //   if (computedClientTypes?.length === 1) {
-  //     setValue("client_type", computedClientTypes[0]?.value);
-  //   }
-  // }, [computedClientTypes]);
+  useEffect(() => {
+    if (computedClientTypes?.length === 1) {
+      setValue("client_type", computedClientTypes[0]?.value);
+    }
+  }, [computedClientTypes]);
 
   useEffect(() => {
     getFcmToken();
@@ -171,7 +173,6 @@ const LoginForm = ({ setIndex, index }) => {
       .multiCompanyLogin(data)
       .then((res) => {
         setLoading(false);
-        setClientTypes(res.client_types);
         setCompanies(res.companies);
         setFormType("MULTI_COMPANY");
         dispatch(companyActions.setCompanies(res.companies));
@@ -198,12 +199,6 @@ const LoginForm = ({ setIndex, index }) => {
     else if (index === 1) register(values);
     else dispatch(loginAction(values)).then(() => setLoading(false));
   };
-
-  useEffect(() => {
-    if (selectedEnvID) {
-      setAferLoginModal(true);
-    }
-  }, [selectedEnvID]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
@@ -309,7 +304,7 @@ const LoginForm = ({ setIndex, index }) => {
                   options={computedEnvironments}
                 />
               </div>
-              {/* <div className={classes.formRow}>
+              <div className={classes.formRow}>
                 <p className={classes.label}>{t("client_type")}</p>
                 <HFSelect
                   required
@@ -319,7 +314,18 @@ const LoginForm = ({ setIndex, index }) => {
                   placeholder={t("enter.client_type")}
                   options={computedClientTypes}
                 />
-              </div> */}
+              </div>
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("role")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="role_id"
+                  size="large"
+                  placeholder={t("enter.role")}
+                  options={computedRoles}
+                />
+              </div>
               {computedConnections.length
                 ? computedConnections?.map((connection, idx) => (
                     <DynamicFields
@@ -335,19 +341,6 @@ const LoginForm = ({ setIndex, index }) => {
                   ))
                 : null}
             </div>
-            {afterLoginModal && (
-              <AfterLoginModal
-                control={control}
-                setValue={setValue}
-                watch={watch}
-                handleSubmit={handleSubmit}
-                roles={roles}
-                setFormType={setFormType}
-                formType={formType}
-                computedClientTypes={computedClientTypes}
-                computedConnections={computedConnections}
-              />
-            )}
           </div>
         )}
       </Tabs>

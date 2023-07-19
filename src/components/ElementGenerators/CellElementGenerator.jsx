@@ -1,6 +1,5 @@
 import { get } from "@ngard/tiny-get";
 import { useMemo } from "react";
-
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
 import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
 import { numberWithSpaces } from "../../utils/formatNumbers";
@@ -66,14 +65,11 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return <span className="text-nowrap">{formatDate(value)}</span>;
 
     case "NUMBER":
-      return numberWithSpaces(value?.toFixed(1)) || "";
+      return value ? numberWithSpaces(value?.toFixed(1)) : "";
 
     case "DATE_TIME":
       return (
-        <span className="text-nowrap">
-          {formatDate(value, "DATE_TIME")}
-          {/* {value ? format(new Date(value), "dd.MM.yyyy HH:mm") : "---"} */}
-        </span>
+        <span className="text-nowrap">{formatDate(value, "DATE_TIME")}</span>
       );
 
     case "MULTISELECT":

@@ -145,11 +145,12 @@ const ObjectsFormPage = () => {
       });
 
       const [
-        // { sections = [] }, 
-        { relations: view_relations = [] }
+        // { sections = [] },
+        { relations: view_relations = [] },
       ] = await Promise.all([
-        // getSections, 
-        getRelations]);
+        // getSections,
+        getRelations,
+      ]);
 
       setSections(sortSections(sections));
 
@@ -218,9 +219,8 @@ const ObjectsFormPage = () => {
   }, [id, tableInfo, selectedTabIndex]);
 
   const getSubtitleValue = useMemo(() => {
-    return watch(tableInfo?.data?.table?.subtitle_field_slug)
-  }, [tableInfo])
-
+    return watch(tableInfo?.data?.table?.subtitle_field_slug);
+  }, [tableInfo]);
 
   // Automatic setValue for End of Session
 
@@ -293,10 +293,10 @@ const ObjectsFormPage = () => {
               Закрыть
             </SecondaryButton>
 
-            <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-              <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
+            {/* <PermissionWrapperV2 tableSlug={tableSlug} type="update"> */}
+            <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
 
-              {/* {customEvents?.map((event) => (
+            {/* {customEvents?.map((event) => (
                 <PrimaryButton
                   key={event.id}
                   onClick={() => invokeFunction(event)}
@@ -304,13 +304,13 @@ const ObjectsFormPage = () => {
                   <IconGenerator icon={event.icon} /> {event.label}
                 </PrimaryButton>
               ))} */}
-              <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
-                  <Save />
-                  Сохранить
-                </PrimaryButton>
-              </PermissionWrapperV2>
+            <PermissionWrapperV2 tableSlug={tableSlug} type={id ? "update" : "write"}>
+              <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
+                <Save />
+                Сохранить
+              </PrimaryButton>
             </PermissionWrapperV2>
+            {/* </PermissionWrapperV2> */}
           </>
         }
       />

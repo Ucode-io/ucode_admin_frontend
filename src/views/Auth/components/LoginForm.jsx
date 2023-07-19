@@ -19,16 +19,23 @@ import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import { firebaseCloudMessaging } from "../../../firebase/config";
 import DynamicFields from "./DynamicFields";
+<<<<<<< HEAD
 import { companyActions } from "../../../store/company/company.slice";
 import RegisterForm from "./RegisterForm";
 import { store } from "../../../store";
 import { showAlert } from "../../../store/alert/alert.thunk";
+=======
+import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
+import AfterLoginModal from "./AfterLoginModal";
+import { useRoleListQuery } from "../../../services/roleServiceV2";
+>>>>>>> after_login
 
 const LoginForm = ({ setIndex, index }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
+  const [afterLoginModal, setAferLoginModal] = useState();
   const [clientTypes, setClientTypes] = useState([]);
   const [formType, setFormType] = useState("LOGIN");
 
@@ -69,6 +76,26 @@ const LoginForm = ({ setIndex, index }) => {
         })),
     }
   );
+  console.log("selectedClientTypeID", selectedClientTypeID);
+
+  const { data: roles } = useRoleListQuery({
+    headers: { "environment-id": selectedEnvID },
+    params: {
+      "client-type-id": selectedClientTypeID,
+      "project-id": selectedProjectID,
+    },
+    queryParams: {
+      enabled: !!selectedClientTypeID,
+      select: (res) => {
+        console.log("res", res);
+        return res?.data?.response?.map((row) => ({
+          label: row.name,
+          value: row.guid,
+        }));
+      },
+    },
+  });
+  console.log("roles", roles);
 
   const { data: computedClientTypes = [] } = useQuery(
     [
@@ -130,11 +157,11 @@ const LoginForm = ({ setIndex, index }) => {
     }
   }, [computedEnvironments]);
 
-  useEffect(() => {
-    if (computedClientTypes?.length === 1) {
-      setValue("client_type", computedClientTypes[0]?.value);
-    }
-  }, [computedClientTypes]);
+  // useEffect(() => {
+  //   if (computedClientTypes?.length === 1) {
+  //     setValue("client_type", computedClientTypes[0]?.value);
+  //   }
+  // }, [computedClientTypes]);
 
   useEffect(() => {
     getFcmToken();
@@ -175,6 +202,12 @@ const LoginForm = ({ setIndex, index }) => {
     else if (index === 1) register(values);
     else dispatch(loginAction(values)).then(() => setLoading(false));
   };
+
+  useEffect(() => {
+    if (selectedEnvID) {
+      setAferLoginModal(true);
+    }
+  }, [selectedEnvID]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
@@ -280,7 +313,7 @@ const LoginForm = ({ setIndex, index }) => {
                   options={computedEnvironments}
                 />
               </div>
-              <div className={classes.formRow}>
+              {/* <div className={classes.formRow}>
                 <p className={classes.label}>{t("client_type")}</p>
                 <HFSelect
                   required
@@ -290,7 +323,7 @@ const LoginForm = ({ setIndex, index }) => {
                   placeholder={t("enter.client_type")}
                   options={computedClientTypes}
                 />
-              </div>
+              </div> */}
               {computedConnections.length
                 ? computedConnections?.map((connection, idx) => (
                     <DynamicFields
@@ -306,6 +339,19 @@ const LoginForm = ({ setIndex, index }) => {
                   ))
                 : null}
             </div>
+            {afterLoginModal && (
+              <AfterLoginModal
+                control={control}
+                setValue={setValue}
+                watch={watch}
+                handleSubmit={handleSubmit}
+                roles={roles}
+                setFormType={setFormType}
+                formType={formType}
+                computedClientTypes={computedClientTypes}
+                computedConnections={computedConnections}
+              />
+            )}
           </div>
         )}
       </Tabs>

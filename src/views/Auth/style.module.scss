@@ -56,51 +56,59 @@
     }
   }
 
-  .form {
+}
+
+.form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .formArea {
     flex: 1;
-    display: flex;
-    flex-direction: column;
+    overflow: auto;
 
-    .formArea {
-      flex: 1;
-      overflow: auto;
+    .formRow {
+      .label {
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
 
-      .formRow {
-        .label {
-          font-weight: 600;
-          margin-bottom: 12px;
+      margin-bottom: 20px;
+
+      .phone {
+        padding: 8px;
+        border: 1px solid #f8f8f8;
+
+        // &:focus-visible {
+        //   outline: blue;
+        // }
+
+        &:hover {
+          border-color: #000;
         }
 
-        margin-bottom: 20px;
+        input {
+          border: none;
 
-        .phone {
-          padding: 8px;
-          border: 1px solid #f8f8f8;
-
-          // &:focus-visible {
-  //   outline: blue;
-  // }
-
-          &:hover {
-            border-color: #000;
-          }
-
-          input {
-            border: none;
-
-            &:focus-visible {
-              outline: none;
-            }
+          &:focus-visible {
+            outline: none;
           }
         }
       }
     }
+  }
 
-    .buttonsArea {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
+  .buttonsArea {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .modalButtonsArea {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
   }
 }
 

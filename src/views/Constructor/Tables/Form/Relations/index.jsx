@@ -78,6 +78,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
         loader={loader}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}
+        checkPermission={false}
         dataLength={1}
         additionalRow={
           <TableRowButton

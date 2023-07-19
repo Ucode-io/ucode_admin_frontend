@@ -34,7 +34,7 @@ export default function LanguagesNavbar() {
   };
 
   const { data: projectInfo } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
-    return projectService.getById(projectId);
+    return projectService.getByID(projectId);
   });
 
   const languages = useMemo(() => {
@@ -47,7 +47,7 @@ export default function LanguagesNavbar() {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    i18n.changeLanguage(languages[0]?.slug);
+    if (languages?.length) i18n.changeLanguage(languages?.[0]?.slug);
   }, [languages]);
 
   const handleRowClick = (lang) => {
@@ -56,7 +56,7 @@ export default function LanguagesNavbar() {
   };
 
   const activeLang = useMemo(() => {
-    return languages.find((lang) => lang.slug === i18n.language);
+    return languages?.find((lang) => lang.slug === i18n.language);
   }, [i18n.language]);
 
   return (
@@ -82,7 +82,7 @@ export default function LanguagesNavbar() {
           "aria-labelledby": "basic-button",
         }}
       >
-        {languages.map((language) => (
+        {languages?.map((language) => (
           <MenuItem key={language.slug} onClick={() => handleRowClick(language.slug)}>
             {language.title}
           </MenuItem>

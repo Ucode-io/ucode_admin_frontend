@@ -19,16 +19,12 @@ import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import { firebaseCloudMessaging } from "../../../firebase/config";
 import DynamicFields from "./DynamicFields";
-<<<<<<< HEAD
 import { companyActions } from "../../../store/company/company.slice";
 import RegisterForm from "./RegisterForm";
 import { store } from "../../../store";
 import { showAlert } from "../../../store/alert/alert.thunk";
-=======
-import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
 import AfterLoginModal from "./AfterLoginModal";
 import { useRoleListQuery } from "../../../services/roleServiceV2";
->>>>>>> after_login
 
 const LoginForm = ({ setIndex, index }) => {
   const { t } = useTranslation();

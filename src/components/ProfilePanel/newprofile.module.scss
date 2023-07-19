@@ -19,6 +19,7 @@
         .block {
             overflow-y: auto;
             padding: 8px;
+            height: 500px;
 
             &::-webkit-scrollbar {
                 display: none;

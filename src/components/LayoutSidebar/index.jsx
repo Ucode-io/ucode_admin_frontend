@@ -243,7 +243,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between",
             height: "85vh",
             overflow: "hidden",
           }}

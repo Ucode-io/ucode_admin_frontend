@@ -292,6 +292,16 @@ const NewRelationSection = ({
       });
   }, [tableSlug, menuItem.table_id]);
 
+  const isMultiLanguage = useMemo(() => {
+    const allFields = [];
+    selectedTab?.sections.map((section) => {
+      section?.fields.map((field) => {
+        allFields.push(field);
+      });
+    });
+    return !!allFields.find((field) => field?.enable_multilanguage === true);
+  }, [selectedTab]);
+
   // if (!data?.length) return <PageFallback />;
   // if (loader) return <PageFallback />;
   return (
@@ -466,6 +476,7 @@ const NewRelationSection = ({
                           <NewMainInfo
                             control={control}
                             loader={loader}
+                            isMultiLanguage={isMultiLanguage}
                             computedSections={computedSections}
                             setFormValue={setFormValue}
                             relatedTable={relatedTable}

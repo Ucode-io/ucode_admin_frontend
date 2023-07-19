@@ -1,5 +1,5 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
-import { Box, InputAdornment } from "@mui/material";
+import { InputAdornment } from "@mui/material";
 import { useEffect, useMemo } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,8 +19,6 @@ import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import { firebaseCloudMessaging } from "../../../firebase/config";
 import DynamicFields from "./DynamicFields";
-import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
-import AfterLoginModal from "./AfterLoginModal";
 import { useRoleListQuery } from "../../../services/roleServiceV2";
 
 const LoginForm = () => {
@@ -28,8 +26,6 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [afterLoginModal, setAferLoginModal] = useState();
-  const [clientTypes, setClientTypes] = useState([]);
 
   useEffect(() => {
     getFcmToken();
@@ -73,9 +69,8 @@ const LoginForm = () => {
         })),
     }
   );
-  console.log("selectedClientTypeID", selectedClientTypeID);
 
-  const { data: roles } = useRoleListQuery({
+  const { data: computedRoles } = useRoleListQuery({
     headers: { "environment-id": selectedEnvID },
     params: {
       "client-type-id": selectedClientTypeID,
@@ -84,7 +79,6 @@ const LoginForm = () => {
     queryParams: {
       enabled: !!selectedClientTypeID,
       select: (res) => {
-        console.log("res", res);
         return res?.data?.response?.map((row) => ({
           label: row.name,
           value: row.guid,
@@ -92,7 +86,6 @@ const LoginForm = () => {
       },
     },
   });
-  console.log("roles", roles);
 
   const { data: computedClientTypes = [] } = useQuery(
     [
@@ -153,12 +146,17 @@ const LoginForm = () => {
       setValue("environment_id", computedEnvironments[0]?.value);
     }
   }, [computedEnvironments]);
+  useEffect(() => {
+    if (computedRoles?.length === 1) {
+      setValue("role_id", computedRoles[0]?.value);
+    }
+  }, [computedRoles]);
 
-  // useEffect(() => {
-  //   if (computedClientTypes?.length === 1) {
-  //     setValue("client_type", computedClientTypes[0]?.value);
-  //   }
-  // }, [computedClientTypes]);
+  useEffect(() => {
+    if (computedClientTypes?.length === 1) {
+      setValue("client_type", computedClientTypes[0]?.value);
+    }
+  }, [computedClientTypes]);
 
   const multiCompanyLogin = (data) => {
     setLoading(true);
@@ -167,7 +165,6 @@ const LoginForm = () => {
       .multiCompanyLogin(data)
       .then((res) => {
         setLoading(false);
-        setClientTypes(res.client_types);
         setCompanies(res.companies);
         setFormType("MULTI_COMPANY");
       })
@@ -179,12 +176,6 @@ const LoginForm = () => {
     if (formType === "LOGIN") multiCompanyLogin(values);
     else dispatch(loginAction(values)).then(() => setLoading(false));
   };
-
-  useEffect(() => {
-    if (selectedEnvID) {
-      setAferLoginModal(true);
-    }
-  }, [selectedEnvID]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
@@ -296,7 +287,7 @@ const LoginForm = () => {
                   options={computedEnvironments}
                 />
               </div>
-              {/* <div className={classes.formRow}>
+              <div className={classes.formRow}>
                 <p className={classes.label}>{t("client_type")}</p>
                 <HFSelect
                   required
@@ -306,7 +297,18 @@ const LoginForm = () => {
                   placeholder={t("enter.client_type")}
                   options={computedClientTypes}
                 />
-              </div> */}
+              </div>
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("role")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="role_id"
+                  size="large"
+                  placeholder={t("enter.role")}
+                  options={computedRoles}
+                />
+              </div>
               {computedConnections.length
                 ? computedConnections?.map((connection, idx) => (
                     <DynamicFields
@@ -322,19 +324,6 @@ const LoginForm = () => {
                   ))
                 : null}
             </div>
-            {afterLoginModal && (
-              <AfterLoginModal
-                control={control}
-                setValue={setValue}
-                watch={watch}
-                handleSubmit={handleSubmit}
-                roles={roles}
-                setFormType={setFormType}
-                formType={formType}
-                computedClientTypes={computedClientTypes}
-                computedConnections={computedConnections}
-              />
-            )}
           </div>
         )}
       </Tabs>

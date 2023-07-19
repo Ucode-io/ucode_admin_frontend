@@ -4,7 +4,7 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import { Box, Divider, Menu, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PlusIcon } from "../../assets/icons/icon";
 import CompanyModal from "../../layouts/MainLayout/CompanyModal";
 import {
@@ -47,9 +47,12 @@ const NewProfilePanel = ({
   const [projectListEl, setProjectListEl] = useState(null);
   const [environmentListEl, setEnvironmentListEl] = useState(null);
   const [companyModal, setCompanyModal] = useState(null);
+  const [selected, setSelected] = useState(false);
   const menuVisible = Boolean(anchorEl || anchorProfileEl);
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
+  const location = useLocation();
+  const settings = location.pathname.includes("settings");
 
   const handleClick = () => {
     navigate(`/main/${appId}/api-key`);
@@ -76,8 +79,7 @@ const NewProfilePanel = ({
   const handleCompanySelect = (item, e) => {
     dispatch(companyActions.setCompanyItem(item));
     dispatch(companyActions.setCompanyId(item.id));
-    dispatch(companyActions.setProjectItem({}));
-    dispatch(companyActions.setEnvironmentItem({}));
+    setSelected(true);
     setProfileAnchorEl(e.currentTarget);
   };
 
@@ -127,14 +129,6 @@ const NewProfilePanel = ({
     );
   }, []);
 
-  //   useEffect(() => {
-  //     dispatch(
-  //       companyActions.setProjectItem(
-  //         projects?.find((item) => item.project_id === projectId)
-  //       )
-  //     );
-  //   }, [companyId]);
-
   const { isLoading } = useCompanyListQuery({
     params: {
       owner_id: user_id,
@@ -153,8 +147,11 @@ const NewProfilePanel = ({
       enabled: Boolean(companyId),
       onSuccess: (res) => {
         dispatch(companyActions.setProjects(res.projects));
-        dispatch(companyActions.setProjectItem(res.projects[0]));
-        dispatch(companyActions.setProjectId(res.projects[0].project_id));
+        if (selected) {
+          dispatch(companyActions.setProjectItem(res.projects[0]));
+          dispatch(companyActions.setProjectId(res.projects[0].project_id));
+          setSelected(false);
+        }
       },
     },
   });
@@ -166,8 +163,11 @@ const NewProfilePanel = ({
       enabled: Boolean(projectId),
       onSuccess: (res) => {
         dispatch(companyActions.setEnvironments(res.environments));
-        dispatch(companyActions.setEnvironmentItem(res.environments[0]));
-        dispatch(companyActions.setEnvironmentId(res.environments[0].id));
+        if (selected) {
+          dispatch(companyActions.setEnvironmentItem(res.environments[0]));
+          dispatch(companyActions.setEnvironmentId(res.environments[0].id));
+          setSelected(false);
+        }
       },
     },
   });
@@ -186,7 +186,10 @@ const NewProfilePanel = ({
         anchorEl={anchorProfileEl || anchorEl}
         open={menuVisible}
         onClose={closeMenu}
-        classes={{ list: styles.profilemenu, paper: styles.profilepaper }}
+        classes={{
+          list: styles.profilemenu,
+          paper: settings ? styles.settingspaper : styles.profilepaper,
+        }}
       >
         <Box className={styles.leftblock}>
           <div className={styles.block}>

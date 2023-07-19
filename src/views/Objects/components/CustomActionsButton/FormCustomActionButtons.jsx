@@ -11,9 +11,7 @@ const FormCustomActionButton = ({ tableSlug, id, control }) => {
         enabled: !!id,
       },
     });
-
-    console.log("customEvents ==>", customEvents)
-
+    
     const computedCustomEvents = useMemo(() => {
       return customEvents?.filter(event => event.action_type === "HTTP")
     }, [customEvents])

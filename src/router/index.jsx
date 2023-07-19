@@ -77,13 +77,15 @@ const Router = () => {
   const [favicon, setFavicon] = useState("");
   const cashboxIsOpen = cashbox.is_open === "Открыто";
 
+  console.log("applications", applications);
   const redirectLink = useMemo(() => {
     if (location.pathname.includes("settings"))
       return "/settings/constructor/apps";
     if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
     if (!applications.length || !applications[0].permission?.read)
       return "/settings/constructor/apps";
-    return `/main/${applications[0].id}`;
+    // return "/settings/constructor/apps";
+    return `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
   }, [location.pathname, applications]);
 
   if (!isAuth)

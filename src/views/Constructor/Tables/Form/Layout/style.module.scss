@@ -211,7 +211,7 @@
 }
 
 .summarySection {
-  height: 80px;
+  height: 100px;
   min-width: 100%;
   // max-width: 470px;
   border-radius: 4px;
@@ -227,7 +227,7 @@
   }
 
   .field_summary {
-    width: 150px;
+    width: 200px;
     height: 100% !important;
     display: flex;
     overflow: hidden;
@@ -235,6 +235,7 @@
     margin-right: 5px;
     background: #fff;
   }
+
   .field_summary_item {
     width: 150px;
     height: 40px;
@@ -247,11 +248,13 @@
     color: #000;
     text-transform: uppercase;
     position: relative;
+
     .label {
       margin-bottom: 0px !important;
       height: 16px;
       display: none !important;
     }
+
     input {
       display: block;
       font-size: 12px;
@@ -267,9 +270,9 @@
     }
   }
 }
+
 .summaySectionTitle {
   display: flex;
-  align-items: center;
   padding-top: 10px;
   margin-right: 12px;
 
@@ -282,6 +285,7 @@
     line-height: 24px;
     min-width: 200px;
   }
+
   span {
     cursor: pointer;
     width: 24px;
@@ -390,12 +394,14 @@
     }
   }
 }
+
 .newSectionDelete {
   width: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .addBtn {
   height: 40px;
   width: 40px;
@@ -405,6 +411,7 @@
 .tabInput {
   width: 120px;
   cursor: pointer;
+
   fieldset {
     display: none;
   }
@@ -444,8 +451,8 @@
   font-size: 14px;
   font-weight: 500;
   margin: 0;
-  
-  
+
+
 
   &.active {
     background-color: rgba(14, 115, 246, 0.1490196078);

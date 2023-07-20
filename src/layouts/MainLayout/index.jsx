@@ -28,10 +28,6 @@ const MainLayout = ({ setFavicon, favicon }) => {
   //   };
   // }, []);
 
-  const { data: environment } = useQuery(["GET_ENVIRONMENT", envId], () => {
-    return environmentService.getEnvironments(envId);
-  });
-
   const { data: projectInfo } = useQuery(
     ["GET_PROJECT_BY_ID", projectId],
     () => {
@@ -47,7 +43,7 @@ const MainLayout = ({ setFavicon, favicon }) => {
   return (
     <div className={styles.layout}>
       <Favicon url={favicon} />
-      <LayoutSidebar appId={appId} environment={environment} />
+      <LayoutSidebar appId={appId} />
       <div className={styles.content}>
         {/* <RouterTabsBlock selectedTable={selectedTable} /> */}
 

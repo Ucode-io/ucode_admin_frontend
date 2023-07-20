@@ -41,6 +41,14 @@ import WebPage from "../views/WebPage";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
 import ClientUserPage from "../views/Users/UserPage";
 import ClientUserForm from "../views/Users/UserFormPage";
+import EnvironmentPage from "../views/Environments";
+import EnvironmentForm from "../views/Environments/EnvironmentFormPage";
+import ProjectPage from "../views/Projects";
+import ProjectForm from "../views/Projects/ProjectFormPage";
+import RedirectFormPage from "../views/Redirect/RedirectFormPage";
+import RedirectPage from "../views/Redirect";
+import CompanyPage from "../views/Company";
+import CompanyForm from "../views/Company/CompanyFormPage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -72,12 +80,13 @@ const Router = () => {
   const cashboxIsOpen = cashbox.is_open === "Открыто";
 
   const redirectLink = useMemo(() => {
-    if (location.pathname.includes("settings"))
-      return "/settings/constructor/apps";
-    if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
-    if (!applications.length || !applications[0].permission?.read)
-      return "/settings/constructor/apps";
-    return `/main/${applications[0].id}`;
+    // if (location.pathname.includes("settings"))
+    //   return "/settings/constructor/apps";
+    // if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
+    // if (!applications.length || !applications[0].permission?.read)
+    //   return "/settings/constructor/apps";
+    // return "/settings/constructor/apps";
+    return `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
   }, [location.pathname, applications]);
 
   if (!isAuth)
@@ -110,10 +119,30 @@ const Router = () => {
         <Route path=":appId/chat" element={<Chat />}>
           <Route path=":chat_id" element={<Chat />} />
         </Route>
-
-        <Route path=":appId/api-key" element={<ApiKeyPage />} />
-        <Route path=":appId/api-key/create" element={<ApiKeysForm />} />
-        <Route path=":appId/api-key/:apiKeyId" element={<ApiKeysForm />} />
+        <Route path=":appId/projects">
+          <Route index element={<ProjectPage />} />
+          <Route path="create" element={<ProjectForm />} />
+          <Route path=":projectId" element={<ProjectForm />} />
+        </Route>
+        <Route path=":appId/redirects">
+          <Route index element={<RedirectPage />} />
+          <Route path="create" element={<RedirectFormPage />} />
+          <Route path=":redirectId" element={<RedirectFormPage />} />
+        </Route>
+        <Route path=":appId/api-key">
+          <Route index element={<ApiKeyPage />} />
+          <Route path="create" element={<ApiKeysForm />} />
+          <Route path=":apiKeyId" element={<ApiKeysForm />} />
+        </Route>
+        <Route path=":appId/environments">
+          <Route index element={<EnvironmentPage />} />
+          <Route path="create" element={<EnvironmentForm />} />
+          <Route path=":envId" element={<EnvironmentForm />} />
+        </Route>
+        <Route path=":appId/company">
+          <Route index element={<CompanyPage />} />
+          <Route path=":companyId" element={<CompanyForm />} />
+        </Route>
 
         <Route
           path=":appId/microfrontend-playground"
@@ -165,18 +194,12 @@ const Router = () => {
         <Route path="constructor/apps" element={<AppsPage />} />
         <Route path="constructor/apps/create" element={<AppsForm />} />
         <Route path="constructor/apps/:appId" element={<AppsForm />} />
-        <Route
-          path="constructor/microfrontend"
-          element={<MicrofrontendPage />}
-        />
-        <Route
-          path="constructor/microfrontend/create"
-          element={<MicrofrontendForm />}
-        />
-        <Route
-          path="constructor/microfrontend/:microfrontendId"
-          element={<MicrofrontendForm />}
-        />
+
+        <Route path="constructor/microfrontend">
+          <Route index element={<MicrofrontendPage />} />
+          <Route path="create" element={<MicrofrontendForm />} />
+          <Route path=":microfrontendId" element={<MicrofrontendForm />} />
+        </Route>
 
         {/* <Route path="constructor/objects" element={<ConstructorTablesListPage />} /> */}
         <Route

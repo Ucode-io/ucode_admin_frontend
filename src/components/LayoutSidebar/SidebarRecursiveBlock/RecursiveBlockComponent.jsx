@@ -5,7 +5,7 @@ import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Draggable } from "react-smooth-dnd";
 import { useMenuListQuery } from "../../../services/menuService";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
@@ -139,7 +139,6 @@ const RecursiveBlock = ({
       setChildBlockVisible(true);
     }
   }, []);
-  console.log("element", element);
 
   return (
     <Draggable key={index}>

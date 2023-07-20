@@ -28,10 +28,11 @@ const ClientUserForm = () => {
   const { userId, userMenuId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const auth = store.getState().auth;
+  const company = store.getState().company;
   const mainForm = useForm({
     defaultValues: {
-      company_id: "",
+      company_id: company.companyId,
+      project_id: company.projectId,
     },
   });
   const { isLoading } = useUserGetByIdQuery({
@@ -95,7 +96,7 @@ const ClientUserForm = () => {
 
   const onSubmit = (data) => {
     if (userId) updateProject(data);
-    else createProject(data);
+    else createProject({ ...data, active: data.active ? 1 : 0 });
   };
 
   if (updateLoading) return <PageFallback />;

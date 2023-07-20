@@ -14,7 +14,7 @@ const userService = {
     authRequestV2.get(`/v2/user/${userId}`, {
       params,
     }),
-  userUpdate: (data) => authRequestV2.put(`/v2/user/${data}`, data, {}),
+  userUpdate: (data) => authRequestV2.put(`/v2/user`, data, {}),
   userCreate: (data) => authRequestV2.post(`/v2/user`, data, {}),
   userDelete: (id, userMenuId) =>
     authRequestV2.delete(`/v2/user/${id}`, {

@@ -14,6 +14,7 @@ const initialState = {
   tables: [],
   environmentId: "",
   resourceId: "",
+  after_login: false,
 };
 
 export const { actions: authActions, reducer: authReducer } = createSlice({
@@ -46,6 +47,7 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
           }, {})
         : [];
       state.loading = false;
+      state.after_login = true;
     },
     setTokens(state, { payload }) {
       state.token = payload.token.access_token;

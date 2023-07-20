@@ -23,14 +23,18 @@ import { companyActions } from "../../../store/company/company.slice";
 import RegisterForm from "./RegisterForm";
 import { store } from "../../../store";
 import { showAlert } from "../../../store/alert/alert.thunk";
+import { useRoleListQuery } from "../../../services/roleServiceV2";
 
 const LoginForm = ({ setIndex, index }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [clientTypes, setClientTypes] = useState([]);
   const [formType, setFormType] = useState("LOGIN");
+
+  useEffect(() => {
+    getFcmToken();
+  }, []);
 
   const getFcmToken = async () => {
     const token = await firebaseCloudMessaging.init();
@@ -69,6 +73,23 @@ const LoginForm = ({ setIndex, index }) => {
         })),
     }
   );
+
+  const { data: computedRoles } = useRoleListQuery({
+    headers: { "environment-id": selectedEnvID },
+    params: {
+      "client-type-id": selectedClientTypeID,
+      "project-id": selectedProjectID,
+    },
+    queryParams: {
+      enabled: !!selectedClientTypeID,
+      select: (res) => {
+        return res?.data?.response?.map((row) => ({
+          label: row.name,
+          value: row.guid,
+        }));
+      },
+    },
+  });
 
   const { data: computedClientTypes = [] } = useQuery(
     [
@@ -129,6 +150,11 @@ const LoginForm = ({ setIndex, index }) => {
       setValue("environment_id", computedEnvironments[0]?.value);
     }
   }, [computedEnvironments]);
+  useEffect(() => {
+    if (computedRoles?.length === 1) {
+      setValue("role_id", computedRoles[0]?.value);
+    }
+  }, [computedRoles]);
 
   useEffect(() => {
     if (computedClientTypes?.length === 1) {
@@ -148,7 +174,6 @@ const LoginForm = ({ setIndex, index }) => {
       .multiCompanyLogin(data)
       .then((res) => {
         setLoading(false);
-        setClientTypes(res.client_types);
         setCompanies(res.companies);
         setFormType("MULTI_COMPANY");
         dispatch(companyActions.setCompanies(res.companies));
@@ -289,6 +314,17 @@ const LoginForm = ({ setIndex, index }) => {
                   size="large"
                   placeholder={t("enter.client_type")}
                   options={computedClientTypes}
+                />
+              </div>
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("role")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="role_id"
+                  size="large"
+                  placeholder={t("enter.role")}
+                  options={computedRoles}
                 />
               </div>
               {computedConnections.length

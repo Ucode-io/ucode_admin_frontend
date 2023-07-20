@@ -207,5 +207,6 @@
   "excel.download": "Скачать Excel",
   "select.environment": "Select environment",
   "register.form": "Регистрация",
-  "register.form.desc": "Заполните данные для регистрации"
+  "register.form.desc": "Заполните данные для регистрации",
+  "enter.role": "Выберите роль"
 }

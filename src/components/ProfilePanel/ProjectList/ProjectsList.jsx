@@ -9,6 +9,7 @@ const ProjectList = ({
   closeProjectList,
   projectVisible,
   projectList,
+  setSelected,
 }) => {
   const dispatch = useDispatch();
 
@@ -32,7 +33,8 @@ const ProjectList = ({
               </>
             }
             onClick={() => {
-              dispatch(companyActions.setEnvironmentItem({}));
+              // dispatch(companyActions.setEnvironmentItem({}));
+              setSelected(true);
               dispatch(companyActions.setProjectItem(item));
               dispatch(companyActions.setProjectId(item.project_id));
               closeProjectList();

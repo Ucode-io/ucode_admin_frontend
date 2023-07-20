@@ -141,7 +141,7 @@ const NewProfilePanel = ({
         company.projects?.find((item) => item.project_id === company.projectId)
       )
     );
-  }, []);
+  }, [company.companies, company.environments]);
 
   const { isLoading } = useCompanyListQuery({
     params: {

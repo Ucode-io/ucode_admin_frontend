@@ -1,0 +1,17 @@
+.tableCells {
+    margin: 0px 0 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.collapse {
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.submitBtn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 20px;
+}

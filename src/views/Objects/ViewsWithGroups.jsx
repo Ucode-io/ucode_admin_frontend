@@ -13,7 +13,7 @@ import SettingsButton from "./components/ViewSettings/SettingsButton";
 import { useNavigate, useParams } from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Modal } from "@mui/material";
 import { useMutation, useQuery } from "react-query";
 import useFilters from "../../hooks/useFilters";
 import FastFilterButton from "./components/FastFilter/FastFilterButton";
@@ -44,6 +44,7 @@ import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView
 import LanguagesNavbar from "./LanguagesNavbar";
 import SearchInput from "../../components/SearchInput";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
+import ShareModal from "./ShareModal/ShareModal";
 
 const ViewsWithGroups = ({
   views,
@@ -303,6 +304,9 @@ const ViewsWithGroups = ({
               </div>
             </Menu> */}
 
+              <ShareModal/>
+              
+            
             <LanguagesNavbar />
 
             <Button variant="outlined">

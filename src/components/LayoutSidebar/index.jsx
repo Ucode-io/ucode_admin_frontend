@@ -9,7 +9,6 @@ import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import menuService, { useMenuListQuery } from "../../services/menuService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
-import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
 import FolderModal from "./FolderModalComponent";
 import "./style.scss";
@@ -26,13 +25,11 @@ import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import { UdevsLogo } from "../../assets/icons/icon";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
-import {
-  useMenuSettingGetByIdQuery,
-  useMenuSettingListQuery,
-} from "../../services/menuSettingService";
+import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
+import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import { store } from "../../store";
 
-const LayoutSidebar = ({ favicon, appId, environment }) => {
+const LayoutSidebar = ({ appId }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -58,7 +55,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const [searchText, setSearchText] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
-  const [root, setRoot] = useState("");
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openSidebarMenu = Boolean(menu?.event);
 
@@ -175,10 +171,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     }
   }, [menuTemplate]);
 
-  const switchRightSideVisible = () => {
-    setSidebarIsOpen(!sidebarIsOpen);
-  };
-
   useEffect(() => {
     getMenuList();
   }, [searchText]);
@@ -250,27 +242,30 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between",
-            height: "calc(100% - 56px)",
+            height: "85vh",
+            overflow: "hidden",
           }}
         >
-          <div>
-            <Box className="search">
-              <SearchInput
-                style={{
-                  borderRadius: "8px",
-                  width: "100%",
-                }}
-                onChange={(e) => {
-                  setSearchText(e);
-                }}
-              />
-            </Box>
-
+          <Box className="search">
+            <SearchInput
+              style={{
+                borderRadius: "8px",
+                width: "100%",
+              }}
+              onChange={(e) => {
+                setSearchText(e);
+              }}
+            />
+          </Box>
+          <div
+            style={{
+              overflow: "auto",
+            }}
+          >
             {!menuList?.menus ? (
               <RingLoaderWithWrapper />
             ) : (
-              <>
+              <Box>
                 <MenuButtonComponent
                   title={"Chat"}
                   icon={
@@ -352,30 +347,29 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                   }}
                 />
                 <Divider />
-              </>
+              </Box>
             )}
           </div>
-
-          <MenuButtonComponent
-            title={"Profile"}
-            openFolderCreateModal={openFolderCreateModal}
-            onClick={(e) => {
-              anchorEl ? setAnchorEl(null) : openMenu(e);
-            }}
-            children={
-              <ProfilePanel
-                anchorEl={anchorEl}
-                handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-                projectInfo={projectInfo}
-              />
-            }
-            style={{
-              background: menuStyle?.background || "#fff",
-              color: menuStyle?.text || "#000",
-            }}
-            sidebarIsOpen={sidebarIsOpen}
-          />
         </Box>
+        <MenuButtonComponent
+          title={"Profile"}
+          openFolderCreateModal={openFolderCreateModal}
+          onClick={(e) => {
+            anchorEl ? setAnchorEl(null) : openMenu(e);
+          }}
+          children={
+            <NewProfilePanel
+              anchorEl={anchorEl}
+              handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+              projectInfo={projectInfo}
+            />
+          }
+          style={{
+            background: menuStyle?.background || "#fff",
+            color: menuStyle?.text || "#000",
+          }}
+          sidebarIsOpen={sidebarIsOpen}
+        />
 
         {(modalType === "create" ||
           modalType === "parent" ||
@@ -421,7 +415,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
       </div>
       <SubMenu
         child={child}
-        environment={environment}
         subMenuIsOpen={subMenuIsOpen}
         setSubMenuIsOpen={setSubMenuIsOpen}
         openFolderCreateModal={openFolderCreateModal}

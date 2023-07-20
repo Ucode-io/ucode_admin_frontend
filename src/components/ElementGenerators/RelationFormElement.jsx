@@ -315,7 +315,7 @@ const AutoCompleteElement = ({
   useEffect(() => {
     setDefaultValue();
   }, [options, multipleInsertField]);
-  console.log('field', field);
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

@@ -358,7 +358,7 @@ export const CrossIcon = () => (
   </svg>
 );
 
-export const PlusIcon = () => (
+export const PlusIcon = ({ fill }) => (
   <svg
     width="24"
     height="24"
@@ -368,14 +368,14 @@ export const PlusIcon = () => (
   >
     <path
       d="M12 5V19"
-      stroke="#6E8BB7"
+      stroke={fill}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
       d="M5 12H19"
-      stroke="#6E8BB7"
+      stroke={fill}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

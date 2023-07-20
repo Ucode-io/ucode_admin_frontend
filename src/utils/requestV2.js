@@ -68,9 +68,10 @@ requestV2.interceptors.request.use(
   (config) => {
     const authStore = store.getState().auth;
     const token = authStore.token;
-    const environmentId = authStore.environmentId;
     const resourceId = authStore.resourceId;
-    const projectId = authStore.projectId;
+    const companyStore = store.getState().company;
+    const environmentId = companyStore.environmentId;
+    const projectId = companyStore.projectId;
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

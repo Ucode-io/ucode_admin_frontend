@@ -9,7 +9,6 @@ import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import menuService, { useMenuListQuery } from "../../services/menuService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
-import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
 import FolderModal from "./FolderModalComponent";
 import "./style.scss";
@@ -30,7 +29,7 @@ import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
 import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import { store } from "../../store";
 
-const LayoutSidebar = ({ favicon, appId, environment }) => {
+const LayoutSidebar = ({ appId }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -416,7 +415,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
       </div>
       <SubMenu
         child={child}
-        environment={environment}
         subMenuIsOpen={subMenuIsOpen}
         setSubMenuIsOpen={setSubMenuIsOpen}
         openFolderCreateModal={openFolderCreateModal}

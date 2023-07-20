@@ -12,7 +12,6 @@ import { mainActions } from "../../../store/main/main.slice";
 
 const SubMenu = ({
   child,
-  environment,
   subMenuIsOpen,
   openFolderCreateModal,
   setFolderModalType,
@@ -116,20 +115,13 @@ const SubMenu = ({
             {isLoading ? (
               <RingLoaderWithWrapper />
             ) : (
-              <div
-                className="nav-block"
-                style={{
-                  // height: `calc(100vh - ${57}px)`,
-                  background: environment?.data?.background,
-                }}
-              >
+              <div className="nav-block">
                 <div className="menu-element">
                   {child?.map((element, index) => (
                     <RecursiveBlock
                       key={index}
                       element={element}
                       openFolderCreateModal={openFolderCreateModal}
-                      environment={environment}
                       setFolderModalType={setFolderModalType}
                       sidebarIsOpen={subMenuIsOpen}
                       setTableModal={setTableModal}

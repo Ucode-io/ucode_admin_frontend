@@ -26,8 +26,23 @@ import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import { UdevsLogo } from "../../assets/icons/icon";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
 import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
-import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import { store } from "../../store";
+import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
+
+const admin = {
+  id: "12",
+  label: "Admin",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+  type: "FOLDER",
+  data: {
+    permission: {
+      read: true,
+      write: true,
+      delete: true,
+      update: true,
+    },
+  },
+};
 
 const LayoutSidebar = ({ appId }) => {
   const sidebarIsOpen = useSelector(
@@ -65,6 +80,7 @@ const LayoutSidebar = ({ appId }) => {
   const handleCloseNotify = () => {
     setMenu(null);
   };
+
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: appId,
@@ -74,7 +90,27 @@ const LayoutSidebar = ({ appId }) => {
       // cacheTime: 10,
       enabled: Boolean(appId),
       onSuccess: (res) => {
-        setChild(res.menus);
+        if (appId === "12") {
+          setChild([
+            {
+              label: "Users",
+              path: "users",
+              type: "FOLDER",
+              parent_id: "12",
+              id: "13",
+              data: {
+                permission: {
+                  read: true,
+                  write: true,
+                  delete: true,
+                  update: true,
+                },
+              },
+            },
+          ]);
+        } else {
+          setChild(res.menus);
+        }
       },
     },
   });
@@ -153,7 +189,7 @@ const LayoutSidebar = ({ appId }) => {
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
       })
       .then((res) => {
-        setMenuList(res);
+        setMenuList([admin, ...res.menus]);
       })
       .finally((error) => {
         console.log("error", error);
@@ -176,7 +212,7 @@ const LayoutSidebar = ({ appId }) => {
   }, [searchText]);
 
   useEffect(() => {
-    setSelectedApp(menuList?.menus?.find((item) => item?.id === appId));
+    setSelectedApp(menuList?.find((item) => item?.id === appId));
   }, [menuList]);
 
   useEffect(() => {
@@ -191,7 +227,7 @@ const LayoutSidebar = ({ appId }) => {
   );
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(menuList?.menus, dropResult);
+    const result = applyDrag(menuList, dropResult);
     if (result) {
       menuService
         .updateOrder({
@@ -262,7 +298,7 @@ const LayoutSidebar = ({ appId }) => {
               overflow: "auto",
             }}
           >
-            {!menuList?.menus ? (
+            {!menuList ? (
               <RingLoaderWithWrapper />
             ) : (
               <Box>
@@ -303,8 +339,8 @@ const LayoutSidebar = ({ appId }) => {
                       dragHandleSelector=".column-drag-handle"
                       onDrop={onDrop}
                     >
-                      {menuList?.menus &&
-                        menuList?.menus?.map((element, index) => (
+                      {menuList &&
+                        menuList?.map((element, index) => (
                           <AppSidebar
                             key={index}
                             element={element}

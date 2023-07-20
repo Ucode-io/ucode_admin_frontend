@@ -34,9 +34,21 @@ authRequestV2.interceptors.request.use(
   (config) => {
     const authStore = store.getState().auth;
     const token = authStore.token;
+    const projectId = authStore.projectId;
+    const environmentId = authStore.environmentId;
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      config.headers["environment-id"] = environmentId;
+    }
+    if (!config.params?.["project-id"]) {
+      if (config.params) {
+        config.params["project-id"] = projectId;
+      } else {
+        config.params = {
+          "project-id": projectId,
+        };
+      }
     }
 
     return config;

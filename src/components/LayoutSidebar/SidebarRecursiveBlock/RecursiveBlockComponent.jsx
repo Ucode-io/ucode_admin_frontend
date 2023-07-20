@@ -13,6 +13,8 @@ import IconGenerator from "../../IconPicker/IconGenerator";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
 import { store } from "../../../store";
+import { useQuery, useQueryClient } from "react-query";
+import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
 
 const RecursiveBlock = ({
   index,
@@ -30,13 +32,35 @@ const RecursiveBlock = ({
 }) => {
   const { appId, tableSlug } = useParams();
   const dispatch = useDispatch();
-  const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
+  const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const menuItem = store.getState().menu.menuItem;
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+  const queryClient = useQueryClient();
+
+  const navigateMenu = () => {
+    switch (element?.type) {
+      case "FOLDER":
+        return navigate(`/main/${appId}`);
+      case "TABLE":
+        return navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
+      case "MICROFRONTEND":
+        return navigate(
+          `/main/${appId}/page/${element?.data?.microfrontend?.id}`
+        );
+      case "WEBPAGE":
+        return navigate(
+          `/main/${appId}/web-page/${element?.data?.webpage?.id}`
+        );
+      case "USER":
+        return navigate(`/main/${appId}/user-page/${element?.guid}`);
+      default:
+        return navigate(`/main/${appId}`);
+    }
+  };
 
   const { isLoading } = useMenuListQuery({
     params: {
@@ -66,16 +90,47 @@ const RecursiveBlock = ({
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
+  const { data: computedClientTypes } = useQuery(
+    ["GET_CLIENT_TYPE_LIST"],
+    () => {
+      return clientTypeServiceV2.getList();
+    },
+    {
+      onSuccess: (res) => {
+        console.log("res", res.data.response);
+        setChild(
+          res.data.response?.map((row) => ({
+            ...row,
+            type: "USER",
+            parent_id: "13",
+            data: {
+              permission: {
+                read: true,
+              },
+            },
+          }))
+        );
+      },
+    }
+  );
 
-  const clickHandler = () => {
+  const clickHandler = (e) => {
+    if (element.id === "13") {
+      queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
+    } else {
+      setCheck(true);
+      navigateMenu();
+    }
+    e.stopPropagation();
     if (!pinIsEnabled && element.type !== "FOLDER") {
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
-    setCheck(true);
     setId(element?.id);
-    element.type === "FOLDER" && navigate(`/main/${appId}`);
+    setElement(element);
+    dispatch(menuActions.setMenuItem(element));
   };
+
   useEffect(() => {
     if (
       element.id === "0" ||
@@ -97,21 +152,7 @@ const RecursiveBlock = ({
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
             onClick={(e) => {
-              e.stopPropagation();
-              element.type === "TABLE" &&
-                navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
-              element.type === "MICROFRONTEND" &&
-                navigate(
-                  `/main/${appId}/page/${element?.data?.microfrontend?.id}`
-                );
-              if (element.type === "WEBPAGE") {
-                navigate(
-                  `/main/${appId}/web-page/${element?.data?.webpage?.id}`
-                );
-              }
-              clickHandler();
-              setElement(element);
-              dispatch(menuActions.setMenuItem(element));
+              clickHandler(e);
             }}
           >
             <div
@@ -135,7 +176,8 @@ const RecursiveBlock = ({
 
               {(sidebarIsOpen && element?.label) ||
                 element?.data?.microfrontend?.name ||
-                element?.data?.webpage?.title}
+                element?.data?.webpage?.title ||
+                element?.name}
             </div>
             {element?.type === "FOLDER" && sidebarIsOpen ? (
               <Box className="icon_group">

@@ -3,38 +3,15 @@ import styles from "./environment.module.scss";
 import { useDispatch } from "react-redux";
 import ProfileItem from "../ProfileItem";
 import { companyActions } from "../../../store/company/company.slice";
-import authService from "../../../services/auth/authService";
-import { store } from "../../../store";
-import { authActions } from "../../../store/auth/auth.slice";
 
 const EnvironmentsList = ({
   environmentListEl,
   closeEnvironmentList,
   environmentVisible,
   environmentList,
+  refreshTokenFunc,
 }) => {
   const dispatch = useDispatch();
-  const refreshToken = store.getState().auth.refreshToken;
-  const environmentId = store.getState().company.environmentId;
-  const projectId = store.getState().company.projectId;
-
-  const params = {
-    refresh_token: refreshToken,
-    env_id: environmentId,
-    project_id: projectId,
-  };
-
-  const refreshTokenFunc = (env_id) => {
-    authService
-      .updateToken({ ...params, env_id: env_id })
-      .then((res) => {
-        console.log("res", res);
-        store.dispatch(authActions.setTokens(res));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   return (
     <Menu

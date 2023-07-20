@@ -26,11 +26,23 @@ import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import { UdevsLogo } from "../../assets/icons/icon";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
-import {
-  useMenuSettingGetByIdQuery,
-  useMenuSettingListQuery,
-} from "../../services/menuSettingService";
+import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
 import { store } from "../../store";
+
+const admin = {
+  id: "12",
+  label: "Admin",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+  type: "FOLDER",
+  data: {
+    permission: {
+      read: true,
+      write: true,
+      delete: true,
+      update: true,
+    },
+  },
+};
 
 const LayoutSidebar = ({ favicon, appId, environment }) => {
   const sidebarIsOpen = useSelector(
@@ -58,7 +70,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const [searchText, setSearchText] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
-  const [root, setRoot] = useState("");
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openSidebarMenu = Boolean(menu?.event);
 
@@ -69,6 +80,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const handleCloseNotify = () => {
     setMenu(null);
   };
+
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: appId,
@@ -78,7 +90,27 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
       // cacheTime: 10,
       enabled: Boolean(appId),
       onSuccess: (res) => {
-        setChild(res.menus);
+        if (appId === "12") {
+          setChild([
+            {
+              label: "Users",
+              path: "users",
+              type: "FOLDER",
+              parent_id: "12",
+              id: "13",
+              data: {
+                permission: {
+                  read: true,
+                  write: true,
+                  delete: true,
+                  update: true,
+                },
+              },
+            },
+          ]);
+        } else {
+          setChild(res.menus);
+        }
       },
     },
   });
@@ -157,7 +189,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
       })
       .then((res) => {
-        setMenuList(res);
+        setMenuList([admin, ...res.menus]);
       })
       .finally((error) => {
         console.log("error", error);
@@ -184,7 +216,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   }, [searchText]);
 
   useEffect(() => {
-    setSelectedApp(menuList?.menus?.find((item) => item?.id === appId));
+    setSelectedApp(menuList?.find((item) => item?.id === appId));
   }, [menuList]);
 
   useEffect(() => {
@@ -199,7 +231,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   );
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(menuList?.menus, dropResult);
+    const result = applyDrag(menuList, dropResult);
     if (result) {
       menuService
         .updateOrder({
@@ -267,7 +299,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
               />
             </Box>
 
-            {!menuList?.menus ? (
+            {!menuList ? (
               <RingLoaderWithWrapper />
             ) : (
               <>
@@ -308,8 +340,8 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                       dragHandleSelector=".column-drag-handle"
                       onDrop={onDrop}
                     >
-                      {menuList?.menus &&
-                        menuList?.menus?.map((element, index) => (
+                      {menuList &&
+                        menuList?.map((element, index) => (
                           <AppSidebar
                             key={index}
                             element={element}

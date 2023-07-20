@@ -30,13 +30,32 @@ const RecursiveBlock = ({
 }) => {
   const { appId, tableSlug } = useParams();
   const dispatch = useDispatch();
-  const [childBlockVisible, setChildBlockVisible] = useState(false);
   const navigate = useNavigate();
+  const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const menuItem = store.getState().menu.menuItem;
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+
+  const navigateMenu = () => {
+    switch (element?.type) {
+      case "FOLDER":
+        return navigate(`/main/${appId}`);
+      case "TABLE":
+        return navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
+      case "MICROFRONTEND":
+        return navigate(
+          `/main/${appId}/page/${element?.data?.microfrontend?.id}`
+        );
+      case "WEBPAGE":
+        return navigate(
+          `/main/${appId}/web-page/${element?.data?.webpage?.id}`
+        );
+      default:
+        return navigate(`/main/${appId}`);
+    }
+  };
 
   const { isLoading } = useMenuListQuery({
     params: {
@@ -67,15 +86,19 @@ const RecursiveBlock = ({
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 
-  const clickHandler = () => {
+  const clickHandler = (e) => {
+    e.stopPropagation();
+    navigateMenu();
     if (!pinIsEnabled && element.type !== "FOLDER") {
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
     setCheck(true);
     setId(element?.id);
-    element.type === "FOLDER" && navigate(`/main/${appId}`);
+    setElement(element);
+    dispatch(menuActions.setMenuItem(element));
   };
+
   useEffect(() => {
     if (
       element.id === "0" ||
@@ -84,7 +107,7 @@ const RecursiveBlock = ({
       setChildBlockVisible(true);
     }
   }, []);
-  console.log("elemeent", element);
+
   return (
     <Draggable key={index}>
       <div className="parent-block column-drag-handle" key={index}>
@@ -97,22 +120,7 @@ const RecursiveBlock = ({
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
             onClick={(e) => {
-              e.stopPropagation();
-              element.type === "TABLE" &&
-                navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
-              element.type === "MICROFRONTEND" &&
-                navigate(
-                  `/main/${appId}/page/${element?.data?.microfrontend?.id}`
-                );
-              if (element.type === "WEBPAGE") {
-                navigate(
-                  `/main/${appId}/web-page/${element?.data?.webpage?.id}`
-                );
-                window.location.reload();
-              }
-              clickHandler();
-              setElement(element);
-              dispatch(menuActions.setMenuItem(element));
+              clickHandler(e);
             }}
           >
             <div

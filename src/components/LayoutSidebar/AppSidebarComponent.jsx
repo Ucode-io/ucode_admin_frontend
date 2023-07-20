@@ -52,7 +52,6 @@ const AppSidebar = ({
   const favourite = element?.id === "c57eedc3-a954-4262-a0af-376c65b5a282";
   const menuStyle = menuTemplate?.menu_template;
 
-  console.log("menuStyle", menuStyle);
 
   useEffect(() => {
     setElement(element);

@@ -59,6 +59,8 @@ export default function LanguagesNavbar() {
     return languages.find((lang) => lang.slug === i18n.language);
   }, [i18n.language]);
 
+  console.log("activeLang", activeLang);
+
   return (
     <>
       <Button

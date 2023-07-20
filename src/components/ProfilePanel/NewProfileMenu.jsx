@@ -25,6 +25,7 @@ import ProfileItem from "./ProfileItem";
 import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
 import styles from "./newprofile.module.scss";
+import { useQueryClient } from "react-query";
 
 const NewProfilePanel = ({
   anchorEl,
@@ -34,6 +35,7 @@ const NewProfilePanel = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { appId } = useParams();
+  const queryClient = useQueryClient();
   const company = store.getState().company;
   const auth = store.getState().auth;
   const [anchorProfileEl, setProfileAnchorEl] = useState(null);
@@ -71,14 +73,15 @@ const NewProfilePanel = ({
   };
   const closeMenu = () => {
     setProfileAnchorEl(null);
+    // refreshTokenFunc();
   };
   const openMenu = (event) => {
     setProfileAnchorEl(event.currentTarget);
   };
   const handleCompanySelect = (item, e) => {
+    setSelected(true);
     dispatch(companyActions.setCompanyItem(item));
     dispatch(companyActions.setCompanyId(item.id));
-    setSelected(true);
     setProfileAnchorEl(e.currentTarget);
   };
 
@@ -112,9 +115,10 @@ const NewProfilePanel = ({
 
   const refreshTokenFunc = (env_id) => {
     authService
-      .updateToken({ ...params, env_id: env_id })
+      .updateToken(params)
       .then((res) => {
         store.dispatch(authActions.setTokens(res));
+        window.location.reload();
       })
       .catch((err) => {
         console.log(err);
@@ -155,13 +159,12 @@ const NewProfilePanel = ({
       company_id: company.companyId,
     },
     queryParams: {
-      enabled: Boolean(selected),
+      enabled: Boolean(company.companyId),
       onSuccess: (res) => {
         dispatch(companyActions.setProjects(res.projects));
         if (selected) {
           dispatch(companyActions.setProjectItem(res.projects[0]));
           dispatch(companyActions.setProjectId(res.projects[0].project_id));
-          setSelected(false);
         }
       },
     },
@@ -172,15 +175,14 @@ const NewProfilePanel = ({
       project_id: company.projectId,
     },
     queryParams: {
-      enabled: Boolean(selected),
+      enabled: Boolean(company.projectId),
       onSuccess: (res) => {
-        dispatch(companyActions.setEnvironments(res.environments));
         if (selected) {
           dispatch(companyActions.setEnvironmentItem(res.environments[0]));
           dispatch(companyActions.setEnvironmentId(res.environments[0].id));
-          refreshTokenFunc(res.environments[0].id);
-          setSelected(false);
         }
+        dispatch(companyActions.setEnvironments(res.environments));
+        setSelected(false);
       },
     },
   });
@@ -198,7 +200,10 @@ const NewProfilePanel = ({
         id="lock-menu"
         anchorEl={anchorProfileEl || anchorEl}
         open={menuVisible}
-        onClose={closeMenu}
+        onClose={() => {
+          closeMenu();
+          refreshTokenFunc();
+        }}
         classes={{
           list: styles.profilemenu,
           paper: settings ? styles.settingspaper : styles.profilepaper,
@@ -219,12 +224,14 @@ const NewProfilePanel = ({
                         }
                         onClick={(e) => {
                           handleCompanySelect(item, e);
+                          queryClient.refetchQueries(["PROJECT"], item.id);
                         }}
                       >
                         {item?.name?.charAt(0).toUpperCase()}
                       </p>
                     </Tooltip>
                   }
+                  key={item.id}
                   type="company"
                   className={styles.company}
                 />
@@ -246,9 +253,9 @@ const NewProfilePanel = ({
               children={
                 <>
                   <p className={styles.companyavatar}>
-                    {company?.companyItem?.name?.charAt(0).toUpperCase()}
+                    {company.companyItem?.name?.charAt(0).toUpperCase()}
                   </p>
-                  {company?.companyItem?.name}
+                  {company.companyItem?.name}
                 </>
               }
             />
@@ -290,9 +297,9 @@ const NewProfilePanel = ({
             <ProfileItem
               children={
                 <ResourceList
-                  item={company?.environmentItem?.name || "No environment"}
+                  item={company.environmentItem?.name || "No environment"}
                   className={styles.environmentavatar}
-                  colorItem={company?.environmentItem}
+                  colorItem={company.environmentItem}
                 />
               }
               onClick={openEnvironmentList}

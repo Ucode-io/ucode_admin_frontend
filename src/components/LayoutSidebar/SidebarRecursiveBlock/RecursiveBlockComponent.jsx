@@ -55,6 +55,8 @@ const RecursiveBlock = ({
         return navigate(
           `/main/${appId}/web-page/${element?.data?.webpage?.id}`
         );
+      case "USER":
+        return navigate(`/main/${appId}/user-page/${element?.guid}`);
       default:
         return navigate(`/main/${appId}`);
     }
@@ -88,24 +90,29 @@ const RecursiveBlock = ({
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
-
-  const { data: computedClientTypes = [] } = useQuery(
+  const { data: computedClientTypes } = useQuery(
     ["GET_CLIENT_TYPE_LIST"],
     () => {
       return clientTypeServiceV2.getList();
     },
     {
-      enabled: false,
-      select: (res) => {
-        console.log("res", res);
-        // res.data.response?.map((row) => ({
-        //   label: row.name,
-        //   value: row.guid,
-        // }));
+      onSuccess: (res) => {
+        console.log("res", res.data.response);
+        setChild(
+          res.data.response?.map((row) => ({
+            ...row,
+            type: "USER",
+            parent_id: "13",
+            data: {
+              permission: {
+                read: true,
+              },
+            },
+          }))
+        );
       },
     }
   );
-  console.log("computedClientTypes", computedClientTypes);
 
   const clickHandler = (e) => {
     if (element.id === "13") {
@@ -132,6 +139,7 @@ const RecursiveBlock = ({
       setChildBlockVisible(true);
     }
   }, []);
+  console.log("element", element);
 
   return (
     <Draggable key={index}>
@@ -169,7 +177,8 @@ const RecursiveBlock = ({
 
               {(sidebarIsOpen && element?.label) ||
                 element?.data?.microfrontend?.name ||
-                element?.data?.webpage?.title}
+                element?.data?.webpage?.title ||
+                element?.name}
             </div>
             {element?.type === "FOLDER" && sidebarIsOpen ? (
               <Box className="icon_group">

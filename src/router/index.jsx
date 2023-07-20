@@ -39,6 +39,8 @@ import MicrofrontendPage from "../views/Constructor/Microfrontend";
 import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
 import WebPage from "../views/WebPage";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
+import ClientUserPage from "../views/Users/UserPage";
+import ClientUserForm from "../views/Users/UserFormPage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -124,6 +126,12 @@ const Router = () => {
         />
 
         <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
+
+        <Route path=":appId/user-page/:userMenuId">
+          <Route index element={<ClientUserPage />} />
+          <Route path="create" element={<ClientUserForm />} />
+          <Route path=":userId" element={<ClientUserForm />} />
+        </Route>
 
         <Route
           path=":appId/object/:tableSlug"

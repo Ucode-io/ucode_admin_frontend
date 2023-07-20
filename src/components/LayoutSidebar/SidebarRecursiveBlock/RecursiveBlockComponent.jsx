@@ -13,6 +13,8 @@ import IconGenerator from "../../IconPicker/IconGenerator";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
 import { store } from "../../../store";
+import { useQuery, useQueryClient } from "react-query";
+import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
 
 const RecursiveBlock = ({
   index,
@@ -37,6 +39,7 @@ const RecursiveBlock = ({
   const [id, setId] = useState();
   const menuItem = store.getState().menu.menuItem;
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+  const queryClient = useQueryClient();
 
   const navigateMenu = () => {
     switch (element?.type) {
@@ -86,14 +89,36 @@ const RecursiveBlock = ({
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 
+  const { data: computedClientTypes = [] } = useQuery(
+    ["GET_CLIENT_TYPE_LIST"],
+    () => {
+      return clientTypeServiceV2.getList();
+    },
+    {
+      enabled: false,
+      select: (res) => {
+        console.log("res", res);
+        // res.data.response?.map((row) => ({
+        //   label: row.name,
+        //   value: row.guid,
+        // }));
+      },
+    }
+  );
+  console.log("computedClientTypes", computedClientTypes);
+
   const clickHandler = (e) => {
+    if (element.id === "13") {
+      queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
+    } else {
+      setCheck(true);
+      navigateMenu();
+    }
     e.stopPropagation();
-    navigateMenu();
     if (!pinIsEnabled && element.type !== "FOLDER") {
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
-    setCheck(true);
     setId(element?.id);
     setElement(element);
     dispatch(menuActions.setMenuItem(element));

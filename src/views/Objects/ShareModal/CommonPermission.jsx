@@ -51,7 +51,7 @@ function CommonPermission({
           />
         </FRow>
         <FRow style={{ marginBottom: "0px" }}>
-          <HFSelect control={control} name={"role_id"} options={getRoleList} />
+          <HFSelect control={control} name={"guid"} options={getRoleList} />
         </FRow>
       </Box>
     </>

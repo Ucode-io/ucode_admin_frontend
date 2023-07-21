@@ -25,7 +25,8 @@ function ShareModal() {
         action_permissions: [],
         client_type_default: client_type_id,
         role_id_default: role_id,
-        slug: tableSlug
+        slug: tableSlug,
+        id: ''
       }
     },
   });

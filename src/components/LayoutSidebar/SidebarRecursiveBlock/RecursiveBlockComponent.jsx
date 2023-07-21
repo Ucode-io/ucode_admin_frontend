@@ -5,7 +5,7 @@ import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Draggable } from "react-smooth-dnd";
 import { useMenuListQuery } from "../../../services/menuService";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
@@ -90,18 +90,19 @@ const RecursiveBlock = ({
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
-  const { data: computedClientTypes } = useQuery(
+  const { data: computedClientTpes } = useQuery(
     ["GET_CLIENT_TYPE_LIST"],
     () => {
       return clientTypeServiceV2.getList();
     },
     {
+      enabled: false,
       onSuccess: (res) => {
-        console.log("res", res.data.response);
         setChild(
           res.data.response?.map((row) => ({
             ...row,
-            type: "USER",
+            type: element.id === "14" ? "PERMISSION" : "USER",
+            id: row.guid,
             parent_id: "13",
             data: {
               permission: {
@@ -115,20 +116,24 @@ const RecursiveBlock = ({
   );
 
   const clickHandler = (e) => {
-    if (element.id === "13") {
+    e.stopPropagation();
+    if (element.id === "13" || element.id === "14") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     } else {
       setCheck(true);
-      navigateMenu();
     }
-    e.stopPropagation();
-    if (!pinIsEnabled && element.type !== "FOLDER") {
+    navigateMenu();
+    if (
+      !pinIsEnabled &&
+      element.type !== "FOLDER" &&
+      element.type !== "USER_FOLDER"
+    ) {
       setSubMenuIsOpen(false);
     }
-    setChildBlockVisible((prev) => !prev);
+    element.type !== "USER" && setChildBlockVisible((prev) => !prev);
+    dispatch(menuActions.setMenuItem(element));
     setId(element?.id);
     setElement(element);
-    dispatch(menuActions.setMenuItem(element));
   };
 
   useEffect(() => {
@@ -225,6 +230,14 @@ const RecursiveBlock = ({
                   <KeyboardArrowRightIcon />
                 )}
               </Box>
+            ) : element?.type === "USER_FOLDER" ? (
+              <>
+                {childBlockVisible ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowRightIcon />
+                )}
+              </>
             ) : (
               ""
             )}

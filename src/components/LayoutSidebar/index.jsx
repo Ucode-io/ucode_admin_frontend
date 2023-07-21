@@ -2,32 +2,32 @@ import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import { Box, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
-import menuService, { useMenuListQuery } from "../../services/menuService";
-import projectService from "../../services/projectService";
-import { mainActions } from "../../store/main/main.slice";
-import SearchInput from "../SearchInput";
-import FolderModal from "./FolderModalComponent";
-import "./style.scss";
-import menuSettingsService from "../../services/menuSettingsService";
-import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
-import SubMenu from "./SubMenu";
-import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
-import MenuButtonComponent from "./MenuButtonComponent";
-import AppSidebar from "./AppSidebarComponent";
-import { applyDrag } from "../../utils/applyDrag";
 import { Container } from "react-smooth-dnd";
-import ButtonsMenu from "./MenuButtons";
-import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
-import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import { UdevsLogo } from "../../assets/icons/icon";
+import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
+import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
+import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
+import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
+import menuService, { useMenuListQuery } from "../../services/menuService";
 import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
+import menuSettingsService from "../../services/menuSettingsService";
 import { store } from "../../store";
+import { mainActions } from "../../store/main/main.slice";
+import { applyDrag } from "../../utils/applyDrag";
+import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
+import SearchInput from "../SearchInput";
+import AppSidebar from "./AppSidebarComponent";
+import FolderModal from "./FolderModalComponent";
+import MenuButtonComponent from "./MenuButtonComponent";
+import ButtonsMenu from "./MenuButtons";
+import SubMenu from "./SubMenu";
+import "./style.scss";
+import { AdminFolders } from "./mock/AdminFolders";
 
 const admin = {
   id: "12",
@@ -91,23 +91,7 @@ const LayoutSidebar = ({ appId }) => {
       enabled: Boolean(appId),
       onSuccess: (res) => {
         if (appId === "12") {
-          setChild([
-            {
-              label: "Users",
-              path: "users",
-              type: "FOLDER",
-              parent_id: "12",
-              id: "13",
-              data: {
-                permission: {
-                  read: true,
-                  write: true,
-                  delete: true,
-                  update: true,
-                },
-              },
-            },
-          ]);
+          setChild(AdminFolders);
         } else {
           setChild(res.menus);
         }
@@ -191,7 +175,7 @@ const LayoutSidebar = ({ appId }) => {
       .then((res) => {
         setMenuList([admin, ...res.menus]);
       })
-      .finally((error) => {
+      .catch((error) => {
         console.log("error", error);
       });
   };
@@ -216,15 +200,12 @@ const LayoutSidebar = ({ appId }) => {
   }, [menuList]);
 
   useEffect(() => {
-    if (selectedApp?.type === "FOLDER" && pinIsEnabled) setSubMenuIsOpen(true);
+    if (
+      selectedApp?.type === "FOLDER" ||
+      (selectedApp?.type === "USER_FOLDER" && pinIsEnabled)
+    )
+      setSubMenuIsOpen(true);
   }, [selectedApp]);
-
-  const { data: projectInfo } = useQuery(
-    ["GET_PROJECT_BY_ID", projectId],
-    () => {
-      return projectService.getById(projectId);
-    }
-  );
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList, dropResult);
@@ -247,31 +228,10 @@ const LayoutSidebar = ({ appId }) => {
           background: menuStyle?.background || "#fff",
         }}
       >
-        <div
-          className="header"
-          onClick={() => {
-            // switchRightSideVisible();
-          }}
-        >
+        <div className="header">
           <div className="brand">
-            <UdevsLogo
-              fill={"#007AFF"}
-              // onClick={switchRightSideVisible}
-            />
-            {sidebarIsOpen && (
-              <h2
-                style={{
-                  marginLeft: "8px",
-                  color: menuStyle?.text || "#000",
-                }}
-              >
-                {projectInfo?.title}
-              </h2>
-            )}
+            <UdevsLogo fill={"#007AFF"} />
           </div>
-          {/* <div className="cloes-btn">
-            <OpenCloseSvg fill={menuStyle?.text} />
-          </div> */}
         </div>
 
         <Box
@@ -397,7 +357,6 @@ const LayoutSidebar = ({ appId }) => {
             <NewProfilePanel
               anchorEl={anchorEl}
               handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-              projectInfo={projectInfo}
             />
           }
           style={{

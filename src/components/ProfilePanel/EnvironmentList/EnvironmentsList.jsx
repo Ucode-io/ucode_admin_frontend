@@ -47,6 +47,7 @@ const EnvironmentsList = ({
               // refreshTokenFunc(item.id);
             }}
             className={styles.menuItem}
+            key={item.id}
           />
         ))}
       </div>

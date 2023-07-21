@@ -104,6 +104,7 @@ const RelationTable = forwardRef(
     }, [getRelatedTabeSlug?.permission?.view_permission]);
 
     const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
+
     const { data: { tableData = [], pageCount = 1, columns = [], quickFilters = [], fieldsMap = {} } = {}, isLoading: dataFetchingLoading } = useQuery(
       [
         "GET_OBJECT_LIST",
@@ -139,6 +140,9 @@ const RelationTable = forwardRef(
           const columns = getRelatedTabeSlug.columns?.map((id, index) => fieldsMap[id])?.filter((el) => el);
 
           const quickFilters = getRelatedTabeSlug.quick_filters?.map(({ field_id }) => fieldsMap[field_id])?.filter((el) => el);
+
+          setFormValue("multi", tableData);
+
           return {
             tableData,
             pageCount,
@@ -155,16 +159,10 @@ const RelationTable = forwardRef(
       else setLimit(parseInt(getRelatedTabeSlug?.default_limit));
     }, [getRelatedTabeSlug?.default_limit]);
 
-    useEffect(() => {
-      setFormValue("multi", tableData);
-    }, [selectedTab, tableData]);
+    // useEffect(() => {
+    //   setFormValue("multi", tableData);
+    // }, [selectedTab, tableData]);
 
-    const a = useWatch({
-      control
-    });
-
-    console.log('awdawdawdawd', a)
- 
     const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {
         if (getRelatedTabeSlug.type === "Many2Many") {
@@ -238,7 +236,7 @@ const RelationTable = forwardRef(
       }),
       [pageCount, filters, currentPage, limit]
     );
-    if(loader) return <PageFallback />
+    if (loader) return <PageFallback />;
     return (
       <div className={styles.relationTable} ref={tableRef}>
         {!!quickFilters?.length && (

@@ -294,7 +294,7 @@ const NewRelationSection = ({
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
-    selectedTab?.sections.map((section) => {
+    selectedTab?.sections?.map((section) => {
       section?.fields.map((field) => {
         allFields.push(field);
       });
@@ -469,7 +469,6 @@ const NewRelationSection = ({
               ) : (
                 relation?.tabs?.map(
                   (el, index) => (
-                    console.log("TabPanel", el),
                     (
                       <TabPanel key={el.id}>
                         {!selectedTab?.relation_id ? (

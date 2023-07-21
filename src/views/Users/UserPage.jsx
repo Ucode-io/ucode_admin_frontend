@@ -41,7 +41,6 @@ const ClientUserPage = () => {
       "client-type-id": userMenuId,
     },
   });
-  console.log("users", users);
 
   const { mutateAsync: deleteProject, isLoading: createLoading } =
     useUserDeleteMutation({

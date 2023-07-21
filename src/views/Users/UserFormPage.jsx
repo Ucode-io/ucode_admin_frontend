@@ -95,7 +95,7 @@ const ClientUserForm = () => {
     });
 
   const onSubmit = (data) => {
-    if (userId) updateProject(data);
+    if (userId) updateProject({ ...data, active: data.active ? 1 : 0 });
     else createProject({ ...data, active: data.active ? 1 : 0 });
   };
 

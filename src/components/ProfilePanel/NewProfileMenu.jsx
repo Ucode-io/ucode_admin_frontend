@@ -27,11 +27,7 @@ import ResourceList from "./ResourceList";
 import styles from "./newprofile.module.scss";
 import { useQueryClient } from "react-query";
 
-const NewProfilePanel = ({
-  anchorEl,
-  handleMenuSettingModalOpen,
-  projectInfo,
-}) => {
+const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { appId } = useParams();
@@ -148,6 +144,7 @@ const NewProfilePanel = ({
       owner_id: auth.userId,
     },
     queryParams: {
+      enabled: Boolean(auth.userId) && menuVisible,
       onSuccess: (res) => {
         dispatch(companyActions.setCompanies(res.companies));
       },
@@ -159,7 +156,7 @@ const NewProfilePanel = ({
       company_id: company.companyId,
     },
     queryParams: {
-      enabled: Boolean(company.companyId),
+      enabled: Boolean(company.companyId) && menuVisible,
       onSuccess: (res) => {
         dispatch(companyActions.setProjects(res.projects));
         if (selected) {
@@ -175,7 +172,7 @@ const NewProfilePanel = ({
       project_id: company.projectId,
     },
     queryParams: {
-      enabled: Boolean(company.projectId),
+      enabled: Boolean(company.projectId) && menuVisible,
       onSuccess: (res) => {
         if (selected) {
           dispatch(companyActions.setEnvironmentItem(res.environments[0]));

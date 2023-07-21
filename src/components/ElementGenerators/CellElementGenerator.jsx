@@ -23,6 +23,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
     return result;
   }, [row, field]);
+  console.log("value", value);
 
   const tablesList = useMemo(() => {
     return (
@@ -65,7 +66,9 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return <span className="text-nowrap">{formatDate(value)}</span>;
 
     case "NUMBER":
-      return value ? numberWithSpaces(value?.toFixed(1)) : "";
+      return Number.isNaN(value) && value
+        ? numberWithSpaces(value?.toFixed(1))
+        : "";
 
     case "DATE_TIME":
       return (
@@ -103,7 +106,9 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return value ? numberWithSpaces(value) : "";
 
     case "FORMULA_FRONTEND":
-      return value ? numberWithSpaces(value.toFixed(1)) : "";
+      return Number.isNaN(value) && value
+        ? numberWithSpaces(value?.toFixed(1))
+        : "";
 
     // case "FORMULA_FRONTEND":
     //   return <FormulaCell field={field} row={row} />

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import ShareContent from "./ShareContent";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import styles from './styles.module.scss'
 
 function ShareModal() {
   const [open, setOpen] = useState(false);
@@ -51,6 +52,7 @@ function ShareModal() {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        className={styles.dialog}
       >
         <ShareContent
           handleClose={handleClose}

@@ -6,6 +6,7 @@ import HFCheckbox from '../../../components/FormElements/HFCheckbox';
 import styles from './styles.module.scss'
 import { useWatch } from 'react-hook-form';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 
 function ActionPermission({control, getUserPermission, getTablePermission}) {
@@ -43,8 +44,7 @@ function ActionPermission({control, getUserPermission, getTablePermission}) {
           <FRow
             style={{ marginBottom: "0px" }}
             label="- Действие ( Actions )"
-          />{" "}
-          <ExpandMoreIcon />
+          />{isCollapsedCon ? <KeyboardArrowUpIcon /> : <ExpandMoreIcon />}
         </Box>
 
         {isCollapsedCon && (

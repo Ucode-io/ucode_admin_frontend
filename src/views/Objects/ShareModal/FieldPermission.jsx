@@ -11,10 +11,12 @@ import HFCheckbox from "../../../components/FormElements/HFCheckbox";
 import styles from "./styles.module.scss";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useWatch } from "react-hook-form";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 function FieldPermission({ control, getUserPermission, getTablePermission }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isFieldPermissionsMatched, setIsFieldPermissionsMatched] = useState(false);
+  const [isFieldPermissionsMatched, setIsFieldPermissionsMatched] =
+    useState(false);
   const grantAccess =
     getTablePermission?.current_user_permission?.grant_access || false;
   const fieldPermissions = useWatch({
@@ -23,13 +25,18 @@ function FieldPermission({ control, getUserPermission, getTablePermission }) {
   });
 
   useEffect(() => {
-    if (grantAccess && fieldPermissions && getUserPermission?.table?.field_permissions) {
+    if (
+      grantAccess &&
+      fieldPermissions &&
+      getUserPermission?.table?.field_permissions
+    ) {
       setIsFieldPermissionsMatched(
         fieldPermissions.every((item, index) => {
-          const permissionsInGetTable = getUserPermission.table.field_permissions[index];
+          const permissionsInGetTable =
+            getUserPermission.table.field_permissions[index];
           return (
-            item.view_permission === permissionsInGetTable.view_permission &&
-            item.edit_permission === permissionsInGetTable.edit_permission
+            item.view_permission === permissionsInGetTable?.view_permission &&
+            item.edit_permission === permissionsInGetTable?.edit_permission
           );
         })
       );
@@ -43,11 +50,11 @@ function FieldPermission({ control, getUserPermission, getTablePermission }) {
   return (
     <div className={styles.collapse}>
       <Box
-        sx={{ display: "flex", justifyContent: "center", width: "200px" }}
+        sx={{ display: "flex", justifyContent: "center", width: "250px" }}
         onClick={handleCollapseToggle}
       >
         <FRow style={{ marginBottom: "0px" }} label="-  Поля" />{" "}
-        <ExpandMoreIcon />
+        {isCollapsed ? <KeyboardArrowUpIcon /> : <ExpandMoreIcon />}
       </Box>
 
       {isCollapsed && (
@@ -92,4 +99,3 @@ function FieldPermission({ control, getUserPermission, getTablePermission }) {
 }
 
 export default FieldPermission;
-

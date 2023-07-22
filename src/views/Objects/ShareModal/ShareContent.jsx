@@ -97,13 +97,14 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
   );
 
   const { data: getTablePermission } = useQuery(
-    ["GET_TABLE_PERMISSONS", role_id],
+    ["GET_TABLE_PERMISSONS", role_id, slug],
     () => {
       return tablePermissionService.getList(params);
     },
     {
       enable: !params,
       select: (res) => res ?? {},
+      staleTime: Infinity 
     }
   );
 
@@ -148,13 +149,14 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
           view_permissions: getUserPermission?.table?.view_permissions,
           action_permissions: getUserPermission?.table?.action_permissions,
           id: tableId?.id,
+          slug
         },
       });
     }
   }, [getUserPermission, reset]);
 
   return (
-    <Box sx={{ padding: "15px", position: "relative" }}>
+    <div className={styles.shareContent}>
       <CommonPermission
         control={control}
         tablesList={tablesList}
@@ -193,7 +195,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
           Submit
         </Button>
       </div>
-    </Box>
+    </div>
   );
 }
 

@@ -46,7 +46,7 @@ function ConnectionPermission({ control, getUserPermission, getTablePermission }
   return (
     <div className={styles.collapse}>
       <Box
-        sx={{ display: "flex", justifyContent: "center", width: "200px" }}
+        sx={{ display: "flex", justifyContent: "center", width: "250px" }}
         onClick={handleCollapseConToggle}
       >
         <FRow style={{ marginBottom: "0px" }} label="- Связи" />{" "}

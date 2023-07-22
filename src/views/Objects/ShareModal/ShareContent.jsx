@@ -1,8 +1,5 @@
 import { Box, Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import FRow from "../../../components/FormElements/FRow";
-import HFSelect from "../../../components/FormElements/HFSelect";
-import HFCheckbox from "../../../components/FormElements/HFCheckbox";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./styles.module.scss";
 import { useQuery } from "react-query";
 import constructorTableService from "../../../services/constructorTableService";
@@ -19,14 +16,7 @@ import ActionPermission from "./ActionPermission";
 import CommonPermission from "./CommonPermission";
 import DefaultPermission from "./DefaultPermission";
 
-function ShareContent({
-  handleClose,
-  control,
-  watch,
-  handleSubmit,
-  reset,
-  setValue,
-}) {
+function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
   const { tableSlug, appId } = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
 
@@ -38,7 +28,12 @@ function ShareContent({
   });
   const role_id = useWatch({
     control,
-    name: "role_id",
+    name: "guid",
+  });
+
+  const slug = useWatch({
+    control,
+    name: "table.slug",
   });
 
   const params = {
@@ -48,13 +43,13 @@ function ShareContent({
   };
 
   //============   TABLE GET LIST
-  const { data: tablesList = [] } = useQuery(
+  const { data: tables = [] } = useQuery(
     ["GET_TABLES_LIST"],
     () => {
-      return constructorTableService.getList(projectId);
+      return constructorTableService.getList({ projectId });
     },
     {
-      select: (data) => listToOptions(data?.tables, "label", "slug"),
+      select: (data) => data?.tables ?? [],
     }
   );
 
@@ -104,39 +99,59 @@ function ShareContent({
   const { data: getTablePermission } = useQuery(
     ["GET_TABLE_PERMISSONS", role_id],
     () => {
-      return tablePermissionService.getList({
-        ...params,
-      });
+      return tablePermissionService.getList(params);
     },
     {
       enable: !params,
-      select: (res) => {
-        return res?.selected_user_permission ?? [];
-      },
+      select: (res) => res ?? {},
     }
   );
 
+  const getUserPermission = useMemo(() => {
+    if (getTablePermission?.selected_user_permission) {
+      return getTablePermission?.selected_user_permission;
+    } else {
+      return {
+        ...getTablePermission?.current_user_permission,
+        current_user_permission: true,
+      };
+    }
+  }, [getTablePermission]);
+
+  const tablesList = useMemo(() => {
+    let getObjects = [];
+    getObjects = listToOptions(tables, "label", "slug");
+    return getObjects;
+  }, [tables]);
+
+  const tableId = useMemo(() => {
+    if (slug) {
+      return tables.find((item) => item?.slug === slug);
+    } else {
+      return tables.find((item) => item?.slug === tableSlug);
+    }
+  }, [slug, tableSlug, tables]);
+
   const onSubmit = (values) => {
-    console.log("ssssss", values);
-    
     tablePermissionService.update(values).then(() => {
-      handleClose()
+      handleClose();
     });
   };
 
   useEffect(() => {
-    if (getTablePermission) {
+    if (getUserPermission) {
       reset({
         ...data,
         table: {
-          record_permissions: getTablePermission?.table?.record_permissions,
-          field_permissions: getTablePermission?.table?.field_permissions,
-          view_permissions: getTablePermission?.table?.view_permissions,
-          action_permissions: getTablePermission?.table?.action_permissions,
-        }
+          record_permissions: getUserPermission?.table?.record_permissions,
+          field_permissions: getUserPermission?.table?.field_permissions,
+          view_permissions: getUserPermission?.table?.view_permissions,
+          action_permissions: getUserPermission?.table?.action_permissions,
+          id: tableId?.id,
+        },
       });
     }
-  }, [getTablePermission, reset]);
+  }, [getUserPermission, reset]);
 
   return (
     <Box sx={{ padding: "15px", position: "relative" }}>
@@ -146,14 +161,31 @@ function ShareContent({
         clientTypeList={clientTypeList}
         getRoleList={getRoleList}
       />
-      <TablePermission control={control} />
-      <FieldPermission control={control} />
-      <ConnectionPermission control={control} />
-      <ActionPermission control={control} />
+      <TablePermission
+        control={control}
+        getUserPermission={getUserPermission}
+        getTablePermission={getTablePermission}
+      />
+      <FieldPermission
+        control={control}
+        getUserPermission={getUserPermission}
+        getTablePermission={getTablePermission}
+      />
+      <ConnectionPermission
+        control={control}
+        getUserPermission={getUserPermission}
+        getTablePermission={getTablePermission}
+      />
+      <ActionPermission
+        control={control}
+        getUserPermission={getUserPermission}
+        getTablePermission={getTablePermission}
+      />
       <DefaultPermission
         control={control}
         clientTypeList={clientTypeList}
         getRoleList={getRoleList}
+        getUserPermission={getUserPermission}
       />
 
       <div className={styles.submitBtn}>

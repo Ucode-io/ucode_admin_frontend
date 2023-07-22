@@ -4,7 +4,7 @@ import HFSelect from "../../../components/FormElements/HFSelect";
 import HFCheckbox from "../../../components/FormElements/HFCheckbox";
 import { Box } from "@mui/material";
 
-function DefaultPermission({ control, clientTypeList, getRoleList }) {
+function DefaultPermission({ control, clientTypeList, getRoleList, getUserPermission }) {
   return (
     <>
       <Box
@@ -17,7 +17,7 @@ function DefaultPermission({ control, clientTypeList, getRoleList }) {
         }}
       >
         <FRow style={{ marginBottom: "0px" }} label="- Дават другим доступ" />
-        <HFCheckbox control={control} name={"grant_access"} />
+        <HFCheckbox control={control} name={"grant_access"} disabled={getUserPermission?.current_user_permission} />
       </Box>
 
       <Box

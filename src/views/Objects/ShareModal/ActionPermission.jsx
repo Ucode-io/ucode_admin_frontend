@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FRow from '../../../components/FormElements/FRow';
 import { CTable, CTableBody, CTableCell, CTableRow } from '../../../components/CTable';
 import HFCheckbox from '../../../components/FormElements/HFCheckbox';
@@ -8,16 +8,32 @@ import { useWatch } from 'react-hook-form';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 
-function ActionPermission({control}) {
+function ActionPermission({control, getUserPermission, getTablePermission}) {
     const [isCollapsedCon, setIsCollapsedCon] = useState(false);
-
-    const action_permissions = useWatch({
+    const [isActionPermissionsMatched, setIsActionPermissionsMatched] = useState(false);
+    const grantAccess =
+    getTablePermission?.current_user_permission?.grant_access || false;
+    const actionPermissions = useWatch({
       control,
       name: "table.action_permissions",
     });
     const handleCollapseConToggle = () => {
       setIsCollapsedCon(!isCollapsedCon);
     };
+    
+    useEffect(() => {
+      if (grantAccess && actionPermissions && getUserPermission?.table?.action_permissions) {
+        setIsActionPermissionsMatched(
+          actionPermissions.every((item, index) => {
+            const permissionsInGetTable = getUserPermission.table.action_permissions[index];
+            return (
+              item.view_permission === permissionsInGetTable.permission
+            );
+          })
+        );
+      }
+    }, [actionPermissions, getTablePermission]);
+    
     return (
         <div className={styles.collapse}>
         <Box
@@ -34,7 +50,7 @@ function ActionPermission({control}) {
         {isCollapsedCon && (
           <CTable removableHeight={null} disablePagination>
             <CTableBody loader={false} columnsCount={2} dataLength={1}>
-              {action_permissions?.map((item, index) => (
+              {actionPermissions?.map((item, index) => (
                 <CTableRow>
                   <CTableCell width={250}>{item?.label}</CTableCell>
                   <CTableCell width={250}>
@@ -43,7 +59,11 @@ function ActionPermission({control}) {
                         <FRow style={{ marginBottom: "0px" }} label="Run" />{" "}
                         <HFCheckbox
                           control={control}
-                          name={`table.action_permissions.${index}.run`}
+                          name={`table.action_permissions.${index}.permission`}
+                          disabled={
+                            isActionPermissionsMatched ||
+                            getUserPermission?.current_user_permission
+                          }
                         />
                       </div>
                     </Box>

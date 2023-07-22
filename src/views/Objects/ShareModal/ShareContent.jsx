@@ -38,7 +38,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
 
   const params = {
     role_id: role_id,
-    table_slug: tableSlug,
+    table_slug: slug ?? tableSlug,
     project_id: projectId,
   };
 

@@ -10,6 +10,7 @@ import {
 } from "../../../components/CTable";
 import HFCheckbox from "../../../components/FormElements/HFCheckbox";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useWatch } from "react-hook-form";
 
 function ConnectionPermission({ control, getUserPermission, getTablePermission }) {
@@ -50,7 +51,7 @@ function ConnectionPermission({ control, getUserPermission, getTablePermission }
         onClick={handleCollapseConToggle}
       >
         <FRow style={{ marginBottom: "0px" }} label="- Связи" />{" "}
-        <ExpandMoreIcon />
+        {isCollapsedCon ? <KeyboardArrowUpIcon /> : <ExpandMoreIcon />}
       </Box>
 
       {isCollapsedCon && (

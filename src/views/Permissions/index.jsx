@@ -6,12 +6,29 @@ import { useState } from "react";
 import FRow from "../../components/FormElements/FRow";
 import HFTextField from "../../components/FormElements/HFTextField";
 import { useForm } from "react-hook-form";
+import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
+import { useQuery } from "react-query";
+import ProjectPage from "../Projects";
+import RolePage from "./Roles";
 
 const PermissionDetail = () => {
   const { clientId } = useParams();
   const [selectedTab, setSelectedTab] = useState(0);
-  const { control, reset } = useForm();
-  console.log("clientId", clientId);
+  const { control, reset, watch } = useForm();
+
+  const { data: computedClientTpes } = useQuery(
+    ["GET_CLIENT_TYPE_LIST"],
+    () => {
+      return clientTypeServiceV2.getById(clientId);
+    },
+    {
+      enabled: !!clientId,
+      onSuccess: (res) => {
+        console.log("res", res);
+        reset(res.data.response);
+      },
+    }
+  );
 
   return (
     <Box flex={1}>
@@ -39,7 +56,9 @@ const PermissionDetail = () => {
                 </FRow>
               </div>
             </TabPanel>
-            <TabPanel></TabPanel>
+            <TabPanel>
+              <RolePage />
+            </TabPanel>
           </Card>
         </div>
       </Tabs>

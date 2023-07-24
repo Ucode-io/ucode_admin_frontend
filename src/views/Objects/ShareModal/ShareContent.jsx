@@ -1,5 +1,5 @@
-import { Box, Button } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import { Button } from "@mui/material";
+import React, { useEffect, useMemo } from "react";
 import styles from "./styles.module.scss";
 import { useQuery } from "react-query";
 import constructorTableService from "../../../services/constructorTableService";
@@ -15,6 +15,7 @@ import ConnectionPermission from "./ConnectionPermission";
 import ActionPermission from "./ActionPermission";
 import CommonPermission from "./CommonPermission";
 import DefaultPermission from "./DefaultPermission";
+import ClearIcon from "@mui/icons-material/Clear";
 
 function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
   const { tableSlug, appId } = useParams();
@@ -104,7 +105,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     {
       enable: !params,
       select: (res) => res ?? {},
-      staleTime: Infinity 
+      staleTime: Infinity,
     }
   );
 
@@ -150,7 +151,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
           view_permissions: getUserPermission?.table?.view_permissions,
           action_permissions: getUserPermission?.table?.action_permissions,
           id: tableId?.id,
-          slug
+          slug,
         },
       });
     }
@@ -158,42 +159,53 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
 
   return (
     <div className={styles.shareContent}>
-      <CommonPermission
-        control={control}
-        tablesList={tablesList}
-        clientTypeList={clientTypeList}
-        getRoleList={getRoleList}
-      />
-      <TablePermission
-        control={control}
-        getUserPermission={getUserPermission}
-        getTablePermission={getTablePermission}
-      />
-      <FieldPermission
-        control={control}
-        getUserPermission={getUserPermission}
-        getTablePermission={getTablePermission}
-      />
-      <ConnectionPermission
-        control={control}
-        getUserPermission={getUserPermission}
-        getTablePermission={getTablePermission}
-      />
-      <ActionPermission
-        control={control}
-        getUserPermission={getUserPermission}
-        getTablePermission={getTablePermission}
-      />
-      <DefaultPermission
-        control={control}
-        clientTypeList={clientTypeList}
-        getRoleList={getRoleList}
-        getUserPermission={getUserPermission}
-      />
+      <div className={styles.shareHeader}>
+        <h2>Доступы</h2>
+        <Button onClick={handleClose}>
+          <ClearIcon style={{color: '#000'}} />
+        </Button>
+      </div>
 
-      <div className={styles.submitBtn}>
+      <div className={styles.shareContentBody}>
+        <CommonPermission
+          control={control}
+          tablesList={tablesList}
+          clientTypeList={clientTypeList}
+          getRoleList={getRoleList}
+        />
+        <TablePermission
+          control={control}
+          getUserPermission={getUserPermission}
+          getTablePermission={getTablePermission}
+        />
+        <FieldPermission
+          control={control}
+          getUserPermission={getUserPermission}
+          getTablePermission={getTablePermission}
+        />
+        <ConnectionPermission
+          control={control}
+          getUserPermission={getUserPermission}
+          getTablePermission={getTablePermission}
+        />
+        <ActionPermission
+          control={control}
+          getUserPermission={getUserPermission}
+          getTablePermission={getTablePermission}
+        />
+        {/* <DefaultPermission
+          control={control}
+          clientTypeList={clientTypeList}
+          getRoleList={getRoleList}
+          getUserPermission={getUserPermission}
+        /> */}
+      </div>
+      <div className={styles.shareFooter}>
         <Button variant="contained" onClick={handleSubmit(onSubmit)}>
-          Submit
+          Apply
+        </Button>
+        <Button color="error" onClick={handleClose}>
+          Delete
         </Button>
       </div>
     </div>

@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { Box } from "@mui/material";
-import FRow from "../../../components/FormElements/FRow";
-import {
-  CTable,
-  CTableBody,
-  CTableCell,
-  CTableRow,
-} from "../../../components/CTable";
 import HFCheckbox from "../../../components/FormElements/HFCheckbox";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useWatch } from "react-hook-form";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 function ConnectionPermission({ control, getUserPermission, getTablePermission }) {
   const [isCollapsedCon, setIsCollapsedCon] = useState(false);
@@ -45,26 +39,24 @@ function ConnectionPermission({ control, getUserPermission, getTablePermission }
   };
   
   return (
-    <div className={styles.collapse}>
-      <Box
-        sx={{ display: "flex", justifyContent: "center", width: "250px" }}
-        onClick={handleCollapseConToggle}
-      >
-        <FRow style={{ marginBottom: "0px" }} label="- Связи" />{" "}
-        {isCollapsedCon ? <KeyboardArrowUpIcon /> : <ExpandMoreIcon />}
-      </Box>
+    <div className={styles.collapseCon}>
+    <Box
+      sx={{ display: "flex", justifyContent: "space-between", alignItems: 'center', padding: '15px'}}
+      onClick={handleCollapseConToggle}
+    >
+      <h2>Связи</h2>
+      {isCollapsedCon ? <ExpandMoreIcon /> : <KeyboardArrowRightIcon />}
+    </Box>
 
-      {isCollapsedCon && (
-        <CTable removableHeight={null} disablePagination>
-          <CTableBody loader={false} columnsCount={2} dataLength={1}>
-            {viewPermissions?.map((item, index) => (
-              <CTableRow>
-                <CTableCell width={250}>{item?.label}</CTableCell>
-                <CTableCell width={250}>
-                  <Box sx={{ padding: "10px" }}>
-                    <div className={styles.tableCells}>
-                      <FRow style={{ marginBottom: "0px" }} label="Viewer" />{" "}
-                      <HFCheckbox
+    {isCollapsedCon &&
+      viewPermissions?.map((item, index) => (
+        <Box>
+          <div className={styles.permissionList}>
+            <h2 className={styles.permissionListTitle}>{item?.label}</h2>
+
+            <div className={styles.permissionListContent}>
+              <div className={styles.permissionListItem}>
+              <HFCheckbox
                         control={control}
                         name={`table.view_permissions.${index}.view_permission`}
                         disabled={
@@ -72,10 +64,10 @@ function ConnectionPermission({ control, getUserPermission, getTablePermission }
                           getUserPermission?.current_user_permission
                         }
                       />
-                    </div>
-                    <div className={styles.tableCells}>
-                      <FRow style={{ marginBottom: "0px" }} label="Creator" />{" "}
-                      <HFCheckbox
+                <div>Viewer</div>
+              </div>
+              <div className={styles.permissionListItem}>
+              <HFCheckbox
                         control={control}
                         name={`table.view_permissions.${index}.create_permission`}
                         disabled={
@@ -83,36 +75,37 @@ function ConnectionPermission({ control, getUserPermission, getTablePermission }
                           getUserPermission?.current_user_permission
                         }
                       />
-                    </div>
-                    <div className={styles.tableCells}>
-                      <FRow style={{ marginBottom: "0px" }} label="Editor" />{" "}
-                      <HFCheckbox
+                <div>Creator</div>
+              </div>
+              <div className={styles.permissionListItem}>
+              <HFCheckbox
                         control={control}
                         name={`table.view_permissions.${index}.edit_permission`}
                         disabled={getUserPermission?.current_user_permission}
                       />
-                    </div>
-                    <div className={styles.tableCells}>
-                      <FRow style={{ marginBottom: "0px" }} label="Delete" />{" "}
-                      <HFCheckbox
+                <div>Editor</div>
+              </div>
+              <div className={styles.permissionListItem}>
+              <HFCheckbox
                         control={control}
                         name={`table.view_permissions.${index}.delete_permission`}
                         disabled={getUserPermission?.current_user_permission}
                       />
-                    </div>
-                    <div className={styles.tableCells}>
-                      <FRow style={{ marginBottom: "0px" }} label="Is_public" />{" "}
-                      <HFCheckbox control={control} name="is_public" disabled={getUserPermission?.current_user_permission} />
-                    </div>
-                  </Box>
-                </CTableCell>
-              </CTableRow>
-            ))}
-          </CTableBody>
-        </CTable>
-      )}
-    </div>
+                <div>Delete</div>
+              </div>
+              <div className={styles.permissionListItem}>
+              <HFCheckbox control={control} name="is_public" disabled={getUserPermission?.current_user_permission} />
+                <div>is_public</div>
+              </div>
+            </div>
+          </div>
+        </Box>
+      ))}
+  </div>
   );
 }
 
 export default ConnectionPermission;
+
+
+  

@@ -57,6 +57,10 @@ const RecursiveBlock = ({
         );
       case "USER":
         return navigate(`/main/${appId}/user-page/${element?.guid}`);
+
+      case "PERMISSION":
+        return navigate(`/main/${appId}/permission/${element?.guid}`);
+
       default:
         return navigate(`/main/${appId}`);
     }

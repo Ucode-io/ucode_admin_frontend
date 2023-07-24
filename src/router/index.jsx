@@ -49,6 +49,7 @@ import RedirectFormPage from "../views/Redirect/RedirectFormPage";
 import RedirectPage from "../views/Redirect";
 import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
+import PermissionDetail from "../views/Permissions";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -79,7 +80,6 @@ const Router = () => {
   const [favicon, setFavicon] = useState("");
   const cashboxIsOpen = cashbox.is_open === "Открыто";
 
-  console.log("applications", applications);
   const redirectLink = useMemo(() => {
     // if (location.pathname.includes("settings"))
     //   return "/settings/constructor/apps";
@@ -161,6 +161,10 @@ const Router = () => {
           <Route index element={<ClientUserPage />} />
           <Route path="create" element={<ClientUserForm />} />
           <Route path=":userId" element={<ClientUserForm />} />
+        </Route>
+
+        <Route path=":appId/permission/:clientId">
+          <Route index element={<PermissionDetail />} />
         </Route>
 
         <Route

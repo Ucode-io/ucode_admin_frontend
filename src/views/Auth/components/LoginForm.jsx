@@ -1,6 +1,7 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
 import { Button, InputAdornment } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
+import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";

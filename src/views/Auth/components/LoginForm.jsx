@@ -1,5 +1,5 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
-import { Box, InputAdornment } from "@mui/material";
+import { Box, Button, InputAdornment } from "@mui/material";
 import { useEffect, useMemo } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -149,7 +149,7 @@ const LoginForm = () => {
   return (
     <>
       {formType === "RESET_PASSWORD" ? (
-        <RecoverPassword setFormType={setFormType}/>
+        <RecoverPassword setFormType={setFormType} />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
           <Tabs direction={"ltr"}>
@@ -201,6 +201,18 @@ const LoginForm = () => {
                         }}
                       />
                     </div>
+
+                    {
+                      <Button
+                        variant="text"
+                        type="button"
+                        onClick={() => {
+                          formType === "RESET_PASSWORD" ? setFormType("LOGIN") : setFormType("RESET_PASSWORD");
+                        }}
+                      >
+                        Forgot password?
+                      </Button>
+                    }
                   </TabPanel>
                   {/* <TabPanel>
         <div className={classes.formRow}>
@@ -263,16 +275,18 @@ const LoginForm = () => {
         </form>
       )}
 
-      <SecondaryButton
-        size="large"
-        style={{ marginTop: "20px" }}
-        type="button"
-        onClick={() => {
-          formType === "RESET_PASSWORD" ? setFormType("LOGIN") : setFormType("RESET_PASSWORD");
-        }}
-      >
-        {formType === "RESET_PASSWORD" ? "Back to login" : "Reset Password"}
-      </SecondaryButton>
+      {formType === "RESET_PASSWORD" && (
+        <SecondaryButton
+          size="large"
+          style={{ marginTop: "20px" }}
+          type="button"
+          onClick={() => {
+            formType === "RESET_PASSWORD" ? setFormType("LOGIN") : setFormType("RESET_PASSWORD");
+          }}
+        >
+          Back to login
+        </SecondaryButton>
+      )}
     </>
   );
 };

@@ -14,27 +14,30 @@ import { store } from "../../../store";
 import { useQuery, useQueryClient } from "react-query";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import TableRowButton from "../../../components/TableRowButton";
-import roleServiceV2, {
-  useRoleDeleteMutation,
-} from "../../../services/roleServiceV2";
 import { useState } from "react";
-import RoleCreateModal from "./RoleFormPage";
+import ConnectionCreateModal from "./ConnectionFormPage";
+import connectionServiceV2, {
+  useConnectionDeleteMutation,
+} from "../../../services/auth/connectionService";
 
-const RolePage = () => {
+const ConnectionPage = () => {
   const { clientId } = useParams();
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState();
-  const [roleId, setRoleId] = useState();
+  const [connectionId, setConnectionId] = useState();
 
-  const { data: roles, isLoading } = useQuery(["GET_ROLE_LIST"], () => {
-    return roleServiceV2.getList({ "client-type-id": clientId });
-  });
+  const { data: connections, isLoading } = useQuery(
+    ["GET_CONNECTION_LIST"],
+    () => {
+      return connectionServiceV2.getList({ "client-type-id": clientId });
+    }
+  );
 
   const { mutateAsync: deleteRole, isLoading: createLoading } =
-    useRoleDeleteMutation({
+    useConnectionDeleteMutation({
       onSuccess: () => {
         store.dispatch(showAlert("Успешно", "success"));
-        queryClient.refetchQueries(["GET_ROLE_LIST"]);
+        queryClient.refetchQueries(["GET_CONNECTION_LIST"]);
       },
     });
 
@@ -52,23 +55,27 @@ const RolePage = () => {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>
+            <CTableCell>Table slug</CTableCell>
+            <CTableCell>View slug</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody
             loader={isLoading}
-            columnsCount={2}
-            dataLength={roles?.data?.response?.length}
+            columnsCount={5}
+            dataLength={connections?.data?.response?.length}
           >
-            {roles?.data?.response?.map((element, index) => (
+            {connections?.data?.response?.map((element, index) => (
               <CTableRow
                 key={element.guid}
                 onClick={() => {
                   setModalType("UPDATE");
-                  setRoleId(element.guid);
+                  setConnectionId(element.guid);
                 }}
               >
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
+                <CTableCell>{element?.table_slug}</CTableCell>
+                <CTableCell>{element?.view_slug}</CTableCell>
                 <CTableCell>
                   <RectangleIconButton
                     color="error"
@@ -82,21 +89,21 @@ const RolePage = () => {
               </CTableRow>
             ))}
             <PermissionWrapperV2 tabelSlug="app" type="write">
-              <TableRowButton colSpan={4} onClick={() => setModalType("NEW")} />
+              <TableRowButton colSpan={5} onClick={() => setModalType("NEW")} />
             </PermissionWrapperV2>
           </CTableBody>
         </CTable>
       </TableCard>
 
       {modalType && (
-        <RoleCreateModal
+        <ConnectionCreateModal
           closeModal={closeModal}
           modalType={modalType}
-          roleId={roleId}
+          connectionId={connectionId}
         />
       )}
     </div>
   );
 };
 
-export default RolePage;
+export default ConnectionPage;

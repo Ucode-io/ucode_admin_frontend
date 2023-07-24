@@ -8,8 +8,9 @@ import HFTextField from "../../components/FormElements/HFTextField";
 import { useForm } from "react-hook-form";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import { useQuery } from "react-query";
-import ProjectPage from "../Projects";
 import RolePage from "./Roles";
+import FormCard from "../../components/FormCard";
+import ConnectionPage from "./Connections";
 
 const PermissionDetail = () => {
   const { clientId } = useParams();
@@ -17,14 +18,14 @@ const PermissionDetail = () => {
   const { control, reset, watch } = useForm();
 
   const { data: computedClientTpes } = useQuery(
-    ["GET_CLIENT_TYPE_LIST"],
+    ["GET_CLIENT_TYPE_BY_ID"],
     () => {
       return clientTypeServiceV2.getById(clientId);
     },
     {
-      enabled: !!clientId,
+      enabled: Boolean(clientId),
       onSuccess: (res) => {
-        console.log("res", res);
+        console.log("res===>", res);
         reset(res.data.response);
       },
     }
@@ -46,15 +47,18 @@ const PermissionDetail = () => {
             </TabList>
 
             <TabPanel>
-              <div
-                style={{
-                  padding: "20px",
-                }}
-              >
-                <FRow label="Name">
-                  <HFTextField control={control} name="name" fullWidth />
-                </FRow>
-              </div>
+              <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
+                <div>
+                  <FRow label="Name">
+                    <HFTextField control={control} name="name" fullWidth />
+                  </FRow>
+                </div>
+              </FormCard>
+              <FormCard title="Связи" icon="address-card.svg" maxWidth="100%">
+                <div>
+                  <ConnectionPage />
+                </div>
+              </FormCard>
             </TabPanel>
             <TabPanel>
               <RolePage />

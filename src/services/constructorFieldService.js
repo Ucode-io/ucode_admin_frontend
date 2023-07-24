@@ -1,4 +1,5 @@
-import request from "../utils/request"
+import { useQuery } from "react-query";
+import request from "../utils/request";
 
 const constructorFieldService = {
   getList: (params) => request.get("/field", { params }),
@@ -7,6 +8,20 @@ const constructorFieldService = {
   update: (data) => request.put("/field", data),
   create: (data) => request.post("/field", data),
   delete: (id) => request.delete(`/field/${id}`),
-}
+};
 
-export default constructorFieldService
+export const useFieldsListQuery = ({
+  params = {},
+  headers,
+  queryParams,
+} = {}) => {
+  return useQuery(
+    ["FIELDS", params],
+    () => {
+      return constructorFieldService.getList(params, headers);
+    },
+    queryParams
+  );
+};
+
+export default constructorFieldService;

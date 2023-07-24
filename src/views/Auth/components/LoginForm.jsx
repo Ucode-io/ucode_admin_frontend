@@ -20,6 +20,8 @@ import classes from "../style.module.scss";
 import { firebaseCloudMessaging } from "../../../firebase/config";
 import DynamicFields from "./DynamicFields";
 import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
+import SecondaryButton from "../../../components/Buttons/SecondaryButton";
+import RecoverPassword from "./RecoverPassword";
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -50,9 +52,7 @@ const LoginForm = () => {
   }, [companies]);
 
   const computedProjects = useMemo(() => {
-    const company = companies?.find(
-      (company) => company.id === selectedCompanyID
-    );
+    const company = companies?.find((company) => company.id === selectedCompanyID);
     return listToOptions(company?.projects, "name");
   }, [companies, selectedCompanyID]);
 
@@ -72,16 +72,9 @@ const LoginForm = () => {
   );
 
   const { data: computedClientTypes = [] } = useQuery(
-    [
-      "GET_CLIENT_TYPE_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-    ],
+    ["GET_CLIENT_TYPE_LIST", { "project-id": selectedProjectID }, { "environment-id": selectedEnvID }],
     () => {
-      return clientTypeServiceV2.getList(
-        { "project-id": selectedProjectID },
-        { "environment-id": selectedEnvID }
-      );
+      return clientTypeServiceV2.getList({ "project-id": selectedProjectID }, { "environment-id": selectedEnvID });
     },
     {
       enabled: !!selectedEnvID,
@@ -94,11 +87,7 @@ const LoginForm = () => {
   );
 
   const { data: computedConnections = [] } = useQuery(
-    [
-      "GET_CONNECTION_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-    ],
+    ["GET_CONNECTION_LIST", { "project-id": selectedProjectID }, { "environment-id": selectedEnvID }],
     () => {
       return connectionServiceV2.getList(
         {
@@ -158,150 +147,133 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-      <Tabs direction={"ltr"}>
-        {formType === "LOGIN" ? (
-          <div style={{ padding: "0 20px" }}>
-            <TabList>
-              <Tab>{t("login")}</Tab>
-              <Tab>{t("phone")}</Tab>
-              <Tab>{t("E-mail")}</Tab>
-            </TabList>
+    <>
+      {formType === "RESET_PASSWORD" ? (
+        <RecoverPassword setFormType={setFormType}/>
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
+          <Tabs direction={"ltr"}>
+            {formType === "LOGIN" ? (
+              <div style={{ padding: "0 20px" }}>
+                <TabList>
+                  <Tab>{t("login")}</Tab>
+                  <Tab>{t("phone")}</Tab>
+                  <Tab>{t("E-mail")}</Tab>
+                </TabList>
 
-            <div
-              className={classes.formArea}
-              style={{ marginTop: "10px", height: `calc(100vh - 370px)` }}
-            >
-              <TabPanel>
-                <div className={classes.formRow}>
-                  <p className={classes.label}>{t("login")}</p>
-                  <HFTextField
-                    required
-                    control={control}
-                    name="username"
-                    size="large"
-                    fullWidth
-                    placeholder={t("enter.login")}
-                    autoFocus
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AccountCircle style={{ fontSize: "30px" }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+                <div className={classes.formArea} style={{ marginTop: "10px", height: `calc(100vh - 370px)` }}>
+                  <TabPanel>
+                    <div className={classes.formRow}>
+                      <p className={classes.label}>{t("login")}</p>
+                      <HFTextField
+                        required
+                        control={control}
+                        name="username"
+                        size="large"
+                        fullWidth
+                        placeholder={t("enter.login")}
+                        autoFocus
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <AccountCircle style={{ fontSize: "30px" }} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </div>
+                    <div className={classes.formRow}>
+                      <p className={classes.label}>{t("password")}</p>
+                      <HFTextField
+                        required
+                        control={control}
+                        name="password"
+                        type="password"
+                        size="large"
+                        fullWidth
+                        placeholder={t("enter.password")}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Lock style={{ fontSize: "30px" }} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </div>
+                  </TabPanel>
+                  {/* <TabPanel>
+        <div className={classes.formRow}>
+          <p className={classes.label}>{t("login")}</p>
+          <Box className={classes.phone}>
+            <HFTextFieldWithMask
+              isFormEdit
+              control={control}
+              name={"phoneNumber"}
+              fullWidth
+              // mask={"(99) 999-99-99"}
+            />
+          </Box>
+        </div>
+      </TabPanel> */}
                 </div>
-                <div className={classes.formRow}>
-                  <p className={classes.label}>{t("password")}</p>
-                  <HFTextField
-                    required
-                    control={control}
-                    name="password"
-                    type="password"
-                    size="large"
-                    fullWidth
-                    placeholder={t("enter.password")}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Lock style={{ fontSize: "30px" }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+              </div>
+            ) : (
+              <div style={{ padding: "0 20px" }}>
+                <div className={classes.formArea} style={{ marginTop: "10px", height: `calc(100vh - 350px)` }}>
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>{t("company")}</p>
+                    <HFSelect required control={control} name="company_id" size="large" placeholder={t("enter.company")} options={computedCompanies} />
+                  </div>
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>{t("project")}</p>
+                    <HFSelect required control={control} name="project_id" size="large" placeholder={t("enter.project")} options={computedProjects} />
+                  </div>
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>{t("environment")}</p>
+                    <HFSelect required control={control} name="environment_id" size="large" placeholder={t("select.environment")} options={computedEnvironments} />
+                  </div>
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>{t("client_type")}</p>
+                    <HFSelect required control={control} name="client_type" size="large" placeholder={t("enter.client_type")} options={computedClientTypes} />
+                  </div>
+                  {computedConnections.length
+                    ? computedConnections?.map((connection, idx) => (
+                        <DynamicFields
+                          key={connection?.guid}
+                          table={computedConnections}
+                          connection={connection}
+                          index={idx}
+                          control={control}
+                          setValue={setValue}
+                          watch={watch}
+                          companies={companies}
+                        />
+                      ))
+                    : null}
                 </div>
-              </TabPanel>
-              {/* <TabPanel>
-                <div className={classes.formRow}>
-                  <p className={classes.label}>{t("login")}</p>
-                  <Box className={classes.phone}>
-                    <HFTextFieldWithMask
-                      isFormEdit
-                      control={control}
-                      name={"phoneNumber"}
-                      fullWidth
-                      // mask={"(99) 999-99-99"}
-                    />
-                  </Box>
-                </div>
-              </TabPanel> */}
-            </div>
+              </div>
+            )}
+          </Tabs>
+          <div className={classes.buttonsArea}>
+            <PrimaryButton size="large" loader={loading}>
+              {t("enter")}
+            </PrimaryButton>
           </div>
-        ) : (
-          <div style={{ padding: "0 20px" }}>
-            <div
-              className={classes.formArea}
-              style={{ marginTop: "10px", height: `calc(100vh - 350px)` }}
-            >
-              <div className={classes.formRow}>
-                <p className={classes.label}>{t("company")}</p>
-                <HFSelect
-                  required
-                  control={control}
-                  name="company_id"
-                  size="large"
-                  placeholder={t("enter.company")}
-                  options={computedCompanies}
-                />
-              </div>
-              <div className={classes.formRow}>
-                <p className={classes.label}>{t("project")}</p>
-                <HFSelect
-                  required
-                  control={control}
-                  name="project_id"
-                  size="large"
-                  placeholder={t("enter.project")}
-                  options={computedProjects}
-                />
-              </div>
-              <div className={classes.formRow}>
-                <p className={classes.label}>{t("environment")}</p>
-                <HFSelect
-                  required
-                  control={control}
-                  name="environment_id"
-                  size="large"
-                  placeholder={t("select.environment")}
-                  options={computedEnvironments}
-                />
-              </div>
-              <div className={classes.formRow}>
-                <p className={classes.label}>{t("client_type")}</p>
-                <HFSelect
-                  required
-                  control={control}
-                  name="client_type"
-                  size="large"
-                  placeholder={t("enter.client_type")}
-                  options={computedClientTypes}
-                />
-              </div>
-              {computedConnections.length
-                ? computedConnections?.map((connection, idx) => (
-                    <DynamicFields
-                      key={connection?.guid}
-                      table={computedConnections}
-                      connection={connection}
-                      index={idx}
-                      control={control}
-                      setValue={setValue}
-                      watch={watch}
-                      companies={companies}
-                    />
-                  ))
-                : null}
-            </div>
-          </div>
-        )}
-      </Tabs>
-      <div className={classes.buttonsArea}>
-        <PrimaryButton size="large" loader={loading}>
-          {t("enter")}
-        </PrimaryButton>
-      </div>
-    </form>
+        </form>
+      )}
+
+      <SecondaryButton
+        size="large"
+        style={{ marginTop: "20px" }}
+        type="button"
+        onClick={() => {
+          formType === "RESET_PASSWORD" ? setFormType("LOGIN") : setFormType("RESET_PASSWORD");
+        }}
+      >
+        {formType === "RESET_PASSWORD" ? "Back to login" : "Reset Password"}
+      </SecondaryButton>
+    </>
   );
 };
 

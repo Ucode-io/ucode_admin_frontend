@@ -13,17 +13,17 @@ const authService = {
       headers: { "environment-id": data.environment_id },
     }),
   multiCompanyLogin: (data) => requestAuthV2.post("/multi-company/login", data),
-  sendResetMessageToEmail: (data) =>
-    requestAuth.post(`/user/send-message`, data),
+  sendResetMessageToEmail: (data) => requestAuth.post(`/user/send-message`, data),
   resetPassword: (data) => requestAuth.put(`/user/reset-password`, data),
+  resetPasswordV2: (data) => requestAuth.put(`/v2/reset-password`, data),
   refreshToken: (data) => requestAuthV2.put(`/refresh`, data),
   updateToken: (data) => authRequestV2.put(`/refresh`, data),
   sendCode: (data) => requestAuth.post(`/send-code`, data),
-  verifyCode: (sms_id, otp, data) =>
-    requestAuth.post(`/verify/${sms_id}/${otp}`, data),
+  verifyCode: (sms_id, otp, data) => requestAuth.post(`/verify/${sms_id}/${otp}`, data),
   sendMessage: (data) => requestAuth.post(`/send-message`, data),
-  verifyEmail: (sms_id, otp, data) =>
-    requestAuth.post(`/verify-email/${sms_id}/${otp}`, data),
+  verifyEmail: (sms_id, otp, data) => requestAuth.post(`/verify-email/${sms_id}/${otp}`, data),
+  verifyOnlyEmail: (data) => requestAuth.post(`/v2/verify-only-email`, data),
+  forgotPassword: (login) => requestAuth.post(`/v2/forgot-password`, login),
 };
 
 export default authService;

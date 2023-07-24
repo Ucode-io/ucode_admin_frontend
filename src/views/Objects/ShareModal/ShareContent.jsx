@@ -143,6 +143,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     if (getUserPermission) {
       reset({
         ...data,
+        grant_access: getUserPermission?.grant_access,
         table: {
           record_permissions: getUserPermission?.table?.record_permissions,
           field_permissions: getUserPermission?.table?.field_permissions,

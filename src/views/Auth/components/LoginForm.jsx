@@ -55,7 +55,9 @@ const LoginForm = ({ setIndex, index }) => {
   }, [companies]);
 
   const computedProjects = useMemo(() => {
-    const company = companies?.find((company) => company.id === selectedCompanyID);
+    const company = companies?.find(
+      (company) => company.id === selectedCompanyID
+    );
     return listToOptions(company?.projects, "name");
   }, [companies, selectedCompanyID]);
 
@@ -92,9 +94,16 @@ const LoginForm = ({ setIndex, index }) => {
   });
 
   const { data: computedClientTypes = [] } = useQuery(
-    ["GET_CLIENT_TYPE_LIST", { "project-id": selectedProjectID }, { "environment-id": selectedEnvID }],
+    [
+      "GET_CLIENT_TYPE_LIST",
+      { "project-id": selectedProjectID },
+      { "environment-id": selectedEnvID },
+    ],
     () => {
-      return clientTypeServiceV2.getList({ "project-id": selectedProjectID }, { "environment-id": selectedEnvID });
+      return clientTypeServiceV2.getList(
+        { "project-id": selectedProjectID },
+        { "environment-id": selectedEnvID }
+      );
     },
     {
       enabled: !!selectedEnvID,
@@ -107,7 +116,11 @@ const LoginForm = ({ setIndex, index }) => {
   );
 
   const { data: computedConnections = [] } = useQuery(
-    ["GET_CONNECTION_LIST", { "project-id": selectedProjectID }, { "environment-id": selectedEnvID }],
+    [
+      "GET_CONNECTION_LIST",
+      { "project-id": selectedProjectID },
+      { "environment-id": selectedEnvID },
+    ],
     () => {
       return connectionServiceV2.getList(
         {
@@ -193,7 +206,7 @@ const LoginForm = ({ setIndex, index }) => {
   return (
     <>
       {formType === "RESET_PASSWORD" ? (
-        <RecoverPassword setFormType={setFormType}/>
+        <RecoverPassword setFormType={setFormType} />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
           <Tabs direction={"ltr"}>
@@ -205,7 +218,10 @@ const LoginForm = ({ setIndex, index }) => {
                   <Tab>{t("E-mail")}</Tab>
                 </TabList>
 
-                <div className={classes.formArea} style={{ marginTop: "10px", height: `calc(100vh - 370px)` }}>
+                <div
+                  className={classes.formArea}
+                  style={{ marginTop: "10px", height: `calc(100vh - 370px)` }}
+                >
                   <TabPanel>
                     <div className={classes.formRow}>
                       <p className={classes.label}>{t("login")}</p>
@@ -264,22 +280,53 @@ const LoginForm = ({ setIndex, index }) => {
               </div>
             ) : (
               <div style={{ padding: "0 20px" }}>
-                <div className={classes.formArea} style={{ marginTop: "10px", height: `calc(100vh - 350px)` }}>
+                <div
+                  className={classes.formArea}
+                  style={{ marginTop: "10px", height: `calc(100vh - 350px)` }}
+                >
                   <div className={classes.formRow}>
                     <p className={classes.label}>{t("company")}</p>
-                    <HFSelect required control={control} name="company_id" size="large" placeholder={t("enter.company")} options={computedCompanies} />
+                    <HFSelect
+                      required
+                      control={control}
+                      name="company_id"
+                      size="large"
+                      placeholder={t("enter.company")}
+                      options={computedCompanies}
+                    />
                   </div>
                   <div className={classes.formRow}>
                     <p className={classes.label}>{t("project")}</p>
-                    <HFSelect required control={control} name="project_id" size="large" placeholder={t("enter.project")} options={computedProjects} />
+                    <HFSelect
+                      required
+                      control={control}
+                      name="project_id"
+                      size="large"
+                      placeholder={t("enter.project")}
+                      options={computedProjects}
+                    />
                   </div>
                   <div className={classes.formRow}>
                     <p className={classes.label}>{t("environment")}</p>
-                    <HFSelect required control={control} name="environment_id" size="large" placeholder={t("select.environment")} options={computedEnvironments} />
+                    <HFSelect
+                      required
+                      control={control}
+                      name="environment_id"
+                      size="large"
+                      placeholder={t("select.environment")}
+                      options={computedEnvironments}
+                    />
                   </div>
                   <div className={classes.formRow}>
                     <p className={classes.label}>{t("client_type")}</p>
-                    <HFSelect required control={control} name="client_type" size="large" placeholder={t("enter.client_type")} options={computedClientTypes} />
+                    <HFSelect
+                      required
+                      control={control}
+                      name="client_type"
+                      size="large"
+                      placeholder={t("enter.client_type")}
+                      options={computedClientTypes}
+                    />
                   </div>
                   {computedConnections.length
                     ? computedConnections?.map((connection, idx) => (
@@ -312,7 +359,9 @@ const LoginForm = ({ setIndex, index }) => {
         style={{ marginTop: "20px" }}
         type="button"
         onClick={() => {
-          formType === "RESET_PASSWORD" ? setFormType("LOGIN") : setFormType("RESET_PASSWORD");
+          formType === "RESET_PASSWORD"
+            ? setFormType("LOGIN")
+            : setFormType("RESET_PASSWORD");
         }}
       >
         {formType === "RESET_PASSWORD" ? "Back to login" : "Reset Password"}

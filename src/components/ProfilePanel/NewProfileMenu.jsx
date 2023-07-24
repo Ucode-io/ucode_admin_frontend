@@ -1,7 +1,5 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import KeyIcon from "@mui/icons-material/Key";
-import LayersIcon from "@mui/icons-material/Layers";
-import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, Tooltip } from "@mui/material";
@@ -249,22 +247,14 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
             <ProfileItem
               children={
                 <>
-                  <p className={styles.companyavatar}>
-                    {company.companyItem?.name?.charAt(0).toUpperCase()}
-                  </p>
+                  <ApartmentIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
                   {company.companyItem?.name}
                 </>
               }
-            />
-            <ProfileItem
-              children={
-                <ApartmentIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={"Settings"}
               onClick={handleCompanyNavigate}
             />
           </div>
@@ -282,17 +272,6 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
             />
             <ProfileItem
               children={
-                <LayersIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={"Projects"}
-              onClick={handleProjectNavigate}
-            />
-            <ProfileItem
-              children={
                 <ResourceList
                   item={company.environmentItem?.name || "No environment"}
                   className={styles.environmentavatar}
@@ -300,17 +279,6 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
                 />
               }
               onClick={openEnvironmentList}
-            />
-            <ProfileItem
-              children={
-                <LocalOfferIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={"Environments"}
-              onClick={handleEnvNavigate}
             />
           </div>
           <Divider />
@@ -396,13 +364,14 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
         projectVisible={projectVisible}
         projectList={company.projects}
         setSelected={setSelected}
+        handleProjectNavigate={handleProjectNavigate}
       />
       <EnvironmentsList
         environmentListEl={environmentListEl}
         closeEnvironmentList={closeEnvironmentList}
         environmentVisible={environmentVisible}
         environmentList={company.environments}
-        refreshTokenFunc={refreshTokenFunc}
+        handleEnvNavigate={handleEnvNavigate}
       />
       {companyModal && <CompanyModal closeModal={closeCompanyModal} />}
     </div>

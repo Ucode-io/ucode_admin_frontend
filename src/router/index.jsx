@@ -80,7 +80,6 @@ const Router = () => {
   const [favicon, setFavicon] = useState("");
   const cashboxIsOpen = cashbox.is_open === "Открыто";
 
-  console.log("applications", applications);
   const redirectLink = useMemo(() => {
     // if (location.pathname.includes("settings"))
     //   return "/settings/constructor/apps";

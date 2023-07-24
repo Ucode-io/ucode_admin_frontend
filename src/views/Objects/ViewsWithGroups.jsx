@@ -57,7 +57,6 @@ const ViewsWithGroups = ({
   const [analyticsRes, setAnalyticsRes] = useState(null);
   const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
     useState(false);
-  console.log("jnkawjdnkajwda", tableSlug);
   const [res, setRes] = [
     {
       balance: [],

@@ -76,7 +76,10 @@ export default function RecoverPassword({ setFormType }) {
   };
 
   return (
-    <form className={classes.form}>
+    <form className={classes.form} onSubmit={(e) => {
+      e.preventDefault();
+      viewType === "login" ? onSubmit(getValues()) : viewType === "otp" ? verifyOtp() : resetPassword();
+    }}>
       {viewType === "login" ? (
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%" }}>
           <div className={classes.formRow}>

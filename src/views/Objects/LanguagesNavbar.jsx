@@ -33,8 +33,8 @@ export default function LanguagesNavbar() {
     setAnchorEl(null);
   };
 
-  const { data: projectInfo } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
-    return projectService.getByID(projectId);
+  const { data: projectInfo = [] } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
+    return projectService.getById(projectId);
   });
 
   const languages = useMemo(() => {

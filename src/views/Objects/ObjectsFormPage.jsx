@@ -108,7 +108,7 @@ const ObjectsFormPage = () => {
       setSummary(layout?.find((el) => el.is_default === true)?.summary_fields ?? []);
 
       // setTableRelations(relations?.sort(sortByOrder)?.map(el => el.relation ?? el?.view_relation_type === 'FILE' ? el : {}))
-
+ 
       const relations =
         view_relations?.map((el) => ({
           ...el,
@@ -121,6 +121,7 @@ const ObjectsFormPage = () => {
           relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
+
 
       if (!selectedTab?.relation_id) reset(data?.response ?? {});
       // const hasCurrentTab = tabs?.some((tab) => tab.link === location.pathname)

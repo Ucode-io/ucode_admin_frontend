@@ -9,16 +9,16 @@ import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Card } from "@mui/material";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
+import { useFieldArray } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
-import IconGenerator from "../../../components/IconPicker/IconGenerator";
-import applicationService from "../../../services/applicationService";
+import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
 import layoutService from "../../../services/layoutService";
+import { store } from "../../../store";
 import FilesSection from "../FilesSection";
 import NewMainInfo from "../NewMainInfo";
 import CustomActionsButton from "../components/CustomActionsButton";
@@ -26,8 +26,6 @@ import DocumentGeneratorButton from "../components/DocumentGeneratorButton";
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import styles from "./style.module.scss";
-import { store } from "../../../store";
-import PageFallback from "../../../components/PageFallback";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -57,7 +55,7 @@ const NewRelationSection = ({
     });
   }, [data]);
 
-  const { tableSlug: tableSlugFromParams, id: idFromParams, appId } = useParams();
+  const { tableSlug: tableSlugFromParams, id: idFromParams } = useParams();
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
@@ -79,7 +77,6 @@ const NewRelationSection = ({
   const dispatch = useDispatch();
   const queryTab = searchParams.get("tab");
   const myRef = useRef();
-  const navigate = useNavigate();
   const tables = useSelector((state) => state?.auth?.tables);
 
   const getRelatedTabeSlug = useMemo(() => {
@@ -90,11 +87,11 @@ const NewRelationSection = ({
     if (data?.[0]?.tabs?.length > 0) {
       setSelectTab(data?.[0]?.tabs?.[0]);
     }
-  }, [data]);
+  }, [data, setSelectTab]);
 
   useEffect(() => {
     queryTab ? setSelectedTabIndex(parseInt(queryTab) - 1) : setSelectedTabIndex(0);
-  }, [queryTab]);
+  }, [queryTab, setSelectedTabIndex]);
 
   const handleHeightControl = (val) => {
     dispatch(
@@ -125,10 +122,10 @@ const NewRelationSection = ({
 
   useEffect(() => {
     update();
-  }, []);
+  }, [update]);
 
   const selectedRelation = filteredRelations?.[selectedTabIndex];
-
+  console.log('filteredRelations', )
   useEffect(() => {
     setSelectedObjects([]);
     setFormVisible(false);
@@ -157,7 +154,7 @@ const NewRelationSection = ({
       let values = Object.values(el);
       mapped[keys[0]] = values[0];
     });
-    const relation = filteredRelations[selectedTabIndex];
+    // const relation = filteredRelations[selectedTabIndex];
     if (getRelatedTabeSlug?.type === "Many2Many") setSelectedManyToManyRelation(getRelatedTabeSlug);
     else {
       append(mapped);
@@ -224,10 +221,8 @@ const NewRelationSection = ({
   const computedSections = useMemo(() => {
     const sections = [];
     data?.map((relation) => {
-      relation?.tabs?.[selectedTabIndex]?.sections?.map((el) => {
-        if (!sections?.[el]) {
-          sections.push(el);
-        }
+      return relation?.tabs?.[selectedTabIndex]?.sections?.map((el) => {
+        return !sections?.[el] && sections.push(el);
       });
     });
     return sections;
@@ -247,7 +242,7 @@ const NewRelationSection = ({
           setJwtObjects(res?.data?.fields?.filter((item) => item?.attributes?.object_id_from_jwt === true));
         })
         .catch((a) => console.log("error", a));
-  }, [selectedRelation]);
+  }, [, getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
 
   useEffect(() => {
     let tableSlugsFromObj = jwtObjects?.map((item) => {
@@ -265,7 +260,7 @@ const NewRelationSection = ({
         };
       })
     );
-  }, [jwtObjects]);
+  }, [jwtObjects, tables]);
 
   const onSelect = (el) => {
     setSelectTab(el ?? relations[selectedTabIndex]);
@@ -294,13 +289,17 @@ const NewRelationSection = ({
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
-    selectedTab?.sections.map((section) => {
-      section?.fields.map((field) => {
-        allFields.push(field);
+    selectedTab?.sections?.map((section) => {
+      return section?.fields?.map((field) => {
+        return allFields.push(field);
       });
     });
     return !!allFields.find((field) => field?.enable_multilanguage === true);
   }, [selectedTab]);
+
+  const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
+
+  console.log("sssssssss", relatedTableSlug);
 
   // if (!data?.length) return <PageFallback />;
   // if (loader) return <PageFallback />;
@@ -450,8 +449,8 @@ const NewRelationSection = ({
                             }}
                           >
                             <ExcelDownloadButton
-                              relatedTable={selectedRelation?.relatedTable}
-                              fieldSlug={fieldSlug}
+                              relatedTable={relatedTableSlug}
+                              fieldSlug={selectedTab?.type === "section" ? relatedTableSlug : fieldSlug}
                               fieldSlugId={id}
                               withText={true}
                               sort={myRef.current?.excelSort()}
@@ -467,67 +466,62 @@ const NewRelationSection = ({
               {loader ? (
                 <PageFallback />
               ) : (
-                relation?.tabs?.map(
-                  (el, index) => (
-                    console.log("TabPanel", el),
-                    (
-                      <TabPanel key={el.id}>
-                        {!selectedTab?.relation_id ? (
-                          <NewMainInfo
-                            control={control}
-                            loader={loader}
-                            isMultiLanguage={isMultiLanguage}
-                            computedSections={computedSections}
-                            setFormValue={setFormValue}
-                            relatedTable={relatedTable}
-                            relation={relation}
-                            selectedIndex={selectedIndex}
-                          />
-                        ) : relation?.relatedTable === "file" ? (
-                          <FilesSection
-                            shouldGet={shouldGet}
-                            setFormValue={setFormValue}
-                            remove={remove}
-                            reset={reset}
-                            watch={watch}
-                            control={control}
-                            formVisible={formVisible}
-                            relation={relation}
-                            key={relation.id}
-                            createFormVisible={relationsCreateFormVisible}
-                            setCreateFormVisible={setCreateFormVisible}
-                          />
-                        ) : (
-                          <RelationTable
-                            ref={myRef}
-                            loader={loader}
-                            setFieldSlug={setFieldSlug}
-                            setDataLength={setDataLength}
-                            shouldGet={shouldGet}
-                            remove={remove}
-                            reset={reset}
-                            selectedTabIndex={selectedTabIndex}
-                            watch={watch}
-                            selectedTab={selectedTab}
-                            control={control}
-                            setFormValue={setFormValue}
-                            fields={fields}
-                            setFormVisible={setFormVisible}
-                            formVisible={formVisible}
-                            key={selectedTab.id}
-                            relation={relations}
-                            createFormVisible={relationsCreateFormVisible}
-                            setCreateFormVisible={setCreateFormVisible}
-                            selectedObjects={selectedObjects}
-                            setSelectedObjects={setSelectedObjects}
-                            tableSlug={tableSlug}
-                            id={id}
-                          />
-                        )}
-                      </TabPanel>
-                    )
-                  )
-                )
+                relation?.tabs?.map((el, index) => (
+                  <TabPanel key={el.id}>
+                    {!selectedTab?.relation_id ? (
+                      <NewMainInfo
+                        control={control}
+                        loader={loader}
+                        isMultiLanguage={isMultiLanguage}
+                        computedSections={computedSections}
+                        setFormValue={setFormValue}
+                        relatedTable={relatedTable}
+                        relation={relation}
+                        selectedIndex={selectedIndex}
+                      />
+                    ) : relation?.relatedTable === "file" ? (
+                      <FilesSection
+                        shouldGet={shouldGet}
+                        setFormValue={setFormValue}
+                        remove={remove}
+                        reset={reset}
+                        watch={watch}
+                        control={control}
+                        formVisible={formVisible}
+                        relation={relation}
+                        key={relation.id}
+                        createFormVisible={relationsCreateFormVisible}
+                        setCreateFormVisible={setCreateFormVisible}
+                      />
+                    ) : (
+                      <RelationTable
+                        ref={myRef}
+                        loader={loader}
+                        setFieldSlug={setFieldSlug}
+                        setDataLength={setDataLength}
+                        shouldGet={shouldGet}
+                        remove={remove}
+                        reset={reset}
+                        selectedTabIndex={selectedTabIndex}
+                        watch={watch}
+                        selectedTab={selectedTab}
+                        control={control}
+                        setFormValue={setFormValue}
+                        fields={fields}
+                        setFormVisible={setFormVisible}
+                        formVisible={formVisible}
+                        key={selectedTab.id}
+                        relation={relations}
+                        createFormVisible={relationsCreateFormVisible}
+                        setCreateFormVisible={setCreateFormVisible}
+                        selectedObjects={selectedObjects}
+                        setSelectedObjects={setSelectedObjects}
+                        tableSlug={tableSlug}
+                        id={id}
+                      />
+                    )}
+                  </TabPanel>
+                ))
               )}
             </Tabs>
           ))}

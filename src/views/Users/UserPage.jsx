@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -8,48 +8,55 @@ import {
 } from "../../components/CTable";
 import FiltersBlock from "../../components/FiltersBlock";
 import HeaderSettings from "../../components/HeaderSettings";
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import TableCard from "../../components/TableCard";
+import TableRowButton from "../../components/TableRowButton";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
 import { store } from "../../store";
 import { useQueryClient } from "react-query";
+
 import { showAlert } from "../../store/alert/alert.thunk";
 import {
-  useCompanyDeleteMutation,
-  useCompanyListQuery,
-} from "../../services/companyService";
+  useUserDeleteMutation,
+  useUserListQuery,
+} from "../../services/auth/userService";
 
-const CompanyPage = () => {
+const ClientUserPage = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const location = useLocation();
-  const user_id = store.getState().auth.userId;
+  const { userMenuId } = useParams();
 
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
   };
 
-  const { data: companies, isLoading } = useCompanyListQuery({
+  const navigateToCreateForm = () => {
+    navigate(`${location.pathname}/create`);
+  };
+
+  const { data: users, isLoading: projectLoading } = useUserListQuery({
     params: {
-      owner_id: user_id,
+      "client-type-id": userMenuId,
     },
   });
 
-  const { mutateAsync: deteleCompany, isLoading: createLoading } =
-    useCompanyDeleteMutation({
+  const { mutateAsync: deleteProject, isLoading: createLoading } =
+    useUserDeleteMutation({
+      userMenuId: userMenuId,
       onSuccess: () => {
         store.dispatch(showAlert("Успешно", "success"));
-        queryClient.refetchQueries(["COMPANY"]);
+        queryClient.refetchQueries(["PROJECT"]);
       },
     });
 
-  const deteleCompanyElement = (id) => {
-    deteleCompany(id);
+  const deleteProjectElement = (id) => {
+    deleteProject(id);
   };
-
   return (
     <div>
-      <HeaderSettings title={"Companies"} />
+      <HeaderSettings title={"Users"} />
 
       <FiltersBlock>
         <div className="p-1">{/* <SearchInput /> */}</div>
@@ -60,25 +67,31 @@ const CompanyPage = () => {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>
+            <CTableCell>Login</CTableCell>
+            <CTableCell>Email</CTableCell>
+            <CTableCell>Phone</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody
-            loader={isLoading}
-            columnsCount={4}
-            dataLength={companies?.companies?.length}
+            loader={projectLoading}
+            columnsCount={6}
+            dataLength={users?.users?.length}
           >
-            {companies?.companies?.map((element, index) => (
+            {users?.users?.map((element, index) => (
               <CTableRow
-                key={element?.id}
-                onClick={() => navigateToEditForm(element?.id)}
+                key={element.id}
+                onClick={() => navigateToEditForm(element.id)}
               >
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.name}</CTableCell>
+                <CTableCell>{element?.login}</CTableCell>
+                <CTableCell>{element?.email}</CTableCell>
+                <CTableCell>{element?.phone}</CTableCell>
                 <CTableCell>
                   <RectangleIconButton
                     color="error"
                     onClick={() => {
-                      deteleCompanyElement(element?.id);
+                      deleteProjectElement(element.id);
                     }}
                   >
                     <Delete color="error" />
@@ -86,6 +99,9 @@ const CompanyPage = () => {
                 </CTableCell>
               </CTableRow>
             ))}
+            <PermissionWrapperV2 tabelSlug="app" type="write">
+              <TableRowButton colSpan={6} onClick={navigateToCreateForm} />
+            </PermissionWrapperV2>
           </CTableBody>
         </CTable>
       </TableCard>
@@ -93,4 +109,4 @@ const CompanyPage = () => {
   );
 };
 
-export default CompanyPage;
+export default ClientUserPage;

@@ -39,6 +39,8 @@ import MicrofrontendPage from "../views/Constructor/Microfrontend";
 import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
 import WebPage from "../views/WebPage";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
+import ClientUserPage from "../views/Users/UserPage";
+import ClientUserForm from "../views/Users/UserFormPage";
 import EnvironmentPage from "../views/Environments";
 import EnvironmentForm from "../views/Environments/EnvironmentFormPage";
 import ProjectPage from "../views/Projects";
@@ -79,11 +81,11 @@ const Router = () => {
 
   console.log("applications", applications);
   const redirectLink = useMemo(() => {
-    if (location.pathname.includes("settings"))
-      return "/settings/constructor/apps";
-    if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
-    if (!applications.length || !applications[0].permission?.read)
-      return "/settings/constructor/apps";
+    // if (location.pathname.includes("settings"))
+    //   return "/settings/constructor/apps";
+    // if (location.pathname.includes("cashbox")) return "/cashbox/appointments";
+    // if (!applications.length || !applications[0].permission?.read)
+    //   return "/settings/constructor/apps";
     // return "/settings/constructor/apps";
     return `/main/c57eedc3-a954-4262-a0af-376c65b5a284`;
   }, [location.pathname, applications]);
@@ -154,6 +156,12 @@ const Router = () => {
         />
 
         <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
+
+        <Route path=":appId/user-page/:userMenuId">
+          <Route index element={<ClientUserPage />} />
+          <Route path="create" element={<ClientUserForm />} />
+          <Route path=":userId" element={<ClientUserForm />} />
+        </Route>
 
         <Route
           path=":appId/object/:tableSlug"

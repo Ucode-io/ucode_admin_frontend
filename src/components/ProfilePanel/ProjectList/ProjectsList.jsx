@@ -3,14 +3,17 @@ import styles from "./project.module.scss";
 import { useDispatch } from "react-redux";
 import ProfileItem from "../ProfileItem";
 import { companyActions } from "../../../store/company/company.slice";
+import { useQueryClient } from "react-query";
 
 const ProjectList = ({
   projectListEl,
   closeProjectList,
   projectVisible,
   projectList,
+  setSelected,
 }) => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   return (
     <Menu
@@ -32,12 +35,15 @@ const ProjectList = ({
               </>
             }
             onClick={() => {
-              dispatch(companyActions.setEnvironmentItem({}));
+              // dispatch(companyActions.setEnvironmentItem({}));
+              setSelected(true);
+              queryClient.refetchQueries(["ENVIRONMENT"], item.project_id);
               dispatch(companyActions.setProjectItem(item));
               dispatch(companyActions.setProjectId(item.project_id));
               closeProjectList();
             }}
             className={styles.menuItem}
+            key={item.project_id}
           />
         ))}
       </div>

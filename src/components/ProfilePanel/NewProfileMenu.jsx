@@ -1,12 +1,16 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
+import KeyIcon from "@mui/icons-material/Key";
 import LayersIcon from "@mui/icons-material/Layers";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import MoveUpIcon from "@mui/icons-material/MoveUp";
+import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PlusIcon } from "../../assets/icons/icon";
 import CompanyModal from "../../layouts/MainLayout/CompanyModal";
+import authService from "../../services/auth/authService";
 import {
   useCompanyListQuery,
   useEnvironmentListQuery,
@@ -21,27 +25,14 @@ import ProfileItem from "./ProfileItem";
 import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
 import styles from "./newprofile.module.scss";
-import KeyIcon from "@mui/icons-material/Key";
-import MoveUpIcon from "@mui/icons-material/MoveUp";
-import WidgetsIcon from "@mui/icons-material/Widgets";
-const NewProfilePanel = ({
-  anchorEl,
-  handleMenuSettingModalOpen,
-  projectInfo,
-}) => {
+import { useQueryClient } from "react-query";
+
+const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { appId } = useParams();
-  const companies = store.getState().company.companies;
-  const projects = store.getState().company.projects;
-  const environments = store.getState().company.environments;
-  const companyItem = store.getState().company.companyItem;
-  const environmentItem = store.getState().company.environmentItem;
-  const companyId = store.getState().company.companyId;
-  const projectId = store.getState().company.projectId;
-  const environmentId = store.getState().company.environmentId;
-  const projectItem = store.getState().company.projectItem;
-  const user_id = store.getState().auth.userId;
+  const queryClient = useQueryClient();
+  const company = store.getState().company;
   const auth = store.getState().auth;
   const [anchorProfileEl, setProfileAnchorEl] = useState(null);
   const [projectListEl, setProjectListEl] = useState(null);
@@ -53,6 +44,12 @@ const NewProfilePanel = ({
   const environmentVisible = Boolean(environmentListEl);
   const location = useLocation();
   const settings = location.pathname.includes("settings");
+
+  const params = {
+    refresh_token: auth.refreshToken,
+    env_id: company.environmentId,
+    project_id: company.projectId,
+  };
 
   const handleClick = () => {
     navigate(`/main/${appId}/api-key`);
@@ -72,14 +69,15 @@ const NewProfilePanel = ({
   };
   const closeMenu = () => {
     setProfileAnchorEl(null);
+    // refreshTokenFunc();
   };
   const openMenu = (event) => {
     setProfileAnchorEl(event.currentTarget);
   };
   const handleCompanySelect = (item, e) => {
+    setSelected(true);
     dispatch(companyActions.setCompanyItem(item));
     dispatch(companyActions.setCompanyId(item.id));
-    setSelected(true);
     setProfileAnchorEl(e.currentTarget);
   };
 
@@ -111,63 +109,77 @@ const NewProfilePanel = ({
     closeMenu();
   };
 
+  const refreshTokenFunc = (env_id) => {
+    authService
+      .updateToken(params)
+      .then((res) => {
+        store.dispatch(authActions.setTokens(res));
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     dispatch(
       companyActions.setCompanyItem(
-        companies.find((item) => item.id === companyId)
+        company.companies.find((item) => item.id === company.companyId)
       )
     );
     dispatch(
       companyActions.setEnvironmentItem(
-        environments?.find((item) => item.id === environmentId)
+        company.environments?.find((item) => item.id === company.environmentId)
       )
     );
     dispatch(
       companyActions.setProjectItem(
-        projects?.find((item) => item.project_id === projectId)
+        company.projects?.find((item) => item.project_id === company.projectId)
       )
     );
-  }, []);
+  }, [company.companies, company.environments]);
 
   const { isLoading } = useCompanyListQuery({
     params: {
-      owner_id: user_id,
+      owner_id: auth.userId,
     },
     queryParams: {
+      enabled: Boolean(auth.userId) && menuVisible,
       onSuccess: (res) => {
         dispatch(companyActions.setCompanies(res.companies));
       },
     },
   });
+
   const { isLoading: projectLoading } = useProjectListQuery({
     params: {
-      company_id: companyId,
+      company_id: company.companyId,
     },
     queryParams: {
-      enabled: Boolean(companyId),
+      enabled: Boolean(company.companyId) && menuVisible,
       onSuccess: (res) => {
         dispatch(companyActions.setProjects(res.projects));
         if (selected) {
           dispatch(companyActions.setProjectItem(res.projects[0]));
           dispatch(companyActions.setProjectId(res.projects[0].project_id));
-          setSelected(false);
         }
       },
     },
   });
+
   const { isLoading: environmentLoading } = useEnvironmentListQuery({
     params: {
-      project_id: projectId,
+      project_id: company.projectId,
     },
     queryParams: {
-      enabled: Boolean(projectId),
+      enabled: Boolean(company.projectId) && menuVisible,
       onSuccess: (res) => {
-        dispatch(companyActions.setEnvironments(res.environments));
         if (selected) {
           dispatch(companyActions.setEnvironmentItem(res.environments[0]));
           dispatch(companyActions.setEnvironmentId(res.environments[0].id));
-          setSelected(false);
         }
+        dispatch(companyActions.setEnvironments(res.environments));
+        setSelected(false);
       },
     },
   });
@@ -185,7 +197,10 @@ const NewProfilePanel = ({
         id="lock-menu"
         anchorEl={anchorProfileEl || anchorEl}
         open={menuVisible}
-        onClose={closeMenu}
+        onClose={() => {
+          closeMenu();
+          refreshTokenFunc();
+        }}
         classes={{
           list: styles.profilemenu,
           paper: settings ? styles.settingspaper : styles.profilepaper,
@@ -194,24 +209,26 @@ const NewProfilePanel = ({
         <Box className={styles.leftblock}>
           <div className={styles.block}>
             <div className={styles.companyblock}>
-              {companies?.map((item) => (
+              {company.companies?.map((item) => (
                 <ProfileItem
                   children={
                     <Tooltip title={item?.name}>
                       <p
                         className={
-                          item.id === companyId
+                          item.id === company.companyId
                             ? styles.avatarborder
                             : styles.avatar
                         }
                         onClick={(e) => {
                           handleCompanySelect(item, e);
+                          queryClient.refetchQueries(["PROJECT"], item.id);
                         }}
                       >
                         {item?.name?.charAt(0).toUpperCase()}
                       </p>
                     </Tooltip>
                   }
+                  key={item.id}
                   type="company"
                   className={styles.company}
                 />
@@ -233,9 +250,9 @@ const NewProfilePanel = ({
               children={
                 <>
                   <p className={styles.companyavatar}>
-                    {companyItem?.name?.charAt(0).toUpperCase()}
+                    {company.companyItem?.name?.charAt(0).toUpperCase()}
                   </p>
-                  {companyItem?.name}
+                  {company.companyItem?.name}
                 </>
               }
             />
@@ -253,18 +270,16 @@ const NewProfilePanel = ({
           </div>
           <Divider />
           <div className={styles.block}>
-            {projectItem.project_id === projectId && (
-              <ProfileItem
-                children={
-                  <ResourceList
-                    item={projectItem?.title}
-                    className={styles.projectavatar}
-                    colorItem={projectItem}
-                  />
-                }
-                onClick={openProjectList}
-              />
-            )}
+            <ProfileItem
+              children={
+                <ResourceList
+                  item={company.projectItem?.title || "No project"}
+                  className={styles.projectavatar}
+                  colorItem={company.projectItem}
+                />
+              }
+              onClick={openProjectList}
+            />
             <ProfileItem
               children={
                 <LayersIcon
@@ -276,18 +291,16 @@ const NewProfilePanel = ({
               text={"Projects"}
               onClick={handleProjectNavigate}
             />
-            {environmentItem.id === environmentId && (
-              <ProfileItem
-                children={
-                  <ResourceList
-                    item={environmentItem?.name}
-                    className={styles.environmentavatar}
-                    colorItem={environmentItem}
-                  />
-                }
-                onClick={openEnvironmentList}
-              />
-            )}
+            <ProfileItem
+              children={
+                <ResourceList
+                  item={company.environmentItem?.name || "No environment"}
+                  className={styles.environmentavatar}
+                  colorItem={company.environmentItem}
+                />
+              }
+              onClick={openEnvironmentList}
+            />
             <ProfileItem
               children={
                 <LocalOfferIcon
@@ -381,13 +394,15 @@ const NewProfilePanel = ({
         projectListEl={projectListEl}
         closeProjectList={closeProjectList}
         projectVisible={projectVisible}
-        projectList={projects}
+        projectList={company.projects}
+        setSelected={setSelected}
       />
       <EnvironmentsList
         environmentListEl={environmentListEl}
         closeEnvironmentList={closeEnvironmentList}
         environmentVisible={environmentVisible}
-        environmentList={environments}
+        environmentList={company.environments}
+        refreshTokenFunc={refreshTokenFunc}
       />
       {companyModal && <CompanyModal closeModal={closeCompanyModal} />}
     </div>

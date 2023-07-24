@@ -12,6 +12,19 @@ const roleServiceV2 = {
   addPermissionToRole: (data) =>
     requestAuthV2.post(`/role-permission/many`, data),
 };
+export const useRoleListQuery = ({
+  params = {},
+  headers = {},
+  queryParams,
+} = {}) => {
+  return useQuery(
+    ["ROLES", { params, headers }],
+    () => {
+      return roleServiceV2.getList(params, headers);
+    },
+    queryParams
+  );
+};
 
 export const useRoleGetByIdQuery = ({ id, params = {}, queryParams }) => {
   return useQuery(

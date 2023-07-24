@@ -14,7 +14,6 @@ import authService from "../../../services/auth/authService";
 import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
 import connectionServiceV2 from "../../../services/auth/connectionService";
 import environmentService from "../../../services/environmentService";
-import { useRoleListQuery } from "../../../services/roleServiceV2";
 import { store } from "../../../store";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import { loginAction } from "../../../store/auth/auth.thunk";
@@ -22,10 +21,9 @@ import { companyActions } from "../../../store/company/company.slice";
 import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
-import RegisterForm from "./RegisterForm";
-import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
+import { useRoleListQuery } from "../../../services/roleServiceV2";
 
 const LoginForm = ({ setIndex, index }) => {
   const { t } = useTranslation();

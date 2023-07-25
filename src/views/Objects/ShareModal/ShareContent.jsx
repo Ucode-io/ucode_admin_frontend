@@ -105,7 +105,6 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     {
       enable: !params,
       select: (res) => res ?? {},
-      staleTime: Infinity,
     }
   );
 

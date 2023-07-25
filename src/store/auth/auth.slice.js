@@ -33,7 +33,7 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
       state.projectId = payload.project_id;
       state.environmentId = payload.environment_id;
       state.resourceId = payload.resource_id;
-      state.globalPermissions = payload.global_permissions;
+      state.globalPermissions = payload.global_permission;
       // state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
       state.permissions = payload?.permissions
         ? payload?.permissions?.reduce((acc, curr) => {

@@ -14,45 +14,29 @@ function CommonPermission({
       <Box
         sx={{
           display: "flex",
-          width: "500px",
           justifyContent: "space-between",
           gap: "10px",
+          padding: '15px'
         }}
       >
-        <FRow style={{ marginBottom: "0px" }}>Таблица:</FRow>
-        <FRow>
-          <HFSelect
+        <FRow label="Таблица" style={{ marginBottom: "0px" }}>
+        <HFSelect
             control={control}
             name={"table.slug"}
             options={tablesList}
           />
         </FRow>
-      </Box>
-      <Box
-        sx={{ display: "flex", justifyContent: "space-between", gap: "10px" }}
-      >
-        <FRow>Доступы</FRow>
-        <FRow></FRow>
-      </Box>
-      <Box
-        sx={{ display: "flex", justifyContent: "space-between", gap: "10px" }}
-      >
-        <FRow>Тип ползователя</FRow>
-        <FRow>Роль</FRow>
-      </Box>
-      <Box
-        sx={{ display: "flex", justifyContent: "space-between", gap: "10px" }}
-      >
-        <FRow style={{ marginBottom: "0px" }}>
-          <HFSelect
+        <FRow label="Тип ползователя">
+        <HFSelect
             control={control}
             name={"client_type"}
             options={clientTypeList}
           />
         </FRow>
-        <FRow style={{ marginBottom: "0px" }}>
+        <FRow label="Роль">
           <HFSelect control={control} name={"guid"} options={getRoleList} />
         </FRow>
+
       </Box>
     </>
   );

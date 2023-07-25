@@ -166,13 +166,13 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             placeholder={field?.attributes?.show_label ? "" : field.label}
             defaultValue={defaultValue}
             disabled={isDisabled}
+            key={computedSlug}
             rules={{
               pattern: {
                 value: new RegExp(field?.attributes?.validation),
                 message: field?.attributes?.validation_message,
               },
             }}
-            key={computedSlug}
             {...props}
           />
         </FRow>

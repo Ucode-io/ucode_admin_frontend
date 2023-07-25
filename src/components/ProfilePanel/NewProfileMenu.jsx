@@ -4,16 +4,12 @@ import MoveUpIcon from "@mui/icons-material/MoveUp";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PlusIcon } from "../../assets/icons/icon";
 import CompanyModal from "../../layouts/MainLayout/CompanyModal";
 import authService from "../../services/auth/authService";
-import {
-  useCompanyListQuery,
-  useEnvironmentListQuery,
-  useProjectListQuery,
-} from "../../services/companyService";
+import { useCompanyListQuery, useEnvironmentListQuery, useProjectListQuery } from "../../services/companyService";
 import { store } from "../../store";
 import { authActions } from "../../store/auth/auth.slice";
 import { companyActions } from "../../store/company/company.slice";
@@ -24,8 +20,10 @@ import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
 import styles from "./newprofile.module.scss";
 import { useQueryClient } from "react-query";
+import LayersIcon from '@mui/icons-material/Layers';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
-const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
+const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen, projectInfo }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { appId } = useParams();
@@ -120,21 +118,9 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
   };
 
   useEffect(() => {
-    dispatch(
-      companyActions.setCompanyItem(
-        company.companies.find((item) => item.id === company.companyId)
-      )
-    );
-    dispatch(
-      companyActions.setEnvironmentItem(
-        company.environments?.find((item) => item.id === company.environmentId)
-      )
-    );
-    dispatch(
-      companyActions.setProjectItem(
-        company.projects?.find((item) => item.project_id === company.projectId)
-      )
-    );
+    dispatch(companyActions.setCompanyItem(company.companies.find((item) => item.id === company.companyId)));
+    dispatch(companyActions.setEnvironmentItem(company.environments?.find((item) => item.id === company.environmentId)));
+    dispatch(companyActions.setProjectItem(company.projects?.find((item) => item.project_id === company.projectId)));
   }, [company.companies, company.environments]);
 
   const { isLoading } = useCompanyListQuery({
@@ -182,6 +168,8 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
     },
   });
 
+  const permissions = useSelector((state) => state.auth.globalPermissions);
+
   return (
     <div>
       <UserAvatar
@@ -212,11 +200,7 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
                   children={
                     <Tooltip title={item?.name}>
                       <p
-                        className={
-                          item.id === company.companyId
-                            ? styles.avatarborder
-                            : styles.avatar
-                        }
+                        className={item.id === company.companyId ? styles.avatarborder : styles.avatar}
                         onClick={(e) => {
                           handleCompanySelect(item, e);
                           queryClient.refetchQueries(["PROJECT"], item.id);
@@ -247,82 +231,111 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
             <ProfileItem
               children={
                 <>
+                  <p className={styles.companyavatar}>{company.companyItem?.name?.charAt(0).toUpperCase()}</p>
+                  {company.companyItem?.name}
+                </>
+              }
+            />
+            {permissions?.settings_button && (
+              <ProfileItem
+                children={
                   <ApartmentIcon
                     style={{
                       color: "#747474",
                     }}
                   />
-                  {company.companyItem?.name}
-                </>
-              }
-              onClick={handleCompanyNavigate}
-            />
+                }
+                text={"Settings"}
+                onClick={handleCompanyNavigate}
+              />
+            )}
           </div>
           <Divider />
           <div className={styles.block}>
             <ProfileItem
-              children={
-                <ResourceList
-                  item={company.projectItem?.title || "No project"}
-                  className={styles.projectavatar}
-                  colorItem={company.projectItem}
-                />
-              }
+              children={<ResourceList item={company.projectItem?.title || "No project"} className={styles.projectavatar} colorItem={company.projectItem} />}
               onClick={openProjectList}
             />
+            {permissions?.projects_button && (
+              <ProfileItem
+                children={
+                  <LayersIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
+                }
+                text={"Projects"}
+                onClick={handleProjectNavigate}
+              />
+            )}
             <ProfileItem
-              children={
-                <ResourceList
-                  item={company.environmentItem?.name || "No environment"}
-                  className={styles.environmentavatar}
-                  colorItem={company.environmentItem}
-                />
-              }
+              children={<ResourceList item={company.environmentItem?.name || "No environment"} className={styles.environmentavatar} colorItem={company.environmentItem} />}
               onClick={openEnvironmentList}
             />
+            {permissions?.environments_button && (
+              <ProfileItem
+                children={
+                  <LocalOfferIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
+                }
+                text={"Environments"}
+                onClick={handleEnvNavigate}
+              />
+            )}
           </div>
           <Divider />
           <div className={styles.block}>
-            <ProfileItem
-              children={
-                <KeyIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={"Api Keys"}
-              onClick={handleClick}
-            />
-            <ProfileItem
-              children={
-                <MoveUpIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={"Redirects"}
-              onClick={handleRedirectNavigate}
-            />
+            {permissions?.api_keys_button && (
+              <ProfileItem
+                children={
+                  <KeyIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
+                }
+                text={"Api Keys"}
+                onClick={handleClick}
+              />
+            )}
+
+            {permissions?.redirects_button && (
+              <ProfileItem
+                children={
+                  <MoveUpIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
+                }
+                text={"Redirects"}
+                onClick={handleRedirectNavigate}
+              />
+            )}
           </div>
           <Divider />
 
           <div className={styles.block}>
-            <ProfileItem
-              children={
-                <WidgetsIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={"Menu settings"}
-              onClick={() => {
-                handleMenuSettingModalOpen();
-                closeMenu();
-              }}
-            />
+            {permissions?.menu_setting_button && (
+              <ProfileItem
+                children={
+                  <WidgetsIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
+                }
+                text={"Menu settings"}
+                onClick={() => {
+                  handleMenuSettingModalOpen();
+                  closeMenu();
+                }}
+              />
+            )}
           </div>
         </Box>
         <Box className={styles.centerblock}>
@@ -330,10 +343,7 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
             <ProfileItem
               children={
                 <>
-                  <p className={styles.companyavatar}>
-                    {auth?.userInfo?.name?.charAt(0).toUpperCase() ||
-                      auth?.userInfo?.login?.charAt(0).toUpperCase()}
-                  </p>
+                  <p className={styles.companyavatar}>{auth?.userInfo?.name?.charAt(0).toUpperCase() || auth?.userInfo?.login?.charAt(0).toUpperCase()}</p>
                   {auth?.userInfo?.name || auth?.userInfo?.login}
                 </>
               }
@@ -341,31 +351,29 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
           </div>
           <Divider />
           <div className={styles.block}>
-            <ProfileItem
-              text={"Profile settings"}
-              onClick={() => {
-                navigate(`/settings/auth/matrix/profile/crossed`);
-              }}
-            />
-            <ProfileItem
-              text={"Настройки"}
-              onClick={() => {
-                navigate(`/settings/constructor/apps`);
-              }}
-            />
+            {permissions?.profile_settings_button && (
+              <ProfileItem
+                text={"Profile settings"}
+                onClick={() => {
+                  navigate(`/settings/auth/matrix/profile/crossed`);
+                }}
+              />
+            )}
+
+            {permissions?.project_settings_button && (
+              <ProfileItem
+                text={"Настройки"}
+                onClick={() => {
+                  navigate(`/settings/constructor/apps`);
+                }}
+              />
+            )}
             <ProfileItem text={"Logout"} onClick={logoutClickHandler} />
           </div>
         </Box>
       </Menu>
 
-      <ProjectList
-        projectListEl={projectListEl}
-        closeProjectList={closeProjectList}
-        projectVisible={projectVisible}
-        projectList={company.projects}
-        setSelected={setSelected}
-        handleProjectNavigate={handleProjectNavigate}
-      />
+      <ProjectList projectListEl={projectListEl} closeProjectList={closeProjectList} projectVisible={projectVisible} projectList={company.projects} setSelected={setSelected} />
       <EnvironmentsList
         environmentListEl={environmentListEl}
         closeEnvironmentList={closeEnvironmentList}

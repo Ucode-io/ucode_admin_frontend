@@ -1,12 +1,31 @@
-.tableCells {
-    margin: 0px 0 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.checkBox {
+  display: flex;
+  align-items: center;
+  width: 80px;
+}
+.shareHeader {
+  display:flex ;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  padding: 15px;
 }
 .collapse {
-    margin-top: 20px;
+    border: 1px solid #eee;
     cursor: pointer;
+    border-top: 0px;
+    h2 {
+      font-size: 14px;
+    }
+}
+.collapseCon {
+    border: 1px solid #eee;
+    border-top: 0px;
+    cursor: pointer;
+    
+    h2 {
+      font-size: 14px;
+    }
 }
 
 .submitBtn {
@@ -21,10 +40,10 @@
       width: 40px;
     }
   }
-  
-  .shareContent {
-    padding: 15px;
-    height: 650px;
+
+  .shareContentBody {
+    height: 400px;
+    width: 600px;
     overflow-y: scroll;
     
     &::-webkit-scrollbar {
@@ -36,5 +55,38 @@
       &::-webkit-scrollbar-thumb:hover {
         background-color: rgb(99, 99, 148);
       }
+  }
+  .shareFooter {
+    padding: 15px 15px;
+    border-top: 1px solid #eee;
+    
+    button {
+      margin: 0 10px;
+      font-size: 15px;
+      font-weight: 400;
+    }
+  }
+  
+  .permissionList {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    
+    .permissionListTitle {
+      font-size: 12px;
+      font-weight: 400;
+    }
+    .permissionListContent {
+      display: flex;
+      width: 160px; 
+    }
+    .permissionListItem {
+      width: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 5px;
+    }
   }
   

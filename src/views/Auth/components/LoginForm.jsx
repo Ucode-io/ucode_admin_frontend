@@ -1,6 +1,7 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
-import { InputAdornment } from "@mui/material";
+import { Button, InputAdornment } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
+import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
@@ -23,6 +24,8 @@ import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
+import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
+import RegisterForm from "./RegisterForm";
 import { useRoleListQuery } from "../../../services/roleServiceV2";
 
 const LoginForm = ({ setIndex, index }) => {
@@ -259,6 +262,18 @@ const LoginForm = ({ setIndex, index }) => {
                         }}
                       />
                     </div>
+
+                    {
+                      <Button
+                        variant="text"
+                        type="button"
+                        onClick={() => {
+                          formType === "RESET_PASSWORD" ? setFormType("LOGIN") : setFormType("RESET_PASSWORD");
+                        }}
+                      >
+                        Forgot password?
+                      </Button>
+                    }
                   </TabPanel>
                   {/* <TabPanel>
         <div className={classes.formRow}>
@@ -352,18 +367,18 @@ const LoginForm = ({ setIndex, index }) => {
         </form>
       )}
 
-      <SecondaryButton
-        size="large"
-        style={{ marginTop: "20px" }}
-        type="button"
-        onClick={() => {
-          formType === "RESET_PASSWORD"
-            ? setFormType("LOGIN")
-            : setFormType("RESET_PASSWORD");
-        }}
-      >
-        {formType === "RESET_PASSWORD" ? "Back to login" : "Reset Password"}
-      </SecondaryButton>
+      {formType === "RESET_PASSWORD" && (
+        <SecondaryButton
+          size="large"
+          style={{ marginTop: "20px" }}
+          type="button"
+          onClick={() => {
+            formType === "RESET_PASSWORD" ? setFormType("LOGIN") : setFormType("RESET_PASSWORD");
+          }}
+        >
+          Back to login
+        </SecondaryButton>
+      )}
     </>
   );
 };

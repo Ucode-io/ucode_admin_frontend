@@ -32,6 +32,7 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
       state.projectId = payload.project_id;
       state.environmentId = payload.environment_id;
       state.resourceId = payload.resource_id;
+      state.globalPermissions = payload.global_permissions;
       // state.permissions = listToMap(payload.permissions?.map(el => ({...el, name: el.name?.replace('ROOT/', '')})), "name")
       state.permissions = payload?.permissions
         ? payload?.permissions?.reduce((acc, curr) => {
@@ -41,6 +42,11 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
               write: curr.write !== "No",
               update: curr.update !== "No",
               delete: curr.delete !== "No",
+              automation: curr.automation !== "No",
+              language_btn: curr.language_btn !== "No",
+              settings: curr.settings !== "No",
+              share_modal: curr.share_modal !== "No",
+              view_create: curr.view_create !== "No",
             };
             return acc;
           }, {})
@@ -61,6 +67,11 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
             write: curr.write !== "No",
             update: curr.update !== "No",
             delete: curr.delete !== "No",
+            automation: curr.automation !== "No",
+            language_btn: curr.language_btn !== "No",
+            settings: curr.settings !== "No",
+            share_modal: curr.share_modal !== "No",
+            view_create: curr.view_create !== "No",
           };
           return acc;
         }, {}) || [];

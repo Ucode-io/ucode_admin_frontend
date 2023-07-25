@@ -43,6 +43,7 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
               write: curr.write !== "No",
               update: curr.update !== "No",
               delete: curr.delete !== "No",
+
               automation: curr.automation !== "No",
               language_btn: curr.language_btn !== "No",
               settings: curr.settings !== "No",
@@ -69,6 +70,7 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
             write: curr.write !== "No",
             update: curr.update !== "No",
             delete: curr.delete !== "No",
+            
             automation: curr.automation !== "No",
             language_btn: curr.language_btn !== "No",
             settings: curr.settings !== "No",

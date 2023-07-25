@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 import { store } from "../../../../store";
 import { Container, Draggable } from "react-smooth-dnd";
 import { applyDrag } from "../../../../utils/applyDrag";
+import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) => {
   const { t } = useTranslation();
@@ -66,6 +67,7 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
   };
 
   const selectedTable = store.getState().menu.menuItem;
+  const permissions = useSelector((state) => state.auth.permissions);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(views, dropResult);
@@ -128,10 +130,12 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
           <Settings className={style.icon} />
         </div> */}
 
-        <div className={style.element} aria-describedby={id} variant="contained" onClick={handleClick}>
-          <AddIcon className={style.icon} style={{ color: "#000" }} />
-          <strong style={{ color: "#000" }}>{t("add")}</strong>
-        </div>
+        <PermissionWrapperV2 tableSlug={tableSlug} type="view_create" >
+          <div className={style.element} aria-describedby={id} variant="contained" onClick={handleClick}>
+            <AddIcon className={style.icon} style={{ color: "#000" }} />
+            <strong style={{ color: "#000" }}>{t("add")}</strong>
+          </div>
+        </PermissionWrapperV2>
 
         <Popover
           id={id}

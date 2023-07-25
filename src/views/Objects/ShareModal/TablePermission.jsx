@@ -60,7 +60,7 @@ function TablePermission({ control, getUserPermission, getTablePermission }) {
             name="table.record_permissions.is_public"
             disabled={isCheckboxDisabled("is_public")}
           />
-          <div>Owner</div>
+          <div>is_public</div>
         </div>
       </Box>
     </Box>

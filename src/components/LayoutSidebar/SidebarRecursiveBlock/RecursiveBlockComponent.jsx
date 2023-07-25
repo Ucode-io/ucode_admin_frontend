@@ -5,7 +5,7 @@ import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Draggable } from "react-smooth-dnd";
 import { useMenuListQuery } from "../../../services/menuService";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
@@ -74,8 +74,7 @@ const RecursiveBlock = ({
     setChildBlockVisible((prev) => !prev);
     setCheck(true);
     setId(element?.id);
-    element.type === "FOLDER" &&
-      navigate(`/main/${appId}/web-page/c57eedc3-a954-4262-a0af-376c65b5a284`);
+    element.type === "FOLDER" && navigate(`/main/${appId}`);
   };
   useEffect(() => {
     if (
@@ -85,7 +84,7 @@ const RecursiveBlock = ({
       setChildBlockVisible(true);
     }
   }, []);
-  console.log("elemeent", element);
+
   return (
     <Draggable key={index}>
       <div className="parent-block column-drag-handle" key={index}>
@@ -109,7 +108,6 @@ const RecursiveBlock = ({
                 navigate(
                   `/main/${appId}/web-page/${element?.data?.webpage?.id}`
                 );
-                window.location.reload();
               }
               clickHandler();
               setElement(element);

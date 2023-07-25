@@ -1,6 +1,5 @@
 import { get } from "@ngard/tiny-get";
 import { useMemo } from "react";
-
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
 import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
 import { numberWithSpaces } from "../../utils/formatNumbers";
@@ -60,20 +59,21 @@ const CellElementGenerator = ({ field = {}, row }) => {
 
   switch (field.type) {
     case "LOOKUPS":
-      return <Many2ManyValue field={field} value={value}/>
-    
+      return <Many2ManyValue field={field} value={value} />;
+
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;
 
     case "NUMBER":
-      return numberWithSpaces(value);
+      return value !== undefined && typeof value === "number"
+        ? numberWithSpaces(value?.toFixed(1))
+        : value === undefined
+        ? value
+        : "";
 
     case "DATE_TIME":
       return (
-        <span className="text-nowrap">
-          {formatDate(value, "DATE_TIME")}
-          {/* {value ? format(new Date(value), "dd.MM.yyyy HH:mm") : "---"} */}
-        </span>
+        <span className="text-nowrap">{formatDate(value, "DATE_TIME")}</span>
       );
 
     case "MULTISELECT":
@@ -107,7 +107,11 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return value ? numberWithSpaces(value) : "";
 
     case "FORMULA_FRONTEND":
-      return value ? numberWithSpaces((Math.floor(value * 100) / 100).toFixed(2) ) : "";
+      return value !== undefined && typeof value === "number"
+        ? numberWithSpaces(value?.toFixed(1))
+        : value === undefined
+        ? value
+        : "";
 
     // case "FORMULA_FRONTEND":
     //   return <FormulaCell field={field} row={row} />

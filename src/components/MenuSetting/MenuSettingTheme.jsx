@@ -16,15 +16,19 @@ import {
 } from "../../services/menuTemplateService";
 import { useQueryClient } from "react-query";
 import RingLoader from "../Loaders/RingLoader";
+import { useDispatch } from "react-redux";
+import { menuActions } from "../../store/menuItem/menuItem.slice";
 
 const MenuSettingTheme = ({
   setModalType,
   setSelectedTemplate,
   check,
   setCheck,
+  setFormType,
 }) => {
   const queryClient = useQueryClient();
   const [template, setTemplate] = useState("");
+  const dispatch = useDispatch();
 
   const handleTemplateChange = (event) => {
     setTemplate(event.target.value);
@@ -39,6 +43,7 @@ const MenuSettingTheme = ({
   const deleteTemplate = (id) => {
     deleteCustomError(id);
   };
+
   const { data: templates, isLoading } = useMenuTemplateListQuery({});
   useEffect(() => {
     if (check) {
@@ -47,6 +52,7 @@ const MenuSettingTheme = ({
       setCheck(false);
     }
   }, []);
+
   return (
     <>
       <div className={styles.header}>
@@ -82,10 +88,16 @@ const MenuSettingTheme = ({
                     key={item?.id}
                     control={<Radio />}
                     label={
-                      <ThemeCard item={item} deleteTemplate={deleteTemplate} />
+                      <ThemeCard
+                        item={item}
+                        deleteTemplate={deleteTemplate}
+                        setFormType={setFormType}
+                        setModalType={setModalType}
+                      />
                     }
                     onClick={() => {
                       setSelectedTemplate(item);
+                      dispatch(menuActions.setMenuLayout(item));
                     }}
                     className={
                       template === item?.id ? styles.active : styles.inactive
@@ -110,7 +122,10 @@ const MenuSettingTheme = ({
           style={{
             background: "#2D6CE51A",
           }}
-          onClick={() => setModalType("MENUFORM")}
+          onClick={() => {
+            setModalType("MENUFORM");
+            setFormType("");
+          }}
         >
           Create
         </Button>

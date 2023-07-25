@@ -76,14 +76,18 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
-    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
+    if (field.type === "MULTISELECT" || field.id?.includes("#"))
+      return defaultValue;
 
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type, objectIdFromJWT, isUserId]);
 
   const isDisabled = useMemo(() => {
-    return field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
+    return (
+      field.attributes?.disabled ||
+      !field.attributes?.field_permission?.edit_permission
+    );
   }, [field]);
 
   if (!field.attributes?.field_permission?.view_permission && checkPermission) {
@@ -92,9 +96,27 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
-      return <ManyToManyRelationFormElement control={control} field={field} setFormValue={setFormValue} defaultValue={defaultValue} disabled={isDisabled} {...props} />;
+      return (
+        <ManyToManyRelationFormElement
+          control={control}
+          field={field}
+          setFormValue={setFormValue}
+          defaultValue={defaultValue}
+          disabled={isDisabled}
+          {...props}
+        />
+      );
     } else if (field?.relation_type === "Many2Dynamic") {
-      return <DynamicRelationFormElement control={control} field={field} setFormValue={setFormValue} defaultValue={defaultValue} disabled={isDisabled} {...props} />;
+      return (
+        <DynamicRelationFormElement
+          control={control}
+          field={field}
+          setFormValue={setFormValue}
+          defaultValue={defaultValue}
+          disabled={isDisabled}
+          {...props}
+        />
+      );
     } else {
       return (
         <RelationFormElement
@@ -145,6 +167,12 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             defaultValue={defaultValue}
             disabled={isDisabled}
             key={computedSlug}
+            rules={{
+              pattern: {
+                value: new RegExp(field?.attributes?.validation),
+                message: field?.attributes?.validation_message,
+              },
+            }}
             {...props}
           />
         </FRow>

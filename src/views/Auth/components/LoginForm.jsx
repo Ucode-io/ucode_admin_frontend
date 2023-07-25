@@ -22,13 +22,18 @@ import DynamicFields from "./DynamicFields";
 import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
+import { companyActions } from "../../../store/company/company.slice";
+import RegisterForm from "./RegisterForm";
+import { store } from "../../../store";
+import { showAlert } from "../../../store/alert/alert.thunk";
+import { useRoleListQuery } from "../../../services/roleServiceV2";
 
-const LoginForm = () => {
+const LoginForm = ({ setIndex, index }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [clientTypes, setClientTypes] = useState([]);
+  const [formType, setFormType] = useState("LOGIN");
 
   useEffect(() => {
     getFcmToken();
@@ -39,8 +44,7 @@ const LoginForm = () => {
     localStorage.setItem("fcmToken", token);
   };
 
-  const [formType, setFormType] = useState("LOGIN");
-  const { control, handleSubmit, watch, setValue } = useForm();
+  const { control, handleSubmit, watch, setValue, reset } = useForm();
 
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
@@ -70,6 +74,23 @@ const LoginForm = () => {
         })),
     }
   );
+
+  const { data: computedRoles } = useRoleListQuery({
+    headers: { "environment-id": selectedEnvID },
+    params: {
+      "client-type-id": selectedClientTypeID,
+      "project-id": selectedProjectID,
+    },
+    queryParams: {
+      enabled: !!selectedClientTypeID,
+      select: (res) => {
+        return res?.data?.response?.map((row) => ({
+          label: row.name,
+          value: row.guid,
+        }));
+      },
+    },
+  });
 
   const { data: computedClientTypes = [] } = useQuery(
     ["GET_CLIENT_TYPE_LIST", { "project-id": selectedProjectID }, { "environment-id": selectedEnvID }],
@@ -119,12 +140,22 @@ const LoginForm = () => {
       setValue("environment_id", computedEnvironments[0]?.value);
     }
   }, [computedEnvironments]);
+  useEffect(() => {
+    if (computedRoles?.length === 1) {
+      setValue("role_id", computedRoles[0]?.value);
+    }
+  }, [computedRoles]);
 
   useEffect(() => {
     if (computedClientTypes?.length === 1) {
       setValue("client_type", computedClientTypes[0]?.value);
     }
   }, [computedClientTypes]);
+
+  useEffect(() => {
+    getFcmToken();
+    reset();
+  }, [index]);
 
   const multiCompanyLogin = (data) => {
     setLoading(true);
@@ -133,16 +164,30 @@ const LoginForm = () => {
       .multiCompanyLogin(data)
       .then((res) => {
         setLoading(false);
-        setClientTypes(res.client_types);
         setCompanies(res.companies);
         setFormType("MULTI_COMPANY");
+        dispatch(companyActions.setCompanies(res.companies));
+      })
+      .catch(() => setLoading(false));
+  };
+
+  const register = (data) => {
+    setLoading(true);
+
+    authService
+      .register(data)
+      .then((res) => {
+        setLoading(false);
+        setIndex(0);
+        store.dispatch(showAlert("Успешно", "success"));
       })
       .catch(() => setLoading(false));
   };
 
   const onSubmit = (values) => {
     setLoading(true);
-    if (formType === "LOGIN") multiCompanyLogin(values);
+    if (formType === "LOGIN" && index === 0) multiCompanyLogin(values);
+    else if (index === 1) register(values);
     else dispatch(loginAction(values)).then(() => setLoading(false));
   };
 

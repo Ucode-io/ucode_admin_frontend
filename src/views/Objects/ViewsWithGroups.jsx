@@ -38,7 +38,14 @@ import LanguagesNavbar from "./LanguagesNavbar";
 import SearchInput from "../../components/SearchInput";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 
-const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
+const ViewsWithGroups = ({
+  views,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  view,
+  fieldsMap,
+  menuItem,
+}) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
@@ -47,7 +54,13 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   const [shouldGet, setShouldGet] = useState(false);
   const [heightControl, setHeightControl] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
-  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
+  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
+    useState(false);
+  const [res, setRes] = [
+    {
+      balance: [],
+    },
+  ];
   const { navigateToForm } = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
@@ -296,8 +309,14 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
           </>
         }
       >
-        <ViewTabSelector selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} />
-        {view?.type === "FINANCE CALENDAR" && <CRangePickerNew onChange={setDateFilters} value={dateFilters} />}
+        <ViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+        />
+        {view?.type === "FINANCE CALENDAR" && (
+          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+        )}
       </FiltersBlock>
 
       <div className={style.extraNavbar}>
@@ -401,7 +420,11 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-                <RectangleIconButton color="success" size="small" onClick={navigateToCreatePage}>
+                <RectangleIconButton
+                  color="success"
+                  size="small"
+                  onClick={navigateToCreatePage}
+                >
                   <AddIcon style={{ color: "#007AFF" }} />
                 </RectangleIconButton>
                 {formVisible ? (
@@ -489,6 +512,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       filters={filters}
                       view={view}
                       fieldsMap={fieldsMap}
+                      setFormValue={setFormValue}
                       tab={tab}
                       selectedObjects={selectedObjects}
                       setSelectedObjects={setSelectedObjects}

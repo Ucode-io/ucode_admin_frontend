@@ -3,7 +3,7 @@ import { store } from "../store/index";
 import { showAlert } from "../store/alert/alert.thunk";
 import authService from "../services/auth/authService";
 import { authActions } from "../store/auth/auth.slice";
-export const baseURL = `${import.meta.env.VITE_BASE_URL}/v3`
+export const baseURL = `${import.meta.env.VITE_BASE_URL}/v3`;
 
 const requestV3 = axios.create({
   baseURL,
@@ -68,14 +68,15 @@ requestV3.interceptors.request.use(
   (config) => {
     const authStore = store.getState().auth;
     const token = authStore.token;
-    const environmentId = authStore.environmentId;
     const resourceId = authStore.resourceId;
-    const projectId = authStore.projectId
+    const companyStore = store.getState().company;
+    const environmentId = companyStore.environmentId;
+    const projectId = companyStore.projectId;
 
-    if(token) {
-      config.headers.Authorization = `Bearer ${token}`
-      config.headers['environment-id'] = environmentId
-      config.headers['resource-id'] = resourceId
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      config.headers["environment-id"] = environmentId;
+      config.headers["resource-id"] = resourceId;
     }
     if (!config.params?.["project-id"]) {
       if (config.params) {

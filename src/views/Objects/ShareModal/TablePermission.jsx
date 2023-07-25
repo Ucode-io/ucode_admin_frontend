@@ -54,14 +54,14 @@ function TablePermission({ control, getUserPermission, getTablePermission }) {
           />
           <div>Delete</div>
         </div>
-        <div className={styles.checkBox}>
+        {/* <div className={styles.checkBox}>
           <HFCheckbox
             control={control}
             name="table.record_permissions.is_public"
             disabled={isCheckboxDisabled("is_public")}
           />
           <div>is_public</div>
-        </div>
+        </div> */}
       </Box>
     </Box>
   );

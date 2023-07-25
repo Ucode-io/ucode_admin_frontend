@@ -11,7 +11,7 @@ function TablePermission({ control, getUserPermission, getTablePermission }) {
     getTablePermission?.current_user_permission.table?.record_permissions || {};
 
   const isCheckboxDisabled = (permissionName) => {
-    if (getUserPermission?.current_user_permission) {
+    if (getUserPermission?.current_user_permission || currentPermissions[permissionName] === "No") {
       return true;
     } else if (grantAccess && currentPermissions[permissionName] === "Yes") {
       return false;

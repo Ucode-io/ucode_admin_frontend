@@ -24,15 +24,15 @@ function ActionPermission({ control, getUserPermission, getTablePermission }) {
     if (
       grantAccess &&
       actionPermissions &&
-      getUserPermission?.table?.action_permissions
+      getUserPermission?.table?.field_permissions
     ) {
-      setIsActionPermissionsMatched(
-        actionPermissions.every((item, index) => {
-          const permissionsInGetTable =
-            getUserPermission.table.action_permissions[index];
-          return item.view_permission === permissionsInGetTable.permission;
-        })
-      );
+      const viewPermissionsMatched = actionPermissions.map((item, index) => {
+        const permissionsInGetTable =
+        getTablePermission?.current_user_permission?.table.action_permissions[index];
+        return permissionsInGetTable?.permission;
+      });
+
+      setIsActionPermissionsMatched(viewPermissionsMatched);
     }
   }, [actionPermissions, getTablePermission]);
 
@@ -63,7 +63,7 @@ function ActionPermission({ control, getUserPermission, getTablePermission }) {
                     control={control}
                     name={`table.action_permissions.${index}.permission`}
                     disabled={
-                      isActionPermissionsMatched ||
+                      isActionPermissionsMatched?.[index] ||
                       getUserPermission?.current_user_permission
                     }
                   />

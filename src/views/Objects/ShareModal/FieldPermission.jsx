@@ -8,8 +8,8 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 function FieldPermission({ control, getUserPermission, getTablePermission }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isFieldPermissionsMatched, setIsFieldPermissionsMatched] =
-    useState(false);
+  const [isViewPermissionsMatched, setIsViewPermissionsMatched] = useState();
+  const [isEditPermissionsMatched, setIsEditPermissionsMatched] = useState();
   const grantAccess =
     getTablePermission?.current_user_permission?.grant_access || false;
   const fieldPermissions = useWatch({
@@ -23,16 +23,20 @@ function FieldPermission({ control, getUserPermission, getTablePermission }) {
       fieldPermissions &&
       getUserPermission?.table?.field_permissions
     ) {
-      setIsFieldPermissionsMatched(
-        fieldPermissions.every((item, index) => {
-          const permissionsInGetTable =
-            getUserPermission.table.field_permissions[index];
-          return (
-            item.view_permission === permissionsInGetTable?.view_permission &&
-            item.edit_permission === permissionsInGetTable?.edit_permission
-          );
-        })
-      );
+      const viewPermissionsMatched = fieldPermissions.map((item, index) => {
+        const permissionsInGetTable =
+        getTablePermission?.current_user_permission?.table.field_permissions[index];
+        return permissionsInGetTable?.view_permission;
+      });
+
+      const editPermissionsMatched = fieldPermissions.map((item, index) => {
+        const permissionsInGetTable =
+        getTablePermission?.current_user_permission?.table.field_permissions[index];
+        return permissionsInGetTable?.edit_permission;
+      });
+
+      setIsViewPermissionsMatched(viewPermissionsMatched);
+      setIsEditPermissionsMatched(editPermissionsMatched);
     }
   }, [fieldPermissions, getTablePermission]);
 
@@ -43,7 +47,12 @@ function FieldPermission({ control, getUserPermission, getTablePermission }) {
   return (
     <div className={styles.collapse}>
       <Box
-        sx={{ display: "flex", justifyContent: "space-between", alignItems: 'center',  padding: '15px'}}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "15px",
+        }}
         onClick={handleCollapseToggle}
       >
         <h2>Поля</h2>
@@ -51,38 +60,40 @@ function FieldPermission({ control, getUserPermission, getTablePermission }) {
       </Box>
 
       {isCollapsed &&
-        fieldPermissions?.map((item, index) => (
-          <Box>
-            <div className={styles.permissionList}>
-              <h2 className={styles.permissionListTitle}>{item?.label}</h2>
+        fieldPermissions?.map((item, index) => {
+          return (
+            <Box key={index}>
+              <div className={styles.permissionList}>
+                <h2 className={styles.permissionListTitle}>{item?.label}</h2>
 
-              <div className={styles.permissionListContent}>
-                <div className={styles.permissionListItem}>
-                  <HFCheckbox
-                    control={control}
-                    name={`table.field_permissions.${index}.view_permission`}
-                    disabled={
-                      isFieldPermissionsMatched ||
-                      getUserPermission?.current_user_permission
-                    }
-                  />
-                  <div>Viewer</div>
-                </div>
-                <div className={styles.permissionListItem}>
-                  <HFCheckbox
-                    control={control}
-                    name={`table.field_permissions.${index}.edit_permission`}
-                    disabled={
-                      isFieldPermissionsMatched ||
-                      getUserPermission?.current_user_permission
-                    }
-                  />
-                  <div>Editor</div>
+                <div className={styles.permissionListContent}>
+                  <div className={styles.permissionListItem}>
+                    <HFCheckbox
+                      control={control}
+                      name={`table.field_permissions.${index}.view_permission`}
+                      disabled={
+                        !isViewPermissionsMatched?.[index] || 
+                        getUserPermission?.current_user_permission
+                      }
+                    />
+                    <div>Viewer</div>
+                  </div>
+                  <div className={styles.permissionListItem}>
+                    <HFCheckbox
+                      control={control}
+                      name={`table.field_permissions.${index}.edit_permission`}
+                      disabled={
+                        !isEditPermissionsMatched?.[index] ||
+                        getUserPermission?.current_user_permission
+                      }
+                    />
+                    <div>Editor</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Box>
-        ))}
+            </Box>
+          );
+        })}
     </div>
   );
 }

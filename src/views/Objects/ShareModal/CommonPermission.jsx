@@ -24,6 +24,7 @@ function CommonPermission({
             control={control}
             name={"table.slug"}
             options={tablesList}
+            disabled
           />
         </FRow>
         <FRow label="Тип ползователя">

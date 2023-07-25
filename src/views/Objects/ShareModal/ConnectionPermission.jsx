@@ -94,7 +94,7 @@ function ConnectionPermission({
             <div className={styles.permissionList}>
               <h2 className={styles.permissionListTitle}>{item?.label}</h2>
 
-              <div className={styles.permissionListContent}>
+              <div className={styles.permissionListContentCon}>
                 <div className={styles.permissionListItem}>
                   <HFCheckbox
                     control={control}

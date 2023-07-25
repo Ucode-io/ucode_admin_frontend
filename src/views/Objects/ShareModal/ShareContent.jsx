@@ -198,7 +198,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
           clientTypeList={clientTypeList}
           getRoleList={getRoleList}
           getUserPermission={getUserPermission}
-        /> */}
+        /> */} 
       </div>
       <div className={styles.shareFooter}>
         <Button variant="contained" onClick={handleSubmit(onSubmit)}>

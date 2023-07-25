@@ -3,10 +3,11 @@ import request from "../utils/request";
 
 const projectService = {
   getList: (params) => request.get("/company-project", { params }),
-  getByID: (projectId, params) =>
-    request.get(`/company-project/${projectId}`, {
+  getByID: (params, projectId) => {
+    return request.get(`/company-project/${projectId}`, {
       params,
-    }),
+    });
+  },
   update: (data) => request.put(`/company-project/${data}`, data),
   create: (data) => request.post(`/company-project`, data),
   delete: (id) => request.delete(`/company-project/${id}`),
@@ -22,7 +23,11 @@ export const useProjectListQuery = ({ params = {}, queryParams } = {}) => {
   );
 };
 
-export const useProjectGetByIdQuery = ({ projectId, params = {}, queryParams }) => {
+export const useProjectGetByIdQuery = ({
+  projectId,
+  params = {},
+  queryParams,
+}) => {
   return useQuery(
     ["PROJECT_GET_BY_ID", { ...params, projectId }],
     () => {

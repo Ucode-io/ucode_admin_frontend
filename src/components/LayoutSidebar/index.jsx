@@ -2,7 +2,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import { Box, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Container } from "react-smooth-dnd";
@@ -28,7 +28,7 @@ import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import "./style.scss";
 import { AdminFolders } from "./mock/AdminFolders";
-import projectService from "../../services/projectService";
+import { useProjectGetByIdQuery } from "../../services/projectService";
 
 const admin = {
   id: "12",
@@ -46,10 +46,12 @@ const admin = {
 };
 
 const LayoutSidebar = ({ appId }) => {
-  const sidebarIsOpen = useSelector((state) => state.main.settingsSidebarIsOpen);
-  const projectId = useSelector((state) => state.auth.projectId);
+  const sidebarIsOpen = useSelector(
+    (state) => state.main.settingsSidebarIsOpen
+  );
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const selectedMenuTemplate = store.getState().menu.menuTemplate;
+  const projectId = store.getState().company.projectId;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -99,7 +101,8 @@ const LayoutSidebar = ({ appId }) => {
   });
   const { data: menuTemplate } = useMenuSettingGetByIdQuery({
     params: {
-      template_id: selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+      template_id:
+        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
     },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
@@ -205,9 +208,8 @@ const LayoutSidebar = ({ appId }) => {
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const { data: projectInfo } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
-    return projectService.getById(projectId);
-  });
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  console.log("projectInfo", projectInfo);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList, dropResult);
@@ -233,6 +235,7 @@ const LayoutSidebar = ({ appId }) => {
         <div className="header">
           <div className="brand">
             <UdevsLogo fill={"#007AFF"} />
+            <h2>{projectInfo?.title}</h2>
           </div>
         </div>
 
@@ -270,7 +273,12 @@ const LayoutSidebar = ({ appId }) => {
                     icon={
                       <ChatBubbleIcon
                         style={{
-                          width: menuTemplate?.icon_size === "SMALL" ? 10 : menuTemplate?.icon_size === "MEDIUM" ? 15 : 18 || 18,
+                          width:
+                            menuTemplate?.icon_size === "SMALL"
+                              ? 10
+                              : menuTemplate?.icon_size === "MEDIUM"
+                              ? 15
+                              : 18 || 18,
                           color: menuStyle?.text || "",
                         }}
                       />
@@ -294,9 +302,12 @@ const LayoutSidebar = ({ appId }) => {
                   }}
                 >
                   <div className="menu-element">
-                    <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>
-                      {menuList?.menus &&
-                        menuList?.menus?.map((element, index) => (
+                    <Container
+                      dragHandleSelector=".column-drag-handle"
+                      onDrop={onDrop}
+                    >
+                      {menuList &&
+                        menuList?.map((element, index) => (
                           <AppSidebar
                             key={index}
                             element={element}
@@ -319,7 +330,12 @@ const LayoutSidebar = ({ appId }) => {
                     icon={
                       <AddIcon
                         style={{
-                          width: menuTemplate?.icon_size === "SMALL" ? 10 : menuTemplate?.icon_size === "MEDIUM" ? 15 : 18 || 18,
+                          width:
+                            menuTemplate?.icon_size === "SMALL"
+                              ? 10
+                              : menuTemplate?.icon_size === "MEDIUM"
+                              ? 15
+                              : 18 || 18,
                           color: menuStyle?.text,
                         }}
                       />
@@ -346,7 +362,13 @@ const LayoutSidebar = ({ appId }) => {
           onClick={(e) => {
             anchorEl ? setAnchorEl(null) : openMenu(e);
           }}
-          children={<NewProfilePanel anchorEl={anchorEl} handleMenuSettingModalOpen={handleMenuSettingModalOpen} projectInfo={projectInfo} />}
+          children={
+            <NewProfilePanel
+              anchorEl={anchorEl}
+              handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+              projectInfo={projectInfo}
+            />
+          }
           style={{
             background: menuStyle?.background || "#fff",
             color: menuStyle?.text || "#000",
@@ -354,13 +376,47 @@ const LayoutSidebar = ({ appId }) => {
           sidebarIsOpen={sidebarIsOpen}
         />
 
-        {(modalType === "create" || modalType === "parent" || modalType === "update") && (
-          <FolderCreateModal closeModal={closeModal} selectedFolder={selectedFolder} modalType={modalType} appId={appId} getMenuList={getMenuList} />
+        {(modalType === "create" ||
+          modalType === "parent" ||
+          modalType === "update") && (
+          <FolderCreateModal
+            closeModal={closeModal}
+            selectedFolder={selectedFolder}
+            modalType={modalType}
+            appId={appId}
+            getMenuList={getMenuList}
+          />
         )}
-        {tableModal && <TableLinkModal closeModal={closeTableModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
-        {microfrontendModal && <MicrofrontendLinkModal closeModal={closeMicrofrontendModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
-        {webPageModal && <WebPageLinkModal closeModal={closeWebPageModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
-        {folderModalType === "folder" && <FolderModal closeModal={closeFolderModal} modalType={folderModalType} menuList={menuList} element={element} getMenuList={getMenuList} />}
+        {tableModal && (
+          <TableLinkModal
+            closeModal={closeTableModal}
+            selectedFolder={selectedFolder}
+            getMenuList={getMenuList}
+          />
+        )}
+        {microfrontendModal && (
+          <MicrofrontendLinkModal
+            closeModal={closeMicrofrontendModal}
+            selectedFolder={selectedFolder}
+            getMenuList={getMenuList}
+          />
+        )}
+        {webPageModal && (
+          <WebPageLinkModal
+            closeModal={closeWebPageModal}
+            selectedFolder={selectedFolder}
+            getMenuList={getMenuList}
+          />
+        )}
+        {folderModalType === "folder" && (
+          <FolderModal
+            closeModal={closeFolderModal}
+            modalType={folderModalType}
+            menuList={menuList}
+            element={element}
+            getMenuList={getMenuList}
+          />
+        )}
       </div>
       <SubMenu
         child={child}
@@ -390,7 +446,9 @@ const LayoutSidebar = ({ appId }) => {
         setWebPageModal={setWebPageModal}
         deleteFolder={deleteFolder}
       />
-      {menuSettingModal && <MenuSettingModal closeModal={closeMenuSettingModal} />}
+      {menuSettingModal && (
+        <MenuSettingModal closeModal={closeMenuSettingModal} />
+      )}
     </>
   );
 };

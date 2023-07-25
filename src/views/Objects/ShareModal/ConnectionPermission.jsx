@@ -139,14 +139,14 @@ function ConnectionPermission({
                   />
                   <div>Delete</div>
                 </div>
-                <div className={styles.permissionListItem}>
+                {/* <div className={styles.permissionListItem}>
                   <HFCheckbox
                     control={control}
                     name="is_public"
                     disabled={getUserPermission?.current_user_permission}
                   />
                   <div>is_public</div>
-                </div>
+                </div> */}
               </div>
             </div>
           </Box>

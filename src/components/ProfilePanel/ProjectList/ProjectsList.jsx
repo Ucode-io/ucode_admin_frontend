@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import ProfileItem from "../ProfileItem";
 import { companyActions } from "../../../store/company/company.slice";
 import { useQueryClient } from "react-query";
+import LayersIcon from "@mui/icons-material/Layers";
 
 const ProjectList = ({
   projectListEl,
@@ -11,6 +12,7 @@ const ProjectList = ({
   projectVisible,
   projectList,
   setSelected,
+  handleProjectNavigate,
 }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -45,6 +47,23 @@ const ProjectList = ({
             className={styles.menuItem}
           />
         ))}
+        <ProfileItem
+          children={
+            <>
+              <LayersIcon
+                style={{
+                  color: "#747474",
+                }}
+              />
+              All projects
+            </>
+          }
+          onClick={() => {
+            handleProjectNavigate();
+            closeProjectList();
+          }}
+          className={styles.menuItem}
+        />
       </div>
     </Menu>
   );

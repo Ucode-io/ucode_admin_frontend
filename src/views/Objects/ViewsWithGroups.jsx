@@ -39,14 +39,7 @@ import SearchInput from "../../components/SearchInput";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import ShareModal from "./ShareModal/ShareModal";
 
-const ViewsWithGroups = ({
-  views,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  view,
-  fieldsMap,
-  menuItem,
-}) => {
+const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
@@ -55,8 +48,7 @@ const ViewsWithGroups = ({
   const [shouldGet, setShouldGet] = useState(false);
   const [heightControl, setHeightControl] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
-  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
-    useState(false);
+  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
   const [res, setRes] = [
     {
       balance: [],
@@ -294,17 +286,22 @@ const ViewsWithGroups = ({
               </div>
             </Menu> */}
 
-              <ShareModal/>
-              
-            
-            <LanguagesNavbar />
+            <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
+              <ShareModal />
+            </PermissionWrapperV2>
 
-            <Button variant="outlined">
-              <HexagonIcon />
-              {t("automations")}
-            </Button>
+            <PermissionWrapperV2 tableSlug={tableSlug} type="language_btn">
+              <LanguagesNavbar />
+            </PermissionWrapperV2>
 
-            <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+            <PermissionWrapperV2 tableSlug={tableSlug} type="automation">
+              <Button variant="outlined">
+                <HexagonIcon />
+                {t("automations")}
+              </Button>
+            </PermissionWrapperV2>
+
+            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
               <Button variant="outlined" onClick={navigateToSettingsPage}>
                 <SettingsSuggestIcon />
                 {t("settings")}
@@ -313,14 +310,8 @@ const ViewsWithGroups = ({
           </>
         }
       >
-        <ViewTabSelector
-          selectedTabIndex={selectedTabIndex}
-          setSelectedTabIndex={setSelectedTabIndex}
-          views={views}
-        />
-        {view?.type === "FINANCE CALENDAR" && (
-          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
-        )}
+        <ViewTabSelector selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} />
+        {view?.type === "FINANCE CALENDAR" && <CRangePickerNew onChange={setDateFilters} value={dateFilters} />}
       </FiltersBlock>
 
       <div className={style.extraNavbar}>
@@ -424,11 +415,7 @@ const ViewsWithGroups = ({
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-                <RectangleIconButton
-                  color="success"
-                  size="small"
-                  onClick={navigateToCreatePage}
-                >
+                <RectangleIconButton color="success" size="small" onClick={navigateToCreatePage}>
                   <AddIcon style={{ color: "#007AFF" }} />
                 </RectangleIconButton>
                 {formVisible ? (

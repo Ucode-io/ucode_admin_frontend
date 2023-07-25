@@ -24,6 +24,8 @@ import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
+import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
+import RegisterForm from "./RegisterForm";
 import { useRoleListQuery } from "../../../services/roleServiceV2";
 
 const LoginForm = ({ setIndex, index }) => {

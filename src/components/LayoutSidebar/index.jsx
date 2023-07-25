@@ -2,7 +2,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import { Box, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Container } from "react-smooth-dnd";
@@ -28,6 +28,7 @@ import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import "./style.scss";
 import { AdminFolders } from "./mock/AdminFolders";
+import { useProjectGetByIdQuery } from "../../services/projectService";
 
 const admin = {
   id: "12",
@@ -48,9 +49,10 @@ const LayoutSidebar = ({ appId }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
-  const projectId = useSelector((state) => state.auth.projectId);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const selectedMenuTemplate = store.getState().menu.menuTemplate;
+  const projectId = store.getState().company.projectId;
+  console.log("projectId", projectId);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -106,7 +108,7 @@ const LayoutSidebar = ({ appId }) => {
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
   const menuStyle = menuTemplate?.menu_template;
-
+  const permissions = useSelector((state) => state.auth.globalPermissions);
   const handleRouter = () => {
     navigate(`/main/${appId}/chat`);
   };
@@ -207,6 +209,9 @@ const LayoutSidebar = ({ appId }) => {
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  console.log("projectInfo", projectInfo);
+
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList, dropResult);
     if (result) {
@@ -231,6 +236,7 @@ const LayoutSidebar = ({ appId }) => {
         <div className="header">
           <div className="brand">
             <UdevsLogo fill={"#007AFF"} />
+            <h2>{projectInfo?.title}</h2>
           </div>
         </div>
 
@@ -262,31 +268,33 @@ const LayoutSidebar = ({ appId }) => {
               <RingLoaderWithWrapper />
             ) : (
               <Box>
-                <MenuButtonComponent
-                  title={"Chat"}
-                  icon={
-                    <ChatBubbleIcon
-                      style={{
-                        width:
-                          menuTemplate?.icon_size === "SMALL"
-                            ? 10
-                            : menuTemplate?.icon_size === "MEDIUM"
-                            ? 15
-                            : 18 || 18,
-                        color: menuStyle?.text || "",
-                      }}
-                    />
-                  }
-                  openFolderCreateModal={openFolderCreateModal}
-                  onClick={(e) => {
-                    handleRouter();
-                  }}
-                  sidebarIsOpen={sidebarIsOpen}
-                  style={{
-                    background: menuStyle?.background || "#fff",
-                    color: menuStyle?.text || "",
-                  }}
-                />
+                {permissions?.chat && (
+                  <MenuButtonComponent
+                    title={"Chat"}
+                    icon={
+                      <ChatBubbleIcon
+                        style={{
+                          width:
+                            menuTemplate?.icon_size === "SMALL"
+                              ? 10
+                              : menuTemplate?.icon_size === "MEDIUM"
+                              ? 15
+                              : 18 || 18,
+                          color: menuStyle?.text || "",
+                        }}
+                      />
+                    }
+                    openFolderCreateModal={openFolderCreateModal}
+                    onClick={(e) => {
+                      handleRouter();
+                    }}
+                    sidebarIsOpen={sidebarIsOpen}
+                    style={{
+                      background: menuStyle?.background || "#fff",
+                      color: menuStyle?.text || "",
+                    }}
+                  />
+                )}
                 <div
                   className="nav-block"
                   style={{
@@ -317,31 +325,33 @@ const LayoutSidebar = ({ appId }) => {
                     </Container>
                   </div>
                 </div>
-                <MenuButtonComponent
-                  title={"Create"}
-                  icon={
-                    <AddIcon
-                      style={{
-                        width:
-                          menuTemplate?.icon_size === "SMALL"
-                            ? 10
-                            : menuTemplate?.icon_size === "MEDIUM"
-                            ? 15
-                            : 18 || 18,
-                        color: menuStyle?.text,
-                      }}
-                    />
-                  }
-                  openFolderCreateModal={openFolderCreateModal}
-                  onClick={(e) => {
-                    handleOpenNotify(e, "ROOT");
-                  }}
-                  sidebarIsOpen={sidebarIsOpen}
-                  style={{
-                    background: menuStyle?.background || "#fff",
-                    color: menuStyle?.text || "",
-                  }}
-                />
+                {permissions?.menu_button && (
+                  <MenuButtonComponent
+                    title={"Create"}
+                    icon={
+                      <AddIcon
+                        style={{
+                          width:
+                            menuTemplate?.icon_size === "SMALL"
+                              ? 10
+                              : menuTemplate?.icon_size === "MEDIUM"
+                              ? 15
+                              : 18 || 18,
+                          color: menuStyle?.text,
+                        }}
+                      />
+                    }
+                    openFolderCreateModal={openFolderCreateModal}
+                    onClick={(e) => {
+                      handleOpenNotify(e, "ROOT");
+                    }}
+                    sidebarIsOpen={sidebarIsOpen}
+                    style={{
+                      background: menuStyle?.background || "#fff",
+                      color: menuStyle?.text || "",
+                    }}
+                  />
+                )}
                 <Divider />
               </Box>
             )}
@@ -357,6 +367,7 @@ const LayoutSidebar = ({ appId }) => {
             <NewProfilePanel
               anchorEl={anchorEl}
               handleMenuSettingModalOpen={handleMenuSettingModalOpen}
+              projectInfo={projectInfo}
             />
           }
           style={{

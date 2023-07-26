@@ -1,27 +1,20 @@
 import { Button } from "@mui/material";
-import React, { useEffect, useMemo } from "react";
-import styles from "./styles.module.scss";
+import React, { useMemo } from "react";
+import styles from "../styles.module.scss";
 import { useQuery } from "react-query";
-import constructorTableService from "../../../services/constructorTableService";
-import listToOptions from "../../../utils/listToOptions";
+import constructorTableService from "../../../../services/constructorTableService";
+import listToOptions from "../../../../utils/listToOptions";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import constructorObjectService from "../../../services/constructorObjectService";
+import constructorObjectService from "../../../../services/constructorObjectService";
 import { useWatch } from "react-hook-form";
-import tablePermissionService from "../../../services/tablePermission";
-import TablePermission from "./TablePermission";
-import FieldPermission from "./FieldPermission";
-import ConnectionPermission from "./ConnectionPermission";
-import ActionPermission from "./ActionPermission";
-import CommonPermission from "./CommonPermission";
-import DefaultPermission from "./DefaultPermission";
+import tablePermissionService from "../../../../services/tablePermission";
 import ClearIcon from "@mui/icons-material/Clear";
+import ShareModalItems from "./ShareModalItems";
 
 function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
-  const { tableSlug, appId } = useParams();
+  const { tableSlug } = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
-
-  const data = watch();
 
   const client_type = useWatch({
     control,
@@ -40,9 +33,10 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
   const params = {
     role_id: role_id,
     table_slug: slug ?? tableSlug,
-    project_id: projectId,
+    // project_id: projectId,
   };
-
+  console.log('slug',slug);
+  console.log('params',params);
   //============   TABLE GET LIST
   const { data: tables = [] } = useQuery(
     ["GET_TABLES_LIST"],
@@ -97,8 +91,9 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     }
   );
 
+  // =============  GET PERMISSIONS WITH ROLE AND SLUG
   const { data: getTablePermission } = useQuery(
-    ["GET_TABLE_PERMISSONS", role_id, slug],
+    ["GET_TABLE_PERMISSONS", role_id],
     () => {
       return tablePermissionService.getList(params);
     },
@@ -108,6 +103,7 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     }
   );
 
+  // ========== COMPUTE USER PERMISSION ACCORDING TO TYPE
   const getUserPermission = useMemo(() => {
     if (getTablePermission?.selected_user_permission) {
       return getTablePermission?.selected_user_permission;
@@ -119,12 +115,14 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     }
   }, [getTablePermission]);
 
+  // ========== COMPUTE TABLES OPTIONS
   const tablesList = useMemo(() => {
     let getObjects = [];
     getObjects = listToOptions(tables, "label", "slug");
     return getObjects;
   }, [tables]);
 
+  // =========== COMPUTE CHOSEN TABLEID
   const tableId = useMemo(() => {
     if (slug) {
       return tables.find((item) => item?.slug === slug);
@@ -139,65 +137,29 @@ function ShareContent({ handleClose, control, watch, handleSubmit, reset }) {
     });
   };
 
-  useEffect(() => {
-    if (getUserPermission) {
-      reset({
-        ...data,
-        grant_access: getUserPermission?.grant_access,
-        table: {
-          record_permissions: getUserPermission?.table?.record_permissions,
-          field_permissions: getUserPermission?.table?.field_permissions,
-          view_permissions: getUserPermission?.table?.view_permissions,
-          action_permissions: getUserPermission?.table?.action_permissions,
-          id: tableId?.id,
-          slug,
-        },
-      });
-    }
-  }, [getUserPermission, reset]);
+
 
   return (
     <div className={styles.shareContent}>
       <div className={styles.shareHeader}>
         <h2>Доступы</h2>
         <Button onClick={handleClose}>
-          <ClearIcon style={{color: '#000'}} />
+          <ClearIcon style={{ color: "#000" }} />
         </Button>
       </div>
 
       <div className={styles.shareContentBody}>
-        <CommonPermission
+        <ShareModalItems
           control={control}
           tablesList={tablesList}
           clientTypeList={clientTypeList}
           getRoleList={getRoleList}
-        />
-        <TablePermission
-          control={control}
           getUserPermission={getUserPermission}
           getTablePermission={getTablePermission}
+          watch={watch}
+          reset={reset}
+          tableId={tableId}
         />
-        <FieldPermission
-          control={control}
-          getUserPermission={getUserPermission}
-          getTablePermission={getTablePermission}
-        />
-        <ConnectionPermission
-          control={control}
-          getUserPermission={getUserPermission}
-          getTablePermission={getTablePermission}
-        />
-        <ActionPermission
-          control={control}
-          getUserPermission={getUserPermission}
-          getTablePermission={getTablePermission}
-        />
-        {/* <DefaultPermission
-          control={control}
-          clientTypeList={clientTypeList}
-          getRoleList={getRoleList}
-          getUserPermission={getUserPermission}
-        /> */} 
       </div>
       <div className={styles.shareFooter}>
         <Button variant="contained" onClick={handleSubmit(onSubmit)}>

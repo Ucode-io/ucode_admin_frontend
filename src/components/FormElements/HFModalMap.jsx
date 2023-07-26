@@ -3,6 +3,7 @@ import { Box, Button, Dialog, TextField } from "@mui/material";
 import HFMapField from "./HFMapField";
 import { useWatch } from "react-hook-form";
 import styles from "./style.module.scss";
+import { generateLink } from "../../utils/generateYandexLink";
 
 function HFModalMap({
   control,
@@ -30,7 +31,7 @@ function HFModalMap({
   return (
     <>
       <TextField
-        value={value}
+        value={value ? generateLink(value?.split(',')?.[0], value?.split(',')?.[1]) : ''}
         defaultValue={defaultValue}
         width="small"
         onClick={() => handleOpen()}

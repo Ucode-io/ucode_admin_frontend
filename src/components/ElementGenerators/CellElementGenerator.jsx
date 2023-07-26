@@ -10,6 +10,7 @@ import LogoDisplay from "../LogoDisplay";
 import TableTag from "../TableTag";
 import DownloadIcon from "@mui/icons-material/Download";
 import Many2ManyValue from "./Many2ManyValue";
+import { generateLink } from "../../utils/generateYandexLink";
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
@@ -131,6 +132,9 @@ const CellElementGenerator = ({ field = {}, row }) => {
           <LogoDisplay url={value} />
         </span>
       );
+      
+      case 'MAP': 
+      return value ? generateLink(value?.split(',')?.[0], value?.split(',')?.[1]) : ''
 
     case "FILE":
       return value ? (

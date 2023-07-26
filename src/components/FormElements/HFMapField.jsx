@@ -1,9 +1,9 @@
+import React from "react";
 import { Box } from "@mui/material";
 import { Map, Placemark, YMaps } from "@pbe/react-yandex-maps";
 import { toNumber } from "lodash-es";
 import { useEffect, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
-import styles from "./style.module.scss";
 
 const HFMapField = ({
   control,
@@ -48,6 +48,7 @@ const HFMapField = ({
 
     getCurrentLocation();
   }, []);
+
 
   return (
     <Controller

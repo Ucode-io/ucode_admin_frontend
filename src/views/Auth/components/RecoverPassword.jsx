@@ -24,11 +24,33 @@ export default function RecoverPassword({ setFormType }) {
     authService
       .forgotPassword(values)
       .then((res) => {
-        if (res?.login_found) {
+        if (res?.email_found) {
           setViewType("otp");
           setValue("login", res);
-        } else if (res === undefined) {
+        } else if (res === undefined || res.email_found === false) {
+          setViewType("new_email");
+          if (res.user_id) setValue("user_id", res.user_id);
           store.dispatch(showAlert("Login not found!"));
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const sendNewEmail = () => {
+    setLoading(true);
+
+    const data = {
+      email: getValues("new_email"),
+      user_id: getValues("user_id"),
+    };
+    authService
+      .setEmail(data)
+      .then((res) => {
+        if (res.email_found) {
+          setViewType("otp");
+          setValue("login", res);
         }
       })
       .finally(() => {
@@ -80,7 +102,7 @@ export default function RecoverPassword({ setFormType }) {
       className={classes.form}
       onSubmit={(e) => {
         e.preventDefault();
-        viewType === "login" ? onSubmit(getValues()) : viewType === "otp" ? verifyOtp() : resetPassword();
+        viewType === "login" ? onSubmit(getValues()) : viewType === "otp" ? verifyOtp() : viewType === "new_email" ? sendNewEmail() : resetPassword();
       }}
     >
       {viewType === "login" ? (
@@ -128,6 +150,26 @@ export default function RecoverPassword({ setFormType }) {
               }}
             >
               {"Send"}
+            </PrimaryButton>
+          </div>
+        </div>
+      ) : viewType === "new_email" ? (
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", height: "100%" }}>
+          <div className={classes.formRow}>
+            <p className={classes.label}>{"New Email"}</p>
+            <HFTextField required key={viewType} control={control} name="new_email" size="large" fullWidth placeholder={"Type new email"} autoFocus />
+          </div>
+
+          <div className={classes.buttonsArea} style={{ marginTop: "20px" }}>
+            <PrimaryButton
+              size="large"
+              type={"button"}
+              loader={loading}
+              onClick={() => {
+                sendNewEmail();
+              }}
+            >
+              {"Set new email"}
             </PrimaryButton>
           </div>
         </div>

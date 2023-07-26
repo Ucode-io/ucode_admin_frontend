@@ -27,11 +27,11 @@ const RoleCreateModal = ({ closeModal, modalType, roleId }) => {
   });
 
   const { isLoading } = useRoleGetByIdQuery({
-    roleId: roleId,
+    id: roleId,
     queryParams: {
       enabled: Boolean(modalType === "UPDATE"),
       onSuccess: (res) => {
-        reset(res);
+        reset(res.data.response);
       },
     },
   });

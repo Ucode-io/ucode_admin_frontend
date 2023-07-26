@@ -50,6 +50,7 @@ import RedirectPage from "../views/Redirect";
 import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
 import PermissionDetail from "../views/Permissions";
+import RoleDetail from "../views/Permissions/Roles/Detail";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -165,6 +166,7 @@ const Router = () => {
 
         <Route path=":appId/permission/:clientId">
           <Route index element={<PermissionDetail />} />
+          <Route path="role/:roleId" element={<RoleDetail />} />
         </Route>
 
         <Route

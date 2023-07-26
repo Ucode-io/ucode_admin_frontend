@@ -12,8 +12,6 @@ import { QueryClientProvider } from "react-query";
 import queryClient from "./queries";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { AliveScope } from "react-activation";
-import chakraUITheme from "./theme/chakraUITheme";
-import { ChakraProvider } from "@chakra-ui/react";
 
 function App() {
   return (
@@ -23,18 +21,16 @@ function App() {
           <ReactQueryDevtools initialIsOpen={false} />
           <Provider store={store}>
             <PersistGate persistor={persistor}>
-              {/* <ChakraProvider theme={chakraUITheme}> */}
-                <MaterialUIProvider>
-                  <AlertProvider>
-                    <GlobalFunctionsProvider />
-                    <BrowserRouter>
-                      <AliveScope>
-                        <Router />
-                      </AliveScope>
-                    </BrowserRouter>
-                  </AlertProvider>
-                </MaterialUIProvider>
-              {/* </ChakraProvider> */}
+              <MaterialUIProvider>
+                <AlertProvider>
+                  <GlobalFunctionsProvider />
+                  <BrowserRouter>
+                    <AliveScope>
+                      <Router />
+                    </AliveScope>
+                  </BrowserRouter>
+                </AlertProvider>
+              </MaterialUIProvider>
             </PersistGate>
           </Provider>
         </QueryClientProvider>

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -25,6 +25,8 @@ const RolePage = () => {
   const queryClient = useQueryClient();
   const [modalType, setModalType] = useState();
   const [roleId, setRoleId] = useState();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const { data: roles, isLoading } = useQuery(["GET_ROLE_LIST"], () => {
     return roleServiceV2.getList({ "client-type-id": clientId });
@@ -45,6 +47,10 @@ const RolePage = () => {
     setModalType(null);
   };
 
+  const navigateToDetailPage = (id) => {
+    navigate(`${pathname}/role/${id}`);
+  };
+
   return (
     <div>
       <TableCard>
@@ -63,8 +69,9 @@ const RolePage = () => {
               <CTableRow
                 key={element.guid}
                 onClick={() => {
-                  setModalType("UPDATE");
-                  setRoleId(element.guid);
+                  // setModalType("UPDATE");
+                  // setRoleId(element?.guid);
+                  navigateToDetailPage(element.guid);
                 }}
               >
                 <CTableCell>{index + 1}</CTableCell>
@@ -73,7 +80,7 @@ const RolePage = () => {
                   <RectangleIconButton
                     color="error"
                     onClick={() => {
-                      deleteRoleElement(element.guid);
+                      deleteRoleElement(element?.guid);
                     }}
                   >
                     <Delete color="error" />

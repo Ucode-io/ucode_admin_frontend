@@ -30,9 +30,7 @@ import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import { store } from "../../store";
 
 const LayoutSidebar = ({ appId }) => {
-  const sidebarIsOpen = useSelector(
-    (state) => state.main.settingsSidebarIsOpen
-  );
+  const sidebarIsOpen = useSelector((state) => state.main.settingsSidebarIsOpen);
   const projectId = useSelector((state) => state.auth.projectId);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const selectedMenuTemplate = store.getState().menu.menuTemplate;
@@ -80,13 +78,12 @@ const LayoutSidebar = ({ appId }) => {
   });
   const { data: menuTemplate } = useMenuSettingGetByIdQuery({
     params: {
-      template_id:
-        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+      template_id: selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
     },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
   const menuStyle = menuTemplate?.menu_template;
-
+  const permissions = useSelector((state) => state.auth.globalPermissions);
   const handleRouter = () => {
     navigate(`/main/${appId}/chat`);
   };
@@ -183,12 +180,9 @@ const LayoutSidebar = ({ appId }) => {
     if (selectedApp?.type === "FOLDER" && pinIsEnabled) setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const { data: projectInfo } = useQuery(
-    ["GET_PROJECT_BY_ID", projectId],
-    () => {
-      return projectService.getById(projectId);
-    }
-  );
+  const { data: projectInfo } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
+    return projectService.getById(projectId);
+  });
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList?.menus, dropResult);
@@ -266,31 +260,28 @@ const LayoutSidebar = ({ appId }) => {
               <RingLoaderWithWrapper />
             ) : (
               <Box>
-                <MenuButtonComponent
-                  title={"Chat"}
-                  icon={
-                    <ChatBubbleIcon
-                      style={{
-                        width:
-                          menuTemplate?.icon_size === "SMALL"
-                            ? 10
-                            : menuTemplate?.icon_size === "MEDIUM"
-                            ? 15
-                            : 18 || 18,
-                        color: menuStyle?.text || "",
-                      }}
-                    />
-                  }
-                  openFolderCreateModal={openFolderCreateModal}
-                  onClick={(e) => {
-                    handleRouter();
-                  }}
-                  sidebarIsOpen={sidebarIsOpen}
-                  style={{
-                    background: menuStyle?.background || "#fff",
-                    color: menuStyle?.text || "",
-                  }}
-                />
+                {permissions?.chat && (
+                  <MenuButtonComponent
+                    title={"Chat"}
+                    icon={
+                      <ChatBubbleIcon
+                        style={{
+                          width: menuTemplate?.icon_size === "SMALL" ? 10 : menuTemplate?.icon_size === "MEDIUM" ? 15 : 18 || 18,
+                          color: menuStyle?.text || "",
+                        }}
+                      />
+                    }
+                    openFolderCreateModal={openFolderCreateModal}
+                    onClick={(e) => {
+                      handleRouter();
+                    }}
+                    sidebarIsOpen={sidebarIsOpen}
+                    style={{
+                      background: menuStyle?.background || "#fff",
+                      color: menuStyle?.text || "",
+                    }}
+                  />
+                )}
                 <div
                   className="nav-block"
                   style={{
@@ -299,10 +290,7 @@ const LayoutSidebar = ({ appId }) => {
                   }}
                 >
                   <div className="menu-element">
-                    <Container
-                      dragHandleSelector=".column-drag-handle"
-                      onDrop={onDrop}
-                    >
+                    <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>
                       {menuList?.menus &&
                         menuList?.menus?.map((element, index) => (
                           <AppSidebar
@@ -321,31 +309,28 @@ const LayoutSidebar = ({ appId }) => {
                     </Container>
                   </div>
                 </div>
-                <MenuButtonComponent
-                  title={"Create"}
-                  icon={
-                    <AddIcon
-                      style={{
-                        width:
-                          menuTemplate?.icon_size === "SMALL"
-                            ? 10
-                            : menuTemplate?.icon_size === "MEDIUM"
-                            ? 15
-                            : 18 || 18,
-                        color: menuStyle?.text,
-                      }}
-                    />
-                  }
-                  openFolderCreateModal={openFolderCreateModal}
-                  onClick={(e) => {
-                    handleOpenNotify(e, "ROOT");
-                  }}
-                  sidebarIsOpen={sidebarIsOpen}
-                  style={{
-                    background: menuStyle?.background || "#fff",
-                    color: menuStyle?.text || "",
-                  }}
-                />
+                {permissions?.menu_button && (
+                  <MenuButtonComponent
+                    title={"Create"}
+                    icon={
+                      <AddIcon
+                        style={{
+                          width: menuTemplate?.icon_size === "SMALL" ? 10 : menuTemplate?.icon_size === "MEDIUM" ? 15 : 18 || 18,
+                          color: menuStyle?.text,
+                        }}
+                      />
+                    }
+                    openFolderCreateModal={openFolderCreateModal}
+                    onClick={(e) => {
+                      handleOpenNotify(e, "ROOT");
+                    }}
+                    sidebarIsOpen={sidebarIsOpen}
+                    style={{
+                      background: menuStyle?.background || "#fff",
+                      color: menuStyle?.text || "",
+                    }}
+                  />
+                )}
                 <Divider />
               </Box>
             )}
@@ -357,13 +342,7 @@ const LayoutSidebar = ({ appId }) => {
           onClick={(e) => {
             anchorEl ? setAnchorEl(null) : openMenu(e);
           }}
-          children={
-            <NewProfilePanel
-              anchorEl={anchorEl}
-              handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-              projectInfo={projectInfo}
-            />
-          }
+          children={<NewProfilePanel anchorEl={anchorEl} handleMenuSettingModalOpen={handleMenuSettingModalOpen} projectInfo={projectInfo} />}
           style={{
             background: menuStyle?.background || "#fff",
             color: menuStyle?.text || "#000",
@@ -371,47 +350,13 @@ const LayoutSidebar = ({ appId }) => {
           sidebarIsOpen={sidebarIsOpen}
         />
 
-        {(modalType === "create" ||
-          modalType === "parent" ||
-          modalType === "update") && (
-          <FolderCreateModal
-            closeModal={closeModal}
-            selectedFolder={selectedFolder}
-            modalType={modalType}
-            appId={appId}
-            getMenuList={getMenuList}
-          />
+        {(modalType === "create" || modalType === "parent" || modalType === "update") && (
+          <FolderCreateModal closeModal={closeModal} selectedFolder={selectedFolder} modalType={modalType} appId={appId} getMenuList={getMenuList} />
         )}
-        {tableModal && (
-          <TableLinkModal
-            closeModal={closeTableModal}
-            selectedFolder={selectedFolder}
-            getMenuList={getMenuList}
-          />
-        )}
-        {microfrontendModal && (
-          <MicrofrontendLinkModal
-            closeModal={closeMicrofrontendModal}
-            selectedFolder={selectedFolder}
-            getMenuList={getMenuList}
-          />
-        )}
-        {webPageModal && (
-          <WebPageLinkModal
-            closeModal={closeWebPageModal}
-            selectedFolder={selectedFolder}
-            getMenuList={getMenuList}
-          />
-        )}
-        {folderModalType === "folder" && (
-          <FolderModal
-            closeModal={closeFolderModal}
-            modalType={folderModalType}
-            menuList={menuList}
-            element={element}
-            getMenuList={getMenuList}
-          />
-        )}
+        {tableModal && <TableLinkModal closeModal={closeTableModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
+        {microfrontendModal && <MicrofrontendLinkModal closeModal={closeMicrofrontendModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
+        {webPageModal && <WebPageLinkModal closeModal={closeWebPageModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
+        {folderModalType === "folder" && <FolderModal closeModal={closeFolderModal} modalType={folderModalType} menuList={menuList} element={element} getMenuList={getMenuList} />}
       </div>
       <SubMenu
         child={child}
@@ -441,9 +386,7 @@ const LayoutSidebar = ({ appId }) => {
         setWebPageModal={setWebPageModal}
         deleteFolder={deleteFolder}
       />
-      {menuSettingModal && (
-        <MenuSettingModal closeModal={closeMenuSettingModal} />
-      )}
+      {menuSettingModal && <MenuSettingModal closeModal={closeMenuSettingModal} />}
     </>
   );
 };

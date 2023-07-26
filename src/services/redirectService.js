@@ -13,6 +13,9 @@ const redirectService = {
         "project-id": data.project_id,
       },
     }),
+  updateReorder: (data) =>
+    request.put(`/redirect-url/re-order`, data),
+    
   create: (data) =>
     request.post(`/redirect-url`, data, {
       params: {
@@ -48,6 +51,9 @@ export const useRedirectGetByIdQuery = ({
 
 export const useRedirectUpdateMutation = (mutationSettings) => {
   return useMutation((data) => redirectService.update(data), mutationSettings);
+};
+export const useRedirectUpdateReorderMutation = (mutationSettings) => {
+  return useMutation((data) => redirectService.updateReorder(data), mutationSettings);
 };
 
 export const useRedirectCreateMutation = (mutationSettings) => {

@@ -1,21 +1,21 @@
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
+import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import FRow from "../../../components/FormElements/FRow";
+import PageFallback from "../../../components/PageFallback";
 import useTabRouter from "../../../hooks/useTabRouter";
+import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import constructorObjectService from "../../../services/constructorObjectService";
 import { listToMap } from "../../../utils/listToMap";
 import { objectToArray } from "../../../utils/objectToArray";
 import { pageToOffset } from "../../../utils/pageToOffset";
 import { Filter } from "../components/FilterGenerator";
 import styles from "./style.module.scss";
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
-import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
-import { useSelector } from "react-redux";
+import { set } from "date-fns";
 import { useWatch } from "react-hook-form";
-import PageFallback from "../../../components/PageFallback";
 
 const RelationTable = forwardRef(
   (
@@ -51,8 +51,6 @@ const RelationTable = forwardRef(
     const [filters, setFilters] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [limit, setLimit] = useState();
-    const isPermissions = useSelector((state) => state?.auth?.permissions);
-    const rowClickType = relation?.action_relations?.find((item) => item.key === "click");
     const filterChangeHandler = (value, name) => {
       setFilters({
         ...filters,
@@ -62,13 +60,13 @@ const RelationTable = forwardRef(
 
     const getRelatedTabeSlug = useMemo(() => {
       return relation?.find((el) => el?.id === selectedTab?.relation_id);
-    }, [relation, selectedTab]);
+    }, [relation, selectedTab?.relation_id]);
 
     useEffect(() => {
       if (getRelatedTabeSlug?.default_editable) {
         setFormVisible(true);
       }
-    }, [getRelatedTabeSlug?.default_editable]);
+    }, [getRelatedTabeSlug?.default_editable, setFormVisible]);
 
     const onCheckboxChange = (val, row) => {
       if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -104,6 +102,9 @@ const RelationTable = forwardRef(
     }, [getRelatedTabeSlug?.permission?.view_permission]);
 
     const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
+
+    console.log('relatedTableSlug', relatedTableSlug)
+
     const { data: { tableData = [], pageCount = 1, columns = [], quickFilters = [], fieldsMap = {} } = {}, isLoading: dataFetchingLoading } = useQuery(
       [
         "GET_OBJECT_LIST",
@@ -139,6 +140,9 @@ const RelationTable = forwardRef(
           const columns = getRelatedTabeSlug.columns?.map((id, index) => fieldsMap[id])?.filter((el) => el);
 
           const quickFilters = getRelatedTabeSlug.quick_filters?.map(({ field_id }) => fieldsMap[field_id])?.filter((el) => el);
+
+          setFormValue("multi", tableData);
+
           return {
             tableData,
             pageCount,
@@ -155,16 +159,10 @@ const RelationTable = forwardRef(
       else setLimit(parseInt(getRelatedTabeSlug?.default_limit));
     }, [getRelatedTabeSlug?.default_limit]);
 
-    useEffect(() => {
-      setFormValue("multi", tableData);
-    }, [selectedTab, tableData]);
+    // useEffect(() => {
+    //   setFormValue("multi", tableData);
+    // }, [selectedTab, tableData]);
 
-    const a = useWatch({
-      control
-    });
-
-    console.log('awdawdawdawd', a)
- 
     const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {
         if (getRelatedTabeSlug.type === "Many2Many") {
@@ -222,23 +220,7 @@ const RelationTable = forwardRef(
     //   }
     // )
 
-    useImperativeHandle(
-      ref,
-      () => ({
-        excelSort: () => {
-          if (!filters) return null;
-          return {
-            filters,
-            currentPage,
-            limit,
-            pageCount,
-            fieldsMap,
-          };
-        },
-      }),
-      [pageCount, filters, currentPage, limit]
-    );
-    if(loader) return <PageFallback />
+    if (loader) return <PageFallback />;
     return (
       <div className={styles.relationTable} ref={tableRef}>
         {!!quickFilters?.length && (

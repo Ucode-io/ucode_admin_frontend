@@ -6,7 +6,7 @@ import {
   TableChart,
 } from "@mui/icons-material";
 import { Button, Modal, Popover } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQueryClient } from "react-query";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import ViewSettings from "../ViewSettings";
@@ -16,17 +16,17 @@ import ButtonsPopover from "../../../../components/ButtonsPopover";
 import constructorViewService from "../../../../services/constructorViewService";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
-import { viewTypes } from "../../../../utils/constants/viewTypes";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import { useTranslation } from "react-i18next";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useSelector } from "react-redux";
+import { Container, Draggable } from "react-smooth-dnd";
+import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
+import { store } from "../../../../store";
+import { applyDrag } from "../../../../utils/applyDrag";
+import { viewTypes } from "../../../../utils/constants/viewTypes";
 import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
-import { useSelector } from "react-redux";
-import { store } from "../../../../store";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../../../utils/applyDrag";
-import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
 
 const ViewTabSelector = ({
   selectedTabIndex,
@@ -44,6 +44,13 @@ const ViewTabSelector = ({
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   const [selectedView, setSelectedView] = useState(null);
   const [typeNewView, setTypeNewView] = useState(null);
+
+  const permissionCheckedViews = useMemo(() => {
+    return views.filter((view) => {
+      if (view?.attributes?.view_permission?.view) return view;
+    });
+  }, [views]);
+
   const handleClick = (event) => {
     setSelectedView("NEW");
     setAnchorEl(event.currentTarget);
@@ -80,7 +87,7 @@ const ViewTabSelector = ({
   const permissions = useSelector((state) => state.auth.permissions);
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(views, dropResult);
+    const result = applyDrag(permissionCheckedViews, dropResult);
     if (!result) return;
     const computedViews = result.map((el, index) => el.id);
     const data = {
@@ -121,6 +128,7 @@ const ViewTabSelector = ({
             onDrop={onDrop}
             dropPlaceholder={{ className: "drag-row-drop-preview" }}
             style={{ display: "flex", alignItems: "center" }}
+<<<<<<< HEAD
             getChildPayload={(i) => views[i]}
             orientation="horizontal"
           >
@@ -173,6 +181,29 @@ const ViewTabSelector = ({
                       />
                     )}
                   </div>
+=======
+            getChildPayload={(i) => permissionCheckedViews[i]}
+            orientation="horizontal"
+          >
+            {permissionCheckedViews.map((view, index) => (
+              <Draggable key={view.id}>
+                <div onClick={() => setSelectedTabIndex(index)} className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
+                  {view.type === "TABLE" && <TableChart className={style.icon} />}
+                  {view.type === "CALENDAR" && <CalendarMonth className={style.icon} />}
+                  {view.type === "CALENDAR HOUR" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+                  {view.type === "GANTT" && <IconGenerator className={style.icon} icon="chart-gantt.svg" />}
+                  {view.type === "TREE" && <AccountTree className={style.icon} />}
+                  {view.type === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
+                  {view.type === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
+                  <span>{view.name ? view.name : view.type}</span>
+
+                  {view?.attributes?.view_permission?.edit && (
+                    <div className={style.popoverElement}>
+                      {/* {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />} */}
+                      {selectedTabIndex === index && <MoreButtonViewType onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />}
+                    </div>
+                  )}
+>>>>>>> lay_per_prod_bugs
                 </div>
               </Draggable>
             ))}
@@ -182,7 +213,7 @@ const ViewTabSelector = ({
           <Settings className={style.icon} />
         </div> */}
 
-        <PermissionWrapperV2 tableSlug={tableSlug} type="view_create" >
+        <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
           <div className={style.element} aria-describedby={id} variant="contained" onClick={handleClick}>
             <AddIcon className={style.icon} style={{ color: "#000" }} />
             <strong style={{ color: "#000" }}>{t("add")}</strong>

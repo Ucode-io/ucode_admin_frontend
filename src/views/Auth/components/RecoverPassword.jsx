@@ -27,10 +27,11 @@ export default function RecoverPassword({ setFormType }) {
         if (res?.email_found) {
           setViewType("otp");
           setValue("login", res);
-        } else if (res === undefined || res.email_found === false) {
+        } else if (!res.user_id) {
+          store.dispatch(showAlert("Login not found!"));
+        } else if (res.email_found === false) {
           setViewType("new_email");
           if (res.user_id) setValue("user_id", res.user_id);
-          store.dispatch(showAlert("Login not found!"));
         }
       })
       .finally(() => {

@@ -94,8 +94,8 @@ function ConnectionPermission({
             <div className={styles.permissionList}>
               <h2 className={styles.permissionListTitle}>{item?.label}</h2>
 
-              <div className={styles.permissionListContent}>
-                <div className={styles.permissionListItem}>
+              <div className={styles.permissionListContentCon}>
+                <div className={styles.permissionListItemCon}>
                   <HFCheckbox
                     control={control}
                     name={`table.view_permissions.${index}.view_permission`}
@@ -139,14 +139,14 @@ function ConnectionPermission({
                   />
                   <div>Delete</div>
                 </div>
-                <div className={styles.permissionListItem}>
+                {/* <div className={styles.permissionListItem}>
                   <HFCheckbox
                     control={control}
                     name="is_public"
                     disabled={getUserPermission?.current_user_permission}
                   />
                   <div>is_public</div>
-                </div>
+                </div> */}
               </div>
             </div>
           </Box>

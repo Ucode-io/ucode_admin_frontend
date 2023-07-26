@@ -151,7 +151,7 @@
 }
 
 .appTabs {
-  width: 450px;
+  max-width: 380px;
   overflow-x: auto;
   
   &::-webkit-scrollbar {

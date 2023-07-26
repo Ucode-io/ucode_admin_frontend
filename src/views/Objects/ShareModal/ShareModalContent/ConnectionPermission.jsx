@@ -1,35 +1,26 @@
 import React, { useEffect, useState } from "react";
-import styles from "./styles.module.scss";
 import { Box } from "@mui/material";
-import HFCheckbox from "../../../components/FormElements/HFCheckbox";
+import styles from '../styles.module.scss'
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useWatch } from "react-hook-form";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
 
-function ConnectionPermission({
-  control,
-  getUserPermission,
-  getTablePermission,
-}) {
+function ConnectionPermission({control, getUserPermission, getTablePermission}) {
   const [isCollapsedCon, setIsCollapsedCon] = useState(false);
   const [isViewPermission, setIsViewPermission] = useState(false);
   const [isCreatePermission, setIsCreatePermission] = useState(false);
   const [isEidtPermission, setIsEditPermission] = useState(false);
   const [isDeletePermission, setIsDeletePermission] = useState(false);
-  const grantAccess =
-    getTablePermission?.current_user_permission?.grant_access || false;
+  const grantAccess = getTablePermission?.current_user_permission?.grant_access || false;
+  
   const viewPermissions = useWatch({
     control,
     name: "table.view_permissions",
   });
 
   useEffect(() => {
-    if (
-      grantAccess &&
-      viewPermissions &&
-      getUserPermission?.table?.field_permissions
-    ) {
+    if ( grantAccess && viewPermissions && getUserPermission?.table?.field_permissions) {
       const viewPermissionsMatched = viewPermissions.map((item, index) => {
         const permissionsInGetTable =
           getTablePermission?.current_user_permission?.table.view_permissions[
@@ -37,7 +28,6 @@ function ConnectionPermission({
           ];
         return permissionsInGetTable?.view_permission;
       });
-
       const editPermissionsMatched = viewPermissions.map((item, index) => {
         const permissionsInGetTable =
           getTablePermission?.current_user_permission?.table.view_permissions[
@@ -45,7 +35,6 @@ function ConnectionPermission({
           ];
         return permissionsInGetTable?.edit_permission;
       });
-
       const createPermissionsMatched = viewPermissions.map((item, index) => {
         const permissionsInGetTable =
           getTablePermission?.current_user_permission?.table.view_permissions[
@@ -53,7 +42,6 @@ function ConnectionPermission({
           ];
         return permissionsInGetTable?.create_permission;
       });
-      
       const deletePermissionsMatched = viewPermissions.map((item, index) => {
         const permissionsInGetTable =
           getTablePermission?.current_user_permission?.table.view_permissions[
@@ -106,7 +94,7 @@ function ConnectionPermission({
                   />
                   <div>Viewer</div>
                 </div>
-                <div className={styles.permissionListItem}>
+                <div className={styles.permissionListItemCon}>
                   <HFCheckbox
                     control={control}
                     name={`table.view_permissions.${index}.create_permission`}
@@ -117,7 +105,7 @@ function ConnectionPermission({
                   />
                   <div>Creator</div>
                 </div>
-                <div className={styles.permissionListItem}>
+                <div className={styles.permissionListItemCon}>
                   <HFCheckbox
                     control={control}
                     name={`table.view_permissions.${index}.edit_permission`}
@@ -128,7 +116,7 @@ function ConnectionPermission({
                   />
                   <div>Editor</div>
                 </div>
-                <div className={styles.permissionListItem}>
+                <div className={styles.permissionListItemCon}>
                   <HFCheckbox
                     control={control}
                     name={`table.view_permissions.${index}.delete_permission`}
@@ -139,14 +127,6 @@ function ConnectionPermission({
                   />
                   <div>Delete</div>
                 </div>
-                {/* <div className={styles.permissionListItem}>
-                  <HFCheckbox
-                    control={control}
-                    name="is_public"
-                    disabled={getUserPermission?.current_user_permission}
-                  />
-                  <div>is_public</div>
-                </div> */}
               </div>
             </div>
           </Box>

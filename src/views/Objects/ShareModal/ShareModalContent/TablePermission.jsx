@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import React from "react";
-import HFCheckbox from "../../../components/FormElements/HFCheckbox";
-import styles from "./styles.module.scss";
+import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
+import styles from "../styles.module.scss";
 import HFCheckboxRecord from "./HFCheckboxRecord";
 
 function TablePermission({ control, getUserPermission, getTablePermission }) {
@@ -52,7 +52,7 @@ function TablePermission({ control, getUserPermission, getTablePermission }) {
             name="table.record_permissions.delete"
             disabled={isCheckboxDisabled("delete")}
           />
-          <div>Delete</div>
+          <div>Cancel</div>
         </div>
         <div className={styles.checkBox}>
           <HFCheckbox

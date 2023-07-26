@@ -1,21 +1,21 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import HFCheckbox from "../../../components/FormElements/HFCheckbox";
-import styles from "./styles.module.scss";
+import styles from '../styles.module.scss'
 import { useWatch } from "react-hook-form";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
 
 function ActionPermission({ control, getUserPermission, getTablePermission }) {
   const [isCollapsedCon, setIsCollapsedCon] = useState(false);
-  const [isActionPermissionsMatched, setIsActionPermissionsMatched] =
-    useState(false);
-  const grantAccess =
-    getTablePermission?.current_user_permission?.grant_access || false;
+  const [isActionPermissionsMatched, setIsActionPermissionsMatched] = useState(false);
+  const grantAccess = getTablePermission?.current_user_permission?.grant_access || false;
+  
   const actionPermissions = useWatch({
     control,
     name: "table.action_permissions",
   });
+
   const handleCollapseConToggle = () => {
     setIsCollapsedCon(!isCollapsedCon);
   };

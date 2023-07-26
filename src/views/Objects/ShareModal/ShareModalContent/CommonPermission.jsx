@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import React from "react";
-import FRow from "../../../components/FormElements/FRow";
-import HFSelect from "../../../components/FormElements/HFSelect";
+import FRow from "../../../../components/FormElements/FRow";
+import HFSelect from "../../../../components/FormElements/HFSelect";
 
 function CommonPermission({
   control,

@@ -128,60 +128,6 @@ const ViewTabSelector = ({
             onDrop={onDrop}
             dropPlaceholder={{ className: "drag-row-drop-preview" }}
             style={{ display: "flex", alignItems: "center" }}
-<<<<<<< HEAD
-            getChildPayload={(i) => views[i]}
-            orientation="horizontal"
-          >
-            {views.map((view, index) => (
-              <Draggable key={view.id}>
-                <div
-                  onClick={() => setSelectedTabIndex(index)}
-                  className={`${style.element} ${
-                    selectedTabIndex === index ? style.active : ""
-                  }`}
-                >
-                  {view.type === "TABLE" && (
-                    <TableChart className={style.icon} />
-                  )}
-                  {view.type === "CALENDAR" && (
-                    <CalendarMonth className={style.icon} />
-                  )}
-                  {view.type === "CALENDAR HOUR" && (
-                    <IconGenerator
-                      className={style.icon}
-                      icon="chart-gantt.svg"
-                    />
-                  )}
-                  {view.type === "GANTT" && (
-                    <IconGenerator
-                      className={style.icon}
-                      icon="chart-gantt.svg"
-                    />
-                  )}
-                  {view.type === "TREE" && (
-                    <AccountTree className={style.icon} />
-                  )}
-                  {view.type === "BOARD" && (
-                    <IconGenerator
-                      className={style.icon}
-                      icon="brand_trello.svg"
-                    />
-                  )}
-                  {view.type === "FINANCE CALENDAR" && (
-                    <MonetizationOnIcon className={style.icon} />
-                  )}
-                  <span>{view.name ? view.name : view.type}</span>
-
-                  <div className={style.popoverElement}>
-                    {/* {selectedTabIndex === index && <ButtonsPopover className={""} onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />} */}
-                    {selectedTabIndex === index && (
-                      <MoreButtonViewType
-                        onEditClick={() => openModal(view)}
-                        onDeleteClick={() => deleteView(view.id)}
-                      />
-                    )}
-                  </div>
-=======
             getChildPayload={(i) => permissionCheckedViews[i]}
             orientation="horizontal"
           >
@@ -203,7 +149,6 @@ const ViewTabSelector = ({
                       {selectedTabIndex === index && <MoreButtonViewType onEditClick={() => openModal(view)} onDeleteClick={() => deleteView(view.id)} />}
                     </div>
                   )}
->>>>>>> lay_per_prod_bugs
                 </div>
               </Draggable>
             ))}

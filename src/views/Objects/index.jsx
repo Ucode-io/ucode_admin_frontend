@@ -40,7 +40,7 @@ const ObjectsPage = () => {
     {
       select: ({ data }) => {
         return {
-          views: data?.views ?? [],
+          views: data?.views?.filter((view) => view?.attributes?.view_permission?.view === true) ?? [],
           fieldsMap: listToMap(data?.fields),
         };
       },

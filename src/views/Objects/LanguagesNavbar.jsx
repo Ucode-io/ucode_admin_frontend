@@ -34,7 +34,7 @@ export default function LanguagesNavbar() {
   };
 
   const { data: projectInfo = [] } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
-    return projectService.getById(projectId);
+    return projectService.getByID(projectId);
   });
 
   const languages = useMemo(() => {

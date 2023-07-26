@@ -14,8 +14,7 @@ const authService = {
     }),
   multiCompanyLogin: (data) => requestAuthV2.post("/multi-company/login", data),
   register: (data) => requestAuth.post("/company", data),
-  sendResetMessageToEmail: (data) =>
-    requestAuth.post(`/user/send-message`, data),
+  sendResetMessageToEmail: (data) => requestAuth.post(`/user/send-message`, data),
   resetPassword: (data) => requestAuth.put(`/user/reset-password`, data),
   resetPasswordV2: (data) => requestAuth.put(`/v2/reset-password`, data),
   refreshToken: (data) => requestAuthV2.put(`/refresh`, data),
@@ -26,6 +25,7 @@ const authService = {
   verifyEmail: (sms_id, otp, data) => requestAuth.post(`/verify-email/${sms_id}/${otp}`, data),
   verifyOnlyEmail: (data) => requestAuth.post(`/v2/verify-only-email`, data),
   forgotPassword: (login) => requestAuth.post(`/v2/forgot-password`, login),
+  setEmail: (data) => requestAuth.put(`/v2/set-email/send-code`, data),
 };
 
 export default authService;

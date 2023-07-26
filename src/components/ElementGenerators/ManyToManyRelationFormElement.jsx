@@ -142,7 +142,7 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
-  const { data: options } = useQuery(
+  const { data: fromInvokeList } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
       return request.post(
@@ -166,12 +166,44 @@ const AutoCompleteElement = ({
       );
     },
     {
+      enabled: Boolean(field?.attributes?.function_path),
+      select: (res) => {
+        return res?.data?.response ?? [];
+      },
+    }
+  );
+  
+  const { data: fromObjectList } = useQuery(
+    ["GET_OBJECT_LIST", tableSlug, autoFiltersValue, debouncedValue],
+    () => {
+      return constructorObjectService.getList(tableSlug, {
+        data: {
+          ...autoFiltersValue,
+          view_fields:
+            field?.view_fields?.map((field) => field.slug) ??
+            field?.attributes?.view_fields?.map((field) => field.slug),
+          additional_request: {
+            additional_field: "guid",
+            additional_values: value,
+          },
+          // additional_ids: value,
+          search: debouncedValue,
+          limit: 10,
+        },
+      });
+    },
+    {
+      enabled: !!field?.attributes?.function_path,
       select: (res) => {
         return res?.data?.response ?? [];
       },
     }
   );
 
+const options = useMemo(() => {
+  return fromObjectList ?? fromInvokeList
+}, [fromInvokeList, fromObjectList])
+  
   const computedValue = useMemo(() => {
     if (!value) return undefined;
 

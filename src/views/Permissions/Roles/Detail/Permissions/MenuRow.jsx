@@ -127,7 +127,6 @@ const MenuRow = ({
       },
     }));
   };
-  console.log("rowPermissions?.writ", rowPermissions?.write);
 
   return (
     <>

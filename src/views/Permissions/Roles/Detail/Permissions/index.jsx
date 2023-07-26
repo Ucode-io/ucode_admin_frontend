@@ -1,4 +1,4 @@
-import { useFieldArray, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import TableCard from "../../../../../components/TableCard";
 import {
   CTable,
@@ -7,7 +7,7 @@ import {
   CTableHead,
   CTableHeadRow,
 } from "../../../../../components/CTable";
-import { Box, Button, Card } from "@mui/material";
+import { Box, Card } from "@mui/material";
 import { useEffect, useState } from "react";
 import TableRow from "./TableRow";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
@@ -21,12 +21,6 @@ const Permissions = ({
   setValue,
   watch,
 }) => {
-  const { fields: apps } = useFieldArray({
-    control,
-    name: "data.tables",
-    keyName: "key",
-  });
-  console.log("apps", apps);
   const [checkBoxValues, setCheckBoxValues] = useState({});
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -162,19 +156,11 @@ const Permissions = ({
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>
-                        <CTableCell>Chat</CTableCell>
-                        <CTableCell>Menu button</CTableCell>
-                        <CTableCell>Settings button</CTableCell>
-                        <CTableCell>Projects button</CTableCell>
-                        <CTableCell>Environments button</CTableCell>
-                        <CTableCell>API keys button</CTableCell>
-                        <CTableCell>Redirects button</CTableCell>
-                        <CTableCell>Menu setting button</CTableCell>
-                        <CTableCell>Profile settings button</CTableCell>
-                        <CTableCell>Project settings button</CTableCell>
+                        <CTableCell width={"50%"}>Global permission</CTableCell>
+                        <CTableCell></CTableCell>
                       </CTableHeadRow>
                     </CTableHead>
-                    <CTableBody columnsCount={10}>
+                    <CTableBody columnsCount={2} dataLength={5}>
                       <CustomPermissionRow watch={watch} setValue={setValue} />
                     </CTableBody>
                   </CTable>

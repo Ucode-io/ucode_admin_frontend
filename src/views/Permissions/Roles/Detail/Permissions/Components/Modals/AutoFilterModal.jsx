@@ -86,7 +86,6 @@ const AutoFilterModal = ({ control, closeModal, tableIndex, type }) => {
       },
     },
   });
-  console.log("filters", filters);
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>

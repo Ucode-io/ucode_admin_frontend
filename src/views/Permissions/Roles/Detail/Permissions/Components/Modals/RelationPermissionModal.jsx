@@ -36,7 +36,11 @@ const RelationPermissionModal = ({ closeModal, control, tableIndex }) => {
           </div>
           <Box>
             <TableCard withBorder borderRadius="md">
-              <CTable>
+              <CTable
+                tableStyle={{
+                  height: "auto",
+                }}
+              >
                 <CTableHead>
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>

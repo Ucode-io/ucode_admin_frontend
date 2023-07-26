@@ -45,12 +45,6 @@ const ViewTabSelector = ({
   const [selectedView, setSelectedView] = useState(null);
   const [typeNewView, setTypeNewView] = useState(null);
 
-  const permissionCheckedViews = useMemo(() => {
-    return views.filter((view) => {
-      if (view?.attributes?.view_permission?.view) return view;
-    });
-  }, [views]);
-
   const handleClick = (event) => {
     setSelectedView("NEW");
     setAnchorEl(event.currentTarget);
@@ -87,7 +81,7 @@ const ViewTabSelector = ({
   const permissions = useSelector((state) => state.auth.permissions);
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(permissionCheckedViews, dropResult);
+    const result = applyDrag(views, dropResult);
     if (!result) return;
     const computedViews = result.map((el, index) => el.id);
     const data = {
@@ -128,10 +122,10 @@ const ViewTabSelector = ({
             onDrop={onDrop}
             dropPlaceholder={{ className: "drag-row-drop-preview" }}
             style={{ display: "flex", alignItems: "center" }}
-            getChildPayload={(i) => permissionCheckedViews[i]}
+            getChildPayload={(i) => views[i]}
             orientation="horizontal"
           >
-            {permissionCheckedViews.map((view, index) => (
+            {views.map((view, index) => (
               <Draggable key={view.id}>
                 <div onClick={() => setSelectedTabIndex(index)} className={`${style.element} ${selectedTabIndex === index ? style.active : ""}`}>
                   {view.type === "TABLE" && <TableChart className={style.icon} />}

@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import HFCheckbox from "../../../components/FormElements/HFCheckbox";
-import styles from "./styles.module.scss";
+import styles from '../styles.module.scss'
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useWatch } from "react-hook-form";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
 
 function FieldPermission({ control, getUserPermission, getTablePermission }) {
   const [isCollapsed, setIsCollapsed] = useState(false);

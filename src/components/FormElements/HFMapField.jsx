@@ -4,6 +4,7 @@ import { Map, Placemark, YMaps } from "@pbe/react-yandex-maps";
 import { toNumber } from "lodash-es";
 import { useEffect, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
+import { generateLink } from "../../utils/generateYandexLink";
 
 const HFMapField = ({
   control,
@@ -48,7 +49,6 @@ const HFMapField = ({
 
     getCurrentLocation();
   }, []);
-
 
   return (
     <Controller
@@ -107,6 +107,9 @@ const HFMapField = ({
                 <Placemark geometry={[lat, long]} />
               </Map>
             </YMaps>
+            <a href={generateLink(lat, long)} target="_blank" rel="noopener noreferrer">
+              Open in Yandex Maps
+            </a>
           </Box>
         );
       }}

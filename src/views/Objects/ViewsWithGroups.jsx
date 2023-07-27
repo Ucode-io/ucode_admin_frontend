@@ -311,13 +311,12 @@ const ViewsWithGroups = ({
 
             <Button variant="outlined">
               <HexagonIcon />
-              Automation
             </Button>
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="update">
               <Button variant="outlined" onClick={navigateToSettingsPage}>
                 <SettingsSuggestIcon />
-                {t("settings")}
+                {/* {t("settings")} */}
               </Button>
             </PermissionWrapperV2>
           </>

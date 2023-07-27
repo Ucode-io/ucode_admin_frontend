@@ -304,21 +304,28 @@ const ViewsWithGroups = ({
               </div>
             </Menu> */}
 
-              <ShareModal/>
-              
-            
-            <LanguagesNavbar />
+            <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
+              <ShareModal />
+            </PermissionWrapperV2>
 
-            <Button variant="outlined">
-              <HexagonIcon />
-            </Button>
+            <PermissionWrapperV2 tableSlug={tableSlug} type="language_btn">
+              <LanguagesNavbar />
+            </PermissionWrapperV2>
 
-            <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+            <PermissionWrapperV2 tableSlug={tableSlug} type="automation">
+              <Button variant="outlined">
+                <HexagonIcon />
+                {/* {t("automations")} */}
+              </Button>
+            </PermissionWrapperV2>
+
+            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
               <Button variant="outlined" onClick={navigateToSettingsPage}>
                 <SettingsSuggestIcon />
                 {/* {t("settings")} */}
               </Button>
             </PermissionWrapperV2>
+
           </>
         }
       >

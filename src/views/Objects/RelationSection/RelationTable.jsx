@@ -141,8 +141,6 @@ const RelationTable = forwardRef(
 
           const quickFilters = getRelatedTabeSlug.quick_filters?.map(({ field_id }) => fieldsMap[field_id])?.filter((el) => el);
 
-          setFormValue("multi", tableData);
-
           return {
             tableData,
             pageCount,
@@ -151,6 +149,9 @@ const RelationTable = forwardRef(
             fieldsMap,
           };
         },
+        onSuccess: () => {
+          setFormValue("multi", tableData);
+        }
       }
     );
 

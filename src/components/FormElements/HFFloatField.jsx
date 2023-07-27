@@ -20,10 +20,7 @@ const HFFloatField = ({
   decimalScale = 2, 
   ...props
 }) => {
-  const value = useWatch({
-    control,
-    // name,
-  });
+
 
   return (
     <Controller
@@ -56,8 +53,8 @@ const HFFloatField = ({
               
               if (!valueWithoutSpaces) onChange('');
               else {
-                if(valueWithoutSpaces.at(-1) === '.') onChange(valueWithoutSpaces)
-                else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '')}
+                if(valueWithoutSpaces.at(-1) === '.') onChange(parseInt(valueWithoutSpaces))
+                else onChange(!isNaN(valueWithoutSpaces) ? parseInt(valueWithoutSpaces) : valueWithoutSpaces)}
                 }}
               className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
               name={name}

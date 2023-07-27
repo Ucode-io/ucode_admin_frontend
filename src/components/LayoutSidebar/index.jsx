@@ -29,6 +29,7 @@ import SubMenu from "./SubMenu";
 import "./style.scss";
 import { AdminFolders } from "./mock/AdminFolders";
 import { useProjectGetByIdQuery } from "../../services/projectService";
+import MenuBox from "./Components/MenuBox";
 
 const admin = {
   id: "12",
@@ -364,17 +365,14 @@ const LayoutSidebar = ({ appId }) => {
             )}
           </div>
         </Box>
-        <MenuButtonComponent
+        <MenuBox
           title={"Profile"}
           openFolderCreateModal={openFolderCreateModal}
-          onClick={(e) => {
-            anchorEl ? setAnchorEl(null) : openMenu(e);
-          }}
           children={
             <NewProfilePanel
               anchorEl={anchorEl}
+              setAnchorEl={setAnchorEl}
               handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-              projectInfo={projectInfo}
             />
           }
           style={{

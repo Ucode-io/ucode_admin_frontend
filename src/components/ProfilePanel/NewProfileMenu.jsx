@@ -1,7 +1,5 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import KeyIcon from "@mui/icons-material/Key";
-import LayersIcon from "@mui/icons-material/Layers";
-import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, Tooltip } from "@mui/material";
@@ -11,7 +9,11 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PlusIcon } from "../../assets/icons/icon";
 import CompanyModal from "../../layouts/MainLayout/CompanyModal";
 import authService from "../../services/auth/authService";
-import { useCompanyListQuery, useEnvironmentListQuery, useProjectListQuery } from "../../services/companyService";
+import {
+  useCompanyListQuery,
+  useEnvironmentListQuery,
+  useProjectListQuery,
+} from "../../services/companyService";
 import { store } from "../../store";
 import { authActions } from "../../store/auth/auth.slice";
 import { companyActions } from "../../store/company/company.slice";
@@ -23,7 +25,11 @@ import ResourceList from "./ResourceList";
 import styles from "./newprofile.module.scss";
 import { useQueryClient } from "react-query";
 
-const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen, projectInfo }) => {
+const NewProfilePanel = ({
+  anchorEl,
+  handleMenuSettingModalOpen,
+  projectInfo,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { appId } = useParams();
@@ -118,9 +124,21 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen, projectInfo }) 
   };
 
   useEffect(() => {
-    dispatch(companyActions.setCompanyItem(company.companies.find((item) => item.id === company.companyId)));
-    dispatch(companyActions.setEnvironmentItem(company.environments?.find((item) => item.id === company.environmentId)));
-    dispatch(companyActions.setProjectItem(company.projects?.find((item) => item.project_id === company.projectId)));
+    dispatch(
+      companyActions.setCompanyItem(
+        company.companies.find((item) => item.id === company.companyId)
+      )
+    );
+    dispatch(
+      companyActions.setEnvironmentItem(
+        company.environments?.find((item) => item.id === company.environmentId)
+      )
+    );
+    dispatch(
+      companyActions.setProjectItem(
+        company.projects?.find((item) => item.project_id === company.projectId)
+      )
+    );
   }, [company.companies, company.environments]);
 
   const { isLoading } = useCompanyListQuery({
@@ -199,7 +217,11 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen, projectInfo }) 
                   children={
                     <Tooltip title={item?.name}>
                       <p
-                        className={item.id === company.companyId ? styles.avatarborder : styles.avatar}
+                        className={
+                          item.id === company.companyId
+                            ? styles.avatarborder
+                            : styles.avatar
+                        }
                         onClick={(e) => {
                           handleCompanySelect(item, e);
                           queryClient.refetchQueries(["PROJECT"], item.id);
@@ -230,7 +252,9 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen, projectInfo }) 
             <ProfileItem
               children={
                 <>
-                  <p className={styles.companyavatar}>{company.companyItem?.name?.charAt(0).toUpperCase()}</p>
+                  <p className={styles.companyavatar}>
+                    {company.companyItem?.name?.charAt(0).toUpperCase()}
+                  </p>
                   {company.companyItem?.name}
                 </>
               }
@@ -252,39 +276,25 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen, projectInfo }) 
           <Divider />
           <div className={styles.block}>
             <ProfileItem
-              children={<ResourceList item={company.projectItem?.title || "No project"} className={styles.projectavatar} colorItem={company.projectItem} />}
+              children={
+                <ResourceList
+                  item={company.projectItem?.title || "No project"}
+                  className={styles.projectavatar}
+                  colorItem={company.projectItem}
+                />
+              }
               onClick={openProjectList}
             />
-            {permissions?.projects_button && (
-              <ProfileItem
-                children={
-                  <LayersIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Projects"}
-                onClick={handleProjectNavigate}
-              />
-            )}
             <ProfileItem
-              children={<ResourceList item={company.environmentItem?.name || "No environment"} className={styles.environmentavatar} colorItem={company.environmentItem} />}
+              children={
+                <ResourceList
+                  item={company.environmentItem?.name || "No environment"}
+                  className={styles.environmentavatar}
+                  colorItem={company.environmentItem}
+                />
+              }
               onClick={openEnvironmentList}
             />
-            {permissions?.environments_button && (
-              <ProfileItem
-                children={
-                  <LocalOfferIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Environments"}
-                onClick={handleEnvNavigate}
-              />
-            )}
           </div>
           <Divider />
           <div className={styles.block}>
@@ -342,7 +352,10 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen, projectInfo }) 
             <ProfileItem
               children={
                 <>
-                  <p className={styles.companyavatar}>{auth?.userInfo?.name?.charAt(0).toUpperCase() || auth?.userInfo?.login?.charAt(0).toUpperCase()}</p>
+                  <p className={styles.companyavatar}>
+                    {auth?.userInfo?.name?.charAt(0).toUpperCase() ||
+                      auth?.userInfo?.login?.charAt(0).toUpperCase()}
+                  </p>
                   {auth?.userInfo?.name || auth?.userInfo?.login}
                 </>
               }
@@ -372,13 +385,20 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen, projectInfo }) 
         </Box>
       </Menu>
 
-      <ProjectList projectListEl={projectListEl} closeProjectList={closeProjectList} projectVisible={projectVisible} projectList={company.projects} setSelected={setSelected} />
+      <ProjectList
+        projectListEl={projectListEl}
+        closeProjectList={closeProjectList}
+        projectVisible={projectVisible}
+        projectList={company.projects}
+        setSelected={setSelected}
+        handleProjectNavigate={handleProjectNavigate}
+      />
       <EnvironmentsList
         environmentListEl={environmentListEl}
         closeEnvironmentList={closeEnvironmentList}
         environmentVisible={environmentVisible}
         environmentList={company.environments}
-        refreshTokenFunc={refreshTokenFunc}
+        handleEnvNavigate={handleEnvNavigate}
       />
       {companyModal && <CompanyModal closeModal={closeCompanyModal} />}
     </div>

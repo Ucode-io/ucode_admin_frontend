@@ -1,26 +1,32 @@
 import { ArrowDropDownCircleOutlined } from "@mui/icons-material";
 import { Button, Menu, MenuItem } from "@mui/material";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
+import projectService, {
+  useProjectGetByIdQuery,
+} from "../../services/projectService";
 
-const languages = [
-  {
-    title: "English",
-    slug: "en",
-  },
-  {
-    title: "Русский",
-    slug: "ru",
-  },
-  {
-    title: "O'zbekcha",
-    slug: "uz",
-  },
-];
+// const languages = [
+//   {
+//     title: "English",
+//     slug: "en",
+//   },
+//   {
+//     title: "Русский",
+//     slug: "ru",
+//   },
+//   {
+//     title: "O'zbekcha",
+//     slug: "uz",
+//   },
+// ];
 
 export default function LanguagesNavbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const projectId = useSelector((state) => state.company.projectId);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -29,7 +35,20 @@ export default function LanguagesNavbar() {
     setAnchorEl(null);
   };
 
+  const { data: projectInfo = [] } = useProjectGetByIdQuery({ projectId });
+
+  const languages = useMemo(() => {
+    return projectInfo?.language?.map((lang) => ({
+      title: lang?.name,
+      slug: lang?.short_name,
+    }));
+  }, [projectInfo]);
+
   const { i18n } = useTranslation();
+
+  useEffect(() => {
+    i18n.changeLanguage(languages?.[0]?.slug);
+  }, [languages]);
 
   const handleRowClick = (lang) => {
     i18n.changeLanguage(lang);
@@ -37,7 +56,7 @@ export default function LanguagesNavbar() {
   };
 
   const activeLang = useMemo(() => {
-    return languages.find((lang) => lang.slug === i18n.language);
+    return languages?.find((lang) => lang.slug === i18n.language);
   }, [i18n.language]);
 
   return (
@@ -50,7 +69,7 @@ export default function LanguagesNavbar() {
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
       >
-        {activeLang.title}
+        {activeLang?.title}
         <KeyboardArrowDownIcon />
       </Button>
 
@@ -63,8 +82,11 @@ export default function LanguagesNavbar() {
           "aria-labelledby": "basic-button",
         }}
       >
-        {languages.map((language) => (
-          <MenuItem key={language.slug} onClick={() => handleRowClick(language.slug)}>
+        {languages?.map((language) => (
+          <MenuItem
+            key={language.slug}
+            onClick={() => handleRowClick(language.slug)}
+          >
             {language.title}
           </MenuItem>
         ))}

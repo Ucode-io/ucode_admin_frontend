@@ -8,6 +8,7 @@ import { tableColumnReducer } from "./tableColumn/tableColumn.slice";
 import { tabRouterReducer } from "./tabRouter/tabRouter.slice";
 import { applicationReducer } from "./application/application.slice";
 import { menuReducer } from "./menuItem/menuItem.slice";
+import { companyReducer } from "./company/company.slice";
 import { cashboxReducer } from "./cashbox/cashbox.slice";
 import { filterReducer } from "./filter/filter.slice";
 import { tableSizeReducer } from "./tableSize/tableSizeSlice";
@@ -36,6 +37,11 @@ const applicationPersistConfig = {
 
 const menuPersistConfig = {
   key: "menu",
+  storage,
+};
+
+const companyPersistConfig = {
+  key: "company",
   storage,
 };
 
@@ -82,6 +88,7 @@ const rootReducer = combineReducers({
   ),
   application: persistReducer(applicationPersistConfig, applicationReducer),
   menu: persistReducer(menuPersistConfig, menuReducer),
+  company: persistReducer(companyPersistConfig, companyReducer),
   tableColumn: persistReducer(
     tableColumnTablePersistConfig,
     tableColumnReducer

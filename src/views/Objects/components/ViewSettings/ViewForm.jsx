@@ -28,17 +28,7 @@ import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import NavigateSettings from "./NavigateSettings";
 import ViewsList from "./ViewsList";
 
-const ViewForm = ({
-  initialValues,
-  typeNewView,
-  closeForm,
-  refetchViews,
-  setIsChanged,
-  closeModal,
-  columns,
-  relationColumns,
-  views
-}) => {
+const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
@@ -47,14 +37,8 @@ const ViewForm = ({
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
   const navigate = initialValues?.navigate;
-  const relationObjValue =
-    initialValues?.attributes?.balance?.table_slug +
-    "#" +
-    initialValues?.attributes?.balance?.table_id;
-  const numberFieldValue =
-    initialValues?.attributes?.balance?.field_slug +
-    "#" +
-    initialValues?.attributes?.balance?.field_id;
+  const relationObjValue = initialValues?.attributes?.balance?.table_slug + "#" + initialValues?.attributes?.balance?.table_id;
+  const numberFieldValue = initialValues?.attributes?.balance?.field_slug + "#" + initialValues?.attributes?.balance?.field_id;
   const financialFiledId = initialValues?.attributes?.percent?.field_id;
   const form = useForm();
   const type = form.watch("type");
@@ -150,25 +134,14 @@ const ViewForm = ({
       ?.map((el) => ({ field_id: el.id }));
 
     // form.setValue('columns', computeColumns(formColumns, computedColumns))
-    form.setValue(
-      "quick_filters",
-      computeQuickFilters(
-        formQuickFilters,
-        type === "CALENDAR" || type === "GANTT"
-          ? [...columns, ...relationColumns]
-          : columns
-      )
-    );
+    form.setValue("quick_filters", computeQuickFilters(formQuickFilters, type === "CALENDAR" || type === "GANTT" ? [...columns, ...relationColumns] : columns));
   }, [type, form]);
-
-  console.log('sssssss ViewsList?.length', ViewsList?.length)
 
   const onSubmit = (values) => {
     setBtnLoader(true);
     const computedValues = {
       ...values,
-      columns:
-        values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
+      columns: values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
       quick_filters:
         values.quick_filters
           ?.filter((el) => el.is_checked)
@@ -176,11 +149,7 @@ const ViewForm = ({
             field_id: el.id,
             default_value: el.default_value ?? "",
           })) ?? [],
-      attributes: computeFinancialAcc(
-        values.chartOfAccounts,
-        values?.group_by_field_selected?.slug,
-        values
-      ),
+      attributes: computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
       app_id: appId,
       order: views?.length ?? 0,
     };
@@ -221,13 +190,13 @@ const ViewForm = ({
       })
       .catch(() => setDeleteBtnLoader(false));
   };
-  
+
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
         <Tabs>
           <div className={styles.section}>
-            <TabList style={{marginBottom: '1px'}}>
+            <TabList style={{ marginBottom: "1px" }}>
               <Tab>Information</Tab>
               <Tab>Quick filters</Tab>
               <Tab>Columns</Tab>
@@ -250,42 +219,25 @@ const ViewForm = ({
 
                   <div className={styles.formRow}>
                     <FRow label="Тип">
-                      <HFSelect
-                        options={computedViewTypes}
-                        defaultValue={typeNewView}
-                        control={form.control}
-                        name="type"
-                        fullWidth
-                      />
+                      <HFSelect options={computedViewTypes} defaultValue={typeNewView} control={form.control} name="type" fullWidth />
                     </FRow>
                   </div>
                   <FRow label="Default limit">
                     <HFTextField control={form.control} name="default_limit" />
                   </FRow>
                   <FRow label="Изменение по умолчанию">
-                    <HFSwitch
-                      control={form.control}
-                      name="default_editable"
-                      required
-                      value={form.watch("default_editable")}
-                    />
+                    <HFSwitch control={form.control} name="default_editable" required value={form.watch("default_editable")} />
                   </FRow>
                 </div>
               </div>
 
               <MultipleInsertSettings form={form} columns={columns} />
 
-              {type === "CALENDAR" && (
-                <CalendarSettings form={form} columns={columns} />
-              )}
+              {type === "CALENDAR" && <CalendarSettings form={form} columns={columns} />}
 
-              {type === "CALENDAR HOUR" && (
-                <CalendarHourSettings form={form} columns={columns} />
-              )}
+              {type === "CALENDAR HOUR" && <CalendarHourSettings form={form} columns={columns} />}
 
-              {type === "GANTT" && (
-                <GanttSettings form={form} columns={columns} />
-              )}
+              {type === "GANTT" && <GanttSettings form={form} columns={columns} />}
             </TabPanel>
             <TabPanel>
               <QuickFiltersTab form={form} />
@@ -309,13 +261,8 @@ const ViewForm = ({
       </div>
 
       <div className={styles.formFooter}>
-        {initialValues !== "NEW" && (
-          <CancelButton
-            loading={deleteBtnLoader}
-            onClick={deleteView}
-            title={"Delete"}
-            icon={<Delete />}
-          />
+        {initialValues !== "NEW" && initialValues?.attributes?.view_permission?.delete && (
+          <CancelButton loading={deleteBtnLoader} onClick={deleteView} title={"Delete"} icon={<Delete />} />
         )}
         {/* <CancelButton onClick={closeModal} /> */}
         <SaveButton onClick={form.handleSubmit(onSubmit)} loading={btnLoader} />
@@ -337,7 +284,7 @@ const getInitialValues = (
   numberFieldValue,
   navigate
 ) => {
-  console.log('navigate', navigate);
+  console.log("navigate", navigate);
   if (initialValues === "NEW")
     return {
       type: typeNewView,
@@ -358,9 +305,9 @@ const getInitialValues = (
       group_fields: [],
       navigate: {
         params: [],
-        url: '',
+        url: "",
         headers: [],
-        cookies: []
+        cookies: [],
       },
       table_slug: tableSlug,
       updated_fields: [],
@@ -383,24 +330,17 @@ const getInitialValues = (
     },
     columns: computeColumns(initialValues?.columns, columns),
     quick_filters:
-      computeQuickFilters(
-        initialValues?.quick_filters,
-        initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT"
-          ? [...columns, ...relationColumns]
-          : columns
-      ) ?? [],
+      computeQuickFilters(initialValues?.quick_filters, initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT" ? [...columns, ...relationColumns] : columns) ?? [],
     group_fields: computeGroupFields(
       initialValues?.group_fields,
-      initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT"
-        ? [...columns, ...relationColumns]
-        : columns
+      initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT" ? [...columns, ...relationColumns] : columns
     ),
     navigate: {
       params: navigate?.params,
       url: navigate?.url,
       headers: [],
-      cookies: []
-    }, 
+      cookies: [],
+    },
     table_slug: tableSlug,
     id: initialValues?.id,
     calendar_from_slug: initialValues?.calendar_from_slug ?? "",
@@ -425,8 +365,7 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
         ...columns.find((el) => el.id === id),
         is_checked: true,
       })) ?? [];
-  const unselectedColumns =
-    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+  const unselectedColumns = columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
   return [...selectedColumns, ...unselectedColumns];
 };
 
@@ -463,19 +402,12 @@ const computeQuickFilters = (quickFilters = [], columns) => {
         ...filter,
         is_checked: true,
       })) ?? [];
-  const unselectedQuickFilters =
-    columns?.filter(
-      (el) => !quickFilters?.find((filter) => filter.field_id === el.id)
-    ) ?? [];
+  const unselectedQuickFilters = columns?.filter((el) => !quickFilters?.find((filter) => filter.field_id === el.id)) ?? [];
   return [...selectedQuickFilters, ...unselectedQuickFilters];
 };
 
 const computeGroupFields = (groupFields = [], columns) => {
-  return (
-    groupFields?.filter((groupFieldID) =>
-      columns?.some((column) => column.id === groupFieldID)
-    ) ?? []
-  );
+  return groupFields?.filter((groupFieldID) => columns?.some((column) => column.id === groupFieldID)) ?? [];
 };
 
 export default ViewForm;

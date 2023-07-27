@@ -5,6 +5,7 @@ import ProfilePanel from "../../components/ProfilePanel";
 import UserAvatar from "../../components/UserAvatar";
 import RouteTabComponent from "./RouteTabComponent";
 import styles from "./style.module.scss";
+import NewProfilePanel from "../../components/ProfilePanel/NewProfileMenu";
 
 const RouterTabsBlock = () => {
   const tabs = useSelector((state) => state.tabRouter.tabs);
@@ -21,7 +22,7 @@ const RouterTabsBlock = () => {
 
       <div className={styles.rightSide}>
         <AppSelector />
-        <ProfilePanel />
+        <NewProfilePanel />
       </div>
     </div>
   );

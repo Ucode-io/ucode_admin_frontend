@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "../../services/auth/authService";
 import { authActions } from "./auth.slice";
 import { store } from "..";
+import { companyActions } from "../company/company.slice";
 
 export const loginAction = createAsyncThunk(
   "auth/login",
@@ -11,6 +12,9 @@ export const loginAction = createAsyncThunk(
       dispatch(
         authActions.loginSuccess({ ...res, project_id: data.project_id })
       );
+      dispatch(companyActions.setCompanyId(res?.user?.company_id));
+      dispatch(companyActions.setProjectId(data.project_id));
+      dispatch(companyActions.setEnvironmentId(res?.environment_id));
       await authService
         .updateToken({
           refresh_token: res.token.access_token,

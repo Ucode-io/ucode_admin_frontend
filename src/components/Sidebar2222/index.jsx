@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { mainActions } from "../../store/main/main.slice";
 import ProfilePanel from "../ProfilePanel";
 import { OpenCloseSvg } from "../../assets/icons/icon";
+import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 
 const Sidebar2222 = ({ favicon }) => {
   const sidebarIsOpen = useSelector(
@@ -110,7 +111,7 @@ const Sidebar2222 = ({ favicon }) => {
         </div>
 
         <div className="sidebar-footer">
-          <ProfilePanel />
+          <NewProfilePanel />
         </div>
       </div>
     </div>

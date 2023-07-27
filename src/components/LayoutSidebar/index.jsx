@@ -9,7 +9,6 @@ import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import menuService, { useMenuListQuery } from "../../services/menuService";
 import projectService from "../../services/projectService";
 import { mainActions } from "../../store/main/main.slice";
-import ProfilePanel from "../ProfilePanel";
 import SearchInput from "../SearchInput";
 import FolderModal from "./FolderModalComponent";
 import "./style.scss";
@@ -26,16 +25,12 @@ import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import { UdevsLogo } from "../../assets/icons/icon";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
-import {
-  useMenuSettingGetByIdQuery,
-  useMenuSettingListQuery,
-} from "../../services/menuSettingService";
+import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
+import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import { store } from "../../store";
 
-const LayoutSidebar = ({ favicon, appId, environment }) => {
-  const sidebarIsOpen = useSelector(
-    (state) => state.main.settingsSidebarIsOpen
-  );
+const LayoutSidebar = ({ appId }) => {
+  const sidebarIsOpen = useSelector((state) => state.main.settingsSidebarIsOpen);
   const projectId = useSelector((state) => state.auth.projectId);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const selectedMenuTemplate = store.getState().menu.menuTemplate;
@@ -58,7 +53,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   const [searchText, setSearchText] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
-  const [root, setRoot] = useState("");
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openSidebarMenu = Boolean(menu?.event);
 
@@ -84,13 +78,12 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
   });
   const { data: menuTemplate } = useMenuSettingGetByIdQuery({
     params: {
-      template_id:
-        selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
+      template_id: selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
     },
     menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
   });
   const menuStyle = menuTemplate?.menu_template;
-
+  const permissions = useSelector((state) => state.auth.globalPermissions);
   const handleRouter = () => {
     navigate(`/main/${appId}/chat`);
   };
@@ -175,10 +168,6 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     }
   }, [menuTemplate]);
 
-  const switchRightSideVisible = () => {
-    setSidebarIsOpen(!sidebarIsOpen);
-  };
-
   useEffect(() => {
     getMenuList();
   }, [searchText]);
@@ -191,12 +180,9 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
     if (selectedApp?.type === "FOLDER" && pinIsEnabled) setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const { data: projectInfo } = useQuery(
-    ["GET_PROJECT_BY_ID", projectId],
-    () => {
-      return projectService.getById(projectId);
-    }
-  );
+  const { data: projectInfo } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
+    return projectService.getById(projectId);
+  });
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList?.menus, dropResult);
@@ -250,52 +236,52 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between",
-            height: "calc(100% - 56px)",
+            height: "85vh",
+            overflow: "hidden",
           }}
         >
-          <div>
-            <Box className="search">
-              <SearchInput
-                style={{
-                  borderRadius: "8px",
-                  width: "100%",
-                }}
-                onChange={(e) => {
-                  setSearchText(e);
-                }}
-              />
-            </Box>
-
+          <Box className="search">
+            <SearchInput
+              style={{
+                borderRadius: "8px",
+                width: "100%",
+              }}
+              onChange={(e) => {
+                setSearchText(e);
+              }}
+            />
+          </Box>
+          <div
+            style={{
+              overflow: "auto",
+            }}
+          >
             {!menuList?.menus ? (
               <RingLoaderWithWrapper />
             ) : (
-              <>
-                <MenuButtonComponent
-                  title={"Chat"}
-                  icon={
-                    <ChatBubbleIcon
-                      style={{
-                        width:
-                          menuTemplate?.icon_size === "SMALL"
-                            ? 10
-                            : menuTemplate?.icon_size === "MEDIUM"
-                            ? 15
-                            : 18 || 18,
-                        color: menuStyle?.text || "",
-                      }}
-                    />
-                  }
-                  openFolderCreateModal={openFolderCreateModal}
-                  onClick={(e) => {
-                    handleRouter();
-                  }}
-                  sidebarIsOpen={sidebarIsOpen}
-                  style={{
-                    background: menuStyle?.background || "#fff",
-                    color: menuStyle?.text || "",
-                  }}
-                />
+              <Box>
+                {permissions?.chat && (
+                  <MenuButtonComponent
+                    title={"Chat"}
+                    icon={
+                      <ChatBubbleIcon
+                        style={{
+                          width: menuTemplate?.icon_size === "SMALL" ? 10 : menuTemplate?.icon_size === "MEDIUM" ? 15 : 18 || 18,
+                          color: menuStyle?.text || "",
+                        }}
+                      />
+                    }
+                    openFolderCreateModal={openFolderCreateModal}
+                    onClick={(e) => {
+                      handleRouter();
+                    }}
+                    sidebarIsOpen={sidebarIsOpen}
+                    style={{
+                      background: menuStyle?.background || "#fff",
+                      color: menuStyle?.text || "",
+                    }}
+                  />
+                )}
                 <div
                   className="nav-block"
                   style={{
@@ -304,10 +290,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                   }}
                 >
                   <div className="menu-element">
-                    <Container
-                      dragHandleSelector=".column-drag-handle"
-                      onDrop={onDrop}
-                    >
+                    <Container dragHandleSelector=".column-drag-handle" onDrop={onDrop}>
                       {menuList?.menus &&
                         menuList?.menus?.map((element, index) => (
                           <AppSidebar
@@ -326,102 +309,57 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
                     </Container>
                   </div>
                 </div>
-                <MenuButtonComponent
-                  title={"Create"}
-                  icon={
-                    <AddIcon
-                      style={{
-                        width:
-                          menuTemplate?.icon_size === "SMALL"
-                            ? 10
-                            : menuTemplate?.icon_size === "MEDIUM"
-                            ? 15
-                            : 18 || 18,
-                        color: menuStyle?.text,
-                      }}
-                    />
-                  }
-                  openFolderCreateModal={openFolderCreateModal}
-                  onClick={(e) => {
-                    handleOpenNotify(e, "ROOT");
-                  }}
-                  sidebarIsOpen={sidebarIsOpen}
-                  style={{
-                    background: menuStyle?.background || "#fff",
-                    color: menuStyle?.text || "",
-                  }}
-                />
+                {permissions?.menu_button && (
+                  <MenuButtonComponent
+                    title={"Create"}
+                    icon={
+                      <AddIcon
+                        style={{
+                          width: menuTemplate?.icon_size === "SMALL" ? 10 : menuTemplate?.icon_size === "MEDIUM" ? 15 : 18 || 18,
+                          color: menuStyle?.text,
+                        }}
+                      />
+                    }
+                    openFolderCreateModal={openFolderCreateModal}
+                    onClick={(e) => {
+                      handleOpenNotify(e, "ROOT");
+                    }}
+                    sidebarIsOpen={sidebarIsOpen}
+                    style={{
+                      background: menuStyle?.background || "#fff",
+                      color: menuStyle?.text || "",
+                    }}
+                  />
+                )}
                 <Divider />
-              </>
+              </Box>
             )}
           </div>
-
-          <MenuButtonComponent
-            title={"Profile"}
-            openFolderCreateModal={openFolderCreateModal}
-            onClick={(e) => {
-              anchorEl ? setAnchorEl(null) : openMenu(e);
-            }}
-            children={
-              <ProfilePanel
-                anchorEl={anchorEl}
-                handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-                projectInfo={projectInfo}
-              />
-            }
-            style={{
-              background: menuStyle?.background || "#fff",
-              color: menuStyle?.text || "#000",
-            }}
-            sidebarIsOpen={sidebarIsOpen}
-          />
         </Box>
+        <MenuButtonComponent
+          title={"Profile"}
+          openFolderCreateModal={openFolderCreateModal}
+          onClick={(e) => {
+            anchorEl ? setAnchorEl(null) : openMenu(e);
+          }}
+          children={<NewProfilePanel anchorEl={anchorEl} handleMenuSettingModalOpen={handleMenuSettingModalOpen} projectInfo={projectInfo} />}
+          style={{
+            background: menuStyle?.background || "#fff",
+            color: menuStyle?.text || "#000",
+          }}
+          sidebarIsOpen={sidebarIsOpen}
+        />
 
-        {(modalType === "create" ||
-          modalType === "parent" ||
-          modalType === "update") && (
-          <FolderCreateModal
-            closeModal={closeModal}
-            selectedFolder={selectedFolder}
-            modalType={modalType}
-            appId={appId}
-            getMenuList={getMenuList}
-          />
+        {(modalType === "create" || modalType === "parent" || modalType === "update") && (
+          <FolderCreateModal closeModal={closeModal} selectedFolder={selectedFolder} modalType={modalType} appId={appId} getMenuList={getMenuList} />
         )}
-        {tableModal && (
-          <TableLinkModal
-            closeModal={closeTableModal}
-            selectedFolder={selectedFolder}
-            getMenuList={getMenuList}
-          />
-        )}
-        {microfrontendModal && (
-          <MicrofrontendLinkModal
-            closeModal={closeMicrofrontendModal}
-            selectedFolder={selectedFolder}
-            getMenuList={getMenuList}
-          />
-        )}
-        {webPageModal && (
-          <WebPageLinkModal
-            closeModal={closeWebPageModal}
-            selectedFolder={selectedFolder}
-            getMenuList={getMenuList}
-          />
-        )}
-        {folderModalType === "folder" && (
-          <FolderModal
-            closeModal={closeFolderModal}
-            modalType={folderModalType}
-            menuList={menuList}
-            element={element}
-            getMenuList={getMenuList}
-          />
-        )}
+        {tableModal && <TableLinkModal closeModal={closeTableModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
+        {microfrontendModal && <MicrofrontendLinkModal closeModal={closeMicrofrontendModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
+        {webPageModal && <WebPageLinkModal closeModal={closeWebPageModal} selectedFolder={selectedFolder} getMenuList={getMenuList} />}
+        {folderModalType === "folder" && <FolderModal closeModal={closeFolderModal} modalType={folderModalType} menuList={menuList} element={element} getMenuList={getMenuList} />}
       </div>
       <SubMenu
         child={child}
-        environment={environment}
         subMenuIsOpen={subMenuIsOpen}
         setSubMenuIsOpen={setSubMenuIsOpen}
         openFolderCreateModal={openFolderCreateModal}
@@ -448,9 +386,7 @@ const LayoutSidebar = ({ favicon, appId, environment }) => {
         setWebPageModal={setWebPageModal}
         deleteFolder={deleteFolder}
       />
-      {menuSettingModal && (
-        <MenuSettingModal closeModal={closeMenuSettingModal} />
-      )}
+      {menuSettingModal && <MenuSettingModal closeModal={closeMenuSettingModal} />}
     </>
   );
 };

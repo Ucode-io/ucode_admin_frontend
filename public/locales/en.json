@@ -173,5 +173,8 @@
   "showing": "Showing",
   "excel.upload": "Excel upload",
   "excel.download": "Excel download",
-  "select.environment": "Select environment"
+  "select.environment": "Select environment",
+  "register.form": "Register",
+  "register.form.desc": "Fill in the data for registration",
+  "enter.role": "Choose role"
 }

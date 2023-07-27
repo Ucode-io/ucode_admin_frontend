@@ -2,7 +2,9 @@ import { useQuery } from "react-query";
 import request from "../utils/request";
 
 const constructorObjectService = {
-  getList: ({ tableSlug, ...params }, data) =>
+  getList: (tableSlug, data) =>
+    request.post(`/object/get-list/${tableSlug}`, data),
+  getAutofilterList: ({ tableSlug, ...params }, data) =>
     request.post(`/object/get-list/${tableSlug}`, data, { params }),
   update: (tableSlug, data) => request.put(`/object/${tableSlug}`, data),
   updateMultiple: (tableSlug, data) =>
@@ -28,7 +30,7 @@ export const useObjectsListQuery = ({
   return useQuery(
     ["OBJECTS", { ...params, ...data }],
     () => {
-      return constructorObjectService.getList(params, { data });
+      return constructorObjectService.getAutofilterList(params, { data });
     },
     queryParams
   );

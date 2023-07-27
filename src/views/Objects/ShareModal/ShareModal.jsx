@@ -1,6 +1,5 @@
 import { Button, Dialog } from "@mui/material";
-import HexagonIcon from "@mui/icons-material/Hexagon";
-import LinkIcon from '@mui/icons-material/Link';
+import ShareIcon from '@mui/icons-material/Share';
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import ShareContent from "./ShareModalContent/ShareContent";
@@ -46,7 +45,7 @@ function ShareModal() {
   return (
     <>
       <Button onClick={handleClickOpen} variant="outlined">
-        <LinkIcon />
+        <ShareIcon />
 
       </Button>
 

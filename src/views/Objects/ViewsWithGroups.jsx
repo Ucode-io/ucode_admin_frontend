@@ -297,16 +297,17 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             <PermissionWrapperV2 tableSlug={tableSlug} type="automation">
               <Button variant="outlined">
                 <HexagonIcon />
-                {t("automations")}
+                {/* {t("automations")} */}
               </Button>
             </PermissionWrapperV2>
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
               <Button variant="outlined" onClick={navigateToSettingsPage}>
                 <SettingsSuggestIcon />
-                {t("settings")}
+                {/* {t("settings")} */}
               </Button>
             </PermissionWrapperV2>
+
           </>
         }
       >

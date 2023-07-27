@@ -132,9 +132,23 @@ const CellElementGenerator = ({ field = {}, row }) => {
           <LogoDisplay url={value} />
         </span>
       );
-      
-      case 'MAP': 
-      return value ? generateLink(value?.split(',')?.[0], value?.split(',')?.[1]) : ''
+
+    case "MAP":
+      return value ? (
+        <a
+          target="_blank"
+          href={`${generateLink(
+            value?.split(",")?.[0],
+            value?.split(",")?.[1]
+          )}`}
+          rel='noreferrer'
+          onClick={(e) => e.stopPropagation()}
+        >
+          {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
+        </a>
+      ) : (
+        ""
+      );
 
     case "FILE":
       return value ? (

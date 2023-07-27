@@ -1,9 +1,10 @@
 import { Menu } from "@mui/material";
 import styles from "./project.module.scss";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProfileItem from "../ProfileItem";
 import { companyActions } from "../../../store/company/company.slice";
 import { useQueryClient } from "react-query";
+import LayersIcon from "@mui/icons-material/Layers";
 
 const ProjectList = ({
   projectListEl,
@@ -11,9 +12,12 @@ const ProjectList = ({
   projectVisible,
   projectList,
   setSelected,
+  handleProjectNavigate,
 }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+
+  const permissions = useSelector((state) => state.auth.globalPermissions);
 
   return (
     <Menu
@@ -45,6 +49,23 @@ const ProjectList = ({
             className={styles.menuItem}
           />
         ))}
+        {permissions?.projects_button && (
+          <ProfileItem
+            children={
+              <LayersIcon
+                style={{
+                  color: "#747474",
+                }}
+              />
+            }
+            text={"Projects"}
+            onClick={() => {
+              handleProjectNavigate();
+              closeProjectList();
+            }}
+            className={styles.menuItem}
+          />
+        )}
       </div>
     </Menu>
   );

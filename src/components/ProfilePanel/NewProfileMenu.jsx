@@ -255,26 +255,18 @@ const NewProfilePanel = ({
             <ProfileItem
               children={
                 <>
-                  <p className={styles.companyavatar}>
-                    {company.companyItem?.name?.charAt(0).toUpperCase()}
-                  </p>
-                  {company.companyItem?.name}
-                </>
-              }
-            />
-            {permissions?.settings_button && (
-              <ProfileItem
-                children={
                   <ApartmentIcon
                     style={{
                       color: "#747474",
                     }}
                   />
-                }
-                text={"Settings"}
-                onClick={handleCompanyNavigate}
-              />
-            )}
+                  {company.companyItem?.name}
+                </>
+              }
+              onClick={() => {
+                permissions?.settings_button && handleCompanyNavigate();
+              }}
+            />
           </div>
           <Divider />
           <div className={styles.block}>

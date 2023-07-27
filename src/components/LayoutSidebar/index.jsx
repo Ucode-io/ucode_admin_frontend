@@ -209,7 +209,6 @@ const LayoutSidebar = ({ appId }) => {
   }, [selectedApp]);
 
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
-  console.log("projectInfo", projectInfo);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList, dropResult);
@@ -235,7 +234,16 @@ const LayoutSidebar = ({ appId }) => {
         <div className="header">
           <div className="brand">
             <UdevsLogo fill={"#007AFF"} />
-            <h2>{projectInfo?.title}</h2>
+            {sidebarIsOpen && (
+              <h2
+                style={{
+                  marginLeft: "8px",
+                  color: menuStyle?.text || "#000",
+                }}
+              >
+                {projectInfo?.title}
+              </h2>
+            )}
           </div>
         </div>
 

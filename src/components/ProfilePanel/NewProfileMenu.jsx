@@ -288,19 +288,6 @@ const NewProfilePanel = ({
               }
               onClick={openProjectList}
             />
-            {permissions?.projects_button && (
-              <ProfileItem
-                children={
-                  <LayersIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Projects"}
-                onClick={handleProjectNavigate}
-              />
-            )}
             <ProfileItem
               children={
                 <ResourceList
@@ -311,19 +298,6 @@ const NewProfilePanel = ({
               }
               onClick={openEnvironmentList}
             />
-            {permissions?.environments_button && (
-              <ProfileItem
-                children={
-                  <LocalOfferIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Environments"}
-                onClick={handleEnvNavigate}
-              />
-            )}
           </div>
           <Divider />
           <div className={styles.block}>

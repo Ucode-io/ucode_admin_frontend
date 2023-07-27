@@ -1,6 +1,6 @@
 import { Menu } from "@mui/material";
 import styles from "./environment.module.scss";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProfileItem from "../ProfileItem";
 import { companyActions } from "../../../store/company/company.slice";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
@@ -13,6 +13,7 @@ const EnvironmentsList = ({
   handleEnvNavigate,
 }) => {
   const dispatch = useDispatch();
+  const permissions = useSelector((state) => state.auth.globalPermissions);
 
   return (
     <Menu
@@ -50,23 +51,23 @@ const EnvironmentsList = ({
             key={item.id}
           />
         ))}
-        <ProfileItem
-          children={
-            <>
+        {permissions?.environments_button && (
+          <ProfileItem
+            children={
               <LocalOfferIcon
                 style={{
                   color: "#747474",
                 }}
               />
-              All environments
-            </>
-          }
-          onClick={() => {
-            handleEnvNavigate();
-            closeEnvironmentList();
-          }}
-          className={styles.menuItem}
-        />
+            }
+            className={styles.menuItem}
+            text={"Environments"}
+            onClick={() => {
+              handleEnvNavigate();
+              closeEnvironmentList();
+            }}
+          />
+        )}
       </div>
     </Menu>
   );

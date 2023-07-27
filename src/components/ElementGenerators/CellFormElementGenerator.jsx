@@ -91,7 +91,6 @@ const CellFormElementGenerator = ({
       setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
     }
   }, [field, row, setFormValue, computedSlug]);
-  console.log("field", field);
 
   useEffect(() => {
     if (columns.length && changedValue !== undefined && changedValue !== null) {

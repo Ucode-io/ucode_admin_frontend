@@ -10,6 +10,7 @@ import LogoDisplay from "../LogoDisplay";
 import TableTag from "../TableTag";
 import DownloadIcon from "@mui/icons-material/Download";
 import Many2ManyValue from "./Many2ManyValue";
+import { generateLink } from "../../utils/generateYandexLink";
 
 const CellElementGenerator = ({ field = {}, row }) => {
   const value = useMemo(() => {
@@ -130,6 +131,23 @@ const CellElementGenerator = ({ field = {}, row }) => {
         >
           <LogoDisplay url={value} />
         </span>
+      );
+
+    case "MAP":
+      return value ? (
+        <a
+          target="_blank"
+          href={`${generateLink(
+            value?.split(",")?.[0],
+            value?.split(",")?.[1]
+          )}`}
+          rel='noreferrer'
+          onClick={(e) => e.stopPropagation()}
+        >
+          {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}
+        </a>
+      ) : (
+        ""
       );
 
     case "FILE":

@@ -358,6 +358,7 @@ const NewRelationSection = ({
                       </RectangleIconButton>
                       <RectangleIconButton
                         color="error"
+                        type='edit'
                         onClick={() => {
                           setFormVisible(false);
                           if (fields.length > dataLength) {

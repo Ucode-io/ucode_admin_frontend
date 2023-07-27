@@ -5,7 +5,9 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
-import projectService from "../../services/projectService";
+import projectService, {
+  useProjectGetByIdQuery,
+} from "../../services/projectService";
 
 // const languages = [
 //   {
@@ -24,7 +26,7 @@ import projectService from "../../services/projectService";
 
 export default function LanguagesNavbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const projectId = useSelector((state) => state.auth.projectId);
+  const projectId = useSelector((state) => state.company.projectId);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -33,9 +35,7 @@ export default function LanguagesNavbar() {
     setAnchorEl(null);
   };
 
-  const { data: projectInfo = [] } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
-    return projectService.getByID(projectId);
-  });
+  const { data: projectInfo = [] } = useProjectGetByIdQuery({ projectId });
 
   const languages = useMemo(() => {
     return projectInfo?.language?.map((lang) => ({
@@ -83,7 +83,10 @@ export default function LanguagesNavbar() {
         }}
       >
         {languages?.map((language) => (
-          <MenuItem key={language.slug} onClick={() => handleRowClick(language.slug)}>
+          <MenuItem
+            key={language.slug}
+            onClick={() => handleRowClick(language.slug)}
+          >
             {language.title}
           </MenuItem>
         ))}

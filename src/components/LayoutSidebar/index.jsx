@@ -30,6 +30,7 @@ import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
 import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
 import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import { store } from "../../store";
+import MenuBox from "./Components/MenuBox";
 
 const LayoutSidebar = ({ appId }) => {
   const sidebarIsOpen = useSelector(
@@ -352,17 +353,14 @@ const LayoutSidebar = ({ appId }) => {
             )}
           </div>
         </Box>
-        <MenuButtonComponent
+        <MenuBox
           title={"Profile"}
           openFolderCreateModal={openFolderCreateModal}
-          onClick={(e) => {
-            anchorEl ? setAnchorEl(null) : openMenu(e);
-          }}
           children={
             <NewProfilePanel
               anchorEl={anchorEl}
+              setAnchorEl={setAnchorEl}
               handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-              projectInfo={projectInfo}
             />
           }
           style={{

@@ -24,12 +24,11 @@ import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
 import styles from "./newprofile.module.scss";
 import { useQueryClient } from "react-query";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import useBooleanState from "../../hooks/useBooleanState";
+import VersionModal from "./Components/VersionModal/VersionModal";
 
-const NewProfilePanel = ({
-  anchorEl,
-  handleMenuSettingModalOpen,
-  projectInfo,
-}) => {
+const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { appId } = useParams();
@@ -41,11 +40,13 @@ const NewProfilePanel = ({
   const [environmentListEl, setEnvironmentListEl] = useState(null);
   const [companyModal, setCompanyModal] = useState(null);
   const [selected, setSelected] = useState(false);
-  const menuVisible = Boolean(anchorEl || anchorProfileEl);
+  const menuVisible = Boolean(anchorProfileEl);
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
   const location = useLocation();
   const settings = location.pathname.includes("settings");
+  const [versionModalIsOpen, openVersionModal, closeVersionModal] =
+    useBooleanState(false);
 
   const params = {
     refresh_token: auth.refreshToken,
@@ -71,7 +72,6 @@ const NewProfilePanel = ({
   };
   const closeMenu = () => {
     setProfileAnchorEl(null);
-    // refreshTokenFunc();
   };
   const openMenu = (event) => {
     setProfileAnchorEl(event.currentTarget);
@@ -198,7 +198,7 @@ const NewProfilePanel = ({
       />
       <Menu
         id="lock-menu"
-        anchorEl={anchorProfileEl || anchorEl}
+        anchorEl={anchorProfileEl}
         open={menuVisible}
         onClose={() => {
           closeMenu();
@@ -286,6 +286,24 @@ const NewProfilePanel = ({
                 />
               }
               onClick={openEnvironmentList}
+            />
+            <ProfileItem
+              children={
+                <LocalOfferIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={
+                company?.version?.version
+                  ? `Version - ${company?.version?.version}`
+                  : "Version"
+              }
+              onClick={() => {
+                closeMenu();
+                openVersionModal();
+              }}
             />
           </div>
           <Divider />
@@ -392,6 +410,8 @@ const NewProfilePanel = ({
         environmentList={company.environments}
         handleEnvNavigate={handleEnvNavigate}
       />
+      {versionModalIsOpen && <VersionModal closeModal={closeVersionModal} />}
+
       {companyModal && <CompanyModal closeModal={closeCompanyModal} />}
     </div>
   );

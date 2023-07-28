@@ -18,7 +18,7 @@ import {
 import { format } from "date-fns";
 import { applyDrag } from "../../utils/applyDrag";
 import { Container, Draggable } from "react-smooth-dnd";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
 
 const RedirectPage = () => {
@@ -59,17 +59,16 @@ const RedirectPage = () => {
   const deleteRedirectElement = (id) => {
     deleteRedirect(id);
   };
-  
-  const reorderIds = useMemo(() => {
-    return computedData?.map((item) => item?.id)
-  }, [computedData])
+
 
   const onDrop = (dropResult, index) => {
     const result = applyDrag(computedData, dropResult);
-    if (result) setComputedData(result);
-    updateReorder({ids: reorderIds})
+    if (result) {
+      setComputedData(result);
+      updateReorder({ ids: result.map((item) => item?.id) });
+    }
   };
-  
+
 
   return  (
     <div>

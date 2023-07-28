@@ -15,17 +15,16 @@ import ConnectionPage from "./Connections";
 const PermissionDetail = () => {
   const { clientId } = useParams();
   const [selectedTab, setSelectedTab] = useState(0);
-  const { control, reset, watch } = useForm();
+  const { control, reset } = useForm();
 
-  const { data: computedClientTpes } = useQuery(
-    ["GET_CLIENT_TYPE_BY_ID"],
+  const { isLoading } = useQuery(
+    ["GET_CLIENT_TYPE_BY_ID", clientId],
     () => {
       return clientTypeServiceV2.getById(clientId);
     },
     {
-      enabled: Boolean(clientId),
+      enabled: !!clientId,
       onSuccess: (res) => {
-        console.log("res===>", res);
         reset(res.data.response);
       },
     }

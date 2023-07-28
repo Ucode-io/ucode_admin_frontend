@@ -27,7 +27,6 @@ import MenuButtonComponent from "./MenuButtonComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import "./style.scss";
-import { AdminFolders } from "./mock/AdminFolders";
 import { useProjectGetByIdQuery } from "../../services/projectService";
 import MenuBox from "./Components/MenuBox";
 
@@ -92,11 +91,7 @@ const LayoutSidebar = ({ appId }) => {
       // cacheTime: 10,
       enabled: Boolean(appId),
       onSuccess: (res) => {
-        if (appId === "12") {
-          setChild(AdminFolders);
-        } else {
-          setChild(res.menus);
-        }
+        setChild(res.menus);
       },
     },
   });
@@ -437,6 +432,7 @@ const LayoutSidebar = ({ appId }) => {
         selectedApp={selectedApp}
         isLoading={isLoading}
         menuStyle={menuStyle}
+        setChild={setChild}
       />
       <ButtonsMenu
         element={element}

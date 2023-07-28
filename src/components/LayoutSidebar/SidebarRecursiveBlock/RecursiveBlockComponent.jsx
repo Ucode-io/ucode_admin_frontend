@@ -6,18 +6,15 @@ import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { Draggable } from "react-smooth-dnd";
 import { useMenuListQuery } from "../../../services/menuService";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
-import { store } from "../../../store";
-import { useQuery, useQueryClient } from "react-query";
-import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
+import { useQueryClient } from "react-query";
 
 const RecursiveBlock = ({
-  index,
+  customFunc = () => {},
   element,
   openFolderCreateModal,
   environment,
@@ -29,17 +26,32 @@ const RecursiveBlock = ({
   setElement,
   setSubMenuIsOpen,
   menuStyle,
+  menuItem,
 }) => {
   const { appId, tableSlug } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
-  const menuItem = store.getState().menu.menuItem;
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const queryClient = useQueryClient();
+
+  const activeStyle = {
+    backgroundColor:
+      menuItem?.id === element?.id
+        ? menuStyle?.active_background || "#007AFF"
+        : menuStyle?.background,
+    color:
+      menuItem?.id === element?.id
+        ? menuStyle?.active_text || "#fff"
+        : menuStyle?.text,
+    paddingLeft: level * 2 * 5,
+    display:
+      element.id === "0" ||
+      (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+  };
 
   const navigateMenu = () => {
     switch (element?.type) {
@@ -80,48 +92,9 @@ const RecursiveBlock = ({
     },
   });
 
-  const activeStyle = {
-    backgroundColor:
-      menuItem?.id === element?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      menuItem?.id === element?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    paddingLeft: level * 2 * 5,
-    display:
-      element.id === "0" ||
-      (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-  };
-  const { data: computedClientTpes } = useQuery(
-    ["GET_CLIENT_TYPE_LIST"],
-    () => {
-      return clientTypeServiceV2.getList();
-    },
-    {
-      enabled: false,
-      onSuccess: (res) => {
-        setChild(
-          res.data.response?.map((row) => ({
-            ...row,
-            type: element.id === "14" ? "PERMISSION" : "USER",
-            id: row.guid,
-            parent_id: "13",
-            data: {
-              permission: {
-                read: true,
-              },
-            },
-          }))
-        );
-      },
-    }
-  );
-
   const clickHandler = (e) => {
     e.stopPropagation();
-    if (element.id === "13" || element.id === "14") {
+    if (element.type === "PERMISSION") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     } else {
       setCheck(true);
@@ -141,26 +114,24 @@ const RecursiveBlock = ({
   };
 
   useEffect(() => {
-    if (
-      element.id === "0" ||
-      element.id === "c57eedc3-a954-4262-a0af-376c65b5a284"
-    ) {
+    if (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284") {
       setChildBlockVisible(true);
     }
   }, []);
 
   return (
-    <Draggable key={index}>
-      <div className="parent-block column-drag-handle" key={index}>
+    <Box>
+      <div className="parent-block column-drag-handle" key={element.id}>
         {element?.data?.permission?.read && (
           <Button
-            key={index}
+            key={element.id}
             style={activeStyle}
             className={`nav-element ${
               element.isChild &&
               (tableSlug !== element.slug ? "active-with-child" : "active")
             }`}
             onClick={(e) => {
+              customFunc(e);
               clickHandler(e);
             }}
           >
@@ -182,7 +153,6 @@ const RecursiveBlock = ({
                 }
                 size={18}
               />
-
               {(sidebarIsOpen && element?.label) ||
                 element?.data?.microfrontend?.name ||
                 element?.data?.webpage?.title ||
@@ -298,9 +268,10 @@ const RecursiveBlock = ({
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        {child?.map((childElement, index) => (
+        {child?.map((childElement) => (
           <RecursiveBlock
-            key={index}
+            customFunc={customFunc}
+            key={childElement.id}
             level={level + 1}
             element={childElement}
             openFolderCreateModal={openFolderCreateModal}
@@ -312,10 +283,11 @@ const RecursiveBlock = ({
             setElement={setElement}
             setSubMenuIsOpen={setSubMenuIsOpen}
             menuStyle={menuStyle}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>
-    </Draggable>
+    </Box>
   );
 };
 

@@ -2,7 +2,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import { Box, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Container } from "react-smooth-dnd";
@@ -27,7 +27,6 @@ import MenuButtonComponent from "./MenuButtonComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import "./style.scss";
-import { AdminFolders } from "./mock/AdminFolders";
 import { useProjectGetByIdQuery } from "../../services/projectService";
 
 const admin = {
@@ -52,7 +51,6 @@ const LayoutSidebar = ({ appId }) => {
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const selectedMenuTemplate = store.getState().menu.menuTemplate;
   const projectId = store.getState().company.projectId;
-  console.log("projectId", projectId);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -92,11 +90,7 @@ const LayoutSidebar = ({ appId }) => {
       // cacheTime: 10,
       enabled: Boolean(appId),
       onSuccess: (res) => {
-        if (appId === "12") {
-          setChild(AdminFolders);
-        } else {
-          setChild(res.menus);
-        }
+        setChild(res.menus);
       },
     },
   });
@@ -210,7 +204,6 @@ const LayoutSidebar = ({ appId }) => {
   }, [selectedApp]);
 
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
-  console.log("projectInfo", projectInfo);
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList, dropResult);
@@ -432,6 +425,7 @@ const LayoutSidebar = ({ appId }) => {
         selectedApp={selectedApp}
         isLoading={isLoading}
         menuStyle={menuStyle}
+        setChild={setChild}
       />
       <ButtonsMenu
         element={element}

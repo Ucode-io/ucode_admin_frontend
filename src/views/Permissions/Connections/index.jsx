@@ -27,9 +27,13 @@ const ConnectionPage = () => {
   const [connectionId, setConnectionId] = useState();
 
   const { data: connections, isLoading } = useQuery(
-    ["GET_CONNECTION_LIST"],
+    ["GET_CONNECTION_LIST", clientId],
     () => {
       return connectionServiceV2.getList({ "client-type-id": clientId });
+    },
+    {
+      cacheTime: 10,
+      enabled: !!clientId,
     }
   );
 

@@ -1,5 +1,5 @@
 import { Save } from "@mui/icons-material";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../components/Buttons/SecondaryButton";
@@ -16,18 +16,27 @@ import { showAlert } from "../../store/alert/alert.thunk";
 import {
   useRedirectCreateMutation,
   useRedirectGetByIdQuery,
+  useRedirectListQuery,
   useRedirectUpdateMutation,
 } from "../../services/redirectService";
+import { useState } from "react";
 
 const RedirectFormPage = () => {
   const { redirectId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [computedData, setComputedData] = useState()
 
   const mainForm = useForm({
     defaultValues: {
       defaultFrom: "/api/",
       defaultTo: "/",
+    },
+  });
+  
+  const { isLoading: redirectLoading } = useRedirectListQuery({
+    queryParams: {
+      onSuccess: (res) => setComputedData(res?.redirect_urls?.length),
     },
   });
 
@@ -76,6 +85,7 @@ const RedirectFormPage = () => {
         ...data,
         from: data.defaultFrom + data.from,
         to: data.defaultTo + data.to,
+        order: computedData + 1
       });
   };
 

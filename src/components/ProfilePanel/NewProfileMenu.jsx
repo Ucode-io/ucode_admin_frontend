@@ -24,6 +24,8 @@ import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
 import styles from "./newprofile.module.scss";
 import { useQueryClient } from "react-query";
+import LayersIcon from "@mui/icons-material/Layers";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
 const NewProfilePanel = ({
   anchorEl,
@@ -273,6 +275,13 @@ const NewProfilePanel = ({
                   item={company.projectItem?.title || "No project"}
                   className={styles.projectavatar}
                   colorItem={company.projectItem}
+                  icon={
+                    <LayersIcon
+                      style={{
+                        color: "#747474",
+                      }}
+                    />
+                  }
                 />
               }
               onClick={openProjectList}
@@ -283,6 +292,13 @@ const NewProfilePanel = ({
                   item={company.environmentItem?.name || "No environment"}
                   className={styles.environmentavatar}
                   colorItem={company.environmentItem}
+                  icon={
+                    <LocalOfferIcon
+                      style={{
+                        color: "#747474",
+                      }}
+                    />
+                  }
                 />
               }
               onClick={openEnvironmentList}
@@ -320,24 +336,37 @@ const NewProfilePanel = ({
           </div>
           <Divider />
 
-          <div className={styles.block}>
-            {permissions?.menu_setting_button && (
-              <ProfileItem
-                children={
-                  <WidgetsIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Menu settings"}
-                onClick={() => {
-                  handleMenuSettingModalOpen();
-                  closeMenu();
-                }}
-              />
-            )}
-          </div>
+          <Box
+            style={{
+              height: "calc((100% / 2) + 13px)",
+              display: "flex",
+            }}
+          >
+            <Box
+              className={styles.block}
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+              }}
+            >
+              {permissions?.menu_setting_button && (
+                <ProfileItem
+                  children={
+                    <WidgetsIcon
+                      style={{
+                        color: "#747474",
+                      }}
+                    />
+                  }
+                  text={"Menu settings"}
+                  onClick={() => {
+                    handleMenuSettingModalOpen();
+                    closeMenu();
+                  }}
+                />
+              )}
+            </Box>
+          </Box>
         </Box>
         <Box className={styles.centerblock}>
           <div className={styles.block}>

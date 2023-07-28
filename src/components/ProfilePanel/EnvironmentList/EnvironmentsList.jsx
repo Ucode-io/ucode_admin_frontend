@@ -5,6 +5,12 @@ import ProfileItem from "../ProfileItem";
 import { companyActions } from "../../../store/company/company.slice";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
+const alignCenterStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
+
 const EnvironmentsList = ({
   environmentListEl,
   closeEnvironmentList,
@@ -53,19 +59,13 @@ const EnvironmentsList = ({
         ))}
         {permissions?.environments_button && (
           <ProfileItem
-            children={
-              <LocalOfferIcon
-                style={{
-                  color: "#747474",
-                }}
-              />
-            }
             className={styles.menuItem}
-            text={"Environments"}
+            text={"All Environments"}
             onClick={() => {
               handleEnvNavigate();
               closeEnvironmentList();
             }}
+            style={{ ...alignCenterStyle }}
           />
         )}
       </div>

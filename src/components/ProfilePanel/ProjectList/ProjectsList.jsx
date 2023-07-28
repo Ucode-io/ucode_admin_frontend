@@ -4,7 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import ProfileItem from "../ProfileItem";
 import { companyActions } from "../../../store/company/company.slice";
 import { useQueryClient } from "react-query";
-import LayersIcon from "@mui/icons-material/Layers";
+
+const alignCenterStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};
 
 const ProjectList = ({
   projectListEl,
@@ -52,19 +57,13 @@ const ProjectList = ({
         ))}
         {permissions?.projects_button && (
           <ProfileItem
-            children={
-              <LayersIcon
-                style={{
-                  color: "#747474",
-                }}
-              />
-            }
-            text={"Projects"}
+            text={"All Projects"}
             onClick={() => {
               handleProjectNavigate();
               closeProjectList();
             }}
             className={styles.menuItem}
+            style={{ ...alignCenterStyle }}
           />
         )}
       </div>

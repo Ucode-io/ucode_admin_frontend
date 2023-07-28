@@ -61,7 +61,7 @@ const RedirectPage = () => {
   };
   
   const reorderIds = useMemo(() => {
-    return computedData.map((item) => item?.id)
+    return computedData?.map((item) => item?.id)
   }, [computedData])
 
   const onDrop = (dropResult, index) => {

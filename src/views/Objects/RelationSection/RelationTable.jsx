@@ -103,8 +103,6 @@ const RelationTable = forwardRef(
 
     const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
-    console.log('relatedTableSlug', relatedTableSlug)
-
     const { data: { tableData = [], pageCount = 1, columns = [], quickFilters = [], fieldsMap = {} } = {}, isLoading: dataFetchingLoading } = useQuery(
       [
         "GET_OBJECT_LIST",
@@ -129,6 +127,7 @@ const RelationTable = forwardRef(
       {
         enabled: !!relatedTableSlug && !!appId,
         select: ({ data }) => {
+          
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount = isNaN(data?.count) || tableData.length === 0 ? 1 : Math.ceil(data.count / limit);
           setDataLength(tableData.length);
@@ -160,9 +159,9 @@ const RelationTable = forwardRef(
       else setLimit(parseInt(getRelatedTabeSlug?.default_limit));
     }, [getRelatedTabeSlug?.default_limit]);
 
-    // useEffect(() => {
-    //   setFormValue("multi", tableData);
-    // }, [selectedTab, tableData]);
+    useEffect(() => {
+      setFormValue("multi", tableData);
+    }, [selectedTab, tableData]);
 
     const { isLoading: deleteLoading, mutate: deleteHandler } = useMutation(
       (row) => {
@@ -234,7 +233,7 @@ const RelationTable = forwardRef(
             ))}
           </div>
         )}
-
+ 
         <div className={styles.tableBlock}>
           {viewPermission && (
             <ObjectDataTable

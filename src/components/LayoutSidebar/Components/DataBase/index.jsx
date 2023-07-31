@@ -4,7 +4,7 @@ import { Box, Button, Collapse } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useQueries } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { store } from "../../../../store";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
@@ -13,9 +13,9 @@ import { useResourceListQuery } from "../../../../services/resourceService";
 import constructorTableService, {
   useTableFolderListQuery,
 } from "../../../../services/constructorTableService";
-import DataBaseRecursive from "./RecursiveBlock";
 import { tableFolderListToNested } from "../../../../utils/tableFolderListToNestedLIst copy";
 import useComputedResource from "../../../../utils/computedTables";
+import DataBaseRecursive from "./RecursiveBlock";
 
 const dataBase = {
   label: "Databases",
@@ -33,14 +33,17 @@ const dataBase = {
   },
 };
 
-const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, setElement }) => {
+const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const [selected, setSelected] = useState();
+  const [selected, setSelected] = useState({});
+  const [resourceId, setResourceId] = useState("");
   const company = store.getState().company;
   const [openedFolders, setOpenedFolders] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const activeStyle = {
     backgroundColor:
@@ -108,6 +111,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, setElement }) => {
           ...table,
           name: table.label,
           parent_id: table.folder_id,
+          type: "TABLE",
         });
       });
     });
@@ -126,9 +130,17 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, setElement }) => {
     resources,
     sidebarElements
   );
+  console.log("location.pathname", location.pathname);
 
   const rowClickHandler = (id, element) => {
+    console.log("element", element);
     setSelected(element);
+    if (element.type === "TABLE") {
+      navigate(
+        `${location.pathname}/database/${resourceId}/${element.slug}/${element.id}`
+      );
+    }
+    if (element.resource_type) setResourceId(element.id);
     if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
     setOpenedFolders((prev) => [...prev, id]);
   };
@@ -173,9 +185,9 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, setElement }) => {
             level={level + 1}
             element={childElement}
             menuStyle={menuStyle}
-            setElement={setElement}
             onRowClick={rowClickHandler}
             selected={selected}
+            resourceId={resourceId}
           />
         ))}
       </Collapse>

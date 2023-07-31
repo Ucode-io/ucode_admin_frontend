@@ -149,7 +149,6 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   //=========SET VARIABLE===========
   const setVariable = () => {
     if (state && selectedLinkedObject && selectedObject) {
-      console.log('sssssssss');
       exportToHTML();
     }
   };

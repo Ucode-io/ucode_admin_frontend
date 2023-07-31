@@ -24,14 +24,12 @@ import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
 import styles from "./newprofile.module.scss";
 import { useQueryClient } from "react-query";
-import LayersIcon from "@mui/icons-material/Layers";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import useBooleanState from "../../hooks/useBooleanState";
+import VersionModal from "./Components/VersionModal/VersionModal";
+import LayersIcon from "@mui/icons-material/Layers";
 
-const NewProfilePanel = ({
-  anchorEl,
-  handleMenuSettingModalOpen,
-  projectInfo,
-}) => {
+const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { appId } = useParams();
@@ -43,11 +41,13 @@ const NewProfilePanel = ({
   const [environmentListEl, setEnvironmentListEl] = useState(null);
   const [companyModal, setCompanyModal] = useState(null);
   const [selected, setSelected] = useState(false);
-  const menuVisible = Boolean(anchorEl || anchorProfileEl);
+  const menuVisible = Boolean(anchorProfileEl);
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
   const location = useLocation();
   const settings = location.pathname.includes("settings");
+  const [versionModalIsOpen, openVersionModal, closeVersionModal] =
+    useBooleanState(false);
 
   const params = {
     refresh_token: auth.refreshToken,
@@ -73,7 +73,6 @@ const NewProfilePanel = ({
   };
   const closeMenu = () => {
     setProfileAnchorEl(null);
-    // refreshTokenFunc();
   };
   const openMenu = (event) => {
     setProfileAnchorEl(event.currentTarget);
@@ -148,6 +147,7 @@ const NewProfilePanel = ({
       owner_id: auth.userId,
     },
     queryParams: {
+      enabled: Boolean(auth.userId) && menuVisible,
       onSuccess: (res) => {
         dispatch(companyActions.setCompanies(res.companies));
       },
@@ -159,7 +159,7 @@ const NewProfilePanel = ({
       company_id: company.companyId,
     },
     queryParams: {
-      enabled: Boolean(company.companyId),
+      enabled: Boolean(company.companyId) && menuVisible,
       onSuccess: (res) => {
         dispatch(companyActions.setProjects(res.projects));
         if (selected) {
@@ -175,7 +175,7 @@ const NewProfilePanel = ({
       project_id: company.projectId,
     },
     queryParams: {
-      enabled: Boolean(company.projectId),
+      enabled: Boolean(company.projectId) && menuVisible,
       onSuccess: (res) => {
         if (selected) {
           dispatch(companyActions.setEnvironmentItem(res.environments[0]));
@@ -200,7 +200,7 @@ const NewProfilePanel = ({
       />
       <Menu
         id="lock-menu"
-        anchorEl={anchorProfileEl || anchorEl}
+        anchorEl={anchorProfileEl}
         open={menuVisible}
         onClose={() => {
           closeMenu();
@@ -302,6 +302,24 @@ const NewProfilePanel = ({
                 />
               }
               onClick={openEnvironmentList}
+            />
+            <ProfileItem
+              children={
+                <LocalOfferIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={
+                company?.version?.version
+                  ? `Version - ${company?.version?.version}`
+                  : "Version"
+              }
+              onClick={() => {
+                closeMenu();
+                openVersionModal();
+              }}
             />
           </div>
           <Divider />
@@ -421,6 +439,8 @@ const NewProfilePanel = ({
         environmentList={company.environments}
         handleEnvNavigate={handleEnvNavigate}
       />
+      {versionModalIsOpen && <VersionModal closeModal={closeVersionModal} />}
+
       {companyModal && <CompanyModal closeModal={closeCompanyModal} />}
     </div>
   );

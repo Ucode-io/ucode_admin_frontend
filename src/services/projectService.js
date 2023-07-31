@@ -3,22 +3,13 @@ import request from "../utils/request";
 
 const projectService = {
   getList: (params) => request.get("/company-project", { params }),
-  getByID: (params, projectId) =>
-    request.get(`/company-project/${projectId}`, {
+  getByID: (params, projectId) => {
+    return request.get(`/company-project/${projectId}`, {
       params,
-    }),
-  update: (data) =>
-    request.put(`/company-project/${data.project_id}`, data, {
-      params: {
-        "project-id": data.project_id,
-      },
-    }),
-  create: (data) =>
-    request.post(`/company-project`, data, {
-      params: {
-        "project-id": data.project_id,
-      },
-    }),
+    });
+  },
+  update: (data) => request.put(`/company-project/${data}`, data),
+  create: (data) => request.post(`/company-project`, data),
   delete: (id) => request.delete(`/company-project/${id}`),
 };
 

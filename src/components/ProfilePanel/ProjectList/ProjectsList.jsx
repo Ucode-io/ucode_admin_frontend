@@ -52,6 +52,7 @@ const ProjectList = ({
               closeProjectList();
             }}
             className={styles.menuItem}
+            key={item.project_id}
           />
         ))}
         {permissions?.projects_button && (

@@ -89,6 +89,15 @@ const CellElementGenerator = ({ field = {}, row }) => {
         </div>
       );
 
+      case "PASSWORD":
+      return (
+        <div className="text-overflow">
+          <span
+            dangerouslySetInnerHTML={{ __html: "*".repeat(value?.length) }}
+          ></span>
+        </div>
+      );
+
     case "CHECKBOX":
     case "SWITCH":
       return parseBoolean(value) ? (

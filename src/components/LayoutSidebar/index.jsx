@@ -2,42 +2,56 @@ import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import { Box, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
-import menuService, { useMenuListQuery } from "../../services/menuService";
-import projectService, {
-  useProjectGetByIdQuery,
-} from "../../services/projectService";
-import { mainActions } from "../../store/main/main.slice";
-import SearchInput from "../SearchInput";
-import FolderModal from "./FolderModalComponent";
-import "./style.scss";
-import menuSettingsService from "../../services/menuSettingsService";
-import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
-import SubMenu from "./SubMenu";
-import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
-import MenuButtonComponent from "./MenuButtonComponent";
-import AppSidebar from "./AppSidebarComponent";
-import { applyDrag } from "../../utils/applyDrag";
 import { Container } from "react-smooth-dnd";
-import ButtonsMenu from "./MenuButtons";
-import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
-import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import { UdevsLogo } from "../../assets/icons/icon";
+import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
+import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
+import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
+import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
+import menuService, { useMenuListQuery } from "../../services/menuService";
 import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
-import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
+import menuSettingsService from "../../services/menuSettingsService";
 import { store } from "../../store";
+import { mainActions } from "../../store/main/main.slice";
+import { applyDrag } from "../../utils/applyDrag";
+import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
+import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
+import SearchInput from "../SearchInput";
+import AppSidebar from "./AppSidebarComponent";
+import FolderModal from "./FolderModalComponent";
+import MenuButtonComponent from "./MenuButtonComponent";
+import ButtonsMenu from "./MenuButtons";
+import SubMenu from "./SubMenu";
+import "./style.scss";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import MenuBox from "./Components/MenuBox";
+
+const admin = {
+  id: "12",
+  label: "Admin",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+  type: "FOLDER",
+  data: {
+    permission: {
+      read: true,
+      write: true,
+      delete: true,
+      update: true,
+    },
+  },
+};
 
 const LayoutSidebar = ({ appId }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
-  const projectId = useSelector((state) => state.auth.projectId);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const selectedMenuTemplate = store.getState().menu.menuTemplate;
+  const projectId = store.getState().company.projectId;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -67,6 +81,7 @@ const LayoutSidebar = ({ appId }) => {
   const handleCloseNotify = () => {
     setMenu(null);
   };
+
   const { isLoading } = useMenuListQuery({
     params: {
       parent_id: appId,
@@ -155,9 +170,9 @@ const LayoutSidebar = ({ appId }) => {
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
       })
       .then((res) => {
-        setMenuList(res);
+        setMenuList([admin, ...res.menus]);
       })
-      .finally((error) => {
+      .catch((error) => {
         console.log("error", error);
       });
   };
@@ -178,17 +193,21 @@ const LayoutSidebar = ({ appId }) => {
   }, [searchText]);
 
   useEffect(() => {
-    setSelectedApp(menuList?.menus?.find((item) => item?.id === appId));
+    setSelectedApp(menuList?.find((item) => item?.id === appId));
   }, [menuList]);
 
   useEffect(() => {
-    if (selectedApp?.type === "FOLDER" && pinIsEnabled) setSubMenuIsOpen(true);
+    if (
+      selectedApp?.type === "FOLDER" ||
+      (selectedApp?.type === "USER_FOLDER" && pinIsEnabled)
+    )
+      setSubMenuIsOpen(true);
   }, [selectedApp]);
 
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const onDrop = (dropResult) => {
-    const result = applyDrag(menuList?.menus, dropResult);
+    const result = applyDrag(menuList, dropResult);
     if (result) {
       menuService
         .updateOrder({
@@ -208,17 +227,9 @@ const LayoutSidebar = ({ appId }) => {
           background: menuStyle?.background || "#fff",
         }}
       >
-        <div
-          className="header"
-          onClick={() => {
-            // switchRightSideVisible();
-          }}
-        >
+        <div className="header">
           <div className="brand">
-            <UdevsLogo
-              fill={"#007AFF"}
-              // onClick={switchRightSideVisible}
-            />
+            <UdevsLogo fill={"#007AFF"} />
             {sidebarIsOpen && (
               <h2
                 style={{
@@ -230,9 +241,6 @@ const LayoutSidebar = ({ appId }) => {
               </h2>
             )}
           </div>
-          {/* <div className="cloes-btn">
-            <OpenCloseSvg fill={menuStyle?.text} />
-          </div> */}
         </div>
 
         <Box
@@ -259,7 +267,7 @@ const LayoutSidebar = ({ appId }) => {
               overflow: "auto",
             }}
           >
-            {!menuList?.menus ? (
+            {!menuList ? (
               <RingLoaderWithWrapper />
             ) : (
               <Box>
@@ -302,8 +310,8 @@ const LayoutSidebar = ({ appId }) => {
                       dragHandleSelector=".column-drag-handle"
                       onDrop={onDrop}
                     >
-                      {menuList?.menus &&
-                        menuList?.menus?.map((element, index) => (
+                      {menuList &&
+                        menuList?.map((element, index) => (
                           <AppSidebar
                             key={index}
                             element={element}
@@ -352,17 +360,14 @@ const LayoutSidebar = ({ appId }) => {
             )}
           </div>
         </Box>
-        <MenuButtonComponent
+        <MenuBox
           title={"Profile"}
           openFolderCreateModal={openFolderCreateModal}
-          onClick={(e) => {
-            anchorEl ? setAnchorEl(null) : openMenu(e);
-          }}
           children={
             <NewProfilePanel
               anchorEl={anchorEl}
+              setAnchorEl={setAnchorEl}
               handleMenuSettingModalOpen={handleMenuSettingModalOpen}
-              projectInfo={projectInfo}
             />
           }
           style={{
@@ -427,6 +432,7 @@ const LayoutSidebar = ({ appId }) => {
         selectedApp={selectedApp}
         isLoading={isLoading}
         menuStyle={menuStyle}
+        setChild={setChild}
       />
       <ButtonsMenu
         element={element}

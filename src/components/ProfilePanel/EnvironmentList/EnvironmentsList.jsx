@@ -51,10 +51,10 @@ const EnvironmentsList = ({
             onClick={() => {
               dispatch(companyActions.setEnvironmentItem(item));
               dispatch(companyActions.setEnvironmentId(item.id));
-
-              // refreshTokenFunc(item.id);
+              closeEnvironmentList();
             }}
             className={styles.menuItem}
+            key={item.id}
           />
         ))}
         {permissions?.environments_button && (

@@ -2,7 +2,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse } from "@mui/material";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
@@ -13,8 +13,8 @@ const DataBaseRecursive = ({
   level = 1,
   menuStyle,
   onRowClick = () => {},
-  onSelect = () => {},
   selected,
+  resourceId,
 }) => {
   const dispatch = useDispatch();
   const { tableSlug } = useParams();
@@ -39,7 +39,6 @@ const DataBaseRecursive = ({
     dispatch(menuActions.setMenuItem(element));
     onRowClick(element.id, element);
     setChildBlockVisible((prev) => !prev);
-    if (!element.children) onSelect(element.id, element);
   };
 
   return (
@@ -84,8 +83,8 @@ const DataBaseRecursive = ({
             element={childElement}
             menuStyle={menuStyle}
             onRowClick={onRowClick}
-            onSelect={onSelect}
             selected={selected}
+            resourceId={resourceId}
           />
         ))}
       </Collapse>

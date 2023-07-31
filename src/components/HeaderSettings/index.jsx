@@ -16,6 +16,7 @@ const HeaderSettings = ({
   backButtonLink,
   icon,
   sticky,
+  disabledMenu = true,
   ...props
 }) => {
   const navigate = useNavigate();
@@ -42,21 +43,23 @@ const HeaderSettings = ({
         <div>{children}</div>
       </div>
 
-      <div className={styles.rightSide}>
-        <Tooltip title="Menu">
-          <RectangleIconButton
-            color="primary"
-            className={`${styles.addButton}`}
-            onClick={() =>
-              navigate("/main/c57eedc3-a954-4262-a0af-376c65b5a284")
-            }
-          >
-            <MenuIcon />
-          </RectangleIconButton>
-        </Tooltip>
-        {/* <AppSelector /> */}
-        <NewProfilePanel />
-      </div>
+      {disabledMenu && (
+        <div className={styles.rightSide}>
+          <Tooltip title="Menu">
+            <RectangleIconButton
+              color="primary"
+              className={`${styles.addButton}`}
+              onClick={() =>
+                navigate("/main/c57eedc3-a954-4262-a0af-376c65b5a284")
+              }
+            >
+              <MenuIcon />
+            </RectangleIconButton>
+          </Tooltip>
+          {/* <AppSelector /> */}
+          <NewProfilePanel />
+        </div>
+      )}
     </div>
   );
 };

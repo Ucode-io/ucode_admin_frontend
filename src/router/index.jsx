@@ -51,6 +51,8 @@ import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
 import PermissionDetail from "../views/Permissions";
 import RoleDetail from "../views/Permissions/Roles/Detail";
+import DatabasePage from "../views/DataBase";
+import DatabaseConfiguration from "../views/DataBase/Configuration";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -167,6 +169,10 @@ const Router = () => {
         <Route path=":appId/permission/:clientId">
           <Route index element={<PermissionDetail />} />
           <Route path="role/:roleId" element={<RoleDetail />} />
+        </Route>
+        <Route path=":appId/database/:resourceId/:tableSlug/:databaseId">
+          <Route index element={<DatabasePage />} />
+          <Route path="configuration" element={<DatabaseConfiguration />} />
         </Route>
 
         <Route

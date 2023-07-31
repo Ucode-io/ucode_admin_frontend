@@ -156,7 +156,6 @@ const SubMenu = ({
                       <DataBase
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
-                        setElement={setElement}
                       />
                     </>
                   )}

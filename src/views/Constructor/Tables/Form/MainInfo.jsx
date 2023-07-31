@@ -159,6 +159,9 @@ const MainInfo = ({ control }) => {
           <FRow label="Софт Удаление">
             <HFSwitch control={control} name="soft_delete" required />
           </FRow>
+          <FRow label="Сортировка">
+            <HFSwitch control={control} name="order_by" required />
+          </FRow>
         </Box>
 
         {loginTable && (

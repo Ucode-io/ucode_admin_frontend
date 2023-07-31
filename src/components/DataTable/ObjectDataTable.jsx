@@ -186,7 +186,7 @@ const ObjectDataTable = ({
       dispatch(selectedRowActions.clear());
     }
   }, [formVisible]);
-  
+
   return (
     <CTable
       disablePagination={disablePagination}
@@ -231,6 +231,9 @@ const ObjectDataTable = ({
                     }}
                   >
                     <span
+                      style={{
+                        whiteSpace: "nowrap",
+                      }}
                       onClick={(e) => {
                         e.stopPropagation();
                         setColumnId((prev) => (prev === column.id ? "" : column.id));

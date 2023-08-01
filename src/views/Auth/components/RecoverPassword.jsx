@@ -75,6 +75,9 @@ export default function RecoverPassword({ setFormType }) {
           store.dispatch(showAlert("Wrong OTP!"));
         }
       })
+      .catch((err) => {
+        store.dispatch(showAlert("Wrong OTP!"));
+      })
       .finally(() => {
         setLoading(false);
       });

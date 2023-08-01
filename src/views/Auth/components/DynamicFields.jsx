@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import classes from "../style.module.scss";
@@ -47,6 +47,13 @@ const DynamicFields = ({ control, setValue, connection, table = {}, index, watch
       },
     }
   );
+
+  useEffect(() => {
+    if (computedConnections?.length === 1) {
+      setValue(`tables[${index}].object_id`, computedConnections[0]?.value);
+      setSelectedCollection(computedConnections[0]?.value);
+    }
+  }, [computedConnections]);
 
   // const computedOptions = useMemo(() => {
   //   return table?.map((field) => ({

@@ -166,7 +166,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled: Boolean(field?.attributes?.function_path),
+      enabled: !!field?.attributes?.function_path,
       select: (res) => {
         return res?.data?.response ?? [];
       },
@@ -193,7 +193,7 @@ const AutoCompleteElement = ({
       });
     },
     {
-      enabled: !!field?.attributes?.function_path,
+      enabled: !field?.attributes?.function_path,
       select: (res) => {
         return res?.data?.response ?? [];
       },

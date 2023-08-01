@@ -120,9 +120,13 @@ const LoginForm = ({ setIndex, index }) => {
     },
     {
       enabled: !!selectedClientTypeID,
+
       select: (res) => res.data.response ?? [],
     }
   );
+
+  console.log('selectedClientTypeID', computedConnections)
+
   useEffect(() => {
     if (computedCompanies?.length === 1) {
       setValue("company_id", computedCompanies[0]?.value);

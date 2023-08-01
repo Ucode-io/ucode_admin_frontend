@@ -8,6 +8,7 @@ import TableRowForm from "./TableRowForm";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 import { useNavigate } from "react-router-dom";
+
 const TableRow = ({
   row,
   key,
@@ -146,12 +147,12 @@ const TableRow = ({
               color="error"
               onClick={() => {
                 onDeleteClick(row, rowIndex);
-                remove(rowIndex);
-                navigate("/reloadRelations", {
-                  state: {
-                    redirectUrl: window.location.pathname,
-                  },
-                });
+                // remove(rowIndex);
+                // navigate("/reloadRelations", {
+                //   state: {
+                //     redirectUrl: window.location.pathname,
+                //   },
+                // });
               }}
             >
               <Delete color="error" />

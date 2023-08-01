@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import {  useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
@@ -46,6 +46,7 @@ const RelationTable = forwardRef(
   ) => {
     const { appId } = useParams();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const { navigateToForm } = useTabRouter();
     const tableRef = useRef(null);
     const [filters, setFilters] = useState({});
@@ -181,6 +182,7 @@ const RelationTable = forwardRef(
       {
         onSuccess: (a, b) => {
           remove(tableData.findIndex((i) => i.guid === b.guid));
+          queryClient.refetchQueries(["GET_OBJECT_LIST"]);
         },
       }
     );

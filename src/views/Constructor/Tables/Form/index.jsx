@@ -59,7 +59,7 @@ const ConstructorTablesFormPage = () => {
         column: "SINGLE",
         is_summary_section: true,
       },
-      view_relations: [],
+      // view_relations: [],
       label: "",
       description: "",
       slug: "",
@@ -199,10 +199,10 @@ const ConstructorTablesFormPage = () => {
     //   table_id: id,
     // });
 
-    const updateViewRelationsData = constructorViewRelationService.update({
-      view_relations: data.view_relations,
-      table_slug: data.slug,
-    });
+    // const updateViewRelationsData = constructorViewRelationService.update({
+    //   view_relations: data.view_relations,
+    //   table_slug: data.slug,
+    // });
 
     const computedLayouts = data.layouts.map((layout) => ({
       ...layout,
@@ -255,7 +255,7 @@ const ConstructorTablesFormPage = () => {
     Promise.all([
       updateTableData,
       // updateSectionData,
-      updateViewRelationsData,
+      // updateViewRelationsData,
       updateLayoutData,
     ])
       .then(() => {

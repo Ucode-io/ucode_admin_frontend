@@ -34,7 +34,6 @@ const CompanyPage = () => {
       owner_id: user_id,
     },
   });
-  console.log("companies", companies);
 
   const { mutateAsync: deteleCompany, isLoading: createLoading } =
     useCompanyDeleteMutation({

@@ -13,6 +13,7 @@ export const { actions: companyActions, reducer: companyReducer } = createSlice(
       companyId: null,
       projectId: null,
       environmentId: null,
+      version: null,
     },
     reducers: {
       setCompanies: (state, { payload }) => {
@@ -41,6 +42,9 @@ export const { actions: companyActions, reducer: companyReducer } = createSlice(
       },
       setEnvironmentId: (state, { payload }) => {
         state.environmentId = payload ?? "";
+      },
+      setVersion: (state, { payload }) => {
+        state.version = payload ?? "";
       },
     },
   }

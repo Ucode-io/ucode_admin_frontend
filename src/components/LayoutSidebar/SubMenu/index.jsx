@@ -9,6 +9,10 @@ import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrappe
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useDispatch, useSelector } from "react-redux";
 import { mainActions } from "../../../store/main/main.slice";
+import { store } from "../../../store";
+import DataBase from "../Components/DataBase";
+import Users from "../Components/Users";
+import Permissions from "../Components/Permission";
 
 const SubMenu = ({
   child,
@@ -26,6 +30,7 @@ const SubMenu = ({
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+  const menuItem = store.getState().menu.menuItem;
 
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
@@ -51,41 +56,43 @@ const SubMenu = ({
             </h2>
           )}{" "}
           <Box className="buttons">
-            <div className="dots">
-              <BsThreeDots
-                size={13}
-                onClick={(e) => {
-                  handleOpenNotify(e, "FOLDER");
-                  setElement(selectedApp);
-                }}
-                style={{
-                  color: menuStyle?.text,
-                }}
-              />
-              {selectedApp?.data?.permission?.write && (
-                <AddIcon
+            {selectedApp?.id !== "12" && (
+              <div className="dots">
+                <BsThreeDots
                   size={13}
                   onClick={(e) => {
-                    handleOpenNotify(e, "CREATE_TO_FOLDER");
+                    handleOpenNotify(e, "FOLDER");
                     setElement(selectedApp);
                   }}
                   style={{
                     color: menuStyle?.text,
                   }}
                 />
-              )}
-              <PushPinIcon
-                size={13}
-                onClick={() => {
-                  if (!pinIsEnabled) setPinIsEnabledFunc(true);
-                  else setPinIsEnabledFunc(false);
-                }}
-                style={{
-                  rotate: pinIsEnabled ? "" : "45deg",
-                  color: menuStyle?.text,
-                }}
-              />
-            </div>
+                {selectedApp?.data?.permission?.write && (
+                  <AddIcon
+                    size={13}
+                    onClick={(e) => {
+                      handleOpenNotify(e, "CREATE_TO_FOLDER");
+                      setElement(selectedApp);
+                    }}
+                    style={{
+                      color: menuStyle?.text,
+                    }}
+                  />
+                )}
+                <PushPinIcon
+                  size={13}
+                  onClick={() => {
+                    if (!pinIsEnabled) setPinIsEnabledFunc(true);
+                    else setPinIsEnabledFunc(false);
+                  }}
+                  style={{
+                    rotate: pinIsEnabled ? "" : "45deg",
+                    color: menuStyle?.text,
+                  }}
+                />
+              </div>
+            )}
             <div className="close-btn" onClick={() => setSubMenuIsOpen(false)}>
               <ClearIcon />
             </div>
@@ -117,9 +124,9 @@ const SubMenu = ({
             ) : (
               <div className="nav-block">
                 <div className="menu-element">
-                  {child?.map((element, index) => (
+                  {child?.map((element) => (
                     <RecursiveBlock
-                      key={index}
+                      key={element.id}
                       element={element}
                       openFolderCreateModal={openFolderCreateModal}
                       setFolderModalType={setFolderModalType}
@@ -129,8 +136,30 @@ const SubMenu = ({
                       setElement={setElement}
                       setSubMenuIsOpen={setSubMenuIsOpen}
                       menuStyle={menuStyle}
+                      menuItem={menuItem}
                     />
                   ))}
+                  {selectedApp?.id === "12" && (
+                    <>
+                      <Users
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
+                        setElement={setElement}
+                      />
+                      <Permissions
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
+                        setElement={setElement}
+                      />
+                      <DataBase
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        setElement={setElement}
+                      />
+                    </>
+                  )}
                 </div>
               </div>
             )}

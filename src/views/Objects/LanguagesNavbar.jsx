@@ -4,10 +4,9 @@ import React, { useEffect, useMemo } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
-import projectService, {
-  useProjectGetByIdQuery,
-} from "../../services/projectService";
+import { useDispatch, useSelector } from "react-redux";
+import projectService, { useProjectGetByIdQuery } from "../../services/projectService";
+import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
 
 // const languages = [
 //   {
@@ -27,6 +26,7 @@ import projectService, {
 export default function LanguagesNavbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const projectId = useSelector((state) => state.company.projectId);
+  const dispatch = useDispatch();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -37,6 +37,12 @@ export default function LanguagesNavbar() {
 
   const { data: projectInfo = [] } = useProjectGetByIdQuery({ projectId });
 
+  useEffect(() => {
+    if (projectId) {
+      dispatch(languagesActions.setLanguagesItems(projectInfo?.language));
+    }
+  }, [projectId]);
+
   const languages = useMemo(() => {
     return projectInfo?.language?.map((lang) => ({
       title: lang?.name,
@@ -45,8 +51,6 @@ export default function LanguagesNavbar() {
   }, [projectInfo]);
 
   const { i18n } = useTranslation();
-
-  console.log('languages', projectInfo)
 
   useEffect(() => {
     if (languages?.length) i18n.changeLanguage(languages?.[0]?.slug);
@@ -85,10 +89,7 @@ export default function LanguagesNavbar() {
         }}
       >
         {languages?.map((language) => (
-          <MenuItem
-            key={language.slug}
-            onClick={() => handleRowClick(language.slug)}
-          >
+          <MenuItem key={language.slug} onClick={() => handleRowClick(language.slug)}>
             {language.title}
           </MenuItem>
         ))}

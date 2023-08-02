@@ -1,5 +1,5 @@
 import { Close } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
@@ -38,14 +38,7 @@ const typeList = [
   { label: "HARDCODE", value: "HARDCODE" },
 ];
 
-const ActionSettings = ({
-  closeSettingsBlock = () => {},
-  onUpdate = () => {},
-  onCreate = () => {},
-  action,
-  formType,
-  height,
-}) => {
+const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, onCreate = () => {}, action, formType, height }) => {
   const { slug } = useParams();
 
   const [loader, setLoader] = useState(false);
@@ -93,8 +86,14 @@ const ActionSettings = ({
   };
 
   const submitHandler = (values) => {
-    if (formType === "CREATE") createAction(values);
-    else updateAction(values);
+    const computedValues = {
+      ...values,
+      label: values.label.length ? values.label : values.label_uz.length ? values.label_uz : values.label_en,
+      label_uz: values.label_uz.length ? values.label_uz : values.label.length ? values.label : values.label_en,
+      label_en: values.label_en.length ? values.label_en : values.label.length ? values.label : values.label_uz,
+    }
+    if (formType === "CREATE") createAction(computedValues);
+    else updateAction(computedValues);
   };
 
   useEffect(() => {
@@ -113,68 +112,32 @@ const ActionSettings = ({
       </div>
 
       <div className={styles.settingsBlockBody} style={{ height }}>
-        <form
-          onSubmit={handleSubmit(submitHandler)}
-          className={styles.fieldSettingsForm}
-        >
+        <form onSubmit={handleSubmit(submitHandler)} className={styles.fieldSettingsForm}>
           <div className="p-2">
             <FRow label="Icon" required>
               <HFIconPicker control={control} required name="icon" />
             </FRow>
             <FRow label="Label" required>
-              <HFTextField
-                name="label"
-                control={control}
-                placeholder="Label"
-                fullWidth
-                required
-              />
+              <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <HFTextField name="label" control={control} placeholder="Label (RU)" fullWidth />
+                <HFTextField name="label_en" control={control} placeholder="Label (EN)" fullWidth />
+                <HFTextField name="label_uz" control={control} placeholder="Label (UZ)" fullWidth />
+              </Box>
             </FRow>
             <FRow label="Function" required>
-              <HFAutocomplete
-                name="event_path"
-                control={control}
-                placeholder="Event path"
-                options={functions}
-                disabled={false}
-                required
-              />
+              <HFAutocomplete name="event_path" control={control} placeholder="Event path" options={functions} disabled={false} required />
             </FRow>
             <FRow label="Redirect url">
-              <HFTextField
-                name="url"
-                control={control}
-                placeholder="Redirect url"
-                options={functions}
-                fullWidth
-              />
+              <HFTextField name="url" control={control} placeholder="Redirect url" options={functions} fullWidth />
             </FRow>
             <FRow label="Action type">
-              <HFSelect
-                name="action_type"
-                control={control}
-                placeholder="action type"
-                options={actionTypeList}
-                fullWidth
-              />
+              <HFSelect name="action_type" control={control} placeholder="action type" options={actionTypeList} fullWidth />
             </FRow>
             <FRow label="Method">
-              <HFSelect
-                name="method"
-                control={control}
-                placeholder="Redirect url"
-                options={methodList}
-                fullWidth
-              />
+              <HFSelect name="method" control={control} placeholder="Redirect url" options={methodList} fullWidth />
             </FRow>
 
-            <TableActions
-              control={control}
-              typeList={typeList}
-              slug={slug}
-              watch={watch}
-              setValue={setValue}
-            />
+            <TableActions control={control} typeList={typeList} slug={slug} watch={watch} setValue={setValue} />
 
             <FRow label="Disabled">
               <HFSwitch name="disabled" control={control} />
@@ -182,13 +145,7 @@ const ActionSettings = ({
           </div>
 
           <div className={styles.settingsFooter}>
-            <PrimaryButton
-              size="large"
-              className={styles.button}
-              style={{ width: "100%" }}
-              onClick={handleSubmit(submitHandler)}
-              loader={loader}
-            >
+            <PrimaryButton size="large" className={styles.button} style={{ width: "100%" }} onClick={handleSubmit(submitHandler)} loader={loader}>
               Сохранить
             </PrimaryButton>
           </div>

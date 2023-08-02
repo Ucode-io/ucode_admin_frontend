@@ -1,6 +1,6 @@
 import listToOptions from "@/utils/listToOptions";
 import { Close, DragIndicator, PushPin, PushPinOutlined, RemoveRedEye, VisibilityOff } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, Card, Checkbox, IconButton } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Card, Checkbox, IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
@@ -194,12 +194,15 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
   };
 
   const submitHandler = (values) => {
+    console.log('ssssssss', values)
     const data = {
       ...values,
       relation_table_slug: slug,
       // compute columns
       columns: values.columnsList?.filter((el) => el.is_checked)?.map((el) => el.id),
-
+      title: values.title.length ? values.title : values.title_uz.length ? values.title_uz : values.title_en,
+      title_uz: values.title_uz.length ? values.title_uz : values.title.length ? values.title : values.title_en,
+      title_en: values.title_en.length ? values.title_en : values.title.length ? values.title : values.title_uz,
       // compute filters
       quick_filters: values.filtersList
         ?.filter((el) => el.is_checked)
@@ -287,7 +290,11 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                     <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
                         <FRow label="Label" required>
-                          <HFTextField name="title" control={control} placeholder="Relation Label" fullWidth required />
+                          <Box style={{ display: "flex", flexDirection: 'column', gap: '6px' }}>
+                            <HFTextField name="title" control={control} placeholder="Relation Label (RU)" fullWidth />
+                            <HFTextField name="title_en" control={control} placeholder="Relation Label (EN)" fullWidth />
+                            <HFTextField name="title_uz" control={control} placeholder="Relation Label (UZ)" fullWidth />
+                          </Box>
                         </FRow>
 
                         <FRow label="Table from" required>
@@ -541,7 +548,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                       <h2>Function</h2>
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
-                      <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue}/>
+                      <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue} />
                     </AccordionDetails>
                   </Accordion>
 

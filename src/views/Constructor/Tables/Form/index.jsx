@@ -112,7 +112,7 @@ const ConstructorTablesFormPage = () => {
         fields: [],
         // sections: computeSections(sections),
         // summary_section: computeSummarySection(sections),
-        view_relations: computeViewRelations(viewRelations),
+        // view_relations: computeViewRelations(viewRelations),
         actions,
       };
 
@@ -268,10 +268,15 @@ const ConstructorTablesFormPage = () => {
   const onSubmit = (data) => {
     const computedData = {
       ...data,
+      label: data.label.length ? data.label : data.label_uz.length ? data.label_uz : data.label_en,
+      label_uz: data.label_uz.length ? data.label_uz : data.label.length ? data.label : data.label_en,
+      label_en: data.label_en.length ? data.label_en : data.label.length ? data.label : data.label_uz,
+      description: data.description.length ? data.description : data.description_uz.length ? data.description_uz : data.description_en,
+      description_uz: data.description_uz.length ? data.description_uz : data.description.length ? data.description : data.description_en,
+      description_en: data.description_en.length ? data.description_en : data.description.length ? data.description : data.description_uz,
       // sections: computeSectionsOnSubmit(data.sections, data.summary_section),
-      view_relations: computeViewRelationsOnSubmit(data.view_relations),
+      // view_relations: computeViewRelationsOnSubmit(data.view_relations),
     };
-
     // return;
     if (id) updateConstructorTable(computedData);
     else createConstructorTable(computedData);
@@ -281,6 +286,7 @@ const ConstructorTablesFormPage = () => {
     if (!id) setLoader(false);
     else getData();
   }, [id]);
+
   if (loader) return <PageFallback />;
 
   return (

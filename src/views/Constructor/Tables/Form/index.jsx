@@ -112,7 +112,7 @@ const ConstructorTablesFormPage = () => {
         fields: [],
         // sections: computeSections(sections),
         // summary_section: computeSummarySection(sections),
-        view_relations: computeViewRelations(viewRelations),
+        // view_relations: computeViewRelations(viewRelations),
         actions,
       };
 
@@ -269,7 +269,7 @@ const ConstructorTablesFormPage = () => {
     const computedData = {
       ...data,
       // sections: computeSectionsOnSubmit(data.sections, data.summary_section),
-      view_relations: computeViewRelationsOnSubmit(data.view_relations),
+      // view_relations: computeViewRelationsOnSubmit(data.view_relations),
     };
 
     // return;

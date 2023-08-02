@@ -1,7 +1,7 @@
 import axios from "axios";
 import { store } from "../store/index";
 import { showAlert } from "../store/alert/alert.thunk";
-export const baseURL = import.meta.env.VITE_AUTH_BASE_URL;
+export const baseURL = import.meta.env.VITE_AUTH_BASE_URL_V2;
 
 const authRequestV2 = axios.create({
   baseURL,

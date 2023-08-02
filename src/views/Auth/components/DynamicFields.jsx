@@ -55,13 +55,16 @@ const DynamicFields = ({ control, setValue, connection, table = {}, index, watch
     }
   }, [computedConnections]);
 
+  useEffect(() => {
+    setValue(`tables[${index}].table_slug`, connection?.table_slug);
+  }, [watch(`tables[${index}].object_id`)]);
+
   // const computedOptions = useMemo(() => {
   //   return table?.map((field) => ({
   //     value: field.table_slug,
   //     label: field.name,
   //   }));
   // }, [table]);
-
   return (
     <div className={classes.formRow}>
       <p className={classes.label}>{table.label}</p>
@@ -77,7 +80,7 @@ const DynamicFields = ({ control, setValue, connection, table = {}, index, watch
         onChange={(e, val) => {
           console.log("e", e);
           setSelectedCollection(e);
-          setValue(`tables[${index}].table_slug`, connection?.table_slug);
+          // setValue(`tables[${index}].table_slug`, connection?.table_slug);
         }}
       />
     </div>

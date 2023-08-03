@@ -1,7 +1,10 @@
+import { store } from "../../store";
 import authRequestV2 from "../../utils/authRequest";
 import request from "../../utils/request";
 import requestAuth from "../../utils/requestAuth";
 import requestAuthV2 from "../../utils/requestAuthV2";
+
+const authStore = store.getState().auth;
 
 const authService = {
   login: (data) =>
@@ -26,6 +29,8 @@ const authService = {
   verifyOnlyEmail: (data) => requestAuth.post(`/v2/verify-only-email`, data),
   forgotPassword: (login) => requestAuth.post(`/v2/forgot-password`, login),
   setEmail: (data) => requestAuth.put(`/v2/set-email/send-code`, data),
+  getUserById: (user_id, params) => requestAuthV2.get(`user/${user_id}`, {params, headers: { "environment-id": authStore.environmentId }}),
+  resetPassword: (data) => requestAuthV2.put('/reset-password', data)
 };
 
 export default authService;

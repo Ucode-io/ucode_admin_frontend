@@ -64,6 +64,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     $lt: endOfMonth(new Date()),
   });
 
+  console.log('filters', filters)
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -383,7 +384,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
               }}
             >
               <div className={style.menuBar}>
-                <ExcelButtons fieldsMap={fieldsMap} />
+                <ExcelButtons fieldsMap={fieldsMap} view={view} />
                 <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)}>
                   <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
                     <Description className={style.icon} style={{ color: "#6E8BB7" }} />

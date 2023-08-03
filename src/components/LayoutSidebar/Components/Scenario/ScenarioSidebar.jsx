@@ -18,6 +18,7 @@ import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import ScenarioRecursive from "./RecursiveBlock";
+import ScenarioButtonMenu from "./Components/ScenarioButtonMenu";
 
 const scenarioFolder = {
   label: "Scenarios",
@@ -45,7 +46,16 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const company = store.getState().company;
   const [openedFolders, setOpenedFolders] = useState([]);
   const navigate = useNavigate();
+  const [menu, setMenu] = useState({ event: "", type: "" });
+  const openMenu = Boolean(menu?.event);
 
+  const handleOpenNotify = (event, type) => {
+    setMenu({ event: event?.currentTarget, type: type });
+  };
+
+  const handleCloseNotify = () => {
+    setMenu(null);
+  };
   const activeStyle = {
     backgroundColor:
       selected?.id === scenarioFolder?.id
@@ -70,14 +80,12 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
 
   const rowClickHandler = (id, element) => {
     if (selected && selected?.type === "DAG") {
-      navigate(`/main/12/scenario/${id}`);
+      navigate(`/main/12/scenario/${element.category_id}/${id}`);
     }
     setSelected(element);
     if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
     setOpenedFolders((prev) => [...prev, id]);
   };
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const {
     data: category = [],
@@ -89,6 +97,7 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     isLoading: scenarioLoading,
     refetch,
   } = useScenarioListQuery();
+  console.log("scenario", scenario);
 
   const deleteEndpointClickHandler = (id) => {
     deleteScenario({
@@ -97,7 +106,6 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       projectId: company.projectId,
     });
   };
-  console.log("category", category);
 
   const { mutate: deleteScenario, deleteScenarioLoading } =
     useScenarioDeleteMutation({
@@ -176,7 +184,6 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       //   ),
     },
   ];
-  console.log("computedElements", computedElements);
 
   return (
     <Box>
@@ -223,9 +230,19 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             onRowClick={rowClickHandler}
             selected={selected}
             resourceId={resourceId}
+            handleOpenNotify={handleOpenNotify}
           />
         ))}
       </Collapse>
+
+      <ScenarioButtonMenu
+        selected={selected}
+        openMenu={openMenu}
+        menu={menu?.event}
+        menuType={menu?.type}
+        handleCloseNotify={handleCloseNotify}
+        deleteEndpointClickHandler={deleteEndpointClickHandler}
+      />
     </Box>
   );
 };

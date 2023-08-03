@@ -175,9 +175,9 @@ const Router = () => {
           <Route index element={<DatabasePage />} />
           <Route path="configuration" element={<DatabaseConfiguration />} />
         </Route>
-        <Route path=":appId/scenario">
+        <Route path=":appId/scenario/:categoryId">
           <Route index element={<Scenarios />} />
-          <Route path=":scenarioId" element={<Scenarios />} />
+          <Route path=":categoryId/:scenarioId" element={<Scenarios />} />
         </Route>
 
         <Route

@@ -21,7 +21,7 @@ const scenarioService = {
       params: { "project-id": projectId },
     }),
   create: ({ data, projectId }) => {
-    return request.post("/v1/scenario", data, {
+    return request.post("/scenario", data, {
       params: { "project-id": projectId },
       headers: {
         "resource-id": data.resourceId,
@@ -29,7 +29,7 @@ const scenarioService = {
     });
   },
   run: ({ data, projectId }) => {
-    return request.post("/v1/scenario/run", data, {
+    return request.post("/scenario/run", data, {
       params: { "project-id": projectId },
       headers: {
         "resource-id": data.resourceId,
@@ -37,22 +37,22 @@ const scenarioService = {
     });
   },
   delete: ({ id, envId, projectId, resourceId }) =>
-    request.delete(`/v1/scenario/dag/${id}`, {
+    request.delete(`/scenario/dag/${id}`, {
       params: { "project-id": projectId },
       headers: { "resource-id": resourceId, "environment-id": envId },
     }),
   getHistory: ({ scenarioId, projectId, envId }) =>
-    request.get(`/v1/scenario/${scenarioId}/history`, {
+    request.get(`/scenario/${scenarioId}/history`, {
       headers: { "environment-id": envId },
       params: { "project-id": projectId },
     }),
   revertCommit: ({ data, projectId, envId }) =>
-    request.post(`/v1/scenario/revert`, data, {
+    request.post(`/scenario/revert`, data, {
       headers: { "environment-id": envId },
       params: { "project-id": projectId },
     }),
   selectVersion: ({ scenarioId, envId, projectId, data }) =>
-    request.put(`/v1/scenario/${scenarioId}/select-versions`, data, {
+    request.put(`/scenario/${scenarioId}/select-versions`, data, {
       headers: { "environment-id": envId },
       params: { "project-id": projectId },
     }),

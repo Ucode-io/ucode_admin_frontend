@@ -73,7 +73,7 @@ const FinishNode = ({ data }) => {
             </div>
             <FinishNodeForm
               open={drawerIsOpen}
-              closeDrawer={closeDrawer}
+              onClose={closeDrawer}
               initialValues={drawerIsOpen}
               formIsVisible={drawerIsOpen}
               data={data}

@@ -30,8 +30,11 @@ import style from "./index.module.scss";
 import "reactflow/dist/style.css";
 import Navbar from "./Components/Navbar";
 import RunForm from "./Components/RunForm";
+import { showAlert } from "../../../../store/alert/alert.thunk";
+import { useDispatch } from "react-redux";
 
 const initialEdges = [];
+const initialNodes = [];
 
 const nodeTypes = {
   startNode: StartNode,
@@ -46,8 +49,7 @@ const Flow = () => {
   const navigate = useNavigate();
   const { projectId, categoryId, scenarioId } = useParams();
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes] = useState();
-  //   const [nodes, setNodes] = useState(initialNodes);
+  const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
   const [toggle, setToggle] = useState(true);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
@@ -55,12 +57,14 @@ const Flow = () => {
   const methods = useForm();
   const queryClient = useQueryClient();
   const [selectedTab, setSelectedTab] = useState(0);
+  const dispatch = useDispatch();
 
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
     name: "steps",
     keyName: "key",
   });
+
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     []
@@ -87,7 +91,6 @@ const Flow = () => {
   }, []);
 
   const closeBtn = (value) => {
-    console.log("style[scrollValue]", style[value]);
     setScrollValue(value);
   };
   const deleteNodeById = (id) => {
@@ -138,7 +141,7 @@ const Flow = () => {
         title: title,
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      setNodes((nds) => nds?.concat(newNode));
       append({ ui_component: newNode });
     },
     [reactFlowInstance]
@@ -174,6 +177,7 @@ const Flow = () => {
       projectId: projectId,
       onSuccess: (res) => {
         // successToast("Successfully created");
+        dispatch(showAlert("Успешно!", "success"));
         queryClient.refetchQueries(["SCENARIO"]);
         navigate(
           `/project/${projectId}/scenarios/${categoryId}/detail/${res.id}`
@@ -187,6 +191,7 @@ const Flow = () => {
       projectId: projectId,
       onSuccess: (res) => {
         // successToast("Successfully update");
+        dispatch(showAlert("Успешно!", "success"));
         queryClient.refetchQueries(["SCENARIO"]);
       },
     });
@@ -217,7 +222,6 @@ const Flow = () => {
       });
     }
   };
-
   return (
     <>
       {isLoading || createLoading || updateLoading ? (
@@ -275,7 +279,7 @@ const Flow = () => {
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
                 nodeTypes={nodeTypes}
-                // onClick={(e) => console.log("e", e)}
+                onClick={(e) => console.log("e", e)}
                 onInit={setReactFlowInstance}
                 onDrop={onDrop}
                 onDragOver={onDragOver}

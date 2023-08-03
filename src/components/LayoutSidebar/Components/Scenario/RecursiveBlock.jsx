@@ -1,12 +1,13 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { useDispatch } from "react-redux";
+import { BsThreeDots } from "react-icons/bs";
 
 const ScenarioRecursive = ({
   element,
@@ -15,6 +16,7 @@ const ScenarioRecursive = ({
   onRowClick = () => {},
   selected,
   resourceId,
+  handleOpenNotify,
 }) => {
   const dispatch = useDispatch();
   const { tableSlug } = useParams();
@@ -66,6 +68,48 @@ const ScenarioRecursive = ({
             <IconGenerator icon={element?.icon} size={18} />
             {element?.name}
           </div>
+          {element.type === "FOLDER" && (
+            <Box className="icon_group">
+              <Tooltip title="Scenario settings" placement="top">
+                <Box className="extra_icon">
+                  <BsThreeDots
+                    size={13}
+                    onClick={(e) => {
+                      e?.stopPropagation();
+                      handleOpenNotify(e, "FOLDER");
+                    }}
+                    style={{
+                      color:
+                        selected?.id === element?.id
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "",
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            </Box>
+          )}
+          {element.type === "DAG" && (
+            <Box className="icon_group">
+              <Tooltip title="Scenario settings" placement="top">
+                <Box className="extra_icon">
+                  <BsThreeDots
+                    size={13}
+                    onClick={(e) => {
+                      e?.stopPropagation();
+                      handleOpenNotify(e, "DAG");
+                    }}
+                    style={{
+                      color:
+                        selected?.id === element?.id
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "",
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            </Box>
+          )}
           {element.type === "FOLDER" &&
             (childBlockVisible ? (
               <KeyboardArrowDownIcon />
@@ -85,6 +129,7 @@ const ScenarioRecursive = ({
             onRowClick={onRowClick}
             selected={selected}
             resourceId={resourceId}
+            handleOpenNotify={handleOpenNotify}
           />
         ))}
       </Collapse>

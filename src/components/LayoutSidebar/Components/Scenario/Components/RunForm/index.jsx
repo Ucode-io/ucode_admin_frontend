@@ -108,6 +108,7 @@ const RunForm = ({ methods }) => {
                         style={{
                           borderRight: "1px solid #E2E8F0",
                         }}
+                        placeholder={"Key"}
                       />
                       <HFTextField
                         control={control}

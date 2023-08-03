@@ -32,6 +32,7 @@ const TableRowForm = ({
   relationFields,
   data,
 }) => {
+  console.log('columns', columns)
   const navigate = useNavigate();
   
   return (

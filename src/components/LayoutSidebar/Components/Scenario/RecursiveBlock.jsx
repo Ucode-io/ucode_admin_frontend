@@ -1,20 +1,22 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { useDispatch } from "react-redux";
+import { BsThreeDots } from "react-icons/bs";
 
-const DataBaseRecursive = ({
+const ScenarioRecursive = ({
   element,
   level = 1,
   menuStyle,
   onRowClick = () => {},
   selected,
   resourceId,
+  handleOpenNotify,
 }) => {
   const dispatch = useDispatch();
   const { tableSlug } = useParams();
@@ -66,6 +68,48 @@ const DataBaseRecursive = ({
             <IconGenerator icon={element?.icon} size={18} />
             {element?.name}
           </div>
+          {element.type === "FOLDER" && (
+            <Box className="icon_group">
+              <Tooltip title="Scenario settings" placement="top">
+                <Box className="extra_icon">
+                  <BsThreeDots
+                    size={13}
+                    onClick={(e) => {
+                      e?.stopPropagation();
+                      handleOpenNotify(e, "FOLDER");
+                    }}
+                    style={{
+                      color:
+                        selected?.id === element?.id
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "",
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            </Box>
+          )}
+          {element.type === "DAG" && (
+            <Box className="icon_group">
+              <Tooltip title="Scenario settings" placement="top">
+                <Box className="extra_icon">
+                  <BsThreeDots
+                    size={13}
+                    onClick={(e) => {
+                      e?.stopPropagation();
+                      handleOpenNotify(e, "DAG");
+                    }}
+                    style={{
+                      color:
+                        selected?.id === element?.id
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "",
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            </Box>
+          )}
           {element.type === "FOLDER" &&
             (childBlockVisible ? (
               <KeyboardArrowDownIcon />
@@ -77,7 +121,7 @@ const DataBaseRecursive = ({
 
       <Collapse in={childBlockVisible} unmountOnExit>
         {element?.children?.map((childElement) => (
-          <DataBaseRecursive
+          <ScenarioRecursive
             key={childElement.id}
             level={level + 1}
             element={childElement}
@@ -85,6 +129,7 @@ const DataBaseRecursive = ({
             onRowClick={onRowClick}
             selected={selected}
             resourceId={resourceId}
+            handleOpenNotify={handleOpenNotify}
           />
         ))}
       </Collapse>
@@ -92,4 +137,4 @@ const DataBaseRecursive = ({
   );
 };
 
-export default DataBaseRecursive;
+export default ScenarioRecursive;

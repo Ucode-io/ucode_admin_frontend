@@ -53,6 +53,7 @@ import PermissionDetail from "../views/Permissions";
 import RoleDetail from "../views/Permissions/Roles/Detail";
 import DatabasePage from "../views/DataBase";
 import DatabaseConfiguration from "../views/DataBase/Configuration";
+import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -173,6 +174,10 @@ const Router = () => {
         <Route path=":appId/database/:resourceId/:tableSlug/:databaseId">
           <Route index element={<DatabasePage />} />
           <Route path="configuration" element={<DatabaseConfiguration />} />
+        </Route>
+        <Route path=":appId/scenario/:categoryId">
+          <Route index element={<Scenarios />} />
+          <Route path=":categoryId/:scenarioId" element={<Scenarios />} />
         </Route>
 
         <Route

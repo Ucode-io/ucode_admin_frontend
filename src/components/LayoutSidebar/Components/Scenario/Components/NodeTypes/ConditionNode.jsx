@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Handle, Position } from "reactflow";
 import { useFormContext } from "react-hook-form";
-import ConditionNodeCard from "../IconCard/conditionNodeCard";
+import ConditionNodeCard from "../IconCard/ConditionNodeCard";
 import ConditionNodeForm from "../NodeForms/ConditionNodeForm";
 // import SimpleLoader from "components/Loaders/SimpleLoader";
 

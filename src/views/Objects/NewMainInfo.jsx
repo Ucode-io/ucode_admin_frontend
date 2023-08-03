@@ -6,15 +6,24 @@ import FormElementGenerator from "../../components/ElementGenerators/FormElement
 import PageFallback from "../../components/PageFallback";
 import NewFormCard from "./components/NewFormCard";
 import styles from "./style.module.scss";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
-import projectService from "../../services/projectService";
-import { useWatch } from "react-hook-form";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import { store } from "../../store";
 
-const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTable, relation, selectedTabIndex, selectedTab, selectedIndex, isMultiLanguage }) => {
+const MainInfo = ({
+  computedSections,
+  control,
+  loader,
+  setFormValue,
+  relatedTable,
+  relation,
+  selectedTabIndex,
+  selectedTab,
+  selectedIndex,
+  isMultiLanguage,
+}) => {
   const { tableSlug } = useParams();
   const [isShow, setIsShow] = useState(true);
-  const projectId = useSelector((state) => state.auth.projectId);
+  const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
 
   const fieldsList = useMemo(() => {
@@ -30,9 +39,7 @@ const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTabl
     return fields;
   }, [relation]);
 
-  const { data: projectInfo } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
-    return projectService.getById(projectId);
-  });
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   useEffect(() => {
     if (isMultiLanguage) {
@@ -49,7 +56,10 @@ const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTabl
           {isMultiLanguage && (
             <div className={styles.language}>
               {projectInfo?.language?.map((lang) => (
-                <Button className={activeLang === lang?.short_name && styles.active} onClick={() => setActiveLang(lang?.short_name)}>
+                <Button
+                  className={activeLang === lang?.short_name && styles.active}
+                  onClick={() => setActiveLang(lang?.short_name)}
+                >
                   {lang?.name}
                 </Button>
               ))}
@@ -57,7 +67,12 @@ const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTabl
           )}
 
           {computedSections.map((section) => (
-            <NewFormCard key={section.id} title={section.label} className={styles.formCard} icon={section.icon}>
+            <NewFormCard
+              key={section.id}
+              title={section.label}
+              className={styles.formCard}
+              icon={section.icon}
+            >
               <div className={styles.newformColumn}>
                 {section.fields?.map((field) => (
                   <Box style={{ display: "flex", alignItems: "flex-start" }}>

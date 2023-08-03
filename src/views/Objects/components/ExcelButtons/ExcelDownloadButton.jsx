@@ -6,6 +6,7 @@ import RectangleIconButton from "../../../../components/Buttons/RectangleIconBut
 import useDownloader from "../../../../hooks/useDownloader";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import style from "./style.module.scss";
+import useFilters from "../../../../hooks/useFilters";
 
 const ExcelDownloadButton = ({
   relatedTable,
@@ -13,11 +14,14 @@ const ExcelDownloadButton = ({
   fieldSlugId,
   withText,
   sort,
+  view
 }) => {
   const { t } = useTranslation()
   const { tableSlug } = useParams();
   const { download } = useDownloader();
   const [loader, setLoader] = useState(false);
+  const { filters } = useFilters(tableSlug, view.id);
+
   const onClick = async () => {
     try {
       setLoader(true);
@@ -27,6 +31,7 @@ const ExcelDownloadButton = ({
           data: {
             [fieldSlug]: fieldSlugId,
             ...sort,
+            ...filters,
           },
         }
       );

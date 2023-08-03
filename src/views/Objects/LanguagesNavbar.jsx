@@ -1,31 +1,12 @@
-import { ArrowDropDownCircleOutlined } from "@mui/icons-material";
-import { Button, Menu, MenuItem } from "@mui/material";
-import React, { useEffect, useMemo } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { Button, Menu, MenuItem } from "@mui/material";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import projectService, { useProjectGetByIdQuery } from "../../services/projectService";
 import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
-
-// const languages = [
-//   {
-//     title: "English",
-//     slug: "en",
-//   },
-//   {
-//     title: "Русский",
-//     slug: "ru",
-//   },
-//   {
-//     title: "O'zbekcha",
-//     slug: "uz",
-//   },
-// ];
 
 export default function LanguagesNavbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const projectId = useSelector((state) => state.company.projectId);
   const dispatch = useDispatch();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -34,30 +15,13 @@ export default function LanguagesNavbar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const { data: projectInfo = [] } = useProjectGetByIdQuery({ projectId });
-
-  useEffect(() => {
-    if (projectId) {
-      dispatch(languagesActions.setLanguagesItems(projectInfo?.language));
-    }
-  }, [projectId]);
-
-  const languages = useMemo(() => {
-    return projectInfo?.language?.map((lang) => ({
-      title: lang?.name,
-      slug: lang?.short_name,
-    }));
-  }, [projectInfo]);
+  const languages = useSelector((state) => state.languages.list);
 
   const { i18n } = useTranslation();
 
-  useEffect(() => {
-    if (languages?.length) i18n.changeLanguage(languages?.[0]?.slug);
-  }, [languages]);
-
   const handleRowClick = (lang) => {
     i18n.changeLanguage(lang);
+    dispatch(languagesActions.setDefaultLanguage(lang));
     handleClose();
   };
 

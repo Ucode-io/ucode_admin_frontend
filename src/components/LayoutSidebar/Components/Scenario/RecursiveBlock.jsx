@@ -2,13 +2,13 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse } from "@mui/material";
 import { useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { useDispatch } from "react-redux";
 
-const DataBaseRecursive = ({
+const ScenarioRecursive = ({
   element,
   level = 1,
   menuStyle,
@@ -77,7 +77,7 @@ const DataBaseRecursive = ({
 
       <Collapse in={childBlockVisible} unmountOnExit>
         {element?.children?.map((childElement) => (
-          <DataBaseRecursive
+          <ScenarioRecursive
             key={childElement.id}
             level={level + 1}
             element={childElement}
@@ -92,4 +92,4 @@ const DataBaseRecursive = ({
   );
 };
 
-export default DataBaseRecursive;
+export default ScenarioRecursive;

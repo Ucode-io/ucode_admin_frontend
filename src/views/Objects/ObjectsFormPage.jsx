@@ -58,9 +58,14 @@ const ObjectsFormPage = () => {
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([getFormData, getLayout]);
+      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([
+        getFormData,
+        getLayout,
+      ]);
       setSections(sortSections(sections));
-      setSummary(layout?.find((el) => el.is_default === true)?.summary_fields ?? []);
+      setSummary(
+        layout?.find((el) => el.is_default === true)?.summary_fields ?? []
+      );
 
       const defaultLayout = layout?.find((el) => el.is_default === true);
 
@@ -73,7 +78,10 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
+          relatedTable:
+            relation.table_from?.slug === tableSlug
+              ? relation.table_to?.slug
+              : relation.table_from?.slug,
         }))
       );
 
@@ -104,7 +112,10 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
+          relatedTable:
+            relation.table_from?.slug === tableSlug
+              ? relation.table_to?.slug
+              : relation.table_from?.slug,
         }))
       );
     } catch (error) {
@@ -139,7 +150,8 @@ const ObjectsFormPage = () => {
         navigate(-1);
         dispatch(showAlert("Успешно обновлено", "success"));
         // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
-        if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
+        if (tableRelations?.length)
+          navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
@@ -158,19 +170,21 @@ const ObjectsFormPage = () => {
     else getFields();
   }, [id, tableInfo, selectedTabIndex]);
 
-  const getSubtitleValue = useMemo(() => {
-    return watch(tableInfo?.data?.table?.subtitle_field_slug);
-  }, [tableInfo]);
+  // const getSubtitleValue = useMemo(() => {
+  //   return watch(tableInfo?.data?.table?.subtitle_field_slug);
+  // }, [tableInfo]);
   return (
     <div className={styles.formPage}>
       <FiltersBlock summary={true} sections={sections} hasBackground={true}>
         <FormPageBackButton />
 
-        <div className={styles.subTitle}>
-          <h3>{getSubtitleValue}</h3>
-        </div>
+        <div className={styles.subTitle}>{/* <h3>Test</h3> */}</div>
 
-        <SummarySectionValue computedSummary={summary} control={control} sections={sections} />
+        <SummarySectionValue
+          computedSummary={summary}
+          control={control}
+          sections={sections}
+        />
       </FiltersBlock>
       <div className={styles.formArea}>
         <NewRelationSection
@@ -196,9 +210,20 @@ const ObjectsFormPage = () => {
             <SecondaryButton onClick={() => navigate(-1)} color="error">
               Закрыть
             </SecondaryButton>
-            <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
-            <PermissionWrapperV2 tableSlug={tableSlug} type={id ? "update" : "write"}>
-              <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
+            <FormCustomActionButton
+              control={control?._formValues}
+              tableSlug={tableSlug}
+              id={id}
+            />
+            <PermissionWrapperV2
+              tableSlug={tableSlug}
+              type={id ? "update" : "write"}
+            >
+              <PrimaryButton
+                loader={btnLoader}
+                id="submit"
+                onClick={handleSubmit(onSubmit)}
+              >
                 <Save />
                 Сохранить
               </PrimaryButton>

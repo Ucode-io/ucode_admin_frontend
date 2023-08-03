@@ -25,6 +25,8 @@ const CellElementGenerator = ({ field = {}, row }) => {
     return result;
   }, [row, field]);
 
+  console.log('FIELD', field)
+
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
@@ -105,7 +107,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return computedInputString ?? "";
 
     case "FORMULA":
-      return value ? numberWithSpaces(value) : "";
+      return value ? numberWithSpaces(value) : 0;
 
     case "FORMULA_FRONTEND":
       return value !== undefined && typeof value === "number"

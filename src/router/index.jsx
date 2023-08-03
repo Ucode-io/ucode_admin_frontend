@@ -177,7 +177,7 @@ const Router = () => {
         </Route>
         <Route path=":appId/scenario/:categoryId">
           <Route index element={<Scenarios />} />
-          <Route path=":categoryId/:scenarioId" element={<Scenarios />} />
+          <Route path=":scenarioId" element={<Scenarios />} />
         </Route>
 
         <Route

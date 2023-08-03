@@ -132,13 +132,17 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   );
 
   const rowClickHandler = (id, element) => {
-    if (selected && selected?.type === "TABLE") {
-      navigate(`/main/12/database/${resourceId}/${element.slug}/${element.id}`);
-    }
     setSelected(element);
+    element.type === "FOLDER" && navigate("/main/12");
     if (element.resource_type) setResourceId(element.id);
     if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
     setOpenedFolders((prev) => [...prev, id]);
+  };
+
+  const onSelect = (id, element) => {
+    if (element.type === "TABLE") {
+      navigate(`/main/12/database/${resourceId}/${element.slug}/${element.id}`);
+    }
   };
 
   return (
@@ -182,6 +186,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             element={childElement}
             menuStyle={menuStyle}
             onRowClick={rowClickHandler}
+            onSelect={onSelect}
             selected={selected}
             resourceId={resourceId}
           />

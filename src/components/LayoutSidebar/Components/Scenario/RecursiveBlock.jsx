@@ -13,9 +13,9 @@ const ScenarioRecursive = ({
   element,
   level = 1,
   menuStyle,
+  onSelect = () => {},
   onRowClick = () => {},
   selected,
-  resourceId,
   handleOpenNotify,
 }) => {
   const dispatch = useDispatch();
@@ -41,6 +41,7 @@ const ScenarioRecursive = ({
     onRowClick(element.id, element);
     dispatch(menuActions.setMenuItem(element));
     setChildBlockVisible((prev) => !prev);
+    if (!element.children) onSelect(element.id, element);
   };
 
   return (
@@ -126,9 +127,9 @@ const ScenarioRecursive = ({
             level={level + 1}
             element={childElement}
             menuStyle={menuStyle}
+            onSelect={onSelect}
             onRowClick={onRowClick}
             selected={selected}
-            resourceId={resourceId}
             handleOpenNotify={handleOpenNotify}
           />
         ))}

@@ -42,7 +42,6 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const [selected, setSelected] = useState({});
-  const [resourceId, setResourceId] = useState("");
   const company = store.getState().company;
   const [openedFolders, setOpenedFolders] = useState([]);
   const navigate = useNavigate();
@@ -79,12 +78,16 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   };
 
   const rowClickHandler = (id, element) => {
-    if (selected && selected?.type === "DAG") {
-      navigate(`/main/12/scenario/${element.category_id}/${id}`);
-    }
     setSelected(element);
+    element.type !== "DAG" && navigate(`/main/12`);
     if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
     setOpenedFolders((prev) => [...prev, id]);
+  };
+
+  const onSelect = (id, element) => {
+    if (element.type === "DAG") {
+      navigate(`/main/12/scenario/${element?.category_id}/${id}`);
+    }
   };
 
   const {
@@ -131,19 +134,7 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         name: category.name,
         id: category.guid,
         type: "FOLDER",
-        // buttons: (
-        //   <>
-        //     <ApiDeleteButton onClick={() => onDeleteCategory(category.guid)} />
-        //     <ApiCreateButton
-        //       onClick={() => {
-        //         navigate(
-        //           `/project/${projectId}/scenarios/${category.guid}/create`
-        //         );
-        //         closeSidebar();
-        //       }}
-        //     />
-        //   </>
-        // ),
+
         children: scenario?.DAGs?.filter(
           (dag) => dag.category_id === category.guid
         ).map((dag) => ({
@@ -152,38 +143,10 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
           id: dag.id,
           name: dag.title,
           type: "DAG",
-          //   buttons: (
-          //     <ApiDeleteButton
-          //       onClick={(e) => {
-          //         deleteEndpointClickHandler(dag.id);
-          //       }}
-          //     />
-          //   ),
         })),
       })),
     [category, scenario, company.projectId, navigate]
   );
-
-  const sidebarElements = [
-    {
-      name: "SCENARIO",
-      id: 1,
-      children: computedElements,
-      type: "FOLDER",
-      //   buttons: (
-      //     <>
-      //       <IconButton
-      //         variant="ghost"
-      //         colorScheme="whiteAlpha"
-      //         icon={<AiFillFolderAdd size={20} />}
-      //         onClick={() => {
-      //           openApiCategoryModal({}, "CREATE");
-      //         }}
-      //       />
-      //     </>
-      //   ),
-    },
-  ];
 
   return (
     <Box>
@@ -221,16 +184,16 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
-        {computedElements?.map((childElement) => (
+        {computedElements?.map((element) => (
           <ScenarioRecursive
-            key={childElement.id}
+            key={element.id}
             level={level + 1}
-            element={childElement}
+            element={element}
             menuStyle={menuStyle}
             onRowClick={rowClickHandler}
             selected={selected}
-            resourceId={resourceId}
             handleOpenNotify={handleOpenNotify}
+            onSelect={onSelect}
           />
         ))}
       </Collapse>

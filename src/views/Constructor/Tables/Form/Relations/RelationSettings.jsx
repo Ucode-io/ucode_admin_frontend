@@ -212,7 +212,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
       default_values: values?.default_values ? (Array.isArray(values.default_values) ? values.default_values : [values.default_values]) : [],
     };
 
-    delete data?.field_name;
+    // delete data?.field_name;
     delete data?.formula_name;
 
     setFormLoader(true);
@@ -245,8 +245,10 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
       editable: relation?.editable ?? false,
       summaries: relation?.summaries ?? [],
       view_fields: relation?.view_fields?.map((field) => field.id) ?? [],
+      field_name: relation?.title
     });
   }, [relation]);
+
 
   const computedColumns = useMemo(() => {
     return listToOptions(computedColumnsList, "label", "slug");

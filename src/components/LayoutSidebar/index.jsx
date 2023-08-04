@@ -52,8 +52,6 @@ const LayoutSidebar = ({ appId }) => {
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const selectedMenuTemplate = store.getState().menu.menuTemplate;
   const projectId = store.getState().company.projectId;
-  const companyProject = store.getState().company;
-    console.log('companyProject', companyProject)
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -221,7 +219,6 @@ const LayoutSidebar = ({ appId }) => {
     }
   };
 
-  console.log('projectInfo', projectInfo)
 
 
   return (

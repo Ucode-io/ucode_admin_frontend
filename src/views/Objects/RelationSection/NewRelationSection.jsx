@@ -59,8 +59,11 @@ const NewRelationSection = ({
   const tableSlug = tableSlugFromProps ?? tableSlugFromParams;
   const id = idFromProps ?? idFromParams;
   const menuItem = store.getState().menu.menuItem;
-  const [selectedManyToManyRelation, setSelectedManyToManyRelation] = useState(null);
-  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState({});
+  const [selectedManyToManyRelation, setSelectedManyToManyRelation] =
+    useState(null);
+  const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
+    {}
+  );
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -90,7 +93,9 @@ const NewRelationSection = ({
   }, [data, setSelectTab]);
 
   useEffect(() => {
-    queryTab ? setSelectedTabIndex(parseInt(queryTab) - 1) : setSelectedTabIndex(0);
+    queryTab
+      ? setSelectedTabIndex(parseInt(queryTab) - 1)
+      : setSelectedTabIndex(0);
   }, [queryTab, setSelectedTabIndex]);
 
   const handleHeightControl = (val) => {
@@ -125,7 +130,6 @@ const NewRelationSection = ({
   }, [update]);
 
   const selectedRelation = filteredRelations?.[selectedTabIndex];
-  console.log('filteredRelations', )
   useEffect(() => {
     setSelectedObjects([]);
     setFormVisible(false);
@@ -155,7 +159,8 @@ const NewRelationSection = ({
       mapped[keys[0]] = values[0];
     });
     // const relation = filteredRelations[selectedTabIndex];
-    if (getRelatedTabeSlug?.type === "Many2Many") setSelectedManyToManyRelation(getRelatedTabeSlug);
+    if (getRelatedTabeSlug?.type === "Many2Many")
+      setSelectedManyToManyRelation(getRelatedTabeSlug);
     else {
       append(mapped);
       setFormVisible(true);
@@ -187,18 +192,21 @@ const NewRelationSection = ({
 
   const { mutate: updateMultipleObject } = useMutation(
     (values) =>
-      constructorObjectService.updateMultipleObject(getRelatedTabeSlug.relatedTable, {
-        data: {
-          objects: values.multi.map((item) => ({
-            ...item,
-            guid: item?.guid ?? "",
-            doctors_id_2: getValue(item, "doctors_id_2"),
-            doctors_id_3: getValue(item, "doctors_id_3"),
-            specialities_id: getValue(item, "specialities_id"),
-            [fieldSlug]: id,
-          })),
-        },
-      }),
+      constructorObjectService.updateMultipleObject(
+        getRelatedTabeSlug.relatedTable,
+        {
+          data: {
+            objects: values.multi.map((item) => ({
+              ...item,
+              guid: item?.guid ?? "",
+              doctors_id_2: getValue(item, "doctors_id_2"),
+              doctors_id_3: getValue(item, "doctors_id_3"),
+              specialities_id: getValue(item, "specialities_id"),
+              [fieldSlug]: id,
+            })),
+          },
+        }
+      ),
     {
       enabled: !getRelatedTabeSlug?.relatedTable,
       onSuccess: () => {
@@ -235,11 +243,16 @@ const NewRelationSection = ({
           data: {
             offset: 0,
             limit: 0,
-            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]: idFromParams,
+            [`${relationFieldSlug?.relation_field_slug}.${tableSlug}_id`]:
+              idFromParams,
           },
         })
         .then((res) => {
-          setJwtObjects(res?.data?.fields?.filter((item) => item?.attributes?.object_id_from_jwt === true));
+          setJwtObjects(
+            res?.data?.fields?.filter(
+              (item) => item?.attributes?.object_id_from_jwt === true
+            )
+          );
         })
         .catch((a) => console.log("error", a));
   }, [, getRelatedTabeSlug, idFromParams, relationFieldSlug, tableSlug]);
@@ -269,7 +282,7 @@ const NewRelationSection = ({
   /*****************************JWT END*************************/
 
   useEffect(() => {
-    if (!menuItem.table_id) return;
+    // if (!menuItem.table_id) return;
     layoutService
       .getList({
         "table-slug": tableSlug,
@@ -280,7 +293,11 @@ const NewRelationSection = ({
           .map((item) => {
             return {
               ...item,
-              tabs: item?.tabs?.filter((tab) => tab?.relation?.permission?.view_permission === true || tab?.type === "section"),
+              tabs: item?.tabs?.filter(
+                (tab) =>
+                  tab?.relation?.permission?.view_permission === true ||
+                  tab?.type === "section"
+              ),
             };
           });
         setData(layout);
@@ -304,7 +321,12 @@ const NewRelationSection = ({
   return (
     <>
       {selectedManyToManyRelation && (
-        <ManyToManyRelationCreateModal relation={selectedManyToManyRelation} closeModal={() => setSelectedManyToManyRelation(null)} limit={limit} setLimit={setLimit} />
+        <ManyToManyRelationCreateModal
+          relation={selectedManyToManyRelation}
+          closeModal={() => setSelectedManyToManyRelation(null)}
+          limit={limit}
+          setLimit={setLimit}
+        />
       )}
       {data?.length ? (
         <Card className={styles.card}>
@@ -322,7 +344,11 @@ const NewRelationSection = ({
                   {relation?.tabs?.map((el, index) => (
                     <Tab
                       key={el.id}
-                      className={`${styles.tabs_item} ${selectedTabIndex === index ? "custom-selected-tab" : "custom-tab"}`}
+                      className={`${styles.tabs_item} ${
+                        selectedTabIndex === index
+                          ? "custom-selected-tab"
+                          : "custom-tab"
+                      }`}
                       onClick={() => {
                         setSelectedIndex(index);
                         onSelect(el);
@@ -333,14 +359,25 @@ const NewRelationSection = ({
                           <InsertDriveFile /> Файлы
                         </>
                       )}
-                      <div className="flex align-center gap-2 text-nowrap">{el?.label ?? el?.title}</div>
+                      <div className="flex align-center gap-2 text-nowrap">
+                        {el?.label ?? el?.title}
+                      </div>
                     </Tab>
                   ))}
                 </TabList>
 
                 <div className="flex gap-2">
-                  <CustomActionsButton tableSlug={selectedRelation?.relatedTable} selectedObjects={selectedObjects} setSelectedObjects={setSelectedObjects} />
-                  <RectangleIconButton color="success" size="small" onClick={navigateToCreatePage} disabled={!id}>
+                  <CustomActionsButton
+                    tableSlug={selectedRelation?.relatedTable}
+                    selectedObjects={selectedObjects}
+                    setSelectedObjects={setSelectedObjects}
+                  />
+                  <RectangleIconButton
+                    color="success"
+                    size="small"
+                    onClick={navigateToCreatePage}
+                    disabled={!id}
+                  >
                     <Add style={{ color: "#007AFF" }} />
                   </RectangleIconButton>
 
@@ -356,7 +393,7 @@ const NewRelationSection = ({
                       </RectangleIconButton>
                       <RectangleIconButton
                         color="error"
-                        type='edit'
+                        type="edit"
                         onClick={() => {
                           setFormVisible(false);
                           if (fields.length > dataLength) {
@@ -388,10 +425,18 @@ const NewRelationSection = ({
                   <DocumentGeneratorButton />
 
                   {data[selectedTabIndex]?.multiple_insert && (
-                    <MultipleInsertButton view={filteredRelations[selectedTabIndex]} tableSlug={filteredRelations[selectedTabIndex].relatedTable} />
+                    <MultipleInsertButton
+                      view={filteredRelations[selectedTabIndex]}
+                      tableSlug={
+                        filteredRelations[selectedTabIndex].relatedTable
+                      }
+                    />
                   )}
 
-                  <RectangleIconButton color="white" onClick={() => setHeightControl(!heightControl)}>
+                  <RectangleIconButton
+                    color="white"
+                    onClick={() => setHeightControl(!heightControl)}
+                  >
                     <div style={{ position: "relative" }}>
                       <span
                         style={{
@@ -405,9 +450,15 @@ const NewRelationSection = ({
                       {heightControl && (
                         <div className={style.heightControl}>
                           {tableHeightOptions.map((el) => (
-                            <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
+                            <div
+                              key={el.value}
+                              className={style.heightControl_item}
+                              onClick={() => handleHeightControl(el.value)}
+                            >
                               {el.label}
-                              {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
+                              {tableHeight === el.value ? (
+                                <CheckIcon color="primary" />
+                              ) : null}
                             </div>
                           ))}
                         </div>
@@ -415,7 +466,11 @@ const NewRelationSection = ({
                     </div>
                   </RectangleIconButton>
 
-                  <RectangleIconButton color="success" size="small" onClick={() => setMoreShowButton(!moreShowButton)}>
+                  <RectangleIconButton
+                    color="success"
+                    size="small"
+                    onClick={() => setMoreShowButton(!moreShowButton)}
+                  >
                     <div style={{ position: "relative" }}>
                       <span
                         style={{
@@ -427,7 +482,10 @@ const NewRelationSection = ({
                         <MoreVertIcon color="primary" />
                       </span>
                       {moreShowButton && (
-                        <div className={style.heightControl} style={{ minWidth: "auto" }}>
+                        <div
+                          className={style.heightControl}
+                          style={{ minWidth: "auto" }}
+                        >
                           <div
                             className={style.heightControl_item}
                             style={{
@@ -449,7 +507,11 @@ const NewRelationSection = ({
                           >
                             <ExcelDownloadButton
                               relatedTable={relatedTableSlug}
-                              fieldSlug={selectedTab?.type === "section" ? relatedTableSlug : fieldSlug}
+                              fieldSlug={
+                                selectedTab?.type === "section"
+                                  ? relatedTableSlug
+                                  : fieldSlug
+                              }
                               fieldSlugId={id}
                               withText={true}
                               sort={myRef.current?.excelSort()}

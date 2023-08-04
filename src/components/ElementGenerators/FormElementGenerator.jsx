@@ -94,7 +94,6 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     return null;
   }
 
-  console.log('sssssss', field)
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {

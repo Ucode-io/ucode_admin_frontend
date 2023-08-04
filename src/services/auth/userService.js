@@ -8,8 +8,8 @@ const userService = {
   getById: (id, params) => requestAuth.get(`/user/${id}`, { params }),
   create: (data) => requestAuth.post("/user", data),
   update: (data) => requestAuth.put("/user", data),
-  updateV2: (data) => requestAuthV2.put('/user', data),
   delete: (id) => requestAuth.delete(`/user/${id}`),
+  updateV2: (data) => requestAuthV2.put('/user', data),
 
   getUserList: (params) => authRequestV2.get("/v2/user", { params }),
   getUserByID: (params, userId) =>

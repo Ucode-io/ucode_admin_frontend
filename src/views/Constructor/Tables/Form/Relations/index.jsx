@@ -21,7 +21,7 @@ const Relations = ({ mainForm, getRelationFields }) => {
     name: "relations",
     keyName: "key",
   });
-
+  
   const { id } = useParams();
 
   const openEditForm = (field, index) => {

@@ -14,6 +14,7 @@ import DataBase from "../Components/DataBase";
 import Users from "../Components/Users";
 import Permissions from "../Components/Permission";
 import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
+import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 
 const SubMenu = ({
   child,
@@ -159,6 +160,10 @@ const SubMenu = ({
                         setSubMenuIsOpen={setSubMenuIsOpen}
                       />
                       <ScenarioSidebar
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                      />
+                      <DocumentsSidebar
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
                       />

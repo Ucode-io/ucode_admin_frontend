@@ -1,6 +1,6 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useMemo, useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,10 +19,14 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import ScenarioRecursive from "./RecursiveBlock";
 import ScenarioButtonMenu from "./Components/ScenarioButtonMenu";
+import AddIcon from "@mui/icons-material/Add";
+import "../../../LayoutSidebar/style.scss";
+import FolderCreateModal from "./Components/Modal/FolderCreateModal";
 
 const scenarioFolder = {
   label: "Scenarios",
   type: "USER_FOLDER",
+  button: "PLUS",
   icon: "scenario.svg",
   parent_id: "12",
   id: "16",
@@ -47,6 +51,14 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const navigate = useNavigate();
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openMenu = Boolean(menu?.event);
+  const [selectedScenarioFolder, setSelectedScenarioFolder] = useState(null);
+  const [scenarioFolderModalType, setScenarioFolderModalType] = useState(null);
+  const closeScenarioFolderModal = () => setSelectedScenarioFolder(null);
+
+  const openScenarioFolderModal = (folder, type) => {
+    setSelectedScenarioFolder(folder);
+    setScenarioFolderModalType(type);
+  };
 
   const handleOpenNotify = (event, type) => {
     setMenu({ event: event?.currentTarget, type: type });
@@ -175,6 +187,25 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             <IconGenerator icon={"film.svg"} size={18} />
             Scenarios
           </div>
+          <Box className="icon_group">
+            <Tooltip title="Create folder" placement="top">
+              <Box className="extra_icon">
+                <AddIcon
+                  size={13}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenNotify(e, "CREATE_FOLDER");
+                  }}
+                  style={{
+                    color:
+                      selected?.id === scenarioFolder?.id
+                        ? menuStyle?.active_text
+                        : menuStyle?.text || "",
+                  }}
+                />
+              </Box>
+            </Tooltip>
+          </Box>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
@@ -205,7 +236,17 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         menuType={menu?.type}
         handleCloseNotify={handleCloseNotify}
         deleteEndpointClickHandler={deleteEndpointClickHandler}
+        openScenarioFolderModal={openScenarioFolderModal}
+        onDeleteCategory={onDeleteCategory}
       />
+
+      {selectedScenarioFolder && (
+        <FolderCreateModal
+          modalType={scenarioFolderModalType}
+          folder={selectedScenarioFolder}
+          closeModal={closeScenarioFolderModal}
+        />
+      )}
     </Box>
   );
 };

@@ -10,17 +10,14 @@ const scenarioCategory = {
     }),
   update: (data) =>
     request.put(`/scenario/category`, data, {
-      params: { "project-id": data.project_id },
       headers: { "resource-id": data.resourceId, "environment-id": data.envId },
     }),
   create: (data) =>
     request.post("/scenario/category", data, {
-      params: { "project-id": data.project_id },
       headers: { "resource-id": data.resourceId, "environment-id": data.envId },
     }),
   delete: ({ id, resourceId, envId, projectId }) =>
     request.delete(`/scenario/category/${id}`, {
-      params: { project_id: projectId },
       headers: { "resource-id": resourceId, "environment-id": envId },
     }),
 };

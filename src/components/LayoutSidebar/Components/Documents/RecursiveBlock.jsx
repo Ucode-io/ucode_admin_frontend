@@ -17,6 +17,7 @@ const DocumentsRecursive = ({
   onRowClick = () => {},
   selected,
   handleOpenNotify,
+  setSelected,
 }) => {
   const dispatch = useDispatch();
   const { tableSlug } = useParams();
@@ -38,6 +39,7 @@ const DocumentsRecursive = ({
   };
 
   const clickHandler = () => {
+    setSelected(element);
     onRowClick(element.id, element);
     dispatch(menuActions.setMenuItem(element));
     setChildBlockVisible((prev) => !prev);
@@ -69,31 +71,40 @@ const DocumentsRecursive = ({
             <IconGenerator icon={element?.icon} size={18} />
             {element?.name}
           </div>
-          {element.what_is === "note" && (
+          {element.buttons && (
             <Box className="icon_group">
-              <Tooltip title="Scenario settings" placement="top">
+              <Tooltip title={element?.button_text} placement="top">
+                <Box className="extra_icon">{element.buttons}</Box>
+              </Tooltip>
+            </Box>
+          )}
+          {element.what_is === "template" && (
+            <Box className="icon_group">
+              <Tooltip title={element?.button_text} placement="top">
                 <Box className="extra_icon">
                   <BsThreeDots
                     size={13}
                     onClick={(e) => {
-                      e?.stopPropagation();
-                      handleOpenNotify(e, "FOLDER");
-                    }}
-                    style={{
-                      color:
-                        selected?.id === element?.id
-                          ? menuStyle?.active_text
-                          : menuStyle?.text || "",
+                      e.stopPropagation();
+                      handleOpenNotify(e, "TEMPLATE", element);
                     }}
                   />
                 </Box>
               </Tooltip>
             </Box>
           )}
-          {element.buttons && (
+          {element.what_is === "note" && (
             <Box className="icon_group">
               <Tooltip title={element?.button_text} placement="top">
-                <Box className="extra_icon">{element.buttons}</Box>
+                <Box className="extra_icon">
+                  <BsThreeDots
+                    size={13}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenNotify(e, "NOTE", element);
+                    }}
+                  />
+                </Box>
               </Tooltip>
             </Box>
           )}

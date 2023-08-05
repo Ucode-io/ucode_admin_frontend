@@ -9,12 +9,12 @@ const DocumentButtonMenu = ({
   menu,
   openMenu,
   menuType,
+  element,
   handleCloseNotify,
-  deleteEndpointClickHandler,
-  templateFolderModalType,
+  deleteNoteFolder,
+  deleteTemplateFolder,
 }) => {
   const navigate = useNavigate();
-
   return (
     <>
       <Menu
@@ -38,11 +38,11 @@ const DocumentButtonMenu = ({
           },
         }}
       >
-        {menuType === "FOLDER" ? (
+        {menuType === "FOLDER" && (
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Добавить note"
+              title="Добавить Note"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/main/12/docs/note/create`);
@@ -50,14 +50,28 @@ const DocumentButtonMenu = ({
               }}
             />
           </Box>
-        ) : (
+        )}
+        {menuType === "NOTE" && (
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Удалить scenario"
+              title="Удалить Note"
               onClick={(e) => {
                 e.stopPropagation();
-                deleteEndpointClickHandler(selected.id);
+                deleteNoteFolder({ id: element.id });
+                handleCloseNotify();
+              }}
+            />
+          </Box>
+        )}
+        {menuType === "TEMPLATE" && (
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<RiPencilFill size={13} />}
+              title="Удалить Template"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteTemplateFolder({ id: element.id });
                 handleCloseNotify();
               }}
             />

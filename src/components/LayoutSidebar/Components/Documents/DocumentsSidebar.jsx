@@ -10,8 +10,14 @@ import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { useQueries, useQueryClient } from "react-query";
-import { useTemplateFoldersListQuery } from "../../../../services/templateFolderService";
-import { useNoteFoldersListQuery } from "../../../../services/noteFolderService";
+import {
+  useTemplateFolderDeleteMutation,
+  useTemplateFoldersListQuery,
+} from "../../../../services/templateFolderService";
+import {
+  useNoteFolderDeleteMutation,
+  useNoteFoldersListQuery,
+} from "../../../../services/noteFolderService";
 import templateService from "../../../../services/templateService";
 import { CgFileDocument } from "react-icons/cg";
 import noteService from "../../../../services/noteService";
@@ -23,6 +29,7 @@ import { BsThreeDots } from "react-icons/bs";
 import AddIcon from "@mui/icons-material/Add";
 import TemplateFolderCreateModal from "./Components/Modals/TemplateFolderCreate";
 import NoteFolderCreateModal from "./Components/Modals/NoteFolderCreate";
+import { showAlert } from "../../../../store/alert/alert.thunk";
 
 const docsFolder = {
   label: "Documents",
@@ -51,8 +58,8 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openMenu = Boolean(menu?.event);
 
-  const handleOpenNotify = (event, type) => {
-    setMenu({ event: event?.currentTarget, type: type });
+  const handleOpenNotify = (event, type, element) => {
+    setMenu({ event: event?.currentTarget, type: type, element });
   };
 
   const handleCloseNotify = () => {
@@ -107,15 +114,18 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         select: (res) =>
           res.folders?.map((folder) => ({
             ...folder,
-            icon: FaFolder,
+            // icon: FaFolder,
             type: "FOLDER",
             what_is: "template",
             hasChild: true,
             name: folder?.title,
             // buttons: (
-            //   <TemplateFolderButtons
-            //     folder={folder}
-            //     openFolderModal={openTemplateFolderModal}
+            //   <BsThreeDots
+            //     size={13}
+            //     onClick={(e) => {
+            //       e.stopPropagation();
+            //       handleOpenNotify(e, "TEMPLATE");
+            //     }}
             //   />
             // ),
           })),
@@ -134,15 +144,18 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         select: (res) =>
           res.folders?.map((folder) => ({
             ...folder,
-            icon: FaFolder,
+            // icon: FaFolder,
             type: "FOLDER",
             hasChild: true,
             what_is: "note",
             name: folder?.title,
             // buttons: (
-            //   <NoteFolderButtons
-            //     folder={folder}
-            //     openFolderModal={openNoteFolderModal}
+            //   <BsThreeDots
+            //     size={13}
+            //     onClick={(e) => {
+            //       e.stopPropagation();
+            //       handleOpenNotify(e, "NOTE");
+            //     }}
             //   />
             // ),
           })),
@@ -178,11 +191,9 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         list.push({
           ...template,
           parent_id: template.folder_id,
-          icon: CgFileDocument,
+          // icon: CgFileDocument,
           what_is: "template",
           name: template?.title,
-
-          //   buttons: <TemplateButtons templateId={template.id} />,
         });
       });
     });
@@ -218,10 +229,9 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         list.push({
           ...note,
           parent_id: note.folder_id,
-          icon: CgFileDocument,
+          // icon: CgFileDocument,
           what_is: "note",
           name: note?.title,
-          //   buttons: <NoteButtons noteId={note.id} />,
         });
       });
     });
@@ -247,7 +257,7 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       {
         id: 1,
         name: "Templates",
-        icon: CgFileDocument,
+        // icon: CgFileDocument,
         children: computedTemplatesList,
         type: "FOLDER",
         buttons: (
@@ -266,7 +276,7 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       {
         id: 2,
         name: "Notes",
-        icon: TbEdit,
+        // icon: TbEdit,
         children: computedNotesList,
         type: "FOLDER",
         buttons: (
@@ -281,7 +291,6 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
           </>
         ),
         button_text: "Create Note folder",
-        // buttons: <TableCreateButton onClick={() => createFolder("note")} />,
       },
     ],
     [computedTemplatesList, computedNotesList]
@@ -303,18 +312,20 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     noteQueryResults,
   ]);
 
-  // --SELECT HANDLER--
-
-  //   const clickHandler = (id, element) => {
-  //     if (element.type === "FOLDER") return;
-  //     if (id === 1 || element.what_is === "template") {
-  //       navigate(`/project/${projectId}/docs/templates/${id}`);
-  //     } else if (id === 6 || element.what_is === "note") {
-  //       navigate(`/project/${projectId}/docs/notes/${id}`);
-  //     }
-  //   };
-
-  // --ROW CLICK HANDLER--
+  const { mutate: deleteNoteFolder, isLoading: deleteNoteLoading } =
+    useNoteFolderDeleteMutation({
+      onSuccess: () => {
+        dispatch(showAlert("Successfully deleted", "success"));
+        queryClient.refetchQueries("NOTE_FOLDERS");
+      },
+    });
+  const { mutate: deleteTemplateFolder, isLoading: deleteTemplateLoading } =
+    useTemplateFolderDeleteMutation({
+      onSuccess: () => {
+        dispatch(showAlert("Successfully deleted", "success"));
+        queryClient.refetchQueries("TEMPLATE_FOLDERS");
+      },
+    });
 
   const rowClickHandler = (id, element) => {
     if (id === 1 || id === 2) {
@@ -359,12 +370,13 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       : setTemplateFolderModalType("CREATE");
   };
   const onSelect = (id, element) => {
-    if (id === 1 || element.what_is === "template") {
-      navigate(`/main/12/docs/template/${id}`);
-    } else if (id === 6 || element.what_is === "note") {
-      navigate(`/main/12/docs/note/${id}`);
-    }
+    // if (id === 1 || element.what_is === "template") {
+    //   navigate(`/main/12/docs/template/${id}`);
+    // } else if (id === 6 || element.what_is === "note") {
+    //   navigate(`/main/12/docs/note/${id}`);
+    // }
   };
+  console.log("computed", sidebarElements);
 
   return (
     <Box>
@@ -410,6 +422,7 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             selected={selected}
             handleOpenNotify={handleOpenNotify}
             onSelect={onSelect}
+            setSelected={setSelected}
           />
         ))}
       </Collapse>
@@ -419,8 +432,11 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         openMenu={openMenu}
         menu={menu?.event}
         menuType={menu?.type}
+        element={menu?.element}
         handleCloseNotify={handleCloseNotify}
         templateFolderModalType={templateFolderModalType}
+        deleteNoteFolder={deleteNoteFolder}
+        deleteTemplateFolder={deleteTemplateFolder}
       />
 
       {templateFolderModalType && (

@@ -22,7 +22,7 @@ import constructorFunctionService from "../../services/constructorFunctionServic
 import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
 import request from "../../utils/request";
 import { useSelector } from "react-redux";
-import Select from 'react-select'
+import Select from "react-select";
 
 const RelationFormElement = ({
   control,
@@ -133,20 +133,19 @@ const AutoCompleteElement = ({
   control,
   name,
   multipleInsertField,
-  setFormValue = () => { },
+  setFormValue = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
   const isUserId = useSelector((state) => state?.auth?.userId);
-  const ids = field?.attributes?.is_user_id_default ? isUserId : undefined
+  const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
   const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
-
 
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
@@ -234,11 +233,14 @@ const AutoCompleteElement = ({
   const options = useMemo(() => {
     if (field?.attributes?.function_path) {
       return optionsFromFunctions ?? [];
+    } else {
+      return optionsFromLocale ?? [];
     }
-    else {
-      return optionsFromLocale ?? []
-    };
-  }, [optionsFromFunctions, optionsFromLocale, field?.attributes?.function_path]);
+  }, [
+    optionsFromFunctions,
+    optionsFromLocale,
+    field?.attributes?.function_path,
+  ]);
 
   const getValueData = async () => {
     try {
@@ -249,13 +251,12 @@ const AutoCompleteElement = ({
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
       setLocalValue(data ? [data] : null);
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option);
   };
-
 
   const setDefaultValue = () => {
     if (options?.slugOptions && multipleInsertField) {
@@ -287,24 +288,24 @@ const AutoCompleteElement = ({
     }
   };
 
-
   const computedOptions = useMemo(() => {
     const value = [];
     allOptions?.forEach((item) => {
-      const label = field?.attributes?.view_fields?.map((el) => item[el.slug]).join(' ');
+      const label = field?.attributes?.view_fields
+        ?.map((el) => item[el.slug])
+        .join(" ");
       const option = { label, value: item?.guid };
-  
-      const optionExists = value?.some((existingOption) => existingOption?.value === option.value);
+
+      const optionExists = value?.some(
+        (existingOption) => existingOption?.value === option.value
+      );
       if (!optionExists) {
         value.push(option);
       }
     });
-  
+
     return value;
   }, [allOptions, field]);
-  
-  
-
 
   const computedValue = useMemo(() => {
     const findedOption = options?.options?.find((el) => el?.guid === value);
@@ -312,25 +313,28 @@ const AutoCompleteElement = ({
   }, [options, value]);
 
   const computedInputValue = useMemo(() => {
-    if(Array.isArray(localValue?.length)) {
-      return localValue?.map((item) => ({
-        label: field?.attributes?.view_fields?.map((el) => item?.[el?.slug]).join(' '),
-        value: item?.guid
-      })).find((element) => element?.value === value)
+    if (Array.isArray(localValue?.length)) {
+      return localValue
+        ?.map((item) => ({
+          label: field?.attributes?.view_fields
+            ?.map((el) => item?.[el?.slug])
+            .join(" "),
+          value: item?.guid,
+        }))
+        .find((element) => element?.value === value);
     } else {
-      return computedOptions?.find((item) => item?.value === value)
+      return computedOptions?.find((item) => item?.value === value);
     }
   }, [localValue, value, computedOptions]);
 
-
   useEffect(() => {
     setLocalValue(
-      localValue?.filter((item) => {
-        return item?.[autoFiltersFieldFroms] === filtersHandler[0];
-      })
+      Array.isArray(localValue) &&
+        localValue?.filter((item) => {
+          return item?.[autoFiltersFieldFroms] === filtersHandler[0];
+        })
     );
   }, [filtersHandler]);
-
 
   useEffect(() => {
     const val = computedValue[computedValue.length - 1];
@@ -354,8 +358,6 @@ const AutoCompleteElement = ({
     setDefaultValue();
   }, [options, multipleInsertField]);
 
-
-
   useEffect(() => {
     if (field?.attributes?.function_path) {
       const newOptions = optionsFromFunctions?.options ?? [];
@@ -369,7 +371,6 @@ const AutoCompleteElement = ({
   function loadMoreItems() {
     setPage((prevPage) => prevPage + 1);
   }
-
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -414,19 +415,18 @@ const AutoCompleteElement = ({
           }}
         />
       ) : (
-
         <Select
           isDisabled={disabled}
           options={computedOptions ?? []}
           isClearable={true}
           value={computedInputValue ?? []}
-          defaultValue={value ?? ''}
+          defaultValue={value ?? ""}
           onChange={(e) => {
             changeHandler(e);
             setLocalValue(e);
           }}
           onMenuScrollToBottom={loadMoreItems}
-          inputChangeHandler={(e) => console.log('ssss', e)}
+          inputChangeHandler={(e) => console.log("ssss", e)}
           onInputChange={(e, newValue) => {
             setInputValue(e ?? null);
             inputChangeHandler(e);
@@ -453,6 +453,5 @@ const AutoCompleteElement = ({
     </div>
   );
 };
-
 
 export default RelationFormElement;

@@ -51,8 +51,6 @@ const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewVi
     }
   }, [isChanged]);
 
-  console.log('viewsviewsviewsviews', viewData)
-
   return (
     <Card className={styles.card}>
       <div className={styles.header}>

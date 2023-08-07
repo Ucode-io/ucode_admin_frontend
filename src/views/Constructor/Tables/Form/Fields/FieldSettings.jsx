@@ -20,12 +20,14 @@ import { generateGUID } from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import styles from "./style.module.scss";
+import { useSelector } from "react-redux";
 
 const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, onSubmit = () => {}, getRelationFields }) => {
   const { id } = useParams();
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
+  const languages = useSelector((state) => state.languages.list);
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
@@ -85,14 +87,8 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
   };
 
   const submitHandler = (values) => {
-    const computedValues = {
-      ...values,
-      label: values.label.length ? values.label : values.label_uz.length ? values.label_uz : values.label_en,
-      label_uz: values.label_uz.length ? values.label_uz : values.label.length ? values.label : values.label_en,
-      label_en: values.label_en.length ? values.label_en : values.label.length ? values.label : values.label_uz,
-    };
-    if (formType === "CREATE") createField(computedValues);
-    else updateField(computedValues);
+    if (formType === "CREATE") createField(values);
+    else updateField(values);
   };
 
   const selectedAutofillTableSlug = useWatch({
@@ -217,12 +213,20 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
                         <FRow label="Field Label and icon" required>
                           <div className="flex align-center gap-1">
                             <HFIconPicker control={control} name="attributes.icon" shape="rectangle" />
-                            <HFTextField disabledHelperText fullWidth name="label" control={control} placeholder="Field Label (RU)" autoFocus />
+                            {/* <HFTextField disabledHelperText fullWidth name="label" control={control} placeholder="Field Label (RU)" autoFocus /> */}
                           </div>
 
                           <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                            <HFTextField disabledHelperText fullWidth name="label_en" control={control} placeholder="Field Label (EN)" autoFocus />
-                            <HFTextField disabledHelperText fullWidth name="label_uz" control={control} placeholder="Field Label (UZ)" autoFocus />
+                            {languages?.map((lang) => (
+                              <HFTextField
+                                disabledHelperText
+                                fullWidth
+                                name={`attributes.label_${lang?.slug}`}
+                                control={control}
+                                placeholder={`Field Label (${lang?.slug})`}
+                                autoFocus
+                              />
+                            ))}
                           </Box>
                         </FRow>
 

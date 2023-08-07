@@ -13,6 +13,7 @@ import { store } from "../../../store";
 import DataBase from "../Components/DataBase";
 import Users from "../Components/Users";
 import Permissions from "../Components/Permission";
+import { useTranslation } from "react-i18next";
 
 const SubMenu = ({
   child,
@@ -31,7 +32,8 @@ const SubMenu = ({
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const menuItem = store.getState().menu.menuItem;
-
+  const {i18n} = useTranslation();
+console.log('selectedApp', selectedApp?.attributes?.[`label_${i18n.language}`])
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
@@ -52,7 +54,7 @@ const SubMenu = ({
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.label}
+              {selectedApp?.label ?? selectedApp?.attributes?.[`label_${i18n.language}`]}
             </h2>
           )}{" "}
           <Box className="buttons">

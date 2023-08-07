@@ -206,7 +206,6 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
     if (languages?.length) {
       if (!defaultLanguage) {
         i18n.changeLanguage(languages?.[0]?.slug);
-      } else {
         dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
       }
     }

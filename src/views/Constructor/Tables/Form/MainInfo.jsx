@@ -11,6 +11,7 @@ import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import listToOptions from "../../../../utils/listToOptions";
+import { useSelector } from "react-redux";
 
 const MainInfo = ({ control }) => {
   const { slug } = useParams();
@@ -85,6 +86,8 @@ const MainInfo = ({ control }) => {
     }));
   }, [computedTableFields]);
 
+  const languages = useSelector((state) => state.languages.list);
+
   return (
     <div className="p-2">
       <FormCard title="Общие сведение">
@@ -96,16 +99,16 @@ const MainInfo = ({ control }) => {
 
         <FRow label="Название">
           <Box style={{ display: "flex", gap: "6px" }}>
-            <HFTextField control={control} name="label" fullWidth placeholder="Название (RU)" />
-            <HFTextField control={control} name="label_en" fullWidth placeholder="Название (EN)" />
-            <HFTextField control={control} name="label_uz" fullWidth placeholder="Название (UZ)" />
+            {languages?.map((language) => (
+              <HFTextField control={control} name={`attributes.label_${language?.slug}`} fullWidth placeholder={`Название (${language?.slug})`} />
+            ))}
           </Box>
         </FRow>
         <FRow label="Описание">
           <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <HFTextField control={control} name="description" fullWidth placeholder="Описание" multiline rows={4} />
-            <HFTextField control={control} name="description_en" fullWidth placeholder="Описание (EN)" multiline rows={4} />
-            <HFTextField control={control} name="description_uz" fullWidth placeholder="Описание (UZ)" multiline rows={4} />
+            {languages?.map((desc) => (
+              <HFTextField control={control} name={`attributes.description_${desc?.slug}`} fullWidth placeholder={`Описание (${desc?.slug})`} multiline rows={4} />
+            ))}
           </Box>
         </FRow>
         <FRow label="SLUG">

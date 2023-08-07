@@ -8,6 +8,7 @@ import FormElementGenerator from "../../../../../components/ElementGenerators/Fo
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import styles from "./style.module.scss";
+import { useSelector } from "react-redux";
 
 const NewSection = ({
   mainForm,
@@ -65,24 +66,28 @@ const NewSection = ({
     removeSection(index);
   };
 
+  const languages = useSelector((state) => state.languages.list);
+
   return (
     <Card className={`${styles.newsectionCard}`}>
       <div className={styles.newsectionCardHeader}>
-        <div className={styles.newsectionCardHeaderLeftSide}>
+        <div className={styles.newsectionCardHeaderLeftSide} style={{display: 'flex', flexDirection: 'column'}}>
           {/* <HFIconPicker
             control={mainForm.control}
             name={`sections[${index}].icon`}
             disabledHelperText
           /> */}
 
-          <HFTextField
-            placeholder="Label"
-            required={index === 0}
-            control={mainForm.control}
-            name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`}
-            size="small"
-            style={{ width: 170 }}
-          />
+          {languages.map((language) => (
+            <HFTextField
+              placeholder={`Label ${language.slug}`}
+              required={index === 0}
+              control={mainForm.control}
+              name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language.slug}`}
+              size="small"
+              style={{ width: 170 }}
+            />
+          ))}
         </div>
 
         <div className="flex gap-1" style={{ marginLeft: "5px" }}>

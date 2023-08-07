@@ -1,10 +1,4 @@
-import {
-  AccountTree,
-  CalendarMonth,
-  Description,
-  Settings,
-  TableChart,
-} from "@mui/icons-material";
+import { AccountTree, CalendarMonth, Description, Settings, TableChart } from "@mui/icons-material";
 import { Button, Modal, Popover } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useQueryClient } from "react-query";
@@ -28,11 +22,7 @@ import { viewTypes } from "../../../../utils/constants/viewTypes";
 import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
 
-const ViewTabSelector = ({
-  selectedTabIndex,
-  setSelectedTabIndex,
-  views = [],
-}) => {
+const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
@@ -94,6 +84,8 @@ const ViewTabSelector = ({
     });
   };
 
+  const { i18n } = useTranslation();
+
   return (
     <>
       <div className={style.selector} style={{ minWidth: "fit-content" }}>
@@ -105,14 +97,7 @@ const ViewTabSelector = ({
           </div>
 
           <div className={style.title}>
-            <IconGenerator
-              className={style.icon}
-              icon={
-                selectedTable?.isChild
-                  ? selectedTable?.icon
-                  : selectedTable?.icon
-              }
-            />
+            <IconGenerator className={style.icon} icon={selectedTable?.isChild ? selectedTable?.icon : selectedTable?.icon} />
             <h3>{selectedTable?.label ?? selectedTable?.title}</h3>
           </div>
         </div>
@@ -135,7 +120,7 @@ const ViewTabSelector = ({
                   {view.type === "TREE" && <AccountTree className={style.icon} />}
                   {view.type === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
                   {view.type === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
-                  <span>{view.name ? view.name : view.type}</span>
+                  <span>{view?.name ?? view?.attributes?.[`name_${i18n.language}`] ? view?.attributes?.[`name_${i18n.language}`] : view.type}</span>
 
                   {view?.attributes?.view_permission?.edit && (
                     <div className={style.popoverElement}>
@@ -191,28 +176,12 @@ const ViewTabSelector = ({
             ))}
           </div> */}
 
-          <ViewTypeList
-            computedViewTypes={computedViewTypes}
-            handleClose={handleClose}
-            openModal={openModal}
-            setSelectedView={setSelectedView}
-            setTypeNewView={setTypeNewView}
-          />
+          <ViewTypeList computedViewTypes={computedViewTypes} handleClose={handleClose} openModal={openModal} setSelectedView={setSelectedView} setTypeNewView={setTypeNewView} />
         </Popover>
       </div>
 
-      <Modal
-        className={style.modal}
-        open={settingsModalVisible}
-        onClose={closeModal}
-      >
-        <ViewSettings
-          closeModal={closeModal}
-          isChanged={isChanged}
-          setIsChanged={setIsChanged}
-          viewData={selectedView}
-          typeNewView={typeNewView}
-        />
+      <Modal className={style.modal} open={settingsModalVisible} onClose={closeModal}>
+        <ViewSettings closeModal={closeModal} isChanged={isChanged} setIsChanged={setIsChanged} viewData={selectedView} typeNewView={typeNewView} />
       </Modal>
     </>
   );

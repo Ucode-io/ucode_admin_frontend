@@ -4,10 +4,14 @@ export const { actions: languagesActions, reducer: languagesReducer } = createSl
   name: "languages",
   initialState: {
     list: [],
+    defaultLanguage: null,
   },
   reducers: {
     setLanguagesItems: (state, { payload }) => {
       state.list = payload ?? [];
     },
+    setDefaultLanguage: (state, { payload }) => {
+      state.defaultLanguage = payload;
+    }
   },
 });

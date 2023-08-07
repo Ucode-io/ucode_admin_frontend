@@ -3,17 +3,13 @@ import KeyIcon from "@mui/icons-material/Key";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PlusIcon } from "../../assets/icons/icon";
 import CompanyModal from "../../layouts/MainLayout/CompanyModal";
 import authService from "../../services/auth/authService";
-import {
-  useCompanyListQuery,
-  useEnvironmentListQuery,
-  useProjectListQuery,
-} from "../../services/companyService";
+import { useCompanyListQuery, useEnvironmentListQuery, useProjectListQuery } from "../../services/companyService";
 import { store } from "../../store";
 import { authActions } from "../../store/auth/auth.slice";
 import { companyActions } from "../../store/company/company.slice";
@@ -28,6 +24,11 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import useBooleanState from "../../hooks/useBooleanState";
 import VersionModal from "./Components/VersionModal/VersionModal";
 import LayersIcon from "@mui/icons-material/Layers";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import { Title } from "@mui/icons-material";
+import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
+import { changeLanguage } from "i18next";
+import { useTranslation } from "react-i18next";
 
 const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const dispatch = useDispatch();
@@ -46,8 +47,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const environmentVisible = Boolean(environmentListEl);
   const location = useLocation();
   const settings = location.pathname.includes("settings");
-  const [versionModalIsOpen, openVersionModal, closeVersionModal] =
-    useBooleanState(false);
+  const [versionModalIsOpen, openVersionModal, closeVersionModal] = useBooleanState(false);
 
   const params = {
     refresh_token: auth.refreshToken,
@@ -125,21 +125,9 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   };
 
   useEffect(() => {
-    dispatch(
-      companyActions.setCompanyItem(
-        company.companies.find((item) => item.id === company.companyId)
-      )
-    );
-    dispatch(
-      companyActions.setEnvironmentItem(
-        company.environments?.find((item) => item.id === company.environmentId)
-      )
-    );
-    dispatch(
-      companyActions.setProjectItem(
-        company.projects?.find((item) => item.project_id === company.projectId)
-      )
-    );
+    dispatch(companyActions.setCompanyItem(company.companies.find((item) => item.id === company.companyId)));
+    dispatch(companyActions.setEnvironmentItem(company.environments?.find((item) => item.id === company.environmentId)));
+    dispatch(companyActions.setProjectItem(company.projects?.find((item) => item.project_id === company.projectId)));
   }, [company.companies, company.environments]);
 
   const { isLoading } = useCompanyListQuery({
@@ -189,6 +177,40 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
 
   const permissions = useSelector((state) => state.auth.globalPermissions);
 
+  const projectId = useSelector((state) => state.company.projectId);
+  const { data: projectInfo = [] } = useProjectGetByIdQuery({ projectId });
+
+  const languages = useMemo(() => {
+    return projectInfo?.language?.map((lang) => ({
+      title: lang?.name,
+      slug: lang?.short_name,
+    }));
+  }, [projectInfo]);
+
+  useEffect(() => {
+    if (projectId) {
+      dispatch(languagesActions.setLanguagesItems(languages));
+    }
+  }, [languages, projectId, dispatch]);
+
+  const { i18n } = useTranslation();
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dispatch(languagesActions.setDefaultLanguage(lang));
+  };
+
+  const defaultLanguage = useSelector((state) => state.languages.defaultLanguage);
+
+  useEffect(() => {
+    if (languages?.length) {
+      if (!defaultLanguage) {
+        i18n.changeLanguage(languages?.[0]?.slug);
+        dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+      }
+    }
+  }, [languages]);
+
   return (
     <div>
       <UserAvatar
@@ -219,11 +241,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
                   children={
                     <Tooltip title={item?.name}>
                       <p
-                        className={
-                          item.id === company.companyId
-                            ? styles.avatarborder
-                            : styles.avatar
-                        }
+                        className={item.id === company.companyId ? styles.avatarborder : styles.avatar}
                         onClick={(e) => {
                           handleCompanySelect(item, e);
                           queryClient.refetchQueries(["PROJECT"], item.id);
@@ -311,11 +329,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
                   }}
                 />
               }
-              text={
-                company?.version?.version
-                  ? `Version - ${company?.version?.version}`
-                  : "Version"
-              }
+              text={company?.version?.version ? `Version - ${company?.version?.version}` : "Version"}
               onClick={() => {
                 closeMenu();
                 openVersionModal();
@@ -391,10 +405,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
             <ProfileItem
               children={
                 <>
-                  <p className={styles.companyavatar}>
-                    {auth?.userInfo?.name?.charAt(0).toUpperCase() ||
-                      auth?.userInfo?.login?.charAt(0).toUpperCase()}
-                  </p>
+                  <p className={styles.companyavatar}>{auth?.userInfo?.name?.charAt(0).toUpperCase() || auth?.userInfo?.login?.charAt(0).toUpperCase()}</p>
                   {auth?.userInfo?.name || auth?.userInfo?.login}
                 </>
               }
@@ -420,6 +431,12 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
               />
             )}
             <ProfileItem text={"Logout"} onClick={logoutClickHandler} />
+            <Divider />
+            <Box>
+              {languages?.map((item) => (
+                <ProfileItem text={item?.title} onClick={() => changeLanguage(item.slug)} />
+              ))}
+            </Box>
           </div>
         </Box>
       </Menu>

@@ -9,6 +9,7 @@ import HFTextField from "../../../../../components/FormElements/HFTextField";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import { generateGUID } from "../../../../../utils/generateID";
 import styles from "./style.module.scss";
+import { useSelector } from "react-redux";
 
 const FieldsBlock = ({
   mainForm,
@@ -103,6 +104,8 @@ const FieldsBlock = ({
     if (!result) return;
   };
 
+  const languages = useSelector((state) => state.languages.list);
+
   // let watch = useWatch({
   //   control: mainForm.control,
   //   name: `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}`,
@@ -117,6 +120,12 @@ const FieldsBlock = ({
   //   sectionTabs[index].label = value;
   //   console.log('ssssssss index', value)
   // }, 300);
+
+  const aaaaa = useWatch({
+    control: mainForm.control,
+  })
+
+  console.log('sssssss', aaaaa)
 
   return (
     <div className={styles.settingsBlock}>
@@ -175,7 +184,7 @@ const FieldsBlock = ({
                 {unusedRelations?.map((relation) => (
                   <Draggable key={relation.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
-                      <FormElementGenerator field={relation} control={mainForm.control} disabledHelperText checkPermission={false}/>
+                      <FormElementGenerator field={relation} control={mainForm.control} disabledHelperText checkPermission={false} />
                     </div>
                   </Draggable>
                 ))}
@@ -202,7 +211,7 @@ const FieldsBlock = ({
                   if (tab.type === "section")
                     return (
                       <Draggable key={index} style={{ overflow: "visible", width: "fit-content" }}>
-                        <div className={`${styles.sectionFieldRow} ${styles.relation}`}>
+                        <div className={`${styles.sectionFieldRow} ${styles.relation}`} style={{display: 'flex', flexDirection: 'column', gap: '6px'}}>
                           {/* <OutlinedInput
                             value={tab.label}
                             onClick={(e) => e.stopPropagation()}
@@ -217,13 +226,16 @@ const FieldsBlock = ({
                             }}
                           /> */}
 
-                          <HFTextField
-                            control={mainForm.control}
-                            name={`layouts.${selectedLayoutIndex}.tabs.${index}.label`}
-                            size="small"
-                            variant="outlined"
-                            style={{ width: 200 }}
-                          />
+                          {languages?.map((language) => (
+                            <HFTextField
+                              control={mainForm.control}
+                              name={`layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${language.slug}`}
+                              size="small"
+                              placeholder={`Label (${language.slug})`}
+                              variant="outlined"
+                              style={{ width: 200 }}
+                            />
+                          ))}
 
                           <Button onClick={() => removeSectionTab(index)}>
                             <Close />

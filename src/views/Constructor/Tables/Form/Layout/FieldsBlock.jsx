@@ -96,7 +96,7 @@ const FieldsBlock = ({
   }, [tableRelations, viewRelations]);
 
   const unusedRelations = useMemo(() => {
-    return relations?.filter((relation) => !usedFields.includes(relation.id));
+    return relations?.filter((relation) => !usedFields.includes(relation.id)).map(item => ({...item, label: item.title}));
   }, [relations, usedFields]);
 
   const onDrop = (dropResult) => {
@@ -120,12 +120,6 @@ const FieldsBlock = ({
   //   sectionTabs[index].label = value;
   //   console.log('ssssssss index', value)
   // }, 300);
-
-  const aaaaa = useWatch({
-    control: mainForm.control,
-  })
-
-  console.log('sssssss', aaaaa)
 
   return (
     <div className={styles.settingsBlock}>

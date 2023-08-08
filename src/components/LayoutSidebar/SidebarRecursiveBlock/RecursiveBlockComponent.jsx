@@ -93,6 +93,7 @@ const RecursiveBlock = ({
   });
 
   const clickHandler = (e) => {
+    dispatch(menuActions.setMenuItem(element));
     e.stopPropagation();
     if (element.type === "PERMISSION") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
@@ -108,7 +109,6 @@ const RecursiveBlock = ({
       setSubMenuIsOpen(false);
     }
     element.type !== "USER" && setChildBlockVisible((prev) => !prev);
-    dispatch(menuActions.setMenuItem(element));
     setId(element?.id);
     setElement(element);
   };

@@ -75,8 +75,9 @@ requestV2.interceptors.request.use(
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      // config.headers['environment-id'] = environmentId
+      config.headers["environment-id"] = environmentId;
       config.headers["resource-id"] = resourceId;
+      config.params["project-id"] = projectId;
     }
     // if (!config.params?.["project-id"]) {
     //   if (config.params) {

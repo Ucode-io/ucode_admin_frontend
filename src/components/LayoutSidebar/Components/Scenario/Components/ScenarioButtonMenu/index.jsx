@@ -3,6 +3,7 @@ import { RiPencilFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import "./style.scss";
 import MenuItemComponent from "../../../../MenuItem";
+import { Delete } from "@mui/icons-material";
 
 const ScenarioButtonMenu = ({
   selected,
@@ -11,6 +12,8 @@ const ScenarioButtonMenu = ({
   menuType,
   handleCloseNotify,
   deleteEndpointClickHandler,
+  openScenarioFolderModal,
+  onDeleteCategory,
 }) => {
   const navigate = useNavigate();
 
@@ -38,13 +41,38 @@ const ScenarioButtonMenu = ({
         }}
       >
         {menuType === "FOLDER" ? (
+          <>
+            <Box className="menu">
+              <MenuItemComponent
+                icon={<RiPencilFill size={13} />}
+                title="Добавить scenario"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/main/12/scenario/${selected.id}`);
+                  handleCloseNotify();
+                }}
+              />
+            </Box>
+            <Box className="menu">
+              <MenuItemComponent
+                icon={<Delete size={13} />}
+                title="Удалить папку"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteCategory(selected.id);
+                  handleCloseNotify();
+                }}
+              />
+            </Box>
+          </>
+        ) : menuType === "CREATE_FOLDER" ? (
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Добавить scenario"
+              title="Добавить папку"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/main/12/scenario/${selected.id}`);
+                openScenarioFolderModal({}, "CREATE");
                 handleCloseNotify();
               }}
             />

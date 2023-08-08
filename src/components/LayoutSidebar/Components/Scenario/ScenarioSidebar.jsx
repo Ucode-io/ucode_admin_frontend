@@ -1,6 +1,7 @@
+import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useMemo, useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,13 +17,16 @@ import {
 import { store } from "../../../../store";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
+import "../../../LayoutSidebar/style.scss";
 import "../../style.scss";
-import ScenarioRecursive from "./RecursiveBlock";
+import FolderCreateModal from "./Components/Modal/FolderCreateModal";
 import ScenarioButtonMenu from "./Components/ScenarioButtonMenu";
+import ScenarioRecursive from "./RecursiveBlock";
 
 const scenarioFolder = {
   label: "Scenarios",
   type: "USER_FOLDER",
+  button: "PLUS",
   icon: "scenario.svg",
   parent_id: "12",
   id: "16",
@@ -36,8 +40,12 @@ const scenarioFolder = {
   },
 };
 
-const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
-  const { tableSlug } = useParams();
+const ScenarioSidebar = ({
+  level = 1,
+  menuStyle,
+  setSubMenuIsOpen,
+  menuItem,
+}) => {
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -47,6 +55,14 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const navigate = useNavigate();
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openMenu = Boolean(menu?.event);
+  const [selectedScenarioFolder, setSelectedScenarioFolder] = useState(null);
+  const [scenarioFolderModalType, setScenarioFolderModalType] = useState(null);
+  const closeScenarioFolderModal = () => setSelectedScenarioFolder(null);
+
+  const openScenarioFolderModal = (folder, type) => {
+    setSelectedScenarioFolder(folder);
+    setScenarioFolderModalType(type);
+  };
 
   const handleOpenNotify = (event, type) => {
     setMenu({ event: event?.currentTarget, type: type });
@@ -57,14 +73,26 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   };
   const activeStyle = {
     backgroundColor:
-      selected?.id === scenarioFolder?.id
+      scenarioFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      selected?.id === scenarioFolder?.id
+      scenarioFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
+  };
+  const labelStyle = {
+    color:
+      scenarioFolder?.id === menuItem?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text,
+  };
+  const iconStyle = {
+    color:
+      scenarioFolder?.id === menuItem?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text || "",
   };
 
   const clickHandler = (e) => {
@@ -100,7 +128,6 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     isLoading: scenarioLoading,
     refetch,
   } = useScenarioListQuery();
-  console.log("scenario", scenario);
 
   const deleteEndpointClickHandler = (id) => {
     deleteScenario({
@@ -153,28 +180,29 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
-          className={`nav-element ${
-            scenarioFolder?.isChild &&
-            (tableSlug !== scenarioFolder?.slug
-              ? "active-with-child"
-              : "active")
-          }`}
+          className="nav-element"
           onClick={(e) => {
             clickHandler(e);
           }}
         >
-          <div
-            className="label"
-            style={{
-              color:
-                selected?.id === scenarioFolder?.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text,
-            }}
-          >
+          <div className="label" style={labelStyle}>
             <IconGenerator icon={"film.svg"} size={18} />
             Scenarios
           </div>
+          <Box className="icon_group">
+            <Tooltip title="Create folder" placement="top">
+              <Box className="extra_icon">
+                <AddIcon
+                  size={13}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenNotify(e, "CREATE_FOLDER");
+                  }}
+                  style={iconStyle}
+                />
+              </Box>
+            </Tooltip>
+          </Box>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
@@ -205,7 +233,17 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
         menuType={menu?.type}
         handleCloseNotify={handleCloseNotify}
         deleteEndpointClickHandler={deleteEndpointClickHandler}
+        openScenarioFolderModal={openScenarioFolderModal}
+        onDeleteCategory={onDeleteCategory}
       />
+
+      {selectedScenarioFolder && (
+        <FolderCreateModal
+          modalType={scenarioFolderModalType}
+          folder={selectedScenarioFolder}
+          closeModal={closeScenarioFolderModal}
+        />
+      )}
     </Box>
   );
 };

@@ -9,12 +9,12 @@ import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrappe
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useDispatch, useSelector } from "react-redux";
 import { mainActions } from "../../../store/main/main.slice";
-import { store } from "../../../store";
 import DataBase from "../Components/DataBase";
 import Users from "../Components/Users";
 import Permissions from "../Components/Permission";
 import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import { useTranslation } from "react-i18next";
+import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 
 const SubMenu = ({
   child,
@@ -32,9 +32,9 @@ const SubMenu = ({
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const menuItem = store.getState().menu.menuItem;
-  const {i18n} = useTranslation();
-console.log('selectedApp', selectedApp?.attributes?.[`label_${i18n.language}`])
+  const { i18n } = useTranslation();
+  const menuItem = useSelector((state) => state.menu.menuItem);
+
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
@@ -55,7 +55,8 @@ console.log('selectedApp', selectedApp?.attributes?.[`label_${i18n.language}`])
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.label ?? selectedApp?.attributes?.[`label_${i18n.language}`]}
+              {selectedApp?.label ??
+                selectedApp?.attributes?.[`label_${i18n.language}`]}
             </h2>
           )}{" "}
           <Box className="buttons">
@@ -159,10 +160,17 @@ console.log('selectedApp', selectedApp?.attributes?.[`label_${i18n.language}`])
                       <DataBase
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
                       />
                       <ScenarioSidebar
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
+                      />
+                      <DocumentsSidebar
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
                       />
                     </>
                   )}

@@ -3,6 +3,8 @@ import { RiPencilFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import "./style.scss";
 import MenuItemComponent from "../../../../MenuItem";
+import AddIcon from "@mui/icons-material/Add";
+import { Delete } from "@mui/icons-material";
 
 const DocumentButtonMenu = ({
   menu,
@@ -40,7 +42,7 @@ const DocumentButtonMenu = ({
         {menuType === "FOLDER" && (
           <Box className="menu">
             <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
+              icon={<AddIcon size={13} />}
               title="Добавить Note"
               onClick={(e) => {
                 e.stopPropagation();
@@ -53,7 +55,7 @@ const DocumentButtonMenu = ({
         {menuType === "TEMPLATE_FOLDER" && (
           <Box className="menu">
             <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
+              icon={<AddIcon size={13} />}
               title="Добавить Template"
               onClick={(e) => {
                 e.stopPropagation();
@@ -63,11 +65,24 @@ const DocumentButtonMenu = ({
             />
           </Box>
         )}
+        {menuType === "NOTE_FOLDER" && (
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<AddIcon size={13} />}
+              title="Добавить Note"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/main/12/docs/note/${element.id}/create`);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
+        )}
         {menuType === "NOTE" && (
           <>
             <Box className="menu">
               <MenuItemComponent
-                icon={<RiPencilFill size={13} />}
+                icon={<Delete size={13} />}
                 title="Удалить Note"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -81,7 +96,7 @@ const DocumentButtonMenu = ({
         {menuType === "TEMPLATE" && (
           <Box className="menu">
             <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
+              icon={<Delete size={13} />}
               title="Удалить Template"
               onClick={(e) => {
                 e.stopPropagation();

@@ -1,39 +1,38 @@
+import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
+import { Box, Button, Collapse } from "@mui/material";
 import { useMemo, useState } from "react";
+import { useQueries, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { store } from "../../../../store";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
-import IconGenerator from "../../../IconPicker/IconGenerator";
-import "../../style.scss";
-import { useQueries, useQueryClient } from "react-query";
-import {
-  useTemplateFolderDeleteMutation,
-  useTemplateFoldersListQuery,
-} from "../../../../services/templateFolderService";
 import {
   useNoteFolderDeleteMutation,
   useNoteFoldersListQuery,
 } from "../../../../services/noteFolderService";
-import templateService from "../../../../services/templateService";
 import noteService from "../../../../services/noteService";
-import { listToNested } from "../../../../utils/listToNestedList";
-import AddIcon from "@mui/icons-material/Add";
-import TemplateFolderCreateModal from "./Components/Modals/TemplateFolderCreate";
-import NoteFolderCreateModal from "./Components/Modals/NoteFolderCreate";
+import {
+  useTemplateFolderDeleteMutation,
+  useTemplateFoldersListQuery,
+} from "../../../../services/templateFolderService";
+import templateService from "../../../../services/templateService";
+import { store } from "../../../../store";
 import { showAlert } from "../../../../store/alert/alert.thunk";
+import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import { listToNested } from "../../../../utils/listToNestedList";
+import IconGenerator from "../../../IconPicker/IconGenerator";
+import "../../style.scss";
 import DocumentButtonMenu from "./Components/DocumentsButtonMenu";
+import NoteFolderCreateModal from "./Components/Modals/NoteFolderCreate";
+import TemplateFolderCreateModal from "./Components/Modals/TemplateFolderCreate";
 import DocumentsRecursive from "./RecursiveBlock";
-import { BsThreeDots } from "react-icons/bs";
 
 const docsFolder = {
   label: "Documents",
   type: "USER_FOLDER",
   icon: "documents.svg",
   parent_id: "12",
-  id: "16",
+  id: "17",
   data: {
     permission: {
       read: true,
@@ -44,11 +43,16 @@ const docsFolder = {
   },
 };
 
-const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
+const DocumentsSidebar = ({
+  level = 1,
+  menuStyle,
+  setSubMenuIsOpen,
+  menuItem,
+}) => {
   const dispatch = useDispatch();
   const company = store.getState().company;
   const navigate = useNavigate();
-  const { projectId, folderId } = useParams();
+  const { projectId } = useParams();
   const [selected, setSelected] = useState({});
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -89,14 +93,21 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
 
   const activeStyle = {
     backgroundColor:
-      selected?.id === docsFolder?.id
+      docsFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      selected?.id === docsFolder?.id
+      docsFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
+  };
+
+  const labelStyle = {
+    color:
+      docsFolder?.id === menuItem?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text,
   };
 
   // --TEMPLATE FOLDERS QUERY--
@@ -325,6 +336,7 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     });
 
   const rowClickHandler = (id, element) => {
+    dispatch(menuActions.setMenuItem(element));
     if (id === 1 || id === 2) {
       if (element.children === null) {
         element.name === "Templates"
@@ -347,6 +359,9 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     } else if (element.what_is === "note") {
       setOpenedNoteFolders((prev) => [...prev, id]);
     }
+    if (element.type === "FOLDER") {
+      navigate(`/main/12`);
+    }
   };
 
   const clickHandler = (e) => {
@@ -357,6 +372,7 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
+    navigate(`/main/12`);
   };
 
   // --CREATE FOLDERS--
@@ -367,8 +383,9 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       : setTemplateFolderModalType("CREATE");
   };
   const onSelect = (id, element) => {
+    setSelected(element);
     if (element.type !== "FOLDER" && element.what_is === "template") {
-      navigate(`/main/12/docs/template/${id}`);
+      navigate(`/main/12/docs/template/${element?.id}/${id}`);
     } else if (element.type !== "FOLDER" && element.what_is === "note") {
       navigate(`/main/12/docs/note/${element?.id}/${id}`);
     }
@@ -379,23 +396,12 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
-          className={`nav-element ${
-            docsFolder?.isChild &&
-            (selected !== docsFolder?.slug ? "active-with-child" : "active")
-          }`}
+          className="nav-element"
           onClick={(e) => {
             clickHandler(e);
           }}
         >
-          <div
-            className="label"
-            style={{
-              color:
-                selected?.id === docsFolder?.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text,
-            }}
-          >
+          <div className="label" style={labelStyle}>
             <IconGenerator icon={"folder.svg"} size={18} />
             Documents
           </div>
@@ -419,6 +425,7 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             handleOpenNotify={handleOpenNotify}
             onSelect={onSelect}
             setSelected={setSelected}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>

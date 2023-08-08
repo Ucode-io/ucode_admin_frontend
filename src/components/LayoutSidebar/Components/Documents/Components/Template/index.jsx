@@ -46,7 +46,7 @@ const tabs = [
 
 const Template = () => {
   const form = useForm();
-  const { projectId, templateId } = useParams();
+  const { projectId, templateId, folderId } = useParams();
   const queryClient = useQueryClient();
   const [queryParams, setQueryParams] = useSearchParams();
   const selectedTabIndex = Number(queryParams.get("tab") ?? 0);
@@ -81,7 +81,7 @@ const Template = () => {
   useEffect(() => {
     if (!Boolean(templateId)) {
       form.reset({
-        folderId: queryParams.get("folder_id"),
+        folderId: folderId,
         commit_id: "",
         html: "",
         project_id: projectId,
@@ -111,15 +111,18 @@ const Template = () => {
   });
 
   const onSubmit = (values) => {
+    console.log("values", values);
     if (!!values.id) {
       updateTemplate({
         ...values,
+        tables: values.tables.map((item) => ({ ...item, relations: [] })),
       });
     } else {
       createTemplate({
         ...values,
         project_id: projectId,
-        folder_id: queryParams.get("folder_id"),
+        folder_id: folderId,
+        tables: values.tables.map((item) => ({ ...item, relations: [] })),
       });
     }
   };

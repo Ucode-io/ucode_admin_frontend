@@ -9,7 +9,6 @@ import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrappe
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useDispatch, useSelector } from "react-redux";
 import { mainActions } from "../../../store/main/main.slice";
-import { store } from "../../../store";
 import DataBase from "../Components/DataBase";
 import Users from "../Components/Users";
 import Permissions from "../Components/Permission";
@@ -32,7 +31,7 @@ const SubMenu = ({
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const menuItem = store.getState().menu.menuItem;
+  const menuItem = useSelector((state) => state.menu.menuItem);
 
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
@@ -158,14 +157,17 @@ const SubMenu = ({
                       <DataBase
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
                       />
                       <ScenarioSidebar
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
                       />
                       <DocumentsSidebar
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
                       />
                     </>
                   )}

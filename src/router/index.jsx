@@ -55,6 +55,8 @@ import DatabasePage from "../views/DataBase";
 import DatabaseConfiguration from "../views/DataBase/Configuration";
 import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import Note from "../components/LayoutSidebar/Components/Documents/Note";
+import ResourceDetail from "../views/Resources/Detail";
+import Connections from "../views/Matrix/Connections";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -172,6 +174,32 @@ const Router = () => {
           <Route index element={<PermissionDetail />} />
           <Route path="role/:roleId" element={<RoleDetail />} />
         </Route>
+
+      
+        <Route path="resources">
+            <Route path="create" element={<ResourceDetail />} />
+            <Route path=":resourceId" element={<ResourceDetail />} />
+
+            <Route path="elt">
+              <Route path="connections">
+                <Route index element={<Connections />} />
+                {/* <Route path="create" element={<ConnectionCreate />} /> */}
+                {/* <Route path=":connectionId" element={<ConnectionDetail />} /> */}
+              </Route>
+              {/* <Route path="sources">
+                <Route index element={<Sources />} />
+                <Route path="create" element={<SourceDetail />} />
+                <Route path=":sourceId" element={<SourceDetail />} />
+              </Route>
+              <Route path="destinations">
+                <Route index element={<Destinations />} />
+                <Route path="create" element={<DestinationDetail />} />
+                <Route path=":destinationId" element={<DestinationDetail />} />
+              </Route> */}
+            </Route>
+          </Route>
+
+
         <Route path=":appId/database/:resourceId/:tableSlug/:databaseId">
           <Route index element={<DatabasePage />} />
           <Route path="configuration" element={<DatabaseConfiguration />} />

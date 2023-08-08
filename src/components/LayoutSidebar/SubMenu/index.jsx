@@ -15,6 +15,7 @@ import Users from "../Components/Users";
 import Permissions from "../Components/Permission";
 import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
+import Resources from "../Components/Resources";
 
 const SubMenu = ({
   child,
@@ -39,15 +40,14 @@ const SubMenu = ({
   };
   return (
     <div
-      className={`SubMenu ${
-        !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
-      }`}
+      className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
+        }`}
       style={{
         background: menuStyle?.background || "#fff",
       }}
     >
       <div className="body">
-        <div className="header" onClick={() => {}}>
+        <div className="header" onClick={() => { }}>
           {subMenuIsOpen && (
             <h2
               style={{
@@ -164,6 +164,10 @@ const SubMenu = ({
                         setSubMenuIsOpen={setSubMenuIsOpen}
                       />
                       <DocumentsSidebar
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                      />
+                      <Resources
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
                       />

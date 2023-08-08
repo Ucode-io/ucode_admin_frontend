@@ -2,7 +2,6 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useMemo, useState } from "react";
-import { FaFolder } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { store } from "../../../../store";
@@ -19,17 +18,15 @@ import {
   useNoteFoldersListQuery,
 } from "../../../../services/noteFolderService";
 import templateService from "../../../../services/templateService";
-import { CgFileDocument } from "react-icons/cg";
 import noteService from "../../../../services/noteService";
 import { listToNested } from "../../../../utils/listToNestedList";
-import DocumentsRecursive from "./RecursiveBlock";
-import { TbEdit } from "react-icons/tb";
-import DocumentButtonMenu from "./Components/DocumentsButtonMenu";
-import { BsThreeDots } from "react-icons/bs";
 import AddIcon from "@mui/icons-material/Add";
 import TemplateFolderCreateModal from "./Components/Modals/TemplateFolderCreate";
 import NoteFolderCreateModal from "./Components/Modals/NoteFolderCreate";
 import { showAlert } from "../../../../store/alert/alert.thunk";
+import DocumentButtonMenu from "./Components/DocumentsButtonMenu";
+import DocumentsRecursive from "./RecursiveBlock";
+import { BsThreeDots } from "react-icons/bs";
 
 const docsFolder = {
   label: "Documents",
@@ -51,7 +48,7 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const dispatch = useDispatch();
   const company = store.getState().company;
   const navigate = useNavigate();
-  const { projectId, templateId, noteId } = useParams();
+  const { projectId, folderId } = useParams();
   const [selected, setSelected] = useState({});
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -370,13 +367,12 @@ const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       : setTemplateFolderModalType("CREATE");
   };
   const onSelect = (id, element) => {
-    // if (id === 1 || element.what_is === "template") {
-    //   navigate(`/main/12/docs/template/${id}`);
-    // } else if (id === 6 || element.what_is === "note") {
-    //   navigate(`/main/12/docs/note/${id}`);
-    // }
+    if (element.type !== "FOLDER" && element.what_is === "template") {
+      navigate(`/main/12/docs/template/${id}`);
+    } else if (element.type !== "FOLDER" && element.what_is === "note") {
+      navigate(`/main/12/docs/note/${element?.id}/${id}`);
+    }
   };
-  console.log("computed", sidebarElements);
 
   return (
     <Box>

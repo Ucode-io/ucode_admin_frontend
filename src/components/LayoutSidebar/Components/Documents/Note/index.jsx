@@ -17,7 +17,9 @@ import { Box, Button } from "@mui/material";
 import Header, { HeaderExtraSide, HeaderLeftSide } from "../../Header";
 import HFTextField from "../../../../FormElements/HFTextField";
 import ButtonTabs from "../Components/ButtonTabs";
-import Editor from "../Components/EditorJS";
+import EditorJs from "../Components/EditorJS";
+import styles from "./style.module.scss";
+import NoteSettings from "./NoteSettings";
 
 const tabs = [
   {
@@ -40,7 +42,7 @@ const center = {
 
 const Note = () => {
   const form = useForm();
-  const { projectId, noteId } = useParams();
+  const { projectId, noteId, folderId } = useParams();
   const company = store.getState().company;
   const [queryParams, setQueryParams] = useSearchParams();
   const selectedTabIndex = Number(queryParams.get("tab") ?? 0);
@@ -83,7 +85,7 @@ const Note = () => {
   useEffect(() => {
     if (!Boolean(noteId)) {
       form.reset({
-        folderId: queryParams.get("folder_id"),
+        folderId: folderId,
         commit_id: "",
         json: {},
         project_id: projectId,
@@ -121,28 +123,32 @@ const Note = () => {
       createNote({
         ...values,
         project_id: projectId,
-        folder_id: queryParams.get("folder_id"),
+        folder_id: folderId,
       });
     }
   };
 
   return (
     <FormProvider {...form}>
-      <Box>
-        <Header bg="dark.secondary" color="white" border="none">
+      <Box backgroundColor="white" height={"100%"}>
+        <Header border="none">
           <HeaderLeftSide flex={1}>
-            <HFTextField control={form.control} />
+            <HFTextField
+              control={form.control}
+              name="title"
+              className={styles.input}
+            />
           </HeaderLeftSide>
 
-          <HeaderExtraSide h="full">
+          <HeaderExtraSide height="100%">
             <Button variant="contained" onClick={form.handleSubmit(onSubmit)}>
               Save changes
             </Button>
           </HeaderExtraSide>
 
-          <HeaderExtraSide h="full">
+          <HeaderExtraSide height="100%">
             <ButtonTabs
-              w="350px"
+              width="350px"
               selectedTabIndex={selectedTabIndex}
               ml="auto"
               tabs={tabs}
@@ -153,7 +159,7 @@ const Note = () => {
 
         <Box style={center}>
           <Box flex={1}>
-            <Editor
+            <EditorJs
               control={form.control}
               name={"json"}
               isLoading={isLoading}
@@ -161,17 +167,12 @@ const Note = () => {
             />
           </Box>
 
-          <Box
-            h="calc(100vh - 50px)"
-            w="350px"
-            minW="350px"
-            backgroundColor={"dark.main"}
-          >
-            {/* {token ? (
+          <Box height="calc(100vh - 50px)" width="350px" minW="350px">
+            {token ? (
               ""
             ) : (
               <NoteSettings selectedTabIndex={selectedTabIndex} form={form} />
-            )} */}
+            )}
           </Box>
         </Box>
       </Box>

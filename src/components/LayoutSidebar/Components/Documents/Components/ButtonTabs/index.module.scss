@@ -9,16 +9,16 @@
     align-items: center;
     justify-content: center;
     border-top: 2px solid transparent;
-    color: #ffffff99;
+    color: #000;
     cursor: pointer;
 
     &:hover {
-      background-color: #ffffff1a;
+      background-color: #fff;
     }
 
     &.active {
-      background-color: #1e272c;
-      border-color: #007AFF;
+      background-color: #007AFF;
+      color: #fff;
     }
   }
 }

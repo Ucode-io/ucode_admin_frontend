@@ -28,6 +28,8 @@ const NewSection = ({
     keyName: "key",
   });
 
+  const sectionFieldsWatch = mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.fields`);
+
   const openSettingsBlock = (field) => {
     if (!field.id?.includes("#")) {
       openFieldSettingsBlock(fieldsMap[field.id] ?? field);
@@ -114,17 +116,17 @@ const NewSection = ({
           onDrop={(dragResults) => onDrop(dragResults, 1)}
           getChildPayload={(index) => sectionFields.fields[index]}
         >
-          {sectionFields?.fields?.map((field, fieldIndex) => (
-            <Draggable key={field.key} style={{ minWidth: "300px" }}>
+          {sectionFieldsWatch?.map((field, fieldIndex) => (
+            <Draggable key={fieldIndex} style={{ minWidth: "300px" }}>
               <div className={styles.newsectionCardRow}>
                 <FormElementGenerator
-                  control={layoutForm.control}
+                  control={mainForm.control}
                   field={fieldsMap[field.id] ?? field}
-                  isLayout={true}
-                  sectionIndex={index}
-                  column={1}
-                  fieldIndex={fieldIndex}
-                  mainForm={mainForm}
+                  // isLayout={true}
+                  // sectionIndex={index}
+                  // column={1}
+                  // fieldIndex={fieldIndex}
+                  // mainForm={mainForm}
                   checkPermission={false}
                 />
                 <ButtonsPopover className={styles.deleteButton} onEditClick={() => openSettingsBlock(field)} onDeleteClick={() => removeField(fieldIndex, 1)} />

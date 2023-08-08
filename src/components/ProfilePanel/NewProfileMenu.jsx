@@ -370,7 +370,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
 
           <Box
             style={{
-              height: "calc((100% / 2) + 13px)",
+              height: "240px",
               display: "flex",
             }}
           >

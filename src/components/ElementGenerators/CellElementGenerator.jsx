@@ -25,7 +25,6 @@ const CellElementGenerator = ({ field = {}, row }) => {
     return result;
   }, [row, field]);
 
-  console.log('FIELD', field)
 
   const tablesList = useMemo(() => {
     return (

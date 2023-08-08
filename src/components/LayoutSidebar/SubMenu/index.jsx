@@ -15,6 +15,7 @@ import Permissions from "../Components/Permission";
 import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import { useTranslation } from "react-i18next";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
+import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
 
 const SubMenu = ({
   child,
@@ -170,6 +171,10 @@ const SubMenu = ({
                       <DocumentsSidebar
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
+                      />
+                      <MicroServiceSidebar
+                        menuStyle={menuStyle}
                         menuItem={menuItem}
                       />
                     </>

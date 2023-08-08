@@ -56,6 +56,7 @@ import DatabaseConfiguration from "../views/DataBase/Configuration";
 import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import Note from "../components/LayoutSidebar/Components/Documents/Note";
 import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
+import MicroservicePage from "../components/LayoutSidebar/Components/MicroService";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -180,6 +181,9 @@ const Router = () => {
         <Route path=":appId/scenario/:categoryId">
           <Route index element={<Scenarios />} />
           <Route path=":scenarioId" element={<Scenarios />} />
+        </Route>
+        <Route path=":appId/micro-frontend">
+          <Route index element={<MicroservicePage />} />
         </Route>
         <Route path=":appId/docs">
           <Route path="note/:folderId">

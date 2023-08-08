@@ -36,9 +36,8 @@
     }
   }
   .field_summary_item {
-    // width: 200px;
-    // min-height: 20px !important;
     min-width: 50px;
+    box-sizing: border-box;
     min-height: 45px;
     margin-top: 0px;
     background: #fff;

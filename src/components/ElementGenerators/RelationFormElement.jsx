@@ -1,6 +1,6 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { get } from "@ngard/tiny-get";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMemo } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
@@ -22,6 +22,7 @@ import constructorFunctionService from "../../services/constructorFunctionServic
 import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
 import request from "../../utils/request";
 import { useSelector } from "react-redux";
+import Select from "react-select";
 
 const RelationFormElement = ({
   control,
@@ -138,11 +139,13 @@ const AutoCompleteElement = ({
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
   const isUserId = useSelector((state) => state?.auth?.userId);
-  const ids = field?.attributes?.is_user_id_default ? isUserId : undefined
+  const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
   const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
+  const [page, setPage] = useState(1);
+  const [allOptions, setAllOptions] = useState([]);
 
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
@@ -163,7 +166,7 @@ const AutoCompleteElement = ({
   }, [autoFilters, filtersHandler]);
 
   const { data: optionsFromFunctions } = useQuery(
-    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
+    ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
         `/invoke_function/${field?.attributes?.function_path}`,
@@ -172,7 +175,7 @@ const AutoCompleteElement = ({
             table_slug: tableSlug,
             ...autoFiltersValue,
             search: debouncedValue,
-            limit: 10,
+            limit: 10 * page,
             offset: 0,
             view_fields:
               field?.view_fields?.map((field) => field.slug) ??
@@ -195,9 +198,9 @@ const AutoCompleteElement = ({
       },
     }
   );
-  
+
   const { data: optionsFromLocale } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
+    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, page],
     () => {
       if (!tableSlug) return null;
       return constructorObjectService.getList(tableSlug, {
@@ -209,7 +212,7 @@ const AutoCompleteElement = ({
           },
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
-          limit: 10,
+          limit: 10 * page,
         },
       });
     },
@@ -230,11 +233,14 @@ const AutoCompleteElement = ({
   const options = useMemo(() => {
     if (field?.attributes?.function_path) {
       return optionsFromFunctions ?? [];
+    } else {
+      return optionsFromLocale ?? [];
     }
-    else {
-      return optionsFromLocale ?? []
-    };
-  }, [optionsFromFunctions, optionsFromLocale, field?.attributes?.function_path]);
+  }, [
+    optionsFromFunctions,
+    optionsFromLocale,
+    field?.attributes?.function_path,
+  ]);
 
   const getValueData = async () => {
     try {
@@ -251,10 +257,6 @@ const AutoCompleteElement = ({
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option);
   };
-  const computedValue = useMemo(() => {
-    const findedOption = options?.options?.find((el) => el?.guid === value);
-    return findedOption ? [findedOption] : [];
-  }, [options, value]);
 
   const setDefaultValue = () => {
     if (options?.slugOptions && multipleInsertField) {
@@ -274,9 +276,9 @@ const AutoCompleteElement = ({
         setFormValue(field_to, get(value, field_from));
       });
     } else {
-      const val = value?.[value?.length - 1];
-      setValue(val?.guid ?? null);
-      setLocalValue(val ? [val] : null);
+      const val = value;
+      setValue(val?.value ?? null);
+      setLocalValue(val?.value ? [val] : null);
 
       if (!field?.attributes?.autofill) return;
 
@@ -285,12 +287,52 @@ const AutoCompleteElement = ({
       });
     }
   };
-  
+
+  const computedOptions = useMemo(() => {
+    const value = [];
+    allOptions?.forEach((item) => {
+      const label = field?.attributes?.view_fields
+        ?.map((el) => item[el.slug])
+        .join(" ");
+      const option = { label, value: item?.guid };
+
+      const optionExists = value?.some(
+        (existingOption) => existingOption?.value === option.value
+      );
+      if (!optionExists) {
+        value.push(option);
+      }
+    });
+
+    return value;
+  }, [allOptions, field]);
+
+  const computedValue = useMemo(() => {
+    const findedOption = options?.options?.find((el) => el?.guid === value);
+    return findedOption ? [findedOption] : [];
+  }, [options, value]);
+
+  const computedInputValue = useMemo(() => {
+    if (Array.isArray(localValue?.length)) {
+      return localValue
+        ?.map((item) => ({
+          label: field?.attributes?.view_fields
+            ?.map((el) => item?.[el?.slug])
+            .join(" "),
+          value: item?.guid,
+        }))
+        .find((element) => element?.value === value);
+    } else {
+      return computedOptions?.find((item) => item?.value === value);
+    }
+  }, [localValue, value, computedOptions]);
+
   useEffect(() => {
     setLocalValue(
-      localValue?.filter((item) => {
-        return item?.[autoFiltersFieldFroms] === filtersHandler[0];
-      })
+      Array.isArray(localValue) &&
+        localValue?.filter((item) => {
+          return item?.[autoFiltersFieldFroms] === filtersHandler[0];
+        })
     );
   }, [filtersHandler]);
 
@@ -316,6 +358,20 @@ const AutoCompleteElement = ({
     setDefaultValue();
   }, [options, multipleInsertField]);
 
+  useEffect(() => {
+    if (field?.attributes?.function_path) {
+      const newOptions = optionsFromFunctions?.options ?? [];
+      setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
+    } else {
+      const newOptions = optionsFromLocale?.options ?? [];
+      setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
+    }
+  }, [optionsFromFunctions, optionsFromLocale]);
+
+  function loadMoreItems() {
+    setPage((prevPage) => prevPage + 1);
+  }
+
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -332,7 +388,7 @@ const AutoCompleteElement = ({
           tableSlug={tableSlug}
           error={error}
           disabledHelperText={disabledHelperText}
-          value={localValue ?? []}
+          value={localValue?.guid ?? []}
           setValue={(newValue) => {
             changeHandler(newValue, "cascading");
           }}
@@ -359,39 +415,26 @@ const AutoCompleteElement = ({
           }}
         />
       ) : (
-        <Autocomplete
-          disabled={disabled}
-          options={options?.options ?? []}
-          value={localValue ?? []}
-          freeSolo
-          onChange={(event, newValue) => {
-            changeHandler(newValue);
+        <Select
+          isDisabled={disabled}
+          options={computedOptions ?? []}
+          isClearable={true}
+          value={computedInputValue ?? []}
+          defaultValue={value ?? ""}
+          onChange={(e) => {
+            changeHandler(e);
+            setLocalValue(e);
           }}
-          noOptionsText={
-            <span
-              onClick={() => navigateToForm(tableSlug)}
-              style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-            >
-              Создать новый
-            </span>
-          }
-          inputValue={inputValue}
+          onMenuScrollToBottom={loadMoreItems}
+          inputChangeHandler={(e) => console.log("ssss", e)}
           onInputChange={(e, newValue) => {
-            setInputValue(newValue ?? null);
-            inputChangeHandler(newValue);
+            setInputValue(e ?? null);
+            inputChangeHandler(e);
           }}
-          disablePortal
-          blurOnSelect
-          openOnFocus
-          getOptionLabel={(option) => getRelationFieldLabel(field, option)}
-          multiple
-          isOptionEqualToValue={(option, value) => {
-            return option.guid === value.guid;
-          }}
-          renderInput={(params) => <TextField {...params} size="small" />}
-          renderTags={(value, index) => (
-            <>
-              {getOptionLabel(value[0])}
+          getOptionLabel={(option) => option?.label}
+          components={{
+            DropdownIndicator: () => null,
+            MultiValue: ({ data }) => (
               <IconGenerator
                 icon="arrow-up-right-from-square.svg"
                 style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -399,11 +442,12 @@ const AutoCompleteElement = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-                  navigateToForm(tableSlug, "EDIT", value[0]);
+                  navigateToForm(tableSlug, "EDIT", value);
                 }}
               />
-            </>
-          )}
+            ),
+          }}
+          isOptionEqualToValue={(option, value) => option.guid === value.guid}
         />
       )}
     </div>

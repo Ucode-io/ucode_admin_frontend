@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
@@ -10,6 +10,8 @@ import Header from "../../../../components/Header";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import CancelButton from "../../../../components/Buttons/CancelButton";
 import SaveButton from "../../../../components/Buttons/SaveButton";
+import authService from "../../../../services/auth/authService";
+import userService from "../../../../services/auth/userService";
 
 const UsersForm = () => {
   const navigate = useNavigate();
@@ -18,40 +20,62 @@ const UsersForm = () => {
   const role = useSelector((state) => state?.auth?.roleInfo);
   const clientType = useSelector((state) => state?.auth?.clientType);
   const userTableSlug = useSelector((state) => state?.auth?.loginTableSlug);
+  const projectId = useSelector((state) => state?.auth?.projectId);
 
-  // Update function
+
   const update = (data) => {
-    constructorObjectService
-      ?.update(userTableSlug, {
-        data: {
-          ...data,
-          guid: isUserInfo?.id,
-        },
+    const newPassword = data?.new_password;
+    const requestData = {
+      ...data,
+      guid: isUserInfo?.id,
+    };
+  
+    if (newPassword) {
+      requestData.password = newPassword;
+      resetPassword(newPassword)
+    } else {
+      delete requestData.password;
+    }
+    userService
+      ?.updateV2({
+       ...requestData,
       })
       .then((res) => {
         navigate(-1);
       });
+
+      if(newPassword) {
+
+     
+      }
   };
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       name: "",
       email: "",
       login: "",
       phone: "",
+      password: '',
       client_type_id: clientType?.id ?? "",
       role_id: role?.id ?? "",
     },
   });
 
-  // OnSubmit Function
+  const resetPassword = (newPassword) => {
+    authService.resetPassword( {
+      password: newPassword,
+      user_id: isUserId
+    })
+  }
+
   const onSubmit = (values) => {
     if (isUserInfo) return update(values);
   };
 
   useEffect(() => {
-    constructorObjectService.getById(userTableSlug, isUserId).then((res) => {
-      reset(res?.data?.response);
+    authService.getUserById(isUserId, { 'project-id': projectId, 'client-type-id': clientType?.id }).then((res) => {
+      reset(res);
     });
   }, []);
 
@@ -112,6 +136,7 @@ const UsersForm = () => {
               />
             </FRow>
 
+
             <FRow label="Type">
               <HFTextField
                 placeholder="Type"
@@ -133,6 +158,16 @@ const UsersForm = () => {
                 value={role?.name}
               />
             </FRow>
+
+            <FRow label="New Password">
+              <HFTextField
+                placeholder="New Password"
+                fullWidth
+                control={control}
+                name="new_password"
+              />
+            </FRow>
+
           </div>
         </FormCard>
       </form>

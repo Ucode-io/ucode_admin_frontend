@@ -112,7 +112,7 @@ const ConstructorTablesFormPage = () => {
         fields: [],
         // sections: computeSections(sections),
         // summary_section: computeSummarySection(sections),
-        view_relations: computeViewRelations(viewRelations),
+        // view_relations: computeViewRelations(viewRelations),
         actions,
       };
 
@@ -206,7 +206,12 @@ const ConstructorTablesFormPage = () => {
 
     const computedLayouts = data.layouts.map((layout) => ({
       ...layout,
-      summary_fields: layout?.summary_fields,
+      summary_fields: layout?.summary_fields.map((item) => {
+        return {
+          ...item,
+          field_name: item?.field_name ?? item?.title ?? item?.label,
+        };
+      }),
       tabs: layout?.tabs?.map((tab) => {
         if (
           tab.type === "Many2Many" ||
@@ -218,10 +223,11 @@ const ConstructorTablesFormPage = () => {
           tab.relation_type === "Recursive" ||
           tab.relation_type === "Many2One"
         ) {
+          console.log("layout", layout);
           return {
             order: tab?.order ?? 0,
             label: tab.title ?? tab.label,
-            field_name: tab?.title ?? tab.label,
+            field_name: tab?.title ?? tab.label ?? tab?.field_name,
             type: "relation",
             layout_id: layout.id,
             relation_id: tab.id,
@@ -230,6 +236,7 @@ const ConstructorTablesFormPage = () => {
             },
           };
         } else {
+          console.log("layout", layout);
           return {
             ...tab,
             sections: tab?.sections?.map((section, index) => ({
@@ -269,7 +276,7 @@ const ConstructorTablesFormPage = () => {
     const computedData = {
       ...data,
       // sections: computeSectionsOnSubmit(data.sections, data.summary_section),
-      view_relations: computeViewRelationsOnSubmit(data.view_relations),
+      // view_relations: computeViewRelationsOnSubmit(data.view_relations),
     };
 
     // return;

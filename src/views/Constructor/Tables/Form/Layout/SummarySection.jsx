@@ -42,18 +42,20 @@ const SummarySection = ({
     });
     return map;
   }, [fieldsList]);
-
-  console.log("sections", sections);
-  console.log("fieldsMap", fieldsMap);
-
+  
   const onDrop = (dropResult) => {
     const result = applyDrag(sections, dropResult);
 
-    if (result) {
+    if (!result) return;
+    if (result.length > sections.length) {
+      sectionsFieldArray.insert(dropResult.addedIndex, { ...dropResult.payload });
+    } else if (result.length < sections.length) {
+      sectionsFieldArray.remove(dropResult.removedIndex);
+    } else {
       sectionsFieldArray.move(dropResult.removedIndex, dropResult.addedIndex);
-      sectionsFieldArray.replace(result);
     }
   };
+
   const removeField = (index, colNumber) => {
     sectionsFieldArray.remove(index);
   };
@@ -84,6 +86,7 @@ const SummarySection = ({
         orientation="horizontal"
         dropPlaceholder={{ className: "drag-row-drop-preview" }}
         onDrop={(dragResults) => onDrop(dragResults, 1)}
+          getChildPayload={(index) => sections[index]}
       >
         {sections?.map((field, fieldIndex) => (
           <Draggable key={field.key}>
@@ -92,6 +95,7 @@ const SummarySection = ({
                 <FormElementGenerator
                   control={mainForm.control}
                   field={field}
+                  checkPermission={false}
                   // field={fieldsMap[field?.id] ?? field}
                   // isLayout={true}
                   // sectionIndex={fieldIndex}

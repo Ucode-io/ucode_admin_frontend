@@ -118,6 +118,11 @@ const FieldsBlock = ({
   //   console.log('ssssssss index', value)
   // }, 300);
 
+  console.log('sssssssss', useWatch({
+    control: mainForm.control,
+    name: `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}`,
+  }))
+
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>
@@ -168,12 +173,12 @@ const FieldsBlock = ({
                 dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
                   ...unusedRelations[i],
-                  field_name: unusedRelations[i]?.label ?? unusedFields[i]?.title,
+                  field_name: unusedRelations[i]?.label ?? 'no title',
                   relation_type: unusedRelations[i].type,
                 })}
               >
-                {unusedRelations?.map((relation) => (
-                  <Draggable key={relation.id} style={{ overflow: "visible" }}>
+                {unusedRelations?.map((relation, relationIndex) => (
+                  <Draggable key={relationIndex} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator field={relation} control={mainForm.control} disabledHelperText checkPermission={false}/>
                     </div>

@@ -51,6 +51,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
     const data = {
       ...field,
       id: generateGUID(),
+      label: Object.values(field?.attributes).find((item) => item),
     };
 
     if (!id) {

@@ -152,6 +152,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
             default_value: el.default_value ?? "",
           })) ?? [],
       attributes: computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
+      name: Object.values(values?.attributes).find((item) => item),
       app_id: appId,
       order: views?.length ?? 0,
     };

@@ -3,13 +3,13 @@ import { Box, Card, Modal, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
 import HFSelect from "../../components/FormElements/HFSelect";
 import menuSettingsService from "../../services/menuSettingsService";
-import microfrontendService from "../../services/microfrontendService";
+import { useMicrofrontendListQuery } from "../../services/microfrontendService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
+import { store } from "../../store";
 
 const MicrofrontendLinkModal = ({
   closeModal,
@@ -17,9 +17,8 @@ const MicrofrontendLinkModal = ({
   selectedFolder,
   getMenuList,
 }) => {
-  const { projectId } = useParams();
   const queryClient = useQueryClient();
-  const [list, setList] = useState();
+  const company = store.getState().company;
 
   const onSubmit = (data) => {
     if (selectedFolder.type === "MICROFRONTEND") {
@@ -34,7 +33,7 @@ const MicrofrontendLinkModal = ({
   useEffect(() => {
     if (selectedFolder.type === "MICROFRONTEND")
       menuSettingsService
-        .getById(selectedFolder.id, projectId)
+        .getById(selectedFolder.id, company.projectId)
         .then((res) => {
           reset(res);
         })
@@ -74,22 +73,14 @@ const MicrofrontendLinkModal = ({
       });
   };
 
-  const getTables = () => {
-    microfrontendService.getList().then((res) => {
-      setList(res);
-    });
-  };
-
-  useEffect(() => {
-    getTables();
-  }, []);
+  const { data: microfrontend } = useMicrofrontendListQuery();
 
   const microfrontendOptions = useMemo(() => {
-    return list?.functions?.map((item, index) => ({
+    return microfrontend?.functions?.map((item, index) => ({
       label: item.name,
       value: item.id,
     }));
-  }, [list]);
+  }, [microfrontend]);
 
   return (
     <div>

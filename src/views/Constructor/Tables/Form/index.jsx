@@ -32,7 +32,6 @@ const ConstructorTablesFormPage = () => {
   const navigate = useNavigate();
   const { id, slug, appId } = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
-
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
 
@@ -41,15 +40,6 @@ const ConstructorTablesFormPage = () => {
       show_in_menu: true,
       fields: [],
       app_id: appId,
-      // sections: [
-      //   {
-      //     column: "SINGLE",
-      //     fields: [],
-      //     label: "Детали",
-      //     id: generateGUID(),
-      //     icon: "circle-info.svg",
-      //   },
-      // ],
       summary_section: {
         id: generateGUID(),
         label: "Summary",
@@ -59,7 +49,6 @@ const ConstructorTablesFormPage = () => {
         column: "SINGLE",
         is_summary_section: true,
       },
-      // view_relations: [],
       label: "",
       description: "",
       slug: "",
@@ -76,10 +65,6 @@ const ConstructorTablesFormPage = () => {
       table_slug: slug,
     });
 
-    // const getSectionsData = constructorSectionService.getList({
-    //   table_slug: slug,
-    // });
-
     const getActions = constructorCustomEventService.getList({
       table_slug: slug,
     });
@@ -93,26 +78,12 @@ const ConstructorTablesFormPage = () => {
       });
 
     try {
-      const [
-        tableData,
-        // { sections = [] },
-        { relations: viewRelations = [] },
-        { custom_events: actions = [] },
-      ] = await Promise.all([
-        getTableData,
-        // getSectionsData,
-        getViewRelations,
-        getActions,
-        getLayouts,
-      ]);
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getViewRelations, getActions, getLayouts]);
 
       const data = {
         ...mainForm.getValues(),
         ...tableData,
         fields: [],
-        // sections: computeSections(sections),
-        // summary_section: computeSummarySection(sections),
-        // view_relations: computeViewRelations(viewRelations),
         actions,
       };
 
@@ -132,13 +103,8 @@ const ConstructorTablesFormPage = () => {
         table_slug: slug,
         relation_table_slug: slug,
       });
-
       const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
-
-      // remove fields which type
-
       mainForm.setValue("fields", fields);
-
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
         relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
@@ -188,22 +154,10 @@ const ConstructorTablesFormPage = () => {
       })
       .catch(() => setBtnLoader(false));
   };
+  
   const updateConstructorTable = (data) => {
     setBtnLoader(true);
-
     const updateTableData = constructorTableService.update(data, projectId);
-
-    // const updateSectionData = constructorSectionService.update({
-    //   sections: addOrderNumberToSections(data.sections),
-    //   table_slug: data.slug,
-    //   table_id: id,
-    // });
-
-    // const updateViewRelationsData = constructorViewRelationService.update({
-    //   view_relations: data.view_relations,
-    //   table_slug: data.slug,
-    // });
-  
     const computedLayouts = data.layouts.map((layout) => ({
       ...layout,
       summary_fields: layout?.summary_fields,
@@ -218,7 +172,7 @@ const ConstructorTablesFormPage = () => {
           tab.relation_type === "Recursive" ||
           tab.relation_type === "Many2One"
         ) {
-          console.log('layout', layout)
+          console.log("layout", layout);
           return {
             order: tab?.order ?? 0,
             label: tab.title ?? tab.label,
@@ -231,7 +185,7 @@ const ConstructorTablesFormPage = () => {
             },
           };
         } else {
-          console.log('layout', layout)
+          console.log("layout", layout);
           return {
             ...tab,
             sections: tab?.sections?.map((section, index) => ({

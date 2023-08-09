@@ -1,23 +1,28 @@
+import { Button, Drawer } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
-
-import constructorObjectService from "../../../services/constructorObjectService";
-import { pageToOffset } from "../../../utils/pageToOffset";
-import useTabRouter from "../../../hooks/useTabRouter";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
+import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
+import useTabRouter from "../../../hooks/useTabRouter";
+import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
+import constructorObjectService from "../../../services/constructorObjectService";
+import layoutService from "../../../services/layoutService";
+import { mergeStringAndState } from "../../../utils/jsonPath";
+import { pageToOffset } from "../../../utils/pageToOffset";
+import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
-import { useSelector } from "react-redux";
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
-import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
-import { useTranslation } from "react-i18next";
-import layoutService from "../../../services/layoutService";
-import applicationService from "../../../services/applicationService";
-import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
-import { store } from "../../../store";
-import { mergeStringAndState } from "../../../utils/jsonPath";
-import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { useFieldArray, useForm } from "react-hook-form";
+import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
+import { listToMap } from "../../../utils/listToMap";
+import constructorFieldService from "../../../services/constructorFieldService";
+import constructorRelationService from "../../../services/constructorRelationService";
+import { generateGUID } from "../../../utils/generateID";
 
 const TableView = ({
   tab,
@@ -32,6 +37,7 @@ const TableView = ({
   setDataLength,
   setSelectedObjects,
   selectedLinkedObject,
+  selectedTabIndex,
   selectedLinkedTableSlug,
   menuItem,
   setFormValue,
@@ -40,15 +46,105 @@ const TableView = ({
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
-  const { tableSlug, appId } = useParams();
+  const { id, slug, tableSlug, appId } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [deleteLoader, setDeleteLoader] = useState(false);
+  const [drawerState, setDrawerState] = useState(null);
   // const selectTableSlug = selectedLinkedObject
   //   ? selectedLinkedObject?.split("#")?.[1]
   //   : tableSlug;
+
+  const mainForm = useForm({
+    defaultValues: {
+      show_in_menu: true,
+      fields: [],
+      app_id: appId,
+      // sections: [
+      //   {
+      //     column: "SINGLE",
+      //     fields: [],
+      //     label: "Детали",
+      //     id: generateGUID(),
+      //     icon: "circle-info.svg",
+      //   },
+      // ],
+      summary_section: {
+        id: generateGUID(),
+        label: "Summary",
+        fields: [],
+        icon: "",
+        order: 1,
+        column: "SINGLE",
+        is_summary_section: true,
+      },
+      // view_relations: [],
+      label: "",
+      description: "",
+      slug: "",
+      icon: "",
+    },
+    mode: "all",
+  });
+
+  const { fields, prepend, update, remove } = useFieldArray({
+    control: mainForm.control,
+    name: "fields",
+    keyName: "key",
+  });
+
+  const getRelationFields = async () => {
+    return new Promise(async (resolve) => {
+      const getFieldsData = constructorFieldService.getList({ table_id: id ?? menuItem?.table_id });
+
+      const getRelations = constructorRelationService.getList({
+        table_slug: slug,
+        relation_table_slug: slug,
+      });
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
+      mainForm.setValue("fields", fields);
+      const relationsWithRelatedTableSlug = relations?.map((relation) => ({
+        ...relation,
+        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
+      }));
+
+      const layoutRelations = [];
+      const tableRelations = [];
+
+      relationsWithRelatedTableSlug?.forEach((relation) => {
+        if (
+          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
+          (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
+          relation.type === "Recursive" ||
+          (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
+          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
+        ) {
+          layoutRelations.push(relation);
+        } else {
+          tableRelations.push(relation);
+        }
+      });
+
+      const layoutRelationsFields = layoutRelations.map((relation) => ({
+        ...relation,
+        id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
+        attributes: {
+          fields: relation.view_fields ?? [],
+        },
+        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
+      }));
+
+      mainForm.setValue("relations", relations);
+      mainForm.setValue("relationsMap", listToMap(relations));
+      mainForm.setValue("layoutRelations", layoutRelationsFields);
+      mainForm.setValue("tableRelations", tableRelations);
+      resolve();
+    });
+  };
+
+  // OLD CODE
 
   const columns = useMemo(() => {
     return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
@@ -91,9 +187,7 @@ const TableView = ({
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count)
-          ? 1
-          : Math.ceil(res.data?.count / limit),
+        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
       };
     },
   });
@@ -128,10 +222,9 @@ const TableView = ({
     }
   }, [tableData, reset]);
 
-  const { data: { custom_events: customEvents = [] } = {} } =
-    useCustomActionsQuery({
-      tableSlug,
-    });
+  const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
+    tableSlug,
+  });
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -158,9 +251,7 @@ const TableView = ({
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout"
-            ? setLayoutType("PopupLayout")
-            : setLayoutType("SimpleLayout");
+          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
         });
       });
   }, [menuItem.id, tableSlug]);
@@ -175,15 +266,7 @@ const TableView = ({
 
   const navigateToDetailPage = (row) => {
     if (view?.navigate?.params?.length || view?.navigate?.url) {
-      const params = view.navigate?.params
-        ?.map(
-          (param) =>
-            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-              param.value,
-              row
-            )}`
-        )
-        .join("&&");
+      const params = view.navigate?.params?.map((param) => `${mergeStringAndState(param.key, row)}=${mergeStringAndState(param.value, row)}`).join("&&");
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
@@ -195,57 +278,76 @@ const TableView = ({
     refetch();
   }, [view?.quick_filters?.length]);
 
+  const openFieldSettings = () => {
+    setDrawerState("CREATE");
+  };
+
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 ||
-        (new_list[tableSlug] &&
-          new_list[tableSlug].some((i) => i.checked))) && (
+      {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>{t("filters")}</p>
-          <FastFilter
-            view={view}
-            fieldsMap={fieldsMap}
-            getFilteredFilterFields={getFilteredFilterFields}
-            isVertical
-          />
+          <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
         </div>
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <ObjectDataTable
-          defaultLimit={view?.default_limit}
-          formVisible={formVisible}
-          setFormVisible={setFormVisible}
-          setFormValue={setFormValue}
-          isRelationTable={false}
-          removableHeight={isDocView ? 150 : 215}
-          currentPage={currentPage}
-          pagesCount={pageCount}
-          columns={columns}
-          limit={limit}
-          setLimit={setLimit}
-          onPaginationChange={setCurrentPage}
-          loader={tableLoader || deleteLoader}
-          data={tableData}
-          disableFilters
-          isChecked={(row) => selectedObjects?.includes(row.guid)}
-          onCheckboxChange={!!customEvents?.length && onCheckboxChange}
-          filters={filters}
-          filterChangeHandler={filterChangeHandler}
-          onRowClick={navigateToEditPage}
-          onDeleteClick={deleteHandler}
-          tableSlug={tableSlug}
-          tableStyle={{
-            borderRadius: 0,
-            border: "none",
-            borderBottom: "1px solid #E5E9EB",
-            width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "100%",
-          }}
-          isResizeble={true}
-          {...props}
-        />
+        <div style={{ display: "flex", alignItems: "flex-start" }}>
+          <ObjectDataTable
+            defaultLimit={view?.default_limit}
+            formVisible={formVisible}
+            setFormVisible={setFormVisible}
+            setFormValue={setFormValue}
+            isRelationTable={false}
+            removableHeight={isDocView ? 150 : 215}
+            currentPage={currentPage}
+            pagesCount={pageCount}
+            columns={columns}
+            limit={limit}
+            setLimit={setLimit}
+            onPaginationChange={setCurrentPage}
+            loader={tableLoader || deleteLoader}
+            data={tableData}
+            disableFilters
+            isChecked={(row) => selectedObjects?.includes(row.guid)}
+            onCheckboxChange={!!customEvents?.length && onCheckboxChange}
+            filters={filters}
+            filterChangeHandler={filterChangeHandler}
+            onRowClick={navigateToEditPage}
+            onDeleteClick={deleteHandler}
+            tableSlug={tableSlug}
+            tableStyle={{
+              borderRadius: 0,
+              border: "none",
+              borderBottom: "1px solid #E5E9EB",
+              width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
+              margin: 0,
+            }}
+            isResizeble={true}
+            {...props}
+          />
+
+          <Button variant="outlined" style={{ borderColor: "#F0F0F0", borderRadius: "0px" }} onClick={openFieldSettings}>
+            <AddRoundedIcon />
+            Column
+          </Button>
+        </div>
       </PermissionWrapperV2>
 
       <ModalDetailPage open={open} setOpen={setOpen} />
+
+      <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
+        <FieldSettings
+          closeSettingsBlock={() => setDrawerState(null)}
+          isTableView={true}
+          onSubmit={(index, field) => update(index, field)}
+          field={drawerState}
+          formType={drawerState}
+          mainForm={mainForm}
+          selectedTabIndex={selectedTabIndex}
+          height={`calc(100vh - 48px)`}
+          getRelationFields={getRelationFields}
+        />
+      </Drawer>
     </div>
   );
 };

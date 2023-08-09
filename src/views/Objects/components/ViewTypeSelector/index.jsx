@@ -1,10 +1,4 @@
-import {
-  AccountTree,
-  CalendarMonth,
-  Description,
-  Settings,
-  TableChart,
-} from "@mui/icons-material";
+import { AccountTree, CalendarMonth, Description, Settings, TableChart } from "@mui/icons-material";
 import { Button, Modal, Popover } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useQueryClient } from "react-query";
@@ -31,18 +25,25 @@ import MoreButtonViewType from "./MoreButtonViewType";
 const ViewTabSelector = ({
   selectedTabIndex,
   setSelectedTabIndex,
+  settingsModalVisible,
+  setSettingsModalVisible,
+  isChanged,
+  setIsChanged,
+  selectedView,
+  defaultViewTab,
+  setSelectedView,
   views = [],
 }) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
+  // const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  // const [isChanged, setIsChanged] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
-  const [selectedView, setSelectedView] = useState(null);
+  // const [selectedView, setSelectedView] = useState(null);
   const [typeNewView, setTypeNewView] = useState(null);
 
   const handleClick = (event) => {
@@ -62,6 +63,7 @@ const ViewTabSelector = ({
     setSettingsModalVisible(true);
     setSelectedView(data);
   };
+
   const closeModal = () => {
     setSettingsModalVisible(false);
     if (isChanged) queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -105,14 +107,7 @@ const ViewTabSelector = ({
           </div>
 
           <div className={style.title}>
-            <IconGenerator
-              className={style.icon}
-              icon={
-                selectedTable?.isChild
-                  ? selectedTable?.icon
-                  : selectedTable?.icon
-              }
-            />
+            <IconGenerator className={style.icon} icon={selectedTable?.isChild ? selectedTable?.icon : selectedTable?.icon} />
             <h3>{selectedTable?.label ?? selectedTable?.title}</h3>
           </div>
         </div>
@@ -191,28 +186,12 @@ const ViewTabSelector = ({
             ))}
           </div> */}
 
-          <ViewTypeList
-            computedViewTypes={computedViewTypes}
-            handleClose={handleClose}
-            openModal={openModal}
-            setSelectedView={setSelectedView}
-            setTypeNewView={setTypeNewView}
-          />
+          <ViewTypeList computedViewTypes={computedViewTypes} handleClose={handleClose} openModal={openModal} setSelectedView={setSelectedView} setTypeNewView={setTypeNewView} />
         </Popover>
       </div>
 
-      <Modal
-        className={style.modal}
-        open={settingsModalVisible}
-        onClose={closeModal}
-      >
-        <ViewSettings
-          closeModal={closeModal}
-          isChanged={isChanged}
-          setIsChanged={setIsChanged}
-          viewData={selectedView}
-          typeNewView={typeNewView}
-        />
+      <Modal className={style.modal} open={settingsModalVisible} onClose={closeModal}>
+        <ViewSettings closeModal={closeModal} defaultViewTab={defaultViewTab} isChanged={isChanged} setIsChanged={setIsChanged} viewData={selectedView} typeNewView={typeNewView} />
       </Modal>
     </>
   );

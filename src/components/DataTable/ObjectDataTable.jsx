@@ -215,13 +215,18 @@ const ObjectDataTable = ({
                   key={index}
                   style={{
                     padding: "10px 4px",
+                    color: "#747474",
+                    fontSize: "13px",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "normal",
                     minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
                     width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
                     position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
                     left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
                     backgroundColor: "#fff",
                     zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
-                    color: formVisible && column?.required === true ? "red" : "",
+                    // color: formVisible && column?.required === true ? "red" : "",
                   }}
                 >
                   <div

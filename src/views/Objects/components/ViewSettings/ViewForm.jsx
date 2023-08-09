@@ -1,13 +1,14 @@
-import { Delete, FilterAlt, JoinInner, TableChart, AltRoute } from "@mui/icons-material";
-import InfoIcon from "@mui/icons-material/Info";
+import ChartAccountsWrapper from "@/views/Objects/components/ViewSettings/ChartAccountsWrapper";
+import { Delete } from "@mui/icons-material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { Tab, TabList, Tabs, TabPanel } from "react-tabs";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CancelButton from "../../../../components/Buttons/CancelButton";
 import SaveButton from "../../../../components/Buttons/SaveButton";
 import FRow from "../../../../components/FormElements/FRow";
 import HFSelect from "../../../../components/FormElements/HFSelect";
+import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import useWatch from "../../../../hooks/useWatch";
 import constructorViewService from "../../../../services/constructorViewService";
@@ -18,17 +19,11 @@ import ColumnsTab from "./ColumnsTab";
 import GanttSettings from "./GanttSettings";
 import GroupsTab from "./GroupsTab";
 import MultipleInsertSettings from "./MultipleInsertSettings";
+import NavigateSettings from "./NavigateSettings";
 import QuickFiltersTab from "./QuicFiltersTab";
 import styles from "./style.module.scss";
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import ChartAccounts from "./ChartAccounts";
-import ChartAccountsWrapper from "@/views/Objects/components/ViewSettings/ChartAccountsWrapper";
-import constructorFieldService from "@/services/constructorFieldService";
-import HFSwitch from "../../../../components/FormElements/HFSwitch";
-import NavigateSettings from "./NavigateSettings";
-import ViewsList from "./ViewsList";
 
-const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
+const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
@@ -191,10 +186,12 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
       .catch(() => setDeleteBtnLoader(false));
   };
 
+  console.log('ksejnfkjernfjekr', views)
+
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
-        <Tabs>
+        <Tabs defaultIndex={defaultViewTab}>
           <div className={styles.section}>
             <TabList style={{ marginBottom: "1px" }}>
               <Tab>Information</Tab>
@@ -284,7 +281,6 @@ const getInitialValues = (
   numberFieldValue,
   navigate
 ) => {
-  console.log("navigate", navigate);
   if (initialValues === "NEW")
     return {
       type: typeNewView,

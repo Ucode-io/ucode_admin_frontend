@@ -48,6 +48,7 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder, getMenuList }) =>
         parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
         type: "TABLE",
         table_id: data?.table_id,
+        label: Object.values(data?.attributes).find((item) => item),
       })
       .then(() => {
         closeModal();

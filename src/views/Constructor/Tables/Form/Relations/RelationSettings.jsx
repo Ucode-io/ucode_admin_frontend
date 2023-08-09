@@ -220,7 +220,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
 
     if (formType === "CREATE") {
       constructorRelationService
-        .create(data)
+        .create({...data, title: Object.values(data?.attributes).find((item) => item)})
         .then((res) => {
           updateRelations();
         })

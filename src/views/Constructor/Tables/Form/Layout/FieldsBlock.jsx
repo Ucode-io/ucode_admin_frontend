@@ -106,21 +106,6 @@ const FieldsBlock = ({
 
   const languages = useSelector((state) => state.languages.list);
 
-  // let watch = useWatch({
-  //   control: mainForm.control,
-  //   name: `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}`,
-  // });
-
-  // const handleNameChange = (event) => {
-  //   mainForm.setValue(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.label`, event.target.value);
-  //   updateSectionTab(index, { label: event.target.value, ...watch });
-  // };
-
-  // const updateOptions = useDebounce((value, index) => {
-  //   sectionTabs[index].label = value;
-  //   console.log('ssssssss index', value)
-  // }, 300);
-
   return (
     <div className={styles.settingsBlock}>
       <div className={styles.settingsBlockHeader}>

@@ -90,9 +90,7 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
   const submitHandler = (values) => {
     const computedValues = {
       ...values,
-      label: values.label.length ? values.label : values.label_uz.length ? values.label_uz : values.label_en,
-      label_uz: values.label_uz.length ? values.label_uz : values.label.length ? values.label : values.label_en,
-      label_en: values.label_en.length ? values.label_en : values.label.length ? values.label : values.label_uz,
+      label: Object.values(values?.attributes).find((item) => item),
     };
     if (formType === "CREATE") createAction(computedValues);
     else updateAction(computedValues);

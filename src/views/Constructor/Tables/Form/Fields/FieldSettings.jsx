@@ -94,6 +94,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, 
     const data = {
       ...field,
       id: generateGUID(),
+      label: Object.values(field?.attributes).find((item) => item),
     };
 
     if (id || menuItem?.table_id) {

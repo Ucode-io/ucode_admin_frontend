@@ -49,7 +49,7 @@ const FolderCreateModal = ({ closeModal, loading, modalType, appId, selectedFold
         ...data,
         parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
         type: selectedFolder?.type || "FOLDER",
-        label: data.label,
+        label: Object.values(data?.attributes).find(item => item),
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);

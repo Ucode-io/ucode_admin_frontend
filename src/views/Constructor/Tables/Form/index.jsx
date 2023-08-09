@@ -147,7 +147,7 @@ const ConstructorTablesFormPage = () => {
   const createConstructorTable = (data) => {
     setBtnLoader(true);
 
-    dispatch(createConstructorTableAction(data))
+    dispatch(createConstructorTableAction({...data, label: Object.values(data?.attributes).find(item => item)}))
       .unwrap()
       .then((res) => {
         navigate(-1);

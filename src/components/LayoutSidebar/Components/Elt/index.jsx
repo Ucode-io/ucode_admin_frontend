@@ -1,22 +1,20 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Menu, MenuItem, Tooltip } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { store } from "../../../../store";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { useResourceCreateFromClusterMutation, useResourceDeleteMutation, useResourceListQuery } from "../../../../services/resourceService";
-import RecursiveBlock from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
 import StorageIcon from '@mui/icons-material/Storage';
+import {resourceTypes} from '../../../../utils/resourceConstants'
+import RecursiveBlock from "./RecursiveBlock";
+import DatabasesConnectIcon from "../../../../assets/icons/DatabaseIcon";
 import { TbDatabaseExport } from "react-icons/tb";
 import { BiGitCompare } from "react-icons/bi";
 import { IoEnter, IoExit } from "react-icons/io5";
-// import { resourceTypes } from "utils/resourceConstants";
-import {resourceTypes} from '../../../../utils/resourceConstants'
-// import environmentStore from "../../../../store/environment";
-
 
 const dataBase = {
     label: "Resources",
@@ -34,7 +32,7 @@ const dataBase = {
     },
 };
 
-const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
+const EltResources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     const navigate = useNavigate();
     const { projectId, resourceId } = useParams();
     const [childBlockVisible, setChildBlockVisible] = useState(false);
@@ -44,7 +42,6 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     const open = Boolean(anchorEl);
     const authStore = store.getState().auth;
     
-    console.log('projectId', authStore)
 
     const { data: { resources } = {} } = useResourceListQuery({
         params: {
@@ -59,6 +56,30 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const sidebarElements = useMemo(
+    () => [
+      {
+        id: 1,
+        title: "Connections",
+        icon: BiGitCompare,
+        link: `/project/${projectId}/elt/connections`,
+      },
+      {
+        id: 2,
+        title: "Sources",
+        icon: IoExit,
+        link: `/project/${projectId}/elt/sources`,
+      },
+      {
+        id: 3,
+        title: "Destinations",
+        icon: IoEnter,
+        link: `/project/${projectId}/elt/destinations`,
+      },
+    ],
+    [projectId]
+  );
 
 
     const { mutate: deleteResource, isLoading: deleteLoading } =
@@ -138,50 +159,10 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
                                     : menuStyle?.text,
                         }}
                     >
-                        <IconGenerator icon={"database.svg"} size={18} />
-                        Resources
+                        {/* <IconGenerator icon={"database.svg"} size={18} /> */}
+                        <DatabasesConnectIcon/>
+                        Elt
                     </div>
-
-                    <Box mt={1} sx={{ cursor: 'pointer' }}>
-                        <Tooltip title="Add resource" placement="top">
-                            <Box className="">
-                                <StorageIcon
-                                    size={13}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleClick(e)
-                                        handleOpenNotify(e, "CREATE_FOLDER");
-                                    }}
-                                    style={{
-                                        color:
-                                            selected?.id === dataBase?.id
-                                                ? menuStyle?.active_text
-                                                : menuStyle?.text || "",
-                                    }}
-                                />
-                            </Box>
-                        </Tooltip>
-                    </Box>
-                    <Box mt={1} sx={{ cursor: 'pointer' }}>
-                        <Tooltip title="Add resource" placement="top">
-                            <Box className="">
-                                <AddIcon
-                                    size={13}
-                                    onClick={(e) => {
-                                        navigate('/main/resources/create')
-                                        e.stopPropagation();
-                                        handleOpenNotify(e, "CREATE_FOLDER");
-                                    }}
-                                    style={{
-                                        color:
-                                            selected?.id === dataBase?.id
-                                                ? menuStyle?.active_text
-                                                : menuStyle?.text || "",
-                                    }}
-                                />
-                            </Box>
-                        </Tooltip>
-                    </Box>
 
 
                     <Menu
@@ -213,7 +194,7 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             </div>
 
             <Collapse in={childBlockVisible} unmountOnExit>
-                {resources?.map((childElement) => (
+                {sidebarElements?.map((childElement) => (
                     <RecursiveBlock
                         key={childElement.id}
                         level={level + 1}
@@ -223,7 +204,6 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
                         onSelect={onSelect}
                         selected={selected}
                         resourceId={resourceId}
-                        deleteResource={deleteResource}
                         childBlockVisible={childBlockVisible}
                     />
                 ))}
@@ -232,4 +212,4 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     );
 };
 
-export default Resources;
+export default EltResources;

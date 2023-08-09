@@ -16,6 +16,7 @@ import Permissions from "../Components/Permission";
 import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import Resources from "../Components/Resources";
+import EltResources from "../Components/Elt";
 
 const SubMenu = ({
   child,
@@ -168,6 +169,11 @@ const SubMenu = ({
                         setSubMenuIsOpen={setSubMenuIsOpen}
                       />
                       <Resources
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                      />
+
+                      <EltResources
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
                       />

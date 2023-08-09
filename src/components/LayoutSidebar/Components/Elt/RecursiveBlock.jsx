@@ -1,11 +1,11 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Icon } from "@mui/material";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useNavigate, useParams } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 
 
-const RecursiveBlock = ({ element, selected, menuStyle, level, clickHandler, childBlockVisible, deleteResource }) => {
+const RecursiveBlock = ({ element, selected, menuStyle, level, clickHandler, childBlockVisible }) => {
 
     const { tableSlug } = useParams();
     const navigate = useNavigate()
@@ -26,7 +26,7 @@ const RecursiveBlock = ({ element, selected, menuStyle, level, clickHandler, chi
     };
 
 
-
+    console.log('element', element)
     return (
         <Box>
             <div className="parent-block column-drag-handle" key={element.id}>
@@ -47,18 +47,15 @@ const RecursiveBlock = ({ element, selected, menuStyle, level, clickHandler, chi
                                     : menuStyle?.text,
                             opacity: element?.isChild && 0.6,
                         }}
-                        onClick={() => navigate(`/main/resources/${element?.id}`)}
+                        // onClick={() => navigate(`/main/resources/${element?.id}`)}
                     >
                         <IconGenerator icon={element?.icon} size={18} />
+                        <Icon as={element?.icon} size={18} />
+
                         {element?.title}
 
                     </div>
-                    <Box onClick={(e) => {
-                        e.stopPropagation()
-                        deleteResource({
-                            id: element?.id
-                        })
-                        }} sx={{cursor:'pointer'}}>
+                    <Box onClick={(e) => e.stopPropagation()} sx={{cursor:'pointer'}}>
                         <DeleteIcon/>
                     </Box>
                     {element.type === "FOLDER" && (

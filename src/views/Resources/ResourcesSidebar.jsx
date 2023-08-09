@@ -148,6 +148,18 @@ const ResourcesSidebar = () => {
               <AddIcon />
             </IconButton>
           </Tooltip>
+          <Tooltip label="Add resource">
+            <IconButton
+              colorScheme="whiteAlpha"
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigateToCreateForm();
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
         </Flex>
       ),
     },

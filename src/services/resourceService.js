@@ -7,7 +7,7 @@ const resourceService = {
   create: (data) => request.post(`/company/project/resource`, data),
   update: (data) => request.put(`/company/project/resource/${data.id}`, data),
   createFromCluster: (data) =>
-  request.post("/v1/company/project/create-resource", data),
+  request.post("/company/project/create-resource", data),
   getResourceEnvironment: (id) =>
   request.get(`v1/company/project/resource-environment/${id}`),
   configureResource: (data) =>

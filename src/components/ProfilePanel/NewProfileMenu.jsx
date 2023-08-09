@@ -3,6 +3,7 @@ import KeyIcon from "@mui/icons-material/Key";
 import LayersIcon from "@mui/icons-material/Layers";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
+import SmsIcon from '@mui/icons-material/Sms';
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -66,6 +67,9 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
   };
   const handleRedirectNavigate = () => {
     navigate(`/main/${appId}/redirects`);
+  };
+  const handleSmsNavigate = () => {
+    navigate(`/main/${appId}/sms-otp`);
   };
   const closeMenu = () => {
     setProfileAnchorEl(null);
@@ -336,6 +340,17 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
               }
               text={"Redirects"}
               onClick={handleRedirectNavigate}
+            />
+            <ProfileItem
+              children={
+                <SmsIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Sms Otp"}
+              onClick={handleSmsNavigate}
             />
           </div>
           <Divider />

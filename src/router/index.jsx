@@ -57,6 +57,8 @@ import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import Note from "../components/LayoutSidebar/Components/Documents/Note";
 import ResourceDetail from "../views/Resources/Detail";
 import Connections from "../views/Matrix/Connections";
+import SmsPage from "../views/SmsOtp";
+import SmsFormPage from "../views/SmsOtp/SmsFormpage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -136,6 +138,12 @@ const Router = () => {
           <Route index element={<RedirectPage />} />
           <Route path="create" element={<RedirectFormPage />} />
           <Route path=":redirectId" element={<RedirectFormPage />} />
+        </Route>
+
+        <Route path=":appId/sms-otp">
+          <Route index element={<SmsPage />} />
+          <Route path="create" element={<SmsFormPage />} />
+          <Route path=":redirectId" element={<SmsFormPage />} />
         </Route>
         <Route path=":appId/api-key">
           <Route index element={<ApiKeyPage />} />

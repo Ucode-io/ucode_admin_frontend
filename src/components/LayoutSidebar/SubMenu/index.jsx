@@ -18,6 +18,8 @@ import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
 import EmailSidebar from "../Components/Email/EmailSidebar";
 import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
+import Resources from "../Components/Resources";
+import EltResources from "../Components/Elt";
 
 const SubMenu = ({
   child,
@@ -43,15 +45,14 @@ const SubMenu = ({
   };
   return (
     <div
-      className={`SubMenu ${
-        !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
-      }`}
+      className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
+        }`}
       style={{
         background: menuStyle?.background || "#fff",
       }}
     >
       <div className="body">
-        <div className="header" onClick={() => {}}>
+        <div className="header" onClick={() => { }}>
           {subMenuIsOpen && (
             <h2
               style={{
@@ -183,6 +184,15 @@ const SubMenu = ({
                       <ProjectSettingSidebar
                         menuStyle={menuStyle}
                         menuItem={menuItem}
+                      />
+                      <Resources
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                      />
+
+                      <EltResources
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
                       />
                     </>
                   )}

@@ -30,6 +30,12 @@ const environmentService = {
     }),
   delete: (id) => request.delete(`/environment/${id}`),
 };
+export const useEnvironmentsListQuery = ({params ={}, queryParams} = {}) => {
+  
+  return useQuery(['ENVIRONMENTS', params], () => {
+    return environmentService.getList(params)
+  }, queryParams)
+}
 
 export const useEnvironmentListQuery = ({ params = {}, queryParams } = {}) => {
   return useQuery(

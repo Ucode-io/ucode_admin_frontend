@@ -1,6 +1,7 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import KeyIcon from "@mui/icons-material/Key";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
+import SmsIcon from "@mui/icons-material/Sms";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, MenuItem, Tooltip } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
@@ -9,7 +10,11 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PlusIcon } from "../../assets/icons/icon";
 import CompanyModal from "../../layouts/MainLayout/CompanyModal";
 import authService from "../../services/auth/authService";
-import { useCompanyListQuery, useEnvironmentListQuery, useProjectListQuery } from "../../services/companyService";
+import {
+  useCompanyListQuery,
+  useEnvironmentListQuery,
+  useProjectListQuery,
+} from "../../services/companyService";
 import { store } from "../../store";
 import { authActions } from "../../store/auth/auth.slice";
 import { companyActions } from "../../store/company/company.slice";
@@ -49,7 +54,8 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const environmentVisible = Boolean(environmentListEl);
   const location = useLocation();
   const settings = location.pathname.includes("settings");
-  const [versionModalIsOpen, openVersionModal, closeVersionModal] = useBooleanState(false);
+  const [versionModalIsOpen, openVersionModal, closeVersionModal] =
+    useBooleanState(false);
 
   const params = {
     refresh_token: auth.refreshToken,
@@ -72,6 +78,9 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   };
   const handleRedirectNavigate = () => {
     navigate(`/main/${appId}/redirects`);
+  };
+  const handleSmsNavigate = () => {
+    navigate(`/main/${appId}/sms-otp`);
   };
   const closeMenu = () => {
     setProfileAnchorEl(null);
@@ -127,9 +136,21 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   };
 
   useEffect(() => {
-    dispatch(companyActions.setCompanyItem(company.companies.find((item) => item.id === company.companyId)));
-    dispatch(companyActions.setEnvironmentItem(company.environments?.find((item) => item.id === company.environmentId)));
-    dispatch(companyActions.setProjectItem(company.projects?.find((item) => item.project_id === company.projectId)));
+    dispatch(
+      companyActions.setCompanyItem(
+        company.companies.find((item) => item.id === company.companyId)
+      )
+    );
+    dispatch(
+      companyActions.setEnvironmentItem(
+        company.environments?.find((item) => item.id === company.environmentId)
+      )
+    );
+    dispatch(
+      companyActions.setProjectItem(
+        company.projects?.find((item) => item.project_id === company.projectId)
+      )
+    );
   }, [company.companies, company.environments]);
 
   const { isLoading } = useCompanyListQuery({
@@ -200,10 +221,12 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     dispatch(languagesActions.setDefaultLanguage(lang));
-    dispatch(showAlert(`Language changed to ${lang} successfully`, "success"))
+    dispatch(showAlert(`Language changed to ${lang} successfully`, "success"));
   };
 
-  const defaultLanguage = useSelector((state) => state.languages.defaultLanguage);
+  const defaultLanguage = useSelector(
+    (state) => state.languages.defaultLanguage
+  );
 
   useEffect(() => {
     if (languages?.length) {
@@ -253,7 +276,11 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
                   children={
                     <Tooltip title={item?.name}>
                       <p
-                        className={item.id === company.companyId ? styles.avatarborder : styles.avatar}
+                        className={
+                          item.id === company.companyId
+                            ? styles.avatarborder
+                            : styles.avatar
+                        }
                         onClick={(e) => {
                           handleCompanySelect(item, e);
                           queryClient.refetchQueries(["PROJECT"], item.id);
@@ -341,7 +368,11 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
                   }}
                 />
               }
-              text={company?.version?.version ? `Version - ${company?.version?.version}` : "Version"}
+              text={
+                company?.version?.version
+                  ? `Version - ${company?.version?.version}`
+                  : "Version"
+              }
               onClick={() => {
                 closeMenu();
                 openVersionModal();
@@ -350,33 +381,39 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
           </div>
           <Divider />
           <div className={styles.block}>
-            {permissions?.api_keys_button && (
-              <ProfileItem
-                children={
-                  <KeyIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Api Keys"}
-                onClick={handleClick}
-              />
-            )}
-
-            {permissions?.redirects_button && (
-              <ProfileItem
-                children={
-                  <MoveUpIcon
-                    style={{
-                      color: "#747474",
-                    }}
-                  />
-                }
-                text={"Redirects"}
-                onClick={handleRedirectNavigate}
-              />
-            )}
+            <ProfileItem
+              children={
+                <KeyIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Api Keys"}
+              onClick={handleClick}
+            />
+            <ProfileItem
+              children={
+                <MoveUpIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Redirects"}
+              onClick={handleRedirectNavigate}
+            />
+            <ProfileItem
+              children={
+                <SmsIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Sms Otp"}
+              onClick={handleSmsNavigate}
+            />
           </div>
           <Divider />
 
@@ -408,7 +445,10 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
                     changeLanguage(item.slug);
                   }}
                   key={item.id}
-                  style={{backgroundColor: item.slug === defaultLanguage ? "#E5E5E5" : "#fff"}}
+                  style={{
+                    backgroundColor:
+                      item.slug === defaultLanguage ? "#E5E5E5" : "#fff",
+                  }}
                 >
                   {item?.title}
                 </MenuItem>
@@ -453,7 +493,10 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
             <ProfileItem
               children={
                 <>
-                  <p className={styles.companyavatar}>{auth?.userInfo?.name?.charAt(0).toUpperCase() || auth?.userInfo?.login?.charAt(0).toUpperCase()}</p>
+                  <p className={styles.companyavatar}>
+                    {auth?.userInfo?.name?.charAt(0).toUpperCase() ||
+                      auth?.userInfo?.login?.charAt(0).toUpperCase()}
+                  </p>
                   {auth?.userInfo?.name || auth?.userInfo?.login}
                 </>
               }

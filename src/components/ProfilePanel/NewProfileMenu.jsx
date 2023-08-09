@@ -2,7 +2,7 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 import KeyIcon from "@mui/icons-material/Key";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
 import WidgetsIcon from "@mui/icons-material/Widgets";
-import { Box, Divider, Menu, Tooltip } from "@mui/material";
+import { Box, Divider, Menu, MenuItem, Tooltip } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -18,6 +18,7 @@ import EnvironmentsList from "./EnvironmentList/EnvironmentsList";
 import ProfileItem from "./ProfileItem";
 import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
 import styles from "./newprofile.module.scss";
 import { useQueryClient } from "react-query";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
@@ -211,6 +212,15 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
     }
   }, [languages]);
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClickLanguages = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <div>
       <UserAvatar
@@ -368,6 +378,42 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
           </div>
           <Divider />
 
+          <div className={styles.block}>
+            <ProfileItem
+              children={
+                <GTranslateIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Languages"}
+              onClick={handleClickLanguages}
+            />
+
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              {languages?.map((item) => (
+                <MenuItem
+                  onClick={() => {
+                    changeLanguage(item.slug);
+                  }}
+                  key={item.id}
+                  style={{backgroundColor: item.slug === defaultLanguage ? "#E5E5E5" : "#fff"}}
+                >
+                  {item?.title}
+                </MenuItem>
+              ))}
+            </Menu>
+          </div>
+
           <Box
             style={{
               height: "calc((100% / 2) + 13px)",
@@ -431,12 +477,6 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
               />
             )}
             <ProfileItem text={"Logout"} onClick={logoutClickHandler} />
-            <Divider />
-            <Box>
-              {languages?.map((item) => (
-                <ProfileItem text={item?.title} onClick={() => changeLanguage(item.slug)} />
-              ))}
-            </Box>
           </div>
         </Box>
       </Menu>

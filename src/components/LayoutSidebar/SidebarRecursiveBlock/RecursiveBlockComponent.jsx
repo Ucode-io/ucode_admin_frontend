@@ -92,6 +92,8 @@ const RecursiveBlock = ({
     },
   });
 
+  console.log('element', element)
+
   const clickHandler = (e) => {
     dispatch(menuActions.setMenuItem(element));
     e.stopPropagation();

@@ -87,7 +87,6 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
   };
 
   const handleGetClientType = (e) => {
-    console.log("dfdf");
     e.stopPropagation();
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     dispatch(menuActions.setMenuItem(userFolder));

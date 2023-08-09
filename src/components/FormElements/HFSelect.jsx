@@ -18,6 +18,7 @@ const HFSelect = ({
   placeholder,
   required = false,
   onChange = () => {},
+  onOpen = () => {},
   optionType,
   defaultValue = "",
   rules = {},
@@ -36,7 +37,6 @@ const HFSelect = ({
         field: { onChange: onFormChange, value },
         fieldState: { error },
       }) => {
-
         return (
           <FormControl style={{ width }}>
             <InputLabel size="small">{label}</InputLabel>
@@ -56,11 +56,16 @@ const HFSelect = ({
               renderValue={
                 value !== ""
                   ? undefined
-                  : () => <span style={{ color: "#909EAB" }}>{placeholder}</span>
+                  : () => (
+                      <span style={{ color: "#909EAB" }}>{placeholder}</span>
+                    )
               }
               onChange={(e) => {
                 onChange(e.target.value);
                 onFormChange(e.target.value);
+              }}
+              onOpen={() => {
+                onOpen();
               }}
               {...props}
             >
@@ -98,7 +103,7 @@ const HFSelect = ({
               <FormHelperText error>{error?.message}</FormHelperText>
             )}
           </FormControl>
-        )
+        );
       }}
     ></Controller>
   );

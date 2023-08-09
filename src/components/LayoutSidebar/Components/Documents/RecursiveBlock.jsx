@@ -50,7 +50,6 @@ const DocumentsRecursive = ({
     onRowClick(element.id, element);
     setChildBlockVisible((prev) => !prev);
     if (!element.children) onSelect(element.id, element);
-    console.log("element.what_is", element);
   };
   return (
     <Box>

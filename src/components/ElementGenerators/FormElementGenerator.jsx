@@ -33,7 +33,18 @@ import RelationFormElement from "./RelationFormElement";
 
 const parser = new Parser();
 
-const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, activeLang, fieldsList, checkPermission = true, isMultiLanguage, relatedTable, ...props }) => {
+const FormElementGenerator = ({
+  field = {},
+  control,
+  setFormValue,
+  formTableSlug,
+  activeLang,
+  fieldsList,
+  checkPermission = true,
+  isMultiLanguage,
+  relatedTable,
+  ...props
+}) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
   let relationTableSlug = "";
@@ -44,7 +55,9 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
   const label = useMemo(() => {
     if (field?.enable_multilanguage) {
-      return field?.attributes?.show_label ? `${field?.label} (${activeLang})` : "";
+      return field?.attributes?.show_label
+        ? `${field?.label} (${activeLang})`
+        : "";
     } else {
       if (field?.attributes?.show_label === false) return "";
       return field?.label ?? " ";
@@ -72,7 +85,8 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
 
-    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue =
+      field.attributes?.defaultValue ?? field.attributes?.default_values;
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
@@ -81,7 +95,14 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
-  }, [field.attributes, field.type, field.id, field.relation_type, objectIdFromJWT, isUserId]);
+  }, [
+    field.attributes,
+    field.type,
+    field.id,
+    field.relation_type,
+    objectIdFromJWT,
+    isUserId,
+  ]);
 
   const isDisabled = useMemo(() => {
     return (
@@ -93,7 +114,6 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
   if (!field.attributes?.field_permission?.view_permission && checkPermission) {
     return null;
   }
-
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
@@ -467,13 +487,29 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     case "VIDEO":
       return (
         <FRow label={label} required={field.required}>
-          <HFVideoUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
+          <HFVideoUpload
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
         </FRow>
       );
     case "FILE":
       return (
         <FRow label={label} required={field.required}>
-          <HFFileUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
+          <HFFileUpload
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
         </FRow>
       );
 
@@ -552,7 +588,15 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     case "ICON":
       return (
         <FRow label={label} required={field.required}>
-          <HFIconPicker control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
+          <HFIconPicker
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
         </FRow>
       );
 

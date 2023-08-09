@@ -1,3 +1,4 @@
+import { useQuery } from "react-query";
 import requestV2 from "../utils/requestV2";
 
 const microfrontendService = {
@@ -9,7 +10,17 @@ const microfrontendService = {
   delete: (id) => requestV2.delete(`/functions/micro-frontend/${id}`),
 };
 
-
-
+export const useMicrofrontendListQuery = ({
+  params = {},
+  queryParams,
+} = {}) => {
+  return useQuery(
+    ["MENU_TEMPLATE", params],
+    () => {
+      return microfrontendService.getList(params);
+    },
+    queryParams
+  );
+};
 
 export default microfrontendService;

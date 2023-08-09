@@ -61,7 +61,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(dataBase));
     setSelected(dataBase);
-    if (!pinIsEnabled) {
+    if (!pinIsEnabled && dataBase.type !== "USER_FOLDER") {
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
@@ -130,19 +130,19 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     resources,
     sidebarElements
   );
-  console.log("location.pathname", location.pathname);
 
   const rowClickHandler = (id, element) => {
-    console.log("element", element);
     setSelected(element);
-    if (element.type === "TABLE") {
-      navigate(
-        `${location.pathname}/database/${resourceId}/${element.slug}/${element.id}`
-      );
-    }
+    element.type === "FOLDER" && navigate("/main/12");
     if (element.resource_type) setResourceId(element.id);
     if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
     setOpenedFolders((prev) => [...prev, id]);
+  };
+
+  const onSelect = (id, element) => {
+    if (element.type === "TABLE") {
+      navigate(`/main/12/database/${resourceId}/${element.slug}/${element.id}`);
+    }
   };
 
   return (
@@ -186,6 +186,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             element={childElement}
             menuStyle={menuStyle}
             onRowClick={rowClickHandler}
+            onSelect={onSelect}
             selected={selected}
             resourceId={resourceId}
           />

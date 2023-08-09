@@ -13,6 +13,7 @@ const DataBaseRecursive = ({
   level = 1,
   menuStyle,
   onRowClick = () => {},
+  onSelect = () => {},
   selected,
   resourceId,
 }) => {
@@ -36,9 +37,10 @@ const DataBaseRecursive = ({
   };
 
   const clickHandler = () => {
-    dispatch(menuActions.setMenuItem(element));
     onRowClick(element.id, element);
+    dispatch(menuActions.setMenuItem(element));
     setChildBlockVisible((prev) => !prev);
+    if (!element.children) onSelect(element.id, element);
   };
 
   return (
@@ -83,6 +85,7 @@ const DataBaseRecursive = ({
             element={childElement}
             menuStyle={menuStyle}
             onRowClick={onRowClick}
+            onSelect={onSelect}
             selected={selected}
             resourceId={resourceId}
           />

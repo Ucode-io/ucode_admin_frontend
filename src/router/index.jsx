@@ -53,6 +53,12 @@ import PermissionDetail from "../views/Permissions";
 import RoleDetail from "../views/Permissions/Roles/Detail";
 import DatabasePage from "../views/DataBase";
 import DatabaseConfiguration from "../views/DataBase/Configuration";
+import Scenarios from "../components/LayoutSidebar/Components/Scenario";
+import Note from "../components/LayoutSidebar/Components/Documents/Note";
+import ResourceDetail from "../views/Resources/Detail";
+import Connections from "../views/Matrix/Connections";
+import SmsPage from "../views/SmsOtp";
+import SmsFormPage from "../views/SmsOtp/SmsFormpage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -133,6 +139,12 @@ const Router = () => {
           <Route path="create" element={<RedirectFormPage />} />
           <Route path=":redirectId" element={<RedirectFormPage />} />
         </Route>
+
+        <Route path=":appId/sms-otp">
+          <Route index element={<SmsPage />} />
+          <Route path="create" element={<SmsFormPage />} />
+          <Route path=":redirectId" element={<SmsFormPage />} />
+        </Route>
         <Route path=":appId/api-key">
           <Route index element={<ApiKeyPage />} />
           <Route path="create" element={<ApiKeysForm />} />
@@ -170,9 +182,45 @@ const Router = () => {
           <Route index element={<PermissionDetail />} />
           <Route path="role/:roleId" element={<RoleDetail />} />
         </Route>
+
+      
+        <Route path="resources">
+            <Route path="create" element={<ResourceDetail />} />
+            <Route path=":resourceId" element={<ResourceDetail />} />
+
+            <Route path="elt">
+              <Route path="connections">
+                <Route index element={<Connections />} />
+                {/* <Route path="create" element={<ConnectionCreate />} /> */}
+                {/* <Route path=":connectionId" element={<ConnectionDetail />} /> */}
+              </Route>
+              {/* <Route path="sources">
+                <Route index element={<Sources />} />
+                <Route path="create" element={<SourceDetail />} />
+                <Route path=":sourceId" element={<SourceDetail />} />
+              </Route>
+              <Route path="destinations">
+                <Route index element={<Destinations />} />
+                <Route path="create" element={<DestinationDetail />} />
+                <Route path=":destinationId" element={<DestinationDetail />} />
+              </Route> */}
+            </Route>
+          </Route>
+
+
         <Route path=":appId/database/:resourceId/:tableSlug/:databaseId">
           <Route index element={<DatabasePage />} />
           <Route path="configuration" element={<DatabaseConfiguration />} />
+        </Route>
+        <Route path=":appId/scenario/:categoryId">
+          <Route index element={<Scenarios />} />
+          <Route path=":scenarioId" element={<Scenarios />} />
+        </Route>
+        <Route path=":appId/docs">
+          <Route path="note">
+            <Route path="create" element={<Note />} />
+            <Route path=":noteId" element={<Note />} />
+          </Route>
         </Route>
 
         <Route

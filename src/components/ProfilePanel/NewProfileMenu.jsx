@@ -1,6 +1,7 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import KeyIcon from "@mui/icons-material/Key";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
+import SmsIcon from '@mui/icons-material/Sms';
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -70,6 +71,9 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   };
   const handleRedirectNavigate = () => {
     navigate(`/main/${appId}/redirects`);
+  };
+  const handleSmsNavigate = () => {
+    navigate(`/main/${appId}/sms-otp`);
   };
   const closeMenu = () => {
     setProfileAnchorEl(null);
@@ -311,11 +315,44 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
                   }}
                 />
               }
-              text={
-                company?.version?.version
-                  ? `Version - ${company?.version?.version}`
-                  : "Version"
+              text={"Api Keys"}
+              onClick={handleClick}
+            />
+            <ProfileItem
+              children={
+                <MoveUpIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
               }
+              text={"Redirects"}
+              onClick={handleRedirectNavigate}
+            />
+            <ProfileItem
+              children={
+                <SmsIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Sms Otp"}
+              onClick={handleSmsNavigate}
+            />
+          </div>
+          <Divider />
+
+          <div className={styles.block}>
+            <ProfileItem
+              children={
+                <WidgetsIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Menu settings"}
               onClick={() => {
                 closeMenu();
                 openVersionModal();

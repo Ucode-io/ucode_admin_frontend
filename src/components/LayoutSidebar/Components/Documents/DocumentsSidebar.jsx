@@ -1,0 +1,460 @@
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
+import { useMemo, useState } from "react";
+import { FaFolder } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { store } from "../../../../store";
+import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import IconGenerator from "../../../IconPicker/IconGenerator";
+import "../../style.scss";
+import { useQueries, useQueryClient } from "react-query";
+import {
+  useTemplateFolderDeleteMutation,
+  useTemplateFoldersListQuery,
+} from "../../../../services/templateFolderService";
+import {
+  useNoteFolderDeleteMutation,
+  useNoteFoldersListQuery,
+} from "../../../../services/noteFolderService";
+import templateService from "../../../../services/templateService";
+import { CgFileDocument } from "react-icons/cg";
+import noteService from "../../../../services/noteService";
+import { listToNested } from "../../../../utils/listToNestedList";
+import DocumentsRecursive from "./RecursiveBlock";
+import { TbEdit } from "react-icons/tb";
+import DocumentButtonMenu from "./Components/DocumentsButtonMenu";
+import { BsThreeDots } from "react-icons/bs";
+import AddIcon from "@mui/icons-material/Add";
+import TemplateFolderCreateModal from "./Components/Modals/TemplateFolderCreate";
+import NoteFolderCreateModal from "./Components/Modals/NoteFolderCreate";
+import { showAlert } from "../../../../store/alert/alert.thunk";
+
+const docsFolder = {
+  label: "Documents",
+  type: "USER_FOLDER",
+  icon: "documents.svg",
+  parent_id: "12",
+  id: "16",
+  data: {
+    permission: {
+      read: true,
+      write: true,
+      delete: true,
+      update: true,
+    },
+  },
+};
+
+const DocumentsSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
+  const dispatch = useDispatch();
+  const company = store.getState().company;
+  const navigate = useNavigate();
+  const { projectId, templateId, noteId } = useParams();
+  const [selected, setSelected] = useState({});
+  const [childBlockVisible, setChildBlockVisible] = useState(false);
+  const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+  const [menu, setMenu] = useState({ event: "", type: "" });
+  const openMenu = Boolean(menu?.event);
+
+  const handleOpenNotify = (event, type, element) => {
+    setMenu({ event: event?.currentTarget, type: type, element });
+  };
+
+  const handleCloseNotify = () => {
+    setMenu(null);
+  };
+
+  const [openedTemplateFolders, setOpenedTemplateFolders] = useState([]);
+  const [openedNoteFolders, setOpenedNoteFolders] = useState([]);
+
+  const [templateFolderModalType, setTemplateFolderModalType] = useState(null);
+  const [noteFolderModalType, setNoteFolderModalType] = useState(null);
+
+  const [selectedTemplateFolder, setSelectedTemplateFolder] = useState(null);
+  const [selectedNoteFolder, setSelectedNoteFolder] = useState(null);
+
+  const queryClient = useQueryClient();
+
+  const openTemplateFolderModal = (folder, type) => {
+    setSelectedTemplateFolder(folder);
+    setTemplateFolderModalType(type);
+  };
+
+  const openNoteFolderModal = (folder, type) => {
+    setSelectedNoteFolder(folder);
+    setNoteFolderModalType(type);
+  };
+
+  const closeTemplateFolderModal = () => setTemplateFolderModalType(false);
+  const closeNoteFolderModal = () => setNoteFolderModalType(false);
+
+  const activeStyle = {
+    backgroundColor:
+      selected?.id === docsFolder?.id
+        ? menuStyle?.active_background || "#007AFF"
+        : menuStyle?.background,
+    color:
+      selected?.id === docsFolder?.id
+        ? menuStyle?.active_text || "#fff"
+        : menuStyle?.text,
+    paddingLeft: level * 2 * 5,
+  };
+
+  // --TEMPLATE FOLDERS QUERY--
+
+  const { data: templateFolders, isLoading: foldersLoading } =
+    useTemplateFoldersListQuery({
+      params: {
+        "project-id": projectId,
+      },
+      envId: company.environmentId,
+      queryParams: {
+        select: (res) =>
+          res.folders?.map((folder) => ({
+            ...folder,
+            // icon: FaFolder,
+            type: "FOLDER",
+            what_is: "template",
+            hasChild: true,
+            name: folder?.title,
+            // buttons: (
+            //   <BsThreeDots
+            //     size={13}
+            //     onClick={(e) => {
+            //       e.stopPropagation();
+            //       handleOpenNotify(e, "TEMPLATE");
+            //     }}
+            //   />
+            // ),
+          })),
+      },
+    });
+
+  // --NOTE FOLDERS QUERY--
+
+  const { data: noteFolders, isLoading: noteFoldersLoading } =
+    useNoteFoldersListQuery({
+      params: {
+        "project-id": projectId,
+      },
+      envId: company.environmentId,
+      queryParams: {
+        select: (res) =>
+          res.folders?.map((folder) => ({
+            ...folder,
+            // icon: FaFolder,
+            type: "FOLDER",
+            hasChild: true,
+            what_is: "note",
+            name: folder?.title,
+            // buttons: (
+            //   <BsThreeDots
+            //     size={13}
+            //     onClick={(e) => {
+            //       e.stopPropagation();
+            //       handleOpenNotify(e, "NOTE");
+            //     }}
+            //   />
+            // ),
+          })),
+      },
+    });
+
+  // --TEMPLATE QUERIES--
+
+  const templateQueries = useMemo(() => {
+    return openedTemplateFolders.map((folderId) => ({
+      queryKey: [
+        "TEMPLATES",
+        {
+          "folder-id": folderId,
+          "project-id": projectId,
+          envId: company.environmentId,
+        },
+      ],
+      queryFn: () =>
+        templateService.getList(
+          { "folder-id": folderId, "project-id": projectId },
+          company.environmentId
+        ),
+    }));
+  }, [openedTemplateFolders, projectId]);
+
+  const templateQueryResults = useQueries(templateQueries);
+
+  const templates = useMemo(() => {
+    const list = [];
+    templateQueryResults.forEach((query) => {
+      query.data?.templates?.forEach((template) => {
+        list.push({
+          ...template,
+          parent_id: template.folder_id,
+          // icon: CgFileDocument,
+          what_is: "template",
+          name: template?.title,
+        });
+      });
+    });
+    return list;
+  }, [templateQueryResults]);
+
+  // --NOTE QUERIES--
+
+  const noteQueries = useMemo(() => {
+    return openedNoteFolders.map((folderId) => ({
+      queryKey: [
+        "NOTES",
+        {
+          "folder-id": folderId,
+          "project-id": projectId,
+          envId: company.environmentId,
+        },
+      ],
+      queryFn: () =>
+        noteService.getList(
+          { "folder-id": folderId, "project-id": projectId },
+          company.environmentId
+        ),
+    }));
+  }, [openedNoteFolders, projectId]);
+
+  const noteQueryResults = useQueries(noteQueries);
+
+  const notes = useMemo(() => {
+    const list = [];
+    noteQueryResults.forEach((query) => {
+      query.data?.notes?.forEach((note) => {
+        list.push({
+          ...note,
+          parent_id: note.folder_id,
+          // icon: CgFileDocument,
+          what_is: "note",
+          name: note?.title,
+        });
+      });
+    });
+    return list;
+  }, [templateQueryResults]);
+
+  // --SIDEBAR ELEMENTS--
+
+  const computedTemplatesList = useMemo(() => {
+    return listToNested([...(templateFolders ?? []), ...templates], {
+      undefinedChildren: true,
+    });
+  }, [templateFolders, templates]);
+
+  const computedNotesList = useMemo(() => {
+    return listToNested([...(noteFolders ?? []), ...notes], {
+      undefinedChildren: true,
+    });
+  }, [noteFolders, notes]);
+
+  const sidebarElements = useMemo(
+    () => [
+      {
+        id: 1,
+        name: "Templates",
+        // icon: CgFileDocument,
+        children: computedTemplatesList,
+        type: "FOLDER",
+        buttons: (
+          <>
+            <AddIcon
+              size={13}
+              onClick={(e) => {
+                e?.stopPropagation();
+                createFolder("template");
+              }}
+            />
+          </>
+        ),
+        button_text: "Create Template folder",
+      },
+      {
+        id: 2,
+        name: "Notes",
+        // icon: TbEdit,
+        children: computedNotesList,
+        type: "FOLDER",
+        buttons: (
+          <>
+            <AddIcon
+              size={13}
+              onClick={(e) => {
+                e?.stopPropagation();
+                createFolder("note");
+              }}
+            />
+          </>
+        ),
+        button_text: "Create Note folder",
+      },
+    ],
+    [computedTemplatesList, computedNotesList]
+  );
+
+  // --IS LOADING--
+
+  const isLoading = useMemo(() => {
+    return (
+      foldersLoading ||
+      templateQueryResults.some((query) => query.isLoading) ||
+      noteFoldersLoading ||
+      noteQueryResults.some((query) => query.isLoading)
+    );
+  }, [
+    templateQueryResults,
+    foldersLoading,
+    noteFoldersLoading,
+    noteQueryResults,
+  ]);
+
+  const { mutate: deleteNoteFolder, isLoading: deleteNoteLoading } =
+    useNoteFolderDeleteMutation({
+      onSuccess: () => {
+        dispatch(showAlert("Successfully deleted", "success"));
+        queryClient.refetchQueries("NOTE_FOLDERS");
+      },
+    });
+  const { mutate: deleteTemplateFolder, isLoading: deleteTemplateLoading } =
+    useTemplateFolderDeleteMutation({
+      onSuccess: () => {
+        dispatch(showAlert("Successfully deleted", "success"));
+        queryClient.refetchQueries("TEMPLATE_FOLDERS");
+      },
+    });
+
+  const rowClickHandler = (id, element) => {
+    if (id === 1 || id === 2) {
+      if (element.children === null) {
+        element.name === "Templates"
+          ? setTemplateFolderModalType("CREATE")
+          : setNoteFolderModalType("CREATE");
+      } else if (element.children === null) {
+        element.name === "Notes"
+          ? setNoteFolderModalType("CREATE")
+          : setTemplateFolderModalType("CREATE");
+      }
+    }
+    if (
+      element.type !== "FOLDER" ||
+      openedNoteFolders.includes(id) ||
+      openedTemplateFolders.includes(id)
+    )
+      return;
+    if (element.what_is === "template") {
+      setOpenedTemplateFolders((prev) => [...prev, id]);
+    } else if (element.what_is === "note") {
+      setOpenedNoteFolders((prev) => [...prev, id]);
+    }
+  };
+
+  const clickHandler = (e) => {
+    e.stopPropagation();
+    dispatch(menuActions.setMenuItem(docsFolder));
+    setSelected(docsFolder);
+    if (!pinIsEnabled && docsFolder.type !== "USER_FOLDER") {
+      setSubMenuIsOpen(false);
+    }
+    setChildBlockVisible((prev) => !prev);
+  };
+
+  // --CREATE FOLDERS--
+
+  const createFolder = (element) => {
+    element === "note"
+      ? setNoteFolderModalType("CREATE")
+      : setTemplateFolderModalType("CREATE");
+  };
+  const onSelect = (id, element) => {
+    // if (id === 1 || element.what_is === "template") {
+    //   navigate(`/main/12/docs/template/${id}`);
+    // } else if (id === 6 || element.what_is === "note") {
+    //   navigate(`/main/12/docs/note/${id}`);
+    // }
+  };
+  console.log("computed", sidebarElements);
+
+  return (
+    <Box>
+      <div className="parent-block column-drag-handle">
+        <Button
+          style={activeStyle}
+          className={`nav-element ${
+            docsFolder?.isChild &&
+            (selected !== docsFolder?.slug ? "active-with-child" : "active")
+          }`}
+          onClick={(e) => {
+            clickHandler(e);
+          }}
+        >
+          <div
+            className="label"
+            style={{
+              color:
+                selected?.id === docsFolder?.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text,
+            }}
+          >
+            <IconGenerator icon={"folder.svg"} size={18} />
+            Documents
+          </div>
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
+        </Button>
+      </div>
+
+      <Collapse in={childBlockVisible} unmountOnExit>
+        {sidebarElements?.map((element) => (
+          <DocumentsRecursive
+            key={element.id}
+            level={level + 1}
+            element={element}
+            menuStyle={menuStyle}
+            onRowClick={rowClickHandler}
+            selected={selected}
+            handleOpenNotify={handleOpenNotify}
+            onSelect={onSelect}
+            setSelected={setSelected}
+          />
+        ))}
+      </Collapse>
+
+      <DocumentButtonMenu
+        selected={selected}
+        openMenu={openMenu}
+        menu={menu?.event}
+        menuType={menu?.type}
+        element={menu?.element}
+        handleCloseNotify={handleCloseNotify}
+        templateFolderModalType={templateFolderModalType}
+        deleteNoteFolder={deleteNoteFolder}
+        deleteTemplateFolder={deleteTemplateFolder}
+      />
+
+      {templateFolderModalType && (
+        <TemplateFolderCreateModal
+          modalType={templateFolderModalType}
+          folder={selectedTemplateFolder}
+          closeModal={closeTemplateFolderModal}
+        />
+      )}
+      {noteFolderModalType && (
+        <NoteFolderCreateModal
+          modalType={noteFolderModalType}
+          folder={selectedNoteFolder}
+          closeModal={closeNoteFolderModal}
+        />
+      )}
+    </Box>
+  );
+};
+
+export default DocumentsSidebar;

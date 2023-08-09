@@ -1,7 +1,7 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Card, Modal, Typography } from "@mui/material";
+import { Box, Button, Card, Modal, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
@@ -10,6 +10,9 @@ import menuSettingsService from "../../services/menuSettingsService";
 import microfrontendService from "../../services/microfrontendService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
+import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
+import { Delete } from "@mui/icons-material";
+import styles from "./style.module.scss";
 
 const MicrofrontendLinkModal = ({
   closeModal,
@@ -20,6 +23,23 @@ const MicrofrontendLinkModal = ({
   const { projectId } = useParams();
   const queryClient = useQueryClient();
   const [list, setList] = useState();
+  const { control, handleSubmit, reset } = useForm();
+
+  const {
+    fields: values,
+    append,
+    remove,
+  } = useFieldArray({
+    control: control,
+    name: "attributes.params",
+  });
+
+  const addField = () => {
+    append({
+      key: "",
+      value: "",
+    });
+  };
 
   const onSubmit = (data) => {
     if (selectedFolder.type === "MICROFRONTEND") {
@@ -28,8 +48,6 @@ const MicrofrontendLinkModal = ({
       createType(data, selectedFolder);
     }
   };
-
-  const { control, handleSubmit, reset } = useForm();
 
   useEffect(() => {
     if (selectedFolder.type === "MICROFRONTEND")
@@ -84,6 +102,10 @@ const MicrofrontendLinkModal = ({
     getTables();
   }, []);
 
+  const deleteField = (index) => {
+    remove(index);
+  };
+
   const microfrontendOptions = useMemo(() => {
     return list?.functions?.map((item, index) => ({
       label: item.name,
@@ -128,7 +150,36 @@ const MicrofrontendLinkModal = ({
                 required
               />
             </Box>
-
+            {values?.map((elements, index) => (
+              <div key={elements?.key} className={styles.navigateWrap}>
+                <HFTextField
+                  fullWidth
+                  control={control}
+                  name={`attributes.params[${index}].key`}
+                  placeholder={"key"}
+                />
+                <HFTextField
+                  fullWidth
+                  control={control}
+                  name={`attributes.params[${index}].value`}
+                  placeholder={"value"}
+                />
+                <RectangleIconButton
+                  onClick={() => deleteField(index)}
+                  color="error"
+                >
+                  <Delete color="error" />
+                </RectangleIconButton>
+              </div>
+            ))}
+            <Button
+              className={styles.button}
+              variant="contained"
+              fullWidth
+              onClick={addField}
+            >
+              Add params
+            </Button>
             <div className="btns-row">
               <SaveButton title="Добавить" type="submit" loading={loading} />
             </div>

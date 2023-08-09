@@ -1,41 +1,30 @@
 import { Save } from "@mui/icons-material";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import HeaderSettings from "../../../HeaderSettings";
-import FormCard from "../../../FormCard";
-import FRow from "../../../FormElements/FRow";
-import HFTextField from "../../../FormElements/HFTextField";
-import Footer from "../../../Footer";
-import SecondaryButton from "../../../Buttons/SecondaryButton";
-import PrimaryButton from "../../../Buttons/PrimaryButton";
-import { useDispatch } from "react-redux";
-import {
-  useEmailCreateMutation,
-  useEmailListQuery,
-  useEmailUpdateMutation,
-} from "../../../../services/emailService";
-import { useEffect, useMemo, useState } from "react";
-import { showAlert } from "../../../../store/alert/alert.thunk";
-import { store } from "../../../../store";
 import {
   useProjectGetByIdQuery,
   useProjectUpdateMutation,
   useProjectsAllSettingQuery,
 } from "../../../../services/projectService";
+import { store } from "../../../../store";
+import PrimaryButton from "../../../Buttons/PrimaryButton";
+import SecondaryButton from "../../../Buttons/SecondaryButton";
+import Footer from "../../../Footer";
+import FormCard from "../../../FormCard";
+import FRow from "../../../FormElements/FRow";
 import HFAvatarUpload from "../../../FormElements/HFAvatarUpload";
-import HFSelect from "../../../FormElements/HFSelect";
 import HFMultipleSelect from "../../../FormElements/HFMultipleSelect";
+import HFSelect from "../../../FormElements/HFSelect";
+import HFTextField from "../../../FormElements/HFTextField";
+import HeaderSettings from "../../../HeaderSettings";
 
 const ProjectSettingPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const company = store.getState().company;
-  const { emailId } = useParams();
-  const [type, setType] = useState("");
-  const [check, setCheck] = useState(true);
-  const { control, reset, handleSubmit, setValue, watch, getValues } =
-    useForm();
+  const { control, reset, handleSubmit, watch } = useForm();
 
   const { isLoading } = useProjectGetByIdQuery({
     projectId: company.projectId,
@@ -148,8 +137,8 @@ const ProjectSettingPage = () => {
     <div>
       <HeaderSettings
         title="Project settings"
-        backButtonLink={-1}
         subtitle={watch("title")}
+        disabledMenu={false}
       ></HeaderSettings>
 
       <form

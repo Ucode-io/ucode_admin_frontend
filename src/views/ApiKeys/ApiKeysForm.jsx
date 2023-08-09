@@ -37,7 +37,6 @@ const ApiKeysForm = () => {
       role_id: authStore.roleInfo.id,
     },
   });
-  console.log("watch()", mainForm.watch());
 
   const createApp = (data) => {
     setBtnLoader(true);
@@ -71,7 +70,6 @@ const ApiKeysForm = () => {
         clienty_type_id: mainForm.watch("client_type_id"),
       })
       .then((res) => {
-        console.log("res", res);
         setRole(res.data);
       })
       .catch((err) => {
@@ -82,7 +80,6 @@ const ApiKeysForm = () => {
     clientTypeServiceV2
       .getList({})
       .then((res) => {
-        console.log("res", res);
         setClientType(res.data);
       })
       .catch((err) => {
@@ -94,7 +91,6 @@ const ApiKeysForm = () => {
     apiKeyService
       .getById(authStore.projectId, apiKeyId)
       .then((res) => {
-        console.log("res", res);
         mainForm.reset(res);
       })
       .catch((err) => {

@@ -5,12 +5,12 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { useNavigate } from "react-router-dom";
 
-const microServiceFolder = {
-  label: "Micro service",
+const projectFolder = {
+  label: "Project setting",
   type: "USER_FOLDER",
   icon: "lock.svg",
   parent_id: "12",
-  id: "20",
+  id: "22",
   data: {
     permission: {
       read: true,
@@ -21,17 +21,17 @@ const microServiceFolder = {
   },
 };
 
-const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
+const ProjectSettingSidebar = ({ level = 1, menuStyle, menuItem }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const activeStyle = {
     backgroundColor:
-      microServiceFolder?.id === menuItem?.id
+      projectFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      microServiceFolder?.id === menuItem?.id
+      projectFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
@@ -42,14 +42,14 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
 
   const labelStyle = {
     color:
-      microServiceFolder?.id === menuItem?.id
+      projectFolder?.id === menuItem?.id
         ? menuStyle?.active_text
         : menuStyle?.text,
   };
 
   const clickHandler = (e) => {
-    navigate(`/main/12/micro-service`);
-    dispatch(menuActions.setMenuItem(microServiceFolder));
+    navigate(`/main/12/project-setting`);
+    dispatch(menuActions.setMenuItem(projectFolder));
   };
 
   return (
@@ -63,8 +63,8 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
           }}
         >
           <div className="label" style={labelStyle}>
-            <IconGenerator icon={"atom.svg"} size={18} />
-            Micro Service
+            <IconGenerator icon={"building.svg"} size={18} />
+            Project settings
           </div>
         </Button>
       </div>
@@ -72,4 +72,4 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
   );
 };
 
-export default MicroServiceSidebar;
+export default ProjectSettingSidebar;

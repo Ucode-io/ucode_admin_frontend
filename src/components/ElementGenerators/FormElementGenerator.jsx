@@ -45,7 +45,6 @@ const FormElementGenerator = ({
   relatedTable,
   ...props
 }) => {
-  console.log("akjwndkjawndkjawnd", field);
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
   let relationTableSlug = "";

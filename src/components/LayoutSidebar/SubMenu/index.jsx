@@ -15,6 +15,8 @@ import Permissions from "../Components/Permission";
 import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
+import EmailSidebar from "../Components/Email/EmailSidebar";
+import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 
 const SubMenu = ({
   child,
@@ -171,6 +173,11 @@ const SubMenu = ({
                         menuItem={menuItem}
                       />
                       <MicroServiceSidebar
+                        menuStyle={menuStyle}
+                        menuItem={menuItem}
+                      />
+                      <EmailSidebar menuStyle={menuStyle} menuItem={menuItem} />
+                      <ProjectSettingSidebar
                         menuStyle={menuStyle}
                         menuItem={menuItem}
                       />

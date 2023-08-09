@@ -4,13 +4,14 @@ import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { useNavigate } from "react-router-dom";
+import { store } from "../../../../store";
 
-const microServiceFolder = {
-  label: "Micro service",
+const emailFolder = {
+  label: "Email",
   type: "USER_FOLDER",
   icon: "lock.svg",
   parent_id: "12",
-  id: "20",
+  id: "21",
   data: {
     permission: {
       read: true,
@@ -21,17 +22,17 @@ const microServiceFolder = {
   },
 };
 
-const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
+const EmailSidebar = ({ level = 1, menuStyle, menuItem }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const activeStyle = {
     backgroundColor:
-      microServiceFolder?.id === menuItem?.id
+      emailFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      microServiceFolder?.id === menuItem?.id
+      emailFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
@@ -42,14 +43,14 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
 
   const labelStyle = {
     color:
-      microServiceFolder?.id === menuItem?.id
+      emailFolder?.id === menuItem?.id
         ? menuStyle?.active_text
         : menuStyle?.text,
   };
 
   const clickHandler = (e) => {
-    navigate(`/main/12/micro-service`);
-    dispatch(menuActions.setMenuItem(microServiceFolder));
+    navigate(`/main/12/email-setting`);
+    dispatch(menuActions.setMenuItem(emailFolder));
   };
 
   return (
@@ -63,8 +64,8 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
           }}
         >
           <div className="label" style={labelStyle}>
-            <IconGenerator icon={"atom.svg"} size={18} />
-            Micro Service
+            <IconGenerator icon={"folder.svg"} size={18} />
+            Email
           </div>
         </Button>
       </div>
@@ -72,4 +73,4 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
   );
 };
 
-export default MicroServiceSidebar;
+export default EmailSidebar;

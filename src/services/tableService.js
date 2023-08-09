@@ -22,7 +22,6 @@ const tableService = {
       },
     }),
   create: (data) => {
-    console.log("data", data);
     return request.post("/table", data, {
       headers: { "resource-id": data.resourceId, "environment-id": data.envId },
       params: { "project-id": data.project_id },

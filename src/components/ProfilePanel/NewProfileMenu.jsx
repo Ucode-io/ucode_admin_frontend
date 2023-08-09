@@ -30,6 +30,7 @@ import { Title } from "@mui/icons-material";
 import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
 import { changeLanguage } from "i18next";
 import { useTranslation } from "react-i18next";
+import { showAlert } from "../../store/alert/alert.thunk";
 
 const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const dispatch = useDispatch();
@@ -199,6 +200,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     dispatch(languagesActions.setDefaultLanguage(lang));
+    dispatch(showAlert(`Language changed to ${lang} successfully`, "success"))
   };
 
   const defaultLanguage = useSelector((state) => state.languages.defaultLanguage);

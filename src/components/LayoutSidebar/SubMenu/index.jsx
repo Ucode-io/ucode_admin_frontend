@@ -21,6 +21,7 @@ import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 import Resources from "../Components/Resources";
 import EltResources from "../Components/Elt";
 import { store } from "../../../store";
+import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
 
 const SubMenu = ({
   child,
@@ -39,30 +40,32 @@ const SubMenu = ({
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const menuItem = store.getState().menu.menuItem;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
 
-  console.log('selectedApp', selectedApp)
+  console.log("selectedApp", selectedApp);
   return (
     <div
-      className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
-        }`}
+      className={`SubMenu ${
+        !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
+      }`}
       style={{
         background: menuStyle?.background || "#fff",
       }}
     >
       <div className="body">
-        <div className="header" onClick={() => { }}>
+        <div className="header" onClick={() => {}}>
           {subMenuIsOpen && (
             <h2
               style={{
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label}
+              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
+                selectedApp?.label}
             </h2>
           )}{" "}
           <Box className="buttons">
@@ -195,6 +198,11 @@ const SubMenu = ({
                       <EltResources
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                      />
+                      <FunctionSidebar
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
                       />
                     </>
                   )}

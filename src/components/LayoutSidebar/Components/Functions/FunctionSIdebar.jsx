@@ -19,7 +19,7 @@ const functionFolder = {
   type: "USER_FOLDER",
   icon: "documents.svg",
   parent_id: "12",
-  id: "22",
+  id: "25",
   data: {
     permission: {
       read: true,
@@ -104,6 +104,7 @@ const FunctionSidebar = ({
       ...folder,
       icon: FaFolder,
       type: "FOLDER",
+      name: folder.title,
       //   buttons: (
       //     <FunctionFolderButtons
       //       openFunctionModal={openFunctionModal}
@@ -116,7 +117,7 @@ const FunctionSidebar = ({
         ?.filter((func) => func.function_folder_id === folder.id)
         .map((func) => ({
           ...func,
-          title: func.name,
+          name: func.name,
           icon: HiOutlineCodeBracket,
           //   buttons: (
           //     <FunctionButtons
@@ -186,8 +187,8 @@ const FunctionSidebar = ({
           }}
         >
           <div className="label" style={labelStyle}>
-            <IconGenerator icon={"folder.svg"} size={18} />
-            Documents
+            <IconGenerator icon={"key.svg"} size={18} />
+            Functions
           </div>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />

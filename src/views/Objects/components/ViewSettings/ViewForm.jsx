@@ -31,6 +31,7 @@ import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
 
 const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
+  console.log('initialValues', initialValues)
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
@@ -151,7 +152,10 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
             field_id: el.id,
             default_value: el.default_value ?? "",
           })) ?? [],
-      attributes: computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
+      attributes: {
+        ...computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
+        ...values?.attributes
+      },
       name: Object.values(values?.attributes).find((item) => item),
       app_id: appId,
       order: views?.length ?? 0,
@@ -294,7 +298,6 @@ const getInitialValues = (
   numberFieldValue,
   navigate
 ) => {
-  console.log("navigate", navigate);
   if (initialValues === "NEW")
     return {
       type: typeNewView,
@@ -329,6 +332,7 @@ const getInitialValues = (
     type: initialValues?.type ?? "TABLE",
     users: initialValues?.users ?? [],
     name: initialValues?.name ?? "",
+    attributes: initialValues?.attributes ?? {},
     default_limit: initialValues?.default_limit ?? "",
     main_field: initialValues?.main_field ?? "",
     status_field_slug: initialValues?.status_field_slug ?? "",
@@ -337,7 +341,7 @@ const getInitialValues = (
       table_slug: initialValues?.disable_dates?.table_slug ?? "",
       time_from_slug: initialValues?.disable_dates?.time_from_slug ?? "",
       time_to_slug: initialValues?.disable_dates?.time_to_slug ?? "",
-    },
+    }, 
     columns: computeColumns(initialValues?.columns, columns),
     quick_filters:
       computeQuickFilters(initialValues?.quick_filters, initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT" ? [...columns, ...relationColumns] : columns) ?? [],

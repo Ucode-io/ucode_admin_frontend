@@ -37,6 +37,8 @@ const SubMenu = ({
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
+
+  console.log('selectedApp', selectedApp)
   return (
     <div
       className={`SubMenu ${
@@ -54,7 +56,7 @@ const SubMenu = ({
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label ?? selectedApp?.attributes?.[`label_${i18n.language}`]}
+              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label}
             </h2>
           )}{" "}
           <Box className="buttons">

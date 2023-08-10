@@ -90,7 +90,7 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
   const submitHandler = (values) => {
     const computedValues = {
       ...values,
-      label: Object.values(values?.attributes).find((item) => item),
+      label: Object.values(values?.attributes).find(item => typeof item === "string"),
     };
     if (formType === "CREATE") createAction(computedValues);
     else updateAction(computedValues);

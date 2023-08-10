@@ -25,7 +25,7 @@ import styles from "./style.module.scss";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
 
-const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
+const ViewForm = ({ initialValues, typeNewView, defaultViewTab, closeForm, refetchViews, setIsChanged, closeModal, columns, relationColumns, views,  }) => {
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
@@ -150,7 +150,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
         ...computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
         ...values?.attributes
       },
-      name: Object.values(values?.attributes).find((item) => item),
+      name: Object.values(values?.attributes).find(item => typeof item === "string"),
       app_id: appId,
       order: views?.length ?? 0,
     };

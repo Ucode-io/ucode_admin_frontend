@@ -123,6 +123,7 @@ const NewSection = ({
                   // fieldIndex={fieldIndex}
                   // mainForm={mainForm}
                   checkPermission={false}
+                  checkRequired={false}
                 />
                 <ButtonsPopover className={styles.deleteButton} onEditClick={() => openSettingsBlock(field)} onDeleteClick={() => removeField(fieldIndex, 1)} />
                 {/* <RectangleIconButton

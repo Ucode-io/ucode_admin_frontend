@@ -33,7 +33,7 @@ const SubMenu = ({
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const menuItem = store.getState().menu.menuItem;
   const {i18n} = useTranslation();
-console.log('selectedApp', selectedApp?.attributes?.[`label_${i18n.language}`])
+  const defaultLanguage = i18n.language;
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
@@ -54,7 +54,7 @@ console.log('selectedApp', selectedApp?.attributes?.[`label_${i18n.language}`])
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.label ?? selectedApp?.attributes?.[`label_${i18n.language}`]}
+              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label ?? selectedApp?.attributes?.[`label_${i18n.language}`]}
             </h2>
           )}{" "}
           <Box className="buttons">

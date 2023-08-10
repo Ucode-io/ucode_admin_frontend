@@ -214,7 +214,6 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
                         <FRow label="Field Label and icon" required>
                           <div className="flex align-center gap-1">
                             <HFIconPicker control={control} name="attributes.icon" shape="rectangle" />
-                            {/* <HFTextField disabledHelperText fullWidth name="label" control={control} placeholder="Field Label (RU)" autoFocus /> */}
                           </div>
 
                           <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>

@@ -18,6 +18,7 @@ const Fields = ({ mainForm, getRelationFields }) => {
   const { id, slug } = useParams();
   const [formLoader, setFormLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
+  const { i18n } = useTranslation();
 
   const { fields, prepend, update, remove } = useFieldArray({
     control: mainForm.control,
@@ -83,15 +84,14 @@ const Fields = ({ mainForm, getRelationFields }) => {
     }
   };
 
-  const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
-  
+
   const columns = useMemo(
     () => [
       {
         id: 1,
         label: "Field Label",
-        slug: `attributes.label_${defaultLanguage}`,
+        slug: `label`,
       },
       {
         id: 2,

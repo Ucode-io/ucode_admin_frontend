@@ -120,7 +120,7 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
             <FRow label="Label" required>
               <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 {languages?.map((lang) => (
-                  <HFTextField name={`label_${lang?.slug}`} control={control} placeholder={`Label (${lang?.slug})`} fullWidth />
+                  <HFTextField name={`attributes.label_${lang?.slug}`} control={control} placeholder={`Label (${lang?.slug})`} fullWidth />
                 ))}
               </Box>
             </FRow>

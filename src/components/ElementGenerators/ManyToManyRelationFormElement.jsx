@@ -148,7 +148,9 @@ const AutoCompleteElement = ({
       return request.post(
         `/invoke_function/${field?.attributes?.function_path}`,
         {
-          params: {},
+          params: {
+            from_input: true
+          },
           data: {
             ...autoFiltersValue,
             view_fields:

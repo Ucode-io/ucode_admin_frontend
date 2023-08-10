@@ -29,6 +29,7 @@ import NavigateSettings from "./NavigateSettings";
 import ViewsList from "./ViewsList";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
   const { tableSlug, appId } = useParams();
@@ -138,7 +139,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
     // form.setValue('columns', computeColumns(formColumns, computedColumns))
     form.setValue("quick_filters", computeQuickFilters(formQuickFilters, type === "CALENDAR" || type === "GANTT" ? [...columns, ...relationColumns] : columns));
   }, [type, form]);
-
+  const {i18n} = useTranslation();
   const onSubmit = (values) => {
     setBtnLoader(true);
     const computedValues = {
@@ -155,7 +156,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
         ...computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
         ...values?.attributes
       },
-      name: Object.values(values?.attributes).find(item => typeof item === "string"),
+      name: values?.attributes?.[`label_${i18n.language}`] ?? Object.values(values?.attributes).find(item => typeof item === "string"),
       app_id: appId,
       order: views?.length ?? 0,
     };

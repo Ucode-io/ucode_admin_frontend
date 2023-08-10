@@ -1,45 +1,34 @@
-import { useCallback, useRef } from "react";
-import DragDrop from "editorjs-drag-drop";
-import Undo from "editorjs-undo";
-import { createReactEditorJS } from "react-editor-js";
-import { EDITOR_JS_TOOLS } from "../../../../../../hooks/useNoteConstants.js";
+import { Controller } from "react-hook-form";
+import { Box } from "@mui/material";
+import Editor from "./Editor";
 
-const Editor = ({ value, onChange, isLoading, loadingFromTokenDoc }) => {
-  const ReactEditorJS = createReactEditorJS();
-
-  const editorCore = useRef(null);
-
-  const handleInitialize = useCallback((instance) => {
-    editorCore.current = instance;
-  }, []);
-
-  const handleReady = () => {
-    const editor = editorCore.current._editorJS;
-    new DragDrop({ editor });
-    new Undo({ editor });
-  };
-
-  const changeHandler = async () => {
-    const outputData = await editorCore.current.save();
-    // const data = JSON.stringify(outputData);
-    onChange(outputData);
-  };
-
+const EditorJs = ({
+  name,
+  control,
+  defaultValue = "",
+  required = false,
+  form,
+  isLoading,
+  loadingFromTokenDoc,
+}) => {
   return (
-    !isLoading &&
-    !loadingFromTokenDoc && (
-      <ReactEditorJS
-        defaultValue={value}
-        hideToolbar={true}
-        onInitialize={handleInitialize}
-        autofocus={true}
-        onReady={handleReady}
-        tools={EDITOR_JS_TOOLS}
-        // holder="editorjs"
-        onChange={changeHandler}
+    <Box pr="10px" pl="40px" h="calc(100vh - 50px)" overflowY="scroll">
+      <Controller
+        name={name}
+        control={control}
+        defaultValue={defaultValue}
+        rules={{ required }}
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <Editor
+            value={value}
+            onChange={onChange}
+            isLoading={isLoading}
+            loadingFromTokenDoc={loadingFromTokenDoc}
+          />
+        )}
       />
-    )
+    </Box>
   );
 };
 
-export default Editor;
+export default EditorJs;

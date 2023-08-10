@@ -11,11 +11,14 @@ import constructorFieldService from "../../../../../services/constructorFieldSer
 import { generateGUID } from "../../../../../utils/generateID";
 import FieldSettings from "./FieldSettings";
 import styles from "./style.module.scss";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const Fields = ({ mainForm, getRelationFields }) => {
   const { id, slug } = useParams();
   const [formLoader, setFormLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
+  const { i18n } = useTranslation();
 
   const { fields, prepend, update, remove } = useFieldArray({
     control: mainForm.control,
@@ -81,12 +84,14 @@ const Fields = ({ mainForm, getRelationFields }) => {
     }
   };
 
+  const defaultLanguage = i18n.language;
+
   const columns = useMemo(
     () => [
       {
         id: 1,
         label: "Field Label",
-        slug: "label",
+        slug: `label`,
       },
       {
         id: 2,
@@ -99,7 +104,7 @@ const Fields = ({ mainForm, getRelationFields }) => {
         slug: "type",
       },
     ],
-    []
+    [defaultLanguage]
   );
 
   return (
@@ -119,10 +124,7 @@ const Fields = ({ mainForm, getRelationFields }) => {
           // <PermissionWrapperV2 tableSlug={slug} type="write">
           <CTableRow>
             <CTableCell colSpan={columns.length + 1}>
-              <div
-                className={styles.createButton}
-                onClick={() => setDrawerState("CREATE")}
-              >
+              <div className={styles.createButton} onClick={() => setDrawerState("CREATE")}>
                 <Add color="primary" />
                 <p>Добавить</p>
               </div>
@@ -132,12 +134,7 @@ const Fields = ({ mainForm, getRelationFields }) => {
         }
       />
 
-      <Drawer
-        open={drawerState}
-        anchor="right"
-        onClose={() => setDrawerState(null)}
-        orientation="horizontal"
-      >
+      <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           onSubmit={(index, field) => update(index, field)}

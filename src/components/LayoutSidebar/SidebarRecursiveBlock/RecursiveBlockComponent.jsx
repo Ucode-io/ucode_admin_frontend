@@ -12,6 +12,7 @@ import IconGenerator from "../../IconPicker/IconGenerator";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
 import { useQueryClient } from "react-query";
+import { useTranslation } from "react-i18next";
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -37,6 +38,8 @@ const RecursiveBlock = ({
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+  const { i18n } = useTranslation();
+  const defaultLanguage = i18n.language;
 
   const activeStyle = {
     backgroundColor:
@@ -60,9 +63,15 @@ const RecursiveBlock = ({
       case "TABLE":
         return navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
       case "MICROFRONTEND":
-        return navigate(
-          `/main/${appId}/page/${element?.data?.microfrontend?.id}`
-        );
+        let obj = {};
+        element?.attributes?.params.forEach((el) => {
+          obj[el.key] = el.value;
+        });
+        const searchParams = new URLSearchParams(obj || {});
+        return navigate({
+          pathname: `/main/${appId}/page/${element?.data?.microfrontend?.id}`,
+          search: `?${searchParams.toString()}`,
+        });
       case "WEBPAGE":
         return navigate(
           `/main/${appId}/web-page/${element?.data?.webpage?.id}`
@@ -95,6 +104,7 @@ const RecursiveBlock = ({
   console.log('element', element)
 
   const clickHandler = (e) => {
+    dispatch(menuActions.setMenuItem(element));
     e.stopPropagation();
     if (element.type === "PERMISSION") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
@@ -110,7 +120,6 @@ const RecursiveBlock = ({
       setSubMenuIsOpen(false);
     }
     element.type !== "USER" && setChildBlockVisible((prev) => !prev);
-    dispatch(menuActions.setMenuItem(element));
     setId(element?.id);
     setElement(element);
   };
@@ -155,7 +164,7 @@ const RecursiveBlock = ({
                 }
                 size={18}
               />
-              {(sidebarIsOpen && element?.label) ||
+              {(sidebarIsOpen && (element?.attributes?.[`label_${defaultLanguage}`] ?? element?.label)) ||
                 element?.data?.microfrontend?.name ||
                 element?.data?.webpage?.title ||
                 element?.name}

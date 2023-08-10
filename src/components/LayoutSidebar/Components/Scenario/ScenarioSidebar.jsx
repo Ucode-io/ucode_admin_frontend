@@ -1,3 +1,4 @@
+import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Tooltip } from "@mui/material";
@@ -16,12 +17,11 @@ import {
 import { store } from "../../../../store";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
-import "../../style.scss";
-import ScenarioRecursive from "./RecursiveBlock";
-import ScenarioButtonMenu from "./Components/ScenarioButtonMenu";
-import AddIcon from "@mui/icons-material/Add";
 import "../../../LayoutSidebar/style.scss";
+import "../../style.scss";
 import FolderCreateModal from "./Components/Modal/FolderCreateModal";
+import ScenarioButtonMenu from "./Components/ScenarioButtonMenu";
+import ScenarioRecursive from "./RecursiveBlock";
 
 const scenarioFolder = {
   label: "Scenarios",
@@ -40,8 +40,12 @@ const scenarioFolder = {
   },
 };
 
-const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
-  const { tableSlug } = useParams();
+const ScenarioSidebar = ({
+  level = 1,
+  menuStyle,
+  setSubMenuIsOpen,
+  menuItem,
+}) => {
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -69,14 +73,26 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
   };
   const activeStyle = {
     backgroundColor:
-      selected?.id === scenarioFolder?.id
+      scenarioFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      selected?.id === scenarioFolder?.id
+      scenarioFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
+  };
+  const labelStyle = {
+    color:
+      scenarioFolder?.id === menuItem?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text,
+  };
+  const iconStyle = {
+    color:
+      scenarioFolder?.id === menuItem?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text || "",
   };
 
   const clickHandler = (e) => {
@@ -112,7 +128,6 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     isLoading: scenarioLoading,
     refetch,
   } = useScenarioListQuery();
-  console.log("scenario", scenario);
 
   const deleteEndpointClickHandler = (id) => {
     deleteScenario({
@@ -165,25 +180,12 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
-          className={`nav-element ${
-            scenarioFolder?.isChild &&
-            (tableSlug !== scenarioFolder?.slug
-              ? "active-with-child"
-              : "active")
-          }`}
+          className="nav-element"
           onClick={(e) => {
             clickHandler(e);
           }}
         >
-          <div
-            className="label"
-            style={{
-              color:
-                selected?.id === scenarioFolder?.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text,
-            }}
-          >
+          <div className="label" style={labelStyle}>
             <IconGenerator icon={"film.svg"} size={18} />
             Scenarios
           </div>
@@ -196,12 +198,7 @@ const ScenarioSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
                     e.stopPropagation();
                     handleOpenNotify(e, "CREATE_FOLDER");
                   }}
-                  style={{
-                    color:
-                      selected?.id === scenarioFolder?.id
-                        ? menuStyle?.active_text
-                        : menuStyle?.text || "",
-                  }}
+                  style={iconStyle}
                 />
               </Box>
             </Tooltip>

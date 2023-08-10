@@ -16,9 +16,6 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
-
-  console.log("sssssss", i18n.language);
-
   const clickHandler = () => {
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
@@ -53,6 +50,10 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
   useEffect(() => {
     setElement(element);
   }, [element]);
+  
+  const defaultLanguage = i18n.language;
+
+  console.log('element', element)
 
   return (
     <Draggable key={index}>
@@ -82,7 +83,7 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
           />
           {sidebarIsOpen && (
             <ListItemText
-              primary={element?.[`label${generatorLanguageKey}`] || element?.data?.microfrontend?.name || element?.data?.webpage?.title}
+              primary={element?.attributes?.[`label_${defaultLanguage}`] || element?.label || element?.data?.microfrontend?.name || element?.data?.webpage?.title}
               style={{
                 color: selectedApp?.id === element.id ? menuStyle?.active_text : menuStyle?.text || "",
               }}

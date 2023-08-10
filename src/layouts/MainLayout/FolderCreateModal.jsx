@@ -9,25 +9,19 @@ import { useQueryClient } from "react-query";
 import { useEffect } from "react";
 import menuSettingsService from "../../services/menuSettingsService";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useSelector } from "react-redux";
 
 const FolderCreateModal = ({ closeModal, loading, modalType, appId, selectedFolder, getMenuList }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
 
   const onSubmit = (data) => {
-    const computedData = {
-      ...data,
-      label: data.label.length ? data.label : data.label_uz.length ? data.label_uz : data.label_en,
-      label_uz: data.label_uz.length ? data.label_uz : data.label.length ? data.label : data.label_en,
-      label_en: data.label_en.length ? data.label_en : data.label.length ? data.label : data.label_uz,
-    };
-
     if (modalType === "create") {
-      createType(computedData, selectedFolder);
+      createType(data, selectedFolder);
     } else if (modalType === "parent") {
-      createType(computedData, selectedFolder);
+      createType(data, selectedFolder);
     } else if (modalType === "update") {
-      updateType(computedData);
+      updateType(data);
     }
   };
 
@@ -55,7 +49,7 @@ const FolderCreateModal = ({ closeModal, loading, modalType, appId, selectedFold
         ...data,
         parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
         type: selectedFolder?.type || "FOLDER",
-        label: data.label,
+        label: Object.values(data?.attributes).find(item => item),
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);
@@ -71,6 +65,7 @@ const FolderCreateModal = ({ closeModal, loading, modalType, appId, selectedFold
     menuSettingsService
       .update({
         ...data,
+        label: Object.values(data?.attributes).find(item => item),
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);
@@ -80,6 +75,8 @@ const FolderCreateModal = ({ closeModal, loading, modalType, appId, selectedFold
         console.log(err);
       });
   };
+
+  const languages = useSelector((state) => state.languages.list);
 
   return (
     <div>
@@ -100,9 +97,9 @@ const FolderCreateModal = ({ closeModal, loading, modalType, appId, selectedFold
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              <HFTextField autoFocus fullWidth label="Title (RU)" control={control} name="label" />
-              <HFTextField fullWidth label="Title (EN)" control={control} name="label_en" />
-              <HFTextField fullWidth label="Title (UZ)" control={control} name="label_uz" />
+              {languages.map((item) => (
+                <HFTextField autoFocus fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
+              ))}
             </Box>
 
             <div className="btns-row">{modalType === "crete" ? <CreateButton type="submit" loading={loading} /> : <SaveButton type="submit" loading={loading} />}</div>

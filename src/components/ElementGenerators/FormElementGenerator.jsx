@@ -30,24 +30,41 @@ import CodabarBarcode from "./CodabarBarcode";
 import DynamicRelationFormElement from "./DynamicRelationFormElement";
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import RelationFormElement from "./RelationFormElement";
+import { useTranslation } from "react-i18next";
 
 const parser = new Parser();
 
-const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, activeLang, fieldsList, checkPermission = true, isMultiLanguage, relatedTable, ...props }) => {
+const FormElementGenerator = ({
+  field = {},
+  control,
+  setFormValue,
+  formTableSlug,
+  activeLang,
+  fieldsList,
+  checkPermission = true,
+  isMultiLanguage,
+  relatedTable,
+  ...props
+}) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
+  const {i18n} = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
   if (field?.id?.includes("#")) {
     relationTableSlug = field?.id?.split("#")[0];
   }
 
+  console.log('sssssssss', field?.attributes?.[`label_${i18n}`])
+
   const label = useMemo(() => {
     if (field?.enable_multilanguage) {
-      return field?.attributes?.show_label ? `${field?.label} (${activeLang})` : "";
+      return field?.attributes?.show_label
+        ? `${field?.label} (${activeLang})`
+        : "";
     } else {
       if (field?.attributes?.show_label === false) return "";
-      return field?.label ?? " ";
+      return field?.attributes?.[`label_${i18n.language}`] ?? field?.label ?? " ";
     }
   }, [field, activeLang]);
 
@@ -72,7 +89,8 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
 
-    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue =
+      field.attributes?.defaultValue ?? field.attributes?.default_values;
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
@@ -81,7 +99,14 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
-  }, [field.attributes, field.type, field.id, field.relation_type, objectIdFromJWT, isUserId]);
+  }, [
+    field.attributes,
+    field.type,
+    field.id,
+    field.relation_type,
+    objectIdFromJWT,
+    isUserId,
+  ]);
 
   const isDisabled = useMemo(() => {
     return (
@@ -93,7 +118,6 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
   if (!field.attributes?.field_permission?.view_permission && checkPermission) {
     return null;
   }
-
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
@@ -164,7 +188,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={defaultValue}
             disabled={isDisabled}
             key={computedSlug}
@@ -188,7 +212,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             mask={"(99) 999-99-99"}
             defaultValue={defaultValue}
             disabled={isDisabled}
@@ -263,7 +287,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             multiline
             rows={4}
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={field.defaultValue}
             disabled={isDisabled}
             key={computedSlug}
@@ -334,7 +358,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             fullWidth
             type="number"
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={defaultValue}
             disabled={isDisabled}
             {...props}
@@ -423,7 +447,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             }}
             fullWidth
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={defaultValue}
             tabIndex={field?.tabIndex}
             disabled={isDisabled}
@@ -467,13 +491,29 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     case "VIDEO":
       return (
         <FRow label={label} required={field.required}>
-          <HFVideoUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
+          <HFVideoUpload
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
         </FRow>
       );
     case "FILE":
       return (
         <FRow label={label} required={field.required}>
-          <HFFileUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
+          <HFFileUpload
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
         </FRow>
       );
 
@@ -552,7 +592,15 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     case "ICON":
       return (
         <FRow label={label} required={field.required}>
-          <HFIconPicker control={control} name={computedSlug} tabIndex={field?.tabIndex} required={field.required} defaultValue={defaultValue} disabled={isDisabled} {...props} />
+          <HFIconPicker
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={field.required}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
         </FRow>
       );
 
@@ -645,7 +693,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={defaultValue}
             disabled={field.attributes?.disabled}
             type="password"
@@ -664,7 +712,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={defaultValue}
             disabled={isDisabled}
             InputProps={{

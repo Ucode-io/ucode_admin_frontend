@@ -9,6 +9,7 @@ import ButtonsPopover from "../../../../../components/ButtonsPopover";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import { Container, Draggable } from "react-smooth-dnd";
 import RelationTable from "../../../components/RelationTable";
+import { useTranslation } from "react-i18next";
 
 function LayoutTabs({
   mainForm,
@@ -129,6 +130,8 @@ function LayoutTabs({
     return mainForm.getValues("layouts").findIndex((layout) => layout?.id === selectedLayout?.id);
   }, [mainForm, selectedLayout]);
 
+  const {i18n} = useTranslation();
+
   return (
     <>
       <div className={"custom-tabs"} style={{ width: "100%" }}>
@@ -162,7 +165,7 @@ function LayoutTabs({
                     className={`${styles.tabsItem} ${selectedTab?.id === tab?.id ? styles.active : ""}`}
                   >
                     <div className={styles.tab} style={{ display: "flex", alignItems: "center" }}>
-                      {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label ?? tab?.relation?.table_from?.label}
+                      {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`) ?? mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${index}.label`) ?? tab?.title ?? tab?.table_from?.label ?? tab?.relation?.table_from?.label}
                       {tab?.type === "section" ? (
                         <ButtonsPopover onEditClick={() => openFieldsBlock("RELATION")} onDeleteClick={() => removeSectionTab(index, tab)} />
                       ) : (

@@ -1,3 +1,14 @@
-.note{
+.note {
   padding: 20px 50px;
+}
+
+.input {
+  fieldset {
+    border: none;
+  }
+
+  input {
+    font-size: 18px;
+    font-weight: 700;
+  }
 }

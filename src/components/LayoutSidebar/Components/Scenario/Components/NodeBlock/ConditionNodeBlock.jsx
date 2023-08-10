@@ -26,8 +26,6 @@ const NodeBlock = ({ control, blockIndex, watch, setValue }) => {
     return /^[0-9]+$/.test(str);
   };
 
-  console.log("watch", watch());
-
   return (
     <>
       <Box

@@ -2,7 +2,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse } from "@mui/material";
 import { useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
@@ -16,6 +16,7 @@ const DataBaseRecursive = ({
   onSelect = () => {},
   selected,
   resourceId,
+  menuItem,
 }) => {
   const dispatch = useDispatch();
   const { tableSlug } = useParams();
@@ -23,11 +24,11 @@ const DataBaseRecursive = ({
 
   const activeStyle = {
     backgroundColor:
-      selected?.id === element?.id
+      menuItem?.id === element?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      selected?.id === element?.id
+      menuItem?.id === element?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
@@ -59,7 +60,7 @@ const DataBaseRecursive = ({
             className="label"
             style={{
               color:
-                selected?.id === element?.id
+                menuItem?.id === element?.id
                   ? menuStyle?.active_text
                   : menuStyle?.text,
               opacity: element?.isChild && 0.6,
@@ -88,6 +89,7 @@ const DataBaseRecursive = ({
             onSelect={onSelect}
             selected={selected}
             resourceId={resourceId}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>

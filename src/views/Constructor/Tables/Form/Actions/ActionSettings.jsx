@@ -17,6 +17,8 @@ import styles from "./style.module.scss";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import TableActions from "./TableActions";
 import requestV2 from "../../../../../utils/requestV2";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const actionTypeList = [
   { label: "HTTP", value: "HTTP" },
@@ -40,6 +42,7 @@ const typeList = [
 
 const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, onCreate = () => {}, action, formType, height }) => {
   const { slug } = useParams();
+  const languages = useSelector((state) => state.languages.list);
 
   const [loader, setLoader] = useState(false);
 
@@ -84,14 +87,12 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
       })
       .catch(() => setLoader(false));
   };
-
+  const {i18n} = useTranslation();
   const submitHandler = (values) => {
     const computedValues = {
       ...values,
-      label: values.label.length ? values.label : values.label_uz.length ? values.label_uz : values.label_en,
-      label_uz: values.label_uz.length ? values.label_uz : values.label.length ? values.label : values.label_en,
-      label_en: values.label_en.length ? values.label_en : values.label.length ? values.label : values.label_uz,
-    }
+      label: values?.attributes?.[`label_${i18n.language}`] ?? Object.values(values?.attributes).find(item => typeof item === "string"),
+    };
     if (formType === "CREATE") createAction(computedValues);
     else updateAction(computedValues);
   };
@@ -119,9 +120,9 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
             </FRow>
             <FRow label="Label" required>
               <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <HFTextField name="label" control={control} placeholder="Label (RU)" fullWidth />
-                <HFTextField name="label_en" control={control} placeholder="Label (EN)" fullWidth />
-                <HFTextField name="label_uz" control={control} placeholder="Label (UZ)" fullWidth />
+                {languages?.map((lang) => (
+                  <HFTextField name={`attributes.label_${lang?.slug}`} control={control} placeholder={`Label (${lang?.slug})`} fullWidth />
+                ))}
               </Box>
             </FRow>
             <FRow label="Function" required>

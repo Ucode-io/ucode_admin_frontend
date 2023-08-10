@@ -9,14 +9,19 @@ import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrappe
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useDispatch, useSelector } from "react-redux";
 import { mainActions } from "../../../store/main/main.slice";
-import { store } from "../../../store";
 import DataBase from "../Components/DataBase";
 import Users from "../Components/Users";
 import Permissions from "../Components/Permission";
 import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
+import { useTranslation } from "react-i18next";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
+import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
+import EmailSidebar from "../Components/Email/EmailSidebar";
+import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 import Resources from "../Components/Resources";
 import EltResources from "../Components/Elt";
+import { store } from "../../../store";
+import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
 
 const SubMenu = ({
   child,
@@ -35,27 +40,32 @@ const SubMenu = ({
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const menuItem = store.getState().menu.menuItem;
-
+  const { i18n } = useTranslation();
+  const defaultLanguage = i18n.language;
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
+
+  console.log("selectedApp", selectedApp);
   return (
     <div
-      className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
-        }`}
+      className={`SubMenu ${
+        !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
+      }`}
       style={{
         background: menuStyle?.background || "#fff",
       }}
     >
       <div className="body">
-        <div className="header" onClick={() => { }}>
+        <div className="header" onClick={() => {}}>
           {subMenuIsOpen && (
             <h2
               style={{
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.label}
+              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
+                selectedApp?.label}
             </h2>
           )}{" "}
           <Box className="buttons">
@@ -159,14 +169,26 @@ const SubMenu = ({
                       <DataBase
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
                       />
                       <ScenarioSidebar
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
                       />
                       <DocumentsSidebar
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
+                      />
+                      <MicroServiceSidebar
+                        menuStyle={menuStyle}
+                        menuItem={menuItem}
+                      />
+                      <EmailSidebar menuStyle={menuStyle} menuItem={menuItem} />
+                      <ProjectSettingSidebar
+                        menuStyle={menuStyle}
+                        menuItem={menuItem}
                       />
                       <Resources
                         menuStyle={menuStyle}
@@ -176,6 +198,11 @@ const SubMenu = ({
                       <EltResources
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
+                      />
+                      <FunctionSidebar
+                        menuStyle={menuStyle}
+                        setSubMenuIsOpen={setSubMenuIsOpen}
+                        menuItem={menuItem}
                       />
                     </>
                   )}

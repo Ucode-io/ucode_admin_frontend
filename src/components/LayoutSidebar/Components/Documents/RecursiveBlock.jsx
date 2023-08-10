@@ -18,18 +18,25 @@ const DocumentsRecursive = ({
   selected,
   handleOpenNotify,
   setSelected,
+  menuItem,
 }) => {
   const dispatch = useDispatch();
   const { tableSlug } = useParams();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
+  const note = element?.what_is === "note" && element?.type !== "FOLDER";
+  const noteFolder = element?.what_is === "note" && element?.type === "FOLDER";
+  const templateFolder =
+    element?.what_is === "template" && element?.type === "FOLDER";
+  const template =
+    element?.what_is === "template" && element?.type !== "FOLDER";
 
   const activeStyle = {
     backgroundColor:
-      selected?.id === element?.id
+      element?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      selected?.id === element?.id
+      element?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
@@ -41,11 +48,9 @@ const DocumentsRecursive = ({
   const clickHandler = () => {
     setSelected(element);
     onRowClick(element.id, element);
-    dispatch(menuActions.setMenuItem(element));
     setChildBlockVisible((prev) => !prev);
     if (!element.children) onSelect(element.id, element);
   };
-  console.log("element.what_is", element.what_is);
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
@@ -62,10 +67,9 @@ const DocumentsRecursive = ({
             className="label"
             style={{
               color:
-                selected?.id === element?.id
+                element?.id === menuItem?.id
                   ? menuStyle?.active_text
                   : menuStyle?.text,
-              opacity: element?.isChild && 0.6,
             }}
           >
             <IconGenerator icon={element?.icon} size={18} />
@@ -78,7 +82,7 @@ const DocumentsRecursive = ({
               </Tooltip>
             </Box>
           )}
-          {element.what_is === "template" && (
+          {template && (
             <Box className="icon_group">
               <Tooltip title={element?.button_text} placement="top">
                 <Box className="extra_icon">
@@ -93,7 +97,7 @@ const DocumentsRecursive = ({
               </Tooltip>
             </Box>
           )}
-          {element.what_is === "note" && (
+          {note && (
             <Box className="icon_group">
               <Tooltip title={element?.button_text} placement="top">
                 <Box className="extra_icon">
@@ -102,6 +106,36 @@ const DocumentsRecursive = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       handleOpenNotify(e, "NOTE", element);
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            </Box>
+          )}
+          {templateFolder && (
+            <Box className="icon_group">
+              <Tooltip title={element?.button_text} placement="top">
+                <Box className="extra_icon">
+                  <BsThreeDots
+                    size={13}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenNotify(e, "TEMPLATE_FOLDER", element);
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            </Box>
+          )}
+          {noteFolder && (
+            <Box className="icon_group">
+              <Tooltip title={element?.button_text} placement="top">
+                <Box className="extra_icon">
+                  <BsThreeDots
+                    size={13}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenNotify(e, "NOTE_FOLDER", element);
                     }}
                   />
                 </Box>
@@ -128,6 +162,7 @@ const DocumentsRecursive = ({
             onRowClick={onRowClick}
             selected={selected}
             handleOpenNotify={handleOpenNotify}
+            setSelected={setSelected}
           />
         ))}
       </Collapse>

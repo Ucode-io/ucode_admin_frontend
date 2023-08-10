@@ -55,6 +55,11 @@ import DatabasePage from "../views/DataBase";
 import DatabaseConfiguration from "../views/DataBase/Configuration";
 import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import Note from "../components/LayoutSidebar/Components/Documents/Note";
+import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
+import MicroservicePage from "../components/LayoutSidebar/Components/MicroService";
+import EmailPage from "../components/LayoutSidebar/Components/Email";
+import EmailDetailPage from "../components/LayoutSidebar/Components/Email/EmailDetailPage";
+import ProjectSettingPage from "../components/LayoutSidebar/Components/Project";
 import ResourceDetail from "../views/Resources/Detail";
 import Connections from "../views/Matrix/Connections";
 import SmsPage from "../views/SmsOtp";
@@ -216,10 +221,25 @@ const Router = () => {
           <Route index element={<Scenarios />} />
           <Route path=":scenarioId" element={<Scenarios />} />
         </Route>
+        <Route path=":appId/micro-service">
+          <Route index element={<MicroservicePage />} />
+        </Route>
+        <Route path=":appId/email-setting">
+          <Route index element={<EmailPage />} />
+          <Route path="create" element={<EmailDetailPage />} />
+          <Route path=":emailId" element={<EmailDetailPage />} />
+        </Route>
+        <Route path=":appId/project-setting">
+          <Route index element={<ProjectSettingPage />} />
+        </Route>
         <Route path=":appId/docs">
-          <Route path="note">
+          <Route path="note/:folderId">
             <Route path="create" element={<Note />} />
             <Route path=":noteId" element={<Note />} />
+          </Route>
+          <Route path="template/:folderId">
+            <Route path="create" element={<Template />} />
+            <Route path=":templateId" element={<Template />} />
           </Route>
         </Route>
 

@@ -3,9 +3,10 @@ import { RiPencilFill } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import "./style.scss";
 import MenuItemComponent from "../../../../MenuItem";
+import AddIcon from "@mui/icons-material/Add";
+import { Delete } from "@mui/icons-material";
 
 const DocumentButtonMenu = ({
-  selected,
   menu,
   openMenu,
   menuType,
@@ -41,33 +42,61 @@ const DocumentButtonMenu = ({
         {menuType === "FOLDER" && (
           <Box className="menu">
             <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
+              icon={<AddIcon size={13} />}
               title="Добавить Note"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/main/12/docs/note/create`);
+                navigate(`/main/12/docs/${element.id}/note/create`);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
+        )}
+        {menuType === "TEMPLATE_FOLDER" && (
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<AddIcon size={13} />}
+              title="Добавить Template"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/main/12/docs/template/${element.id}/create`);
+                handleCloseNotify();
+              }}
+            />
+          </Box>
+        )}
+        {menuType === "NOTE_FOLDER" && (
+          <Box className="menu">
+            <MenuItemComponent
+              icon={<AddIcon size={13} />}
+              title="Добавить Note"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/main/12/docs/note/${element.id}/create`);
                 handleCloseNotify();
               }}
             />
           </Box>
         )}
         {menuType === "NOTE" && (
-          <Box className="menu">
-            <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
-              title="Удалить Note"
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteNoteFolder({ id: element.id });
-                handleCloseNotify();
-              }}
-            />
-          </Box>
+          <>
+            <Box className="menu">
+              <MenuItemComponent
+                icon={<Delete size={13} />}
+                title="Удалить Note"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteNoteFolder({ id: element.id });
+                  handleCloseNotify();
+                }}
+              />
+            </Box>
+          </>
         )}
         {menuType === "TEMPLATE" && (
           <Box className="menu">
             <MenuItemComponent
-              icon={<RiPencilFill size={13} />}
+              icon={<Delete size={13} />}
               title="Удалить Template"
               onClick={(e) => {
                 e.stopPropagation();

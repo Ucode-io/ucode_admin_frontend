@@ -22,7 +22,7 @@ import constructorFunctionService from "../../services/constructorFunctionServic
 import constructorFunctionServiceV2 from "../../services/constructorFunctionServiceV2";
 import request from "../../utils/request";
 import { useSelector } from "react-redux";
-import Select from 'react-select'
+import Select from "react-select";
 
 const RelationFormElement = ({
   control,
@@ -133,21 +133,24 @@ const AutoCompleteElement = ({
   control,
   name,
   multipleInsertField,
-  setFormValue = () => { },
+  setFormValue = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
   const { id } = useParams();
   const isUserId = useSelector((state) => state?.auth?.userId);
-  const ids = field?.attributes?.is_user_id_default ? isUserId : undefined
+  const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
   const { navigateToForm } = useTabRouter();
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const autoFilters = field?.attributes?.auto_filters;
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
 
+<<<<<<< HEAD
 console.log('allOptions',allOptions)
+=======
+>>>>>>> 3703f804fd4044e8fce04536a9682201234a7a4c
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
   }, [autoFilters]);
@@ -237,11 +240,14 @@ console.log('allOptions',allOptions)
   const options = useMemo(() => {
     if (field?.attributes?.function_path) {
       return optionsFromFunctions ?? [];
+    } else {
+      return optionsFromLocale ?? [];
     }
-    else {
-      return optionsFromLocale ?? []
-    };
-  }, [optionsFromFunctions, optionsFromLocale, field?.attributes?.function_path]);
+  }, [
+    optionsFromFunctions,
+    optionsFromLocale,
+    field?.attributes?.function_path,
+  ]);
 
   const getValueData = async () => {
     try {
@@ -252,13 +258,12 @@ console.log('allOptions',allOptions)
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
       setLocalValue(data ? [data] : null);
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option);
   };
-
 
   const setDefaultValue = () => {
     if (options?.slugOptions && multipleInsertField) {
@@ -293,24 +298,24 @@ console.log('allOptions',allOptions)
     }
   };
 
-
   const computedOptions = useMemo(() => {
     const value = [];
     allOptions?.forEach((item) => {
-      const label = field?.attributes?.view_fields?.map((el) => item[el.slug]).join(' ');
+      const label = field?.attributes?.view_fields
+        ?.map((el) => item[el.slug])
+        .join(" ");
       const option = { label, value: item?.guid };
-  
-      const optionExists = value?.some((existingOption) => existingOption?.value === option.value);
+
+      const optionExists = value?.some(
+        (existingOption) => existingOption?.value === option.value
+      );
       if (!optionExists) {
         value.push(option);
       }
     });
-  
+
     return value;
   }, [allOptions, field]);
-  
-  
-
 
   const computedValue = useMemo(() => {
     const findedOption = options?.options?.find((el) => el?.guid === value);
@@ -318,17 +323,26 @@ console.log('allOptions',allOptions)
   }, [options, value]);
 
   const computedInputValue = useMemo(() => {
-    if(Array.isArray(localValue?.length)) {
-      return localValue?.map((item) => ({
-        label: field?.attributes?.view_fields?.map((el) => item?.[el?.slug]).join(' '),
-        value: item?.guid
-      })).find((element) => element?.value === value)
-    } else {
+    if (Array.isArray(localValue?.length)) {
       return localValue
+        ?.map((item) => ({
+          label: field?.attributes?.view_fields
+            ?.map((el) => item?.[el?.slug])
+            .join(" "),
+          value: item?.guid,
+        }))
+        .find((element) => element?.value === value);
+    } else {
+<<<<<<< HEAD
+      return localValue
+=======
+      return computedOptions?.find((item) => item?.value === value);
+>>>>>>> 3703f804fd4044e8fce04536a9682201234a7a4c
     }
   }, [localValue, value, computedOptions]);
 
   useEffect(() => {
+<<<<<<< HEAD
     if(Array.isArray(localValue)) {
       setLocalValue(
         localValue?.filter((item) => {
@@ -336,8 +350,15 @@ console.log('allOptions',allOptions)
         })
       );
     } else return localValue
+=======
+    setLocalValue(
+      Array.isArray(localValue) &&
+        localValue?.filter((item) => {
+          return item?.[autoFiltersFieldFroms] === filtersHandler[0];
+        })
+    );
+>>>>>>> 3703f804fd4044e8fce04536a9682201234a7a4c
   }, [filtersHandler]);
-
 
   useEffect(() => {
     const val = computedValue[computedValue.length - 1];
@@ -360,8 +381,6 @@ console.log('allOptions',allOptions)
   useEffect(() => {
     setDefaultValue();
   }, [options, multipleInsertField]);
-
-
 
   useEffect(() => {
     if (field?.attributes?.function_path) {
@@ -438,19 +457,18 @@ console.log('allOptions',allOptions)
           }}
         />
       ) : (
-
         <Select
           isDisabled={disabled}
           options={computedOptions ?? []}
           isClearable={true}
           value={computedInputValue ?? []}
-          defaultValue={value ?? ''}
+          defaultValue={value ?? ""}
           onChange={(e) => {
             changeHandler(e);
             setLocalValue(e);
           }}          
           onMenuScrollToBottom={loadMoreItems}
-          inputChangeHandler={(e) => console.log('ssss', e)}
+          inputChangeHandler={(e) => console.log("ssss", e)}
           onInputChange={(e, newValue) => {
             setInputValue(e ?? null);
             inputChangeHandler(e);
@@ -477,6 +495,5 @@ console.log('allOptions',allOptions)
     </div>
   );
 };
-
 
 export default RelationFormElement;

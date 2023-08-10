@@ -84,13 +84,13 @@ const smsPage = () => {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Login</CTableCell>
-            <CTableCell>Default Otp</CTableCell>
-            <CTableCell>Number of Otp </CTableCell>
             <CTableCell>Password</CTableCell>
+            <CTableCell>Number of Otp </CTableCell>
+            <CTableCell>Default Otp</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
 
-          <CTableBody loader={loader} columnsCount={4} dataLength={list.length}>
+          <CTableBody loader={loader} columnsCount={5} dataLength={list.length}>
             {smsOtp?.map((element, index) => (
               <CTableRow
                 key={element.id}
@@ -98,9 +98,9 @@ const smsPage = () => {
               >
                 <CTableCell>{index + 1}</CTableCell>
                 <CTableCell>{element?.login}</CTableCell>
-                <CTableCell>{element?.default_otp}</CTableCell>
-                <CTableCell>{element?.number_of_otp}</CTableCell>
                 <CTableCell>{element?.password}</CTableCell>
+                <CTableCell>{element?.number_of_otp}</CTableCell>
+                <CTableCell>{element?.default_otp}</CTableCell>
                 <CTableCell>
                   <RectangleIconButton color="error" onClick={() => deleteTable(element?.id)}>
                     <Delete color="error" />
@@ -109,7 +109,7 @@ const smsPage = () => {
               </CTableRow>
             ))}
             <PermissionWrapperV2 tableSlug="app" type="write">
-              <TableRowButton colSpan={4} onClick={navigateToCreateForm} />
+              <TableRowButton colSpan={6} onClick={navigateToCreateForm} />
             </PermissionWrapperV2>
           </CTableBody>
         </CTable>

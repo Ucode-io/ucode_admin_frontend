@@ -1,43 +1,43 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import CreateButton from "../../components/Buttons/CreateButton";
-import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
-import FiltersBlock from "../../components/FiltersBlock";
-import TableCard from "../../components/TableCard";
-import useTabRouter from "../../hooks/useTabRouter";
-import ViewTabSelector from "./components/ViewTypeSelector";
-import TableView from "./TableView";
-import style from "./style.module.scss";
-import TreeView from "./TreeView";
-import SettingsButton from "./components/ViewSettings/SettingsButton";
-import { useNavigate, useParams } from "react-router-dom";
-import constructorObjectService from "../../services/constructorObjectService";
-import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
-import { Button, CircularProgress, Modal } from "@mui/material";
-import { useMutation, useQuery } from "react-query";
-import useFilters from "../../hooks/useFilters";
-import FastFilterButton from "./components/FastFilter/FastFilterButton";
-import { useDispatch, useSelector } from "react-redux";
-import { CheckIcon } from "../../assets/icons/icon";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
-import ExcelButtons from "./components/ExcelButtons";
-import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
-import MultipleInsertButton from "./components/MultipleInsertForm";
-import CustomActionsButton from "./components/CustomActionsButton";
-import { ArrowDropDownCircleOutlined, Clear, Description, Edit, MoreVertOutlined, Save } from "@mui/icons-material";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Clear, Description, Edit, MoreVertOutlined, Save } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
+import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import HexagonIcon from "@mui/icons-material/Hexagon";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
-import { Menu } from "@mui/material";
+import { Button, CircularProgress, Divider, Menu } from "@mui/material";
 import { endOfMonth, startOfMonth } from "date-fns";
+import { useCallback, useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useMutation, useQuery } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import { CheckIcon } from "../../assets/icons/icon";
+import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
+import FiltersBlock from "../../components/FiltersBlock";
+import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
+import SearchInput from "../../components/SearchInput";
+import TableCard from "../../components/TableCard";
+import useFilters from "../../hooks/useFilters";
+import useTabRouter from "../../hooks/useTabRouter";
+import constructorObjectService from "../../services/constructorObjectService";
+import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
+import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
 import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
 import LanguagesNavbar from "./LanguagesNavbar";
-import SearchInput from "../../components/SearchInput";
-import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import ShareModal from "./ShareModal/ShareModal";
+import TableView from "./TableView";
+import TreeView from "./TreeView";
+import CustomActionsButton from "./components/CustomActionsButton";
+import ExcelButtons from "./components/ExcelButtons";
+import FastFilterButton from "./components/FastFilter/FastFilterButton";
+import MultipleInsertButton from "./components/MultipleInsertForm";
+import ViewTabSelector from "./components/ViewTypeSelector";
+import style from "./style.module.scss";
+import ColumnButton from "./ColumnButton";
+import SortButton from "./SortButton";
+import GroupByButton from "./GroupByButton";
 
 const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
   const { t } = useTranslation();
@@ -49,22 +49,23 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   const [heightControl, setHeightControl] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
   const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
-  const [res, setRes] = [
-    {
-      balance: [],
-    },
-  ];
   const { navigateToForm } = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
   const [selectedObjects, setSelectedObjects] = useState([]);
+  const navigate = useNavigate();
+  const { appId } = useParams();
+  const [count, setCount] = useState(0);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
+  const [selectedView, setSelectedView] = useState(null);
+  const [defaultViewTab, setDefaultViewTab] = useState(0);
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
     $lt: endOfMonth(new Date()),
   });
 
-  console.log('filters', filters)
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -175,12 +176,42 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     }
   }, [dateFilters, tableSlug]);
 
-  const navigate = useNavigate();
-  const { appId } = useParams();
+  constructorObjectService
+    .getList(tableSlug, {
+      data: {
+        offset: 0,
+        app_id: appId,
+        limit: 0,
+      },
+    })
+    .then((res) => {
+      setCount(res.data.count);
+    });
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
     navigate(url);
+  };
+
+  const clickColumn = () => {
+    setIsChanged(false);
+    setSettingsModalVisible(true);
+    setSelectedView(views[selectedTabIndex]);
+    setDefaultViewTab(2);
+  };
+
+  const clickSort = () => {
+    setIsChanged(false);
+    setSettingsModalVisible(true);
+    setSelectedView(views[selectedTabIndex]);
+    setDefaultViewTab(2);
+  };
+
+  const clickGroupBy = () => {
+    setIsChanged(false);
+    setSettingsModalVisible(true);
+    setSelectedView(views[selectedTabIndex]);
+    setDefaultViewTab(4);
   };
 
   return (
@@ -188,105 +219,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
       <FiltersBlock
         extra={
           <>
-            {/* {view.type === "TABLE" && (
-              <RectangleIconButton
-                color="white"
-                onClick={() => setHeightControl(!heightControl)}
-              >
-                <div style={{ position: "relative" }}>
-                  <span
-                    style={{
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <FormatLineSpacingIcon color="primary" />
-                  </span>
-                  {heightControl && (
-                    <div className={style.heightControl}>
-                      {tableHeightOptions.map((el) => (
-                        <div
-                          key={el.value}
-                          className={style.heightControl_item}
-                          onClick={() => handleHeightControl(el.value)}
-                        >
-                          {el.label}
-                          {tableHeight === el.value ? (
-                            <CheckIcon color="primary" />
-                          ) : null}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </RectangleIconButton>
-            )}
-
-            <FastFilterButton view={view} fieldsMap={fieldsMap} />
-
-            <button className={style.moreButton} onClick={handleClick}>
-              <MoreHorizIcon
-                style={{
-                  color: "#888",
-                }}
-              />
-            </button>
-            <Menu
-              open={open}
-              onClose={handleClose}
-              anchorEl={anchorEl}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    // width: 100,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
-              }}
-            >
-              <div className={style.menuBar}>
-                <ExcelButtons fieldsMap={fieldsMap} />
-                <div
-                  className={style.template}
-                  onClick={() => setSelectedTabIndex(views?.length)}
-                >
-                  <div
-                    className={`${style.element} ${
-                      selectedTabIndex === views?.length ? style.active : ""
-                    }`}
-                  >
-                    <Description
-                      className={style.icon}
-                      style={{ color: "#6E8BB7" }}
-                    />
-                  </div>
-                  <span>{ t('template') }</span>
-                </div>
-                <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                  <SettingsButton />
-                </PermissionWrapperV2>
-              </div>
-            </Menu> */}
-
             <PermissionWrapperV2 tableSlug={tableSlug} type="share_modal">
               <ShareModal />
             </PermissionWrapperV2>
@@ -298,21 +230,29 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             <PermissionWrapperV2 tableSlug={tableSlug} type="automation">
               <Button variant="outlined">
                 <HexagonIcon />
-                {/* {t("automations")} */}
               </Button>
             </PermissionWrapperV2>
 
             <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
               <Button variant="outlined" onClick={navigateToSettingsPage}>
                 <SettingsSuggestIcon />
-                {/* {t("settings")} */}
               </Button>
             </PermissionWrapperV2>
-
           </>
         }
       >
-        <ViewTabSelector selectedTabIndex={selectedTabIndex} setSelectedTabIndex={setSelectedTabIndex} views={views} />
+        <ViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+          settingsModalVisible={settingsModalVisible}
+          setSettingsModalVisible={setSettingsModalVisible}
+          isChanged={isChanged}
+          setIsChanged={setIsChanged}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
+          defaultViewTab={defaultViewTab}
+        />
         {view?.type === "FINANCE CALENDAR" && <CRangePickerNew onChange={setDateFilters} value={dateFilters} />}
       </FiltersBlock>
 
@@ -320,9 +260,31 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
         <div className={style.extraWrapper}>
           <div className={style.search}>
             <SearchInput placeholder={"Search"} />
+
+            <Divider orientation="vertical" flexItem />
+
+            <div className={style.count}>
+              <span>{count} items</span>
+            </div>
           </div>
 
           <div className={style.rightExtra}>
+            <FastFilterButton view={view} fieldsMap={fieldsMap} />
+
+            <Divider orientation="vertical" flexItem />
+
+            <ColumnButton onClick={clickColumn} />
+
+            <Divider orientation="vertical" flexItem />
+
+            <SortButton onClick={clickSort} />
+
+            <Divider orientation="vertical" flexItem />
+
+            <GroupByButton onClick={clickGroupBy} />
+
+            <Divider orientation="vertical" flexItem />
+
             {view.type === "TABLE" && (
               <div className={style.lineControl} onClick={() => setHeightControl(!heightControl)}>
                 <div style={{ position: "relative" }}>
@@ -344,8 +306,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
               </div>
             )}
 
-            <FastFilterButton view={view} fieldsMap={fieldsMap} />
-
             <button className={style.moreButton} onClick={handleClick}>
               <MoreVertOutlined
                 style={{
@@ -353,6 +313,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                 }}
               />
             </button>
+
             <Menu
               open={open}
               onClose={handleClose}
@@ -392,9 +353,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                   </div>
                   <span>{t("template")}</span>
                 </div>
-                {/* <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                  <SettingsButton />
-                </PermissionWrapperV2> */}
               </div>
             </Menu>
           </div>
@@ -410,7 +368,9 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
               </div>
               <TabList style={{ border: "none" }}>
                 {tabs?.map((tab) => (
-                  <Tab key={tab.value}>{tab.label}</Tab>
+                  <Tab key={tab.value} selectedClassName={style.activeTab} className={`${style.disableTab} react-tabs__tab`}>
+                    {tab.label}
+                  </Tab>
                 ))}
               </TabList>
             </div>
@@ -450,7 +410,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       size="small"
                       onClick={() => {
                         setFormVisible(true);
-                        // reset()
                       }}
                     >
                       <Edit color="primary" />
@@ -462,20 +421,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
               </PermissionWrapperV2>
             </div>
           </div>
-          {/* <>
-            {view.type === "TREE" ? (
-              <TreeView
-                filters={filters}
-                filterChangeHandler={filterChangeHandler}
-                view={view}
-              />
-            ) : (
-              <TableView
-                filters={filters}
-                filterChangeHandler={filterChangeHandler}
-              />
-            )}
-          </> */}
           {loader ? (
             <div className={style.loader}>
               <CircularProgress />
@@ -533,6 +478,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                   ) : (
                     <TableView
                       setDataLength={setDataLength}
+                      selectedTabIndex={selectedTabIndex}
                       shouldGet={shouldGet}
                       reset={reset}
                       menuItem={menuItem}

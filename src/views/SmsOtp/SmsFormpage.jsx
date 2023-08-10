@@ -136,7 +136,6 @@ const smsFormPage = () => {
                 disabledHelperText
                 name="number_of_otp"
                 control={mainForm.control}
-                type={'number'}
                 fullWidth
                 required
               />

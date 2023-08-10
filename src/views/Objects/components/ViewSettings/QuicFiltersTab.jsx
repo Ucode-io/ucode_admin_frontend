@@ -48,16 +48,15 @@ const QuickFiltersTab = ({ form }) => {
 }
 
 const QuickFilterRow = ({ column, onCheckboxChange, index, control }) => {
-const {i18n} = useTranslation()
+  const {i18n} = useTranslation()
   return (
     <div className={styles.row} >
-      <div className={styles.cell} style={{ flex: 1 }}>{column.label ?? column?.attributes?.[`label_${i18n.language}`]}</div>
+      <div className={styles.cell} style={{ flex: 1 }}>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</div>
       <div className={styles.cell} style={{ width: 70 }}>
         <HFCheckbox control={control} name={`quick_filters[${index}].is_checked`} />
       </div>
     </div>
   )
-
 
   // return (
   //   <CTableRow>

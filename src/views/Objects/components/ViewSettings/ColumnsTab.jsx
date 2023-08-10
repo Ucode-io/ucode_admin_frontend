@@ -38,7 +38,6 @@ const ColumnsTab = ({ form }) => {
   };
 
   const { i18n } = useTranslation();
-  console.log("columns", columns);
 
   return (
     <div>
@@ -57,7 +56,7 @@ const ColumnsTab = ({ form }) => {
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
                 <div className={styles.cell} style={{ flex: 1 }}>
-                  {column.label ?? column?.attributes?.[`label_${i18n.language}`]}
+                  {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
                 </div>
                 <div className={styles.cell} style={{ width: 70 }}>
                   <HFCheckbox control={form.control} name={`columns[${index}].is_checked`} />

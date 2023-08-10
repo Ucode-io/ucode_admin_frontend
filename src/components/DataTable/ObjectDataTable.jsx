@@ -241,7 +241,7 @@ const ObjectDataTable = ({
                         setColumnId((prev) => (prev === column.id ? "" : column.id));
                       }}
                     >
-                      {column.label ?? column.attributes?.[`label_${i18n.language}`]}
+                      {column.attributes?.[`label_${i18n.language}`] ?? column.label}
                     </span>
                     {disableFilters && <FilterGenerator field={column} name={column.slug} onChange={filterChangeHandler} filters={filters} tableSlug={tableSlug} />}
                     {columnId === column?.id && (

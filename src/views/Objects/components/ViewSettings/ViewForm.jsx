@@ -31,7 +31,6 @@ import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
 
 const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
-  console.log('initialValues', initialValues)
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);

@@ -39,7 +39,8 @@ const Dropdown = ({ field, closeMenu, onObjectSelect, tablesList }) => {
       return request.post(
         `/invoke_function/${field?.attributes?.function_path}`,
         {
-          params: {},
+          params: {
+          },
           data: {
             ...queryPayload,
             table_slug: selectedTable?.slug,

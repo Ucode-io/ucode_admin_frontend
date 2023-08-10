@@ -22,12 +22,13 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                   value={value}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
-                  size="small"
+                  size="medium"
                   placeholder={placeholder.split("#")[0]}
                   sx={{
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderRight: 0,
                     },
+                    width: '150px',
                   }}
                   fullWidth
                   className={`${isFormEdit ? "custom_textfield" : ""}`}
@@ -72,7 +73,7 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                   value={value}
                   onClick={() => (disabled ? null : openCalendar())}
                   onChange={handleChange}
-                  size="small"
+                  // size="small"
                   autoComplete="off"
                   placeholder={placeholder.split("#")[1]}
                   className={`${isFormEdit ? "custom_textfield" : ""}`}
@@ -82,6 +83,7 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderLeft: 0,
                     },
+                    width: '150px'
                   }}
                   InputProps={{
                     readOnly: disabled,

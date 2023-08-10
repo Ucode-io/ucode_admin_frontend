@@ -130,6 +130,7 @@ const AutoCompleteElement = ({
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const { id } = useParams();
+  console.log('defaultValue',field?.type,  defaultValue)
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
@@ -182,6 +183,9 @@ const AutoCompleteElement = ({
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
       return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
+        params: {
+          from_input: true
+        },
         data: {
           table_slug: tableSlug,
           ...autoFiltersValue,
@@ -205,6 +209,7 @@ const AutoCompleteElement = ({
       },
     }
   );
+  console.log('defaultValue', defaultValue)
 
   const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
@@ -285,7 +290,6 @@ const AutoCompleteElement = ({
     });
   }, [computedValue]);
 
-  console.log("options==>>", options);
 
   return (
     <div className={styles.autocompleteWrapper}>

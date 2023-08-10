@@ -218,6 +218,8 @@ const LayoutSidebar = ({ appId }) => {
     }
   };
 
+
+
   return (
     <>
       <div
@@ -228,7 +230,8 @@ const LayoutSidebar = ({ appId }) => {
       >
         <div className="header">
           <div className="brand">
-            <UdevsLogo fill={"#007AFF"} />
+            {/* <UdevsLogo fill={"#007AFF"} /> */}
+            <img src={projectInfo?.logo} alt="" width={40} height={40} />
             {sidebarIsOpen && (
               <h2
                 style={{

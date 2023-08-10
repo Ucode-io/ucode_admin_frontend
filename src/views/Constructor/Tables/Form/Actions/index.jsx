@@ -52,7 +52,7 @@ const Actions = ({ mainForm }) => {
       {
         id: 1,
         label: "Label",
-        slug: `label_${defaultLanguage}`,
+        slug: `label`,
       },
       // {
       //   id: 2,

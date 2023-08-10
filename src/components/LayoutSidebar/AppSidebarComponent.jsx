@@ -83,7 +83,7 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
           />
           {sidebarIsOpen && (
             <ListItemText
-              primary={element?.label || element?.attributes?.[`label_${defaultLanguage}`] || element?.data?.microfrontend?.name || element?.data?.webpage?.title}
+              primary={element?.attributes?.[`label_${defaultLanguage}`] || element?.label || element?.data?.microfrontend?.name || element?.data?.webpage?.title}
               style={{
                 color: selectedApp?.id === element.id ? menuStyle?.active_text : menuStyle?.text || "",
               }}

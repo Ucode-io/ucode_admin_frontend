@@ -20,6 +20,7 @@ import EmailSidebar from "../Components/Email/EmailSidebar";
 import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 import Resources from "../Components/Resources";
 import EltResources from "../Components/Elt";
+import { store } from "../../../store";
 
 const SubMenu = ({
   child,
@@ -37,9 +38,9 @@ const SubMenu = ({
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const { i18n } = useTranslation();
-  const menuItem = useSelector((state) => state.menu.menuItem);
-
+  const menuItem = store.getState().menu.menuItem;
+  const {i18n} = useTranslation();
+  const defaultLanguage = i18n.language;
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
@@ -59,8 +60,7 @@ const SubMenu = ({
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.label ??
-                selectedApp?.attributes?.[`label_${i18n.language}`]}
+              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label ?? selectedApp?.attributes?.[`label_${i18n.language}`]}
             </h2>
           )}{" "}
           <Box className="buttons">

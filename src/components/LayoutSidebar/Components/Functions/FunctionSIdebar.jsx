@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { HiOutlineCodeBracket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useFunctionFoldersListQuery } from "../../../../services/functionFolderService";
 import { useFunctionsListQuery } from "../../../../services/functionService";
 import { store } from "../../../../store";
@@ -44,6 +44,7 @@ const FunctionSidebar = ({
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const [menu, setMenu] = useState({ event: "", type: "" });
+  const location = useLocation();
   const openMenu = Boolean(menu?.event);
 
   const handleOpenNotify = (event, type, element) => {
@@ -151,7 +152,7 @@ const FunctionSidebar = ({
 
   const onSelect = (id, element) => {
     setSelected(element);
-    navigate(`/project/${company.projectId}/functions/${id}`);
+    navigate(`${location.pathname}/function/${id}`);
   };
   const rowClickHandler = (id, element) => {
     dispatch(menuActions.setMenuItem(element));

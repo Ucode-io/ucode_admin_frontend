@@ -1,6 +1,6 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
+import { Box, Button, Collapse, Icon, Tooltip } from "@mui/material";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import IconGenerator from "../../../IconPicker/IconGenerator";
@@ -62,7 +62,7 @@ const FunctionRecursive = ({
                   : menuStyle?.text,
             }}
           >
-            <IconGenerator icon={element?.icon} size={18} />
+            <Icon as={element.icon} />
             {element?.name}
           </div>
           {element.buttons && (

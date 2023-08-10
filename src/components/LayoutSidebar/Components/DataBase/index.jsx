@@ -16,6 +16,8 @@ import { tableFolderListToNested } from "../../../../utils/tableFolderListToNest
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import DataBaseRecursive from "./RecursiveBlock";
+import { FaFolder } from "react-icons/fa";
+import { BsTable } from "react-icons/bs";
 
 const dataBase = {
   label: "Databases",
@@ -81,6 +83,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
       select: (res) =>
         res?.folders?.map((item) => ({
           name: item?.title,
+          icon: FaFolder,
           parent_id: item?.parent_id,
           id: item?.id,
           type: "FOLDER",
@@ -113,6 +116,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
         list.push({
           ...table,
           name: table.label,
+          icon: BsTable,
           parent_id: table.folder_id,
           type: "TABLE",
         });

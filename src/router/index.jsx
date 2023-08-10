@@ -64,6 +64,7 @@ import ResourceDetail from "../views/Resources/Detail";
 import Connections from "../views/Matrix/Connections";
 import SmsPage from "../views/SmsOtp";
 import SmsFormPage from "../views/SmsOtp/SmsFormpage";
+import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -188,18 +189,17 @@ const Router = () => {
           <Route path="role/:roleId" element={<RoleDetail />} />
         </Route>
 
-      
         <Route path="resources">
-            <Route path="create" element={<ResourceDetail />} />
-            <Route path=":resourceId" element={<ResourceDetail />} />
+          <Route path="create" element={<ResourceDetail />} />
+          <Route path=":resourceId" element={<ResourceDetail />} />
 
-            <Route path="elt">
-              <Route path="connections">
-                <Route index element={<Connections />} />
-                {/* <Route path="create" element={<ConnectionCreate />} /> */}
-                {/* <Route path=":connectionId" element={<ConnectionDetail />} /> */}
-              </Route>
-              {/* <Route path="sources">
+          <Route path="elt">
+            <Route path="connections">
+              <Route index element={<Connections />} />
+              {/* <Route path="create" element={<ConnectionCreate />} /> */}
+              {/* <Route path=":connectionId" element={<ConnectionDetail />} /> */}
+            </Route>
+            {/* <Route path="sources">
                 <Route index element={<Sources />} />
                 <Route path="create" element={<SourceDetail />} />
                 <Route path=":sourceId" element={<SourceDetail />} />
@@ -209,9 +209,8 @@ const Router = () => {
                 <Route path="create" element={<DestinationDetail />} />
                 <Route path=":destinationId" element={<DestinationDetail />} />
               </Route> */}
-            </Route>
           </Route>
-
+        </Route>
 
         <Route path=":appId/database/:resourceId/:tableSlug/:databaseId">
           <Route index element={<DatabasePage />} />
@@ -231,6 +230,9 @@ const Router = () => {
         </Route>
         <Route path=":appId/project-setting">
           <Route index element={<ProjectSettingPage />} />
+        </Route>
+        <Route path=":appId/function">
+          <Route path=":functionId" element={<FunctionsDetail />} />
         </Route>
         <Route path=":appId/docs">
           <Route path="note/:folderId">

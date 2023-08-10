@@ -1,6 +1,6 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
+import { Box, Button, Collapse, Icon } from "@mui/material";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import IconGenerator from "../../../IconPicker/IconGenerator";
@@ -66,7 +66,8 @@ const DataBaseRecursive = ({
               opacity: element?.isChild && 0.6,
             }}
           >
-            <IconGenerator icon={element?.icon} size={18} />
+            {/* <IconGenerator icon={element?.icon} size={18} /> */}
+            <Icon as={element.icon} />
             {element?.name}
           </div>
           {element.type === "FOLDER" &&

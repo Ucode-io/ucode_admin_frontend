@@ -65,6 +65,7 @@ const FolderCreateModal = ({ closeModal, loading, modalType, appId, selectedFold
     menuSettingsService
       .update({
         ...data,
+        label: Object.values(data?.attributes).find(item => item),
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);

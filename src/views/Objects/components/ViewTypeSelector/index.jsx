@@ -110,7 +110,7 @@ const ViewTabSelector = ({
 
           <div className={style.title}>
             <IconGenerator className={style.icon} icon={selectedTable?.isChild ? selectedTable?.icon : selectedTable?.icon} />
-            <h3>{selectedTable?.label ?? selectedTable?.title}</h3>
+            <h3>{selectedTable?.attributes?.[`label_${i18n.language}`] ?? selectedTable?.attributes?.[`title_${i18n.language}`]}</h3>
           </div>
         </div>
         <div className={style.appTabs}>
@@ -132,7 +132,7 @@ const ViewTabSelector = ({
                   {view.type === "TREE" && <AccountTree className={style.icon} />}
                   {view.type === "BOARD" && <IconGenerator className={style.icon} icon="brand_trello.svg" />}
                   {view.type === "FINANCE CALENDAR" && <MonetizationOnIcon className={style.icon} />}
-                  <span>{view?.name ?? view?.attributes?.[`name_${i18n.language}`] ? view?.attributes?.[`name_${i18n.language}`] : view.type}</span>
+                  <span>{(view?.attributes?.[`name_${i18n.language}`] ? view?.attributes?.[`name_${i18n.language}`] : view.type) ?? view?.name}</span>
 
                   {view?.attributes?.view_permission?.edit && (
                     <div className={style.popoverElement}>

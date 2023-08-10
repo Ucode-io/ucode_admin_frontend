@@ -1,7 +1,6 @@
 import { Save } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tabs } from "react-tabs";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
@@ -9,13 +8,8 @@ import SecondaryButton from "../../components/Buttons/SecondaryButton";
 import Footer from "../../components/Footer";
 import FormCard from "../../components/FormCard";
 import FRow from "../../components/FormElements/FRow";
-import HFSelect from "../../components/FormElements/HFSelect";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HeaderSettings from "../../components/HeaderSettings";
-import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import roleServiceV2 from "../../services/roleServiceV2";
-import listToOptions from "../../utils/listToOptions";
-import apiKeyService from "../../services/apiKey.service";
 import PageFallback from "../../components/PageFallback";
 import { store } from "../../store";
 import smsOtpService from "../../services/auth/smsOtpService";
@@ -48,6 +42,24 @@ const smsFormPage = () => {
       .catch(() => setBtnLoader(false));
   };
 
+
+  const updateApp = (data) => {
+    setBtnLoader(true);
+
+    const params = {
+      'project-id': authStore?.projectId
+    }
+
+    smsOtpService
+      .update({
+        ...data, number_of_otp: parseInt(data?.number_of_otp)
+      }, params)
+      .then(() => {
+        navigate(-1);
+        getRoleList();
+      })
+      .catch(() => setBtnLoader(false));
+  };
 
 
   const getById = () => {

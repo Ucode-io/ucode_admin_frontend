@@ -147,6 +147,7 @@ const AutoCompleteElement = ({
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
 
+console.log('allOptions',allOptions)
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
   }, [autoFilters]);
@@ -267,6 +268,7 @@ const AutoCompleteElement = ({
   };
 
   const changeHandler = (value, key = "") => {
+    console.log('value', value)
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value ? [value] : null);
@@ -275,6 +277,7 @@ const AutoCompleteElement = ({
       field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(value, field_from));
       });
+      setPage(1)
     } else {
       const val = value;
       setValue(val?.value ?? null);
@@ -285,6 +288,7 @@ const AutoCompleteElement = ({
       field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(val, field_from));
       });
+      setPage(1)
     }
   };
 
@@ -323,17 +327,18 @@ const AutoCompleteElement = ({
         }))
         .find((element) => element?.value === value);
     } else {
-      return computedOptions?.find((item) => item?.value === value);
+      return localValue
     }
   }, [localValue, value, computedOptions]);
 
   useEffect(() => {
-    setLocalValue(
-      Array.isArray(localValue) &&
+    if(Array.isArray(localValue)) {
+      setLocalValue(
         localValue?.filter((item) => {
           return item?.[autoFiltersFieldFroms] === filtersHandler[0];
         })
-    );
+      );
+    } else return localValue
   }, [filtersHandler]);
 
   useEffect(() => {
@@ -361,15 +366,33 @@ const AutoCompleteElement = ({
   useEffect(() => {
     if (field?.attributes?.function_path) {
       const newOptions = optionsFromFunctions?.options ?? [];
-      setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
+      if(newOptions?.length && page > 1) {
+        setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
+      } else {
+        setAllOptions(newOptions)
+      }
     } else {
       const newOptions = optionsFromLocale?.options ?? [];
-      setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
+      if(newOptions?.length && page > 1) {
+        setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
+      } else {
+        setAllOptions(newOptions)
+      }
     }
   }, [optionsFromFunctions, optionsFromLocale]);
 
   function loadMoreItems() {
-    setPage((prevPage) => prevPage + 1);
+    if (field?.attributes?.function_path) {
+        if(optionsFromFunctions?.length >= 10) {
+          setPage((prevPage) => prevPage + 1);
+        } else return false
+        
+    } else {
+          if(optionsFromLocale?.length >= 10) {
+            setPage((prevPage) => prevPage + 1);
+          } 
+          else return false
+    } 
   }
 
   return (
@@ -424,14 +447,14 @@ const AutoCompleteElement = ({
           onChange={(e) => {
             changeHandler(e);
             setLocalValue(e);
-          }}
+          }}          
           onMenuScrollToBottom={loadMoreItems}
           inputChangeHandler={(e) => console.log("ssss", e)}
           onInputChange={(e, newValue) => {
             setInputValue(e ?? null);
             inputChangeHandler(e);
           }}
-          getOptionLabel={(option) => option?.label}
+          getOptionLabel={(option) => option?.name ?? option?.label}
           components={{
             DropdownIndicator: () => null,
             MultiValue: ({ data }) => (

@@ -150,7 +150,7 @@ const ViewForm = ({ initialValues, typeNewView, defaultViewTab, closeForm, refet
         ...computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
         ...values?.attributes
       },
-      name: Object.values(values?.attributes).find((item) => item),
+      name: Object.values(values?.attributes).find(item => typeof item === "string"),
       app_id: appId,
       order: views?.length ?? 0,
     };

@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
 import HFSelect from "../../components/FormElements/HFSelect";
 import menuSettingsService from "../../services/menuSettingsService";
-import microfrontendService from "../../services/microfrontendService";
+import { useMicrofrontendListQuery } from "../../services/microfrontendService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
@@ -22,7 +22,6 @@ const MicrofrontendLinkModal = ({
 }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
-  const [list, setList] = useState();
   const { control, handleSubmit, reset } = useForm();
 
   const {
@@ -91,27 +90,18 @@ const MicrofrontendLinkModal = ({
         console.log(err);
       });
   };
-
-  const getTables = () => {
-    microfrontendService.getList().then((res) => {
-      setList(res);
-    });
-  };
-
-  useEffect(() => {
-    getTables();
-  }, []);
-
   const deleteField = (index) => {
     remove(index);
   };
 
+  const { data: microfrontend } = useMicrofrontendListQuery();
+
   const microfrontendOptions = useMemo(() => {
-    return list?.functions?.map((item, index) => ({
+    return microfrontend?.functions?.map((item, index) => ({
       label: item.name,
       value: item.id,
     }));
-  }, [list]);
+  }, [microfrontend]);
 
   return (
     <div>

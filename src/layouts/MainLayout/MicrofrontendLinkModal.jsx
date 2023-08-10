@@ -90,12 +90,11 @@ const MicrofrontendLinkModal = ({
         console.log(err);
       });
   };
-
-  const { data: microfrontend } = useMicrofrontendListQuery();
-
   const deleteField = (index) => {
     remove(index);
   };
+
+  const { data: microfrontend } = useMicrofrontendListQuery();
 
   const microfrontendOptions = useMemo(() => {
     return microfrontend?.functions?.map((item, index) => ({

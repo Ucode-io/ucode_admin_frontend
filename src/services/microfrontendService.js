@@ -1,13 +1,14 @@
 import { useQuery } from "react-query";
-import requestV2 from "../utils/requestV2";
+import httpsRequest from "../utils/httpsRequest";
 
 const microfrontendService = {
-  getList: (params) => requestV2.get("/functions/micro-frontend", { params }),
+  getList: (params) =>
+    httpsRequest.get("/v2/functions/micro-frontend", { params }),
   getById: (id, params) =>
-    requestV2.get(`/functions/micro-frontend/${id}`, { params }),
-  create: (data) => requestV2.post("/functions/micro-frontend", data),
-  update: (data) => requestV2.put("/functions/micro-frontend", data),
-  delete: (id) => requestV2.delete(`/functions/micro-frontend/${id}`),
+    httpsRequest.get(`/v2/functions/micro-frontend/${id}`, { params }),
+  create: (data) => httpsRequest.post("/v2/functions/micro-frontend", data),
+  update: (data) => httpsRequest.put("/v2/functions/micro-frontend", data),
+  delete: (id) => httpsRequest.delete(`/v2/functions/micro-frontend/${id}`),
 };
 
 export const useMicrofrontendListQuery = ({

@@ -27,6 +27,8 @@ import constructorFieldService from "@/services/constructorFieldService";
 import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import NavigateSettings from "./NavigateSettings";
 import ViewsList from "./ViewsList";
+import { useSelector } from "react-redux";
+import { Box } from "@mui/material";
 
 const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
   const { tableSlug, appId } = useParams();
@@ -150,6 +152,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
             default_value: el.default_value ?? "",
           })) ?? [],
       attributes: computeFinancialAcc(values.chartOfAccounts, values?.group_by_field_selected?.slug, values),
+      name: Object.values(values?.attributes).find((item) => item),
       app_id: appId,
       order: views?.length ?? 0,
     };
@@ -187,9 +190,12 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
       .then(() => {
         closeForm();
         refetchViews();
+        setIsChanged(true);
       })
       .catch(() => setDeleteBtnLoader(false));
   };
+
+  const languages = useSelector((state) => state.languages.list);
 
   return (
     <div className={styles.formSection}>
@@ -213,7 +219,11 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, refetchViews, setIsCh
                 <div className={styles.sectionBody}>
                   <div className={styles.formRow}>
                     <FRow label="Название">
-                      <HFTextField control={form.control} name="name" fullWidth />
+                      <Box style={{ display: "flex", gap: "6px" }}>
+                        {languages?.map((language) => (
+                          <HFTextField control={form.control} name={`attributes.name_${language?.slug}`} placeholder={`Название (${language?.slug})`} fullWidth />
+                        ))}
+                      </Box>
                     </FRow>
                   </div>
 

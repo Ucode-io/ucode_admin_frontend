@@ -12,6 +12,7 @@ import IconGenerator from "../../IconPicker/IconGenerator";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
 import { useQueryClient } from "react-query";
+import { useTranslation } from "react-i18next";
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -37,6 +38,8 @@ const RecursiveBlock = ({
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+  const { i18n } = useTranslation();
+  const defaultLanguage = i18n.language;
 
   const activeStyle = {
     backgroundColor:
@@ -153,7 +156,7 @@ const RecursiveBlock = ({
                 }
                 size={18}
               />
-              {(sidebarIsOpen && element?.label) ||
+              {(sidebarIsOpen && (element?.attributes?.[`label_${defaultLanguage}`] ?? element?.label)) ||
                 element?.data?.microfrontend?.name ||
                 element?.data?.webpage?.title ||
                 element?.name}

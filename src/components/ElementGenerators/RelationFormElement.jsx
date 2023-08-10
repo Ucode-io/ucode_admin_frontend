@@ -147,7 +147,7 @@ const AutoCompleteElement = ({
   const [page, setPage] = useState(1)
   const [allOptions, setAllOptions] = useState([]);
 
-
+console.log('allOptions',allOptions)
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
   }, [autoFilters]);
@@ -266,6 +266,7 @@ const AutoCompleteElement = ({
   };
 
   const changeHandler = (value, key = "") => {
+    console.log('value', value)
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value ? [value] : null);
@@ -274,6 +275,7 @@ const AutoCompleteElement = ({
       field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(value, field_from));
       });
+      setPage(1)
     } else {
       const val = value;
       setValue(val?.value ?? null);
@@ -284,6 +286,7 @@ const AutoCompleteElement = ({
       field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(val, field_from));
       });
+      setPage(1)
     }
   };
 
@@ -318,17 +321,18 @@ const AutoCompleteElement = ({
         value: item?.guid
       })).find((element) => element?.value === value)
     } else {
-      return computedOptions?.find((item) => item?.value === value)
+      return localValue
     }
   }, [localValue, value, computedOptions]);
 
-
   useEffect(() => {
-    setLocalValue(
-      localValue?.filter((item) => {
-        return item?.[autoFiltersFieldFroms] === filtersHandler[0];
-      })
-    );
+    if(Array.isArray(localValue)) {
+      setLocalValue(
+        localValue?.filter((item) => {
+          return item?.[autoFiltersFieldFroms] === filtersHandler[0];
+        })
+      );
+    } else return localValue
   }, [filtersHandler]);
 
 
@@ -441,15 +445,14 @@ const AutoCompleteElement = ({
           onChange={(e) => {
             changeHandler(e);
             setLocalValue(e);
-            setPage(1)
-          }}
+          }}          
           onMenuScrollToBottom={loadMoreItems}
           inputChangeHandler={(e) => console.log('ssss', e)}
           onInputChange={(e, newValue) => {
             setInputValue(e ?? null);
             inputChangeHandler(e);
           }}
-          getOptionLabel={(option) => option?.label}
+          getOptionLabel={(option) => option?.name ?? option?.label}
           components={{
             DropdownIndicator: () => null,
             MultiValue: ({ data }) => (

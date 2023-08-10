@@ -93,7 +93,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
   if (!field.attributes?.field_permission?.view_permission && checkPermission) {
     return null;
   }
-
+  console.log('fielddddddd', field)
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {

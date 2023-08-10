@@ -359,17 +359,34 @@ const AutoCompleteElement = ({
   useEffect(() => {
     if (field?.attributes?.function_path) {
       const newOptions = optionsFromFunctions?.options ?? [];
-      setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
+      if(newOptions?.length && page > 1) {
+        setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
+      } else {
+        setAllOptions(newOptions)
+      }
     } else {
       const newOptions = optionsFromLocale?.options ?? [];
-      setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
+      if(newOptions?.length && page > 1) {
+        setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
+      } else {
+        setAllOptions(newOptions)
+      }
     }
   }, [optionsFromFunctions, optionsFromLocale]);
 
   function loadMoreItems() {
-    setPage((prevPage) => prevPage + 1);
+    if (field?.attributes?.function_path) {
+        if(optionsFromFunctions?.length >= 10) {
+          setPage((prevPage) => prevPage + 1);
+        } else return false
+        
+    } else {
+          if(optionsFromLocale?.length >= 10) {
+            setPage((prevPage) => prevPage + 1);
+          } 
+          else return false
+    } 
   }
-
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -424,6 +441,7 @@ const AutoCompleteElement = ({
           onChange={(e) => {
             changeHandler(e);
             setLocalValue(e);
+            setPage(1)
           }}
           onMenuScrollToBottom={loadMoreItems}
           inputChangeHandler={(e) => console.log('ssss', e)}

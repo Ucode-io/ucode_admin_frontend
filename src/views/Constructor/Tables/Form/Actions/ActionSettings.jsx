@@ -18,6 +18,7 @@ import HFSelect from "../../../../../components/FormElements/HFSelect";
 import TableActions from "./TableActions";
 import requestV2 from "../../../../../utils/requestV2";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const actionTypeList = [
   { label: "HTTP", value: "HTTP" },
@@ -86,11 +87,11 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
       })
       .catch(() => setLoader(false));
   };
-
+  const {i18n} = useTranslation();
   const submitHandler = (values) => {
     const computedValues = {
       ...values,
-      label: Object.values(values?.attributes).find(item => typeof item === "string"),
+      label: values?.attributes?.[`label_${i18n.language}`] ?? Object.values(values?.attributes).find(item => typeof item === "string"),
     };
     if (formType === "CREATE") createAction(computedValues);
     else updateAction(computedValues);

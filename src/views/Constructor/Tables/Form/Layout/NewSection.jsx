@@ -82,7 +82,7 @@ const NewSection = ({
 
           {languages.map((language) => (
             <HFTextField
-              placeholder={`Label ${language.slug}`}
+              placeholder={`Section ${language.slug}`}
               required={index === 0}
               control={mainForm.control}
               name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language.slug}`}

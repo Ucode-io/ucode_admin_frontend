@@ -181,7 +181,7 @@ const ConstructorTablesFormPage = () => {
   const createConstructorTable = (data) => {
     setBtnLoader(true);
 
-    dispatch(createConstructorTableAction(data))
+    dispatch(createConstructorTableAction({...data, label: Object.values(data?.attributes).find(item => item)}))
       .unwrap()
       .then((res) => {
         navigate(-1);
@@ -278,7 +278,6 @@ const ConstructorTablesFormPage = () => {
       // sections: computeSectionsOnSubmit(data.sections, data.summary_section),
       // view_relations: computeViewRelationsOnSubmit(data.view_relations),
     };
-
     // return;
     if (id) updateConstructorTable(computedData);
     else createConstructorTable(computedData);
@@ -288,6 +287,7 @@ const ConstructorTablesFormPage = () => {
     if (!id) setLoader(false);
     else getData();
   }, [id]);
+
   if (loader) return <PageFallback />;
 
   return (

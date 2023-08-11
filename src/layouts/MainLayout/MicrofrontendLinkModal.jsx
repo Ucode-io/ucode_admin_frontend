@@ -10,6 +10,7 @@ import menuSettingsService from "../../services/menuSettingsService";
 import microfrontendService from "../../services/microfrontendService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
+import { useSelector } from "react-redux";
 
 const MicrofrontendLinkModal = ({
   closeModal,
@@ -91,6 +92,8 @@ const MicrofrontendLinkModal = ({
     }));
   }, [list]);
 
+  const languages = useSelector((state) => state.languages.list);
+
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
@@ -110,13 +113,19 @@ const MicrofrontendLinkModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              <HFTextField
+              {
+                languages?.map((item, index) => (
+                  <HFTextField
                 autoFocus
                 fullWidth
-                label="Title"
+                required
+                label={`Title ${item.slug}`}
                 control={control}
-                name="label"
+                name={`attributes.label_${item.slug}`}
               />
+                ))
+              }
+              
             </Box>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFSelect

@@ -14,6 +14,7 @@ import { filterReducer } from "./filter/filter.slice";
 import { tableSizeReducer } from "./tableSize/tableSizeSlice";
 import { mainReducer } from "./main/main.slice";
 import { selectedRowReducer } from "./selectedRow/selectedRow.slice";
+import { languagesReducer } from "./globalLanguages/globalLanguages.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -37,6 +38,11 @@ const applicationPersistConfig = {
 
 const menuPersistConfig = {
   key: "menu",
+  storage,
+};
+
+const languagesPersistConfig = {
+  key: "languages",
   storage,
 };
 
@@ -82,17 +88,12 @@ const selectedRowPersistConfig = {
 const rootReducer = combineReducers({
   main: persistReducer(mainPersistConfig, mainReducer),
   auth: persistReducer(authPersistConfig, authReducer),
-  constructorTable: persistReducer(
-    constructorTablePersistConfig,
-    constructorTableReducer
-  ),
+  constructorTable: persistReducer(constructorTablePersistConfig, constructorTableReducer),
   application: persistReducer(applicationPersistConfig, applicationReducer),
   menu: persistReducer(menuPersistConfig, menuReducer),
+  languages: persistReducer(languagesPersistConfig, languagesReducer),
   company: persistReducer(companyPersistConfig, companyReducer),
-  tableColumn: persistReducer(
-    tableColumnTablePersistConfig,
-    tableColumnReducer
-  ),
+  tableColumn: persistReducer(tableColumnTablePersistConfig, tableColumnReducer),
   filter: persistReducer(filtersPersistConfig, filterReducer),
   // filter: filterReducer,
   tableSize: persistReducer(tableSizePersistConfig, tableSizeReducer),

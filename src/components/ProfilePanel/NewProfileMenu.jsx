@@ -189,6 +189,11 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
 
   const permissions = useSelector((state) => state.auth.globalPermissions);
 
+  console.log(
+    "permissions?.menu_setting_button",
+    permissions?.menu_setting_button
+  );
+
   return (
     <div>
       <UserAvatar
@@ -356,7 +361,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
 
           <Box
             style={{
-              height: "calc((100% / 2) + 13px)",
+              height: "240px",
               display: "flex",
             }}
           >

@@ -11,6 +11,7 @@ import { useWebPagesListQuery } from "../../services/webpageService";
 import { store } from "../../store";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
+import { useSelector } from "react-redux";
 
 const WebPageLinkModal = ({
   closeModal,
@@ -89,6 +90,8 @@ const WebPageLinkModal = ({
     }));
   }, [pages]);
 
+  const languages = useSelector((state) => state.languages.list);
+
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
@@ -108,13 +111,19 @@ const WebPageLinkModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              <HFTextField
+              {
+                languages?.map((item, index) => (
+                  <HFTextField
                 autoFocus
                 fullWidth
-                label="Title"
+                required
+                label={`Title ${item.slug}`}
                 control={control}
-                name="label"
+                name={`attributes.label_${item.slug}`}
               />
+                ))
+              }
+              
             </Box>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFSelect

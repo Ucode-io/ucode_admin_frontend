@@ -115,7 +115,7 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder, getMenuList }) =>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
               {languages?.map((item, index) => (
-                <HFTextField autoFocus fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
+                <HFTextField autoFocus required fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
               ))}
             </Box>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">

@@ -12,6 +12,7 @@ const FunctionButtonMenu = ({
   menuType,
   handleCloseNotify,
   deleteEndpointClickHandler,
+  openFolderModal,
 }) => {
   const navigate = useNavigate();
 
@@ -69,6 +70,7 @@ const FunctionButtonMenu = ({
               title="Добавить папку"
               onClick={(e) => {
                 e.stopPropagation();
+                openFolderModal();
                 handleCloseNotify();
               }}
             />

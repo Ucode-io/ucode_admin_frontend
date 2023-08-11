@@ -15,6 +15,7 @@ import "../../style.scss";
 import FunctionRecursive from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
 import FunctionButtonMenu from "./Components/FunctionButtonMenu";
+import FunctionFolderCreateModal from "./Components/Modal/FolderCreateModal";
 
 const functionFolder = {
   label: "Functions",
@@ -245,7 +246,14 @@ const FunctionSidebar = ({
         menuType={menu?.type}
         element={menu?.element}
         handleCloseNotify={handleCloseNotify}
+        openFolderModal={openFolderModal}
       />
+      {folderModalIsOpen && (
+        <FunctionFolderCreateModal
+          folder={selectedFolder}
+          closeModal={closeFolderModal}
+        />
+      )}
     </Box>
   );
 };

@@ -23,8 +23,6 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
   const queryClient = useQueryClient();
   const authStore = store.getState().auth;
 
-  console.log("tableSlug", id);
-
   const { fields: relations } = useFieldArray({
     control: mainForm.control,
     name: "relations",
@@ -36,8 +34,6 @@ const CustomErrors = ({ mainForm, getRelationFields }) => {
       table_id: id,
     },
   });
-
-  console.log("customErrors", customErrors);
 
   const openEditForm = (field, index) => {
     setDrawerState(field);

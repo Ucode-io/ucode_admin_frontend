@@ -64,7 +64,7 @@ import ResourceDetail from "../views/Resources/Detail";
 import Connections from "../views/Matrix/Connections";
 import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
 import SmsPage from "../views/SmsOtp";
-import SmsFormPage from "../views/SmsOtp/SmsFormpage";
+import SmsFormPage from "../views/SmsOtp/SmsFormPageComponent";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 

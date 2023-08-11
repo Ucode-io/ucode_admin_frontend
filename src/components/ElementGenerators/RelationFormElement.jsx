@@ -147,10 +147,7 @@ const AutoCompleteElement = ({
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
 
-<<<<<<< HEAD
 console.log('allOptions',allOptions)
-=======
->>>>>>> 3703f804fd4044e8fce04536a9682201234a7a4c
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
   }, [autoFilters]);
@@ -333,16 +330,11 @@ console.log('allOptions',allOptions)
         }))
         .find((element) => element?.value === value);
     } else {
-<<<<<<< HEAD
       return localValue
-=======
-      return computedOptions?.find((item) => item?.value === value);
->>>>>>> 3703f804fd4044e8fce04536a9682201234a7a4c
     }
   }, [localValue, value, computedOptions]);
 
   useEffect(() => {
-<<<<<<< HEAD
     if(Array.isArray(localValue)) {
       setLocalValue(
         localValue?.filter((item) => {
@@ -350,14 +342,6 @@ console.log('allOptions',allOptions)
         })
       );
     } else return localValue
-=======
-    setLocalValue(
-      Array.isArray(localValue) &&
-        localValue?.filter((item) => {
-          return item?.[autoFiltersFieldFroms] === filtersHandler[0];
-        })
-    );
->>>>>>> 3703f804fd4044e8fce04536a9682201234a7a4c
   }, [filtersHandler]);
 
   useEffect(() => {

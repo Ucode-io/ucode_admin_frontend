@@ -1,6 +1,6 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useMemo, useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { HiOutlineCodeBracket } from "react-icons/hi2";
@@ -13,6 +13,8 @@ import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import FunctionRecursive from "./RecursiveBlock";
+import AddIcon from "@mui/icons-material/Add";
+import FunctionButtonMenu from "./Components/FunctionButtonMenu";
 
 const functionFolder = {
   label: "Functions",
@@ -169,6 +171,12 @@ const FunctionSidebar = ({
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
   };
+  const iconStyle = {
+    color:
+      functionFolder?.id === menuItem?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text || "",
+  };
 
   const labelStyle = {
     color:
@@ -191,6 +199,20 @@ const FunctionSidebar = ({
             <IconGenerator icon={"key.svg"} size={18} />
             Functions
           </div>
+          <Box className="icon_group">
+            <Tooltip title="Create folder" placement="top">
+              <Box className="extra_icon">
+                <AddIcon
+                  size={13}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenNotify(e, "CREATE_FOLDER");
+                  }}
+                  style={iconStyle}
+                />
+              </Box>
+            </Tooltip>
+          </Box>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
@@ -216,14 +238,14 @@ const FunctionSidebar = ({
         ))}
       </Collapse>
 
-      {/* <DocumentButtonMenu
+      <FunctionButtonMenu
         selected={selected}
         openMenu={openMenu}
         menu={menu?.event}
         menuType={menu?.type}
         element={menu?.element}
         handleCloseNotify={handleCloseNotify}
-      /> */}
+      />
     </Box>
   );
 };

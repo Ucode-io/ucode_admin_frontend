@@ -9,6 +9,7 @@ import constructorFieldService from "../../../../../../services/constructorField
 import listToOptions from "../../../../../../utils/listToOptions";
 import FormulaFilters from "./FormulaFilters";
 import styles from "./style.module.scss";
+import HFTextField from "../../../../../../components/FormElements/HFTextField";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -108,6 +109,16 @@ const FormulaAttributes = ({ control, mainForm }) => {
             <FRow label="Field from">
               <HFSelect
                 name="attributes.sum_field"
+                control={control}
+                options={fields}
+              />
+            </FRow>
+
+            <FRow label="Rounds">
+              <HFTextField
+                name="attributes.number_of_rounds"
+                type='number'
+                fullWidth
                 control={control}
                 options={fields}
               />

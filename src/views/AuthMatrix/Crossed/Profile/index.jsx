@@ -7,11 +7,13 @@ import FRow from "../../../../components/FormElements/FRow";
 import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import Header from "../../../../components/Header";
-import constructorObjectService from "../../../../services/constructorObjectService";
 import CancelButton from "../../../../components/Buttons/CancelButton";
 import SaveButton from "../../../../components/Buttons/SaveButton";
 import authService from "../../../../services/auth/authService";
 import userService from "../../../../services/auth/userService";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { Button } from "@mui/material";
 
 const UsersForm = () => {
   const navigate = useNavigate();
@@ -21,6 +23,8 @@ const UsersForm = () => {
   const clientType = useSelector((state) => state?.auth?.clientType);
   const userTableSlug = useSelector((state) => state?.auth?.loginTableSlug);
   const projectId = useSelector((state) => state?.auth?.projectId);
+  const [inputType, setInputType] = useState('password')
+  const [passwordType, setPasswordType] = useState('password')
 
 
   const update = (data) => {
@@ -159,12 +163,37 @@ const UsersForm = () => {
               />
             </FRow>
 
-            <FRow label="New Password">
+            <FRow label="Password">
+              <HFTextField
+                placeholder="password"
+                fullWidth
+                control={control}
+                name="old_password"
+              />
+            </FRow>
+
+            <FRow style={{display: 'none'}} label="New Password">
               <HFTextField
                 placeholder="New Password"
                 fullWidth
                 control={control}
                 name="new_password"
+                type={passwordType}
+              />
+
+              <Button sx={{position: 'absolute'}}>
+                <VisibilityIcon/>
+              </Button>
+
+            </FRow>
+
+            <FRow label="Confirm password">
+              <HFTextField
+                placeholder="confirm password"
+                fullWidth
+                control={control}
+                name="confirm_password"
+                type={inputType}
               />
             </FRow>
 

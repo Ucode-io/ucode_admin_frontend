@@ -14,6 +14,8 @@ import MultipleUpdateRow from "./MultipleUpdateRow";
 import "./style.scss";
 import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
+import { de } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 const ObjectDataTable = ({
   data = [],
@@ -57,7 +59,7 @@ const ObjectDataTable = ({
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-
+  const { i18n } = useTranslation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
 
@@ -215,13 +217,18 @@ const ObjectDataTable = ({
                   key={index}
                   style={{
                     padding: "10px 4px",
+                    color: "#747474",
+                    fontSize: "13px",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "normal",
                     minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
                     width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
                     position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
                     left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
                     backgroundColor: "#fff",
                     zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
-                    color: formVisible && column?.required === true ? "red" : "",
+                    // color: formVisible && column?.required === true ? "red" : "",
                   }}
                 >
                   <div
@@ -239,7 +246,7 @@ const ObjectDataTable = ({
                         setColumnId((prev) => (prev === column.id ? "" : column.id));
                       }}
                     >
-                      {column.label}
+                      {column.attributes?.[`label_${i18n.language}`] ?? column.label}
                     </span>
                     {disableFilters && <FilterGenerator field={column} name={column.slug} onChange={filterChangeHandler} filters={filters} tableSlug={tableSlug} />}
                     {columnId === column?.id && (

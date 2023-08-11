@@ -83,9 +83,9 @@ const SmsPage = () => {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Login</CTableCell>
-            <CTableCell>Default Otp</CTableCell>
-            <CTableCell>Number of Otp </CTableCell>
             <CTableCell>Password</CTableCell>
+            <CTableCell>Number of Otp </CTableCell>
+            <CTableCell>Default Otp</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
 

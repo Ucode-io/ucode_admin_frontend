@@ -15,6 +15,8 @@ const DataBaseRecursive = ({
   onRowClick = () => {},
   onSelect = () => {},
   selected,
+  resourceId,
+  menuItem,
 }) => {
   const dispatch = useDispatch();
   const { tableSlug } = useParams();
@@ -22,11 +24,11 @@ const DataBaseRecursive = ({
 
   const activeStyle = {
     backgroundColor:
-      selected?.id === element?.id
+      menuItem?.id === element?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      selected?.id === element?.id
+      menuItem?.id === element?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
@@ -36,8 +38,8 @@ const DataBaseRecursive = ({
   };
 
   const clickHandler = () => {
-    dispatch(menuActions.setMenuItem(element));
     onRowClick(element.id, element);
+    dispatch(menuActions.setMenuItem(element));
     setChildBlockVisible((prev) => !prev);
     if (!element.children) onSelect(element.id, element);
   };
@@ -58,7 +60,7 @@ const DataBaseRecursive = ({
             className="label"
             style={{
               color:
-                selected?.id === element?.id
+                menuItem?.id === element?.id
                   ? menuStyle?.active_text
                   : menuStyle?.text,
               opacity: element?.isChild && 0.6,
@@ -86,6 +88,8 @@ const DataBaseRecursive = ({
             onRowClick={onRowClick}
             onSelect={onSelect}
             selected={selected}
+            resourceId={resourceId}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>

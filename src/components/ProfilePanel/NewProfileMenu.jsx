@@ -2,8 +2,8 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 import KeyIcon from "@mui/icons-material/Key";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
 import WidgetsIcon from "@mui/icons-material/Widgets";
-import { Box, Divider, Menu, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Divider, Menu, MenuItem, Tooltip } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { PlusIcon } from "../../assets/icons/icon";
@@ -22,12 +22,19 @@ import EnvironmentsList from "./EnvironmentList/EnvironmentsList";
 import ProfileItem from "./ProfileItem";
 import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
 import styles from "./newprofile.module.scss";
 import { useQueryClient } from "react-query";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import useBooleanState from "../../hooks/useBooleanState";
 import VersionModal from "./Components/VersionModal/VersionModal";
 import LayersIcon from "@mui/icons-material/Layers";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import { Title } from "@mui/icons-material";
+import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
+import { changeLanguage } from "i18next";
+import { useTranslation } from "react-i18next";
+import { showAlert } from "../../store/alert/alert.thunk";
 import SmsIcon from '@mui/icons-material/Sms';
 
 const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
@@ -75,7 +82,6 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const handleSmsNavigate = () => {
     navigate(`/main/${appId}/sms-otp`);
   };
-
   const closeMenu = () => {
     setProfileAnchorEl(null);
   };
@@ -194,10 +200,51 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
 
   const permissions = useSelector((state) => state.auth.globalPermissions);
 
-  console.log(
-    "permissions?.menu_setting_button",
-    permissions?.menu_setting_button
+  const projectId = useSelector((state) => state.company.projectId);
+  const { data: projectInfo = [] } = useProjectGetByIdQuery({ projectId });
+
+  const languages = useMemo(() => {
+    return projectInfo?.language?.map((lang) => ({
+      title: lang?.name,
+      slug: lang?.short_name,
+    }));
+  }, [projectInfo]);
+
+  useEffect(() => {
+    if (projectId) {
+      dispatch(languagesActions.setLanguagesItems(languages));
+    }
+  }, [languages, projectId, dispatch]);
+
+  const { i18n } = useTranslation();
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dispatch(languagesActions.setDefaultLanguage(lang));
+    dispatch(showAlert(`Language changed to ${lang} successfully`, "success"));
+  };
+
+  const defaultLanguage = useSelector(
+    (state) => state.languages.defaultLanguage
   );
+
+  useEffect(() => {
+    if (languages?.length) {
+      if (!defaultLanguage) {
+        i18n.changeLanguage(languages?.[0]?.slug);
+        dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+      }
+    }
+  }, [languages]);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClickLanguages = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <div>
@@ -373,9 +420,50 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
               text={"Sms Otp"}
               onClick={handleSmsNavigate}
             />
-
           </div>
           <Divider />
+
+          <div className={styles.block}>
+            <ProfileItem
+              children={
+                <GTranslateIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Menu settings"}
+              onClick={() => {
+                closeMenu();
+                openVersionModal();
+              }}
+            />
+
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              {languages?.map((item) => (
+                <MenuItem
+                  onClick={() => {
+                    changeLanguage(item.slug);
+                  }}
+                  key={item.id}
+                  style={{
+                    backgroundColor:
+                      item.slug === defaultLanguage ? "#E5E5E5" : "#fff",
+                  }}
+                >
+                  {item?.title}
+                </MenuItem>
+              ))}
+            </Menu>
+          </div>
 
           <Box
             style={{

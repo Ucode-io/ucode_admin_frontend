@@ -24,25 +24,40 @@ const CellCheckboxNoSign = ({ formVisible, data }) => {
     }
   };
 
-  const checkboxHandler = (_, value) =>
-    value
-      ? dispatch(selectedRowActions.addRowId(data.map((i) => i.guid)))
-      : dispatch(selectedRowActions.clear());
+  const checkboxHandler = (_, value) => (value ? dispatch(selectedRowActions.addRowId(data.map((i) => i.guid))) : dispatch(selectedRowActions.clear()));
 
   return formVisible ? (
-    <CTableHeadCell
-      onMouseEnter={() => checkboxVisibilityTrigger(true)}
-      onMouseLeave={() => checkboxVisibilityTrigger(false)}
-      style={{ padding: "2px 0", minWidth: "40px" }}
-    >
+    <CTableHeadCell onMouseEnter={() => checkboxVisibilityTrigger(true)} onMouseLeave={() => checkboxVisibilityTrigger(false)} style={{ padding: "2px 0", minWidth: "40px" }}>
       {showCheckbox || data.length === selectedRow.length ? (
         <Checkbox onChange={checkboxHandler} />
       ) : (
-        "№"
+        <span
+          style={{
+            color: "#747474",
+            fontSize: "13px",
+            fontStyle: "normal",
+            fontWeight: 500,
+            lineHeight: "normal",
+          }}
+        >
+          #
+        </span>
       )}
     </CTableHeadCell>
   ) : (
-    <CTableHeadCell width={10}>№</CTableHeadCell>
+    <CTableHeadCell width={10}>
+      <span
+        style={{
+          color: "#747474",
+          fontSize: "13px",
+          fontStyle: "normal",
+          fontWeight: 500,
+          lineHeight: "normal",
+        }}
+      >
+        #
+      </span>
+    </CTableHeadCell>
   );
 };
 

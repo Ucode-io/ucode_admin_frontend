@@ -22,7 +22,6 @@ const CompanyForm = () => {
   const { companyId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  console.log("companyId", companyId);
 
   const mainForm = useForm({
     defaultValues: {

@@ -89,6 +89,11 @@ const TableRow = ({
                   className={`overflow-ellipsis ${tableHeight}`}
                   style={{
                     minWidth: "max-content",
+                    color: "#262626",
+                    fontSize: "13px",
+                    fontStyle: "normal",
+                    fontWeight: 400,
+                    lineHeight: "normal",
                     padding: "0 4px",
                     position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
                     left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",

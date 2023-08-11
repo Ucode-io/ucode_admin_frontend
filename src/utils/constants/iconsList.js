@@ -1,4 +1,3 @@
-
 export const iconsList = [
   "bear-toy.svg",
   "clock-sleep.svg",
@@ -2000,6 +1999,6 @@ export const iconsList = [
   "brand_youtube-square.svg",
   "brand_youtube.svg",
   "brand_zhihu.svg",
-]
+];
 
 window.iconsList = iconsList;

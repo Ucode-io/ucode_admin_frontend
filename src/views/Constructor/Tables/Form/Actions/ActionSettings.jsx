@@ -1,5 +1,5 @@
 import { Close } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useQuery } from "react-query";
@@ -17,6 +17,9 @@ import styles from "./style.module.scss";
 import HFSelect from "../../../../../components/FormElements/HFSelect";
 import TableActions from "./TableActions";
 import requestV2 from "../../../../../utils/requestV2";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+import constructorFunctionService from "../../../../../services/constructorFunctionService";
 
 const actionTypeList = [
   { label: "HTTP", value: "HTTP" },
@@ -38,15 +41,9 @@ const typeList = [
   { label: "HARDCODE", value: "HARDCODE" },
 ];
 
-const ActionSettings = ({
-  closeSettingsBlock = () => {},
-  onUpdate = () => {},
-  onCreate = () => {},
-  action,
-  formType,
-  height,
-}) => {
+const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, onCreate = () => {}, action, formType, height }) => {
   const { slug } = useParams();
+  const languages = useSelector((state) => state.languages.list);
 
   const [loader, setLoader] = useState(false);
 
@@ -59,7 +56,7 @@ const ActionSettings = ({
   const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],
     () => {
-      return requestV2.get("/function");
+      return constructorFunctionService.getListV2({})
     },
     {
       select: (res) => {
@@ -91,10 +88,14 @@ const ActionSettings = ({
       })
       .catch(() => setLoader(false));
   };
-
+  const {i18n} = useTranslation();
   const submitHandler = (values) => {
-    if (formType === "CREATE") createAction(values);
-    else updateAction(values);
+    const computedValues = {
+      ...values,
+      label: values?.attributes?.[`label_${i18n.language}`] ?? Object.values(values?.attributes).find(item => typeof item === "string"),
+    };
+    if (formType === "CREATE") createAction(computedValues);
+    else updateAction(computedValues);
   };
 
   useEffect(() => {
@@ -113,68 +114,32 @@ const ActionSettings = ({
       </div>
 
       <div className={styles.settingsBlockBody} style={{ height }}>
-        <form
-          onSubmit={handleSubmit(submitHandler)}
-          className={styles.fieldSettingsForm}
-        >
+        <form onSubmit={handleSubmit(submitHandler)} className={styles.fieldSettingsForm}>
           <div className="p-2">
             <FRow label="Icon" required>
               <HFIconPicker control={control} required name="icon" />
             </FRow>
             <FRow label="Label" required>
-              <HFTextField
-                name="label"
-                control={control}
-                placeholder="Label"
-                fullWidth
-                required
-              />
+              <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                {languages?.map((lang) => (
+                  <HFTextField name={`attributes.label_${lang?.slug}`} control={control} placeholder={`Label (${lang?.slug})`} fullWidth />
+                ))}
+              </Box>
             </FRow>
             <FRow label="Function" required>
-              <HFAutocomplete
-                name="event_path"
-                control={control}
-                placeholder="Event path"
-                options={functions}
-                disabled={false}
-                required
-              />
+              <HFAutocomplete name="event_path" control={control} placeholder="Event path" options={functions} disabled={false} required />
             </FRow>
             <FRow label="Redirect url">
-              <HFTextField
-                name="url"
-                control={control}
-                placeholder="Redirect url"
-                options={functions}
-                fullWidth
-              />
+              <HFTextField name="url" control={control} placeholder="Redirect url" options={functions} fullWidth />
             </FRow>
             <FRow label="Action type">
-              <HFSelect
-                name="action_type"
-                control={control}
-                placeholder="action type"
-                options={actionTypeList}
-                fullWidth
-              />
+              <HFSelect name="action_type" control={control} placeholder="action type" options={actionTypeList} fullWidth />
             </FRow>
             <FRow label="Method">
-              <HFSelect
-                name="method"
-                control={control}
-                placeholder="Redirect url"
-                options={methodList}
-                fullWidth
-              />
+              <HFSelect name="method" control={control} placeholder="Redirect url" options={methodList} fullWidth />
             </FRow>
 
-            <TableActions
-              control={control}
-              typeList={typeList}
-              slug={slug}
-              watch={watch}
-              setValue={setValue}
-            />
+            <TableActions control={control} typeList={typeList} slug={slug} watch={watch} setValue={setValue} />
 
             <FRow label="Disabled">
               <HFSwitch name="disabled" control={control} />
@@ -182,13 +147,7 @@ const ActionSettings = ({
           </div>
 
           <div className={styles.settingsFooter}>
-            <PrimaryButton
-              size="large"
-              className={styles.button}
-              style={{ width: "100%" }}
-              onClick={handleSubmit(submitHandler)}
-              loader={loader}
-            >
+            <PrimaryButton size="large" className={styles.button} style={{ width: "100%" }} onClick={handleSubmit(submitHandler)} loader={loader}>
               Сохранить
             </PrimaryButton>
           </div>

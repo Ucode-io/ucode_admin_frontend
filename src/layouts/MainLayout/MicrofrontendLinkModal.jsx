@@ -1,15 +1,19 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Card, Modal, Typography } from "@mui/material";
+import { Box, Button, Card, Modal, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
 import HFSelect from "../../components/FormElements/HFSelect";
 import menuSettingsService from "../../services/menuSettingsService";
-import microfrontendService from "../../services/microfrontendService";
+import { useMicrofrontendListQuery } from "../../services/microfrontendService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
+import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
+import { Delete } from "@mui/icons-material";
+import styles from "./style.module.scss";
+import { store } from "../../store";
+import { useSelector } from "react-redux";
 
 const MicrofrontendLinkModal = ({
   closeModal,
@@ -17,9 +21,25 @@ const MicrofrontendLinkModal = ({
   selectedFolder,
   getMenuList,
 }) => {
-  const { projectId } = useParams();
   const queryClient = useQueryClient();
-  const [list, setList] = useState();
+  const { control, handleSubmit, reset } = useForm();
+
+  const {
+    fields: values,
+    append,
+    remove,
+  } = useFieldArray({
+    control: control,
+    name: "attributes.params",
+  });
+
+  const addField = () => {
+    append({
+      key: "",
+      value: "",
+    });
+  };
+  const company = store.getState().company;
 
   const onSubmit = (data) => {
     if (selectedFolder.type === "MICROFRONTEND") {
@@ -29,12 +49,10 @@ const MicrofrontendLinkModal = ({
     }
   };
 
-  const { control, handleSubmit, reset } = useForm();
-
   useEffect(() => {
     if (selectedFolder.type === "MICROFRONTEND")
       menuSettingsService
-        .getById(selectedFolder.id, projectId)
+        .getById(selectedFolder.id, company.projectId)
         .then((res) => {
           reset(res);
         })
@@ -73,23 +91,20 @@ const MicrofrontendLinkModal = ({
         console.log(err);
       });
   };
-
-  const getTables = () => {
-    microfrontendService.getList().then((res) => {
-      setList(res);
-    });
+  const deleteField = (index) => {
+    remove(index);
   };
 
-  useEffect(() => {
-    getTables();
-  }, []);
+  const { data: microfrontend } = useMicrofrontendListQuery();
 
   const microfrontendOptions = useMemo(() => {
-    return list?.functions?.map((item, index) => ({
+    return microfrontend?.functions?.map((item, index) => ({
       label: item.name,
       value: item.id,
     }));
-  }, [list]);
+  }, [microfrontend]);
+
+  const languages = useSelector((state) => state.languages.list);
 
   return (
     <div>
@@ -110,13 +125,19 @@ const MicrofrontendLinkModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              <HFTextField
+              {
+                languages?.map((item, index) => (
+                  <HFTextField
                 autoFocus
                 fullWidth
-                label="Title"
+                required
+                label={`Title ${item.slug}`}
                 control={control}
-                name="label"
+                name={`attributes.label_${item.slug}`}
               />
+                ))
+              }
+              
             </Box>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFSelect
@@ -128,7 +149,36 @@ const MicrofrontendLinkModal = ({
                 required
               />
             </Box>
-
+            {values?.map((elements, index) => (
+              <div key={elements?.key} className={styles.navigateWrap}>
+                <HFTextField
+                  fullWidth
+                  control={control}
+                  name={`attributes.params[${index}].key`}
+                  placeholder={"key"}
+                />
+                <HFTextField
+                  fullWidth
+                  control={control}
+                  name={`attributes.params[${index}].value`}
+                  placeholder={"value"}
+                />
+                <RectangleIconButton
+                  onClick={() => deleteField(index)}
+                  color="error"
+                >
+                  <Delete color="error" />
+                </RectangleIconButton>
+              </div>
+            ))}
+            <Button
+              className={styles.button}
+              variant="contained"
+              fullWidth
+              onClick={addField}
+            >
+              Add params
+            </Button>
             <div className="btns-row">
               <SaveButton title="Добавить" type="submit" loading={loading} />
             </div>

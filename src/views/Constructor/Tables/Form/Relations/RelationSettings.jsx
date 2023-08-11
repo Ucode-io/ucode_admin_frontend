@@ -1,6 +1,6 @@
 import listToOptions from "@/utils/listToOptions";
 import { Close, DragIndicator, PushPin, PushPinOutlined, RemoveRedEye, VisibilityOff } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, Card, Checkbox, IconButton } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Card, Checkbox, IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery } from "react-query";
@@ -35,6 +35,7 @@ import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SettingsIcon from "@mui/icons-material/Settings";
 import BrushIcon from "@mui/icons-material/Brush";
 import { F } from "@formulajs/formulajs";
+import { useSelector } from "react-redux";
 
 const relationViewTypes = [
   {
@@ -55,6 +56,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
   const [onlyCheckedColumnsVisible, setOnlyCheckedColumnsVisible] = useState(true);
   const [onlyCheckedFiltersVisible, setOnlyCheckedFiltersVisible] = useState(true);
   const [selectedTab, setSelectedTab] = useState(0);
+  const languages = useSelector((state) => state.languages.list);
   const { handleSubmit, control, reset, watch, setValue } = useForm({
     defaultValues: {
       table_from: slug,
@@ -199,7 +201,6 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
       relation_table_slug: slug,
       // compute columns
       columns: values.columnsList?.filter((el) => el.is_checked)?.map((el) => el.id),
-
       // compute filters
       quick_filters: values.filtersList
         ?.filter((el) => el.is_checked)
@@ -219,7 +220,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
 
     if (formType === "CREATE") {
       constructorRelationService
-        .create(data)
+        .create({...data, title: Object.values(data?.attributes).find((item) => item)})
         .then((res) => {
           updateRelations();
         })
@@ -289,7 +290,11 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                     <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
                         <FRow label="Label" required>
-                          <HFTextField name="title" control={control} placeholder="Relation Label" fullWidth required />
+                          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                            {languages?.map((lang) => (
+                              <HFTextField name={`attributes.title_${lang?.slug}`} control={control} placeholder={`Relation Label (${lang?.slug})`} fullWidth />
+                            ))}
+                          </Box>
                         </FRow>
 
                         <FRow label="Table from" required>
@@ -543,7 +548,7 @@ const RelationSettings = ({ closeSettingsBlock = () => {}, relation, getRelation
                       <h2>Function</h2>
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
-                      <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue}/>
+                      <FunctionPath control={control} watch={watch} functions={functions} setValue={setValue} />
                     </AccordionDetails>
                   </Accordion>
 

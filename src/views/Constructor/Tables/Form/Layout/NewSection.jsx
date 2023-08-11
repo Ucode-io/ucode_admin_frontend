@@ -8,6 +8,7 @@ import FormElementGenerator from "../../../../../components/ElementGenerators/Fo
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import styles from "./style.module.scss";
+import { useSelector } from "react-redux";
 
 const NewSection = ({
   mainForm,
@@ -26,6 +27,8 @@ const NewSection = ({
     name: `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.fields`,
     keyName: "key",
   });
+
+  const sectionFieldsWatch = mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.fields`);
 
   const openSettingsBlock = (field) => {
     if (!field.id?.includes("#")) {
@@ -65,24 +68,28 @@ const NewSection = ({
     removeSection(index);
   };
 
+  const languages = useSelector((state) => state.languages.list);
+
   return (
     <Card className={`${styles.newsectionCard}`}>
       <div className={styles.newsectionCardHeader}>
-        <div className={styles.newsectionCardHeaderLeftSide}>
+        <div className={styles.newsectionCardHeaderLeftSide} style={{display: 'flex', flexDirection: 'column'}}>
           {/* <HFIconPicker
             control={mainForm.control}
             name={`sections[${index}].icon`}
             disabledHelperText
           /> */}
 
-          <HFTextField
-            placeholder="Label"
-            required={index === 0}
-            control={mainForm.control}
-            name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`}
-            size="small"
-            style={{ width: 170 }}
-          />
+          {languages.map((language) => (
+            <HFTextField
+              placeholder={`Section ${language.slug}`}
+              required={index === 0}
+              control={mainForm.control}
+              name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language.slug}`}
+              size="small"
+              style={{ width: 170 }}
+            />
+          ))}
         </div>
 
         <div className="flex gap-1" style={{ marginLeft: "5px" }}>
@@ -109,17 +116,17 @@ const NewSection = ({
           onDrop={(dragResults) => onDrop(dragResults, 1)}
           getChildPayload={(index) => sectionFields.fields[index]}
         >
-          {sectionFields?.fields?.map((field, fieldIndex) => (
-            <Draggable key={field.key} style={{ minWidth: "300px" }}>
+          {sectionFieldsWatch?.map((field, fieldIndex) => (
+            <Draggable key={fieldIndex} style={{ minWidth: "300px" }}>
               <div className={styles.newsectionCardRow}>
                 <FormElementGenerator
-                  control={layoutForm.control}
+                  control={mainForm.control}
                   field={fieldsMap[field.id] ?? field}
-                  isLayout={true}
-                  sectionIndex={index}
-                  column={1}
-                  fieldIndex={fieldIndex}
-                  mainForm={mainForm}
+                  // isLayout={true}
+                  // sectionIndex={index}
+                  // column={1}
+                  // fieldIndex={fieldIndex}
+                  // mainForm={mainForm}
                   checkPermission={false}
                 />
                 <ButtonsPopover className={styles.deleteButton} onEditClick={() => openSettingsBlock(field)} onDeleteClick={() => removeField(fieldIndex, 1)} />

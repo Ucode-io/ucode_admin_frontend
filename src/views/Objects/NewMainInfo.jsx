@@ -8,6 +8,11 @@ import NewFormCard from "./components/NewFormCard";
 import styles from "./style.module.scss";
 import { useProjectGetByIdQuery } from "../../services/projectService";
 import { store } from "../../store";
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
+import projectService from "../../services/projectService";
+import { useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 const MainInfo = ({
   computedSections,
@@ -46,6 +51,7 @@ const MainInfo = ({
       setActiveLang(projectInfo?.language?.[0]?.short_name);
     }
   }, [isMultiLanguage, projectInfo]);
+  const {i18n} = useTranslation();
 
   if (loader) return <PageFallback />;
 
@@ -67,12 +73,7 @@ const MainInfo = ({
           )}
 
           {computedSections.map((section) => (
-            <NewFormCard
-              key={section.id}
-              title={section.label}
-              className={styles.formCard}
-              icon={section.icon}
-            >
+            <NewFormCard key={section.id} title={section?.attributes?.[`label_${i18n.language}`] ?? section.label} className={styles.formCard} icon={section.icon}>
               <div className={styles.newformColumn}>
                 {section.fields?.map((field) => (
                   <Box style={{ display: "flex", alignItems: "flex-start" }}>

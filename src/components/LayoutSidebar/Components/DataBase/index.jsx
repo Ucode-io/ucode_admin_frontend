@@ -4,18 +4,18 @@ import { Box, Button, Collapse } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useQueries } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { store } from "../../../../store";
-import { menuActions } from "../../../../store/menuItem/menuItem.slice";
-import IconGenerator from "../../../IconPicker/IconGenerator";
-import "../../style.scss";
-import { useResourceListQuery } from "../../../../services/resourceService";
+import { useNavigate } from "react-router-dom";
 import constructorTableService, {
   useTableFolderListQuery,
 } from "../../../../services/constructorTableService";
-import DataBaseRecursive from "./RecursiveBlock";
-import { tableFolderListToNested } from "../../../../utils/tableFolderListToNestedLIst copy";
+import { useResourceListQuery } from "../../../../services/resourceService";
+import { store } from "../../../../store";
+import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import useComputedResource from "../../../../utils/computedTables";
+import { tableFolderListToNested } from "../../../../utils/tableFolderListToNestedLIst copy";
+import IconGenerator from "../../../IconPicker/IconGenerator";
+import "../../style.scss";
+import DataBaseRecursive from "./RecursiveBlock";
 
 const dataBase = {
   label: "Databases",
@@ -33,32 +33,38 @@ const dataBase = {
   },
 };
 
-const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, setElement }) => {
-  const { tableSlug } = useParams();
+const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const [selected, setSelected] = useState();
+  const [selected, setSelected] = useState({});
+  const [resourceId, setResourceId] = useState("");
   const company = store.getState().company;
   const [openedFolders, setOpenedFolders] = useState([]);
+  const navigate = useNavigate();
 
   const activeStyle = {
     backgroundColor:
-      selected?.id === dataBase?.id
+      dataBase?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      selected?.id === dataBase?.id
+      dataBase?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
+  };
+
+  const labelStyle = {
+    color:
+      dataBase?.id === menuItem?.id ? menuStyle?.active_text : menuStyle?.text,
   };
 
   const clickHandler = (e) => {
     e.stopPropagation();
     dispatch(menuActions.setMenuItem(dataBase));
     setSelected(dataBase);
-    if (!pinIsEnabled) {
+    if (!pinIsEnabled && dataBase.type !== "USER_FOLDER") {
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
@@ -108,6 +114,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, setElement }) => {
           ...table,
           name: table.label,
           parent_id: table.folder_id,
+          type: "TABLE",
         });
       });
     });
@@ -129,8 +136,16 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, setElement }) => {
 
   const rowClickHandler = (id, element) => {
     setSelected(element);
+    element.type === "FOLDER" && navigate("/main/12");
+    if (element.resource_type) setResourceId(element.id);
     if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
     setOpenedFolders((prev) => [...prev, id]);
+  };
+
+  const onSelect = (id, element) => {
+    if (element.type === "TABLE") {
+      navigate(`/main/12/database/${resourceId}/${element.slug}/${element.id}`);
+    }
   };
 
   return (
@@ -138,23 +153,12 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, setElement }) => {
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
-          className={`nav-element ${
-            dataBase?.isChild &&
-            (tableSlug !== dataBase?.slug ? "active-with-child" : "active")
-          }`}
+          className="nav-element"
           onClick={(e) => {
             clickHandler(e);
           }}
         >
-          <div
-            className="label"
-            style={{
-              color:
-                selected?.id === dataBase?.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text,
-            }}
-          >
+          <div className="label" style={labelStyle}>
             <IconGenerator icon={"database.svg"} size={18} />
             Databases
           </div>
@@ -173,9 +177,11 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, setElement }) => {
             level={level + 1}
             element={childElement}
             menuStyle={menuStyle}
-            setElement={setElement}
             onRowClick={rowClickHandler}
+            onSelect={onSelect}
             selected={selected}
+            resourceId={resourceId}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>

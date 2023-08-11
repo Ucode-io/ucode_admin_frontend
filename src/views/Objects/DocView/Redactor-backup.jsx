@@ -1,36 +1,38 @@
-import { forwardRef, useCallback, useMemo, useRef } from "react"
-import { createReactEditorJS } from "react-editor-js"
-import styles from "./style.module.scss"
-import { EDITOR_JS_TOOLS } from "./tools"
-import DragDrop from 'editorjs-drag-drop';
-import "./redactorOverriders.scss"
+import { forwardRef, useCallback, useMemo, useRef } from "react";
+import { createReactEditorJS } from "react-editor-js";
+import styles from "./style.module.scss";
+import { EDITOR_JS_TOOLS } from "./tools";
+import DragDrop from "editorjs-drag-drop";
+import "./redactorOverriders.scss";
 import { useWatch } from "react-hook-form";
 import TestInlinePlugin from "./RedactorPlugins/TestInlinePlugin";
 
 const Redactor = forwardRef(({ control, fields, HTMLContent }, ref) => {
-  const ReactEditorJS = createReactEditorJS()
-  const editorCore = useRef(null)
+  const ReactEditorJS = createReactEditorJS();
+  const editorCore = useRef(null);
   const value = useWatch({
     control,
     name: "html",
-  })
+  });
 
-  const handleInitialize = useCallback((instance) => {
-    editorCore.current = instance
-    ref.current = instance
-  }, [ref])
+  const handleInitialize = useCallback(
+    (instance) => {
+      editorCore.current = instance;
+      ref.current = instance;
+    },
+    [ref]
+  );
 
   const handleReady = () => {
-    const editor = editorCore.current._editorJS
+    const editor = editorCore.current._editorJS;
 
-    if(HTMLContent) {
-      editor.blocks.renderFromHTML(HTMLContent)
+    if (HTMLContent) {
+      editor.blocks.renderFromHTML(HTMLContent);
     }
 
-
     // new Undo({ editor })
-    new DragDrop(editor)
-  }
+    new DragDrop(editor);
+  };
 
   const computedTools = useMemo(() => {
     return {
@@ -38,12 +40,12 @@ const Redactor = forwardRef(({ control, fields, HTMLContent }, ref) => {
       testInline: {
         class: TestInlinePlugin,
         config: {
-          fields
-        }
+          fields,
+        },
       },
-    }
-  }, [fields])
-  
+    };
+  }, [fields]);
+
   return (
     <div className={styles.page}>
       <ReactEditorJS
@@ -53,12 +55,11 @@ const Redactor = forwardRef(({ control, fields, HTMLContent }, ref) => {
         minHeight={1000}
         defaultValue={value}
         // style={{ width: 10 }}
-        config={{name: 'asdasd'}}
-        holder="editorjs"
-      >
-      </ReactEditorJS>
+        config={{ name: "asdasd" }}
+        // holder="editorjs"
+      ></ReactEditorJS>
     </div>
-  )
-})
+  );
+});
 
-export default Redactor
+export default Redactor;

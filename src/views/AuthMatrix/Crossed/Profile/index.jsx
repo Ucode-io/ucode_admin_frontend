@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
@@ -14,6 +14,7 @@ import userService from "../../../../services/auth/userService";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Box } from "@mui/material";
+import { showAlert } from "../../../../store/alert/alert.thunk";
 
 const UsersForm = () => {
   const navigate = useNavigate();
@@ -25,20 +26,28 @@ const UsersForm = () => {
   const projectId = useSelector((state) => state?.auth?.projectId);
   const [inputType, setInputType] = useState(true)
   const [passwordType, setPasswordType] = useState(true)
+  const dispatch = useDispatch()
+  const [inputMatch, setInputMatch] = useState(false)
 
 
   const update = (data) => {
-    const newPassword = data?.new_password;
+    console.log('datattaa', data)
+    const oldPassword = data?.old_password;
+    const newPassword = data?.new_password
     const requestData = {
       ...data,
       guid: isUserInfo?.id,
     };
-  
-    if (newPassword) {
+
+    if(newPassword && oldPassword) {
+      resetPasswordV2(oldPassword, newPassword)
+    }
+
+    if (oldPassword) {
       requestData.password = newPassword;
-      resetPassword(newPassword)
+      resetPassword(oldPassword)
     } else {
-      delete requestData.password;
+      delete requestData.confirm_password;
     }
     userService
       ?.updateV2({
@@ -67,14 +76,34 @@ const UsersForm = () => {
   });
 
   const resetPassword = (newPassword) => {
-    authService.resetPassword( {
+    authService.resetPasswordProfile( {
       password: newPassword,
       user_id: isUserId
     })
   }
 
+  const resetPasswordV2 = (oldPassword, newPassword) => {
+    authService.resetUserPasswordV2( {
+      password: newPassword,
+      old_password: oldPassword,
+      user_id: isUserId
+    })
+  }
+
   const onSubmit = (values) => {
-    if (isUserInfo) return update(values);
+
+    if(values?.new_password && values?.old_password) {
+      if(values?.new_password !== values?.confirm_password) {
+        dispatch(showAlert("Confirm Password fields do not match"))
+        setInputMatch(true)
+      } else if(isUserInfo) {
+          update(values)
+          setInputMatch(false)
+          }
+    } else if(isUserInfo) {
+      update(values)
+      setInputMatch(false)
+    };
   };
 
   useEffect(() => {
@@ -164,7 +193,7 @@ const UsersForm = () => {
               />
             </FRow>
 
-            <FRow label="Password">
+            <FRow label="Old Password">
               <HFTextField
                 placeholder="password"
                 fullWidth
@@ -199,6 +228,7 @@ const UsersForm = () => {
                 control={control}
                 name="confirm_password"
                 type={passwordType ? 'password' : 'text'}
+                style={{ border: `1px solid ${inputMatch ? 'red' : '#eee'}`}}
               />
 
               <Box onClick={() => setPasswordType(!passwordType)} sx={{position: 'absolute', right: '15px', bottom: '5px', cursor: 'pointer'}}>

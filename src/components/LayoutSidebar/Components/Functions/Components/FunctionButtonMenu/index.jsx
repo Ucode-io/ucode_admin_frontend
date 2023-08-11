@@ -16,8 +16,8 @@ const FunctionButtonMenu = ({
   deleteFolder,
   element,
   openFunctionModal,
+  deleteFunction,
 }) => {
-  const navigate = useNavigate();
   return (
     <>
       <Menu
@@ -49,7 +49,7 @@ const FunctionButtonMenu = ({
                 title="Добавить function"
                 onClick={(e) => {
                   e.stopPropagation();
-                  openFunctionModal();
+                  openFunctionModal(element);
                   handleCloseNotify();
                 }}
               />
@@ -93,10 +93,19 @@ const FunctionButtonMenu = ({
           <Box className="menu">
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
-              title="Удалить scenario"
+              title="Изменить function"
               onClick={(e) => {
                 e.stopPropagation();
-                // deleteEndpointClickHandler(selected.id);
+                openFunctionModal(null, element);
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
+              icon={<Delete size={13} />}
+              title="Удалить function"
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFunction(element?.id);
                 handleCloseNotify();
               }}
             />

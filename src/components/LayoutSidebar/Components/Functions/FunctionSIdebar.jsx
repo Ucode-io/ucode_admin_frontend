@@ -5,12 +5,15 @@ import { useMemo, useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { HiOutlineCodeBracket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   useFunctionFolderDeleteMutation,
   useFunctionFoldersListQuery,
 } from "../../../../services/functionFolderService";
-import { useFunctionsListQuery } from "../../../../services/functionService";
+import {
+  useFunctionDeleteMutation,
+  useFunctionsListQuery,
+} from "../../../../services/functionService";
 import { store } from "../../../../store";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
@@ -21,6 +24,7 @@ import FunctionButtonMenu from "./Components/FunctionButtonMenu";
 import FunctionFolderCreateModal from "./Components/Modal/FolderCreateModal";
 import { BsThreeDots } from "react-icons/bs";
 import { useQueryClient } from "react-query";
+import FunctionCreateModal from "./Components/Modal/FunctionCreateModal";
 
 const functionFolder = {
   label: "Functions",
@@ -47,12 +51,10 @@ const FunctionSidebar = ({
   const dispatch = useDispatch();
   const company = store.getState().company;
   const navigate = useNavigate();
-  const { functionId } = useParams();
   const [selected, setSelected] = useState({});
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const [menu, setMenu] = useState({ event: "", type: "" });
-  const location = useLocation();
   const openMenu = Boolean(menu?.event);
   const queryClient = useQueryClient();
   const handleOpenNotify = (event, type, element) => {
@@ -95,6 +97,11 @@ const FunctionSidebar = ({
       queryParams: {
         select: (res) => res.function_folders,
       },
+    });
+
+  const { mutate: deleteFunction, isLoading: deleteFunctionLoading } =
+    useFunctionDeleteMutation({
+      onSuccess: () => queryClient.refetchQueries("FUNCTIONS"),
     });
 
   const { data: functions, isLoading: functionLoading } = useFunctionsListQuery(
@@ -149,7 +156,7 @@ const FunctionSidebar = ({
               size={13}
               onClick={(e) => {
                 e?.stopPropagation();
-                handleOpenNotify(e, "FOLDER");
+                handleOpenNotify(e, "FUNCTION", func);
               }}
               style={{
                 color:
@@ -164,12 +171,12 @@ const FunctionSidebar = ({
     }));
   }, [functionFolders, functions]);
 
-  const selectHandler = (id, element) => {
-    dispatch(menuActions.setMenuItem(element));
-    if (element.type === "FOLDER") return;
-    // setValue("request_info.url", element.path);
-    // setValue("request_info.title", element.title);
-  };
+  // const selectHandler = (id, element) => {
+  //   dispatch(menuActions.setMenuItem(element));
+  //   if (element.type === "FOLDER") return;
+  //   // setValue("request_info.url", element.path);
+  //   // setValue("request_info.title", element.title);
+  // };
 
   const clickHandler = (e) => {
     e.stopPropagation();
@@ -279,11 +286,19 @@ const FunctionSidebar = ({
         openFolderModal={openFolderModal}
         deleteFolder={deleteFolder}
         openFunctionModal={openFunctionModal}
+        deleteFunction={deleteFunction}
       />
       {folderModalIsOpen && (
         <FunctionFolderCreateModal
           folder={selectedFolder}
           closeModal={closeFolderModal}
+        />
+      )}
+      {functionModalIsOpen && (
+        <FunctionCreateModal
+          folder={selectedFolder}
+          func={selectedFunction}
+          closeModal={closeFunctionModal}
         />
       )}
     </Box>

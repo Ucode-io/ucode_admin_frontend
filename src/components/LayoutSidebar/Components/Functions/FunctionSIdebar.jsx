@@ -6,7 +6,10 @@ import { FaFolder } from "react-icons/fa";
 import { HiOutlineCodeBracket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useFunctionFoldersListQuery } from "../../../../services/functionFolderService";
+import {
+  useFunctionFolderDeleteMutation,
+  useFunctionFoldersListQuery,
+} from "../../../../services/functionFolderService";
 import { useFunctionsListQuery } from "../../../../services/functionService";
 import { store } from "../../../../store";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
@@ -16,6 +19,8 @@ import FunctionRecursive from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
 import FunctionButtonMenu from "./Components/FunctionButtonMenu";
 import FunctionFolderCreateModal from "./Components/Modal/FolderCreateModal";
+import { BsThreeDots } from "react-icons/bs";
+import { useQueryClient } from "react-query";
 
 const functionFolder = {
   label: "Functions",
@@ -49,7 +54,7 @@ const FunctionSidebar = ({
   const [menu, setMenu] = useState({ event: "", type: "" });
   const location = useLocation();
   const openMenu = Boolean(menu?.event);
-
+  const queryClient = useQueryClient();
   const handleOpenNotify = (event, type, element) => {
     setMenu({ event: event?.currentTarget, type: type, element });
   };
@@ -103,38 +108,64 @@ const FunctionSidebar = ({
     }
   );
 
+  const { mutate: deleteFolder, isLoading: deleteLoading } =
+    useFunctionFolderDeleteMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries("FUNCTION_FOLDERS");
+      },
+    });
+
   const sidebarElements = useMemo(() => {
     return functionFolders?.map((folder) => ({
       ...folder,
       icon: FaFolder,
       type: "FOLDER",
       name: folder.title,
-      //   buttons: (
-      //     <FunctionFolderButtons
-      //       openFunctionModal={openFunctionModal}
-      //       openFolderModal={openFolderModal}
-      //       folder={folder}
-      //       projectId={projectId}
-      //     />
-      //   ),
+      buttons: (
+        <BsThreeDots
+          size={13}
+          onClick={(e) => {
+            e?.stopPropagation();
+            handleOpenNotify(e, "FOLDER", folder);
+          }}
+          style={{
+            color:
+              menuItem?.id === folder?.id
+                ? menuStyle?.active_text
+                : menuStyle?.text || "",
+          }}
+        />
+      ),
+      button_text: "Folder settings",
+
       children: functions
         ?.filter((func) => func.function_folder_id === folder.id)
         .map((func) => ({
           ...func,
           name: func.name,
           icon: HiOutlineCodeBracket,
-          //   buttons: (
-          //     <FunctionButtons
-          //       openFunctionModal={openFunctionModal}
-          //       func={func}
-          //       projectId={projectId}
-          //     />
-          //   ),
+          buttons: (
+            <BsThreeDots
+              size={13}
+              onClick={(e) => {
+                e?.stopPropagation();
+                handleOpenNotify(e, "FOLDER");
+              }}
+              style={{
+                color:
+                  menuItem?.id === func?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
+              }}
+            />
+          ),
+          button_text: "Folder settings",
         })),
     }));
   }, [functionFolders, functions]);
 
   const selectHandler = (id, element) => {
+    dispatch(menuActions.setMenuItem(element));
     if (element.type === "FOLDER") return;
     // setValue("request_info.url", element.path);
     // setValue("request_info.title", element.title);
@@ -155,11 +186,10 @@ const FunctionSidebar = ({
 
   const onSelect = (id, element) => {
     setSelected(element);
-    navigate(`${location.pathname}/function/${id}`);
-  };
-  const rowClickHandler = (id, element) => {
+    navigate(`/main/12/function/${id}`);
     dispatch(menuActions.setMenuItem(element));
   };
+  const rowClickHandler = (id, element) => {};
 
   const activeStyle = {
     backgroundColor:
@@ -247,6 +277,8 @@ const FunctionSidebar = ({
         element={menu?.element}
         handleCloseNotify={handleCloseNotify}
         openFolderModal={openFolderModal}
+        deleteFolder={deleteFolder}
+        openFunctionModal={openFunctionModal}
       />
       {folderModalIsOpen && (
         <FunctionFolderCreateModal

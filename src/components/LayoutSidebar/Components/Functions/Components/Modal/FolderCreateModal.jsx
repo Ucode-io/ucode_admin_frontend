@@ -24,7 +24,7 @@ const FunctionFolderCreateModal = ({ folder, closeModal }) => {
     useFunctionFolderCreateMutation({
       onSuccess: () => {
         closeModal();
-        dispatch(showAlert("Successful added new folder"));
+        dispatch(showAlert("Successful added new folder", "success"));
         queryClient.refetchQueries("FUNCTION_FOLDERS");
       },
     });
@@ -33,7 +33,7 @@ const FunctionFolderCreateModal = ({ folder, closeModal }) => {
     useFunctionFolderUpdateMutation({
       onSuccess: () => {
         closeModal();
-        dispatch(showAlert("Successful updated new folder"));
+        dispatch(showAlert("Successful updated folder", "success"));
         queryClient.refetchQueries("FUNCTION_FOLDERS");
       },
     });

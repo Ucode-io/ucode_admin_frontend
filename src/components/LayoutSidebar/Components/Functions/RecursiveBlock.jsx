@@ -3,8 +3,9 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Icon, Tooltip } from "@mui/material";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
+import { useDispatch } from "react-redux";
+import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 
 const FunctionRecursive = ({
   element,
@@ -17,8 +18,8 @@ const FunctionRecursive = ({
   setSelected,
   menuItem,
 }) => {
-  const { tableSlug } = useParams();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
+  const dispatch = useDispatch();
 
   const activeStyle = {
     backgroundColor:
@@ -40,6 +41,7 @@ const FunctionRecursive = ({
     onRowClick(element.id, element);
     setChildBlockVisible((prev) => !prev);
     if (!element.children) onSelect(element.id, element);
+    dispatch(menuActions.setMenuItem(element));
   };
   return (
     <Box>
@@ -47,10 +49,7 @@ const FunctionRecursive = ({
         <Button
           key={element.id}
           style={activeStyle}
-          className={`nav-element ${
-            element.isChild &&
-            (tableSlug !== element.slug ? "active-with-child" : "active")
-          }`}
+          className="nav-element"
           onClick={clickHandler}
         >
           <div

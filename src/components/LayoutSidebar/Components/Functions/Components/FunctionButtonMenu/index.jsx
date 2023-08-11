@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./style.scss";
 import MenuItemComponent from "../../../../MenuItem";
 import { Delete } from "@mui/icons-material";
+import AddIcon from "@mui/icons-material/Add";
 
 const FunctionButtonMenu = ({
   selected,
@@ -11,11 +12,12 @@ const FunctionButtonMenu = ({
   openMenu,
   menuType,
   handleCloseNotify,
-  deleteEndpointClickHandler,
   openFolderModal,
+  deleteFolder,
+  element,
+  openFunctionModal,
 }) => {
   const navigate = useNavigate();
-
   return (
     <>
       <Menu
@@ -43,11 +45,22 @@ const FunctionButtonMenu = ({
           <>
             <Box className="menu">
               <MenuItemComponent
-                icon={<RiPencilFill size={13} />}
-                title="Добавить scenario"
+                icon={<AddIcon size={13} />}
+                title="Добавить function"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/main/12/scenario/${selected.id}`);
+                  openFunctionModal();
+                  handleCloseNotify();
+                }}
+              />
+            </Box>
+            <Box className="menu">
+              <MenuItemComponent
+                icon={<RiPencilFill size={13} />}
+                title="Изменить папку"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openFolderModal(element);
                   handleCloseNotify();
                 }}
               />
@@ -58,6 +71,7 @@ const FunctionButtonMenu = ({
                 title="Удалить папку"
                 onClick={(e) => {
                   e.stopPropagation();
+                  deleteFolder(element?.id);
                   handleCloseNotify();
                 }}
               />
@@ -82,7 +96,7 @@ const FunctionButtonMenu = ({
               title="Удалить scenario"
               onClick={(e) => {
                 e.stopPropagation();
-                deleteEndpointClickHandler(selected.id);
+                // deleteEndpointClickHandler(selected.id);
                 handleCloseNotify();
               }}
             />

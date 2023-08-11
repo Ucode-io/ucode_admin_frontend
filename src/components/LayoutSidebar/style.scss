@@ -9,7 +9,7 @@ $main-color: #0365F2;
   transition-property: width;
   transition-timing-function: linear;
   transition-duration: .3s;
-  overflow-x: hidden;
+  overflow: hidden;
 
   .search {
     display: flex;
@@ -204,7 +204,7 @@ $main-color: #0365F2;
 
   .nav-block {
     // padding: 12px;
-    overflow-y: scroll;
+    // overflow-y: scroll;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;

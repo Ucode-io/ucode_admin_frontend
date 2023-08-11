@@ -43,6 +43,21 @@ const SmsFormPage = () => {
       .catch(() => setBtnLoader(false));
   };
 
+  const updateApp = (data) => {
+    setBtnLoader(true);
+
+    smsOtpService
+      .update({
+        ...data,
+        number_of_otp: parseInt(data?.number_of_otp)
+      })
+      .then(() => {
+        navigate(-1);
+        getRoleList();
+      })
+      .catch(() => setBtnLoader(false));
+  };
+
 
 
   const getById = () => {

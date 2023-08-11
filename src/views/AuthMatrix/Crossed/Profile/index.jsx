@@ -31,7 +31,7 @@ const UsersForm = () => {
 
 
   const update = (data) => {
-    console.log('datattaa', data)
+
     const oldPassword = data?.old_password;
     const newPassword = data?.new_password
     const requestData = {
@@ -39,16 +39,12 @@ const UsersForm = () => {
       guid: isUserInfo?.id,
     };
 
-    if(newPassword && oldPassword) {
+    if(newPassword || oldPassword) {
       resetPasswordV2(oldPassword, newPassword)
-    }
-
-    if (oldPassword) {
-      requestData.password = newPassword;
-      resetPassword(oldPassword)
     } else {
       delete requestData.confirm_password;
     }
+
     userService
       ?.updateV2({
        ...requestData,
@@ -75,12 +71,17 @@ const UsersForm = () => {
     },
   });
 
-  const resetPassword = (newPassword) => {
-    authService.resetPasswordProfile( {
-      password: newPassword,
-      user_id: isUserId
-    })
-  }
+  // const resetPassword = (newPassword) => {
+  //   authService.resetPasswordProfile( {
+  //     password: newPassword,
+  //     user_id: isUserId
+  //   }).then(() => {
+
+  //   }).catch(err => {
+  //     console.log('errrrrr', err)
+  //     dispatch(showAlert(err))
+  //   })
+  // }
 
   const resetPasswordV2 = (oldPassword, newPassword) => {
     authService.resetUserPasswordV2( {

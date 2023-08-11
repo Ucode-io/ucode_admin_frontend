@@ -51,7 +51,7 @@ const {i18n} = useTranslation();
               <CTableCell>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</CTableCell>
               <CTableCell style={{ width: 20 }}>
                 <Checkbox
-                  checked={selectedColumns.includes(column.id)}
+                  checked={selectedColumns?.includes(column?.id)}
                   onChange={(e, val) => onCheckboxChange(val, column.id)}
                 />
               </CTableCell>

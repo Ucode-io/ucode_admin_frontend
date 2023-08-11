@@ -31,8 +31,10 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const { state } = useLocation();
   const { tableSlug } = useParams();
   const navigate = useNavigate();
-
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const queryClient = useQueryClient();
+  const [defaultViewTab, setDefaultViewTab] = useState(0);
+  const [isChanged, setIsChanged] = useState(false);
 
   const loginTableSlug = useSelector((state) => state.auth.loginTableSlug);
   const userId = useSelector((state) => state.auth.userId);
@@ -48,7 +50,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const [selectedLinkedObject, setSelectedLinkedObject] = useState("");
   const [searchText, setSearchText] = useState("");
   const [selectedObject, setSelectedObject] = useState("");
-
+  const [selectedView, setSelectedView] = useState(null);
   const selectLinkedObject = selectedObject?.value;
 
   // ============SELECTED LINKED TABLE SLUG=============
@@ -300,10 +302,23 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
           </>
         }
       >
+        {/* <ViewTabSelector
+          selectedTabIndex={selectedTabIndex}
+          setSelectedTabIndex={setSelectedTabIndex}
+          views={views}
+        /> */}
+
         <ViewTabSelector
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
+          settingsModalVisible={settingsModalVisible}
+          setSettingsModalVisible={setSettingsModalVisible}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
+          defaultViewTab={defaultViewTab}
+          isChanged={isChanged}
+          setIsChanged={setIsChanged}
         />
       </FiltersBlock>
 

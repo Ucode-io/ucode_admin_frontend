@@ -22,17 +22,28 @@ import { viewTypes } from "../../../../utils/constants/viewTypes";
 import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
 
-const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) => {
+const ViewTabSelector = ({
+  selectedTabIndex,
+  setSelectedTabIndex,
+  settingsModalVisible,
+  setSettingsModalVisible,
+  isChanged,
+  setIsChanged,
+  selectedView,
+  defaultViewTab,
+  setSelectedView,
+  views = [],
+}) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
-  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
+  // const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  // const [isChanged, setIsChanged] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
-  const [selectedView, setSelectedView] = useState(null);
+  // const [selectedView, setSelectedView] = useState(null);
   const [typeNewView, setTypeNewView] = useState(null);
 
   const handleClick = (event) => {
@@ -52,6 +63,7 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
     setSettingsModalVisible(true);
     setSelectedView(data);
   };
+
   const closeModal = () => {
     setSettingsModalVisible(false);
     if (isChanged) queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
@@ -181,7 +193,7 @@ const ViewTabSelector = ({ selectedTabIndex, setSelectedTabIndex, views = [] }) 
       </div>
 
       <Modal className={style.modal} open={settingsModalVisible} onClose={closeModal}>
-        <ViewSettings closeModal={closeModal} isChanged={isChanged} setIsChanged={setIsChanged} viewData={selectedView} typeNewView={typeNewView} />
+        <ViewSettings closeModal={closeModal} defaultViewTab={defaultViewTab} isChanged={isChanged} setIsChanged={setIsChanged} viewData={selectedView} typeNewView={typeNewView} />
       </Modal>
     </>
   );

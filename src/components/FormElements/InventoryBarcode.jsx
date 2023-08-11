@@ -40,6 +40,9 @@ const InventoryBarCode = ({
   });
 
   const sendRequestOpenFaas = () => {
+    const params = {
+      form_input: true
+    }
     constructorFunctionService
       .invoke({
         function_id: field?.attributes?.function,
@@ -47,7 +50,9 @@ const InventoryBarCode = ({
         attributes: {
           barcode: elmValue.length > 0 ? elmValue : barcode,
         },
-      })
+      },
+      params
+      )
       .then((res) => {
         dispatch(showAlert("Успешно!", "success"));
 

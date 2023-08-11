@@ -11,6 +11,7 @@ const HFFloatField = ({
   required = false,
   fullWidth = false,
   withTrim = false,
+  field,
   rules = {},
   defaultValue = "",
   tabIndex,
@@ -21,7 +22,7 @@ const HFFloatField = ({
   ...props
 }) => {
 
-
+  const decimal = field?.attributes?.number_of_rounds ? field?.attributes?.number_of_rounds : decimalScale
   return (
     <Controller
       control={control}
@@ -32,15 +33,15 @@ const HFFloatField = ({
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
-        const allowNegative = isFloat; // allow negatives only for float fields
-        const decimalSeparator = isFloat ? '.' : undefined; // set the decimal separator only for float fields
+        const allowNegative = isFloat; 
+        const decimalSeparator = isFloat ? '.' : undefined;
 
         return (
           <NumericFormat
             thousandsGroupStyle="thousand"
             thousandSeparator=" "
             decimalSeparator={decimalSeparator}
-            decimalScale={decimalScale}
+            decimalScale={decimal}
             displayType="input"
             isNumericString={true}
             autoComplete="off"

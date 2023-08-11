@@ -203,9 +203,7 @@ $main-color: #0365F2;
 
 
   .nav-block {
-    // padding: 12px;
-    // overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: hidden !important;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

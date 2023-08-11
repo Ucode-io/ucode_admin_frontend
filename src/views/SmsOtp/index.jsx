@@ -17,7 +17,7 @@ import TableRowButton from "../../components/TableRowButton";
 import { useEffect, useState } from "react";
 import smsOtpService from "../../services/auth/smsOtpService";
 
-const smsPage = () => {
+const SmsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const list = useSelector((state) => state.application.list);
@@ -50,7 +50,6 @@ const smsPage = () => {
     smsOtpService
       .getList(params)
       .then((res) => {
-        console.log('resssssssss', res?.items)
         setSmsOtp(res.items);
       })
       .catch((err) => {
@@ -84,13 +83,13 @@ const smsPage = () => {
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Login</CTableCell>
-            <CTableCell>Password</CTableCell>
-            <CTableCell>Number of Otp </CTableCell>
             <CTableCell>Default Otp</CTableCell>
+            <CTableCell>Number of Otp </CTableCell>
+            <CTableCell>Password</CTableCell>
             <CTableCell width={60}></CTableCell>
           </CTableHead>
 
-          <CTableBody loader={loader} columnsCount={5} dataLength={list.length}>
+          <CTableBody loader={loader} columnsCount={4} dataLength={list.length}>
             {smsOtp?.map((element, index) => (
               <CTableRow
                 key={element.id}
@@ -118,4 +117,4 @@ const smsPage = () => {
   );
 };
 
-export default smsPage;
+export default SmsPage;

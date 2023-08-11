@@ -36,6 +36,7 @@ import { languagesActions } from "../../store/globalLanguages/globalLanguages.sl
 import { changeLanguage } from "i18next";
 import { useTranslation } from "react-i18next";
 import { showAlert } from "../../store/alert/alert.thunk";
+import SmsIcon from '@mui/icons-material/Sms';
 
 const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const dispatch = useDispatch();
@@ -381,28 +382,34 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
           </div>
           <Divider />
           <div className={styles.block}>
-            <ProfileItem
-              children={
-                <KeyIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={"Api Keys"}
-              onClick={handleClick}
-            />
-            <ProfileItem
-              children={
-                <MoveUpIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={"Redirects"}
-              onClick={handleRedirectNavigate}
-            />
+            {permissions?.api_keys_button && (
+              <ProfileItem
+                children={
+                  <KeyIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
+                }
+                text={"Api Keys"}
+                onClick={handleClick}
+              />
+            )}
+
+            {permissions?.redirects_button && (
+              <ProfileItem
+                children={
+                  <MoveUpIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
+                }
+                text={"Redirects"}
+                onClick={handleRedirectNavigate}
+              />
+            )}
+
             <ProfileItem
               children={
                 <SmsIcon

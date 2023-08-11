@@ -13,7 +13,7 @@ import authService from "../../../../services/auth/authService";
 import userService from "../../../../services/auth/userService";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { Button } from "@mui/material";
+import { Box } from "@mui/material";
 
 const UsersForm = () => {
   const navigate = useNavigate();
@@ -23,8 +23,8 @@ const UsersForm = () => {
   const clientType = useSelector((state) => state?.auth?.clientType);
   const userTableSlug = useSelector((state) => state?.auth?.loginTableSlug);
   const projectId = useSelector((state) => state?.auth?.projectId);
-  const [inputType, setInputType] = useState('password')
-  const [passwordType, setPasswordType] = useState('password')
+  const [inputType, setInputType] = useState(true)
+  const [passwordType, setPasswordType] = useState(true)
 
 
   const update = (data) => {
@@ -82,6 +82,7 @@ const UsersForm = () => {
       reset(res);
     });
   }, []);
+
 
   return (
     <>
@@ -172,29 +173,41 @@ const UsersForm = () => {
               />
             </FRow>
 
-            <FRow style={{display: 'none'}} label="New Password">
+            <FRow style={{position: 'relative'}} label="New Password">
               <HFTextField
                 placeholder="New Password"
                 fullWidth
                 control={control}
                 name="new_password"
-                type={passwordType}
+                type={inputType ? 'password' : 'text'}
               />
 
-              <Button sx={{position: 'absolute'}}>
-                <VisibilityIcon/>
-              </Button>
+              <Box onClick={() => setInputType(!inputType)} sx={{position: 'absolute', right: '15px', bottom: '5px', cursor: 'pointer'}}>
+                {inputType ? (
+                  <VisibilityIcon/>
+                ) : (
+                  <VisibilityOffIcon/>
+                )}
+              </Box>
 
             </FRow>
 
-            <FRow label="Confirm password">
+            <FRow style={{position: 'relative'}} label="Confirm password">
               <HFTextField
                 placeholder="confirm password"
                 fullWidth
                 control={control}
                 name="confirm_password"
-                type={inputType}
+                type={passwordType ? 'password' : 'text'}
               />
+
+              <Box onClick={() => setPasswordType(!passwordType)} sx={{position: 'absolute', right: '15px', bottom: '5px', cursor: 'pointer'}}>
+                {passwordType ? (
+                  <VisibilityIcon/>
+                ) : (
+                  <VisibilityOffIcon/>
+                )}
+              </Box>
             </FRow>
 
           </div>

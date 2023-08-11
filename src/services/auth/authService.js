@@ -18,8 +18,8 @@ const authService = {
   multiCompanyLogin: (data) => requestAuthV2.post("/multi-company/login", data),
   register: (data) => requestAuth.post("/company", data),
   sendResetMessageToEmail: (data) => requestAuth.post(`/user/send-message`, data),
-  resetPassword: (data) => requestAuth.put(`/user/reset-password`, data),
-  resetPasswordV2: (data) => requestAuth.put(`/v2/reset-password`, data),
+  resetPassword: (data) => requestAuth.put(`/v1/user/reset-password`, data),
+  resetUserPasswordV2: (data) => requestAuth.put(`/v2/user/reset-password`, data),
   refreshToken: (data) => requestAuthV2.put(`/refresh`, data),
   updateToken: (data) => authRequestV2.put(`/refresh`, data),
   sendCode: (data) => requestAuth.post(`/send-code`, data),
@@ -30,7 +30,7 @@ const authService = {
   forgotPassword: (login) => requestAuth.post(`/v2/forgot-password`, login),
   setEmail: (data) => requestAuth.put(`/v2/set-email/send-code`, data),
   getUserById: (user_id, params) => requestAuthV2.get(`user/${user_id}`, {params, headers: { "environment-id": authStore.environmentId }}),
-  resetPassword: (data) => requestAuthV2.put('/reset-password', data)
+  resetPasswordProfile: (data) => requestAuthV2.put('/reset-password', data)
 };
 
 export default authService;

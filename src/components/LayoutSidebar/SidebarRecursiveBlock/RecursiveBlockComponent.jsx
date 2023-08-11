@@ -60,9 +60,15 @@ const RecursiveBlock = ({
       case "TABLE":
         return navigate(`/main/${appId}/object/${element?.data?.table?.slug}`);
       case "MICROFRONTEND":
-        return navigate(
-          `/main/${appId}/page/${element?.data?.microfrontend?.id}`
-        );
+        let obj = {};
+        element?.attributes?.params.forEach((el) => {
+          obj[el.key] = el.value;
+        });
+        const searchParams = new URLSearchParams(obj || {});
+        return navigate({
+          pathname: `/main/${appId}/page/${element?.data?.microfrontend?.id}`,
+          search: `?${searchParams.toString()}`,
+        });
       case "WEBPAGE":
         return navigate(
           `/main/${appId}/web-page/${element?.data?.webpage?.id}`

@@ -183,6 +183,9 @@ const AutoCompleteElement = ({
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
       return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
+        params: {
+          from_input: true
+        },
         data: {
           table_slug: tableSlug,
           ...autoFiltersValue,

@@ -139,6 +139,9 @@ const AutoCompleteElement = ({
       return request.post(
         `/invoke_function/${field?.attributes?.function_path}`,
         {
+          params: {
+            from_input: true
+          },
           data: {
             table_slug: tableSlug,
             ...autoFiltersValue,

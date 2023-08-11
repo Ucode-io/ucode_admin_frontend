@@ -51,6 +51,10 @@ import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
 import PermissionDetail from "../views/Permissions";
 import RoleDetail from "../views/Permissions/Roles/Detail";
+import SmsPage from "../views/SmsOtp";
+import SmsFormPage from "../views/SmsOtp/SmsFormPage";
+
+
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -130,6 +134,11 @@ const Router = () => {
           <Route index element={<RedirectPage />} />
           <Route path="create" element={<RedirectFormPage />} />
           <Route path=":redirectId" element={<RedirectFormPage />} />
+        </Route>
+        <Route path=":appId/sms-otp">
+          <Route index element={<SmsPage />} />
+          <Route path="create" element={<SmsFormPage />} />
+          <Route path=":redirectId" element={<SmsFormPage />} />
         </Route>
         <Route path=":appId/api-key">
           <Route index element={<ApiKeyPage />} />

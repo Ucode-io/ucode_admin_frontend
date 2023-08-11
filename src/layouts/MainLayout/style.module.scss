@@ -12,6 +12,19 @@
   position: relative;
 }
 
+.navigateWrap {
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.button {
+  margin-top: 10px;
+}
+
 .tabsBlock {
   display: flex;
   align-items: center;

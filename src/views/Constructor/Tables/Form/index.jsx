@@ -206,7 +206,7 @@ const ConstructorTablesFormPage = () => {
 
     const computedLayouts = data.layouts.map((layout) => ({
       ...layout,
-      summary_fields: layout?.summary_fields.map((item) => {
+      summary_fields: layout?.summary_fields?.map((item) => {
         return {
           ...item,
           field_name: item?.field_name ?? item?.title ?? item?.label,

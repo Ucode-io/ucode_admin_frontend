@@ -1,27 +1,18 @@
 import { useMutation, useQuery } from "react-query";
-import requestV2 from "../utils/requestV2";
+import httpsRequestV2 from "../utils/httpsRequestV2";
 
 const functionService = {
   getList: (params) =>
-    requestV2.get("/function", {
+    httpsRequestV2.get("/function", {
       params,
     }),
   getById: (params, functionId) =>
-    requestV2.get(`/function/${functionId}`, {
+    httpsRequestV2.get(`/function/${functionId}`, {
       params,
     }),
-  update: ({ data, projectId }) =>
-    requestV2.put("/function", data, {
-      params: { "project-id": projectId },
-    }),
-  create: ({ data, projectId }) =>
-    requestV2.post("/function", data, {
-      params: { "project-id": projectId },
-    }),
-  delete: ({ functionId, projectId }) =>
-    requestV2.delete(`/function/${functionId}`, {
-      params: { "project-id": projectId },
-    }),
+  update: (data) => httpsRequestV2.put("/function", data, {}),
+  create: (data) => httpsRequestV2.post("/function", data, {}),
+  delete: (functionId) => httpsRequestV2.delete(`/function/${functionId}`, {}),
 };
 
 export const useFunctionsListQuery = ({ params = {}, queryParams } = {}) => {
@@ -48,23 +39,17 @@ export const useFunctionByIdQuery = ({
   );
 };
 
-export const useFunctionUpdateMutation = ({ projectId, mutationSettings }) => {
-  return useMutation(
-    (data) => functionService.update({ data, projectId }),
-    mutationSettings
-  );
+export const useFunctionUpdateMutation = (mutationSettings) => {
+  return useMutation((data) => functionService.update(data), mutationSettings);
 };
 
-export const useFunctionCreateMutation = ({ projectId, mutationSettings }) => {
-  return useMutation(
-    (data) => functionService.create({ data, projectId }),
-    mutationSettings
-  );
+export const useFunctionCreateMutation = (mutationSettings) => {
+  return useMutation((data) => functionService.create(data), mutationSettings);
 };
 
-export const useFunctionDeleteMutation = ({ projectId, mutationSettings }) => {
+export const useFunctionDeleteMutation = (mutationSettings) => {
   return useMutation(
-    (data) => functionService.delete({ data, projectId }),
+    (functionId) => functionService.delete(functionId),
     mutationSettings
   );
 };

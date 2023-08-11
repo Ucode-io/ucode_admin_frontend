@@ -1,18 +1,30 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useMemo, useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { HiOutlineCodeBracket } from "react-icons/hi2";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { useFunctionFoldersListQuery } from "../../../../services/functionFolderService";
-import { useFunctionsListQuery } from "../../../../services/functionService";
+import { useNavigate } from "react-router-dom";
+import {
+  useFunctionFolderDeleteMutation,
+  useFunctionFoldersListQuery,
+} from "../../../../services/functionFolderService";
+import {
+  useFunctionDeleteMutation,
+  useFunctionsListQuery,
+} from "../../../../services/functionService";
 import { store } from "../../../../store";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import FunctionRecursive from "./RecursiveBlock";
+import AddIcon from "@mui/icons-material/Add";
+import FunctionButtonMenu from "./Components/FunctionButtonMenu";
+import FunctionFolderCreateModal from "./Components/Modal/FolderCreateModal";
+import { BsThreeDots } from "react-icons/bs";
+import { useQueryClient } from "react-query";
+import FunctionCreateModal from "./Components/Modal/FunctionCreateModal";
 
 const functionFolder = {
   label: "Functions",
@@ -39,13 +51,12 @@ const FunctionSidebar = ({
   const dispatch = useDispatch();
   const company = store.getState().company;
   const navigate = useNavigate();
-  const { functionId } = useParams();
   const [selected, setSelected] = useState({});
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openMenu = Boolean(menu?.event);
-
+  const queryClient = useQueryClient();
   const handleOpenNotify = (event, type, element) => {
     setMenu({ event: event?.currentTarget, type: type, element });
   };
@@ -88,6 +99,11 @@ const FunctionSidebar = ({
       },
     });
 
+  const { mutate: deleteFunction, isLoading: deleteFunctionLoading } =
+    useFunctionDeleteMutation({
+      onSuccess: () => queryClient.refetchQueries("FUNCTIONS"),
+    });
+
   const { data: functions, isLoading: functionLoading } = useFunctionsListQuery(
     {
       params: {
@@ -99,42 +115,68 @@ const FunctionSidebar = ({
     }
   );
 
+  const { mutate: deleteFolder, isLoading: deleteLoading } =
+    useFunctionFolderDeleteMutation({
+      onSuccess: () => {
+        queryClient.refetchQueries("FUNCTION_FOLDERS");
+      },
+    });
+
   const sidebarElements = useMemo(() => {
     return functionFolders?.map((folder) => ({
       ...folder,
       icon: FaFolder,
       type: "FOLDER",
       name: folder.title,
-      //   buttons: (
-      //     <FunctionFolderButtons
-      //       openFunctionModal={openFunctionModal}
-      //       openFolderModal={openFolderModal}
-      //       folder={folder}
-      //       projectId={projectId}
-      //     />
-      //   ),
+      buttons: (
+        <BsThreeDots
+          size={13}
+          onClick={(e) => {
+            e?.stopPropagation();
+            handleOpenNotify(e, "FOLDER", folder);
+          }}
+          style={{
+            color:
+              menuItem?.id === folder?.id
+                ? menuStyle?.active_text
+                : menuStyle?.text || "",
+          }}
+        />
+      ),
+      button_text: "Folder settings",
+
       children: functions
         ?.filter((func) => func.function_folder_id === folder.id)
         .map((func) => ({
           ...func,
           name: func.name,
           icon: HiOutlineCodeBracket,
-          //   buttons: (
-          //     <FunctionButtons
-          //       openFunctionModal={openFunctionModal}
-          //       func={func}
-          //       projectId={projectId}
-          //     />
-          //   ),
+          buttons: (
+            <BsThreeDots
+              size={13}
+              onClick={(e) => {
+                e?.stopPropagation();
+                handleOpenNotify(e, "FUNCTION", func);
+              }}
+              style={{
+                color:
+                  menuItem?.id === func?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
+              }}
+            />
+          ),
+          button_text: "Folder settings",
         })),
     }));
   }, [functionFolders, functions]);
 
-  const selectHandler = (id, element) => {
-    if (element.type === "FOLDER") return;
-    // setValue("request_info.url", element.path);
-    // setValue("request_info.title", element.title);
-  };
+  // const selectHandler = (id, element) => {
+  //   dispatch(menuActions.setMenuItem(element));
+  //   if (element.type === "FOLDER") return;
+  //   // setValue("request_info.url", element.path);
+  //   // setValue("request_info.title", element.title);
+  // };
 
   const clickHandler = (e) => {
     e.stopPropagation();
@@ -151,11 +193,10 @@ const FunctionSidebar = ({
 
   const onSelect = (id, element) => {
     setSelected(element);
-    navigate(`/project/${company.projectId}/functions/${id}`);
-  };
-  const rowClickHandler = (id, element) => {
+    navigate(`/main/12/function/${id}`);
     dispatch(menuActions.setMenuItem(element));
   };
+  const rowClickHandler = (id, element) => {};
 
   const activeStyle = {
     backgroundColor:
@@ -167,6 +208,12 @@ const FunctionSidebar = ({
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
+  };
+  const iconStyle = {
+    color:
+      functionFolder?.id === menuItem?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text || "",
   };
 
   const labelStyle = {
@@ -190,6 +237,20 @@ const FunctionSidebar = ({
             <IconGenerator icon={"key.svg"} size={18} />
             Functions
           </div>
+          <Box className="icon_group">
+            <Tooltip title="Create folder" placement="top">
+              <Box className="extra_icon">
+                <AddIcon
+                  size={13}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenNotify(e, "CREATE_FOLDER");
+                  }}
+                  style={iconStyle}
+                />
+              </Box>
+            </Tooltip>
+          </Box>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
@@ -215,14 +276,31 @@ const FunctionSidebar = ({
         ))}
       </Collapse>
 
-      {/* <DocumentButtonMenu
+      <FunctionButtonMenu
         selected={selected}
         openMenu={openMenu}
         menu={menu?.event}
         menuType={menu?.type}
         element={menu?.element}
         handleCloseNotify={handleCloseNotify}
-      /> */}
+        openFolderModal={openFolderModal}
+        deleteFolder={deleteFolder}
+        openFunctionModal={openFunctionModal}
+        deleteFunction={deleteFunction}
+      />
+      {folderModalIsOpen && (
+        <FunctionFolderCreateModal
+          folder={selectedFolder}
+          closeModal={closeFolderModal}
+        />
+      )}
+      {functionModalIsOpen && (
+        <FunctionCreateModal
+          folder={selectedFolder}
+          func={selectedFunction}
+          closeModal={closeFunctionModal}
+        />
+      )}
     </Box>
   );
 };

@@ -22,6 +22,7 @@ import "../../style.scss";
 import FolderCreateModal from "./Components/Modal/FolderCreateModal";
 import ScenarioButtonMenu from "./Components/ScenarioButtonMenu";
 import ScenarioRecursive from "./RecursiveBlock";
+import { BsTable } from "react-icons/bs";
 
 const scenarioFolder = {
   label: "Scenarios",
@@ -161,12 +162,11 @@ const ScenarioSidebar = ({
         name: category.name,
         id: category.guid,
         type: "FOLDER",
-
         children: scenario?.DAGs?.filter(
           (dag) => dag.category_id === category.guid
         ).map((dag) => ({
           ...dag,
-          //   icon: WebPagesIcon,
+          icon: BsTable,
           id: dag.id,
           name: dag.title,
           type: "DAG",

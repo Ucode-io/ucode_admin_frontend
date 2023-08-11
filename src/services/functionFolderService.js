@@ -10,18 +10,9 @@ const functionFolderService = {
     request.get(`/function-folder/${folderId}`, {
       params,
     }),
-  update: ({ data, projectId }) =>
-    request.put("/function-folder", data, {
-      params: { "project-id": projectId },
-    }),
-  create: ({ data, projectId }) =>
-    request.post("/function-folder", data, {
-      params: { "project-id": projectId },
-    }),
-  delete: ({ folderId, projectId }) =>
-    request.delete(`/function-folder/${folderId}`, {
-      params: { "project-id": projectId },
-    }),
+  update: (data) => request.put("/function-folder", data, {}),
+  create: (data) => request.post("/function-folder", data, {}),
+  delete: (folderId) => request.delete(`/function-folder/${folderId}`, {}),
 };
 
 export const useFunctionFoldersListQuery = ({
@@ -51,32 +42,23 @@ export const useFunctionFolderByIdQuery = ({
   );
 };
 
-export const useFunctionFolderUpdateMutation = ({
-  projectId,
-  mutationSettings,
-}) => {
+export const useFunctionFolderUpdateMutation = (mutationSettings) => {
   return useMutation(
-    (data) => functionFolderService.update({ data, projectId }),
+    (data) => functionFolderService.update(data),
     mutationSettings
   );
 };
 
-export const useFunctionFolderCreateMutation = ({
-  projectId,
-  mutationSettings,
-}) => {
+export const useFunctionFolderCreateMutation = (mutationSettings) => {
   return useMutation(
-    (data) => functionFolderService.create({ data, projectId }),
+    (data) => functionFolderService.create(data),
     mutationSettings
   );
 };
 
-export const useFunctionFolderDeleteMutation = ({
-  projectId,
-  mutationSettings,
-}) => {
+export const useFunctionFolderDeleteMutation = (mutationSettings) => {
   return useMutation(
-    (folderId) => functionFolderService.delete({ folderId, projectId }),
+    (folderId) => functionFolderService.delete(folderId),
     mutationSettings
   );
 };

@@ -26,6 +26,9 @@ import DocumentButtonMenu from "./Components/DocumentsButtonMenu";
 import NoteFolderCreateModal from "./Components/Modals/NoteFolderCreate";
 import TemplateFolderCreateModal from "./Components/Modals/TemplateFolderCreate";
 import DocumentsRecursive from "./RecursiveBlock";
+import { TbEdit } from "react-icons/tb";
+import { FaFolder } from "react-icons/fa";
+import { CgFileDocument } from "react-icons/cg";
 
 const docsFolder = {
   label: "Documents",
@@ -122,7 +125,7 @@ const DocumentsSidebar = ({
         select: (res) =>
           res.folders?.map((folder) => ({
             ...folder,
-            // icon: FaFolder,
+            icon: FaFolder,
             type: "FOLDER",
             what_is: "template",
             hasChild: true,
@@ -152,7 +155,7 @@ const DocumentsSidebar = ({
         select: (res) =>
           res.folders?.map((folder) => ({
             ...folder,
-            // icon: FaFolder,
+            icon: FaFolder,
             type: "FOLDER",
             hasChild: true,
             what_is: "note",
@@ -199,7 +202,7 @@ const DocumentsSidebar = ({
         list.push({
           ...template,
           parent_id: template.folder_id,
-          // icon: CgFileDocument,
+          icon: CgFileDocument,
           what_is: "template",
           name: template?.title,
         });
@@ -237,7 +240,7 @@ const DocumentsSidebar = ({
         list.push({
           ...note,
           parent_id: note.folder_id,
-          // icon: CgFileDocument,
+          icon: CgFileDocument,
           what_is: "note",
           name: note?.title,
         });
@@ -265,7 +268,7 @@ const DocumentsSidebar = ({
       {
         id: 1,
         name: "Templates",
-        // icon: CgFileDocument,
+        icon: CgFileDocument,
         children: computedTemplatesList,
         type: "FOLDER",
         buttons: (
@@ -284,7 +287,7 @@ const DocumentsSidebar = ({
       {
         id: 2,
         name: "Notes",
-        // icon: TbEdit,
+        icon: TbEdit,
         children: computedNotesList,
         type: "FOLDER",
         buttons: (

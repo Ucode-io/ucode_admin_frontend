@@ -78,8 +78,8 @@ const TableView = ({
       return constructorObjectService.getList(tableSlug, {
         data: {
           offset: pageToOffset(currentPage, limit),
-          app_id: appId,
-          with_relations: true,
+          // app_id: appId,
+          // with_relations: true,
           limit,
           ...filters,
           [tab?.slug]: tab?.value,

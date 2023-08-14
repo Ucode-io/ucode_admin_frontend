@@ -34,7 +34,7 @@ import { useTranslation } from "react-i18next";
 
 const parser = new Parser();
 
-const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, activeLang, fieldsList, checkPermission = true, isMultiLanguage, relatedTable, ...props }) => {
+const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, checkRequired=true, activeLang, fieldsList, checkPermission = true, isMultiLanguage, relatedTable, ...props }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
   const {i18n} = useTranslation();
@@ -96,6 +96,12 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
   if (!field.attributes?.field_permission?.view_permission && checkPermission) {
     return null;
+  }
+
+  if(checkRequired){
+    return null
+  } else {
+    field.required = false
   }
 
 

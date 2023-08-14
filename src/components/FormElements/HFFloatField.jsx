@@ -53,8 +53,8 @@ const HFFloatField = ({
               
               if (!valueWithoutSpaces) onChange('');
               else {
-                if(valueWithoutSpaces.at(-1) === '.') onChange(parseInt(valueWithoutSpaces))
-                else onChange(!isNaN(valueWithoutSpaces) ? parseInt(valueWithoutSpaces) : valueWithoutSpaces)}
+                if(valueWithoutSpaces.at(-1) === '.') onChange(parseFloat(valueWithoutSpaces))
+                else onChange(!isNaN(valueWithoutSpaces) ? parseFloat(valueWithoutSpaces) : valueWithoutSpaces)}
                 }}
               className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
               name={name}

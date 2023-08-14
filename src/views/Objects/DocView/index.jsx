@@ -70,7 +70,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
     ],
     () => {
       return constructorObjectService.getList(selectedLinkedTableSlug, {
-        data: { with_relations: true, limit: 0, offset: 0 },
+        data: { limit: 0, offset: 0 },
       });
     },
     {

@@ -88,8 +88,16 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
   };
 
   const submitHandler = (values) => {
-    if (formType === "CREATE") createField(values);
-    else updateField(values);
+    const data = {
+      ...values,
+      attributes: {
+        ...values?.attributes,
+        number_of_rounds: parseInt(values?.attributes?.number_of_rounds)
+      }
+    }
+
+    if (formType === "CREATE") createField(data);
+    else updateField(data);
   };
 
   const selectedAutofillTableSlug = useWatch({

@@ -7,7 +7,6 @@ import { FirstTeeth } from "../../assets/icons/icon.jsx";
 
 function DentistView({ onClose }) {
   const fillTheSvg = () => {};
-  console.log("obj", obj);
   return (
     <>
       <div className={styles.dentist}>

@@ -31,6 +31,7 @@ import { languagesActions } from "../../store/globalLanguages/globalLanguages.sl
 import { changeLanguage } from "i18next";
 import { useTranslation } from "react-i18next";
 import { showAlert } from "../../store/alert/alert.thunk";
+import SmsIcon from '@mui/icons-material/Sms';
 
 const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const dispatch = useDispatch();
@@ -73,6 +74,10 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const handleRedirectNavigate = () => {
     navigate(`/main/${appId}/redirects`);
   };
+  const handleSmsNavigate = () => {
+    navigate(`/main/${appId}/sms-otp`);
+  };
+
   const closeMenu = () => {
     setProfileAnchorEl(null);
   };
@@ -377,6 +382,19 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
                 onClick={handleRedirectNavigate}
               />
             )}
+
+            <ProfileItem
+              children={
+                <SmsIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Sms Otp"}
+              onClick={handleSmsNavigate}
+            />
+
           </div>
           <Divider />
 

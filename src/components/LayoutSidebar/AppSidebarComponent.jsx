@@ -27,8 +27,16 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
       setSubMenuIsOpen(false);
       navigate(`/main/${element?.id}/object/${element?.data?.table?.slug}`);
     } else if (element.type === "MICROFRONTEND") {
-      navigate(`/main/${element?.id}/page/${element?.data?.microfrontend?.id}`);
       setSubMenuIsOpen(false);
+      let obj = {};
+      element?.attributes?.params.forEach((el) => {
+        obj[el.key] = el.value;
+      });
+      const searchParams = new URLSearchParams(obj || {});
+      return navigate({
+        pathname: `/main/${element.id}/page/${element?.data?.microfrontend?.id}`,
+        search: `?${searchParams.toString()}`,
+      });
     } else if (element.type === "WEBPAGE") {
       navigate(`/main/${element?.id}/web-page/${element?.data?.webpage?.id}`);
       setSubMenuIsOpen(false);

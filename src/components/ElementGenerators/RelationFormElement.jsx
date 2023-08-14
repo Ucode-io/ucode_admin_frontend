@@ -147,7 +147,6 @@ const AutoCompleteElement = ({
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
 
-console.log('allOptions',allOptions)
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
   }, [autoFilters]);
@@ -271,7 +270,6 @@ console.log('allOptions',allOptions)
   };
 
   const changeHandler = (value, key = "") => {
-    console.log('value', value)
     if (key === "cascading") {
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value ? [value] : null);
@@ -320,7 +318,7 @@ console.log('allOptions',allOptions)
   }, [options, value]);
 
   const computedInputValue = useMemo(() => {
-    if (Array.isArray(localValue?.length)) {
+    if (Array.isArray(localValue)) {
       return localValue
         ?.map((item) => ({
           label: field?.attributes?.view_fields
@@ -332,39 +330,55 @@ console.log('allOptions',allOptions)
     } else {
       return localValue
     }
-  }, [localValue, value, computedOptions]);
+  }, [localValue, value]);
 
-  useEffect(() => {
-    if(Array.isArray(localValue)) {
-      setLocalValue(
-        localValue?.filter((item) => {
-          return item?.[autoFiltersFieldFroms] === filtersHandler[0];
-        })
-      );
-    } else return localValue
-  }, [filtersHandler]);
 
-  useEffect(() => {
-    const val = computedValue[computedValue.length - 1];
-    if (!field?.attributes?.autofill || !val) return;
-    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
-      const setName = name?.split(".");
-      setName?.pop();
-      setName?.push(field_to);
-      automatic &&
-        setTimeout(() => {
-          setFormValue(setName.join("."), get(val, field_from));
-        }, 1);
-    });
-  }, [computedValue, field]);
+  // useEffect(() => {
+  //   if(Array.isArray(localValue)) {
+  //     setLocalValue(
+  //       localValue?.filter((item) => {
+  //         return item?.[autoFiltersFieldFroms] === filtersHandler[0];
+  //       })
+  //     );
+  //   } else return localValue
+  // }, [filtersHandler]);
+
+//=========AUTOFILL
+
+useEffect(() => {
+  let val;
+
+  if (Array.isArray(computedValue)) {
+    val = computedValue[computedValue.length - 1];
+  } else {
+    val = computedValue;
+  }
+
+  if (!field?.attributes?.autofill || !val) {
+    return;
+  }
+
+  field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+    const setName = name?.split(".");
+    setName?.pop();
+    setName?.push(field_to);
+
+    if (automatic) {
+      setTimeout(() => {
+        setFormValue(setName.join("."), get(val, field_from));
+      }, 1);
+    }
+  });
+}, [computedValue, field]);
+
 
   useEffect(() => {
     if (value) getValueData();
   }, [value]);
 
-  useEffect(() => {
-    setDefaultValue();
-  }, [options, multipleInsertField]);
+  // useEffect(() => {
+  //   setDefaultValue();
+  // }, [options, multipleInsertField]);
 
   useEffect(() => {
     if (field?.attributes?.function_path) {
@@ -445,6 +459,7 @@ console.log('allOptions',allOptions)
           isDisabled={disabled}
           options={computedOptions ?? []}
           isClearable={true}
+          required={true}
           value={computedInputValue ?? []}
           defaultValue={value ?? ""}
           onChange={(e) => {

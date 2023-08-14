@@ -36,6 +36,7 @@ const parser = new Parser();
 const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, checkRequired=true, activeLang, fieldsList, checkPermission = true, isMultiLanguage, relatedTable, ...props }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
+  const checkRequiredField = checkRequired
   let relationTableSlug = "";
   let objectIdFromJWT = "";
   if (field?.id?.includes("#")) {
@@ -94,11 +95,11 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     return null;
   }
 
-  if(checkRequired){
-    return null
-  } else {
-    field.required = false
-  }
+  // if(checkRequired){
+  //   return field?.required
+  // } else {
+  //   field.required = false
+  // }
 
 
   if (field?.id?.includes("#")) {
@@ -110,6 +111,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
           setFormValue={setFormValue}
           defaultValue={defaultValue}
           disabled={isDisabled}
+          checkRequiredField={checkRequiredField}
           {...props}
         />
       );
@@ -121,6 +123,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
           setFormValue={setFormValue}
           defaultValue={defaultValue}
           disabled={isDisabled}
+          checkRequiredField={checkRequiredField}
           {...props}
         />
       );
@@ -135,6 +138,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
           defaultValue={defaultValue}
           disabled={isDisabled}
           key={computedSlug}
+          checkRequiredField={checkRequiredField}
           {...props}
         />
       );

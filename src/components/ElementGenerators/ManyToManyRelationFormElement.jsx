@@ -29,6 +29,7 @@ const ManyToManyRelationFormElement = ({
   disabledHelperText,
   autocompleteProps = {},
   disabled = false,
+  checkRequiredField,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -68,7 +69,7 @@ const ManyToManyRelationFormElement = ({
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={field.required}
+          required={checkRequiredField}
         >
           <Controller
             control={control}

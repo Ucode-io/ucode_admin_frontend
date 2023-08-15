@@ -79,7 +79,7 @@ const CalendarHourView = ({
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { with_relations: true, ...filters },
+        data: { ...filters },
       });
     },
     {

@@ -20,6 +20,7 @@ const DynamicRelationFormElement = ({
   field,
   setFormValue,
   disabled = false,
+  checkRequiredField
 }) => {
   const {
     field: { onChange, value },
@@ -98,7 +99,7 @@ const DynamicRelationFormElement = ({
       <FEditableRow
         label={field?.label ?? field.title ?? " "}
         onLabelChange={onChange}
-        required={field.required}
+        required={checkRequiredField}
       >
         {/* <FRow label={field.label ?? field.title} required={field.required}> */}
         <TextField

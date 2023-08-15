@@ -24,6 +24,7 @@ const InventoryBarCode = ({
   defaultValue = "",
   disabled,
   field,
+  checkRequiredField,
   setFormValue,
   ...props
 }) => {
@@ -99,7 +100,7 @@ const InventoryBarCode = ({
       name={name}
       defaultValue={defaultValue}
       rules={{
-        required: required ? "This is required field" : false,
+        required: checkRequiredField ? "This is required field" : false,
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (

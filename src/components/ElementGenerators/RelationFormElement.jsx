@@ -39,6 +39,7 @@ const RelationFormElement = ({
   disabled = false,
   defaultValue = null,
   multipleInsertField,
+  checkRequiredField,
   ...props
 }) => {
   const tableSlug = useMemo(() => {
@@ -81,7 +82,7 @@ const RelationFormElement = ({
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={field.required}
+          required={checkRequiredField}
         >
           <Controller
             control={control}
@@ -459,7 +460,6 @@ useEffect(() => {
           isDisabled={disabled}
           options={computedOptions ?? []}
           isClearable={true}
-          required={true}
           value={computedInputValue ?? []}
           defaultValue={value ?? ""}
           onChange={(e) => {

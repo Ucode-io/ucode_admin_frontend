@@ -20,7 +20,7 @@ const CRangePicker = ({ value = [null, null], onChange, interval="weeks" }) => {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 2 }} >
+    <div style={{ display: 'flex', alignItems: 'center', gap: 2 }} className="ucode-rangepicker" >
 
     <RectangleIconButton color="white" onClick={() => clickHandler(-1)} > <ArrowLeft /> </RectangleIconButton>
       <ReactDatePicker

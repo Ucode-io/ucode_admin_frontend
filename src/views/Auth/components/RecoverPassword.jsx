@@ -90,7 +90,7 @@ export default function RecoverPassword({ setFormType }) {
     };
 
     authService
-      .resetPasswordV2(computedValues)
+      .resetPasswordProfile(computedValues)
       .then((res) => {
         dispatch(showAlert("Successfully updated password!", "success"));
         setFormType("LOGIN");

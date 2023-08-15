@@ -99,7 +99,7 @@ const DynamicRelationFormElement = ({
       <FEditableRow
         label={field?.label ?? field.title ?? " "}
         onLabelChange={onChange}
-        required={checkRequiredField ? checkRequiredField : field.required}
+        required={checkRequiredField}
       >
         {/* <FRow label={field.label ?? field.title} required={field.required}> */}
         <TextField

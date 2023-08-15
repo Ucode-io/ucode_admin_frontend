@@ -38,7 +38,7 @@ const ManyToManyRelationFormElement = ({
 
   if (!isLayout)
     return (
-      <FRow label={field.label ?? " "} required={checkRequiredField ? checkRequiredField : field.required}>
+      <FRow label={field.label ?? " "} required={field.required}>
         <Controller
           control={control}
           name={name || `${tableSlug}_ids`}
@@ -69,7 +69,7 @@ const ManyToManyRelationFormElement = ({
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={checkRequiredField ? checkRequiredField : field.required}
+          required={checkRequiredField}
         >
           <Controller
             control={control}

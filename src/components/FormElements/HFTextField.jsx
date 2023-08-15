@@ -26,6 +26,7 @@ const HFTextField = ({
   defaultValue = "",
   disabled,
   tabIndex,
+  checkRequiredField,
   placeholder,
   ...props
 }) => {

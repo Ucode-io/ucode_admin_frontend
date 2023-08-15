@@ -30,7 +30,7 @@ function ValueGenerator({ field, control }) {
   const view = field?.attributes?.view_fields;
 
   const computedSlug = view?.find((item) => item).slug;
-
+  console.log('eeeeeeeee', field)
   switch (field.type) {
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;
@@ -43,6 +43,13 @@ function ValueGenerator({ field, control }) {
         <span className="text-nowrap">
           {formatDate(value, "DATE_TIME")}
           {/* {value ? format(new Date(value), "dd.MM.yyyy HH:mm") : "---"} */}
+        </span>
+      );
+
+      case "FORMULA":
+      return (
+        <span className="text-nowrap">
+          {value ?? 0}
         </span>
       );
 

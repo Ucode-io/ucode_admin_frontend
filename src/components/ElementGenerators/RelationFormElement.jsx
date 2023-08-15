@@ -49,7 +49,7 @@ const RelationFormElement = ({
 
   if (!isLayout)
     return (
-      <FRow label={field?.label ?? field?.title} required={checkRequiredField ? checkRequiredField : field.required}>
+      <FRow label={field?.label ?? field?.title} required={field.required}>
         <Controller
           control={control}
           name={(name || field.slug) ?? `${tableSlug}_id`}
@@ -82,7 +82,7 @@ const RelationFormElement = ({
         <FEditableRow
           label={value}
           onLabelChange={onChange}
-          required={checkRequiredField ? checkRequiredField : field.required}
+          required={checkRequiredField}
         >
           <Controller
             control={control}
@@ -460,7 +460,6 @@ useEffect(() => {
           isDisabled={disabled}
           options={computedOptions ?? []}
           isClearable={true}
-          required={true}
           value={computedInputValue ?? []}
           defaultValue={value ?? ""}
           onChange={(e) => {

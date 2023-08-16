@@ -48,7 +48,9 @@ const ScenarioButtonMenu = ({
                 title="Добавить scenario"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/main/12/scenario/${selected.id}`);
+                  navigate(
+                    `/main/c57eedc3-a954-4262-a0af-376c65b5a280/scenario/${selected.id}`
+                  );
                   handleCloseNotify();
                 }}
               />

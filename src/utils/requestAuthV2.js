@@ -3,7 +3,7 @@ import { store } from "../store/index";
 import { showAlert } from "../store/alert/alert.thunk";
 export const baseURL = import.meta.env.VITE_AUTH_BASE_URL_V2;
 
-const requestAuth = axios.create({
+const requestAuthV2 = axios.create({
   baseURL,
   timeout: 100000,
 });
@@ -30,7 +30,7 @@ const errorHandler = (error, hooks) => {
   return Promise.reject(error.response);
 };
 
-requestAuth.interceptors.request.use(
+requestAuthV2.interceptors.request.use(
   (config) => {
     const authStore = store.getState().auth;
     const token = authStore.token;
@@ -60,9 +60,9 @@ requestAuth.interceptors.request.use(
   (error) => errorHandler(error)
 );
 
-requestAuth.interceptors.response.use(
+requestAuthV2.interceptors.response.use(
   (response) => response.data.data,
   errorHandler
 );
 
-export default requestAuth;
+export default requestAuthV2;

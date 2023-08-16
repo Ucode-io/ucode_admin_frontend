@@ -10,7 +10,7 @@ const emailFolder = {
   label: "Email",
   type: "USER_FOLDER",
   icon: "lock.svg",
-  parent_id: "12",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
   id: "21",
   data: {
     permission: {
@@ -49,7 +49,7 @@ const EmailSidebar = ({ level = 1, menuStyle, menuItem }) => {
   };
 
   const clickHandler = (e) => {
-    navigate(`/main/12/email-setting`);
+    navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280/email-setting`);
     dispatch(menuActions.setMenuItem(emailFolder));
   };
 

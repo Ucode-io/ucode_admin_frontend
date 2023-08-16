@@ -9,7 +9,7 @@ const EnvironmentsList = ({
   closeEnvironmentList,
   environmentVisible,
   environmentList,
-  refreshTokenFunc,
+  setSelected,
 }) => {
   const dispatch = useDispatch();
 
@@ -41,10 +41,10 @@ const EnvironmentsList = ({
               </>
             }
             onClick={() => {
+              setSelected(true);
               dispatch(companyActions.setEnvironmentItem(item));
               dispatch(companyActions.setEnvironmentId(item.id));
               closeEnvironmentList();
-              // refreshTokenFunc(item.id);
             }}
             className={styles.menuItem}
             key={item.id}

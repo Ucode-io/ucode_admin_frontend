@@ -46,7 +46,9 @@ const DocumentButtonMenu = ({
               title="Добавить Note"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/main/12/docs/${element.id}/note/create`);
+                navigate(
+                  `/main/c57eedc3-a954-4262-a0af-376c65b5a280/docs/${element.id}/note/create`
+                );
                 handleCloseNotify();
               }}
             />
@@ -59,7 +61,9 @@ const DocumentButtonMenu = ({
               title="Добавить Template"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/main/12/docs/template/${element.id}/create`);
+                navigate(
+                  `/main/c57eedc3-a954-4262-a0af-376c65b5a280/docs/template/${element.id}/create`
+                );
                 handleCloseNotify();
               }}
             />
@@ -72,7 +76,9 @@ const DocumentButtonMenu = ({
               title="Добавить Note"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/main/12/docs/note/${element.id}/create`);
+                navigate(
+                  `/main/c57eedc3-a954-4262-a0af-376c65b5a280/docs/note/${element.id}/create`
+                );
                 handleCloseNotify();
               }}
             />

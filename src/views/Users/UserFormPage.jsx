@@ -26,6 +26,7 @@ import HFSwitch from "../../components/FormElements/HFSwitch";
 
 const ClientUserForm = () => {
   const { userId, userMenuId } = useParams();
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const company = store.getState().company;
@@ -37,6 +38,9 @@ const ClientUserForm = () => {
   });
   const { isLoading } = useUserGetByIdQuery({
     userId: userId,
+    params: {
+      "client-type-id": userMenuId,
+    },
     queryParams: {
       enabled: Boolean(userId),
       onSuccess: (res) => {

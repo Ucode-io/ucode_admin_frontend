@@ -23,7 +23,7 @@ const dataBase = {
   label: "Databases",
   type: "USER_FOLDER",
   icon: "database.svg",
-  parent_id: "12",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
   id: "15",
   data: {
     permission: {
@@ -140,7 +140,8 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
 
   const rowClickHandler = (id, element) => {
     setSelected(element);
-    element.type === "FOLDER" && navigate("/main/12");
+    element.type === "FOLDER" &&
+      navigate("/main/c57eedc3-a954-4262-a0af-376c65b5a280");
     if (element.resource_type) setResourceId(element.id);
     if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
     setOpenedFolders((prev) => [...prev, id]);
@@ -148,7 +149,9 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
 
   const onSelect = (id, element) => {
     if (element.type === "TABLE") {
-      navigate(`/main/12/database/${resourceId}/${element.slug}/${element.id}`);
+      navigate(
+        `/main/c57eedc3-a954-4262-a0af-376c65b5a280/database/${resourceId}/${element.slug}/${element.id}`
+      );
     }
   };
 

@@ -29,7 +29,7 @@ const scenarioFolder = {
   type: "USER_FOLDER",
   button: "PLUS",
   icon: "scenario.svg",
-  parent_id: "12",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
   id: "16",
   data: {
     permission: {
@@ -108,14 +108,17 @@ const ScenarioSidebar = ({
 
   const rowClickHandler = (id, element) => {
     setSelected(element);
-    element.type !== "DAG" && navigate(`/main/12`);
+    element.type !== "DAG" &&
+      navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280`);
     if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
     setOpenedFolders((prev) => [...prev, id]);
   };
 
   const onSelect = (id, element) => {
     if (element.type === "DAG") {
-      navigate(`/main/12/scenario/${element?.category_id}/${id}`);
+      navigate(
+        `/main/c57eedc3-a954-4262-a0af-376c65b5a280/scenario/${element?.category_id}/${id}`
+      );
     }
   };
 

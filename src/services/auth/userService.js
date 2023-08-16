@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "react-query";
 import requestAuth from "../../utils/requestAuth";
-import authRequestV2 from "../../utils/authRequest";
+import requestAuthV2 from "../../utils/requestAuthV2";
 
 const userService = {
   getList: (params) => requestAuth.get(`/user`, { params }),
@@ -9,15 +9,15 @@ const userService = {
   update: (data) => requestAuth.put("/user", data),
   delete: (id) => requestAuth.delete(`/user/${id}`),
 
-  getUserList: (params) => authRequestV2.get("/v2/user", { params }),
+  getUserList: (params) => requestAuthV2.get("/user", { params }),
   getUserByID: (params, userId) =>
-    authRequestV2.get(`/v2/user/${userId}`, {
+    requestAuthV2.get(`/user/${userId}`, {
       params,
     }),
-  userUpdate: (data) => authRequestV2.put(`/v2/user`, data, {}),
-  userCreate: (data) => authRequestV2.post(`/v2/user`, data, {}),
+  userUpdate: (data) => requestAuthV2.put(`/user`, data, {}),
+  userCreate: (data) => requestAuthV2.post(`/user`, data, {}),
   userDelete: (id, userMenuId) =>
-    authRequestV2.delete(`/v2/user/${id}`, {
+    requestAuthV2.delete(`/user/${id}`, {
       params: {
         "client-type-id": userMenuId,
       },

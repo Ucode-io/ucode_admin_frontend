@@ -34,7 +34,7 @@ const docsFolder = {
   label: "Documents",
   type: "USER_FOLDER",
   icon: "documents.svg",
-  parent_id: "12",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
   id: "17",
   data: {
     permission: {
@@ -363,7 +363,7 @@ const DocumentsSidebar = ({
       setOpenedNoteFolders((prev) => [...prev, id]);
     }
     if (element.type === "FOLDER") {
-      navigate(`/main/12`);
+      navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280`);
     }
   };
 
@@ -375,7 +375,7 @@ const DocumentsSidebar = ({
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
-    navigate(`/main/12`);
+    navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280`);
   };
 
   // --CREATE FOLDERS--
@@ -388,9 +388,13 @@ const DocumentsSidebar = ({
   const onSelect = (id, element) => {
     setSelected(element);
     if (element.type !== "FOLDER" && element.what_is === "template") {
-      navigate(`/main/12/docs/template/${element?.id}/${id}`);
+      navigate(
+        `/main/c57eedc3-a954-4262-a0af-376c65b5a280/docs/template/${element?.id}/${id}`
+      );
     } else if (element.type !== "FOLDER" && element.what_is === "note") {
-      navigate(`/main/12/docs/note/${element?.id}/${id}`);
+      navigate(
+        `/main/c57eedc3-a954-4262-a0af-376c65b5a280/docs/note/${element?.id}/${id}`
+      );
     }
   };
 

@@ -3,7 +3,7 @@ import KeyIcon from "@mui/icons-material/Key";
 import LayersIcon from "@mui/icons-material/Layers";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
-import SmsIcon from '@mui/icons-material/Sms';
+import SmsIcon from "@mui/icons-material/Sms";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -188,6 +188,11 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
     },
   });
 
+  const onClose = () => {
+    closeMenu();
+    if (selected) refreshTokenFunc();
+  };
+
   return (
     <div>
       <UserAvatar
@@ -201,10 +206,7 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
         id="lock-menu"
         anchorEl={anchorProfileEl || anchorEl}
         open={menuVisible}
-        onClose={() => {
-          closeMenu();
-          refreshTokenFunc();
-        }}
+        onClose={onClose}
         classes={{
           list: styles.profilemenu,
           paper: settings ? styles.settingspaper : styles.profilepaper,
@@ -417,7 +419,7 @@ const NewProfilePanel = ({ anchorEl, handleMenuSettingModalOpen }) => {
         closeEnvironmentList={closeEnvironmentList}
         environmentVisible={environmentVisible}
         environmentList={company.environments}
-        refreshTokenFunc={refreshTokenFunc}
+        setSelected={setSelected}
       />
       {companyModal && <CompanyModal closeModal={closeCompanyModal} />}
     </div>

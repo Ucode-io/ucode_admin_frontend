@@ -53,6 +53,7 @@ import PermissionDetail from "../views/Permissions";
 import RoleDetail from "../views/Permissions/Roles/Detail";
 import SmsPage from "../views/SmsOtp";
 import SmsFormPage from "../views/SmsOtp/SmsFormPage";
+import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
 
 
 
@@ -166,6 +167,7 @@ const Router = () => {
         />
 
         <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
+        <Route path=":appId/report-setting/:reportSettingsId" element={<ReportSettings />} />
 
         <Route path=":appId/user-page/:userMenuId">
           <Route index element={<ClientUserPage />} />

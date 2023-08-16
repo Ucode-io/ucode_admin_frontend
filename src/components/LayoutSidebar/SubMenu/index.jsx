@@ -32,16 +32,15 @@ const SubMenu = ({
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const menuItem = store.getState().menu.menuItem;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
+
   return (
     <div
-      className={`SubMenu ${
-        !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
-      }`}
+      className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""}`}
       style={{
         background: menuStyle?.background || "#fff",
       }}
@@ -56,7 +55,7 @@ const SubMenu = ({
             >
               {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label ?? selectedApp?.attributes?.[`label_${i18n.language}`]}
             </h2>
-          )}{" "}
+          )}
           <Box className="buttons">
             {selectedApp?.id !== "12" && (
               <div className="dots">
@@ -143,23 +142,9 @@ const SubMenu = ({
                   ))}
                   {selectedApp?.id === "12" && (
                     <>
-                      <Users
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        menuItem={menuItem}
-                        setElement={setElement}
-                      />
-                      <Permissions
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        menuItem={menuItem}
-                        setElement={setElement}
-                      />
-                      <DataBase
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        setElement={setElement}
-                      />
+                      <Users menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} setElement={setElement} />
+                      <Permissions menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} menuItem={menuItem} setElement={setElement} />
+                      <DataBase menuStyle={menuStyle} setSubMenuIsOpen={setSubMenuIsOpen} setElement={setElement} />
                     </>
                   )}
                 </div>

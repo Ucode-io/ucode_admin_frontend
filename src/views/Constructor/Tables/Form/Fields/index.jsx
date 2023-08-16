@@ -19,6 +19,7 @@ const Fields = ({ mainForm, getRelationFields }) => {
   const [formLoader, setFormLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   const { i18n } = useTranslation();
+  const [selectedField, setSelectedField] = useState({})
 
   const { fields, prepend, update, remove } = useFieldArray({
     control: mainForm.control,
@@ -116,6 +117,7 @@ const Fields = ({ mainForm, getRelationFields }) => {
         checkPermission={false}
         disablePagination
         dataLength={1}
+        setSelectedField={setSelectedField}
         tableSlug={"app"}
         // loader={loader}
         onDeleteClick={deleteField}
@@ -143,6 +145,7 @@ const Fields = ({ mainForm, getRelationFields }) => {
           mainForm={mainForm}
           height={`calc(100vh - 48px)`}
           getRelationFields={getRelationFields}
+          selectedField={selectedField}
         />
       </Drawer>
 

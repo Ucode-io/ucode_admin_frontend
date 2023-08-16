@@ -46,6 +46,7 @@ const DataTable = ({
   checkboxValue,
   onCheckboxChange,
   filteredColumns,
+  setSelectedField,
   defaultLimit,
 }) => {
   const location = useLocation();
@@ -318,7 +319,10 @@ const DataTable = ({
                   >
                     <div className="flex">
                       {onEditClick && (
-                        <RectangleIconButton color="success" className="mr-1" size="small" onClick={() => onEditClick(row, rowIndex)}>
+                        <RectangleIconButton color="success" className="mr-1" size="small" onClick={() => {
+                          onEditClick(row, rowIndex)
+                          setSelectedField(row)
+                          }}>
                           <Edit color="success" />
                         </RectangleIconButton>
                       )}

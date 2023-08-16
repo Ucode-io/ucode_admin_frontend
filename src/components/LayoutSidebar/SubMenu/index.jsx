@@ -46,12 +46,9 @@ const SubMenu = ({
     dispatch(mainActions.setPinIsEnabled(val));
   };
 
-  console.log("selectedApp", selectedApp);
   return (
     <div
-      className={`SubMenu ${
-        !subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""
-      }`}
+      className={`SubMenu ${!subMenuIsOpen || !selectedApp?.id ? "right-side-closed" : ""}`}
       style={{
         background: menuStyle?.background || "#fff",
       }}
@@ -67,7 +64,7 @@ const SubMenu = ({
               {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
                 selectedApp?.label}
             </h2>
-          )}{" "}
+          )}
           <Box className="buttons">
             {selectedApp?.id !== "c57eedc3-a954-4262-a0af-376c65b5a280" && (
               <div className="dots">

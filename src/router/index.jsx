@@ -65,6 +65,9 @@ import Connections from "../views/Matrix/Connections";
 import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
 import SmsPage from "../views/SmsOtp";
 import SmsFormPage from "../views/SmsOtp/SmsFormPageComponent";
+import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
+
+
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -177,6 +180,7 @@ const Router = () => {
         />
 
         <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
+        <Route path=":appId/report-setting/:reportSettingsId" element={<ReportSettings />} />
 
         <Route path=":appId/user-page/:userMenuId">
           <Route index element={<ClientUserPage />} />

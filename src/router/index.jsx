@@ -168,6 +168,7 @@ const Router = () => {
 
         <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
         <Route path=":appId/report-setting/:reportSettingsId" element={<ReportSettings />} />
+        <Route path=":appId/pivot-template/:pivotTemplateId" element={<ReportSettings />} />
 
         <Route path=":appId/user-page/:userMenuId">
           <Route index element={<ClientUserPage />} />

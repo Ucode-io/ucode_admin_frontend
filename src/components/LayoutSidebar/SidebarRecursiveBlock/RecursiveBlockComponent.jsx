@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { use } from "i18next";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import pivotService from "../../../services/pivotService";
+import DeleteIcon from "../DeleteIcon";
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -271,7 +272,7 @@ const RecursiveBlock = ({
               />
             )}
             {element?.type === "REPORT_SETTING" && (
-              <MenuIcon
+              <DeleteIcon
                 title="Delete report settings"
                 onClick={(e) => {
                   e.stopPropagation();

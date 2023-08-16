@@ -9,7 +9,7 @@ const microServiceFolder = {
   label: "Micro service",
   type: "USER_FOLDER",
   icon: "lock.svg",
-  parent_id: "12",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
   id: "20",
   data: {
     permission: {
@@ -48,7 +48,7 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
   };
 
   const clickHandler = (e) => {
-    navigate(`/main/12/micro-service`);
+    navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280/micro-service`);
     dispatch(menuActions.setMenuItem(microServiceFolder));
   };
 

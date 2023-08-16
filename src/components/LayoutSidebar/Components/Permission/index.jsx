@@ -1,6 +1,6 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
@@ -9,12 +9,14 @@ import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import RecursiveBlock from "../../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "../../style.scss";
+import AddIcon from "@mui/icons-material/Add";
+import FolderCreateModal from "./Modal/FolderCreateModal";
 
 const permissionFolder = {
   label: "Permissions",
   type: "USER_FOLDER",
   icon: "lock.svg",
-  parent_id: "12",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
   id: "14",
   data: {
     permission: {
@@ -32,6 +34,14 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
   const [child, setChild] = useState();
   const [selected, setSelected] = useState(null);
   const queryClient = useQueryClient();
+  const [selectedUserFolder, setSelectedUserFolder] = useState(null);
+  const [userFolderModalType, setUserFolderModalType] = useState(null);
+  const closeUserFolderModal = () => setSelectedUserFolder(null);
+
+  const openUserFolderModal = (folder, type) => {
+    setSelectedUserFolder(folder);
+    setUserFolderModalType(type);
+  };
 
   const activeStyle = {
     backgroundColor:
@@ -46,6 +56,12 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
     display:
       menuItem?.id === "0" ||
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+  };
+  const iconStyle = {
+    color:
+      permissionFolder?.id === menuItem?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text || "",
   };
 
   const labelStyle = {
@@ -103,6 +119,21 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
             <IconGenerator icon={"lock.svg"} size={18} />
             Permissions
           </div>
+          <Box className="icon_group">
+            <Tooltip title="Create folder" placement="top">
+              <Box className="extra_icon">
+                <AddIcon
+                  size={13}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // handleOpenNotify(e, "CREATE_FOLDER");
+                    openUserFolderModal({}, "CREATE");
+                  }}
+                  style={iconStyle}
+                />
+              </Box>
+            </Tooltip>
+          </Box>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
@@ -123,6 +154,13 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
           />
         ))}
       </Collapse>
+      {selectedUserFolder && (
+        <FolderCreateModal
+          clientType={selectedUserFolder}
+          closeModal={closeUserFolderModal}
+          modalType={userFolderModalType}
+        />
+      )}
     </Box>
   );
 };

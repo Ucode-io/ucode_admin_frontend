@@ -9,7 +9,7 @@ const projectFolder = {
   label: "Project setting",
   type: "USER_FOLDER",
   icon: "lock.svg",
-  parent_id: "12",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
   id: "22",
   data: {
     permission: {
@@ -48,7 +48,7 @@ const ProjectSettingSidebar = ({ level = 1, menuStyle, menuItem }) => {
   };
 
   const clickHandler = (e) => {
-    navigate(`/main/12/project-setting`);
+    navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280/project-setting`);
     dispatch(menuActions.setMenuItem(projectFolder));
   };
 

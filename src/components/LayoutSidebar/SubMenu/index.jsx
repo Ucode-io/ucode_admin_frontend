@@ -69,7 +69,7 @@ const SubMenu = ({
             </h2>
           )}{" "}
           <Box className="buttons">
-            {selectedApp?.id !== "12" && (
+            {selectedApp?.id !== "c57eedc3-a954-4262-a0af-376c65b5a280" && (
               <div className="dots">
                 <BsThreeDots
                   size={13}
@@ -152,7 +152,8 @@ const SubMenu = ({
                       menuItem={menuItem}
                     />
                   ))}
-                  {selectedApp?.id === "12" && (
+                  {selectedApp?.id ===
+                    "c57eedc3-a954-4262-a0af-376c65b5a280" && (
                     <>
                       <Users
                         menuStyle={menuStyle}

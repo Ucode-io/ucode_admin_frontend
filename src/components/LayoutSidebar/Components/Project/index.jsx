@@ -19,6 +19,8 @@ import HFMultipleSelect from "../../../FormElements/HFMultipleSelect";
 import HFSelect from "../../../FormElements/HFSelect";
 import HFTextField from "../../../FormElements/HFTextField";
 import HeaderSettings from "../../../HeaderSettings";
+import HFAutocomplete from "../../../FormElements/HFAutocomplete";
+import { Autocomplete, TextField } from "@mui/material";
 
 const ProjectSettingPage = () => {
   const navigate = useNavigate();
@@ -102,7 +104,7 @@ const ProjectSettingPage = () => {
       },
     });
 
-  const filteredLanguage = languageOptions.filter((item) =>
+  const filteredLanguage = languageOptions?.filter((item) =>
     watch("language")?.includes(item.value)
   );
   const filteredCurrency = currencyOptions?.filter(
@@ -132,7 +134,7 @@ const ProjectSettingPage = () => {
       })),
     });
   };
-
+  console.log("languageOptions", languageOptions);
   return (
     <div>
       <HeaderSettings
@@ -180,7 +182,7 @@ const ProjectSettingPage = () => {
             componentClassName="flex gap-2 align-center"
             required
           >
-            <HFSelect
+            <HFAutocomplete
               disabledHelperText
               options={currencyOptions}
               name="currency"
@@ -194,7 +196,7 @@ const ProjectSettingPage = () => {
             componentClassName="flex gap-2 align-center"
             required
           >
-            <HFSelect
+            <HFAutocomplete
               disabledHelperText
               options={timezoneOptions}
               name="timezone"

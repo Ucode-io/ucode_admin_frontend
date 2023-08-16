@@ -30,7 +30,7 @@ const functionFolder = {
   label: "Functions",
   type: "USER_FOLDER",
   icon: "documents.svg",
-  parent_id: "12",
+  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
   id: "25",
   data: {
     permission: {
@@ -186,14 +186,14 @@ const FunctionSidebar = ({
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
-    navigate(`/main/12`);
+    navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280`);
   };
 
   // --CREATE FOLDERS--
 
   const onSelect = (id, element) => {
     setSelected(element);
-    navigate(`/main/12/function/${id}`);
+    navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280/function/${id}`);
     dispatch(menuActions.setMenuItem(element));
   };
   const rowClickHandler = (id, element) => {};

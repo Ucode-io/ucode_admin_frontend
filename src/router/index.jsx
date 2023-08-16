@@ -54,6 +54,7 @@ import RoleDetail from "../views/Permissions/Roles/Detail";
 import SmsPage from "../views/SmsOtp";
 import SmsFormPage from "../views/SmsOtp/SmsFormPage";
 import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
+import PivotTableView from "../views/Objects/PivotTableView";
 
 
 
@@ -168,7 +169,7 @@ const Router = () => {
 
         <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
         <Route path=":appId/report-setting/:reportSettingsId" element={<ReportSettings />} />
-        <Route path=":appId/pivot-template/:pivotTemplateId" element={<ReportSettings />} />
+        <Route path=":appId/pivot-template/:pivotTemplateId" element={<PivotTableView />} />
 
         <Route path=":appId/user-page/:userMenuId">
           <Route index element={<ClientUserPage />} />

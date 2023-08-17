@@ -19,12 +19,13 @@ import DatabasesConnectIcon from "../../../../assets/icons/DatabaseIcon";
 import { TbDatabaseExport } from "react-icons/tb";
 import { BiGitCompare } from "react-icons/bi";
 import { IoEnter, IoExit } from "react-icons/io5";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const dataBase = {
   label: "Resources",
   type: "USER_FOLDER",
   icon: "database.svg",
-  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
+  parent_id: adminId,
   id: "15",
   data: {
     permission: {
@@ -118,8 +119,7 @@ const EltResources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
 
   const rowClickHandler = (id, element) => {
     setSelected(element);
-    element.type === "FOLDER" &&
-      navigate("/main/c57eedc3-a954-4262-a0af-376c65b5a280");
+    element.type === "FOLDER" && navigate(`/main/${adminId}`);
     if (element.resource_type) setResourceId(element.id);
     if (element.type !== "FOLDER" || openedFolders.includes(id)) return;
     setOpenedFolders((prev) => [...prev, id]);

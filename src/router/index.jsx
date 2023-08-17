@@ -65,6 +65,8 @@ import Connections from "../views/Matrix/Connections";
 import SmsPage from "../views/SmsOtp";
 import SmsFormPage from "../views/SmsOtp/SmsFormpage";
 import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
+import NotificationPage from "../components/LayoutSidebar/Components/Notification";
+import NotificationForm from "../components/LayoutSidebar/Components/Notification/NotificationForm";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -233,6 +235,11 @@ const Router = () => {
         </Route>
         <Route path=":appId/function">
           <Route path=":functionId" element={<FunctionsDetail />} />
+        </Route>
+        <Route path=":appId/notification/:categoryId">
+          <Route index element={<NotificationPage />} />
+          <Route path="create" element={<NotificationForm />} />
+          <Route path=":notificationId" element={<NotificationForm />} />
         </Route>
         <Route path=":appId/docs">
           <Route path="note/:folderId">

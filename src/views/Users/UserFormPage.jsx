@@ -1,4 +1,4 @@
-import { Save } from "@mui/icons-material";
+import { Save, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import PrimaryButton from "../../components/Buttons/PrimaryButton";
@@ -23,9 +23,12 @@ import HFSelect from "../../components/FormElements/HFSelect";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import roleServiceV2 from "../../services/roleServiceV2";
 import HFSwitch from "../../components/FormElements/HFSwitch";
+import { useState } from "react";
+import { IconButton, InputAdornment } from "@mui/material";
 
 const ClientUserForm = () => {
   const { userId, userMenuId } = useParams();
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -164,8 +167,23 @@ const ClientUserForm = () => {
               disabledHelperText
               name="password"
               control={mainForm.control}
+              type={showPassword ? "text" : "password"}
               fullWidth
               required
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    color="primary"
+                    onClick={() => {
+                      setShowPassword((prev) => !prev);
+                    }}
+                    edge="end"
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }
             />
           </FRow>
           <FRow

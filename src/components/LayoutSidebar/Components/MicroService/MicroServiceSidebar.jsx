@@ -4,12 +4,13 @@ import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { useNavigate } from "react-router-dom";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const microServiceFolder = {
   label: "Micro service",
   type: "USER_FOLDER",
   icon: "lock.svg",
-  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
+  parent_id: adminId,
   id: "20",
   data: {
     permission: {
@@ -48,7 +49,7 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
   };
 
   const clickHandler = (e) => {
-    navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280/micro-service`);
+    navigate(`/main/${adminId}/micro-service`);
     dispatch(menuActions.setMenuItem(microServiceFolder));
   };
 

@@ -11,12 +11,13 @@ import RecursiveBlock from "../../SidebarRecursiveBlock/RecursiveBlockComponent"
 import "../../style.scss";
 import AddIcon from "@mui/icons-material/Add";
 import FolderCreateModal from "./Modal/FolderCreateModal";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const permissionFolder = {
   label: "Permissions",
   type: "USER_FOLDER",
   icon: "lock.svg",
-  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
+  parent_id: adminId,
   id: "14",
   data: {
     permission: {

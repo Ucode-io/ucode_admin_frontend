@@ -9,17 +9,14 @@ import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrappe
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useDispatch, useSelector } from "react-redux";
 import { mainActions } from "../../../store/main/main.slice";
-import DataBase from "../Components/DataBase";
-import Users from "../Components/Users";
-import Permissions from "../Components/Permission";
-import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
-import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
-import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
-import EmailSidebar from "../Components/Email/EmailSidebar";
-import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 import Resources from "../Components/Resources";
-import EltResources from "../Components/Elt";
-import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
+import NotificationSidebar from "../Components/Notification/NotificationSidebar";
+import UserAndPermissionFolder from "../Components/AdminFolders/UserAndPermissionFolder";
+import DataBaseFolder from "../Components/AdminFolders/DataBaseFolder";
+import CodeFolder from "../Components/AdminFolders/CodeFolder";
+import ResourceFolder from "../Components/AdminFolders/ResourceFolder";
+import ApiFolder from "../Components/AdminFolders/ApiFolder";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
   child,
@@ -63,7 +60,7 @@ const SubMenu = ({
             </h2>
           )}{" "}
           <Box className="buttons">
-            {selectedApp?.id !== "c57eedc3-a954-4262-a0af-376c65b5a280" && (
+            {selectedApp?.id !== adminId && (
               <div className="dots">
                 <BsThreeDots
                   size={13}
@@ -146,55 +143,29 @@ const SubMenu = ({
                       menuItem={menuItem}
                     />
                   ))}
-                  {selectedApp?.id ===
-                    "c57eedc3-a954-4262-a0af-376c65b5a280" && (
+                  {selectedApp?.id === adminId && (
                     <>
-                      <Users
+                      <UserAndPermissionFolder
                         menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
                         menuItem={menuItem}
                         setElement={setElement}
                       />
-                      <Permissions
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        menuItem={menuItem}
-                        setElement={setElement}
-                      />
-                      <DataBase
+                      <DataBaseFolder
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
                         menuItem={menuItem}
                       />
-                      <ScenarioSidebar
+                      <CodeFolder
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
                         menuItem={menuItem}
                       />
-                      <DocumentsSidebar
+                      <ResourceFolder
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
                         menuItem={menuItem}
                       />
-                      <MicroServiceSidebar
-                        menuStyle={menuStyle}
-                        menuItem={menuItem}
-                      />
-                      <EmailSidebar menuStyle={menuStyle} menuItem={menuItem} />
-                      <ProjectSettingSidebar
-                        menuStyle={menuStyle}
-                        menuItem={menuItem}
-                      />
-                      <Resources
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                      />
-
-                      <EltResources
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                      />
-                      <FunctionSidebar
+                      <ApiFolder
                         menuStyle={menuStyle}
                         setSubMenuIsOpen={setSubMenuIsOpen}
                         menuItem={menuItem}

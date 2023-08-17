@@ -16,6 +16,17 @@ import { useSelector } from "react-redux";
 const MainInfo = ({ control }) => {
   const { slug } = useParams();
 
+  const tableName = useWatch({
+    control,
+    name: 'label'
+  })
+
+  const description = useWatch({
+    control,
+    name: 'description'
+  })
+
+
   const { fields } = useFieldArray({
     control,
     name: "fields",
@@ -36,6 +47,11 @@ const MainInfo = ({ control }) => {
   const login = useWatch({
     control,
     name: "attributes.auth_info.login",
+  });
+
+  const attributes = useWatch({
+    control,
+    name: "attributes",
   });
 
   const { data: computedTableFields } = useQuery(
@@ -99,16 +115,50 @@ const MainInfo = ({ control }) => {
 
         <FRow label="Название">
           <Box style={{ display: "flex", gap: "6px" }}>
-            {languages?.map((language) => (
-              <HFTextField control={control} name={`attributes.label_${language?.slug}`} fullWidth placeholder={`Название (${language?.slug})`} />
-            ))}
+             {
+              languages?.map((language) => {
+                const languageFieldName = `attributes.label_${language?.slug}`;
+                const fieldValue = useWatch({
+                  control,
+                  name: languageFieldName
+                });
+
+                return (
+                  <HFTextField
+                    control={control}
+                    name={languageFieldName}
+                    fullWidth
+                    placeholder={`Название (${language?.slug})`}
+                    defaultValue={fieldValue || tableName} // Set default value if fieldValue is empty
+                  />
+                );
+              })
+            }
+
           </Box>
         </FRow>
         <FRow label="Описание">
           <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            {languages?.map((desc) => (
-              <HFTextField control={control} name={`attributes.description_${desc?.slug}`} fullWidth placeholder={`Описание (${desc?.slug})`} multiline rows={4} />
-            ))}
+          {
+              languages?.map((desc) => {
+                const languageFieldDesc = `attributes.description_${desc?.slug}`;
+                const fieldValue = useWatch({
+                  control,
+                  name: languageFieldDesc
+                });
+
+                return (
+                  <HFTextField
+                    control={control}
+                    name={languageFieldDesc}
+                    fullWidth
+                    placeholder={`Название (${desc?.slug})`}
+                    defaultValue={fieldValue || description} // Set default value if fieldValue is empty
+                  />
+                );
+              })
+            }
+
           </Box>
         </FRow>
         <FRow label="SLUG">

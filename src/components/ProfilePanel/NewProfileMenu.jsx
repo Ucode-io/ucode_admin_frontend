@@ -30,10 +30,6 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import useBooleanState from "../../hooks/useBooleanState";
 import VersionModal from "./Components/VersionModal/VersionModal";
 import LayersIcon from "@mui/icons-material/Layers";
-<<<<<<< HEAD
-=======
-import SmsIcon from "@mui/icons-material/Sms";
->>>>>>> multilanguage_default
 import { useProjectGetByIdQuery } from "../../services/projectService";
 import { Title } from "@mui/icons-material";
 import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";

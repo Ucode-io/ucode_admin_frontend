@@ -28,7 +28,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, selectedField, for
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const languages = useSelector((state) => state.languages.list);
-
+  console.log('languages', languages)
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
     const index = fields.findIndex((el) => el.id === field.id);

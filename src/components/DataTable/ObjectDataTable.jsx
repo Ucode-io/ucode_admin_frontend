@@ -14,6 +14,8 @@ import MultipleUpdateRow from "./MultipleUpdateRow";
 import "./style.scss";
 import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
+import { de } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 const ObjectDataTable = ({
   data = [],
@@ -57,7 +59,7 @@ const ObjectDataTable = ({
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-
+  const { i18n } = useTranslation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
 
@@ -239,7 +241,7 @@ const ObjectDataTable = ({
                         setColumnId((prev) => (prev === column.id ? "" : column.id));
                       }}
                     >
-                      {column.label}
+                      {column.attributes?.[`label_${i18n.language}`] ?? column.label}
                     </span>
                     {disableFilters && <FilterGenerator field={column} name={column.slug} onChange={filterChangeHandler} filters={filters} tableSlug={tableSlug} />}
                     {columnId === column?.id && (

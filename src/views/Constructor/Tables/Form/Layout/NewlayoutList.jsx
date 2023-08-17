@@ -8,6 +8,7 @@ import { CTable, CTableCell, CTableHead, CTableRow } from "../../../../../compon
 import HFAutoWidthInput from "../../../../../components/FormElements/HFAutoWidthInput";
 import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
+import { useSelector } from "react-redux";
 
 function NewlayoutList({ setSelectedLayout, mainForm }) {
   const { id } = useParams();
@@ -54,6 +55,8 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
     mainForm.setValue("layouts", newLayout);
   };
 
+  const languages = useSelector((state) => state.languages.list);
+
   return (
     <Box sx={{ width: "100%", height: "100vh", background: "#fff" }}>
       <TableCard>
@@ -69,12 +72,15 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
               <CTableCell>{index + 1}</CTableCell>
               <CTableCell>
                 <Box style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <HFAutoWidthInput
-                    onClick={(e) => e.stopPropagation()}
-                    control={mainForm.control}
-                    name={`layouts.${index}.label`}
-                    inputStyle={{ border: "none", outline: "none", fontWeight: 500, background: "transparent" }}
-                  />
+                  {languages?.map((lang) => (
+                    <HFAutoWidthInput
+                      onClick={(e) => e.stopPropagation()}
+                      control={mainForm.control}
+                      placeholder={`Название ${lang.slug}`}
+                      name={`layouts.${index}.attributes.label_${lang.slug}`}
+                      inputStyle={{ border: "none", outline: "none", fontWeight: 500, background: "transparent" }}
+                    />
+                  ))}
 
                   <Box style={{ display: "flex", alignItems: "center" }}>
                     <FormControlLabel control={<Switch onChange={() => setDefault(index)} checked={element.is_default ?? false} />} label={"Default"} />
@@ -97,7 +103,9 @@ function NewlayoutList({ setSelectedLayout, mainForm }) {
             </CTableRow>
           ))}
 
-          <TableRowButton colSpan={4} onClick={() => append({ table_id: id, type: "SimpleLayout", label: "New" })} />
+          <TableRowButton colSpan={4} onClick={() => append({ table_id: id, type: "SimpleLayout", label: "New", attributes: {
+            
+          } })} />
         </CTable>
       </TableCard>
     </Box>

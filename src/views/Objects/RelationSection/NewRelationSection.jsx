@@ -26,6 +26,7 @@ import DocumentGeneratorButton from "../components/DocumentGeneratorButton";
 import ManyToManyRelationCreateModal from "./ManyToManyRelationCreateModal";
 import RelationTable from "./RelationTable";
 import styles from "./style.module.scss";
+import { useTranslation } from "react-i18next";
 
 const NewRelationSection = ({
   selectedTabIndex,
@@ -315,6 +316,7 @@ const NewRelationSection = ({
   }, [selectedTab]);
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
+  const {i18n} = useTranslation();
 
   // if (!data?.length) return <PageFallback />;
   // if (loader) return <PageFallback />;
@@ -359,9 +361,7 @@ const NewRelationSection = ({
                           <InsertDriveFile /> Файлы
                         </>
                       )}
-                      <div className="flex align-center gap-2 text-nowrap">
-                        {el?.label ?? el?.title}
-                      </div>
+                      <div className="flex align-center gap-2 text-nowrap">{el?.attributes?.[`label_${i18n.language}`] ?? el?.label ?? el?.title}</div>
                     </Tab>
                   ))}
                 </TabList>

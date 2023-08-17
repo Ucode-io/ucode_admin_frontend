@@ -30,24 +30,28 @@ import CodabarBarcode from "./CodabarBarcode";
 import DynamicRelationFormElement from "./DynamicRelationFormElement";
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import RelationFormElement from "./RelationFormElement";
+import { useTranslation } from "react-i18next";
 
 const parser = new Parser();
 
 const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, activeLang, fieldsList, checkPermission = true, isMultiLanguage, relatedTable, ...props }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
+  const {i18n} = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
   if (field?.id?.includes("#")) {
     relationTableSlug = field?.id?.split("#")[0];
   }
 
+  console.log('sssssssss', field?.attributes?.[`label_${i18n}`])
+
   const label = useMemo(() => {
     if (field?.enable_multilanguage) {
       return field?.attributes?.show_label ? `${field?.label} (${activeLang})` : "";
     } else {
       if (field?.attributes?.show_label === false) return "";
-      return field?.label ?? " ";
+      return field?.attributes?.[`label_${i18n.language}`] ?? field?.label ?? " ";
     }
   }, [field, activeLang]);
 
@@ -164,7 +168,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={defaultValue}
             disabled={isDisabled}
             key={computedSlug}
@@ -188,7 +192,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             mask={"(99) 999-99-99"}
             defaultValue={defaultValue}
             disabled={isDisabled}
@@ -263,7 +267,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             multiline
             rows={4}
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={field.defaultValue}
             disabled={isDisabled}
             key={computedSlug}
@@ -334,7 +338,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             fullWidth
             type="number"
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={defaultValue}
             disabled={isDisabled}
             {...props}
@@ -423,7 +427,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             }}
             fullWidth
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={defaultValue}
             tabIndex={field?.tabIndex}
             disabled={isDisabled}
@@ -645,7 +649,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={defaultValue}
             disabled={field.attributes?.disabled}
             type="password"
@@ -664,7 +668,7 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             tabIndex={field?.tabIndex}
             fullWidth
             required={field.required}
-            placeholder={field?.attributes?.show_label ? "" : field.label}
+            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
             defaultValue={defaultValue}
             disabled={isDisabled}
             InputProps={{

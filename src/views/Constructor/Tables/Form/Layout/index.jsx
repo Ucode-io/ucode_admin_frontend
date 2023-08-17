@@ -1,7 +1,7 @@
 import { Collapse } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { mainActions } from "../../../../../store/main/main.slice";
 import NewLayoutSettings from "./NewLayoutSettings";
@@ -18,6 +18,7 @@ const Layout = ({ mainForm, getRelationFields }) => {
   const [selectedRelation, setSelectedRelation] = useState(null);
   const [selectedSettingsTab, setSelectedSettingsTab] = useState(0);
   const [selectedTab, setSelectedTab] = useState({});
+  const languages = useSelector((state) => state.languages.list);
 
   const selectedLayoutIndex = useMemo(() => {
     if (!mainForm.getValues("layouts")?.length > 0) return "notSelected";

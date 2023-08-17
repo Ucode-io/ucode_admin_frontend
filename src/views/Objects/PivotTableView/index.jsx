@@ -596,12 +596,12 @@ export default function PivotTableView() {
           style={{ width: 235, alignSelf: "end", height: "32px" }}
           calendarPosition="top-right"
         />
-        <PivotTemplatesPopover
+        {/* <PivotTemplatesPopover
           isDefaultTemplate={isDefaultTemplate}
           onDeleteFn={onDeleteTemplate}
           onChange={onTemplateChange}
           data={pivotTemplates.data}
-        />
+        /> */}
         <SecondaryButton
           disabled={!activeClickActionTabId}
           size="small"
@@ -688,7 +688,7 @@ export default function PivotTableView() {
           />
         </ModalCard>
       )}
-      {pivotTemplatesHistory.data?.length > 0 && (
+      {/* {pivotTemplatesHistory.data?.length > 0 && (
         <ClickActionPages
           ref={sformirovatBtnRef}
           refetch={refetch}
@@ -703,7 +703,7 @@ export default function PivotTableView() {
           items={clickActionTabs}
           activeClickActionTabId={activeClickActionTabId}
         />
-      )}
+      )} */}
     </div>
   );
 }

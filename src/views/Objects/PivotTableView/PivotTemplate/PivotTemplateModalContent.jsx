@@ -27,7 +27,7 @@ export default function PivotTemplateModalContent(props) {
 
   const { data: reportSettings } = useQuery(
     ["GET_REPORT_SETTINGS_LIST"],
-    () => pivotService.getListReportSetting({ app_id }),
+    () => pivotService.getListReportSetting(),
     {
       select: (data) => data.report_settings ?? [],
     }

@@ -146,8 +146,6 @@ function PivotTable(props) {
     [computedFields, computedRelationRowsFields]
   );
 
-  console.log("computedRows", computedRows);
-
   return (
     <CTable
       dataLength={computedData.length}
@@ -155,7 +153,9 @@ function PivotTable(props) {
       count={10}
       disablePagination
       tableStyle={{
-        height: `calc(100vh - ${clickActionTabs.length ? "125px" : "125px"})`,
+        height: `calc(100vh - 43px)`,
+        borderRadius: '0',
+        borderLeft: 'none'
       }}
     >
       <CTableHead>

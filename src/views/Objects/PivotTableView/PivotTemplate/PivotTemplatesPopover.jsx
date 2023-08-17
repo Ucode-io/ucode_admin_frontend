@@ -8,7 +8,7 @@ import styles from "./styles.module.scss";
 
 export default function PivotTemplatesPopover({ onChange, isDefaultTemplate, onDeleteFn, data }) {
   const [anchorEl, setAnchorEl] = useState(null);
-console.log('ssssssss', data)
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };

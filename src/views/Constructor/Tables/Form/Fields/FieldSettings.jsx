@@ -2,7 +2,14 @@ import { Close } from "@mui/icons-material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Card, IconButton } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Card,
+  IconButton,
+} from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
@@ -26,8 +33,17 @@ import constructorObjectService from "../../../../../services/constructorObjectS
 import constructorViewService from "../../../../../services/constructorViewService";
 import { useSelector } from "react-redux";
 
-const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, formType, height, isTableView = false, onSubmit = () => {}, getRelationFields }) => {
-  const { id, tableSlug, appId } = useParams();
+const FieldSettings = ({
+  closeSettingsBlock,
+  mainForm,
+  field,
+  selectedField,
+  formType,
+  height,
+  onSubmit = () => {},
+  getRelationFields,
+}) => {
+  const { id } = useParams();
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -149,9 +165,9 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, 
       ...values,
       attributes: {
         ...values?.attributes,
-        number_of_rounds: parseInt(values?.attributes?.number_of_rounds)
-      }
-    }
+        number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
+      },
+    };
 
     if (formType === "CREATE") createField(data);
     else updateField(data);
@@ -196,7 +212,9 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, 
         const oneRelationFields = res?.data?.one_relation_fields ?? [];
 
         return [...fields, ...oneRelationFields]
-          .filter((field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP")
+          .filter(
+            (field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP"
+          )
           .map((el) => ({
             value: el?.path_slug ? el?.path_slug : el?.slug,
             label: el?.label,
@@ -240,8 +258,15 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, 
       </div>
 
       <div className={styles.settingsBlockBody} style={{ height }}>
-        <form onSubmit={handleSubmit(submitHandler)} className={styles.fieldSettingsForm}>
-          <Tabs direction={"ltr"} selectedIndex={selectedTab} onSelect={setSelectedTab}>
+        <form
+          onSubmit={handleSubmit(submitHandler)}
+          className={styles.fieldSettingsForm}
+        >
+          <Tabs
+            direction={"ltr"}
+            selectedIndex={selectedTab}
+            onSelect={setSelectedTab}
+          >
             <div>
               <Card>
                 <TabList
@@ -277,17 +302,25 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, 
 
                 <TabPanel>
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Field settings</h2>
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
                         <FRow label="Field Label and icon" required>
                           <div className="flex align-center gap-1">
-                            <HFIconPicker control={control} name="attributes.icon" shape="rectangle" />
+                            <HFIconPicker
+                              control={control}
+                              name="attributes.icon"
+                              shape="rectangle"
+                            />
                           </div>
 
-                          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                          {/* <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                             {languages?.map((lang) => (
                               <HFTextField
                                 disabledHelperText
@@ -298,43 +331,120 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, 
                                 autoFocus
                               />
                             ))}
+                          </Box> */}
+
+                          <Box
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "6px",
+                            }}
+                          >
+                            {languages?.map((language) => {
+                              const languageFieldName = `attributes.label_${language?.slug}`;
+                              const fieldValue = useWatch({
+                                control,
+                                name: languageFieldName,
+                              });
+
+                              return (
+                                <HFTextField
+                                  disabledHelperText
+                                  fullWidth
+                                  name={`attributes.label_${language?.slug}`}
+                                  control={control}
+                                  placeholder={`Field Label (${language?.slug})`}
+                                  autoFocus
+                                  defaultValue={
+                                    fieldValue || selectedField?.label
+                                  }
+                                />
+                              );
+                            })}
                           </Box>
                         </FRow>
 
                         <FRow label="Field SLUG" required>
-                          <HFTextField disabledHelperText fullWidth name="slug" control={control} placeholder="Field SLUG" required withTrim />
+                          <HFTextField
+                            disabledHelperText
+                            fullWidth
+                            name="slug"
+                            control={control}
+                            placeholder="Field SLUG"
+                            required
+                            withTrim
+                          />
                         </FRow>
 
                         <FRow label="Field type" required>
-                          <HFSelect disabledHelperText name="type" control={control} options={fieldTypesOptions} optionType="GROUP" placeholder="Type" required />
+                          <HFSelect
+                            disabledHelperText
+                            name="type"
+                            control={control}
+                            options={fieldTypesOptions}
+                            optionType="GROUP"
+                            placeholder="Type"
+                            required
+                          />
                         </FRow>
 
-                        {(fieldType === "SINGLE_LINE" || fieldType === "MULTI_LINE") && (
-                          <FRow style={{ marginTop: "15px" }} label="Multi language">
-                            <HFSwitch control={control} name="enable_multilanguage" label="" className="mb-1" />
+                        {(fieldType === "SINGLE_LINE" ||
+                          fieldType === "MULTI_LINE") && (
+                          <FRow
+                            style={{ marginTop: "15px" }}
+                            label="Multi language"
+                          >
+                            <HFSwitch
+                              control={control}
+                              name="enable_multilanguage"
+                              label=""
+                              className="mb-1"
+                            />
                           </FRow>
                         )}
                       </div>
 
-                      <Attributes control={control} watch={watch} mainForm={mainForm} />
+                      <Attributes
+                        control={control}
+                        watch={watch}
+                        mainForm={mainForm}
+                      />
                     </AccordionDetails>
                   </Accordion>
 
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Appearance</h2>
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
-                        <HFSwitch control={control} name="attributes.show_label" label="Show label" className="mb-1" />
+                        <HFSwitch
+                          control={control}
+                          name="attributes.show_label"
+                          label="Show label"
+                          className="mb-1"
+                        />
 
                         <DefaultValueBlock control={control} />
 
-                        <HFSwitch control={control} name="attributes.showTooltip" label="Show tooltip" className="mb-1" />
+                        <HFSwitch
+                          control={control}
+                          name="attributes.showTooltip"
+                          label="Show tooltip"
+                          className="mb-1"
+                        />
 
                         {showTooltip && (
                           <FRow label="Tooltip text">
-                            <HFTextField fullWidth name="attributes.tooltipText" control={control} />
+                            <HFTextField
+                              fullWidth
+                              name="attributes.tooltipText"
+                              control={control}
+                            />
                           </FRow>
                         )}
                       </div>
@@ -344,40 +454,88 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, 
 
                 <TabPanel>
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Validation</h2>
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
-                        <HFSwitch control={control} name="attributes.disabled" label="Disabled" />
-                        <HFSwitch control={control} name="required" label="Required" />
-                        <HFSwitch control={control} name="unique" label="Avoid duplicate values" />
-                        <HFSwitch control={control} name="attributes.creatable" label="Can create" />
+                        <HFSwitch
+                          control={control}
+                          name="attributes.disabled"
+                          label="Disabled"
+                        />
+                        <HFSwitch
+                          control={control}
+                          name="required"
+                          label="Required"
+                        />
+                        <HFSwitch
+                          control={control}
+                          name="unique"
+                          label="Avoid duplicate values"
+                        />
+                        <HFSwitch
+                          control={control}
+                          name="attributes.creatable"
+                          label="Can create"
+                        />
                         <FRow label="Validation">
-                          <HFTextField fullWidth name="attributes.validation" control={control} />
+                          <HFTextField
+                            fullWidth
+                            name="attributes.validation"
+                            control={control}
+                          />
                         </FRow>
                         <FRow label="Validation message">
-                          <HFTextField fullWidth name="attributes.validation_message" control={control} />
+                          <HFTextField
+                            fullWidth
+                            name="attributes.validation_message"
+                            control={control}
+                          />
                         </FRow>
                       </div>
                     </AccordionDetails>
                   </Accordion>
 
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
                       <h2>Autofill settings</h2>
                     </AccordionSummary>
                     <AccordionDetails style={{ padding: 0 }}>
                       <div className="p-2">
                         <FRow label="Autofill table">
-                          <HFSelect disabledHelperText name="autofill_table" control={control} options={computedRelationTables} placeholder="Type" />
+                          <HFSelect
+                            disabledHelperText
+                            name="autofill_table"
+                            control={control}
+                            options={computedRelationTables}
+                            placeholder="Type"
+                          />
                         </FRow>
 
                         <FRow label="Autofill field">
-                          <HFSelect disabledHelperText name="autofill_field" control={control} options={computedRelationFields} placeholder="Type" />
+                          <HFSelect
+                            disabledHelperText
+                            name="autofill_field"
+                            control={control}
+                            options={computedRelationFields}
+                            placeholder="Type"
+                          />
                         </FRow>
                         <FRow label="Automatic">
-                          <HFSwitch control={control} name="automatic" label="automatic" />
+                          <HFSwitch
+                            control={control}
+                            name="automatic"
+                            label="automatic"
+                          />
                         </FRow>
                       </div>
                     </AccordionDetails>
@@ -389,7 +547,13 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, 
         </form>
 
         <div className={styles.settingsFooter}>
-          <PrimaryButton size="large" className={styles.button} style={{ width: "100%" }} onClick={handleSubmit(submitHandler)} loader={formLoader}>
+          <PrimaryButton
+            size="large"
+            className={styles.button}
+            style={{ width: "100%" }}
+            onClick={handleSubmit(submitHandler)}
+            loader={formLoader}
+          >
             Сохранить
           </PrimaryButton>
         </div>

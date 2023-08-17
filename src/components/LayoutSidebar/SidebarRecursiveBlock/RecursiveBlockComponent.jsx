@@ -203,6 +203,7 @@ const RecursiveBlock = ({
                         e?.stopPropagation();
                         handleOpenNotify(e, "FOLDER");
                         setElement(element);
+                        dispatch(menuActions.setMenuItem(element));
                       }}
                       style={{
                         color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
@@ -219,6 +220,7 @@ const RecursiveBlock = ({
                           e.stopPropagation();
                           handleOpenNotify(e, "CREATE_TO_FOLDER");
                           setElement(element);
+                          dispatch(menuActions.setMenuItem(element));
                         }}
                         style={{
                           color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
@@ -241,6 +243,7 @@ const RecursiveBlock = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "TABLE");
                   setElement(element);
+                  dispatch(menuActions.setMenuItem(element));
                 }}
                 style={{
                   color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
@@ -254,6 +257,7 @@ const RecursiveBlock = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "MICROFRONTEND");
                   setElement(element);
+                  dispatch(menuActions.setMenuItem(element));
                 }}
                 style={{
                   color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
@@ -267,6 +271,7 @@ const RecursiveBlock = ({
                   e.stopPropagation();
                   handleOpenNotify(e, "WEBPAGE");
                   setElement(element);
+                  dispatch(menuActions.setMenuItem(element));
                 }}
                 style={{
                   color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",

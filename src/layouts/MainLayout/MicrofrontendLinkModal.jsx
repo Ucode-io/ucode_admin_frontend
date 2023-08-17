@@ -125,19 +125,16 @@ const MicrofrontendLinkModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              {
-                languages?.map((item, index) => (
-                  <HFTextField
-                autoFocus
-                fullWidth
-                required
-                label={`Title ${item.slug}`}
-                control={control}
-                name={`attributes.label_${item.slug}`}
-              />
-                ))
-              }
-              
+              {languages?.map((item, index) => (
+                <HFTextField
+                  autoFocus
+                  fullWidth
+                  required
+                  label={`Title ${item.slug}`}
+                  control={control}
+                  name={`attributes.label_${item.slug}`}
+                />
+              ))}
             </Box>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFSelect

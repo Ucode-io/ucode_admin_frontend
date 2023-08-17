@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 const FolderCreateModal = ({ closeModal, loading, modalType, appId, selectedFolder, getMenuList }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
+  const menuItemLabel = useSelector((state) => state.menu.menuItem?.label);
 
   const onSubmit = (data) => {
     if (modalType === "create") {
@@ -25,7 +26,7 @@ const FolderCreateModal = ({ closeModal, loading, modalType, appId, selectedFold
     }
   };
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       app_id: appId,
     },
@@ -97,9 +98,28 @@ const FolderCreateModal = ({ closeModal, loading, modalType, appId, selectedFold
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              {languages.map((item) => (
+              {/* {languages.map((item) => (
                 <HFTextField autoFocus fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
-              ))}
+              ))} */}
+
+            {
+              languages?.map((language) => {
+                const languageFieldName = `attributes.label_${language?.slug}`;
+                const fieldValue = watch(languageFieldName)
+
+                return (
+                  <HFTextField 
+                    autoFocus 
+                    fullWidth 
+                    label={`Title (${language?.slug})`} 
+                    control={control} 
+                    name={`attributes.label_${language?.slug}`} 
+                    defaultValue={fieldValue || menuItemLabel}
+                  />
+                );
+              })
+              }
+
             </Box>
 
             <div className="btns-row">{modalType === "crete" ? <CreateButton type="submit" loading={loading} /> : <SaveButton type="submit" loading={loading} />}</div>

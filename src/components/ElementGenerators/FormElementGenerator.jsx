@@ -65,13 +65,27 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     }
   });
 
+  const removeLangFromSlug = (slug) => {
+    var lastIndex = slug.lastIndexOf('_');
+  if (lastIndex !== -1) {
+      var result = slug.substring(0, lastIndex);
+      return result
+  } else {
+      return false
+  }
+  }
+
   const computedSlug = useMemo(() => {
+    if (field?.enable_multilanguage) {
+      return `${removeLangFromSlug(field.slug)}_${activeLang}`;
+    }
+
     if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     }
 
     return field?.slug;
-  }, [field?.id, field?.slug]);
+  }, [field?.id, field?.slug, activeLang, field?.enable_multilanguage]);
 
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;

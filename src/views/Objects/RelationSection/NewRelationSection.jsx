@@ -361,7 +361,7 @@ const NewRelationSection = ({
                           <InsertDriveFile /> Файлы
                         </>
                       )}
-                      <div className="flex align-center gap-2 text-nowrap">{el?.attributes?.[`label_${i18n.language}`] ?? el?.label ?? el?.title}</div>
+                      <div className="flex align-center gap-2 text-nowrap">{el?.attributes?.[`label_${i18n.language}`] ?? el?.label ?? el?.title ?? el?.relation?.attributes?.[`title_${i18n.language}`]}</div>
                     </Tab>
                   ))}
                 </TabList>

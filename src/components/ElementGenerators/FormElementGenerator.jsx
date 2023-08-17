@@ -45,11 +45,14 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     relationTableSlug = field?.id?.split("#")[0];
   }
 
-  console.log('sssssssss', field?.attributes?.[`label_${i18n}`])
+  const slugSplit = (slug) => {
+    const parts = slug.split("_");
+    return parts[parts.length - 1];
+  }
 
   const label = useMemo(() => {
     if (field?.enable_multilanguage) {
-      return field?.attributes?.show_label ? `${field?.label} (${activeLang})` : "";
+      return field?.attributes?.show_label ? `${field?.label} (${activeLang ?? slugSplit(field?.slug)})` : "";
     } else {
       if (field?.attributes?.show_label === false) return "";
       return field?.attributes?.[`label_${i18n.language}`] ?? field?.label ?? " ";

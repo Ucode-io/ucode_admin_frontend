@@ -22,13 +22,13 @@ import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import styles from "./style.module.scss";
 import { useSelector } from "react-redux";
 
-const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, onSubmit = () => {}, getRelationFields }) => {
+const FieldSettings = ({ closeSettingsBlock, mainForm, field, selectedField, formType, height, onSubmit = () => {}, getRelationFields }) => {
   const { id } = useParams();
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const languages = useSelector((state) => state.languages.list);
-
+  console.log('languages', languages)
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
     const index = fields.findIndex((el) => el.id === field.id);
@@ -224,7 +224,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
                             <HFIconPicker control={control} name="attributes.icon" shape="rectangle" />
                           </div>
 
-                          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                          {/* <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                             {languages?.map((lang) => (
                               <HFTextField
                                 disabledHelperText
@@ -235,7 +235,32 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, formType, height, 
                                 autoFocus
                               />
                             ))}
-                          </Box>
+                          </Box> */}
+
+                      <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                        {
+                        languages?.map((language) => {
+                          const languageFieldName = `attributes.label_${language?.slug}`;
+                          const fieldValue = useWatch({
+                            control,
+                            name: languageFieldName
+                          });
+
+                          return (
+                            <HFTextField
+                            disabledHelperText
+                            fullWidth
+                            name={`attributes.label_${language?.slug}`}
+                            control={control}
+                            placeholder={`Field Label (${language?.slug})`}
+                            autoFocus
+                            defaultValue={fieldValue || selectedField?.label} 
+                          />
+                          );
+                        })
+                      }
+                       </Box> 
+
                         </FRow>
 
                         <FRow label="Field SLUG" required>

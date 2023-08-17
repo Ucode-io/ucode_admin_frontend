@@ -18,6 +18,10 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
       search: debouncedValue,
       limit: 10,
       additional_ids: filters[name],
+      additional_request: {
+        additional_field: 'guid',
+        additional_values:filters[name]
+      }
     },
     queryParams: {
       select: (res) => {

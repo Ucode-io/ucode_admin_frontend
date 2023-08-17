@@ -28,6 +28,7 @@ const UsersForm = () => {
   const [passwordType, setPasswordType] = useState(true)
   const dispatch = useDispatch()
   const [inputMatch, setInputMatch] = useState(false)
+  const [getError, setGetError] = useState(false)
 
 
   const update = (data) => {
@@ -50,13 +51,10 @@ const UsersForm = () => {
        ...requestData,
       })
       .then((res) => {
-        navigate(-1);
-      });
-
-      if(newPassword) {
-
-     
-      }
+        if(getError) {
+            navigate(-1);
+        }
+      })
   };
 
   const { control, handleSubmit, reset, watch } = useForm({
@@ -88,6 +86,10 @@ const UsersForm = () => {
       password: newPassword,
       old_password: oldPassword,
       user_id: isUserId
+    }).then((res) => {
+      navigate(-1)
+    }).catch((err) => {
+      setGetError(true)
     })
   }
 

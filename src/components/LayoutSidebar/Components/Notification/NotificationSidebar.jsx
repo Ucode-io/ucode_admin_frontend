@@ -168,7 +168,7 @@ const NotificationSidebar = ({
       notificationFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 * 5,
+    paddingLeft: level * 2 + 10,
   };
   const iconStyle = {
     color:

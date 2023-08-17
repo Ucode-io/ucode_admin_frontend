@@ -15,7 +15,7 @@ const userFolder = {
   label: "Users",
   type: "USER_FOLDER",
   icon: "users.svg",
-  parent_id: adminId,
+  parent_id: "a8de4296-c8c3-48d6-bef0-ee17057733d6",
   id: "13",
   data: {
     permission: {
@@ -42,7 +42,7 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
       userFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 * 5,
+    paddingLeft: level * 2 + 10,
     display:
       menuItem?.id === "0" ||
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),

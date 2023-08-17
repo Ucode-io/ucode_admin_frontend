@@ -10,6 +10,7 @@ import IconGenerator from "../IconPicker/IconGenerator";
 import { useDispatch } from "react-redux";
 import { menuActions } from "../../store/menuItem/menuItem.slice";
 import MenuIcon from "./MenuIcon";
+import { store } from "../../store";
 
 const AppSidebar = ({
   index,
@@ -24,6 +25,8 @@ const AppSidebar = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const auth = store.getState().auth;
+  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
   const clickHandler = () => {
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
@@ -51,7 +54,7 @@ const AppSidebar = ({
 
   return (
     <Draggable key={index}>
-      {element?.data?.permission?.read && (
+      {element?.data?.permission?.read || defaultAdmin ? (
         <ListItemButton
           key={index}
           onClick={(e) => {
@@ -212,7 +215,7 @@ const AppSidebar = ({
             ""
           )}
         </ListItemButton>
-      )}
+      ) : null}
     </Draggable>
   );
 };

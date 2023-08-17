@@ -9,13 +9,6 @@ import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrappe
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useDispatch, useSelector } from "react-redux";
 import { mainActions } from "../../../store/main/main.slice";
-import Resources from "../Components/Resources";
-import NotificationSidebar from "../Components/Notification/NotificationSidebar";
-import UserAndPermissionFolder from "../Components/AdminFolders/UserAndPermissionFolder";
-import DataBaseFolder from "../Components/AdminFolders/DataBaseFolder";
-import CodeFolder from "../Components/AdminFolders/CodeFolder";
-import ResourceFolder from "../Components/AdminFolders/ResourceFolder";
-import ApiFolder from "../Components/AdminFolders/ApiFolder";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
@@ -143,35 +136,6 @@ const SubMenu = ({
                       menuItem={menuItem}
                     />
                   ))}
-                  {selectedApp?.id === adminId && (
-                    <>
-                      <UserAndPermissionFolder
-                        menuStyle={menuStyle}
-                        menuItem={menuItem}
-                        setElement={setElement}
-                      />
-                      <DataBaseFolder
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        menuItem={menuItem}
-                      />
-                      <CodeFolder
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        menuItem={menuItem}
-                      />
-                      <ResourceFolder
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        menuItem={menuItem}
-                      />
-                      <ApiFolder
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        menuItem={menuItem}
-                      />
-                    </>
-                  )}
                 </div>
               </div>
             )}

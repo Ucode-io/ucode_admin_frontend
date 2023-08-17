@@ -2,7 +2,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse } from "@mui/material";
 import { useMemo, useState } from "react";
-import { useQueries } from "react-query";
+import { useQueries, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import constructorTableService, {
@@ -17,7 +17,12 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import DataBaseRecursive from "./RecursiveBlock";
 import { FaFolder } from "react-icons/fa";
-import { BsTable } from "react-icons/bs";
+import { BsTable, BsThreeDots } from "react-icons/bs";
+import AddIcon from "@mui/icons-material/Add";
+import DataBaseFolderCreateModal from "./Modal/DataBaseFolderModal";
+import DatabaseButtonMenu from "./DatabaseButtonMenu";
+import { useTableFolderDeleteMutation } from "../../../../services/tableFolderService";
+import DataBaseTableForm from "./Drawer/DataBaseTableForm";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const dataBase = {
@@ -37,6 +42,7 @@ const dataBase = {
 };
 
 const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
+  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -45,6 +51,44 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   const company = store.getState().company;
   const [openedFolders, setOpenedFolders] = useState([]);
   const navigate = useNavigate();
+  const [selectedTableFolder, setSelectedTableFolder] = useState(null);
+  const [tablefolderModalType, setTableFolderModalType] = useState(null);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [selectedResource, setSelectedResource] = useState();
+  const closeTableFolderModal = () => setTableFolderModalType(null);
+  const [menu, setMenu] = useState({ event: "", type: "" });
+  const openMenu = Boolean(menu?.event);
+  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+
+  const openCreateDrawer = (resourceId) => {
+    setSelectedResource(resourceId);
+    setDrawerIsOpen(true);
+  };
+
+  const openEditDrawer = (tableId, resourceId) => {
+    setSelectedResource(resourceId);
+    setSelectedTable(tableId);
+    setDrawerIsOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setSelectedResource(null);
+    setSelectedTable(null);
+    setDrawerIsOpen(false);
+  };
+
+  const openFolderModal = (folder, type) => {
+    setSelectedTableFolder(folder);
+    setTableFolderModalType(type);
+  };
+
+  const handleOpenNotify = (event, type) => {
+    setMenu({ event: event?.currentTarget, type: type });
+  };
+
+  const handleCloseNotify = () => {
+    setMenu(null);
+  };
 
   const activeStyle = {
     backgroundColor:
@@ -55,7 +99,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
       dataBase?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 * 5,
+    paddingLeft: level * 2 + 10,
   };
 
   const labelStyle = {
@@ -73,25 +117,25 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     setChildBlockVisible((prev) => !prev);
   };
 
-  const { data: { resources } = {} } = useResourceListQuery({
-    params: {
-      project_id: company.projectId,
+  const { data: { resources } = {}, refetch: refetchCategory } =
+    useResourceListQuery({
+      params: {
+        project_id: company.projectId,
+      },
+    });
+
+  const { mutate: deleteTableFolder } = useTableFolderDeleteMutation({
+    onSuccess: () => {
+      refetchCategory();
+      queryClient.refetchQueries(["TABLE_FOLDER"]);
     },
   });
 
-  const { data: folders, isLoading: loading } = useTableFolderListQuery({
-    queryParams: {
-      select: (res) =>
-        res?.folders?.map((item) => ({
-          name: item?.title,
-          icon: FaFolder,
-          parent_id: item?.parent_id,
-          id: item?.id,
-          type: "FOLDER",
-          hasChild: true,
-        })),
-    },
-  });
+  const onDeleteTableFolder = (id) => {
+    deleteTableFolder(id);
+  };
+
+  const { data: folders, isLoading: loading } = useTableFolderListQuery();
 
   const fetchTable = useMemo(() => {
     return openedFolders.map((folderId) => ({
@@ -126,19 +170,61 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     return list;
   }, [tableResults]);
 
-  const computedTableList = useMemo(() => {
-    return tableFolderListToNested([...(folders ?? []), ...computedTables], {
-      undefinedChildren: true,
+  const computedFolders = useMemo(() => {
+    const list = [];
+    folders?.folders?.forEach((item) => {
+      list.push({
+        name: item?.title,
+        icon: FaFolder,
+        parent_id: item?.parent_id,
+        id: item?.id,
+        type: "FOLDER",
+        hasChild: true,
+        buttons: (
+          <BsThreeDots
+            size={13}
+            onClick={(e) => {
+              e?.stopPropagation();
+              handleOpenNotify(e, "FOLDER");
+              setSelected(item);
+            }}
+            style={{
+              color:
+                menuItem?.id === item?.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
+            }}
+          />
+        ),
+      });
     });
-  }, [folders, computedTables]);
+    return list;
+  }, [folders?.folders]);
+
+  const computedTableList = useMemo(() => {
+    return tableFolderListToNested(
+      [...(computedFolders ?? []), ...computedTables],
+      {
+        undefinedChildren: true,
+      }
+    );
+  }, [computedFolders, computedTables]);
 
   const sidebarElements = useMemo(() => computedTableList, [computedTableList]);
 
+  const createFolder = () => {
+    setTableFolderModalType("CREATE");
+  };
+
   const computedResourceFromUtils = useComputedResource(
     resources,
-    sidebarElements
+    sidebarElements,
+    menuItem,
+    menuStyle,
+    createFolder,
+    openEditDrawer
   );
-
+  console.log("computedResourceFromUtils", computedResourceFromUtils);
   const rowClickHandler = (id, element) => {
     setSelected(element);
     element.type === "FOLDER" && navigate(`/main/${adminId}`);
@@ -166,8 +252,8 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
           }}
         >
           <div className="label" style={labelStyle}>
-            <IconGenerator icon={"database.svg"} size={18} />
-            Databases
+            <IconGenerator icon={dataBase.icon} size={18} />
+            {dataBase.label}
           </div>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
@@ -192,6 +278,33 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
           />
         ))}
       </Collapse>
+
+      <DatabaseButtonMenu
+        selected={selected}
+        openMenu={openMenu}
+        menu={menu?.event}
+        menuType={menu?.type}
+        handleCloseNotify={handleCloseNotify}
+        onDeleteTableFolder={onDeleteTableFolder}
+        openFolderModal={openFolderModal}
+        openCreateDrawer={openCreateDrawer}
+      />
+
+      {tablefolderModalType && (
+        <DataBaseFolderCreateModal
+          closeModal={closeTableFolderModal}
+          tableFolder={selectedTableFolder}
+          formType={tablefolderModalType}
+        />
+      )}
+      <DataBaseTableForm
+        open={drawerIsOpen}
+        initialValues={drawerIsOpen}
+        formIsVisible={drawerIsOpen}
+        selectedResource={selectedResource}
+        selectedTable={selectedTable}
+        closeDrawer={closeDrawer}
+      />
     </Box>
   );
 };

@@ -1,9 +1,7 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Icon } from "@mui/material";
+import { Box, Button, Collapse, Icon, Tooltip } from "@mui/material";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { useDispatch } from "react-redux";
@@ -19,7 +17,6 @@ const DataBaseRecursive = ({
   menuItem,
 }) => {
   const dispatch = useDispatch();
-  const { tableSlug } = useParams();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
 
   const activeStyle = {
@@ -31,7 +28,7 @@ const DataBaseRecursive = ({
       menuItem?.id === element?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 * 5,
+    paddingLeft: level * 2 + 10,
     display:
       element?.id === "0" ||
       (element?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
@@ -63,10 +60,16 @@ const DataBaseRecursive = ({
               opacity: element?.isChild && 0.6,
             }}
           >
-            {/* <IconGenerator icon={element?.icon} size={18} /> */}
             <Icon as={element?.icon} />
             {element?.name}
           </div>
+          {element.buttons && (
+            <Box className="icon_group">
+              <Tooltip title={element?.button_text} placement="top">
+                <Box className="extra_icon">{element.buttons}</Box>
+              </Tooltip>
+            </Box>
+          )}
           {element?.type === "FOLDER" &&
             (childBlockVisible ? (
               <KeyboardArrowDownIcon />

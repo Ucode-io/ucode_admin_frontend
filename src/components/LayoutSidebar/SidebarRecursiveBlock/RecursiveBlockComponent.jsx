@@ -12,6 +12,20 @@ import IconGenerator from "../../IconPicker/IconGenerator";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
 import { useQueryClient } from "react-query";
+import { store } from "../../../store";
+import Users from "../Components/Users";
+import { folderIds } from "./mock/folders";
+import Permissions from "../Components/Permission";
+import DataBase from "../Components/DataBase";
+import EltResources from "../Components/Elt";
+import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
+import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
+import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
+import EmailSidebar from "../Components/Email/EmailSidebar";
+import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
+import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
+import NotificationSidebar from "../Components/Notification/NotificationSidebar";
+import Resources from "../Components/Resources";
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -37,6 +51,8 @@ const RecursiveBlock = ({
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
+  const auth = store.getState().auth;
+  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
 
   const activeStyle = {
     backgroundColor:
@@ -47,7 +63,7 @@ const RecursiveBlock = ({
       menuItem?.id === element?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 * 5,
+    paddingLeft: level * 2 + 10,
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
@@ -92,7 +108,7 @@ const RecursiveBlock = ({
     },
   });
 
-  console.log('element', element)
+  console.log("element", element);
 
   const clickHandler = (e) => {
     dispatch(menuActions.setMenuItem(element));
@@ -124,7 +140,7 @@ const RecursiveBlock = ({
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        {element?.data?.permission?.read && (
+        {element?.data?.permission?.read || defaultAdmin ? (
           <Button
             key={element.id}
             style={activeStyle}
@@ -266,7 +282,7 @@ const RecursiveBlock = ({
               />
             )}
           </Button>
-        )}
+        ) : null}
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
@@ -288,6 +304,80 @@ const RecursiveBlock = ({
             menuItem={menuItem}
           />
         ))}
+        {element.id === folderIds.users_folder_id && (
+          <>
+            <Users
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              setElement={setElement}
+              level={2}
+            />
+            <Permissions
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              setElement={setElement}
+              level={2}
+            />
+          </>
+        )}
+        {element.id === folderIds.data_base_folder_id && (
+          <>
+            <DataBase
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              level={2}
+            />
+            <EltResources menuStyle={menuStyle} level={2} menuItem={menuItem} />
+            <MicroServiceSidebar
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              level={2}
+            />
+          </>
+        )}
+        {element.id === folderIds.code_folder_id && (
+          <>
+            <ScenarioSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              level={2}
+            />
+            <DocumentsSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              level={2}
+            />
+            <EmailSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
+            <ProjectSettingSidebar
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              level={2}
+            />
+            <FunctionSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              level={2}
+            />
+            <NotificationSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              level={2}
+            />
+          </>
+        )}
+        {element.id === folderIds.resource_folder_id && (
+          <Resources
+            menuStyle={menuStyle}
+            setSubMenuIsOpen={setSubMenuIsOpen}
+            level={2}
+          />
+        )}
+        {element.id === folderIds.users_folder_id && null}
       </Collapse>
     </Box>
   );

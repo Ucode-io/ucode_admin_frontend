@@ -176,7 +176,6 @@ const Flow = () => {
     useScenarioCreateMutation({
       projectId: projectId,
       onSuccess: (res) => {
-        // successToast("Successfully created");
         dispatch(showAlert("Успешно!", "success"));
         queryClient.refetchQueries(["SCENARIO"]);
         navigate(
@@ -190,7 +189,6 @@ const Flow = () => {
     useScenarioUpdateMutation({
       projectId: projectId,
       onSuccess: (res) => {
-        // successToast("Successfully update");
         dispatch(showAlert("Успешно!", "success"));
         queryClient.refetchQueries(["SCENARIO"]);
       },

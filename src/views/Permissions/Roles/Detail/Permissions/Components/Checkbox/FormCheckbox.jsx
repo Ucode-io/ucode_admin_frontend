@@ -18,16 +18,18 @@ const FormCheckbox = ({
       control={control}
       defaultValue={defaultValue}
       rules={{ required }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <Checkbox
-          isInvalid={error}
-          onChange={onChange}
-          checked={value}
-          {...props}
-        >
-          {children}
-        </Checkbox>
-      )}
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        return (
+          <Checkbox
+            isInvalid={error}
+            onChange={onChange}
+            checked={value}
+            {...props}
+          >
+            {children}
+          </Checkbox>
+        );
+      }}
     />
   );
 };

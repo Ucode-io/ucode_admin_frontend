@@ -29,12 +29,13 @@ import DocumentsRecursive from "./RecursiveBlock";
 import { TbEdit } from "react-icons/tb";
 import { FaFolder } from "react-icons/fa";
 import { CgFileDocument } from "react-icons/cg";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const docsFolder = {
   label: "Documents",
   type: "USER_FOLDER",
   icon: "documents.svg",
-  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
+  parent_id: adminId,
   id: "17",
   data: {
     permission: {
@@ -363,7 +364,7 @@ const DocumentsSidebar = ({
       setOpenedNoteFolders((prev) => [...prev, id]);
     }
     if (element.type === "FOLDER") {
-      navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280`);
+      navigate(`/main/${adminId}`);
     }
   };
 
@@ -375,7 +376,7 @@ const DocumentsSidebar = ({
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
-    navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280`);
+    navigate(`/main/${adminId}`);
   };
 
   // --CREATE FOLDERS--
@@ -388,13 +389,9 @@ const DocumentsSidebar = ({
   const onSelect = (id, element) => {
     setSelected(element);
     if (element.type !== "FOLDER" && element.what_is === "template") {
-      navigate(
-        `/main/c57eedc3-a954-4262-a0af-376c65b5a280/docs/template/${element?.id}/${id}`
-      );
+      navigate(`/main/${adminId}/docs/template/${element?.id}/${id}`);
     } else if (element.type !== "FOLDER" && element.what_is === "note") {
-      navigate(
-        `/main/c57eedc3-a954-4262-a0af-376c65b5a280/docs/note/${element?.id}/${id}`
-      );
+      navigate(`/main/${adminId}/docs/note/${element?.id}/${id}`);
     }
   };
 

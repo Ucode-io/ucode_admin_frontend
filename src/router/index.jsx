@@ -66,8 +66,8 @@ import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/Fu
 import SmsPage from "../views/SmsOtp";
 import SmsFormPage from "../views/SmsOtp/SmsFormPageComponent";
 import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
-
-
+import NotificationPage from "../components/LayoutSidebar/Components/Notification";
+import NotificationForm from "../components/LayoutSidebar/Components/Notification/NotificationForm";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -180,8 +180,14 @@ const Router = () => {
         />
 
         <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
-        <Route path=":appId/report-setting/:reportSettingsId" element={<ReportSettings />} />
-        <Route path=":appId/pivot-template/:pivotTemplateId" element={<ReportSettings />} />
+        <Route
+          path=":appId/report-setting/:reportSettingsId"
+          element={<ReportSettings />}
+        />
+        <Route
+          path=":appId/pivot-template/:pivotTemplateId"
+          element={<ReportSettings />}
+        />
 
         <Route path=":appId/user-page/:userMenuId">
           <Route index element={<ClientUserPage />} />
@@ -238,6 +244,11 @@ const Router = () => {
         </Route>
         <Route path=":appId/function">
           <Route path=":functionId" element={<FunctionsDetail />} />
+        </Route>
+        <Route path=":appId/notification/:categoryId">
+          <Route index element={<NotificationPage />} />
+          <Route path="create" element={<NotificationForm />} />
+          <Route path=":notificationId" element={<NotificationForm />} />
         </Route>
         <Route path=":appId/docs">
           <Route path="note/:folderId">

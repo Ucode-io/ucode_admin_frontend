@@ -1,5 +1,5 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Card, Modal, Typography } from "@mui/material";
+import { Box, Card, Checkbox, Modal, Typography } from "@mui/material";
 import TableCard from "../../../../../../../components/TableCard";
 import {
   CTable,
@@ -10,7 +10,13 @@ import {
 } from "../../../../../../../components/CTable";
 import PermissionCheckbox from "../PermissionCheckbox";
 
-const CustomPermissionModal = ({ closeModal, control, tableIndex }) => {
+const CustomPermissionModal = ({
+  closeModal,
+  control,
+  tableIndex,
+  setValue,
+  watch,
+}) => {
   const basePath = `data.tables.${tableIndex}.custom_permission`;
 
   const fields = [
@@ -41,6 +47,21 @@ const CustomPermissionModal = ({ closeModal, control, tableIndex }) => {
     },
   ];
 
+  const updateView = (val) => {
+    const computedValue = {
+      view_create: val ? "Yes" : "No",
+      share_modal: val ? "Yes" : "No",
+      automation: val ? "Yes" : "No",
+      language_btn: val ? "Yes" : "No",
+      settings: val ? "Yes" : "No",
+    };
+    setValue(basePath, computedValue);
+  };
+
+  const allYes = Object.values(watch(basePath)).every(
+    (value) => value === "Yes"
+  );
+
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
@@ -67,7 +88,13 @@ const CustomPermissionModal = ({ closeModal, control, tableIndex }) => {
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>
                     <CTableCell w={250}>Label</CTableCell>
-                    <CTableCell w={150}>Permission</CTableCell>
+                    <CTableCell w={150}>
+                      Permission
+                      <Checkbox
+                        checked={allYes ? true : false}
+                        onChange={(e) => updateView(e.target.checked)}
+                      />
+                    </CTableCell>
                   </CTableHeadRow>
                 </CTableHead>
                 <CTableBody columnsCount={3} dataLength={fields?.length}>

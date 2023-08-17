@@ -5,6 +5,7 @@ import "./style.scss";
 import MenuItemComponent from "../../../../MenuItem";
 import AddIcon from "@mui/icons-material/Add";
 import { Delete } from "@mui/icons-material";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const DocumentButtonMenu = ({
   menu,
@@ -46,9 +47,7 @@ const DocumentButtonMenu = ({
               title="Добавить Note"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(
-                  `/main/c57eedc3-a954-4262-a0af-376c65b5a280/docs/${element.id}/note/create`
-                );
+                navigate(`/main/${adminId}/docs/${element.id}/note/create`);
                 handleCloseNotify();
               }}
             />
@@ -61,9 +60,7 @@ const DocumentButtonMenu = ({
               title="Добавить Template"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(
-                  `/main/c57eedc3-a954-4262-a0af-376c65b5a280/docs/template/${element.id}/create`
-                );
+                navigate(`/main/${adminId}/docs/template/${element.id}/create`);
                 handleCloseNotify();
               }}
             />
@@ -76,9 +73,7 @@ const DocumentButtonMenu = ({
               title="Добавить Note"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(
-                  `/main/c57eedc3-a954-4262-a0af-376c65b5a280/docs/note/${element.id}/create`
-                );
+                navigate(`/main/${adminId}/docs/note/${element.id}/create`);
                 handleCloseNotify();
               }}
             />

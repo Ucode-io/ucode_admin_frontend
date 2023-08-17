@@ -5,12 +5,13 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { useNavigate } from "react-router-dom";
 import { store } from "../../../../store";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const emailFolder = {
   label: "Email",
   type: "USER_FOLDER",
   icon: "lock.svg",
-  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a280",
+  parent_id: adminId,
   id: "21",
   data: {
     permission: {
@@ -49,7 +50,7 @@ const EmailSidebar = ({ level = 1, menuStyle, menuItem }) => {
   };
 
   const clickHandler = (e) => {
-    navigate(`/main/c57eedc3-a954-4262-a0af-376c65b5a280/email-setting`);
+    navigate(`/main/${adminId}/email-setting`);
     dispatch(menuActions.setMenuItem(emailFolder));
   };
 

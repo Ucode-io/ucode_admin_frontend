@@ -1,6 +1,6 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
+import { Box, Button, Collapse, IconButton, Tooltip } from "@mui/material";
 import { useMemo, useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { HiOutlineCodeBracket } from "react-icons/hi2";
@@ -18,21 +18,28 @@ import { store } from "../../../../store";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
-import FunctionRecursive from "./RecursiveBlock";
 import AddIcon from "@mui/icons-material/Add";
-import FunctionButtonMenu from "./Components/FunctionButtonMenu";
-import FunctionFolderCreateModal from "./Components/Modal/FolderCreateModal";
+// import FunctionButtonMenu from "./Components/FunctionButtonMenu";
+// import FunctionFolderCreateModal from "./Components/Modal/FolderCreateModal";
 import { BsThreeDots } from "react-icons/bs";
 import { useQueryClient } from "react-query";
-import FunctionCreateModal from "./Components/Modal/FunctionCreateModal";
+// import FunctionCreateModal from "./Components/Modal/FunctionCreateModal";
+import {
+  useNotificationCategoryDeleteMutation,
+  useNotificationCategoryListQuery,
+} from "../../../../services/notificationCategoryService";
+import { AiFillFolderAdd } from "react-icons/ai";
+import RectangleIconButton from "../../../Buttons/RectangleIconButton";
+import { Delete } from "@mui/icons-material";
+import NotificationRecursive from "./RecursiveBlock";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
-const functionFolder = {
+const notificationFolder = {
   label: "Functions",
   type: "USER_FOLDER",
   icon: "documents.svg",
-  parent_id: adminId,
-  id: "25",
+  parent_id: "adminId",
+  id: "26",
   data: {
     permission: {
       read: true,
@@ -43,7 +50,7 @@ const functionFolder = {
   },
 };
 
-const FunctionSidebar = ({
+const NotificationSidebar = ({
   level = 1,
   menuStyle,
   setSubMenuIsOpen,
@@ -90,100 +97,53 @@ const FunctionSidebar = ({
     setFunctionModalIsOpen(false);
   };
 
-  const { data: functionFolders, isLoading: folderLoading } =
-    useFunctionFoldersListQuery({
-      params: {
-        "project-id": company.projectId,
-      },
-      queryParams: {
-        select: (res) => res.function_folders,
-      },
-    });
+  const [selectedNotificationCategory, setSelectedNotificationCategory] =
+    useState(null);
+  const [notificationCategoryModalType, setNotificationCategoryModalType] =
+    useState(null);
 
-  const { mutate: deleteFunction, isLoading: deleteFunctionLoading } =
-    useFunctionDeleteMutation({
-      onSuccess: () => queryClient.refetchQueries("FUNCTIONS"),
-    });
+  const closeTemplateFolderModal = () =>
+    setNotificationCategoryModalType(false);
 
-  const { data: functions, isLoading: functionLoading } = useFunctionsListQuery(
-    {
-      params: {
-        "project-id": company.projectId,
-      },
-      queryParams: {
-        select: (res) => res.functions,
-      },
-    }
+  const openApiCategoryModal = (folder, type) => {
+    setSelectedNotificationCategory(folder);
+    setNotificationCategoryModalType(type);
+  };
+
+  const {
+    data: category = [],
+    isLoading: formLoading,
+    refetch: refetchCategory,
+  } = useNotificationCategoryListQuery();
+
+  const { mutate: deleteCategory } = useNotificationCategoryDeleteMutation({
+    onSuccess: () => refetchCategory(),
+  });
+  const onDeleteCategory = (id) => {
+    deleteCategory({
+      id,
+    });
+  };
+  const sidebarElements = useMemo(
+    () =>
+      category?.categories?.map((category) => ({
+        icon: FaFolder,
+        name: category.name,
+        id: category.guid,
+        buttons: (
+          <>
+            <Delete onClick={() => onDeleteCategory(category.guid)} />
+          </>
+        ),
+      })),
+    [category, navigate]
   );
-
-  const { mutate: deleteFolder, isLoading: deleteLoading } =
-    useFunctionFolderDeleteMutation({
-      onSuccess: () => {
-        queryClient.refetchQueries("FUNCTION_FOLDERS");
-      },
-    });
-
-  const sidebarElements = useMemo(() => {
-    return functionFolders?.map((folder) => ({
-      ...folder,
-      icon: FaFolder,
-      type: "FOLDER",
-      name: folder.title,
-      buttons: (
-        <BsThreeDots
-          size={13}
-          onClick={(e) => {
-            e?.stopPropagation();
-            handleOpenNotify(e, "FOLDER", folder);
-          }}
-          style={{
-            color:
-              menuItem?.id === folder?.id
-                ? menuStyle?.active_text
-                : menuStyle?.text || "",
-          }}
-        />
-      ),
-      button_text: "Folder settings",
-
-      children: functions
-        ?.filter((func) => func.function_folder_id === folder.id)
-        .map((func) => ({
-          ...func,
-          name: func.name,
-          icon: HiOutlineCodeBracket,
-          buttons: (
-            <BsThreeDots
-              size={13}
-              onClick={(e) => {
-                e?.stopPropagation();
-                handleOpenNotify(e, "FUNCTION", func);
-              }}
-              style={{
-                color:
-                  menuItem?.id === func?.id
-                    ? menuStyle?.active_text
-                    : menuStyle?.text || "",
-              }}
-            />
-          ),
-          button_text: "Folder settings",
-        })),
-    }));
-  }, [functionFolders, functions]);
-
-  // const selectHandler = (id, element) => {
-  //   dispatch(menuActions.setMenuItem(element));
-  //   if (element.type === "FOLDER") return;
-  //   // setValue("request_info.url", element.path);
-  //   // setValue("request_info.title", element.title);
-  // };
 
   const clickHandler = (e) => {
     e.stopPropagation();
-    dispatch(menuActions.setMenuItem(functionFolder));
-    setSelected(functionFolder);
-    if (!pinIsEnabled && functionFolder.type !== "USER_FOLDER") {
+    dispatch(menuActions.setMenuItem(notificationFolder));
+    setSelected(notificationFolder);
+    if (!pinIsEnabled && notificationFolder.type !== "USER_FOLDER") {
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
@@ -194,32 +154,32 @@ const FunctionSidebar = ({
 
   const onSelect = (id, element) => {
     setSelected(element);
-    navigate(`/main/${adminId}/function/${id}`);
+    navigate(`/main/${adminId}/notification/${id}`);
     dispatch(menuActions.setMenuItem(element));
   };
   const rowClickHandler = (id, element) => {};
 
   const activeStyle = {
     backgroundColor:
-      functionFolder?.id === menuItem?.id
+      notificationFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      functionFolder?.id === menuItem?.id
+      notificationFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
     paddingLeft: level * 2 * 5,
   };
   const iconStyle = {
     color:
-      functionFolder?.id === menuItem?.id
+      notificationFolder?.id === menuItem?.id
         ? menuStyle?.active_text
         : menuStyle?.text || "",
   };
 
   const labelStyle = {
     color:
-      functionFolder?.id === menuItem?.id
+      notificationFolder?.id === menuItem?.id
         ? menuStyle?.active_text
         : menuStyle?.text,
   };
@@ -235,8 +195,8 @@ const FunctionSidebar = ({
           }}
         >
           <div className="label" style={labelStyle}>
-            <IconGenerator icon={"key.svg"} size={18} />
-            Functions
+            <IconGenerator icon={"bell.svg"} size={18} />
+            Notifications
           </div>
           <Box className="icon_group">
             <Tooltip title="Create folder" placement="top">
@@ -262,7 +222,7 @@ const FunctionSidebar = ({
 
       <Collapse in={childBlockVisible} unmountOnExit>
         {sidebarElements?.map((element) => (
-          <FunctionRecursive
+          <NotificationRecursive
             key={element.id}
             level={level + 1}
             element={element}
@@ -277,7 +237,7 @@ const FunctionSidebar = ({
         ))}
       </Collapse>
 
-      <FunctionButtonMenu
+      {/* <FunctionButtonMenu
         selected={selected}
         openMenu={openMenu}
         menu={menu?.event}
@@ -294,16 +254,16 @@ const FunctionSidebar = ({
           folder={selectedFolder}
           closeModal={closeFolderModal}
         />
-      )}
-      {functionModalIsOpen && (
+      )} */}
+      {/* {functionModalIsOpen && (
         <FunctionCreateModal
           folder={selectedFolder}
           func={selectedFunction}
           closeModal={closeFunctionModal}
         />
-      )}
+      )} */}
     </Box>
   );
 };
 
-export default FunctionSidebar;
+export default NotificationSidebar;

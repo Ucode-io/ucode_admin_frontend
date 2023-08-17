@@ -28,6 +28,7 @@ const HFTextField = ({
   tabIndex,
   checkRequiredField,
   placeholder,
+  endAdornment,
   ...props
 }) => {
   const classes = useStyles();
@@ -75,12 +76,14 @@ const HFTextField = ({
                   color: "inherit",
                 },
 
-            endAdornment: disabled && (
+            endAdornment: disabled ? (
               <Tooltip title="This field is disabled for this role!">
                 <InputAdornment position="start">
                   <Lock style={{ fontSize: "20px" }} />
                 </InputAdornment>
               </Tooltip>
+            ) : (
+              endAdornment
             ),
           }}
           helperText={!disabledHelperText && error?.message}

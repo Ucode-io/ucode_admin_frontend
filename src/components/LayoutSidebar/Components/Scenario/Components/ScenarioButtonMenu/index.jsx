@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./style.scss";
 import MenuItemComponent from "../../../../MenuItem";
 import { Delete } from "@mui/icons-material";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const ScenarioButtonMenu = ({
   selected,
@@ -48,9 +49,7 @@ const ScenarioButtonMenu = ({
                 title="Добавить scenario"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(
-                    `/main/c57eedc3-a954-4262-a0af-376c65b5a280/scenario/${selected.id}`
-                  );
+                  navigate(`/main/${adminId}/scenario/${selected.id}`);
                   handleCloseNotify();
                 }}
               />

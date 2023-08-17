@@ -26,7 +26,7 @@ const dataBase = {
   type: "USER_FOLDER",
   icon: "database.svg",
   parent_id: adminId,
-  id: "15",
+  id: "150",
   data: {
     permission: {
       read: true,
@@ -37,7 +37,7 @@ const dataBase = {
   },
 };
 
-const EltResources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
+const EltResources = ({ level = 1, menuStyle, menuItem }) => {
   const navigate = useNavigate();
   const { projectId, resourceId } = useParams();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
@@ -52,6 +52,18 @@ const EltResources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
       project_id: company?.projectId,
     },
   });
+
+  const activeStyle = {
+    backgroundColor:
+      dataBase?.id === menuItem?.id
+        ? menuStyle?.active_background || "#007AFF"
+        : menuStyle?.background,
+    color:
+      dataBase?.id === menuItem?.id
+        ? menuStyle?.active_text || "#fff"
+        : menuStyle?.text,
+    paddingLeft: level * 2 + 10,
+  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -142,6 +154,7 @@ const EltResources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
     <Box>
       <div className="parent-block column-drag-handle">
         <Button
+          style={activeStyle}
           className={`nav-element`}
           onClick={(e) => {
             clickHandler(e);

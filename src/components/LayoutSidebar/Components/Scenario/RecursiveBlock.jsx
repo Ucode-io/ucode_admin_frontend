@@ -31,7 +31,7 @@ const ScenarioRecursive = ({
       selected?.id === element?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 * 5,
+    paddingLeft: level * 2 + 10,
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),

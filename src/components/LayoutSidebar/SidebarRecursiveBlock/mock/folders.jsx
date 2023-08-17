@@ -1,0 +1,7 @@
+export const folderIds = {
+  users_folder_id: "a8de4296-c8c3-48d6-bef0-ee17057733d6",
+  code_folder_id: "f7d1fa7d-b857-4a24-a18c-402345f65df8",
+  data_base_folder_id: "d1b3b349-4200-4ba9-8d06-70299795d5e6",
+  resource_folder_id: "f313614f-f018-4ddc-a0ce-10a1f5716401",
+  api_folder_id: "db4ffda3-7696-4f56-9f1f-be128d82ae68",
+};

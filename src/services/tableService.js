@@ -11,47 +11,32 @@ const tableService = {
     }),
   getByID: ({ resourceId, tableId, envId, projectId }) =>
     request.get(`/table/${tableId}`, {
-      headers: { "resource-id": resourceId, "environment-id": envId },
-      params: { "project-id": projectId },
+      headers: { "resource-id": resourceId },
     }),
-  update: ({ projectId, data }) =>
+  update: (data) =>
     request.put(`/table`, data, {
-      headers: { "resource-id": data.resourceId, "environment-id": data.envId },
-      params: {
-        "project-id": projectId,
-      },
+      headers: { "resource-id": data.resourceId },
     }),
   create: (data) => {
     return request.post("/table", data, {
-      headers: { "resource-id": data.resourceId, "environment-id": data.envId },
-      params: { "project-id": data.project_id },
+      headers: { "resource-id": data.resourceId },
     });
   },
   delete: ({ id, resourceId, envId }) =>
     request.delete(`/table/${id}`, {
-      headers: { "resource-id": resourceId, "environment-id": envId },
+      headers: { "resource-id": resourceId },
     }),
   configure: ({ data, resourceId, envId }) =>
     request.post(`/fields-relations`, data, {
-      headers: { "resource-id": resourceId, "environment-id": envId },
+      headers: { "resource-id": resourceId },
     }),
   getHistory: ({ tableId, projectId, envId }) =>
-    request.get(`/table-history/list/${tableId}`, {
-      headers: { "environment-id": envId },
-      params: { "project-id": projectId },
-    }),
+    request.get(`/table-history/list/${tableId}`, {}),
   getHistoryById: ({ historyId, envId, projectId }) =>
-    request.get(`/table-history/${historyId}`, {
-      params: { "project-id": projectId },
-    }),
+    request.get(`/table-history/${historyId}`, {}),
   revertCommit: ({ data, projectId }) =>
-    request.put(`/table-history/revert`, data, {
-      params: { "project-id": projectId },
-    }),
-  postVersion: ({ data, projectId }) =>
-    request.put(`/table-history`, data, {
-      params: { "project-id": projectId },
-    }),
+    request.put(`/table-history/revert`, data, {}),
+  postVersion: ({ data, projectId }) => request.put(`/table-history`, data, {}),
 };
 
 export const useTablesListQuery = ({ params = {}, queryParams } = {}) => {
@@ -80,11 +65,8 @@ export const useTableGetByIdQuery = ({
   );
 };
 
-export const useTableUpdateMutation = ({ projectId, mutationSettings }) => {
-  return useMutation(
-    (data) => tableService.update({ projectId, data }),
-    mutationSettings
-  );
+export const useTableUpdateMutation = (mutationSettings) => {
+  return useMutation((data) => tableService.update(data), mutationSettings);
 };
 
 export const useTableCreateMutation = (mutationSettings) => {

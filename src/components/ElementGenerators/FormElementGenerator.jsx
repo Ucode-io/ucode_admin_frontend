@@ -66,15 +66,12 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
   });
 
   const computedSlug = useMemo(() => {
-    if (field?.enable_multilanguage) {
-      return `${field?.slug?.split("_")?.[0]}_${activeLang}`;
-    }
     if (field.id?.includes("@")) {
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     }
 
     return field?.slug;
-  }, [field?.id, field?.slug, field?.enable_multilanguage, activeLang]);
+  }, [field?.id, field?.slug]);
 
   const defaultValue = useMemo(() => {
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;

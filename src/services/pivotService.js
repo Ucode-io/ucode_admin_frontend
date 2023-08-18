@@ -62,6 +62,7 @@ const pivotService = {
         "project-id": data.project_id,
       },
     }),
+  getReportLink: (id, params) => request(`/export/dynamic-report/excel/${id}`, { params }),
 };
 
 export default pivotService;

@@ -112,6 +112,9 @@ const RecursiveBlock = ({
           `/main/${appId}/report-setting/${element?.report_setting_id}`
         );
 
+      case "PIVOT":
+        return navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
+
       default:
         return navigate(`/main/${appId}`);
     }

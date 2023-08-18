@@ -3,7 +3,6 @@ import { Box, Button, Card, Modal, Typography } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
 import HFSelect from "../../components/FormElements/HFSelect";
 import menuSettingsService from "../../services/menuSettingsService";
@@ -14,6 +13,7 @@ import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
 import styles from "./style.module.scss";
 import { useSelector } from "react-redux";
+import { store } from "../../store";
 
 const MicrofrontendLinkModal = ({
   closeModal,
@@ -21,7 +21,6 @@ const MicrofrontendLinkModal = ({
   selectedFolder,
   getMenuList,
 }) => {
-  const { projectId } = useParams();
   const queryClient = useQueryClient();
   const { control, handleSubmit, reset } = useForm();
 
@@ -40,6 +39,7 @@ const MicrofrontendLinkModal = ({
       value: "",
     });
   };
+  const company = store.getState().company;
 
   const onSubmit = (data) => {
     if (selectedFolder.type === "MICROFRONTEND") {
@@ -52,7 +52,7 @@ const MicrofrontendLinkModal = ({
   useEffect(() => {
     if (selectedFolder.type === "MICROFRONTEND")
       menuSettingsService
-        .getById(selectedFolder.id, projectId)
+        .getById(selectedFolder.id, company.projectId)
         .then((res) => {
           reset(res);
         })

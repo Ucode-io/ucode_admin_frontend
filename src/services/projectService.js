@@ -3,12 +3,13 @@ import request from "../utils/request";
 
 const projectService = {
   getList: (params) => request.get("/company-project", { params }),
+  getAllSetting: (params) => request.get(`/project/setting`, { params }),
   getByID: (params, projectId) => {
     return request.get(`/company-project/${projectId}`, {
       params,
     });
   },
-  update: (data) => request.put(`/company-project/${data}`, data),
+  update: (data) => request.put(`/company-project/${data.project_id}`, data),
   create: (data) => request.post(`/company-project`, data),
   delete: (id) => request.delete(`/company-project/${id}`),
 };
@@ -18,6 +19,19 @@ export const useProjectListQuery = ({ params = {}, queryParams } = {}) => {
     ["PROJECT", params],
     () => {
       return projectService.getList(params);
+    },
+    queryParams
+  );
+};
+
+export const useProjectsAllSettingQuery = ({
+  params = {},
+  queryParams,
+} = {}) => {
+  return useQuery(
+    ["ALL_SETTINGS", params],
+    () => {
+      return projectService.getAllSetting(params);
     },
     queryParams
   );

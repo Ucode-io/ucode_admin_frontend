@@ -19,6 +19,7 @@ import roleServiceV2, {
 } from "../../../services/roleServiceV2";
 import { useState } from "react";
 import RoleCreateModal from "./RoleFormPage";
+import styles from "../style.module.scss";
 
 const RolePage = () => {
   const { clientId } = useParams();
@@ -52,9 +53,9 @@ const RolePage = () => {
   };
 
   return (
-    <div>
-      <TableCard>
-        <CTable disablePagination removableHeight={140}>
+    <div className={styles.role}>
+      <TableCard type={"withoutPadding"}>
+        <CTable disablePagination removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>

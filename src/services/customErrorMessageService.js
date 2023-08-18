@@ -33,7 +33,6 @@ const customErrorMessageService = {
 };
 
 export const useCustomErrorListQuery = ({ params = {}, queryParams } = {}) => {
-  console.log("object", params);
   return useQuery(
     ["CUSTOM_ERROR_MESSAGE", params],
     () => {

@@ -1,6 +1,7 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import KeyIcon from "@mui/icons-material/Key";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
+import SmsIcon from "@mui/icons-material/Sms";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, MenuItem, Tooltip } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
@@ -87,7 +88,6 @@ const NewProfilePanel = ({
   const closeMenu = (e) => {
     e.stopPropagation();
     setSidebarAnchor(false);
-    setProfileAnchorEl(null);
   };
   const openMenu = (event) => {
     setProfileAnchorEl(event.currentTarget);
@@ -249,6 +249,10 @@ const NewProfilePanel = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const onClose = (e) => {
+    closeMenu(e);
+    if (selected) refreshTokenFunc();
+  };
 
   return (
     <div>
@@ -264,8 +268,7 @@ const NewProfilePanel = ({
         anchorEl={anchorProfileEl || sidebarAnchorEl}
         open={menuVisible}
         onClose={(e) => {
-          closeMenu(e);
-          // refreshTokenFunc();
+          onClose(e);
         }}
         classes={{
           list: styles.profilemenu,
@@ -424,6 +427,17 @@ const NewProfilePanel = ({
               text={"Sms Otp"}
               onClick={handleSmsNavigate}
             />
+            <ProfileItem
+              children={
+                <SmsIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Sms Otp"}
+              onClick={handleSmsNavigate}
+            />
           </div>
           <Divider />
 
@@ -549,6 +563,7 @@ const NewProfilePanel = ({
         closeEnvironmentList={closeEnvironmentList}
         environmentVisible={environmentVisible}
         environmentList={company.environments}
+        setSelected={setSelected}
         handleEnvNavigate={handleEnvNavigate}
       />
       {versionModalIsOpen && <VersionModal closeModal={closeVersionModal} />}

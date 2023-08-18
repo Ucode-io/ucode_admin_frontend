@@ -24,6 +24,9 @@ const Header = ({
         {backButtonLink && (
           <BackButton
             link={backButtonLink}
+            style={{
+              marginRight: "10px",
+            }}
             onClick={() => navigate(backButtonLink)}
           />
         )}

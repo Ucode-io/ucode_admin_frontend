@@ -181,6 +181,7 @@
             align-items: center;
             column-gap: 8px;
             color: #A8A8A8;
+
         }
 
         .icon_group {
@@ -333,6 +334,14 @@
                     display: flex;
                     align-items: center;
                     column-gap: 8px;
+
+                    p {
+                        max-width: 200px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        cursor: pointer;
+                    }
                 }
 
                 .icon_group {

@@ -30,21 +30,6 @@ import "./style.scss";
 import { useProjectGetByIdQuery } from "../../services/projectService";
 import MenuBox from "./Components/MenuBox";
 
-const admin = {
-  id: "12",
-  label: "Admin",
-  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
-  type: "FOLDER",
-  data: {
-    permission: {
-      read: true,
-      write: true,
-      delete: true,
-      update: true,
-    },
-  },
-};
-
 const LayoutSidebar = ({ appId }) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
@@ -60,7 +45,6 @@ const LayoutSidebar = ({ appId }) => {
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [menuList, setMenuList] = useState();
-  const [anchorEl, setAnchorEl] = useState(null);
   const [tableModal, setTableModalOpen] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
   const [webPageModal, setWebPageModalOpen] = useState(false);
@@ -73,6 +57,7 @@ const LayoutSidebar = ({ appId }) => {
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
   const [menu, setMenu] = useState({ event: "", type: "" });
   const openSidebarMenu = Boolean(menu?.event);
+  const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
 
   const handleOpenNotify = (event, type) => {
     setMenu({ event: event?.currentTarget, type: type });
@@ -108,9 +93,6 @@ const LayoutSidebar = ({ appId }) => {
     navigate(`/main/${appId}/chat`);
   };
 
-  const openMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
   const setTableModal = (element) => {
     setTableModalOpen(true);
     setSelectedFolder(element);
@@ -370,14 +352,20 @@ const LayoutSidebar = ({ appId }) => {
           openFolderCreateModal={openFolderCreateModal}
           children={
             <NewProfilePanel
-              anchorEl={anchorEl}
-              setAnchorEl={setAnchorEl}
+              sidebarAnchorEl={sidebarAnchorEl}
+              setSidebarAnchor={setSidebarAnchor}
               handleMenuSettingModalOpen={handleMenuSettingModalOpen}
             />
           }
+          onClick={(e) => {
+            e.stopPropagation();
+            setSidebarAnchor(true);
+          }}
           style={{
             background: menuStyle?.background || "#fff",
             color: menuStyle?.text || "#000",
+            height: "40px",
+            cursor: "pointer",
           }}
           sidebarIsOpen={sidebarIsOpen}
         />

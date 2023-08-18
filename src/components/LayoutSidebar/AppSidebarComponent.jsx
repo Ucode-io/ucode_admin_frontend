@@ -12,7 +12,17 @@ import { menuActions } from "../../store/menuItem/menuItem.slice";
 import MenuIcon from "./MenuIcon";
 import { useTranslation } from "react-i18next";
 
-const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpen, handleOpenNotify, setSelectedApp, selectedApp, menuTemplate }) => {
+const AppSidebar = ({
+  index,
+  element,
+  sidebarIsOpen,
+  setElement,
+  setSubMenuIsOpen,
+  handleOpenNotify,
+  setSelectedApp,
+  selectedApp,
+  menuTemplate,
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
@@ -58,10 +68,8 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
   useEffect(() => {
     setElement(element);
   }, [element]);
-  
-  const defaultLanguage = i18n.language;
 
-  console.log('element', element)
+  const defaultLanguage = i18n.language;
 
   return (
     <Draggable key={index}>
@@ -74,7 +82,10 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
           }}
           className="parent-folder column-drag-handle"
           style={{
-            background: selectedApp?.id === element?.id ? menuStyle?.active_background || "#007AFF" : menuStyle?.background,
+            background:
+              selectedApp?.id === element?.id
+                ? menuStyle?.active_background || "#007AFF"
+                : menuStyle?.background,
             color: selectedApp?.id === element.id ? "#fff" : "#A8A8A8",
             borderTop: favourite && "1px solid #F0F0F0",
             borderBottom: favourite && "1px solid #F0F0F0",
@@ -82,18 +93,40 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
           }}
         >
           <IconGenerator
-            icon={element?.icon || element?.data?.microfrontend?.icon || element?.data?.webpage?.icon || "folder.svg"}
-            size={menuTemplate?.icon_size === "SMALL" ? 10 : menuTemplate?.icon_size === "MEDIUM" ? 15 : 18 || 18}
+            icon={
+              element?.icon ||
+              element?.data?.microfrontend?.icon ||
+              element?.data?.webpage?.icon ||
+              "folder.svg"
+            }
+            size={
+              menuTemplate?.icon_size === "SMALL"
+                ? 10
+                : menuTemplate?.icon_size === "MEDIUM"
+                ? 15
+                : 18 || 18
+            }
             className="folder-icon"
             style={{
-              color: selectedApp?.id === element.id ? menuStyle?.active_text : menuStyle?.text || "",
+              color:
+                selectedApp?.id === element.id
+                  ? menuStyle?.active_text
+                  : menuStyle?.text || "",
             }}
           />
           {sidebarIsOpen && (
             <ListItemText
-              primary={element?.attributes?.[`label_${defaultLanguage}`] || element?.label || element?.data?.microfrontend?.name || element?.data?.webpage?.title}
+              primary={
+                element?.attributes?.[`label_${defaultLanguage}`] ||
+                element?.label ||
+                element?.data?.microfrontend?.name ||
+                element?.data?.webpage?.title
+              }
               style={{
-                color: selectedApp?.id === element.id ? menuStyle?.active_text : menuStyle?.text || "",
+                color:
+                  selectedApp?.id === element.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
               }}
             />
           )}
@@ -107,7 +140,10 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
                       handleOpenNotify(e, "FOLDER");
                     }}
                     style={{
-                      color: selectedApp?.id === element.id ? menuStyle?.active_text : menuStyle?.text || "",
+                      color:
+                        selectedApp?.id === element.id
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "",
                     }}
                   />
                 </Box>
@@ -123,7 +159,10 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
                     <AddIcon
                       size={13}
                       style={{
-                        color: selectedApp?.id === element.id ? menuStyle?.active_text : menuStyle?.text || "",
+                        color:
+                          selectedApp?.id === element.id
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
                       }}
                     />
                   </Box>
@@ -142,7 +181,10 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
                 setElement(element);
               }}
               style={{
-                color: selectedApp?.id === element.id ? menuStyle?.active_text : menuStyle?.text || "",
+                color:
+                  selectedApp?.id === element.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
               }}
             />
           )}
@@ -155,7 +197,10 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
                 setElement(element);
               }}
               style={{
-                color: selectedApp?.id === element.id ? menuStyle?.active_text : menuStyle?.text || "",
+                color:
+                  selectedApp?.id === element.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
               }}
             />
           )}
@@ -168,14 +213,20 @@ const AppSidebar = ({ index, element, sidebarIsOpen, setElement, setSubMenuIsOpe
                 setElement(element);
               }}
               style={{
-                color: selectedApp?.id === element.id ? menuStyle?.active_text : menuStyle?.text || "",
+                color:
+                  selectedApp?.id === element.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
               }}
             />
           )}
           {sidebarIsOpen && element?.type === "FOLDER" ? (
             <KeyboardArrowRightIcon
               style={{
-                color: selectedApp?.id === element.id ? menuStyle?.active_text : menuStyle?.text || "",
+                color:
+                  selectedApp?.id === element.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
                 transform: selectedApp?.id === element.id && "rotate(90deg)",
                 transition: "0.3s",
               }}

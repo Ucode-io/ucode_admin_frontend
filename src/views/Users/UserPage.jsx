@@ -55,7 +55,12 @@ const ClientUserPage = () => {
     deleteProject(id);
   };
   return (
-    <div>
+    <div
+      style={{
+        background: "#fff",
+        height: "100%",
+      }}
+    >
       <HeaderSettings
         title={"Users"}
         disabledMenu={false}
@@ -64,7 +69,7 @@ const ClientUserPage = () => {
       />
 
       <TableCard>
-        <CTable disablePagination removableHeight={140}>
+        <CTable disablePagination removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>

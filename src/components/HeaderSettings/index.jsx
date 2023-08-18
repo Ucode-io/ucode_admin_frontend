@@ -18,6 +18,7 @@ const HeaderSettings = ({
   sticky,
   disabledMenu = true,
   line = true,
+  extraButtons,
   ...props
 }) => {
   const navigate = useNavigate();
@@ -48,6 +49,8 @@ const HeaderSettings = ({
 
         <div>{children}</div>
       </div>
+
+      {extraButtons && <div className={styles.rightSide}>{extraButtons}</div>}
 
       {disabledMenu && (
         <div className={styles.rightSide}>

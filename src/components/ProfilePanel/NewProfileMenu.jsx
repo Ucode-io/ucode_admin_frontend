@@ -79,6 +79,10 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const handleRedirectNavigate = () => {
     navigate(`/main/${appId}/redirects`);
   };
+  const handleSmsNavigate = () => {
+    navigate(`/main/${appId}/sms-otp`);
+  };
+
   const closeMenu = () => {
     setProfileAnchorEl(null);
   };

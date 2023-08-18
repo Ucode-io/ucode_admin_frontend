@@ -67,8 +67,8 @@ const Permissions = ({
         selectedIndex={selectedTab}
         onSelect={setSelectedTab}
       >
-        <div style={{ padding: "20px" }}>
-          <Card style={{ padding: "10px" }}>
+        <div>
+          <Card style={{ boxShadow: "none" }}>
             <TabList>
               <Tab>Table</Tab>
               <Tab>Menu</Tab>
@@ -76,8 +76,8 @@ const Permissions = ({
             </TabList>
 
             <TabPanel>
-              <Box py={4}>
-                <TableCard withBorder borderRadius="md">
+              <Box py={1}>
+                <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>
@@ -211,8 +211,8 @@ const Permissions = ({
               </Box>
             </TabPanel>
             <TabPanel>
-              <Box py={4}>
-                <TableCard withBorder borderRadius="md">
+              <Box py={1}>
+                <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>
@@ -256,8 +256,8 @@ const Permissions = ({
               </Box>
             </TabPanel>
             <TabPanel>
-              <Box py={4}>
-                <TableCard withBorder borderRadius="md">
+              <Box py={1}>
+                <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>

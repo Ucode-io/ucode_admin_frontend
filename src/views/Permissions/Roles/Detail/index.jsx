@@ -85,6 +85,7 @@ const RoleDetail = () => {
     <Box flex={1}>
       <Header
         title="Role"
+        backButtonLink={-1}
         extra={
           <Button
             onClick={handleSubmit(onSubmit)}
@@ -96,23 +97,19 @@ const RoleDetail = () => {
         }
       />
 
-      <div style={{ padding: "20px" }}>
-        <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
-          <div>
-            <FRow label="Name">
-              <HFTextField control={control} name="data.name" fullWidth />
-            </FRow>
-          </div>
-        </FormCard>
-        <FormCard title="Разрешения" icon="address-card.svg" maxWidth="100%">
-          <Permissions
-            control={control}
-            setChangedData={setChangedData}
-            changedData={changedData}
-            setValue={setValue}
-            watch={watch}
-          />
-        </FormCard>
+      <div style={{ padding: "10px", background: "#fff" }}>
+        <div>
+          <FRow label="Name">
+            <HFTextField control={control} name="data.name" fullWidth />
+          </FRow>
+        </div>
+        <Permissions
+          control={control}
+          setChangedData={setChangedData}
+          changedData={changedData}
+          setValue={setValue}
+          watch={watch}
+        />
       </div>
     </Box>
   );

@@ -18,12 +18,12 @@ import PivotTable from "./PivotTable";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import useBooleanState from "../../../hooks/useBooleanState";
 import ClickActionPages from "./PivotTable/ClickActionPages";
-import ClickActionModalContent from "./PivotTable/ClickActionModalContent";
 import styles from "./PivotTable/styles.module.scss";
 import PivotTemplatesPopover from "./PivotTemplate/PivotTemplatesPopover";
 import PivotTemplateModalContent from "./PivotTemplate/PivotTemplateModalContent";
 import useDownloader from "../../../hooks/useDownloader";
 import pivotService from "../../../services/pivotService";
+import ClickActionModalContent from "./PivotTable/ClickActionModalContent";
 
 export default function PivotTableView() {
   const dispatch = useDispatch();
@@ -31,7 +31,8 @@ export default function PivotTableView() {
   const sformirovatBtnRef = useRef(null);
   const { download } = useDownloader();
 
-  const [clActModalVisible, showClActModal, hideClActModal] = useBooleanState(false);
+  const [clActModalVisible, showClActModal, hideClActModal] =
+    useBooleanState(false);
   const [computedFields, setComputedFields] = useState({
     cols: [],
     rows: [],
@@ -45,7 +46,10 @@ export default function PivotTableView() {
 
   const [isTemplateChanged, setIsTemplateChanged] = useState(false);
   const [modalParams, setModalParams] = useState({ key: "", isOpen: false });
-  const [dateRange, setDateRange] = useState({ $gte: addMonths(new Date(), -1), $lt: new Date() });
+  const [dateRange, setDateRange] = useState({
+    $gte: addMonths(new Date(), -1),
+    $lt: new Date(),
+  });
   const [isCollapsing, setIsCollapsing] = useState(false);
   const [tableSlugData, setTableSlugData] = useState(false);
   const [columnsData, setColumnsData] = useState([]);
@@ -73,12 +77,18 @@ export default function PivotTableView() {
     hideModal(modalParams.key);
   };
 
-  const excludeEmptyItems = (arr, key = "table_field_settings", recursiveFieldName) => {
+  const excludeEmptyItems = (
+    arr,
+    key = "table_field_settings",
+    recursiveFieldName
+  ) => {
     if (!recursiveFieldName) {
       return arr
         .map((row) => ({
           ...row,
-          table_field_settings: row.table_field_settings.filter((i) => i.label && i.checked),
+          table_field_settings: row.table_field_settings.filter(
+            (i) => i.label && i.checked
+          ),
         }))
         .filter((row) => row.rowsRelationRow || row.table_field_settings.length)
         .map((row, idx) => ({
@@ -87,7 +97,10 @@ export default function PivotTableView() {
         }));
     }
     return arr
-      .map((i) => ({ ...i, [key]: excludeEmptyItems(i[key], recursiveFieldName) }))
+      .map((i) => ({
+        ...i,
+        [key]: excludeEmptyItems(i[key], recursiveFieldName),
+      }))
       .filter((i) => i[key].length);
   };
 
@@ -109,7 +122,9 @@ export default function PivotTableView() {
       .upsertPivotTemplate({
         ...values,
 
-        from_date: dateRange ? format(new Date(dateRange.$gte), "yyyy-MM-dd") : "",
+        from_date: dateRange
+          ? format(new Date(dateRange.$gte), "yyyy-MM-dd")
+          : "",
         to_date: dateRange ? format(new Date(dateRange.$lt), "yyyy-MM-dd") : "",
         pivot_table_slug: values.template_name,
         id: modalParams.isOpen ? activeClickActionTabId : values.id,
@@ -121,10 +136,16 @@ export default function PivotTableView() {
             ]?.filter((i) => !i.rowsRelationRow)
           : undefined,
         columns: values.columns ? excludeEmptyItems(values.columns) : undefined,
-        values: values.values ? excludeEmptyItems(values.values, "objects", "table_field_settings") : undefined,
+        values: values.values
+          ? excludeEmptyItems(values.values, "objects", "table_field_settings")
+          : undefined,
         rows_relation:
           values?.rows_relation?.length > 0
-            ? excludeEmptyItems(values.rows_relation, "objects", "table_field_settings")?.map((i, idx) => ({
+            ? excludeEmptyItems(
+                values.rows_relation,
+                "objects",
+                "table_field_settings"
+              )?.map((i, idx) => ({
                 ...i,
                 order_number: findRowRelationOrder(values),
                 // order_number: idx + 1 + excludeEmptyItems(values.rows)?.length
@@ -154,7 +175,9 @@ export default function PivotTableView() {
       .savePivotTemplate({
         pivot_table_slug: values.template_name,
         app_id: appId,
-        from_date: dateRange ? format(new Date(dateRange.$gte), "yyyy-MM-dd") : "",
+        from_date: dateRange
+          ? format(new Date(dateRange.$gte), "yyyy-MM-dd")
+          : "",
         to_date: dateRange ? format(new Date(dateRange.$lt), "yyyy-MM-dd") : "",
         clone_id: activeClickActionTabId,
         status: "SAVED",
@@ -178,14 +201,20 @@ export default function PivotTableView() {
 
   const pivotTemplateField = useQuery(
     ["GET_PIVOT_TEMPLATE_BY_ID", activeClickActionTabId],
-    () => pivotService.getByIdPivotTemplateSetting({ id: activeClickActionTabId, app_id: appId }),
+    () =>
+      pivotService.getByIdPivotTemplateSetting({
+        id: activeClickActionTabId,
+        app_id: appId,
+      }),
     {
       enabled: false,
       onSuccess: (res) => {
         form.setValue("report_setting_id", res.report_setting_id);
         if (res.from_date)
           setDateRange({
-            $gte: res.from_date ? new Date(res.from_date) : addMonths(new Date(), -1),
+            $gte: res.from_date
+              ? new Date(res.from_date)
+              : addMonths(new Date(), -1),
             $lt: res.to_date ? new Date(res.to_date) : new Date(),
           });
         setComputedFields({
@@ -193,7 +222,11 @@ export default function PivotTableView() {
           cols: res.columns ?? [],
           calc: res.values ?? [],
           rows_relation: res.rows_relation ?? [],
-          defaults: res.defaults?.reduce((acc, cur) => [...acc, ...cur.table_field_settings], []) ?? [],
+          defaults:
+            res.defaults?.reduce(
+              (acc, cur) => [...acc, ...cur.table_field_settings],
+              []
+            ) ?? [],
         });
       },
     }
@@ -201,17 +234,33 @@ export default function PivotTableView() {
 
   const pivotTemplates = useQuery(
     ["GET_TEMPLATES_LIST_SAVED"],
-    () => pivotService.getListPivotTemplateSetting({ app_id: appId, status: "SAVED" }),
+    () =>
+      pivotService.getListPivotTemplateSetting({
+        app_id: appId,
+        status: "SAVED",
+      }),
     {
-      select: (res) => res?.pivot_templates.map((i) => ({ label: i.pivot_table_slug, value: i.id })) ?? [],
+      select: (res) =>
+        res?.pivot_templates.map((i) => ({
+          label: i.pivot_table_slug,
+          value: i.id,
+        })) ?? [],
     }
   );
 
   const pivotTemplatesHistory = useQuery(
     ["GET_TEMPLATES_LIST_HISTORY"],
-    () => pivotService.getListPivotTemplateSetting({ app_id: appId, status: "HISTORY" }),
+    () =>
+      pivotService.getListPivotTemplateSetting({
+        app_id: appId,
+        status: "HISTORY",
+      }),
     {
-      select: (res) => (res.pivot_templates ?? []).map((i) => ({ label: i.pivot_table_slug, value: i.id })) ?? [],
+      select: (res) =>
+        (res.pivot_templates ?? []).map((i) => ({
+          label: i.pivot_table_slug,
+          value: i.id,
+        })) ?? [],
       onSuccess: (data) => {
         setActiveClickActionTabId(data[0].value);
         setTimeout(() => {
@@ -243,11 +292,20 @@ export default function PivotTableView() {
         {
           data: {
             match_tables: expandedRows[activeClickActionTabId]?.length
-              ? makeExpandRowParam(JSON.parse(JSON.stringify(expandedRows[activeClickActionTabId].at(-1))))
+              ? makeExpandRowParam(
+                  JSON.parse(
+                    JSON.stringify(expandedRows[activeClickActionTabId].at(-1))
+                  )
+                )
               : undefined,
-            order_number: expandedRows[activeClickActionTabId]?.at(-1)?.order_number,
-            from_date: dateRange ? format(new Date(dateRange.$gte), "yyyy-MM-dd") : "",
-            to_date: dateRange ? format(new Date(dateRange.$lt), "yyyy-MM-dd") : "",
+            order_number:
+              expandedRows[activeClickActionTabId]?.at(-1)?.order_number,
+            from_date: dateRange
+              ? format(new Date(dateRange.$gte), "yyyy-MM-dd")
+              : "",
+            to_date: dateRange
+              ? format(new Date(dateRange.$lt), "yyyy-MM-dd")
+              : "",
           },
         },
         {
@@ -267,10 +325,18 @@ export default function PivotTableView() {
           totalValues: res.data.data?.total_values ?? [],
         };
       },
-      onSuccess: ({ res, columnsData, columnValuesData, tableSlug, totalValues }) => {
+      onSuccess: ({
+        res,
+        columnsData,
+        columnValuesData,
+        tableSlug,
+        totalValues,
+      }) => {
         const curExpRow = expandedRows[activeClickActionTabId];
         const recalculateData = (arr, expandRow, order) => {
-          const foundRow = arr.find((row) => expandRow && row.guid === expandRow.real_value);
+          const foundRow = arr.find(
+            (row) => expandRow && row.guid === expandRow.real_value
+          );
           if (order === 1 && !foundRow?.children?.length) {
             return arr.map((i) =>
               i.guid === expandRow.real_value
@@ -283,7 +349,14 @@ export default function PivotTableView() {
           }
           return arr?.map((i) =>
             expandRow && i.guid === expandRow.real_value
-              ? { ...i, children: recalculateData(foundRow?.children, expandRow.child, order - 1) }
+              ? {
+                  ...i,
+                  children: recalculateData(
+                    foundRow?.children,
+                    expandRow.child,
+                    order - 1
+                  ),
+                }
               : i
           );
         };
@@ -328,7 +401,11 @@ export default function PivotTableView() {
 
   const calculateParentValues = (row) => {
     if (row.parent_ids?.length) {
-      return row.parent_ids.reduce((acc, cur, idx) => (acc + idx === row.parent_ids.length - 1 ? "" : "#" + cur), "");
+      return row.parent_ids.reduce(
+        (acc, cur, idx) =>
+          acc + idx === row.parent_ids.length - 1 ? "" : "#" + cur,
+        ""
+      );
     }
     return "";
   };
@@ -340,7 +417,9 @@ export default function PivotTableView() {
   const handleExpandRow = (row, fieldObjArg, isAfterRelationRow) => {
     const fieldObj = {
       ...fieldObjArg,
-      order_number: isAfterRelationRow ? fieldObjArg.order_number + 1 : fieldObjArg.order_number,
+      order_number: isAfterRelationRow
+        ? fieldObjArg.order_number + 1
+        : fieldObjArg.order_number,
     };
 
     const sample = {
@@ -357,21 +436,25 @@ export default function PivotTableView() {
     // console.log("sample => ", sample);
 
     const repeated = {
-      relation_order_number: row.slug_type === "RELATION" ? fieldObj.order_number : null,
+      relation_order_number:
+        row.slug_type === "RELATION" ? fieldObj.order_number : null,
       is_relaiton_row: row.slug_type === "RELATION",
     };
 
     // !!! MAKE IT RECURSIVE !!!
     const addExpandRow = (arr) => {
       if (sample.order_number === 2) {
-        const parent = arr.find((i) => i.combined_value === sample.parent_value_combined);
+        const parent = arr.find(
+          (i) => i.combined_value === sample.parent_value_combined
+        );
         return [
           ...arr,
           {
             ...parent,
 
             ...repeated,
-            order_number: row.slug_type === "RELATION" ? 1 : sample.order_number,
+            order_number:
+              row.slug_type === "RELATION" ? 1 : sample.order_number,
             child: {
               ...sample,
               value: `${parent.value}#${sample.value}`,
@@ -381,13 +464,16 @@ export default function PivotTableView() {
           },
         ];
       } else if (sample.order_number === 3) {
-        const parent = arr.find((i) => i?.child?.combined_value === sample.parent_value_combined);
+        const parent = arr.find(
+          (i) => i?.child?.combined_value === sample.parent_value_combined
+        );
         return [
           ...arr,
           {
             ...parent,
             ...repeated,
-            order_number: row.slug_type === "RELATION" ? 2 : sample.order_number,
+            order_number:
+              row.slug_type === "RELATION" ? 2 : sample.order_number,
             child: {
               ...parent.child,
               child: {
@@ -400,13 +486,17 @@ export default function PivotTableView() {
           },
         ];
       } else if (sample.order_number === 4) {
-        const parent = arr.find((i) => i?.child?.child?.combined_value === sample.parent_value_combined);
+        const parent = arr.find(
+          (i) =>
+            i?.child?.child?.combined_value === sample.parent_value_combined
+        );
         return [
           ...arr,
           {
             ...parent,
             ...repeated,
-            order_number: row.slug_type === "RELATION" ? 3 : sample.order_number,
+            order_number:
+              row.slug_type === "RELATION" ? 3 : sample.order_number,
             child: {
               ...parent.child,
               child: {
@@ -415,20 +505,26 @@ export default function PivotTableView() {
                   ...sample,
                   value: `${sample.parent_value}#${sample.value}`,
                   combined_value: `${sample.parent_value_combined}#${sample.value}`,
-                  row_slug_type: row.slug_type === "RELATION" ? "RELATION" : null,
+                  row_slug_type:
+                    row.slug_type === "RELATION" ? "RELATION" : null,
                 },
               },
             },
           },
         ];
       } else if (sample.order_number === 5) {
-        const parent = arr.find((i) => i?.child?.child?.child?.combined_value === sample.parent_value_combined);
+        const parent = arr.find(
+          (i) =>
+            i?.child?.child?.child?.combined_value ===
+            sample.parent_value_combined
+        );
         return [
           ...arr,
           {
             ...parent,
             ...repeated,
-            order_number: row.slug_type === "RELATION" ? 4 : sample.order_number,
+            order_number:
+              row.slug_type === "RELATION" ? 4 : sample.order_number,
             child: {
               ...parent.child,
               child: {
@@ -439,7 +535,8 @@ export default function PivotTableView() {
                     ...sample,
                     value: `${sample.parent_value}#${sample.value}`,
                     combined_value: `${sample.parent_value_combined}#${sample.value}`,
-                    row_slug_type: row.slug_type === "RELATION" ? "RELATION" : null,
+                    row_slug_type:
+                      row.slug_type === "RELATION" ? "RELATION" : null,
                   },
                 },
               },
@@ -464,15 +561,26 @@ export default function PivotTableView() {
 
       const collapseRows = (arr, expandRow, order) => {
         if (order === 1 || !row?.children) {
-          return arr.map((i) => (i.guid === expandRow.real_value ? { ...i, children: [] } : i));
+          return arr.map((i) =>
+            i.guid === expandRow.real_value ? { ...i, children: [] } : i
+          );
         }
 
         return arr.map((i) =>
-          i.guid === expandRow.real_value ? { ...i, children: collapseRows(i.children, expandRow.child, order - 1) } : i
+          i.guid === expandRow.real_value
+            ? {
+                ...i,
+                children: collapseRows(i.children, expandRow.child, order - 1),
+              }
+            : i
         );
       };
 
-      if (p[activeClickActionTabId]?.some((i) => getValueRecursively(i, fieldObj.order_number) === condition)) {
+      if (
+        p[activeClickActionTabId]?.some(
+          (i) => getValueRecursively(i, fieldObj.order_number) === condition
+        )
+      ) {
         const foundExpandRow = expandedRows[activeClickActionTabId]?.find(
           (i) => getValueRecursively(i, fieldObj.order_number) === condition
         );
@@ -482,7 +590,9 @@ export default function PivotTableView() {
           collapseRows(
             p,
             foundExpandRow,
-            foundExpandRow.is_relaiton_row ? foundExpandRow.relation_order_number : foundExpandRow.order_number
+            foundExpandRow.is_relaiton_row
+              ? foundExpandRow.relation_order_number
+              : foundExpandRow.order_number
           )
         );
         return {
@@ -498,7 +608,10 @@ export default function PivotTableView() {
         // console.log("CHECK ADD EXPAND ROW => ", p);
         // console.log("ACTIVE CLICK ACTION TAB ID => ", activeClickActionTabId);
 
-        return { ...p, [activeClickActionTabId]: addExpandRow(p[activeClickActionTabId]) };
+        return {
+          ...p,
+          [activeClickActionTabId]: addExpandRow(p[activeClickActionTabId]),
+        };
       }
     });
   };
@@ -535,7 +648,8 @@ export default function PivotTableView() {
   };
 
   const isDefaultTemplate = useCallback(
-    (value) => pivotTemplates.data?.find((i) => i.value === value)?.label === "DEFAULT",
+    (value) =>
+      pivotTemplates.data?.find((i) => i.value === value)?.label === "DEFAULT",
     [pivotTemplates]
   );
 
@@ -544,16 +658,18 @@ export default function PivotTableView() {
     setComputedData([]);
     setExpandedRows({ [activeClickActionTabId]: [] });
     setTimeout(() => {
-      pivotService.getByIdPivotTemplateSetting({ id, app_id: appId }).then((res) => {
-        if (!isDefaultTemplate(activeClickActionTabId))
-          upsertPivotTemplate({
-            ...(values ?? res),
-            instance_id: id,
-            template_name: res?.pivot_table_slug,
-            id: undefined,
-            status: "HISTORY",
-          });
-      });
+      pivotService
+        .getByIdPivotTemplateSetting({ id, app_id: appId })
+        .then((res) => {
+          if (!isDefaultTemplate(activeClickActionTabId))
+            upsertPivotTemplate({
+              ...(values ?? res),
+              instance_id: id,
+              template_name: res?.pivot_table_slug,
+              id: undefined,
+              status: "HISTORY",
+            });
+        });
     }, 0);
   };
 
@@ -567,7 +683,9 @@ export default function PivotTableView() {
     form.setValue(
       "template_name",
       modalParams.key === "edit"
-        ? pivotTemplatesHistory.data?.find((i) => i.value === activeClickActionTabId)?.label
+        ? pivotTemplatesHistory.data?.find(
+            (i) => i.value === activeClickActionTabId
+          )?.label
         : ""
     );
   }, [modalParams]);
@@ -580,7 +698,10 @@ export default function PivotTableView() {
     {
       enabled: false,
       onSuccess: (res) => {
-        download({ link: "https://" + res?.link, fileName: "pivot_table_excel" });
+        download({
+          link: "https://" + res?.link,
+          fileName: "pivot_table_excel",
+        });
       },
     }
   );
@@ -611,15 +732,27 @@ export default function PivotTableView() {
           <PlayArrowIcon />
           Сформировать
         </SecondaryButton>
-        <SecondaryButton disabled={!activeClickActionTabId} size="small" onClick={() => showModal("add")}>
+        <SecondaryButton
+          disabled={!activeClickActionTabId}
+          size="small"
+          onClick={() => showModal("add")}
+        >
           <AddIcon />
           Добавить
         </SecondaryButton>
-        <SecondaryButton disabled={!activeClickActionTabId} size="small" onClick={() => showModal("edit")}>
+        <SecondaryButton
+          disabled={!activeClickActionTabId}
+          size="small"
+          onClick={() => showModal("edit")}
+        >
           <Edit />
           Изменить
         </SecondaryButton>
-        <SecondaryButton disabled={!activeClickActionTabId} size="small" onClick={() => linkRefetch()}>
+        <SecondaryButton
+          disabled={!activeClickActionTabId}
+          size="small"
+          onClick={() => linkRefetch()}
+        >
           <ArrowCircleDownIcon />
           Скачать
         </SecondaryButton>

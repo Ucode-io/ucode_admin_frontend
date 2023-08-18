@@ -56,11 +56,12 @@ const ClientUserPage = () => {
   };
   return (
     <div>
-      <HeaderSettings title={"Users"} />
-
-      <FiltersBlock>
-        <div className="p-1">{/* <SearchInput /> */}</div>
-      </FiltersBlock>
+      <HeaderSettings
+        title={"Users"}
+        disabledMenu={false}
+        line={false}
+        backButtonLink={-1}
+      />
 
       <TableCard>
         <CTable disablePagination removableHeight={140}>

@@ -38,32 +38,26 @@ const PermissionDetail = () => {
         selectedIndex={selectedTab}
         onSelect={setSelectedTab}
       >
-        <div style={{ padding: "20px" }}>
-          <Card style={{ padding: "10px" }}>
-            <TabList>
-              <Tab>Инфо</Tab>
-              <Tab>Роли</Tab>
-            </TabList>
+        <Card style={{ padding: "10px" }}>
+          <TabList>
+            <Tab>Инфо</Tab>
+            <Tab>Роли</Tab>
+          </TabList>
 
-            <TabPanel>
-              <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
-                <div>
-                  <FRow label="Name">
-                    <HFTextField control={control} name="name" fullWidth />
-                  </FRow>
-                </div>
-              </FormCard>
-              <FormCard title="Связи" icon="address-card.svg" maxWidth="100%">
-                <div>
-                  <ConnectionPage />
-                </div>
-              </FormCard>
-            </TabPanel>
-            <TabPanel>
-              <RolePage />
-            </TabPanel>
-          </Card>
-        </div>
+          <TabPanel>
+            <div>
+              <FRow label="Name">
+                <HFTextField control={control} name="name" fullWidth />
+              </FRow>
+            </div>
+            <div>
+              <ConnectionPage />
+            </div>
+          </TabPanel>
+          <TabPanel>
+            <RolePage />
+          </TabPanel>
+        </Card>
       </Tabs>
     </Box>
   );

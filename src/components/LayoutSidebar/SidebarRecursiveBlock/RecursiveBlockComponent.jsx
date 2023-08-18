@@ -29,7 +29,7 @@ import Users from "../Components/Users";
 import DeleteIcon from "../DeleteIcon";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
-import { folderIds } from "./mock/folders";
+import { analyticItems, folderIds } from "./mock/folders";
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -66,6 +66,12 @@ const RecursiveBlock = ({
   const permissionButton =
     element?.id === analyticItems.pivot_id ||
     element?.id === analyticItems.report_setting
+
+  const buttonPermission =
+    element?.data?.permission?.read ||
+    defaultAdmin ||
+    element?.id === analyticItems.pivot_id ||
+    element?.id === analyticItems.report_setting;
 
   const activeStyle = {
     backgroundColor:
@@ -135,8 +141,6 @@ const RecursiveBlock = ({
     },
   });
 
-  console.log("element", element);
-
   const clickHandler = (e) => {
     dispatch(menuActions.setMenuItem(element));
     e.stopPropagation();
@@ -177,7 +181,7 @@ const RecursiveBlock = ({
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        {element?.data?.permission?.read || defaultAdmin ? (
+        {buttonPermission ? (
           <Button
             key={element.id}
             style={activeStyle}
@@ -286,7 +290,9 @@ const RecursiveBlock = ({
                 </Tooltip>
                 <Tooltip title="Create folder" placement="top">
                   <Box className="extra_icon">
-                    {element?.data?.permission?.write && (
+                    {element?.data?.permission?.write ||
+                    element?.id === analyticItems.pivot_id ||
+                    element?.id === analyticItems.report_setting ? (
                       <AddIcon
                         size={13}
                         onClick={(e) => {
@@ -302,7 +308,7 @@ const RecursiveBlock = ({
                               : menuStyle?.text || "",
                         }}
                       />
-                    )}
+                    ) : null}
                   </Box>
                 </Tooltip>
                 {childBlockVisible ? (

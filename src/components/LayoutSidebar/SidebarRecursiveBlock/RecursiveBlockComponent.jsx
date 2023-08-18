@@ -93,7 +93,7 @@ const RecursiveBlock = ({
       to_date: element?.data?.pivot?.to_date,
       instance_id: element?.data?.pivot?.id,
       template_name: element?.data?.pivot?.pivot_table_slug,
-      id: element?.data?.pivot?.id,
+      id: undefined,
       status: "HISTORY",
     };
     pivotService.upsertPivotTemplate(computedData).then((res) => {

@@ -280,7 +280,9 @@ const RecursiveBlock = ({
                 </Tooltip>
                 <Tooltip title="Create folder" placement="top">
                   <Box className="extra_icon">
-                    {element?.data?.permission?.write && (
+                    {element?.data?.permission?.write ||
+                    element?.id === analyticItems.pivot_id ||
+                    element?.id === analyticItems.report_setting ? (
                       <AddIcon
                         size={13}
                         onClick={(e) => {
@@ -296,7 +298,7 @@ const RecursiveBlock = ({
                               : menuStyle?.text || "",
                         }}
                       />
-                    )}
+                    ) : null}
                   </Box>
                 </Tooltip>
                 {childBlockVisible ? (

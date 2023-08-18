@@ -17,7 +17,7 @@ const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTabl
   const [isShow, setIsShow] = useState(true);
   const projectId = useSelector((state) => state.auth.projectId);
   const [activeLang, setActiveLang] = useState();
-
+console.log('firstprojectId', projectId)
   const fieldsList = useMemo(() => {
     const fields = [];
 
@@ -31,8 +31,11 @@ const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTabl
     return fields;
   }, [relation]);
 
+  const params = {
+    
+  }
   const { data: projectInfo } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
-    return projectService.getById(projectId);
+    return projectService.getByID(params, projectId);
   });
 
   useEffect(() => {
@@ -59,7 +62,7 @@ const MainInfo = ({ computedSections, control, loader, setFormValue, relatedTabl
           )}
 
           {computedSections.map((section) => (
-            <NewFormCard key={section.id} title={section?.attributes?.[`label_${i18n.language}`] ?? section.label} className={styles.formCard} icon={section.icon}>
+            <NewFormCard key={section.id} title={section?.attributes?.[`label_${activeLang}`] ?? section.label} className={styles.formCard} icon={section.icon}>
               <div className={styles.newformColumn}>
                 {section.fields?.map((field) => (
                   <Box style={{ display: "flex", alignItems: "flex-start" }}>

@@ -59,6 +59,13 @@ const RecursiveBlock = ({
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
   const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
+   const analyticItems = {
+    pivot_id: "c57eedc3-a954-4262-a0af-376c65b5a274",
+    report_setting: "c57eedc3-a954-4262-a0af-376c65b5a276",
+  };
+  const permissionButton =
+    element?.id === analyticItems.pivot_id ||
+    element?.id === analyticItems.report_setting
 
   const activeStyle = {
     backgroundColor:
@@ -226,9 +233,12 @@ const RecursiveBlock = ({
                     />
                   </Box>
                 </Tooltip> */}
+                {
+
+                }
                 <Tooltip title="Create report settings" placement="top">
                   <Box className="extra_icon">
-                    {element?.data?.permission?.write && (
+                    {element?.data?.permission?.write ||permissionButton ? (
                       <AddIcon
                         size={13}
                         onClick={(e) => {
@@ -244,7 +254,7 @@ const RecursiveBlock = ({
                               : menuStyle?.text || "",
                         }}
                       />
-                    )}
+                    ) : null}
                   </Box>
                 </Tooltip>
                 {childBlockVisible ? (

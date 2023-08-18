@@ -331,58 +331,64 @@ const NewProfilePanel = ({
           </div>
           <Divider />
           <div className={styles.block}>
-            <ProfileItem
-              children={
-                <ResourceList
-                  item={company.projectItem?.title || "No project"}
-                  className={styles.projectavatar}
-                  colorItem={company.projectItem}
-                  icon={
-                    <LayersIcon
-                      style={{
-                        color: "#747474",
-                      }}
-                    />
-                  }
-                />
-              }
-              onClick={openProjectList}
-            />
-            <ProfileItem
-              children={
-                <ResourceList
-                  item={company.environmentItem?.name || "No environment"}
-                  className={styles.environmentavatar}
-                  colorItem={company.environmentItem}
-                  icon={
-                    <LocalOfferIcon
-                      style={{
-                        color: "#747474",
-                      }}
-                    />
-                  }
-                />
-              }
-              onClick={openEnvironmentList}
-            />
-            <ProfileItem
-              children={
-                <LocalOfferIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={
-                company?.version?.version
-                  ? `Version - ${company?.version?.version}`
-                  : "Version"
-              }
-              onClick={(e) => {
-                openVersionModal();
-                closeMenu(e);
-              }}
-            />
+            {permissions?.project_button && (
+              <ProfileItem
+                children={
+                  <ResourceList
+                    item={company.projectItem?.title || "No project"}
+                    className={styles.projectavatar}
+                    colorItem={company.projectItem}
+                    icon={
+                      <LayersIcon
+                        style={{
+                          color: "#747474",
+                        }}
+                      />
+                    }
+                  />
+                }
+                onClick={openProjectList}
+              />
+            )}
+            {permissions?.environments_button && (
+              <ProfileItem
+                children={
+                  <ResourceList
+                    item={company.environmentItem?.name || "No environment"}
+                    className={styles.environmentavatar}
+                    colorItem={company.environmentItem}
+                    icon={
+                      <LocalOfferIcon
+                        style={{
+                          color: "#747474",
+                        }}
+                      />
+                    }
+                  />
+                }
+                onClick={openEnvironmentList}
+              />
+            )}
+            {permissions?.version_button && (
+              <ProfileItem
+                children={
+                  <LocalOfferIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
+                }
+                text={
+                  company?.version?.version
+                    ? `Version - ${company?.version?.version}`
+                    : "Version"
+                }
+                onClick={(e) => {
+                  openVersionModal();
+                  closeMenu(e);
+                }}
+              />
+            )}
           </div>
           <Divider />
           <div className={styles.block}>
@@ -414,17 +420,19 @@ const NewProfilePanel = ({
               />
             )}
 
-            <ProfileItem
-              children={
-                <SmsIcon
-                  style={{
-                    color: "#747474",
-                  }}
-                />
-              }
-              text={"Sms Otp"}
-              onClick={handleSmsNavigate}
-            />
+            {permissions?.sms_button && (
+              <ProfileItem
+                children={
+                  <SmsIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
+                }
+                text={"Sms Otp"}
+                onClick={handleSmsNavigate}
+              />
+            )}
           </div>
           <Divider />
 

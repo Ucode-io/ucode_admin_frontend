@@ -10,10 +10,10 @@ import menuSettingsService from "../../services/menuSettingsService";
 import { useMicrofrontendListQuery } from "../../services/microfrontendService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
-import { useSelector } from "react-redux";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
 import styles from "./style.module.scss";
+import { useSelector } from "react-redux";
 
 const MicrofrontendLinkModal = ({
   closeModal,
@@ -125,19 +125,16 @@ const MicrofrontendLinkModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              {
-                languages?.map((item, index) => (
-                  <HFTextField
-                autoFocus
-                fullWidth
-                required
-                label={`Title ${item.slug}`}
-                control={control}
-                name={`attributes.label_${item.slug}`}
-              />
-                ))
-              }
-              
+              {languages?.map((item, index) => (
+                <HFTextField
+                  autoFocus
+                  fullWidth
+                  required
+                  label={`Title ${item.slug}`}
+                  control={control}
+                  name={`attributes.label_${item.slug}`}
+                />
+              ))}
             </Box>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFSelect

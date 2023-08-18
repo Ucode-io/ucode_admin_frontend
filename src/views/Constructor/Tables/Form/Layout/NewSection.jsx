@@ -9,6 +9,7 @@ import HFTextField from "../../../../../components/FormElements/HFTextField";
 import { applyDrag } from "../../../../../utils/applyDrag";
 import styles from "./style.module.scss";
 import { useSelector } from "react-redux";
+import { useMemo } from "react";
 
 const NewSection = ({
   mainForm,
@@ -70,26 +71,46 @@ const NewSection = ({
 
   const languages = useSelector((state) => state.languages.list);
 
+  const nameGenerator = (language) => {
+    console.log("ssssssqqqqq", language);
+    if (mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language}`)) {
+      return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language.slug}`;
+    } else {
+      return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`;
+    }
+  };
+
   return (
     <Card className={`${styles.newsectionCard}`}>
       <div className={styles.newsectionCardHeader}>
-        <div className={styles.newsectionCardHeaderLeftSide} style={{display: 'flex', flexDirection: 'column'}}>
+        <div className={styles.newsectionCardHeaderLeftSide} style={{ display: "flex", flexDirection: "column" }}>
           {/* <HFIconPicker
             control={mainForm.control}
             name={`sections[${index}].icon`}
             disabledHelperText
           /> */}
 
-          {languages.map((language) => (
+          {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`) ? (
             <HFTextField
-              placeholder={`Section ${language.slug}`}
+              placeholder={`Section`}
               required={index === 0}
               control={mainForm.control}
-              name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language.slug}`}
+              name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`}
               size="small"
               style={{ width: 170 }}
             />
-          ))}
+          ) : (
+            languages.map((language) => (
+              <HFTextField
+                placeholder={`Section ${language.slug}`}
+                required={index === 0}
+                control={mainForm.control}
+                name={nameGenerator(language.slug)}
+                size="small"
+                style={{ width: 170 }}
+              />
+            ))
+          )}
         </div>
 
         <div className="flex gap-1" style={{ marginLeft: "5px" }}>

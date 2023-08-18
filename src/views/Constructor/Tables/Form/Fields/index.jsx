@@ -119,6 +119,7 @@ const Fields = ({ mainForm, getRelationFields }) => {
         dataLength={1}
         setSelectedField={setSelectedField}
         tableSlug={"app"}
+        setSelectedField={setSelectedField}
         // loader={loader}
         onDeleteClick={deleteField}
         onEditClick={openEditForm}

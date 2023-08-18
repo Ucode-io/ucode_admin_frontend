@@ -13,13 +13,18 @@ import HFAutocomplete from "../../components/FormElements/HFAutocomplete";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-const TableLinkModal = ({ closeModal, loading, selectedFolder, getMenuList }) => {
+const TableLinkModal = ({
+  closeModal,
+  loading,
+  selectedFolder,
+  getMenuList,
+}) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
   const [tables, setTables] = useState();
   const languages = useSelector((state) => state.languages.list);
   const menuItemLabel = useSelector((state) => state.menu.menuItem?.label);
-  console.log('menuItemLabel', menuItemLabel)
+  console.log("menuItemLabel", menuItemLabel);
   const onSubmit = (data) => {
     if (selectedFolder.type === "TABLE") {
       updateType(data, selectedFolder);
@@ -118,10 +123,10 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder, getMenuList }) =>
               {/* {languages?.map((item, index) => (
                 <HFTextField autoFocus required fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
               ))} */}
-              {
-              languages?.map((language) => {
+
+              {languages?.map((language) => {
                 const languageFieldName = `attributes.label_${language?.slug}`;
-                const fieldValue = watch(languageFieldName)
+                const fieldValue = watch(languageFieldName);
 
                 return (
                   // <HFTextField
@@ -132,18 +137,17 @@ const TableLinkModal = ({ closeModal, loading, selectedFolder, getMenuList }) =>
                   //   name={`attributes.label_${item?.slug}`}
                   //   defaultValue={fieldValue || menuItemLabel}
                   // />
-                  <HFTextField 
-                    autoFocus 
-                    fullWidth 
-                    label={`Title (${language?.slug})`} 
-                    control={control} 
+                  <HFTextField
+                    autoFocus
+                    fullWidth
+                    label={`Title (${language?.slug})`}
+                    control={control}
                     required
-                    name={`attributes.label_${language?.slug}`} 
+                    name={`attributes.label_${language?.slug}`}
                     defaultValue={fieldValue || menuItemLabel}
                   />
                 );
-              })
-              }
+              })}
             </Box>
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFAutocomplete

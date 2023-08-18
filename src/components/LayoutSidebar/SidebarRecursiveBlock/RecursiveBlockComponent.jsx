@@ -56,6 +56,13 @@ const RecursiveBlock = ({
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 
+  const label =
+    (sidebarIsOpen &&
+      (element?.attributes?.[`label_${defaultLanguage}`] ?? element?.label)) ||
+    element?.data?.microfrontend?.name ||
+    element?.data?.webpage?.title ||
+    element?.name;
+
   const navigateMenu = () => {
     switch (element?.type) {
       case "FOLDER":
@@ -162,10 +169,9 @@ const RecursiveBlock = ({
                 }
                 size={18}
               />
-              {(sidebarIsOpen && (element?.attributes?.[`label_${defaultLanguage}`] ?? element?.label)) ||
-                element?.data?.microfrontend?.name ||
-                element?.data?.webpage?.title ||
-                element?.name}
+              <Tooltip title={label} placement="top">
+                <p>{label}</p>
+              </Tooltip>
             </div>
             {element?.type === "FOLDER" && sidebarIsOpen ? (
               <Box className="icon_group">
@@ -197,6 +203,7 @@ const RecursiveBlock = ({
                           e.stopPropagation();
                           handleOpenNotify(e, "CREATE_TO_FOLDER");
                           setElement(element);
+                          dispatch(menuActions.setMenuItem(element));
                         }}
                         style={{
                           color:

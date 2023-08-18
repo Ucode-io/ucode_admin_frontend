@@ -2,7 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Delete, Edit } from "@mui/icons-material";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import { CTable, CTableBody, CTableCell, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableHead,
+  CTableHeadCell,
+  CTableRow,
+} from "../CTable";
 import DeleteWrapperModal from "../DeleteWrapperModal";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import { useDispatch, useSelector } from "react-redux";
@@ -48,7 +55,6 @@ const DataTable = ({
   filteredColumns,
   setSelectedField,
   defaultLimit,
-  setSelectedField,
 }) => {
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -60,7 +66,8 @@ const DataTable = ({
   const popupRef = useRef(null);
   useOnClickOutside(popupRef, () => setColumnId(""));
 
-  const pageName = location?.pathname.split("/")[location.pathname.split("/").length - 1];
+  const pageName =
+    location?.pathname.split("/")[location.pathname.split("/").length - 1];
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -128,7 +135,9 @@ const DataTable = ({
   }, []);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" }));
+    dispatch(
+      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
+    );
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -158,13 +167,18 @@ const DataTable = ({
   };
 
   const calculateWidth = (colId, index) => {
-    const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
+    const colIdx = tableSettings?.[pageName]
+      ?.filter((item) => item?.isStiky === true)
+      ?.findIndex((item) => item?.id === colId);
 
     if (index === 0) {
       return 0;
     } else if (colIdx === 0) {
       return 0;
-    } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
+    } else if (
+      tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
+        .length === 1
+    ) {
       return 0;
     } else {
       return tableSettings?.[pageName]
@@ -196,62 +210,118 @@ const DataTable = ({
         <CTableRow>
           {onCheckboxChange && <CTableCell width={10} />}
           <CTableHeadCell width={10}>№</CTableHeadCell>
-          {(filteredColumns?.length ? filteredColumns : columns).map((column, index) => (
-            <CTableHeadCell
-              id={column.id}
-              key={index}
-              style={{
-                minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
-                width: column.width ?? (tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto"),
-                position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
-                backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
-              }}
-            >
-              <div
-                className="table-filter-cell cell-data"
-                onMouseEnter={(e) => {
-                  setCurrentColumnWidth(e.relatedTarget.offsetWidth);
+          {(filteredColumns?.length ? filteredColumns : columns).map(
+            (column, index) => (
+              <CTableHeadCell
+                id={column.id}
+                key={index}
+                style={{
+                  minWidth: tableSize?.[pageName]?.[column.id]
+                    ? tableSize?.[pageName]?.[column.id]
+                    : "auto",
+                  width:
+                    column.width ??
+                    (tableSize?.[pageName]?.[column.id]
+                      ? tableSize?.[pageName]?.[column.id]
+                      : "auto"),
+                  position: tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky
+                    ? "sticky"
+                    : "relative",
+                  left: tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky
+                    ? calculateWidth(column?.id, index)
+                    : "0",
+                  backgroundColor: "#fff",
+                  zIndex: tableSettings?.[pageName]?.find(
+                    (item) => item?.id === column?.id
+                  )?.isStiky
+                    ? "1"
+                    : "",
                 }}
               >
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setColumnId((prev) => (prev === column.id ? "" : column.id));
+                <div
+                  className="table-filter-cell cell-data"
+                  onMouseEnter={(e) => {
+                    setCurrentColumnWidth(e.relatedTarget.offsetWidth);
                   }}
                 >
-                  {column.label ?? column?.attributes?.[`label_${defaultLanguage}`]}
-                </span>
-                {!disableFilters && <FilterGenerator field={column} name={column.slug} onChange={filterChangeHandler} filters={filters} tableSlug={tableSlug} />}
-                {columnId === column?.id && (
-                  <div className="cell-popup" ref={popupRef}>
-                    {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
-                    <div className="cell-popup-item" onClick={() => handlePin(column?.id, index)}>
-                      <PinIcon pinned={tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky} />
-                      <span>Pin column</span>
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setColumnId((prev) =>
+                        prev === column.id ? "" : column.id
+                      );
+                    }}
+                  >
+                    {column.label ??
+                      column?.attributes?.[`label_${defaultLanguage}`]}
+                  </span>
+                  {!disableFilters && (
+                    <FilterGenerator
+                      field={column}
+                      name={column.slug}
+                      onChange={filterChangeHandler}
+                      filters={filters}
+                      tableSlug={tableSlug}
+                    />
+                  )}
+                  {columnId === column?.id && (
+                    <div className="cell-popup" ref={popupRef}>
+                      {/* <OutsideClickHandler onOutsideClick={() => setColumnId("")}> */}
+                      <div
+                        className="cell-popup-item"
+                        onClick={() => handlePin(column?.id, index)}
+                      >
+                        <PinIcon
+                          pinned={
+                            tableSettings?.[pageName]?.find(
+                              (item) => item?.id === column?.id
+                            )?.isStiky
+                          }
+                        />
+                        <span>Pin column</span>
+                      </div>
+                      <div
+                        className="cell-popup-item"
+                        onClick={() => handleAutoSize(column?.id, index)}
+                      >
+                        <ResizeIcon />
+                        <span>Autosize</span>
+                      </div>
+                      {/* </OutsideClickHandler> */}
                     </div>
-                    <div className="cell-popup-item" onClick={() => handleAutoSize(column?.id, index)}>
-                      <ResizeIcon />
-                      <span>Autosize</span>
-                    </div>
-                    {/* </OutsideClickHandler> */}
-                  </div>
-                )}
-              </div>
-            </CTableHeadCell>
-          ))}
+                  )}
+                </div>
+              </CTableHeadCell>
+            )
+          )}
 
           {checkPermission ? (
-            <PermissionWrapperV2 tableSlug={tableSlug} type={["update", "delete"]}>
-              {(onDeleteClick || onEditClick) && <CTableHeadCell width={10}></CTableHeadCell>}
+            <PermissionWrapperV2
+              tableSlug={tableSlug}
+              type={["update", "delete"]}
+            >
+              {(onDeleteClick || onEditClick) && (
+                <CTableHeadCell width={10}></CTableHeadCell>
+              )}
             </PermissionWrapperV2>
           ) : (
-            <>{(onDeleteClick || onEditClick) && <CTableHeadCell width={10}></CTableHeadCell>}</>
+            <>
+              {(onDeleteClick || onEditClick) && (
+                <CTableHeadCell width={10}></CTableHeadCell>
+              )}
+            </>
           )}
         </CTableRow>
       </CTableHead>
-      <CTableBody loader={loader} columnsCount={columns.length} dataLength={dataLength || data?.length}>
+      <CTableBody
+        loader={loader}
+        columnsCount={columns.length}
+        dataLength={dataLength || data?.length}
+      >
         {data?.map((row, rowIndex) => (
           <CTableRow
             key={row.guid || row.id}
@@ -261,33 +331,58 @@ const DataTable = ({
           >
             {onCheckboxChange && (
               <CTableCell>
-                <Checkbox checked={checkboxValue === row.guid} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
+                <Checkbox
+                  checked={checkboxValue === row.guid}
+                  onChange={(_, val) => onCheckboxChange(val, row)}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </CTableCell>
             )}
-            <CTableCell align="center">{(currentPage - 1) * 10 + rowIndex + 1}</CTableCell>
-            {(filteredColumns?.length ? filteredColumns : columns).map((column, index) => (
-              <CTableCell
-                key={column.id}
-                className={`overflow-ellipsis ${tableHeight}`}
-                style={{
-                  padding: "8px 12px 4px",
-                  position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                  left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
-                  backgroundColor: "#fff",
-                  zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
-                }}
-              >
-                {column.slug === "label" ? (
-                  row?.attributes?.[`label_${defaultLanguage}`] ?? <CellElementGenerator field={column} row={row} />
-                ) : column.render ? (
-                  column.render(get(row, column.slug, row), row, column)
-                ) : (
-                  <CellElementGenerator field={column} row={row} />
-                )}
-              </CTableCell>
-            ))}
+            <CTableCell align="center">
+              {(currentPage - 1) * 10 + rowIndex + 1}
+            </CTableCell>
+            {(filteredColumns?.length ? filteredColumns : columns).map(
+              (column, index) => (
+                <CTableCell
+                  key={column.id}
+                  className={`overflow-ellipsis ${tableHeight}`}
+                  style={{
+                    padding: "8px 12px 4px",
+                    position: tableSettings?.[pageName]?.find(
+                      (item) => item?.id === column?.id
+                    )?.isStiky
+                      ? "sticky"
+                      : "relative",
+                    left: tableSettings?.[pageName]?.find(
+                      (item) => item?.id === column?.id
+                    )?.isStiky
+                      ? calculateWidth(column?.id, index)
+                      : "0",
+                    backgroundColor: "#fff",
+                    zIndex: tableSettings?.[pageName]?.find(
+                      (item) => item?.id === column?.id
+                    )?.isStiky
+                      ? "1"
+                      : "",
+                  }}
+                >
+                  {column.slug === "label" ? (
+                    row?.attributes?.[`label_${defaultLanguage}`] ?? (
+                      <CellElementGenerator field={column} row={row} />
+                    )
+                  ) : column.render ? (
+                    column.render(get(row, column.slug, row), row, column)
+                  ) : (
+                    <CellElementGenerator field={column} row={row} />
+                  )}
+                </CTableCell>
+              )
+            )}
             {checkPermission ? (
-              <PermissionWrapperV2 tableSlug={tableSlug} type={["update", "delete"]}>
+              <PermissionWrapperV2
+                tableSlug={tableSlug}
+                type={["update", "delete"]}
+              >
                 {(onDeleteClick || onEditClick) && (
                   <CTableCell
                     style={{
@@ -297,12 +392,20 @@ const DataTable = ({
                   >
                     <div className="flex">
                       {onEditClick && (
-                        <RectangleIconButton color="success" className="mr-1" size="small" onClick={() => onEditClick(row, rowIndex)}>
+                        <RectangleIconButton
+                          color="success"
+                          className="mr-1"
+                          size="small"
+                          onClick={() => onEditClick(row, rowIndex)}
+                        >
                           <Edit color="success" />
                         </RectangleIconButton>
                       )}
 
-                      <RectangleIconButton color="error" onClick={() => onDeleteClick(row, rowIndex)}>
+                      <RectangleIconButton
+                        color="error"
+                        onClick={() => onDeleteClick(row, rowIndex)}
+                      >
                         <Delete color="error" />
                       </RectangleIconButton>
                     </div>
@@ -320,15 +423,23 @@ const DataTable = ({
                   >
                     <div className="flex">
                       {onEditClick && (
-                        <RectangleIconButton color="success" className="mr-1" size="small" onClick={() => {
-                          onEditClick(row, rowIndex)
-                          setSelectedField(row)
-                          }}>
+                        <RectangleIconButton
+                          color="success"
+                          className="mr-1"
+                          size="small"
+                          onClick={() => {
+                            onEditClick(row, rowIndex);
+                            setSelectedField(row);
+                          }}
+                        >
                           <Edit color="success" />
                         </RectangleIconButton>
                       )}
 
-                      <RectangleIconButton color="error" onClick={() => onDeleteClick(row, rowIndex)}>
+                      <RectangleIconButton
+                        color="error"
+                        onClick={() => onDeleteClick(row, rowIndex)}
+                      >
                         <Delete color="error" />
                       </RectangleIconButton>
                     </div>
@@ -343,8 +454,12 @@ const DataTable = ({
             <CTableCell>Итог</CTableCell>
             {columns?.map((col) => (
               <CTableCell>
-                {col?.slug === func?.filter((item) => item?.field_name === col?.slug)?.[0]?.field_name
-                  ? numberWithSpaces(data?.reduce((acc, curr) => acc + curr[col?.slug], 0))
+                {col?.slug ===
+                func?.filter((item) => item?.field_name === col?.slug)?.[0]
+                  ?.field_name
+                  ? numberWithSpaces(
+                      data?.reduce((acc, curr) => acc + curr[col?.slug], 0)
+                    )
                   : ""}
               </CTableCell>
             ))}

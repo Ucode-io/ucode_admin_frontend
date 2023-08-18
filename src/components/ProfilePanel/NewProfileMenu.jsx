@@ -30,7 +30,6 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import useBooleanState from "../../hooks/useBooleanState";
 import VersionModal from "./Components/VersionModal/VersionModal";
 import LayersIcon from "@mui/icons-material/Layers";
-import SmsIcon from "@mui/icons-material/Sms";
 import { useProjectGetByIdQuery } from "../../services/projectService";
 import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
 import { useTranslation } from "react-i18next";

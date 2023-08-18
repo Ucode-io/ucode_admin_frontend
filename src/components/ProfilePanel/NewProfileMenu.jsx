@@ -250,8 +250,8 @@ const NewProfilePanel = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const onClose = () => {
-    closeMenu();
+  const onClose = (e) => {
+    closeMenu(e);
     if (selected) refreshTokenFunc();
   };
 

@@ -59,13 +59,11 @@ const RecursiveBlock = ({
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
   const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
-   const analyticItems = {
+  const analyticItems = {
     pivot_id: "c57eedc3-a954-4262-a0af-376c65b5a274",
     report_setting: "c57eedc3-a954-4262-a0af-376c65b5a276",
   };
-  const permissionButton =
-    element?.id === analyticItems.pivot_id ||
-    element?.id === analyticItems.report_setting
+  const permissionButton = element?.id === analyticItems.pivot_id || element?.id === analyticItems.report_setting;
 
   const buttonPermission =
     element?.data?.permission?.read ||
@@ -86,6 +84,21 @@ const RecursiveBlock = ({
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+  };
+
+  const navigateAndSaveHistory = () => {
+    const computedData = {
+      from_date: element?.data?.pivot?.from_data,
+      pivot_table_slug: element?.data?.pivot?.pivot_table_slug,
+      to_date: element?.data?.pivot?.to_date,
+      instance_id: element?.data?.pivot?.id,
+      template_name: element?.data?.pivot?.pivot_table_slug,
+      id: element?.data?.pivot?.id,
+      status: "HISTORY",
+    };
+    pivotService.upsertPivotTemplate(computedData).then((res) => {
+      navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
+    });
   };
 
   const navigateMenu = () => {
@@ -120,7 +133,7 @@ const RecursiveBlock = ({
         );
 
       case "PIVOT":
-        return navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
+        return navigateAndSaveHistory();
 
       default:
         return navigate(`/main/${appId}`);
@@ -237,12 +250,10 @@ const RecursiveBlock = ({
                     />
                   </Box>
                 </Tooltip> */}
-                {
-
-                }
+                {}
                 <Tooltip title="Create report settings" placement="top">
                   <Box className="extra_icon">
-                    {element?.data?.permission?.write ||permissionButton ? (
+                    {element?.data?.permission?.write || permissionButton ? (
                       <AddIcon
                         size={13}
                         onClick={(e) => {

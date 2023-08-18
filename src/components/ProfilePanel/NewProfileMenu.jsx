@@ -30,14 +30,17 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import useBooleanState from "../../hooks/useBooleanState";
 import VersionModal from "./Components/VersionModal/VersionModal";
 import LayersIcon from "@mui/icons-material/Layers";
+import SmsIcon from "@mui/icons-material/Sms";
 import { useProjectGetByIdQuery } from "../../services/projectService";
-import { Title } from "@mui/icons-material";
 import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
-import { changeLanguage } from "i18next";
 import { useTranslation } from "react-i18next";
 import { showAlert } from "../../store/alert/alert.thunk";
 
-const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
+const NewProfilePanel = ({
+  handleMenuSettingModalOpen,
+  setSidebarAnchor,
+  sidebarAnchorEl,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { appId } = useParams();
@@ -49,7 +52,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const [environmentListEl, setEnvironmentListEl] = useState(null);
   const [companyModal, setCompanyModal] = useState(null);
   const [selected, setSelected] = useState(false);
-  const menuVisible = Boolean(anchorProfileEl);
+  const menuVisible = Boolean(anchorProfileEl || sidebarAnchorEl);
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
   const location = useLocation();
@@ -83,7 +86,9 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
     navigate(`/main/${appId}/sms-otp`);
   };
 
-  const closeMenu = () => {
+  const closeMenu = (e) => {
+    e.stopPropagation();
+    setSidebarAnchor(false);
     setProfileAnchorEl(null);
   };
   const openMenu = (event) => {
@@ -263,7 +268,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
       />
       <Menu
         id="lock-menu"
-        anchorEl={anchorProfileEl}
+        anchorEl={anchorProfileEl || sidebarAnchorEl}
         open={menuVisible}
         onClose={onClose}
         classes={{

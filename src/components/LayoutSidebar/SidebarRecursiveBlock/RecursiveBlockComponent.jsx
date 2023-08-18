@@ -63,7 +63,9 @@ const RecursiveBlock = ({
     pivot_id: "c57eedc3-a954-4262-a0af-376c65b5a274",
     report_setting: "c57eedc3-a954-4262-a0af-376c65b5a276",
   };
-  const permissionButton = element?.id === analyticItems.pivot_id || element?.id === analyticItems.report_setting;
+  const permissionButton =
+    element?.id === analyticItems.pivot_id ||
+    element?.id === analyticItems.report_setting;
 
   const buttonPermission =
     element?.data?.permission?.read ||

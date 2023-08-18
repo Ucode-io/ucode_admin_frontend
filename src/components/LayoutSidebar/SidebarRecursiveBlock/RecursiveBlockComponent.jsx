@@ -14,7 +14,7 @@ import "../style.scss";
 import { useQueryClient } from "react-query";
 import { store } from "../../../store";
 import Users from "../Components/Users";
-import { folderIds } from "./mock/folders";
+import { analyticItems, folderIds } from "./mock/folders";
 import Permissions from "../Components/Permission";
 import DataBase from "../Components/DataBase";
 import EltResources from "../Components/Elt";
@@ -53,6 +53,12 @@ const RecursiveBlock = ({
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
+
+  const buttonPermission =
+    element?.data?.permission?.read ||
+    defaultAdmin ||
+    element?.id === analyticItems.pivot_id ||
+    element?.id === analyticItems.report_setting;
 
   const activeStyle = {
     backgroundColor:
@@ -108,8 +114,6 @@ const RecursiveBlock = ({
     },
   });
 
-  console.log("element", element);
-
   const clickHandler = (e) => {
     dispatch(menuActions.setMenuItem(element));
     e.stopPropagation();
@@ -140,7 +144,7 @@ const RecursiveBlock = ({
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        {element?.data?.permission?.read || defaultAdmin ? (
+        {buttonPermission ? (
           <Button
             key={element.id}
             style={activeStyle}

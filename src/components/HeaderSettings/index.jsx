@@ -17,6 +17,7 @@ const HeaderSettings = ({
   icon,
   sticky,
   disabledMenu = true,
+  line = true,
   ...props
 }) => {
   const navigate = useNavigate();
@@ -28,7 +29,12 @@ const HeaderSettings = ({
     >
       <div className={styles.leftSide}>
         {backButtonLink && (
-          <BackButton onClick={() => navigate(backButtonLink)} />
+          <BackButton
+            style={{
+              marginRight: "8px",
+            }}
+            onClick={() => navigate(backButtonLink)}
+          />
         )}
 
         {icon && <IconGenerator className={styles.icon} icon={icon} />}
@@ -38,7 +44,7 @@ const HeaderSettings = ({
           {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
         </div>
 
-        <div className={styles.line} />
+        {line && <div className={styles.line} />}
 
         <div>{children}</div>
       </div>

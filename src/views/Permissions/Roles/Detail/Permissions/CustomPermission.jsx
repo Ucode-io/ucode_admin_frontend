@@ -122,6 +122,50 @@ const CustomPermissionRow = ({ watch, setValue }) => {
           </Box>
         </CTableCell>
       </CTableHeadRow>
+      <CTableHeadRow>
+        <CTableCell>Environment Button</CTableCell>
+        <CTableCell>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <Checkbox
+              isChecked={watch("data.global_permission.environment_button")}
+              onChange={(e) => handleChange(e, "environment_button")}
+            />
+          </Box>
+        </CTableCell>
+      </CTableHeadRow>
+      <CTableHeadRow>
+        <CTableCell>Project Button</CTableCell>
+        <CTableCell>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <Checkbox
+              isChecked={watch("data.global_permission.project_button")}
+              onChange={(e) => handleChange(e, "project_button")}
+            />
+          </Box>
+        </CTableCell>
+      </CTableHeadRow>
+      <CTableHeadRow>
+        <CTableCell>Sms Button</CTableCell>
+        <CTableCell>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <Checkbox
+              isChecked={watch("data.global_permission.sms_button")}
+              onChange={(e) => handleChange(e, "sms_button")}
+            />
+          </Box>
+        </CTableCell>
+      </CTableHeadRow>
+      <CTableHeadRow>
+        <CTableCell>Version Button</CTableCell>
+        <CTableCell>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <Checkbox
+              isChecked={watch("data.global_permission.version_button")}
+              onChange={(e) => handleChange(e, "version_button")}
+            />
+          </Box>
+        </CTableCell>
+      </CTableHeadRow>
     </>
   );
 };

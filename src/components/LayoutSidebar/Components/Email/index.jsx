@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   CTable,
   CTableBody,
@@ -6,13 +6,11 @@ import {
   CTableHead,
   CTableRow,
 } from "../../../../components/CTable";
-import FiltersBlock from "../../../../components/FiltersBlock";
 import HeaderSettings from "../../../../components/HeaderSettings";
 import TableCard from "../../../../components/TableCard";
 import TableRowButton from "../../../../components/TableRowButton";
 import RectangleIconButton from "../../../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
-import { useState } from "react";
 import {
   useEmailDeleteMutation,
   useEmailListQuery,
@@ -24,8 +22,6 @@ import { store } from "../../../../store";
 const EmailPage = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedEmail, setSelectedEmail] = useState("");
   const navigate = useNavigate();
   const company = store.getState().company;
   const {
@@ -36,16 +32,6 @@ const EmailPage = () => {
     params: { project_id: company.projectId },
   });
 
-  const closeModal = () => setModalVisible(null);
-
-  const openCreateModal = () => {
-    setModalVisible(true);
-  };
-
-  const openEditModal = (id) => {
-    setModalVisible(true);
-    setSelectedEmail(id);
-  };
   const navigateToEditForm = (id) => {
     navigate(`${location.pathname}/${id}`);
   };
@@ -64,11 +50,22 @@ const EmailPage = () => {
   const onDeleteClick = (id) => {
     deleteEmail(id);
   };
+
   return (
-    <div>
-      <HeaderSettings title={"Email settings"} disabledMenu={false} />
+    <div
+      style={{
+        background: "#fff",
+        height: "100%",
+      }}
+    >
+      <HeaderSettings
+        title={"Email settings"}
+        disabledMenu={false}
+        backButtonLink={-1}
+        line={false}
+      />
       <TableCard>
-        <CTable disablePagination removableHeight={140}>
+        <CTable disablePagination removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Email</CTableCell>

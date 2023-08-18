@@ -90,19 +90,27 @@ const MicroservicePage = () => {
   }, [isLoading]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <HeaderSettings title={"Microservice"} disabledMenu={false} />
-
-      <FiltersBlock
-        extra={
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      style={{
+        background: "#fff",
+        height: "100%",
+      }}
+    >
+      <HeaderSettings
+        title={"Microservice"}
+        disabledMenu={false}
+        extraButtons={
           <Button variant="contained" type="submit">
             Save
           </Button>
         }
+        backButtonLink={-1}
+        line={false}
       />
 
       <TableCard>
-        <CTable disablePagination removableHeight={140}>
+        <CTable disablePagination removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Service</CTableCell>

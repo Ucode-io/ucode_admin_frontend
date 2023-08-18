@@ -41,13 +41,22 @@ const NotificationPage = () => {
   };
 
   return (
-    <div>
-      <HeaderSettings title={"Notifications"} />
+    <div
+      style={{
+        background: "#fff",
+        height: "100%",
+      }}
+    >
+      <HeaderSettings
+        title={"Notifications"}
+        disabledMenu={false}
+        backButtonLink={-1}
+      />
 
       <TableCard>
         <CTable
           disablePagination
-          removableHeight={140}
+          removableHeight={false}
           count={pageCount}
           page={currentPage}
           setCurrentPage={setCurrentPage}

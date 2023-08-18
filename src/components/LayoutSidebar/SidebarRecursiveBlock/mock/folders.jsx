@@ -5,3 +5,8 @@ export const folderIds = {
   resource_folder_id: "f313614f-f018-4ddc-a0ce-10a1f5716401",
   api_folder_id: "db4ffda3-7696-4f56-9f1f-be128d82ae68",
 };
+
+export const analyticItems = {
+  pivot_id: "c57eedc3-a954-4262-a0af-376c65b5a274",
+  report_setting: "c57eedc3-a954-4262-a0af-376c65b5a276",
+};

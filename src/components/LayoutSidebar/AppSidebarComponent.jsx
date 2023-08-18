@@ -29,6 +29,11 @@ const AppSidebar = ({
   const { i18n } = useTranslation();
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
+  const analyticsId = "c57eedc3-a954-4262-a0af-376c65b5a278";
+  const buttonPermission =
+    element?.data?.permission?.read ||
+    defaultAdmin ||
+    element?.id === analyticsId;
   const clickHandler = () => {
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
@@ -78,7 +83,7 @@ const AppSidebar = ({
 
   return (
     <Draggable key={index}>
-      {element?.data?.permission?.read || defaultAdmin ? (
+      {buttonPermission ? (
         <ListItemButton
           key={index}
           onClick={(e) => {

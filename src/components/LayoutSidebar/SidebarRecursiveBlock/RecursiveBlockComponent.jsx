@@ -29,7 +29,7 @@ import Users from "../Components/Users";
 import DeleteIcon from "../DeleteIcon";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
-import { folderIds } from "./mock/folders";
+import { analyticItems, folderIds } from "./mock/folders";
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -59,6 +59,12 @@ const RecursiveBlock = ({
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
   const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
+
+  const buttonPermission =
+    element?.data?.permission?.read ||
+    defaultAdmin ||
+    element?.id === analyticItems.pivot_id ||
+    element?.id === analyticItems.report_setting;
 
   const activeStyle = {
     backgroundColor:
@@ -125,8 +131,6 @@ const RecursiveBlock = ({
     },
   });
 
-  console.log("element", element);
-
   const clickHandler = (e) => {
     dispatch(menuActions.setMenuItem(element));
     e.stopPropagation();
@@ -167,7 +171,7 @@ const RecursiveBlock = ({
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        {element?.data?.permission?.read || defaultAdmin ? (
+        {buttonPermission ? (
           <Button
             key={element.id}
             style={activeStyle}

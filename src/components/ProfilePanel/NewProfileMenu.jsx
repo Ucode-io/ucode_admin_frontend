@@ -222,7 +222,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  console.log('eeeeeeeee')
   return (
     <div>
       <UserAvatar

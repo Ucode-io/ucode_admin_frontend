@@ -30,7 +30,7 @@ const MainInfo = ({
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
-
+console.log('firstprojectId', projectId)
   const fieldsList = useMemo(() => {
     const fields = [];
 
@@ -44,7 +44,12 @@ const MainInfo = ({
     return fields;
   }, [relation]);
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const params = {
+    
+  }
+  const { data: projectInfo } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
+    return projectService.getByID(params, projectId);
+  });
 
   useEffect(() => {
     if (isMultiLanguage) {
@@ -73,7 +78,7 @@ const MainInfo = ({
           )}
 
           {computedSections.map((section) => (
-            <NewFormCard key={section.id} title={section?.attributes?.[`label_${i18n.language}`] ?? section.label} className={styles.formCard} icon={section.icon}>
+            <NewFormCard key={section.id} title={section?.attributes?.[`label_${activeLang}`] ?? section.label} className={styles.formCard} icon={section.icon}>
               <div className={styles.newformColumn}>
                 {section.fields?.map((field) => (
                   <Box style={{ display: "flex", alignItems: "flex-start" }}>

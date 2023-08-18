@@ -136,7 +136,12 @@ const ProjectSettingPage = () => {
   };
   console.log("languageOptions", languageOptions);
   return (
-    <div>
+    <div
+      style={{
+        background: "#fff",
+        height: "100%",
+      }}
+    >
       <HeaderSettings
         title="Project settings"
         subtitle={watch("title")}
@@ -148,64 +153,62 @@ const ProjectSettingPage = () => {
         className="p-2"
         style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
       >
-        <FormCard title="Детали" maxWidth={500}>
-          <FRow
-            label={"Name"}
-            componentClassName="flex gap-2 align-center"
+        <FRow
+          label={"Name"}
+          componentClassName="flex gap-2 align-center"
+          required
+        >
+          <HFTextField
+            disabledHelperText
+            name="title"
+            control={control}
+            fullWidth
             required
-          >
-            <HFTextField
-              disabledHelperText
-              name="title"
-              control={control}
-              fullWidth
-              required
-            />
-          </FRow>
-          <HFAvatarUpload control={control} name="logo" />
+          />
+        </FRow>
+        <HFAvatarUpload control={control} name="logo" />
 
-          <FRow
-            label={"Language"}
-            componentClassName="flex gap-2 align-center"
+        <FRow
+          label={"Language"}
+          componentClassName="flex gap-2 align-center"
+          required
+        >
+          <HFMultipleSelect
+            options={languageOptions}
+            name="language"
+            control={control}
+            fullWidth
             required
-          >
-            <HFMultipleSelect
-              options={languageOptions}
-              name="language"
-              control={control}
-              fullWidth
-              required
-            />
-          </FRow>
-          <FRow
-            label={"Currency"}
-            componentClassName="flex gap-2 align-center"
+          />
+        </FRow>
+        <FRow
+          label={"Currency"}
+          componentClassName="flex gap-2 align-center"
+          required
+        >
+          <HFAutocomplete
+            disabledHelperText
+            options={currencyOptions}
+            name="currency"
+            control={control}
+            fullWidth
             required
-          >
-            <HFAutocomplete
-              disabledHelperText
-              options={currencyOptions}
-              name="currency"
-              control={control}
-              fullWidth
-              required
-            />
-          </FRow>
-          <FRow
-            label={"Timezone"}
-            componentClassName="flex gap-2 align-center"
+          />
+        </FRow>
+        <FRow
+          label={"Timezone"}
+          componentClassName="flex gap-2 align-center"
+          required
+        >
+          <HFAutocomplete
+            disabledHelperText
+            options={timezoneOptions}
+            name="timezone"
+            control={control}
+            fullWidth
             required
-          >
-            <HFAutocomplete
-              disabledHelperText
-              options={timezoneOptions}
-              name="timezone"
-              control={control}
-              fullWidth
-              required
-            />
-          </FRow>
-        </FormCard>
+          />
+        </FRow>
       </form>
 
       <Footer

@@ -17,10 +17,10 @@ import { Box, Button } from "@mui/material";
 import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
 import DataBaseDetailPage from "./DetailPage";
-import Header from "../../components/Header";
 import { BiPencil } from "react-icons/bi";
 import "./style.scss";
 import { store } from "../../store";
+import HeaderSettings from "../../components/HeaderSettings";
 
 const DatabasePage = () => {
   const { resourceId, tableSlug } = useParams();
@@ -84,10 +84,18 @@ const DatabasePage = () => {
   };
 
   return (
-    <div>
-      <Header
+    <div
+      style={{
+        background: "#fff",
+        height: "100%",
+      }}
+    >
+      <HeaderSettings
         title="Data base"
-        extra={
+        backButtonLink={-1}
+        line={false}
+        disabledMenu={false}
+        extraButtons={
           <>
             <Button variant="contained" onClick={openCreateDrawer}>
               Create object
@@ -106,7 +114,7 @@ const DatabasePage = () => {
 
       <TableCard>
         <CTable
-          removableHeight={140}
+          removableHeight={false}
           count={pageCount}
           page={currentPage}
           setCurrentPage={setCurrentPage}

@@ -11,6 +11,7 @@ import { useQuery } from "react-query";
 import RolePage from "./Roles";
 import FormCard from "../../components/FormCard";
 import ConnectionPage from "./Connections";
+import styles from "./style.module.scss";
 
 const PermissionDetail = () => {
   const { clientId } = useParams();
@@ -31,20 +32,21 @@ const PermissionDetail = () => {
   );
 
   return (
-    <Box flex={1}>
-      <Header title="Matrix details" />
+    <Box className={styles.permission}>
+      <Header title="Matrix details" backButtonLink={-1} />
       <Tabs
         direction={"ltr"}
         selectedIndex={selectedTab}
         onSelect={setSelectedTab}
+        className={styles.tabs}
       >
-        <Card style={{ padding: "10px" }}>
+        <Card style={{ padding: "10px", borderRadius: "0" }}>
           <TabList>
             <Tab>Инфо</Tab>
             <Tab>Роли</Tab>
           </TabList>
 
-          <TabPanel>
+          <TabPanel style={{ marginTop: "8px" }}>
             <div>
               <FRow label="Name">
                 <HFTextField control={control} name="name" fullWidth />

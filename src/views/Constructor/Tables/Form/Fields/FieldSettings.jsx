@@ -43,7 +43,9 @@ const FieldSettings = ({
   onSubmit = () => {},
   getRelationFields,
 }) => {
-  const { id } = useParams();
+  const { id, slug } = useParams();
+  const test = useParams();
+  console.log("tesstt", test);
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -56,7 +58,7 @@ const FieldSettings = ({
     } else {
       return menuItem?.table_id;
     }
-  }, [id, tableSlug]);
+  }, [id, slug]);
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
@@ -85,9 +87,9 @@ const FieldSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", { tableSlug }],
+    ["GET_VIEWS_AND_FIELDS", { slug }],
     () => {
-      return constructorObjectService.getList(tableSlug, {
+      return constructorObjectService.getList(slug, {
         data: { limit: 10, offset: 0, with_relations: true, app_id: appId },
       });
     },

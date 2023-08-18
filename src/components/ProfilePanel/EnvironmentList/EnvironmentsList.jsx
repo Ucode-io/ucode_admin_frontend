@@ -17,6 +17,7 @@ const EnvironmentsList = ({
   environmentVisible,
   environmentList,
   handleEnvNavigate,
+  setSelected,
 }) => {
   const dispatch = useDispatch();
   const permissions = useSelector((state) => state.auth.globalPermissions);
@@ -49,6 +50,7 @@ const EnvironmentsList = ({
               </>
             }
             onClick={() => {
+              setSelected(true);
               dispatch(companyActions.setEnvironmentItem(item));
               dispatch(companyActions.setEnvironmentId(item.id));
               closeEnvironmentList();

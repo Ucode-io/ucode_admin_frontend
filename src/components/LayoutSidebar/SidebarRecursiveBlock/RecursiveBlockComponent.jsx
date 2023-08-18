@@ -13,6 +13,20 @@ import MenuIcon from "../MenuIcon";
 import "../style.scss";
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
+import { store } from "../../../store";
+import Users from "../Components/Users";
+import { analyticItems, folderIds } from "./mock/folders";
+import Permissions from "../Components/Permission";
+import DataBase from "../Components/DataBase";
+import EltResources from "../Components/Elt";
+import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
+import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
+import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
+import EmailSidebar from "../Components/Email/EmailSidebar";
+import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
+import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
+import NotificationSidebar from "../Components/Notification/NotificationSidebar";
+import Resources from "../Components/Resources";
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -40,6 +54,14 @@ const RecursiveBlock = ({
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
+  const auth = store.getState().auth;
+  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
+
+  const buttonPermission =
+    element?.data?.permission?.read ||
+    defaultAdmin ||
+    element?.id === analyticItems.pivot_id ||
+    element?.id === analyticItems.report_setting;
 
   const activeStyle = {
     backgroundColor:
@@ -50,7 +72,7 @@ const RecursiveBlock = ({
       menuItem?.id === element?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 * 5,
+    paddingLeft: level * 2 + 10,
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
@@ -109,6 +131,7 @@ const RecursiveBlock = ({
   });
 
   const clickHandler = (e) => {
+    dispatch(menuActions.setMenuItem(element));
     e.stopPropagation();
     if (element.type === "PERMISSION") {
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
@@ -124,7 +147,6 @@ const RecursiveBlock = ({
       setSubMenuIsOpen(false);
     }
     element.type !== "USER" && setChildBlockVisible((prev) => !prev);
-    dispatch(menuActions.setMenuItem(element));
     setId(element?.id);
     setElement(element);
   };
@@ -138,7 +160,7 @@ const RecursiveBlock = ({
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        {element?.data?.permission?.read && (
+        {buttonPermission ? (
           <Button
             key={element.id}
             style={activeStyle}
@@ -196,7 +218,9 @@ const RecursiveBlock = ({
                 </Tooltip>
                 <Tooltip title="Create folder" placement="top">
                   <Box className="extra_icon">
-                    {element?.data?.permission?.write && (
+                    {element?.data?.permission?.write ||
+                    element?.id === analyticItems.pivot_id ||
+                    element?.id === analyticItems.report_setting ? (
                       <AddIcon
                         size={13}
                         onClick={(e) => {
@@ -212,7 +236,7 @@ const RecursiveBlock = ({
                               : menuStyle?.text || "",
                         }}
                       />
-                    )}
+                    ) : null}
                   </Box>
                 </Tooltip>
                 {childBlockVisible ? (
@@ -284,7 +308,7 @@ const RecursiveBlock = ({
               />
             )}
           </Button>
-        )}
+        ) : null}
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
@@ -306,6 +330,80 @@ const RecursiveBlock = ({
             menuItem={menuItem}
           />
         ))}
+        {element.id === folderIds.users_folder_id && (
+          <>
+            <Users
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              setElement={setElement}
+              level={2}
+            />
+            <Permissions
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              setElement={setElement}
+              level={2}
+            />
+          </>
+        )}
+        {element.id === folderIds.data_base_folder_id && (
+          <>
+            <DataBase
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              level={2}
+            />
+            <EltResources menuStyle={menuStyle} level={2} menuItem={menuItem} />
+            <MicroServiceSidebar
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              level={2}
+            />
+          </>
+        )}
+        {element.id === folderIds.code_folder_id && (
+          <>
+            <ScenarioSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              level={2}
+            />
+            <DocumentsSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              level={2}
+            />
+            <EmailSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
+            <ProjectSettingSidebar
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              level={2}
+            />
+            <FunctionSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              level={2}
+            />
+            <NotificationSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              level={2}
+            />
+          </>
+        )}
+        {element.id === folderIds.resource_folder_id && (
+          <Resources
+            menuStyle={menuStyle}
+            setSubMenuIsOpen={setSubMenuIsOpen}
+            level={2}
+          />
+        )}
+        {element.id === folderIds.users_folder_id && null}
       </Collapse>
     </Box>
   );

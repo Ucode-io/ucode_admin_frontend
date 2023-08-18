@@ -9,11 +9,8 @@ import RingLoaderWithWrapper from "../../Loaders/RingLoader/RingLoaderWithWrappe
 import PushPinIcon from "@mui/icons-material/PushPin";
 import { useDispatch, useSelector } from "react-redux";
 import { mainActions } from "../../../store/main/main.slice";
-import { store } from "../../../store";
-import DataBase from "../Components/DataBase";
-import Users from "../Components/Users";
-import Permissions from "../Components/Permission";
 import { useTranslation } from "react-i18next";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const SubMenu = ({
   child,
@@ -31,14 +28,15 @@ const SubMenu = ({
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const menuItem = store.getState().menu.menuItem;
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
+  const menuItem = useSelector((state) => state.menu.menuItem);
+
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
 
-  console.log('selectedApp', selectedApp)
+  console.log("selectedApp", selectedApp);
   return (
     <div
       className={`SubMenu ${
@@ -56,11 +54,12 @@ const SubMenu = ({
                 color: menuStyle?.text || "#000",
               }}
             >
-              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ?? selectedApp?.label}
+              {selectedApp?.attributes?.[`label_${defaultLanguage}`] ??
+                selectedApp?.label}
             </h2>
           )}{" "}
           <Box className="buttons">
-            {selectedApp?.id !== "12" && (
+            {selectedApp?.id !== adminId && (
               <div className="dots">
                 <BsThreeDots
                   size={13}
@@ -143,27 +142,6 @@ const SubMenu = ({
                       menuItem={menuItem}
                     />
                   ))}
-                  {selectedApp?.id === "12" && (
-                    <>
-                      <Users
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        menuItem={menuItem}
-                        setElement={setElement}
-                      />
-                      <Permissions
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        menuItem={menuItem}
-                        setElement={setElement}
-                      />
-                      <DataBase
-                        menuStyle={menuStyle}
-                        setSubMenuIsOpen={setSubMenuIsOpen}
-                        setElement={setElement}
-                      />
-                    </>
-                  )}
                 </div>
               </div>
             )}

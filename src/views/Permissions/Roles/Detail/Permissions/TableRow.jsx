@@ -20,7 +20,7 @@ import {
   RelationPermissionIcon,
 } from "../../../../../assets/icons/icon";
 
-const TableRow = ({ table, tableIndex, control }) => {
+const TableRow = ({ table, tableIndex, control, setValue, watch }) => {
   const [type, setType] = useState("");
 
   const basePath = `data.tables.${tableIndex}.record_permissions`;
@@ -162,6 +162,8 @@ const TableRow = ({ table, tableIndex, control }) => {
           control={control}
           tableIndex={tableIndex}
           closeModal={closeFieldPermissionModal}
+          setValue={setValue}
+          watch={watch}
         />
       )}
       {actionPermissionsModalIsOpen && (
@@ -193,6 +195,8 @@ const TableRow = ({ table, tableIndex, control }) => {
           closeModal={closeCustomPermissionModal}
           tableIndex={tableIndex}
           type={type}
+          setValue={setValue}
+          watch={watch}
         />
       )}
     </>

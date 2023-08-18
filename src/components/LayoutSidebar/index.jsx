@@ -73,7 +73,6 @@ const LayoutSidebar = ({ appId }) => {
       search: subSearchText,
     },
     queryParams: {
-      // cacheTime: 10,
       enabled: Boolean(appId),
       onSuccess: (res) => {
         setChild(res.menus);

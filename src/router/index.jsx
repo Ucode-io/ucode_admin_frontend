@@ -51,10 +51,22 @@ import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
 import PermissionDetail from "../views/Permissions";
 import RoleDetail from "../views/Permissions/Roles/Detail";
+import DatabasePage from "../views/DataBase";
+import DatabaseConfiguration from "../views/DataBase/Configuration";
+import Scenarios from "../components/LayoutSidebar/Components/Scenario";
+import Note from "../components/LayoutSidebar/Components/Documents/Note";
+import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
+import MicroservicePage from "../components/LayoutSidebar/Components/MicroService";
+import EmailPage from "../components/LayoutSidebar/Components/Email";
+import EmailDetailPage from "../components/LayoutSidebar/Components/Email/EmailDetailPage";
+import ProjectSettingPage from "../components/LayoutSidebar/Components/Project";
+import ResourceDetail from "../views/Resources/Detail";
+import Connections from "../views/Matrix/Connections";
 import SmsPage from "../views/SmsOtp";
-import SmsFormPage from "../views/SmsOtp/SmsFormPage";
-
-
+import SmsFormPage from "../views/SmsOtp/SmsFormpage";
+import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
+import NotificationPage from "../components/LayoutSidebar/Components/Notification";
+import NotificationForm from "../components/LayoutSidebar/Components/Notification/NotificationForm";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -176,6 +188,67 @@ const Router = () => {
         <Route path=":appId/permission/:clientId">
           <Route index element={<PermissionDetail />} />
           <Route path="role/:roleId" element={<RoleDetail />} />
+        </Route>
+
+        <Route path="resources">
+          <Route path="create" element={<ResourceDetail />} />
+          <Route path=":resourceId" element={<ResourceDetail />} />
+
+          <Route path="elt">
+            <Route path="connections">
+              <Route index element={<Connections />} />
+              {/* <Route path="create" element={<ConnectionCreate />} /> */}
+              {/* <Route path=":connectionId" element={<ConnectionDetail />} /> */}
+            </Route>
+            {/* <Route path="sources">
+                <Route index element={<Sources />} />
+                <Route path="create" element={<SourceDetail />} />
+                <Route path=":sourceId" element={<SourceDetail />} />
+              </Route>
+              <Route path="destinations">
+                <Route index element={<Destinations />} />
+                <Route path="create" element={<DestinationDetail />} />
+                <Route path=":destinationId" element={<DestinationDetail />} />
+              </Route> */}
+          </Route>
+        </Route>
+
+        <Route path=":appId/database/:resourceId/:tableSlug/:databaseId">
+          <Route index element={<DatabasePage />} />
+          <Route path="configuration" element={<DatabaseConfiguration />} />
+        </Route>
+        <Route path=":appId/scenario/:categoryId">
+          <Route index element={<Scenarios />} />
+          <Route path=":scenarioId" element={<Scenarios />} />
+        </Route>
+        <Route path=":appId/micro-service">
+          <Route index element={<MicroservicePage />} />
+        </Route>
+        <Route path=":appId/email-setting">
+          <Route index element={<EmailPage />} />
+          <Route path="create" element={<EmailDetailPage />} />
+          <Route path=":emailId" element={<EmailDetailPage />} />
+        </Route>
+        <Route path=":appId/project-setting">
+          <Route index element={<ProjectSettingPage />} />
+        </Route>
+        <Route path=":appId/function">
+          <Route path=":functionId" element={<FunctionsDetail />} />
+        </Route>
+        <Route path=":appId/notification/:categoryId">
+          <Route index element={<NotificationPage />} />
+          <Route path="create" element={<NotificationForm />} />
+          <Route path=":notificationId" element={<NotificationForm />} />
+        </Route>
+        <Route path=":appId/docs">
+          <Route path="note/:folderId">
+            <Route path="create" element={<Note />} />
+            <Route path=":noteId" element={<Note />} />
+          </Route>
+          <Route path="template/:folderId">
+            <Route path="create" element={<Template />} />
+            <Route path=":templateId" element={<Template />} />
+          </Route>
         </Route>
 
         <Route

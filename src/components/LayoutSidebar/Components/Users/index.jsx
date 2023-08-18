@@ -4,18 +4,18 @@ import { Box, Button, Collapse } from "@mui/material";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
 import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../../IconPicker/IconGenerator";
 import RecursiveBlock from "../../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "../../style.scss";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const userFolder = {
   label: "Users",
   type: "USER_FOLDER",
   icon: "users.svg",
-  parent_id: "12",
+  parent_id: "a8de4296-c8c3-48d6-bef0-ee17057733d6",
   id: "13",
   data: {
     permission: {
@@ -28,7 +28,6 @@ const userFolder = {
 };
 
 const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
-  const { tableSlug } = useParams();
   const dispatch = useDispatch();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const [child, setChild] = useState();
@@ -36,17 +35,23 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
 
   const activeStyle = {
     backgroundColor:
-      menuItem?.id === userFolder?.id
+      userFolder?.id === menuItem?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      menuItem?.id === userFolder?.id
+      userFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 * 5,
+    paddingLeft: level * 2 + 10,
     display:
-      userFolder?.id === "0" ||
-      (userFolder?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+      menuItem?.id === "0" ||
+      (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+  };
+  const labelStyle = {
+    color:
+      userFolder?.id === menuItem?.id
+        ? menuStyle?.active_text
+        : menuStyle?.text,
   };
 
   const { isLoading } = useQuery(
@@ -76,14 +81,13 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
   );
 
   const clickHandler = (e) => {
+    dispatch(menuActions.setMenuItem(userFolder));
     e.stopPropagation();
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     setChildBlockVisible((prev) => !prev);
-    dispatch(menuActions.setMenuItem(userFolder));
   };
 
   const handleGetClientType = (e) => {
-    console.log("dfdf");
     e.stopPropagation();
     queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     dispatch(menuActions.setMenuItem(userFolder));
@@ -94,23 +98,12 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
       <div className="parent-block column-drag-handle">
         <Button
           style={activeStyle}
-          className={`nav-element ${
-            userFolder?.isChild &&
-            (tableSlug !== userFolder?.slug ? "active-with-child" : "active")
-          }`}
+          className="nav-element"
           onClick={(e) => {
             clickHandler(e);
           }}
         >
-          <div
-            className="label"
-            style={{
-              color:
-                menuItem?.id === userFolder?.id
-                  ? menuStyle?.active_text
-                  : menuStyle?.text,
-            }}
-          >
+          <div className="label" style={labelStyle}>
             <IconGenerator icon={"users.svg"} size={18} />
             Users
           </div>

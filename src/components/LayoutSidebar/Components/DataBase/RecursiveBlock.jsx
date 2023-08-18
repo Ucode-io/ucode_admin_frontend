@@ -1,9 +1,7 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse } from "@mui/material";
+import { Box, Button, Collapse, Icon, Tooltip } from "@mui/material";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { useDispatch } from "react-redux";
@@ -15,59 +13,64 @@ const DataBaseRecursive = ({
   onRowClick = () => {},
   onSelect = () => {},
   selected,
+  resourceId,
+  menuItem,
 }) => {
   const dispatch = useDispatch();
-  const { tableSlug } = useParams();
   const [childBlockVisible, setChildBlockVisible] = useState(false);
 
   const activeStyle = {
     backgroundColor:
-      selected?.id === element?.id
+      menuItem?.id === element?.id
         ? menuStyle?.active_background || "#007AFF"
         : menuStyle?.background,
     color:
-      selected?.id === element?.id
+      menuItem?.id === element?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 * 5,
+    paddingLeft: level * 2 + 10,
     display:
-      element.id === "0" ||
-      (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+      element?.id === "0" ||
+      (element?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 
   const clickHandler = () => {
-    dispatch(menuActions.setMenuItem(element));
     onRowClick(element.id, element);
+    dispatch(menuActions.setMenuItem(element));
     setChildBlockVisible((prev) => !prev);
-    if (!element.children) onSelect(element.id, element);
+    if (!element.children) onSelect(element?.id, element);
   };
 
   return (
     <Box>
-      <div className="parent-block column-drag-handle" key={element.id}>
+      <div className="parent-block column-drag-handle" key={element?.id}>
         <Button
-          key={element.id}
+          key={element?.id}
           style={activeStyle}
-          className={`nav-element ${
-            element.isChild &&
-            (tableSlug !== element.slug ? "active-with-child" : "active")
-          }`}
+          className="nav-element"
           onClick={clickHandler}
         >
           <div
             className="label"
             style={{
               color:
-                selected?.id === element?.id
+                menuItem?.id === element?.id
                   ? menuStyle?.active_text
                   : menuStyle?.text,
               opacity: element?.isChild && 0.6,
             }}
           >
-            <IconGenerator icon={element?.icon} size={18} />
+            <Icon as={element?.icon} />
             {element?.name}
           </div>
-          {element.type === "FOLDER" &&
+          {element.buttons && (
+            <Box className="icon_group">
+              <Tooltip title={element?.button_text} placement="top">
+                <Box className="extra_icon">{element.buttons}</Box>
+              </Tooltip>
+            </Box>
+          )}
+          {element?.type === "FOLDER" &&
             (childBlockVisible ? (
               <KeyboardArrowDownIcon />
             ) : (
@@ -86,6 +89,8 @@ const DataBaseRecursive = ({
             onRowClick={onRowClick}
             onSelect={onSelect}
             selected={selected}
+            resourceId={resourceId}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>

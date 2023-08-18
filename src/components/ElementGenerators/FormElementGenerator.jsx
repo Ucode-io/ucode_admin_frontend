@@ -34,11 +34,23 @@ import { useTranslation } from "react-i18next";
 
 const parser = new Parser();
 
-const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug, checkRequired=true, activeLang, fieldsList, checkPermission = true, isMultiLanguage, relatedTable, ...props }) => {
+const FormElementGenerator = ({
+  field = {},
+  control,
+  setFormValue,
+  formTableSlug,
+  checkRequired = true,
+  activeLang,
+  fieldsList,
+  checkPermission = true,
+  isMultiLanguage,
+  relatedTable,
+  ...props
+}) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
-  const {i18n} = useTranslation();
-  const checkRequiredField = !checkRequired ? checkRequired : field?.required
+  const { i18n } = useTranslation();
+  const checkRequiredField = !checkRequired ? checkRequired : field?.required;
   let relationTableSlug = "";
   let objectIdFromJWT = "";
   if (field?.id?.includes("#")) {
@@ -48,14 +60,18 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
   const slugSplit = (slug) => {
     const parts = slug.split("_");
     return parts[parts.length - 1];
-  }
+  };
 
   const label = useMemo(() => {
     if (field?.enable_multilanguage) {
-      return field?.attributes?.show_label ? `${field?.label} (${activeLang ?? slugSplit(field?.slug)})` : "";
+      return field?.attributes?.show_label
+        ? `${field?.label} (${activeLang ?? slugSplit(field?.slug)})`
+        : "";
     } else {
       if (field?.attributes?.show_label === false) return "";
-      return field?.attributes?.[`label_${i18n.language}`] ?? field?.label ?? " ";
+      return (
+        field?.attributes?.[`label_${i18n.language}`] ?? field?.label ?? " "
+      );
     }
   }, [field, activeLang]);
 
@@ -66,14 +82,14 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
   });
 
   const removeLangFromSlug = (slug) => {
-    var lastIndex = slug.lastIndexOf('_');
-  if (lastIndex !== -1) {
+    var lastIndex = slug.lastIndexOf("_");
+    if (lastIndex !== -1) {
       var result = slug.substring(0, lastIndex);
-      return result
-  } else {
-      return false
-  }
-  }
+      return result;
+    } else {
+      return false;
+    }
+  };
 
   const computedSlug = useMemo(() => {
     if (field?.enable_multilanguage) {
@@ -91,7 +107,8 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
     if (field?.attributes?.is_user_id_default === true) return isUserId;
 
-    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue =
+      field.attributes?.defaultValue ?? field.attributes?.default_values;
 
     if (!defaultValue) return undefined;
     if (field.relation_type === "Many2One") return defaultValue[0];
@@ -100,7 +117,14 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
 
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
-  }, [field.attributes, field.type, field.id, field.relation_type, objectIdFromJWT, isUserId]);
+  }, [
+    field.attributes,
+    field.type,
+    field.id,
+    field.relation_type,
+    objectIdFromJWT,
+    isUserId,
+  ]);
 
   const isDisabled = useMemo(() => {
     return (
@@ -118,7 +142,6 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
   // } else {
   //   field.required = false
   // }
-
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
@@ -192,7 +215,11 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
-            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
+            placeholder={
+              field?.attributes?.show_label
+                ? ""
+                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+            }
             required={checkRequiredField}
             defaultValue={defaultValue}
             disabled={isDisabled}
@@ -217,7 +244,11 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
-            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
+            placeholder={
+              field?.attributes?.show_label
+                ? ""
+                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+            }
             required={checkRequiredField}
             mask={"(99) 999-99-99"}
             defaultValue={defaultValue}
@@ -292,7 +323,11 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             fullWidth
             multiline
             rows={4}
-            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
+            placeholder={
+              field?.attributes?.show_label
+                ? ""
+                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+            }
             required={checkRequiredField}
             defaultValue={field.defaultValue}
             disabled={isDisabled}
@@ -363,7 +398,11 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             tabIndex={field?.tabIndex}
             fullWidth
             type="number"
-            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
+            placeholder={
+              field?.attributes?.show_label
+                ? ""
+                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+            }
             required={checkRequiredField}
             defaultValue={defaultValue}
             disabled={isDisabled}
@@ -452,7 +491,11 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
               },
             }}
             fullWidth
-            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
+            placeholder={
+              field?.attributes?.show_label
+                ? ""
+                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+            }
             required={checkRequiredField}
             defaultValue={defaultValue}
             tabIndex={field?.tabIndex}
@@ -497,13 +540,29 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     case "VIDEO":
       return (
         <FRow label={label} required={field.required}>
-          <HFVideoUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={checkRequiredField} defaultValue={defaultValue} disabled={isDisabled} {...props} />
+          <HFVideoUpload
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
         </FRow>
       );
     case "FILE":
       return (
         <FRow label={label} required={field.required}>
-          <HFFileUpload control={control} name={computedSlug} tabIndex={field?.tabIndex} required={checkRequiredField} defaultValue={defaultValue} disabled={isDisabled} {...props} />
+          <HFFileUpload
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
         </FRow>
       );
 
@@ -582,7 +641,15 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
     case "ICON":
       return (
         <FRow label={label} required={field.required}>
-          <HFIconPicker control={control} name={computedSlug} tabIndex={field?.tabIndex} required={checkRequiredField} defaultValue={defaultValue} disabled={isDisabled} {...props} />
+          <HFIconPicker
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            required={checkRequiredField}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
         </FRow>
       );
 
@@ -674,7 +741,11 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
-            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
+            placeholder={
+              field?.attributes?.show_label
+                ? ""
+                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+            }
             required={checkRequiredField}
             defaultValue={defaultValue}
             disabled={field.attributes?.disabled}
@@ -693,7 +764,11 @@ const FormElementGenerator = ({ field = {}, control, setFormValue, formTableSlug
             key={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth
-            placeholder={field?.attributes?.show_label ? "" : (field?.attributes?.[`label_${i18n.language}`] ?? field.label)}
+            placeholder={
+              field?.attributes?.show_label
+                ? ""
+                : field?.attributes?.[`label_${i18n.language}`] ?? field.label
+            }
             required={checkRequiredField}
             defaultValue={defaultValue}
             disabled={isDisabled}

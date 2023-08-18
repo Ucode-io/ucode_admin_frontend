@@ -28,6 +28,7 @@ const HFTextField = ({
   tabIndex,
   checkRequiredField,
   placeholder,
+  endAdornment,
   ...props
 }) => {
   const classes = useStyles();
@@ -46,7 +47,13 @@ const HFTextField = ({
           size="small"
           value={typeof value === "number" ? numberWithSpaces(value) : value}
           onChange={(e) => {
-            onChange(withTrim ? e.target.value?.trim() : typeof e.target.value === "number" ? numberWithSpaces(e.target.value) : e.target.value);
+            onChange(
+              withTrim
+                ? e.target.value?.trim()
+                : typeof e.target.value === "number"
+                ? numberWithSpaces(e.target.value)
+                : e.target.value
+            );
           }}
           name={name}
           error={error}
@@ -65,16 +72,18 @@ const HFTextField = ({
                   paddingRight: "0px",
                 }
               : {
-                background: "inherit",
-                color: "inherit",
+                  background: "inherit",
+                  color: "inherit",
                 },
 
-            endAdornment: disabled && (
+            endAdornment: disabled ? (
               <Tooltip title="This field is disabled for this role!">
                 <InputAdornment position="start">
                   <Lock style={{ fontSize: "20px" }} />
                 </InputAdornment>
               </Tooltip>
+            ) : (
+              endAdornment
             ),
           }}
           helperText={!disabledHelperText && error?.message}

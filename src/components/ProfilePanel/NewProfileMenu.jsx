@@ -1,6 +1,7 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import KeyIcon from "@mui/icons-material/Key";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
+import SmsIcon from "@mui/icons-material/Sms";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Box, Divider, Menu, MenuItem, Tooltip } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
@@ -29,7 +30,6 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import useBooleanState from "../../hooks/useBooleanState";
 import VersionModal from "./Components/VersionModal/VersionModal";
 import LayersIcon from "@mui/icons-material/Layers";
-import SmsIcon from "@mui/icons-material/Sms";
 import { useProjectGetByIdQuery } from "../../services/projectService";
 import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
 import { useTranslation } from "react-i18next";
@@ -250,6 +250,10 @@ const NewProfilePanel = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const onClose = () => {
+    closeMenu();
+    if (selected) refreshTokenFunc();
+  };
 
   return (
     <div>
@@ -265,8 +269,7 @@ const NewProfilePanel = ({
         anchorEl={anchorProfileEl || sidebarAnchorEl}
         open={menuVisible}
         onClose={(e) => {
-          closeMenu(e);
-          // refreshTokenFunc();
+          onClose(e);
         }}
         classes={{
           list: styles.profilemenu,
@@ -559,6 +562,7 @@ const NewProfilePanel = ({
         environmentVisible={environmentVisible}
         environmentList={company.environments}
         handleEnvNavigate={handleEnvNavigate}
+        setSelected={setSelected}
       />
       {versionModalIsOpen && <VersionModal closeModal={closeVersionModal} />}
 

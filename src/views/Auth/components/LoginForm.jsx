@@ -1,5 +1,5 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
-import { Button, InputAdornment } from "@mui/material";
+import { Button, Dialog, InputAdornment } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
@@ -34,6 +34,18 @@ const LoginForm = ({ setIndex, index }) => {
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [formType, setFormType] = useState("LOGIN");
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setLoading(false);
+  };
 
   useEffect(() => {
     getFcmToken();
@@ -174,14 +186,19 @@ const LoginForm = ({ setIndex, index }) => {
 
   const multiCompanyLogin = (data) => {
     setLoading(true);
-
+    const hasEmptyValue = Object.values(data).forEach((value) => !value);
     authService
       .multiCompanyLogin(data)
       .then((res) => {
-        setLoading(false);
-        setCompanies(res.companies);
-        setFormType("MULTI_COMPANY");
-        dispatch(companyActions.setCompanies(res.companies));
+        if (!hasEmptyValue) {
+          setCompanies(res.companies);
+          handleClickOpen();
+          dispatch(companyActions.setCompanies(res.companies));
+        } else {
+          onSubmitDialog(data);
+          setCompanies(res.companies);
+          dispatch(companyActions.setCompanies(res.companies));
+        }
       })
       .catch(() => setLoading(false));
   };
@@ -192,7 +209,6 @@ const LoginForm = ({ setIndex, index }) => {
     authService
       .register(data)
       .then((res) => {
-        setLoading(false);
         setIndex(0);
         store.dispatch(showAlert("Успешно", "success"));
       })
@@ -203,7 +219,13 @@ const LoginForm = ({ setIndex, index }) => {
     setLoading(true);
     if (formType === "LOGIN" && index === 0) multiCompanyLogin(values);
     else if (index === 1) register(values);
-    else dispatch(loginAction(values)).then(() => setLoading(false));
+    else dispatch(loginAction(values)).then(() => console.log(""));
+  };
+
+  const onSubmitDialog = (values) => {
+    setLoading(true);
+    multiCompanyLogin(values);
+    dispatch(loginAction(values)).then(() => console.log(""));
   };
 
   return (
@@ -270,95 +292,19 @@ const LoginForm = ({ setIndex, index }) => {
                         variant="text"
                         type="button"
                         onClick={() => {
-                          formType === "RESET_PASSWORD" ? setFormType("LOGIN") : setFormType("RESET_PASSWORD");
+                          formType === "RESET_PASSWORD"
+                            ? setFormType("LOGIN")
+                            : setFormType("RESET_PASSWORD");
                         }}
                       >
                         Forgot password?
                       </Button>
                     }
                   </TabPanel>
-                  {/* <TabPanel>
-        <div className={classes.formRow}>
-          <p className={classes.label}>{t("login")}</p>
-          <Box className={classes.phone}>
-            <HFTextFieldWithMask
-              isFormEdit
-              control={control}
-              name={"phoneNumber"}
-              fullWidth
-              // mask={"(99) 999-99-99"}
-            />
-          </Box>
-        </div>
-      </TabPanel> */}
                 </div>
               </div>
             ) : (
-              <div style={{ padding: "0 20px" }}>
-                <div
-                  className={classes.formArea}
-                  style={{ marginTop: "10px", height: `calc(100vh - 350px)` }}
-                >
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("company")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="company_id"
-                      size="large"
-                      placeholder={t("enter.company")}
-                      options={computedCompanies}
-                    />
-                  </div>
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("project")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="project_id"
-                      size="large"
-                      placeholder={t("enter.project")}
-                      options={computedProjects}
-                    />
-                  </div>
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("environment")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="environment_id"
-                      size="large"
-                      placeholder={t("select.environment")}
-                      options={computedEnvironments}
-                    />
-                  </div>
-                  <div className={classes.formRow}>
-                    <p className={classes.label}>{t("client_type")}</p>
-                    <HFSelect
-                      required
-                      control={control}
-                      name="client_type"
-                      size="large"
-                      placeholder={t("enter.client_type")}
-                      options={computedClientTypes}
-                    />
-                  </div>
-                  {computedConnections.length
-                    ? computedConnections?.map((connection, idx) => (
-                        <DynamicFields
-                          key={connection?.guid}
-                          table={computedConnections}
-                          connection={connection}
-                          index={idx}
-                          control={control}
-                          setValue={setValue}
-                          watch={watch}
-                          companies={companies}
-                        />
-                      ))
-                    : null}
-                </div>
-              </div>
+              ""
             )}
           </Tabs>
           <div className={classes.buttonsArea}>
@@ -369,13 +315,111 @@ const LoginForm = ({ setIndex, index }) => {
         </form>
       )}
 
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <div
+          style={{
+            padding: "0 20px",
+            width: "500px",
+            height: `calc(100vh - 270px)`,
+          }}
+        >
+          <h2 className={classes.headerContent}>Multi Company</h2>
+          <div className={classes.formArea}>
+            <div className={classes.formRow}>
+              <p className={classes.label}>{t("company")}</p>
+              <HFSelect
+                required
+                control={control}
+                name="company_id"
+                size="large"
+                fullWidth
+                placeholder={t("enter.company")}
+                options={computedCompanies}
+              />
+            </div>
+            <div className={classes.formRow}>
+              <p className={classes.label}>{t("project")}</p>
+              <HFSelect
+                required
+                control={control}
+                name="project_id"
+                size="large"
+                placeholder={t("enter.project")}
+                options={computedProjects}
+              />
+            </div>
+            <div className={classes.formRow}>
+              <p className={classes.label}>{t("environment")}</p>
+              <HFSelect
+                required
+                control={control}
+                name="environment_id"
+                size="large"
+                placeholder={t("select.environment")}
+                options={computedEnvironments}
+              />
+            </div>
+            <div className={classes.formRow}>
+              <p className={classes.label}>{t("client_type")}</p>
+              <HFSelect
+                required
+                control={control}
+                name="client_type"
+                size="large"
+                placeholder={t("enter.client_type")}
+                options={computedClientTypes}
+              />
+            </div>
+            {computedConnections.length
+              ? computedConnections?.map((connection, idx) => (
+                  <DynamicFields
+                    key={connection?.guid}
+                    table={computedConnections}
+                    connection={connection}
+                    index={idx}
+                    control={control}
+                    setValue={setValue}
+                    watch={watch}
+                    companies={companies}
+                  />
+                ))
+              : null}
+          </div>
+          <div className={classes.footerContent}>
+            <Button
+              sx={{ marginRight: "10px" }}
+              variant="contained"
+              color="error"
+            >
+              Cancel
+            </Button>
+            <div className={classes.buttonsArea}>
+              <PrimaryButton
+                onClick={handleSubmit(onSubmitDialog)}
+                size="small"
+                loader={loading}
+              >
+                {t("enter")}
+              </PrimaryButton>
+            </div>
+          </div>
+        </div>
+      </Dialog>
+
       {formType === "RESET_PASSWORD" && (
         <SecondaryButton
           size="large"
           style={{ marginTop: "20px" }}
           type="button"
           onClick={() => {
-            formType === "RESET_PASSWORD" ? setFormType("LOGIN") : setFormType("RESET_PASSWORD");
+            formType === "RESET_PASSWORD"
+              ? setFormType("LOGIN")
+              : setFormType("RESET_PASSWORD");
           }}
         >
           Back to login

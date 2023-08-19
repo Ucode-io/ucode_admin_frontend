@@ -55,61 +55,55 @@
       }
     }
   }
-
 }
 
-.form {
+.formArea {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  overflow: auto;
+  margin-top: 10px;
 
-  .formArea {
-    flex: 1;
-    overflow: auto;
+  .formRow {
+    .label {
+      font-weight: 600 !important;
+      margin-bottom: 5px;
+    }
 
-    .formRow {
-      .label {
-        font-weight: 600;
-        margin-bottom: 12px;
+    margin-bottom: 20px;
+
+    .phone {
+      padding: 8px;
+      border: 1px solid #f8f8f8;
+
+      // &:focus-visible {
+      //   outline: blue;
+      // }
+
+      &:hover {
+        border-color: #000;
       }
 
-      margin-bottom: 20px;
+      input {
+        border: none;
 
-      .phone {
-        padding: 8px;
-        border: 1px solid #f8f8f8;
-
-        // &:focus-visible {
-        //   outline: blue;
-        // }
-
-        &:hover {
-          border-color: #000;
-        }
-
-        input {
-          border: none;
-
-          &:focus-visible {
-            outline: none;
-          }
+        &:focus-visible {
+          outline: none;
         }
       }
     }
   }
+}
 
-  .buttonsArea {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
+.buttonsArea {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
 
-  .modalButtonsArea {
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
+.modalButtonsArea {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .publickOfferRow {
@@ -117,7 +111,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 0;
-  box-shadow: inset 0px -1px 0px #E5E9EB;
+  box-shadow: inset 0px -1px 0px #e5e9eb;
 
   .nameBlock {
     flex: 1;
@@ -134,4 +128,18 @@
 
 .checkboxLabel {
   color: colors.$grey;
+}
+
+.headerContent {
+  height: 50px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+.footerContent {
+  height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
 }

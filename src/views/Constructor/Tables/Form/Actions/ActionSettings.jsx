@@ -58,6 +58,9 @@ const ActionSettings = ({ closeSettingsBlock = () => {}, onUpdate = () => {}, on
       return requestV2.get("/function");
     },
     {
+      onError: err => {
+        console.log("ERR =>", err)
+      },
       select: (res) => {
         return listToOptions(res.functions, "name", "id");
       },

@@ -1,6 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import { Box, Divider } from "@mui/material";
+import { Box, Button, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,6 +29,8 @@ import SubMenu from "./SubMenu";
 import "./style.scss";
 import { useProjectGetByIdQuery } from "../../services/projectService";
 import MenuBox from "./Components/MenuBox";
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 
 const LayoutSidebar = ({ appId }) => {
   const sidebarIsOpen = useSelector(
@@ -210,12 +212,34 @@ const LayoutSidebar = ({ appId }) => {
         }}
       >
         <div className="header">
-          <div className="brand">
+          <div className="brand" onClick={() => setSidebarIsOpen(!sidebarIsOpen)}>
             {projectInfo?.logo ? (
               <img src={projectInfo?.logo} alt="" width={40} height={40} />
             ) : (
               <UdevsLogo fill={"#007AFF"} />
             )}
+
+            {
+              !sidebarIsOpen && (
+                <Button style={{
+                  position: 'absolute',
+                  zIndex: '9',
+                  left: '58px',
+                  width: '20px',
+                  height: '20px',
+                  minWidth: '20px',
+                  borderRadius: '50%',
+                  border: '1px solid #e5e5e5',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#fff'
+                }}  >
+                  <KeyboardDoubleArrowRightIcon/>
+                </Button>
+              ) 
+            }
+
             {sidebarIsOpen && (
               <h2
                 style={{
@@ -227,6 +251,14 @@ const LayoutSidebar = ({ appId }) => {
               </h2>
             )}
           </div>
+
+          {
+            sidebarIsOpen && (
+              <Button onClick={() => setSidebarIsOpen(!sidebarIsOpen)}>
+                <KeyboardDoubleArrowLeftIcon/>
+              </Button>
+            )
+          }
         </div>
 
         <Box

@@ -395,6 +395,7 @@ const LoginForm = ({ setIndex, index }) => {
               sx={{ marginRight: "10px" }}
               variant="contained"
               color="error"
+              onClick={handleClose}
             >
               Cancel
             </Button>

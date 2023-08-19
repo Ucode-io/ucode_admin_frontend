@@ -7,10 +7,10 @@ import { Close } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import styles from "./styles.module.scss";
+import pivotService from "../../../../services/pivotService";
 import useBooleanState from "../../../../hooks/useBooleanState";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import HFSelect from "../../../../components/FormElements/HFSelect";
-import pivotService from "../../../../services/pivotService";
 
 export default function MultiSelectWithInputs({ values, options, onFieldChange, form, idx, objIdx }) {
   const ref = useRef();

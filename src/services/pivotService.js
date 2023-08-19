@@ -1,13 +1,9 @@
 import request from "../utils/request";
 
 const pivotService = {
-  dynamicReport: (data) => {
-    return request.post(`/dynamic-report`, data, {
-      params: {
-        "project-id": data.project_id,
-      },
-    });
-  },
+  
+
+  dynamicReport: (data, params) => request.post(`/dynamic-report`, data, { params }),
 
   dynamicReportFormula: (params) =>
     request.get(`/dynamic-report-formula`, {
@@ -19,10 +15,7 @@ const pivotService = {
       params,
     }),
 
-  getByIdPivotTemplateSetting: ({ id, params }) =>
-    request.get(`/get-pivot-template-setting/${id}`, {
-      params,
-    }),
+  getByIdPivotTemplateSetting: (id) => request.get(`/get-pivot-template-setting/${id}`),
 
   deletePivotTemplate: ({ id, projectId }) =>
     request.delete(`/remove-pivot-template/${id}`, {
@@ -51,10 +44,7 @@ const pivotService = {
       params,
     }),
 
-  getByIdReportSetting: (id, params) =>
-    request.get(`/get-report-setting/${id}`, {
-      params,
-    }),
+  getByIdReportSetting: (id) => request.get(`/get-report-setting/${id}`),
 
   upsertReportSetting: (data) =>
     request.put(`/upsert-report-setting`, data, {

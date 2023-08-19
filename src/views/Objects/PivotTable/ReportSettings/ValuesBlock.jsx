@@ -124,9 +124,11 @@ function ObjectItem({ form, idx, objIdx, options, removeObj, getTables }) {
     });
   };
 
+  console.log('formValuesObj', formValuesObj)
+
   const onFieldChange = (values) => {
     const getField = (slug) => fields.find((v) => v.value === slug);
-    const getExistedField = (slug) => formValuesObj.table_field_settings.find((v) => v.field_slug === slug);
+    const getExistedField = (slug) => formValuesObj?.table_field_settings?.find((v) => v.field_slug === slug);
 
     const key = `values.${idx}.objects.${objIdx}.table_field_settings`;
     form.setValue(
@@ -149,12 +151,12 @@ function ObjectItem({ form, idx, objIdx, options, removeObj, getTables }) {
         <div className={styles.select}>
           <FRow label="Object">
             <HFAutocomplete
-              name={`rows_relation.${idx}.objects.${objIdx}.slug`}
+              name={`values.${idx}.objects.${objIdx}.slug`}
               control={form.control}
               fullWidth
               required
               options={options}
-              onChange={(val) => onObjectSelect(val)}
+              onChange={(val) => {onObjectSelect(val)}}
               onFieldChange={(e) => {
                 getTables(e.target.value);
               }}

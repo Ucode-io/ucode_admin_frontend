@@ -13,11 +13,9 @@ import styles from "./styles.module.scss";
 export default function PivotTemplate(props) {
   const { id, form, modalKey, activeClickActionTabId } = props;
 
-  const { appId: app_id } = useParams();
-
   const { data: dataList, isLoading } = useQuery(
-    ["GET_REPORT_SETTING_BY_ID", app_id],
-    () => pivotService.getByIdReportSetting(id, app_id),
+    ["GET_REPORT_SETTING_BY_ID"],
+    () => pivotService.getByIdReportSetting(id),
     {
       enabled: modalKey === "edit",
       onSuccess: (res) => {
@@ -28,7 +26,7 @@ export default function PivotTemplate(props) {
             report_setting_id: id,
           });
           if (activeClickActionTabId)
-            pivotService.getByIdPivotTemplateSetting({ app_id: app_id, id: activeClickActionTabId }).then((resInner) => {
+            pivotService.getByIdPivotTemplateSetting(activeClickActionTabId).then((resInner) => {
               form.setValue("instance_id", resInner?.instance_id);
 
               const resetValues = (key) => {
@@ -58,8 +56,6 @@ export default function PivotTemplate(props) {
                   form.setValue(key, test);
                 }
               };
-
-              console.log("INSIDE => ", resInner.rows_relation);
 
               form.setValue(
                 `rows.${res.rows?.length}`,
@@ -137,7 +133,7 @@ export default function PivotTemplate(props) {
                 form.watch("values")?.map((out) => ({
                   label: out.label,
                   table_field_settings: out.objects
-                    .reduce((acc, cur) => [...acc, ...cur.table_field_settings], [])
+                    .reduce((acc, cur) => [...acc, ...cur?.table_field_settings], [])
                     .sort((a, b) => (a.order_number > b.order_number ? 1 : -1)),
                 }))
               );
@@ -154,6 +150,8 @@ export default function PivotTemplate(props) {
       },
     }
   );
+
+  console.log('fffffff', form.watch())
 
   console.log("CHECK => ", form.watch("rows"));
 

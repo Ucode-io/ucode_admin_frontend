@@ -22,7 +22,7 @@ export default function RowsRelationItem(props) {
       });
     });
   };
-
+  
   return (
     <div className={styles.wrapper}>
       <div className={styles.itemHead}>
@@ -38,7 +38,7 @@ export default function RowsRelationItem(props) {
                     sx={{ padding: 0 }}
                     checked={form
                       .watch(`${rowName}.${idx}.objects`)
-                      ?.reduce((acc, cur) => [...acc, ...cur.table_field_settings], [])
+                      ?.reduce((acc, cur) => [...acc, ...cur?.table_field_settings], [])
                       ?.every((i) => i.checked)}
                     onChange={(_, val) => onAllCheckboxChange(val, idx)}
                   />

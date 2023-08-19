@@ -201,11 +201,7 @@ export default function PivotTableView() {
 
   const pivotTemplateField = useQuery(
     ["GET_PIVOT_TEMPLATE_BY_ID", activeClickActionTabId],
-    () =>
-      pivotService.getByIdPivotTemplateSetting({
-        id: activeClickActionTabId,
-        app_id: appId,
-      }),
+    () => pivotService.getByIdPivotTemplateSetting(activeClickActionTabId),
     {
       enabled: false,
       onSuccess: (res) => {
@@ -310,7 +306,6 @@ export default function PivotTableView() {
         },
         {
           id: activeClickActionTabId || "default",
-          app_id: appId,
         }
       ),
     {
@@ -658,18 +653,16 @@ export default function PivotTableView() {
     setComputedData([]);
     setExpandedRows({ [activeClickActionTabId]: [] });
     setTimeout(() => {
-      pivotService
-        .getByIdPivotTemplateSetting({ id, app_id: appId })
-        .then((res) => {
-          if (!isDefaultTemplate(activeClickActionTabId))
-            upsertPivotTemplate({
-              ...(values ?? res),
-              instance_id: id,
-              template_name: res?.pivot_table_slug,
-              id: undefined,
-              status: "HISTORY",
-            });
-        });
+      pivotService.getByIdPivotTemplateSetting(id).then((res) => {
+        if (!isDefaultTemplate(activeClickActionTabId))
+          upsertPivotTemplate({
+            ...(values ?? res),
+            instance_id: id,
+            template_name: res?.pivot_table_slug,
+            id: undefined,
+            status: "HISTORY",
+          });
+      });
     }, 0);
   };
 

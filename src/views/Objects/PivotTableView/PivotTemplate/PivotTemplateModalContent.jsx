@@ -21,8 +21,6 @@ export default function PivotTemplateModalContent(props) {
     name: "report_setting_id",
   });
 
-  const { appId: app_id } = useParams();
-
   const [settingId, setSettingId] = useState("");
 
   const { data: reportSettings } = useQuery(
@@ -32,7 +30,7 @@ export default function PivotTemplateModalContent(props) {
       select: (data) => data.report_settings ?? [],
     }
   );
-
+console.log('settingId', settingId)
   return (
     <div>
       {settingId ? (

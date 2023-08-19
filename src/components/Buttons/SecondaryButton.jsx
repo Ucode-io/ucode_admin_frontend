@@ -1,23 +1,20 @@
-import styles from "./style.module.scss"
+import { forwardRef } from "react";
 
-const SecondaryButton = ({
-  children,
-  className,
-  color = "primary",
-  size,
-  disabled = false,
-  ...props
-}) => {
-  return (
+import styles from "./style.module.scss";
+
+const SecondaryButton = forwardRef(
+  ({ children, className, color = "primary", size, disabled = false,onClick, ...props }, ref) => (
     <button
-      className={`${styles.button} ${styles.secondary} ${styles[size]} ${
-        styles[color]
-      } ${disabled ? styles.disabled : ""} ${className}`}
+      ref={ref}
+      className={`${styles.button} ${styles.secondary} ${styles[size]} ${styles[color]} ${
+        disabled ? styles.disabled : ""
+      } ${className}`}
+      onClick={() => !disabled && onClick()}
       {...props}
     >
       {children}
     </button>
   )
-}
+);
 
-export default SecondaryButton
+export default SecondaryButton;

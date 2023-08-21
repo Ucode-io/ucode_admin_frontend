@@ -175,9 +175,8 @@ export default function PivotTableView() {
       .savePivotTemplate({
         pivot_table_slug: values.template_name,
         app_id: appId,
-        from_date: dateRange
-          ? format(new Date(dateRange.$gte), "yyyy-MM-dd")
-          : "",
+        report_setting_id: values.report_setting_id,
+        from_date: dateRange ? format(new Date(dateRange.$gte), "yyyy-MM-dd") : "",
         to_date: dateRange ? format(new Date(dateRange.$lt), "yyyy-MM-dd") : "",
         clone_id: activeClickActionTabId,
         status: "SAVED",
@@ -280,6 +279,8 @@ export default function PivotTableView() {
   // console.log("clickActionTabs", clickActionTabs);
   // console.log("expanded Rows", expandedRows);
   // console.log("relationOrderNumber", relationOrderNumber);
+
+  console.log('activeClickActionTabId',activeClickActionTabId)
 
   const { isLoading, isRefetching, refetch } = useQuery(
     ["DYNAMIC_REPORT", activeClickActionTabId, [activeClickActionTabId]],

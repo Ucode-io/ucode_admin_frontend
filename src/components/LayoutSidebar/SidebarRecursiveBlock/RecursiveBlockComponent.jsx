@@ -1,4 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIconFromMui from '@mui/icons-material/Delete';
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Tooltip } from "@mui/material";
@@ -56,7 +57,7 @@ const RecursiveBlock = ({
     paddingLeft: level * 2 * 5,
     display: element.id === "0" || (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
-
+console.log('element', element)
   const navigateAndSaveHistory = () => {
     const computedData = {
       from_date: element?.data?.pivot?.from_data,
@@ -151,6 +152,19 @@ const RecursiveBlock = ({
     },
   });
 
+  const { mutate: onDeleteTemplate } = useMutation(
+    (id) =>
+      pivotService.deletePivotTemplate({
+        id
+      }),
+    {
+      onSuccess: () => {
+        dispatch(showAlert("Успешно удалено", "success"));
+        queryClient.refetchQueries(["MENU"]);
+      },
+    }
+  );
+
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
@@ -194,7 +208,6 @@ const RecursiveBlock = ({
                     />
                   </Box>
                 </Tooltip> */}
-                {}
                 <Tooltip title="Create report settings" placement="top">
                   <Box className="extra_icon">
                     {element?.data?.permission?.write || permissionButton ? (
@@ -253,9 +266,24 @@ const RecursiveBlock = ({
               </Box>
             ) : element?.type === "USER_FOLDER" ? (
               <>{childBlockVisible ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}</>
-            ) : (
-              ""
-            )}
+            ) : element?.type === "PIVOT" ? (
+              <Tooltip title="Delete Pivot" placement="top">
+                  <Box className="extra_icon">
+                    
+                      <DeleteIconFromMui
+                        size={13}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDeleteTemplate(element.pivot_template_id)
+                        }}
+                        style={{
+                          color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
+                        }}
+                      />
+                    
+                  </Box>
+                </Tooltip>
+            ) : ''}
             {element?.type === "TABLE" && (
               <MenuIcon
                 title="Table settings"

@@ -24,16 +24,15 @@ import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
-import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
-import RegisterForm from "./RegisterForm";
 import { useRoleListQuery } from "../../../services/roleServiceV2";
+import RegisterFormPage from "./RegisterFormPage";
 
-const LoginForm = ({ setIndex, index }) => {
+const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [formType, setFormType] = useState("LOGIN");
 
   const [open, setOpen] = useState(false);
 
@@ -45,6 +44,8 @@ const LoginForm = ({ setIndex, index }) => {
   const handleClose = () => {
     setOpen(false);
     setLoading(false);
+    setValue("username", "");
+    setValue("password", "");
   };
 
   useEffect(() => {
@@ -229,7 +230,9 @@ const LoginForm = ({ setIndex, index }) => {
       selectedClientTypeID &&
       selectedCompanyID &&
       selectedEnvID &&
-      selectedProjectID;
+      selectedProjectID &&
+      getFormValue?.username &&
+      getFormValue?.password;
 
     const hasValidCredentials =
       getFormValue?.password && getFormValue?.username && !formValues;
@@ -240,7 +243,7 @@ const LoginForm = ({ setIndex, index }) => {
     } else if (hasValidCredentials) {
       handleClickTimeout = setTimeout(() => {
         handleClickOpen();
-      }, 500);
+      }, 2000);
     }
     return () => {
       clearTimeout(handleClickTimeout);
@@ -250,6 +253,7 @@ const LoginForm = ({ setIndex, index }) => {
     selectedCompanyID,
     selectedEnvID,
     selectedProjectID,
+    getFormValue,
   ]);
 
   return (
@@ -269,7 +273,7 @@ const LoginForm = ({ setIndex, index }) => {
 
                 <div
                   className={classes.formArea}
-                  style={{ marginTop: "10px", height: `calc(100vh - 370px)` }}
+                  style={{ marginTop: "10px", height: `calc(100vh - 400px)` }}
                 >
                   <TabPanel>
                     <div className={classes.formRow}>
@@ -328,14 +332,32 @@ const LoginForm = ({ setIndex, index }) => {
                 </div>
               </div>
             ) : (
-              ""
+              <RegisterFormPage setFormType={setFormType} formType={formType} />
             )}
           </Tabs>
-          <div className={classes.buttonsArea}>
-            <PrimaryButton size="large" loader={loading}>
-              {t("enter")}
-            </PrimaryButton>
-          </div>
+          {formType !== "register" && (
+            <>
+              <div className={classes.buttonsArea}>
+                <PrimaryButton size="large" loader={loading}>
+                  {t("enter")}
+                </PrimaryButton>
+              </div>
+              <div className={classes.buttonsArea}>
+                <PrimaryButton
+                  onClick={() => setFormType("register")}
+                  size="large"
+                  type="button"
+                  className={`${
+                    formType === "register"
+                      ? classes.registerBtnPage
+                      : classes.registerBtn
+                  }`}
+                >
+                  {t("Зарегистрироваться")}
+                </PrimaryButton>
+              </div>
+            </>
+          )}
         </form>
       )}
 

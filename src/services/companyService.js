@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "react-query";
 import request from "../utils/request";
+import requestAuth from "../utils/requestAuth";
 
 const companyService = {
   getList: (params) => {
@@ -7,6 +8,7 @@ const companyService = {
       params,
     });
   },
+  register: (data) => requestAuth.post(`/company`, data),
   getProjectList: (params) => {
     return request.get(`/company-project`, {
       params,
@@ -31,6 +33,10 @@ const companyService = {
       },
     }),
   delete: (id) => request.delete(`/company/${id}`),
+};
+
+export const useRegisterCompanyMutation = (mutationSettings) => {
+  return useMutation((data) => companyService.register(data), mutationSettings);
 };
 
 export const useCompanyListQuery = ({ params = {}, queryParams } = {}) => {

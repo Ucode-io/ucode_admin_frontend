@@ -87,23 +87,76 @@ const SmsFormPage = () => {
 
   return (
     <div>
-      <Tabs selectedIndex={Number(search.get("tab") ?? 0)} onSelect={(index) => setSearch({ tab: index })} direction={"ltr"} style={{ height: "100vh", position: "relative" }}>
-        <HeaderSettings title="Sms Otp" backButtonLink={-1} subtitle={appId ? mainForm.watch("name") : "Новый"}></HeaderSettings>
+      <Tabs
+        selectedIndex={Number(search.get("tab") ?? 0)}
+        onSelect={(index) => setSearch({ tab: index })}
+        direction={"ltr"}
+        style={{ height: "100vh", position: "relative" }}
+      >
+        <HeaderSettings
+          title="Sms Otp"
+          backButtonLink={-1}
+          subtitle={appId ? mainForm.watch("name") : "Новый"}
+        ></HeaderSettings>
 
-        <form onSubmit={mainForm.handleSubmit(onSubmit)} className="p-2" style={{ height: "calc(100vh - 112px)", overflow: "auto" }}>
+        <form
+          onSubmit={mainForm.handleSubmit(onSubmit)}
+          className="p-2"
+          style={{ height: "calc(100vh - 112px)", overflow: "auto" }}
+        >
           <FormCard title="Детали" maxWidth={500}>
-            <FRow label={"Login"} componentClassName="flex gap-2 align-center" required>
-              <HFTextField disabledHelperText name="login" control={mainForm.control} fullWidth required />
+            <FRow
+              label={"Login"}
+              componentClassName="flex gap-2 align-center"
+              required
+            >
+              <HFTextField
+                disabledHelperText
+                name="login"
+                control={mainForm.control}
+                fullWidth
+                required
+              />
             </FRow>
-            <FRow label={"Default Otp"} componentClassName="flex gap-2 align-center" required>
-              <HFTextField disabledHelperText name="default_otp" control={mainForm.control} fullWidth required />
+            <FRow
+              label={"Default Otp"}
+              componentClassName="flex gap-2 align-center"
+              required
+            >
+              <HFTextField
+                disabledHelperText
+                name="default_otp"
+                control={mainForm.control}
+                fullWidth
+                required
+              />
             </FRow>
-            <FRow label={"Number Of Otp"} componentClassName="flex gap-2 align-center" required>
-              <HFTextField disabledHelperText name="number_of_otp" control={mainForm.control} fullWidth required />
+            <FRow
+              label={"Number Of Otp"}
+              componentClassName="flex gap-2 align-center"
+              required
+            >
+              <HFTextField
+                disabledHelperText
+                name="number_of_otp"
+                control={mainForm.control}
+                fullWidth
+                required
+              />
             </FRow>
 
-            <FRow label={"Password"} componentClassName="flex gap-2 align-center" required>
-              <HFTextField disabledHelperText name="password" control={mainForm.control} fullWidth required />
+            <FRow
+              label={"Password"}
+              componentClassName="flex gap-2 align-center"
+              required
+            >
+              <HFTextField
+                disabledHelperText
+                name="password"
+                control={mainForm.control}
+                fullWidth
+                required
+              />
             </FRow>
           </FormCard>
         </form>
@@ -115,7 +168,10 @@ const SmsFormPage = () => {
                 Закрыть
               </SecondaryButton>
 
-              <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)}>
+              <PrimaryButton
+                loader={btnLoader}
+                onClick={mainForm.handleSubmit(onSubmit)}
+              >
                 <Save /> Сохранить
               </PrimaryButton>
             </>

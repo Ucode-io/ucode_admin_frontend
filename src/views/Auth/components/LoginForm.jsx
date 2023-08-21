@@ -234,13 +234,13 @@ const LoginForm = ({ setIndex, index }) => {
     const hasValidCredentials =
       getFormValue?.password && getFormValue?.username && !formValues;
 
-    if (formValues) {
+    if (formValues && !open) {
       clearTimeout(handleClickTimeout);
       onSubmitDialog(getFormValue);
     } else if (hasValidCredentials) {
       handleClickTimeout = setTimeout(() => {
         handleClickOpen();
-      }, 2000);
+      }, 500);
     }
     return () => {
       clearTimeout(handleClickTimeout);

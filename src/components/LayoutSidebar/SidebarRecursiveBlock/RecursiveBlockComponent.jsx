@@ -57,8 +57,8 @@ const RecursiveBlock = ({
     paddingLeft: level * 2 * 5,
     display: element.id === "0" || (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
-console.log('element', element)
-  const navigateAndSaveHistory = () => {
+
+  const navigateAndSaveHistory = (elementItem) => {
     const computedData = {
       from_date: element?.data?.pivot?.from_data,
       pivot_table_slug: element?.data?.pivot?.pivot_table_slug,
@@ -68,9 +68,13 @@ console.log('element', element)
       id: undefined,
       status: "HISTORY",
     };
-    pivotService.upsertPivotTemplate(computedData).then((res) => {
+    if (elementItem?.data?.pivot?.status === "SAVED") {
+      pivotService.upsertPivotTemplate(computedData).then((res) => {
+        navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
+      });
+    } else {
       navigate(`/main/${appId}/pivot-template/${element?.pivot_template_id}`);
-    });
+    }
   };
 
   const navigateMenu = () => {
@@ -101,7 +105,7 @@ console.log('element', element)
         return navigate(`/main/${appId}/report-setting/${element?.report_setting_id}`);
 
       case "PIVOT":
-        return navigateAndSaveHistory();
+        return navigateAndSaveHistory(element);
 
       default:
         return navigate(`/main/${appId}`);

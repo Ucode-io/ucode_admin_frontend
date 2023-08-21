@@ -243,6 +243,8 @@ export default function PivotTableView() {
     }
   );
 
+  const {pivotTemplateId} = useParams()
+
   const pivotTemplatesHistory = useQuery(
     ["GET_TEMPLATES_LIST_HISTORY"],
     () =>
@@ -257,7 +259,7 @@ export default function PivotTableView() {
           value: i.id,
         })) ?? [],
       onSuccess: (data) => {
-        setActiveClickActionTabId(data[0].value);
+        setActiveClickActionTabId(pivotTemplateId);
         setTimeout(() => {
           sformirovatBtnRef.current.click();
         }, 0);

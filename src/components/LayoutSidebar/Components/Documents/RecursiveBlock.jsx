@@ -163,6 +163,7 @@ const DocumentsRecursive = ({
             selected={selected}
             handleOpenNotify={handleOpenNotify}
             setSelected={setSelected}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>

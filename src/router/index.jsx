@@ -63,10 +63,10 @@ import ProjectSettingPage from "../components/LayoutSidebar/Components/Project";
 import ResourceDetail from "../views/Resources/Detail";
 import Connections from "../views/Matrix/Connections";
 import SmsPage from "../views/SmsOtp";
-import SmsFormPage from "../views/SmsOtp/SmsFormpage";
 import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
 import NotificationPage from "../components/LayoutSidebar/Components/Notification";
 import NotificationForm from "../components/LayoutSidebar/Components/Notification/NotificationForm";
+import SmsFormPage from "../views/SmsOtp/SmsFormPage";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 

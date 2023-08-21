@@ -15,7 +15,7 @@ import { store } from "../../store";
 import smsOtpService from "../../services/auth/smsOtpService";
 
 const SmsFormPage = () => {
-  const { appId, apiKeyId, redirectId  } = useParams();
+  const { appId, apiKeyId, redirectId } = useParams();
   const navigate = useNavigate();
   const [search, setSearch] = useSearchParams();
   const [btnLoader, setBtnLoader] = useState();
@@ -23,21 +23,19 @@ const SmsFormPage = () => {
   const authStore = store.getState().auth;
 
   const mainForm = useForm({
-    defaultValues: {
-    },
+    defaultValues: {},
   });
-
 
   const createApp = (data) => {
     setBtnLoader(true);
     const params = {
-        'project-id': authStore.projectId
-    }
+      "project-id": authStore.projectId,
+    };
     smsOtpService
-      .create({...data, number_of_otp: parseInt(data?.number_of_otp)}, params)
+      .create({ ...data, number_of_otp: parseInt(data?.number_of_otp) }, params)
       .then(() => {
         navigate(-1);
-        getRoleList();
+        // getRoleList();
       })
       .catch(() => setBtnLoader(false));
   };
@@ -48,16 +46,14 @@ const SmsFormPage = () => {
     smsOtpService
       .update({
         ...data,
-        number_of_otp: parseInt(data?.number_of_otp)
+        number_of_otp: parseInt(data?.number_of_otp),
       })
       .then(() => {
         navigate(-1);
-        getRoleList();
+        // getRoleList();
       })
       .catch(() => setBtnLoader(false));
   };
-
-
 
   const getById = () => {
     smsOtpService
@@ -70,12 +66,11 @@ const SmsFormPage = () => {
       });
   };
 
-
-  useEffect(() => {
-    if (mainForm.watch("client_type_id")) {
-      getRoleList();
-    }
-  }, [mainForm.watch("client_type_id")]);
+  // useEffect(() => {
+  //   if (mainForm.watch("client_type_id")) {
+  //     getRoleList();
+  //   }
+  // }, [mainForm.watch("client_type_id")]);
 
   useEffect(() => {
     if (redirectId) {

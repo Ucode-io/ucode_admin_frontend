@@ -208,13 +208,15 @@ export default function PivotTableView() {
     }
   );
 
+  const {pivotTemplateId} = useParams()
+
   const pivotTemplatesHistory = useQuery(
     ["GET_TEMPLATES_LIST_HISTORY"],
     () => pivotService.getListPivotTemplateSetting({ app_id: appId, status: "HISTORY" }),
     {
       select: (res) => (res.pivot_templates ?? []).map((i) => ({ label: i.pivot_table_slug, value: i.id })) ?? [],
       onSuccess: (data) => {
-        setActiveClickActionTabId(data[0].value);
+        setActiveClickActionTabId(pivotTemplateId);
         setTimeout(() => {
           sformirovatBtnRef.current.click();
         }, 0);

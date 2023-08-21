@@ -36,11 +36,10 @@ export default function PivotTemplate(props) {
                   if (row.join) {
                     form.setValue(`${key}.${rowIdx}.join`, true);
                   }
-                  row.table_field_settings.forEach((field) => {
+                  row.table_field_settings?.forEach((field) => {
                     if (field.checked) {
                       const fieldIdx = form
-                        .watch(`${key}.${rowIdx}.table_field_settings`)
-                        .findIndex((i) => i.field_slug === field.field_slug);
+                        .watch(`${key}.${rowIdx}.table_field_settings`)?.findIndex((i) => i.field_slug === field.field_slug);
                       form.setValue(`${key}.${rowIdx}.table_field_settings.${fieldIdx}.checked`, true);
                     }
                   });
@@ -59,7 +58,7 @@ export default function PivotTemplate(props) {
 
               form.setValue(
                 `rows.${res.rows?.length}`,
-                res["rows_relation"].map((item, idx) => ({
+                res["rows_relation"]?.map((item, idx) => ({
                   join: true,
                   rowsRelationRow: true,
                   label: item.label,
@@ -88,8 +87,7 @@ export default function PivotTemplate(props) {
                   form.setValue(`rows_relation.${rowIdx}.objects.${objIdx}.relation_order_number`, obIdx + 1);
                   object.table_field_settings.forEach((field) => {
                     const fieldIdx = form
-                      .watch(`rows_relation.${rowIdx}.objects.${objIdx}.table_field_settings`)
-                      .findIndex((i) => i.field_slug === field.field_slug);
+                      .watch(`rows_relation.${rowIdx}.objects.${objIdx}.table_field_settings`)?.findIndex((i) => i.field_slug === field.field_slug);
                     if (field.checked) {
                       form.setValue(
                         `rows_relation.${rowIdx}.objects.${objIdx}.table_field_settings.${fieldIdx}.checked`,
@@ -110,8 +108,7 @@ export default function PivotTemplate(props) {
                   const objIdx = form.watch(`values.${rowIdx}.objects`)?.findIndex((i) => i.id === object.id);
                   object.table_field_settings.forEach((field) => {
                     const fieldIdx = form
-                      .watch(`values.${rowIdx}.objects.${objIdx}.table_field_settings`)
-                      .findIndex((i) => i.field_slug === field.field_slug);
+                      .watch(`values.${rowIdx}.objects.${objIdx}.table_field_settings`)?.findIndex((i) => i.field_slug === field.field_slug);
                     if (field.checked) {
                       form.setValue(
                         `values.${rowIdx}.objects.${objIdx}.table_field_settings.${fieldIdx}.checked`,
@@ -150,10 +147,6 @@ export default function PivotTemplate(props) {
       },
     }
   );
-
-  console.log('fffffff', form.watch())
-
-  console.log("CHECK => ", form.watch("rows"));
 
   return (
     <div>

@@ -79,7 +79,7 @@ function Item(props) {
       {!row.rowsRelationRow && (
         <Checkbox
           sx={{ padding: 0, marginTop: "7px" }}
-          checked={form.watch(`${rowName}.${idx}.table_field_settings`).every((i) => i.checked)}
+          checked={form.watch(`${rowName}.${idx}.table_field_settings`)?.every((i) => i.checked)}
           onChange={(_, val) => onAllCheckboxChange(val)}
         />
       )}

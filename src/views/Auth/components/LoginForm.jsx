@@ -56,12 +56,14 @@ const LoginForm = ({ setIndex, index }) => {
     localStorage.setItem("fcmToken", token);
   };
 
-  const { control, handleSubmit, watch, setValue, reset } = useForm();
+  const { control, handleSubmit, watch, setValue, reset, getValues } =
+    useForm();
 
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
+  const getFormValue = getValues();
 
   const computedCompanies = useMemo(() => {
     return listToOptions(companies, "name");
@@ -186,19 +188,11 @@ const LoginForm = ({ setIndex, index }) => {
 
   const multiCompanyLogin = (data) => {
     setLoading(true);
-    const hasEmptyValue = Object.values(data).forEach((value) => !value);
     authService
       .multiCompanyLogin(data)
       .then((res) => {
-        if (!hasEmptyValue) {
-          setCompanies(res.companies);
-          handleClickOpen();
-          dispatch(companyActions.setCompanies(res.companies));
-        } else {
-          onSubmitDialog(data);
-          setCompanies(res.companies);
-          dispatch(companyActions.setCompanies(res.companies));
-        }
+        setCompanies(res.companies);
+        dispatch(companyActions.setCompanies(res.companies));
       })
       .catch(() => setLoading(false));
   };
@@ -227,6 +221,36 @@ const LoginForm = ({ setIndex, index }) => {
     multiCompanyLogin(values);
     dispatch(loginAction(values)).then(() => console.log(""));
   };
+
+  useEffect(() => {
+    let handleClickTimeout;
+
+    const formValues =
+      selectedClientTypeID &&
+      selectedCompanyID &&
+      selectedEnvID &&
+      selectedProjectID;
+
+    const hasValidCredentials =
+      getFormValue?.password && getFormValue?.username && !formValues;
+
+    if (formValues) {
+      clearTimeout(handleClickTimeout);
+      onSubmitDialog(getFormValue);
+    } else if (hasValidCredentials) {
+      handleClickTimeout = setTimeout(() => {
+        handleClickOpen();
+      }, 2000);
+    }
+    return () => {
+      clearTimeout(handleClickTimeout);
+    };
+  }, [
+    selectedClientTypeID,
+    selectedCompanyID,
+    selectedEnvID,
+    selectedProjectID,
+  ]);
 
   return (
     <>
@@ -325,7 +349,7 @@ const LoginForm = ({ setIndex, index }) => {
           style={{
             padding: "0 20px",
             width: "500px",
-            height: `calc(100vh - 270px)`,
+            height: `calc(100vh - 150px)`,
           }}
         >
           <h2 className={classes.headerContent}>Multi Company</h2>

@@ -240,7 +240,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     if (formValues && !open) {
       clearTimeout(handleClickTimeout);
       onSubmitDialog(getFormValue);
-    } else if (hasValidCredentials) {
+    } else if (hasValidCredentials && formType !== "register") {
       handleClickTimeout = setTimeout(() => {
         handleClickOpen();
       }, 2000);
@@ -347,6 +347,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                   onClick={() => setFormType("register")}
                   size="large"
                   type="button"
+                  loader={true}
                   className={`${
                     formType === "register"
                       ? classes.registerBtnPage

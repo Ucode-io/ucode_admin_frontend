@@ -26,6 +26,7 @@ import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
 import { useRoleListQuery } from "../../../services/roleServiceV2";
 import RegisterFormPage from "./RegisterFormPage";
+import companyService from "../../../services/companyService";
 
 const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const { t } = useTranslation();
@@ -66,10 +67,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const selectedEnvID = watch("environment_id");
   const getFormValue = getValues();
 
+  //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
     return listToOptions(companies, "name");
   }, [companies]);
 
+  //=======COMPUTE PROJECTS
   const computedProjects = useMemo(() => {
     const company = companies?.find(
       (company) => company.id === selectedCompanyID
@@ -77,59 +80,38 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     return listToOptions(company?.projects, "name");
   }, [companies, selectedCompanyID]);
 
-  const { data: computedEnvironments } = useQuery(
-    ["GET_ENVIRONMENT_LIST", { "project-id": selectedProjectID }],
-    () => {
-      return environmentService.getList({ "project-id": selectedProjectID });
-    },
-    {
-      enabled: !!selectedProjectID,
-      select: (res) =>
-        res.data?.map((row) => ({
-          label: row.name,
-          value: row.environment_id,
-        })),
-    }
-  );
+  //=======COMPUTE ENVIRONMENTS
+  const computedEnvironments = useMemo(() => {
+    const company = companies?.find(
+      (company) => company.id === selectedCompanyID
+    );
+    const companyProject = company?.projects?.find(
+      (el) => el?.id === selectedProjectID
+    );
 
-  const { data: computedRoles } = useRoleListQuery({
-    headers: { "environment-id": selectedEnvID },
-    params: {
-      "client-type-id": selectedClientTypeID,
-      "project-id": selectedProjectID,
-    },
-    queryParams: {
-      enabled: !!selectedClientTypeID,
-      select: (res) => {
-        return res?.data?.response?.map((row) => ({
-          label: row.name,
-          value: row.guid,
-        }));
-      },
-    },
-  });
+    return companyProject?.resource_environments?.map((item) => ({
+      label: item?.name,
+      value: item?.environment_id,
+    }));
+  }, [selectedEnvID, companies, selectedProjectID]);
 
-  const { data: computedClientTypes = [] } = useQuery(
-    [
-      "GET_CLIENT_TYPE_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-    ],
-    () => {
-      return clientTypeServiceV2.getList(
-        { "project-id": selectedProjectID },
-        { "environment-id": selectedEnvID }
-      );
-    },
-    {
-      enabled: !!selectedEnvID,
-      select: (res) =>
-        res.data.response?.map((row) => ({
-          label: row.name,
-          value: row.guid,
-        })),
-    }
-  );
+  //======COMPUTE CLIENTTYPES
+  const computedClientTypes = useMemo(() => {
+    const company = companies?.find(
+      (company) => company.id === selectedCompanyID
+    );
+    const companyProject = company?.projects?.find(
+      (el) => el?.id === selectedProjectID
+    );
+
+    const companyEnvironment = companyProject?.resource_environments?.find(
+      (el) => el?.environment_id === selectedEnvID
+    );
+    return companyEnvironment?.client_types?.response?.map((item) => ({
+      label: item?.name,
+      value: item?.guid,
+    }));
+  }, [companies, selectedCompanyID, selectedEnvID, selectedProjectID]);
 
   const { data: computedConnections = [] } = useQuery(
     [
@@ -154,35 +136,6 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   );
 
   useEffect(() => {
-    if (computedCompanies?.length === 1) {
-      setValue("company_id", computedCompanies[0]?.value);
-    }
-  }, [computedCompanies]);
-
-  useEffect(() => {
-    if (computedProjects?.length === 1) {
-      setValue("project_id", computedProjects[0]?.value);
-    }
-  }, [computedProjects]);
-
-  useEffect(() => {
-    if (computedEnvironments?.length === 1) {
-      setValue("environment_id", computedEnvironments[0]?.value);
-    }
-  }, [computedEnvironments]);
-  useEffect(() => {
-    if (computedRoles?.length === 1) {
-      setValue("role_id", computedRoles[0]?.value);
-    }
-  }, [computedRoles]);
-
-  useEffect(() => {
-    if (computedClientTypes?.length === 1) {
-      setValue("client_type", computedClientTypes[0]?.value);
-    }
-  }, [computedClientTypes]);
-
-  useEffect(() => {
     getFcmToken();
     reset();
   }, [index]);
@@ -192,7 +145,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     authService
       .multiCompanyLogin(data)
       .then((res) => {
-        setCompanies(res.companies);
+        // setCompanies(res.companies);
         dispatch(companyActions.setCompanies(res.companies));
       })
       .catch(() => setLoading(false));
@@ -214,30 +167,60 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     setLoading(true);
     if (formType === "LOGIN" && index === 0) multiCompanyLogin(values);
     else if (index === 1) register(values);
-    else dispatch(loginAction(values)).then(() => console.log(""));
+    else dispatch(loginAction(values));
   };
 
   const onSubmitDialog = (values) => {
     setLoading(true);
-    multiCompanyLogin(values);
-    dispatch(loginAction(values)).then(() => console.log(""));
+    // multiCompanyLogin(values);
+    dispatch(loginAction(values));
   };
+
+  useEffect(() => {
+    if (getFormValue?.username && getFormValue?.password) {
+      companyService
+        .getCompanyList({
+          password: getFormValue?.password,
+          username: getFormValue?.username,
+        })
+        .then((res) => {
+          setCompanies(res?.companies);
+        });
+    }
+  }, [getFormValue?.username, getFormValue?.password]);
+
+  useEffect(() => {
+    if (computedCompanies?.length === 1) {
+      setValue("company_id", computedCompanies?.[0]?.value);
+    }
+    if (computedProjects?.length === 1) {
+      setValue("project_id", computedProjects?.[0]?.value);
+    }
+    if (computedEnvironments?.length === 1) {
+      setValue("environment_id", computedEnvironments?.[0]?.value);
+    }
+    if (computedClientTypes?.length === 1) {
+      setValue("client_type", computedClientTypes?.[0]?.value);
+    }
+  }, [
+    computedCompanies,
+    computedProjects,
+    computedEnvironments,
+    computedClientTypes,
+  ]);
 
   useEffect(() => {
     let handleClickTimeout;
 
-    const formValues =
+    const formValuesExist =
       selectedClientTypeID &&
       selectedCompanyID &&
       selectedEnvID &&
-      selectedProjectID &&
-      getFormValue?.username &&
-      getFormValue?.password;
-
+      selectedProjectID;
     const hasValidCredentials =
-      getFormValue?.password && getFormValue?.username && !formValues;
+      getFormValue?.password && getFormValue?.username && !formValuesExist;
 
-    if (formValues && !open) {
+    if (formValuesExist && !open) {
       clearTimeout(handleClickTimeout);
       onSubmitDialog(getFormValue);
     } else if (hasValidCredentials && formType !== "register") {
@@ -245,6 +228,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         handleClickOpen();
       }, 2000);
     }
+
     return () => {
       clearTimeout(handleClickTimeout);
     };
@@ -254,6 +238,8 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     selectedEnvID,
     selectedProjectID,
     getFormValue,
+    formType,
+    open,
   ]);
 
   return (

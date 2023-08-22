@@ -169,6 +169,7 @@ const RegisterFormPage = ({ setFormType, formType }) => {
         <PrimaryButton
           onClick={handleSubmit(onSubmit)}
           size="large"
+          loader={isLoading}
           className={`${
             formType === "register"
               ? classes.registerBtnPage

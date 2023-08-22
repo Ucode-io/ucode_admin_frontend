@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "react-query";
 import request from "../utils/request";
 import requestAuth from "../utils/requestAuth";
+import requestAuthV2 from "../utils/requestAuthV2";
 
 const companyService = {
   getList: (params) => {
@@ -9,6 +10,8 @@ const companyService = {
     });
   },
   register: (data) => requestAuth.post(`/company`, data),
+  getCompanyList: (data) =>
+    requestAuthV2.post("/multi-company/one-login", data),
   getProjectList: (params) => {
     return request.get(`/company-project`, {
       params,

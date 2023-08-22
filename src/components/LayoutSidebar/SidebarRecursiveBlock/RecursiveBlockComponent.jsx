@@ -27,6 +27,8 @@ import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
 import NotificationSidebar from "../Components/Notification/NotificationSidebar";
 import Resources from "../Components/Resources";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
+export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -56,12 +58,14 @@ const RecursiveBlock = ({
   const defaultLanguage = i18n.language;
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
-
-  const buttonPermission =
-    element?.data?.permission?.read ||
-    defaultAdmin ||
-    element?.id === analyticItems.pivot_id ||
-    element?.id === analyticItems.report_setting;
+  const readPermission = element?.data?.permission?.read;
+  const withoutPermission =
+    element?.parent_id === adminId || element?.parent_id === analyticsId
+      ? true
+      : false;
+  const permission = defaultAdmin
+    ? readPermission || withoutPermission
+    : readPermission;
 
   const activeStyle = {
     backgroundColor:
@@ -160,7 +164,7 @@ const RecursiveBlock = ({
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        {buttonPermission ? (
+        {permission ? (
           <Button
             key={element.id}
             style={activeStyle}

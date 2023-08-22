@@ -217,12 +217,13 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       selectedCompanyID &&
       selectedEnvID &&
       selectedProjectID;
+
     const hasValidCredentials =
       getFormValue?.password && getFormValue?.username && !formValuesExist;
 
-    if (formValuesExist && !open) {
+    if (formValuesExist && getFormValue?.password && getFormValue?.username) {
       clearTimeout(handleClickTimeout);
-      onSubmitDialog(getFormValue);
+      if (!open) onSubmitDialog(getFormValue);
     } else if (hasValidCredentials && formType !== "register") {
       handleClickTimeout = setTimeout(() => {
         handleClickOpen();
@@ -363,51 +364,59 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         >
           <h2 className={classes.headerContent}>Multi Company</h2>
           <div className={classes.formArea}>
-            <div className={classes.formRow}>
-              <p className={classes.label}>{t("company")}</p>
-              <HFSelect
-                required
-                control={control}
-                name="company_id"
-                size="large"
-                fullWidth
-                placeholder={t("enter.company")}
-                options={computedCompanies}
-              />
-            </div>
-            <div className={classes.formRow}>
-              <p className={classes.label}>{t("project")}</p>
-              <HFSelect
-                required
-                control={control}
-                name="project_id"
-                size="large"
-                placeholder={t("enter.project")}
-                options={computedProjects}
-              />
-            </div>
-            <div className={classes.formRow}>
-              <p className={classes.label}>{t("environment")}</p>
-              <HFSelect
-                required
-                control={control}
-                name="environment_id"
-                size="large"
-                placeholder={t("select.environment")}
-                options={computedEnvironments}
-              />
-            </div>
-            <div className={classes.formRow}>
-              <p className={classes.label}>{t("client_type")}</p>
-              <HFSelect
-                required
-                control={control}
-                name="client_type"
-                size="large"
-                placeholder={t("enter.client_type")}
-                options={computedClientTypes}
-              />
-            </div>
+            {computedCompanies?.length !== 1 && (
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("company")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="company_id"
+                  size="large"
+                  fullWidth
+                  placeholder={t("enter.company")}
+                  options={computedCompanies}
+                />
+              </div>
+            )}
+            {computedProjects?.length !== 1 && (
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("project")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="project_id"
+                  size="large"
+                  placeholder={t("enter.project")}
+                  options={computedProjects}
+                />
+              </div>
+            )}
+            {computedEnvironments?.length !== 1 && (
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("environment")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="environment_id"
+                  size="large"
+                  placeholder={t("select.environment")}
+                  options={computedEnvironments}
+                />
+              </div>
+            )}
+            {computedClientTypes?.length !== 1 && (
+              <div className={classes.formRow}>
+                <p className={classes.label}>{t("client_type")}</p>
+                <HFSelect
+                  required
+                  control={control}
+                  name="client_type"
+                  size="large"
+                  placeholder={t("enter.client_type")}
+                  options={computedClientTypes}
+                />
+              </div>
+            )}
             {computedConnections.length
               ? computedConnections?.map((connection, idx) => (
                   <DynamicFields

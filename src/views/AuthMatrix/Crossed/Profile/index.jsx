@@ -32,27 +32,29 @@ const UsersForm = () => {
 
 
   const update = (data) => {
-
     const oldPassword = data?.old_password;
     const newPassword = data?.new_password
+
     const requestData = {
       ...data,
       guid: isUserInfo?.id,
     };
 
-    if(newPassword || oldPassword) {
-      resetPasswordV2(oldPassword, newPassword)
-    } else {
-      delete requestData.confirm_password;
-    }
+    // if(newPassword || oldPassword) {
+    //   resetPasswordV2(oldPassword, newPassword)
+    // } else {
+    //   delete requestData.confirm_password;
+    // }
 
     userService
       ?.updateV2({
        ...requestData,
       })
       .then((res) => {
-        if(getError) {
-            navigate(-1);
+        if(newPassword || oldPassword) {
+          resetPasswordV2(oldPassword, newPassword)
+        } else {
+          delete requestData.confirm_password;
         }
       })
   };
@@ -87,14 +89,13 @@ const UsersForm = () => {
       old_password: oldPassword,
       user_id: isUserId
     }).then((res) => {
-      navigate(-1)
+      dispatch(showAlert("Password successfuly updated", "success"));
     }).catch((err) => {
-      setGetError(true)
+      dispatch(showAlert("Something went wrong on changing password"))
     })
   }
 
   const onSubmit = (values) => {
-
     if(values?.new_password && values?.old_password) {
       if(values?.new_password !== values?.confirm_password) {
         dispatch(showAlert("Confirm Password fields do not match"))

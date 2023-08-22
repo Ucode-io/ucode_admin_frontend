@@ -250,9 +250,8 @@ const NewProfilePanel = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const onClose = () => {
-    closeMenu();
+  const onClose = (e) => {
+    closeMenu(e);
     if (selected) refreshTokenFunc();
   };
 
@@ -269,7 +268,9 @@ const NewProfilePanel = ({
         id="lock-menu"
         anchorEl={anchorProfileEl || sidebarAnchorEl}
         open={menuVisible}
-        onClose={onClose}
+        onClose={(e) => {
+          onClose(e);
+        }}
         classes={{
           list: styles.profilemenu,
           paper: settings ? styles.settingspaper : styles.profilepaper,

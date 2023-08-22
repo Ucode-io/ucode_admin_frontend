@@ -26,12 +26,14 @@ const SubMenu = ({
   selectedApp,
   isLoading,
   menuStyle,
+  setSelectedApp,
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const menuItem = store.getState().menu.menuItem;
   const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
+  const menuItem = useSelector((state) => state.menu.menuItem);
+
   const setPinIsEnabledFunc = (val) => {
     dispatch(mainActions.setPinIsEnabled(val));
   };
@@ -95,7 +97,13 @@ const SubMenu = ({
                 />
               </div>
             )}
-            <div className="close-btn" onClick={() => setSubMenuIsOpen(false)}>
+            <div
+              className="close-btn"
+              onClick={() => {
+                setSelectedApp({});
+                setSubMenuIsOpen(false);
+              }}
+            >
               <ClearIcon />
             </div>
           </Box>

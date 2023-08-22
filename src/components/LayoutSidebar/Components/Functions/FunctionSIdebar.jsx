@@ -138,7 +138,7 @@ const FunctionSidebar = ({
           }}
           style={{
             color:
-              menuItem?.id === folder?.id
+              menuItem?.id === selected?.id
                 ? menuStyle?.active_text
                 : menuStyle?.text || "",
           }}
@@ -161,7 +161,7 @@ const FunctionSidebar = ({
               }}
               style={{
                 color:
-                  menuItem?.id === func?.id
+                  menuItem?.id === selected?.id
                     ? menuStyle?.active_text
                     : menuStyle?.text || "",
               }}

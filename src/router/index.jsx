@@ -70,8 +70,6 @@ import NotificationPage from "../components/LayoutSidebar/Components/Notificatio
 import NotificationForm from "../components/LayoutSidebar/Components/Notification/NotificationForm";
 import PivotTableView from "../views/Objects/PivotTableView";
 
-
-
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -151,7 +149,6 @@ const Router = () => {
           <Route path="create" element={<RedirectFormPage />} />
           <Route path=":redirectId" element={<RedirectFormPage />} />
         </Route>
-
         <Route path=":appId/sms-otp">
           <Route index element={<SmsPage />} />
           <Route path="create" element={<SmsFormPage />} />
@@ -183,8 +180,14 @@ const Router = () => {
         />
 
         <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
-        <Route path=":appId/report-setting/:reportSettingsId" element={<ReportSettings />} />
-        <Route path=":appId/pivot-template/:pivotTemplateId" element={<PivotTableView />} />
+        <Route
+          path=":appId/report-setting/:reportSettingsId"
+          element={<ReportSettings />}
+        />
+        <Route
+          path=":appId/pivot-template/:pivotTemplateId"
+          element={<PivotTableView />}
+        />
 
         <Route path=":appId/user-page/:userMenuId">
           <Route index element={<ClientUserPage />} />

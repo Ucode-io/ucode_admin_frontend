@@ -11,7 +11,7 @@ import CreateButton from "../../../../../Buttons/CreateButton";
 import SaveButton from "../../../../../Buttons/SaveButton";
 import HFTextField from "../../../../../FormElements/HFTextField";
 
-const FolderCreateModal = ({ closeModal, loading, modalType, folder }) => {
+const FolderCreateModal = ({ closeModal, modalType, folder }) => {
   const createType = modalType === "CREATE";
   const company = store.getState().company;
   const queryClient = useQueryClient();
@@ -79,9 +79,15 @@ const FolderCreateModal = ({ closeModal, loading, modalType, folder }) => {
 
             <div className="btns-row">
               {modalType === "crete" ? (
-                <CreateButton type="submit" loading={loading} />
+                <CreateButton
+                  type="submit"
+                  loading={createLoading || updateLoading}
+                />
               ) : (
-                <SaveButton type="submit" loading={loading} />
+                <SaveButton
+                  type="submit"
+                  loading={createLoading || updateLoading}
+                />
               )}
             </div>
           </form>

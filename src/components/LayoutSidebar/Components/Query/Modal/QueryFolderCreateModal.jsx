@@ -2,50 +2,52 @@ import { Card, Modal, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
-import { store } from "../../../../../../store";
-import CreateButton from "../../../../../Buttons/CreateButton";
-import SaveButton from "../../../../../Buttons/SaveButton";
-import HFTextField from "../../../../../FormElements/HFTextField";
 import {
-  useTemplateFolderCreateMutation,
-  useTemplateFolderUpdateMutation,
-} from "../../../../../../services/templateFolderService";
+  useQueryFolderCreateMutation,
+  useQueryFolderUpdateMutation,
+} from "../../../../../services/query.service";
+import HFTextField from "../../../../FormElements/HFTextField";
+import CreateButton from "../../../../Buttons/CreateButton";
+import SaveButton from "../../../../Buttons/SaveButton";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../../../../store/alert/alert.thunk";
 
-const TemplateFolderCreateModal = ({ closeModal, modalType, folder }) => {
-  const createType = modalType === "CREATE";
-  const company = store.getState().company;
+const QueryFolderCreateModal = ({ folder, closeModal, formType }) => {
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const createType = formType === "CREATE";
 
   const { control, handleSubmit } = useForm({
-    defaultValues:
-      modalType === "CREATE"
-        ? {
-            project_id: company.projectId,
-            parent_id: folder?.id,
-          }
-        : folder,
+    defaultValues: createType
+      ? {
+          parent_id: folder?.id,
+        }
+      : folder,
   });
 
   const { mutate: create, isLoading: createLoading } =
-    useTemplateFolderCreateMutation({
+    useQueryFolderCreateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["TEMPLATE_FOLDERS"]);
+        queryClient.refetchQueries(["QUERY_FOLDERS"]);
+        dispatch(showAlert("Success", "success"));
         closeModal();
       },
     });
 
   const { mutate: update, isLoading: updateLoading } =
-    useTemplateFolderUpdateMutation({
+    useQueryFolderUpdateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["TEMPLATE_FOLDERS"]);
+        dispatch(showAlert("Success", "success"));
+        queryClient.refetchQueries(["QUERY_FOLDERS"]);
         closeModal();
       },
     });
 
   const onSubmit = (values) => {
-    if (modalType === "EDIT") update(values);
+    if (!createType) update(values);
     else create(values);
   };
+
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>
@@ -64,26 +66,25 @@ const TemplateFolderCreateModal = ({ closeModal, modalType, folder }) => {
             />
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="form">
+          <form className="form">
             <HFTextField
               autoFocus
               fullWidth
               label="Title"
               control={control}
-              name="Title"
-              required
+              name="title"
             />
 
             <div className="btns-row">
-              {modalType === "crete" ? (
+              {createType ? (
                 <CreateButton
-                  type="submit"
-                  loading={createLoading || updateLoading}
+                  onClick={handleSubmit(onSubmit)}
+                  loading={createLoading}
                 />
               ) : (
                 <SaveButton
-                  type="submit"
-                  loading={createLoading || updateLoading}
+                  onClick={handleSubmit(onSubmit)}
+                  loading={updateLoading}
                 />
               )}
             </div>
@@ -94,4 +95,4 @@ const TemplateFolderCreateModal = ({ closeModal, modalType, folder }) => {
   );
 };
 
-export default TemplateFolderCreateModal;
+export default QueryFolderCreateModal;

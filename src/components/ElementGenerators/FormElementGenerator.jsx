@@ -57,14 +57,21 @@ const FormElementGenerator = ({
     relationTableSlug = field?.id?.split("#")[0];
   }
 
+  const slugSplit = (slug) => {
+    const parts = slug.split("_");
+    return parts[parts.length - 1];
+  };
+
   const label = useMemo(() => {
     if (field?.enable_multilanguage) {
       return field?.attributes?.show_label
-        ? `${field?.label} (${activeLang})`
+        ? `${field?.label} (${activeLang ?? slugSplit(field?.slug)})`
         : "";
     } else {
       if (field?.attributes?.show_label === false) return "";
-      return field?.attributes?.[`label_${activeLang ?? i18n.language}`] ?? field?.label ?? " ";
+      return (
+        field?.attributes?.[`label_${i18n.language}`] ?? field?.label ?? " "
+      );
     }
   }, [field, activeLang, i18n.language]);
 

@@ -6,7 +6,7 @@ import "../../style.scss";
 import { useDispatch } from "react-redux";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 
-const FunctionRecursive = ({
+const QueryRecursive = ({
   element,
   level = 1,
   menuStyle,
@@ -81,7 +81,7 @@ const FunctionRecursive = ({
 
       <Collapse in={childBlockVisible} unmountOnExit>
         {element?.children?.map((childElement) => (
-          <FunctionRecursive
+          <QueryRecursive
             key={childElement.id}
             level={level + 1}
             element={childElement}
@@ -99,4 +99,4 @@ const FunctionRecursive = ({
   );
 };
 
-export default FunctionRecursive;
+export default QueryRecursive;

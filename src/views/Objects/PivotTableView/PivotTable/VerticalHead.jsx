@@ -78,7 +78,7 @@ export default function VerticalHead(props) {
                     rowSpan={isOpen ? 1 : rowSpanCount * 2 - (notJoinedRows.length ? 1 : 2)}
                     colSpan={computedCalcFields.length}
                   >
-                    {group?.branch_name}
+                    {group?.name}
                   </CTableHeadCell>
                 ))
               : computedFields.calc.map((calcCol) => (

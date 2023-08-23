@@ -34,6 +34,8 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const [loading, setLoading] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
+  const [loginError, setLoginError] = useState(false);
+  const [oneLogin, setOneLogin] = useState(false);
 
   const [open, setOpen] = useState(false);
 
@@ -146,9 +148,13 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       .multiCompanyLogin(data)
       .then((res) => {
         // setCompanies(res.companies);
+        setLoginError(false);
         dispatch(companyActions.setCompanies(res.companies));
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setLoading(false);
+        setLoginError(true);
+      });
   };
 
   const register = (data) => {
@@ -160,7 +166,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         setIndex(0);
         store.dispatch(showAlert("Успешно", "success"));
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        console.log("ffffffff");
+        setLoading(false);
+      });
   };
 
   const onSubmit = (values) => {
@@ -185,6 +194,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         })
         .then((res) => {
           setCompanies(res?.companies);
+          setOneLogin(false);
+        })
+        .catch((err) => {
+          setOneLogin(true);
         });
     }
   }, [getFormValue?.username, getFormValue?.password]);
@@ -226,7 +239,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       if (!open) onSubmitDialog(getFormValue);
     } else if (hasValidCredentials && formType !== "register") {
       handleClickTimeout = setTimeout(() => {
-        handleClickOpen();
+        if (!loginError && !oneLogin) handleClickOpen();
       }, 2000);
     }
 
@@ -359,7 +372,8 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           style={{
             padding: "0 20px",
             width: "500px",
-            height: `calc(100vh - 150px)`,
+            maxHeight: `calc(100vh - 150px)`,
+            minHeight: "200px",
           }}
         >
           <h2 className={classes.headerContent}>Multi Company</h2>

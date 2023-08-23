@@ -377,9 +377,10 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="write">
-                <RectangleIconButton color="success" size="small" onClick={navigateToCreatePage}>
+                <Button variant="outlined" onClick={navigateToCreatePage}>
                   <AddIcon style={{ color: "#007AFF" }} />
-                </RectangleIconButton>
+                  Add object
+                </Button>
                 {formVisible ? (
                   <>
                     <RectangleIconButton color="success" size="small" onClick={handleSubmit(onSubmit)} loader={isLoading}>
@@ -403,18 +404,19 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                     </RectangleIconButton>
                   </>
                 ) : (
-                  <PermissionWrapperV2 tableSlug={tableSlug} type="update">
-                    <RectangleIconButton
-                      color="success"
-                      className=""
-                      size="small"
-                      onClick={() => {
-                        setFormVisible(true);
-                      }}
-                    >
-                      <Edit color="primary" />
-                    </RectangleIconButton>
-                  </PermissionWrapperV2>
+                  // <PermissionWrapperV2 tableSlug={tableSlug} type="update">
+                  //   <RectangleIconButton
+                  //     color="success"
+                  //     className=""
+                  //     size="small"
+                  //     onClick={() => {
+                  //       setFormVisible(true);
+                  //     }}
+                  //   >
+                  //     <Edit color="primary" />
+                  //   </RectangleIconButton>
+                  // </PermissionWrapperV2>
+                  ''
                 )}
                 <MultipleInsertButton view={view} fieldsMap={fieldsMap} tableSlug={tableSlug} />
                 <CustomActionsButton selectedObjects={selectedObjects} setSelectedObjects={setSelectedObjects} tableSlug={tableSlug} />

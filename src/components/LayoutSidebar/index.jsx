@@ -4,7 +4,7 @@ import { Box, Button, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Container } from "react-smooth-dnd";
 import { UdevsLogo } from "../../assets/icons/icon";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
@@ -248,6 +248,8 @@ const LayoutSidebar = ({ appId }) => {
                 style={{
                   marginLeft: "8px",
                   color: menuStyle?.text || "#000",
+                  fontSize: "20px",
+                  fontWeight: "700",
                 }}
               >
                 {projectInfo?.title}

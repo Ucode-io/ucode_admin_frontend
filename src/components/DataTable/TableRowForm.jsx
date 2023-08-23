@@ -32,9 +32,8 @@ const TableRowForm = ({
   relationFields,
   data,
 }) => {
-  console.log('columns', columns)
   const navigate = useNavigate();
-  
+
   return (
     <CTableRow>
       <CellCheckboxOrOrderNumBlock
@@ -58,47 +57,50 @@ const TableRowForm = ({
           {(currentPage - 1) * limit + rowIndex + 1}
         </CTableCell>
       )}
-      {columns.map((column, index) => (
-        console.log("column", column),
-        column?.attributes?.field_permission?.view_permission &&
-        <CTableCell
-          key={column.id}
-          className={`overflow-ellipsis editable_col`}
-          style={{
-            padding: 0,
-            position: tableSettings?.[pageName]?.find(
-              (item) => item?.id === column?.id
-            )?.isStiky
-              ? "sticky"
-              : "relative",
-            left: tableSettings?.[pageName]?.find(
-              (item) => item?.id === column?.id
-            )?.isStiky
-              ? calculateWidth(column?.id, index)
-              : "0",
-            backgroundColor: "#fff",
-            zIndex: tableSettings?.[pageName]?.find(
-              (item) => item?.id === column?.id
-            )?.isStiky
-              ? "1"
-              : "",
-            minWidth: "max-content",
-          }}
-        >
-          <CellFormElementGenerator
-            tableSlug={tableSlug}
-            watch={watch}
-            fields={columns}
-            field={column}
-            row={row}
-            index={rowIndex}
-            control={control}
-            setFormValue={setFormValue}
-            relationfields={relationFields}
-            data={data}
-          />
-        </CTableCell>
-      ))}
+      {columns.map(
+        (column, index) => (
+          console.log("column", column),
+          column?.attributes?.field_permission?.view_permission && (
+            <CTableCell
+              key={column.id}
+              className={`overflow-ellipsis editable_col`}
+              style={{
+                padding: 0,
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? calculateWidth(column?.id, index)
+                  : "0",
+                backgroundColor: "#fff",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
+                minWidth: "max-content",
+              }}
+            >
+              <CellFormElementGenerator
+                tableSlug={tableSlug}
+                watch={watch}
+                fields={columns}
+                field={column}
+                row={row}
+                index={rowIndex}
+                control={control}
+                setFormValue={setFormValue}
+                relationfields={relationFields}
+                data={data}
+              />
+            </CTableCell>
+          )
+        )
+      )}
       <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>
         <PermissionWrapperV2
           type="delete"
@@ -106,17 +108,15 @@ const TableRowForm = ({
         >
           <RectangleIconButton
             color="error"
-            onClick={() =>
-              {
-                onDeleteClick(row, rowIndex) 
-                 remove(rowIndex)
-                 navigate("/reloadRelations", {
-                  state: {
-                    redirectUrl: window.location.pathname,
-                  },
-                });
-              }
-            }
+            onClick={() => {
+              onDeleteClick(row, rowIndex);
+              remove(rowIndex);
+              // navigate("/reloadRelations", {
+              //   state: {
+              //     redirectUrl: window.location.pathname,
+              //   },
+              // });
+            }}
           >
             <Delete color="error" />
           </RectangleIconButton>

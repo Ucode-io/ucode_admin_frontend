@@ -7,32 +7,21 @@ import { useState } from "react";
 const Login = () => {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
-  const [formType, setFormType] = useState("LOGIN");
+  console.log("index", index);
 
   return (
     <div className={styles.page}>
-      {formType !== "register" && (
-        <>
-          <div style={{ marginLeft: "auto" }}>
-            <LanguageSelector />
-          </div>
-          <h1 className={styles.title}>
-            {index === 0 ? t("enter.to.system") : t("register.form")}
-          </h1>
-          <p className={styles.subtitle}>
-            {index === 0
-              ? t("fill.in.your.login.info")
-              : t("register.form.desc")}
-          </p>
-        </>
-      )}
+      <div style={{ marginLeft: "auto" }}>
+        <LanguageSelector />
+      </div>
+      <h1 className={styles.title}>
+        {index === 0 ? t("enter.to.system") : t("register.form")}
+      </h1>
+      <p className={styles.subtitle}>
+        {index === 0 ? t("fill.in.your.login.info") : t("register.form.desc")}
+      </p>
 
-      <LoginForm
-        setFormType={setFormType}
-        formType={formType}
-        setIndex={setIndex}
-        index={index}
-      />
+      <LoginForm setIndex={setIndex} index={index} />
     </div>
   );
 };

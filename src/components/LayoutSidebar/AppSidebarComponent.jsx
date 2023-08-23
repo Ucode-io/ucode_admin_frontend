@@ -12,6 +12,8 @@ import { menuActions } from "../../store/menuItem/menuItem.slice";
 import MenuIcon from "./MenuIcon";
 import { useTranslation } from "react-i18next";
 import { store } from "../../store";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
+export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
 const AppSidebar = ({
   index,
@@ -29,11 +31,12 @@ const AppSidebar = ({
   const { i18n } = useTranslation();
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
-  const analyticsId = "c57eedc3-a954-4262-a0af-376c65b5a278";
-  const buttonPermission =
-    element?.data?.permission?.read ||
-    defaultAdmin ||
-    element?.id === analyticsId;
+  const readPermission = element?.data?.permission?.read;
+  const withoutPermission =
+    element?.id === adminId || element?.id === analyticsId ? true : false;
+  const permission = defaultAdmin
+    ? readPermission || withoutPermission
+    : readPermission;
   const clickHandler = () => {
     dispatch(menuActions.setMenuItem(element));
     setSelectedApp(element);
@@ -81,7 +84,7 @@ const AppSidebar = ({
 
   return (
     <Draggable key={index}>
-      {buttonPermission ? (
+      {permission ? (
         <ListItemButton
           key={index}
           onClick={(e) => {

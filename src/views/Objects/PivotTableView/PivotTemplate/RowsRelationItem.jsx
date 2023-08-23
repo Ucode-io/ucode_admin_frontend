@@ -36,10 +36,22 @@ export default function RowsRelationItem(props) {
                 <div className={styles.valuesLabel}>
                   <Checkbox
                     sx={{ padding: 0 }}
-                    checked={form
-                      .watch(`${rowName}.${idx}.objects`)
-                      ?.reduce((acc, cur) => [...acc, ...cur?.table_field_settings], [])
-                      ?.every((i) => i.checked)}
+                    // checked={form
+                    //   .watch(`${rowName}.${idx}.objects`)
+                    //   ?.reduce((acc, cur) => [...acc, ...cur?.table_field_settings], [])
+                    //   ?.every((i) => i.checked)}
+                    checked={
+                      form
+                        .watch(`${rowName}.${idx}.objects`)
+                        ?.reduce(
+                          (acc, cur) =>
+                            cur?.table_field_settings
+                              ? [...acc, ...cur.table_field_settings]
+                              : acc,
+                          []
+                        )
+                        ?.every((i) => i.checked)
+                    }
                     onChange={(_, val) => onAllCheckboxChange(val, idx)}
                   />
                   <span>{row.label}</span>
@@ -126,7 +138,12 @@ function Item(props) {
           </RectangleIconButton>
           <Checkbox
             sx={{ padding: 0, marginTop: "7px" }}
-            checked={form.watch(`${rowName}.${idx}.objects.${objIdx}.table_field_settings`).every((i) => i.checked)}
+            // checked={form.watch(`${rowName}.${idx}.objects.${objIdx}.table_field_settings`).every((i) => i.checked)}
+            checked={
+              form.watch(`${rowName}.${idx}.objects.${objIdx}.table_field_settings`)?.every(
+                (i) => i?.checked !== undefined ? i.checked : true
+              )
+            }
             onChange={(_, val) => onAllCheckboxChange(val)}
           />
         </>

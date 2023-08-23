@@ -73,7 +73,10 @@ const HFMultipleAutocomplete = ({
             hasColor={hasColor}
             isFormEdit={isFormEdit}
             hasIcon={hasIcon}
-            onFormChange={onFormChange}
+            onFormChange={(el) => {
+              onFormChange(el);
+              onChange(el);
+            }}
             disabledHelperText={disabledHelperText}
             error={error}
             isMultiSelect={isMultiSelect}
@@ -178,7 +181,7 @@ const AutoCompleteElement = ({
               },
               style: disabled
                 ? {
-                    background: "#c0c0c039"
+                    background: "#c0c0c039",
                   }
                 : {
                     background: isBlackBg ? "#2A2D34" : "inherit",

@@ -406,7 +406,9 @@ const QueryForRest = ({ control, form, responseQuery }) => {
 
         {responseQuery ? (
           <Box mt={"50px"}>
-            <Typography mb="10px">Response</Typography>
+            <Typography variant="h3" mb="10px">
+              Response
+            </Typography>
 
             <Box width="100%" borderRadius="0.375rem" overflow="hidden">
               <Tabs>
@@ -423,13 +425,15 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                   />
                 </TabPanel>
                 <TabPanel>
-                  <CodeMirror
-                    value={JSON.stringify(responseQuery, null, 2)}
-                    height="auto"
-                    width="100%"
-                    color="#00C387"
-                    theme={"dark"}
-                  />
+                  <Box overflow={"auto"} height={"550px"}>
+                    <CodeMirror
+                      value={JSON.stringify(responseQuery, null, 2)}
+                      height="auto"
+                      width="100%"
+                      color="#00C387"
+                      theme={"dark"}
+                    />
+                  </Box>
                 </TabPanel>
               </Tabs>
             </Box>

@@ -10,7 +10,7 @@ const queryService = {
   updateFolder: (data) => request.put("/query-folder", data, {}),
   deleteFolder: (id) => request.delete(`/query-folder/${id}`, {}),
 
-  getListQuery: (params, envId) =>
+  getListQuery: (params) =>
     request.get("/query-request", {
       params,
     }),
@@ -19,14 +19,11 @@ const queryService = {
     request.post("/query-request", data, {
       params: { "project-id": data.project_id },
     }),
-  getSingleQuery: ({ id, params, envId }) =>
+  getSingleQuery: ({ id, params }) =>
     request.get(`/query-request/${id}`, {
       params,
     }),
-  deleteQuery: ({ id, projectId }) =>
-    request.delete(`/query-request/${id}`, {
-      params: { "project-id": projectId },
-    }),
+  deleteQuery: (id) => request.delete(`/query-request/${id}`, {}),
   runQuery: (data) =>
     request.post("/query-request/run", data, {
       params: { "project-id": data.project_id },
@@ -122,10 +119,7 @@ export const useQueryCreateMutation = (mutationSettings) => {
 };
 
 export const useQueryDeleteMutation = (mutationSettings) => {
-  return useMutation(
-    ({ id, projectId }) => queryService.deleteQuery({ id, projectId }),
-    mutationSettings
-  );
+  return useMutation((id) => queryService.deleteQuery(id), mutationSettings);
 };
 
 export const useRunQueryMutation = (mutationSettings) => {

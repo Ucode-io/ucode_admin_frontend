@@ -8,6 +8,7 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { useState } from "react";
 import styles from "../style.module.scss";
+import HFTextField from "../../../../FormElements/HFTextField";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -44,7 +45,7 @@ const AccordionSummary = styled((props) => (
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(2),
+  padding: theme.spacing(1),
   boxShadow: "none",
 }));
 
@@ -74,7 +75,6 @@ const QuerySettings = ({ form }) => {
                 width="full"
                 colorScheme="gray"
                 variant="ghost"
-                padding="10px"
                 justifyContent="flex-start"
               >
                 <Box
@@ -83,22 +83,20 @@ const QuerySettings = ({ form }) => {
                   alignItems="flex-start"
                   width="100%"
                 >
-                  <Typography mb={4} color="#fff">
+                  <Typography mb={2} color="#000">
                     {variable.key}
                   </Typography>
 
-                  <Box width="100%">
+                  <Box width="100%" marginBottom={"10px"}>
                     <Controller
                       name={`variables.${index}.value`}
                       control={form.control}
                       render={({ field: { onChange, value } }) => (
-                        <Input
+                        <HFTextField
                           placeholder="Specify a value"
-                          variant="outline"
-                          size="sm"
                           onChange={onChange}
                           value={value}
-                          color="#fff"
+                          fullWidth
                         />
                       )}
                     />

@@ -164,7 +164,6 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       .register(data)
       .then((res) => {
         setIndex(0);
-        // store.dispatch(showAlert("Успешно", "success"));
       })
       .catch(() => {
         setLoading(false);
@@ -173,14 +172,11 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
 
   const onSubmit = (values) => {
     setLoading(true);
-    if (formType === "LOGIN" && index === 0) multiCompanyLogin(values);
-    else if (index === 1) register(values);
-    else dispatch(loginAction(values));
+    if (index === 1) register(values);
   };
 
   const onSubmitDialog = (values) => {
     setLoading(true);
-    // multiCompanyLogin(values);
     dispatch(loginAction(values));
   };
 
@@ -197,6 +193,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         })
         .catch((err) => {
           setOneLogin(true);
+          setLoading(false);
         });
     }
   }, [getFormValue?.username, getFormValue?.password]);

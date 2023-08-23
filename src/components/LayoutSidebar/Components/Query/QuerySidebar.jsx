@@ -8,7 +8,7 @@ import { FaDatabase, FaFolder } from "react-icons/fa";
 import { TbApi } from "react-icons/tb";
 import { useQueries, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import queryService, {
   useQueryFolderDeleteMutation,
   useQueryFoldersListQuery,
@@ -60,6 +60,7 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   const [openedFolders, setOpenedFolders] = useState([]);
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
+  const location = useLocation();
 
   const openFolderModal = (folder, type) => {
     setSelectedFolder(folder);
@@ -68,6 +69,9 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   const closeFolderModal = () => {
     setSelectedFolder(null);
     setFolderModalType(null);
+  };
+  const handleNavigate = (folder) => {
+    navigate(`${location.pathname}/queries/create?folder_id=${folder?.id}`);
   };
 
   // FOLDERS QUERY
@@ -177,7 +181,7 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     setSelected(element);
     dispatch(menuActions.setMenuItem(element));
     if (element.type === "FOLDER") return;
-    // navigate(`/project/${projectId}/queries/${id}`);
+    navigate(`/main/${adminId}/queries/${id}`);
   };
 
   const activeStyle = {
@@ -266,6 +270,7 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
         handleCloseNotify={handleCloseNotify}
         openFolderModal={openFolderModal}
         deleteFolder={deleteFolder}
+        handleNavigate={handleNavigate}
       />
       {selectedFolder && (
         <QueryFolderCreateModal

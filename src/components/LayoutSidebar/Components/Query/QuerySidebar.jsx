@@ -1,3 +1,4 @@
+import { Delete } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -8,12 +9,12 @@ import { FaDatabase, FaFolder } from "react-icons/fa";
 import { TbApi } from "react-icons/tb";
 import { useQueries, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import queryService, {
+  useQueryDeleteMutation,
   useQueryFolderDeleteMutation,
   useQueryFoldersListQuery,
 } from "../../../../services/query.service";
-import { store } from "../../../../store";
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { listToNested } from "../../../../utils/listToNestedList";
@@ -42,7 +43,6 @@ const queryFolder = {
 
 const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   const dispatch = useDispatch();
-  const company = store.getState().company;
   const navigate = useNavigate();
   const [selected, setSelected] = useState({});
   const [childBlockVisible, setChildBlockVisible] = useState(false);
@@ -60,6 +60,7 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   const [openedFolders, setOpenedFolders] = useState([]);
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
+  const location = useLocation();
 
   const openFolderModal = (folder, type) => {
     setSelectedFolder(folder);
@@ -68,6 +69,9 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   const closeFolderModal = () => {
     setSelectedFolder(null);
     setFolderModalType(null);
+  };
+  const handleNavigate = (folder) => {
+    navigate(`${location.pathname}/queries/create?folder_id=${folder?.id}`);
   };
 
   // FOLDERS QUERY
@@ -98,6 +102,7 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
             }}
           />
         ),
+        button_text: "Query settings",
       });
     });
     return list;
@@ -119,6 +124,13 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
 
   const queryResults = useQueries(queryQueries);
 
+  const { mutate: deleteQuery } = useQueryDeleteMutation({
+    onSuccess: () => {
+      dispatch(showAlert("Удалено", "success"));
+      queryClient.refetchQueries(["QUERIES"]);
+    },
+  });
+
   const queries = useMemo(() => {
     const list = [];
     queryResults.forEach((query) => {
@@ -128,7 +140,22 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
           parent_id: query.folder_id,
           name: query.title,
           icon: query.query_type === "REST" ? TbApi : FaDatabase,
-          //   buttons: <QueryButtons queryId={query.id} />,
+          buttons: (
+            <Delete
+              size={13}
+              onClick={(e) => {
+                deleteQuery(query?.id);
+                e?.stopPropagation();
+              }}
+              style={{
+                color:
+                  menuItem?.id === query?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
+              }}
+            />
+          ),
+          button_text: "Delete query",
         });
       });
     });
@@ -177,7 +204,7 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     setSelected(element);
     dispatch(menuActions.setMenuItem(element));
     if (element.type === "FOLDER") return;
-    // navigate(`/project/${projectId}/queries/${id}`);
+    navigate(`/main/${adminId}/queries/${id}`);
   };
 
   const activeStyle = {
@@ -266,6 +293,7 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
         handleCloseNotify={handleCloseNotify}
         openFolderModal={openFolderModal}
         deleteFolder={deleteFolder}
+        handleNavigate={handleNavigate}
       />
       {selectedFolder && (
         <QueryFolderCreateModal

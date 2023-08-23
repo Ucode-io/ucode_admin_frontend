@@ -4,6 +4,7 @@ import "./style.scss";
 import { Delete } from "@mui/icons-material";
 import MenuItemComponent from "../../../MenuItem";
 import { FaPlus } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const QueryButtonMenu = ({
   menu,
@@ -13,6 +14,7 @@ const QueryButtonMenu = ({
   deleteFolder,
   element,
   openFolderModal,
+  handleNavigate,
 }) => {
   return (
     <>
@@ -56,6 +58,7 @@ const QueryButtonMenu = ({
                 title="Добавить Query"
                 onClick={(e) => {
                   e.stopPropagation();
+                  handleNavigate(element);
                   handleCloseNotify();
                 }}
               />

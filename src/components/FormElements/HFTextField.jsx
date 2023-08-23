@@ -29,6 +29,7 @@ const HFTextField = ({
   checkRequiredField,
   placeholder,
   endAdornment,
+  customOnChange = () => {},
   ...props
 }) => {
   const classes = useStyles();
@@ -54,6 +55,7 @@ const HFTextField = ({
                 ? numberWithSpaces(e.target.value)
                 : e.target.value
             );
+            customOnChange(e);
           }}
           name={name}
           error={error}

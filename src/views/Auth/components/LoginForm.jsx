@@ -35,6 +35,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const [modalLoading, setModalLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [loginError, setLoginError] = useState(false);
+  const [oneLogin, setOneLogin] = useState(false);
 
   const [open, setOpen] = useState(false);
 
@@ -165,7 +166,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         setIndex(0);
         store.dispatch(showAlert("Успешно", "success"));
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        console.log("ffffffff");
+        setLoading(false);
+      });
   };
 
   const onSubmit = (values) => {
@@ -190,6 +194,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         })
         .then((res) => {
           setCompanies(res?.companies);
+          setOneLogin(false);
+        })
+        .catch((err) => {
+          setOneLogin(true);
         });
     }
   }, [getFormValue?.username, getFormValue?.password]);
@@ -231,7 +239,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       if (!open) onSubmitDialog(getFormValue);
     } else if (hasValidCredentials && formType !== "register") {
       handleClickTimeout = setTimeout(() => {
-        if (!loginError) handleClickOpen();
+        if (!loginError && !oneLogin) handleClickOpen();
       }, 2000);
     }
 

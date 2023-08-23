@@ -164,10 +164,9 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       .register(data)
       .then((res) => {
         setIndex(0);
-        store.dispatch(showAlert("Успешно", "success"));
+        // store.dispatch(showAlert("Успешно", "success"));
       })
       .catch(() => {
-        console.log("ffffffff");
         setLoading(false);
       });
   };

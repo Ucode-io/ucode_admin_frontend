@@ -1,18 +1,43 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import classes from "../style.module.scss";
 
-const DynamicFields = ({ control, setValue, connection, table = {}, index, watch, companies }) => {
-  const [selectedCollection, setSelectedCollection] = useState(null);
+const DynamicFields = ({
+  control,
+  setValue,
+  connection,
+  table = {},
+  index,
+  watch,
+  companies,
+  userId,
+  options,
+  selectedCollection,
+  setSelectedCollection,
+}) => {
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
   // const field_slug = connection?.field_slug;
-  const userId = Array.isArray(companies) ? companies?.[0]?.user_id : companies?.user_id;
+  // const userId = Array.isArray(companies)
+  //   ? companies?.[0]?.owner_id
+  //   : companies?.owner_id;
+  // console.log("companies", companies);
 
-  const url = `${import.meta.env.VITE_AUTH_BASE_URL_V2}/get-connection-options/${connection?.guid}/${userId}`;
+  const computedConnections = useMemo(() => {
+    return (
+      options?.map((item) => ({
+        value: item?.guid,
+        label: item?.[connection?.view_slug],
+      })) ?? []
+    );
+  }, [options, connection]);
+
+  const url = `${
+    import.meta.env.VITE_AUTH_BASE_URL_V2
+  }/get-connection-options/${connection?.guid}/${userId}`;
 
   const data = {
     data: {
@@ -30,23 +55,27 @@ const DynamicFields = ({ control, setValue, connection, table = {}, index, watch
     },
   };
 
-  const { data: computedConnections = [] } = useQuery(
-    ["GET_CONNECTION_OPTIONS", { table_slug: connection?.table_slug }, { "environment-id": selectedEnvID }],
-    () => {
-      return axios.get(url, config);
-    },
-    {
-      enabled: !!selectedClientTypeID,
-      select: (res) => {
-        return (
-          res?.data?.data?.data?.response?.map((item) => ({
-            value: item?.guid,
-            label: item?.[connection?.view_slug],
-          })) ?? []
-        );
-      },
-    }
-  );
+  // const { data: computedConnections = [] } = useQuery(
+  //   [
+  //     "GET_CONNECTION_OPTIONS",
+  //     { table_slug: connection?.table_slug },
+  //     { "environment-id": selectedEnvID },
+  //   ],
+  //   () => {
+  //     return axios.get(url, config);
+  //   },
+  //   {
+  //     enabled: !!selectedClientTypeID,
+  //     select: (res) => {
+  //       return (
+  //         res?.data?.data?.data?.response?.map((item) => ({
+  //           value: item?.guid,
+  //           label: item?.[connection?.view_slug],
+  //         })) ?? []
+  //       );
+  //     },
+  //   }
+  // );
 
   useEffect(() => {
     if (computedConnections?.length === 1) {

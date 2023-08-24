@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
@@ -36,6 +36,8 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const [companies, setCompanies] = useState([]);
   const [loginError, setLoginError] = useState(false);
   const [oneLogin, setOneLogin] = useState(false);
+  const [isUserId, setisUserId] = useState();
+  const [selectedCollection, setSelectedCollection] = useState(null);
 
   const [open, setOpen] = useState(false);
 
@@ -67,7 +69,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
-  const getFormValue = getValues();
+  const getFormValue = watch();
 
   //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
@@ -120,12 +122,14 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       "GET_CONNECTION_LIST",
       { "project-id": selectedProjectID },
       { "environment-id": selectedEnvID },
+      { "user-id": isUserId },
     ],
     () => {
       return connectionServiceV2.getList(
         {
           "project-id": selectedProjectID,
           client_type_id: selectedClientTypeID,
+          "user-id": isUserId,
         },
         { "environment-id": selectedEnvID }
       );
@@ -136,6 +140,33 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       select: (res) => res.data.response ?? [],
     }
   );
+
+  const getFormInitial = getFormValue?.username && getFormValue?.password;
+  const getFormValueSecond =
+    getFormInitial &&
+    getFormValue?.client_type &&
+    getFormValue?.company_id &&
+    getFormValue?.environment_id
+      ? true
+      : false;
+  const getFormConTable =
+    computedConnections?.length > 1 &&
+    getFormValue?.tables?.some((el) => el?.table_slug || el?.object_id);
+
+  useEffect(() => {
+    if (computedConnections?.length > 1) {
+      computedConnections.forEach((connection, index) => {
+        if (connection.options.length === 1) {
+          setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
+          setSelectedCollection(connection.options[0]?.value);
+          setValue(
+            `tables[${index}].table_slug`,
+            connection?.options?.[0]?.[connection?.view_slug]
+          );
+        }
+      });
+    }
+  }, [computedConnections]);
 
   useEffect(() => {
     getFcmToken();
@@ -172,6 +203,22 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
 
   const onSubmit = (values) => {
     setLoading(true);
+    if (values?.username && values?.password) {
+      companyService
+        .getCompanyList({
+          password: values?.password,
+          username: values?.username,
+        })
+        .then((res) => {
+          setisUserId(res?.user_id);
+          setCompanies(res?.companies);
+          setOneLogin(true);
+        })
+        .catch((err) => {
+          setOneLogin(true);
+          setLoading(false);
+        });
+    }
     if (index === 1) register(values);
   };
 
@@ -180,23 +227,53 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     dispatch(loginAction(values));
   };
 
-  useEffect(() => {
-    if (getFormValue?.username && getFormValue?.password) {
-      companyService
-        .getCompanyList({
-          password: getFormValue?.password,
-          username: getFormValue?.username,
-        })
-        .then((res) => {
-          setCompanies(res?.companies);
-          setOneLogin(false);
-        })
-        .catch((err) => {
-          setOneLogin(true);
-          setLoading(false);
-        });
+  const onSubmitTable = async () => {
+    if (getFormValueSecond && getFormConTable) {
+      onSubmitDialog(getFormValue);
     }
-  }, [getFormValue?.username, getFormValue?.password]);
+  };
+
+  useEffect(() => {
+    if (oneLogin) {
+      onSubmitTable();
+    }
+    if (oneLogin && !getFormConTable) {
+      handleClickOpen();
+    }
+  }, [
+    selectedClientTypeID,
+    selectedCompanyID,
+    selectedEnvID,
+    selectedProjectID,
+    getFormValue,
+    formType,
+    open,
+    oneLogin,
+  ]);
+
+  useEffect(() => {
+    if (
+      computedConnections.length === 1 &&
+      computedConnections[0].options.length === 1
+    ) {
+      const index = 0;
+      setValue(
+        `tables[${index}].object_id`,
+        computedConnections[0].options[0]?.guid
+      );
+      setSelectedCollection(computedConnections[0].options[0]?.guid);
+      setValue(
+        `tables[${index}].table_slug`,
+        computedConnections[0]?.table_slug
+      );
+    }
+  }, [computedConnections]);
+
+  console.log("getFormValue", getFormValue);
+
+  // useEffect(() => {
+
+  // }, [getFormValue?.username, getFormValue?.password]);
 
   useEffect(() => {
     if (computedCompanies?.length === 1) {
@@ -218,39 +295,17 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     computedClientTypes,
   ]);
 
-  useEffect(() => {
-    let handleClickTimeout;
-
-    const formValuesExist =
-      selectedClientTypeID &&
-      selectedCompanyID &&
-      selectedEnvID &&
-      selectedProjectID;
-
-    const hasValidCredentials =
-      getFormValue?.password && getFormValue?.username && !formValuesExist;
-
-    if (formValuesExist && getFormValue?.password && getFormValue?.username) {
-      clearTimeout(handleClickTimeout);
-      if (!open) onSubmitDialog(getFormValue);
-    } else if (hasValidCredentials && formType !== "register") {
-      handleClickTimeout = setTimeout(() => {
-        if (!loginError && !oneLogin) handleClickOpen();
-      }, 2000);
-    }
-
-    return () => {
-      clearTimeout(handleClickTimeout);
-    };
-  }, [
-    selectedClientTypeID,
-    selectedCompanyID,
-    selectedEnvID,
-    selectedProjectID,
-    getFormValue,
-    formType,
-    open,
-  ]);
+  // useEffect(() => {
+  //   onSubmitTable();
+  // }, [
+  //   selectedClientTypeID,
+  //   selectedCompanyID,
+  //   selectedEnvID,
+  //   selectedProjectID,
+  //   getFormValue,
+  //   formType,
+  //   open,
+  // ]);
 
   return (
     <>
@@ -363,6 +418,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        // style={!allValid ? { display: "block" } : { display: "none" }}
       >
         <div
           style={{
@@ -438,6 +494,9 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                     setValue={setValue}
                     watch={watch}
                     companies={companies}
+                    options={connection.options}
+                    setSelectedCollection={setSelectedCollection}
+                    selectedCollection={selectedCollection}
                   />
                 ))
               : null}

@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { updateLevel } from "../../../../utils/level";
 
-const NotificationRecursive = ({
+const ApiRecursive = ({
   element,
   level = 1,
   menuStyle,
@@ -37,11 +37,11 @@ const NotificationRecursive = ({
   };
 
   const clickHandler = () => {
+    dispatch(menuActions.setMenuItem(element));
     setSelected(element);
     onRowClick(element.id, element);
     setChildBlockVisible((prev) => !prev);
     if (!element.children) onSelect(element.id, element);
-    dispatch(menuActions.setMenuItem(element));
   };
   return (
     <Box>
@@ -71,18 +71,19 @@ const NotificationRecursive = ({
               </Tooltip>
             </Box>
           )}
-          {element.type === "FOLDER" &&
-            (childBlockVisible ? (
+          {element.type === "FOLDER" ? (
+            childBlockVisible ? (
               <KeyboardArrowDownIcon />
             ) : (
               <KeyboardArrowRightIcon />
-            ))}
+            )
+          ) : null}
         </Button>
       </div>
 
       <Collapse in={childBlockVisible} unmountOnExit>
         {element?.children?.map((childElement) => (
-          <NotificationRecursive
+          <ApiRecursive
             key={childElement.id}
             level={level + 1}
             element={childElement}
@@ -92,6 +93,7 @@ const NotificationRecursive = ({
             selected={selected}
             handleOpenNotify={handleOpenNotify}
             setSelected={setSelected}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>
@@ -99,4 +101,4 @@ const NotificationRecursive = ({
   );
 };
 
-export default NotificationRecursive;
+export default ApiRecursive;

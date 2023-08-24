@@ -19,6 +19,7 @@ import DatabasesConnectIcon from "../../../../assets/icons/DatabaseIcon";
 import { TbDatabaseExport } from "react-icons/tb";
 import { BiGitCompare } from "react-icons/bi";
 import { IoEnter, IoExit } from "react-icons/io5";
+import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const dataBase = {
@@ -62,7 +63,7 @@ const EltResources = ({ level = 1, menuStyle, menuItem }) => {
       dataBase?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
   };
 
   const handleClick = (event) => {

@@ -32,6 +32,7 @@ import { AiFillFolderAdd } from "react-icons/ai";
 import RectangleIconButton from "../../../Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
 import NotificationRecursive from "./RecursiveBlock";
+import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const notificationFolder = {
@@ -168,7 +169,7 @@ const NotificationSidebar = ({
       notificationFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
   };
   const iconStyle = {
     color:

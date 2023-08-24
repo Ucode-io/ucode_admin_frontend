@@ -32,6 +32,8 @@ import DeleteIcon from "../DeleteIcon";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
 import { folderIds } from "./mock/folders";
+import ApiSidebar from "../Components/Api/ApiSidebar";
+import { updateLevel } from "../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const RecursiveBlock = ({
@@ -82,7 +84,7 @@ const RecursiveBlock = ({
       menuItem?.id === element?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
@@ -543,12 +545,20 @@ const RecursiveBlock = ({
           />
         )}
         {element.id === folderIds.api_folder_id && (
-          <QuerySidebar
-            menuStyle={menuStyle}
-            setSubMenuIsOpen={setSubMenuIsOpen}
-            level={2}
-            menuItem={menuItem}
-          />
+          <>
+            <QuerySidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              level={2}
+              menuItem={menuItem}
+            />
+            <ApiSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              level={2}
+              menuItem={menuItem}
+            />
+          </>
         )}
       </Collapse>
     </Box>

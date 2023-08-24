@@ -8,7 +8,15 @@ import { generateGUID } from "../../../../../utils/generateID";
 import NewSection from "./NewSection";
 import styles from "./style.module.scss";
 
-const NewSectionsBlock = ({ mainForm, layoutForm, openFieldSettingsBlock, openFieldsBlock, openRelationSettingsBlock, selectedLayout, selectedTab }) => {
+const NewSectionsBlock = ({
+  mainForm,
+  layoutForm,
+  openFieldSettingsBlock,
+  openFieldsBlock,
+  openRelationSettingsBlock,
+  selectedLayout,
+  selectedTab,
+}) => {
   const selectedLayoutIndex = useWatch({
     control: mainForm.control,
     name: "layouts",
@@ -59,7 +67,11 @@ const NewSectionsBlock = ({ mainForm, layoutForm, openFieldSettingsBlock, openFi
 
   return (
     <div className={styles.newsectionsBlock}>
-      <Container lockAxis="y" onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
+      <Container
+        lockAxis="y"
+        onDrop={onDrop}
+        dropPlaceholder={{ className: "drag-row-drop-preview" }}
+      >
         {sections.map((section, index) => (
           <Draggable key={section.id}>
             <NewSection

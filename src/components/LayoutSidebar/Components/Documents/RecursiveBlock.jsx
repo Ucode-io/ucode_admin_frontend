@@ -8,6 +8,7 @@ import "../../style.scss";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { useDispatch } from "react-redux";
 import { BsThreeDots } from "react-icons/bs";
+import { updateLevel } from "../../../../utils/level";
 
 const DocumentsRecursive = ({
   element,
@@ -39,7 +40,7 @@ const DocumentsRecursive = ({
       element?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),

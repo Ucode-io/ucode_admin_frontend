@@ -11,6 +11,7 @@ import RecursiveBlock from "../../SidebarRecursiveBlock/RecursiveBlockComponent"
 import "../../style.scss";
 import AddIcon from "@mui/icons-material/Add";
 import FolderCreateModal from "./Modal/FolderCreateModal";
+import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const permissionFolder = {
@@ -53,7 +54,7 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
       permissionFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
     display:
       menuItem?.id === "0" ||
       (menuItem?.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),

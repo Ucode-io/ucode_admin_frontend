@@ -23,6 +23,7 @@ import FolderCreateModal from "./Components/Modal/FolderCreateModal";
 import ScenarioButtonMenu from "./Components/ScenarioButtonMenu";
 import ScenarioRecursive from "./RecursiveBlock";
 import { BsTable } from "react-icons/bs";
+import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const scenarioFolder = {
@@ -82,7 +83,7 @@ const ScenarioSidebar = ({
       scenarioFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
   };
   const labelStyle = {
     color:

@@ -1,13 +1,11 @@
 import { Delete } from "@mui/icons-material";
 import { Checkbox } from "@mui/material";
-
-import { CTableCell, CTableRow } from "../CTable";
-import RectangleIconButton from "../Buttons/RectangleIconButton";
-import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
-import CellCheckboxOrOrderNumBlock from "./CellCheckboxOrOrderNumBlock";
-import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import DeleteWrapperModal from "../DeleteWrapperModal";
 import { useNavigate } from "react-router-dom";
+import RectangleIconButton from "../Buttons/RectangleIconButton";
+import { CTableCell, CTableRow } from "../CTable";
+import TableDataForm from "../ElementGenerators/TableDataForm";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import CellCheckboxOrOrderNumBlock from "./CellCheckboxOrOrderNumBlock";
 
 const TableRowForm = ({
   onCheckboxChange,
@@ -32,9 +30,7 @@ const TableRowForm = ({
   relationFields,
   data,
 }) => {
-  console.log('columns', columns)
   const navigate = useNavigate();
-  
   return (
     <CTableRow>
       <CellCheckboxOrOrderNumBlock
@@ -85,7 +81,7 @@ const TableRowForm = ({
             minWidth: "max-content",
           }}
         >
-          <CellFormElementGenerator
+          <TableDataForm
             tableSlug={tableSlug}
             watch={watch}
             fields={columns}

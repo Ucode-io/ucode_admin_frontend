@@ -291,17 +291,19 @@ const TableView = ({
         </div>
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <div style={{ display: "flex", alignItems: "flex-start" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", width: '100%' }}>
           <ObjectDataTable
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
             setFormVisible={setFormVisible}
             setFormValue={setFormValue}
+            mainForm={mainForm}
             isRelationTable={false}
             removableHeight={isDocView ? 150 : 215}
             currentPage={currentPage}
             pagesCount={pageCount}
             columns={columns}
+            openFieldSettings={openFieldSettings}
             limit={limit}
             setLimit={setLimit}
             onPaginationChange={setCurrentPage}
@@ -326,10 +328,10 @@ const TableView = ({
             {...props}
           />
 
-          <Button variant="outlined" style={{ borderColor: "#F0F0F0", borderRadius: "0px" }} onClick={openFieldSettings}>
+          {/* <Button variant="outlined" style={{ borderColor: "#F0F0F0", borderRadius: "0px" }} onClick={openFieldSettings}>
             <AddRoundedIcon />
             Column
-          </Button>
+          </Button> */}
         </div>
       </PermissionWrapperV2>
 

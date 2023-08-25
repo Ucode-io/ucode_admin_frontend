@@ -38,6 +38,8 @@ import style from "./style.module.scss";
 import ColumnButton from "./ColumnButton";
 import SortButton from "./SortButton";
 import GroupByButton from "./GroupByButton";
+import FixColumnsTableView from "./components/FixColumnsTableView";
+import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 
 const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
   const { t } = useTranslation();
@@ -75,6 +77,15 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     setAnchorEl(null);
   };
 
+  const [anchorElHeightControl, setAnchorElHeightControl] = useState(null);
+  const openHeightControl = Boolean(anchorElHeightControl);
+  const handleClickHeightControl = (event) => {
+    setAnchorElHeightControl(event.currentTarget);
+  };
+  const handleCloseHeightControl = () => {
+    setAnchorElHeightControl(null);
+  };
+
   const tableHeightOptions = [
     {
       label: "Small",
@@ -101,6 +112,8 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
       multi: [],
     },
   });
+
+  console.log('watch', watch())
 
   const { fields, remove, append } = useFieldArray({
     control,
@@ -273,9 +286,13 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
             <Divider orientation="vertical" flexItem />
 
-            <ColumnButton onClick={clickColumn} />
+            <FixColumnsTableView />
 
             <Divider orientation="vertical" flexItem />
+
+            {/* <ColumnButton onClick={clickColumn} /> */}
+
+            {/* <Divider orientation="vertical" flexItem /> */}
 
             <SortButton onClick={clickSort} />
 
@@ -286,24 +303,83 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             <Divider orientation="vertical" flexItem />
 
             {view.type === "TABLE" && (
-              <div className={style.lineControl} onClick={() => setHeightControl(!heightControl)}>
-                <div style={{ position: "relative" }}>
-                  <span className={style.buttonSpan}>
-                    <FormatLineSpacingIcon color="#A8A8A8" />
-                    Line Height
-                  </span>
-                  {heightControl && (
-                    <div className={style.heightControl}>
-                      {tableHeightOptions.map((el) => (
-                        <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
-                          {el.label}
+              <>
+                <button className={style.moreButton} onClick={handleClickHeightControl}>
+                  <FormatLineSpacingIcon color="#A8A8A8" />
+                  Line Height
+                </button>
+
+                <Menu
+                  open={openHeightControl}
+                  onClose={handleCloseHeightControl}
+                  anchorEl={anchorElHeightControl}
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      overflow: "visible",
+                      filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                      mt: 1.5,
+                      "& .MuiAvatar-root": {
+                        // width: 100,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                      },
+                      "&:before": {
+                        content: '""',
+                        display: "block",
+                        position: "absolute",
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: "background.paper",
+                        transform: "translateY(-50%) rotate(45deg)",
+                        zIndex: 0,
+                      },
+                    },
+                  }}
+                >
+                  {/* <div className={style.menuBar}>
+                    {tableHeightOptions.map((el) => (
+                      <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
+                        {el.label}
+                        {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
+                      </div>
+                    ))}
+                  </div> */}
+
+                  <div className={style.menuBar}>
+                    {tableHeightOptions.map((el) => (
+                      <div className={style.template} onClick={() => handleHeightControl(el.value)}>
+                        <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
                           {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+                        <span>{el.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Menu>
+              </>
+
+              // <div className={style.lineControl} onClick={() => setHeightControl(!heightControl)}>
+              //   <div style={{ position: "relative" }}>
+              //     <span className={style.buttonSpan}>
+              //       <FormatLineSpacingIcon color="#A8A8A8" />
+              //       Line Height
+              //     </span>
+              //     {heightControl && (
+              //       <div className={style.heightControl}>
+              //         {tableHeightOptions.map((el) => (
+              //           <div key={el.value} className={style.heightControl_item} onClick={() => handleHeightControl(el.value)}>
+              //             {el.label}
+              //             {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
+              //           </div>
+              //         ))}
+              //       </div>
+              //     )}
+              //   </div>
+              // </div>
             )}
 
             <button className={style.moreButton} onClick={handleClick}>
@@ -416,7 +492,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                   //     <Edit color="primary" />
                   //   </RectangleIconButton>
                   // </PermissionWrapperV2>
-                  ''
+                  ""
                 )}
                 <MultipleInsertButton view={view} fieldsMap={fieldsMap} tableSlug={tableSlug} />
                 <CustomActionsButton selectedObjects={selectedObjects} setSelectedObjects={setSelectedObjects} tableSlug={tableSlug} />

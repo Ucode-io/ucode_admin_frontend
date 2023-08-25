@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useOnClickOutside from "use-onclickoutside";
 import { useLocation } from "react-router-dom";
-
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CTable, CTableBody, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
@@ -14,13 +14,16 @@ import MultipleUpdateRow from "./MultipleUpdateRow";
 import "./style.scss";
 import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
+import { Button } from "@mui/material";
 
 const ObjectDataTable = ({
   data = [],
   loader = false,
   removableHeight,
   additionalRow,
+  mainForm,
   remove,
+  openFieldSettings,
   fields = [],
   isRelationTable,
   disablePagination,
@@ -265,8 +268,32 @@ const ObjectDataTable = ({
           )}
 
           <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type={["update", "delete"]}>
-            {(onDeleteClick || onEditClick) && <CTableHeadCell width={10}></CTableHeadCell>}
+            {(onDeleteClick || onEditClick) && (
+              <CTableHeadCell width={10}>
+                <span
+                  style={{
+                    whiteSpace: "nowrap",
+                    padding: "10px 4px",
+                    color: "#747474",
+                    fontSize: "13px",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "normal",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  Actions
+                </span>
+              </CTableHeadCell>
+            )}
           </PermissionWrapperV2>
+
+          <CTableHeadCell style={{ padding: "2px 0", minWidth: "40px" }}>
+            <Button variant="text" style={{ borderColor: "#F0F0F0", borderRadius: "0px" }} onClick={openFieldSettings}>
+              <AddRoundedIcon />
+              Column
+            </Button>
+          </CTableHeadCell>
         </CTableRow>
       </CTableHead>
       <CTableBody loader={loader} columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
@@ -277,6 +304,7 @@ const ObjectDataTable = ({
             control={control}
             key={row.id}
             row={row}
+            mainForm={mainForm}
             formVisible={formVisible}
             rowIndex={rowIndex}
             isRelationTable={isRelationTable}

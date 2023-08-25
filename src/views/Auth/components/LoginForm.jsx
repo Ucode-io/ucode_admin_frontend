@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
@@ -36,8 +36,9 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const [companies, setCompanies] = useState([]);
   const [loginError, setLoginError] = useState(false);
   const [oneLogin, setOneLogin] = useState(false);
-  const [isUserId, setisUserId] = useState();
-  const [selectedCollection, setSelectedCollection] = useState(null);
+  const [isUserId, setIsUserId] = useState();
+  const [selectedCollection, setSelectedCollection] = useState();
+  console.log("selectedCollection", selectedCollection);
 
   const [open, setOpen] = useState(false);
 
@@ -70,6 +71,19 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
+
+  const formValuesExist =
+    selectedClientTypeID &&
+    selectedCompanyID &&
+    selectedEnvID &&
+    selectedProjectID
+      ? true
+      : false;
+
+  console.log("formValuesExist", formValuesExist);
+
+  const hasValidCredentials =
+    getFormValue?.password && getFormValue?.username && formValuesExist;
 
   //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
@@ -136,37 +150,9 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     },
     {
       enabled: !!selectedClientTypeID,
-
       select: (res) => res.data.response ?? [],
     }
   );
-
-  const getFormInitial = getFormValue?.username && getFormValue?.password;
-  const getFormValueSecond =
-    getFormInitial &&
-    getFormValue?.client_type &&
-    getFormValue?.company_id &&
-    getFormValue?.environment_id
-      ? true
-      : false;
-  const getFormConTable =
-    computedConnections?.length > 1 &&
-    getFormValue?.tables?.some((el) => el?.table_slug || el?.object_id);
-
-  useEffect(() => {
-    if (computedConnections?.length > 1) {
-      computedConnections.forEach((connection, index) => {
-        if (connection.options.length === 1) {
-          setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
-          setSelectedCollection(connection.options[0]?.value);
-          setValue(
-            `tables[${index}].table_slug`,
-            connection?.options?.[0]?.[connection?.view_slug]
-          );
-        }
-      });
-    }
-  }, [computedConnections]);
 
   useEffect(() => {
     getFcmToken();
@@ -202,24 +188,22 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   const onSubmit = (values) => {
-    setLoading(true);
-    if (values?.username && values?.password) {
-      companyService
-        .getCompanyList({
-          password: values?.password,
-          username: values?.username,
-        })
-        .then((res) => {
-          setisUserId(res?.user_id);
-          setCompanies(res?.companies);
-          setOneLogin(true);
-        })
-        .catch((err) => {
-          setOneLogin(true);
-          setLoading(false);
-        });
-    }
-    if (index === 1) register(values);
+    companyService
+      .getCompanyList({
+        password: values?.password,
+        username: values?.username,
+      })
+      .then((res) => {
+        setIsUserId(res?.user_id);
+        setCompanies(res?.companies);
+        setLoading(true);
+        if (index === 1) register(values);
+        setOneLogin(true);
+      })
+      .catch((err) => {
+        setOneLogin(false);
+        setLoading(false);
+      });
   };
 
   const onSubmitDialog = (values) => {
@@ -227,52 +211,11 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     dispatch(loginAction(values));
   };
 
-  const onSubmitTable = async () => {
-    if (getFormValueSecond && getFormConTable) {
-      onSubmitDialog(getFormValue);
-    }
-  };
-
   useEffect(() => {
     if (oneLogin) {
-      onSubmitTable();
+      submitWithoutModal();
     }
-    if (oneLogin && !getFormConTable && getFormValueSecond) {
-      handleClickOpen();
-    }
-  }, [
-    selectedClientTypeID,
-    selectedCompanyID,
-    selectedEnvID,
-    selectedProjectID,
-    getFormValue,
-    formType,
-    oneLogin,
-  ]);
-
-  useEffect(() => {
-    if (
-      computedConnections.length === 1 &&
-      computedConnections[0].options.length === 1
-    ) {
-      const index = 0;
-      setValue(
-        `tables[${index}].object_id`,
-        computedConnections[0].options[0]?.guid
-      );
-      setSelectedCollection(computedConnections[0].options[0]?.guid);
-      setValue(
-        `tables[${index}].table_slug`,
-        computedConnections[0]?.table_slug
-      );
-    }
-  }, [computedConnections]);
-
-  console.log("getFormValue", getFormValue);
-
-  // useEffect(() => {
-
-  // }, [getFormValue?.username, getFormValue?.password]);
+  }, [oneLogin, companies]);
 
   useEffect(() => {
     if (computedCompanies?.length === 1) {
@@ -292,20 +235,42 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     computedProjects,
     computedEnvironments,
     computedClientTypes,
+    companies,
   ]);
 
-  // useEffect(() => {
-  //   onSubmitTable();
-  // }, [
-  //   selectedClientTypeID,
-  //   selectedCompanyID,
-  //   selectedEnvID,
-  //   selectedProjectID,
-  //   getFormValue,
-  //   formType,
-  //   open,
-  // ]);
+  const submitWithoutModal = () => {
+    const allComputed =
+      computedCompanies?.length > 1 &&
+      computedProjects?.length > 1 &&
+      computedEnvironments?.length > 1 &&
+      computedClientTypes?.length > 1
+        ? true
+        : false;
 
+    console.log("allComputed", allComputed);
+
+    if (hasValidCredentials && computedConnections?.length < 1) {
+      onSubmitDialog(getFormValue);
+    } else if (
+      hasValidCredentials &&
+      computedConnections?.length > 0 &&
+      selectedClientTypeID
+    ) {
+      handleClickOpen();
+    } else if (!selectedClientTypeID) {
+      handleClickOpen();
+    }
+  };
+  useEffect(
+    () => {
+      if (formValuesExist && computedConnections?.length === 0) {
+        onSubmitDialog(getFormValue);
+      }
+    },
+    [getFormValue],
+    formValuesExist,
+    computedConnections
+  );
   return (
     <>
       {formType === "RESET_PASSWORD" ? (
@@ -388,9 +353,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           {formType !== "register" && (
             <>
               <div className={classes.buttonsArea}>
-                <PrimaryButton size="large" loader={loading}>
+                {/* <PrimaryButton size="large" loader={loading}>
                   {t("enter")}
-                </PrimaryButton>
+                </PrimaryButton> */}
+                <Button variant="contained" fullWidth type="submit">
+                  ENter
+                </Button>
               </div>
               <div className={classes.buttonsArea}>
                 <PrimaryButton
@@ -417,7 +385,6 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-        // style={!allValid ? { display: "block" } : { display: "none" }}
       >
         <div
           style={{
@@ -492,10 +459,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                     control={control}
                     setValue={setValue}
                     watch={watch}
+                    options={connection?.options}
                     companies={companies}
-                    options={connection.options}
-                    setSelectedCollection={setSelectedCollection}
                     selectedCollection={selectedCollection}
+                    setSelectedCollection={setSelectedCollection}
                   />
                 ))
               : null}

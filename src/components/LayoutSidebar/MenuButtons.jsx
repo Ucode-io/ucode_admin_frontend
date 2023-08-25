@@ -162,6 +162,15 @@ const ButtonsMenu = ({
               }}
             />
             <MenuItemComponent
+              icon={<TableChartIcon size={13} />}
+              title="Создать pivot template"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`${appId}/pivot-template/create`)
+                handleCloseNotify();
+              }}
+            />
+            <MenuItemComponent
               icon={<SyncAltIcon size={13} />}
               title="Добавить table"
               onClick={(e) => {

@@ -67,6 +67,8 @@ import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/Fu
 import NotificationPage from "../components/LayoutSidebar/Components/Notification";
 import NotificationForm from "../components/LayoutSidebar/Components/Notification/NotificationForm";
 import SmsFormPage from "../views/SmsOtp/SmsFormPage";
+import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
+import PivotTableView from "../views/Objects/PivotTableView";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 
@@ -178,6 +180,8 @@ const Router = () => {
         />
 
         <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
+        <Route path=":appId/report-setting/:reportSettingsId" element={<ReportSettings />} />
+        <Route path=":appId/pivot-template/:pivotTemplateId" element={<PivotTableView />} />
 
         <Route path=":appId/user-page/:userMenuId">
           <Route index element={<ClientUserPage />} />

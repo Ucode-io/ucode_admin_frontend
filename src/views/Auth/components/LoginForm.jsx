@@ -237,7 +237,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     if (oneLogin) {
       onSubmitTable();
     }
-    if (oneLogin && !getFormConTable) {
+    if (oneLogin && !getFormConTable && getFormValueSecond) {
       handleClickOpen();
     }
   }, [
@@ -247,7 +247,6 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     selectedProjectID,
     getFormValue,
     formType,
-    open,
     oneLogin,
   ]);
 

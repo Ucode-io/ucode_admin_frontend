@@ -80,8 +80,6 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       ? true
       : false;
 
-  console.log("formValuesExist", formValuesExist);
-
   const hasValidCredentials =
     getFormValue?.password && getFormValue?.username && formValuesExist;
 
@@ -261,16 +259,16 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       handleClickOpen();
     }
   };
-  useEffect(
-    () => {
-      if (formValuesExist && computedConnections?.length === 0) {
-        onSubmitDialog(getFormValue);
-      }
-    },
-    [getFormValue],
-    formValuesExist,
-    computedConnections
-  );
+  // useEffect(
+  //   () => {
+  //     if (formValuesExist && computedConnections?.length === 0) {
+  //       onSubmitDialog(getFormValue);
+  //     }
+  //   },
+  //   [getFormValue],
+  //   formValuesExist,
+  //   computedConnections
+  // );
   return (
     <>
       {formType === "RESET_PASSWORD" ? (

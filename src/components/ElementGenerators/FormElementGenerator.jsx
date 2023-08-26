@@ -142,6 +142,7 @@ const FormElementGenerator = ({
   // } else {
   //   field.required = false
   // }
+  console.log("field", field);
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
@@ -411,6 +412,43 @@ const FormElementGenerator = ({
         </FRow>
       );
     case "FLOAT":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFFloatField
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            type="number"
+            required={checkRequiredField}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            key={computedSlug}
+            {...props}
+          />
+        </FRow>
+      );
+
+    case "FLOAT":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFFloatField
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            fullWidth
+            type="number"
+            required={checkRequiredField}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            key={computedSlug}
+            {...props}
+          />
+        </FRow>
+      );
+    case "MONEY":
       return (
         <FRow label={label} required={field.required}>
           <HFFloatField

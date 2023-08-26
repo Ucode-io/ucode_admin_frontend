@@ -78,15 +78,15 @@ const CellFormElementGenerator = ({
       field.attributes?.defaultValue ?? field.attributes?.default_values;
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
-    if (field.relation_type === "Many2One" || field?.type === 'LOOKUP') {
-      if(Array.isArray(defaultValue)) {
-        return defaultValue[0]
+    if (field.relation_type === "Many2One" || field?.type === "LOOKUP") {
+      if (Array.isArray(defaultValue)) {
+        return defaultValue[0];
       } else {
-        return defaultValue
+        return defaultValue;
       }
-    };
+    }
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
-    return defaultValue;
+      return defaultValue;
     if (!defaultValue) return undefined;
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
@@ -359,6 +359,22 @@ const CellFormElementGenerator = ({
         />
       );
     case "FLOAT":
+      return (
+        <HFFloatField
+          disabled={isDisabled}
+          isFormEdit
+          control={control}
+          name={computedSlug}
+          fullWidth
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          isBlackBg={isBlackBg}
+          defaultValue={defaultValue}
+          {...props}
+        />
+      );
+
+    case "MONEY":
       return (
         <HFFloatField
           disabled={isDisabled}

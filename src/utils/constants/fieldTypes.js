@@ -40,6 +40,7 @@ export const fieldTypes = [
   "FORMULA",
   "DENTIST",
   "COLOR",
+  "MONEY",
 ];
 
 export const fieldTypesOptions = [
@@ -181,6 +182,11 @@ export const fieldTypesOptions = [
   {
     label: "Other",
     options: [
+      {
+        icon: "arrow-up-9-1.svg",
+        label: "FLOAT_NOLIMIT",
+        value: "MONEY",
+      },
       {
         icon: "arrow-up-9-1.svg",
         label: "Increment ID",

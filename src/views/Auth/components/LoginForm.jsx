@@ -236,28 +236,31 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     companies,
   ]);
 
-  const submitWithoutModal = () => {
-    const allComputed =
-      computedCompanies?.length > 1 &&
-      computedProjects?.length > 1 &&
-      computedEnvironments?.length > 1 &&
-      computedClientTypes?.length > 1
-        ? true
-        : false;
+  const submitWithoutModal = async () => {
+    setTimeout(() => {
+      // const allComputed =
+      //   computedCompanies?.length > 1 &&
+      //   computedProjects?.length > 1 &&
+      //   computedEnvironments?.length > 1 &&
+      //   computedClientTypes?.length > 1
+      //     ? true
+      //     : false;
 
-    console.log("allComputed", allComputed);
-
-    if (hasValidCredentials && computedConnections?.length < 1) {
-      onSubmitDialog(getFormValue);
-    } else if (
-      hasValidCredentials &&
-      computedConnections?.length > 0 &&
-      selectedClientTypeID
-    ) {
-      handleClickOpen();
-    } else if (!selectedClientTypeID) {
-      handleClickOpen();
-    }
+      if (hasValidCredentials && computedConnections?.length < 1) {
+        console.log("first");
+        onSubmitDialog(getFormValue);
+      } else if (
+        hasValidCredentials &&
+        computedConnections?.length > 0 &&
+        selectedClientTypeID
+      ) {
+        console.log("second");
+        handleClickOpen();
+      } else if (!selectedClientTypeID) {
+        console.log("third");
+        handleClickOpen();
+      }
+    }, 2500);
   };
   // useEffect(
   //   () => {
@@ -351,12 +354,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           {formType !== "register" && (
             <>
               <div className={classes.buttonsArea}>
-                {/* <PrimaryButton size="large" loader={loading}>
+                <PrimaryButton size="large" loader={loading}>
                   {t("enter")}
-                </PrimaryButton> */}
-                <Button variant="contained" fullWidth type="submit">
+                </PrimaryButton>
+                {/* <Button variant="contained" fullWidth type="submit">
                   ENter
-                </Button>
+                </Button> */}
               </div>
               <div className={classes.buttonsArea}>
                 <PrimaryButton

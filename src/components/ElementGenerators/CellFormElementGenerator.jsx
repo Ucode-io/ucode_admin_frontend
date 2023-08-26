@@ -373,7 +373,7 @@ const CellFormElementGenerator = ({
           {...props}
         />
       );
-
+    case "FLOAT_NOLIMIT":
     case "MONEY":
       return (
         <HFFloatField

@@ -430,25 +430,7 @@ const FormElementGenerator = ({
         </FRow>
       );
 
-    case "FLOAT":
-      return (
-        <FRow label={label} required={field.required}>
-          <HFFloatField
-            control={control}
-            name={computedSlug}
-            tabIndex={field?.tabIndex}
-            fullWidth
-            type="number"
-            required={checkRequiredField}
-            placeholder={field.attributes?.placeholder}
-            defaultValue={defaultValue}
-            disabled={isDisabled}
-            key={computedSlug}
-            {...props}
-          />
-        </FRow>
-      );
-    case "MONEY":
+    case "FLOAT_NOLIMIT":
       return (
         <FRow label={label} required={field.required}>
           <HFFloatField

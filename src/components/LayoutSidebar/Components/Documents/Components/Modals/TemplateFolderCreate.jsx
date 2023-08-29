@@ -11,12 +11,7 @@ import {
   useTemplateFolderUpdateMutation,
 } from "../../../../../../services/templateFolderService";
 
-const TemplateFolderCreateModal = ({
-  closeModal,
-  loading,
-  modalType,
-  folder,
-}) => {
+const TemplateFolderCreateModal = ({ closeModal, modalType, folder }) => {
   const createType = modalType === "CREATE";
   const company = store.getState().company;
   const queryClient = useQueryClient();
@@ -81,9 +76,15 @@ const TemplateFolderCreateModal = ({
 
             <div className="btns-row">
               {modalType === "crete" ? (
-                <CreateButton type="submit" loading={loading} />
+                <CreateButton
+                  type="submit"
+                  loading={createLoading || updateLoading}
+                />
               ) : (
-                <SaveButton type="submit" loading={loading} />
+                <SaveButton
+                  type="submit"
+                  loading={createLoading || updateLoading}
+                />
               )}
             </div>
           </form>

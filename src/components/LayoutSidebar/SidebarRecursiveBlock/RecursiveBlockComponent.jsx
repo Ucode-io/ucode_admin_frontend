@@ -27,6 +27,10 @@ import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
 import NotificationSidebar from "../Components/Notification/NotificationSidebar";
 import Resources from "../Components/Resources";
+import QuerySidebar from "../Components/Query/QuerySidebar";
+import ApiSidebar from "../Components/Api/ApiSidebar";
+import { updateLevel } from "../../../utils/level";
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -56,7 +60,6 @@ const RecursiveBlock = ({
   const defaultLanguage = i18n.language;
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
-
   const buttonPermission =
     element?.data?.permission?.read ||
     defaultAdmin ||
@@ -72,7 +75,7 @@ const RecursiveBlock = ({
       menuItem?.id === element?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
@@ -197,25 +200,27 @@ const RecursiveBlock = ({
             </div>
             {element?.type === "FOLDER" && sidebarIsOpen ? (
               <Box className="icon_group">
-                <Tooltip title="Folder settings" placement="top">
-                  <Box className="extra_icon">
-                    <BsThreeDots
-                      size={13}
-                      onClick={(e) => {
-                        e?.stopPropagation();
-                        handleOpenNotify(e, "FOLDER");
-                        setElement(element);
-                        dispatch(menuActions.setMenuItem(element));
-                      }}
-                      style={{
-                        color:
-                          menuItem?.id === element?.id
-                            ? menuStyle?.active_text
-                            : menuStyle?.text || "",
-                      }}
-                    />
-                  </Box>
-                </Tooltip>
+                {!adminId && (
+                  <Tooltip title="Folder settings" placement="top">
+                    <Box className="extra_icon">
+                      <BsThreeDots
+                        size={13}
+                        onClick={(e) => {
+                          e?.stopPropagation();
+                          handleOpenNotify(e, "FOLDER");
+                          setElement(element);
+                          dispatch(menuActions.setMenuItem(element));
+                        }}
+                        style={{
+                          color:
+                            menuItem?.id === element?.id
+                              ? menuStyle?.active_text
+                              : menuStyle?.text || "",
+                        }}
+                      />
+                    </Box>
+                  </Tooltip>
+                )}
                 <Tooltip title="Create folder" placement="top">
                   <Box className="extra_icon">
                     {element?.data?.permission?.write ||
@@ -401,9 +406,25 @@ const RecursiveBlock = ({
             menuStyle={menuStyle}
             setSubMenuIsOpen={setSubMenuIsOpen}
             level={2}
+            menuItem={menuItem}
           />
         )}
-        {element.id === folderIds.users_folder_id && null}
+        {element.id === folderIds.api_folder_id && (
+          <>
+            <QuerySidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              level={2}
+              menuItem={menuItem}
+            />
+            <ApiSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              level={2}
+              menuItem={menuItem}
+            />
+          </>
+        )}
       </Collapse>
     </Box>
   );

@@ -1,12 +1,24 @@
+import ReloadRelations from "@/components/ReloadRelations";
 import { lazy, Suspense, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-
+import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
+import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
+import Note from "../components/LayoutSidebar/Components/Documents/Note";
+import EmailPage from "../components/LayoutSidebar/Components/Email";
+import EmailDetailPage from "../components/LayoutSidebar/Components/Email/EmailDetailPage";
+import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
+import MicroservicePage from "../components/LayoutSidebar/Components/MicroService";
+import NotificationPage from "../components/LayoutSidebar/Components/Notification";
+import NotificationForm from "../components/LayoutSidebar/Components/Notification/NotificationForm";
+import ProjectSettingPage from "../components/LayoutSidebar/Components/Project";
+import Queries from "../components/LayoutSidebar/Components/Query";
+import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import PageFallback from "../components/PageFallback";
+import ReloadPage from "../components/ReloadComponent/index";
 import ReloadWrapper from "../components/ReloadWrapper";
 import AnalyticsLayout from "../layouts/AnalyticsLayout";
-
 import CashboxLayout from "../layouts/CashboxLayout";
 import MainLayout from "../layouts/MainLayout";
 import SettingsLayout from "../layouts/SettingsLayout";
@@ -18,58 +30,46 @@ import VariableCreateForm from "../views/Analytics/Dashboard/DashboardSettings/V
 import Variables from "../views/Analytics/Dashboard/DashboardSettings/Variables";
 import DashboardDetailPage from "../views/Analytics/Dashboard/Detail";
 import PanelCreateForm from "../views/Analytics/Dashboard/Detail/PanelForm";
+import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
+import ApiKeyPage from "../views/ApiKeys/index.jsx";
 import Login from "../views/Auth/Login";
 import Registration from "../views/Auth/Registration";
 import CashboxAppointments from "../views/Cashbox/Appointments";
 import AppointmentsForm from "../views/Cashbox/Appointments/Form";
 import CashboxClosing from "../views/Cashbox/Closing";
 import CashboxOpening from "../views/Cashbox/Opening";
-import AppsPage from "../views/Constructor/Apps";
-import AppsForm from "../views/Constructor/Apps/AppsForm";
-import ConstructorTablesFormPage from "../views/Constructor/Tables/Form";
-import ObjectsPage from "../views/Objects";
-import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
-import ReloadPage from "../components/ReloadComponent/index";
-import ReloadRelations from "@/components/ReloadRelations";
-import Chat from "../components/Chat";
-import ApiKeyPage from "../views/ApiKeys/index.jsx";
-import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
-import Microfrontend from "../views/Microfrontend";
-import MicrofrontendPage from "../views/Constructor/Microfrontend";
-import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
-import WebPage from "../views/WebPage";
-import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
-import ClientUserPage from "../views/Users/UserPage";
-import ClientUserForm from "../views/Users/UserFormPage";
-import EnvironmentPage from "../views/Environments";
-import EnvironmentForm from "../views/Environments/EnvironmentFormPage";
-import ProjectPage from "../views/Projects";
-import ProjectForm from "../views/Projects/ProjectFormPage";
-import RedirectFormPage from "../views/Redirect/RedirectFormPage";
-import RedirectPage from "../views/Redirect";
 import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
-import PermissionDetail from "../views/Permissions";
-import RoleDetail from "../views/Permissions/Roles/Detail";
+import AppsPage from "../views/Constructor/Apps";
+import AppsForm from "../views/Constructor/Apps/AppsForm";
+import MicrofrontendPage from "../views/Constructor/Microfrontend";
+import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
+import ConstructorTablesFormPage from "../views/Constructor/Tables/Form";
 import DatabasePage from "../views/DataBase";
 import DatabaseConfiguration from "../views/DataBase/Configuration";
-import Scenarios from "../components/LayoutSidebar/Components/Scenario";
-import Note from "../components/LayoutSidebar/Components/Documents/Note";
-import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
-import MicroservicePage from "../components/LayoutSidebar/Components/MicroService";
-import EmailPage from "../components/LayoutSidebar/Components/Email";
-import EmailDetailPage from "../components/LayoutSidebar/Components/Email/EmailDetailPage";
-import ProjectSettingPage from "../components/LayoutSidebar/Components/Project";
-import ResourceDetail from "../views/Resources/Detail";
+import EnvironmentPage from "../views/Environments";
+import EnvironmentForm from "../views/Environments/EnvironmentFormPage";
 import Connections from "../views/Matrix/Connections";
+import Microfrontend from "../views/Microfrontend";
+import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
+import ObjectsPage from "../views/Objects";
+import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
+import PermissionDetail from "../views/Permissions";
+import RoleDetail from "../views/Permissions/Roles/Detail";
+import ProjectPage from "../views/Projects";
+import ProjectForm from "../views/Projects/ProjectFormPage";
+import RedirectPage from "../views/Redirect";
+import RedirectFormPage from "../views/Redirect/RedirectFormPage";
+import ResourceDetail from "../views/Resources/Detail";
 import SmsPage from "../views/SmsOtp";
 import SmsFormPage from "../views/SmsOtp/SmsFormPage";
-import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
-import NotificationPage from "../components/LayoutSidebar/Components/Notification";
-import NotificationForm from "../components/LayoutSidebar/Components/Notification/NotificationForm";
+import ClientUserForm from "../views/Users/UserFormPage";
+import ClientUserPage from "../views/Users/UserPage";
+import WebPage from "../views/WebPage";
+import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
+import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
-
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
 const ClientPlatform = lazy(() => import("../views/AuthMatrix/ClientPlatform"));
 const ClientType = lazy(() => import("../views/AuthMatrix/ClientType"));
@@ -240,6 +240,20 @@ const Router = () => {
           <Route path="create" element={<NotificationForm />} />
           <Route path=":notificationId" element={<NotificationForm />} />
         </Route>
+        <Route path=":appId/queries">
+          <Route path=":queryId" element={<Queries />} />
+          <Route path="create" element={<Queries />} />
+        </Route>
+        <Route path=":appId/api-endpoints">
+          <Route path=":categoryId">
+            <Route path="create" element={<ApiEndpoint />} />
+            <Route path=":endpointId">
+              <Route index element={<ApiEndpoint />} />
+              <Route path="preview" element={<ApiEndpointDetail />} />
+            </Route>
+          </Route>
+        </Route>
+
         <Route path=":appId/docs">
           <Route path="note/:folderId">
             <Route path="create" element={<Note />} />

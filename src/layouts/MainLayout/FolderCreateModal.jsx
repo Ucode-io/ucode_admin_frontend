@@ -118,14 +118,6 @@ const FolderCreateModal = ({
                 const fieldValue = watch(languageFieldName);
 
                 return (
-                  // <HFTextField
-                  //   control={control}
-                  //   name={languageFieldName}
-                  //   fullWidth
-                  //   placeholder={`Название (${language?.slug})`}
-                  //   name={`attributes.label_${item?.slug}`}
-                  //   defaultValue={fieldValue || menuItemLabel}
-                  // />
                   <HFTextField
                     autoFocus
                     fullWidth

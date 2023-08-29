@@ -2,10 +2,10 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Icon, Tooltip } from "@mui/material";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
 import "../../style.scss";
 import { useDispatch } from "react-redux";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
+import { updateLevel } from "../../../../utils/level";
 
 const FunctionRecursive = ({
   element,
@@ -30,18 +30,18 @@ const FunctionRecursive = ({
       element?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
 
   const clickHandler = () => {
+    dispatch(menuActions.setMenuItem(element));
     setSelected(element);
     onRowClick(element.id, element);
     setChildBlockVisible((prev) => !prev);
     if (!element.children) onSelect(element.id, element);
-    dispatch(menuActions.setMenuItem(element));
   };
   return (
     <Box>
@@ -92,6 +92,7 @@ const FunctionRecursive = ({
             selected={selected}
             handleOpenNotify={handleOpenNotify}
             setSelected={setSelected}
+            menuItem={menuItem}
           />
         ))}
       </Collapse>

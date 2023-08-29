@@ -7,15 +7,11 @@ import CreateButton from "../../../../../Buttons/CreateButton";
 import SaveButton from "../../../../../Buttons/SaveButton";
 import HFTextField from "../../../../../FormElements/HFTextField";
 import {
-  useTemplateFolderCreateMutation,
-  useTemplateFolderUpdateMutation,
-} from "../../../../../../services/templateFolderService";
-import {
   useNoteFolderCreateMutation,
   useNoteFolderUpdateMutation,
 } from "../../../../../../services/noteFolderService";
 
-const NoteFolderCreateModal = ({ closeModal, loading, modalType, folder }) => {
+const NoteFolderCreateModal = ({ closeModal, modalType, folder }) => {
   const createType = modalType === "CREATE";
   const company = store.getState().company;
   const queryClient = useQueryClient();
@@ -79,9 +75,15 @@ const NoteFolderCreateModal = ({ closeModal, loading, modalType, folder }) => {
 
             <div className="btns-row">
               {modalType === "crete" ? (
-                <CreateButton type="submit" loading={loading} />
+                <CreateButton
+                  type="submit"
+                  loading={createLoading || updateLoading}
+                />
               ) : (
-                <SaveButton type="submit" loading={loading} />
+                <SaveButton
+                  type="submit"
+                  loading={createLoading || updateLoading}
+                />
               )}
             </div>
           </form>

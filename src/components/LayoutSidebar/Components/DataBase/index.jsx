@@ -23,6 +23,7 @@ import DataBaseFolderCreateModal from "./Modal/DataBaseFolderModal";
 import DatabaseButtonMenu from "./DatabaseButtonMenu";
 import { useTableFolderDeleteMutation } from "../../../../services/tableFolderService";
 import DataBaseTableForm from "./Drawer/DataBaseTableForm";
+import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const dataBase = {
@@ -99,7 +100,7 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
       dataBase?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
   };
 
   const labelStyle = {

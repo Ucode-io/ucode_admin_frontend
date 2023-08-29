@@ -35,7 +35,7 @@ const SmsFormPage = () => {
       .create({ ...data, number_of_otp: parseInt(data?.number_of_otp) }, params)
       .then(() => {
         navigate(-1);
-        getRoleList();
+        // getRoleList();
       })
       .catch(() => setBtnLoader(false));
   };
@@ -50,7 +50,7 @@ const SmsFormPage = () => {
       })
       .then(() => {
         navigate(-1);
-        getRoleList();
+        // getRoleList();
       })
       .catch(() => setBtnLoader(false));
   };
@@ -66,11 +66,11 @@ const SmsFormPage = () => {
       });
   };
 
-  useEffect(() => {
-    if (mainForm.watch("client_type_id")) {
-      getRoleList();
-    }
-  }, [mainForm.watch("client_type_id")]);
+  // useEffect(() => {
+  //   if (mainForm.watch("client_type_id")) {
+  //     getRoleList();
+  //   }
+  // }, [mainForm.watch("client_type_id")]);
 
   useEffect(() => {
     if (redirectId) {

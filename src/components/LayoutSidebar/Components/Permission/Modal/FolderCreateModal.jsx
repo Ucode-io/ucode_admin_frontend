@@ -132,9 +132,15 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
             </FRow>
             <div className="btns-row">
               {createType ? (
-                <CreateButton type="submit" loading={createLoading} />
+                <CreateButton
+                  type="submit"
+                  loading={createLoading || updateLoading}
+                />
               ) : (
-                <SaveButton type="submit" loading={updateLoading} />
+                <SaveButton
+                  type="submit"
+                  loading={createLoading || updateLoading}
+                />
               )}
             </div>
           </form>

@@ -61,7 +61,7 @@ const EmailPage = () => {
       <HeaderSettings
         title={"Email settings"}
         disabledMenu={false}
-        backButtonLink={-1}
+        backButtonLink={-1} 
         line={false}
       />
       <TableCard>

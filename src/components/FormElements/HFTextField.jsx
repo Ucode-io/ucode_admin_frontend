@@ -29,6 +29,7 @@ const HFTextField = ({
   checkRequiredField,
   placeholder,
   endAdornment,
+  disabled_text = "This field is disabled for this role!",
   customOnChange = () => {},
   ...props
 }) => {
@@ -79,7 +80,7 @@ const HFTextField = ({
                 },
 
             endAdornment: disabled ? (
-              <Tooltip title="This field is disabled for this role!">
+              <Tooltip title={disabled_text}>
                 <InputAdornment position="start">
                   <Lock style={{ fontSize: "20px" }} />
                 </InputAdornment>

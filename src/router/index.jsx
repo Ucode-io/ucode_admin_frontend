@@ -68,6 +68,8 @@ import ResourceDetail from "../views/Resources/Detail";
 import ClientUserForm from "../views/Users/UserFormPage";
 import ClientUserPage from "../views/Users/UserPage";
 import WebPage from "../views/WebPage";
+import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
+import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -252,6 +254,16 @@ const Router = () => {
           <Route path=":queryId" element={<Queries />} />
           <Route path="create" element={<Queries />} />
         </Route>
+        <Route path=":appId/api-endpoints">
+          <Route path=":categoryId">
+            <Route path="create" element={<ApiEndpoint />} />
+            <Route path=":endpointId">
+              <Route index element={<ApiEndpoint />} />
+              <Route path="preview" element={<ApiEndpointDetail />} />
+            </Route>
+          </Route>
+        </Route>
+
         <Route path=":appId/docs">
           <Route path="note/:folderId">
             <Route path="create" element={<Note />} />

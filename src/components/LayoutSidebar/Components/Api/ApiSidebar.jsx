@@ -1,7 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
+import { Box, Button, Collapse } from "@mui/material";
 import { useMemo, useState } from "react";
 import { FaFolder } from "react-icons/fa";
 import { TbApi } from "react-icons/tb";
@@ -75,18 +75,8 @@ const ApiSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     setFolderModalType(null);
   };
   const handleNavigate = (folder) => {
-    navigate(`${location.pathname}/queries/create?folder_id=${folder?.id}`);
+    navigate(`${location.pathname}/api-endpoints/${folder?.guid}/create`);
   };
-
-  const [apiCategoryModalType, setApiCategoryModalType] = useState(null);
-  const [selectedApiCategory, setSelectedApiCategory] = useState(null);
-
-  const openApiCategoryModal = (folder, type) => {
-    setSelectedApiCategory(folder);
-    setApiCategoryModalType(type);
-  };
-
-  const closeTemplateFolderModal = () => setApiCategoryModalType(false);
 
   // --REST API CATEGORIES--
 
@@ -144,12 +134,6 @@ const ApiSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
         : menuStyle?.text,
     paddingLeft: updateLevel(level),
   };
-  const iconStyle = {
-    color:
-      apiFolder?.id === menuItem?.id
-        ? menuStyle?.active_text
-        : menuStyle?.text || "",
-  };
 
   const labelStyle = {
     color:
@@ -185,6 +169,7 @@ const ApiSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
         .map((endpoint) => ({
           ...endpoint,
           id: endpoint.guid,
+          name: endpoint.title,
           type: "API_ENDPOINT",
           icon: TbApi,
           //   buttons: (
@@ -262,6 +247,7 @@ const ApiSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
     setSelected(element);
     dispatch(menuActions.setMenuItem(element));
     if (element.type === "FOLDER") return;
+    navigate(`${location.pathname}/api-endpoints/${element.category_id}/${id}`);
   };
 
   return (

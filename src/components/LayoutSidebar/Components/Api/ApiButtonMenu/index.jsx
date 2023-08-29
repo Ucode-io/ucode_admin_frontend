@@ -43,7 +43,7 @@ const ApiButtonMenu = ({
             <Box className="menu">
               <MenuItemComponent
                 icon={<FaPlus size={13} />}
-                title="Добавить Query"
+                title="Добавить Api"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleNavigate(element);

@@ -39,62 +39,61 @@ const InputWithPopUp = ({
   };
 
   return (
-    <div className={className || styles.container}>
-      <OutsideClickHandler
-        onOutsideClick={() => {
-          setFocused(false);
-        }}
+    <div
+      className={className || styles.container}
+      onBlur={() => {
+        setFocused(false);
+      }}
+    >
+      <Box
+        width="100%"
+        height={height}
+        display="flex"
+        alignItems="center"
+        position="relative"
+        className={styles.inputWithPopUp}
       >
-        <Box
-          width="100%"
-          height={height}
-          display="flex"
-          alignItems="center"
-          position="relative"
-          className={styles.inputWithPopUp}
-        >
-          <HFTextField
-            control={form.control}
-            size={size}
-            name={name}
-            fullWidth
-            onFocus={() => {
-              setFocused(true);
-            }}
-            placeholder={placeholder}
-            customOnChange={(value) => {
-              detectVariables(value.target.value);
-              enableGetElement && getElementBetween(form);
-              customOnChange();
-            }}
-            onBlur={onBlur}
-          />
+        <HFTextField
+          control={form.control}
+          size={size}
+          name={name}
+          fullWidth
+          onFocus={() => {
+            setFocused(true);
+          }}
+          placeholder={placeholder}
+          customOnChange={(value) => {
+            detectVariables(value.target.value);
+            enableGetElement && getElementBetween(form);
+            customOnChange();
+          }}
+          onBlur={onBlur}
+        />
 
-          {focused ? (
-            <div className={styles.prompt}>
-              <div className={styles.wrapper}>
-                <div>
-                  <p>{typeOfElement ? "Number" : "String"}</p>
-                  <p className={styles.paragraph}>"{form.watch(name)}"</p>
-                </div>
+        {focused ? (
+          <div className={styles.prompt}>
+            <div className={styles.wrapper}>
+              <div>
+                <p>{typeOfElement ? "Number" : "String"}</p>
+                <p className={styles.paragraph}>"{form.watch(name)}"</p>
+              </div>
 
-                <div>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    size="xs"
-                    onClick={() => copyToClipboard()}
-                  >
-                    <MdContentCopy />
-                  </Button>
-                </div>
+              <div>
+                <Button
+                  variant="contained"
+                  color="success"
+                  size="xs"
+                  onClick={() => copyToClipboard()}
+                >
+                  <MdContentCopy />
+                </Button>
               </div>
             </div>
-          ) : (
-            ""
-          )}
-        </Box>
-      </OutsideClickHandler>
+          </div>
+        ) : (
+          ""
+        )}
+      </Box>
     </div>
   );
 };

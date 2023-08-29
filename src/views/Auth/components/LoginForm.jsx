@@ -1,5 +1,5 @@
 import { AccountCircle, Lock } from "@mui/icons-material";
-import { Button, Dialog, InputAdornment } from "@mui/material";
+import { Button, InputAdornment } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
@@ -24,32 +24,16 @@ import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
+import HFTextFieldWithMask from "../../../components/FormElements/HFTextFieldWithMask";
+import RegisterForm from "./RegisterForm";
 import { useRoleListQuery } from "../../../services/roleServiceV2";
-import RegisterFormPage from "./RegisterFormPage";
-import companyService from "../../../services/companyService";
 
-const LoginForm = ({ setIndex, index, setFormType, formType }) => {
+const LoginForm = ({ setIndex, index }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [modalLoading, setModalLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [loginError, setLoginError] = useState(false);
-  const [oneLogin, setOneLogin] = useState(false);
-
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-    setLoading(false);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setLoading(false);
-    setValue("username", "");
-    setValue("password", "");
-  };
+  const [formType, setFormType] = useState("LOGIN");
 
   useEffect(() => {
     getFcmToken();
@@ -60,21 +44,17 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     localStorage.setItem("fcmToken", token);
   };
 
-  const { control, handleSubmit, watch, setValue, reset, getValues } =
-    useForm();
+  const { control, handleSubmit, watch, setValue, reset } = useForm();
 
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
-  const getFormValue = getValues();
 
-  //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
     return listToOptions(companies, "name");
   }, [companies]);
 
-  //=======COMPUTE PROJECTS
   const computedProjects = useMemo(() => {
     const company = companies?.find(
       (company) => company.id === selectedCompanyID
@@ -82,38 +62,59 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     return listToOptions(company?.projects, "name");
   }, [companies, selectedCompanyID]);
 
-  //=======COMPUTE ENVIRONMENTS
-  const computedEnvironments = useMemo(() => {
-    const company = companies?.find(
-      (company) => company.id === selectedCompanyID
-    );
-    const companyProject = company?.projects?.find(
-      (el) => el?.id === selectedProjectID
-    );
+  const { data: computedEnvironments } = useQuery(
+    ["GET_ENVIRONMENT_LIST", { "project-id": selectedProjectID }],
+    () => {
+      return environmentService.getList({ "project-id": selectedProjectID });
+    },
+    {
+      enabled: !!selectedProjectID,
+      select: (res) =>
+        res.data?.map((row) => ({
+          label: row.name,
+          value: row.environment_id,
+        })),
+    }
+  );
 
-    return companyProject?.resource_environments?.map((item) => ({
-      label: item?.name,
-      value: item?.environment_id,
-    }));
-  }, [selectedEnvID, companies, selectedProjectID]);
+  const { data: computedRoles } = useRoleListQuery({
+    headers: { "environment-id": selectedEnvID },
+    params: {
+      "client-type-id": selectedClientTypeID,
+      "project-id": selectedProjectID,
+    },
+    queryParams: {
+      enabled: !!selectedClientTypeID,
+      select: (res) => {
+        return res?.data?.response?.map((row) => ({
+          label: row.name,
+          value: row.guid,
+        }));
+      },
+    },
+  });
 
-  //======COMPUTE CLIENTTYPES
-  const computedClientTypes = useMemo(() => {
-    const company = companies?.find(
-      (company) => company.id === selectedCompanyID
-    );
-    const companyProject = company?.projects?.find(
-      (el) => el?.id === selectedProjectID
-    );
-
-    const companyEnvironment = companyProject?.resource_environments?.find(
-      (el) => el?.environment_id === selectedEnvID
-    );
-    return companyEnvironment?.client_types?.response?.map((item) => ({
-      label: item?.name,
-      value: item?.guid,
-    }));
-  }, [companies, selectedCompanyID, selectedEnvID, selectedProjectID]);
+  const { data: computedClientTypes = [] } = useQuery(
+    [
+      "GET_CLIENT_TYPE_LIST",
+      { "project-id": selectedProjectID },
+      { "environment-id": selectedEnvID },
+    ],
+    () => {
+      return clientTypeServiceV2.getList(
+        { "project-id": selectedProjectID },
+        { "environment-id": selectedEnvID }
+      );
+    },
+    {
+      enabled: !!selectedEnvID,
+      select: (res) =>
+        res.data.response?.map((row) => ({
+          label: row.name,
+          value: row.guid,
+        })),
+    }
+  );
 
   const { data: computedConnections = [] } = useQuery(
     [
@@ -138,23 +139,51 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   );
 
   useEffect(() => {
+    if (computedCompanies?.length === 1) {
+      setValue("company_id", computedCompanies[0]?.value);
+    }
+  }, [computedCompanies]);
+
+  useEffect(() => {
+    if (computedProjects?.length === 1) {
+      setValue("project_id", computedProjects[0]?.value);
+    }
+  }, [computedProjects]);
+
+  useEffect(() => {
+    if (computedEnvironments?.length === 1) {
+      setValue("environment_id", computedEnvironments[0]?.value);
+    }
+  }, [computedEnvironments]);
+  useEffect(() => {
+    if (computedRoles?.length === 1) {
+      setValue("role_id", computedRoles[0]?.value);
+    }
+  }, [computedRoles]);
+
+  useEffect(() => {
+    if (computedClientTypes?.length === 1) {
+      setValue("client_type", computedClientTypes[0]?.value);
+    }
+  }, [computedClientTypes]);
+
+  useEffect(() => {
     getFcmToken();
     reset();
   }, [index]);
 
   const multiCompanyLogin = (data) => {
     setLoading(true);
+
     authService
       .multiCompanyLogin(data)
       .then((res) => {
-        // setCompanies(res.companies);
-        setLoginError(false);
+        setLoading(false);
+        setCompanies(res.companies);
+        setFormType("MULTI_COMPANY");
         dispatch(companyActions.setCompanies(res.companies));
       })
-      .catch(() => {
-        setLoading(false);
-        setLoginError(true);
-      });
+      .catch(() => setLoading(false));
   };
 
   const register = (data) => {
@@ -163,94 +192,19 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     authService
       .register(data)
       .then((res) => {
-        setIndex(0);
-      })
-      .catch(() => {
         setLoading(false);
-      });
+        setIndex(0);
+        store.dispatch(showAlert("Успешно", "success"));
+      })
+      .catch(() => setLoading(false));
   };
 
   const onSubmit = (values) => {
     setLoading(true);
-    if (index === 1) register(values);
+    if (formType === "LOGIN" && index === 0) multiCompanyLogin(values);
+    else if (index === 1) register(values);
+    else dispatch(loginAction(values)).then(() => setLoading(false));
   };
-
-  const onSubmitDialog = (values) => {
-    setLoading(true);
-    dispatch(loginAction(values));
-  };
-
-  useEffect(() => {
-    if (getFormValue?.username && getFormValue?.password) {
-      companyService
-        .getCompanyList({
-          password: getFormValue?.password,
-          username: getFormValue?.username,
-        })
-        .then((res) => {
-          setCompanies(res?.companies);
-          setOneLogin(false);
-        })
-        .catch((err) => {
-          setOneLogin(true);
-          setLoading(false);
-        });
-    }
-  }, [getFormValue?.username, getFormValue?.password]);
-
-  useEffect(() => {
-    if (computedCompanies?.length === 1) {
-      setValue("company_id", computedCompanies?.[0]?.value);
-    }
-    if (computedProjects?.length === 1) {
-      setValue("project_id", computedProjects?.[0]?.value);
-    }
-    if (computedEnvironments?.length === 1) {
-      setValue("environment_id", computedEnvironments?.[0]?.value);
-    }
-    if (computedClientTypes?.length === 1) {
-      setValue("client_type", computedClientTypes?.[0]?.value);
-    }
-  }, [
-    computedCompanies,
-    computedProjects,
-    computedEnvironments,
-    computedClientTypes,
-  ]);
-
-  useEffect(() => {
-    let handleClickTimeout;
-
-    const formValuesExist =
-      selectedClientTypeID &&
-      selectedCompanyID &&
-      selectedEnvID &&
-      selectedProjectID;
-
-    const hasValidCredentials =
-      getFormValue?.password && getFormValue?.username && !formValuesExist;
-
-    if (formValuesExist && getFormValue?.password && getFormValue?.username) {
-      clearTimeout(handleClickTimeout);
-      if (!open) onSubmitDialog(getFormValue);
-    } else if (hasValidCredentials && formType !== "register") {
-      handleClickTimeout = setTimeout(() => {
-        if (!loginError && !oneLogin) handleClickOpen();
-      }, 2000);
-    }
-
-    return () => {
-      clearTimeout(handleClickTimeout);
-    };
-  }, [
-    selectedClientTypeID,
-    selectedCompanyID,
-    selectedEnvID,
-    selectedProjectID,
-    getFormValue,
-    formType,
-    open,
-  ]);
 
   return (
     <>
@@ -269,7 +223,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
 
                 <div
                   className={classes.formArea}
-                  style={{ marginTop: "10px", height: `calc(100vh - 400px)` }}
+                  style={{ marginTop: "10px", height: `calc(100vh - 370px)` }}
                 >
                   <TabPanel>
                     <div className={classes.formRow}>
@@ -325,144 +279,97 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                       </Button>
                     }
                   </TabPanel>
+                  {/* <TabPanel>
+        <div className={classes.formRow}>
+          <p className={classes.label}>{t("login")}</p>
+          <Box className={classes.phone}>
+            <HFTextFieldWithMask
+              isFormEdit
+              control={control}
+              name={"phoneNumber"}
+              fullWidth
+              // mask={"(99) 999-99-99"}
+            />
+          </Box>
+        </div>
+      </TabPanel> */}
                 </div>
               </div>
             ) : (
-              <RegisterFormPage setFormType={setFormType} formType={formType} />
+              <div style={{ padding: "0 20px" }}>
+                <div
+                  className={classes.formArea}
+                  style={{ marginTop: "10px", height: `calc(100vh - 350px)` }}
+                >
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>{t("company")}</p>
+                    <HFSelect
+                      required
+                      control={control}
+                      name="company_id"
+                      size="large"
+                      placeholder={t("enter.company")}
+                      options={computedCompanies}
+                    />
+                  </div>
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>{t("project")}</p>
+                    <HFSelect
+                      required
+                      control={control}
+                      name="project_id"
+                      size="large"
+                      placeholder={t("enter.project")}
+                      options={computedProjects}
+                    />
+                  </div>
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>{t("environment")}</p>
+                    <HFSelect
+                      required
+                      control={control}
+                      name="environment_id"
+                      size="large"
+                      placeholder={t("select.environment")}
+                      options={computedEnvironments}
+                    />
+                  </div>
+                  <div className={classes.formRow}>
+                    <p className={classes.label}>{t("client_type")}</p>
+                    <HFSelect
+                      required
+                      control={control}
+                      name="client_type"
+                      size="large"
+                      placeholder={t("enter.client_type")}
+                      options={computedClientTypes}
+                    />
+                  </div>
+                  {computedConnections.length
+                    ? computedConnections?.map((connection, idx) => (
+                        <DynamicFields
+                          key={connection?.guid}
+                          table={computedConnections}
+                          connection={connection}
+                          index={idx}
+                          control={control}
+                          setValue={setValue}
+                          watch={watch}
+                          companies={companies}
+                        />
+                      ))
+                    : null}
+                </div>
+              </div>
             )}
           </Tabs>
-          {formType !== "register" && (
-            <>
-              <div className={classes.buttonsArea}>
-                <PrimaryButton size="large" loader={loading}>
-                  {t("enter")}
-                </PrimaryButton>
-              </div>
-              <div className={classes.buttonsArea}>
-                <PrimaryButton
-                  onClick={() => setFormType("register")}
-                  size="large"
-                  type="button"
-                  loader={true}
-                  className={`${
-                    formType === "register"
-                      ? classes.registerBtnPage
-                      : classes.registerBtn
-                  }`}
-                >
-                  {t("Зарегистрироваться")}
-                </PrimaryButton>
-              </div>
-            </>
-          )}
+          <div className={classes.buttonsArea}>
+            <PrimaryButton size="large" loader={loading}>
+              {t("enter")}
+            </PrimaryButton>
+          </div>
         </form>
       )}
-
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <div
-          style={{
-            padding: "0 20px",
-            width: "500px",
-            maxHeight: `calc(100vh - 150px)`,
-            minHeight: "200px",
-          }}
-        >
-          <h2 className={classes.headerContent}>Multi Company</h2>
-          <div className={classes.formArea}>
-            {computedCompanies?.length !== 1 && (
-              <div className={classes.formRow}>
-                <p className={classes.label}>{t("company")}</p>
-                <HFSelect
-                  required
-                  control={control}
-                  name="company_id"
-                  size="large"
-                  fullWidth
-                  placeholder={t("enter.company")}
-                  options={computedCompanies}
-                />
-              </div>
-            )}
-            {computedProjects?.length !== 1 && (
-              <div className={classes.formRow}>
-                <p className={classes.label}>{t("project")}</p>
-                <HFSelect
-                  required
-                  control={control}
-                  name="project_id"
-                  size="large"
-                  placeholder={t("enter.project")}
-                  options={computedProjects}
-                />
-              </div>
-            )}
-            {computedEnvironments?.length !== 1 && (
-              <div className={classes.formRow}>
-                <p className={classes.label}>{t("environment")}</p>
-                <HFSelect
-                  required
-                  control={control}
-                  name="environment_id"
-                  size="large"
-                  placeholder={t("select.environment")}
-                  options={computedEnvironments}
-                />
-              </div>
-            )}
-            {computedClientTypes?.length !== 1 && (
-              <div className={classes.formRow}>
-                <p className={classes.label}>{t("client_type")}</p>
-                <HFSelect
-                  required
-                  control={control}
-                  name="client_type"
-                  size="large"
-                  placeholder={t("enter.client_type")}
-                  options={computedClientTypes}
-                />
-              </div>
-            )}
-            {computedConnections.length
-              ? computedConnections?.map((connection, idx) => (
-                  <DynamicFields
-                    key={connection?.guid}
-                    table={computedConnections}
-                    connection={connection}
-                    index={idx}
-                    control={control}
-                    setValue={setValue}
-                    watch={watch}
-                    companies={companies}
-                  />
-                ))
-              : null}
-          </div>
-          <div className={classes.footerContent}>
-            <Button
-              sx={{ marginRight: "10px" }}
-              variant="contained"
-              color="error"
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
-            <div className={classes.buttonsArea}>
-              <PrimaryButton
-                onClick={handleSubmit(onSubmitDialog)}
-                size="small"
-                loader={loading}
-              >
-                {t("enter")}
-              </PrimaryButton>
-            </div>
-          </div>
-        </div>
-      </Dialog>
 
       {formType === "RESET_PASSWORD" && (
         <SecondaryButton

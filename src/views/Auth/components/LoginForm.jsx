@@ -32,10 +32,9 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [modalLoading, setModalLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [loginError, setLoginError] = useState(false);
   const [oneLogin, setOneLogin] = useState(false);
+  const [connectionCheck, setConnectionCheck] = useState(false);
   const [isUserId, setIsUserId] = useState();
   const [selectedCollection, setSelectedCollection] = useState();
 
@@ -70,6 +69,32 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
+
+  const { data: computedConnections = [] } = useQuery(
+    [
+      "GET_CONNECTION_LIST",
+      { "project-id": selectedProjectID },
+      { "environment-id": selectedEnvID },
+      { "user-id": isUserId },
+    ],
+    () => {
+      return connectionServiceV2.getList(
+        {
+          "project-id": selectedProjectID,
+          client_type_id: selectedClientTypeID,
+          "user-id": isUserId,
+        },
+        { "environment-id": selectedEnvID }
+      );
+    },
+    {
+      enabled: !!selectedClientTypeID,
+      select: (res) => res.data.response ?? [],
+      onSuccess: (res) => {
+        computeConnections(res);
+      },
+    }
+  );
 
   //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
@@ -111,42 +136,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     const companyEnvironment = companyProject?.resource_environments?.find(
       (el) => el?.environment_id === selectedEnvID
     );
+
     return companyEnvironment?.client_types?.response?.map((item) => ({
       label: item?.name,
       value: item?.guid,
     }));
   }, [companies, selectedCompanyID, selectedEnvID, selectedProjectID]);
-
-  const { data: computedConnections = [] } = useQuery(
-    [
-      "GET_CONNECTION_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-      { "user-id": isUserId },
-    ],
-    () => {
-      return connectionServiceV2.getList(
-        {
-          "project-id": selectedProjectID,
-          client_type_id: selectedClientTypeID,
-          "user-id": isUserId,
-        },
-        { "environment-id": selectedEnvID }
-      );
-    },
-    {
-      enabled: !!selectedClientTypeID,
-      select: (res) => res.data.response ?? [],
-      onSuccess: (res) => {
-        setConnections(res);
-      },
-    }
-  );
-
-  useEffect(() => {
-    getFcmToken();
-    reset();
-  }, [index]);
 
   const register = (data) => {
     setLoading(true);
@@ -174,7 +169,9 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       .then((res) => {
         setIsUserId(res?.user_id);
         setCompanies(res?.companies);
+        computeCompanyElement(res?.companies);
         setLoading(true);
+        setConnectionCheck(true);
 
         if (index === 1) register(values);
         setOneLogin(true);
@@ -195,32 +192,31 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     return false;
   }, [getFormValue]);
 
-  const setConnections = (connections) => {
-    const formValuesExist =
-      selectedClientTypeID &&
-      selectedCompanyID &&
-      selectedEnvID &&
-      selectedProjectID
-        ? true
-        : false;
-
-    const hasValidCredentials =
-      getFormValue?.password && getFormValue?.username && formValuesExist;
-
-    if (hasValidCredentials) {
-      if (connections?.length === 0) {
+  const computeConnections = (connections) => {
+    if (
+      (Array.isArray(connections) && connections?.length === 0) ||
+      connections === undefined
+    ) {
+      if (
+        getFormValue?.username &&
+        getFormValue?.password &&
+        getFormValue?.client_type &&
+        getFormValue?.project_id &&
+        getFormValue?.environment_id
+      ) {
         onSubmitDialog(getFormValue);
-      } else if (connections?.length > 1 && checkConnections) {
+      } else if (
+        !getFormValue?.username ||
+        !getFormValue?.password ||
+        !getFormValue?.company_id ||
+        !getFormValue?.project_id ||
+        !getFormValue?.environment_id ||
+        !getFormValue?.client_type
+      ) {
         handleClickOpen();
       }
-    } else if (Boolean(hasValidCredentials) && connections?.length !== 0) {
-      if (checkConnections) {
-        onSubmitDialog(getFormValue);
-      } else handleClickOpen();
-    } else if (!hasValidCredentials) {
-      handleClickOpen();
-    } else if (hasValidCredentials && connections?.length > 1) {
-      if (checkConnections) {
+    } else if (Array.isArray(connections) && connections?.length > 1) {
+      if (getFormValue?.tables?.length) {
         onSubmitDialog(getFormValue);
       } else {
         handleClickOpen();
@@ -232,6 +228,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     setLoading(true);
     dispatch(loginAction(values));
   };
+  useEffect(() => {
+    getFcmToken();
+    reset();
+  }, [index]);
 
   useEffect(() => {
     if (computedConnections?.length > 1) {
@@ -247,6 +247,46 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       });
     }
   }, [computedConnections]);
+
+  const computeCompanyElement = (company) => {
+    const validLength = company?.length === 1;
+    if (validLength) {
+      setValue("company_id", company?.[0]?.id);
+    }
+    if (validLength) {
+      if (company?.[0]?.projects?.length === 1) {
+        setValue("project_id", company?.[0]?.projects?.[0]?.id);
+      }
+    }
+
+    if (validLength) {
+      if (company?.[0]?.projects?.length === 1) {
+        if (company?.[0]?.projects?.[0]?.resource_environments?.length === 1) {
+          setValue(
+            "environment_id",
+            company?.[0]?.projects?.[0]?.resource_environments?.[0]
+              ?.environment_id
+          );
+        }
+      }
+    }
+    if (validLength) {
+      if (company?.[0]?.projects?.length === 1) {
+        if (company?.[0]?.projects?.[0]?.resource_environments?.length === 1) {
+          if (
+            company?.[0]?.projects?.[0]?.resource_environments?.[0]
+              ?.client_types?.response?.length === 1
+          ) {
+            setValue(
+              "client_type",
+              company?.[0]?.projects?.[0]?.resource_environments?.[0]
+                ?.client_types?.response?.[0]?.guid
+            );
+          }
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     if (computedCompanies?.length === 1) {
@@ -267,6 +307,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     computedEnvironments,
     computedClientTypes,
   ]);
+
+  useEffect(() => {
+    if (connectionCheck) {
+      computeConnections(getFormValue?.tables);
+    }
+  }, [connectionCheck]);
 
   return (
     <>
@@ -475,7 +521,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
             </Button>
             <div className={classes.buttonsArea}>
               <PrimaryButton
-                onClick={handleSubmit(onSubmit)}
+                onClick={handleSubmit(onSubmitDialog)}
                 size="small"
                 loader={loading}
               >

@@ -33,6 +33,7 @@ const HFTextArea = ({
   disabled,
   tabIndex,
   placeholder,
+  minHeight = "120px",
   ...props
 }) => {
   const classes = useStyles();
@@ -69,7 +70,7 @@ const HFTextArea = ({
             width: "100%",
             border: "1px solid #d4d2d2",
             borderRadius: "4px",
-            minHeight: "120px",
+            minHeight: minHeight,
           }}
           InputProps={{
             readOnly: disabled,

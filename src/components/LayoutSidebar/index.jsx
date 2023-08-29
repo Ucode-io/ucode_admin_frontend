@@ -460,6 +460,7 @@ const LayoutSidebar = ({ appId }) => {
         isLoading={isLoading}
         menuStyle={menuStyle}
         setChild={setChild}
+        setSelectedApp={setSelectedApp}
       />
       <ButtonsMenu
         element={element}

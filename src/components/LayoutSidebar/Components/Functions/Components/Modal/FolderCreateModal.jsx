@@ -74,12 +74,12 @@ const FunctionFolderCreateModal = ({ folder, closeModal }) => {
               {!folder ? (
                 <CreateButton
                   onClick={handleSubmit(onSubmit)}
-                  loading={createLoading}
+                  loading={createLoading || updateLoading}
                 />
               ) : (
                 <SaveButton
                   onClick={handleSubmit(onSubmit)}
-                  loading={updateLoading}
+                  loading={createLoading || updateLoading}
                 />
               )}
             </div>

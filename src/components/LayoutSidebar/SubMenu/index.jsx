@@ -25,6 +25,7 @@ const SubMenu = ({
   selectedApp,
   isLoading,
   menuStyle,
+  setSelectedApp,
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -93,7 +94,13 @@ const SubMenu = ({
                 />
               </div>
             )}
-            <div className="close-btn" onClick={() => setSubMenuIsOpen(false)}>
+            <div
+              className="close-btn"
+              onClick={() => {
+                setSelectedApp({});
+                setSubMenuIsOpen(false);
+              }}
+            >
               <ClearIcon />
             </div>
           </Box>

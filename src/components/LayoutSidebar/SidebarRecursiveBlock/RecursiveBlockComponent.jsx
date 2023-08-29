@@ -1,5 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIconFromMui from '@mui/icons-material/Delete';
+import DeleteIconFromMui from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Button, Collapse, Tooltip } from "@mui/material";
@@ -32,6 +32,9 @@ import { use } from "i18next";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import pivotService from "../../../services/pivotService";
 import DeleteIcon from "../DeleteIcon";
+import ApiSidebar from "../Components/Api/ApiSidebar";
+import QuerySidebar from "../Components/Query/QuerySidebar";
+import { updateLevel } from "../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -81,12 +84,14 @@ const RecursiveBlock = ({
       menuItem?.id === element?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
     display:
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-  }
-  const permissionButton = element?.id === analyticItems.pivot_id || element?.id === analyticItems.report_setting;
+  };
+  const permissionButton =
+    element?.id === analyticItems.pivot_id ||
+    element?.id === analyticItems.report_setting;
 
   const navigateAndSaveHistory = (elementItem) => {
     const computedData = {
@@ -131,7 +136,9 @@ const RecursiveBlock = ({
           search: `?${searchParams.toString()}`,
         });
       case "WEBPAGE":
-        return navigate(`/main/${appId}/web-page/${element?.data?.webpage?.id}`);
+        return navigate(
+          `/main/${appId}/web-page/${element?.data?.webpage?.id}`
+        );
       case "USER":
         return navigate(`/main/${appId}/user-page/${element?.guid}`);
 
@@ -139,7 +146,9 @@ const RecursiveBlock = ({
         return navigate(`/main/${appId}/permission/${element?.guid}`);
 
       case "REPORT_SETTING":
-        return navigate(`/main/${appId}/report-setting/${element?.report_setting_id}`);
+        return navigate(
+          `/main/${appId}/report-setting/${element?.report_setting_id}`
+        );
 
       case "PIVOT":
         return navigateAndSaveHistory(element);
@@ -172,7 +181,11 @@ const RecursiveBlock = ({
       setCheck(true);
     }
     navigateMenu();
-    if (!pinIsEnabled && element.type !== "FOLDER" && element.type !== "USER_FOLDER") {
+    if (
+      !pinIsEnabled &&
+      element.type !== "FOLDER" &&
+      element.type !== "USER_FOLDER"
+    ) {
       setSubMenuIsOpen(false);
     }
     element.type !== "USER" && setChildBlockVisible((prev) => !prev);
@@ -186,17 +199,20 @@ const RecursiveBlock = ({
     }
   }, []);
 
-  const { mutate: deleteReportSetting } = useMutation((id) => pivotService.deleteReportSetting(id), {
-    onSuccess: () => {
-      dispatch(showAlert("Успешно удалено", "success"));
-      queryClient.refetchQueries(["MENU"]);
-    },
-  });
+  const { mutate: deleteReportSetting } = useMutation(
+    (id) => pivotService.deleteReportSetting(id),
+    {
+      onSuccess: () => {
+        dispatch(showAlert("Успешно удалено", "success"));
+        queryClient.refetchQueries(["MENU"]);
+      },
+    }
+  );
 
   const { mutate: onDeleteTemplate } = useMutation(
     (id) =>
       pivotService.deletePivotTemplate({
-        id
+        id,
       }),
     {
       onSuccess: () => {
@@ -213,7 +229,10 @@ const RecursiveBlock = ({
           <Button
             key={element.id}
             style={activeStyle}
-            className={`nav-element ${element.isChild && (tableSlug !== element.slug ? "active-with-child" : "active")}`}
+            className={`nav-element ${
+              element.isChild &&
+              (tableSlug !== element.slug ? "active-with-child" : "active")
+            }`}
             onClick={(e) => {
               customFunc(e);
               clickHandler(e);
@@ -222,7 +241,10 @@ const RecursiveBlock = ({
             <div
               className="label"
               style={{
-                color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text,
+                color:
+                  menuItem?.id === element?.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text,
                 opacity: element?.isChild && 0.6,
               }}
             >
@@ -238,7 +260,8 @@ const RecursiveBlock = ({
                 <p>{label}</p>
               </Tooltip>
             </div>
-            {element?.type === "FOLDER" && element?.id === "c57eedc3-a954-4262-a0af-376c65b5a274" ? (
+            {element?.type === "FOLDER" &&
+            element?.id === "c57eedc3-a954-4262-a0af-376c65b5a274" ? (
               <Box className="icon_group">
                 {/* <Tooltip title="Report settings" placement="top">
                   <Box className="extra_icon">
@@ -267,32 +290,44 @@ const RecursiveBlock = ({
                           setElement(element);
                         }}
                         style={{
-                          color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
+                          color:
+                            menuItem?.id === element?.id
+                              ? menuStyle?.active_text
+                              : menuStyle?.text || "",
                         }}
                       />
                     ) : null}
                   </Box>
                 </Tooltip>
-                {childBlockVisible ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
+                {childBlockVisible ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowRightIcon />
+                )}
               </Box>
             ) : element?.type === "FOLDER" && sidebarIsOpen ? (
               <Box className="icon_group">
-                <Tooltip title="Folder settings" placement="top">
-                  <Box className="extra_icon">
-                    <BsThreeDots
-                      size={13}
-                      onClick={(e) => {
-                        e?.stopPropagation();
-                        handleOpenNotify(e, "FOLDER");
-                        setElement(element);
-                        dispatch(menuActions.setMenuItem(element));
-                      }}
-                      style={{
-                        color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
-                      }}
-                    />
-                  </Box>
-                </Tooltip>
+                {!adminId && (
+                  <Tooltip title="Folder settings" placement="top">
+                    <Box className="extra_icon">
+                      <BsThreeDots
+                        size={13}
+                        onClick={(e) => {
+                          e?.stopPropagation();
+                          handleOpenNotify(e, "FOLDER");
+                          setElement(element);
+                          dispatch(menuActions.setMenuItem(element));
+                        }}
+                        style={{
+                          color:
+                            menuItem?.id === element?.id
+                              ? menuStyle?.active_text
+                              : menuStyle?.text || "",
+                        }}
+                      />
+                    </Box>
+                  </Tooltip>
+                )}
                 <Tooltip title="Create folder" placement="top">
                   <Box className="extra_icon">
                     {element?.data?.permission?.write ||
@@ -307,34 +342,50 @@ const RecursiveBlock = ({
                           dispatch(menuActions.setMenuItem(element));
                         }}
                         style={{
-                          color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
+                          color:
+                            menuItem?.id === element?.id
+                              ? menuStyle?.active_text
+                              : menuStyle?.text || "",
                         }}
                       />
                     ) : null}
                   </Box>
                 </Tooltip>
-                {childBlockVisible ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
+                {childBlockVisible ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowRightIcon />
+                )}
               </Box>
             ) : element?.type === "USER_FOLDER" ? (
-              <>{childBlockVisible ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}</>
+              <>
+                {childBlockVisible ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowRightIcon />
+                )}
+              </>
             ) : element?.type === "PIVOT" ? (
               <Tooltip title="Delete Pivot" placement="top">
-                  <Box className="extra_icon">
-                    
-                      <DeleteIconFromMui
-                        size={13}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteTemplate(element.pivot_template_id)
-                        }}
-                        style={{
-                          color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
-                        }}
-                      />
-                    
-                  </Box>
-                </Tooltip>
-            ) : ''}
+                <Box className="extra_icon">
+                  <DeleteIconFromMui
+                    size={13}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteTemplate(element.pivot_template_id);
+                    }}
+                    style={{
+                      color:
+                        menuItem?.id === element?.id
+                          ? menuStyle?.active_text
+                          : menuStyle?.text || "",
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            ) : (
+              ""
+            )}
             {element?.type === "TABLE" && (
               <MenuIcon
                 title="Table settings"
@@ -345,7 +396,10 @@ const RecursiveBlock = ({
                   dispatch(menuActions.setMenuItem(element));
                 }}
                 style={{
-                  color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
+                  color:
+                    menuItem?.id === element?.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text || "",
                 }}
               />
             )}
@@ -359,7 +413,10 @@ const RecursiveBlock = ({
                   dispatch(menuActions.setMenuItem(element));
                 }}
                 style={{
-                  color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
+                  color:
+                    menuItem?.id === element?.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text || "",
                 }}
               />
             )}
@@ -373,7 +430,10 @@ const RecursiveBlock = ({
                   dispatch(menuActions.setMenuItem(element));
                 }}
                 style={{
-                  color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
+                  color:
+                    menuItem?.id === element?.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text || "",
                 }}
               />
             )}
@@ -387,7 +447,10 @@ const RecursiveBlock = ({
                   // setElement(element);
                 }}
                 style={{
-                  color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
+                  color:
+                    menuItem?.id === element?.id
+                      ? menuStyle?.active_text
+                      : menuStyle?.text || "",
                 }}
               />
             )}
@@ -485,9 +548,25 @@ const RecursiveBlock = ({
             menuStyle={menuStyle}
             setSubMenuIsOpen={setSubMenuIsOpen}
             level={2}
+            menuItem={menuItem}
           />
         )}
-        {element.id === folderIds.users_folder_id && null}
+        {element.id === folderIds.api_folder_id && (
+          <>
+            <QuerySidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              level={2}
+              menuItem={menuItem}
+            />
+            <ApiSidebar
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              level={2}
+              menuItem={menuItem}
+            />
+          </>
+        )}
       </Collapse>
     </Box>
   );

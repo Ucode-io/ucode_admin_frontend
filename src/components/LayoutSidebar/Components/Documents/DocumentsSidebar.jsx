@@ -29,6 +29,7 @@ import DocumentsRecursive from "./RecursiveBlock";
 import { TbEdit } from "react-icons/tb";
 import { FaFolder } from "react-icons/fa";
 import { CgFileDocument } from "react-icons/cg";
+import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const docsFolder = {
@@ -104,7 +105,7 @@ const DocumentsSidebar = ({
       docsFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
   };
 
   const labelStyle = {

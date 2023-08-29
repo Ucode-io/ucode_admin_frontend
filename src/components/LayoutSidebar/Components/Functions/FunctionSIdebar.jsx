@@ -25,6 +25,7 @@ import FunctionFolderCreateModal from "./Components/Modal/FolderCreateModal";
 import { BsThreeDots } from "react-icons/bs";
 import { useQueryClient } from "react-query";
 import FunctionCreateModal from "./Components/Modal/FunctionCreateModal";
+import { updateLevel } from "../../../../utils/level";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const functionFolder = {
@@ -138,7 +139,7 @@ const FunctionSidebar = ({
           }}
           style={{
             color:
-              menuItem?.id === folder?.id
+              menuItem?.id === selected?.id
                 ? menuStyle?.active_text
                 : menuStyle?.text || "",
           }}
@@ -161,7 +162,7 @@ const FunctionSidebar = ({
               }}
               style={{
                 color:
-                  menuItem?.id === func?.id
+                  menuItem?.id === selected?.id
                     ? menuStyle?.active_text
                     : menuStyle?.text || "",
               }}
@@ -208,7 +209,7 @@ const FunctionSidebar = ({
       functionFolder?.id === menuItem?.id
         ? menuStyle?.active_text || "#fff"
         : menuStyle?.text,
-    paddingLeft: level * 2 + 10,
+    paddingLeft: updateLevel(level),
   };
   const iconStyle = {
     color:

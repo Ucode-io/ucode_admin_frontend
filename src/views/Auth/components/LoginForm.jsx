@@ -38,7 +38,9 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const [oneLogin, setOneLogin] = useState(false);
   const [isUserId, setIsUserId] = useState();
   const [selectedCollection, setSelectedCollection] = useState();
-  console.log("selectedCollection", selectedCollection);
+
+  const { control, handleSubmit, watch, setValue, reset, getValues } =
+    useForm();
 
   const [open, setOpen] = useState(false);
 
@@ -63,25 +65,11 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     localStorage.setItem("fcmToken", token);
   };
 
-  const { control, handleSubmit, watch, setValue, reset, getValues } =
-    useForm();
-
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
-
-  const formValuesExist =
-    selectedClientTypeID &&
-    selectedCompanyID &&
-    selectedEnvID &&
-    selectedProjectID
-      ? true
-      : false;
-
-  const hasValidCredentials =
-    getFormValue?.password && getFormValue?.username && formValuesExist;
 
   //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
@@ -149,6 +137,9 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     {
       enabled: !!selectedClientTypeID,
       select: (res) => res.data.response ?? [],
+      onSuccess: (res) => {
+        setConnections(res);
+      },
     }
   );
 
@@ -156,21 +147,6 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     getFcmToken();
     reset();
   }, [index]);
-
-  const multiCompanyLogin = (data) => {
-    setLoading(true);
-    authService
-      .multiCompanyLogin(data)
-      .then((res) => {
-        // setCompanies(res.companies);
-        setLoginError(false);
-        dispatch(companyActions.setCompanies(res.companies));
-      })
-      .catch(() => {
-        setLoading(false);
-        setLoginError(true);
-      });
-  };
 
   const register = (data) => {
     setLoading(true);
@@ -186,6 +162,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   const onSubmit = (values) => {
+    getCompany(values);
+  };
+
+  const getCompany = (values) => {
     companyService
       .getCompanyList({
         password: values?.password,
@@ -195,6 +175,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         setIsUserId(res?.user_id);
         setCompanies(res?.companies);
         setLoading(true);
+
         if (index === 1) register(values);
         setOneLogin(true);
       })
@@ -203,6 +184,49 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         setLoading(false);
       });
   };
+  const checkConnections = useMemo(() => {
+    if (getFormValue?.tables) {
+      const tableKeys = Object.keys(getFormValue.tables);
+      return tableKeys.every((key) => {
+        const item = getFormValue.tables[key];
+        return item?.object_id && item?.table_slug;
+      });
+    }
+    return false;
+  }, [getFormValue]);
+
+  const setConnections = (connections) => {
+    const formValuesExist =
+      selectedClientTypeID &&
+      selectedCompanyID &&
+      selectedEnvID &&
+      selectedProjectID
+        ? true
+        : false;
+
+    const hasValidCredentials =
+      getFormValue?.password && getFormValue?.username && formValuesExist;
+
+    if (hasValidCredentials) {
+      if (connections?.length === 0) {
+        onSubmitDialog(getFormValue);
+      } else if (connections?.length > 1 && checkConnections) {
+        handleClickOpen();
+      }
+    } else if (Boolean(hasValidCredentials) && connections?.length !== 0) {
+      if (checkConnections) {
+        onSubmitDialog(getFormValue);
+      } else handleClickOpen();
+    } else if (!hasValidCredentials) {
+      handleClickOpen();
+    } else if (hasValidCredentials && connections?.length > 1) {
+      if (checkConnections) {
+        onSubmitDialog(getFormValue);
+      } else {
+        handleClickOpen();
+      }
+    }
+  };
 
   const onSubmitDialog = (values) => {
     setLoading(true);
@@ -210,10 +234,19 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   useEffect(() => {
-    if (oneLogin) {
-      submitWithoutModal();
+    if (computedConnections?.length > 1) {
+      computedConnections.forEach((connection, index) => {
+        if (connection.options.length === 1) {
+          setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
+          setSelectedCollection(connection.options[0]?.value);
+          setValue(
+            `tables[${index}].table_slug`,
+            connection?.options?.[0]?.[connection?.view_slug]
+          );
+        }
+      });
     }
-  }, [oneLogin, companies]);
+  }, [computedConnections]);
 
   useEffect(() => {
     if (computedCompanies?.length === 1) {
@@ -233,45 +266,8 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     computedProjects,
     computedEnvironments,
     computedClientTypes,
-    companies,
   ]);
 
-  const submitWithoutModal = async () => {
-    setTimeout(() => {
-      // const allComputed =
-      //   computedCompanies?.length > 1 &&
-      //   computedProjects?.length > 1 &&
-      //   computedEnvironments?.length > 1 &&
-      //   computedClientTypes?.length > 1
-      //     ? true
-      //     : false;
-
-      if (hasValidCredentials && computedConnections?.length < 1) {
-        console.log("first");
-        onSubmitDialog(getFormValue);
-      } else if (
-        hasValidCredentials &&
-        computedConnections?.length > 0 &&
-        selectedClientTypeID
-      ) {
-        console.log("second");
-        handleClickOpen();
-      } else if (!selectedClientTypeID) {
-        console.log("third");
-        handleClickOpen();
-      }
-    }, 2500);
-  };
-  // useEffect(
-  //   () => {
-  //     if (formValuesExist && computedConnections?.length === 0) {
-  //       onSubmitDialog(getFormValue);
-  //     }
-  //   },
-  //   [getFormValue],
-  //   formValuesExist,
-  //   computedConnections
-  // );
   return (
     <>
       {formType === "RESET_PASSWORD" ? (
@@ -479,7 +475,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
             </Button>
             <div className={classes.buttonsArea}>
               <PrimaryButton
-                onClick={handleSubmit(onSubmitDialog)}
+                onClick={handleSubmit(onSubmit)}
                 size="small"
                 loader={loading}
               >

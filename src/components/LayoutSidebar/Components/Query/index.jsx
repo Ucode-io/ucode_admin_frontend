@@ -311,7 +311,7 @@ const Queries = () => {
         </Header>
 
         <Box style={flex}>
-          <Box flex={1} h="calc(100vh - 50px)" overflow="scroll">
+          <Box flex={1} height="calc(100vh - 50px)" overflow="scroll">
             {isLoading ? (
               <RingLoaderWithWrapper />
             ) : (

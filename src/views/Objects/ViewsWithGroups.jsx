@@ -286,7 +286,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
             <Divider orientation="vertical" flexItem />
 
-            <FixColumnsTableView />
+            <FixColumnsTableView selectedTabIndex={selectedTabIndex}/>
 
             <Divider orientation="vertical" flexItem />
 

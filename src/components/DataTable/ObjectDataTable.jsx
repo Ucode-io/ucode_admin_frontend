@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useOnClickOutside from "use-onclickoutside";
 import { useLocation } from "react-router-dom";
@@ -57,6 +57,7 @@ const ObjectDataTable = ({
   onChecked,
   defaultLimit,
   title,
+  view,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -167,20 +168,48 @@ const ObjectDataTable = ({
     setColumnId("");
   };
 
-  const calculateWidth = (colId, index) => {
-    const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
+  const pinnedColumns = useMemo(() => {
+    let outputArray = [];
 
-    if (index === 0) {
-      return 0;
-    } else if (colIdx === 0) {
-      return 0;
-    } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
-      return 0;
+    for (const key in view?.attributes?.fixedColumns) {
+      if (view?.attributes?.fixedColumns.hasOwnProperty(key)) {
+        outputArray.push({ key: key, value: view?.attributes?.fixedColumns[key] });
+      }
+    }
+
+    return outputArray
+      ?.filter((item) => item?.value === true)
+      ?.map((item) => {
+        return item?.key;
+      });
+  }, [view?.attributes?.fixedColumns]);
+
+  const calculateWidth = (colId, index) => {
+    if (pinnedColumns.includes(colId)) {
+      const colIdx = tableSettings?.[pageName]?.findIndex((item) => item?.id === colId);
+      if (index === 0) {
+        return 0;
+      } else if (colIdx === 0) {
+        return 0;
+      } else if (tableSettings?.[pageName]?.length === 1) {
+        return 0;
+      } else {
+        return tableSettings?.[pageName]?.slice(0, colIdx)?.reduce((acc, item) => acc + item?.colWidth, 0);
+      }
     } else {
-      return tableSettings?.[pageName]
-        ?.filter((item) => item?.isStiky === true)
-        ?.slice(0, colIdx)
-        ?.reduce((acc, item) => acc + item?.colWidth, 0);
+      const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
+      if (index === 0) {
+        return 0;
+      } else if (colIdx === 0) {
+        return 0;
+      } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
+        return 0;
+      } else {
+        return tableSettings?.[pageName]
+          ?.filter((item) => item?.isStiky === true)
+          ?.slice(0, colIdx)
+          ?.reduce((acc, item) => acc + item?.colWidth, 0);
+      }
     }
   };
 
@@ -225,10 +254,18 @@ const ObjectDataTable = ({
                     lineHeight: "normal",
                     minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
                     width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
-                    position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                    left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
-                    backgroundColor: "#fff",
-                    zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
+                    position: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"
+                    }`,
+                    left: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                        ? `${calculateWidth(column?.id, index)}px`
+                        : "0"
+                    }`,
+                    backgroundColor: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
+                    }`,
+                    zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
                     // color: formVisible && column?.required === true ? "red" : "",
                   }}
                 >
@@ -326,6 +363,7 @@ const ObjectDataTable = ({
             onChecked={onChecked}
             relationFields={fields}
             data={data}
+            view={view}
           />
         ))}
         {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}

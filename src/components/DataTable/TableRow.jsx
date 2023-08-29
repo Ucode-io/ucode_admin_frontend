@@ -26,6 +26,7 @@ const TableRow = ({
   checkboxValue,
   onCheckboxChange,
   currentPage,
+  view,
   columns,
   tableHeight,
   tableSettings,
@@ -121,10 +122,10 @@ const TableRow = ({
                     fontWeight: 400,
                     lineHeight: "normal",
                     padding: "0",
-                    position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                    left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
-                    backgroundColor: "#fff",
-                    zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
+                    position: `${(tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]) ? "sticky" : "relative"}`,
+                    left: `${(tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]) ? `${calculateWidth(column?.id, index)}px` : "0"}`,
+                    backgroundColor: `${(tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]) ? "#F6F6F6" : "#fff"}`,
+                    zIndex: `${(tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]) ? "1" : "0"}`,
                   }}
                 >
                   {/* <CellElementGenerator field={column} row={row} /> */}
@@ -187,7 +188,7 @@ const TableRow = ({
                 minWidth: "max-content",
                 padding: "0 4px",
                 position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
+                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? `${calculateWidth(column?.id, index)}px` : "0",
                 zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
               }}
             >
@@ -234,7 +235,7 @@ const TableRow = ({
                 minWidth: "max-content",
                 padding: "0 4px",
                 position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
+                left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? `${calculateWidth(column?.id, index)}px` : "0",
                 backgroundColor: "#fff",
                 zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
               }}

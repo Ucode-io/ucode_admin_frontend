@@ -49,7 +49,7 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
         relationfields={relationfields}
         data={data}
       />
-      {hovered && (
+      {/* {hovered && (
         <Button
           onClick={() => {
             onRowClick(row, index);
@@ -66,7 +66,7 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
         >
           <OpenInFullIcon />
         </Button>
-      )}
+      )} */}
     </Box>
   );
 }

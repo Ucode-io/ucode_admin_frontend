@@ -1,16 +1,18 @@
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
-import { Menu } from "@mui/material";
-import React, { useState } from "react";
-import style from "./style.module.scss";
-import { useQuery } from "react-query";
+import { Checkbox, Menu } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
-import { CheckBox } from "@mui/icons-material";
+import style from "./style.module.scss";
+import constructorViewService from "../../../../services/constructorViewService";
 
-export default function FixColumnsTableView() {
+export default function FixColumnsTableView({ selectedTabIndex }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedView, setSelectedView] = useState({});
   const { tableSlug } = useParams();
+  const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -20,13 +22,10 @@ export default function FixColumnsTableView() {
   };
 
   const {
-    data: { views, columns, relationColumns } = {
+    data: { views, columns } = {
       views: [],
       columns: [],
-      relationColumns: [],
     },
-    isLoading,
-    refetch: refetchViews,
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
@@ -35,19 +34,42 @@ export default function FixColumnsTableView() {
       });
     },
     {
+      cacheTime: 0,
       select: ({ data }) => {
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],
-          relationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
         };
       },
     }
   );
+
+  useEffect(() => {
+    setSelectedView(views?.[selectedTabIndex] ?? {});
+  }, [views, selectedTabIndex]);
+
+  const changeHandler = (column, e) => {
+    setIsLoading(true);
+    const computedData = {
+      ...selectedView,
+      attributes: {
+        ...selectedView.attributes,
+        fixedColumns: {
+          ...selectedView.attributes?.fixedColumns,
+          [column.id]: e,
+        },
+      },
+    };
+
+    setSelectedView(computedData);
+
+    constructorViewService.update(computedData).then((res) => {
+      // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS"]);
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]).finally(() => {
+        setIsLoading(false);
+      });
+    });
+  };
 
   return (
     <>
@@ -95,7 +117,14 @@ export default function FixColumnsTableView() {
           {columns.map((column) => (
             <div className={style.menuItem}>
               <span>{column.label}</span>
-              <CheckBox/>
+
+              <Checkbox
+                onChange={(e) => {
+                  changeHandler(column, e.target.checked);
+                }}
+                disabled={isLoading}
+                checked={selectedView?.attributes?.fixedColumns?.[column.id]}
+              />
             </div>
           ))}
         </div>

@@ -276,7 +276,7 @@ const TableView = ({
 
   useEffect(() => {
     refetch();
-  }, [view?.quick_filters?.length]);
+  }, [view?.quick_filters?.length, refetch]);
 
   const openFieldSettings = () => {
     setDrawerState("CREATE");
@@ -317,11 +317,13 @@ const TableView = ({
             onRowClick={navigateToEditPage}
             onDeleteClick={deleteHandler}
             tableSlug={tableSlug}
+            view={view}
             tableStyle={{
               borderRadius: 0,
               border: "none",
               borderBottom: "1px solid #E5E9EB",
-              width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
+              // width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
+              width: '100%',
               margin: 0,
             }}
             isResizeble={true}

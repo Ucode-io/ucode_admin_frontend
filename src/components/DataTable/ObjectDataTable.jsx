@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useOnClickOutside from "use-onclickoutside";
 import { useLocation } from "react-router-dom";
-
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CTable, CTableBody, CTableHead, CTableHeadCell, CTableRow } from "../CTable";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
@@ -16,13 +16,16 @@ import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
 import { de } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import { Button } from "@mui/material";
 
 const ObjectDataTable = ({
   data = [],
   loader = false,
   removableHeight,
   additionalRow,
+  mainForm,
   remove,
+  openFieldSettings,
   fields = [],
   isRelationTable,
   disablePagination,
@@ -56,6 +59,7 @@ const ObjectDataTable = ({
   onChecked,
   defaultLimit,
   title,
+  view,
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -166,20 +170,48 @@ const ObjectDataTable = ({
     setColumnId("");
   };
 
-  const calculateWidth = (colId, index) => {
-    const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
+  const pinnedColumns = useMemo(() => {
+    let outputArray = [];
 
-    if (index === 0) {
-      return 0;
-    } else if (colIdx === 0) {
-      return 0;
-    } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
-      return 0;
+    for (const key in view?.attributes?.fixedColumns) {
+      if (view?.attributes?.fixedColumns.hasOwnProperty(key)) {
+        outputArray.push({ key: key, value: view?.attributes?.fixedColumns[key] });
+      }
+    }
+
+    return outputArray
+      ?.filter((item) => item?.value === true)
+      ?.map((item) => {
+        return item?.key;
+      });
+  }, [view?.attributes?.fixedColumns]);
+
+  const calculateWidth = (colId, index) => {
+    if (pinnedColumns.includes(colId)) {
+      const colIdx = tableSettings?.[pageName]?.findIndex((item) => item?.id === colId);
+      if (index === 0) {
+        return 0;
+      } else if (colIdx === 0) {
+        return 0;
+      } else if (tableSettings?.[pageName]?.length === 1) {
+        return 0;
+      } else {
+        return tableSettings?.[pageName]?.slice(0, colIdx)?.reduce((acc, item) => acc + item?.colWidth, 0);
+      }
     } else {
-      return tableSettings?.[pageName]
-        ?.filter((item) => item?.isStiky === true)
-        ?.slice(0, colIdx)
-        ?.reduce((acc, item) => acc + item?.colWidth, 0);
+      const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
+      if (index === 0) {
+        return 0;
+      } else if (colIdx === 0) {
+        return 0;
+      } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
+        return 0;
+      } else {
+        return tableSettings?.[pageName]
+          ?.filter((item) => item?.isStiky === true)
+          ?.slice(0, colIdx)
+          ?.reduce((acc, item) => acc + item?.colWidth, 0);
+      }
     }
   };
 
@@ -224,10 +256,18 @@ const ObjectDataTable = ({
                     lineHeight: "normal",
                     minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
                     width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
-                    position: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "sticky" : "relative",
-                    left: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? calculateWidth(column?.id, index) : "0",
-                    backgroundColor: "#fff",
-                    zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
+                    position: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"
+                    }`,
+                    left: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                        ? `${calculateWidth(column?.id, index)}px`
+                        : "0"
+                    }`,
+                    backgroundColor: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
+                    }`,
+                    zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
                     // color: formVisible && column?.required === true ? "red" : "",
                   }}
                 >
@@ -267,8 +307,32 @@ const ObjectDataTable = ({
           )}
 
           <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type={["update", "delete"]}>
-            {(onDeleteClick || onEditClick) && <CTableHeadCell width={10}></CTableHeadCell>}
+            {(onDeleteClick || onEditClick) && (
+              <CTableHeadCell width={10}>
+                <span
+                  style={{
+                    whiteSpace: "nowrap",
+                    padding: "10px 4px",
+                    color: "#747474",
+                    fontSize: "13px",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "normal",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  Actions
+                </span>
+              </CTableHeadCell>
+            )}
           </PermissionWrapperV2>
+
+          <CTableHeadCell style={{ padding: "2px 0", minWidth: "40px" }}>
+            <Button variant="text" style={{ borderColor: "#F0F0F0", borderRadius: "0px" }} onClick={openFieldSettings}>
+              <AddRoundedIcon />
+              Column
+            </Button>
+          </CTableHeadCell>
         </CTableRow>
       </CTableHead>
       <CTableBody loader={loader} columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
@@ -279,6 +343,7 @@ const ObjectDataTable = ({
             control={control}
             key={row.id}
             row={row}
+            mainForm={mainForm}
             formVisible={formVisible}
             rowIndex={rowIndex}
             isRelationTable={isRelationTable}
@@ -300,6 +365,7 @@ const ObjectDataTable = ({
             onChecked={onChecked}
             relationFields={fields}
             data={data}
+            view={view}
           />
         ))}
         {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}

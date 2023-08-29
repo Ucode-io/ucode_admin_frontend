@@ -43,7 +43,7 @@ const CHFFormulaField = ({
       : [];
 
     fieldsListSorted?.forEach((field) => {
-      let value = values[field.slug] ?? 0;
+      let value = values?.[field?.slug] ?? 0;
 
       if (typeof value === "string") value = `${value}`;
 

@@ -14,6 +14,7 @@ const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewVi
   const [selectedView, setSelectedView] = useState(viewData);
 
   const closeForm = () => setSelectedView(null);
+  
   const {
     data: { views, columns, relationColumns } = {
       views: [],

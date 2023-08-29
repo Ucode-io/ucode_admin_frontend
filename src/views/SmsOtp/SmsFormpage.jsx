@@ -1,5 +1,5 @@
 import { Save } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tabs } from "react-tabs";
@@ -14,8 +14,8 @@ import PageFallback from "../../components/PageFallback";
 import { store } from "../../store";
 import smsOtpService from "../../services/auth/smsOtpService";
 
-const smsFormPage = () => {
-  const { appId, apiKeyId, redirectId  } = useParams();
+const SmsFormPage = () => {
+  const { appId, apiKeyId, redirectId } = useParams();
   const navigate = useNavigate();
   const [search, setSearch] = useSearchParams();
   const [btnLoader, setBtnLoader] = useState();
@@ -23,44 +23,37 @@ const smsFormPage = () => {
   const authStore = store.getState().auth;
 
   const mainForm = useForm({
-    defaultValues: {
-    },
+    defaultValues: {},
   });
-
 
   const createApp = (data) => {
     setBtnLoader(true);
     const params = {
-        'project-id': authStore.projectId
-    }
+      "project-id": authStore.projectId,
+    };
     smsOtpService
-      .create({...data, number_of_otp: parseInt(data?.number_of_otp)}, params)
+      .create({ ...data, number_of_otp: parseInt(data?.number_of_otp) }, params)
       .then(() => {
         navigate(-1);
         getRoleList();
       })
       .catch(() => setBtnLoader(false));
   };
-
 
   const updateApp = (data) => {
     setBtnLoader(true);
 
-    const params = {
-      'project-id': authStore?.projectId
-    }
-
     smsOtpService
       .update({
-        ...data, number_of_otp: parseInt(data?.number_of_otp)
-      }, params)
+        ...data,
+        number_of_otp: parseInt(data?.number_of_otp),
+      })
       .then(() => {
         navigate(-1);
         getRoleList();
       })
       .catch(() => setBtnLoader(false));
   };
-
 
   const getById = () => {
     smsOtpService
@@ -72,7 +65,6 @@ const smsFormPage = () => {
         console.log("exportToJson error", err);
       });
   };
-
 
   useEffect(() => {
     if (mainForm.watch("client_type_id")) {
@@ -190,4 +182,4 @@ const smsFormPage = () => {
   );
 };
 
-export default smsFormPage;
+export default SmsFormPage;

@@ -34,7 +34,7 @@ const InventoryBarCode = ({
   const { id } = useParams();
   const [elmValue, setElmValue] = useState("");
   const time = useRef();
-  
+
   const barcode = useWatch({
     control,
     name: name,
@@ -42,17 +42,18 @@ const InventoryBarCode = ({
 
   const sendRequestOpenFaas = () => {
     const params = {
-      form_input: true
-    }
+      form_input: true,
+    };
     constructorFunctionService
-      .invoke({
-        function_id: field?.attributes?.function,
-        object_ids: [id, elmValue],
-        attributes: {
-          barcode: elmValue.length > 0 ? elmValue : barcode,
+      .invoke(
+        {
+          function_id: field?.attributes?.function,
+          object_ids: [id, elmValue],
+          attributes: {
+            barcode: elmValue.length > 0 ? elmValue : barcode,
+          },
         },
-      },
-      params
+        params
       )
       .then((res) => {
         dispatch(showAlert("Успешно!", "success"));
@@ -81,7 +82,11 @@ const InventoryBarCode = ({
   // );
 
   useEffect(() => {
-    if (elmValue.length >= field.attributes?.length && !field.attributes?.pressEnter && field.attributes?.automatic) {
+    if (
+      elmValue.length >= field.attributes?.length &&
+      !field.attributes?.pressEnter &&
+      field.attributes?.automatic
+    ) {
       sendRequestOpenFaas();
     }
   }, [elmValue]);
@@ -106,12 +111,17 @@ const InventoryBarCode = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
           <TextField
-            size="medium"
+            size="small"
             value={value}
             onChange={(e) => {
               const currentTime = new Date().getTime();
-              if (currentTime - time.current > 50 && !field.attributes?.automatic) {
-                onChange(e.target.value.substring(value.length, e.target.value.length));
+              if (
+                currentTime - time.current > 50 &&
+                !field.attributes?.automatic
+              ) {
+                onChange(
+                  e.target.value.substring(value.length, e.target.value.length)
+                );
               } else {
                 onChange(e.target.value);
               }
@@ -120,6 +130,7 @@ const InventoryBarCode = ({
             }}
             onKeyDown={(e) => keyPress(e)}
             name={name}
+            sx={{ height: "20px", padding: 0 }}
             error={error}
             fullWidth={fullWidth}
             InputProps={{
@@ -128,10 +139,13 @@ const InventoryBarCode = ({
                 ? {
                     background: "#c0c0c039",
                     paddingRight: "0px",
+                    display: "none",
                   }
                 : {
                     background: "#fff",
                     color: "#000",
+                    // display: "none",
+                    height: "25px",
                   },
 
               endAdornment: disabled && (

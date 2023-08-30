@@ -184,6 +184,7 @@ const ObjectsFormPage = () => {
           computedSummary={summary}
           control={control}
           sections={sections}
+          setFormValue={setFormValue}
         />
       </FiltersBlock>
       <div className={styles.formArea}>

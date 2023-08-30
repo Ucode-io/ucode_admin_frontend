@@ -42,13 +42,15 @@ const SummarySection = ({
     });
     return map;
   }, [fieldsList]);
-  
+
   const onDrop = (dropResult) => {
     const result = applyDrag(sections, dropResult);
 
     if (!result) return;
     if (result.length > sections.length) {
-      sectionsFieldArray.insert(dropResult.addedIndex, { ...dropResult.payload });
+      sectionsFieldArray.insert(dropResult.addedIndex, {
+        ...dropResult.payload,
+      });
     } else if (result.length < sections.length) {
       sectionsFieldArray.remove(dropResult.removedIndex);
     } else {
@@ -86,7 +88,7 @@ const SummarySection = ({
         orientation="horizontal"
         dropPlaceholder={{ className: "drag-row-drop-preview" }}
         onDrop={(dragResults) => onDrop(dragResults, 1)}
-          getChildPayload={(index) => sections[index]}
+        getChildPayload={(index) => sections[index]}
       >
         {sections?.map((field, fieldIndex) => (
           <Draggable key={field.key}>
@@ -96,13 +98,6 @@ const SummarySection = ({
                   control={mainForm.control}
                   field={field}
                   checkPermission={false}
-                  // field={fieldsMap[field?.id] ?? field}
-                  // isLayout={true}
-                  // sectionIndex={fieldIndex}
-                  // column={1}
-                  // fieldIndex={fieldIndex}
-                  // mainForm={mainForm}
-                  // maxWidth={true}
                 />
               </div>
               <ButtonsPopover

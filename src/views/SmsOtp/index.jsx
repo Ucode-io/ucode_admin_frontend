@@ -33,8 +33,8 @@ const SmsPage = () => {
   };
 
   const params = {
-    'project-id': projectId
-  }
+    "project-id": projectId,
+  };
 
   const deleteTable = (id) => {
     smsOtpService.delete(params, id).then(() => {
@@ -42,10 +42,9 @@ const SmsPage = () => {
     });
   };
 
-
   const getList = () => {
     const params = {
-      'project-id': projectId
+      "project-id": projectId,
     };
     smsOtpService
       .getList(params)
@@ -60,7 +59,6 @@ const SmsPage = () => {
   useEffect(() => {
     getList();
   }, []);
-
 
   return (
     <div>
@@ -101,7 +99,10 @@ const SmsPage = () => {
                 <CTableCell>{element?.number_of_otp}</CTableCell>
                 <CTableCell>{element?.default_otp}</CTableCell>
                 <CTableCell>
-                  <RectangleIconButton color="error" onClick={() => deleteTable(element?.id)}>
+                  <RectangleIconButton
+                    color="error"
+                    onClick={() => deleteTable(element?.id)}
+                  >
                     <Delete color="error" />
                   </RectangleIconButton>
                 </CTableCell>

@@ -1,7 +1,8 @@
 // import { useDisclosure } from "@chakra-ui/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Handle, Position } from "reactflow";
 import DefaultNodeCard from "../IconCard/DefaultNodeCard";
+import FunctionNodeForm from "../NodeForms/FunctionNodeForm";
 // import FunctionNodeForm from "../../NodeForms/FunctionNodeForm";
 
 const STYLE_PROPS_DEFAULT = {
@@ -27,6 +28,13 @@ const STYLE_PROPS_RIGHT = {
 const FunctionNode = ({ data }) => {
   const btnRef = useRef();
 
+  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+  const openCreateDrawer = () => {
+    setDrawerIsOpen(true);
+  };
+
+  const closeDrawer = () => setDrawerIsOpen(false);
+
   // useEffect(() => {
   //   if (!queryStore.queryRightSidebarIsOpen) {
   //     onClose();
@@ -34,7 +42,7 @@ const FunctionNode = ({ data }) => {
   // }, [queryStore.queryRightSidebarIsOpen]);
   return (
     <>
-      <div className="text-updater-node" ref={btnRef}>
+      <div className="text-updater-node" onClick={openCreateDrawer}>
         <Handle
           type="source"
           id="functionNode"
@@ -62,12 +70,13 @@ const FunctionNode = ({ data }) => {
           id="errorfunctionNode"
         />
       </div>
-      {/* <FunctionNodeForm
-        isOpen={isOpen}
-        btnRef={btnRef}
-        onClose={onClose}
+      <FunctionNodeForm
+        open={drawerIsOpen}
+        initialValues={drawerIsOpen}
+        formIsVisible={drawerIsOpen}
+        closeDrawer={closeDrawer}
         data={data}
-      /> */}
+      />
     </>
   );
 };

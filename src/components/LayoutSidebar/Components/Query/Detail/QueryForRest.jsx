@@ -2,16 +2,21 @@ import { GrClose } from "react-icons/gr";
 import CodeMirror from "@uiw/react-codemirror";
 import ReactJson from "react-json-view";
 import { useFieldArray } from "react-hook-form";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Switch, Typography } from "@mui/material";
 import HFSelect from "../../../../FormElements/HFSelect";
 import { methods, typeBody } from "../mock/ApiEndpoints";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import InputWithPopUp from "./InputWithPopUp";
 import styles from "../style.module.scss";
 import QueryBodyTypes from "./QueryBodyTypes";
+import QueryRequstForm from "./QueryRequestForm";
+import { useTablesListQuery } from "../../../../../services/constructorTableService";
+import QueryResponseForm from "./QueryResponseForm";
+import { useMemo, useState } from "react";
 
 const QueryForRest = ({ control, form, responseQuery }) => {
   const typeOfAction = form.watch("body.action_type");
+  const [search, setSearch] = useState();
 
   const {
     fields: paramsFields,
@@ -39,6 +44,20 @@ const QueryForRest = ({ control, form, responseQuery }) => {
     control,
     name: "body.cookies",
   });
+
+  const { data: tables } = useTablesListQuery({
+    params: {
+      limit: 10,
+      search: search,
+    },
+  });
+
+  const tableOptions = useMemo(() => {
+    return tables?.tables?.map((item, index) => ({
+      label: item.label,
+      value: item.id,
+    }));
+  }, [tables]);
 
   return (
     <>
@@ -436,6 +455,77 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                   </Box>
                 </TabPanel>
               </Tabs>
+            </Box>
+          </Box>
+        ) : (
+          ""
+        )}
+        <Box display="flex" alignItems="flex-start" mt={2}>
+          <Typography
+            minWidth="110px"
+            mt="5px"
+            pr="10px"
+            textAlign="end"
+            fontWeight="bold"
+          >
+            Mapping
+          </Typography>
+
+          <Box display="flex" gap="20px" width="100%">
+            <Box minWidth="100px">
+              <Switch
+                id="isChecked"
+                // checked={watch("authentification")}
+                isChecked={form.watch("body.is_mapping")}
+                onChange={(e) => {
+                  form.setValue("body.is_mapping", e.target.checked);
+                }}
+              />
+            </Box>
+          </Box>
+        </Box>
+        {form.watch("body.is_mapping") ? (
+          <Box display="flex" alignItems="flex-start" mt={2}>
+            <Typography
+              minWidth="110px"
+              mt="5px"
+              pr="10px"
+              textAlign="end"
+              fontWeight="bold"
+            >
+              Table
+            </Typography>
+
+            <Box display="flex" gap="20px" width="100%">
+              <Box width="100%">
+                <Tabs
+                  onSelect={() => {
+                    form.setValue("body.query_mapping", {});
+                  }}
+                >
+                  <TabList>
+                    <Tab>Request</Tab>
+                    <Tab>Response</Tab>
+                  </TabList>
+
+                  <TabPanel>
+                    <QueryRequstForm
+                      tables={tableOptions}
+                      form={form}
+                      control={control}
+                      setSearch={setSearch}
+                    />
+                  </TabPanel>
+                  <TabPanel>
+                    <QueryResponseForm
+                      tables={tableOptions}
+                      form={form}
+                      control={control}
+                      setSearch={setSearch}
+                    />
+                  </TabPanel>
+                </Tabs>
+              </Box>
             </Box>
           </Box>
         ) : (

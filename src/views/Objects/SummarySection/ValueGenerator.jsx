@@ -10,6 +10,7 @@ import { useWatch } from "react-hook-form";
 import constructorObjectService from "../../../services/constructorObjectService";
 import InventoryBarCode from "../../../components/FormElements/InventoryBarcode";
 import { useSelector } from "react-redux";
+import FormElementGenerator from "../../../components/ElementGenerators/FormElementGenerator";
 
 function ValueGenerator({ field, control, setFormValue }) {
   const [data, setData] = useState();
@@ -33,8 +34,6 @@ function ValueGenerator({ field, control, setFormValue }) {
 
   const computedSlug = view?.find((item) => item).slug;
 
-  console.log("field", field);
-
   switch (field.type) {
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;
@@ -44,14 +43,12 @@ function ValueGenerator({ field, control, setFormValue }) {
 
     case "SCAN_BARCODE":
       return (
-        <InventoryBarCode
-          control={control}
-          name={computedSlug}
-          fullWidth
-          setFormValue={setFormValue}
-          required={field.required}
-          placeholder={field.attributes?.placeholder}
+        <FormElementGenerator
+          key={field.id}
           field={field}
+          control={control}
+          setFormValue={setFormValue}
+          valueGenerator={true}
         />
       );
 

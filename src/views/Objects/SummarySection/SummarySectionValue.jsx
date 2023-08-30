@@ -2,7 +2,6 @@ import ValueGenerator from "./ValueGenerator.jsx";
 import styles from "./style.module.scss";
 
 const SummarySectionValue = ({ control, computedSummary }) => {
-  console.log("computedSummary", computedSummary);
   return (
     <div className={styles.summarySection}>
       {computedSummary?.map((field) => (

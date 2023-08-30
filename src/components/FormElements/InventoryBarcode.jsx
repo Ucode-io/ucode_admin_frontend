@@ -22,12 +22,14 @@ const InventoryBarCode = ({
   withTrim = false,
   rules = {},
   defaultValue = "",
-  disabled,
+  disabled = false,
   field,
   checkRequiredField,
   setFormValue,
+  valueGenerator,
   ...props
 }) => {
+  console.log("sasdasdasdasdasdasdasd");
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -130,8 +132,8 @@ const InventoryBarCode = ({
             }}
             onKeyDown={(e) => keyPress(e)}
             name={name}
-            sx={{ height: "20px", padding: 0 }}
             error={error}
+            sx={{ padding: 0 }}
             fullWidth={fullWidth}
             InputProps={{
               readOnly: disabled,
@@ -139,13 +141,12 @@ const InventoryBarCode = ({
                 ? {
                     background: "#c0c0c039",
                     paddingRight: "0px",
-                    display: "none",
                   }
                 : {
                     background: "#fff",
                     color: "#000",
-                    // display: "none",
                     height: "25px",
+                    padding: 0,
                   },
 
               endAdornment: disabled && (

@@ -45,6 +45,7 @@ const FormElementGenerator = ({
   checkPermission = true,
   isMultiLanguage,
   relatedTable,
+  valueGenerator,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
@@ -142,7 +143,6 @@ const FormElementGenerator = ({
   // } else {
   //   field.required = false
   // }
-  console.log("field", field);
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
@@ -189,7 +189,24 @@ const FormElementGenerator = ({
 
   switch (field.type) {
     case "SCAN_BARCODE":
-      return (
+      return valueGenerator ? (
+        <InventoryBarCode
+          relatedTable={relatedTable}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          setFormValue={setFormValue}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          field={field}
+          disabled={isDisabled}
+          checkRequiredField={checkRequiredField}
+          key={computedSlug}
+          valueGenerator={valueGenerator}
+          {...props}
+        />
+      ) : (
         <FRow label={label} required={field.required}>
           <InventoryBarCode
             relatedTable={relatedTable}
@@ -204,6 +221,7 @@ const FormElementGenerator = ({
             disabled={isDisabled}
             checkRequiredField={checkRequiredField}
             key={computedSlug}
+            valueGenerator={valueGenerator}
             {...props}
           />
         </FRow>

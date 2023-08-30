@@ -45,10 +45,12 @@ const functionFolder = {
 };
 
 const FunctionSidebar = ({
+  setValue,
   level = 1,
   menuStyle,
   setSubMenuIsOpen,
   menuItem,
+  integrated = false,
 }) => {
   const dispatch = useDispatch();
   const company = store.getState().company;
@@ -62,7 +64,7 @@ const FunctionSidebar = ({
   const handleOpenNotify = (event, type, element) => {
     setMenu({ event: event?.currentTarget, type: type, element });
   };
-
+  console.log("integrated", integrated);
   const handleCloseNotify = () => {
     setMenu(null);
   };
@@ -188,17 +190,22 @@ const FunctionSidebar = ({
       setSubMenuIsOpen(false);
     }
     setChildBlockVisible((prev) => !prev);
-    navigate(`/main/${adminId}`);
+    !integrated && navigate(`/main/${adminId}`);
   };
 
   // --CREATE FOLDERS--
 
   const onSelect = (id, element) => {
     setSelected(element);
-    navigate(`/main/${adminId}/function/${id}`);
+    !integrated && navigate(`/main/${adminId}/function/${id}`);
     dispatch(menuActions.setMenuItem(element));
   };
-  const rowClickHandler = (id, element) => {};
+  const rowClickHandler = (id, element) => {
+    if (element.type === "FUNCTION") {
+      integrated && setValue("request_info.url", element?.path);
+      integrated && setValue("request_info.title", element?.name);
+    }
+  };
 
   const activeStyle = {
     backgroundColor:

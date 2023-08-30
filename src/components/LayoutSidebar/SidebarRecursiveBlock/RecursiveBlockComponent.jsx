@@ -534,6 +534,7 @@ const RecursiveBlock = ({
               setSubMenuIsOpen={setSubMenuIsOpen}
               menuItem={menuItem}
               level={2}
+              integrated={false}
             />
             <NotificationSidebar
               menuStyle={menuStyle}

@@ -22,6 +22,10 @@ import HFFloatField from "../FormElements/HFFloatField";
 import InventoryBarCode from "../FormElements/InventoryBarcode";
 import HFPassword from "../FormElements/HFPassword";
 import HFModalMap from "../FormElements/HFModalMap";
+import HFTextEditor from "../FormElements/HFTextEditor";
+import HFColorPicker from "../FormElements/HFColorPicker";
+import HFFileUpload from "../FormElements/HFFileUpload";
+import HFVideoUpload from "../FormElements/HFVideoUpload";
 
 const parser = new Parser();
 
@@ -56,10 +60,7 @@ const NewCellElementGenerator = ({
     }
   });
 
-  const computedSlug = useMemo(
-    () => `multi.${index}.${field.slug}`,
-    [field.slug, index]
-  );
+  const computedSlug = useMemo(() => `multi.${index}.${field.slug}`, [field.slug, index]);
 
   const changedValue = useWatch({
     control,
@@ -67,26 +68,21 @@ const NewCellElementGenerator = ({
   });
 
   const isDisabled = useMemo(() => {
-    return (
-      field.attributes?.disabled ||
-      !field.attributes?.field_permission?.edit_permission
-    );
+    return field.attributes?.disabled || !field.attributes?.field_permission?.edit_permission;
   }, [field]);
 
   const defaultValue = useMemo(() => {
-    const defaultValue =
-      field.attributes?.defaultValue ?? field.attributes?.default_values;
+    const defaultValue = field.attributes?.defaultValue ?? field.attributes?.default_values;
     if (field?.attributes?.is_user_id_default === true) return userId;
     if (field?.attributes?.object_id_from_jwt === true) return objectIdFromJWT;
-    if (field.relation_type === "Many2One" || field?.type === 'LOOKUP') {
-      if(Array.isArray(defaultValue)) {
-        return defaultValue[0]
+    if (field.relation_type === "Many2One" || field?.type === "LOOKUP") {
+      if (Array.isArray(defaultValue)) {
+        return defaultValue[0];
       } else {
-        return defaultValue
+        return defaultValue;
       }
-    };
-    if (field.type === "MULTISELECT" || field.id?.includes("#"))
-    return defaultValue;
+    }
+    if (field.type === "MULTISELECT" || field.id?.includes("#")) return defaultValue;
     if (!defaultValue) return undefined;
     const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
@@ -100,11 +96,7 @@ const NewCellElementGenerator = ({
 
   useEffect(() => {
     if (columns.length && changedValue !== undefined && changedValue !== null) {
-      columns.forEach(
-        (i, rowIndex) =>
-          selectedRow.includes(i.guid) &&
-          setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue)
-      );
+      columns.forEach((i, rowIndex) => selectedRow.includes(i.guid) && setFormValue(`multi.${rowIndex}.${field.slug}`, changedValue));
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
 
@@ -170,6 +162,7 @@ const NewCellElementGenerator = ({
           name={computedSlug}
           fullWidth
           field={field}
+          isTransparent={true}
           required={field.required}
           type="password"
           placeholder={field.attributes?.placeholder}
@@ -203,6 +196,7 @@ const NewCellElementGenerator = ({
           control={control}
           name={computedSlug}
           fullWidth
+          isTransparent={true}
           required={field.required}
           placeholder={field.attributes?.placeholder}
           mask={"(99) 999-99-99"}
@@ -224,6 +218,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           mask={"(99) 999-99-99"}
           defaultValue={defaultValue}
+          isTransparent={true}
           {...props}
         />
       );
@@ -237,6 +232,7 @@ const NewCellElementGenerator = ({
           name={computedSlug}
           fieldsList={fields}
           disabled={!isDisabled}
+          isTransparent={true}
           field={field}
           index={index}
           {...props}
@@ -308,6 +304,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
           disabled={isDisabled}
+          isTransparent={true}
           {...props}
         />
       );
@@ -324,6 +321,7 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
+          isTransparent={true}
           {...props}
         />
       );
@@ -339,6 +337,7 @@ const NewCellElementGenerator = ({
           required={field.required}
           placeholder={field.attributes?.placeholder}
           defaultValue={defaultValue}
+          isTransparent={true}
           {...props}
         />
       );
@@ -355,6 +354,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
+          isTransparent={true}
           {...props}
         />
       );
@@ -370,36 +370,19 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
+          isTransparent={true}
           {...props}
         />
       );
 
     case "CHECKBOX":
       return (
-        <HFCheckbox
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          required={field.required}
-          defaultValue={defaultValue}
-          {...props}
-        />
+        <HFCheckbox disabled={isDisabled} isFormEdit isBlackBg={isBlackBg} control={control} name={computedSlug} required={field.required} defaultValue={defaultValue} {...props} />
       );
 
     case "SWITCH":
       return (
-        <HFSwitch
-          disabled={isDisabled}
-          isFormEdit
-          isBlackBg={isBlackBg}
-          control={control}
-          name={computedSlug}
-          required={field.required}
-          defaultValue={defaultValue}
-          {...props}
-        />
+        <HFSwitch disabled={isDisabled} isFormEdit isBlackBg={isBlackBg} control={control} name={computedSlug} required={field.required} defaultValue={defaultValue} {...props} />
       );
 
     case "EMAIL":
@@ -425,34 +408,77 @@ const NewCellElementGenerator = ({
       );
 
     case "ICON":
+      return <HFIconPicker isFormEdit control={control} name={computedSlug} required={field.required} defaultValue={defaultValue} {...props} />;
+    case "MAP":
+      return <HFModalMap isTransparent={true} control={control} field={field} defaultValue={defaultValue} isFormEdit name={computedSlug} required={field?.required} />;
+
+    case "MULTI_LINE":
       return (
-        <HFIconPicker
-          isFormEdit
+        <HFTextEditor
           control={control}
           name={computedSlug}
-          required={field.required}
-          defaultValue={defaultValue}
+          tabIndex={field?.tabIndex}
+          fullWidth
+          multiline
+          rows={4}
+          defaultValue={field.defaultValue}
+          disabled={isDisabled}
+          key={computedSlug}
+          isTransparent={true}
           {...props}
         />
       );
-    case "MAP":
+
+    case "CUSTOM_IMAGE":
+      return <HFFileUpload isTransparent={true} control={control} name={computedSlug} defaultValue={defaultValue} isFormEdit required={field.required} {...props} />;
+
+    case "VIDEO":
       return (
-        <HFModalMap
+        <HFVideoUpload
           control={control}
-          field={field}
+          name={computedSlug}
           defaultValue={defaultValue}
           isFormEdit
+          isBlackBg={isBlackBg}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          isTransparent={true}
+          {...props}
+        />
+      );
+
+    case "FILE":
+      return (
+        <HFFileUpload
+          control={control}
           name={computedSlug}
-          required={field?.required}
+          defaultValue={defaultValue}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          isTransparent={true}
+          {...props}
+        />
+      );
+
+    case "COLOR":
+      return (
+        <HFColorPicker
+          control={control}
+          name={computedSlug}
+          defaultValue={defaultValue}
+          isFormEdit
+          isBlackBg={isBlackBg}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          isTransparent={true}
+          {...props}
         />
       );
 
     default:
-      return (
-        <div style={{ padding: "0 4px" }}>
-          <CellElementGenerator field={field} row={row} />
-        </div>
-      );
+      return <div style={{ padding: "0 4px" }}>kwlamdlakwd</div>;
   }
 };
 

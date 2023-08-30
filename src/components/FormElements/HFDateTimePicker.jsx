@@ -16,6 +16,7 @@ const HFDateTimePicker = ({
   isFormEdit = false,
   name,
   mask,
+  isTransparent = false,
   tabIndex,
   showCopyBtn,
   placeholder = "",
@@ -41,6 +42,7 @@ const HFDateTimePicker = ({
             showCopyBtn={showCopyBtn}
             onChange={onChange}
             disabled={disabled}
+            isTransparent={isTransparent}
           />
         );
       }}

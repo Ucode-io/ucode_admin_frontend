@@ -1,6 +1,6 @@
 import { Controller, useWatch } from "react-hook-form";
-import { NumericFormat } from 'react-number-format';
-import styles from './style.module.scss';
+import { NumericFormat } from "react-number-format";
+import styles from "./style.module.scss";
 import { Box } from "@mui/material";
 import { Lock } from "@mui/icons-material";
 
@@ -12,12 +12,13 @@ const HFNumberField = ({
   isFormEdit = false,
   required = false,
   fullWidth = false,
+  isTransparent = false,
   withTrim = false,
   rules = {},
   defaultValue = "",
   tabIndex,
   disabled,
-  type = 'text',
+  type = "text",
   ...props
 }) => {
   const value = useWatch({
@@ -38,7 +39,12 @@ const HFNumberField = ({
         return (
           <Box
             style={
-              disabled
+              isTransparent
+                ? {
+                    background: "transparent",
+                    border: 'none'
+                  }
+                : disabled
                 ? {
                     background: "#DEDEDE",
                     display: "flex",
@@ -65,23 +71,21 @@ const HFNumberField = ({
                 const valueWithoutSpaces = val.replaceAll(" ", "");
                 if (!valueWithoutSpaces) onChange("");
                 else {
-                  if (valueWithoutSpaces.at(-1) === ".")
-                    onChange(valueWithoutSpaces);
-                  else
-                    onChange(
-                      !isNaN(Number(valueWithoutSpaces))
-                        ? Number(valueWithoutSpaces)
-                        : ""
-                    );
+                  if (valueWithoutSpaces.at(-1) === ".") onChange(valueWithoutSpaces);
+                  else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : "");
                 }
               }}
-              className={`${isFormEdit ? "custom_textfield" : ""} ${
-                styles.numberField
-              }`}
+              className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
               name={name}
               readOnly={disabled}
               style={
-                disabled
+                isTransparent
+                  ? {
+                      background: "transparent",
+                      border: 'none',
+                      borderRadius: '0'
+                    }
+                  : disabled
                   ? { background: "#c0c0c039", borderRight: 0 }
                   : {
                       background: isBlackBg ? "#2A2D34" : "",

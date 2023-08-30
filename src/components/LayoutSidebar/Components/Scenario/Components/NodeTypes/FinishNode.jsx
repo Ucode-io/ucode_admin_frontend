@@ -1,20 +1,18 @@
-// import SimpleLoader from "components/Loaders/SimpleLoader";
 import { useState } from "react";
-import { useFormContext } from "react-hook-form";
 import { Handle, Position } from "reactflow";
 import DefaultNodeCard from "../IconCard/DefaultNodeCard";
+import { useFormContext } from "react-hook-form";
 import FinishNodeForm from "../NodeForms/FinishNodeForm";
 
 const STYLE_PROPS_TARGET = {
-  width: 8,
-  height: 28,
+  width: 28,
+  height: 8,
   borderRadius: 2,
+  background: "#007AFF",
 };
 
 const FinishNode = ({ data }) => {
-  // const { isOpen, onOpen, onClose } = useDisclosure();
   const [type, setType] = useState("success");
-  const [loader, setLoader] = useState(false);
   const { setValue: setParentFormValue, getValues: getParentValues } =
     useFormContext();
   const nodes = getParentValues().steps;
@@ -25,69 +23,39 @@ const FinishNode = ({ data }) => {
     setDrawerIsOpen(true);
   };
 
-  const closeDrawer = () => {
-    setDrawerIsOpen(false);
-  };
+  const closeDrawer = () => setDrawerIsOpen(false);
 
-  // useEffect(() => {
-  //   if (!queryStore.queryRightSidebarIsOpen) {
-  //     onClose();
-  //   }
-  // }, [queryStore.queryRightSidebarIsOpen]);
   return (
     <>
-      {loader ? (
-        <></>
-      ) : (
-        // <SimpleLoader />
-        <>
-          <div className="text-updater-node" onClick={openCreateDrawer}>
-            {callback_type === "success" ? (
-              <Handle
-                type="target"
-                id="successFinishNoded"
-                style={{
-                  ...STYLE_PROPS_TARGET,
-                  background: "#70B362",
-                }}
-                position={Position.Left}
-              />
-            ) : (
-              <Handle
-                type="target"
-                id="errorFinish"
-                style={{
-                  ...STYLE_PROPS_TARGET,
-                  background: "#f5644a",
-                }}
-                position={Position.Left}
-              />
-            )}
-            <div>
-              <DefaultNodeCard
-                color={"#007AFF"}
-                icon={data.icon}
-                noTitle={true}
-                title={data?.label}
-              />
-            </div>
-            <FinishNodeForm
-              open={drawerIsOpen}
-              onClose={closeDrawer}
-              initialValues={drawerIsOpen}
-              formIsVisible={drawerIsOpen}
-              data={data}
-              setType={setType}
-              setLoader={setLoader}
-              type={type}
-              setParentFormValue={setParentFormValue}
-              getParentValues={getParentValues}
-              index={index}
-              callback_type={callback_type}
-            />
-          </div>
-        </>
-      )}
+      <div className="text-updater-node" onClick={openCreateDrawer}>
+        <Handle
+          type="source"
+          id="backFinishNode"
+          style={STYLE_PROPS_TARGET}
+          position={Position.Bottom}
+        />
+        <div>
+          <DefaultNodeCard
+            color={"#007AFF"}
+            icon={data.icon}
+            noTitle={true}
+            title={data?.label}
+          />
+        </div>
+      </div>
+      <FinishNodeForm
+        open={drawerIsOpen}
+        initialValues={drawerIsOpen}
+        formIsVisible={drawerIsOpen}
+        closeDrawer={closeDrawer}
+        data={data}
+        setType={setType}
+        type={type}
+        setParentFormValue={setParentFormValue}
+        getParentValues={getParentValues}
+        index={index}
+        callback_type={callback_type}
+      />
     </>
   );
 };

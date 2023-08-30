@@ -14,13 +14,13 @@ import {
 
 const FinishNodeForm = ({
   open,
+  closeDrawer,
   getParentValues,
   index,
   setParentFormValue,
   type,
   setType,
   callback_type,
-  onClose,
 }) => {
   const { handleSubmit, control, setValue, watch } = useForm({
     defaultValues: getParentValues()?.steps[index]?.config,
@@ -32,7 +32,7 @@ const FinishNodeForm = ({
       type: "FINISH",
       callback_type: type,
     });
-    onClose();
+    closeDrawer();
     setTimeout(() => {
       // setLoader(false);
     }, 10);
@@ -46,7 +46,7 @@ const FinishNodeForm = ({
   return (
     <DrawerCard
       title={"Finish Node"}
-      onClose={onClose}
+      onClose={closeDrawer}
       open={open}
       onSaveButtonClick={handleSubmit(onSubmit)}
     >

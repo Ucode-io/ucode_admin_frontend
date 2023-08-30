@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdContentCopy } from "react-icons/md";
 import styles from "../style.module.scss";
 import CodeMirror from "@uiw/react-codemirror";
@@ -12,6 +12,16 @@ const CodeMirrorWithPopUp = ({ form, name }) => {
   let typeOfElement = typeof form.watch(name);
   const [focused, setFocused] = useState(false);
   const dispatch = useDispatch();
+  const mirrorValue = form.getValues(name);
+
+  useEffect(() => {
+    if (typeof mirrorValue !== "string") {
+      form.reset({
+        ...form.getValues(),
+        body: { ...form.getValues("body"), body: "" },
+      });
+    }
+  }, []);
 
   const copyToClipboard = () => {
     dispatch(showAlert("Copied to clipboard", "success"));
@@ -32,7 +42,7 @@ const CodeMirrorWithPopUp = ({ form, name }) => {
           position="relative"
         >
           <CodeMirror
-            value={form.getValues(name)}
+            value={typeof mirrorValue === "string" ? mirrorValue : ""}
             width="100%"
             color="#00C387"
             onFocus={() => setFocused(true)}

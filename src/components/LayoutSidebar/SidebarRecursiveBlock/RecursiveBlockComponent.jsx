@@ -14,7 +14,9 @@ import pivotService from "../../../services/pivotService";
 import { store } from "../../../store";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import { updateLevel } from "../../../utils/level";
 import IconGenerator from "../../IconPicker/IconGenerator";
+import ApiSidebar from "../Components/Api/ApiSidebar";
 import DataBase from "../Components/DataBase";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import EltResources from "../Components/Elt";
@@ -31,10 +33,9 @@ import Users from "../Components/Users";
 import DeleteIcon from "../DeleteIcon";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
-import { folderIds } from "./mock/folders";
-import ApiSidebar from "../Components/Api/ApiSidebar";
-import { updateLevel } from "../../../utils/level";
+import { analyticItems, folderIds } from "./mock/folders";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
+export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
 const RecursiveBlock = ({
   customFunc = () => {},
@@ -64,16 +65,14 @@ const RecursiveBlock = ({
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
   const { i18n } = useTranslation();
   const defaultLanguage = i18n.language;
-  const analyticItems = {
-    pivot_id: "c57eedc3-a954-4262-a0af-376c65b5a274",
-    report_setting: "c57eedc3-a954-4262-a0af-376c65b5a276",
-  };
-
-  const buttonPermission =
-    element?.data?.permission?.read ||
-    defaultAdmin ||
-    element?.id === analyticItems.pivot_id ||
-    element?.id === analyticItems.report_setting;
+  const readPermission = element?.data?.permission?.read;
+  const withoutPermission =
+    element?.parent_id === adminId || element?.parent_id === analyticsId
+      ? true
+      : false;
+  const permission = defaultAdmin
+    ? readPermission || withoutPermission
+    : readPermission;
 
   const activeStyle = {
     backgroundColor:
@@ -89,6 +88,9 @@ const RecursiveBlock = ({
       element.id === "0" ||
       (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
   };
+  const permissionButton =
+    element?.id === analyticItems.pivot_id ||
+    element?.id === analyticItems.report_setting;
 
   const navigateAndSaveHistory = (elementItem) => {
     const computedData = {
@@ -215,7 +217,7 @@ const RecursiveBlock = ({
   return (
     <Box>
       <div className="parent-block column-drag-handle" key={element.id}>
-        {buttonPermission ? (
+        {permission ? (
           <Button
             key={element.id}
             style={activeStyle}
@@ -273,7 +275,7 @@ const RecursiveBlock = ({
                 </Tooltip> */}
                 <Tooltip title="Create report settings" placement="top">
                   <Box className="extra_icon">
-                    {element?.data?.permission?.write || buttonPermission ? (
+                    {element?.data?.permission?.write || permissionButton ? (
                       <AddIcon
                         size={13}
                         onClick={(e) => {

@@ -14,6 +14,8 @@ const InputWithPopUp = ({
   props,
   placeholder,
   size,
+  defaultValue,
+  disabled,
   height = "32px !important",
   enableGetElement = true,
   customOnChange = () => {},
@@ -57,6 +59,8 @@ const InputWithPopUp = ({
           control={form.control}
           size={size}
           name={name}
+          defaultValue={defaultValue}
+          disabled={disabled}
           fullWidth
           onFocus={() => {
             setFocused(true);

@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
@@ -32,10 +32,14 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [modalLoading, setModalLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [loginError, setLoginError] = useState(false);
   const [oneLogin, setOneLogin] = useState(false);
+  const [connectionCheck, setConnectionCheck] = useState(false);
+  const [isUserId, setIsUserId] = useState();
+  const [selectedCollection, setSelectedCollection] = useState();
+
+  const { control, handleSubmit, watch, setValue, reset, getValues } =
+    useForm();
 
   const [open, setOpen] = useState(false);
 
@@ -60,14 +64,37 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     localStorage.setItem("fcmToken", token);
   };
 
-  const { control, handleSubmit, watch, setValue, reset, getValues } =
-    useForm();
-
   const selectedCompanyID = watch("company_id");
   const selectedProjectID = watch("project_id");
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
-  const getFormValue = getValues();
+  const getFormValue = watch();
+
+  const { data: computedConnections = [] } = useQuery(
+    [
+      "GET_CONNECTION_LIST",
+      { "project-id": selectedProjectID },
+      { "environment-id": selectedEnvID },
+      { "user-id": isUserId },
+    ],
+    () => {
+      return connectionServiceV2.getList(
+        {
+          "project-id": selectedProjectID,
+          client_type_id: selectedClientTypeID,
+          "user-id": isUserId,
+        },
+        { "environment-id": selectedEnvID }
+      );
+    },
+    {
+      enabled: !!selectedClientTypeID,
+      select: (res) => res.data.response ?? [],
+      onSuccess: (res) => {
+        computeConnections(res);
+      },
+    }
+  );
 
   //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
@@ -109,53 +136,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     const companyEnvironment = companyProject?.resource_environments?.find(
       (el) => el?.environment_id === selectedEnvID
     );
+
     return companyEnvironment?.client_types?.response?.map((item) => ({
       label: item?.name,
       value: item?.guid,
     }));
   }, [companies, selectedCompanyID, selectedEnvID, selectedProjectID]);
-
-  const { data: computedConnections = [] } = useQuery(
-    [
-      "GET_CONNECTION_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-    ],
-    () => {
-      return connectionServiceV2.getList(
-        {
-          "project-id": selectedProjectID,
-          client_type_id: selectedClientTypeID,
-        },
-        { "environment-id": selectedEnvID }
-      );
-    },
-    {
-      enabled: !!selectedClientTypeID,
-
-      select: (res) => res.data.response ?? [],
-    }
-  );
-
-  useEffect(() => {
-    getFcmToken();
-    reset();
-  }, [index]);
-
-  const multiCompanyLogin = (data) => {
-    setLoading(true);
-    authService
-      .multiCompanyLogin(data)
-      .then((res) => {
-        // setCompanies(res.companies);
-        setLoginError(false);
-        dispatch(companyActions.setCompanies(res.companies));
-      })
-      .catch(() => {
-        setLoading(false);
-        setLoginError(true);
-      });
-  };
 
   const register = (data) => {
     setLoading(true);
@@ -171,32 +157,136 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   const onSubmit = (values) => {
-    setLoading(true);
-    if (index === 1) register(values);
+    getCompany(values);
+  };
+
+  const getCompany = (values) => {
+    companyService
+      .getCompanyList({
+        password: values?.password,
+        username: values?.username,
+      })
+      .then((res) => {
+        setIsUserId(res?.user_id);
+        setCompanies(res?.companies);
+        computeCompanyElement(res?.companies);
+        setLoading(true);
+        setConnectionCheck(true);
+
+        if (index === 1) register(values);
+        setOneLogin(true);
+      })
+      .catch((err) => {
+        setOneLogin(false);
+        setLoading(false);
+      });
+  };
+  const checkConnections = useMemo(() => {
+    if (getFormValue?.tables) {
+      const tableKeys = Object.keys(getFormValue.tables);
+      return tableKeys.every((key) => {
+        const item = getFormValue.tables[key];
+        return item?.object_id && item?.table_slug;
+      });
+    }
+    return false;
+  }, [getFormValue]);
+
+  const computeConnections = (connections) => {
+    if (
+      (Array.isArray(connections) && connections?.length === 0) ||
+      connections === undefined
+    ) {
+      if (
+        getFormValue?.username &&
+        getFormValue?.password &&
+        getFormValue?.client_type &&
+        getFormValue?.project_id &&
+        getFormValue?.environment_id
+      ) {
+        onSubmitDialog(getFormValue);
+      } else if (
+        !getFormValue?.username ||
+        !getFormValue?.password ||
+        !getFormValue?.company_id ||
+        !getFormValue?.project_id ||
+        !getFormValue?.environment_id ||
+        !getFormValue?.client_type
+      ) {
+        handleClickOpen();
+      }
+    } else if (Array.isArray(connections) && connections?.length > 1) {
+      if (getFormValue?.tables?.length) {
+        onSubmitDialog(getFormValue);
+      } else {
+        handleClickOpen();
+      }
+    }
   };
 
   const onSubmitDialog = (values) => {
     setLoading(true);
     dispatch(loginAction(values));
   };
+  useEffect(() => {
+    getFcmToken();
+    reset();
+  }, [index]);
 
   useEffect(() => {
-    if (getFormValue?.username && getFormValue?.password) {
-      companyService
-        .getCompanyList({
-          password: getFormValue?.password,
-          username: getFormValue?.username,
-        })
-        .then((res) => {
-          setCompanies(res?.companies);
-          setOneLogin(false);
-        })
-        .catch((err) => {
-          setOneLogin(true);
-          setLoading(false);
-        });
+    if (computedConnections?.length > 1) {
+      computedConnections.forEach((connection, index) => {
+        if (connection.options.length === 1) {
+          setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
+          setSelectedCollection(connection.options[0]?.value);
+          setValue(
+            `tables[${index}].table_slug`,
+            connection?.options?.[0]?.[connection?.view_slug]
+          );
+        }
+      });
     }
-  }, [getFormValue?.username, getFormValue?.password]);
+  }, [computedConnections]);
+
+  const computeCompanyElement = (company) => {
+    const validLength = company?.length === 1;
+    if (validLength) {
+      setValue("company_id", company?.[0]?.id);
+    }
+    if (validLength) {
+      if (company?.[0]?.projects?.length === 1) {
+        setValue("project_id", company?.[0]?.projects?.[0]?.id);
+      }
+    }
+
+    if (validLength) {
+      if (company?.[0]?.projects?.length === 1) {
+        if (company?.[0]?.projects?.[0]?.resource_environments?.length === 1) {
+          setValue(
+            "environment_id",
+            company?.[0]?.projects?.[0]?.resource_environments?.[0]
+              ?.environment_id
+          );
+        }
+      }
+    }
+    if (validLength) {
+      if (company?.[0]?.projects?.length === 1) {
+        if (company?.[0]?.projects?.[0]?.resource_environments?.length === 1) {
+          if (
+            company?.[0]?.projects?.[0]?.resource_environments?.[0]
+              ?.client_types?.response?.length === 1
+          ) {
+            setValue(
+              "client_type",
+              company?.[0]?.projects?.[0]?.resource_environments?.[0]
+                ?.client_types?.response?.[0]?.guid
+            );
+          }
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     if (computedCompanies?.length === 1) {
@@ -219,38 +309,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   ]);
 
   useEffect(() => {
-    let handleClickTimeout;
-
-    const formValuesExist =
-      selectedClientTypeID &&
-      selectedCompanyID &&
-      selectedEnvID &&
-      selectedProjectID;
-
-    const hasValidCredentials =
-      getFormValue?.password && getFormValue?.username && !formValuesExist;
-
-    if (formValuesExist && getFormValue?.password && getFormValue?.username) {
-      clearTimeout(handleClickTimeout);
-      if (!open) onSubmitDialog(getFormValue);
-    } else if (hasValidCredentials && formType !== "register") {
-      handleClickTimeout = setTimeout(() => {
-        if (!loginError && !oneLogin) handleClickOpen();
-      }, 2000);
+    if (connectionCheck) {
+      computeConnections(getFormValue?.tables);
     }
-
-    return () => {
-      clearTimeout(handleClickTimeout);
-    };
-  }, [
-    selectedClientTypeID,
-    selectedCompanyID,
-    selectedEnvID,
-    selectedProjectID,
-    getFormValue,
-    formType,
-    open,
-  ]);
+  }, [connectionCheck]);
 
   return (
     <>
@@ -337,6 +399,9 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                 <PrimaryButton size="large" loader={loading}>
                   {t("enter")}
                 </PrimaryButton>
+                {/* <Button variant="contained" fullWidth type="submit">
+                  ENter
+                </Button> */}
               </div>
               <div className={classes.buttonsArea}>
                 <PrimaryButton
@@ -437,7 +502,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                     control={control}
                     setValue={setValue}
                     watch={watch}
+                    options={connection?.options}
                     companies={companies}
+                    selectedCollection={selectedCollection}
+                    setSelectedCollection={setSelectedCollection}
                   />
                 ))
               : null}

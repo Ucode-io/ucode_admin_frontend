@@ -32,6 +32,7 @@ import Navbar from "./Components/Navbar";
 import RunForm from "./Components/RunForm";
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import { useDispatch } from "react-redux";
+import RingLoaderWithWrapper from "../../../Loaders/RingLoader/RingLoaderWithWrapper";
 
 const initialEdges = [];
 const initialNodes = [];
@@ -223,8 +224,7 @@ const Flow = () => {
   return (
     <>
       {isLoading || createLoading || updateLoading ? (
-        //   <SimpleLoader flex={1} h={300} />
-        "test"
+        <RingLoaderWithWrapper />
       ) : (
         <FormProvider {...methods}>
           <Navbar

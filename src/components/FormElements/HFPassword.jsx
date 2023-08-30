@@ -10,6 +10,7 @@ function HFPassword({
   control,
   name,
   fullWidth,
+  isTransparent,
   required,
   placeholder,
   props,
@@ -49,6 +50,9 @@ function HFPassword({
             </IconButton>
           </InputAdornment>
         ),
+        style: {
+          background: isTransparent ? "transparent" : "",
+        }
       }}
       {...props}
       defaultValue={defaultValue}

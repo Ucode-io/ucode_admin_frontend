@@ -28,7 +28,7 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
   };
 
   return (
-    <Box style={{ border: focused ? "1px solid #007AFF" : "1px solid transparent", position: 'relative'}} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+    <Box style={{ border: focused ? "1px solid #007AFF" : "1px solid transparent", position: 'relative', minWidth: '150px'}} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       <NewCellElementGenerator
         tableSlug={tableSlug}
         onFocus={() => {

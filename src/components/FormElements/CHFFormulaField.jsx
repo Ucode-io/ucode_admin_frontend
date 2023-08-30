@@ -18,6 +18,7 @@ const CHFFormulaField = ({
   disabledHelperText,
   fieldsList,
   disabled,
+  isTransparent = false,
   field,
   index,
   ...props
@@ -90,7 +91,8 @@ const CHFFormulaField = ({
           InputProps={{
             readOnly: disabled,
             style: {
-              background: disabled ? "#c0c0c039" : "#fff",
+              background: isTransparent ? 'transparent' : disabled ? "#c0c0c039" : "#fff",
+              border: '0'
             },
             endAdornment: (
               <InputAdornment position="end">

@@ -12,6 +12,7 @@ const HFTextEditor = ({
   name = "",
   disabledHelperText = false,
   required = false,
+  isTransparent = false,
   fullWidth = false,
   withTrim = false,
   tabIndex,
@@ -40,6 +41,7 @@ const HFTextEditor = ({
             onChange={onChange}
             tabIndex={tabIndex}
             autoFocus={false}
+            style={{backgroundColor: `${isTransparent ? 'transparent' : "" }`}}
           />
         </Suspense>
         // <TextField

@@ -328,10 +328,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   ]);
 
   useEffect(() => {
-    if (connectionCheck) {
+    if (connectionCheck && getFormValue?.tables) {
       computeConnections(getFormValue?.tables);
     }
-  }, [connectionCheck]);
+  }, [connectionCheck, getFormValue?.tables]);
 
   return (
     <>

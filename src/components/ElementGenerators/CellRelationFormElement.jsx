@@ -1,4 +1,4 @@
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, Dialog, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
 import { useEffect, useMemo, useState } from "react";
@@ -15,6 +15,7 @@ import useDebounce from "../../hooks/useDebounce";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import request from "../../utils/request";
+import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -49,7 +50,6 @@ const CellRelationFormElement = ({
         name={name}
         defaultValue={defaultValue}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
-          console.log('kajnwdkjanwkdjawd', value)
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
@@ -130,11 +130,9 @@ const AutoCompleteElement = ({
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const { id } = useParams();
-  console.log('defaultValue',field?.type,  defaultValue)
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
-
   const autoFilters = field?.attributes?.auto_filters;
 
   const autoFiltersFieldFroms = useMemo(() => {
@@ -206,7 +204,6 @@ const AutoCompleteElement = ({
       },
     }
   );
-  console.log('defaultValue', defaultValue)
 
   const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
@@ -287,9 +284,31 @@ const AutoCompleteElement = ({
     });
   }, [computedValue]);
 
+  const [open, setOpen] = useState(false);
+  const [tableSlugFromProps, setTableSlugFromProps] = useState("");
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const openFormModal = (tableSlug) => {
+    handleOpen();
+    setTableSlugFromProps(tableSlug);
+  };
 
   return (
     <div className={styles.autocompleteWrapper}>
+      {field.attributes.creatable && (
+        <span onClick={() => openFormModal(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
+          Создать новый
+        </span>
+      )}
+
+      {tableSlugFromProps && <ModalDetailPage open={open} setOpen={setOpen} tableSlug={tableSlugFromProps} />}
+
       <Autocomplete
         inputValue={inputValue}
         onInputChange={(event, newInputValue, reason) => {

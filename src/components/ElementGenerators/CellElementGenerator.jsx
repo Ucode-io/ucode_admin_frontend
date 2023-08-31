@@ -25,7 +25,6 @@ const CellElementGenerator = ({ field = {}, row }) => {
     return result;
   }, [row, field]);
 
-
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
@@ -59,9 +58,14 @@ const CellElementGenerator = ({ field = {}, row }) => {
     return field.render(row);
   }
 
+  console.log("field", field);
+
   switch (field.type) {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
+
+    // case "LOOKUP":
+    //   return value;
 
     case "DATE":
       return <span className="text-nowrap">{formatDate(value)}</span>;
@@ -90,7 +94,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
         </div>
       );
 
-      case "PASSWORD":
+    case "PASSWORD":
       return (
         <div className="text-overflow">
           <span
@@ -151,7 +155,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
             value?.split(",")?.[0],
             value?.split(",")?.[1]
           )}`}
-          rel='noreferrer'
+          rel="noreferrer"
           onClick={(e) => e.stopPropagation()}
         >
           {generateLink(value?.split(",")?.[0], value?.split(",")?.[1])}

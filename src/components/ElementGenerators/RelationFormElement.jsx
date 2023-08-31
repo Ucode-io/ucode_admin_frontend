@@ -46,7 +46,7 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
-
+  console.log("value", defaultValue);
   if (!isLayout)
     return (
       <FRow label={field?.label ?? field?.title} required={field.required}>
@@ -173,7 +173,7 @@ const AutoCompleteElement = ({
         `/invoke_function/${field?.attributes?.function_path}`,
         {
           params: {
-            from_input: true
+            from_input: true,
           },
           data: {
             table_slug: tableSlug,
@@ -254,6 +254,7 @@ const AutoCompleteElement = ({
       if (data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
+      console.log("data", data);
       setLocalValue(data ? [data] : null);
     } catch (error) {}
   };
@@ -279,18 +280,18 @@ const AutoCompleteElement = ({
       field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(value, field_from));
       });
-      setPage(1)
+      setPage(1);
     } else {
       const val = value;
       setValue(val?.value ?? null);
       setLocalValue(val?.value ? [val] : null);
-
+      console.log("value", value);
       if (!field?.attributes?.autofill) return;
 
       field.attributes.autofill.forEach(({ field_from, field_to }) => {
         setFormValue(field_to, get(val, field_from));
       });
-      setPage(1)
+      setPage(1);
     }
   };
 
@@ -301,7 +302,6 @@ const AutoCompleteElement = ({
         ?.map((el) => item[el.slug])
         .join(" ");
       const option = { label, value: item?.guid };
-
       const optionExists = value?.some(
         (existingOption) => existingOption?.value === option.value
       );
@@ -329,10 +329,9 @@ const AutoCompleteElement = ({
         }))
         .find((element) => element?.value === value);
     } else {
-      return localValue
+      return localValue;
     }
   }, [localValue, value]);
-
 
   // useEffect(() => {
   //   if(Array.isArray(localValue)) {
@@ -344,34 +343,33 @@ const AutoCompleteElement = ({
   //   } else return localValue
   // }, [filtersHandler]);
 
-//=========AUTOFILL
+  //=========AUTOFILL
 
-useEffect(() => {
-  let val;
+  useEffect(() => {
+    let val;
 
-  if (Array.isArray(computedValue)) {
-    val = computedValue[computedValue.length - 1];
-  } else {
-    val = computedValue;
-  }
-
-  if (!field?.attributes?.autofill || !val) {
-    return;
-  }
-
-  field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
-    const setName = name?.split(".");
-    setName?.pop();
-    setName?.push(field_to);
-
-    if (automatic) {
-      setTimeout(() => {
-        setFormValue(setName.join("."), get(val, field_from));
-      }, 1);
+    if (Array.isArray(computedValue)) {
+      val = computedValue[computedValue.length - 1];
+    } else {
+      val = computedValue;
     }
-  });
-}, [computedValue, field]);
 
+    if (!field?.attributes?.autofill || !val) {
+      return;
+    }
+
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+      const setName = name?.split(".");
+      setName?.pop();
+      setName?.push(field_to);
+
+      if (automatic) {
+        setTimeout(() => {
+          setFormValue(setName.join("."), get(val, field_from));
+        }, 1);
+      }
+    });
+  }, [computedValue, field]);
 
   useEffect(() => {
     if (value) getValueData();
@@ -384,33 +382,31 @@ useEffect(() => {
   useEffect(() => {
     if (field?.attributes?.function_path) {
       const newOptions = optionsFromFunctions?.options ?? [];
-      if(newOptions?.length && page > 1) {
+      if (newOptions?.length && page > 1) {
         setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
       } else {
-        setAllOptions(newOptions)
+        setAllOptions(newOptions);
       }
     } else {
       const newOptions = optionsFromLocale?.options ?? [];
-      if(newOptions?.length && page > 1) {
+      if (newOptions?.length && page > 1) {
         setAllOptions((prevOptions) => [...prevOptions, ...newOptions]);
       } else {
-        setAllOptions(newOptions)
+        setAllOptions(newOptions);
       }
     }
   }, [optionsFromFunctions, optionsFromLocale]);
 
   function loadMoreItems() {
     if (field?.attributes?.function_path) {
-        if(optionsFromFunctions?.length >= 10) {
-          setPage((prevPage) => prevPage + 1);
-        } else return false
-        
+      if (optionsFromFunctions?.length >= 10) {
+        setPage((prevPage) => prevPage + 1);
+      } else return false;
     } else {
-          if(optionsFromLocale?.length >= 10) {
-            setPage((prevPage) => prevPage + 1);
-          } 
-          else return false
-    } 
+      if (optionsFromLocale?.length >= 10) {
+        setPage((prevPage) => prevPage + 1);
+      } else return false;
+    }
   }
 
   return (
@@ -458,17 +454,18 @@ useEffect(() => {
       ) : (
         <Select
           isDisabled={disabled}
-          options={computedOptions ?? []}
+          options={options?.options ?? []}
           isClearable={true}
           value={computedInputValue ?? []}
           defaultValue={value ?? ""}
           onChange={(e) => {
             changeHandler(e);
             setLocalValue(e);
-          }}          
+          }}
           onMenuScrollToBottom={loadMoreItems}
           inputChangeHandler={(e) => console.log("ssss", e)}
           onInputChange={(e, newValue) => {
+            console.log("newvalue", newValue);
             setInputValue(e ?? null);
             inputChangeHandler(e);
           }}

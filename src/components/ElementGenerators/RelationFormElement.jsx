@@ -46,7 +46,7 @@ const RelationFormElement = ({
     if (field.relation_type === "Recursive") return formTableSlug;
     return field.id.split("#")?.[0] ?? "";
   }, [field.id, formTableSlug, field.relation_type]);
-  console.log("value", defaultValue);
+
   if (!isLayout)
     return (
       <FRow label={field?.label ?? field?.title} required={field.required}>
@@ -283,8 +283,9 @@ const AutoCompleteElement = ({
       setPage(1);
     } else {
       const val = value;
-      setValue(val?.value ?? null);
-      setLocalValue(val?.value ? [val] : null);
+
+      setValue(val?.guid ?? null);
+      setLocalValue(val?.guid ? [val] : null);
       console.log("value", value);
       if (!field?.attributes?.autofill) return;
 
@@ -456,7 +457,7 @@ const AutoCompleteElement = ({
           isDisabled={disabled}
           options={options?.options ?? []}
           isClearable={true}
-          value={computedInputValue ?? []}
+          value={localValue ?? []}
           defaultValue={value ?? ""}
           onChange={(e) => {
             changeHandler(e);
@@ -465,11 +466,12 @@ const AutoCompleteElement = ({
           onMenuScrollToBottom={loadMoreItems}
           inputChangeHandler={(e) => console.log("ssss", e)}
           onInputChange={(e, newValue) => {
-            console.log("newvalue", newValue);
             setInputValue(e ?? null);
             inputChangeHandler(e);
           }}
-          getOptionLabel={(option) => option?.name ?? option?.label}
+          getOptionLabel={(option) =>
+            field?.attributes?.view_fields?.map((el) => option[el.slug])
+          }
           components={{
             DropdownIndicator: () => null,
             MultiValue: ({ data }) => (
@@ -485,7 +487,9 @@ const AutoCompleteElement = ({
               />
             ),
           }}
-          isOptionEqualToValue={(option, value) => option.guid === value.guid}
+          isOptionEqualToValue={(option, value) =>
+            console.log("optionssssss", option)
+          }
         />
       )}
     </div>

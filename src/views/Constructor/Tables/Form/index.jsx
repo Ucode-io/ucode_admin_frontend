@@ -12,7 +12,7 @@ import PageFallback from "../../../../components/PageFallback";
 import constructorCustomEventService from "../../../../services/constructorCustomEventService";
 import constructorFieldService from "../../../../services/constructorFieldService";
 import constructorRelationService from "../../../../services/constructorRelationService";
-import constructorTableService from "../../../../services/constructorTableService";
+import constructorTableService, { useTableByIdQuery } from "../../../../services/constructorTableService";
 import constructorViewRelationService from "../../../../services/constructorViewRelationService";
 import layoutService from "../../../../services/layoutService";
 import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice";
@@ -59,8 +59,9 @@ const ConstructorTablesFormPage = () => {
 
   const getData = async () => {
     setLoader(true);
+    const params = {};
 
-    const getTableData = constructorTableService.getById(id, projectId);
+    const getTableData = constructorTableService.getById(params, id);
     const getViewRelations = constructorViewRelationService.getList({
       table_slug: slug,
     });
@@ -147,14 +148,14 @@ const ConstructorTablesFormPage = () => {
   const createConstructorTable = (data) => {
     setBtnLoader(true);
 
-    dispatch(createConstructorTableAction({...data, label: Object.values(data?.attributes).find(item => item)}))
+    dispatch(createConstructorTableAction({ ...data, label: Object.values(data?.attributes).find((item) => item) }))
       .unwrap()
       .then((res) => {
         navigate(-1);
       })
       .catch(() => setBtnLoader(false));
   };
-  
+
   const updateConstructorTable = (data) => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);

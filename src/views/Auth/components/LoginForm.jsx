@@ -192,7 +192,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     return false;
   }, [getFormValue]);
 
-  const computeConnections = async (connections) => {
+  const computeConnections = (connections) => {
     if (
       (Array.isArray(connections) && connections?.length === 0) ||
       connections === undefined

@@ -70,7 +70,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
 
-  const { data: computedConnections = [] } = useQuery(
+  const { data: computedConnections = [], isLoading } = useQuery(
     [
       "GET_CONNECTION_LIST",
       { "project-id": selectedProjectID },
@@ -92,6 +92,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       select: (res) => res.data.response ?? [],
       onSuccess: (res) => {
         computeConnections(res);
+        setConnectionCheck(true);
       },
     }
   );
@@ -171,7 +172,6 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         setCompanies(res?.companies);
         computeCompanyElement(res?.companies);
         setLoading(true);
-        setConnectionCheck(true);
 
         if (index === 1) register(values);
         setOneLogin(true);
@@ -192,7 +192,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     return false;
   }, [getFormValue]);
 
-  const computeConnections = (connections) => {
+  const computeConnections = async (connections) => {
     if (
       (Array.isArray(connections) && connections?.length === 0) ||
       connections === undefined
@@ -216,7 +216,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         handleClickOpen();
       }
     } else if (Array.isArray(connections) && connections?.length > 1) {
-      if (getFormValue?.tables?.length) {
+      if (getFormValue?.tables?.length && checkConnections) {
         onSubmitDialog(getFormValue);
       } else {
         handleClickOpen();
@@ -228,25 +228,6 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     setLoading(true);
     dispatch(loginAction(values));
   };
-  useEffect(() => {
-    getFcmToken();
-    reset();
-  }, [index]);
-
-  useEffect(() => {
-    if (computedConnections?.length > 1) {
-      computedConnections.forEach((connection, index) => {
-        if (connection.options.length === 1) {
-          setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
-          setSelectedCollection(connection.options[0]?.value);
-          setValue(
-            `tables[${index}].table_slug`,
-            connection?.options?.[0]?.[connection?.view_slug]
-          );
-        }
-      });
-    }
-  }, [computedConnections]);
 
   const computeCompanyElement = (company) => {
     const validLength = company?.length === 1;
@@ -289,6 +270,26 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   useEffect(() => {
+    getFcmToken();
+    reset();
+  }, [index]);
+
+  useEffect(() => {
+    if (computedConnections?.length > 1) {
+      computedConnections.forEach((connection, index) => {
+        if (connection.options.length === 1) {
+          setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
+          setSelectedCollection(connection.options[0]?.value);
+          setValue(
+            `tables[${index}].table_slug`,
+            connection?.options?.[0]?.[connection?.view_slug]
+          );
+        }
+      });
+    }
+  }, [computedConnections]);
+
+  useEffect(() => {
     if (computedCompanies?.length === 1) {
       setValue("company_id", computedCompanies?.[0]?.value);
     }
@@ -300,6 +301,23 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
     }
     if (computedClientTypes?.length === 1) {
       setValue("client_type", computedClientTypes?.[0]?.value);
+    }
+  }, [
+    computedCompanies,
+    computedProjects,
+    computedEnvironments,
+    computedClientTypes,
+  ]);
+
+  useEffect(() => {
+    const shouldOpen =
+      computedCompanies?.length > 1 ||
+      computedProjects?.length > 1 ||
+      computedEnvironments?.length > 1 ||
+      computedClientTypes?.length > 1;
+
+    if (shouldOpen) {
+      handleClickOpen();
     }
   }, [
     computedCompanies,

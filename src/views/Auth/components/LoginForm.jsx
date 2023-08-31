@@ -193,6 +193,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   }, [getFormValue]);
 
   const computeConnections = (connections) => {
+    console.log("connections", connections);
     if (
       (Array.isArray(connections) && connections?.length === 0) ||
       connections === undefined

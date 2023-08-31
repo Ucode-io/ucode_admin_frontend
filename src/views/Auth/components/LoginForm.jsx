@@ -193,6 +193,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   }, [getFormValue]);
 
   const computeConnections = (connections) => {
+    console.log("connnection", connections);
     if (
       (Array.isArray(connections) && connections?.length === 0) ||
       connections === undefined
@@ -216,7 +217,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         handleClickOpen();
       }
     } else if (Array.isArray(connections) && connections?.length > 1) {
-      if (getFormValue?.tables?.length && checkConnections) {
+      if (checkConnections) {
         onSubmitDialog(getFormValue);
       } else {
         handleClickOpen();

@@ -100,6 +100,8 @@ const NewCellElementGenerator = ({
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
 
+  console.log('sssssssss', field)
+
   switch (field.type) {
     case "LOOKUP":
       return (
@@ -478,7 +480,11 @@ const NewCellElementGenerator = ({
       );
 
     default:
-      return <div style={{ padding: "0 4px" }}>kwlamdlakwd</div>;
+      return (
+        <div style={{ padding: "0 4px" }}>
+          <CellElementGenerator field={field} row={row} />
+        </div>
+      );
   }
 };
 

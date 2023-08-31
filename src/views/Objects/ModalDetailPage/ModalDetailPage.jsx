@@ -18,7 +18,7 @@ const style = {
   boxShadow: 24,
 };
 
-export default function ModalDetailPage({ open, setOpen }) {
+export default function ModalDetailPage({ open, setOpen, tableSlug }) {
   const handleClose = () => setOpen(false);
   return (
     <Modal open={open} onClose={handleClose} className="child-position-center">
@@ -31,7 +31,7 @@ export default function ModalDetailPage({ open, setOpen }) {
             </IconButton>
           </div>
 
-          <ObjectsFormPage />
+          <ObjectsFormPage tableSlugFromProps={tableSlug} handleClose={handleClose} modal={true}/>
         </Card>
       
     </Modal>

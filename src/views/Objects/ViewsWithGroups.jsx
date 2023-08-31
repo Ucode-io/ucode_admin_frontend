@@ -273,12 +273,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
         <div className={style.extraWrapper}>
           <div className={style.search}>
             <SearchInput placeholder={"Search"} />
-
-            <Divider orientation="vertical" flexItem />
-
-            <div className={style.count}>
-              <span>{count} items</span>
-            </div>
           </div>
 
           <div className={style.rightExtra}>
@@ -289,10 +283,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             <FixColumnsTableView selectedTabIndex={selectedTabIndex}/>
 
             <Divider orientation="vertical" flexItem />
-
-            {/* <ColumnButton onClick={clickColumn} /> */}
-
-            {/* <Divider orientation="vertical" flexItem /> */}
 
             <SortButton onClick={clickSort} />
 

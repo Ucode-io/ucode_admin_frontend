@@ -345,7 +345,7 @@ const AutoCompleteElement = ({
   // }, [filtersHandler]);
 
   //=========AUTOFILL
-
+  console.log("value", value);
   useEffect(() => {
     let val;
 
@@ -464,14 +464,14 @@ const AutoCompleteElement = ({
             setLocalValue(e);
           }}
           onMenuScrollToBottom={loadMoreItems}
-          inputChangeHandler={(e) => console.log("ssss", e)}
+          inputChangeHandler={(e) => inputChangeHandler(e)}
           onInputChange={(e, newValue) => {
             setInputValue(e ?? null);
-            inputChangeHandler(e);
           }}
           getOptionLabel={(option) =>
             field?.attributes?.view_fields?.map((el) => option[el.slug])
           }
+          getOptionValue={(option) => option?.guid}
           components={{
             DropdownIndicator: () => null,
             MultiValue: ({ data }) => (
@@ -487,9 +487,6 @@ const AutoCompleteElement = ({
               />
             ),
           }}
-          isOptionEqualToValue={(option, value) =>
-            console.log("optionssssss", option)
-          }
         />
       )}
     </div>

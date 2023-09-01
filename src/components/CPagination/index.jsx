@@ -32,7 +32,8 @@ const CPagination = ({
   return (
     <div
       style={{
-        width: "100%",
+        // width: "calc(100vw - 375px)",
+        width: '100%',
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",

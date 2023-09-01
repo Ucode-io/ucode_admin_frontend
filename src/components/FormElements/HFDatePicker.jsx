@@ -24,6 +24,7 @@ const HFDatePicker = ({
   placeholder = "",
   isFormEdit = false,
   defaultValue = "",
+  isTransparent=false,
   disabled,
   ...props
 }) => {
@@ -47,6 +48,7 @@ const HFDatePicker = ({
             value={value}
             onChange={onChange}
             disabled={disabled}
+            isTransparent={isTransparent}
           />
         </div>
       )}

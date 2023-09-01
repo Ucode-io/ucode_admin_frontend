@@ -10,7 +10,7 @@ import "react-multi-date-picker/styles/layouts/mobile.css";
 import CopyToClipboard from "../CopyToClipboard";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
-const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isFormEdit, tabIndex, mask, showCopyBtn = true, disabled = false }) => {
+const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isFormEdit, isTransparent = false, tabIndex, mask, showCopyBtn = true, disabled = false }) => {
   return (
     <div className="main_wrapper">
       <DatePicker
@@ -41,7 +41,9 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                     classes: {
                       input: isBlackBg ? classes.input : "",
                     },
-                    style: disabled
+                    style: isTransparent ? {
+                      background: "transparent",
+                    } : disabled
                       ? {
                           background: "#c0c0c039",
                         }
@@ -90,7 +92,9 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                     classes: {
                       input: isBlackBg ? classes.input : "",
                     },
-                    style: disabled
+                    style: isTransparent ? {
+                      background: "transparent",
+                    } : disabled
                       ? {
                           background: "#c0c0c039",
                         }

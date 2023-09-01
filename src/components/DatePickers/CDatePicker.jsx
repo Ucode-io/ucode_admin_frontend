@@ -10,7 +10,7 @@ import CustomNavButton from "./Plugins/CustomNavButton";
 import "react-multi-date-picker/styles/layouts/mobile.css";
 import "./style2.scss";
 
-const CDatePicker = ({ value, onChange, disabled, isBlackBg, name, isFormEdit, mask, tabIndex, classes, placeholder }) => {
+const CDatePicker = ({ value, onChange, disabled, isBlackBg, name, isFormEdit, mask, isTransparent = false, tabIndex, classes, placeholder }) => {
   const datePickerRef = useRef();
   return (
     <DatePicker
@@ -42,7 +42,9 @@ const CDatePicker = ({ value, onChange, disabled, isBlackBg, name, isFormEdit, m
                   classes: {
                     input: isBlackBg ? classes.input : "",
                   },
-                  style: disabled
+                  style: isTransparent
+                    ? { background: "transparent" }
+                    : disabled
                     ? {
                         background: "#c0c0c039",
                       }

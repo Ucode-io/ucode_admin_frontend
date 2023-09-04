@@ -501,7 +501,7 @@ const RecursiveBlock = ({
               menuItem={menuItem}
               level={2}
             />
-            <EltResources menuStyle={menuStyle} level={2} menuItem={menuItem} />
+            {/* <EltResources menuStyle={menuStyle} level={2} menuItem={menuItem} /> */}
             <MicroServiceSidebar
               menuStyle={menuStyle}
               menuItem={menuItem}

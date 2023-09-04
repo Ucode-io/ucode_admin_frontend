@@ -21,6 +21,7 @@ const InputWithPopUp = ({
   customOnChange = () => {},
   onBlur = () => {},
   className,
+  width = "100% !important",
 }) => {
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
@@ -48,7 +49,7 @@ const InputWithPopUp = ({
       }}
     >
       <Box
-        width="100%"
+        width={width}
         height={height}
         display="flex"
         alignItems="center"

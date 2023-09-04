@@ -474,9 +474,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
           <Box display="flex" gap="20px" width="100%">
             <Box minWidth="100px">
               <Switch
-                id="isChecked"
-                // checked={watch("authentification")}
-                isChecked={form.watch("body.is_mapping")}
+                checked={form.watch("body.is_mapping")}
                 onChange={(e) => {
                   form.setValue("body.is_mapping", e.target.checked);
                 }}

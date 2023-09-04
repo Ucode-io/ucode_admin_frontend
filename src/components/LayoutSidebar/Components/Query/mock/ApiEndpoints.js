@@ -24,6 +24,28 @@ export const methods = [
     value: "OPTIONS",
   },
 ];
+export const query_types = [
+  {
+    label: "PARAM",
+    value: "PARAM",
+  },
+  {
+    label: "BODY",
+    value: "BODY",
+  },
+  {
+    label: "HEADER",
+    value: "HEADER",
+  },
+  {
+    label: "QUERY",
+    value: "QUERY",
+  },
+  {
+    label: "COOKIE",
+    value: "COOKIE",
+  },
+];
 export const types = [
   {
     label: "String",

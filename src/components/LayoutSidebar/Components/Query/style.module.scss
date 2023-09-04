@@ -14,6 +14,16 @@
   }
 }
 
+.query_select {
+  &:nth-child(2)>div {
+    padding: 0;
+  }
+
+  fieldset {
+    border: none;
+  }
+}
+
 .inputWithPopUp {
   input {
     padding: 0;

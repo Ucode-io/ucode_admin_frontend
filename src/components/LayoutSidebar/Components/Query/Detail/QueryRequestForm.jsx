@@ -1,12 +1,12 @@
-import { Box } from "@mui/material";
-import { useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { useFieldArray } from "react-hook-form";
 import { useTableByIdQuery } from "../../../../../services/constructorTableService";
 import { useFieldsListQuery } from "../../../../../services/fieldService";
-import HFSelect from "../../../../FormElements/HFSelect";
-import InputWithPopUp from "./InputWithPopUp";
-import HFTextField from "../../../../FormElements/HFTextField";
 import HFAutocomplete from "../../../../FormElements/HFAutocomplete";
-import { useQueryClient } from "react-query";
+import InputWithPopUp from "./InputWithPopUp";
+import HFSelect from "../../../../FormElements/HFSelect";
+import styles from "../style.module.scss";
+import { query_types } from "../mock/ApiEndpoints";
 
 const QueryRequstForm = ({
   form,
@@ -16,7 +16,10 @@ const QueryRequstForm = ({
   allText,
   setAllText,
 }) => {
-  const [tableFields, setTableFields] = useState();
+  const { fields } = useFieldArray({
+    control,
+    name: "body.query_mapping.request_map.field_match",
+  });
   const tableId = form.watch("body.query_mapping.request_map.table");
   const { isLoading } = useTableByIdQuery({
     id: tableId,
@@ -35,14 +38,11 @@ const QueryRequstForm = ({
     queryParams: {
       enabled: Boolean(tableId),
       onSuccess: (res) => {
-        const queryMapping = {};
-        res?.fields?.forEach((item) => {
-          queryMapping[item?.slug] = "";
-        });
-        setTableFields(res?.fields);
         form.setValue(
           "body.query_mapping.request_map.field_match",
-          queryMapping
+          res?.fields?.map((item) => {
+            return { key: item.slug, value: "", field_type: item.type };
+          })
         );
       },
     },
@@ -63,35 +63,64 @@ const QueryRequstForm = ({
             }}
           />
         </Box>
-        <Box
-          border={tableFields && "1px solid #E2E8F0"}
-          borderRadius="0.375rem"
-        >
+        <Box border="1px solid #E2E8F0" borderRadius="0.375rem">
           <Box>
-            {tableFields?.map((field, index) => (
-              <Box borderBottom="1px solid #E2E8F0" display="flex">
-                <HFTextField
-                  name={``}
-                  form={form}
-                  defaultValue={field.slug}
-                  placeholder={"Key"}
-                  disabled
-                  fullWidth
-                />
+            {fields?.map((item, index) => (
+              <Box
+                borderBottom="1px solid #E2E8F0"
+                display="flex"
+                justifyContent="space-between"
+              >
+                <Box
+                  width="100%"
+                  display="flex"
+                  alignItems="center"
+                  pl="5px"
+                  maxHeight="32px !important"
+                  columnGap={"8px"}
+                >
+                  <Typography>
+                    {form.watch(
+                      `body.query_mapping.request_map.field_match.${index}.key`
+                    )}
+                  </Typography>
+                  <marquee>
+                    <Typography>
+                      {form.watch(
+                        `body.query_mapping.request_map.field_match.${index}.field_type`
+                      )}
+                    </Typography>
+                  </marquee>
+                </Box>
 
                 <Box
                   width="100%"
                   display="flex"
                   alignItems="center"
-                  borderLeft="1px solid #E2E8F0"
                   pl="5px"
+                  maxHeight="32px !important"
+                  borderLeft="1px solid #E2E8F0"
                 >
                   <InputWithPopUp
-                    alltext={allText}
-                    setAllText={setAllText}
-                    name={`body.query_mapping.request_map.field_match.${field.slug}`}
+                    name={`body.query_mapping.request_map.field_match.${index}.value`}
                     form={form}
                     placeholder={"Value"}
+                  />
+                </Box>
+                <Box
+                  width="100%"
+                  display="flex"
+                  alignItems="center"
+                  pl="5px"
+                  maxHeight="32px !important"
+                  borderLeft="1px solid #E2E8F0"
+                >
+                  <HFSelect
+                    name={`body.query_mapping.request_map.field_match.${index}.type`}
+                    form={form}
+                    placeholder={"Type"}
+                    options={query_types}
+                    className={styles.query_select}
                   />
                 </Box>
               </Box>

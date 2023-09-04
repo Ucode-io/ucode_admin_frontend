@@ -58,7 +58,6 @@ const NewProfilePanel = ({
   const settings = location.pathname.includes("settings");
   const [versionModalIsOpen, openVersionModal, closeVersionModal] =
     useBooleanState(false);
-
   const params = {
     refresh_token: auth.refreshToken,
     env_id: company.environmentId,
@@ -538,8 +537,9 @@ const NewProfilePanel = ({
             {permissions?.project_settings_button && (
               <ProfileItem
                 text={"Настройки"}
-                onClick={() => {
-                  navigate(`/settings/constructor/apps`);
+                onClick={(e) => {
+                  closeMenu(e);
+                  navigate(`/main/${appId}/project-setting`);
                 }}
               />
             )}

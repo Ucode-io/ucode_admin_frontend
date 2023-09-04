@@ -5,7 +5,7 @@ import HexagonIcon from "@mui/icons-material/Hexagon";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import { Button, CircularProgress, Divider, Menu } from "@mui/material";
 import { endOfMonth, startOfMonth } from "date-fns";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
@@ -40,6 +40,8 @@ import SortButton from "./SortButton";
 import GroupByButton from "./GroupByButton";
 import FixColumnsTableView from "./components/FixColumnsTableView";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import SearchParams from "./components/ViewSettings/SearchParams";
 
 const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
   const { t } = useTranslation();
@@ -62,6 +64,8 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
   const [defaultViewTab, setDefaultViewTab] = useState(0);
+  const [searchText, setSearchText] = useState("");
+  const [checkedColumns, setCheckedColumns] = useState([]);
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
@@ -84,6 +88,15 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   };
   const handleCloseHeightControl = () => {
     setAnchorElHeightControl(null);
+  };
+
+  const [anchorElSearch, setAnchorElSearch] = useState(null);
+  const openSearch = Boolean(anchorElSearch);
+  const handleClickSearch = (event) => {
+    setAnchorElSearch(event.currentTarget);
+  };
+  const handleCloseSearch = () => {
+    setAnchorElSearch(null);
   };
 
   const tableHeightOptions = [
@@ -113,7 +126,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     },
   });
 
-  console.log('watch', watch())
+  console.log("watch", watch());
 
   const { fields, remove, append } = useFieldArray({
     control,
@@ -227,6 +240,12 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     setDefaultViewTab(4);
   };
 
+  const columnsForSearch = useMemo(() => {
+    return Object.values(fieldsMap)?.filter(
+      (el) => el?.type === "SINGLE_LINE" || el?.type === "MULTI_LINE" || el?.type === "NUMBER" || el?.type === "PHONE" || el?.type === "EMAIL" || el?.type === "INTERNATION_PHONE"
+    );
+  }, [view, fieldsMap]);
+
   return (
     <>
       <FiltersBlock
@@ -272,7 +291,50 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
       <div className={style.extraNavbar}>
         <div className={style.extraWrapper}>
           <div className={style.search}>
-            <SearchInput placeholder={"Search"} />
+            <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)}/>
+            <button
+              className={style.moreButton}
+              onClick={handleClickSearch}
+              style={{
+                paddingRight: "10px",
+              }}
+            >
+              <MoreHorizIcon />
+            </button>
+
+            <Menu
+              open={openSearch}
+              onClose={handleCloseSearch}
+              anchorEl={anchorElSearch}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    // width: 100,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    left: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+            >
+              <SearchParams checkedColumns={checkedColumns} setCheckedColumns={setCheckedColumns} columns={columnsForSearch} />
+            </Menu>
           </div>
 
           <div className={style.rightExtra}>
@@ -280,7 +342,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
             <Divider orientation="vertical" flexItem />
 
-            <FixColumnsTableView selectedTabIndex={selectedTabIndex}/>
+            <FixColumnsTableView selectedTabIndex={selectedTabIndex} />
 
             <Divider orientation="vertical" flexItem />
 
@@ -556,8 +618,10 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       setFormVisible={setFormVisible}
                       formVisible={formVisible}
                       filters={filters}
+                      checkedColumns={checkedColumns}
                       view={view}
                       fieldsMap={fieldsMap}
+                      searchText={searchText}
                       selectedObjects={selectedObjects}
                       setSelectedObjects={setSelectedObjects}
                     />

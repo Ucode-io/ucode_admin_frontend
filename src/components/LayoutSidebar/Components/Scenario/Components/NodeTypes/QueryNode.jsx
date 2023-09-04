@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Handle, Position } from "reactflow";
 // import QueryNodeForm from "../../NodeForms/QueryNodeForm";
 // import QueryToolForm from "../../NodeForms/QueryToolForm";
@@ -6,6 +6,8 @@ import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { store } from "../../../../../../store";
 import DefaultNodeCard from "../IconCard/DefaultNodeCard";
 import { useQueryByIdQuery } from "../../../../../../services/queryService";
+import QueryToolForm from "../NodeForms/QueryToolForm";
+import QueryNodeForm from "../NodeForms/QueryNodeForm";
 
 const STYLE_PROPS_DEFAULT = {
   width: 28,
@@ -56,6 +58,18 @@ const QueryNode = ({ data }) => {
     name: "request_info.variables",
   });
 
+  const [toolIsOpen, setToolIsOpen] = useState(false);
+  const [nodeIsOpen, setNodeIsOpen] = useState(false);
+  const openCreateDrawer = () => {
+    setToolIsOpen(true);
+  };
+  const openNodeDrawer = () => {
+    setNodeIsOpen(true);
+  };
+
+  const closeDrawer = () => setToolIsOpen(false);
+  const closeTool = () => setNodeIsOpen(false);
+
   // useEffect(() => {
   //   if (!queryStore.queryBottomSidebarIsOpen) {
   //     isToolClose();
@@ -99,6 +113,8 @@ const QueryNode = ({ data }) => {
         onClick={() => {
           // queryStore.queryBottomSidebarIsOpen && onToolOpen();
           // queryStore.queryRightSidebarIsOpen && onOpen();
+          openCreateDrawer();
+          openNodeDrawer();
         }}
         ref={btnRef}
       >
@@ -158,6 +174,20 @@ const QueryNode = ({ data }) => {
         variablesFields={variablesFields}
         variablesAppend={variablesAppend}
       /> */}
+      <QueryToolForm
+        open={toolIsOpen}
+        initialValues={toolIsOpen}
+        formIsVisible={toolIsOpen}
+        closeDrawer={closeDrawer}
+        data={data}
+      />
+      <QueryNodeForm
+        open={nodeIsOpen}
+        initialValues={nodeIsOpen}
+        formIsVisible={nodeIsOpen}
+        closeDrawer={closeTool}
+        data={data}
+      />
     </>
   );
 };

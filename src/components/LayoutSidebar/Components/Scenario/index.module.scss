@@ -3,6 +3,10 @@ $sidebar-width: 300px;
 $footer-height: 0px;
 $navbar-height: 48px;
 
+.drawer .MuiBackdrop-root .MuiModal-backdrop {
+  background: none;
+}
+
 .Flow {
   box-sizing: border-box;
   width: 100%;

@@ -10,14 +10,21 @@ const DrawerCard = ({
   open,
   onSaveButtonClick = () => {},
   loader,
-  bodyStyle
+  anchor = "right",
+  bodyStyle,
+  sx,
+  PaperProps,
+  className,
 }) => {
   return (
     <Drawer
       open={open}
-      anchor="right"
+      anchor={anchor}
+      className={className}
+      sx={sx}
       classes={{ paperAnchorRight: styles.verticalDrawer }}
       onClose={onClose}
+      PaperProps={PaperProps}
     >
       <div className={styles.header}>
         <h2 className={styles.title}>{title}</h2>
@@ -26,7 +33,9 @@ const DrawerCard = ({
           <Close className={styles.closeIcon} />
         </IconButton>
       </div>
-      <div className={styles.body} style={bodyStyle}>{children}</div>
+      <div className={styles.body} style={bodyStyle}>
+        {children}
+      </div>
 
       <dir className={styles.footer}>
         <PrimaryButton

@@ -35,6 +35,7 @@ import DeleteIcon from "../DeleteIcon";
 import ApiSidebar from "../Components/Api/ApiSidebar";
 import QuerySidebar from "../Components/Query/QuerySidebar";
 import { updateLevel } from "../../../utils/level";
+import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -524,7 +525,12 @@ const RecursiveBlock = ({
               level={2}
             />
             <EmailSidebar menuStyle={menuStyle} menuItem={menuItem} level={2} />
-            <ProjectSettingSidebar
+            {/* <ProjectSettingSidebar
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              level={2}
+            /> */}
+            <MicrofrontendSettingSidebar
               menuStyle={menuStyle}
               menuItem={menuItem}
               level={2}

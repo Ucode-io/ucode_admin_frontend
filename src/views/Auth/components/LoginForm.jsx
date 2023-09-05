@@ -511,7 +511,7 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
                       <HFTextField
                         required
                         control={control}
-                        name="username"
+                        name="recipient"
                         size="large"
                         fullWidth
                         type="email"
@@ -533,7 +533,7 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
                         <HFTextField
                           required
                           control={control}
-                          name="recipient"
+                          name="otp"
                           type="text"
                           size="large"
                           fullWidth

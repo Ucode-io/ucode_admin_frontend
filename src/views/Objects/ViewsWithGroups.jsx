@@ -350,7 +350,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
             <Divider orientation="vertical" flexItem />
 
-            <GroupByButton onClick={clickGroupBy} />
+            <GroupByButton selectedTabIndex={selectedTabIndex}/>
 
             <Divider orientation="vertical" flexItem />
 

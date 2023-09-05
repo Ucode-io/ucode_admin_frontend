@@ -17,7 +17,6 @@ import { useMemo, useState } from "react";
 const QueryForRest = ({ control, form, responseQuery }) => {
   const typeOfAction = form.watch("body.action_type");
   const [search, setSearch] = useState();
-  console.log("w", form.watch("body.query_mapping.tab"));
 
   const {
     fields: paramsFields,
@@ -59,7 +58,6 @@ const QueryForRest = ({ control, form, responseQuery }) => {
       value: item.id,
     }));
   }, [tables]);
-  console.log("watt", form.watch());
 
   return (
     <>
@@ -503,7 +501,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                     form.setValue("body.query_mapping", {});
                     form.setValue("body.query_mapping.tab", e);
                   }}
-                  selectedIndex={form.watch("body.query_mapping.tab")}
+                  selectedIndex={form.watch("body.query_mapping.tab") || 0}
                 >
                   <TabList>
                     <Tab>Request</Tab>

@@ -76,7 +76,6 @@ const Queries = () => {
         })),
     },
   });
-  console.log("form", form.watch());
 
   const types = useMemo(() => {
     const resourcesCustom = [

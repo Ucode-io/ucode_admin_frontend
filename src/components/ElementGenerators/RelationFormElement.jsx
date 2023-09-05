@@ -54,7 +54,6 @@ const RelationFormElement = ({
     field?.label ??
     field?.title;
 
-  console.log("computedLabel", computedLabel);
   if (!isLayout)
     return (
       <FRow label={computedLabel} required={field.required}>

@@ -92,7 +92,6 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
           <BsThreeDots
             size={13}
             onClick={(e) => {
-              e?.stopPropagation();
               handleOpenNotify(e, "FOLDER", folder);
             }}
             style={{
@@ -146,7 +145,6 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
               size={13}
               onClick={(e) => {
                 deleteQuery(query?.id);
-                e?.stopPropagation();
               }}
               style={{
                 color:
@@ -189,7 +187,6 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
   // --RENDER--
 
   const clickHandler = (e) => {
-    e.stopPropagation();
     dispatch(menuActions.setMenuItem(queryFolder));
     setSelected(queryFolder);
     if (!pinIsEnabled && queryFolder.type !== "USER_FOLDER") {
@@ -253,7 +250,6 @@ const QuerySidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
                 <AddIcon
                   size={13}
                   onClick={(e) => {
-                    e.stopPropagation();
                     openFolderModal({}, "CREATE");
                   }}
                   style={iconStyle}

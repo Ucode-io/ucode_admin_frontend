@@ -20,6 +20,8 @@ import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
 import RegisterFormPage from "./RegisterFormPage";
 import companyService from "../../../services/companyService";
+import HFNumberField from "../../../components/FormElements/HFNumberField";
+import HFInternationPhone from "../../../components/FormElements/HFInternationPhone";
 
 const LoginForm = ({setIndex, index, setFormType, formType}) => {
   const {t} = useTranslation();
@@ -461,7 +463,7 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
                   <TabPanel>
                     <div className={classes.formRow}>
                       <p className={classes.label}>{t("Phone")}</p>
-                      <HFTextField
+                      {/* <HFTextField
                         required
                         control={control}
                         name="recipient"
@@ -476,6 +478,15 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
                             </InputAdornment>
                           ),
                         }}
+                      /> */}
+                      <HFInternationPhone
+                        required
+                        control={control}
+                        name="recipient"
+                        size="large"
+                        fullWidth
+                        placeholder={t("enter.phone")}
+                        autoFocus
                       />
                     </div>
 
@@ -503,6 +514,7 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
                         name="username"
                         size="large"
                         fullWidth
+                        type="email"
                         placeholder={t("enter.email")}
                         autoFocus
                         InputProps={{

@@ -209,7 +209,7 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
     authService
       .sendCodeApp({
         recipient: values?.recipient,
-        text: "",
+        text: "You otp code is",
         type: values?.type,
       })
       .then((res) => {
@@ -533,7 +533,7 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
                         <HFTextField
                           required
                           control={control}
-                          name="otp"
+                          name="recipient"
                           type="text"
                           size="large"
                           fullWidth

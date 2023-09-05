@@ -58,6 +58,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
       value: item.id,
     }));
   }, [tables]);
+  console.log("watch", form.watch());
 
   return (
     <>
@@ -483,50 +484,47 @@ const QueryForRest = ({ control, form, responseQuery }) => {
           </Box>
         </Box>
         {form.watch("body.is_mapping") ? (
-          <Box display="flex" alignItems="flex-start" mt={2}>
-            <Typography
-              minWidth="110px"
-              mt="5px"
-              pr="10px"
-              textAlign="end"
-              fontWeight="bold"
+          <Box width="100%">
+            <Tabs
+              onSelect={(e) => {
+                form.setValue("body.query_mapping", {});
+                form.setValue("body.query_mapping.tab", e);
+              }}
+              selectedIndex={form.watch("body.query_mapping.tab") || 0}
             >
-              Table
-            </Typography>
+              <TabList>
+                <Tab>Request</Tab>
+                <Tab>Response</Tab>
+              </TabList>
 
-            <Box display="flex" gap="20px" width="100%">
-              <Box width="100%">
-                <Tabs
-                  onSelect={(e) => {
-                    form.setValue("body.query_mapping", {});
-                    form.setValue("body.query_mapping.tab", e);
-                  }}
-                  selectedIndex={form.watch("body.query_mapping.tab") || 0}
-                >
-                  <TabList>
-                    <Tab>Request</Tab>
-                    <Tab>Response</Tab>
-                  </TabList>
-
-                  <TabPanel>
-                    <QueryRequstForm
-                      tables={tableOptions}
-                      form={form}
-                      control={control}
-                      setSearch={setSearch}
-                    />
-                  </TabPanel>
-                  <TabPanel>
-                    <QueryResponseForm
-                      tables={tableOptions}
-                      form={form}
-                      control={control}
-                      setSearch={setSearch}
-                    />
-                  </TabPanel>
-                </Tabs>
-              </Box>
-            </Box>
+              <TabPanel>
+                <QueryRequstForm
+                  tables={tableOptions}
+                  form={form}
+                  control={control}
+                  setSearch={setSearch}
+                />
+              </TabPanel>
+              <TabPanel>
+                <Box display="flex" alignItems="flex-start" mt={2}>
+                  <Typography
+                    minWidth="110px"
+                    mt="5px"
+                    pr="10px"
+                    textAlign="end"
+                    fontWeight="bold"
+                  >
+                    Table
+                  </Typography>
+                  <QueryResponseForm
+                    tables={tableOptions}
+                    form={form}
+                    control={control}
+                    setSearch={setSearch}
+                  />
+                </Box>
+              </TabPanel>
+            </Tabs>
           </Box>
         ) : (
           ""

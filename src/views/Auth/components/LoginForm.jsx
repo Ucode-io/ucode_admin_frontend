@@ -1,35 +1,35 @@
-import { AccountCircle, Lock } from "@mui/icons-material";
-import { Button, Dialog, InputAdornment } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { Box } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { connect, useDispatch } from "react-redux";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {AccountCircle, Lock} from "@mui/icons-material";
+import {Button, Dialog, InputAdornment} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {Box} from "@mui/material";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {connect, useDispatch} from "react-redux";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
-import { firebaseCloudMessaging } from "../../../firebase/config";
+import {firebaseCloudMessaging} from "../../../firebase/config";
 import authService from "../../../services/auth/authService";
 import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
 import connectionServiceV2 from "../../../services/auth/connectionService";
 import environmentService from "../../../services/environmentService";
-import { store } from "../../../store";
-import { showAlert } from "../../../store/alert/alert.thunk";
-import { loginAction } from "../../../store/auth/auth.thunk";
-import { companyActions } from "../../../store/company/company.slice";
+import {store} from "../../../store";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {loginAction} from "../../../store/auth/auth.thunk";
+import {companyActions} from "../../../store/company/company.slice";
 import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
-import { useRoleListQuery } from "../../../services/roleServiceV2";
+import {useRoleListQuery} from "../../../services/roleServiceV2";
 import RegisterFormPage from "./RegisterFormPage";
 import companyService from "../../../services/companyService";
 
-const LoginForm = ({ setIndex, index, setFormType, formType }) => {
-  const { t } = useTranslation();
+const LoginForm = ({setIndex, index, setFormType, formType}) => {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
@@ -38,8 +38,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const [isUserId, setIsUserId] = useState();
   const [selectedCollection, setSelectedCollection] = useState();
 
-  const { control, handleSubmit, watch, setValue, reset, getValues } =
-    useForm();
+  const {control, handleSubmit, watch, setValue, reset, getValues} = useForm();
 
   const [open, setOpen] = useState(false);
 
@@ -70,12 +69,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
 
-  const { data: computedConnections = [], isLoading } = useQuery(
+  const {data: computedConnections = [], isLoading} = useQuery(
     [
       "GET_CONNECTION_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-      { "user-id": isUserId },
+      {"project-id": selectedProjectID},
+      {"environment-id": selectedEnvID},
+      {"user-id": isUserId},
     ],
     () => {
       return connectionServiceV2.getList(
@@ -84,7 +83,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           client_type_id: selectedClientTypeID,
           "user-id": isUserId,
         },
-        { "environment-id": selectedEnvID }
+        {"environment-id": selectedEnvID}
       );
     },
     {
@@ -193,7 +192,6 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   }, [getFormValue]);
 
   const computeConnections = (connections) => {
-    console.log("connnection", connections);
     if (
       (Array.isArray(connections) && connections?.length === 0) ||
       connections === undefined
@@ -226,6 +224,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   const onSubmitDialog = (values) => {
+    if (localStorage.getItem("flag") !== null) {
+      console.log("Flag exists in localStorage");
+    } else {
+      localStorage.clear();
+      localStorage.setItem("flag", "true");
+    }
     setLoading(true);
     dispatch(loginAction(values));
   };
@@ -341,7 +345,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
           <Tabs direction={"ltr"}>
             {formType === "LOGIN" ? (
-              <div style={{ padding: "0 20px" }}>
+              <div style={{padding: "0 20px"}}>
                 <TabList>
                   <Tab>{t("login")}</Tab>
                   <Tab>{t("phone")}</Tab>
@@ -350,7 +354,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
 
                 <div
                   className={classes.formArea}
-                  style={{ marginTop: "10px", height: `calc(100vh - 400px)` }}
+                  style={{marginTop: "10px", height: `calc(100vh - 400px)`}}
                 >
                   <TabPanel>
                     <div className={classes.formRow}>
@@ -366,7 +370,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <AccountCircle style={{ fontSize: "30px" }} />
+                              <AccountCircle style={{fontSize: "30px"}} />
                             </InputAdornment>
                           ),
                         }}
@@ -385,7 +389,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                         InputProps={{
                           startAdornment: (
                             <InputAdornment position="start">
-                              <Lock style={{ fontSize: "30px" }} />
+                              <Lock style={{fontSize: "30px"}} />
                             </InputAdornment>
                           ),
                         }}
@@ -531,7 +535,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           </div>
           <div className={classes.footerContent}>
             <Button
-              sx={{ marginRight: "10px" }}
+              sx={{marginRight: "10px"}}
               variant="contained"
               color="error"
               onClick={handleClose}
@@ -554,7 +558,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       {formType === "RESET_PASSWORD" && (
         <SecondaryButton
           size="large"
-          style={{ marginTop: "20px" }}
+          style={{marginTop: "20px"}}
           type="button"
           onClick={() => {
             formType === "RESET_PASSWORD"

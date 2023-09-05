@@ -1,8 +1,8 @@
-import { Lock } from "@mui/icons-material";
-import { InputAdornment, Tooltip } from "@mui/material";
-import { Parser } from "hot-formula-parser";
-import { useMemo } from "react";
-import { useSelector } from "react-redux";
+import {Lock} from "@mui/icons-material";
+import {InputAdornment, Tooltip} from "@mui/material";
+import {Parser} from "hot-formula-parser";
+import {useMemo} from "react";
+import {useSelector} from "react-redux";
 import FRow from "../FormElements/FRow";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
@@ -30,7 +30,7 @@ import CodabarBarcode from "./CodabarBarcode";
 import DynamicRelationFormElement from "./DynamicRelationFormElement";
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import RelationFormElement from "./RelationFormElement";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const parser = new Parser();
 
@@ -45,11 +45,12 @@ const FormElementGenerator = ({
   checkPermission = true,
   isMultiLanguage,
   relatedTable,
+  valueGenerator,
   ...props
 }) => {
   const isUserId = useSelector((state) => state?.auth?.userId);
   const tables = useSelector((state) => state?.auth?.tables);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const checkRequiredField = !checkRequired ? checkRequired : field?.required;
   let relationTableSlug = "";
   let objectIdFromJWT = "";
@@ -115,7 +116,7 @@ const FormElementGenerator = ({
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
 
-    const { error, result } = parser.parse(defaultValue);
+    const {error, result} = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [
     field.attributes,
@@ -142,7 +143,6 @@ const FormElementGenerator = ({
   // } else {
   //   field.required = false
   // }
-  console.log("field", field);
 
   if (field?.id?.includes("#")) {
     if (field?.relation_type === "Many2Many") {
@@ -189,7 +189,24 @@ const FormElementGenerator = ({
 
   switch (field.type) {
     case "SCAN_BARCODE":
-      return (
+      return valueGenerator ? (
+        <InventoryBarCode
+          relatedTable={relatedTable}
+          control={control}
+          name={computedSlug}
+          fullWidth
+          setFormValue={setFormValue}
+          required={field.required}
+          placeholder={field.attributes?.placeholder}
+          defaultValue={defaultValue}
+          field={field}
+          disabled={isDisabled}
+          checkRequiredField={checkRequiredField}
+          key={computedSlug}
+          valueGenerator={valueGenerator}
+          {...props}
+        />
+      ) : (
         <FRow label={label} required={field.required}>
           <InventoryBarCode
             relatedTable={relatedTable}
@@ -204,6 +221,7 @@ const FormElementGenerator = ({
             disabled={isDisabled}
             checkRequiredField={checkRequiredField}
             key={computedSlug}
+            valueGenerator={valueGenerator}
             {...props}
           />
         </FRow>
@@ -806,7 +824,7 @@ const FormElementGenerator = ({
               endAdornment: isDisabled && (
                 <Tooltip title="This field is disabled for this role!">
                   <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
+                    <Lock style={{fontSize: "20px"}} />
                   </InputAdornment>
                 </Tooltip>
               ),

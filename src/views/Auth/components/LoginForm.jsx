@@ -1,45 +1,40 @@
-import { AccountCircle, Lock } from "@mui/icons-material";
-import { Button, Dialog, InputAdornment } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { Box } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
-import { connect, useDispatch } from "react-redux";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {AccountCircle, Lock} from "@mui/icons-material";
+import {Button, Dialog, InputAdornment} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useTranslation} from "react-i18next";
+import {useQuery} from "react-query";
+import {useDispatch} from "react-redux";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
 import HFTextField from "../../../components/FormElements/HFTextField";
-import { firebaseCloudMessaging } from "../../../firebase/config";
+import {firebaseCloudMessaging} from "../../../firebase/config";
 import authService from "../../../services/auth/authService";
-import clientTypeServiceV2 from "../../../services/auth/clientTypeServiceV2";
 import connectionServiceV2 from "../../../services/auth/connectionService";
-import environmentService from "../../../services/environmentService";
-import { store } from "../../../store";
-import { showAlert } from "../../../store/alert/alert.thunk";
-import { loginAction } from "../../../store/auth/auth.thunk";
-import { companyActions } from "../../../store/company/company.slice";
+import {loginAction} from "../../../store/auth/auth.thunk";
 import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
-import { useRoleListQuery } from "../../../services/roleServiceV2";
 import RegisterFormPage from "./RegisterFormPage";
 import companyService from "../../../services/companyService";
 
-const LoginForm = ({ setIndex, index, setFormType, formType }) => {
-  const { t } = useTranslation();
+const LoginForm = ({setIndex, index, setFormType, formType}) => {
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [oneLogin, setOneLogin] = useState(false);
   const [connectionCheck, setConnectionCheck] = useState(false);
   const [isUserId, setIsUserId] = useState();
   const [selectedCollection, setSelectedCollection] = useState();
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [codeAppValue, setCodeAppValue] = useState({});
+  const [type, setType] = useState("");
+  console.log("type", type);
 
-  const { control, handleSubmit, watch, setValue, reset, getValues } =
-    useForm();
+  const {control, handleSubmit, watch, setValue, reset, getValues} = useForm();
 
   const [open, setOpen] = useState(false);
 
@@ -70,12 +65,12 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
 
-  const { data: computedConnections = [] } = useQuery(
+  const {data: computedConnections = [], isLoading} = useQuery(
     [
       "GET_CONNECTION_LIST",
-      { "project-id": selectedProjectID },
-      { "environment-id": selectedEnvID },
-      { "user-id": isUserId },
+      {"project-id": selectedProjectID},
+      {"environment-id": selectedEnvID},
+      {"user-id": isUserId},
     ],
     () => {
       return connectionServiceV2.getList(
@@ -84,7 +79,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           client_type_id: selectedClientTypeID,
           "user-id": isUserId,
         },
-        { "environment-id": selectedEnvID }
+        {"environment-id": selectedEnvID}
       );
     },
     {
@@ -92,6 +87,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       select: (res) => res.data.response ?? [],
       onSuccess: (res) => {
         computeConnections(res);
+        setConnectionCheck(true);
       },
     }
   );
@@ -157,30 +153,71 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   const onSubmit = (values) => {
-    getCompany(values);
+    if (selectedTabIndex === 0) {
+      getCompany(values);
+    }
+    if (selectedTabIndex === 1) {
+      if (codeAppValue?.sms_id) {
+        getCompany({
+          ...values,
+          sms_id: codeAppValue?.sms_id,
+          type: "phone",
+        });
+      } else {
+        getSendCodeApp({...values, type: "PHONE"});
+      }
+    }
+    if (selectedTabIndex === 2) {
+      if (codeAppValue?.sms_id) {
+        getCompany({
+          ...values,
+          sms_id: codeAppValue?.sms_id,
+          type: "email",
+        });
+      } else {
+        getSendCodeApp({...values, type: "EMAIL"});
+      }
+    }
   };
 
   const getCompany = (values) => {
+    setType(values?.type);
+    const data = {
+      password: values?.password ? values?.password : null,
+      username: values?.username ? values?.password : null,
+      [values?.type]: values?.recipient,
+      ...values,
+    };
     companyService
-      .getCompanyList({
-        password: values?.password,
-        username: values?.username,
-      })
+      .getCompanyList(data)
       .then((res) => {
         setIsUserId(res?.user_id);
         setCompanies(res?.companies);
         computeCompanyElement(res?.companies);
         setLoading(true);
-        setConnectionCheck(true);
 
         if (index === 1) register(values);
-        setOneLogin(true);
       })
       .catch((err) => {
-        setOneLogin(false);
         setLoading(false);
       });
   };
+
+  const getSendCodeApp = (values) => {
+    authService
+      .sendCodeApp({
+        recipient: values?.recipient,
+        text: "",
+        type: values?.type,
+      })
+      .then((res) => {
+        setCodeAppValue(res);
+      })
+      .catch((err) => {
+        console.log("eerrrrrrr", err);
+      });
+  };
+
   const checkConnections = useMemo(() => {
     if (getFormValue?.tables) {
       const tableKeys = Object.keys(getFormValue.tables);
@@ -193,6 +230,10 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   }, [getFormValue]);
 
   const computeConnections = (connections) => {
+    const data = {
+      ...getFormValue,
+      sms_id: codeAppValue?.sms_id,
+    };
     if (
       (Array.isArray(connections) && connections?.length === 0) ||
       connections === undefined
@@ -204,7 +245,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         getFormValue?.project_id &&
         getFormValue?.environment_id
       ) {
-        onSubmitDialog(getFormValue);
+        onSubmitDialog(data);
       } else if (
         !getFormValue?.username ||
         !getFormValue?.password ||
@@ -216,8 +257,8 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         handleClickOpen();
       }
     } else if (Array.isArray(connections) && connections?.length > 1) {
-      if (getFormValue?.tables?.length) {
-        onSubmitDialog(getFormValue);
+      if (checkConnections) {
+        onSubmitDialog(data);
       } else {
         handleClickOpen();
       }
@@ -225,28 +266,15 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   const onSubmitDialog = (values) => {
+    const data = {
+      ...values,
+      sms_id: codeAppValue?.sms_id,
+      [type]: values?.recipient,
+      type: type,
+    };
     setLoading(true);
-    dispatch(loginAction(values));
+    dispatch(loginAction(data));
   };
-  useEffect(() => {
-    getFcmToken();
-    reset();
-  }, [index]);
-
-  useEffect(() => {
-    if (computedConnections?.length > 1) {
-      computedConnections.forEach((connection, index) => {
-        if (connection.options.length === 1) {
-          setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
-          setSelectedCollection(connection.options[0]?.value);
-          setValue(
-            `tables[${index}].table_slug`,
-            connection?.options?.[0]?.[connection?.view_slug]
-          );
-        }
-      });
-    }
-  }, [computedConnections]);
 
   const computeCompanyElement = (company) => {
     const validLength = company?.length === 1;
@@ -289,6 +317,26 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   };
 
   useEffect(() => {
+    getFcmToken();
+    reset();
+  }, [index]);
+
+  useEffect(() => {
+    if (computedConnections?.length > 1) {
+      computedConnections.forEach((connection, index) => {
+        if (connection.options.length === 1) {
+          setValue(`tables[${index}].object_id`, connection?.options[0]?.guid);
+          setSelectedCollection(connection.options[0]?.value);
+          setValue(
+            `tables[${index}].table_slug`,
+            connection?.options?.[0]?.[connection?.view_slug]
+          );
+        }
+      });
+    }
+  }, [computedConnections]);
+
+  useEffect(() => {
     if (computedCompanies?.length === 1) {
       setValue("company_id", computedCompanies?.[0]?.value);
     }
@@ -309,10 +357,27 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
   ]);
 
   useEffect(() => {
-    if (connectionCheck) {
+    const shouldOpen =
+      computedCompanies?.length > 1 ||
+      computedProjects?.length > 1 ||
+      computedEnvironments?.length > 1 ||
+      computedClientTypes?.length > 1;
+
+    if (shouldOpen) {
+      handleClickOpen();
+    }
+  }, [
+    computedCompanies,
+    computedProjects,
+    computedEnvironments,
+    computedClientTypes,
+  ]);
+
+  useEffect(() => {
+    if (connectionCheck && getFormValue?.tables) {
       computeConnections(getFormValue?.tables);
     }
-  }, [connectionCheck]);
+  }, [connectionCheck, getFormValue?.tables]);
 
   return (
     <>
@@ -320,9 +385,13 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
         <RecoverPassword setFormType={setFormType} />
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-          <Tabs direction={"ltr"}>
+          <Tabs
+            selected={selectedTabIndex}
+            direction={"ltr"}
+            onSelect={(index) => setSelectedTabIndex(index)}
+          >
             {formType === "LOGIN" ? (
-              <div style={{ padding: "0 20px" }}>
+              <div style={{padding: "0 20px"}}>
                 <TabList>
                   <Tab>{t("login")}</Tab>
                   <Tab>{t("phone")}</Tab>
@@ -331,47 +400,49 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
 
                 <div
                   className={classes.formArea}
-                  style={{ marginTop: "10px", height: `calc(100vh - 400px)` }}
+                  style={{marginTop: "10px", height: `calc(100vh - 400px)`}}
                 >
                   <TabPanel>
-                    <div className={classes.formRow}>
-                      <p className={classes.label}>{t("login")}</p>
-                      <HFTextField
-                        required
-                        control={control}
-                        name="username"
-                        size="large"
-                        fullWidth
-                        placeholder={t("enter.login")}
-                        autoFocus
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <AccountCircle style={{ fontSize: "30px" }} />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </div>
-                    <div className={classes.formRow}>
-                      <p className={classes.label}>{t("password")}</p>
-                      <HFTextField
-                        required
-                        control={control}
-                        name="password"
-                        type="password"
-                        size="large"
-                        fullWidth
-                        placeholder={t("enter.password")}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Lock style={{ fontSize: "30px" }} />
-                            </InputAdornment>
-                          ),
-                        }}
-                      />
-                    </div>
+                    <>
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("login")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="username"
+                          size="large"
+                          fullWidth
+                          placeholder={t("enter.login")}
+                          autoFocus
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <AccountCircle style={{fontSize: "30px"}} />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </div>
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("password")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="password"
+                          type="password"
+                          size="large"
+                          fullWidth
+                          placeholder={t("enter.password")}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Lock style={{fontSize: "30px"}} />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </div>
+                    </>
 
                     {
                       <Button
@@ -386,6 +457,78 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
                         Forgot password?
                       </Button>
                     }
+                  </TabPanel>
+                  <TabPanel>
+                    <div className={classes.formRow}>
+                      <p className={classes.label}>{t("Phone")}</p>
+                      <HFTextField
+                        required
+                        control={control}
+                        name="recipient"
+                        size="large"
+                        fullWidth
+                        placeholder={t("enter.phone")}
+                        autoFocus
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <AccountCircle style={{fontSize: "30px"}} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </div>
+
+                    {codeAppValue?.sms_id && (
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("Otp")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="otp"
+                          type="text"
+                          size="large"
+                          fullWidth
+                          placeholder={"Otp..."}
+                        />
+                      </div>
+                    )}
+                  </TabPanel>
+                  <TabPanel>
+                    <div className={classes.formRow}>
+                      <p className={classes.label}>{t("Email")}</p>
+                      <HFTextField
+                        required
+                        control={control}
+                        name="username"
+                        size="large"
+                        fullWidth
+                        placeholder={t("enter.email")}
+                        autoFocus
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <AccountCircle style={{fontSize: "30px"}} />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </div>
+
+                    {codeAppValue?.sms_id && (
+                      <div className={classes.formRow}>
+                        <p className={classes.label}>{t("Otp")}</p>
+                        <HFTextField
+                          required
+                          control={control}
+                          name="otp"
+                          type="text"
+                          size="large"
+                          fullWidth
+                          placeholder={"Otp..."}
+                        />
+                      </div>
+                    )}
                   </TabPanel>
                 </div>
               </div>
@@ -512,7 +655,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
           </div>
           <div className={classes.footerContent}>
             <Button
-              sx={{ marginRight: "10px" }}
+              sx={{marginRight: "10px"}}
               variant="contained"
               color="error"
               onClick={handleClose}
@@ -535,7 +678,7 @@ const LoginForm = ({ setIndex, index, setFormType, formType }) => {
       {formType === "RESET_PASSWORD" && (
         <SecondaryButton
           size="large"
-          style={{ marginTop: "20px" }}
+          style={{marginTop: "20px"}}
           type="button"
           onClick={() => {
             formType === "RESET_PASSWORD"

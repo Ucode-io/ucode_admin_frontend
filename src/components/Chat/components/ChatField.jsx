@@ -31,7 +31,6 @@ const ChatField = ({ messages, setMessages, onRequest, setOnRequest }) => {
 
   const uploadFile = (e) => {
     const file = e.target.files[0];
-    console.log("file", file);
     const data = new FormData();
     data.append("file", file);
     fileService

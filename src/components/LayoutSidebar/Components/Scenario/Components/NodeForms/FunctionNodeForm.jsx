@@ -55,8 +55,6 @@ const FunctionNodeForm = ({ open, closeDrawer, data }) => {
     });
     closeDrawer();
   };
-  console.log("watch", watch());
-  console.log("fields", fields);
 
   return (
     <DrawerCard

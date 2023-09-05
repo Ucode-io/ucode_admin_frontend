@@ -227,12 +227,6 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
   const onSubmitDialog = (values) => {
     setLoading(true);
     dispatch(loginAction(values));
-    if (localStorage.getItem("flag") !== null) {
-      console.log("Flag exists in localStorage");
-    } else {
-      localStorage.clear();
-      localStorage.setItem("flag", "true");
-    }
   };
 
   const computeCompanyElement = (company) => {

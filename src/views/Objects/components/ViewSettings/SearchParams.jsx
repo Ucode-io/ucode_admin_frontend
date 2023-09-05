@@ -61,6 +61,8 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
           display: "flex",
           alignItems: "center",
           justifyContent: "space-around",
+          padding: "10px",
+          gap: "10px",
         }}
       >
         <Button variant="outlined" color="success" onClick={selectAll}>

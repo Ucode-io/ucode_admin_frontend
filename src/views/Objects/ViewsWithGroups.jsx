@@ -291,7 +291,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
       <div className={style.extraNavbar}>
         <div className={style.extraWrapper}>
           <div className={style.search}>
-            <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)}/>
+            <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)} />
             <button
               className={style.moreButton}
               onClick={handleClickSearch}
@@ -489,21 +489,22 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
       <Tabs direction={"ltr"} defaultIndex={0}>
         <TableCard type="withoutPadding">
-          <div className={style.tableCardHeader}>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <div className="title" style={{ marginRight: "20px" }}>
-                <h3>{view.table_label}</h3>
+          {tabs?.length > 0 && (
+            <div className={style.tableCardHeader}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div className="title" style={{ marginRight: "20px" }}>
+                  <h3>{view.table_label}</h3>
+                </div>
+                <TabList style={{ border: "none" }}>
+                  {tabs?.map((tab) => (
+                    <Tab key={tab.value} selectedClassName={style.activeTab} className={`${style.disableTab} react-tabs__tab`}>
+                      {tab.label}
+                    </Tab>
+                  ))}
+                </TabList>
               </div>
-              <TabList style={{ border: "none" }}>
-                {tabs?.map((tab) => (
-                  <Tab key={tab.value} selectedClassName={style.activeTab} className={`${style.disableTab} react-tabs__tab`}>
-                    {tab.label}
-                  </Tab>
-                ))}
-              </TabList>
-            </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              {/* <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="write">
                 <Button variant="outlined" onClick={navigateToCreatePage}>
                   <AddIcon style={{ color: "#007AFF" }} />
@@ -549,8 +550,9 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                 <MultipleInsertButton view={view} fieldsMap={fieldsMap} tableSlug={tableSlug} />
                 <CustomActionsButton selectedObjects={selectedObjects} setSelectedObjects={setSelectedObjects} tableSlug={tableSlug} />
               </PermissionWrapperV2>
+            </div> */}
             </div>
-          </div>
+          )}
           {loader ? (
             <div className={style.loader}>
               <CircularProgress />

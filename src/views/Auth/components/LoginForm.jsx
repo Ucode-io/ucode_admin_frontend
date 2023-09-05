@@ -1,10 +1,11 @@
 import {AccountCircle, Lock} from "@mui/icons-material";
 import {Button, Dialog, InputAdornment} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
+import {Box} from "@mui/material";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQuery} from "react-query";
-import {useDispatch} from "react-redux";
+import {connect, useDispatch} from "react-redux";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../components/Buttons/PrimaryButton";
 import HFSelect from "../../../components/FormElements/HFSelect";
@@ -12,12 +13,17 @@ import HFTextField from "../../../components/FormElements/HFTextField";
 import {firebaseCloudMessaging} from "../../../firebase/config";
 import authService from "../../../services/auth/authService";
 import connectionServiceV2 from "../../../services/auth/connectionService";
+import environmentService from "../../../services/environmentService";
+import {store} from "../../../store";
+import {showAlert} from "../../../store/alert/alert.thunk";
 import {loginAction} from "../../../store/auth/auth.thunk";
+import {companyActions} from "../../../store/company/company.slice";
 import listToOptions from "../../../utils/listToOptions";
 import classes from "../style.module.scss";
 import DynamicFields from "./DynamicFields";
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
 import RecoverPassword from "./RecoverPassword";
+import {useRoleListQuery} from "../../../services/roleServiceV2";
 import RegisterFormPage from "./RegisterFormPage";
 import companyService from "../../../services/companyService";
 import HFNumberField from "../../../components/FormElements/HFNumberField";
@@ -274,6 +280,12 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
       [type]: values?.recipient,
       type: type,
     };
+    if (localStorage.getItem("flag") !== null) {
+      console.log("Flag exists in localStorage");
+    } else {
+      localStorage.clear();
+      localStorage.setItem("flag", "true");
+    }
     setLoading(true);
     dispatch(loginAction(data));
   };

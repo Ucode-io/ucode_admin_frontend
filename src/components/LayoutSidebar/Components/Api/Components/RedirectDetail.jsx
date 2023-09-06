@@ -1,15 +1,16 @@
-import { Box, Typography } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import MuiAccordion from "@mui/material/Accordion";
-import MuiAccordionSummary from "@mui/material/AccordionSummary";
-import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import { useState } from "react";
-import styles from "../style.module.scss";
-import FormCard from "../../../../FormCard";
+import { Box, Typography } from "@mui/material";
+import MuiAccordion from "@mui/material/Accordion";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import MuiAccordionSummary from "@mui/material/AccordionSummary";
+import { styled } from "@mui/material/styles";
+import { useEffect, useState } from "react";
+import {
+  useRedirectGetByIdQuery,
+  useRedirectListQuery,
+} from "../../../../../services/redirectService";
 import FRow from "../../../../FormElements/FRow";
 import HFTextField from "../../../../FormElements/HFTextField";
-import { useForm } from "react-hook-form";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -50,83 +51,108 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   boxShadow: "none",
 }));
 
-const RedirectDetail = ({ apiControl, watch }) => {
+const RedirectDetail = ({
+  watch,
+  mainForm,
+  setValue,
+  redirectId,
+  setComputedData,
+}) => {
   const [expanded, setExpanded] = useState("panel1");
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
-  console.log("watch", watch());
-
-  const mainForm = useForm({
-    defaultValues: {
-      defaultFrom: watch("base_url"),
-      from: watch("additional_url"),
-      defaultTo: "/",
+  const { isLoading: redirectLoading } = useRedirectGetByIdQuery({
+    redirectId: redirectId,
+    queryParams: {
+      enabled: Boolean(redirectId),
+      onSuccess: (res) => {
+        mainForm.reset({
+          ...res,
+          from: res.from.slice(watch("attributes.base_url").length + 1),
+          defaultFrom: watch("attributes.base_url"),
+          to: res.to.slice(1),
+          defaultTo: "/",
+        });
+      },
     },
   });
-  console.log("object", `${watch("base_url")} ${watch("additional_url")}`);
+
+  const { isLoading: redirectListLoading } = useRedirectListQuery({
+    queryParams: {
+      onSuccess: (res) => setComputedData(res?.redirect_urls?.length),
+    },
+  });
+
+  useEffect(() => {
+    mainForm.setValue("from", watch("additional_url"));
+    mainForm.setValue("defaultFrom", watch("attributes.base_url"));
+  }, [watch("additional_url"), watch("attributes.base_url")]);
+
   return (
-    <Box>
-      <Accordion
-        expanded={expanded === "panel1"}
-        onChange={handleChange("panel1")}
-      >
-        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-          <Typography>Redirect</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <FRow
-            label={"From"}
-            componentClassName="flex gap-2 align-center"
-            required
-          >
-            <HFTextField
-              disabledHelperText
-              name="defaultFrom"
-              control={mainForm.control}
-              fullWidth
+    <form>
+      <Box>
+        <Accordion
+          expanded={expanded === "panel1"}
+          onChange={handleChange("panel1")}
+        >
+          <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+            <Typography>Redirect</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FRow
+              label={"From"}
+              componentClassName="flex gap-2 align-center"
               required
-              disabled={true}
-              style={{
-                width: "70%",
-              }}
-            />
-            <HFTextField
-              disabledHelperText
-              name="from"
-              control={mainForm.control}
-              fullWidth
+            >
+              <HFTextField
+                disabledHelperText
+                name="defaultFrom"
+                control={mainForm.control}
+                fullWidth
+                required
+                disabled={true}
+                style={{
+                  width: "70%",
+                }}
+              />
+              <HFTextField
+                disabledHelperText
+                name="from"
+                control={mainForm.control}
+                fullWidth
+                required
+              />
+            </FRow>
+            <FRow
+              label={"To"}
+              componentClassName="flex gap-2 align-center"
               required
-            />
-          </FRow>
-          <FRow
-            label={"To"}
-            componentClassName="flex gap-2 align-center"
-            required
-          >
-            <HFTextField
-              disabledHelperText
-              name="defaultTo"
-              control={mainForm.control}
-              fullWidth
-              required
-              disabled={true}
-              style={{
-                width: "40%",
-              }}
-            />
-            <HFTextField
-              disabledHelperText
-              name="to"
-              control={mainForm.control}
-              fullWidth
-              required
-            />
-          </FRow>
-        </AccordionDetails>
-      </Accordion>
-    </Box>
+            >
+              <HFTextField
+                disabledHelperText
+                name="defaultTo"
+                control={mainForm.control}
+                fullWidth
+                required
+                disabled={true}
+                style={{
+                  width: "40%",
+                }}
+              />
+              <HFTextField
+                disabledHelperText
+                name="to"
+                control={mainForm.control}
+                fullWidth
+                required
+              />
+            </FRow>
+          </AccordionDetails>
+        </Accordion>
+      </Box>
+    </form>
   );
 };
 

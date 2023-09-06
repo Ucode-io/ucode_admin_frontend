@@ -191,8 +191,6 @@ const TableView = ({
     return resultObject;
   }, [sortedDatas]);
 
-  console.log("computedSortColumns", computedSortColumns);
-
   const {
     data: { tableData, pageCount, fiedlsarray, fieldView } = {
       tableData: [],

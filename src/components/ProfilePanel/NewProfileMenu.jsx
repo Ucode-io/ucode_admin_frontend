@@ -203,7 +203,7 @@ const NewProfilePanel = ({
   });
 
   const permissions = useSelector((state) => state.auth.globalPermissions);
-  const clientType = useSelector((state) => state.auth?.clientType?.name);
+  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
   const projectId = useSelector((state) => state.company.projectId);
   const {data: projectInfo = []} = useProjectGetByIdQuery({projectId});
@@ -304,7 +304,7 @@ const NewProfilePanel = ({
                 />
               ))}
 
-              {clientType === "DEFAULT_ADMIN" && (
+              {roleInfo === "DEFAULT ADMIN" && (
                 <p
                   className={styles.createbutton}
                   onClick={() => {

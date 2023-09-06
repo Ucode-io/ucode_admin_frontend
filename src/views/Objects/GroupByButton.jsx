@@ -7,6 +7,7 @@ import constructorObjectService from "../../services/constructorObjectService";
 import GroupsTab from "./components/ViewSettings/GroupsTab";
 import { useForm } from "react-hook-form";
 import constructorViewService from "../../services/constructorViewService";
+import { use } from "i18next";
 
 export default function GroupByButton({ selectedTabIndex }) {
   const form = useForm();
@@ -61,28 +62,28 @@ export default function GroupByButton({ selectedTabIndex }) {
     }
   }, [columns, relationColumns, type]);
 
-  const watch = form.watch();
-
   useEffect(() => {
     form.reset({
       group_fields: views?.[selectedTabIndex]?.group_fields ?? [],
     });
   }, [selectedTabIndex, views, form]);
 
+  const [updateLoading, setUpdateLoading] = useState(false);
+
   const updateView = () => {
+    setUpdateLoading(true);
     constructorViewService
       .update({
         ...views?.[selectedTabIndex],
-        group_fields: watch.group_fields,
+        group_fields: form.watch("group_fields"),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      })
+      .finally(() => {
+        setUpdateLoading(false);
       });
   };
-
-  useEffect(() => {
-    updateView();
-  }, [watch.group_fields, selectedTabIndex]);
 
   return (
     <div>
@@ -137,7 +138,11 @@ export default function GroupByButton({ selectedTabIndex }) {
           },
         }}
       >
-        {isLoading ? <CircularProgress /> : <GroupsTab columns={computedColumns} selectedView={views?.[selectedTabIndex]} form={form} />}
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <GroupsTab columns={computedColumns} isLoading={isLoading} updateLoading={updateLoading} updateView={updateView} selectedView={views?.[selectedTabIndex]} form={form} />
+        )}
       </Menu>
     </div>
   );

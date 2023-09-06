@@ -14,6 +14,13 @@
   }
 }
 
+.query_tabs {
+  .react-tabs__tab-list {
+    width: 718px;
+    margin-left: auto;
+  }
+}
+
 .query_select {
   &:nth-child(2)>div {
     padding: 0;

@@ -1,12 +1,19 @@
-import { Box, Switch, Typography } from "@mui/material";
+import { Box, Button, Switch, Typography } from "@mui/material";
 import { useFieldArray } from "react-hook-form";
 import { useTableByIdQuery } from "../../../../../services/constructorTableService";
-import { useFieldsListQuery } from "../../../../../services/fieldService";
+import fieldService, {
+  useFieldsListQuery,
+} from "../../../../../services/fieldService";
 import HFAutocomplete from "../../../../FormElements/HFAutocomplete";
 import InputWithPopUp from "./InputWithPopUp";
 import HFSelect from "../../../../FormElements/HFSelect";
 import styles from "../style.module.scss";
 import { query_types } from "../mock/ApiEndpoints";
+import { useRelationsListQuery } from "../../../../../services/relationService";
+import { useMemo } from "react";
+import RelationFields from "./RelationFields";
+import RectangleIconButton from "../../../../Buttons/RectangleIconButton";
+import { Delete } from "@mui/icons-material";
 
 const QueryRequstForm = ({
   form,
@@ -19,6 +26,15 @@ const QueryRequstForm = ({
   const { fields } = useFieldArray({
     control,
     name: "body.query_mapping.request_map.field_match",
+  });
+
+  const {
+    fields: relationFields,
+    append: relationAppend,
+    remove: relationRemove,
+  } = useFieldArray({
+    control,
+    name: "body.query_mapping.request_map.relations",
   });
   const tableId = form.watch("body.query_mapping.request_map.table");
   const { isLoading } = useTableByIdQuery({
@@ -47,6 +63,50 @@ const QueryRequstForm = ({
       },
     },
   });
+
+  const { data: relationsData, isLoading: relationsLoading } =
+    useRelationsListQuery({
+      params: {
+        table_slug: form.watch("body.query_mapping.request_map.table_slug"),
+      },
+      queryParams: {
+        enabled: Boolean(
+          form.watch("body.query_mapping.request_map.table_slug")
+        ),
+      },
+    });
+
+  const filteredData = useMemo(() => {
+    return relationsData?.relations?.filter(
+      (item) =>
+        item.type === "Many2One" &&
+        item.table_to.slug ===
+          form.watch("body.query_mapping.request_map.table_slug")
+    );
+  }, [relationsData]);
+
+  const tableOptions = useMemo(() => {
+    return filteredData?.map((item, index) => ({
+      label: item.table_from?.label,
+      value: item.table_from.id,
+      slug: item.table_from.slug,
+    }));
+  }, [filteredData]);
+
+  const getRelationField = (val, index) => {
+    fieldService
+      .getList({
+        table_id: val,
+      })
+      .then((res) => {
+        form.setValue(
+          `body.query_mapping.request_map.relations.${index}.field_match`,
+          res?.fields?.map((item) => {
+            return { key: item?.slug, value: "", field_type: item.type };
+          })
+        );
+      });
+  };
 
   return (
     <>
@@ -155,7 +215,7 @@ const QueryRequstForm = ({
         <Box display="flex" gap="20px" width="100%">
           <Box minWidth="100px">
             <Switch
-              checked={form.watch("body.query_mapping.is_relation")}
+              checked={form.watch("body.query_mapping.request_map.is_relation")}
               onChange={(e) => {
                 form.setValue(
                   "body.query_mapping.request_map.is_relation",
@@ -166,6 +226,79 @@ const QueryRequstForm = ({
           </Box>
         </Box>
       </Box>
+
+      {form.watch("body.query_mapping.request_map.is_relation") && (
+        <Box mt={2} mb={2}>
+          {relationFields?.map((item, index) => (
+            <>
+              <Box display="flex" alignItems="flex-start">
+                <Typography
+                  minWidth="110px"
+                  mt="5px"
+                  pr="10px"
+                  textAlign="end"
+                  fontWeight="bold"
+                >
+                  Relation
+                </Typography>
+                <Box width="100%">
+                  <Box>
+                    <Box mt={2} mb={2} display={"flex"} columnGap={"8px"}>
+                      <HFAutocomplete
+                        name={`body.query_mapping.request_map.relations.${index}.relation_id`}
+                        control={control}
+                        placeholder="Type Error id"
+                        fullWidth
+                        options={tableOptions}
+                        onChange={(val) => {
+                          getRelationField(val, index);
+                          if (!val) {
+                            form.setValue(
+                              `body.query_mapping.request_map.relations.${index}.field_match`,
+                              []
+                            );
+                          }
+                        }}
+                        customChange={(e) => {
+                          form.setValue(
+                            `body.query_mapping.request_map.relations.${index}.relation_slug`,
+                            e.slug
+                          );
+                        }}
+                      />
+
+                      <RectangleIconButton
+                        type="delete"
+                        color="error"
+                        onClick={() => relationRemove(index)}
+                      >
+                        <Delete color="error" />
+                      </RectangleIconButton>
+                    </Box>
+                    <RelationFields
+                      form={form}
+                      control={control}
+                      index={index}
+                    />
+                  </Box>
+                </Box>
+              </Box>
+            </>
+          ))}
+        </Box>
+      )}
+
+      {form.watch("body.query_mapping.request_map.is_relation") && (
+        <Box width={"87%"} marginLeft={"auto"}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={() => relationAppend({})}
+          >
+            Add relation
+          </Button>
+        </Box>
+      )}
     </>
   );
 };

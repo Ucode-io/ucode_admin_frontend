@@ -491,6 +491,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                 form.setValue("body.query_mapping.tab", e);
               }}
               selectedIndex={form.watch("body.query_mapping.tab") || 0}
+              className={styles.query_tabs}
             >
               <TabList>
                 <Tab>Request</Tab>
@@ -506,23 +507,12 @@ const QueryForRest = ({ control, form, responseQuery }) => {
                 />
               </TabPanel>
               <TabPanel>
-                <Box display="flex" alignItems="flex-start" mt={2}>
-                  <Typography
-                    minWidth="110px"
-                    mt="5px"
-                    pr="10px"
-                    textAlign="end"
-                    fontWeight="bold"
-                  >
-                    Table
-                  </Typography>
-                  <QueryResponseForm
-                    tables={tableOptions}
-                    form={form}
-                    control={control}
-                    setSearch={setSearch}
-                  />
-                </Box>
+                <QueryResponseForm
+                  tables={tableOptions}
+                  form={form}
+                  control={control}
+                  setSearch={setSearch}
+                />
               </TabPanel>
             </Tabs>
           </Box>

@@ -19,6 +19,7 @@ const HFAutocomplete = ({
   onFieldChange = () => {},
   rules = {},
   defaultValue = null,
+  customChange = () => {},
   ...props
 }) => {
   const computedOptions = useMemo(() => {
@@ -55,6 +56,7 @@ const HFAutocomplete = ({
               onChange={(val) => {
                 onChange(val?.value);
                 onFormChange(val?.value);
+                customChange(val);
               }}
               onFieldChange={onFieldChange}
               options={computedOptions}

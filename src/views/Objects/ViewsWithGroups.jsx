@@ -36,12 +36,13 @@ import MultipleInsertButton from "./components/MultipleInsertForm";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
 import ColumnButton from "./ColumnButton";
-import SortButton from "./SortButton";
+import SortButton from "./ColumnVisible";
 import GroupByButton from "./GroupByButton";
 import FixColumnsTableView from "./components/FixColumnsTableView";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SearchParams from "./components/ViewSettings/SearchParams";
+import ColumnVisible from "./ColumnVisible";
 
 const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
   const { t } = useTranslation();
@@ -346,7 +347,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
             <Divider orientation="vertical" flexItem />
 
-            <SortButton onClick={clickSort} />
+            <ColumnVisible selectedTabIndex={selectedTabIndex} />
 
             <Divider orientation="vertical" flexItem />
 

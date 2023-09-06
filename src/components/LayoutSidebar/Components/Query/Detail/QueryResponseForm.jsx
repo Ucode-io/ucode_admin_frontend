@@ -9,6 +9,8 @@ import InputWithPopUp from "./InputWithPopUp";
 import { useRelationsListQuery } from "../../../../../services/relationService";
 import { useMemo } from "react";
 import ResponseRelationFields from "./ResponseRelationFields";
+import RectangleIconButton from "../../../../Buttons/RectangleIconButton";
+import { Delete } from "@mui/icons-material";
 
 const QueryResponseForm = ({
   form,
@@ -222,7 +224,7 @@ const QueryResponseForm = ({
                 </Typography>
                 <Box width="100%">
                   <Box>
-                    <Box mt={2} mb={2}>
+                    <Box mt={2} mb={2} display={"flex"} columnGap={"8px"}>
                       <HFAutocomplete
                         name={`body.query_mapping.response_map.relations.${index}.relation_id`}
                         control={control}
@@ -239,6 +241,13 @@ const QueryResponseForm = ({
                           );
                         }}
                       />
+                      <RectangleIconButton
+                        type="delete"
+                        color="error"
+                        onClick={() => relationRemove(index)}
+                      >
+                        <Delete color="error" />
+                      </RectangleIconButton>
                     </Box>
                     <ResponseRelationFields
                       form={form}
@@ -247,16 +256,6 @@ const QueryResponseForm = ({
                     />
                   </Box>
                 </Box>
-              </Box>
-              <Box width={"87%"} marginLeft={"auto"}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  onClick={() => relationRemove(index)}
-                  color="error"
-                >
-                  Remove relation
-                </Button>
               </Box>
             </>
           ))}

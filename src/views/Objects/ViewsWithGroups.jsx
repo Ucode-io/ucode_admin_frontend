@@ -1,7 +1,7 @@
-import { Clear, Description, Edit, MoreVertOutlined, Save } from "@mui/icons-material";
-import AddIcon from "@mui/icons-material/Add";
+import { Description, MoreVertOutlined } from "@mui/icons-material";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
 import HexagonIcon from "@mui/icons-material/Hexagon";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import { Button, CircularProgress, Divider, Menu } from "@mui/material";
 import { endOfMonth, startOfMonth } from "date-fns";
@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { CheckIcon } from "../../assets/icons/icon";
-import RectangleIconButton from "../../components/Buttons/RectangleIconButton";
 import CRangePickerNew from "../../components/DatePickers/CRangePickerNew";
 import FiltersBlock from "../../components/FiltersBlock";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
@@ -24,25 +23,20 @@ import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
+import ColumnVisible from "./ColumnVisible";
 import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView";
+import GroupByButton from "./GroupByButton";
 import LanguagesNavbar from "./LanguagesNavbar";
 import ShareModal from "./ShareModal/ShareModal";
 import TableView from "./TableView";
 import TreeView from "./TreeView";
-import CustomActionsButton from "./components/CustomActionsButton";
 import ExcelButtons from "./components/ExcelButtons";
 import FastFilterButton from "./components/FastFilter/FastFilterButton";
-import MultipleInsertButton from "./components/MultipleInsertForm";
+import FixColumnsTableView from "./components/FixColumnsTableView";
+import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
-import ColumnButton from "./ColumnButton";
-import SortButton from "./ColumnVisible";
-import GroupByButton from "./GroupByButton";
-import FixColumnsTableView from "./components/FixColumnsTableView";
-import ColumnsTab from "./components/ViewSettings/ColumnsTab";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import SearchParams from "./components/ViewSettings/SearchParams";
-import ColumnVisible from "./ColumnVisible";
+import SortButton from "./SortButton";
 
 const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
   const { t } = useTranslation();
@@ -247,6 +241,8 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     );
   }, [view, fieldsMap]);
 
+  const [sortedDatas, setSortedDatas] = useState([]);
+
   return (
     <>
       <FiltersBlock
@@ -347,11 +343,15 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
             <Divider orientation="vertical" flexItem />
 
+            <GroupByButton selectedTabIndex={selectedTabIndex} />
+
+            <Divider orientation="vertical" flexItem />
+
             <ColumnVisible selectedTabIndex={selectedTabIndex} />
 
             <Divider orientation="vertical" flexItem />
 
-            <GroupByButton selectedTabIndex={selectedTabIndex}/>
+            <SortButton selectedTabIndex={selectedTabIndex} sortDatas={sortedDatas} setSortedDatas={setSortedDatas} />
 
             <Divider orientation="vertical" flexItem />
 
@@ -614,6 +614,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       selectedTabIndex={selectedTabIndex}
                       shouldGet={shouldGet}
                       reset={reset}
+                      sortedDatas={sortedDatas}
                       menuItem={menuItem}
                       fields={fields}
                       setFormValue={setFormValue}

@@ -31,6 +31,7 @@ const TableView = ({
   reset = () => {},
   fieldsMap,
   isDocView,
+  sortedDatas = [],
   formVisible,
   setFormVisible,
   selectedObjects,
@@ -172,6 +173,26 @@ const TableView = ({
     return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
   }, [view, fieldsMap]);
 
+  const computedSortColumns = useMemo(() => {
+    const resultObject = {};
+
+    let a = sortedDatas?.map((el) => {
+      return {
+        [el?.field?.slug]: el.order.value === "ASC" ? 1 : -1,
+      };
+    });
+
+    a.forEach((obj) => {
+      for (const key in obj) {
+        resultObject[key] = obj[key];
+      }
+    });
+
+    return resultObject;
+  }, [sortedDatas]);
+
+  console.log("computedSortColumns", computedSortColumns);
+
   const {
     data: { tableData, pageCount, fiedlsarray, fieldView } = {
       tableData: [],
@@ -187,6 +208,7 @@ const TableView = ({
       {
         tableSlug,
         searchText,
+        sortedDatas,
         currentPage,
         checkedColumns,
         limit,
@@ -199,6 +221,7 @@ const TableView = ({
         data: {
           offset: pageToOffset(currentPage, limit),
           app_id: appId,
+          order: computedSortColumns,
           with_relations: true,
           view_fields: checkedColumns,
           search: searchText,
@@ -319,7 +342,6 @@ const TableView = ({
       setDeleteLoader(false);
     }
   };
-
 
   return (
     <div className={styles.wrapper}>

@@ -280,12 +280,6 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
       [type]: values?.recipient,
       type: type,
     };
-    if (localStorage.getItem("flag") !== null) {
-      console.log("Flag exists in localStorage");
-    } else {
-      localStorage.clear();
-      localStorage.setItem("flag", "true");
-    }
     setLoading(true);
     dispatch(loginAction(data));
   };

@@ -7,7 +7,7 @@ import fieldService, {
 import HFAutocomplete from "../../../../FormElements/HFAutocomplete";
 import InputWithPopUp from "./InputWithPopUp";
 import { useRelationsListQuery } from "../../../../../services/relationService";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import ResponseRelationFields from "./ResponseRelationFields";
 import RectangleIconButton from "../../../../Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
@@ -20,6 +20,7 @@ const QueryResponseForm = ({
   allText,
   setAllText,
 }) => {
+  const [tableId, setTableId] = useState();
   const {
     fields: relationFields,
     append: relationAppend,
@@ -32,11 +33,11 @@ const QueryResponseForm = ({
     control,
     name: "body.query_mapping.response_map.field_match",
   });
-  const tableId = form.watch("body.query_mapping.response_map.table");
+  const tableIdByWatch = form.watch("body.query_mapping.request_map.table");
   const { isLoading } = useTableByIdQuery({
-    id: tableId,
+    id: tableIdByWatch,
     queryParams: {
-      enabled: !!tableId,
+      enabled: !!tableIdByWatch,
       onSuccess: (res) => {
         form.setValue("body.query_mapping.response_map.table_slug", res.slug);
       },
@@ -125,6 +126,9 @@ const QueryResponseForm = ({
                 placeholder="Type Error id"
                 fullWidth
                 options={tables}
+                onChange={(val) => {
+                  setTableId(val);
+                }}
                 onFieldChange={(e) => {
                   setSearch(e.target.value);
                 }}

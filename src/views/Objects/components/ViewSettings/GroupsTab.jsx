@@ -9,7 +9,7 @@ import {
 } from "../../../../components/CTable"
 import { useTranslation } from "react-i18next"
 
-const GroupsTab = ({ columns, form }) => {
+const GroupsTab = ({ columns, form, selectedView }) => {
   
   const selectedColumns = useWatch({
     control: form.control,
@@ -51,7 +51,7 @@ const {i18n} = useTranslation();
               <CTableCell>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</CTableCell>
               <CTableCell style={{ width: 20 }}>
                 <Checkbox
-                  checked={selectedColumns?.includes(column?.id)}
+                  checked={selectedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
                   onChange={(e, val) => onCheckboxChange(val, column.id)}
                 />
               </CTableCell>

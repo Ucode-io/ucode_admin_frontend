@@ -1,18 +1,14 @@
-import { Checkbox } from "@mui/material";
+import { Switch } from "@mui/material";
 import { useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
-import HFCheckbox from "../../../../components/FormElements/HFCheckbox";
 import { applyDrag } from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
-import { use } from "i18next";
-import { useTranslation } from "react-i18next";
 
-const ColumnsTab = ({ form }) => {
+const ColumnsTab = ({ form, updateView }) => {
   const { fields: columns, move } = useFieldArray({
     control: form.control,
     name: "columns",
-    keyName: "key",
   });
 
   const watchedColumns = useWatch({
@@ -21,8 +17,11 @@ const ColumnsTab = ({ form }) => {
   });
 
   const onDrop = (dropResult) => {
+    updateView();
     const result = applyDrag(columns, dropResult);
-    if (result) move(dropResult.removedIndex, dropResult.addedIndex);
+    if (result) {
+      move(dropResult.removedIndex, dropResult.addedIndex);
+    }
   };
 
   const isAllChecked = useMemo(() => {
@@ -35,20 +34,21 @@ const ColumnsTab = ({ form }) => {
     columns?.forEach((column, index) => {
       form.setValue(`columns[${index}].is_checked`, val);
     });
-  };
 
-  const { i18n } = useTranslation();
+    updateView();
+  };
 
   return (
     <div>
       <div className={styles.table}>
         <div className={styles.row}>
           <div className={styles.cell} style={{ flex: 1 }}>
-            {" "}
-            <b>All</b>{" "}
+            <b>All</b>
           </div>
           <div className={styles.cell} style={{ width: 70 }}>
-            <Checkbox checked={isAllChecked} onChange={onAllChecked} />
+            {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
+            <Button variant="outlined" color="error">Hide All</Button> */}
+            <Switch checked={isAllChecked} onChange={onAllChecked} />
           </div>
         </div>
         <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
@@ -56,10 +56,16 @@ const ColumnsTab = ({ form }) => {
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
                 <div className={styles.cell} style={{ flex: 1 }}>
-                  {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+                  {column.label}
                 </div>
                 <div className={styles.cell} style={{ width: 70 }}>
-                  <HFCheckbox control={form.control} name={`columns[${index}].is_checked`} />
+                  <Switch
+                    checked={form.watch(`columns.${index}.is_checked`)}
+                    onChange={(e) => {
+                      form.setValue(`columns.${index}.is_checked`, e.target.checked);
+                      updateView();
+                    }}
+                  />
                 </div>
               </div>
             </Draggable>

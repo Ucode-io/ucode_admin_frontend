@@ -100,8 +100,6 @@ const NewCellElementGenerator = ({
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
 
-  console.log('sssssssss', field)
-
   switch (field.type) {
     case "LOOKUP":
       return (

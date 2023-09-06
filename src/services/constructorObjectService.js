@@ -18,20 +18,12 @@ const constructorObjectService = {
       },
       params: { "project-id": projectId },
     }),
-  delete: (tableSlug, id) =>
-    request.delete(`/object/${tableSlug}/${id}`, { data: { data: {} } }),
+  
   deleteObject: ({ tableSlug, resourceId, objectId }) =>
     request.delete(`/object/${tableSlug}/${objectId}`, {
       headers: { "resource-id": resourceId },
       data: { data: {} },
     }),
-  updateManyToMany: (data) => request.put("/many-to-many", data),
-  updateMultipleObject: (tableSlug, data) => request.put(`/object/multiple-update/${tableSlug}`, data),
-  deleteManyToMany: (data) => request.delete("/many-to-many", { data }),
-  downloadExcel: (tableSlug, data) =>
-    request.post(`/object/excel/${tableSlug}`, data),
-  getFinancialAnalytics: (tableSlug, data) =>
-    request.post(`/object/get-financial-analytics/${tableSlug}`, data),
   updateObject: (data) =>
     request.put(
       `/object/${data.tableSlug}`,
@@ -54,6 +46,13 @@ const constructorObjectService = {
         },
       }
     ),
+  delete: (tableSlug, id) => request.delete(`/object/${tableSlug}/${id}`, { data: { data: {} } }),
+  deleteMultiple: (tableSlug, data) => request.delete(`/object/${tableSlug}`, { data }),
+  updateManyToMany: (data) => request.put("/many-to-many", data),
+  updateMultipleObject: (tableSlug, data) => request.put(`/object/multiple-update/${tableSlug}`, data),
+  deleteManyToMany: (data) => request.delete("/many-to-many", { data }),
+  downloadExcel: (tableSlug, data) => request.post(`/object/excel/${tableSlug}`, data),
+  getFinancialAnalytics: (tableSlug, data) => request.post(`/object/get-financial-analytics/${tableSlug}`, data),
 };
 export const useObjectsListQuery = ({ params = {}, data = {}, queryParams } = {}) => {
   return useQuery(

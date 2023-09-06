@@ -1,14 +1,14 @@
-import LayersOutlinedIcon from "@mui/icons-material/LayersOutlined";
+import AppsIcon from "@mui/icons-material/Apps";
 import { CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
-import GroupsTab from "./components/ViewSettings/GroupsTab";
-import { useForm } from "react-hook-form";
 import constructorViewService from "../../services/constructorViewService";
+import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 
-export default function GroupByButton({ selectedTabIndex }) {
+export default function ColumnVisible({ selectedTabIndex }) {
   const form = useForm();
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -61,28 +61,28 @@ export default function GroupByButton({ selectedTabIndex }) {
     }
   }, [columns, relationColumns, type]);
 
-  const watch = form.watch();
+  const watchedColumns = form.watch("columns");
 
   useEffect(() => {
     form.reset({
-      group_fields: views?.[selectedTabIndex]?.group_fields ?? [],
+      columns:
+        computedColumns?.map((el) => ({
+          ...el,
+          is_checked: views?.[selectedTabIndex]?.columns?.find((column) => column === el.id),
+        })) ?? [],
     });
-  }, [selectedTabIndex, views, form]);
+  }, [selectedTabIndex, views, form, computedColumns]);
 
   const updateView = () => {
     constructorViewService
       .update({
         ...views?.[selectedTabIndex],
-        group_fields: watch.group_fields,
+        columns: watchedColumns?.filter((el) => el.is_checked)?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       });
   };
-
-  useEffect(() => {
-    updateView();
-  }, [watch.group_fields, selectedTabIndex]);
 
   return (
     <div>
@@ -102,8 +102,8 @@ export default function GroupByButton({ selectedTabIndex }) {
         }}
         onClick={handleClick}
       >
-        <LayersOutlinedIcon color={"#A8A8A8"} />
-        Tab group
+        <AppsIcon color={"#A8A8A8"} />
+        Columns
       </div>
 
       <Menu
@@ -127,7 +127,7 @@ export default function GroupByButton({ selectedTabIndex }) {
               display: "block",
               position: "absolute",
               top: 0,
-              right: 14,
+              left: 14,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -137,7 +137,7 @@ export default function GroupByButton({ selectedTabIndex }) {
           },
         }}
       >
-        {isLoading ? <CircularProgress /> : <GroupsTab columns={computedColumns} selectedView={views?.[selectedTabIndex]} form={form} />}
+        {isLoading ? <CircularProgress /> : <ColumnsTab form={form} updateView={updateView}/>}
       </Menu>
     </div>
   );

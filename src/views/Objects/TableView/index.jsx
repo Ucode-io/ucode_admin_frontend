@@ -17,7 +17,7 @@ import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import { listToMap } from "../../../utils/listToMap";
 import constructorFieldService from "../../../services/constructorFieldService";
@@ -34,6 +34,8 @@ const TableView = ({
   formVisible,
   setFormVisible,
   selectedObjects,
+  checkedColumns,
+  searchText,
   setDataLength,
   setSelectedObjects,
   selectedLinkedObject,
@@ -146,6 +148,26 @@ const TableView = ({
 
   // OLD CODE
 
+  const sortToPutBeginOfArray = (allObjects, filteredObject) => {
+    const sortedObjects = [];
+    filteredObject.forEach((filteredObject) => {
+      const index = allObjects.findIndex((allObject) => allObject.id === filteredObject.id);
+      sortedObjects.push(allObjects[index]);
+      allObjects.splice(index, 1);
+    });
+    return [...sortedObjects, ...allObjects];
+  };
+
+  const fixedColumns = useMemo(() => {
+    const result = [];
+    for (const key in view.attributes.fixedColumns) {
+      if (view.attributes.fixedColumns.hasOwnProperty(key)) {
+        result.push({ id: key, value: view.attributes.fixedColumns[key] });
+      }
+    }
+    return result?.map((el) => fieldsMap[el.id])?.filter((el) => el);
+  }, [view, fieldsMap]);
+
   const columns = useMemo(() => {
     return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
   }, [view, fieldsMap]);
@@ -164,7 +186,9 @@ const TableView = ({
       "GET_OBJECTS_LIST",
       {
         tableSlug,
+        searchText,
         currentPage,
+        checkedColumns,
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
@@ -174,8 +198,10 @@ const TableView = ({
       return constructorObjectService.getList(tableSlug, {
         data: {
           offset: pageToOffset(currentPage, limit),
-          // app_id: appId,
-          // with_relations: true,
+          app_id: appId,
+          with_relations: true,
+          view_fields: checkedColumns,
+          search: searchText,
           limit,
           ...filters,
           [tab?.slug]: tab?.value,
@@ -282,6 +308,19 @@ const TableView = ({
     setDrawerState("CREATE");
   };
 
+  const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
+
+  const multipleDelete = async () => {
+    setDeleteLoader(true);
+    try {
+      await constructorObjectService.deleteMultiple(tableSlug, { ids: selectedObjectsForDelete.map((i) => i.guid) });
+      refetch();
+    } finally {
+      setDeleteLoader(false);
+    }
+  };
+
+
   return (
     <div className={styles.wrapper}>
       {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
@@ -291,7 +330,7 @@ const TableView = ({
         </div>
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <div style={{ display: "flex", alignItems: "flex-start", width: '100%' }}>
+        <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }}>
           <ObjectDataTable
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
@@ -299,10 +338,13 @@ const TableView = ({
             setFormValue={setFormValue}
             mainForm={mainForm}
             isRelationTable={false}
-            removableHeight={isDocView ? 150 : 215}
+            removableHeight={isDocView ? 150 : 170}
             currentPage={currentPage}
             pagesCount={pageCount}
+            selectedObjectsForDelete={selectedObjectsForDelete}
+            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
             columns={columns}
+            multipleDelete={multipleDelete}
             openFieldSettings={openFieldSettings}
             limit={limit}
             setLimit={setLimit}
@@ -323,7 +365,7 @@ const TableView = ({
               border: "none",
               borderBottom: "1px solid #E5E9EB",
               // width: view?.quick_filters?.length ? "calc(100vw - 254px)" : "calc(100vw - 375px)",
-              width: '100%',
+              width: "100%",
               margin: 0,
             }}
             isResizeble={true}

@@ -25,6 +25,7 @@ const ObjectDataTable = ({
   additionalRow,
   mainForm,
   remove,
+  multipleDelete,
   openFieldSettings,
   fields = [],
   isRelationTable,
@@ -49,6 +50,8 @@ const ObjectDataTable = ({
   tableSlug,
   isResizeble,
   paginationExtraButton,
+  selectedObjectsForDelete,
+  setSelectedObjectsForDelete,
   onCheckboxChange,
   limit,
   setLimit,
@@ -229,6 +232,8 @@ const ObjectDataTable = ({
       page={currentPage}
       setCurrentPage={onPaginationChange}
       loader={loader}
+      multipleDelete={multipleDelete}
+      selectedObjectsForDelete={selectedObjectsForDelete}
       tableStyle={tableStyle}
       wrapperStyle={wrapperStyle}
       paginationExtraButton={paginationExtraButton}
@@ -346,6 +351,8 @@ const ObjectDataTable = ({
             mainForm={mainForm}
             formVisible={formVisible}
             rowIndex={rowIndex}
+            selectedObjectsForDelete={selectedObjectsForDelete}
+            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
             isRelationTable={isRelationTable}
             relatedTableSlug={relatedTableSlug}
             onRowClick={onRowClick}

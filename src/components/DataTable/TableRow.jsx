@@ -13,7 +13,7 @@ import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenera
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import { useState } from "react";
 import AspectRatioIcon from "@mui/icons-material/AspectRatio";
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 
 const TableRow = ({
   row,
@@ -28,6 +28,8 @@ const TableRow = ({
   currentPage,
   view,
   columns,
+  selectedObjectsForDelete,
+  setSelectedObjectsForDelete,
   tableHeight,
   tableSettings,
   pageName,
@@ -46,6 +48,15 @@ const TableRow = ({
 }) => {
   const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
+
+  const changeSetDelete = (row) => {
+    if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
+      setSelectedObjectsForDelete(selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid));
+    } else {
+      setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
+    }
+  };
+
   if (formVisible)
     return (
       <TableRowForm
@@ -83,23 +94,48 @@ const TableRow = ({
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
-          <CTableCell align="center" className="data_table__number_cell" style={{
-            padding: '0 4px',
-          }}>
-            {hovered ? (
-              <Button
-                onClick={() => {
-                  onRowClick(row, rowIndex);
-                }}
-                style={{
-                  minWidth: "max-content",
-                }}
-              >
-                <OpenInFullIcon />
-              </Button>
-            ) : (
-              <span className="data_table__row_number" style={{ display: 'block', width: '35px'}}>{(currentPage - 1) * limit + rowIndex + 1}</span>
-            )}
+          <CTableCell
+            align="center"
+            className="data_table__number_cell"
+            style={{
+              padding: "0 4px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {hovered ? (
+                <Button
+                  onClick={() => {
+                    onRowClick(row, rowIndex);
+                  }}
+                  style={{
+                    minWidth: "max-content",
+                  }}
+                >
+                  <OpenInFullIcon />
+                </Button>
+              ) : (
+                <span className="data_table__row_number" style={{ display: "block", width: "35px" }}>
+                  {(currentPage - 1) * limit + rowIndex + 1}
+                </span>
+              )}
+
+              {hovered || selectedObjectsForDelete.find((item) => item?.guid === row?.guid) ? (
+                <Checkbox
+                  checked={selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)}
+                  onChange={() => {
+                    changeSetDelete(row);
+                  }}
+                />
+              ) : (
+                ""
+              )}
+            </div>
 
             {onCheckboxChange && (
               <div
@@ -130,10 +166,18 @@ const TableRow = ({
                     fontWeight: 400,
                     lineHeight: "normal",
                     padding: "0",
-                    position: `${(tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]) ? "sticky" : "relative"}`,
-                    left: `${(tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]) ? `${calculateWidth(column?.id, index)}px` : "0"}`,
-                    backgroundColor: `${(tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]) ? "#F6F6F6" : "#fff"}`,
-                    zIndex: `${(tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]) ? "1" : "0"}`,
+                    position: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"
+                    }`,
+                    left: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                        ? `${calculateWidth(column?.id, index)}px`
+                        : "0"
+                    }`,
+                    backgroundColor: `${
+                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
+                    }`,
+                    zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
                   }}
                 >
                   {/* <CellElementGenerator field={column} row={row} /> */}
@@ -155,7 +199,7 @@ const TableRow = ({
               )
           )}
           <td>
-            <div style={{ display: "flex", gap: "5px", padding: "3px", justifyContent: 'center' }}>
+            <div style={{ display: "flex", gap: "5px", padding: "3px", justifyContent: "center" }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                 <RectangleIconButton
                   color="error"
@@ -172,11 +216,8 @@ const TableRow = ({
           </td>
 
           <td>
-            <div style={{ display: "flex", gap: "5px", padding: "3px" }}>
-              
-            </div>
+            <div style={{ display: "flex", gap: "5px", padding: "3px" }}></div>
           </td>
-
         </CTableRow>
       ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
         !relationAction?.action_relations ? (

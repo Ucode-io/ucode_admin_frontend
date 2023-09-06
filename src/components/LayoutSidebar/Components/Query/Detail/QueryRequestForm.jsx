@@ -10,7 +10,7 @@ import HFSelect from "../../../../FormElements/HFSelect";
 import styles from "../style.module.scss";
 import { query_types } from "../mock/ApiEndpoints";
 import { useRelationsListQuery } from "../../../../../services/relationService";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import RelationFields from "./RelationFields";
 import RectangleIconButton from "../../../../Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
@@ -27,6 +27,7 @@ const QueryRequstForm = ({
     control,
     name: "body.query_mapping.request_map.field_match",
   });
+  const [tableId, setTableId] = useState();
 
   const {
     fields: relationFields,
@@ -36,16 +37,18 @@ const QueryRequstForm = ({
     control,
     name: "body.query_mapping.request_map.relations",
   });
-  const tableId = form.watch("body.query_mapping.request_map.table");
+  const tableIdByWatch = form.watch("body.query_mapping.request_map.table");
+
   const { isLoading } = useTableByIdQuery({
-    id: tableId,
+    id: tableIdByWatch,
     queryParams: {
-      enabled: !!tableId,
+      enabled: !!tableIdByWatch,
       onSuccess: (res) => {
         form.setValue("body.query_mapping.request_map.table_slug", res.slug);
       },
     },
   });
+  console.log("watch", form.watch());
 
   const { isLoading: fieldLoading } = useFieldsListQuery({
     params: {
@@ -54,6 +57,7 @@ const QueryRequstForm = ({
     queryParams: {
       enabled: Boolean(tableId),
       onSuccess: (res) => {
+        console.log("dfdf");
         form.setValue(
           "body.query_mapping.request_map.field_match",
           res?.fields?.map((item) => {
@@ -129,6 +133,9 @@ const QueryRequstForm = ({
                 placeholder="Type Error id"
                 fullWidth
                 options={tables}
+                onChange={(val) => {
+                  setTableId(val);
+                }}
                 onFieldChange={(e) => {
                   setSearch(e.target.value);
                 }}

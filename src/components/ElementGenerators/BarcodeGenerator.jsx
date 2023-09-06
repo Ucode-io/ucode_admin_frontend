@@ -48,7 +48,6 @@ const BarcodeGenerator = ({
   const ref = useRef();
 
   const handleClose = () => setOpen(false);
-  console.log("field", field);
   return (
     <div className={styles.barcode_layer}>
       <Controller
@@ -86,7 +85,7 @@ const BarcodeGenerator = ({
                         }
                       : {
                           background: "#fff",
-                          color: "#fff"
+                          color: "#fff",
                         },
 
                     endAdornment: disabled && (
@@ -116,9 +115,17 @@ const BarcodeGenerator = ({
                     </button>
                     <div className={styles.barcode_input_layer}>
                       <FRow label="Print Count">
-                        <input type="number" value={count} placeholder="Count" className={styles.count_control} onChange={(e) => setCount(e.target.value)} />
+                        <input
+                          type="number"
+                          value={count}
+                          placeholder="Count"
+                          className={styles.count_control}
+                          onChange={(e) => setCount(e.target.value)}
+                        />
                       </FRow>
-                      <PrimaryButton className={styles.barcode_print}>Print</PrimaryButton>
+                      <PrimaryButton className={styles.barcode_print}>
+                        Print
+                      </PrimaryButton>
                     </div>
                   </div>
                 </Dialog>
@@ -136,7 +143,14 @@ const BarcodeGenerator = ({
                 )}
               </div>
 
-              {field?.attributes?.disabled === false ? <BarcodeGenerateButton onChange={onChange} tableSlug={formTableSlug} /> : ""}
+              {field?.attributes?.disabled === false ? (
+                <BarcodeGenerateButton
+                  onChange={onChange}
+                  tableSlug={formTableSlug}
+                />
+              ) : (
+                ""
+              )}
             </>
           );
         }}

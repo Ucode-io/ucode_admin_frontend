@@ -107,7 +107,6 @@ const CellFormElementGenerator = ({
       );
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
-  console.log("field", field);
   switch (field.type) {
     case "LOOKUP":
       return (

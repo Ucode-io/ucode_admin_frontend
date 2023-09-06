@@ -30,6 +30,7 @@ import AddIcon from "@mui/icons-material/Add";
 import CodeMirror from "@uiw/react-codemirror";
 import ApiQueryBox from "./Components/ApiQueryBox";
 import { Delete } from "@mui/icons-material";
+import RedirectDetail from "./Components/RedirectDetail";
 
 const flex = {
   display: "flex",
@@ -181,7 +182,7 @@ const ApiEndpoint = () => {
             </HeaderExtraSide>
           </Header>
           <Box className={styles.endpoint}>
-            <Box width={"65%"}>
+            <Box width={"65%"} borderRight="1px solid #E5E9EB">
               <div className={styles.body}>
                 <div className={styles.title}>
                   <div className={styles.descInput}>
@@ -264,6 +265,7 @@ const ApiEndpoint = () => {
                   />
                 </div>
               </div>
+              <RedirectDetail apiControl={control} watch={watch} />
             </Box>
             <Box width={"35%"}>
               <div className={styles.auth}>

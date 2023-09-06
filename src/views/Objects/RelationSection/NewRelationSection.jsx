@@ -341,7 +341,7 @@ const NewRelationSection = ({
                 setSelectedTabIndex(index);
               }}
             >
-              {relation?.is_visible_section && (
+              {!relation?.is_visible_section && (
                 <div className={styles.cardHeader}>
                   <TabList className={styles.tabList}>
                     {relation?.tabs?.map((el, index) => (

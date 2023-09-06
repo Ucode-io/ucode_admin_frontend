@@ -142,7 +142,7 @@ function NewlayoutList({setSelectedLayout, mainForm}) {
                           checked={element?.is_visible_section ?? false}
                         />
                       }
-                      label={"Section Tabs"}
+                      label={"No Section Tabs"}
                     />
                   </Box>
                 </Box>

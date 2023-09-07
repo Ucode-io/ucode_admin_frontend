@@ -31,6 +31,7 @@ import DynamicRelationFormElement from "./DynamicRelationFormElement";
 import ManyToManyRelationFormElement from "./ManyToManyRelationFormElement";
 import RelationFormElement from "./RelationFormElement";
 import {useTranslation} from "react-i18next";
+import HFDateTimePickerWithout from "../FormElements/HFDateTimePickerWithout";
 
 const parser = new Parser();
 
@@ -379,6 +380,23 @@ const FormElementGenerator = ({
       return (
         <FRow label={label} required={field.required}>
           <HFDateTimePicker
+            control={control}
+            name={computedSlug}
+            tabIndex={field?.tabIndex}
+            mask={"99.99.9999"}
+            required={checkRequiredField}
+            placeholder={field.attributes?.placeholder}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+            {...props}
+          />
+        </FRow>
+      );
+
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return (
+        <FRow label={label} required={field.required}>
+          <HFDateTimePickerWithout
             control={control}
             name={computedSlug}
             tabIndex={field?.tabIndex}

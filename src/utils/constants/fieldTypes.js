@@ -41,6 +41,7 @@ export const fieldTypes = [
   "DENTIST",
   "COLOR",
   "FLOAT_NOLIMIT",
+  "DATE_TIME_WITHOUT_TIME_ZONE",
 ];
 
 export const fieldTypesOptions = [
@@ -66,6 +67,11 @@ export const fieldTypesOptions = [
         icon: "calendar.svg",
         label: "Date",
         value: "DATE",
+      },
+      {
+        icon: "clock.svg",
+        label: "Date time (without timezone)",
+        value: "DATE_TIME_WITHOUT_TIME_ZONE",
       },
       {
         icon: "clock.svg",

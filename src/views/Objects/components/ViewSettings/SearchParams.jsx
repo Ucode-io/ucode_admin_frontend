@@ -14,7 +14,7 @@ import QrCode2Icon from "@mui/icons-material/QrCode2";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import { Button, Switch } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 
 export default function SearchParams({ checkedColumns, setCheckedColumns, columns }) {
   const columnIcons = useMemo(() => {
@@ -53,6 +53,10 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
   const deselectAll = () => {
     setCheckedColumns([]);
   };
+
+  useEffect(() => {
+    selectAll();
+  }, [])
 
   return (
     <div>

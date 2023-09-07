@@ -191,6 +191,14 @@ const TableView = ({
     return resultObject;
   }, [sortedDatas]);
 
+  const detectStringType = (inputString) => {
+    if (/^\d+$/.test(inputString)) {
+      return "number";
+    } else {
+      return "string";
+    }
+  };
+
   const {
     data: { tableData, pageCount, fiedlsarray, fieldView } = {
       tableData: [],
@@ -222,10 +230,10 @@ const TableView = ({
           order: computedSortColumns,
           with_relations: true,
           view_fields: checkedColumns,
-          search: searchText,
+          search: detectStringType(searchText) === "number" ? parseInt(searchText) : searchText,
           limit,
           ...filters,
-          [tab?.slug]: tab?.value,
+          [tab?.slug]: tab ? Object.values(fieldsMap).find(el => el.slug === tab?.slug)?.type === "MULTISELECT" ? [`${tab?.value}`] : tab?.value : undefined,
         },
       });
     },
@@ -340,6 +348,8 @@ const TableView = ({
       setDeleteLoader(false);
     }
   };
+
+  console.log('tableData', tableData)
 
   return (
     <div className={styles.wrapper}>

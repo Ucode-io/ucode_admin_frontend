@@ -341,6 +341,7 @@ const ObjectDataTable = ({
       <CTableBody loader={loader} columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
         {(isRelationTable ? fields : data)?.map((row, rowIndex) => (
           <TableRow
+            width={"80px"}
             remove={remove}
             watch={watch}
             control={control}

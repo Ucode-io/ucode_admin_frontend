@@ -1,16 +1,14 @@
+import { Box } from "@mui/material";
 import React, { useState } from "react";
-import NewCellElementGenerator from "./NewCellElementGenerator";
-import { Box, Button } from "@mui/material";
 import { useWatch } from "react-hook-form";
-import constructorObjectService from "../../services/constructorObjectService";
 import { useQueryClient } from "react-query";
 import { useDispatch } from "react-redux";
+import constructorObjectService from "../../services/constructorObjectService";
 import { showAlert } from "../../store/alert/alert.thunk";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import NewCellElementGenerator from "./NewCellElementGenerator";
 
 export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRowClick, field, row, index, control, setFormValue, relationfields, data }) {
   const [focused, setFocused] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const selectedObject = useWatch({
@@ -28,7 +26,7 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
   };
 
   return (
-    <Box style={{ border: focused ? "1px solid #007AFF" : "1px solid transparent", position: 'relative', minWidth: '150px'}} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+    <Box style={{ border: focused ? "1px solid #007AFF" : "1px solid transparent", position: "relative", minWidth: "150px" }}>
       <NewCellElementGenerator
         tableSlug={tableSlug}
         onFocus={() => {

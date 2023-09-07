@@ -7,9 +7,19 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import constructorObjectService from "../../services/constructorObjectService";
 import style from "./style.module.scss";
+import SortMenuRow from "./SortMenuRow";
 
 export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDatas }) {
-  const form = useForm();
+  const form = useForm({
+    defaultValues: {
+      sort: [
+        {
+          field: "",
+          order: "",
+        },
+      ],
+    },
+  });
   const [anchorEl, setAnchorEl] = useState(null);
   const { tableSlug } = useParams();
   const open = Boolean(anchorEl);
@@ -83,6 +93,7 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
     setSortedDatas(watchedSorts);
   }, [watchedSorts, form, setSortedDatas]);
 
+  console.log("sssssssss", computedColumns);
   return (
     <div>
       <div
@@ -141,11 +152,11 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
             padding: "10px",
           }}
         >
-          <div>
-            <h4 style={{ margin: 0 }}>Sort By</h4>
-          </div>
-
-          <div className={style.menuItems}>
+          <div className={style.menuItems} style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}>
             {fields.map((field, index) => (
               <div
                 key={field.id}
@@ -155,27 +166,7 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
                   gap: "10px",
                 }}
               >
-                <Autocomplete
-                  sx={{ width: 200 }}
-                  options={computedColumns}
-                  value={form.watch(`sort[${index}].field`) ?? null}
-                  onChange={(e, value) => form.setValue(`sort[${index}].field`, value)}
-                  getOptionLabel={(option) => option.label}
-                  onSelect={(e, val) => console.log("VAL==>>", e.target.value)}
-                  isOptionEqualToValue={(option, value) => option.value === value.value}
-                  renderInput={(params) => <TextField {...params} size="small" />}
-                />
-
-                <Autocomplete
-                  sx={{ width: 200 }}
-                  options={typeSorts}
-                  value={form.watch(`sort[${index}].order`) ?? null}
-                  onChange={(e, value) => form.setValue(`sort[${index}].order`, value)}
-                  getOptionLabel={(option) => option.label}
-                  onSelect={(e, val) => console.log("sssssssss", e.target.value)}
-                  isOptionEqualToValue={(option, value) => option.value === value.value}
-                  renderInput={(params) => <TextField {...params} size="small" />}
-                />
+                <SortMenuRow computedColumns={computedColumns} index={index} form={form} typeSorts={typeSorts} />
 
                 <Button onClick={() => remove(index)}>
                   <ClearIcon />

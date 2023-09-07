@@ -29,11 +29,14 @@ const QueryResponseForm = ({
     control,
     name: "body.query_mapping.response_map.relations",
   });
+
   const { fields } = useFieldArray({
     control,
     name: "body.query_mapping.response_map.field_match",
   });
-  const tableIdByWatch = form.watch("body.query_mapping.request_map.table");
+
+  const tableIdByWatch = form.watch("body.query_mapping.response_map.table");
+
   const { isLoading } = useTableByIdQuery({
     id: tableIdByWatch,
     queryParams: {

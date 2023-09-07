@@ -619,6 +619,8 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                   )}
                 </>
               )}
+
+
             </>
           )}
         </TableCard>

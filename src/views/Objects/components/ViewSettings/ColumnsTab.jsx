@@ -48,7 +48,7 @@ const ColumnsTab = ({ form, updateView }) => {
           <div className={styles.cell} style={{ width: 70 }}>
             {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
             <Button variant="outlined" color="error">Hide All</Button> */}
-            <Switch checked={isAllChecked} onChange={onAllChecked} />
+            <Switch size="small" checked={isAllChecked} onChange={onAllChecked} />
           </div>
         </div>
         <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
@@ -60,6 +60,7 @@ const ColumnsTab = ({ form, updateView }) => {
                 </div>
                 <div className={styles.cell} style={{ width: 70 }}>
                   <Switch
+                    size="small"
                     checked={form.watch(`columns.${index}.is_checked`)}
                     onChange={(e) => {
                       form.setValue(`columns.${index}.is_checked`, e.target.checked);

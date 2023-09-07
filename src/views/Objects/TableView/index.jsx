@@ -268,14 +268,17 @@ const TableView = ({
     if (isNaN(parseInt(view?.default_limit))) setLimit(10);
     else setLimit(parseInt(view?.default_limit));
   }, [view?.default_limit]);
-
+  
   useEffect(() => {
-    if (tableData?.length) {
+    if (tableData?.length > 0) {
       reset({
         multi: tableData.map((i) => i),
       });
     }
   }, [tableData, reset]);
+
+  console.log('qqqqqqqq', tableData, useWatch({ control: mainForm.control }))
+
 
   const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
     tableSlug,

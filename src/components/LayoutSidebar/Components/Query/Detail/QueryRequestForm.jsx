@@ -37,6 +37,7 @@ const QueryRequstForm = ({
     control,
     name: "body.query_mapping.request_map.relations",
   });
+
   const tableIdByWatch = form.watch("body.query_mapping.request_map.table");
 
   const { isLoading } = useTableByIdQuery({
@@ -48,7 +49,6 @@ const QueryRequstForm = ({
       },
     },
   });
-  console.log("watch", form.watch());
 
   const { isLoading: fieldLoading } = useFieldsListQuery({
     params: {

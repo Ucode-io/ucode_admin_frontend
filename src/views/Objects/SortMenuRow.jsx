@@ -1,5 +1,5 @@
-import { Autocomplete, MenuItem, Select, TextField } from "@mui/material";
-import React, { useState } from "react";
+import { MenuItem, Select } from "@mui/material";
+import React from "react";
 
 export default function SortMenuRow({ computedColumns, index, form, typeSorts }) {
   return (

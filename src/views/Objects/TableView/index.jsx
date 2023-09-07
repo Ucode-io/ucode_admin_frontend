@@ -175,10 +175,10 @@ const TableView = ({
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
-
+    
     let a = sortedDatas?.map((el) => {
       return {
-        [el?.field?.slug]: el.order.value === "ASC" ? 1 : -1,
+        [fieldsMap?.[el?.field]?.slug]: el.order === "ASC" ? 1 : -1,
       };
     });
 

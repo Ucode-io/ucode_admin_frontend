@@ -1,23 +1,20 @@
-import { Button, Checkbox } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-
+import { Button, Checkbox } from "@mui/material";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import RectangleIconButton from "../Buttons/RectangleIconButton";
 import { CTableCell, CTableRow } from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
-import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import TableRowForm from "./TableRowForm";
-import RectangleIconButton from "../Buttons/RectangleIconButton";
-import GeneratePdfFromTable from "./GeneratePdfFromTable";
-import { useNavigate } from "react-router-dom";
-import NewCellElementGenerator from "../ElementGenerators/NewCellElementGenerator";
-import CellFormElementGenerator from "../ElementGenerators/CellFormElementGenerator";
 import TableDataForm from "../ElementGenerators/TableDataForm";
-import { useState } from "react";
-import AspectRatioIcon from "@mui/icons-material/AspectRatio";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
+import GeneratePdfFromTable from "./GeneratePdfFromTable";
+import TableRowForm from "./TableRowForm";
 
 const TableRow = ({
   row,
   key,
+  width,
   rowIndex,
   control,
   onRowClick,
@@ -99,6 +96,8 @@ const TableRow = ({
             className="data_table__number_cell"
             style={{
               padding: "0 4px",
+              minWidth: width
+
             }}
           >
             <div
@@ -154,6 +153,7 @@ const TableRow = ({
 
           {columns.map(
             (column, index) =>
+            
               column?.attributes?.field_permission?.view_permission && (
                 <CTableCell
                   key={column.id}

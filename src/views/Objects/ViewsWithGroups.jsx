@@ -54,7 +54,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   const [selectedObjects, setSelectedObjects] = useState([]);
   const navigate = useNavigate();
   const { appId } = useParams();
-  const [count, setCount] = useState(0);
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectedView, setSelectedView] = useState(null);
@@ -196,18 +195,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
         .finally(() => setIsFinancialCalendarLoading(false));
     }
   }, [dateFilters, tableSlug]);
-
-  constructorObjectService
-    .getList(tableSlug, {
-      data: {
-        offset: 0,
-        app_id: appId,
-        limit: 0,
-      },
-    })
-    .then((res) => {
-      setCount(res.data.count);
-    });
 
   const navigateToSettingsPage = () => {
     const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;

@@ -575,6 +575,16 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       selectedObjects={selectedObjects}
                       setSelectedObjects={setSelectedObjects}
                       menuItem={menuItem}
+
+                      setDataLength={setDataLength}
+                      selectedTabIndex={selectedTabIndex}
+                      shouldGet={shouldGet}
+                      reset={reset}
+                      sortedDatas={sortedDatas}
+                      fields={fields}
+                      checkedColumns={checkedColumns}
+                      searchText={searchText}
+                      
                     />
                   )}
                 </TabPanel>

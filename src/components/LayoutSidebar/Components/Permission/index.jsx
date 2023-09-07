@@ -117,6 +117,11 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
             clickHandler(e);
           }}
         >
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
           <div className="label" style={labelStyle}>
             <IconGenerator icon={"lock.svg"} size={18} />
             Permissions
@@ -136,11 +141,6 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
               </Box>
             </Tooltip>
           </Box>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
         </Button>
       </div>
 

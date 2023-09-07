@@ -52,6 +52,11 @@ const FunctionRecursive = ({
           className="nav-element"
           onClick={clickHandler}
         >
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
           <div
             className="label"
             style={{
@@ -71,12 +76,6 @@ const FunctionRecursive = ({
               </Tooltip>
             </Box>
           )}
-          {element.type === "FOLDER" &&
-            (childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            ))}
         </Button>
       </div>
 

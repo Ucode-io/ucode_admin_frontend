@@ -52,6 +52,11 @@ const ApiRecursive = ({
           className="nav-element"
           onClick={clickHandler}
         >
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
           <div
             className="label"
             style={{
@@ -71,13 +76,6 @@ const ApiRecursive = ({
               </Tooltip>
             </Box>
           )}
-          {element.type === "FOLDER" ? (
-            childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )
-          ) : null}
         </Button>
       </div>
 

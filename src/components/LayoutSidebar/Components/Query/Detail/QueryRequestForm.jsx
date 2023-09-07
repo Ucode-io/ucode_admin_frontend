@@ -14,6 +14,7 @@ import { useMemo, useState } from "react";
 import RelationFields from "./RelationFields";
 import RectangleIconButton from "../../../../Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
+import Header, { HeaderExtraSide, HeaderLeftSide } from "../../Header";
 
 const QueryRequstForm = ({
   form,
@@ -114,7 +115,7 @@ const QueryRequstForm = ({
 
   return (
     <>
-      <Box display="flex" alignItems="flex-start" mt={2}>
+      <Box display="flex" alignItems="flex-start" mt={2} px="16px">
         <Typography
           minWidth="110px"
           mt="5px"
@@ -141,11 +142,15 @@ const QueryRequstForm = ({
                 }}
               />
             </Box>
-            <Box border="1px solid #E2E8F0" borderRadius="0.375rem">
+            <Box
+              border={fields?.length && "1px solid #E2E8F0"}
+              borderRadius="0.375rem"
+              mb={2}
+            >
               <Box>
                 {fields?.map((item, index) => (
                   <Box
-                    borderBottom="1px solid #E2E8F0"
+                    borderBottom={fields?.length && "1px solid #E2E8F0"}
                     display="flex"
                     justifyContent="space-between"
                   >
@@ -208,37 +213,31 @@ const QueryRequstForm = ({
           </Box>
         </Box>
       </Box>
-      <Box display="flex" alignItems="flex-start" mt={2}>
-        <Typography
-          minWidth="110px"
-          mt="5px"
-          pr="10px"
-          textAlign="end"
-          fontWeight="bold"
-        >
-          Relation
-        </Typography>
 
-        <Box display="flex" gap="20px" width="100%">
-          <Box minWidth="100px">
-            <Switch
-              checked={form.watch("body.query_mapping.request_map.is_relation")}
-              onChange={(e) => {
-                form.setValue(
-                  "body.query_mapping.request_map.is_relation",
-                  e.target.checked
-                );
-              }}
-            />
-          </Box>
-        </Box>
-      </Box>
+      <Header color="#000" border="none" borderTop="1px solid #e5e9eb">
+        <HeaderLeftSide flex={1}>
+          <Typography fontSize={"18px"} fontWeight="700" textAlign="end">
+            Relation
+          </Typography>
+        </HeaderLeftSide>
+        <HeaderExtraSide gap="15px">
+          <Switch
+            checked={form.watch("body.query_mapping.request_map.is_relation")}
+            onChange={(e) => {
+              form.setValue(
+                "body.query_mapping.request_map.is_relation",
+                e.target.checked
+              );
+            }}
+          />
+        </HeaderExtraSide>
+      </Header>
 
       {form.watch("body.query_mapping.request_map.is_relation") && (
         <Box mt={2} mb={2}>
           {relationFields?.map((item, index) => (
             <>
-              <Box display="flex" alignItems="flex-start">
+              <Box display="flex" alignItems="flex-start" px="16px">
                 <Typography
                   minWidth="110px"
                   mt="5px"
@@ -296,7 +295,7 @@ const QueryRequstForm = ({
       )}
 
       {form.watch("body.query_mapping.request_map.is_relation") && (
-        <Box width={"87%"} marginLeft={"auto"}>
+        <Box marginLeft={"auto"} px="16px">
           <Button
             fullWidth
             variant="contained"

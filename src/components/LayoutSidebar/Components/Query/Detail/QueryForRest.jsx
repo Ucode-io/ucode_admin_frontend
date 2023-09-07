@@ -13,6 +13,7 @@ import QueryRequstForm from "./QueryRequestForm";
 import { useTablesListQuery } from "../../../../../services/constructorTableService";
 import QueryResponseForm from "./QueryResponseForm";
 import { useMemo, useState } from "react";
+import Header, { HeaderExtraSide, HeaderLeftSide } from "../../Header";
 
 const QueryForRest = ({ control, form, responseQuery }) => {
   const typeOfAction = form.watch("body.action_type");
@@ -58,11 +59,10 @@ const QueryForRest = ({ control, form, responseQuery }) => {
       value: item.id,
     }));
   }, [tables]);
-  console.log("watch", form.watch());
 
   return (
     <>
-      <Box display="flex" alignItems="flex-start">
+      <Box display="flex" alignItems="flex-start" px="16px">
         <Typography
           minWidth="110px"
           mt="5px"
@@ -125,7 +125,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
       <Box>
         {/*URL PARAMETERS START*/}
 
-        <Box display="flex" alignItems="flex-start">
+        <Box display="flex" alignItems="flex-start" px="16px">
           <Typography
             minWidth="110px"
             mt="5px"
@@ -215,7 +215,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
 
         {/*HEADERS START*/}
 
-        <Box display="flex" alignItems="flex-start" mt="12px">
+        <Box display="flex" alignItems="flex-start" mt="12px" px="16px">
           <Typography
             minWidth="110px"
             mt="5px"
@@ -304,7 +304,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
         {/*HEADERS END*/}
 
         {/*COOKIES START*/}
-        <Box display="flex" alignItems="flex-start" mt="12px">
+        <Box display="flex" alignItems="flex-start" mt="12px" px="16px" mb={2}>
           <Typography
             minWidth="110px"
             mt="5px"
@@ -395,7 +395,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
         {typeOfAction === "GET" ? (
           ""
         ) : (
-          <Box display="flex" alignItems="flex-start" mt="12px">
+          <Box display="flex" alignItems="flex-start" mt="12px" mb={2}>
             <Typography
               minWidth="110px"
               mt="5px"
@@ -425,7 +425,7 @@ const QueryForRest = ({ control, form, responseQuery }) => {
         )}
 
         {responseQuery ? (
-          <Box mt={"50px"}>
+          <Box mt={"50px"} mb={2}>
             <Typography variant="h3" mb="10px">
               Response
             </Typography>
@@ -461,28 +461,22 @@ const QueryForRest = ({ control, form, responseQuery }) => {
         ) : (
           ""
         )}
-        <Box display="flex" alignItems="flex-start" mt={2}>
-          <Typography
-            minWidth="110px"
-            mt="5px"
-            pr="10px"
-            textAlign="end"
-            fontWeight="bold"
-          >
-            Mapping
-          </Typography>
+        <Header color="#000" border="none" borderTop="1px solid #e5e9eb">
+          <HeaderLeftSide flex={1}>
+            <Typography fontSize={"18px"} fontWeight="700" textAlign="end">
+              Mapping
+            </Typography>
+          </HeaderLeftSide>
 
-          <Box display="flex" gap="20px" width="100%">
-            <Box minWidth="100px">
-              <Switch
-                checked={form.watch("body.is_mapping")}
-                onChange={(e) => {
-                  form.setValue("body.is_mapping", e.target.checked);
-                }}
-              />
-            </Box>
-          </Box>
-        </Box>
+          <HeaderExtraSide gap="15px">
+            <Switch
+              checked={form.watch("body.is_mapping")}
+              onChange={(e) => {
+                form.setValue("body.is_mapping", e.target.checked);
+              }}
+            />
+          </HeaderExtraSide>
+        </Header>
         {form.watch("body.is_mapping") ? (
           <Box width="100%">
             <Tabs

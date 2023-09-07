@@ -273,6 +273,8 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
       <div className={style.extraNavbar}>
         <div className={style.extraWrapper}>
           <div className={style.search}>
+            <FastFilterButton view={view} fieldsMap={fieldsMap} />
+            <Divider orientation="vertical" flexItem />
             <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)} />
             <button
               className={style.moreButton}
@@ -320,10 +322,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
           </div>
 
           <div className={style.rightExtra}>
-            <FastFilterButton view={view} fieldsMap={fieldsMap} />
-
-            <Divider orientation="vertical" flexItem />
-
             <FixColumnsTableView selectedTabIndex={selectedTabIndex} />
 
             <Divider orientation="vertical" flexItem />

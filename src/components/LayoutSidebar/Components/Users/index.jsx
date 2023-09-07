@@ -104,15 +104,15 @@ const Users = ({ level = 1, menuStyle, menuItem, setElement }) => {
             clickHandler(e);
           }}
         >
-          <div className="label" style={labelStyle}>
-            <IconGenerator icon={"users.svg"} size={18} />
-            Users
-          </div>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
             <KeyboardArrowRightIcon />
           )}
+          <div className="label" style={labelStyle}>
+            <IconGenerator icon={"users.svg"} size={18} />
+            Users
+          </div>
         </Button>
       </div>
 

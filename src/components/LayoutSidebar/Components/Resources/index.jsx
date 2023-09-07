@@ -126,6 +126,11 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
             clickHandler(e);
           }}
         >
+          {childBlockVisible ? (
+            <KeyboardArrowDownIcon />
+          ) : (
+            <KeyboardArrowRightIcon />
+          )}
           <div
             className="label"
             style={{
@@ -201,11 +206,6 @@ const Resources = ({ level = 1, menuStyle, setSubMenuIsOpen }) => {
               </MenuItem>
             ))}
           </Menu>
-          {childBlockVisible ? (
-            <KeyboardArrowDownIcon />
-          ) : (
-            <KeyboardArrowRightIcon />
-          )}
         </Button>
       </div>
 

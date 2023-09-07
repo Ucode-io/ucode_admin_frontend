@@ -406,15 +406,15 @@ const DocumentsSidebar = ({
             clickHandler(e);
           }}
         >
-          <div className="label" style={labelStyle}>
-            <IconGenerator icon={"folder.svg"} size={18} />
-            Documents
-          </div>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
             <KeyboardArrowRightIcon />
           )}
+          <div className="label" style={labelStyle}>
+            <IconGenerator icon={"folder.svg"} size={18} />
+            Documents
+          </div>
         </Button>
       </div>
 

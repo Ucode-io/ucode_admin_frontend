@@ -18,7 +18,6 @@ import "../../style.scss";
 import DataBaseRecursive from "./RecursiveBlock";
 import { FaFolder } from "react-icons/fa";
 import { BsTable, BsThreeDots } from "react-icons/bs";
-import AddIcon from "@mui/icons-material/Add";
 import DataBaseFolderCreateModal from "./Modal/DataBaseFolderModal";
 import DatabaseButtonMenu from "./DatabaseButtonMenu";
 import { useTableFolderDeleteMutation } from "../../../../services/tableFolderService";
@@ -252,15 +251,15 @@ const DataBase = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
             clickHandler(e);
           }}
         >
-          <div className="label" style={labelStyle}>
-            <IconGenerator icon={dataBase.icon} size={18} />
-            {dataBase.label}
-          </div>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
             <KeyboardArrowRightIcon />
           )}
+          <div className="label" style={labelStyle}>
+            <IconGenerator icon={dataBase.icon} size={18} />
+            {dataBase.label}
+          </div>
         </Button>
       </div>
 

@@ -5,6 +5,7 @@ import IconGenerator from "../../../IconPicker/IconGenerator";
 import "../../style.scss";
 import { useNavigate } from "react-router-dom";
 import { updateLevel } from "../../../../utils/level";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const microServiceFolder = {
@@ -64,6 +65,7 @@ const MicroServiceSidebar = ({ level = 1, menuStyle, menuItem }) => {
             clickHandler(e);
           }}
         >
+          <KeyboardArrowRightIcon />
           <div className="label" style={labelStyle}>
             <IconGenerator icon={"atom.svg"} size={18} />
             Micro Service

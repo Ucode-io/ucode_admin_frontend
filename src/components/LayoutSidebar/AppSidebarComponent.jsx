@@ -105,6 +105,19 @@ const AppSidebar = ({
             padding: favourite && "18px 12px",
           }}
         >
+          {sidebarIsOpen && (
+            <KeyboardArrowRightIcon
+              style={{
+                color:
+                  selectedApp?.id === element.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
+                transform: selectedApp?.id === element.id && "rotate(90deg)",
+                transition: "0.3s",
+                marginRight: "5px",
+              }}
+            />
+          )}
           <IconGenerator
             icon={
               element?.icon ||
@@ -232,20 +245,6 @@ const AppSidebar = ({
                     : menuStyle?.text || "",
               }}
             />
-          )}
-          {sidebarIsOpen && element?.type === "FOLDER" ? (
-            <KeyboardArrowRightIcon
-              style={{
-                color:
-                  selectedApp?.id === element.id
-                    ? menuStyle?.active_text
-                    : menuStyle?.text || "",
-                transform: selectedApp?.id === element.id && "rotate(90deg)",
-                transition: "0.3s",
-              }}
-            />
-          ) : (
-            ""
           )}
         </ListItemButton>
       ) : null}

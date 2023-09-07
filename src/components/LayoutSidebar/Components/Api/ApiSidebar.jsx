@@ -260,15 +260,15 @@ const ApiSidebar = ({ level = 1, menuStyle, setSubMenuIsOpen, menuItem }) => {
             clickHandler(e);
           }}
         >
-          <div className="label" style={labelStyle}>
-            <IconGenerator icon={"code.svg"} size={18} />
-            {apiFolder.label}
-          </div>
           {childBlockVisible ? (
             <KeyboardArrowDownIcon />
           ) : (
             <KeyboardArrowRightIcon />
           )}
+          <div className="label" style={labelStyle}>
+            <IconGenerator icon={"code.svg"} size={18} />
+            {apiFolder.label}
+          </div>
         </Button>
       </div>
       <Collapse in={childBlockVisible} unmountOnExit>

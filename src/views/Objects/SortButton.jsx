@@ -93,7 +93,6 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
     setSortedDatas(watchedSorts);
   }, [watchedSorts, form, setSortedDatas]);
 
-  console.log("sssssssss", computedColumns);
   return (
     <div>
       <div

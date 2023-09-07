@@ -19,8 +19,6 @@ const QuickFiltersTab = ({ form }) => {
     keyName: "key",
   })
 
-  console.log('quick_filters', quickFilters)
-
   const onDrop = (dropResult) => {
     const result = applyDrag(quickFilters, dropResult)
     if (result) move(dropResult.removedIndex, dropResult.addedIndex)

@@ -44,7 +44,7 @@ const ClientUserForm = () => {
       },
     },
   });
-  console.log("main.", mainForm.watch());
+
   const { data: computedClientTypes = [] } = useQuery(
     ["GET_CLIENT_TYPE_LIST"],
     () => {
@@ -74,7 +74,6 @@ const ClientUserForm = () => {
         })),
     }
   );
-  console.log("computedRoles", computedRoles);
 
   const { mutateAsync: createProject, isLoading: createLoading } =
     useUserCreateMutation({

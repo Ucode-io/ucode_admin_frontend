@@ -277,9 +277,6 @@ const TableView = ({
     }
   }, [tableData, reset]);
 
-  console.log('qqqqqqqq', tableData, useWatch({ control: mainForm.control }))
-
-
   const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
     tableSlug,
   });
@@ -351,8 +348,6 @@ const TableView = ({
       setDeleteLoader(false);
     }
   };
-
-  console.log('tableData', tableData)
 
   return (
     <div className={styles.wrapper}>

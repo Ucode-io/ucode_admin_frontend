@@ -43,9 +43,6 @@ const SummarySection = ({
     return map;
   }, [fieldsList]);
 
-  console.log("sections", sections);
-  console.log("fieldsMap", fieldsMap);
-
   const onDrop = (dropResult) => {
     const result = applyDrag(sections, dropResult);
 

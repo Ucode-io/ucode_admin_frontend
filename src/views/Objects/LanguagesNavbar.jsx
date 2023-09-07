@@ -46,8 +46,6 @@ export default function LanguagesNavbar() {
 
   const { i18n } = useTranslation();
 
-  console.log('languages', projectInfo)
-
   useEffect(() => {
     if (languages?.length) i18n.changeLanguage(languages?.[0]?.slug);
   }, [languages]);

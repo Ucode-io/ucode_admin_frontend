@@ -120,8 +120,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     },
   });
 
-  console.log("watch", watch());
-
   const { fields, remove, append } = useFieldArray({
     control,
     name: "multi",
@@ -176,7 +174,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
 
-  const { data: tabs, isLoading: loader } = useQuery(queryGenerator(groupField, filters));
+  const { data: tabs } = useQuery(queryGenerator(groupField, filters));
 
   useEffect(() => {
     if (view?.type === "FINANCE CALENDAR" && dateIsValid(dateFilters?.$lt)) {
@@ -541,11 +539,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             </div> */}
             </div>
           )}
-          {loader ? (
-            <div className={style.loader}>
-              <CircularProgress />
-            </div>
-          ) : (
+          {
             <>
               {tabs?.map((tab) => (
                 <TabPanel key={tab.value}>
@@ -575,7 +569,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       selectedObjects={selectedObjects}
                       setSelectedObjects={setSelectedObjects}
                       menuItem={menuItem}
-
                       setDataLength={setDataLength}
                       selectedTabIndex={selectedTabIndex}
                       shouldGet={shouldGet}
@@ -584,7 +577,6 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       fields={fields}
                       checkedColumns={checkedColumns}
                       searchText={searchText}
-                      
                     />
                   )}
                 </TabPanel>
@@ -629,10 +621,8 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                   )}
                 </>
               )}
-
-
             </>
-          )}
+          }
         </TableCard>
       </Tabs>
     </>

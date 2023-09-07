@@ -32,8 +32,6 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
     return form.setValue("group_fields", [...selectedColumns, id]);
   };
 
-  console.log("selectedColumns", selectedColumns);
-
   const changeHandler = async (val, id) => {
     await onCheckboxChange(val, id);
     updateView();

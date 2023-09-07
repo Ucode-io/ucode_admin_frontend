@@ -316,7 +316,7 @@ function LinkedListTables({
   useEffect(() => {
     setDefaultValue();
   }, [computedLinkedObjects?.defaultValue]);
-console.log('computedObject', computedObject);
+
   return (
     <div className={styles.docListTables}>
       <FRow label={"Linked Table"}>

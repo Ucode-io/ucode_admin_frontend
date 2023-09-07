@@ -172,7 +172,6 @@ const ConstructorTablesFormPage = () => {
           tab.relation_type === "Recursive" ||
           tab.relation_type === "Many2One"
         ) {
-          console.log("layout", layout);
           return {
             order: tab?.order ?? 0,
             label: tab.title ?? tab.label,
@@ -185,7 +184,6 @@ const ConstructorTablesFormPage = () => {
             },
           };
         } else {
-          console.log("layout", layout);
           return {
             ...tab,
             sections: tab?.sections?.map((section, index) => ({

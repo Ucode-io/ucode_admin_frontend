@@ -67,7 +67,6 @@ const CTimePicker = ({ value, onChange, classes, isBlackBg, isTransparent = fals
       format="HH:mm"
       value={getValue()}
       onChange={(date) => {
-        console.log("DATE ===>", date)
         onChange(date?.isValid ? date.format("HH:mm") : "")
       }}
     />

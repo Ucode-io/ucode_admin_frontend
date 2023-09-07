@@ -186,8 +186,6 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
       .catch(() => setDeleteBtnLoader(false));
   };
 
-  console.log('ksejnfkjernfjekr', views)
-
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>

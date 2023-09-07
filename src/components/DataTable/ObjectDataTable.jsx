@@ -141,7 +141,7 @@ const ObjectDataTable = ({
     };
 
     createResizableTable(document.getElementById("resizeMe"));
-  }, [data]);
+  }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
     dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" }));

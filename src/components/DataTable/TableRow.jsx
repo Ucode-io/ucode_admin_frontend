@@ -1,13 +1,13 @@
-import { Checkbox } from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import {Checkbox} from "@mui/material";
+import {Delete} from "@mui/icons-material";
 
-import { CTableCell, CTableRow } from "../CTable";
+import {CTableCell, CTableRow} from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import TableRowForm from "./TableRowForm";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 const TableRow = ({
   row,
@@ -123,7 +123,7 @@ const TableRow = ({
               )
           )}
           <td>
-            <div style={{ display: "flex", gap: "5px", padding: "3px" }}>
+            <div style={{display: "flex", gap: "5px", padding: "3px"}}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                 <RectangleIconButton
                   color="error"

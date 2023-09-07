@@ -1,14 +1,14 @@
-import React, { useMemo } from "react";
-import { useQuery } from "react-query";
+import React, {useMemo} from "react";
+import {useQuery} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import get from "lodash.get";
 
-function Many2ManyValue({ field, value }) {
-  const { data: options = [] } = useQuery(
-    ["GET_OBJECT_LIST", field?.table_slug],
+function Many2ManyValue({field, value}) {
+  const {data: options = []} = useQuery(
+    ["GET_OBJECT_LIST", field?.table_slug, value],
     () => {
       return constructorObjectService.getList(field?.table_slug, {
-        data: { guid: value },
+        data: {guid: value},
       });
     },
     {

@@ -24,7 +24,7 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
       })
       .catch((e) => console.log("ERROR: ", e));
   };
-console.log('sssssssss', selectedObject)
+
   return (
     <Box style={{ border: focused ? "1px solid #007AFF" : "1px solid transparent", position: "relative", minWidth: "150px" }}>
       <NewCellElementGenerator

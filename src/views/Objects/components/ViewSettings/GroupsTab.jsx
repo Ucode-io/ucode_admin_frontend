@@ -34,8 +34,6 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
   };
   const { i18n } = useTranslation();
 
-  console.log("selectedColumns", selectedColumns);
-
   const changeHandler = async (val, id) => {
     await onCheckboxChange(val, id);
     updateView();

@@ -55,7 +55,6 @@ const TableRowForm = ({
         </CTableCell>
       )}
       {columns.map((column, index) => (
-        console.log("column", column),
         column?.attributes?.field_permission?.view_permission &&
         <CTableCell
           key={column.id}

@@ -57,7 +57,6 @@ const DataBlock = ({ data, view, fieldsMap, computedDateList }) => {
       frame.translate = lastEvent.drag.beforeTranslate;
     }
     onResizeSubmit(lastEvent.drag);
-    console.log("LAST EVENT", lastEvent);
   };
 
   useEffect(() => {

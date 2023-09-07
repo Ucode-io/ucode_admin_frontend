@@ -231,7 +231,7 @@ const RecursiveBlock = ({
               clickHandler(e);
             }}
           >
-            {adminId &&
+            {adminId === element?.parent_id &&
               (childBlockVisible ? (
                 <KeyboardArrowDownIcon />
               ) : (
@@ -353,7 +353,7 @@ const RecursiveBlock = ({
                     ) : null}
                   </Box>
                 </Tooltip>
-                {!adminId &&
+                {adminId !== element?.parent_id &&
                   (childBlockVisible ? (
                     <KeyboardArrowDownIcon />
                   ) : (

@@ -295,7 +295,6 @@ const LayoutSidebar = ({ appId }) => {
                 {permissions?.chat && (
                   <MenuButtonComponent
                     title={"Chat"}
-                    arrow
                     icon={
                       <ChatBubbleIcon
                         style={{

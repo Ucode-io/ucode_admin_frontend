@@ -231,11 +231,12 @@ const RecursiveBlock = ({
               clickHandler(e);
             }}
           >
-            {childBlockVisible ? (
-              <KeyboardArrowDownIcon />
-            ) : (
-              <KeyboardArrowRightIcon />
-            )}
+            {adminId &&
+              (childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              ))}
             <div
               className="label"
               style={{
@@ -300,6 +301,11 @@ const RecursiveBlock = ({
                     ) : null}
                   </Box>
                 </Tooltip>
+                {childBlockVisible ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowRightIcon />
+                )}
               </Box>
             ) : element?.type === "FOLDER" && sidebarIsOpen ? (
               <Box className="icon_group">
@@ -347,6 +353,12 @@ const RecursiveBlock = ({
                     ) : null}
                   </Box>
                 </Tooltip>
+                {!adminId &&
+                  (childBlockVisible ? (
+                    <KeyboardArrowDownIcon />
+                  ) : (
+                    <KeyboardArrowRightIcon />
+                  ))}
               </Box>
             ) : element?.type === "USER_FOLDER" ? (
               <>

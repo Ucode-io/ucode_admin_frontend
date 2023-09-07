@@ -52,7 +52,6 @@ const FastFilterButton = ({ view, fieldsMap }) => {
         onClick={(e) => setAnchorEl(e.target)}
       >
         <FilterAltOutlinedIcon color={!!selectedFiltersNumber ? "primary" : "#A8A8A8"} />
-        Filter
         {!!selectedFiltersNumber && (
           <>
             <strong>

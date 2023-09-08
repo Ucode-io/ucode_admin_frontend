@@ -1,27 +1,24 @@
 import { useMutation, useQuery } from "react-query";
-import httpsRequestV2 from "../utils/httpsRequestV2";
+import requestAuthV2 from "../utils/requestAuthV2";
 
 const clientTypeService = {
   getList: (params, envId) =>
-    httpsRequestV2.get("/client-type", {
+    requestAuthV2.get("/client-type", {
       params,
     }),
   getById: (id, params) =>
-    httpsRequestV2.get(`/client-type/${id}`, {
+    requestAuthV2.get(`/client-type/${id}`, {
       params,
     }),
   create: ({ data, params }) =>
-    httpsRequestV2.post("/client-type", data, {
+    requestAuthV2.post("/client-type", data, {
       params,
     }),
   update: ({ data, params }) =>
-    httpsRequestV2.put("/client-type", data, {
+    requestAuthV2.put("/client-type", data, {
       params,
     }),
-  delete: ({ id, projectId }) =>
-    httpsRequestV2.delete(`/client-type/${id}`, {
-      params: { "project-id": projectId },
-    }),
+  delete: (id) => requestAuthV2.delete(`/client-type/${id}`),
 };
 
 export const useClientTypesListQuery = ({
@@ -63,8 +60,5 @@ export const useClientTypeUpdateMutation = (mutationSettings) => {
 };
 
 export const useClientTypeDeleteMutation = (mutationSettings) => {
-  return useMutation(
-    ({ id, projectId }) => clientTypeService.delete({ id, projectId }),
-    mutationSettings
-  );
+  return useMutation((id) => clientTypeService.delete(id), mutationSettings);
 };

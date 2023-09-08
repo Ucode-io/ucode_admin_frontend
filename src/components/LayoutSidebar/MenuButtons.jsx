@@ -70,7 +70,7 @@ const ButtonsMenu = ({
         PaperProps={{
           elevation: 0,
           sx: {
-            width: "17%",
+            width: "15%",
             overflow: "visible",
             filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
             mt: 1.5,
@@ -80,6 +80,9 @@ const ButtonsMenu = ({
               height: 32,
               ml: -0.5,
               mr: 1,
+            },
+            "& .MuiList-root": {
+              padding: 0,
             },
           },
         }}
@@ -166,7 +169,7 @@ const ButtonsMenu = ({
               title="Создать pivot template"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`${appId}/pivot-template/create`)
+                navigate(`${appId}/pivot-template/create`);
                 handleCloseNotify();
               }}
             />

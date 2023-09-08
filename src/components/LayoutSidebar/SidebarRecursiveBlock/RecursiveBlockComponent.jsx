@@ -19,16 +19,13 @@ import Users from "../Components/Users";
 import { analyticItems, folderIds } from "./mock/folders";
 import Permissions from "../Components/Permission";
 import DataBase from "../Components/DataBase";
-import EltResources from "../Components/Elt";
 import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
 import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import EmailSidebar from "../Components/Email/EmailSidebar";
-import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
 import NotificationSidebar from "../Components/Notification/NotificationSidebar";
 import Resources from "../Components/Resources";
-import { use } from "i18next";
 import { showAlert } from "../../../store/alert/alert.thunk";
 import pivotService from "../../../services/pivotService";
 import DeleteIcon from "../DeleteIcon";
@@ -75,7 +72,6 @@ const RecursiveBlock = ({
   const permission = defaultAdmin
     ? readPermission || withoutPermission
     : readPermission;
-
   const activeStyle = {
     backgroundColor:
       menuItem?.id === element?.id
@@ -142,9 +138,6 @@ const RecursiveBlock = ({
         );
       case "USER":
         return navigate(`/main/${appId}/user-page/${element?.guid}`);
-
-      case "PERMISSION":
-        return navigate(`/main/${appId}/permission/${element?.guid}`);
 
       case "REPORT_SETTING":
         return navigate(

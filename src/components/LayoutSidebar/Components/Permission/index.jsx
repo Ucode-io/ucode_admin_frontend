@@ -16,6 +16,7 @@ import PermissionRecursive from "./PermissionRecursiveBlock";
 import { BsThreeDots } from "react-icons/bs";
 import PermissionButtonMenu from "./PermissionButtonMenu";
 import { useClientTypeDeleteMutation } from "../../../../services/clientTypeService";
+import { useNavigate } from "react-router-dom";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const permissionFolder = {
@@ -51,6 +52,7 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
   const handleCloseNotify = () => {
     setMenu(null);
   };
+  const navigate = useNavigate();
 
   const openUserFolderModal = (folder, type) => {
     setSelectedUserFolder(folder);
@@ -84,7 +86,6 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
         ? menuStyle?.active_text
         : menuStyle?.text,
   };
-  console.log("selected", selected);
   const { isLoading, refetch } = useQuery(
     ["GET_CLIENT_TYPE_LIST"],
     () => {
@@ -138,6 +139,13 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
     dispatch(menuActions.setMenuItem(permissionFolder));
   };
 
+  const onSelect = (id, element) => {
+    setSelected(element);
+    dispatch(menuActions.setMenuItem(element));
+    if (element.type === "FOLDER") return;
+    navigate(`/main/${adminId}/permission/${element?.guid}`);
+  };
+
   return (
     <Box>
       <div className="parent-block column-drag-handle">
@@ -184,6 +192,8 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
             menuItem={menuItem}
             setElement={setElement}
             setSelected={setSelected}
+            onSelect={onSelect}
+            selected={selected}
           />
         ))}
       </Collapse>

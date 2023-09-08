@@ -4,6 +4,7 @@ import "../../style.scss";
 import { useDispatch } from "react-redux";
 import { menuActions } from "../../../../store/menuItem/menuItem.slice";
 import { updateLevel } from "../../../../utils/level";
+import { useLocation } from "react-router-dom";
 
 const PermissionRecursive = ({
   element,
@@ -11,28 +12,31 @@ const PermissionRecursive = ({
   menuStyle,
   onSelect = () => {},
   onRowClick = () => {},
-  selected,
   handleOpenNotify,
   setSelected,
   menuItem,
+  selected,
 }) => {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const dispatch = useDispatch();
-
-  const activeStyle = {
-    backgroundColor:
-      element?.id === menuItem?.id
-        ? menuStyle?.active_background || "#007AFF"
-        : menuStyle?.background,
-    color:
-      element?.id === menuItem?.id
-        ? menuStyle?.active_text || "#fff"
-        : menuStyle?.text,
-    paddingLeft: updateLevel(level),
-    display:
-      element.id === "0" ||
-      (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
-  };
+  const location = useLocation();
+  const permissionlocation = location.pathname.includes("permission");
+  const activeStyle = permissionlocation
+    ? {
+        backgroundColor:
+          element?.id === selected?.id && permissionlocation
+            ? menuStyle?.active_background || "#007AFF"
+            : menuStyle?.background,
+        color:
+          element?.id === selected?.id
+            ? menuStyle?.active_text
+            : menuStyle?.text,
+        paddingLeft: updateLevel(level),
+        display:
+          element.id === "0" ||
+          (element.id === "c57eedc3-a954-4262-a0af-376c65b5a284" && "none"),
+      }
+    : {};
 
   const clickHandler = () => {
     dispatch(menuActions.setMenuItem(element));
@@ -54,7 +58,7 @@ const PermissionRecursive = ({
             className="label"
             style={{
               color:
-                element?.id === menuItem?.id
+                element?.id === selected?.id && permissionlocation
                   ? menuStyle?.active_text
                   : menuStyle?.text,
             }}

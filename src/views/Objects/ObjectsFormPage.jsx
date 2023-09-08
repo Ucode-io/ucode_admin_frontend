@@ -36,6 +36,8 @@ const ObjectsFormPage = () => {
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
+  const menuItem = store.getState().menu.menuItem;
+  const invite = menuItem.data.table.is_login_table;
 
   const {
     handleSubmit,
@@ -44,7 +46,7 @@ const ObjectsFormPage = () => {
     setValue: setFormValue,
     watch,
   } = useForm({
-    defaultValues: state,
+    defaultValues: { ...state, invite: invite },
   });
 
   const tableInfo = store.getState().menu.menuItem;
@@ -126,6 +128,7 @@ const ObjectsFormPage = () => {
   };
 
   const update = (data) => {
+    delete data.invite;
     setBtnLoader(true);
     constructorObjectService
       .update(tableSlug, { data })

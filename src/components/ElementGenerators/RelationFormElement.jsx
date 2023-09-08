@@ -147,6 +147,8 @@ const AutoCompleteElement = ({
   const [localValue, setLocalValue] = useState([]);
   const {id} = useParams();
   const isUserId = useSelector((state) => state?.auth?.userId);
+  const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
+
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
   const {navigateToForm} = useTabRouter();
@@ -154,6 +156,17 @@ const AutoCompleteElement = ({
   const autoFilters = field?.attributes?.auto_filters;
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
+
+  const computedIds = useMemo(() => {
+    if (
+      field?.attributes?.object_id_from_jwt &&
+      field?.id?.split("#")?.[0] === "client_type"
+    ) {
+      return clientTypeID;
+    } else {
+      return ids;
+    }
+  }, [field]);
 
   const autoFiltersFieldFroms = useMemo(() => {
     return autoFilters?.map((el) => el.field_from) ?? [];
@@ -219,7 +232,7 @@ const AutoCompleteElement = ({
           ...autoFiltersValue,
           additional_request: {
             additional_field: "guid",
-            additional_values: [ids],
+            additional_values: [computedIds],
           },
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
@@ -261,21 +274,13 @@ const AutoCompleteElement = ({
       if (data.prepayment_balance) {
         setFormValue("prepayment_balance", data.prepayment_balance || 0);
       }
-      console.log("data", data);
+
       setLocalValue(data ? [data] : null);
     } catch (error) {}
   };
 
   const getOptionLabel = (option) => {
     return getRelationFieldLabel(field, option);
-  };
-
-  const setDefaultValue = () => {
-    if (options?.slugOptions && multipleInsertField) {
-      const val = options?.slugOptions?.find((item) => item?.guid === id);
-      setValue(val?.guid ?? null);
-      setLocalValue(val ? [val] : null);
-    }
   };
 
   const changeHandler = (value, key = "") => {
@@ -293,7 +298,6 @@ const AutoCompleteElement = ({
 
       setValue(val?.guid ?? null);
       setLocalValue(val?.guid ? [val] : null);
-      console.log("value", value);
       if (!field?.attributes?.autofill) return;
 
       field.attributes.autofill.forEach(({field_from, field_to}) => {
@@ -303,56 +307,22 @@ const AutoCompleteElement = ({
     }
   };
 
-  const computedOptions = useMemo(() => {
-    const value = [];
-    allOptions?.forEach((item) => {
-      const label = field?.attributes?.view_fields
-        ?.map((el) => item[el.slug])
-        .join(" ");
-      const option = {label, value: item?.guid};
-      const optionExists = value?.some(
-        (existingOption) => existingOption?.value === option.value
+  const setClientTypeValue = () => {
+    if (
+      field?.attributes?.object_id_from_jwt &&
+      field?.id?.split("#")?.[0] === "client_type"
+    ) {
+      setLocalValue(
+        options?.options?.find((item) => item?.guid === clientTypeID)
       );
-      if (!optionExists) {
-        value.push(option);
-      }
-    });
-
-    return value;
-  }, [allOptions, field]);
+    }
+  };
 
   const computedValue = useMemo(() => {
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
 
-  const computedInputValue = useMemo(() => {
-    if (Array.isArray(localValue)) {
-      return localValue
-        ?.map((item) => ({
-          label: field?.attributes?.view_fields
-            ?.map((el) => item?.[el?.slug])
-            .join(" "),
-          value: item?.guid,
-        }))
-        .find((element) => element?.value === value);
-    } else {
-      return localValue;
-    }
-  }, [localValue, value]);
-
-  // useEffect(() => {
-  //   if(Array.isArray(localValue)) {
-  //     setLocalValue(
-  //       localValue?.filter((item) => {
-  //         return item?.[autoFiltersFieldFroms] === filtersHandler[0];
-  //       })
-  //     );
-  //   } else return localValue
-  // }, [filtersHandler]);
-
-  //=========AUTOFILL
-  console.log("value", value);
   useEffect(() => {
     let val;
 
@@ -381,11 +351,8 @@ const AutoCompleteElement = ({
 
   useEffect(() => {
     if (value) getValueData();
+    setClientTypeValue();
   }, [value]);
-
-  // useEffect(() => {
-  //   setDefaultValue();
-  // }, [options, multipleInsertField]);
 
   useEffect(() => {
     if (field?.attributes?.function_path) {
@@ -461,7 +428,11 @@ const AutoCompleteElement = ({
         />
       ) : (
         <Select
-          isDisabled={disabled}
+          isDisabled={
+            disabled ||
+            (field?.attributes?.object_id_from_jwt &&
+              field?.id?.split("#")?.[0] === "client_type")
+          }
           options={options?.options ?? []}
           isClearable={true}
           value={localValue ?? []}

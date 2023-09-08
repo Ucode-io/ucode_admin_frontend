@@ -1,18 +1,18 @@
-import { get } from "@ngard/tiny-get";
-import { useMemo } from "react";
+import {get} from "@ngard/tiny-get";
+import {useMemo} from "react";
 import MultiselectCellColoredElement from "./MultiselectCellColoredElement";
-import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
-import { numberWithSpaces } from "../../utils/formatNumbers";
-import { parseBoolean } from "../../utils/parseBoolean";
+import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
+import {numberWithSpaces} from "../../utils/formatNumbers";
+import {parseBoolean} from "../../utils/parseBoolean";
 import IconGenerator from "../IconPicker/IconGenerator";
-import { formatDate } from "../../utils/dateFormatter";
+import {formatDate} from "../../utils/dateFormatter";
 import LogoDisplay from "../LogoDisplay";
 import TableTag from "../TableTag";
 import DownloadIcon from "@mui/icons-material/Download";
 import Many2ManyValue from "./Many2ManyValue";
-import { generateLink } from "../../utils/generateYandexLink";
+import {generateLink} from "../../utils/generateYandexLink";
 
-const CellElementGenerator = ({ field = {}, row }) => {
+const CellElementGenerator = ({field = {}, row}) => {
   const value = useMemo(() => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
 
@@ -28,7 +28,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
-        return el.table ? { ...el.table, ...el } : el;
+        return el.table ? {...el.table, ...el} : el;
       }) ?? []
     );
   }, [field.attributes?.dynamic_tables]);
@@ -57,8 +57,6 @@ const CellElementGenerator = ({ field = {}, row }) => {
   if (field.render) {
     return field.render(row);
   }
-
-  console.log("field", field);
 
   switch (field.type) {
     case "LOOKUPS":
@@ -89,7 +87,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return (
         <div className="text-overflow">
           <span
-            dangerouslySetInnerHTML={{ __html: value + `${value && "..."}` }}
+            dangerouslySetInnerHTML={{__html: value + `${value && "..."}`}}
           ></span>
         </div>
       );
@@ -98,7 +96,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
       return (
         <div className="text-overflow">
           <span
-            dangerouslySetInnerHTML={{ __html: "*".repeat(value?.length) }}
+            dangerouslySetInnerHTML={{__html: "*".repeat(value?.length)}}
           ></span>
         </div>
       );
@@ -175,7 +173,7 @@ const CellElementGenerator = ({ field = {}, row }) => {
           rel="noreferrer"
         >
           <DownloadIcon
-            style={{ width: "25px", height: "25px", fontSize: "30px" }}
+            style={{width: "25px", height: "25px", fontSize: "30px"}}
           />
         </a>
       ) : (

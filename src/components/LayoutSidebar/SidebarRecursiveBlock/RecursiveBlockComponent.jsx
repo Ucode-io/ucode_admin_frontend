@@ -13,8 +13,8 @@ import {useMenuListQuery} from "../../../services/menuService";
 import pivotService from "../../../services/pivotService";
 import {store} from "../../../store";
 import {showAlert} from "../../../store/alert/alert.thunk";
-import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import {updateLevel} from "../../../utils/level";
+import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import ApiSidebar from "../Components/Api/ApiSidebar";
 import DataBase from "../Components/DataBase";
@@ -265,21 +265,6 @@ const RecursiveBlock = ({
             {element?.type === "FOLDER" &&
             element?.id === "c57eedc3-a954-4262-a0af-376c65b5a274" ? (
               <Box className="icon_group">
-                {/* <Tooltip title="Report settings" placement="top">
-                  <Box className="extra_icon">
-                    <BsThreeDots
-                      size={13}
-                      onClick={(e) => {
-                        e?.stopPropagation();
-                        handleOpenNotify(e, "FOLDER");
-                        setElement(element);
-                      }}
-                      style={{
-                        color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
-                      }}
-                    />
-                  </Box>
-                </Tooltip> */}
                 <Tooltip title="Create report settings" placement="top">
                   <Box className="extra_icon">
                     {element?.data?.permission?.write || permissionButton ? (
@@ -309,27 +294,25 @@ const RecursiveBlock = ({
               </Box>
             ) : element?.type === "FOLDER" && sidebarIsOpen ? (
               <Box className="icon_group">
-                {!adminId && (
-                  <Tooltip title="Folder settings" placement="top">
-                    <Box className="extra_icon">
-                      <BsThreeDots
-                        size={13}
-                        onClick={(e) => {
-                          e?.stopPropagation();
-                          handleOpenNotify(e, "FOLDER");
-                          setElement(element);
-                          dispatch(menuActions.setMenuItem(element));
-                        }}
-                        style={{
-                          color:
-                            menuItem?.id === element?.id
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
-                        }}
-                      />
-                    </Box>
-                  </Tooltip>
-                )}
+                <Tooltip title="Folder settings" placement="top">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        e?.stopPropagation();
+                        handleOpenNotify(e, "FOLDER");
+                        setElement(element);
+                        dispatch(menuActions.setMenuItem(element));
+                      }}
+                      style={{
+                        color:
+                          menuItem?.id === element?.id
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
                 <Tooltip title="Create folder" placement="top">
                   <Box className="extra_icon">
                     {element?.data?.permission?.write ||

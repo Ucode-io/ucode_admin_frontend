@@ -1,6 +1,5 @@
 import { Card, Modal, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
 import { store } from "../../../../../store";
 import CreateButton from "../../../../Buttons/CreateButton";
@@ -13,18 +12,21 @@ import {
 import { useTablesListQuery } from "../../../../../services/tableService";
 import FRow from "../../../../FormElements/FRow";
 import HFCheckbox from "../../../../FormElements/HFCheckbox";
-import { useMemo } from "react";
-import HFAutocomplete from "../../../../FormElements/HFAutocomplete";
+import HFSelect from "../../../../FormElements/HFSelect";
 
-const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
+const FolderCreateModal = ({
+  closeModal,
+  clientType = {},
+  modalType,
+  refetch,
+}) => {
   const company = store.getState().company;
-  const queryClient = useQueryClient();
   const createType = modalType === "CREATE";
 
   const { control, handleSubmit } = useForm({
     defaultValues: {
       project_id: company.projectId,
-      id: clientType.id,
+      id: clientType.guid,
       guid: clientType.guid,
       name: clientType.name ?? "",
       self_recover: clientType.self_recover ?? false,
@@ -36,7 +38,7 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
   const { mutate: createClientType, isLoading: createLoading } =
     useClientTypeCreateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["CLIENT_TYPES"]);
+        refetch();
         closeModal();
       },
     });
@@ -44,7 +46,7 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
   const { mutate: updateClientType, isLoading: updateLoading } =
     useClientTypeUpdateMutation({
       onSuccess: () => {
-        queryClient.refetchQueries(["CLIENT_TYPES"]);
+        refetch();
         closeModal();
       },
     });
@@ -70,16 +72,9 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
     const params = {
       "project-id": company.projectId,
     };
-    if (clientType.id) updateClientType({ data, params });
+    if (clientType.guid) updateClientType({ data, params });
     else createClientType({ params, data });
   };
-
-  const tableOptions = useMemo(() => {
-    return projectTables?.map((item) => ({
-      value: item.id,
-      label: item.name,
-    }));
-  }, [projectTables]);
 
   return (
     <div>
@@ -99,7 +94,7 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
             />
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="form">
+          <form className="form">
             <FRow label="Title">
               <HFTextField
                 autoFocus
@@ -121,24 +116,23 @@ const FolderCreateModal = ({ closeModal, clientType = {}, modalType }) => {
               name="self_register"
             />
             <FRow label="Table" required>
-              <HFAutocomplete
-                name="table_slug"
+              <HFSelect
                 control={control}
+                name="table_slug"
                 placeholder="Table"
                 fullWidth
-                required
-                options={tableOptions}
+                options={projectTables}
               />
             </FRow>
             <div className="btns-row">
               {createType ? (
                 <CreateButton
-                  type="submit"
+                  onClick={handleSubmit(onSubmit)}
                   loading={createLoading || updateLoading}
                 />
               ) : (
                 <SaveButton
-                  type="submit"
+                  onClick={handleSubmit(onSubmit)}
                   loading={createLoading || updateLoading}
                 />
               )}

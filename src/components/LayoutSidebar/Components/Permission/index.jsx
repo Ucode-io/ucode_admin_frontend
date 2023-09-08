@@ -12,6 +12,10 @@ import "../../style.scss";
 import AddIcon from "@mui/icons-material/Add";
 import FolderCreateModal from "./Modal/FolderCreateModal";
 import { updateLevel } from "../../../../utils/level";
+import PermissionRecursive from "./PermissionRecursiveBlock";
+import { BsThreeDots } from "react-icons/bs";
+import PermissionButtonMenu from "./PermissionButtonMenu";
+import { useClientTypeDeleteMutation } from "../../../../services/clientTypeService";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const permissionFolder = {
@@ -39,6 +43,14 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
   const [selectedUserFolder, setSelectedUserFolder] = useState(null);
   const [userFolderModalType, setUserFolderModalType] = useState(null);
   const closeUserFolderModal = () => setSelectedUserFolder(null);
+  const [menu, setMenu] = useState({ event: "", type: "" });
+  const openMenu = Boolean(menu?.event);
+  const handleOpenNotify = (event, element) => {
+    setMenu({ event: event?.currentTarget, element });
+  };
+  const handleCloseNotify = () => {
+    setMenu(null);
+  };
 
   const openUserFolderModal = (folder, type) => {
     setSelectedUserFolder(folder);
@@ -72,8 +84,8 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
         ? menuStyle?.active_text
         : menuStyle?.text,
   };
-
-  const { isLoading } = useQuery(
+  console.log("selected", selected);
+  const { isLoading, refetch } = useQuery(
     ["GET_CLIENT_TYPE_LIST"],
     () => {
       return clientTypeServiceV2.getList();
@@ -93,11 +105,30 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
                 read: true,
               },
             },
+            buttons: (
+              <BsThreeDots
+                size={13}
+                onClick={(e) => {
+                  e?.stopPropagation();
+                  handleOpenNotify(e, row);
+                }}
+                style={{
+                  color:
+                    row?.guid === menuItem?.guid
+                      ? menuStyle?.active_text
+                      : menuStyle?.text || "",
+                }}
+              />
+            ),
           }))
         );
       },
     }
   );
+  const { mutate: deleteClientType, isLoading: deleteLoading } =
+    useClientTypeDeleteMutation({
+      onSuccess: refetch,
+    });
 
   const clickHandler = (e) => {
     e.stopPropagation();
@@ -146,21 +177,32 @@ const Permissions = ({ level = 1, menuStyle, menuItem, setElement }) => {
 
       <Collapse in={childBlockVisible} unmountOnExit>
         {child?.map((childElement) => (
-          <RecursiveBlock
+          <PermissionRecursive
             key={childElement.id}
-            level={level + 1}
             element={childElement}
             menuStyle={menuStyle}
             menuItem={menuItem}
             setElement={setElement}
+            setSelected={setSelected}
           />
         ))}
       </Collapse>
+
+      <PermissionButtonMenu
+        openMenu={openMenu}
+        menu={menu?.event}
+        element={menu?.element}
+        handleCloseNotify={handleCloseNotify}
+        deleteClientType={deleteClientType}
+        openUserFolderModal={openUserFolderModal}
+      />
+
       {selectedUserFolder && (
         <FolderCreateModal
           clientType={selectedUserFolder}
           closeModal={closeUserFolderModal}
           modalType={userFolderModalType}
+          refetch={refetch}
         />
       )}
     </Box>

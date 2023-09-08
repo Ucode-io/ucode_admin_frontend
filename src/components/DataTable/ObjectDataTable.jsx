@@ -171,48 +171,53 @@ const ObjectDataTable = ({
     setColumnId("");
   };
 
-  const pinnedColumns = useMemo(() => {
-    let outputArray = [];
-
-    for (const key in view?.attributes?.fixedColumns) {
-      if (view?.attributes?.fixedColumns.hasOwnProperty(key)) {
-        outputArray.push({ key: key, value: view?.attributes?.fixedColumns[key] });
-      }
-    }
-
-    return outputArray
-      ?.filter((item) => item?.value === true)
-      ?.map((item) => {
-        return item?.key;
-      });
-  }, [view?.attributes?.fixedColumns]);
-
   const calculateWidth = (colId, index) => {
-    if (pinnedColumns.includes(colId)) {
-      const colIdx = tableSettings?.[pageName]?.findIndex((item) => item?.id === colId);
-      if (index === 0) {
-        return 0;
-      } else if (colIdx === 0) {
-        return 0;
-      } else if (tableSettings?.[pageName]?.length === 1) {
-        return 0;
-      } else {
-        return tableSettings?.[pageName]?.slice(0, colIdx)?.reduce((acc, item) => acc + item?.colWidth, 0);
-      }
+    const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
+
+    if (index === 0) {
+      return 0;
+    } else if (colIdx === 0) {
+      return 0;
+    } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
+      return 0;
     } else {
-      const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
-      if (index === 0) {
-        return 0;
-      } else if (colIdx === 0) {
-        return 0;
-      } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
-        return 0;
-      } else {
-        return tableSettings?.[pageName]
-          ?.filter((item) => item?.isStiky === true)
-          ?.slice(0, colIdx)
-          ?.reduce((acc, item) => acc + item?.colWidth, 0);
-      }
+      return tableSettings?.[pageName]
+        ?.filter((item) => item?.isStiky === true)
+        ?.slice(0, colIdx)
+        ?.reduce((acc, item) => acc + item?.colWidth, 0);
+    }
+  };
+
+  const calculateWidthFixedColumn = (colId) => {
+    const prevElement = columns?.findIndex((item) => item?.id === colId);
+
+    if (prevElement === 0) {
+      return 0;
+    } else if (prevElement === 1) {
+      const element = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+      return element?.offsetWidth;
+    } else if (prevElement === 2) {
+      const element1 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+      const element2 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+      return element1?.offsetWidth + element2?.offsetWidth;
+    } else if (prevElement === 3) {
+      const element1 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
+      const element2 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+      const element3 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+      return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth;
+    } else if (prevElement === 4) {
+      const element1 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
+      const element2 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
+      const element3 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+      const element4 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+      return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth;
+    } else if (prevElement === 5) {
+      const element1 = document.querySelector(`[id='${columns[prevElement - 5]?.id}']`);
+      const element2 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
+      const element3 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
+      const element4 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+      const element5 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+      return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth + element5?.offsetWidth;
     }
   };
 
@@ -262,11 +267,7 @@ const ObjectDataTable = ({
                     position: `${
                       tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"
                     }`,
-                    left: `${
-                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-                        ? `${calculateWidth(column?.id, index)}px`
-                        : "0"
-                    }`,
+                    left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id)}px` : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
                     }`,
@@ -356,6 +357,7 @@ const ObjectDataTable = ({
             relatedTableSlug={relatedTableSlug}
             onRowClick={onRowClick}
             isChecked={isChecked}
+            calculateWidthFixedColumn={calculateWidthFixedColumn}
             onCheckboxChange={onCheckboxChange}
             currentPage={currentPage}
             limit={limit}

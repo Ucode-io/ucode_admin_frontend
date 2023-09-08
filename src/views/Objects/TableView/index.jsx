@@ -159,26 +159,41 @@ const TableView = ({
     return [...sortedObjects, ...allObjects];
   };
 
-  const fixedColumns = useMemo(() => {
+  function customSortArray(a, b) {
+    const commonItems = a.filter((item) => b.includes(item));
+    commonItems.sort();
+    const remainingItems = a.filter((item) => !b.includes(item));
+    const sortedArray = commonItems.concat(remainingItems);
+    return sortedArray;
+  }
+
+  const columns = useMemo(() => {
     const result = [];
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        result.push({ id: key, value: view.attributes.fixedColumns[key] });
+        if (view.attributes.fixedColumns[key]) result.push({ id: key, value: view.attributes.fixedColumns[key] });
       }
     }
-    return result?.map((el) => fieldsMap[el.id])?.filter((el) => el);
+    return customSortArray(
+      view?.columns,
+      result.map((el) => el.id)
+    )
+      ?.map((el) => fieldsMap[el])
+      ?.filter((el) => el);
   }, [view, fieldsMap]);
 
-  const columns = useMemo(() => {
+  console.log('columns', columns)
+  
+  const columnss = useMemo(() => {
     return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
   }, [view, fieldsMap]);
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
-    
+
     let a = sortedDatas?.map((el) => {
       return {
-        [fieldsMap?.[el?.field]?.slug]: el.order === "ASC" ? 1 : -1,
+        [el?.field?.slug]: el.order.value === "ASC" ? 1 : -1,
       };
     });
 
@@ -233,7 +248,7 @@ const TableView = ({
           search: detectStringType(searchText) === "number" ? parseInt(searchText) : searchText,
           limit,
           ...filters,
-          [tab?.slug]: tab ? Object.values(fieldsMap).find(el => el.slug === tab?.slug)?.type === "MULTISELECT" ? [`${tab?.value}`] : tab?.value : undefined,
+          [tab?.slug]: tab ? (Object.values(fieldsMap).find((el) => el.slug === tab?.slug)?.type === "MULTISELECT" ? [`${tab?.value}`] : tab?.value) : undefined,
         },
       });
     },
@@ -268,7 +283,7 @@ const TableView = ({
     if (isNaN(parseInt(view?.default_limit))) setLimit(10);
     else setLimit(parseInt(view?.default_limit));
   }, [view?.default_limit]);
-  
+
   useEffect(() => {
     if (tableData?.length > 0) {
       reset({

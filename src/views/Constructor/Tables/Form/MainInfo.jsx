@@ -1,8 +1,8 @@
-import { Box } from "@mui/material";
-import { useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import {Box} from "@mui/material";
+import {useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFIconPicker from "../../../../components/FormElements/HFIconPicker";
@@ -11,29 +11,28 @@ import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import listToOptions from "../../../../utils/listToOptions";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 
-const MainInfo = ({ control }) => {
-  const { slug } = useParams();
+const MainInfo = ({control}) => {
+  const {slug} = useParams();
 
   const tableName = useWatch({
     control,
-    name: 'label'
-  })
+    name: "label",
+  });
 
   const description = useWatch({
     control,
-    name: 'description'
-  })
+    name: "description",
+  });
 
-
-  const { fields } = useFieldArray({
+  const {fields} = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
   });
 
-  const { fields: relations } = useFieldArray({
+  const {fields: relations} = useFieldArray({
     control: control,
     name: "layoutRelations",
     keyName: "key",
@@ -54,7 +53,7 @@ const MainInfo = ({ control }) => {
     name: "attributes",
   });
 
-  const { data: computedTableFields } = useQuery(
+  const {data: computedTableFields} = useQuery(
     ["GET_OBJECT_LIST", slug],
     () => {
       return constructorObjectService.getList(slug, {
@@ -82,7 +81,10 @@ const MainInfo = ({ control }) => {
   const computedFields = useMemo(() => {
     const computedRelations = relations.map((relation) => {
       const tableSlug = relation.id.split("#")[0];
-      const viewFields = relation.attributes?.fields?.map((viewField) => `${tableSlug}.${viewField.slug}`) ?? [];
+      const viewFields =
+        relation.attributes?.fields?.map(
+          (viewField) => `${tableSlug}.${viewField.slug}`
+        ) ?? [];
 
       const slug = viewFields.join("#");
 
@@ -114,61 +116,68 @@ const MainInfo = ({ control }) => {
         </div>
 
         <FRow label="Название">
-          <Box style={{ display: "flex", gap: "6px" }}>
-             {
-              languages?.map((language) => {
-                const languageFieldName = `attributes.label_${language?.slug}`;
-                const fieldValue = useWatch({
-                  control,
-                  name: languageFieldName
-                });
+          <Box style={{display: "flex", gap: "6px"}}>
+            {languages?.map((language) => {
+              const languageFieldName = `attributes.label_${language?.slug}`;
+              const fieldValue = useWatch({
+                control,
+                name: languageFieldName,
+              });
 
-                return (
-                  <HFTextField
-                    control={control}
-                    name={languageFieldName}
-                    fullWidth
-                    placeholder={`Название (${language?.slug})`}
-                    defaultValue={fieldValue || tableName} // Set default value if fieldValue is empty
-                  />
-                );
-              })
-            }
-
+              return (
+                <HFTextField
+                  control={control}
+                  name={languageFieldName}
+                  fullWidth
+                  placeholder={`Название (${language?.slug})`}
+                  defaultValue={fieldValue || tableName} // Set default value if fieldValue is empty
+                />
+              );
+            })}
           </Box>
         </FRow>
         <FRow label="Описание">
-          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          {
-              languages?.map((desc) => {
-                const languageFieldDesc = `attributes.description_${desc?.slug}`;
-                const fieldValue = useWatch({
-                  control,
-                  name: languageFieldDesc
-                });
+          <Box style={{display: "flex", flexDirection: "column", gap: "6px"}}>
+            {languages?.map((desc) => {
+              const languageFieldDesc = `attributes.description_${desc?.slug}`;
+              const fieldValue = useWatch({
+                control,
+                name: languageFieldDesc,
+              });
 
-                return (
-                  <HFTextField
-                    control={control}
-                    name={languageFieldDesc}
-                    fullWidth
-                    placeholder={`Название (${desc?.slug})`}
-                    defaultValue={fieldValue || description} // Set default value if fieldValue is empty
-                  />
-                );
-              })
-            }
-
+              return (
+                <HFTextField
+                  control={control}
+                  name={languageFieldDesc}
+                  fullWidth
+                  placeholder={`Название (${desc?.slug})`}
+                  defaultValue={fieldValue || description} // Set default value if fieldValue is empty
+                />
+              );
+            })}
           </Box>
         </FRow>
         <FRow label="SLUG">
-          <HFTextField control={control} name="slug" fullWidth placeholder="SLUG" required withTrim />
+          <HFTextField
+            control={control}
+            name="slug"
+            fullWidth
+            placeholder="SLUG"
+            required
+            withTrim
+          />
         </FRow>
         <FRow label="Subtitle field">
-          <HFSelect control={control} name="subtitle_field_slug" fullWidth placeholder="Subtitle field" options={computedFields} />
+          <HFSelect
+            control={control}
+            name="subtitle_field_slug"
+            fullWidth
+            placeholder="Subtitle field"
+            options={computedFields}
+          />
         </FRow>
 
-        <Box sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}>
+        <Box sx={{display: "flex", alignItems: "center", margin: "30px 0"}}>
           <FRow label="Login Table">
             <HFSwitch control={control} name="is_login_table" required />
           </FRow>
@@ -197,7 +206,14 @@ const MainInfo = ({ control }) => {
               }}
             >
               <FRow label="Тип пользователья" />
-              <HFSelect control={control} name="attributes.auth_info.client_type_id" fullWidth placeholder="client" options={computedLoginFields} required />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.client_type_id"
+                fullWidth
+                placeholder="client"
+                options={computedLoginFields}
+                required
+              />
             </Box>
             <Box
               sx={{
@@ -208,7 +224,14 @@ const MainInfo = ({ control }) => {
               }}
             >
               <FRow label="Роли" />
-              <HFSelect control={control} name="attributes.auth_info.role_id" fullWidth placeholder="role" options={computedLoginFields} required />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.role_id"
+                fullWidth
+                placeholder="role"
+                options={computedLoginFields}
+                required
+              />
             </Box>
             <Box
               sx={{
@@ -219,7 +242,13 @@ const MainInfo = ({ control }) => {
               }}
             >
               <FRow label="Логин" />
-              <HFSelect control={control} name="attributes.auth_info.login" fullWidth placeholder="login" options={computedLoginFields} />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.login"
+                fullWidth
+                placeholder="login"
+                options={computedLoginFields}
+              />
             </Box>
             <Box
               sx={{
@@ -230,7 +259,14 @@ const MainInfo = ({ control }) => {
               }}
             >
               <FRow label="Пароль" />
-              <HFSelect control={control} name="attributes.auth_info.password" fullWidth placeholder="password" options={computedLoginFields} required={loginRequired} />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.password"
+                fullWidth
+                placeholder="password"
+                options={computedLoginFields}
+                required={loginRequired}
+              />
             </Box>
             <Box
               sx={{
@@ -241,7 +277,13 @@ const MainInfo = ({ control }) => {
               }}
             >
               <FRow label="Почта" />
-              <HFSelect control={control} name="attributes.auth_info.email" fullWidth placeholder="email" options={computedLoginFields} />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.email"
+                fullWidth
+                placeholder="email"
+                options={computedLoginFields}
+              />
             </Box>
             <Box
               sx={{
@@ -252,7 +294,13 @@ const MainInfo = ({ control }) => {
               }}
             >
               <FRow label="Телефон" />
-              <HFSelect control={control} name="attributes.auth_info.phone" fullWidth placeholder="phone" options={computedLoginFields} />
+              <HFSelect
+                control={control}
+                name="attributes.auth_info.phone"
+                fullWidth
+                placeholder="phone"
+                options={computedLoginFields}
+              />
             </Box>
           </Box>
         )}

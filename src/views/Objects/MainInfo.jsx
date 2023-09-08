@@ -1,20 +1,15 @@
-import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import {useMemo, useState} from "react";
+import {useParams} from "react-router-dom";
 
 import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
 import FormCard from "./components/FormCard";
 import styles from "./style.module.scss";
 import IconGenerator from "@/components/IconPicker/IconGenerator";
-import { Tooltip } from "@mui/material";
+import {Tooltip} from "@mui/material";
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
 
-const MainInfo = ({
-  computedSections,
-  control,
-  setFormValue,
-  relatedTable,
-}) => {
-  const { tableSlug } = useParams();
+const MainInfo = ({computedSections, control, setFormValue, relatedTable}) => {
+  const {tableSlug} = useParams();
   const [isShow, setIsShow] = useState(true);
   const fieldsList = useMemo(() => {
     const fields = [];
@@ -32,7 +27,7 @@ const MainInfo = ({
       <div className={styles.header}>
         {isShow && (
           <button onClick={() => setIsShow((prev) => !prev)}>
-            <KeyboardTabIcon style={{ color: "#000" }} />
+            <KeyboardTabIcon style={{color: "#000"}} />
           </button>
         )}
       </div>
@@ -67,7 +62,7 @@ const MainInfo = ({
         <div className={styles.hideSideCard}>
           <Tooltip title="Открыть полю ввода" placement="right" followCursor>
             <button onClick={() => setIsShow(true)}>
-              <KeyboardTabIcon style={{ color: "#000" }} />
+              <KeyboardTabIcon style={{color: "#000"}} />
             </button>
           </Tooltip>
         </div>

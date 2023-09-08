@@ -89,7 +89,7 @@ const ViewsWithGroups = ({
     setAnchorEl(null);
   };
 
-  const invite = menuItem.data.table.is_login_table;
+  const invite = menuItem?.data?.table?.is_login_table;
 
   const tableHeightOptions = [
     {

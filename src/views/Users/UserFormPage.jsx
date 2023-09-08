@@ -30,7 +30,7 @@ const ClientUserForm = () => {
   const { userId, userMenuId } = useParams();
   const [showPassword, setShowPassword] = useState(false);
   const menuItem = store.getState().menu.menuItem;
-  const invite = Boolean(menuItem.table_slug);
+  const invite = Boolean(menuItem?.table_slug);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();

@@ -1,11 +1,12 @@
 import ViewColumnOutlinedIcon from "@mui/icons-material/ViewColumnOutlined";
 import { Checkbox, Menu } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import style from "./style.module.scss";
 import constructorViewService from "../../../../services/constructorViewService";
+import { tr } from "date-fns/locale";
 
 export default function FixColumnsTableView({ selectedTabIndex }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -26,6 +27,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
       views: [],
       columns: [],
     },
+    refetch,
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
@@ -64,12 +66,18 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
     setSelectedView(computedData);
 
     constructorViewService.update(computedData).then((res) => {
-      // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS"]);
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]).finally(() => {
         setIsLoading(false);
       });
     });
   };
+
+  const visibleColumns = useMemo(() => {
+    refetch();
+    return columns.filter((column) => {
+      return views[selectedTabIndex].columns.find((el) => el === column.id);
+    });
+  }, [views, columns, selectedTabIndex, anchorEl]);
 
   return (
     <>
@@ -114,7 +122,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
         }}
       >
         <div className={style.menuItems}>
-          {columns.map((column) => (
+          {visibleColumns.map((column) => (
             <div className={style.menuItem}>
               <span>{column.label}</span>
 

@@ -18,6 +18,7 @@ const TableRow = ({
   rowIndex,
   control,
   onRowClick,
+  calculateWidthFixedColumn,
   onDeleteClick,
   mainForm,
   checkboxValue,
@@ -181,13 +182,12 @@ const TableRow = ({
                         ? "sticky"
                         : "relative"
                     }`,
-                    left: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === column?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-                        ? `${calculateWidth(column?.id, index)}px`
-                        : "0"
-                    }`,
+                    // left: `${
+                    //   tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                    //     ? `${calculateWidth(column?.id, index)}px`
+                    //     : "0"
+                    // }`,
+                    left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id)}px` : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
                         (item) => item?.id === column?.id

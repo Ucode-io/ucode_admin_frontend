@@ -2,21 +2,21 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIconFromMui from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Collapse, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
-import { BsThreeDots } from "react-icons/bs";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMenuListQuery } from "../../../services/menuService";
-import { menuActions } from "../../../store/menuItem/menuItem.slice";
+import {Box, Button, Collapse, Tooltip} from "@mui/material";
+import {useEffect, useState} from "react";
+import {BsThreeDots} from "react-icons/bs";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {useMenuListQuery} from "../../../services/menuService";
+import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
 import MenuIcon from "../MenuIcon";
 import "../style.scss";
-import { useMutation, useQueryClient } from "react-query";
-import { useTranslation } from "react-i18next";
-import { store } from "../../../store";
+import {useMutation, useQueryClient} from "react-query";
+import {useTranslation} from "react-i18next";
+import {store} from "../../../store";
 import Users from "../Components/Users";
-import { analyticItems, folderIds } from "./mock/folders";
+import {analyticItems, folderIds} from "./mock/folders";
 import Permissions from "../Components/Permission";
 import DataBase from "../Components/DataBase";
 import EltResources from "../Components/Elt";
@@ -28,13 +28,13 @@ import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
 import NotificationSidebar from "../Components/Notification/NotificationSidebar";
 import Resources from "../Components/Resources";
-import { use } from "i18next";
-import { showAlert } from "../../../store/alert/alert.thunk";
+import {use} from "i18next";
+import {showAlert} from "../../../store/alert/alert.thunk";
 import pivotService from "../../../services/pivotService";
 import DeleteIcon from "../DeleteIcon";
 import ApiSidebar from "../Components/Api/ApiSidebar";
 import QuerySidebar from "../Components/Query/QuerySidebar";
-import { updateLevel } from "../../../utils/level";
+import {updateLevel} from "../../../utils/level";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -54,7 +54,7 @@ const RecursiveBlock = ({
   menuStyle,
   menuItem,
 }) => {
-  const { appId, tableSlug } = useParams();
+  const {appId, tableSlug} = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -63,7 +63,7 @@ const RecursiveBlock = ({
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const defaultLanguage = i18n.language;
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
@@ -159,7 +159,7 @@ const RecursiveBlock = ({
     }
   };
 
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       parent_id: id,
     },
@@ -200,7 +200,7 @@ const RecursiveBlock = ({
     }
   }, []);
 
-  const { mutate: deleteReportSetting } = useMutation(
+  const {mutate: deleteReportSetting} = useMutation(
     (id) => pivotService.deleteReportSetting(id),
     {
       onSuccess: () => {
@@ -210,7 +210,7 @@ const RecursiveBlock = ({
     }
   );
 
-  const { mutate: onDeleteTemplate } = useMutation(
+  const {mutate: onDeleteTemplate} = useMutation(
     (id) =>
       pivotService.deletePivotTemplate({
         id,
@@ -264,21 +264,6 @@ const RecursiveBlock = ({
             {element?.type === "FOLDER" &&
             element?.id === "c57eedc3-a954-4262-a0af-376c65b5a274" ? (
               <Box className="icon_group">
-                {/* <Tooltip title="Report settings" placement="top">
-                  <Box className="extra_icon">
-                    <BsThreeDots
-                      size={13}
-                      onClick={(e) => {
-                        e?.stopPropagation();
-                        handleOpenNotify(e, "FOLDER");
-                        setElement(element);
-                      }}
-                      style={{
-                        color: menuItem?.id === element?.id ? menuStyle?.active_text : menuStyle?.text || "",
-                      }}
-                    />
-                  </Box>
-                </Tooltip> */}
                 <Tooltip title="Create report settings" placement="top">
                   <Box className="extra_icon">
                     {element?.data?.permission?.write || permissionButton ? (
@@ -308,27 +293,6 @@ const RecursiveBlock = ({
               </Box>
             ) : element?.type === "FOLDER" && sidebarIsOpen ? (
               <Box className="icon_group">
-                {!adminId && (
-                  <Tooltip title="Folder settings" placement="top">
-                    <Box className="extra_icon">
-                      <BsThreeDots
-                        size={13}
-                        onClick={(e) => {
-                          e?.stopPropagation();
-                          handleOpenNotify(e, "FOLDER");
-                          setElement(element);
-                          dispatch(menuActions.setMenuItem(element));
-                        }}
-                        style={{
-                          color:
-                            menuItem?.id === element?.id
-                              ? menuStyle?.active_text
-                              : menuStyle?.text || "",
-                        }}
-                      />
-                    </Box>
-                  </Tooltip>
-                )}
                 <Tooltip title="Create folder" placement="top">
                   <Box className="extra_icon">
                     {element?.data?.permission?.write ||
@@ -350,6 +314,25 @@ const RecursiveBlock = ({
                         }}
                       />
                     ) : null}
+                  </Box>
+                </Tooltip>
+                <Tooltip title="Folder settings" placement="top">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        e?.stopPropagation();
+                        handleOpenNotify(e, "FOLDER");
+                        setElement(element);
+                        dispatch(menuActions.setMenuItem(element));
+                      }}
+                      style={{
+                        color:
+                          menuItem?.id === element?.id
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
+                      }}
+                    />
                   </Box>
                 </Tooltip>
                 {childBlockVisible ? (

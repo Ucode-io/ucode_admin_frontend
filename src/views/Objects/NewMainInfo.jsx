@@ -1,18 +1,18 @@
 import KeyboardTabIcon from "@mui/icons-material/KeyboardTab";
-import { Box, Button, Tooltip } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import {Box, Button, Tooltip} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useParams} from "react-router-dom";
 import FormElementGenerator from "../../components/ElementGenerators/FormElementGenerator";
 import PageFallback from "../../components/PageFallback";
 import NewFormCard from "./components/NewFormCard";
 import styles from "./style.module.scss";
-import { useProjectGetByIdQuery } from "../../services/projectService";
-import { store } from "../../store";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
+import {useProjectGetByIdQuery} from "../../services/projectService";
+import {store} from "../../store";
+import {useQuery} from "react-query";
+import {useSelector} from "react-redux";
 import projectService from "../../services/projectService";
-import { useWatch } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import {useWatch} from "react-hook-form";
+import {useTranslation} from "react-i18next";
 
 const MainInfo = ({
   computedSections,
@@ -26,11 +26,11 @@ const MainInfo = ({
   selectedIndex,
   isMultiLanguage,
 }) => {
-  const { tableSlug } = useParams();
+  const {tableSlug} = useParams();
   const [isShow, setIsShow] = useState(true);
   const projectId = store.getState().company.projectId;
   const [activeLang, setActiveLang] = useState();
-console.log('firstprojectId', projectId)
+  console.log("firstprojectId", projectId);
   const fieldsList = useMemo(() => {
     const fields = [];
 
@@ -44,10 +44,8 @@ console.log('firstprojectId', projectId)
     return fields;
   }, [relation]);
 
-  const params = {
-    
-  }
-  const { data: projectInfo } = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
+  const params = {};
+  const {data: projectInfo} = useQuery(["GET_PROJECT_BY_ID", projectId], () => {
     return projectService.getByID(params, projectId);
   });
 
@@ -78,10 +76,17 @@ console.log('firstprojectId', projectId)
           )}
 
           {computedSections.map((section) => (
-            <NewFormCard key={section.id} title={section?.attributes?.[`label_${activeLang}`] ?? section.label} className={styles.formCard} icon={section.icon}>
+            <NewFormCard
+              key={section.id}
+              title={
+                section?.attributes?.[`label_${activeLang}`] ?? section.label
+              }
+              className={styles.formCard}
+              icon={section.icon}
+            >
               <div className={styles.newformColumn}>
                 {section.fields?.map((field) => (
-                  <Box style={{ display: "flex", alignItems: "flex-start" }}>
+                  <Box style={{display: "flex", alignItems: "flex-start"}}>
                     <FormElementGenerator
                       key={field.id}
                       isMultiLanguage={isMultiLanguage}
@@ -103,7 +108,7 @@ console.log('firstprojectId', projectId)
         <div className={styles.hideSideCard}>
           <Tooltip title="Открыть полю ввода" placement="right" followCursor>
             <button onClick={() => setIsShow(true)}>
-              <KeyboardTabIcon style={{ color: "#000" }} />
+              <KeyboardTabIcon style={{color: "#000"}} />
             </button>
           </Tooltip>
         </div>

@@ -294,25 +294,6 @@ const RecursiveBlock = ({
               </Box>
             ) : element?.type === "FOLDER" && sidebarIsOpen ? (
               <Box className="icon_group">
-                <Tooltip title="Folder settings" placement="top">
-                  <Box className="extra_icon">
-                    <BsThreeDots
-                      size={13}
-                      onClick={(e) => {
-                        e?.stopPropagation();
-                        handleOpenNotify(e, "FOLDER");
-                        setElement(element);
-                        dispatch(menuActions.setMenuItem(element));
-                      }}
-                      style={{
-                        color:
-                          menuItem?.id === element?.id
-                            ? menuStyle?.active_text
-                            : menuStyle?.text || "",
-                      }}
-                    />
-                  </Box>
-                </Tooltip>
                 <Tooltip title="Create folder" placement="top">
                   <Box className="extra_icon">
                     {element?.data?.permission?.write ||
@@ -336,12 +317,30 @@ const RecursiveBlock = ({
                     ) : null}
                   </Box>
                 </Tooltip>
-                {adminId !== element?.parent_id &&
-                  (childBlockVisible ? (
-                    <KeyboardArrowDownIcon />
-                  ) : (
-                    <KeyboardArrowRightIcon />
-                  ))}
+                <Tooltip title="Folder settings" placement="top">
+                  <Box className="extra_icon">
+                    <BsThreeDots
+                      size={13}
+                      onClick={(e) => {
+                        e?.stopPropagation();
+                        handleOpenNotify(e, "FOLDER");
+                        setElement(element);
+                        dispatch(menuActions.setMenuItem(element));
+                      }}
+                      style={{
+                        color:
+                          menuItem?.id === element?.id
+                            ? menuStyle?.active_text
+                            : menuStyle?.text || "",
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+                {childBlockVisible ? (
+                  <KeyboardArrowDownIcon />
+                ) : (
+                  <KeyboardArrowRightIcon />
+                )}
               </Box>
             ) : element?.type === "USER_FOLDER" ? (
               <>

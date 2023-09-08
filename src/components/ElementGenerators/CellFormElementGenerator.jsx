@@ -57,12 +57,15 @@ const CellFormElementGenerator = ({
   });
 
   const computedSlug = useMemo(() => {
-    if (field.enable_multilanguage) {
-      return `multi.${index}.${field.slug}`;
-    } else {
-      return field?.slug;
-    }
+    return `multi.${index}.${field.slug}`;
+    // if (field.enable_multilanguage) {
+
+    // } else {
+    //   return field?.slug;
+    // }
   }, [field.slug, index]);
+
+  console.log("computedSlug", computedSlug);
 
   const changedValue = useWatch({
     control,
@@ -110,7 +113,6 @@ const CellFormElementGenerator = ({
       );
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
-
   switch (field.type) {
     case "LOOKUP":
       return (

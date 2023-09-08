@@ -238,7 +238,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
               <QuickFiltersTab form={form} />
             </TabPanel>
             <TabPanel>
-              <ColumnsTab form={form} />
+              <ColumnsTab form={form} isMenu={false}/>
             </TabPanel>
             <TabPanel>
               <NavigateSettings form={form} />

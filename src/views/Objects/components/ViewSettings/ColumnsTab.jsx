@@ -1,11 +1,11 @@
 import { Switch } from "@mui/material";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
 import { applyDrag } from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
 
-const ColumnsTab = ({ form, updateView }) => {
+const ColumnsTab = ({ form, updateView, isMenu }) => {
   const { fields: columns, move } = useFieldArray({
     control: form.control,
     name: "columns",
@@ -16,11 +16,10 @@ const ColumnsTab = ({ form, updateView }) => {
     name: "columns",
   });
 
-  const onDrop = (dropResult) => {
-    updateView();
+  const onDrop = async (dropResult) => {
     const result = applyDrag(columns, dropResult);
     if (result) {
-      move(dropResult.removedIndex, dropResult.addedIndex);
+      await move(dropResult.removedIndex, dropResult.addedIndex);
     }
   };
 
@@ -35,8 +34,16 @@ const ColumnsTab = ({ form, updateView }) => {
       form.setValue(`columns[${index}].is_checked`, val);
     });
 
-    updateView();
+    if (isMenu) {
+      updateView();
+    }
   };
+
+  useEffect(() => {
+    if (isMenu) {
+      updateView();
+    }
+  }, [watchedColumns]);
 
   return (
     <div>
@@ -64,7 +71,7 @@ const ColumnsTab = ({ form, updateView }) => {
                     checked={form.watch(`columns.${index}.is_checked`)}
                     onChange={(e) => {
                       form.setValue(`columns.${index}.is_checked`, e.target.checked);
-                      updateView();
+                      // updateView();
                     }}
                   />
                 </div>

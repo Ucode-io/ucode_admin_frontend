@@ -137,7 +137,7 @@ export default function ColumnVisible({ selectedTabIndex }) {
           },
         }}
       >
-        {isLoading ? <CircularProgress /> : <ColumnsTab form={form} updateView={updateView}/>}
+        {isLoading ? <CircularProgress /> : <ColumnsTab form={form} updateView={updateView} isMenu={true}/>}
       </Menu>
     </div>
   );

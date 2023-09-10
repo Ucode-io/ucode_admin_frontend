@@ -28,10 +28,12 @@ const TableView = ({
   tab,
   view,
   shouldGet,
+  selectedView,
   reset = () => {},
   fieldsMap,
   isDocView,
   sortedDatas = [],
+  setSortedDatas,
   formVisible,
   setFormVisible,
   selectedObjects,
@@ -149,16 +151,6 @@ const TableView = ({
 
   // OLD CODE
 
-  const sortToPutBeginOfArray = (allObjects, filteredObject) => {
-    const sortedObjects = [];
-    filteredObject.forEach((filteredObject) => {
-      const index = allObjects.findIndex((allObject) => allObject.id === filteredObject.id);
-      sortedObjects.push(allObjects[index]);
-      allObjects.splice(index, 1);
-    });
-    return [...sortedObjects, ...allObjects];
-  };
-
   function customSortArray(a, b) {
     const commonItems = a.filter((item) => b.includes(item));
     commonItems.sort();
@@ -182,8 +174,6 @@ const TableView = ({
       ?.filter((el) => el);
   }, [view, fieldsMap]);
 
-  console.log('columns', columns)
-  
   const columnss = useMemo(() => {
     return view?.columns?.map((el) => fieldsMap[el])?.filter((el) => el);
   }, [view, fieldsMap]);
@@ -192,9 +182,11 @@ const TableView = ({
     const resultObject = {};
 
     let a = sortedDatas?.map((el) => {
-      return {
-        [el?.field?.slug]: el.order.value === "ASC" ? 1 : -1,
-      };
+      if (el.field) {
+        return {
+          [fieldsMap[el?.field].slug]: el.order === "ASC" ? 1 : -1,
+        };
+      }
     });
 
     a.forEach((obj) => {
@@ -204,7 +196,7 @@ const TableView = ({
     });
 
     return resultObject;
-  }, [sortedDatas]);
+  }, [sortedDatas, fieldsMap]);
 
   const detectStringType = (inputString) => {
     if (/^\d+$/.test(inputString)) {
@@ -377,6 +369,11 @@ const TableView = ({
           <ObjectDataTable
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
+            selectedView={selectedView}
+            setSortedDatas={setSortedDatas}
+            sortedDatas={sortedDatas}
+            setDrawerState={setDrawerState}
+            isTableView={true}
             setFormVisible={setFormVisible}
             setFormValue={setFormValue}
             mainForm={mainForm}

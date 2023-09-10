@@ -15,22 +15,28 @@ import "./style.scss";
 import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
 import { Button } from "@mui/material";
+import TableHeadForTableView from "./TableHeadForTableView";
 
 const ObjectDataTable = ({
   data = [],
   loader = false,
+  setDrawerState,
   removableHeight,
   additionalRow,
   mainForm,
+  selectedView,
+  isTableView = false,
   remove,
   multipleDelete,
   openFieldSettings,
+  sortedDatas,
   fields = [],
   isRelationTable,
   disablePagination,
   currentPage = 1,
   onPaginationChange = () => {},
   pagesCount = 1,
+  setSortedDatas,
   columns = [],
   relatedTableSlug,
   watch,
@@ -64,7 +70,7 @@ const ObjectDataTable = ({
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-
+console.log('ssssssss', columns)
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
 
@@ -188,37 +194,54 @@ const ObjectDataTable = ({
     }
   };
 
-  const calculateWidthFixedColumn = (colId) => {
-    const prevElement = columns?.findIndex((item) => item?.id === colId);
+  // const calculateWidthFixedColumn = (colId) => {
+  //   const prevElement = columns?.findIndex((item) => item?.id === colId);
 
-    if (prevElement === 0) {
+  //   if (prevElement === 0) {
+  //     return 0;
+  //   } else if (prevElement === 1) {
+  //     const element = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+  //     return element?.offsetWidth;
+  //   } else if (prevElement === 2) {
+  //     const element1 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+  //     const element2 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+  //     return element1?.offsetWidth + element2?.offsetWidth;
+  //   } else if (prevElement === 3) {
+  //     const element1 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
+  //     const element2 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+  //     const element3 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+  //     return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth;
+  //   } else if (prevElement === 4) {
+  //     const element1 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
+  //     const element2 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
+  //     const element3 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+  //     const element4 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+  //     return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth;
+  //   } else if (prevElement === 5) {
+  //     const element1 = document.querySelector(`[id='${columns[prevElement - 5]?.id}']`);
+  //     const element2 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
+  //     const element3 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
+  //     const element4 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+  //     const element5 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+  //     return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth + element5?.offsetWidth;
+  //   }
+  // };
+
+  const calculateWidthFixedColumn = (colId) => {
+    const prevElementIndex = columns?.findIndex((item) => item.id === colId);
+
+    if (prevElementIndex === -1 || prevElementIndex === 0) {
       return 0;
-    } else if (prevElement === 1) {
-      const element = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-      return element?.offsetWidth;
-    } else if (prevElement === 2) {
-      const element1 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-      const element2 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-      return element1?.offsetWidth + element2?.offsetWidth;
-    } else if (prevElement === 3) {
-      const element1 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
-      const element2 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-      const element3 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-      return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth;
-    } else if (prevElement === 4) {
-      const element1 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
-      const element2 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
-      const element3 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-      const element4 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-      return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth;
-    } else if (prevElement === 5) {
-      const element1 = document.querySelector(`[id='${columns[prevElement - 5]?.id}']`);
-      const element2 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
-      const element3 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
-      const element4 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-      const element5 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-      return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth + element5?.offsetWidth;
     }
+
+    let totalWidth = 0;
+
+    for (let i = 0; i < prevElementIndex; i++) {
+      const element = document.querySelector(`[id='${columns?.[i].id}']`);
+      totalWidth += element?.offsetWidth || 0;
+    }
+
+    return totalWidth;
   };
 
   useEffect(() => {
@@ -252,61 +275,31 @@ const ObjectDataTable = ({
           {columns.map(
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
-                <CTableHeadCell
-                  id={column.id}
-                  key={index}
-                  style={{
-                    padding: "10px 4px",
-                    color: "#747474",
-                    fontSize: "13px",
-                    fontStyle: "normal",
-                    fontWeight: 500,
-                    lineHeight: "normal",
-                    minWidth: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
-                    width: tableSize?.[pageName]?.[column.id] ? tableSize?.[pageName]?.[column.id] : "auto",
-                    position: `${
-                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"
-                    }`,
-                    left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id)}px` : "0",
-                    backgroundColor: `${
-                      tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "#F6F6F6" : "#fff"
-                    }`,
-                    zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
-                    // color: formVisible && column?.required === true ? "red" : "",
-                  }}
-                >
-                  <div
-                    className="table-filter-cell cell-data"
-                    onMouseEnter={(e) => {
-                      setCurrentColumnWidth(e.relatedTarget.offsetWidth);
-                    }}
-                  >
-                    <span
-                      style={{
-                        whiteSpace: "nowrap",
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setColumnId((prev) => (prev === column.id ? "" : column.id));
-                      }}
-                    >
-                      {column.label}
-                    </span>
-                    {disableFilters && <FilterGenerator field={column} name={column.slug} onChange={filterChangeHandler} filters={filters} tableSlug={tableSlug} />}
-                    {columnId === column?.id && (
-                      <div className="cell-popup" ref={popupRef}>
-                        <div className="cell-popup-item" onClick={() => handlePin(column?.id, index)}>
-                          <PinIcon pinned={tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky} />
-                          <span>Pin column</span>
-                        </div>
-                        <div className="cell-popup-item" onClick={() => handleAutoSize(column?.id, index)}>
-                          <ResizeIcon />
-                          <span>Autosize</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CTableHeadCell>
+                <TableHeadForTableView
+                  column={column}
+                  index={index}
+                  pageName={pageName}
+                  sortedDatas={sortedDatas}
+                  setSortedDatas={setSortedDatas}
+                  setDrawerState={setDrawerState}
+                  tableSize={tableSize}
+                  tableSettings={tableSettings}
+                  view={view}
+                  selectedView={selectedView}
+                  calculateWidthFixedColumn={calculateWidthFixedColumn}
+                  handlePin={handlePin}
+                  handleAutoSize={handleAutoSize}
+                  popupRef={popupRef}
+                  columnId={columnId}
+                  setColumnId={setColumnId}
+                  setCurrentColumnWidth={setCurrentColumnWidth}
+                  isTableView={isTableView}
+                  FilterGenerator={FilterGenerator}
+                  filterChangeHandler={filterChangeHandler}
+                  filters={filters}
+                  tableSlug={tableSlug}
+                  disableFilters={disableFilters}
+                />
               )
           )}
 

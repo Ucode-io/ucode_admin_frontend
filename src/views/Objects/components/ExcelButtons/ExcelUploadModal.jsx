@@ -79,7 +79,6 @@ const ExcelUploadModal = ({ fieldsMap, handleClose }) => {
       })
       .then((res) => {
         queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
-        console.log("res", res);
       })
       .catch((err) => {
         console.log("onSubmit error", err);

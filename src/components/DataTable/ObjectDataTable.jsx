@@ -203,39 +203,6 @@ const ObjectDataTable = ({
     }
   };
 
-  // const calculateWidthFixedColumn = (colId) => {
-  //   const prevElement = columns?.findIndex((item) => item?.id === colId);
-
-  //   if (prevElement === 0) {
-  //     return 0;
-  //   } else if (prevElement === 1) {
-  //     const element = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-  //     return element?.offsetWidth;
-  //   } else if (prevElement === 2) {
-  //     const element1 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-  //     const element2 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-  //     return element1?.offsetWidth + element2?.offsetWidth;
-  //   } else if (prevElement === 3) {
-  //     const element1 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
-  //     const element2 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-  //     const element3 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-  //     return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth;
-  //   } else if (prevElement === 4) {
-  //     const element1 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
-  //     const element2 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
-  //     const element3 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-  //     const element4 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-  //     return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth;
-  //   } else if (prevElement === 5) {
-  //     const element1 = document.querySelector(`[id='${columns[prevElement - 5]?.id}']`);
-  //     const element2 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
-  //     const element3 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
-  //     const element4 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-  //     const element5 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-  //     return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth + element5?.offsetWidth;
-  //   }
-  // };
-
   const calculateWidthFixedColumn = (colId) => {
     const prevElementIndex = columns?.findIndex((item) => item.id === colId);
 

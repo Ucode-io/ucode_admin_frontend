@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CTableHeadCell } from "../CTable";
 import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
-import { Menu } from "@mui/material";
+import { Button, Menu } from "@mui/material";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import QueueOutlinedIcon from "@mui/icons-material/QueueOutlined";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
@@ -14,6 +14,7 @@ import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { useQueryClient } from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import constructorFieldService from "../../services/constructorFieldService";
+import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 
 export default function TableHeadForTableView({
   column,
@@ -220,7 +221,6 @@ export default function TableHeadForTableView({
           zIndex: `${tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "1" : "0"}`,
           // color: formVisible && column?.required === true ? "red" : "",
         }}
-        onClick={handleClick}
       >
         <div
           className="table-filter-cell cell-data"
@@ -239,6 +239,17 @@ export default function TableHeadForTableView({
           >
             {column.label}
           </span>
+
+          <Button
+            onClick={handleClick}
+            variant="text"
+            style={{
+              minWidth: "auto",
+              padding: "0 5px",
+            }}
+          >
+            <ExpandCircleDownIcon />
+          </Button>
           {/* {(disableFilters && isTableView) && <FilterGenerator field={column} name={column.slug} onChange={filterChangeHandler} filters={filters} tableSlug={tableSlug} />}
           {(columnId === column?.id && isTableView) && (
             <div className="cell-popup" ref={popupRef}>
@@ -314,6 +325,7 @@ export default function TableHeadForTableView({
                     gap: "10px",
                     alignItems: "center",
                     cursor: "pointer",
+                    color: child.id === 14 ? "red" : "",
                   }}
                 >
                   <div>{child.icon}</div>

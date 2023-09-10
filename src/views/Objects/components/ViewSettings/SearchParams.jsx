@@ -56,7 +56,7 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
 
   useEffect(() => {
     selectAll();
-  }, [])
+  }, []);
 
   return (
     <div>
@@ -88,15 +88,25 @@ export default function SearchParams({ checkedColumns, setCheckedColumns, column
               display: "flex",
               alignItems: "center",
               borderBottom: index === columns.length - 1 ? "none" : "1px solid #e0e0e0",
+              padding: "10px 0",
+              justifyContent: "space-between",
             }}
           >
-            <div style={{ width: 70 }}>
-              <Switch onChange={() => changeHandler(column.slug)} checked={checkedColumns.includes(column.slug)} />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
+              <div>{columnIcons[column.type]}</div>
+
+              <div style={{ textAlign: "end" }}>{column.label}</div>
             </div>
 
-            <div style={{ width: 40 }}>{columnIcons[column.type]}</div>
-
-            <div style={{ flex: 1 }}>{column.label}</div>
+            <div>
+              <Switch size="small" onChange={() => changeHandler(column.slug)} checked={checkedColumns.includes(column.slug)} />
+            </div>
           </div>
         ))}
       </div>

@@ -40,7 +40,12 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
   };
 
   return (
-    <div>
+    <div
+      style={{
+        maxHeight: 300,
+        overflowY: "auto",
+      }}
+    >
       <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
         <CTableBody dataLength={1}>
           {computedColumns.map((column) => (

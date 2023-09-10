@@ -209,6 +209,14 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     );
   }, [view, fieldsMap]);
 
+  const selectAll = () => {
+    setCheckedColumns(columnsForSearch.map((el) => el.slug));
+  };
+
+  useEffect(() => {
+    selectAll();
+  }, []);
+
   const [sortedDatas, setSortedDatas] = useState([]);
 
   return (

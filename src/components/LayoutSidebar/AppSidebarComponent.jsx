@@ -1,17 +1,17 @@
-import { Box, ListItemButton, ListItemText, Tooltip } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { BsThreeDots } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
-import { Draggable } from "react-smooth-dnd";
+import {Box, ListItemButton, ListItemText, Tooltip} from "@mui/material";
+import {useEffect, useMemo} from "react";
+import {BsThreeDots} from "react-icons/bs";
+import {useNavigate} from "react-router-dom";
+import {Draggable} from "react-smooth-dnd";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import AddIcon from "@mui/icons-material/Add";
 import "./style.scss";
 import IconGenerator from "../IconPicker/IconGenerator";
-import { useDispatch } from "react-redux";
-import { menuActions } from "../../store/menuItem/menuItem.slice";
+import {useDispatch} from "react-redux";
+import {menuActions} from "../../store/menuItem/menuItem.slice";
 import MenuIcon from "./MenuIcon";
-import { useTranslation } from "react-i18next";
-import { store } from "../../store";
+import {useTranslation} from "react-i18next";
+import {store} from "../../store";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
 
@@ -28,7 +28,7 @@ const AppSidebar = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
@@ -199,6 +199,7 @@ const AppSidebar = ({
                     ? menuStyle?.active_text
                     : menuStyle?.text || "",
               }}
+              element={element}
             />
           )}
           {element?.type === "MICROFRONTEND" && (
@@ -215,6 +216,7 @@ const AppSidebar = ({
                     ? menuStyle?.active_text
                     : menuStyle?.text || "",
               }}
+              element={element}
             />
           )}
           {element?.type === "WEBPAGE" && (

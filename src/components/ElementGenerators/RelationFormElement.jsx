@@ -306,15 +306,17 @@ const AutoCompleteElement = ({
       setPage(1);
     }
   };
-
+  console.log("options", options);
   const setClientTypeValue = () => {
+    const value = options?.options?.find((item) => item?.guid === clientTypeID);
+    console.log("valuie", value), clientTypeID;
+    console.log("options", options?.options);
     if (
       field?.attributes?.object_id_from_jwt &&
       field?.id?.split("#")?.[0] === "client_type"
     ) {
-      setLocalValue(
-        options?.options?.find((item) => item?.guid === clientTypeID)
-      );
+      setValue(value?.guid ?? value?.guid);
+      setLocalValue(value);
     }
   };
 
@@ -351,8 +353,13 @@ const AutoCompleteElement = ({
 
   useEffect(() => {
     if (value) getValueData();
-    setClientTypeValue();
   }, [value]);
+
+  useEffect(() => {
+    setClientTypeValue();
+  }, [options]);
+
+  console.log("field", field);
 
   useEffect(() => {
     if (field?.attributes?.function_path) {
@@ -431,7 +438,8 @@ const AutoCompleteElement = ({
           isDisabled={
             disabled ||
             (field?.attributes?.object_id_from_jwt &&
-              field?.id?.split("#")?.[0] === "client_type")
+              field?.id?.split("#")?.[0] === "client_type") ||
+            field?.attributes?.is_user_id_default
           }
           options={options?.options ?? []}
           isClearable={true}

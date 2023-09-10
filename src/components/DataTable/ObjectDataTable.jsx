@@ -20,14 +20,10 @@ import MultipleUpdateRow from "./MultipleUpdateRow";
 import "./style.scss";
 import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
-<<<<<<< HEAD
 import {de} from "date-fns/locale";
 import {useTranslation} from "react-i18next";
 import {Button} from "@mui/material";
-=======
-import { Button } from "@mui/material";
 import TableHeadForTableView from "./TableHeadForTableView";
->>>>>>> redesign_table_view
 
 const ObjectDataTable = ({
   data = [],
@@ -296,105 +292,6 @@ const ObjectDataTable = ({
           {columns.map(
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
-<<<<<<< HEAD
-                <CTableHeadCell
-                  id={column.id}
-                  key={index}
-                  style={{
-                    padding: "10px 4px",
-                    color: "#747474",
-                    fontSize: "13px",
-                    fontStyle: "normal",
-                    fontWeight: 500,
-                    lineHeight: "normal",
-                    minWidth: tableSize?.[pageName]?.[column.id]
-                      ? tableSize?.[pageName]?.[column.id]
-                      : "auto",
-                    width: tableSize?.[pageName]?.[column.id]
-                      ? tableSize?.[pageName]?.[column.id]
-                      : "auto",
-                    position: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === column?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-                        ? "sticky"
-                        : "relative"
-                    }`,
-                    left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id)}px` : "0",
-                    backgroundColor: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === column?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-                        ? "#F6F6F6"
-                        : "#fff"
-                    }`,
-                    zIndex: `${
-                      tableSettings?.[pageName]?.find(
-                        (item) => item?.id === column?.id
-                      )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-                        ? "1"
-                        : "0"
-                    }`,
-                    // color: formVisible && column?.required === true ? "red" : "",
-                  }}
-                >
-                  <div
-                    className="table-filter-cell cell-data"
-                    onMouseEnter={(e) => {
-                      setCurrentColumnWidth(e.relatedTarget.offsetWidth);
-                    }}
-                  >
-                    <span
-                      style={{
-                        whiteSpace: "nowrap",
-                      }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setColumnId((prev) =>
-                          prev === column.id ? "" : column.id
-                        );
-                      }}
-                    >
-                      {column.attributes?.[`label_${i18n.language}`] ??
-                        column.attributes?.[`title_${i18n.language}`] ??
-                        column.label}
-                    </span>
-                    {disableFilters && (
-                      <FilterGenerator
-                        field={column}
-                        name={column.slug}
-                        onChange={filterChangeHandler}
-                        filters={filters}
-                        tableSlug={tableSlug}
-                      />
-                    )}
-                    {columnId === column?.id && (
-                      <div className="cell-popup" ref={popupRef}>
-                        <div
-                          className="cell-popup-item"
-                          onClick={() => handlePin(column?.id, index)}
-                        >
-                          <PinIcon
-                            pinned={
-                              tableSettings?.[pageName]?.find(
-                                (item) => item?.id === column?.id
-                              )?.isStiky
-                            }
-                          />
-                          <span>Pin column</span>
-                        </div>
-                        <div
-                          className="cell-popup-item"
-                          onClick={() => handleAutoSize(column?.id, index)}
-                        >
-                          <ResizeIcon />
-                          <span>Autosize</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CTableHeadCell>
-=======
                 <TableHeadForTableView
                   column={column}
                   index={index}
@@ -420,7 +317,6 @@ const ObjectDataTable = ({
                   tableSlug={tableSlug}
                   disableFilters={disableFilters}
                 />
->>>>>>> redesign_table_view
               )
           )}
 

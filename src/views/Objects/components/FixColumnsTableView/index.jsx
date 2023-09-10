@@ -4,9 +4,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import constructorObjectService from "../../../../services/constructorObjectService";
-import style from "./style.module.scss";
 import constructorViewService from "../../../../services/constructorViewService";
-import { tr } from "date-fns/locale";
+import style from "./style.module.scss";
 
 export default function FixColumnsTableView({ selectedTabIndex }) {
   const [anchorEl, setAnchorEl] = useState(null);

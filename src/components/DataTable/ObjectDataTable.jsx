@@ -20,25 +20,35 @@ import MultipleUpdateRow from "./MultipleUpdateRow";
 import "./style.scss";
 import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
+<<<<<<< HEAD
 import {de} from "date-fns/locale";
 import {useTranslation} from "react-i18next";
 import {Button} from "@mui/material";
+=======
+import { Button } from "@mui/material";
+import TableHeadForTableView from "./TableHeadForTableView";
+>>>>>>> redesign_table_view
 
 const ObjectDataTable = ({
   data = [],
   loader = false,
+  setDrawerState,
   removableHeight,
   additionalRow,
   mainForm,
+  selectedView,
+  isTableView = false,
   remove,
   multipleDelete,
   openFieldSettings,
+  sortedDatas,
   fields = [],
   isRelationTable,
   disablePagination,
   currentPage = 1,
   onPaginationChange = () => {},
   pagesCount = 1,
+  setSortedDatas,
   columns = [],
   relatedTableSlug,
   watch,
@@ -197,37 +207,54 @@ const ObjectDataTable = ({
     }
   };
 
-  const calculateWidthFixedColumn = (colId) => {
-    const prevElement = columns?.findIndex((item) => item?.id === colId);
+  // const calculateWidthFixedColumn = (colId) => {
+  //   const prevElement = columns?.findIndex((item) => item?.id === colId);
 
-    if (prevElement === 0) {
+  //   if (prevElement === 0) {
+  //     return 0;
+  //   } else if (prevElement === 1) {
+  //     const element = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+  //     return element?.offsetWidth;
+  //   } else if (prevElement === 2) {
+  //     const element1 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+  //     const element2 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+  //     return element1?.offsetWidth + element2?.offsetWidth;
+  //   } else if (prevElement === 3) {
+  //     const element1 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
+  //     const element2 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+  //     const element3 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+  //     return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth;
+  //   } else if (prevElement === 4) {
+  //     const element1 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
+  //     const element2 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
+  //     const element3 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+  //     const element4 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+  //     return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth;
+  //   } else if (prevElement === 5) {
+  //     const element1 = document.querySelector(`[id='${columns[prevElement - 5]?.id}']`);
+  //     const element2 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
+  //     const element3 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
+  //     const element4 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
+  //     const element5 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
+  //     return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth + element5?.offsetWidth;
+  //   }
+  // };
+
+  const calculateWidthFixedColumn = (colId) => {
+    const prevElementIndex = columns?.findIndex((item) => item.id === colId);
+
+    if (prevElementIndex === -1 || prevElementIndex === 0) {
       return 0;
-    } else if (prevElement === 1) {
-      const element = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-      return element?.offsetWidth;
-    } else if (prevElement === 2) {
-      const element1 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-      const element2 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-      return element1?.offsetWidth + element2?.offsetWidth;
-    } else if (prevElement === 3) {
-      const element1 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
-      const element2 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-      const element3 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-      return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth;
-    } else if (prevElement === 4) {
-      const element1 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
-      const element2 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
-      const element3 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-      const element4 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-      return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth;
-    } else if (prevElement === 5) {
-      const element1 = document.querySelector(`[id='${columns[prevElement - 5]?.id}']`);
-      const element2 = document.querySelector(`[id='${columns[prevElement - 4]?.id}']`);
-      const element3 = document.querySelector(`[id='${columns[prevElement - 3]?.id}']`);
-      const element4 = document.querySelector(`[id='${columns[prevElement - 2]?.id}']`);
-      const element5 = document.querySelector(`[id='${columns[prevElement - 1]?.id}']`);
-      return element1?.offsetWidth + element2?.offsetWidth + element3?.offsetWidth + element4?.offsetWidth + element5?.offsetWidth;
     }
+
+    let totalWidth = 0;
+
+    for (let i = 0; i < prevElementIndex; i++) {
+      const element = document.querySelector(`[id='${columns?.[i].id}']`);
+      totalWidth += element?.offsetWidth || 0;
+    }
+
+    return totalWidth;
   };
 
   useEffect(() => {
@@ -269,6 +296,7 @@ const ObjectDataTable = ({
           {columns.map(
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
+<<<<<<< HEAD
                 <CTableHeadCell
                   id={column.id}
                   key={index}
@@ -366,6 +394,33 @@ const ObjectDataTable = ({
                     )}
                   </div>
                 </CTableHeadCell>
+=======
+                <TableHeadForTableView
+                  column={column}
+                  index={index}
+                  pageName={pageName}
+                  sortedDatas={sortedDatas}
+                  setSortedDatas={setSortedDatas}
+                  setDrawerState={setDrawerState}
+                  tableSize={tableSize}
+                  tableSettings={tableSettings}
+                  view={view}
+                  selectedView={selectedView}
+                  calculateWidthFixedColumn={calculateWidthFixedColumn}
+                  handlePin={handlePin}
+                  handleAutoSize={handleAutoSize}
+                  popupRef={popupRef}
+                  columnId={columnId}
+                  setColumnId={setColumnId}
+                  setCurrentColumnWidth={setCurrentColumnWidth}
+                  isTableView={isTableView}
+                  FilterGenerator={FilterGenerator}
+                  filterChangeHandler={filterChangeHandler}
+                  filters={filters}
+                  tableSlug={tableSlug}
+                  disableFilters={disableFilters}
+                />
+>>>>>>> redesign_table_view
               )
           )}
 

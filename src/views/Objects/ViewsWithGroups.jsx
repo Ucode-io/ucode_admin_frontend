@@ -199,26 +199,9 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
     navigate(url);
   };
 
-  const clickColumn = () => {
-    setIsChanged(false);
-    setSettingsModalVisible(true);
-    setSelectedView(views[selectedTabIndex]);
-    setDefaultViewTab(2);
-  };
-
-  const clickSort = () => {
-    setIsChanged(false);
-    setSettingsModalVisible(true);
-    setSelectedView(views[selectedTabIndex]);
-    setDefaultViewTab(2);
-  };
-
-  const clickGroupBy = () => {
-    setIsChanged(false);
-    setSettingsModalVisible(true);
-    setSelectedView(views[selectedTabIndex]);
-    setDefaultViewTab(4);
-  };
+  useEffect(() => {
+    setSelectedView(views?.[selectedTabIndex] ?? {});
+  }, [views, selectedTabIndex]);
 
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
@@ -563,6 +546,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       view={view}
                       fieldsMap={fieldsMap}
                       setFormValue={setFormValue}
+                      setSortedDatas={setSortedDatas}
                       tab={tab}
                       selectedObjects={selectedObjects}
                       setSelectedObjects={setSelectedObjects}
@@ -575,6 +559,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       fields={fields}
                       checkedColumns={checkedColumns}
                       searchText={searchText}
+                      selectedView={selectedView}
                     />
                   )}
                 </TabPanel>
@@ -611,10 +596,12 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       filters={filters}
                       checkedColumns={checkedColumns}
                       view={view}
+                      setSortedDatas={setSortedDatas}
                       fieldsMap={fieldsMap}
                       searchText={searchText}
                       selectedObjects={selectedObjects}
                       setSelectedObjects={setSelectedObjects}
+                      selectedView={selectedView}
                     />
                   )}
                 </>

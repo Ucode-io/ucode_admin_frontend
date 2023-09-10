@@ -46,7 +46,12 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
   }, [watchedColumns]);
 
   return (
-    <div>
+    <div
+      style={{
+        maxHeight: 300,
+        overflowY: "auto",
+      }}
+    >
       <div className={styles.table}>
         <div className={styles.row}>
           <div className={styles.cell} style={{ flex: 1 }}>

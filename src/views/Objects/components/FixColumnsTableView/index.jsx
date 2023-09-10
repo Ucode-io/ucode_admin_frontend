@@ -120,7 +120,10 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
           },
         }}
       >
-        <div className={style.menuItems}>
+        <div className={style.menuItems} style={{
+          maxHeight: 300,
+          overflowY: 'auto'
+        }}>
           {visibleColumns.map((column) => (
             <div className={style.menuItem}>
               <span>{column.label}</span>

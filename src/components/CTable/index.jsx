@@ -81,7 +81,7 @@ export const CTableBody = forwardRef(
           {children}
           <EmptyDataComponent
             columnsCount={columnsCount}
-            isVisible={!dataLength}
+            isVisible={!dataLength || 3}
             title={title}
           />
         </tbody>

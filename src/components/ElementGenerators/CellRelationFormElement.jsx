@@ -1,20 +1,21 @@
-import { Autocomplete, TextField } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { get } from "@ngard/tiny-get";
-import { useEffect, useMemo, useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
+import {Autocomplete, TextField} from "@mui/material";
+import {makeStyles} from "@mui/styles";
+import {get} from "@ngard/tiny-get";
+import {useEffect, useMemo, useState} from "react";
+import {Controller, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
+import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
 import IconGenerator from "../IconPicker/IconGenerator";
 import styles from "./style.module.scss";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { useLocation, useParams } from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import request from "../../utils/request";
+import {useTranslation} from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -48,8 +49,7 @@ const CellRelationFormElement = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({ field: { onChange, value }, fieldState: { error } }) => {
-          console.log('kajnwdkjanwkdjawd', value)
+        render={({field: {onChange, value}, fieldState: {error}}) => {
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
@@ -125,14 +125,15 @@ const AutoCompleteElement = ({
   data,
   setFormValue = () => {},
 }) => {
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
-  const { id } = useParams();
-  console.log('defaultValue',field?.type,  defaultValue)
+  const {id} = useParams();
+  const {i18n} = useTranslation();
+
   const getOptionLabel = (option) => {
-    return getRelationFieldTabsLabel(field, option);
+    return option[`name_${i18n?.language}`];
   };
 
   const autoFilters = field?.attributes?.auto_filters;
@@ -179,22 +180,27 @@ const AutoCompleteElement = ({
     return val;
   }, [data, field]);
 
-  const { data: optionsFromFunctions } = useQuery(
+  const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
-      return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
-        params: {
-          from_input: true
-        },
-        data: {
-          table_slug: tableSlug,
-          ...autoFiltersValue,
-          search: debouncedValue,
-          limit: 10,
-          offset: 0,
-          view_fields: field?.view_fields?.map((field) => field.slug) ?? field?.attributes?.view_fields?.map((field) => field.slug),
-        },
-      });
+      return request.post(
+        `/invoke_function/${field?.attributes?.function_path}`,
+        {
+          params: {
+            from_input: true,
+          },
+          data: {
+            table_slug: tableSlug,
+            ...autoFiltersValue,
+            search: debouncedValue,
+            limit: 10,
+            offset: 0,
+            view_fields:
+              field?.view_fields?.map((field) => field.slug) ??
+              field?.attributes?.view_fields?.map((field) => field.slug),
+          },
+        }
+      );
     },
     {
       enabled: !!field?.attributes?.function_path,
@@ -209,9 +215,8 @@ const AutoCompleteElement = ({
       },
     }
   );
-  console.log('defaultValue', defaultValue)
 
-  const { data: optionsFromLocale } = useQuery(
+  const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
       if (!tableSlug) return null;
@@ -268,7 +273,7 @@ const AutoCompleteElement = ({
 
     if (!field?.attributes?.autofill) return;
 
-    field.attributes.autofill.forEach(({ field_from, field_to }) => {
+    field.attributes.autofill.forEach(({field_from, field_to}) => {
       const setName = name.split(".");
       setName.pop();
       setName.push(field_to);
@@ -279,7 +284,7 @@ const AutoCompleteElement = ({
   useEffect(() => {
     const val = computedValue[computedValue.length - 1];
     if (!field?.attributes?.autofill || !val) return;
-    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
+    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
       const setName = name.split(".");
       setName.pop();
       setName.push(field_to);
@@ -289,7 +294,6 @@ const AutoCompleteElement = ({
         }, 1);
     });
   }, [computedValue]);
-
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -304,18 +308,27 @@ const AutoCompleteElement = ({
         disabled={disabled}
         options={options ?? []}
         value={computedValue}
-        popupIcon={isBlackBg ? <ArrowDropDownIcon style={{ color: "#fff" }} /> : <ArrowDropDownIcon />}
+        popupIcon={
+          isBlackBg ? (
+            <ArrowDropDownIcon style={{color: "#fff"}} />
+          ) : (
+            <ArrowDropDownIcon />
+          )
+        }
         onChange={(event, newValue) => {
           changeHandler(newValue);
         }}
         noOptionsText={
-          <span onClick={() => navigateToForm(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
+          <span
+            onClick={() => navigateToForm(tableSlug)}
+            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
+          >
             Создать новый
           </span>
         }
         blurOnSelect
         openOnFocus
-        getOptionLabel={(option) => getRelationFieldTabsLabel(field, option)}
+        getOptionLabel={(option) => option[`name_${i18n?.language}`]}
         multiple
         onPaste={(e) => {
           console.log("eeeeeee -", e.clipboardData.getData("Text"));
@@ -344,7 +357,7 @@ const AutoCompleteElement = ({
             {getOptionLabel(value[0])}
             <IconGenerator
               icon="arrow-up-right-from-square.svg"
-              style={{ marginLeft: "10px", cursor: "pointer" }}
+              style={{marginLeft: "10px", cursor: "pointer"}}
               size={15}
               onClick={(e) => {
                 e.stopPropagation();

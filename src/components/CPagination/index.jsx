@@ -6,14 +6,26 @@ import AddIcon from "@mui/icons-material/Add";
 import useTabRouter from "../../hooks/useTabRouter";
 import { useParams } from "react-router-dom";
 
-const CPagination = ({ setCurrentPage = () => {}, paginationExtraButton, multipleDelete, selectedObjectsForDelete, limit, setLimit = () => {}, ...props }) => {
+const CPagination = ({
+  setCurrentPage = () => {},
+  paginationExtraButton,
+  multipleDelete,
+  selectedObjectsForDelete,
+  limit,
+  setLimit = () => {},
+  ...props
+}) => {
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
   const { tableSlug } = useParams();
   const options = [
     {
-      value: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
-      label: isNaN(parseInt(props?.defaultLimit)) ? "" : parseInt(props?.defaultLimit),
+      value: isNaN(parseInt(props?.defaultLimit))
+        ? ""
+        : parseInt(props?.defaultLimit),
+      label: isNaN(parseInt(props?.defaultLimit))
+        ? ""
+        : parseInt(props?.defaultLimit),
     },
     { value: 10, label: 10 },
     { value: 15, label: 15 },
@@ -54,7 +66,7 @@ const CPagination = ({ setCurrentPage = () => {}, paginationExtraButton, multipl
         )}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        {selectedObjectsForDelete.length > 0 && (
+        {selectedObjectsForDelete?.length > 0 && (
           <Button variant="outlined" color="error" onClick={multipleDelete}>
             Delete all selected
           </Button>
@@ -65,7 +77,11 @@ const CPagination = ({ setCurrentPage = () => {}, paginationExtraButton, multipl
           Add object
         </Button>
 
-        <Pagination color="primary" onChange={(e, val) => setCurrentPage(val)} {...props} />
+        <Pagination
+          color="primary"
+          onChange={(e, val) => setCurrentPage(val)}
+          {...props}
+        />
         {paginationExtraButton}
       </div>
     </div>

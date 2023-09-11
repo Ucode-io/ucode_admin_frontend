@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Dialog, TextField } from "@mui/material";
+import { Autocomplete, Box, Button, Dialog, Popover, TextField, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
 import { useEffect, useMemo, useState } from "react";
@@ -16,6 +16,7 @@ import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
+import AddIcon from "@mui/icons-material/Add";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -302,11 +303,51 @@ const AutoCompleteElement = ({
     setTableSlugFromProps(tableSlug);
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const openPopover = Boolean(anchorEl);
+
   return (
-    <div className={styles.autocompleteWrapper}>
+    <div
+      className={styles.autocompleteWrapper}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+        minWidth: "max-content",
+      }}
+    >
       {field.attributes.creatable && (
         <span onClick={() => openFormModal(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
-          Создать новый
+          <AddIcon aria-owns={openPopover ? "mouse-over-popover" : undefined} aria-haspopup="true" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} />
+          <Popover
+            id="mouse-over-popover"
+            sx={{
+              pointerEvents: "none",
+            }}
+            open={openPopover}
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            onClose={handlePopoverClose}
+            disableRestoreFocus
+          >
+            <Typography sx={{ p: 1 }}>Create new object</Typography>
+          </Popover>
         </span>
       )}
 
@@ -333,6 +374,9 @@ const AutoCompleteElement = ({
           </span>
         }
         blurOnSelect
+        style={{
+          width: "100%",
+        }}
         openOnFocus
         getOptionLabel={(option) => getRelationFieldTabsLabel(field, option)}
         multiple
@@ -351,8 +395,11 @@ const AutoCompleteElement = ({
                 input: isBlackBg ? classes.input : "",
               },
               style: {
-                background: isBlackBg ? "#2A2D34" : "",
+                background: isBlackBg ? "#2A2D34" : "transparent",
                 color: isBlackBg ? "#fff" : "",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
               },
             }}
             size="small"
@@ -360,7 +407,7 @@ const AutoCompleteElement = ({
         )}
         renderTags={(value, index) => (
           <>
-            {getOptionLabel(value[0])}
+            <span>{getOptionLabel(value[0])}</span>
             <IconGenerator
               icon="arrow-up-right-from-square.svg"
               style={{ marginLeft: "10px", cursor: "pointer" }}

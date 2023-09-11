@@ -210,6 +210,7 @@ const NewCellElementGenerator = ({
         <HFFormulaField
           disabled={isDisabled}
           isFormEdit
+          isTableView={true}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -227,6 +228,7 @@ const NewCellElementGenerator = ({
         <CHFFormulaField
           setFormValue={setFormValue}
           control={control}
+          isTableView={true}
           required={field.required}
           placeholder={field.attributes?.placeholder}
           name={computedSlug}

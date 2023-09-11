@@ -20,7 +20,7 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
       .update(tableSlug, { data: { ...selectedObject } })
       .then(() => {
         queryClient.invalidateQueries(["GET_OBJECTS_LIST", tableSlug]);
-        dispatch(showAlert("Успешно обновлено", "success"));
+        // dispatch(showAlert("Успешно обновлено", "success"));
       })
       .catch((e) => console.log("ERROR: ", e));
   };

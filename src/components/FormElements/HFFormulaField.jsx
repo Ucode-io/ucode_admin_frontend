@@ -1,10 +1,4 @@
-import {
-  Box,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import { Box, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
 import { Controller, useWatch } from "react-hook-form";
 import useDebouncedWatch from "../../hooks/useDebouncedWatch";
 import { Parser } from "hot-formula-parser";
@@ -19,6 +13,7 @@ const parser = new Parser();
 const HFFormulaField = ({
   control,
   name,
+  isTableView = false,
   tabIndex,
   rules = {},
   setFormValue = () => {},
@@ -38,16 +33,13 @@ const HFFormulaField = ({
 
   const updateValue = () => {
     let computedFormula = formula;
-    const fieldsListSorted = fieldsList
-      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
-      : [];
+    const fieldsListSorted = fieldsList ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length) : [];
     fieldsListSorted?.forEach((field) => {
       let value = values[field.slug] ?? 0;
 
       if (typeof value === "string") value = `'${value}'`;
       if (typeof value === "object") value = `"${value}"`;
-      if (typeof value === "boolean")
-        value = JSON.stringify(value).toUpperCase();
+      if (typeof value === "boolean") value = JSON.stringify(value).toUpperCase();
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
 
@@ -76,27 +68,25 @@ const HFFormulaField = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
-          value={
-            formulaIsVisible
-              ? formula
-              : typeof value === "number"
-              ? numberWithSpaces(parseFloat(value).toFixed(2))
-              : ""
-          }
+          value={formulaIsVisible ? formula : typeof value === "number" ? numberWithSpaces(parseFloat(value).toFixed(2)) : ""}
           name={name}
           onChange={(e) => {
             const val = e.target.value;
             const valueWithoutSpaces = val.replaceAll(" ", "");
 
             if (!valueWithoutSpaces) onChange("");
-            else
-              onChange(
-                !isNaN(Number(valueWithoutSpaces))
-                  ? Number(valueWithoutSpaces)
-                  : ""
-              );
+            else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : "");
           }}
           error={error}
+          sx={
+            isTableView
+              ? {
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    border: "0",
+                  },
+                }
+              : ""
+          }
           fullWidth
           autoFocus={tabIndex === 1}
           helperText={!disabledHelperText && error?.message}
@@ -114,21 +104,10 @@ const HFFormulaField = ({
                 },
             endAdornment: (
               <InputAdornment position="end">
-                <Box
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
-                >
-                  <Tooltip
-                    title={formulaIsVisible ? "Hide formula" : "Show formula"}
-                  >
-                    <IconButton
-                      edge="end"
-                      color={formulaIsVisible ? "primary" : "default"}
-                      onClick={() => setFormulaIsVisible((prev) => !prev)}
-                    >
-                      <IconGenerator
-                        icon="square-root-variable.svg"
-                        size={15}
-                      />
+                <Box style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <Tooltip title={formulaIsVisible ? "Hide formula" : "Show formula"}>
+                    <IconButton edge="end" color={formulaIsVisible ? "primary" : "default"} onClick={() => setFormulaIsVisible((prev) => !prev)}>
+                      <IconGenerator icon="square-root-variable.svg" size={15} />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="This field is disabled for this role!">

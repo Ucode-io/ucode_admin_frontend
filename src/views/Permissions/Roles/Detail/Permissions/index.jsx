@@ -1,4 +1,4 @@
-import { useWatch } from "react-hook-form";
+import {useWatch} from "react-hook-form";
 import TableCard from "../../../../../components/TableCard";
 import {
   CTable,
@@ -7,10 +7,10 @@ import {
   CTableHead,
   CTableHeadRow,
 } from "../../../../../components/CTable";
-import { Box, Card, Checkbox } from "@mui/material";
-import { useEffect, useState } from "react";
+import {Box, Card, Checkbox} from "@mui/material";
+import {useEffect, useState} from "react";
 import TableRow from "./TableRow";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import MenuRow from "./MenuRow";
 import CustomPermissionRow from "./CustomPermission";
 
@@ -57,9 +57,6 @@ const Permissions = ({
     setCheckBoxValues(obj);
   }, [allMenu]);
 
-  console.log("watch", watch());
-  console.log("tables?.tables", tables?.tables);
-
   return (
     <>
       <Tabs
@@ -68,7 +65,7 @@ const Permissions = ({
         onSelect={setSelectedTab}
       >
         <div>
-          <Card style={{ boxShadow: "none" }}>
+          <Card style={{boxShadow: "none"}}>
             <TabList>
               <Tab>Table</Tab>
               <Tab>Menu</Tab>
@@ -85,9 +82,7 @@ const Permissions = ({
                           Объекты
                         </CTableCell>
                         <CTableCell colSpan={5}>
-                          <Box
-                            sx={{ justifyContent: "center", display: "flex" }}
-                          >
+                          <Box sx={{justifyContent: "center", display: "flex"}}>
                             Record permissions
                           </Box>
                         </CTableCell>
@@ -105,7 +100,7 @@ const Permissions = ({
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -123,7 +118,7 @@ const Permissions = ({
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -141,7 +136,7 @@ const Permissions = ({
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -159,7 +154,7 @@ const Permissions = ({
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -177,7 +172,7 @@ const Permissions = ({
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -220,9 +215,7 @@ const Permissions = ({
                           Объекты
                         </CTableCell>
                         <CTableCell colSpan={5} tex>
-                          <Box
-                            sx={{ justifyContent: "center", display: "flex" }}
-                          >
+                          <Box sx={{justifyContent: "center", display: "flex"}}>
                             Menu permissions
                           </Box>
                         </CTableCell>

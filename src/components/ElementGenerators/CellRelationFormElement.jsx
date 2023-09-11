@@ -134,7 +134,13 @@ const AutoCompleteElement = ({
   const {i18n} = useTranslation();
 
   const getOptionLabel = (option) => {
-    return option[`name_${i18n?.language}`];
+    const language = i18n?.language;
+
+    const dynamicLanguageKey = Object.keys(option).find((key) =>
+      key.endsWith(`_${language}`)
+    );
+
+    return dynamicLanguageKey ? option[dynamicLanguageKey] : option.name;
   };
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -360,7 +366,7 @@ const AutoCompleteElement = ({
         }
         blurOnSelect
         openOnFocus
-        getOptionLabel={(option) => option[`name_${i18n?.language}`]}
+        getOptionLabel={(option) => getOptionLabel(option)}
         multiple
         onPaste={(e) => {
           console.log("eeeeeee -", e.clipboardData.getData("Text"));

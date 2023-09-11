@@ -28,7 +28,6 @@ const MenuRow = ({
   const [data, setData] = useState([]);
   const projectId = store.getState().company.projectId;
   const {i18n} = useTranslation();
-
   const table = useWatch({
     control,
     name: `menus.${appIndex}`,
@@ -149,8 +148,8 @@ const MenuRow = ({
               alignItems="center"
             >
               {app?.attributes?.[`label_${i18n?.language}`] ??
-                app?.attributes?.[`title${i18n?.language}`] ??
-                app?.label}
+                app?.attributes?.[`title_${i18n?.language}`] ??
+                app.label}
               <Button
                 variant="text"
                 style={{
@@ -218,8 +217,8 @@ const MenuRow = ({
               alignItems="center"
             >
               {app?.attributes?.[`label_${i18n?.language}`] ??
-                app?.attributes?.[`title${i18n?.language}`] ??
-                app?.label}
+                app?.attributes?.[`title_${i18n?.language}`] ??
+                app.label}
             </Box>
           </CTableCell>
           <CTableCell>

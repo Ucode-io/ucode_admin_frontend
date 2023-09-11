@@ -74,7 +74,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
   const visibleColumns = useMemo(() => {
     refetch();
     return columns.filter((column) => {
-      return views[selectedTabIndex].columns.find((el) => el === column.id);
+      return views?.[selectedTabIndex]?.columns?.find((el) => el === column?.id);
     });
   }, [views, columns, selectedTabIndex, anchorEl]);
 

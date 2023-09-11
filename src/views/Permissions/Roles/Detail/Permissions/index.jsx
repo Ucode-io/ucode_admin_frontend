@@ -57,9 +57,6 @@ const Permissions = ({
     setCheckBoxValues(obj);
   }, [allMenu]);
 
-  console.log("watch", watch());
-  console.log("tables?.tables", tables?.tables);
-
   return (
     <>
       <Tabs
@@ -105,7 +102,7 @@ const Permissions = ({
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -123,7 +120,7 @@ const Permissions = ({
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -141,7 +138,7 @@ const Permissions = ({
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -159,7 +156,7 @@ const Permissions = ({
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,
@@ -177,7 +174,7 @@ const Permissions = ({
                             onChange={(e) => {
                               setValue(
                                 "data.tables",
-                                tables?.tables.map((el) => ({
+                                tables?.tables?.map((el) => ({
                                   ...el,
                                   record_permissions: {
                                     ...el.record_permissions,

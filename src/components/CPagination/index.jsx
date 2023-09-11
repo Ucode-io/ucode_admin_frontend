@@ -54,7 +54,7 @@ const CPagination = ({ setCurrentPage = () => {}, paginationExtraButton, multipl
         )}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        {selectedObjectsForDelete.length > 0 && (
+        {selectedObjectsForDelete?.length > 0 && (
           <Button variant="outlined" color="error" onClick={multipleDelete}>
             Delete all selected
           </Button>

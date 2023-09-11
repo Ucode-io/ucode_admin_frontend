@@ -98,7 +98,7 @@ const TableRow = ({
             style={{
               padding: "0 4px",
               minWidth: width
-
+              
             }}
           >
             <div
@@ -152,13 +152,13 @@ const TableRow = ({
                   key={column.id}
                   className={`overflow-ellipsis ${tableHeight}`}
                   style={{
-                    minWidth: "max-content",
+                    minWidth: "220px",
                     color: "#262626",
                     fontSize: "13px",
                     fontStyle: "normal",
                     fontWeight: 400,
                     lineHeight: "normal",
-                    padding: "0",
+                    padding: "0 5px",
                     position: `${
                       tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id] ? "sticky" : "relative"
                     }`,

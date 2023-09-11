@@ -1,12 +1,13 @@
-import { useState } from "react";
-import { useWatch } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { useMemo } from "react";
-import { CTableCell, CTableHeadRow } from "../../../../../components/CTable";
-import { Box, Button, Checkbox } from "@mui/material";
+import {useState} from "react";
+import {useWatch} from "react-hook-form";
+import {useParams} from "react-router-dom";
+import {useMemo} from "react";
+import {CTableCell, CTableHeadRow} from "../../../../../components/CTable";
+import {Box, Button, Checkbox} from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { useMenuPermissionGetByIdQuery } from "../../../../../services/rolePermissionService";
-import { store } from "../../../../../store";
+import {useMenuPermissionGetByIdQuery} from "../../../../../services/rolePermissionService";
+import {store} from "../../../../../store";
+import {useTranslation} from "react-i18next";
 
 const MenuRow = ({
   app,
@@ -21,11 +22,12 @@ const MenuRow = ({
   setCheckBoxValues,
   checkBoxValues,
 }) => {
-  const { roleId } = useParams();
+  const {roleId} = useParams();
   const [tableBlockIsOpen, setTableBlockIsOpen] = useState(false);
   const [parentId, setParentId] = useState("");
   const [data, setData] = useState([]);
   const projectId = store.getState().company.projectId;
+  const {i18n} = useTranslation();
   const table = useWatch({
     control,
     name: `menus.${appIndex}`,
@@ -38,7 +40,7 @@ const MenuRow = ({
     );
   }, [changedData]);
 
-  const { data: permissionData, isLoading: permissionGetByIdLoading } =
+  const {data: permissionData, isLoading: permissionGetByIdLoading} =
     useMenuPermissionGetByIdQuery({
       projectId: projectId,
       roleId: roleId,
@@ -52,7 +54,7 @@ const MenuRow = ({
             obj[item?.id] = item.permission;
           });
 
-          setCheckBoxValues((prev) => ({ ...prev, ...obj }));
+          setCheckBoxValues((prev) => ({...prev, ...obj}));
 
           setData(res?.menus);
           if (!parentId) {
@@ -145,7 +147,9 @@ const MenuRow = ({
               justifyContent="space-between"
               alignItems="center"
             >
-              {app?.label}
+              {app?.attributes?.[`label_${i18n?.language}`] ??
+                app?.attributes?.[`title${i18n?.language}`] ??
+                app.label}
               <Button
                 variant="text"
                 style={{
@@ -212,7 +216,9 @@ const MenuRow = ({
               justifyContent="space-between"
               alignItems="center"
             >
-              {app?.label}
+              {app?.attributes?.[`label_${i18n?.language}`] ??
+                app?.attributes?.[`title${i18n?.language}`] ??
+                app.label}
             </Box>
           </CTableCell>
           <CTableCell>

@@ -1,7 +1,7 @@
-import {useState} from "react";
-import {FiFilter} from "react-icons/fi";
+import { useState } from "react";
+import { FiFilter } from "react-icons/fi";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
-import {CTableCell, CTableHeadRow} from "../../../../../components/CTable";
+import { CTableCell, CTableHeadRow } from "../../../../../components/CTable";
 import PermissionCheckbox from "./Components/PermissionCheckbox";
 import FormCheckbox from "./Components/Checkbox/FormCheckbox";
 import useBooleanState from "../../../../../hooks/useBooleanState";
@@ -11,18 +11,19 @@ import ActionPermissionModal from "./Components/Modals/ActionPermissionModal";
 import TableViewPermission from "./Components/Modals/TableViewPermission";
 import RelationPermissionModal from "./Components/Modals/RelationPermissionModal";
 import CustomPermissionModal from "./Components/Modals/CustomPermissionModal";
-import {Box, Icon} from "@mui/material";
-import {MdDashboardCustomize} from "react-icons/md";
-import {BiTable} from "react-icons/bi";
+import { Box, Icon } from "@mui/material";
+import { MdDashboardCustomize } from "react-icons/md";
+import { BiTable } from "react-icons/bi";
 import {
   ActionPermissionIcon,
   FieldsPermissionIcon,
   RelationPermissionIcon,
 } from "../../../../../assets/icons/icon";
+import { useTranslation } from "react-i18next";
 
-const TableRow = ({table, tableIndex, control, setValue, watch}) => {
+const TableRow = ({ table, tableIndex, control, setValue, watch }) => {
   const [type, setType] = useState("");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const basePath = `data.tables.${tableIndex}.record_permissions`;
   const [
@@ -62,7 +63,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
             table.label}
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <PermissionCheckbox control={control} name={basePath + ".read"} />
             <RectangleIconButton
               size="small"
@@ -76,12 +77,12 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <PermissionCheckbox control={control} name={basePath + ".write"} />
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <PermissionCheckbox control={control} name={basePath + ".update"} />
             <RectangleIconButton
               onClick={() => {
@@ -94,7 +95,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <PermissionCheckbox control={control} name={basePath + ".delete"} />
             <RectangleIconButton
               onClick={() => {
@@ -107,26 +108,26 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <FormCheckbox control={control} name={basePath + ".is_public"} />
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton size="lg" onClick={openFieldPermissionModal}>
               <FieldsPermissionIcon w={"34px"} h={"34px"} />
             </RectangleIconButton>
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton size="lg" onClick={openActionPermissionsModal}>
               <ActionPermissionIcon w={"34px"} h={"34px"} />
             </RectangleIconButton>
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton
               size="lg"
               onClick={openRelationPermissionModal}
@@ -136,7 +137,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton
               size="lg"
               onClick={openTableViewPermissionModal}
@@ -146,7 +147,7 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
           </Box>
         </CTableCell>
         <CTableCell>
-          <Box sx={{justifyContent: "center", display: "flex"}}>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
             <RectangleIconButton size="lg" onClick={openCustomPermissionModal}>
               <MdDashboardCustomize width={"34px"} height={"34px"} />
             </RectangleIconButton>

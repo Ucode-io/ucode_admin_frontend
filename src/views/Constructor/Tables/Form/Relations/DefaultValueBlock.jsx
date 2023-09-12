@@ -8,10 +8,10 @@ import FRow from "../../../../../components/FormElements/FRow";
 const DefaultValueBlock = ({control, watch, columnsList}) => {
   const {slug} = useParams();
   const relation = watch();
-  console.log("columnsList", columnsList);
+
   const relatedTableSlug =
     relation?.table_from === slug ? relation?.table_to : relation?.table_from;
-  console.log("relation", relation);
+
   const computedRelation = useMemo(
     () => ({
       id: `${relatedTableSlug ?? ""}#${relation.id ?? ""}`,
@@ -30,20 +30,22 @@ const DefaultValueBlock = ({control, watch, columnsList}) => {
     }),
     [relation, relatedTableSlug, columnsList]
   );
-  console.log("computedRelation", computedRelation);
+
   if (!relation.table_to || !relation.table_from) return null;
   return (
-    <>
+    <div style={{padding: "0 16px 0px 16px"}}>
       {/* <div className={styles.settingsBlockHeader}>
         <h2>Default value</h2>
       </div> */}
 
-      <div className="p-2">
-        <FormElementGenerator
-          disabled={false}
-          field={computedRelation}
-          control={control}
-        />
+      <div style={{padding: 0}}>
+        <div className={styles.inputPart}>
+          <FormElementGenerator
+            disabled={false}
+            field={computedRelation}
+            control={control}
+          />
+        </div>
         <div className={"table-filter-cell"}>
           <FRow label="Свой ID">
             <HFSwitch control={control} name="is_user_id_default" required />
@@ -54,7 +56,7 @@ const DefaultValueBlock = ({control, watch, columnsList}) => {
           </FRow>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

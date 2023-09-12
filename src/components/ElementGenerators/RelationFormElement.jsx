@@ -266,8 +266,6 @@ const AutoCompleteElement = ({
     field?.attributes?.function_path,
   ]);
 
-  console.log("options", options);
-
   const getValueData = async () => {
     try {
       const id = value;
@@ -318,6 +316,14 @@ const AutoCompleteElement = ({
     ) {
       setValue(value?.guid ?? value?.guid);
       setLocalValue(value);
+    }
+  };
+
+  const setDefaultValue = () => {
+    if (options?.slugOptions && multipleInsertField) {
+      const val = options?.slugOptions?.find((item) => item?.guid === id);
+      setValue(val?.guid ?? null);
+      setLocalValue(val ? [val] : null);
     }
   };
 
@@ -389,7 +395,7 @@ const AutoCompleteElement = ({
       } else return false;
     }
   }
-
+  console.log("field", field);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (

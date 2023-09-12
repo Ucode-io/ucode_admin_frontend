@@ -10,8 +10,7 @@ const constructorTableService = {
   create: (data, projectId) =>
     request.post("/table", data, {params: {project_id: projectId}}),
   getByIdForQuery: (params, id) => request.get(`/table/${id}`, {params}),
-  getById: (id, projectId) =>
-    request.get(`/table/${id}`, {params: {project_id: projectId}}),
+  getById: (id) => request.get(`/table/${id}`),
   delete: (id, projectId) =>
     request.delete(`/table/${id}`, {params: {project_id: projectId}}),
   getFolderList: (params) => requestV2.get("/table-folder", {params}),

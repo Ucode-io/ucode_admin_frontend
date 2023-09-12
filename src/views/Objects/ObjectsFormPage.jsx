@@ -36,8 +36,9 @@ const ObjectsFormPage = () => {
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
-  const menuItem = store.getState().menu.menuItem;
-  const invite = menuItem.data.table.is_login_table;
+  const menu = store.getState().menu;
+  const invite = menu.menuItem.data.table.is_login_table;
+  const isInvite = menu.invite;
 
   const {
     handleSubmit,
@@ -46,7 +47,7 @@ const ObjectsFormPage = () => {
     setValue: setFormValue,
     watch,
   } = useForm({
-    defaultValues: { ...state, invite: invite },
+    defaultValues: { ...state, invite: isInvite ? invite : false },
   });
 
   const tableInfo = store.getState().menu.menuItem;

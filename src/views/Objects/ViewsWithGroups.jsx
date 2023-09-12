@@ -45,6 +45,7 @@ import LanguagesNavbar from "./LanguagesNavbar";
 import SearchInput from "../../components/SearchInput";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
 import ShareModal from "./ShareModal/ShareModal";
+import { menuActions } from "../../store/menuItem/menuItem.slice";
 
 const ViewsWithGroups = ({
   views,
@@ -79,7 +80,6 @@ const ViewsWithGroups = ({
     $lt: endOfMonth(new Date()),
   });
 
-  console.log("filters", filters);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -163,6 +163,11 @@ const ViewsWithGroups = ({
 
   const navigateToCreatePage = () => {
     navigateToForm(tableSlug);
+  };
+
+  const navigateToCreatePageWithInvite = () => {
+    navigateToForm(tableSlug);
+    dispatch(menuActions.setInvite(true));
   };
 
   function dateIsValid(date) {
@@ -461,7 +466,10 @@ const ViewsWithGroups = ({
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="write">
                 {invite && (
-                  <Button variant="contained" onClick={navigateToCreatePage}>
+                  <Button
+                    variant="contained"
+                    onClick={navigateToCreatePageWithInvite}
+                  >
                     Invite
                   </Button>
                 )}

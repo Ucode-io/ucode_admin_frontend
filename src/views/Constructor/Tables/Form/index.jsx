@@ -1,9 +1,9 @@
-import { Save } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Save} from "@mui/icons-material";
+import {useEffect, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../../components/Buttons/PrimaryButton";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import Footer from "../../../../components/Footer";
@@ -15,11 +15,15 @@ import constructorRelationService from "../../../../services/constructorRelation
 import constructorTableService from "../../../../services/constructorTableService";
 import constructorViewRelationService from "../../../../services/constructorViewRelationService";
 import layoutService from "../../../../services/layoutService";
-import { constructorTableActions } from "../../../../store/constructorTable/constructorTable.slice";
-import { createConstructorTableAction } from "../../../../store/constructorTable/constructorTable.thunk";
-import { generateGUID } from "../../../../utils/generateID";
-import { listToMap } from "../../../../utils/listToMap";
-import { computeSectionsOnSubmit, computeViewRelations, computeViewRelationsOnSubmit } from "../utils";
+import {constructorTableActions} from "../../../../store/constructorTable/constructorTable.slice";
+import {createConstructorTableAction} from "../../../../store/constructorTable/constructorTable.thunk";
+import {generateGUID} from "../../../../utils/generateID";
+import {listToMap} from "../../../../utils/listToMap";
+import {
+  computeSectionsOnSubmit,
+  computeViewRelations,
+  computeViewRelationsOnSubmit,
+} from "../utils";
 import Actions from "./Actions";
 import CustomErrors from "./CustomErrors";
 import Fields from "./Fields";
@@ -30,7 +34,7 @@ import Relations from "./Relations";
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id, slug, appId } = useParams();
+  const {id, slug, appId} = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
 
   const [loader, setLoader] = useState(true);
@@ -71,7 +75,7 @@ const ConstructorTablesFormPage = () => {
   const getData = async () => {
     setLoader(true);
 
-    const getTableData = constructorTableService.getById(id, projectId);
+    const getTableData = constructorTableService.getById(id);
     const getViewRelations = constructorViewRelationService.getList({
       table_slug: slug,
     });
@@ -96,8 +100,8 @@ const ConstructorTablesFormPage = () => {
       const [
         tableData,
         // { sections = [] },
-        { relations: viewRelations = [] },
-        { custom_events: actions = [] },
+        {relations: viewRelations = []},
+        {custom_events: actions = []},
       ] = await Promise.all([
         getTableData,
         // getSectionsData,
@@ -126,14 +130,17 @@ const ConstructorTablesFormPage = () => {
 
   const getRelationFields = async () => {
     return new Promise(async (resolve) => {
-      const getFieldsData = constructorFieldService.getList({ table_id: id });
+      const getFieldsData = constructorFieldService.getList({table_id: id});
 
       const getRelations = constructorRelationService.getList({
         table_slug: slug,
         relation_table_slug: slug,
       });
 
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
+      const [{relations = []}, {fields = []}] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ]);
 
       // remove fields which type
 
@@ -141,7 +148,8 @@ const ConstructorTablesFormPage = () => {
 
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug:
+          relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -149,11 +157,13 @@ const ConstructorTablesFormPage = () => {
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" &&
+            relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
+          (relation.type === "Many2Dynamic" &&
+            relation.table_from?.slug === slug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -167,7 +177,10 @@ const ConstructorTablesFormPage = () => {
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
+        label:
+          relation?.label ?? relation[relation.relatedTableSlug]?.label
+            ? relation[relation.relatedTableSlug]?.label
+            : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -181,7 +194,12 @@ const ConstructorTablesFormPage = () => {
   const createConstructorTable = (data) => {
     setBtnLoader(true);
 
-    dispatch(createConstructorTableAction({...data, label: Object.values(data?.attributes).find(item => item)}))
+    dispatch(
+      createConstructorTableAction({
+        ...data,
+        label: Object.values(data?.attributes).find((item) => item),
+      })
+    )
       .unwrap()
       .then((res) => {
         navigate(-1);
@@ -294,7 +312,13 @@ const ConstructorTablesFormPage = () => {
     <>
       <div className="pageWithStickyFooter">
         <Tabs direction={"ltr"}>
-          <HeaderSettings title="Objects" subtitle={id ? mainForm.getValues("label") : "Добавить"} icon={mainForm.getValues("icon")} backButtonLink={-1} sticky>
+          <HeaderSettings
+            title="Objects"
+            subtitle={id ? mainForm.getValues("label") : "Добавить"}
+            icon={mainForm.getValues("icon")}
+            backButtonLink={-1}
+            sticky
+          >
             <TabList>
               <Tab>Details</Tab>
               <Tab>Layouts</Tab>
@@ -319,7 +343,10 @@ const ConstructorTablesFormPage = () => {
 
           {id && (
             <TabPanel>
-              <Relations mainForm={mainForm} getRelationFields={getRelationFields} />
+              <Relations
+                mainForm={mainForm}
+                getRelationFields={getRelationFields}
+              />
             </TabPanel>
           )}
           {id && (
@@ -341,7 +368,11 @@ const ConstructorTablesFormPage = () => {
             <SecondaryButton onClick={() => navigate(-1)} color="error">
               Закрыть
             </SecondaryButton>
-            <PrimaryButton loader={btnLoader} onClick={mainForm.handleSubmit(onSubmit)} loading={btnLoader}>
+            <PrimaryButton
+              loader={btnLoader}
+              onClick={mainForm.handleSubmit(onSubmit)}
+              loading={btnLoader}
+            >
               <Save /> Сохранить
             </PrimaryButton>
           </>

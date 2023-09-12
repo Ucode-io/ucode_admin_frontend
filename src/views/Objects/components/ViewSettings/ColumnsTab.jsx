@@ -15,6 +15,7 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
     control: form.control,
     name: "columns",
   });
+  console.log("watch", form.watch());
 
   const onDrop = async (dropResult) => {
     const result = applyDrag(columns, dropResult);
@@ -60,10 +61,17 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
           <div className={styles.cell} style={{ width: 70 }}>
             {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
             <Button variant="outlined" color="error">Hide All</Button> */}
-            <Switch size="small" checked={isAllChecked} onChange={onAllChecked} />
+            <Switch
+              size="small"
+              checked={isAllChecked}
+              onChange={onAllChecked}
+            />
           </div>
         </div>
-        <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
+        <Container
+          onDrop={onDrop}
+          dropPlaceholder={{ className: "drag-row-drop-preview" }}
+        >
           {columns.map((column, index) => (
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
@@ -75,7 +83,10 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
                     size="small"
                     checked={form.watch(`columns.${index}.is_checked`)}
                     onChange={(e) => {
-                      form.setValue(`columns.${index}.is_checked`, e.target.checked);
+                      form.setValue(
+                        `columns.${index}.is_checked`,
+                        e.target.checked
+                      );
                       // updateView();
                     }}
                   />

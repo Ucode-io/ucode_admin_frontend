@@ -14,8 +14,12 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
 
   const watchedColumns = useWatch({
     control: form.control,
-    name: "columns",
+    name: "attributes.group_tabs",
   });
+
+  console.log("watchedColumns", watchedColumns);
+
+  console.log("watch", form.watch());
 
   const computedColumns = useMemo(() => {
     return columns?.filter((column) => column.type === "SINGLE_LINE");
@@ -32,11 +36,16 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
     return watchedColumns?.every((column) => column.is_checked);
   }, [watchedColumns]);
 
+  const isWhatChecked = useMemo(() => {
+    return watchedColumns?.filter((column) => column.is_checked === true);
+  }, [watchedColumns]);
+  console.log("isWhatChecked", isWhatChecked);
+
   const onAllChecked = (_, val) => {
     const columns = form.getValues("columns");
 
     columns?.forEach((column, index) => {
-      form.setValue(`columns[${index}].is_checked`, val);
+      form.setValue(`attributes.group_tabs.${index}.is_checked`, val);
     });
 
     if (isMenu) {
@@ -85,13 +94,18 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
                 <div className={styles.cell} style={{ width: 70 }}>
                   <Switch
                     size="small"
-                    checked={form.watch(`columns.${index}.is_checked`)}
+                    checked={form.watch(
+                      `attributes.group_tabs.${index}.is_checked`
+                    )}
                     onChange={(e) => {
                       form.setValue(
-                        `columns.${index}.is_checked`,
+                        `attributes.group_tabs.${index}.is_checked`,
                         e.target.checked
                       );
-                      // updateView();
+                      form.setValue(
+                        `attributes.group_tabs.${index}.id`,
+                        column.id
+                      );
                     }}
                   />
                 </div>

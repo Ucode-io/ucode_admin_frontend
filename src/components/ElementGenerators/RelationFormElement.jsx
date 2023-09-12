@@ -310,8 +310,8 @@ const AutoCompleteElement = ({
 
   const setClientTypeValue = () => {
     const value = options?.options?.find((item) => item?.guid === clientTypeID);
-    console.log("value", value);
-    if (!value) {
+
+    if (field?.attributes?.is_user_id_default && !value) {
       setFirstValue(true);
     }
     if (
@@ -330,7 +330,7 @@ const AutoCompleteElement = ({
       setLocalValue(val ? [val] : null);
     }
   };
-  console.log("firstValue", firstValue);
+
   const computedValue = useMemo(() => {
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
@@ -449,8 +449,8 @@ const AutoCompleteElement = ({
             (field?.attributes?.object_id_from_jwt &&
               field?.id?.split("#")?.[0] === "client_type") ||
             (field?.attributes?.is_user_id_default &&
-              localValue?.length !== 0 &&
-              !firstValue)
+              localValue?.length !== 0) ||
+            !firstValue
           }
           options={options?.options ?? []}
           isClearable={true}

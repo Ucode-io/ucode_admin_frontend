@@ -319,6 +319,14 @@ const AutoCompleteElement = ({
     }
   };
 
+  const setDefaultValue = () => {
+    if (options?.slugOptions && multipleInsertField) {
+      const val = options?.slugOptions?.find((item) => item?.guid === id);
+      setValue(val?.guid ?? null);
+      setLocalValue(val ? [val] : null);
+    }
+  };
+
   const computedValue = useMemo(() => {
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];

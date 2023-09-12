@@ -1,9 +1,17 @@
-import { Autocomplete, Box, Button, Dialog, Popover, TextField, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { get } from "@ngard/tiny-get";
-import { useEffect, useMemo, useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Dialog,
+  Popover,
+  TextField,
+  Typography,
+} from "@mui/material";
+import {makeStyles} from "@mui/styles";
+import {get} from "@ngard/tiny-get";
+import {useEffect, useMemo, useState} from "react";
+import {Controller, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
@@ -17,7 +25,7 @@ import RelationGroupCascading from "./RelationGroupCascading";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import AddIcon from "@mui/icons-material/Add";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -135,13 +143,7 @@ const AutoCompleteElement = ({
   const {i18n} = useTranslation();
 
   const getOptionLabel = (option) => {
-    const language = i18n?.language;
-
-    const dynamicLanguageKey = Object.keys(option).find((key) =>
-      key.endsWith(`_${language}`)
-    );
-
-    return dynamicLanguageKey ? option[dynamicLanguageKey] : option.name;
+    return getRelationFieldTabsLabel(field, option);
   };
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -340,8 +342,16 @@ const AutoCompleteElement = ({
       }}
     >
       {field.attributes.creatable && (
-        <span onClick={() => openFormModal(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
-          <AddIcon aria-owns={openPopover ? "mouse-over-popover" : undefined} aria-haspopup="true" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} />
+        <span
+          onClick={() => openFormModal(tableSlug)}
+          style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
+        >
+          <AddIcon
+            aria-owns={openPopover ? "mouse-over-popover" : undefined}
+            aria-haspopup="true"
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+          />
           <Popover
             id="mouse-over-popover"
             sx={{
@@ -360,7 +370,7 @@ const AutoCompleteElement = ({
             onClose={handlePopoverClose}
             disableRestoreFocus
           >
-            <Typography sx={{ p: 1 }}>Create new object</Typography>
+            <Typography sx={{p: 1}}>Create new object</Typography>
           </Popover>
         </span>
       )}
@@ -407,7 +417,7 @@ const AutoCompleteElement = ({
           width: "100%",
         }}
         openOnFocus
-        getOptionLabel={(option) => getOptionLabel(option)}
+        getOptionLabel={(option) => getRelationFieldTabsLabel(field, option)}
         multiple
         onPaste={(e) => {
           console.log("eeeeeee -", e.clipboardData.getData("Text"));

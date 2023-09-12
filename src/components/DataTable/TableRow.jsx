@@ -121,7 +121,8 @@ const TableRow = ({
                 </Button>
               ) : (
                 <span className="data_table__row_number" style={{ display: "block", width: "35px" }}>
-                  {(currentPage - 1) * limit + rowIndex + 1}
+                  {/* {(currentPage - 1) * limit + rowIndex + 1} */}
+                  {rowIndex + 1}
                 </span>
               )}
 

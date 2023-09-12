@@ -30,8 +30,8 @@ const CodeMirrorWithPopUp = ({ form, name }) => {
 
   return (
     <div className={styles.container}>
-      <OutsideClickHandler
-        onOutsideClick={() => {
+      <div
+        onBlur={() => {
           setFocused(false);
         }}
       >
@@ -77,7 +77,8 @@ const CodeMirrorWithPopUp = ({ form, name }) => {
             ""
           )}
         </Box>
-      </OutsideClickHandler>
+        {/* </OutsideClickHandler> */}
+      </div>
     </div>
   );
 };

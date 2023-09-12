@@ -9,8 +9,7 @@ const constructorTableService = {
     request.put("/table", data, { params: { project_id: projectId } }),
   create: (data, projectId) =>
     request.post("/table", data, { params: { project_id: projectId } }),
-  getById: (id, projectId) =>
-    request.get(`/table/${id}`, { params: { project_id: projectId } }),
+  getById: (params, id) => request.get(`/table/${id}`, { params }),
   delete: (id, projectId) =>
     request.delete(`/table/${id}`, { params: { project_id: projectId } }),
   getFolderList: (params) => requestV2.get("/table-folder", { params }),
@@ -35,6 +34,15 @@ export const useTableFolderListQuery = ({ params = {}, queryParams } = {}) => {
     ["TABLE_FOLDER", params],
     () => {
       return constructorTableService.getFolderList(params);
+    },
+    queryParams
+  );
+};
+export const useTableByIdQuery = ({ params = {}, id, queryParams } = {}) => {
+  return useQuery(
+    ["TABLE_BY_ID", { params, id }],
+    () => {
+      return constructorTableService.getById(params, id);
     },
     queryParams
   );

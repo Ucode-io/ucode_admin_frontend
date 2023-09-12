@@ -10,34 +10,44 @@ const DrawerCard = ({
   open,
   onSaveButtonClick = () => {},
   loader,
-  bodyStyle
+  bodyStyle,
+  footer = true,
+  sx,
+  titleStyle,
 }) => {
   return (
     <Drawer
+      sx={sx}
       open={open}
       anchor="right"
       classes={{ paperAnchorRight: styles.verticalDrawer }}
       onClose={onClose}
     >
       <div className={styles.header}>
-        <h2 className={styles.title}>{title}</h2>
+        <h2 className={styles.title} style={titleStyle}>
+          {title}
+        </h2>
 
         <IconButton className={styles.closeButton} onClick={onClose}>
           <Close className={styles.closeIcon} />
         </IconButton>
       </div>
-      <div className={styles.body} style={bodyStyle}>{children}</div>
+      <div className={styles.body} style={bodyStyle}>
+        {children}
+      </div>
 
-      <dir className={styles.footer}>
-        <PrimaryButton
-          size="large"
-          className={styles.button}
-          onClick={onSaveButtonClick}
-          loader={loader}
-        >
-          Сохранить
-        </PrimaryButton>
-      </dir>
+      {footer && (
+        <dir className={styles.footer}>
+          <PrimaryButton
+            size="large"
+            className={styles.button}
+            onClick={onSaveButtonClick}
+            loader={loader}
+          >
+            Сохранить
+          </PrimaryButton>
+        </dir>
+      )}
     </Drawer>
   );
 };

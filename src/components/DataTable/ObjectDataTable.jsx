@@ -228,7 +228,9 @@ const ObjectDataTable = ({
 
   const hasMore = useMemo(() => {
     return currentPage <= count;
-  }, [currentPage, pagesCount]);
+  }, [currentPage, pagesCount, tableSlug, data, count]);
+
+  console.log('hasMore', hasMore)
 
   return (
     <CTable
@@ -261,7 +263,7 @@ const ObjectDataTable = ({
           </Box>
         }
         // height={"calc(100vh - 170px)"}
-        height={`${elementHeight - 50}px`}
+        height={`${elementHeight - 70}px`}
       >
         <CTableHead>
           {formVisible && selectedRow.length > 0 && <MultipleUpdateRow columns={data} fields={columns} watch={watch} setFormValue={setFormValue} control={control} />}

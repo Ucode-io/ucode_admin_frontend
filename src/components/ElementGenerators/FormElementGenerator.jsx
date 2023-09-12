@@ -131,7 +131,8 @@ const FormElementGenerator = ({
   const isDisabled = useMemo(() => {
     return (
       field.attributes?.disabled ||
-      !field.attributes?.field_permission?.edit_permission
+      !field.attributes?.field_permission?.edit_permission ||
+      field?.is_editable
     );
   }, [field]);
 

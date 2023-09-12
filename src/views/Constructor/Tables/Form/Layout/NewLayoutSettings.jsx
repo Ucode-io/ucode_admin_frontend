@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import styles from "./style.module.scss";
 import SummarySection from "./SummarySection";
 import LayoutTabs from "./LayoutTabs";

@@ -55,7 +55,7 @@ const TableView = ({
   const { new_list } = useSelector((state) => state.filter);
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   // const selectTableSlug = selectedLinkedObject
@@ -205,6 +205,7 @@ const TableView = ({
       return "string";
     }
   };
+  const [combinedTableData, setCombinedTableData] = useState([]);
 
   const {
     data: { tableData, pageCount, fiedlsarray, fieldView } = {
@@ -252,6 +253,15 @@ const TableView = ({
         pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
       };
     },
+    onSuccess: (data) => {
+      const checkdublicate = combinedTableData?.filter((item) => {
+        return data?.tableData?.find((el) => el.guid === item.guid);
+      });
+      const result = data?.tableData?.filter((item) => {
+        return !checkdublicate?.find((el) => el.guid === item.guid);
+      });
+      setCombinedTableData((prev) => [...prev, ...result]);
+    },
   });
 
   // ==========FILTER FIELDS=========== //
@@ -272,17 +282,17 @@ const TableView = ({
   }, [fieldView, fiedlsarray]);
 
   useEffect(() => {
-    if (isNaN(parseInt(view?.default_limit))) setLimit(10);
+    if (isNaN(parseInt(view?.default_limit))) setLimit(20);
     else setLimit(parseInt(view?.default_limit));
   }, [view?.default_limit]);
 
   useEffect(() => {
-    if (tableData?.length > 0) {
+    if (combinedTableData?.length > 0) {
       reset({
-        multi: tableData.map((i) => i),
+        multi: combinedTableData.map((i) => i),
       });
     }
-  }, [tableData, reset]);
+  }, [combinedTableData, reset]);
 
   const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
     tableSlug,
@@ -356,6 +366,16 @@ const TableView = ({
     }
   };
 
+  const [elementHeight, setElementHeight] = useState(null);
+
+  useEffect(() => {
+    const element = document.querySelector("#data-table");
+    if (element) {
+      const height = element.getBoundingClientRect().height;
+      setElementHeight(height);
+    }
+  }, []);
+
   return (
     <div className={styles.wrapper}>
       {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
@@ -365,7 +385,7 @@ const TableView = ({
         </div>
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
           <ObjectDataTable
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
@@ -374,6 +394,7 @@ const TableView = ({
             sortedDatas={sortedDatas}
             setDrawerState={setDrawerState}
             isTableView={true}
+            elementHeight={elementHeight}
             setFormVisible={setFormVisible}
             setFormValue={setFormValue}
             mainForm={mainForm}
@@ -390,7 +411,7 @@ const TableView = ({
             setLimit={setLimit}
             onPaginationChange={setCurrentPage}
             loader={tableLoader || deleteLoader}
-            data={tableData}
+            data={combinedTableData}
             disableFilters
             isChecked={(row) => selectedObjects?.includes(row.guid)}
             onCheckboxChange={!!customEvents?.length && onCheckboxChange}

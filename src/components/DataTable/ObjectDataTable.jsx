@@ -22,7 +22,6 @@ import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
 import {de} from "date-fns/locale";
 import {useTranslation} from "react-i18next";
-import {Button} from "@mui/material";
 import { Box, Button, LinearProgress } from "@mui/material";
 import TableHeadForTableView from "./TableHeadForTableView";
 import InfiniteScroll from "react-infinite-scroll-component";

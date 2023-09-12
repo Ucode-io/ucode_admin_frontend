@@ -37,7 +37,7 @@ const ObjectsFormPage = () => {
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
   const menu = store.getState().menu;
-  const invite = menu.menuItem.data.table.is_login_table;
+  const invite = menu.menuItem?.data?.table?.is_login_table;
   const isInvite = menu.invite;
 
   const {

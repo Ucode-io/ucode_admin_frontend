@@ -135,7 +135,11 @@ const FormElementGenerator = ({
     );
   }, [field]);
 
-  if (!field.attributes?.field_permission?.view_permission && checkPermission) {
+  if (
+    !field.attributes?.field_permission?.view_permission &&
+    checkPermission &&
+    field?.slug !== "default_values"
+  ) {
     return null;
   }
 

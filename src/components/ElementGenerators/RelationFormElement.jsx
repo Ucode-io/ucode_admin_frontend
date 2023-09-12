@@ -266,6 +266,8 @@ const AutoCompleteElement = ({
     field?.attributes?.function_path,
   ]);
 
+  console.log("options", options);
+
   const getValueData = async () => {
     try {
       const id = value;

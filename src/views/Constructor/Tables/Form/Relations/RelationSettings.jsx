@@ -755,7 +755,7 @@ const RelationSettings = ({
                     >
                       <h2>Settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{padding: 0}}>
+                    <AccordionDetails style={{padding: "8px"}}>
                       <HFSwitch
                         control={control}
                         name="is_editable"
@@ -776,22 +776,33 @@ const RelationSettings = ({
                         name="relation_buttons"
                         label={"Relation Buttons"}
                       />
-
+                      {/* 
                       <DefaultValueBlock
                         control={control}
                         watch={watch}
                         columnsList={values.columnsList}
-                      />
+                      /> */}
 
                       {/* <AutoFiltersBlock control={control} watch={watch} /> */}
+                    </AccordionDetails>
+                  </Accordion>
 
+                  <Box sx={{padding: "16px"}}>
+                    <Box
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      <h2>Table Actions</h2>
+                    </Box>
+                    <Box style={{padding: 0}}>
                       <TableActions
                         control={control}
                         watch={watch}
                         setValue={setValue}
                       />
-                    </AccordionDetails>
-                  </Accordion>
+                    </Box>
+                  </Box>
 
                   <Accordion defaultExpanded>
                     <AccordionSummary

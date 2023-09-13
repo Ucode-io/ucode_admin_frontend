@@ -139,11 +139,11 @@ const TableRow = ({
               )}
             </div>
 
-            {onCheckboxChange && (
+            {/* {onCheckboxChange && (
               <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
                 <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
               </div>
-            )}
+            )} */}
           </CTableCell>
 
           {columns.map(

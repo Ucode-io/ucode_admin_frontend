@@ -18,8 +18,7 @@ const constructorObjectService = {
       },
       params: { "project-id": projectId },
     }),
-  delete: (tableSlug, id) =>
-    request.delete(`/object/${tableSlug}/${id}`, { data: { data: {} } }),
+  delete: (tableSlug, id) => request.delete(`/object/${tableSlug}/${id}`, { data: { data: {} } }),
   deleteObject: ({ tableSlug, resourceId, objectId }) =>
     request.delete(`/object/${tableSlug}/${objectId}`, {
       headers: { "resource-id": resourceId },
@@ -28,10 +27,8 @@ const constructorObjectService = {
   updateManyToMany: (data) => request.put("/many-to-many", data),
   updateMultipleObject: (tableSlug, data) => request.put(`/object/multiple-update/${tableSlug}`, data),
   deleteManyToMany: (data) => request.delete("/many-to-many", { data }),
-  downloadExcel: (tableSlug, data) =>
-    request.post(`/object/excel/${tableSlug}`, data),
-  getFinancialAnalytics: (tableSlug, data) =>
-    request.post(`/object/get-financial-analytics/${tableSlug}`, data),
+  downloadExcel: (tableSlug, data) => request.post(`/object/excel/${tableSlug}`, data),
+  getFinancialAnalytics: (tableSlug, data) => request.post(`/object/get-financial-analytics/${tableSlug}`, data),
   updateObject: (data) =>
     request.put(
       `/object/${data.tableSlug}`,
@@ -54,6 +51,7 @@ const constructorObjectService = {
         },
       }
     ),
+  deleteMultiple: (tableSlug, data) => request.delete(`/object/${tableSlug}`, { data }),
 };
 export const useObjectsListQuery = ({ params = {}, data = {}, queryParams } = {}) => {
   return useQuery(
@@ -64,14 +62,7 @@ export const useObjectsListQuery = ({ params = {}, data = {}, queryParams } = {}
     queryParams
   );
 };
-export const useObjectGetByIdQuery = ({
-  tableSlug,
-  resourceId,
-  id,
-  envId,
-  projectId,
-  queryParams,
-}) => {
+export const useObjectGetByIdQuery = ({ tableSlug, resourceId, id, envId, projectId, queryParams }) => {
   return useQuery(
     ["FIELD_GET_BY_ID", { tableSlug, resourceId, id, envId, projectId }],
     () => {
@@ -88,17 +79,11 @@ export const useObjectGetByIdQuery = ({
 };
 
 export const useObjectUpdateMutation = (mutationSettings) => {
-  return useMutation(
-    (data) => constructorObjectService.updateObject(data),
-    mutationSettings
-  );
+  return useMutation((data) => constructorObjectService.updateObject(data), mutationSettings);
 };
 
 export const useObjectCreateMutation = (mutationSettings) => {
-  return useMutation(
-    (data) => constructorObjectService.createObject(data),
-    mutationSettings
-  );
+  return useMutation((data) => constructorObjectService.createObject(data), mutationSettings);
 };
 
 export const useObjectDeleteMutation = (mutationSettings) => {

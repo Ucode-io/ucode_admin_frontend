@@ -5,7 +5,8 @@ import { Parser } from "hot-formula-parser";
 import { useEffect } from "react";
 import IconGenerator from "../IconPicker/IconGenerator";
 import { useState } from "react";
-import {numberWithSpaces} from "@/utils/formatNumbers";
+import { numberWithSpaces } from "@/utils/formatNumbers";
+import { fi } from "date-fns/locale";
 
 const parser = new Parser();
 
@@ -13,11 +14,13 @@ const CHFFormulaField = ({
   control,
   name,
   rules = {},
+  isTableView = false,
   setFormValue = () => {},
   required,
   disabledHelperText,
   fieldsList,
   disabled,
+  isTransparent = false,
   field,
   index,
   ...props
@@ -38,12 +41,10 @@ const CHFFormulaField = ({
   const updateValue = () => {
     let computedFormula = formula;
 
-    const fieldsListSorted = fieldsList
-      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
-      : [];
+    const fieldsListSorted = fieldsList ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length) : [];
 
     fieldsListSorted?.forEach((field) => {
-      let value = values[field.slug] ?? 0;
+      let value = values?.[field?.slug] ?? 0;
 
       if (typeof value === "string") value = `${value}`;
 
@@ -75,33 +76,34 @@ const CHFFormulaField = ({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           size="small"
-          value={formulaIsVisible ? formula : typeof(value) === 'number' ? numberWithSpaces(value) : ''}
+          value={formulaIsVisible ? formula : typeof value === "number" ? numberWithSpaces(value) : ""}
           onChange={(e) => {
             const val = e.target.value;
-            const valueWithoutSpaces = val.replaceAll(' ', '')
+            const valueWithoutSpaces = val.replaceAll(" ", "");
 
-            if (!valueWithoutSpaces) onChange('');
-            else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : '');
+            if (!valueWithoutSpaces) onChange("");
+            else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : "");
           }}
           name={name}
           error={error}
           fullWidth
+          sx={isTableView ? {
+            "& .MuiOutlinedInput-notchedOutline": {
+              border: "0",
+            },
+          } : ''}
           helperText={!disabledHelperText && error?.message}
           InputProps={{
             readOnly: disabled,
             style: {
-              background: disabled ? "#c0c0c039" : "#fff",
+              background: isTransparent ? "transparent" : disabled ? "#c0c0c039" : "#fff",
+              border: "0",
+              borderWidth: "0px",
             },
             endAdornment: (
               <InputAdornment position="end">
-                <Tooltip
-                  title={formulaIsVisible ? "Hide formula" : "Show formula"}
-                >
-                  <IconButton
-                    edge="end"
-                    color={formulaIsVisible ? "primary" : "default"}
-                    onClick={() => setFormulaIsVisible((prev) => !prev)}
-                  >
+                <Tooltip title={formulaIsVisible ? "Hide formula" : "Show formula"}>
+                  <IconButton edge="end" color={formulaIsVisible ? "primary" : "default"} onClick={() => setFormulaIsVisible((prev) => !prev)}>
                     <IconGenerator icon="square-root-variable.svg" size={15} />
                   </IconButton>
                 </Tooltip>

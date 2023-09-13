@@ -21,8 +21,13 @@ import FormCustomActionButton from "./components/CustomActionsButton/FormCustomA
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
 
-const ObjectsFormPage = () => {
-  const { tableSlug, id } = useParams();
+const ObjectsFormPage = ({ tableSlugFromProps, handleClose, modal = false }) => {
+  const { id, tableSlug: tableSlugFromParam } = useParams();
+
+  const tableSlug = useMemo(() => {
+    return tableSlugFromProps || tableSlugFromParam;
+  }, [tableSlugFromParam, tableSlugFromProps]);
+
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { state = {} } = useLocation();
   const navigate = useNavigate();
@@ -61,14 +66,9 @@ const ObjectsFormPage = () => {
     const getFormData = constructorObjectService.getById(tableSlug, id);
 
     try {
-      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([
-        getFormData,
-        getLayout,
-      ]);
+      const [{ data = {} }, { layouts: layout = [] }] = await Promise.all([getFormData, getLayout]);
       setSections(sortSections(sections));
-      setSummary(
-        layout?.find((el) => el.is_default === true)?.summary_fields ?? []
-      );
+      setSummary(layout?.find((el) => el.is_default === true)?.summary_fields ?? []);
 
       const defaultLayout = layout?.find((el) => el.is_default === true);
 
@@ -81,10 +81,7 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
 
@@ -115,10 +112,7 @@ const ObjectsFormPage = () => {
       setTableRelations(
         relations.map((relation) => ({
           ...relation,
-          relatedTable:
-            relation.table_from?.slug === tableSlug
-              ? relation.table_to?.slug
-              : relation.table_from?.slug,
+          relatedTable: relation.table_from?.slug === tableSlug ? relation.table_to?.slug : relation.table_from?.slug,
         }))
       );
     } catch (error) {
@@ -151,11 +145,16 @@ const ObjectsFormPage = () => {
           table_slug: tableSlug,
           user_id: isUserId,
         });
-        navigate(-1);
+        if (modal) {
+          handleClose();
+        } else {
+          navigate(-1);
+          if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data);
+        }
+
         dispatch(showAlert("Успешно обновлено", "success"));
-        // if (!state) navigateToForm(tableSlug, "EDIT", res.data?.data)
-        if (tableRelations?.length)
-          navigateToForm(tableSlug, "EDIT", res.data?.data);
+
+        // if (tableRelations?.length) navigateToForm(tableSlug, "EDIT", res.data?.data);
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => setBtnLoader(false));
@@ -201,6 +200,7 @@ const ObjectsFormPage = () => {
           onSubmit={onSubmit}
           reset={reset}
           setFormValue={setFormValue}
+          tableSlug={tableSlugFromProps}
           watch={watch}
           loader={loader}
           setSelectTab={setSelectTab}
@@ -215,20 +215,9 @@ const ObjectsFormPage = () => {
             <SecondaryButton onClick={() => navigate(-1)} color="error">
               Закрыть
             </SecondaryButton>
-            <FormCustomActionButton
-              control={control?._formValues}
-              tableSlug={tableSlug}
-              id={id}
-            />
-            <PermissionWrapperV2
-              tableSlug={tableSlug}
-              type={id ? "update" : "write"}
-            >
-              <PrimaryButton
-                loader={btnLoader}
-                id="submit"
-                onClick={handleSubmit(onSubmit)}
-              >
+            <FormCustomActionButton control={control?._formValues} tableSlug={tableSlug} id={id} />
+            <PermissionWrapperV2 tableSlug={tableSlug} type={id ? "update" : "write"}>
+              <PrimaryButton loader={btnLoader} id="submit" onClick={handleSubmit(onSubmit)}>
                 <Save />
                 Сохранить
               </PrimaryButton>

@@ -1,4 +1,5 @@
 import { Close, FilterAlt } from "@mui/icons-material";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -34,20 +35,23 @@ const FastFilterButton = ({ view, fieldsMap }) => {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
       <div
-        style={{ display: "flex", alignItems: "center", gap: 5, color: "#A8A8A8", cursor: "pointer",
-        fontSize: '13px',
-        fontWeight: 500,
-        lineHeight: '16px',
-        letterSpacing: '0em',
-        textAlign: 'left'
-         }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 5,
+          color: "#A8A8A8",
+          cursor: "pointer",
+          fontSize: "13px",
+          fontWeight: 500,
+          lineHeight: "16px",
+          letterSpacing: "0em",
+          textAlign: "left",
+          padding: "0 10px",
+        }}
         size={!!selectedFiltersNumber ? "long" : ""}
         onClick={(e) => setAnchorEl(e.target)}
       >
-        <FilterAlt
-          color={!!selectedFiltersNumber ? "primary" : "#A8A8A8"}
-        />
-        Filter
+        <FilterAltOutlinedIcon color={!!selectedFiltersNumber ? "primary" : "#A8A8A8"} />
         {!!selectedFiltersNumber && (
           <>
             <strong>
@@ -82,13 +86,7 @@ const FastFilterButton = ({ view, fieldsMap }) => {
           />
         </RectangleIconButton>
       )}
-      <NewFilterModal
-        view={view}
-        fieldsMap={fieldsMap}
-        setAnchorEl={setAnchorEl}
-        anchorEl={anchorEl}
-        handleClose={handleClose}
-      />
+      <NewFilterModal view={view} fieldsMap={fieldsMap} setAnchorEl={setAnchorEl} anchorEl={anchorEl} handleClose={handleClose} />
     </div>
   );
 };

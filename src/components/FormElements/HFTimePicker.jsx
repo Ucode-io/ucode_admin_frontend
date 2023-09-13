@@ -15,6 +15,7 @@ const HFTimePicker = ({
   className,
   isBlackBg,
   name,
+  isTransparent = false,
   disabled,
   label,
     tabIndex,
@@ -42,6 +43,7 @@ const HFTimePicker = ({
             isBlackBg={isBlackBg}
             value={value}
             onChange={onChange}
+            isTransparent={isTransparent}
           />
         </div>
       )}

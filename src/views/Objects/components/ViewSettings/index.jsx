@@ -9,17 +9,12 @@ import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
 import ViewsList from "./ViewsList";
 
-const ViewSettings = ({
-  closeModal,
-  setIsChanged,
-  isChanged,
-  viewData,
-  typeNewView,
-}) => {
-  const {tableSlug, appId} = useParams();
+const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewView, defaultViewTab }) => {
+  const { tableSlug, appId } = useParams();
   const [selectedView, setSelectedView] = useState(viewData);
 
   const closeForm = () => setSelectedView(null);
+  
   const {
     data: {views, columns, relationColumns} = {
       views: [],
@@ -84,6 +79,7 @@ const ViewSettings = ({
               refetchViews={refetchViews}
               closeModal={closeModal}
               setIsChanged={setIsChanged}
+              defaultViewTab={defaultViewTab}
               columns={columns}
               views={views}
               relationColumns={relationColumns}

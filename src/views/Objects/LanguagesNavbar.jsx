@@ -1,6 +1,6 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { Button, Menu, MenuItem } from "@mui/material";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
@@ -18,6 +18,10 @@ export default function LanguagesNavbar() {
   const languages = useSelector((state) => state.languages.list);
 
   const { i18n } = useTranslation();
+
+  useEffect(() => {
+    if (languages?.length) i18n.changeLanguage(languages?.[0]?.slug);
+  }, [languages]);
 
   const handleRowClick = (lang) => {
     i18n.changeLanguage(lang);

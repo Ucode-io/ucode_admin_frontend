@@ -6,7 +6,7 @@ import { Box, InputAdornment, TextField, Tooltip } from "@mui/material"
 import { DateRange, Lock, Today } from "@mui/icons-material"
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
-const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit, tabIndex, disabled }) => {
+const CTimePicker = ({ value, onChange, classes, isBlackBg, isTransparent = false, isFormEdit, tabIndex, disabled }) => {
   const getValue = () => {
     if (!value) return ""
 
@@ -35,7 +35,9 @@ const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit, tabIndex
               classes: {
                 input: isBlackBg ? classes.input : "",
               },
-              style: disabled
+              style: isTransparent ? {
+                background: "transparent",
+              } : disabled
                     ? {
                         background: "#c0c0c039",
                       }
@@ -65,7 +67,6 @@ const CTimePicker = ({ value, onChange, classes, isBlackBg, isFormEdit, tabIndex
       format="HH:mm"
       value={getValue()}
       onChange={(date) => {
-        console.log("DATE ===>", date)
         onChange(date?.isValid ? date.format("HH:mm") : "")
       }}
     />

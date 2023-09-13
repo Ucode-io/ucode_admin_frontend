@@ -5,7 +5,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Card, IconButton } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
@@ -20,15 +20,27 @@ import { generateGUID } from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import styles from "./style.module.scss";
-import { useSelector } from "react-redux";
+import { store } from "../../../../../store";
+import { add } from "date-fns";
+import constructorObjectService from "../../../../../services/constructorObjectService";
+import constructorViewService from "../../../../../services/constructorViewService";
 
-const FieldSettings = ({ closeSettingsBlock, mainForm, field, selectedField, formType, height, onSubmit = () => {}, getRelationFields }) => {
-  const { id } = useParams();
+const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, formType, height, isTableView = false, onSubmit = () => {}, getRelationFields }) => {
+  const { id, tableSlug, appId } = useParams();
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
-  const languages = useSelector((state) => state.languages.list);
-  console.log('languages', languages)
+  const menuItem = store.getState().menu.menuItem;
+  const queryClient = useQueryClient();
+
+  const detectorID = useMemo(() => {
+    if (id) {
+      return id;
+    } else {
+      return menuItem?.table_id;
+    }
+  }, [id, tableSlug]);
+
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
     const index = fields.findIndex((el) => el.id === field.id);
@@ -47,6 +59,36 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, selectedField, for
     name: "attributes.showTooltip",
   });
 
+  const {
+    data: { views, columns, relationColumns } = {
+      views: [],
+      columns: [],
+      relationColumns: [],
+    },
+    isLoading,
+    refetch: refetchViews,
+  } = useQuery(
+    ["GET_VIEWS_AND_FIELDS", { tableSlug }],
+    () => {
+      return constructorObjectService.getList(tableSlug, {
+        data: { limit: 10, offset: 0, with_relations: true, app_id: appId },
+      });
+    },
+    {
+      select: ({ data }) => {
+        return {
+          views: data?.views ?? [],
+          columns: data?.fields ?? [],
+          relationColumns:
+            data?.relation_fields?.map((el) => ({
+              ...el,
+              label: `${el.label} (${el.table_label})`,
+            })) ?? [],
+        };
+      },
+    }
+  );
+
   const createField = (field) => {
     const data = {
       ...field,
@@ -54,10 +96,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, selectedField, for
       label: Object.values(field?.attributes).find((item) => item),
     };
 
-    if (!id) {
-      prepandFieldInForm(data);
-      closeSettingsBlock();
-    } else {
+    if (id || menuItem?.table_id) {
       setFormLoader(true);
       constructorFieldService
         .create(data)
@@ -65,13 +104,30 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, selectedField, for
           prepandFieldInForm(res);
           closeSettingsBlock(null);
           getRelationFields();
+          addColumnToView(res);
         })
         .finally(() => setFormLoader(false));
+    } else {
+      prepandFieldInForm(data);
+      closeSettingsBlock();
+    }
+  };
+
+  const addColumnToView = (data) => {
+    if (isTableView) {
+      const computedValues = {
+        ...views[selectedTabIndex],
+        columns: [...views[selectedTabIndex].columns, data?.id],
+      };
+
+      constructorViewService.update(computedValues).then(() => {
+        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      });
     }
   };
 
   const updateField = (field) => {
-    if (!id) {
+    if (!id || !menuItem?.table_id) {
       updateFieldInform(field);
       closeSettingsBlock();
     } else {
@@ -123,6 +179,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, selectedField, for
       label: table.label,
     }));
   }, [layoutRelations]);
+
   const { data: computedRelationFields } = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
@@ -133,13 +190,17 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, selectedField, for
       });
     },
     {
-      select: (res) =>
-        [...res?.fields, ...res?.data?.one_relation_fields]
-          ?.filter((field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP")
+      select: (res) => {
+        const fields = res?.fields ?? [];
+        const oneRelationFields = res?.data?.one_relation_fields ?? [];
+
+        return [...fields, ...oneRelationFields]
+          .filter((field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP")
           .map((el) => ({
             value: el?.path_slug ? el?.path_slug : el?.slug,
             label: el?.label,
-          })),
+          }));
+      },
     }
   );
 
@@ -151,7 +212,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, selectedField, for
       label: "",
       required: false,
       slug: "",
-      table_id: id,
+      table_id: detectorID,
       type: "",
       relation_field: selectedAutofillFieldSlug,
     };
@@ -164,7 +225,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, field, selectedField, for
     } else {
       reset(values);
     }
-  }, [field, formType, id, reset]);
+  }, [field, formType, id, menuItem.table_id, reset]);
 
   return (
     <div className={styles.settingsBlock}>

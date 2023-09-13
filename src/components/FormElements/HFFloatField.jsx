@@ -9,6 +9,7 @@ const HFFloatField = ({
   isBlackBg = false,
   isFormEdit = false,
   required = false,
+  isTransparent = false,
   fullWidth = false,
   withTrim = false,
   rules = {},
@@ -51,23 +52,17 @@ const HFFloatField = ({
 
               if (!valueWithoutSpaces) onChange("");
               else {
-                if (valueWithoutSpaces.at(-1) === ".")
-                  onChange(parseFloat(valueWithoutSpaces));
-                else
-                  onChange(
-                    !isNaN(valueWithoutSpaces)
-                      ? parseFloat(valueWithoutSpaces)
-                      : valueWithoutSpaces
-                  );
+                if (valueWithoutSpaces.at(-1) === ".") onChange(parseFloat(valueWithoutSpaces));
+                else onChange(!isNaN(valueWithoutSpaces) ? parseFloat(valueWithoutSpaces) : valueWithoutSpaces);
               }
             }}
-            className={`${isFormEdit ? "custom_textfield" : ""} ${
-              styles.numberField
-            }`}
+            className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
             name={name}
             readOnly={disabled}
             style={
-              disabled
+              isTransparent
+                ? { background: "transparent", border: "none" }
+                : disabled
                 ? { background: "#c0c0c039" }
                 : {
                     background: isBlackBg ? "#2A2D34" : "",

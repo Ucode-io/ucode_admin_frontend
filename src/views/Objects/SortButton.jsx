@@ -12,12 +12,7 @@ import SortMenuRow from "./SortMenuRow";
 export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDatas }) {
   const form = useForm({
     defaultValues: {
-      sort: [
-        {
-          field: "",
-          order: "",
-        },
-      ],
+      sort: [],
     },
   });
   const [anchorEl, setAnchorEl] = useState(null);
@@ -151,11 +146,14 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
             padding: "10px",
           }}
         >
-          <div className={style.menuItems} style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-          }}>
+          <div
+            className={style.menuItems}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+            }}
+          >
             {fields.map((field, index) => (
               <div
                 key={field.id}

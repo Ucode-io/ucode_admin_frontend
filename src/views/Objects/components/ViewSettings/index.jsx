@@ -9,12 +9,19 @@ import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
 import ViewsList from "./ViewsList";
 
-const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewView, defaultViewTab }) => {
+const ViewSettings = ({
+  closeModal,
+  setIsChanged,
+  isChanged,
+  viewData,
+  typeNewView,
+  defaultViewTab,
+}) => {
   const { tableSlug, appId } = useParams();
   const [selectedView, setSelectedView] = useState(viewData);
 
   const closeForm = () => setSelectedView(null);
-  
+
   const {
     data: { views, columns, relationColumns } = {
       views: [],
@@ -48,9 +55,11 @@ const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewVi
   useEffect(() => {
     if (isChanged === true) {
       refetchViews();
-      closeModal()
+      closeModal();
     }
   }, [isChanged]);
+
+  console.log("global column", columns);
 
   return (
     <Card className={styles.card}>

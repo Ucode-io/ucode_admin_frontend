@@ -9,13 +9,13 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
   const { fields: columns, move } = useFieldArray({
     control: form.control,
     name: "columns",
+    keyName: "key",
   });
 
   const watchedColumns = useWatch({
     control: form.control,
     name: "columns",
   });
-  console.log("watch", form.watch());
 
   const onDrop = async (dropResult) => {
     const result = applyDrag(columns, dropResult);

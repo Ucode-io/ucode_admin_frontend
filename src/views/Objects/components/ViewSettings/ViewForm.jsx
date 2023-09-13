@@ -43,6 +43,7 @@ const ViewForm = ({
   const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
+  const group_by_columns = initialValues?.attributes?.group_by_columns;
   const navigate = initialValues?.navigate;
   const relationObjValue =
     initialValues?.attributes?.balance?.table_slug +
@@ -104,6 +105,10 @@ const ViewForm = ({
         type: data.typee,
         field_id: data.typee === "field" ? data.filed_idss : null,
       },
+      group_by_columns:
+        data.attributes.group_by_columns
+          ?.filter((el) => el.is_checked)
+          .map((el) => el.id) ?? [],
       // send balance field if relation_obj is selected
       ...(isBalanceExist && {
         balance: {
@@ -141,7 +146,8 @@ const ViewForm = ({
         financialFiledId,
         relationObjValue,
         numberFieldValue,
-        navigate
+        navigate,
+        group_by_columns
       ),
       filters: [],
     });
@@ -176,6 +182,7 @@ const ViewForm = ({
       ...values,
       columns:
         values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
+
       quick_filters:
         values.quick_filters
           ?.filter((el) => el.is_checked)
@@ -240,6 +247,7 @@ const ViewForm = ({
               <Tab>Columns</Tab>
               <Tab>Navigation</Tab>
               {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
+              <Tab>Group by columns</Tab>
               {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
             </TabList>
             <TabPanel>
@@ -309,10 +317,12 @@ const ViewForm = ({
             </TabPanel>
             {type !== "FINANCE CALENDAR" && (
               <TabPanel>
-                {/* <GroupsTab columns={computedColumns} form={form} /> */}
-                <GroupByTab form={form} isMenu={false} />
+                <GroupsTab columns={computedColumns} form={form} />
               </TabPanel>
             )}
+            <TabPanel>
+              <GroupByTab form={form} isMenu={false} />
+            </TabPanel>
             <TabPanel>
               <ChartAccountsWrapper viewId={initialValues.id} form={form} />
             </TabPanel>
@@ -348,7 +358,8 @@ const getInitialValues = (
   financialFiledId,
   relationObjValue,
   numberFieldValue,
-  navigate
+  navigate,
+  group_by_columns
 ) => {
   if (initialValues === "NEW")
     return {
@@ -379,6 +390,10 @@ const getInitialValues = (
       multiple_insert: false,
       multiple_insert_field: "",
       chartOfAccounts: [{}],
+      attributes: {
+        group_by_columns:
+          columns?.map((el) => ({ ...el, is_checked: false })) ?? [],
+      },
     };
   return {
     type: initialValues?.type ?? "TABLE",
@@ -394,6 +409,9 @@ const getInitialValues = (
       time_to_slug: initialValues?.disable_dates?.time_to_slug ?? "",
     },
     columns: computeColumns(initialValues?.columns, columns),
+    attributes: {
+      group_by_columns: computeGroups(group_by_columns, columns),
+    },
     quick_filters:
       computeQuickFilters(
         initialValues?.quick_filters,
@@ -433,6 +451,18 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
   const selectedColumns =
     checkedColumnsIds
       ?.filter((id) => columns.find((el) => el.id === id))
+      ?.map((id) => ({
+        ...columns.find((el) => el.id === id),
+        is_checked: true,
+      })) ?? [];
+  const unselectedColumns =
+    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+  return [...selectedColumns, ...unselectedColumns];
+};
+const computeGroups = (checkedColumnsIds = [], columns) => {
+  const selectedColumns =
+    checkedColumnsIds
+      ?.filter((id) => columns.find((el) => el?.id === id))
       ?.map((id) => ({
         ...columns.find((el) => el.id === id),
         is_checked: true,

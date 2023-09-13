@@ -1,16 +1,35 @@
 import { Checkbox } from "@mui/material";
 import { useMemo } from "react";
 import { useWatch } from "react-hook-form";
-import { CTable, CTableBody, CTableCell, CTableRow } from "../../../../components/CTable";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableRow,
+} from "../../../../components/CTable";
 
-const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateLoading }) => {
+const GroupsTab = ({
+  columns,
+  form,
+  selectedView,
+  updateView,
+  isLoading,
+  updateLoading,
+}) => {
   const selectedColumns = useWatch({
     control: form.control,
     name: "group_fields",
   });
+  console.log("selectedView", selectedView);
 
   const computedColumns = useMemo(() => {
-    return columns?.filter((column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT");
+    return columns?.filter(
+      (column) =>
+        column.type === "LOOKUP" ||
+        column.type === "PICK_LIST" ||
+        column.type === "LOOKUPS" ||
+        column.type === "MULTISELECT"
+    );
   }, [columns]);
 
   const onCheckboxChange = async (val, id) => {
@@ -44,7 +63,11 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
         overflowY: "auto",
       }}
     >
-      <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
+      <CTable
+        removableHeight={false}
+        disablePagination
+        tableStyle={{ border: "none" }}
+      >
         <CTableBody dataLength={1}>
           {computedColumns.map((column) => (
             <CTableRow key={column.id}>
@@ -52,7 +75,10 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
               <CTableCell style={{ width: 20 }}>
                 <Checkbox
                   disabled={isLoading || updateLoading}
-                  checked={selectedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
+                  checked={
+                    selectedColumns?.includes(column?.id) ||
+                    selectedView?.group_fields?.includes(column?.id)
+                  }
                   onChange={(e, val) => changeHandler(val, column.id)}
                 />
               </CTableCell>

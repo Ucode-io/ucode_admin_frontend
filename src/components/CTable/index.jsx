@@ -22,7 +22,6 @@ export const CTable = ({
   setLimit,
   defaultLimit,
 }) => {
-  console.log('fffffff', count)
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
       <div

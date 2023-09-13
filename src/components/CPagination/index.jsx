@@ -37,7 +37,7 @@ const CPagination = ({ setCurrentPage = () => {}, paginationExtraButton, multipl
       }}
     >
       <div>
-        {/* {limit && (
+        {limit && (
           <div className={styles.limitSide}>
             {t("showing")}
             <CSelect
@@ -51,7 +51,7 @@ const CPagination = ({ setCurrentPage = () => {}, paginationExtraButton, multipl
               sx={null}
             />
           </div>
-        )} */}
+        )}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         {selectedObjectsForDelete?.length > 0 && (
@@ -65,7 +65,7 @@ const CPagination = ({ setCurrentPage = () => {}, paginationExtraButton, multipl
           Add object
         </Button>
 
-        {/* <Pagination color="primary" onChange={(e, val) => setCurrentPage(val)} {...props} /> */}
+        <Pagination color="primary" onChange={(e, val) => setCurrentPage(val)} {...props} />
         {paginationExtraButton}
       </div>
     </div>

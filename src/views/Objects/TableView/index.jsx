@@ -287,12 +287,12 @@ const TableView = ({
   }, [view?.default_limit]);
 
   useEffect(() => {
-    if (combinedTableData?.length > 0) {
+    if (tableData?.length > 0) {
       reset({
-        multi: combinedTableData.map((i) => i),
+        multi: tableData.map((i) => i),
       });
     }
-  }, [combinedTableData, reset]);
+  }, [tableData, reset]);
 
   const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
     tableSlug,
@@ -411,7 +411,7 @@ const TableView = ({
             setLimit={setLimit}
             onPaginationChange={setCurrentPage}
             loader={tableLoader || deleteLoader}
-            data={combinedTableData}
+            data={tableData}
             disableFilters
             isChecked={(row) => selectedObjects?.includes(row.guid)}
             onCheckboxChange={!!customEvents?.length && onCheckboxChange}

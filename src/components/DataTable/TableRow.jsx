@@ -43,6 +43,7 @@ const TableRow = ({
   onChecked,
   relationFields,
   data,
+  style,
 }) => {
   const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
@@ -91,14 +92,14 @@ const TableRow = ({
           // }}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
+          style={style}
         >
           <CTableCell
             align="center"
             className="data_table__number_cell"
             style={{
               padding: "0 4px",
-              minWidth: width
-              
+              minWidth: width,
             }}
           >
             <div
@@ -121,8 +122,8 @@ const TableRow = ({
                 </Button>
               ) : (
                 <span className="data_table__row_number" style={{ display: "block", width: "35px" }}>
-                  {/* {(currentPage - 1) * limit + rowIndex + 1} */}
-                  {rowIndex + 1}
+                  {(currentPage - 1) * limit + rowIndex + 1}
+                  {/* {rowIndex + 1} */}
                 </span>
               )}
 
@@ -147,7 +148,6 @@ const TableRow = ({
 
           {columns.map(
             (column, index) =>
-            
               column?.attributes?.field_permission?.view_permission && (
                 <CTableCell
                   key={column.id}

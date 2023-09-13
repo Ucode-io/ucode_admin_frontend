@@ -207,7 +207,7 @@ const AutoCompleteElement = ({
   );
 
   const { data: optionsFromLocale } = useQuery(
-    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
+    ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, value],
     () => {
       if (!tableSlug) return null;
       return constructorObjectService.getList(tableSlug, {
@@ -215,7 +215,7 @@ const AutoCompleteElement = ({
           ...autoFiltersValue,
           additional_request: {
             additional_field: "guid",
-            additional_values: [defaultValue ?? id],
+            additional_values: [value],
           },
           view_fields: field.attributes?.view_fields?.map((f) => f.slug),
           search: debouncedValue.trim(),
@@ -238,15 +238,18 @@ const AutoCompleteElement = ({
 
   const options = useMemo(() => {
     if (field?.attributes?.function_path) {
-      return optionsFromFunctions?.options ?? [];
+      return optionsFromFunctions ?? [];
+    } else {
+      return optionsFromLocale ?? [];
     }
-    return optionsFromLocale?.options ?? [];
-  }, [optionsFromFunctions, optionsFromLocale]);
+  }, [optionsFromFunctions, optionsFromLocale, field?.attributes?.function_path]);
 
   const computedValue = useMemo(() => {
-    const findedOption = options?.find((el) => el?.guid === value);
+    const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
-  }, [options?.options, value, optionsFromFunctions, optionsFromLocale]);
+  }, [options, value]);
+
+  console.log('options', options)
 
   // const computedOptions = useMemo(() => {
   //   let uniqueObjArray = [
@@ -272,18 +275,30 @@ const AutoCompleteElement = ({
   };
 
   useEffect(() => {
-    const val = computedValue[computedValue.length - 1];
-    if (!field?.attributes?.autofill || !val) return;
-    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
-      const setName = name.split(".");
-      setName.pop();
-      setName.push(field_to);
-      automatic &&
+    let val;
+
+    if (Array.isArray(computedValue)) {
+      val = computedValue[computedValue.length - 1];
+    } else {
+      val = computedValue;
+    }
+
+    if (!field?.attributes?.autofill || !val) {
+      return;
+    }
+
+    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+      const setName = name?.split(".");
+      setName?.pop();
+      setName?.push(field_to);
+
+      if (automatic) {
         setTimeout(() => {
           setFormValue(setName.join("."), get(val, field_from));
         }, 1);
+      }
     });
-  }, [computedValue]);
+  }, [computedValue, field]);
 
   const [open, setOpen] = useState(false);
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");

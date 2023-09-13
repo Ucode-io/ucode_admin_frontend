@@ -311,9 +311,6 @@ const AutoCompleteElement = ({
   const setClientTypeValue = () => {
     const value = options?.options?.find((item) => item?.guid === clientTypeID);
 
-    if (field?.attributes?.is_user_id_default && !value) {
-      setFirstValue(true);
-    }
     if (
       field?.attributes?.object_id_from_jwt &&
       field?.id?.split("#")?.[0] === "client_type"
@@ -322,7 +319,7 @@ const AutoCompleteElement = ({
       setLocalValue(value);
     }
   };
-
+  console.log("localValue", localValue);
   const setDefaultValue = () => {
     if (options?.slugOptions && multipleInsertField) {
       const val = options?.slugOptions?.find((item) => item?.guid === id);
@@ -448,9 +445,7 @@ const AutoCompleteElement = ({
             disabled ||
             (field?.attributes?.object_id_from_jwt &&
               field?.id?.split("#")?.[0] === "client_type") ||
-            (field?.attributes?.is_user_id_default &&
-              localValue?.length !== 0) ||
-            !firstValue
+            (field?.attributes?.is_user_id_default && localValue?.length !== 0)
           }
           options={options?.options ?? []}
           isClearable={true}

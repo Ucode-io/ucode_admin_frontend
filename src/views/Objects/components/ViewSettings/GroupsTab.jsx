@@ -1,4 +1,4 @@
-import { Checkbox } from "@mui/material";
+import { Box, Checkbox, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useWatch } from "react-hook-form";
 import { CTable, CTableBody, CTableCell, CTableRow } from "../../../../components/CTable";
@@ -47,18 +47,24 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
     >
       <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
         <CTableBody dataLength={1}>
-          {computedColumns.map((column) => (
-            <CTableRow key={column.id}>
-              <CTableCell>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</CTableCell>
-              <CTableCell style={{ width: 20 }}>
-                <Checkbox
-                  disabled={isLoading || updateLoading}
-                  checked={selectedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
-                  onChange={(e, val) => changeHandler(val, column.id)}
-                />
-              </CTableCell>
-            </CTableRow>
-          ))}
+          {computedColumns.length ? (
+            computedColumns.map((column) => (
+              <CTableRow key={column.id}>
+                <CTableCell>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</CTableCell>
+                <CTableCell style={{ width: 20 }}>
+                  <Checkbox
+                    disabled={isLoading || updateLoading}
+                    checked={selectedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
+                    onChange={(e, val) => changeHandler(val, column.id)}
+                  />
+                </CTableCell>
+              </CTableRow>
+            ))
+          ) : (
+            <Box style={{ padding: "10px" }}>
+              <Typography>No columns to set group!</Typography>
+            </Box>
+          )}
         </CTableBody>
       </CTable>
     </div>

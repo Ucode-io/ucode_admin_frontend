@@ -2,13 +2,14 @@ import { Checkbox } from "@mui/material";
 import { useMemo } from "react";
 import { useWatch } from "react-hook-form";
 import { CTable, CTableBody, CTableCell, CTableRow } from "../../../../components/CTable";
+import { useTranslation } from "react-i18next";
 
 const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateLoading }) => {
   const selectedColumns = useWatch({
     control: form.control,
     name: "group_fields",
   });
-
+  const { i18n } = useTranslation();
   const computedColumns = useMemo(() => {
     return columns?.filter((column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT");
   }, [columns]);

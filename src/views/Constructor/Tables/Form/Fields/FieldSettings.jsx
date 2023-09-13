@@ -24,14 +24,16 @@ import { store } from "../../../../../store";
 import { add } from "date-fns";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorViewService from "../../../../../services/constructorViewService";
+import { useSelector } from "react-redux";
 
-const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, formType, height, isTableView = false, onSubmit = () => {}, getRelationFields }) => {
+const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selectedField, field, formType, height, isTableView = false, onSubmit = () => {}, getRelationFields }) => {
   const { id, tableSlug, appId } = useParams();
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const menuItem = store.getState().menu.menuItem;
   const queryClient = useQueryClient();
+  const languages = useSelector((state) => state.languages.list);
 
   const detectorID = useMemo(() => {
     if (id) {
@@ -148,9 +150,9 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, 
       ...values,
       attributes: {
         ...values?.attributes,
-        number_of_rounds: parseInt(values?.attributes?.number_of_rounds)
-      }
-    }
+        number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
+      },
+    };
 
     if (formType === "CREATE") createField(data);
     else updateField(data);
@@ -298,30 +300,47 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, field, 
                             ))}
                           </Box> */}
 
-                      <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                        {
-                        languages?.map((language) => {
-                          const languageFieldName = `attributes.label_${language?.slug}`;
-                          const fieldValue = useWatch({
-                            control,
-                            name: languageFieldName
-                          });
+                          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                            {/* {languages?.map((language) => {
+                              // const languageFieldName = `attributes.label_${language?.slug}`;
+                              // const fieldValue = useWatch({
+                              //   control,
+                              //   name: languageFieldName,
+                              // });
 
-                          return (
-                            <HFTextField
-                            disabledHelperText
-                            fullWidth
-                            name={`attributes.label_${language?.slug}`}
-                            control={control}
-                            placeholder={`Field Label (${language?.slug})`}
-                            autoFocus
-                            defaultValue={fieldValue || selectedField?.label} 
-                          />
-                          );
-                        })
-                      }
-                       </Box> 
+                              return (
+                                <HFTextField
+                                  disabledHelperText
+                                  fullWidth
+                                  name={`attributes.label_${language?.slug}`}
+                                  control={control}
+                                  placeholder={`Field Label (${language?.slug})`}
+                                  autoFocus
+                                  defaultValue={fieldValue || selectedField?.label}
+                                />
+                              );
+                            })} */}
 
+                            {languages?.map((language) => {
+                              const languageFieldName = `attributes.label_${language?.slug}`;
+                              const fieldValue = useWatch({
+                                control,
+                                name: languageFieldName,
+                              });
+
+                              return (
+                                <HFTextField
+                                  disabledHelperText
+                                  fullWidth
+                                  name={`attributes.label_${language?.slug}`}
+                                  control={control}
+                                  placeholder={`Field Label (${language?.slug})`}
+                                  autoFocus
+                                  defaultValue={fieldValue || selectedField?.label}
+                                />
+                              );
+                            })}
+                          </Box>
                         </FRow>
 
                         <FRow label="Field SLUG" required>

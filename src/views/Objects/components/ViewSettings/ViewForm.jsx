@@ -22,6 +22,9 @@ import MultipleInsertSettings from "./MultipleInsertSettings";
 import NavigateSettings from "./NavigateSettings";
 import QuickFiltersTab from "./QuicFiltersTab";
 import styles from "./style.module.scss";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { Box } from "@mui/material";
 
 const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
   const { tableSlug, appId } = useParams();

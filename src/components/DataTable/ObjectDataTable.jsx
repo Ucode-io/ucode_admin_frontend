@@ -350,6 +350,7 @@ const ObjectDataTable = ({
                   remove={remove}
                   watch={watch}
                   control={control}
+                  isTableView={isTableView}
                   key={row.id}
                   row={row}
                   mainForm={mainForm}

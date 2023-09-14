@@ -612,6 +612,7 @@ const ViewsWithGroups = ({
                   ) : (
                     <TableView
                       control={control}
+                      isTableView={true}
                       setFormVisible={setFormVisible}
                       formVisible={formVisible}
                       filters={filters}
@@ -662,6 +663,7 @@ const ViewsWithGroups = ({
                       setDataLength={setDataLength}
                       selectedTabIndex={selectedTabIndex}
                       shouldGet={shouldGet}
+                      isTableView={true}
                       reset={reset}
                       sortedDatas={sortedDatas}
                       menuItem={menuItem}

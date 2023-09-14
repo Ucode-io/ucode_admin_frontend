@@ -28,6 +28,7 @@ const TableView = ({
   tab,
   view,
   shouldGet,
+  isTableView = false,
   selectedView,
   reset = () => {},
   fieldsMap,

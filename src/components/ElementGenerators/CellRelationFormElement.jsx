@@ -50,7 +50,7 @@ const CellRelationFormElement = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({ field: { onChange, value }, fieldState: { error } }) => {
+        render={({field: {onChange, value}, fieldState: {error}}) => {
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
@@ -130,7 +130,7 @@ const AutoCompleteElement = ({
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
-  const { id } = useParams();
+  const {id} = useParams();
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
@@ -214,7 +214,7 @@ const AutoCompleteElement = ({
     }
   );
 
-  const { data: optionsFromLocale } = useQuery(
+  const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, value],
     () => {
       if (!tableSlug) return null;
@@ -250,14 +250,16 @@ const AutoCompleteElement = ({
     } else {
       return optionsFromLocale ?? [];
     }
-  }, [optionsFromFunctions, optionsFromLocale, field?.attributes?.function_path]);
+  }, [
+    optionsFromFunctions,
+    optionsFromLocale,
+    field?.attributes?.function_path,
+  ]);
 
   const computedValue = useMemo(() => {
     const findedOption = options?.options?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];
   }, [options, value]);
-
-  console.log('options', options)
 
   // const computedOptions = useMemo(() => {
   //   let uniqueObjArray = [
@@ -346,8 +348,16 @@ const AutoCompleteElement = ({
       }}
     >
       {field.attributes.creatable && (
-        <span onClick={() => openFormModal(tableSlug)} style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}>
-          <AddIcon aria-owns={openPopover ? "mouse-over-popover" : undefined} aria-haspopup="true" onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} />
+        <span
+          onClick={() => openFormModal(tableSlug)}
+          style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
+        >
+          <AddIcon
+            aria-owns={openPopover ? "mouse-over-popover" : undefined}
+            aria-haspopup="true"
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+          />
           <Popover
             id="mouse-over-popover"
             sx={{
@@ -366,12 +376,18 @@ const AutoCompleteElement = ({
             onClose={handlePopoverClose}
             disableRestoreFocus
           >
-            <Typography sx={{ p: 1 }}>Create new object</Typography>
+            <Typography sx={{p: 1}}>Create new object</Typography>
           </Popover>
         </span>
       )}
 
-      {tableSlugFromProps && <ModalDetailPage open={open} setOpen={setOpen} tableSlug={tableSlugFromProps} />}
+      {tableSlugFromProps && (
+        <ModalDetailPage
+          open={open}
+          setOpen={setOpen}
+          tableSlug={tableSlugFromProps}
+        />
+      )}
 
       <Autocomplete
         inputValue={inputValue}

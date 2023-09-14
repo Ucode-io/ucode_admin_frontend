@@ -19,10 +19,6 @@ export default function LanguagesNavbar() {
 
   const { i18n } = useTranslation();
 
-  useEffect(() => {
-    if (languages?.length) i18n.changeLanguage(languages?.[0]?.slug);
-  }, [languages]);
-
   const handleRowClick = (lang) => {
     i18n.changeLanguage(lang);
     dispatch(languagesActions.setDefaultLanguage(lang));

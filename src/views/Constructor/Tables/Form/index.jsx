@@ -65,13 +65,16 @@ const ConstructorTablesFormPage = () => {
     setLoader(true);
 
     const getTableData = constructorTableService.getById(id);
+
     const getViewRelations = constructorViewRelationService.getList({
       table_slug: slug,
     });
 
     const getActions = constructorCustomEventService.getList({
       table_slug: slug,
-    });
+    })
+
+    console.log('getActions', getActions)
 
     const getLayouts = layoutService
       .getList({
@@ -82,8 +85,7 @@ const ConstructorTablesFormPage = () => {
       });
 
     try {
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getViewRelations, getActions, getLayouts]);
-
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getActions, getViewRelations, getLayouts]);
       const data = {
         ...mainForm.getValues(),
         ...tableData,

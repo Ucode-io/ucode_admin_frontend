@@ -208,12 +208,12 @@ const AutoCompleteElement = ({
     return optionsFromLocale ?? [];
   }, [optionsFromFunctions, optionsFromLocale]);
 
-
+console.log('options', options)
   const computedValue = useMemo(() => {
     if (!value) return [];
 
     return value?.map((id) => {
-        const option = options?.find((el) => el?.guid === id);
+        const option = options?.options?.find((el) => el?.guid === id);
 
         if (!option) return null;
         return {
@@ -244,7 +244,7 @@ const AutoCompleteElement = ({
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
         disabled={disabled}
-        options={options ?? []}
+        options={options?.options ?? []}
         value={computedValue}
         popupIcon={
           isBlackBg ? (

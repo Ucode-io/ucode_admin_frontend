@@ -25,6 +25,25 @@ const CellElementGenerator = ({field = {}, row}) => {
     return result;
   }, [row, field]);
 
+  const timeValue = useMemo(() => {
+    if (typeof value === "object") return JSON.stringify(value);
+
+    let dateObj = new Date(value);
+
+    let formattedDate = dateObj.toLocaleString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      timeZone: "UTC",
+    });
+
+    return formattedDate;
+  }, [field, value]);
+
   const tablesList = useMemo(() => {
     return (
       field.attributes?.dynamic_tables?.map((el) => {
@@ -91,6 +110,9 @@ const CellElementGenerator = ({field = {}, row}) => {
           ></span>
         </div>
       );
+
+    case "DATE_TIME_WITHOUT_TIME_ZONE":
+      return timeValue;
 
     case "PASSWORD":
       return (

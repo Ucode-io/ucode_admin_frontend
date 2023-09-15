@@ -1,6 +1,6 @@
-import { ArrowDropDown, Close } from "@mui/icons-material";
-import { Checkbox, Divider, Fade, IconButton, Menu } from "@mui/material";
-import { useMemo, useState } from "react";
+import {ArrowDropDown, Close} from "@mui/icons-material";
+import {Checkbox, Divider, Fade, IconButton, Menu} from "@mui/material";
+import {useMemo, useState} from "react";
 import SearchInput from "../../../../components/SearchInput";
 import useDebounce from "../../../../hooks/useDebounce";
 import styles from "./style.module.scss";
@@ -19,7 +19,9 @@ const FilterAutoComplete = ({
   const menuVisible = Boolean(anchorEl);
 
   const computedValue = useMemo(() => {
-    return value?.map((el) => options?.find((option) => option.value === el)).filter((el) => el);
+    return value
+      ?.map((el) => options?.find((option) => option.value === el))
+      .filter((el) => el);
   }, [value, options]);
 
   const openMenu = (event) => {
@@ -49,7 +51,6 @@ const FilterAutoComplete = ({
     onChange(null);
   };
 
-  console.log('akwjndkajnwdjaw')
   return (
     <div className={styles.autocomplete}>
       <div className={styles.autocompleteButton} onClick={openMenu}>
@@ -57,7 +58,7 @@ const FilterAutoComplete = ({
           {computedValue?.[0]?.label ?? (
             <span
               className={styles.placeholder}
-              style={{ color: !value?.length ? "#909EAB" : "#000" }}
+              style={{color: !value?.length ? "#909EAB" : "#000"}}
             >
               {value[0] ?? label}
             </span>
@@ -77,7 +78,7 @@ const FilterAutoComplete = ({
         open={menuVisible}
         TransitionComponent={Fade}
         onClose={closeMenu}
-        classes={{ list: styles.menu, paper: styles.paper }}
+        classes={{list: styles.menu, paper: styles.paper}}
       >
         <SearchInput
           fullWidth

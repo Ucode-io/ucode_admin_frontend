@@ -112,7 +112,7 @@ const NewCellElementGenerator = ({
       );
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
-  console.log("field", field);
+
   switch (field.type) {
     case "LOOKUP":
       return (
@@ -480,7 +480,13 @@ const NewCellElementGenerator = ({
         //   {...props}
         // />
 
-        <MultiLineCellFormElement control={control} computedSlug={computedSlug} field={field} isDisabled={isDisabled} {...props}/>
+        <MultiLineCellFormElement
+          control={control}
+          computedSlug={computedSlug}
+          field={field}
+          isDisabled={isDisabled}
+          {...props}
+        />
       );
 
     case "CUSTOM_IMAGE":

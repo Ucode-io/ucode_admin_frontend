@@ -62,7 +62,6 @@ const Actions = ({ mainForm }) => {
     ],
     []
   );
-
   return (
     <TableCard>
       <DataTable

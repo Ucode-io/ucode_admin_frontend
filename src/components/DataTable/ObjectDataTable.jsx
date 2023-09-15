@@ -22,7 +22,7 @@ import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
 import {de} from "date-fns/locale";
 import {useTranslation} from "react-i18next";
-import { Box, Button, LinearProgress } from "@mui/material";
+import {Box, Button, LinearProgress} from "@mui/material";
 import TableHeadForTableView from "./TableHeadForTableView";
 import InfiniteScroll from "react-infinite-scroll-component";
 import constructorObjectService from "../../services/constructorObjectService";
@@ -189,13 +189,18 @@ const ObjectDataTable = ({
   };
 
   const calculateWidth = (colId, index) => {
-    const colIdx = tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)?.findIndex((item) => item?.id === colId);
+    const colIdx = tableSettings?.[pageName]
+      ?.filter((item) => item?.isStiky === true)
+      ?.findIndex((item) => item?.id === colId);
 
     if (index === 0) {
       return 0;
     } else if (colIdx === 0) {
       return 0;
-    } else if (tableSettings?.[pageName]?.filter((item) => item?.isStiky === true).length === 1) {
+    } else if (
+      tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
+        .length === 1
+    ) {
       return 0;
     } else {
       return tableSettings?.[pageName]
@@ -231,9 +236,11 @@ const ObjectDataTable = ({
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    constructorObjectService.getList(tableSlug, { data: { limit: 0, offset: 0 } }).then((res) => {
-      setCount(Math.ceil(res.data?.count / limit));
-    });
+    constructorObjectService
+      .getList(tableSlug, {data: {limit: 0, offset: 0}})
+      .then((res) => {
+        setCount(Math.ceil(res.data?.count / limit));
+      });
   }, [tableSlug, limit]);
 
   const hasMore = useMemo(() => {
@@ -256,6 +263,7 @@ const ObjectDataTable = ({
       limit={limit}
       setLimit={setLimit}
       defaultLimit={defaultLimit}
+      view={view}
     >
       {/* <Box
         style={{
@@ -279,113 +287,134 @@ const ObjectDataTable = ({
           height={`${elementHeight - 50}px`}
         >
           <table> */}
-            <CTableHead>
-              {formVisible && selectedRow.length > 0 && <MultipleUpdateRow columns={data} fields={columns} watch={watch} setFormValue={setFormValue} control={control} />}
-              <CTableRow>
-                <CellCheckboxNoSign formVisible={formVisible} data={data} />
+      <CTableHead>
+        {formVisible && selectedRow.length > 0 && (
+          <MultipleUpdateRow
+            columns={data}
+            fields={columns}
+            watch={watch}
+            setFormValue={setFormValue}
+            control={control}
+          />
+        )}
+        <CTableRow>
+          <CellCheckboxNoSign formVisible={formVisible} data={data} />
 
-                {columns.map(
-                  (column, index) =>
-                    column?.attributes?.field_permission?.view_permission && (
-                      <TableHeadForTableView
-                        column={column}
-                        index={index}
-                        pageName={pageName}
-                        sortedDatas={sortedDatas}
-                        setSortedDatas={setSortedDatas}
-                        setDrawerState={setDrawerState}
-                        tableSize={tableSize}
-                        tableSettings={tableSettings}
-                        view={view}
-                        selectedView={selectedView}
-                        calculateWidthFixedColumn={calculateWidthFixedColumn}
-                        handlePin={handlePin}
-                        handleAutoSize={handleAutoSize}
-                        popupRef={popupRef}
-                        columnId={columnId}
-                        setColumnId={setColumnId}
-                        setCurrentColumnWidth={setCurrentColumnWidth}
-                        isTableView={isTableView}
-                        FilterGenerator={FilterGenerator}
-                        filterChangeHandler={filterChangeHandler}
-                        filters={filters}
-                        tableSlug={tableSlug}
-                        disableFilters={disableFilters}
-                      />
-                    )
-                )}
-
-                <PermissionWrapperV2 tableSlug={isRelationTable ? relatedTableSlug : tableSlug} type={["update", "delete"]}>
-                  {(onDeleteClick || onEditClick) && (
-                    <CTableHeadCell width={10}>
-                      <span
-                        style={{
-                          whiteSpace: "nowrap",
-                          padding: "10px 4px",
-                          color: "#747474",
-                          fontSize: "13px",
-                          fontStyle: "normal",
-                          fontWeight: 500,
-                          lineHeight: "normal",
-                          backgroundColor: "#fff",
-                        }}
-                      >
-                        Actions
-                      </span>
-                    </CTableHeadCell>
-                  )}
-                </PermissionWrapperV2>
-
-                <CTableHeadCell style={{ padding: "2px 0", minWidth: "40px" }}>
-                  <Button variant="text" style={{ borderColor: "#F0F0F0", borderRadius: "0px" }} onClick={openFieldSettings}>
-                    <AddRoundedIcon />
-                    Column
-                  </Button>
-                </CTableHeadCell>
-              </CTableRow>
-            </CTableHead>
-
-            <CTableBody columnsCount={columns.length} dataLength={dataLength || data?.length} title={title}>
-              {(isRelationTable ? fields : data)?.map((row, rowIndex) => (
-                <TableRow
-                  width={"80px"}
-                  remove={remove}
-                  watch={watch}
-                  control={control}
-                  key={row.id}
-                  row={row}
-                  mainForm={mainForm}
-                  formVisible={formVisible}
-                  rowIndex={rowIndex}
-                  selectedObjectsForDelete={selectedObjectsForDelete}
-                  setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-                  isRelationTable={isRelationTable}
-                  relatedTableSlug={relatedTableSlug}
-                  onRowClick={onRowClick}
-                  isChecked={isChecked}
-                  calculateWidthFixedColumn={calculateWidthFixedColumn}
-                  onCheckboxChange={onCheckboxChange}
-                  currentPage={currentPage}
-                  limit={limit}
-                  setFormValue={setFormValue}
-                  columns={columns}
-                  tableHeight={tableHeight}
-                  tableSettings={tableSettings}
+          {columns.map(
+            (column, index) =>
+              column?.attributes?.field_permission?.view_permission && (
+                <TableHeadForTableView
+                  column={column}
+                  index={index}
                   pageName={pageName}
-                  calculateWidth={calculateWidth}
-                  tableSlug={tableSlug}
-                  onDeleteClick={onDeleteClick}
-                  relationAction={relationAction}
-                  onChecked={onChecked}
-                  relationFields={fields}
-                  data={data}
+                  sortedDatas={sortedDatas}
+                  setSortedDatas={setSortedDatas}
+                  setDrawerState={setDrawerState}
+                  tableSize={tableSize}
+                  tableSettings={tableSettings}
                   view={view}
+                  selectedView={selectedView}
+                  calculateWidthFixedColumn={calculateWidthFixedColumn}
+                  handlePin={handlePin}
+                  handleAutoSize={handleAutoSize}
+                  popupRef={popupRef}
+                  columnId={columnId}
+                  setColumnId={setColumnId}
+                  setCurrentColumnWidth={setCurrentColumnWidth}
+                  isTableView={isTableView}
+                  FilterGenerator={FilterGenerator}
+                  filterChangeHandler={filterChangeHandler}
+                  filters={filters}
+                  tableSlug={tableSlug}
+                  disableFilters={disableFilters}
                 />
-              ))}
-              {!!summaries?.length && <SummaryRow summaries={summaries} columns={columns} data={data} />}
-              {additionalRow}
-            </CTableBody>
-          {/* </table>
+              )
+          )}
+
+          <PermissionWrapperV2
+            tableSlug={isRelationTable ? relatedTableSlug : tableSlug}
+            type={["update", "delete"]}
+          >
+            {(onDeleteClick || onEditClick) && (
+              <CTableHeadCell width={10}>
+                <span
+                  style={{
+                    whiteSpace: "nowrap",
+                    padding: "10px 4px",
+                    color: "#747474",
+                    fontSize: "13px",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "normal",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  Actions
+                </span>
+              </CTableHeadCell>
+            )}
+          </PermissionWrapperV2>
+
+          <CTableHeadCell style={{padding: "2px 0", minWidth: "40px"}}>
+            <Button
+              variant="text"
+              style={{borderColor: "#F0F0F0", borderRadius: "0px"}}
+              onClick={openFieldSettings}
+            >
+              <AddRoundedIcon />
+              Column
+            </Button>
+          </CTableHeadCell>
+        </CTableRow>
+      </CTableHead>
+
+      <CTableBody
+        columnsCount={columns.length}
+        dataLength={dataLength || data?.length}
+        title={title}
+      >
+        {(isRelationTable ? fields : data)?.map((row, rowIndex) => (
+          <TableRow
+            width={"80px"}
+            remove={remove}
+            watch={watch}
+            control={control}
+            key={row.id}
+            row={row}
+            mainForm={mainForm}
+            formVisible={formVisible}
+            rowIndex={rowIndex}
+            selectedObjectsForDelete={selectedObjectsForDelete}
+            setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+            isRelationTable={isRelationTable}
+            relatedTableSlug={relatedTableSlug}
+            onRowClick={onRowClick}
+            isChecked={isChecked}
+            calculateWidthFixedColumn={calculateWidthFixedColumn}
+            onCheckboxChange={onCheckboxChange}
+            currentPage={currentPage}
+            limit={limit}
+            setFormValue={setFormValue}
+            columns={columns}
+            tableHeight={tableHeight}
+            tableSettings={tableSettings}
+            pageName={pageName}
+            calculateWidth={calculateWidth}
+            tableSlug={tableSlug}
+            onDeleteClick={onDeleteClick}
+            relationAction={relationAction}
+            onChecked={onChecked}
+            relationFields={fields}
+            data={data}
+            view={view}
+          />
+        ))}
+        {!!summaries?.length && (
+          <SummaryRow summaries={summaries} columns={columns} data={data} />
+        )}
+        {additionalRow}
+      </CTableBody>
+      {/* </table>
         </InfiniteScroll>
       </Box> */}
     </CTable>

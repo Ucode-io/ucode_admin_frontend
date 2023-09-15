@@ -1,11 +1,20 @@
+<<<<<<< HEAD
 import { Switch } from "@mui/material";
+=======
+import { Box, Switch, Typography } from "@mui/material";
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
 import { useEffect, useMemo } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { Container, Draggable } from "react-smooth-dnd";
 import { applyDrag } from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
+<<<<<<< HEAD
+=======
+import { useTranslation } from "react-i18next";
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
 
 const ColumnsTab = ({ form, updateView, isMenu }) => {
+  const { i18n } = useTranslation();
   const { fields: columns, move } = useFieldArray({
     control: form.control,
     name: "columns",
@@ -64,6 +73,7 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
           </div>
         </div>
         <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
+<<<<<<< HEAD
           {columns.map((column, index) => (
             <Draggable key={column.id}>
               <div key={column.id} className={styles.row}>
@@ -83,6 +93,33 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
               </div>
             </Draggable>
           ))}
+=======
+          {columns.length ? (
+            columns.map((column, index) => (
+              <Draggable key={column.id}>
+                <div key={column.id} className={styles.row}>
+                  <div className={styles.cell} style={{ flex: 1 }}>
+                    {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+                  </div>
+                  <div className={styles.cell} style={{ width: 70 }}>
+                    <Switch
+                      size="small"
+                      checked={form.watch(`columns.${index}.is_checked`)}
+                      onChange={(e) => {
+                        form.setValue(`columns.${index}.is_checked`, e.target.checked);
+                        // updateView();
+                      }}
+                    />
+                  </div>
+                </div>
+              </Draggable>
+            ))
+          ) : (
+            <Box style={{ padding: "10px" }}>
+              <Typography>No columns to set group!</Typography>
+            </Box>
+          )}
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
         </Container>
       </div>
     </div>

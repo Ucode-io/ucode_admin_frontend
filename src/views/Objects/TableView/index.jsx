@@ -28,6 +28,7 @@ const TableView = ({
   tab,
   view,
   shouldGet,
+  isTableView = false,
   selectedView,
   reset = () => {},
   fieldsMap,
@@ -234,9 +235,13 @@ const TableView = ({
       return constructorObjectService.getList(tableSlug, {
         data: {
           offset: pageToOffset(currentPage, limit),
+<<<<<<< HEAD
           app_id: appId,
+=======
+          // app_id: appId,
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
           order: computedSortColumns,
-          with_relations: true,
+          // with_relations: true,
           view_fields: checkedColumns,
           search: detectStringType(searchText) === "number" ? parseInt(searchText) : searchText,
           limit,

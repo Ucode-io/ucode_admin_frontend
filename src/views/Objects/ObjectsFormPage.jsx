@@ -41,6 +41,9 @@ const ObjectsFormPage = ({tableSlugFromProps, handleClose, modal = false}) => {
   const [tableRelations, setTableRelations] = useState([]);
   const [summary, setSummary] = useState([]);
   const [selectedTab, setSelectTab] = useState();
+  const menu = store.getState().menu;
+  const invite = menu.menuItem?.data?.table?.is_login_table;
+  const isInvite = menu.invite;
 
   const {
     handleSubmit,
@@ -49,7 +52,7 @@ const ObjectsFormPage = ({tableSlugFromProps, handleClose, modal = false}) => {
     setValue: setFormValue,
     watch,
   } = useForm({
-    defaultValues: state,
+    defaultValues: { ...state, invite: isInvite ? invite : false },
   });
 
   const tableInfo = store.getState().menu.menuItem;
@@ -131,6 +134,7 @@ const ObjectsFormPage = ({tableSlugFromProps, handleClose, modal = false}) => {
   };
 
   const update = (data) => {
+    delete data.invite;
     setBtnLoader(true);
     constructorObjectService
       .update(tableSlug, {data})

@@ -2,6 +2,7 @@ import { Close } from "@mui/icons-material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SettingsIcon from "@mui/icons-material/Settings";
+<<<<<<< HEAD
 import {
   Accordion,
   AccordionDetails,
@@ -10,6 +11,9 @@ import {
   Card,
   IconButton,
 } from "@mui/material";
+=======
+import { Accordion, AccordionDetails, AccordionSummary, Box, Card, IconButton } from "@mui/material";
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
@@ -33,6 +37,7 @@ import constructorObjectService from "../../../../../services/constructorObjectS
 import constructorViewService from "../../../../../services/constructorViewService";
 import { useSelector } from "react-redux";
 
+<<<<<<< HEAD
 const FieldSettings = ({
   closeSettingsBlock,
   mainForm,
@@ -46,11 +51,16 @@ const FieldSettings = ({
   const { id, slug } = useParams();
   const test = useParams();
   console.log("tesstt", test);
+=======
+const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selectedField, field, formType, height, isTableView = false, onSubmit = () => {}, getRelationFields }) => {
+  const { id, tableSlug, appId } = useParams();
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
   const { handleSubmit, control, reset, watch } = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const menuItem = store.getState().menu.menuItem;
   const queryClient = useQueryClient();
+  const languages = useSelector((state) => state.languages.list);
 
   const detectorID = useMemo(() => {
     if (id) {
@@ -214,9 +224,13 @@ const FieldSettings = ({
         const oneRelationFields = res?.data?.one_relation_fields ?? [];
 
         return [...fields, ...oneRelationFields]
+<<<<<<< HEAD
           .filter(
             (field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP"
           )
+=======
+          .filter((field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP")
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
           .map((el) => ({
             value: el?.path_slug ? el?.path_slug : el?.slug,
             label: el?.label,
@@ -315,11 +329,15 @@ const FieldSettings = ({
                       <div className="p-2">
                         <FRow label="Field Label and icon" required>
                           <div className="flex align-center gap-1">
+<<<<<<< HEAD
                             <HFIconPicker
                               control={control}
                               name="attributes.icon"
                               shape="rectangle"
                             />
+=======
+                            <HFIconPicker control={control} name="attributes.icon" shape="rectangle" />
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
                           </div>
 
                           {/* <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -335,6 +353,7 @@ const FieldSettings = ({
                             ))}
                           </Box> */}
 
+<<<<<<< HEAD
                           <Box
                             style={{
                               display: "flex",
@@ -349,6 +368,15 @@ const FieldSettings = ({
                                 name: languageFieldName,
                               });
 
+=======
+                          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                            {/* {languages?.map((language) => {
+                              // const languageFieldName = `attributes.label_${language?.slug}`;
+                              // const fieldValue = useWatch({
+                              //   control,
+                              //   name: languageFieldName,
+                              // });
+
                               return (
                                 <HFTextField
                                   disabledHelperText
@@ -357,9 +385,34 @@ const FieldSettings = ({
                                   control={control}
                                   placeholder={`Field Label (${language?.slug})`}
                                   autoFocus
+                                  defaultValue={fieldValue || selectedField?.label}
+                                />
+                              );
+                            })} */}
+
+                            {languages?.map((language) => {
+                              const languageFieldName = `attributes.label_${language?.slug}`;
+                              const fieldValue = useWatch({
+                                control,
+                                name: languageFieldName,
+                              });
+
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
+                              return (
+                                <HFTextField
+                                  disabledHelperText
+                                  fullWidth
+                                  name={`attributes.label_${language?.slug}`}
+                                  control={control}
+                                  placeholder={`Field Label (${language?.slug})`}
+                                  autoFocus
+<<<<<<< HEAD
                                   defaultValue={
                                     fieldValue || selectedField?.label
                                   }
+=======
+                                  defaultValue={fieldValue || selectedField?.label}
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
                                 />
                               );
                             })}

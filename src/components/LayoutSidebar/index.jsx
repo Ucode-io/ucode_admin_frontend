@@ -31,6 +31,7 @@ import {useProjectGetByIdQuery} from "../../services/projectService";
 import MenuBox from "./Components/MenuBox";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 
 const LayoutSidebar = ({appId}) => {
   const sidebarIsOpen = useSelector(
@@ -48,6 +49,7 @@ const LayoutSidebar = ({appId}) => {
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [menuList, setMenuList] = useState();
   const [tableModal, setTableModalOpen] = useState(false);
+  const [linkTableModal, setLinkTableModal] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
   const [webPageModal, setWebPageModalOpen] = useState(false);
   const [menuSettingModal, setMenuSettingModalOpen] = useState(false);
@@ -100,6 +102,13 @@ const LayoutSidebar = ({appId}) => {
   };
   const closeTableModal = () => {
     setTableModalOpen(null);
+  };
+  const setLinkedTableModal = (element) => {
+    setLinkTableModal(true);
+    setSelectedFolder(element);
+  };
+  const closeLinkedTableModal = () => {
+    setLinkTableModal(null);
   };
   const setMicrofrontendModal = (element) => {
     setMicrofrontendModalOpen(true);
@@ -422,6 +431,13 @@ const LayoutSidebar = ({appId}) => {
             getMenuList={getMenuList}
           />
         )}
+        {linkTableModal && (
+          <LinkTableModal
+            closeModal={closeLinkedTableModal}
+            selectedFolder={selectedFolder}
+            getMenuList={getMenuList}
+          />
+        )}
         {microfrontendModal && (
           <MicrofrontendLinkModal
             closeModal={closeMicrofrontendModal}
@@ -453,6 +469,7 @@ const LayoutSidebar = ({appId}) => {
         openFolderCreateModal={openFolderCreateModal}
         setFolderModalType={setFolderModalType}
         setTableModal={setTableModal}
+        setLinkedTableModal={setLinkedTableModal}
         setSubSearchText={setSubSearchText}
         handleOpenNotify={handleOpenNotify}
         setElement={setElement}
@@ -472,6 +489,7 @@ const LayoutSidebar = ({appId}) => {
         setFolderModalType={setFolderModalType}
         appId={appId}
         setTableModal={setTableModal}
+        setLinkedTableModal={setLinkedTableModal}
         setMicrofrontendModal={setMicrofrontendModal}
         setWebPageModal={setWebPageModal}
         deleteFolder={deleteFolder}

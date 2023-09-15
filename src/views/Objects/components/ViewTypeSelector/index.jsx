@@ -95,7 +95,7 @@ const ViewTabSelector = ({
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
-
+console.log('sssssss', isChanged)
   const { i18n } = useTranslation();
 
   return (
@@ -110,7 +110,11 @@ const ViewTabSelector = ({
 
           <div className={style.title}>
             <IconGenerator className={style.icon} icon={selectedTable?.isChild ? selectedTable?.icon : selectedTable?.icon} />
+<<<<<<< HEAD
             <h3>{selectedTable?.attributes?.[`label_${i18n.language}`] ?? selectedTable?.attributes?.[`title_${i18n.language}`]}</h3>
+=======
+            <h3>{selectedTable?.label ?? selectedTable?.title}</h3>
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
           </div>
         </div>
         <div className={style.appTabs}>

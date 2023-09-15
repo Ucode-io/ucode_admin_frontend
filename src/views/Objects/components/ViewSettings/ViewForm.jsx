@@ -22,6 +22,7 @@ import MultipleInsertSettings from "./MultipleInsertSettings";
 import NavigateSettings from "./NavigateSettings";
 import QuickFiltersTab from "./QuicFiltersTab";
 import styles from "./style.module.scss";
+<<<<<<< HEAD
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -38,6 +39,13 @@ const ViewForm = ({
   relationColumns,
   views,
 }) => {
+=======
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { Box } from "@mui/material";
+
+const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
+>>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);

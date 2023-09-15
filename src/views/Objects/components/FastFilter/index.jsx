@@ -7,7 +7,12 @@ import { filterActions } from "../../../../store/filter/filter.slice";
 import { Filter } from "../FilterGenerator";
 import styles from "./style.module.scss";
 
-const FastFilter = ({ view, fieldsMap, isVertical = false, getFilteredFilterFields }) => {
+const FastFilter = ({
+  view,
+  fieldsMap,
+  isVertical = false,
+  getFilteredFilterFields,
+}) => {
   const { tableSlug } = useParams();
   const { new_list } = useSelector((state) => state.filter);
   const dispatch = useDispatch();
@@ -27,7 +32,9 @@ const FastFilter = ({ view, fieldsMap, isVertical = false, getFilteredFilterFiel
   // }, [view?.quick_filters, fieldsMap, new_list, tableSlug]);
 
   const computedFields = useMemo(() => {
-    const quickFiltersSet = new Set(view?.quick_filters?.map((quick) => quick.field_id));
+    const quickFiltersSet = new Set(
+      view?.quick_filters?.map((quick) => quick.field_id)
+    );
     return (
       (view?.quick_filters ?? [])
         .concat(new_list[tableSlug] ?? [])
@@ -59,10 +66,19 @@ const FastFilter = ({ view, fieldsMap, isVertical = false, getFilteredFilterFiel
   // }, []);
 
   return (
-    <div className={styles.filtersBlock} style={{ flexDirection: isVertical ? "column" : "row" }}>
+    <div
+      className={styles.filtersBlock}
+      style={{ flexDirection: isVertical ? "column" : "row" }}
+    >
       {(getFilteredFilterFields ?? computedFields)?.map((filter) => (
         <div className={styles.filter} key={filter.id}>
-          <Filter field={filter} name={filter?.path_slug ?? filter.slug} tableSlug={tableSlug} filters={filters} onChange={onChange} />
+          <Filter
+            field={filter}
+            name={filter?.path_slug ?? filter.slug}
+            tableSlug={tableSlug}
+            filters={filters}
+            onChange={onChange}
+          />
         </div>
       ))}
     </div>

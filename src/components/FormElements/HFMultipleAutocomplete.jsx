@@ -145,6 +145,8 @@ const AutoCompleteElement = ({
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
 
+  console.log('computedValue', computedValue)
+
   return (
     <FormControl style={{ width }}>
       <InputLabel size="small">{label}</InputLabel>
@@ -173,6 +175,12 @@ const AutoCompleteElement = ({
             {...params}
             placeholder={computedValue.length ? "" : placeholder}
             // autoFocus={tabIndex === 1}
+            sx={{
+              "&.MuiInputAdornment-root": {
+                position: "absolute",
+                right: 0,
+              },
+            }}
             InputProps={{
               // inputProps: { tabIndex },
               ...params.InputProps,
@@ -189,7 +197,13 @@ const AutoCompleteElement = ({
                   },
 
               endAdornment: disabled && (
-                <Tooltip title="This field is disabled for this role!">
+                <Tooltip
+                  title="This field is disabled for this role!"
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                  }}
+                >
                   <InputAdornment position="start">
                     <Lock style={{ fontSize: "20px" }} />
                   </InputAdornment>

@@ -148,7 +148,7 @@ const LinkTableModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
               <HFTextField
                 name="attributes.link"
                 control={control}
-                placeholder="Tables"
+                placeholder="link..."
                 fullWidth
                 required
                 options={tableOptions}

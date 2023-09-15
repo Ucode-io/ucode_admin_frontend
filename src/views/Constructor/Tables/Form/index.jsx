@@ -75,9 +75,9 @@ const ConstructorTablesFormPage = () => {
 
     const getActions = constructorCustomEventService.getList({
       table_slug: slug,
-    })
+    });
 
-    console.log('getActions', getActions)
+    console.log("getActions", getActions);
 
     const getLayouts = layoutService
       .getList({
@@ -88,17 +88,12 @@ const ConstructorTablesFormPage = () => {
       });
 
     try {
-<<<<<<< HEAD
       const [tableData, {custom_events: actions = []}] = await Promise.all([
         getTableData,
-        getViewRelations,
         getActions,
+        getViewRelations,
         getLayouts,
       ]);
-
-=======
-      const [tableData, { custom_events: actions = [] }] = await Promise.all([getTableData, getActions, getViewRelations, getLayouts]);
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
       const data = {
         ...mainForm.getValues(),
         ...tableData,
@@ -122,14 +117,10 @@ const ConstructorTablesFormPage = () => {
         table_slug: slug,
         relation_table_slug: slug,
       });
-<<<<<<< HEAD
       const [{relations = []}, {fields = []}] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
-=======
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
@@ -195,8 +186,6 @@ const ConstructorTablesFormPage = () => {
   const updateConstructorTable = (data) => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);
-<<<<<<< HEAD
-=======
 
     // const updateSectionData = constructorSectionService.update({
     //   sections: addOrderNumberToSections(data.sections),
@@ -209,7 +198,6 @@ const ConstructorTablesFormPage = () => {
     //   table_slug: data.slug,
     // });
 
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
     const computedLayouts = data.layouts.map((layout) => ({
       ...layout,
       summary_fields: layout?.summary_fields?.map((item) => {

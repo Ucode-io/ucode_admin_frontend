@@ -1,9 +1,9 @@
 import ChartAccountsWrapper from "@/views/Objects/components/ViewSettings/ChartAccountsWrapper";
-import { Delete } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {Delete} from "@mui/icons-material";
+import {useEffect, useMemo, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CancelButton from "../../../../components/Buttons/CancelButton";
 import SaveButton from "../../../../components/Buttons/SaveButton";
 import FRow from "../../../../components/FormElements/FRow";
@@ -12,7 +12,7 @@ import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import useWatch from "../../../../hooks/useWatch";
 import constructorViewService from "../../../../services/constructorViewService";
-import { viewTypes } from "../../../../utils/constants/viewTypes";
+import {viewTypes} from "../../../../utils/constants/viewTypes";
 import CalendarHourSettings from "./CalendarHourSettings";
 import CalendarSettings from "./CalendarSettings";
 import ColumnsTab from "./ColumnsTab";
@@ -22,16 +22,15 @@ import MultipleInsertSettings from "./MultipleInsertSettings";
 import NavigateSettings from "./NavigateSettings";
 import QuickFiltersTab from "./QuicFiltersTab";
 import styles from "./style.module.scss";
-<<<<<<< HEAD
-import { useSelector } from "react-redux";
-import { Box } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
+import {useSelector} from "react-redux";
+import {Box} from "@mui/material";
 
 const ViewForm = ({
   initialValues,
   typeNewView,
-  defaultViewTab,
   closeForm,
+  defaultViewTab,
   refetchViews,
   setIsChanged,
   closeModal,
@@ -39,18 +38,11 @@ const ViewForm = ({
   relationColumns,
   views,
 }) => {
-=======
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { Box } from "@mui/material";
-
-const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refetchViews, setIsChanged, closeModal, columns, relationColumns, views }) => {
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
-  const { tableSlug, appId } = useParams();
+  const {tableSlug, appId} = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
-  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
+  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
   const navigate = initialValues?.navigate;
@@ -82,7 +74,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
   }, [columns, relationColumns, type]);
 
   const computeFinancialAcc = (values, groupByField, data) => {
-    if (values === undefined) return { chart_of_accounts: [] };
+    if (values === undefined) return {chart_of_accounts: []};
 
     const computedFormat = values.map((row) => {
       return {
@@ -158,7 +150,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
   }, [initialValues, tableSlug, form, typeNewView]);
 
   useEffect(() => {
-    form.reset({ ...form.getValues(), number_field: "" });
+    form.reset({...form.getValues(), number_field: ""});
   }, [relationObjInput]);
 
   useWatch(() => {
@@ -166,7 +158,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
     const formQuickFilters = form
       .getValues("quick_filters")
       ?.filter((el) => el?.is_checked)
-      ?.map((el) => ({ field_id: el.id }));
+      ?.map((el) => ({field_id: el.id}));
 
     // form.setValue('columns', computeColumns(formColumns, computedColumns))
     form.setValue(
@@ -179,7 +171,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
       )
     );
   }, [type, form]);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const onSubmit = (values) => {
     setBtnLoader(true);
     const computedValues = {
@@ -255,7 +247,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
       <div className={styles.viewForm}>
         <Tabs defaultIndex={defaultViewTab}>
           <div className={styles.section}>
-            <TabList style={{ marginBottom: "1px" }}>
+            <TabList style={{marginBottom: "1px"}}>
               <Tab>Information</Tab>
               <Tab>Quick filters</Tab>
               <Tab>Columns</Tab>
@@ -272,7 +264,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
                 <div className={styles.sectionBody}>
                   <div className={styles.formRow}>
                     <FRow label="Название">
-                      <Box style={{ display: "flex", gap: "6px" }}>
+                      <Box style={{display: "flex", gap: "6px"}}>
                         {languages?.map((language) => (
                           <HFTextField
                             control={form.control}
@@ -328,7 +320,7 @@ const ViewForm = ({ initialValues, typeNewView, closeForm, defaultViewTab, refet
               <QuickFiltersTab form={form} />
             </TabPanel>
             <TabPanel>
-              <ColumnsTab form={form} isMenu={false}/>
+              <ColumnsTab form={form} isMenu={false} />
             </TabPanel>
             <TabPanel>
               <NavigateSettings form={form} />
@@ -390,7 +382,7 @@ const getInitialValues = (
         time_from_slug: "",
         time_to_slug: "",
       },
-      columns: columns?.map((el) => ({ ...el, is_checked: true })) ?? [],
+      columns: columns?.map((el) => ({...el, is_checked: true})) ?? [],
       quick_filters: columns ?? [],
       group_fields: [],
       navigate: {
@@ -470,7 +462,7 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
 
 const computeFinancialColumns = (financialValues) => {
   return financialValues?.map((row) => {
-    const computedRow = { group_by: row.group_by };
+    const computedRow = {group_by: row.group_by};
 
     row.chart_of_account?.forEach((chart) => {
       computedRow[chart.object_id] = [];
@@ -481,9 +473,9 @@ const computeFinancialColumns = (financialValues) => {
 
         option.filters?.forEach((filter) => {
           filters[filter.field_id] = filter.value;
-          filterFields.push({ field_id: filter.field_id });
+          filterFields.push({field_id: filter.field_id});
         });
-        const computedObj = { ...option, filters, filterFields };
+        const computedObj = {...option, filters, filterFields};
         computedRow[chart.object_id].push(computedObj);
       });
     });

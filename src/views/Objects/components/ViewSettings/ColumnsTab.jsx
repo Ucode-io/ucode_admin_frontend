@@ -1,21 +1,14 @@
-<<<<<<< HEAD
-import { Switch } from "@mui/material";
-=======
-import { Box, Switch, Typography } from "@mui/material";
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
-import { useEffect, useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
-import { Container, Draggable } from "react-smooth-dnd";
-import { applyDrag } from "../../../../utils/applyDrag";
+import {Box, Switch, Typography} from "@mui/material";
+import {useEffect, useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {Container, Draggable} from "react-smooth-dnd";
+import {applyDrag} from "../../../../utils/applyDrag";
 import styles from "./style.module.scss";
-<<<<<<< HEAD
-=======
-import { useTranslation } from "react-i18next";
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
+import {useTranslation} from "react-i18next";
 
-const ColumnsTab = ({ form, updateView, isMenu }) => {
-  const { i18n } = useTranslation();
-  const { fields: columns, move } = useFieldArray({
+const ColumnsTab = ({form, updateView, isMenu}) => {
+  const {i18n} = useTranslation();
+  const {fields: columns, move} = useFieldArray({
     control: form.control,
     name: "columns",
   });
@@ -63,50 +56,40 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
     >
       <div className={styles.table}>
         <div className={styles.row}>
-          <div className={styles.cell} style={{ flex: 1 }}>
+          <div className={styles.cell} style={{flex: 1}}>
             <b>All</b>
           </div>
-          <div className={styles.cell} style={{ width: 70 }}>
+          <div className={styles.cell} style={{width: 70}}>
             {/* <Button variant="outlined" disabled={false} onClick={onAllChecked} color="success">Show All</Button>
             <Button variant="outlined" color="error">Hide All</Button> */}
-            <Switch size="small" checked={isAllChecked} onChange={onAllChecked} />
+            <Switch
+              size="small"
+              checked={isAllChecked}
+              onChange={onAllChecked}
+            />
           </div>
         </div>
-        <Container onDrop={onDrop} dropPlaceholder={{ className: "drag-row-drop-preview" }}>
-<<<<<<< HEAD
-          {columns.map((column, index) => (
-            <Draggable key={column.id}>
-              <div key={column.id} className={styles.row}>
-                <div className={styles.cell} style={{ flex: 1 }}>
-                  {column.label}
-                </div>
-                <div className={styles.cell} style={{ width: 70 }}>
-                  <Switch
-                    size="small"
-                    checked={form.watch(`columns.${index}.is_checked`)}
-                    onChange={(e) => {
-                      form.setValue(`columns.${index}.is_checked`, e.target.checked);
-                      // updateView();
-                    }}
-                  />
-                </div>
-              </div>
-            </Draggable>
-          ))}
-=======
+        <Container
+          onDrop={onDrop}
+          dropPlaceholder={{className: "drag-row-drop-preview"}}
+        >
           {columns.length ? (
             columns.map((column, index) => (
               <Draggable key={column.id}>
                 <div key={column.id} className={styles.row}>
-                  <div className={styles.cell} style={{ flex: 1 }}>
-                    {column?.attributes?.[`label_${i18n.language}`] ?? column.label}
+                  <div className={styles.cell} style={{flex: 1}}>
+                    {column?.attributes?.[`label_${i18n.language}`] ??
+                      column.label}
                   </div>
-                  <div className={styles.cell} style={{ width: 70 }}>
+                  <div className={styles.cell} style={{width: 70}}>
                     <Switch
                       size="small"
                       checked={form.watch(`columns.${index}.is_checked`)}
                       onChange={(e) => {
-                        form.setValue(`columns.${index}.is_checked`, e.target.checked);
+                        form.setValue(
+                          `columns.${index}.is_checked`,
+                          e.target.checked
+                        );
                         // updateView();
                       }}
                     />
@@ -115,11 +98,10 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
               </Draggable>
             ))
           ) : (
-            <Box style={{ padding: "10px" }}>
+            <Box style={{padding: "10px"}}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
         </Container>
       </div>
     </div>

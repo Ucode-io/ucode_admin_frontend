@@ -1,16 +1,4 @@
-<<<<<<< HEAD
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Dialog,
-  Popover,
-  TextField,
-  Typography,
-} from "@mui/material";
-=======
 import {Autocomplete, Popover, TextField, Typography} from "@mui/material";
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
 import {makeStyles} from "@mui/styles";
 import {get} from "@ngard/tiny-get";
 import {useEffect, useMemo, useState} from "react";
@@ -29,10 +17,6 @@ import RelationGroupCascading from "./RelationGroupCascading";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import AddIcon from "@mui/icons-material/Add";
-<<<<<<< HEAD
-import {useTranslation} from "react-i18next";
-=======
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -147,11 +131,8 @@ const AutoCompleteElement = ({
   const [debouncedValue, setDebouncedValue] = useState("");
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const {id} = useParams();
-<<<<<<< HEAD
   const {i18n} = useTranslation();
 
-=======
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
@@ -235,11 +216,7 @@ const AutoCompleteElement = ({
     }
   );
 
-<<<<<<< HEAD
-  const { data: optionsFromLocale } = useQuery(
-=======
   const {data: optionsFromLocale} = useQuery(
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue, value],
     () => {
       if (!tableSlug) return null;

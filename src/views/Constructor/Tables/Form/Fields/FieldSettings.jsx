@@ -1,8 +1,7 @@
-import { Close } from "@mui/icons-material";
+import {Close} from "@mui/icons-material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import SettingsIcon from "@mui/icons-material/Settings";
-<<<<<<< HEAD
 import {
   Accordion,
   AccordionDetails,
@@ -11,14 +10,11 @@ import {
   Card,
   IconButton,
 } from "@mui/material";
-=======
-import { Accordion, AccordionDetails, AccordionSummary, Box, Card, IconButton } from "@mui/material";
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
-import { useEffect, useMemo, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import {useEffect, useMemo, useState} from "react";
+import {useForm, useWatch} from "react-hook-form";
+import {useQuery, useQueryClient} from "react-query";
+import {useParams} from "react-router-dom";
+import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFIconPicker from "../../../../../components/FormElements/HFIconPicker";
@@ -26,36 +22,31 @@ import HFSelect from "../../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import constructorFieldService from "../../../../../services/constructorFieldService";
-import { fieldTypesOptions } from "../../../../../utils/constants/fieldTypes";
-import { generateGUID } from "../../../../../utils/generateID";
+import {fieldTypesOptions} from "../../../../../utils/constants/fieldTypes";
+import {generateGUID} from "../../../../../utils/generateID";
 import Attributes from "./Attributes";
 import DefaultValueBlock from "./Attributes/DefaultValueBlock";
 import styles from "./style.module.scss";
-import { store } from "../../../../../store";
-import { add } from "date-fns";
+import {store} from "../../../../../store";
+import {add} from "date-fns";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorViewService from "../../../../../services/constructorViewService";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 
-<<<<<<< HEAD
 const FieldSettings = ({
   closeSettingsBlock,
   mainForm,
-  field,
+  selectedTabIndex,
   selectedField,
+  field,
   formType,
   height,
+  isTableView = false,
   onSubmit = () => {},
   getRelationFields,
 }) => {
-  const { id, slug } = useParams();
-  const test = useParams();
-  console.log("tesstt", test);
-=======
-const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selectedField, field, formType, height, isTableView = false, onSubmit = () => {}, getRelationFields }) => {
-  const { id, tableSlug, appId } = useParams();
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
-  const { handleSubmit, control, reset, watch } = useForm();
+  const {id, tableSlug, appId} = useParams();
+  const {handleSubmit, control, reset, watch} = useForm();
   const [formLoader, setFormLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const menuItem = store.getState().menu.menuItem;
@@ -89,7 +80,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
   });
 
   const {
-    data: { views, columns, relationColumns } = {
+    data: {views, columns, relationColumns} = {
       views: [],
       columns: [],
       relationColumns: [],
@@ -97,14 +88,14 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", { slug }],
+    ["GET_VIEWS_AND_FIELDS", {slug}],
     () => {
       return constructorObjectService.getList(slug, {
-        data: { limit: 10, offset: 0, with_relations: true, app_id: appId },
+        data: {limit: 10, offset: 0, with_relations: true, app_id: appId},
       });
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],
@@ -209,7 +200,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
     }));
   }, [layoutRelations]);
 
-  const { data: computedRelationFields } = useQuery(
+  const {data: computedRelationFields} = useQuery(
     ["GET_TABLE_FIELDS", selectedAutofillSlug],
     () => {
       if (!selectedAutofillSlug) return [];
@@ -224,13 +215,9 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
         const oneRelationFields = res?.data?.one_relation_fields ?? [];
 
         return [...fields, ...oneRelationFields]
-<<<<<<< HEAD
           .filter(
             (field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP"
           )
-=======
-          .filter((field) => field.type !== "LOOKUPS" && field?.type !== "LOOKUP")
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
           .map((el) => ({
             value: el?.path_slug ? el?.path_slug : el?.slug,
             label: el?.label,
@@ -261,7 +248,6 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
       reset(values);
     }
   }, [field, formType, id, menuItem.table_id, reset]);
-  const languages = useSelector((state) => state.languages.list);
 
   return (
     <div className={styles.settingsBlock}>
@@ -273,7 +259,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
         </IconButton>
       </div>
 
-      <div className={styles.settingsBlockBody} style={{ height }}>
+      <div className={styles.settingsBlockBody} style={{height}}>
         <form
           onSubmit={handleSubmit(submitHandler)}
           className={styles.fieldSettingsForm}
@@ -301,7 +287,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                     }}
                     selectedClassName={styles.selectedTab}
                   >
-                    <SettingsIcon style={{ width: "20px", height: "20px" }} />
+                    <SettingsIcon style={{width: "20px", height: "20px"}} />
                   </Tab>
                   <Tab
                     style={{
@@ -312,7 +298,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                     }}
                     selectedClassName={styles.selectedTab}
                   >
-                    <FlashOnIcon style={{ width: "20px", height: "20px" }} />
+                    <FlashOnIcon style={{width: "20px", height: "20px"}} />
                   </Tab>
                 </TabList>
 
@@ -325,19 +311,15 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                     >
                       <h2>Field settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <div className="p-2">
                         <FRow label="Field Label and icon" required>
                           <div className="flex align-center gap-1">
-<<<<<<< HEAD
                             <HFIconPicker
                               control={control}
                               name="attributes.icon"
                               shape="rectangle"
                             />
-=======
-                            <HFIconPicker control={control} name="attributes.icon" shape="rectangle" />
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
                           </div>
 
                           {/* <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -353,7 +335,6 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                             ))}
                           </Box> */}
 
-<<<<<<< HEAD
                           <Box
                             style={{
                               display: "flex",
@@ -361,15 +342,6 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                               gap: "6px",
                             }}
                           >
-                            {languages?.map((language) => {
-                              const languageFieldName = `attributes.label_${language?.slug}`;
-                              const fieldValue = useWatch({
-                                control,
-                                name: languageFieldName,
-                              });
-
-=======
-                          <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                             {/* {languages?.map((language) => {
                               // const languageFieldName = `attributes.label_${language?.slug}`;
                               // const fieldValue = useWatch({
@@ -397,7 +369,6 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                                 name: languageFieldName,
                               });
 
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
                               return (
                                 <HFTextField
                                   disabledHelperText
@@ -406,13 +377,9 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                                   control={control}
                                   placeholder={`Field Label (${language?.slug})`}
                                   autoFocus
-<<<<<<< HEAD
                                   defaultValue={
                                     fieldValue || selectedField?.label
                                   }
-=======
-                                  defaultValue={fieldValue || selectedField?.label}
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
                                 />
                               );
                             })}
@@ -446,7 +413,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                         {(fieldType === "SINGLE_LINE" ||
                           fieldType === "MULTI_LINE") && (
                           <FRow
-                            style={{ marginTop: "15px" }}
+                            style={{marginTop: "15px"}}
                             label="Multi language"
                           >
                             <HFSwitch
@@ -475,7 +442,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                     >
                       <h2>Appearance</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <div className="p-2">
                         <HFSwitch
                           control={control}
@@ -516,7 +483,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                     >
                       <h2>Validation</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <div className="p-2">
                         <HFSwitch
                           control={control}
@@ -564,7 +531,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
                     >
                       <h2>Autofill settings</h2>
                     </AccordionSummary>
-                    <AccordionDetails style={{ padding: 0 }}>
+                    <AccordionDetails style={{padding: 0}}>
                       <div className="p-2">
                         <FRow label="Autofill table">
                           <HFSelect
@@ -605,7 +572,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
           <PrimaryButton
             size="large"
             className={styles.button}
-            style={{ width: "100%" }}
+            style={{width: "100%"}}
             onClick={handleSubmit(submitHandler)}
             loader={formLoader}
           >

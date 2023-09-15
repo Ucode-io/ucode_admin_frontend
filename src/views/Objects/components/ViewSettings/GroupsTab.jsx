@@ -1,21 +1,34 @@
-<<<<<<< HEAD
-import { Checkbox } from "@mui/material";
-=======
-import { Box, Checkbox, Typography } from "@mui/material";
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
-import { useMemo } from "react";
-import { useWatch } from "react-hook-form";
-import { CTable, CTableBody, CTableCell, CTableRow } from "../../../../components/CTable";
-import { useTranslation } from "react-i18next";
+import {Box, Checkbox, Typography} from "@mui/material";
+import {useMemo} from "react";
+import {useWatch} from "react-hook-form";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableRow,
+} from "../../../../components/CTable";
+import {useTranslation} from "react-i18next";
 
-const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateLoading }) => {
+const GroupsTab = ({
+  columns,
+  form,
+  selectedView,
+  updateView,
+  isLoading,
+  updateLoading,
+}) => {
   const selectedColumns = useWatch({
     control: form.control,
     name: "group_fields",
   });
-  const { i18n } = useTranslation();
   const computedColumns = useMemo(() => {
-    return columns?.filter((column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT");
+    return columns?.filter(
+      (column) =>
+        column.type === "LOOKUP" ||
+        column.type === "PICK_LIST" ||
+        column.type === "LOOKUPS" ||
+        column.type === "MULTISELECT"
+    );
   }, [columns]);
 
   const onCheckboxChange = async (val, id) => {
@@ -36,7 +49,7 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
 
     return form.setValue("group_fields", [...selectedColumns, id]);
   };
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const changeHandler = async (val, id) => {
     await onCheckboxChange(val, id);
@@ -50,23 +63,33 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
         overflowY: "auto",
       }}
     >
-      <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
+      <CTable
+        removableHeight={false}
+        disablePagination
+        tableStyle={{border: "none"}}
+      >
         <CTableBody dataLength={1}>
           {computedColumns.length ? (
             computedColumns.map((column) => (
               <CTableRow key={column.id}>
-                <CTableCell>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</CTableCell>
-                <CTableCell style={{ width: 20 }}>
+                <CTableCell>
+                  {column?.attributes?.[`label_${i18n.language}`] ??
+                    column.label}
+                </CTableCell>
+                <CTableCell style={{width: 20}}>
                   <Checkbox
                     disabled={isLoading || updateLoading}
-                    checked={selectedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
+                    checked={
+                      selectedColumns?.includes(column?.id) ||
+                      selectedView?.group_fields?.includes(column?.id)
+                    }
                     onChange={(e, val) => changeHandler(val, column.id)}
                   />
                 </CTableCell>
               </CTableRow>
             ))
           ) : (
-            <Box style={{ padding: "10px" }}>
+            <Box style={{padding: "10px"}}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}

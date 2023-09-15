@@ -9,7 +9,6 @@ import styles from "./style.module.scss";
 import ViewForm from "./ViewForm";
 import ViewsList from "./ViewsList";
 
-<<<<<<< HEAD
 const ViewSettings = ({
   closeModal,
   setIsChanged,
@@ -19,10 +18,6 @@ const ViewSettings = ({
   defaultViewTab,
 }) => {
   const {tableSlug, appId} = useParams();
-=======
-const ViewSettings = ({ closeModal, setIsChanged, isChanged, viewData, typeNewView, defaultViewTab }) => {
-  const { tableSlug, appId } = useParams();
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
   const [selectedView, setSelectedView] = useState(viewData);
 
   const closeForm = () => setSelectedView(null);

@@ -8,10 +8,7 @@ import {useNavigate, useParams} from "react-router-dom";
 
 const CPagination = ({
   setCurrentPage = () => {},
-<<<<<<< HEAD
-=======
   view,
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
   paginationExtraButton,
   multipleDelete,
   selectedObjectsForDelete,
@@ -19,16 +16,10 @@ const CPagination = ({
   setLimit = () => {},
   ...props
 }) => {
-<<<<<<< HEAD
-  const { t } = useTranslation();
-  const { navigateToForm } = useTabRouter();
-  const { tableSlug } = useParams();
-=======
   const {t} = useTranslation();
   const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
   const {tableSlug} = useParams();
->>>>>>> 1df6249a5a73f148d1255677135171c9a2055ab3
   const options = [
     {
       value: isNaN(parseInt(props?.defaultLimit))

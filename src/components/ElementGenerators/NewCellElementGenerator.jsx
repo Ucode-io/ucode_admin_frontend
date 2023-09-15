@@ -285,6 +285,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
+          setFormValue={setFormValue}
           {...props}
         />
       );
@@ -301,6 +302,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
+          setFormValue={setFormValue}
           {...props}
         />
       );

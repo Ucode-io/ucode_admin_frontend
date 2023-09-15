@@ -26,6 +26,7 @@ import HFTextEditor from "../FormElements/HFTextEditor";
 import HFColorPicker from "../FormElements/HFColorPicker";
 import HFFileUpload from "../FormElements/HFFileUpload";
 import HFVideoUpload from "../FormElements/HFVideoUpload";
+import MultiLineCellFormElement from "./MultiLineCellFormElement";
 
 const parser = new Parser();
 
@@ -465,19 +466,21 @@ const NewCellElementGenerator = ({
 
     case "MULTI_LINE":
       return (
-        <HFTextEditor
-          control={control}
-          name={computedSlug}
-          tabIndex={field?.tabIndex}
-          fullWidth
-          multiline
-          rows={4}
-          defaultValue={field.defaultValue}
-          disabled={isDisabled}
-          key={computedSlug}
-          isTransparent={true}
-          {...props}
-        />
+        // <HFTextEditor
+        //   control={control}
+        //   name={computedSlug}
+        //   tabIndex={field?.tabIndex}
+        //   fullWidth
+        //   multiline
+        //   rows={4}
+        //   defaultValue={field.defaultValue}
+        //   disabled={isDisabled}
+        //   key={computedSlug}
+        //   isTransparent={true}
+        //   {...props}
+        // />
+
+        <MultiLineCellFormElement control={control} computedSlug={computedSlug} field={field} isDisabled={isDisabled} {...props}/>
       );
 
     case "CUSTOM_IMAGE":

@@ -1,10 +1,9 @@
-import { Button, Drawer } from "@mui/material";
+import { Drawer } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
 import useTabRouter from "../../../hooks/useTabRouter";
@@ -16,15 +15,15 @@ import { pageToOffset } from "../../../utils/pageToOffset";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
 import { listToMap } from "../../../utils/listToMap";
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorRelationService from "../../../services/constructorRelationService";
 import { generateGUID } from "../../../utils/generateID";
+import GroupObjectDataTable from "../../../components/DataTable/GroupObjectDataTable";
 
-const TableView = ({
+const GroupTableView = ({
   tab,
   view,
   shouldGet,
@@ -61,12 +60,13 @@ const TableView = ({
   // const selectTableSlug = selectedLinkedObject
   //   ? selectedLinkedObject?.split("#")?.[1]
   //   : tableSlug;
-
+  console.log("grouptableview", view);
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
       fields: [],
       app_id: appId,
+      builder_service_view_id: view?.id,
       // sections: [
       //   {
       //     column: "SINGLE",
@@ -250,6 +250,7 @@ const TableView = ({
           order: computedSortColumns,
           with_relations: true,
           view_fields: checkedColumns,
+          builder_service_view_id: view?.id,
           search:
             detectStringType(searchText) === "number"
               ? parseInt(searchText)
@@ -410,9 +411,9 @@ const TableView = ({
       setElementHeight(height);
     }
   }, []);
-  console.log("tableData", tableData);
+
   return (
-    <div className={styles.wrapper}>
+    <div>
       {(view?.quick_filters?.length > 0 ||
         (new_list[tableSlug] &&
           new_list[tableSlug].some((i) => i.checked))) && (
@@ -428,10 +429,10 @@ const TableView = ({
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
         <div
-          style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
+          //   style={{ display: "flex", alignItems: "flex-start", width: "100%" }}
           id="data-table"
         >
-          <ObjectDataTable
+          <GroupObjectDataTable
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
             selectedView={selectedView}
@@ -509,4 +510,4 @@ const TableView = ({
   );
 };
 
-export default TableView;
+export default GroupTableView;

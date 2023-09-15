@@ -1,6 +1,6 @@
 import AppsIcon from "@mui/icons-material/Apps";
 import { CircularProgress, Menu } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
@@ -22,7 +22,7 @@ export default function GroupColumnVisible({ selectedTabIndex }) {
   };
 
   const {
-    data: { views, columns } = {
+    data: { views, columns, relationColumns } = {
       views: [],
       columns: [],
       relationColumns: [],
@@ -38,7 +38,6 @@ export default function GroupColumnVisible({ selectedTabIndex }) {
     },
     {
       select: ({ data }) => {
-        console.log("data", data);
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],
@@ -54,6 +53,15 @@ export default function GroupColumnVisible({ selectedTabIndex }) {
 
   const watchedColumns = form.watch("attributes.group_by_columns");
   const group_by = views?.[selectedTabIndex]?.attributes.group_by_columns;
+  const type = views?.[selectedTabIndex]?.type;
+
+  const computedColumns = useMemo(() => {
+    if (type !== "CALENDAR" && type !== "GANTT") {
+      return columns;
+    } else {
+      return [...columns, ...relationColumns];
+    }
+  }, [columns, relationColumns, type]);
 
   useEffect(() => {
     form.reset({
@@ -65,6 +73,13 @@ export default function GroupColumnVisible({ selectedTabIndex }) {
           };
         }),
       },
+      columns:
+        computedColumns?.map((el) => ({
+          ...el,
+          is_checked: views?.[selectedTabIndex]?.columns?.find(
+            (column) => column === el.id
+          ),
+        })) ?? [],
     });
   }, [selectedTabIndex, views, form, group_by, columns]);
 

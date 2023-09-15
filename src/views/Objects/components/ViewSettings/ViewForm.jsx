@@ -35,6 +35,7 @@ const ViewForm = ({
   columns,
   relationColumns,
   views,
+  setTab,
 }) => {
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
@@ -236,10 +237,12 @@ const ViewForm = ({
       .catch(() => setDeleteBtnLoader(false));
   };
 
+  console.log("form", form.watch());
+
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
-        <Tabs defaultIndex={defaultViewTab}>
+        <Tabs defaultIndex={defaultViewTab} onSelect={(index) => setTab(index)}>
           <div className={styles.section}>
             <TabList style={{ marginBottom: "1px" }}>
               <Tab>Information</Tab>

@@ -38,6 +38,7 @@ import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
 import SortButton from "./SortButton";
 import GroupColumnVisible from "./GroupColumnVisible";
+import GroupTableView from "./TableView/GroupTableView";
 
 const ViewsWithGroups = ({
   views,
@@ -69,6 +70,13 @@ const ViewsWithGroups = ({
   const [defaultViewTab, setDefaultViewTab] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [checkedColumns, setCheckedColumns] = useState([]);
+  const [tab, setTab] = useState();
+  const [sortedDatas, setSortedDatas] = useState([]);
+  const groupTable = view?.attributes.group_by_columns;
+
+  console.log("tab", tab);
+  console.log("view", view);
+  console.log("groupTable", groupTable);
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
@@ -232,8 +240,6 @@ const ViewsWithGroups = ({
     selectAll();
   }, []);
 
-  const [sortedDatas, setSortedDatas] = useState([]);
-
   return (
     <>
       <FiltersBlock
@@ -272,6 +278,7 @@ const ViewsWithGroups = ({
           selectedView={selectedView}
           setSelectedView={setSelectedView}
           defaultViewTab={defaultViewTab}
+          setTab={setTab}
         />
         {view?.type === "FINANCE CALENDAR" && (
           <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
@@ -587,56 +594,85 @@ const ViewsWithGroups = ({
           )}
           {
             <>
-              {tabs?.map((tab) => (
-                <TabPanel key={tab.value}>
-                  {view.type === "TREE" ? (
-                    <TreeView
-                      tableSlug={tableSlug}
-                      filters={filters}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                      tab={tab}
-                    />
-                  ) : view?.type === "FINANCE CALENDAR" ? (
-                    <FinancialCalendarView
-                      view={view}
-                      filters={filters}
-                      fieldsMap={fieldsMap}
-                      tab={tab}
-                      isLoading={isFinancialCalendarLoading}
-                      financeDate={analyticsRes?.response || []}
-                      financeTotal={analyticsRes?.total_amount || []}
-                      totalBalance={analyticsRes?.balance}
-                    />
-                  ) : (
-                    <TableView
-                      control={control}
-                      setFormVisible={setFormVisible}
-                      formVisible={formVisible}
-                      filters={filters}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                      setFormValue={setFormValue}
-                      setSortedDatas={setSortedDatas}
-                      tab={tab}
-                      selectedObjects={selectedObjects}
-                      setSelectedObjects={setSelectedObjects}
-                      menuItem={menuItem}
+              {!tabs?.length && (
+                <>
+                  {view.type === "TABLE" && groupTable?.length ? (
+                    <GroupTableView
                       setDataLength={setDataLength}
                       selectedTabIndex={selectedTabIndex}
                       shouldGet={shouldGet}
                       reset={reset}
                       sortedDatas={sortedDatas}
+                      menuItem={menuItem}
                       fields={fields}
+                      setFormValue={setFormValue}
+                      control={control}
+                      setFormVisible={setFormVisible}
+                      formVisible={formVisible}
+                      filters={filters}
                       checkedColumns={checkedColumns}
+                      view={view}
+                      setSortedDatas={setSortedDatas}
+                      fieldsMap={fieldsMap}
                       searchText={searchText}
+                      selectedObjects={selectedObjects}
+                      setSelectedObjects={setSelectedObjects}
                       selectedView={selectedView}
                     />
-                  )}
-                </TabPanel>
-              ))}
+                  ) : null}
+                </>
+              )}
+              {!groupTable?.length &&
+                tabs?.map((tab) => (
+                  <TabPanel key={tab.value}>
+                    {view.type === "TREE" ? (
+                      <TreeView
+                        tableSlug={tableSlug}
+                        filters={filters}
+                        view={view}
+                        fieldsMap={fieldsMap}
+                        tab={tab}
+                      />
+                    ) : view?.type === "FINANCE CALENDAR" ? (
+                      <FinancialCalendarView
+                        view={view}
+                        filters={filters}
+                        fieldsMap={fieldsMap}
+                        tab={tab}
+                        isLoading={isFinancialCalendarLoading}
+                        financeDate={analyticsRes?.response || []}
+                        financeTotal={analyticsRes?.total_amount || []}
+                        totalBalance={analyticsRes?.balance}
+                      />
+                    ) : (
+                      <TableView
+                        control={control}
+                        setFormVisible={setFormVisible}
+                        formVisible={formVisible}
+                        filters={filters}
+                        view={view}
+                        fieldsMap={fieldsMap}
+                        setFormValue={setFormValue}
+                        setSortedDatas={setSortedDatas}
+                        tab={tab}
+                        selectedObjects={selectedObjects}
+                        setSelectedObjects={setSelectedObjects}
+                        menuItem={menuItem}
+                        setDataLength={setDataLength}
+                        selectedTabIndex={selectedTabIndex}
+                        shouldGet={shouldGet}
+                        reset={reset}
+                        sortedDatas={sortedDatas}
+                        fields={fields}
+                        checkedColumns={checkedColumns}
+                        searchText={searchText}
+                        selectedView={selectedView}
+                      />
+                    )}
+                  </TabPanel>
+                ))}
 
-              {!tabs?.length && (
+              {!tabs?.length && !groupTable?.length ? (
                 <>
                   {view.type === "TREE" ? (
                     <TreeView
@@ -681,7 +717,7 @@ const ViewsWithGroups = ({
                     />
                   )}
                 </>
-              )}
+              ) : null}
             </>
           }
         </TableCard>

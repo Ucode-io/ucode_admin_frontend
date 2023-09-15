@@ -16,6 +16,11 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
     keyName: "key",
   });
 
+  const watchedMainColumns = useWatch({
+    control: form.control,
+    name: "columns",
+  });
+
   const {
     fields: groupColumn,
     replace: replaceGroup,
@@ -43,10 +48,6 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
     return watchedColumns?.filter((column) => column?.is_checked === true);
   }, [watchedColumns]);
 
-  const isChecked = useMemo(() => {
-    return columns?.filter((column) => column?.is_checked === true);
-  }, [watchedColumns]);
-
   useEffect(() => {
     if (isMenu) {
       updateView();
@@ -55,32 +56,37 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
 
   const onSwitchChange = (e, index) => {
     const updatedColumns = [...columns];
+    const updatedGroupColumn = groupColumn?.map((item, columnIndex) => ({
+      ...item,
+      is_checked: index === columnIndex ? e.target.checked : item.is_checked,
+    }));
+    const selectedId = updatedGroupColumn[index].id;
+    const filteredColumn = updatedColumns?.find(
+      (item) => item?.id === selectedId
+    );
+    const insertIndex = updatedColumns.findIndex(
+      (item) => item?.id === selectedId
+    );
+
     if (!form.watch(`attributes.group_by_columns.${index}.is_checked`)) {
-      const movedColumn = updatedColumns[index];
-      updatedColumns.sort((a, b) => {
-        if (a === movedColumn) return -1;
-        if (b === movedColumn) return 1;
-        return 0;
-      });
+      //   updatedColumns.unshift(filteredColumn);
+      //   replace(updatedColumns);
+      const columnIndex = updatedColumns.findIndex(
+        (item) => item?.id === selectedId
+      );
+      if (columnIndex !== -1) {
+        const filteredColumn = updatedColumns.splice(columnIndex, 1)[0];
+        updatedColumns.unshift(filteredColumn);
+      }
+      console.log("updatedColumns", updatedColumns);
       replace(updatedColumns);
     } else {
       replace(updatedColumns);
     }
 
-    const updatedGroupColumn = groupColumn.map((item, columnIndex) => ({
-      ...item,
-      is_checked: index === columnIndex ? e.target.checked : item.is_checked,
-      //   ...form.watch(`attributes.group_by_columns.${columnIndex}`),
-      //   is_checked: index === columnIndex ? e.target.checked : item.is_checked,
-    }));
-
     if (!form.watch(`attributes.group_by_columns.${index}.is_checked`)) {
-      const groupMovedColumn = updatedGroupColumn[index];
-      updatedGroupColumn.sort((a, b) => {
-        if (a === groupMovedColumn) return -1;
-        if (b === groupMovedColumn) return 1;
-        return 0;
-      });
+      const groupMovedColumn = updatedGroupColumn.splice(index, 1)[0];
+      updatedGroupColumn.unshift(groupMovedColumn);
       replaceGroup(updatedGroupColumn);
     } else {
       replaceGroup(updatedGroupColumn);

@@ -16,6 +16,7 @@ const ViewSettings = ({
   viewData,
   typeNewView,
   defaultViewTab,
+  setTab,
 }) => {
   const { tableSlug, appId } = useParams();
   const [selectedView, setSelectedView] = useState(viewData);
@@ -59,8 +60,6 @@ const ViewSettings = ({
     }
   }, [isChanged]);
 
-  console.log("global column", columns);
-
   return (
     <Card className={styles.card}>
       <div className={styles.header}>
@@ -92,6 +91,7 @@ const ViewSettings = ({
               columns={columns}
               views={views}
               relationColumns={relationColumns}
+              setTab={setTab}
             />
           )}
         </div>

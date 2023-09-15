@@ -12,20 +12,31 @@ const ColumnsTab = ({ form, updateView, isMenu }) => {
     keyName: "key",
   });
 
+  const {
+    fields: groupColumn,
+    replace: replaceGroup,
+    move: groupMove,
+  } = useFieldArray({
+    control: form.control,
+    name: "attributes.group_by_columns",
+    keyName: "key",
+  });
+
   const watchedColumns = useWatch({
     control: form.control,
     name: "columns",
   });
 
-  const onDrop = async (dropResult) => {
+  const onDrop = (dropResult) => {
     const result = applyDrag(columns, dropResult);
     if (result) {
-      await move(dropResult.removedIndex, dropResult.addedIndex);
+      move(dropResult.removedIndex, dropResult.addedIndex);
+      groupMove(dropResult.removedIndex, dropResult.addedIndex);
     }
   };
 
   const isAllChecked = useMemo(() => {
-    return watchedColumns?.every((column) => column.is_checked);
+    return watchedColumns?.every((column) => column?.is_checked);
   }, [watchedColumns]);
 
   const onAllChecked = (_, val) => {

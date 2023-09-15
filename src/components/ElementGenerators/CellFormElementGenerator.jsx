@@ -275,6 +275,7 @@ const CellFormElementGenerator = ({
           name={computedSlug}
           width="100%"
           required={field.required}
+          setFormValue={setFormValue}
           field={field}
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}

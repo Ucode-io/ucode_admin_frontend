@@ -217,8 +217,7 @@ export default function TableHeadForTableView({
       ],
     },
   ];
-  console.log("column", column);
-  console.log("menu", menu);
+
   return (
     <>
       <CTableHeadCell

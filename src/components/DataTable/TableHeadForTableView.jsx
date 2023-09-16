@@ -243,7 +243,7 @@ export default function TableHeadForTableView({
               : "relative"
           }`,
           left: view?.attributes?.fixedColumns?.[column?.id]
-            ? `${calculateWidthFixedColumn(column.id)}px`
+            ? `${calculateWidthFixedColumn(column.id) + 80}px`
             : "0",
           backgroundColor: `${
             tableSettings?.[pageName]?.find((item) => item?.id === column?.id)

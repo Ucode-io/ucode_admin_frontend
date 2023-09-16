@@ -336,7 +336,7 @@ const AutoCompleteElement = ({
   };
 
   const openPopover = Boolean(anchorEl);
-
+  
   return (
     <div
       className={styles.autocompleteWrapper}

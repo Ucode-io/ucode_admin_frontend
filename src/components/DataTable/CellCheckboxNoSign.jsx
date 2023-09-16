@@ -45,7 +45,7 @@ const CellCheckboxNoSign = ({ formVisible, data }) => {
       )}
     </CTableHeadCell>
   ) : (
-    <CTableHeadCell width={10}>
+    <CTableHeadCell width={10} style={{ position: "sticky", left: "0", zIndex: 1, backgroundColor: "#F6F6F6" }}>
       <span
         style={{
           color: "#747474",

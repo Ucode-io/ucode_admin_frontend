@@ -113,6 +113,10 @@ const NewCellElementGenerator = ({
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
 
+  const onChange = () => {
+    props.updateObject && props.updateObject();
+  }
+
   switch (field.type) {
     case "LOOKUP":
       return (
@@ -286,6 +290,7 @@ const NewCellElementGenerator = ({
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
           setFormValue={setFormValue}
+          onFocus={() => console.log('sssssss')}
           {...props}
         />
       );

@@ -24,6 +24,7 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
       })
       .catch((e) => console.log("ERROR: ", e));
   };
+  console.log('focused', focused)
 
   return (
     <Box style={{ border: focused ? "1px solid #007AFF" : "1px solid transparent", position: "relative", minWidth: "150px" }}>
@@ -39,6 +40,7 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
         name={`multi.${index}.${field.slug}`}
         watch={watch}
         fields={fields}
+        updateObject={updateObject}
         field={field}
         row={row}
         index={index}

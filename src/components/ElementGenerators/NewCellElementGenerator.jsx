@@ -119,9 +119,9 @@ const NewCellElementGenerator = ({
     name: computedSlug,
   });
 
-  useEffect(() => {
-    updateObject();
-  }, [watchValue])
+  // useEffect(() => {
+  //   updateObject();
+  // }, [watchValue])
 
   switch (field.type) {
     case "LOOKUP":

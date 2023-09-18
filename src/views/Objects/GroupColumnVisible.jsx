@@ -20,7 +20,6 @@ export default function GroupColumnVisible({ selectedTabIndex }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const {
     data: { views, columns, relationColumns } = {
       views: [],
@@ -51,7 +50,8 @@ export default function GroupColumnVisible({ selectedTabIndex }) {
     }
   );
 
-  const watchedColumns = form.watch("attributes.group_by_columns");
+  const watchedGroupColumns = form.watch("attributes.group_by_columns");
+  const watchedColumns = form.watch("columns");
   const group_by = views?.[selectedTabIndex]?.attributes.group_by_columns;
   const type = views?.[selectedTabIndex]?.type;
 
@@ -88,13 +88,17 @@ export default function GroupColumnVisible({ selectedTabIndex }) {
       .update({
         ...views?.[selectedTabIndex],
         attributes: {
-          group_by_columns: watchedColumns
+          group_by_columns: watchedGroupColumns
             ?.filter((el) => el.is_checked)
             ?.map((el) => el.id),
         },
+        columns: watchedColumns
+          ?.filter((el) => el.is_checked)
+          ?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
       });
   };
 

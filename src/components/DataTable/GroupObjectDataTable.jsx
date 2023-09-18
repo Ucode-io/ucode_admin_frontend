@@ -496,11 +496,25 @@ const GroupObjectDataTable = ({
     //   </Box> */}
     // </CTable>
     <>
-      <TableCard>
-        <CTable removableHeight={140}>
-          <CTableHead>
-            <CTableRow>
-              <CTableHeadCell
+      <CTable
+        disablePagination={disablePagination}
+        removableHeight={removableHeight}
+        count={pagesCount}
+        page={currentPage}
+        setCurrentPage={onPaginationChange}
+        loader={loader}
+        multipleDelete={multipleDelete}
+        selectedObjectsForDelete={selectedObjectsForDelete}
+        tableStyle={tableStyle}
+        wrapperStyle={wrapperStyle}
+        paginationExtraButton={paginationExtraButton}
+        limit={limit}
+        setLimit={setLimit}
+        defaultLimit={defaultLimit}
+      >
+        <CTableHead>
+          <CTableRow>
+            {/* <CTableHeadCell
                 style={{
                   padding: "10px 4px",
                   color: "#747474",
@@ -511,77 +525,80 @@ const GroupObjectDataTable = ({
                 }}
               >
                 #
-              </CTableHeadCell>
-              {columns.map(
-                (column, index) =>
-                  column?.attributes?.field_permission?.view_permission && (
-                    <GroupTableHeadForTableView
-                      column={column}
-                      index={index}
-                      pageName={pageName}
-                      sortedDatas={sortedDatas}
-                      setSortedDatas={setSortedDatas}
-                      setDrawerState={setDrawerState}
-                      tableSize={tableSize}
-                      tableSettings={tableSettings}
-                      view={view}
-                      selectedView={selectedView}
-                      calculateWidthFixedColumn={calculateWidthFixedColumn}
-                      handlePin={handlePin}
-                      handleAutoSize={handleAutoSize}
-                      popupRef={popupRef}
-                      columnId={columnId}
-                      setColumnId={setColumnId}
-                      setCurrentColumnWidth={setCurrentColumnWidth}
-                      isTableView={isTableView}
-                      FilterGenerator={FilterGenerator}
-                      filterChangeHandler={filterChangeHandler}
-                      filters={filters}
-                      tableSlug={tableSlug}
-                      disableFilters={disableFilters}
-                    />
-                  )
-              )}
-            </CTableRow>
-          </CTableHead>
-          <CTableBody columnsCount={6} dataLength={data?.length}>
-            {data?.map((element, index) => (
-              <RecursiveTable
-                element={element}
-                index={index}
-                columns={columns}
-                width={"80px"}
-                remove={remove}
-                watch={watch}
-                control={control}
-                key={element.id}
-                mainForm={mainForm}
-                formVisible={formVisible}
-                selectedObjectsForDelete={selectedObjectsForDelete}
-                setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-                onRowClick={onRowClick}
-                isChecked={isChecked}
-                calculateWidthFixedColumn={calculateWidthFixedColumn}
-                onCheckboxChange={onCheckboxChange}
-                currentPage={currentPage}
-                limit={limit}
-                setFormValue={setFormValue}
-                tableHeight={tableHeight}
-                tableSettings={tableSettings}
-                pageName={pageName}
-                calculateWidth={calculateWidth}
-                tableSlug={tableSlug}
-                onDeleteClick={onDeleteClick}
-                relationAction={relationAction}
-                onChecked={onChecked}
-                relationFields={fields}
-                data={data}
-                view={view}
-              />
-            ))}
-          </CTableBody>
-        </CTable>
-      </TableCard>
+              </CTableHeadCell> */}
+            {columns.map(
+              (column, index) =>
+                column?.attributes?.field_permission?.view_permission && (
+                  <GroupTableHeadForTableView
+                    column={column}
+                    index={index}
+                    pageName={pageName}
+                    sortedDatas={sortedDatas}
+                    setSortedDatas={setSortedDatas}
+                    setDrawerState={setDrawerState}
+                    tableSize={tableSize}
+                    tableSettings={tableSettings}
+                    view={view}
+                    selectedView={selectedView}
+                    calculateWidthFixedColumn={calculateWidthFixedColumn}
+                    handlePin={handlePin}
+                    handleAutoSize={handleAutoSize}
+                    popupRef={popupRef}
+                    columnId={columnId}
+                    setColumnId={setColumnId}
+                    setCurrentColumnWidth={setCurrentColumnWidth}
+                    isTableView={isTableView}
+                    FilterGenerator={FilterGenerator}
+                    filterChangeHandler={filterChangeHandler}
+                    filters={filters}
+                    tableSlug={tableSlug}
+                    disableFilters={disableFilters}
+                  />
+                )
+            )}
+          </CTableRow>
+        </CTableHead>
+        <CTableBody
+          columnsCount={columns.length}
+          dataLength={dataLength || data?.length}
+          title={title}
+        >
+          {data?.map((element, index) => (
+            <RecursiveTable
+              element={element}
+              index={index}
+              columns={columns}
+              width={"80px"}
+              remove={remove}
+              watch={watch}
+              control={control}
+              key={element.id}
+              mainForm={mainForm}
+              formVisible={formVisible}
+              selectedObjectsForDelete={selectedObjectsForDelete}
+              setSelectedObjectsForDelete={setSelectedObjectsForDelete}
+              onRowClick={onRowClick}
+              isChecked={isChecked}
+              calculateWidthFixedColumn={calculateWidthFixedColumn}
+              onCheckboxChange={onCheckboxChange}
+              currentPage={currentPage}
+              limit={limit}
+              setFormValue={setFormValue}
+              tableHeight={tableHeight}
+              tableSettings={tableSettings}
+              pageName={pageName}
+              calculateWidth={calculateWidth}
+              tableSlug={tableSlug}
+              onDeleteClick={onDeleteClick}
+              relationAction={relationAction}
+              onChecked={onChecked}
+              relationFields={fields}
+              data={data}
+              view={view}
+            />
+          ))}
+        </CTableBody>
+      </CTable>
     </>
   );
 };

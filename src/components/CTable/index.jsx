@@ -37,19 +37,18 @@ export const CTable = ({
         <table id="resizeMe">{children}</table>
       </div>
 
-      {!disablePagination && (
-        <CPagination
-          count={count}
-          selectedObjectsForDelete={selectedObjectsForDelete}
-          page={page}
-          setCurrentPage={setCurrentPage}
-          paginationExtraButton={paginationExtraButton}
-          limit={limit}
-          multipleDelete={multipleDelete}
-          setLimit={setLimit}
-          defaultLimit={defaultLimit}
-        />
-      )}
+      <CPagination
+        count={count}
+        selectedObjectsForDelete={selectedObjectsForDelete}
+        page={page}
+        setCurrentPage={setCurrentPage}
+        paginationExtraButton={paginationExtraButton}
+        limit={limit}
+        multipleDelete={multipleDelete}
+        setLimit={setLimit}
+        defaultLimit={defaultLimit}
+        disablePagination={disablePagination}
+      />
     </Paper>
   );
 };
@@ -72,7 +71,18 @@ export const CTableHeadCell = ({
 };
 
 export const CTableBody = forwardRef(
-  ({ children, columnsCount, loader, title, selectedObjectsForDelete,  dataLength, ...props }, ref) => {
+  (
+    {
+      children,
+      columnsCount,
+      loader,
+      title,
+      selectedObjectsForDelete,
+      dataLength,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <>
         <TableLoader

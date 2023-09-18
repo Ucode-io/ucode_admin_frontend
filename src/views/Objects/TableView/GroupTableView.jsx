@@ -60,7 +60,6 @@ const GroupTableView = ({
   // const selectTableSlug = selectedLinkedObject
   //   ? selectedLinkedObject?.split("#")?.[1]
   //   : tableSlug;
-  console.log("grouptableview", view);
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
@@ -433,6 +432,7 @@ const GroupTableView = ({
           id="data-table"
         >
           <GroupObjectDataTable
+            disablePagination
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
             selectedView={selectedView}

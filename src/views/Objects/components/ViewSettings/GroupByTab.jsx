@@ -78,10 +78,19 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
         const filteredColumn = updatedColumns.splice(columnIndex, 1)[0];
         updatedColumns.unshift(filteredColumn);
       }
-      console.log("updatedColumns", updatedColumns);
       replace(updatedColumns);
     } else {
-      replace(updatedColumns);
+      const columnIndex = updatedColumns.findIndex(
+        (item) => item?.id === selectedId
+      );
+
+      if (columnIndex !== -1) {
+        const filteredColumn = updatedColumns[columnIndex];
+        updatedColumns.splice(columnIndex, 1);
+        updatedColumns.splice(1, 0, filteredColumn);
+        console.log("updatedColumns", updatedColumns);
+        replace(updatedColumns);
+      }
     }
 
     if (!form.watch(`attributes.group_by_columns.${index}.is_checked`)) {
@@ -89,6 +98,8 @@ const GroupByTab = ({ form, updateView, isMenu }) => {
       updatedGroupColumn.unshift(groupMovedColumn);
       replaceGroup(updatedGroupColumn);
     } else {
+      const groupMovedColumn = updatedGroupColumn.splice(index, 1)[0];
+      updatedGroupColumn.splice(1, 0, groupMovedColumn);
       replaceGroup(updatedGroupColumn);
     }
   };

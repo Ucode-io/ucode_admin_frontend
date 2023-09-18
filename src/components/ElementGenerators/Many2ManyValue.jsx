@@ -2,6 +2,7 @@ import React, {useMemo} from "react";
 import {useQuery} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import get from "lodash.get";
+import styles from "./style.module.scss";
 
 function Many2ManyValue({field, value}) {
   const {data: options = []} = useQuery(
@@ -23,7 +24,7 @@ function Many2ManyValue({field, value}) {
       .join(", ");
   }, [field, options]);
 
-  return <div>{computedValue}</div>;
+  return <div className={styles.container}>{computedValue}</div>;
 }
 
 export default Many2ManyValue;

@@ -40,7 +40,6 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
         name={`multi.${index}.${field.slug}`}
         watch={watch}
         fields={fields}
-        updateObject={updateObject}
         field={field}
         row={row}
         index={index}

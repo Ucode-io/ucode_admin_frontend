@@ -59,7 +59,7 @@ const FieldSettings = ({
     } else {
       return menuItem?.table_id;
     }
-  }, [id, slug]);
+  }, [id, tableSlug]);
 
   const updateFieldInform = (field) => {
     const fields = mainForm.getValues("fields");
@@ -88,9 +88,9 @@ const FieldSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", {slug}],
+    ["GET_VIEWS_AND_FIELDS", {tableSlug}],
     () => {
-      return constructorObjectService.getList(slug, {
+      return constructorObjectService.getList(tableSlug, {
         data: {limit: 10, offset: 0, with_relations: true, app_id: appId},
       });
     },

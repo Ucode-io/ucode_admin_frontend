@@ -462,7 +462,7 @@ const AutoCompleteElement = ({
             inputChangeHandler(e);
           }}
           getOptionLabel={(option) =>
-            field?.attributes?.view_fields?.map((el) => option[el?.slug])
+            field?.attributes?.view_fields?.map((el) => `${option[el?.slug]} `)
           }
           getOptionValue={(option) => option?.guid}
           components={{

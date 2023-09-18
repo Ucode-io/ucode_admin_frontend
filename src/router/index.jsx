@@ -70,6 +70,7 @@ import ClientUserPage from "../views/Users/UserPage";
 import WebPage from "../views/WebPage";
 import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
 import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
+import Invite from "../views/Auth/Invite";
 
 const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
@@ -116,6 +117,7 @@ const Router = () => {
           <Route path="/" element={<AuthLayout />}>
             <Route index element={<Navigate to="/login " />} />
             <Route path="login" element={<Login />} />
+            <Route path="invite-user" element={<Invite />} />
             <Route path="registration" element={<Registration />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Route>

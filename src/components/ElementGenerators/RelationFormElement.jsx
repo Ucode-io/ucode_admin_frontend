@@ -148,6 +148,7 @@ const AutoCompleteElement = ({
   const {id} = useParams();
   const isUserId = useSelector((state) => state?.auth?.userId);
   const clientTypeID = useSelector((state) => state?.auth?.clientType?.id);
+  const [firstValue, setFirstValue] = useState(false);
 
   const ids = field?.attributes?.is_user_id_default ? isUserId : undefined;
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -318,7 +319,7 @@ const AutoCompleteElement = ({
       setLocalValue(value);
     }
   };
-
+  console.log("localValue", localValue);
   const setDefaultValue = () => {
     if (options?.slugOptions && multipleInsertField) {
       const val = options?.slugOptions?.find((item) => item?.guid === id);
@@ -364,7 +365,7 @@ const AutoCompleteElement = ({
 
   useEffect(() => {
     setClientTypeValue();
-  }, [options]);
+  }, []);
 
   useEffect(() => {
     if (field?.attributes?.function_path) {
@@ -444,7 +445,7 @@ const AutoCompleteElement = ({
             disabled ||
             (field?.attributes?.object_id_from_jwt &&
               field?.id?.split("#")?.[0] === "client_type") ||
-            field?.attributes?.is_user_id_default
+            (field?.attributes?.is_user_id_default && localValue?.length !== 0)
           }
           options={options?.options ?? []}
           isClearable={true}

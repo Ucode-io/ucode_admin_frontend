@@ -17,6 +17,8 @@ const TableRow = ({
   width,
   rowIndex,
   control,
+  isTableView,
+  relatedTableSlug,
   onRowClick,
   calculateWidthFixedColumn,
   onDeleteClick,
@@ -43,6 +45,7 @@ const TableRow = ({
   onChecked,
   relationFields,
   data,
+  style,
 }) => {
   const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
@@ -61,6 +64,7 @@ const TableRow = ({
     return (
       <TableRowForm
         onDeleteClick={onDeleteClick}
+        isTableView={isTableView}
         remove={remove}
         watch={watch}
         onCheckboxChange={onCheckboxChange}
@@ -93,6 +97,7 @@ const TableRow = ({
           // }}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
+          style={style}
         >
           <CTableCell
             align="center"
@@ -121,9 +126,12 @@ const TableRow = ({
                   <OpenInFullIcon />
                 </Button>
               ) : (
-                <span className="data_table__row_number" style={{ display: "block", width: "35px" }}>
-                  {/* {(currentPage - 1) * limit + rowIndex + 1} */}
-                  {rowIndex + 1}
+                <span
+                  className="data_table__row_number"
+                  style={{display: "block", width: "35px"}}
+                >
+                  {(currentPage - 1) * limit + rowIndex + 1}
+                  {/* {rowIndex + 1} */}
                 </span>
               )}
 
@@ -144,19 +152,11 @@ const TableRow = ({
               )}
             </div>
 
-            {onCheckboxChange && (
-              <div
-                className={`data_table__row_checkbox ${
-                  isChecked(row) ? "checked" : ""
-                }`}
-              >
-                <Checkbox
-                  checked={isChecked(row)}
-                  onChange={(_, val) => onCheckboxChange(val, row)}
-                  onClick={(e) => e.stopPropagation()}
-                />
+            {/* {onCheckboxChange && (
+              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
+                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
               </div>
-            )}
+            )} */}
           </CTableCell>
 
           {columns.map(
@@ -185,7 +185,9 @@ const TableRow = ({
                     //     ? `${calculateWidth(column?.id, index)}px`
                     //     : "0"
                     // }`,
-                    left: view?.attributes?.fixedColumns?.[column?.id] ? `${calculateWidthFixedColumn(column.id)}px` : "0",
+                    left: view?.attributes?.fixedColumns?.[column?.id]
+                      ? `${calculateWidthFixedColumn(column.id)}px`
+                      : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
                         (item) => item?.id === column?.id
@@ -202,21 +204,24 @@ const TableRow = ({
                     }`,
                   }}
                 >
-                  {/* <CellElementGenerator field={column} row={row} /> */}
-                  <TableDataForm
-                    tableSlug={tableSlug}
-                    watch={watch}
-                    fields={columns}
-                    field={column}
-                    mainForm={mainForm}
-                    row={row}
-                    index={rowIndex}
-                    control={control}
-                    setFormValue={setFormValue}
-                    relationfields={relationFields}
-                    data={data}
-                    onRowClick={onRowClick}
-                  />
+                  {isTableView ? (
+                    <TableDataForm
+                      tableSlug={tableSlug}
+                      watch={watch}
+                      fields={columns}
+                      field={column}
+                      mainForm={mainForm}
+                      row={row}
+                      index={rowIndex}
+                      control={control}
+                      setFormValue={setFormValue}
+                      relationfields={relationFields}
+                      data={data}
+                      onRowClick={onRowClick}
+                    />
+                  ) : (
+                    <CellElementGenerator field={column} row={row} />
+                  )}
                 </CTableCell>
               )
           )}
@@ -230,12 +235,7 @@ const TableRow = ({
               }}
             >
               <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
-                <RectangleIconButton
-                  color="error"
-                  onClick={() =>
-                    row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-                  }
-                >
+                <RectangleIconButton color="error" onClick={() => (row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex))}>
                   <Delete color="error" />
                 </RectangleIconButton>
               </PermissionWrapperV2>
@@ -248,28 +248,17 @@ const TableRow = ({
             <div style={{display: "flex", gap: "5px", padding: "3px"}}></div>
           </td>
         </CTableRow>
-      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" ||
-        !relationAction?.action_relations ? (
+      ) : relationAction?.action_relations?.[0]?.value === "go_to_page" || !relationAction?.action_relations ? (
         <CTableRow
           onClick={() => {
             onRowClick(row, rowIndex);
           }}
         >
           <CTableCell align="center" className="data_table__number_cell">
-            <span className="data_table__row_number">
-              {(currentPage - 1) * limit + rowIndex + 1}
-            </span>
+            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
             {onCheckboxChange && (
-              <div
-                className={`data_table__row_checkbox ${
-                  isChecked(row) ? "checked" : ""
-                }`}
-              >
-                <Checkbox
-                  checked={isChecked(row)}
-                  onChange={(_, val) => onCheckboxChange(val, row)}
-                  onClick={(e) => e.stopPropagation()}
-                />
+              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
+                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
               </div>
             )}
           </CTableCell>
@@ -325,20 +314,10 @@ const TableRow = ({
           }}
         >
           <CTableCell align="center" className="data_table__number_cell">
-            <span className="data_table__row_number">
-              {(currentPage - 1) * limit + rowIndex + 1}
-            </span>
+            <span className="data_table__row_number">{(currentPage - 1) * limit + rowIndex + 1}</span>
             {onCheckboxChange && (
-              <div
-                className={`data_table__row_checkbox ${
-                  isChecked(row) ? "checked" : ""
-                }`}
-              >
-                <Checkbox
-                  checked={isChecked(row)}
-                  onChange={(_, val) => onCheckboxChange(val, row)}
-                  onClick={(e) => e.stopPropagation()}
-                />
+              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
+                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
               </div>
             )}
           </CTableCell>
@@ -361,11 +340,7 @@ const TableRow = ({
                   ? `${calculateWidth(column?.id, index)}px`
                   : "0",
                 backgroundColor: "#fff",
-                zIndex: tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id
-                )?.isStiky
-                  ? "1"
-                  : "",
+                zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
               }}
             >
               <CellElementGenerator field={column} row={row} />

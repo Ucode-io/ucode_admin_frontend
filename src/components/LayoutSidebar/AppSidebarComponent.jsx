@@ -32,6 +32,7 @@ const AppSidebar = ({
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
   const readPermission = element?.data?.permission?.read;
+
   const withoutPermission =
     element?.id === adminId || element?.id === analyticsId ? true : false;
   const permission = defaultAdmin
@@ -47,6 +48,19 @@ const AppSidebar = ({
     } else if (element.type === "TABLE") {
       setSubMenuIsOpen(false);
       navigate(`/main/${element?.id}/object/${element?.data?.table?.slug}`);
+    } else if (element.type === "LINK") {
+      if (element?.id === "3b74ee68-26e3-48c8-bc95-257ca7d6aa5c") {
+        navigate(
+          replaceValues(
+            element?.attributes?.link,
+            auth?.loginTableSlug,
+            auth?.userId
+          )
+        );
+      } else {
+        navigate(element?.attributes?.link);
+      }
+      setSubMenuIsOpen(false);
     } else if (element.type === "MICROFRONTEND") {
       setSubMenuIsOpen(false);
       let obj = {};
@@ -75,6 +89,12 @@ const AppSidebar = ({
       return "";
     }
   }, [i18n.language]);
+
+  function replaceValues(inputString, loginTableSlug, userId) {
+    return inputString
+      .replace("{login_table_slug}", loginTableSlug)
+      .replace("{user_id}", userId);
+  }
 
   useEffect(() => {
     setElement(element);
@@ -191,6 +211,23 @@ const AppSidebar = ({
               onClick={(e) => {
                 e.stopPropagation();
                 handleOpenNotify(e, "TABLE");
+                setElement(element);
+              }}
+              style={{
+                color:
+                  selectedApp?.id === element.id
+                    ? menuStyle?.active_text
+                    : menuStyle?.text || "",
+              }}
+              element={element}
+            />
+          )}
+          {element?.type === "LINK" && (
+            <MenuIcon
+              title="Table settings"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenNotify(e, "LINK");
                 setElement(element);
               }}
               style={{

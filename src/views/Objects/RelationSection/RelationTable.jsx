@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import {  useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
 import SecondaryButton from "../../../components/Buttons/SecondaryButton";
@@ -109,7 +109,6 @@ const RelationTable = forwardRef(
         "GET_OBJECT_LIST",
         relatedTableSlug,
         shouldGet,
-        appId,
         {
           filters: computedFilters,
           offset: pageToOffset(currentPage, limit),
@@ -123,12 +122,11 @@ const RelationTable = forwardRef(
             limit: id ? limit : 0,
             ...computedFilters,
           },
-        });
+        })
       },
       {
-        enabled: !!relatedTableSlug && !!appId,
+        enabled: !!relatedTableSlug,
         select: ({ data }) => {
-          
           const tableData = id ? objectToArray(data.response ?? {}) : [];
           const pageCount = isNaN(data?.count) || tableData.length === 0 ? 1 : Math.ceil(data.count / limit);
           setDataLength(tableData.length);
@@ -151,7 +149,7 @@ const RelationTable = forwardRef(
         },
         onSuccess: () => {
           setFormValue("multi", tableData);
-        }
+        },
       }
     );
 
@@ -224,7 +222,7 @@ const RelationTable = forwardRef(
 
     if (loader) return <PageFallback />;
     return (
-      <div className={styles.relationTable} ref={tableRef}>
+      <div assName={styles.relationTable} ref={tableRef}>
         {!!quickFilters?.length && (
           <div className={styles.filtersBlock}>
             {quickFilters.map((field) => (
@@ -235,7 +233,7 @@ const RelationTable = forwardRef(
             ))}
           </div>
         )}
- 
+
         <div className={styles.tableBlock}>
           {viewPermission && (
             <ObjectDataTable

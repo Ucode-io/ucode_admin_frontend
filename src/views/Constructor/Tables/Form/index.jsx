@@ -68,6 +68,7 @@ const ConstructorTablesFormPage = () => {
     const params = {};
 
     const getTableData = constructorTableService.getById(id);
+
     const getViewRelations = constructorViewRelationService.getList({
       table_slug: slug,
     });
@@ -75,6 +76,8 @@ const ConstructorTablesFormPage = () => {
     const getActions = constructorCustomEventService.getList({
       table_slug: slug,
     });
+
+    console.log("getActions", getActions);
 
     const getLayouts = layoutService
       .getList({
@@ -87,11 +90,10 @@ const ConstructorTablesFormPage = () => {
     try {
       const [tableData, {custom_events: actions = []}] = await Promise.all([
         getTableData,
-        getViewRelations,
         getActions,
+        getViewRelations,
         getLayouts,
       ]);
-
       const data = {
         ...mainForm.getValues(),
         ...tableData,
@@ -184,6 +186,18 @@ const ConstructorTablesFormPage = () => {
   const updateConstructorTable = (data) => {
     setBtnLoader(true);
     const updateTableData = constructorTableService.update(data, projectId);
+
+    // const updateSectionData = constructorSectionService.update({
+    //   sections: addOrderNumberToSections(data.sections),
+    //   table_slug: data.slug,
+    //   table_id: id,
+    // });
+
+    // const updateViewRelationsData = constructorViewRelationService.update({
+    //   view_relations: data.view_relations,
+    //   table_slug: data.slug,
+    // });
+
     const computedLayouts = data.layouts.map((layout) => ({
       ...layout,
       summary_fields: layout?.summary_fields?.map((item) => {

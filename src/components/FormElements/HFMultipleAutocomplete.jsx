@@ -1,8 +1,18 @@
-import { Close, Lock } from "@mui/icons-material";
-import { Autocomplete, FormControl, FormHelperText, InputLabel, TextField, Dialog, createFilterOptions, Tooltip, InputAdornment } from "@mui/material";
-import { useState } from "react";
-import { useMemo } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import {Close, Lock} from "@mui/icons-material";
+import {
+  Autocomplete,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  TextField,
+  Dialog,
+  createFilterOptions,
+  Tooltip,
+  InputAdornment,
+} from "@mui/material";
+import {useState} from "react";
+import {useMemo} from "react";
+import {Controller, useForm, useWatch} from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
 import HFColorPicker from "./HFColorPicker";
 import HFIconPicker from "./HFIconPicker";
@@ -11,10 +21,10 @@ import HFTextField from "./HFTextField";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import AddIcon from "@mui/icons-material/Add";
 import constructorFieldService from "../../services/constructorFieldService";
-import { generateGUID } from "../../utils/generateID";
+import {generateGUID} from "../../utils/generateID";
 import RippleLoader from "../Loaders/RippleLoader";
 import FRow from "./FRow";
-import { makeStyles } from "@mui/styles";
+import {makeStyles} from "@mui/styles";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 const filter = createFilterOptions();
@@ -43,6 +53,7 @@ const HFMultipleAutocomplete = ({
   rules = {},
   defaultValue = "",
   disabled,
+  setFormValue,
 }) => {
   const classes = useStyles();
   const options = field.attributes?.options ?? [];
@@ -59,7 +70,10 @@ const HFMultipleAutocomplete = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange: onFormChange, value }, fieldState: { error } }) => {
+      render={({
+        field: {onChange: onFormChange, value},
+        fieldState: {error},
+      }) => {
         return (
           <AutoCompleteElement
             value={value}
@@ -122,7 +136,12 @@ const AutoCompleteElement = ({
   const computedValue = useMemo(() => {
     if (!value?.length) return [];
 
-    if (isMultiSelect) return value?.map((el) => localOptions?.find((option) => option.value === el)) ?? [];
+    if (isMultiSelect)
+      return (
+        value?.map((el) =>
+          localOptions?.find((option) => option.value === el)
+        ) ?? []
+      );
     else return [localOptions?.find((option) => option.value === value[0])];
   }, [value, localOptions, isMultiSelect]);
 
@@ -145,14 +164,22 @@ const AutoCompleteElement = ({
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
 
+  console.log("computedValue", computedValue);
+
   return (
-    <FormControl style={{ width }}>
+    <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>
       <Autocomplete
         multiple
         value={computedValue}
         options={localOptions}
-        popupIcon={isBlackBg ? <ArrowDropDownIcon style={{ color: "#fff" }} /> : <ArrowDropDownIcon />}
+        popupIcon={
+          isBlackBg ? (
+            <ArrowDropDownIcon style={{color: "#fff"}} />
+          ) : (
+            <ArrowDropDownIcon />
+          )
+        }
         getOptionLabel={(option) => option?.label ?? option?.value}
         isOptionEqualToValue={(option, value) => option?.value === value?.value}
         onChange={changeHandler}
@@ -173,6 +200,12 @@ const AutoCompleteElement = ({
             {...params}
             placeholder={computedValue.length ? "" : placeholder}
             // autoFocus={tabIndex === 1}
+            sx={{
+              "&.MuiInputAdornment-root": {
+                position: "absolute",
+                right: 0,
+              },
+            }}
             InputProps={{
               // inputProps: { tabIndex },
               ...params.InputProps,
@@ -189,14 +222,22 @@ const AutoCompleteElement = ({
                   },
 
               endAdornment: disabled && (
-                <Tooltip title="This field is disabled for this role!">
+                <Tooltip
+                  title="This field is disabled for this role!"
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                  }}
+                >
                   <InputAdornment position="start">
-                    <Lock style={{ fontSize: "20px" }} />
+                    <Lock style={{fontSize: "20px"}} />
                   </InputAdornment>
                 </Tooltip>
               ),
             }}
-            className={`${isFormEdit ? "custom_textfield" : ""} multiSelectInput`}
+            className={`${
+              isFormEdit ? "custom_textfield" : ""
+            } multiSelectInput`}
             size="small"
           />
         )}
@@ -205,28 +246,48 @@ const AutoCompleteElement = ({
         renderTags={(values, getTagProps) => (
           <div className={styles.valuesWrapper}>
             {values?.map((el, index) => (
-              <div key={el?.value} className={styles.multipleAutocompleteTags} style={hasColor ? { color: el?.color, background: `${el?.color}30` } : {}}>
+              <div
+                key={el?.value}
+                className={styles.multipleAutocompleteTags}
+                style={
+                  hasColor
+                    ? {color: el?.color, background: `${el?.color}30`}
+                    : {}
+                }
+              >
                 {hasIcon && <IconGenerator icon={el?.icon} />}
                 <p className={styles.value}>{el?.label ?? el?.value}</p>
-                {field?.attributes?.disabled === false && editPermission && <Close fontSize="10" onClick={getTagProps({ index })?.onDelete} />}
+                {field?.attributes?.disabled === false && editPermission && (
+                  <Close
+                    fontSize="10"
+                    onClick={getTagProps({index})?.onDelete}
+                  />
+                )}
               </div>
             ))}
           </div>
         )}
       />
-      {!disabledHelperText && error?.message && <FormHelperText error>{error?.message}</FormHelperText>}
+      {!disabledHelperText && error?.message && (
+        <FormHelperText error>{error?.message}</FormHelperText>
+      )}
       <Dialog open={!!dialogState} onClose={handleClose}>
-        <AddOptionBlock dialogState={dialogState} addNewOption={addNewOption} handleClose={handleClose} field={field} />
+        <AddOptionBlock
+          dialogState={dialogState}
+          addNewOption={addNewOption}
+          handleClose={handleClose}
+          field={field}
+        />
       </Dialog>
     </FormControl>
   );
 };
 
-const AddOptionBlock = ({ field, dialogState, handleClose, addNewOption }) => {
+const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
   const hasColor = field.attributes?.has_color;
   const hasIcon = field.attributes?.has_icon;
   const [loader, setLoader] = useState(false);
-  const { control, handleSubmit } = useForm({
+  const {control, handleSubmit} = useForm({
     defaultValues: {
       label: dialogState,
       value: dialogState,
@@ -244,7 +305,7 @@ const AddOptionBlock = ({ field, dialogState, handleClose, addNewOption }) => {
     };
 
     constructorFieldService
-      .update({ ...data })
+      .update({...data})
       .then((res) => {
         handleClose(false);
         addNewOption(newOption);
@@ -271,7 +332,9 @@ const AddOptionBlock = ({ field, dialogState, handleClose, addNewOption }) => {
           <h4>Color</h4>
         </div>
         <div className={styles.icon_picker}>
-          {hasIcon && <HFIconPicker shape="rectangle" control={control} name="icon" />}
+          {hasIcon && (
+            <HFIconPicker shape="rectangle" control={control} name="icon" />
+          )}
           <h4>Icon</h4>
         </div>
       </div>

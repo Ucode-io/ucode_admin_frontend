@@ -26,6 +26,7 @@ const SubMenu = ({
   isLoading,
   menuStyle,
   setSelectedApp,
+  setLinkedTableModal,
 }) => {
   const dispatch = useDispatch();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
@@ -141,6 +142,7 @@ const SubMenu = ({
                       setFolderModalType={setFolderModalType}
                       sidebarIsOpen={subMenuIsOpen}
                       setTableModal={setTableModal}
+                      setLinkedTableModal={setLinkedTableModal}
                       handleOpenNotify={handleOpenNotify}
                       setElement={setElement}
                       setSubMenuIsOpen={setSubMenuIsOpen}

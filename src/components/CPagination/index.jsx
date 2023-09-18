@@ -1,13 +1,14 @@
-import { Button, Pagination } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import {Button, Pagination} from "@mui/material";
+import {useTranslation} from "react-i18next";
 import CSelect from "../CSelect";
 import styles from "./style.module.scss";
 import AddIcon from "@mui/icons-material/Add";
 import useTabRouter from "../../hooks/useTabRouter";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 const CPagination = ({
   setCurrentPage = () => {},
+  view,
   paginationExtraButton,
   multipleDelete,
   selectedObjectsForDelete,
@@ -15,9 +16,10 @@ const CPagination = ({
   setLimit = () => {},
   ...props
 }) => {
-  const { t } = useTranslation();
-  const { navigateToForm } = useTabRouter();
-  const { tableSlug } = useParams();
+  const {t} = useTranslation();
+  const {navigateToForm} = useTabRouter();
+  const navigate = useNavigate();
+  const {tableSlug} = useParams();
   const options = [
     {
       value: isNaN(parseInt(props?.defaultLimit))
@@ -27,14 +29,18 @@ const CPagination = ({
         ? ""
         : parseInt(props?.defaultLimit),
     },
-    { value: 10, label: 10 },
-    { value: 15, label: 15 },
-    { value: 20, label: 20 },
-    { value: 25, label: 25 },
-    { value: 30, label: 30 },
-    { value: 35, label: 35 },
-    { value: 40, label: 40 },
+    {value: 10, label: 10},
+    {value: 15, label: 15},
+    {value: 20, label: 20},
+    {value: 25, label: 25},
+    {value: 30, label: 30},
+    {value: 35, label: 35},
+    {value: 40, label: 40},
   ];
+
+  const objectNavigate = () => {
+    navigate(view?.attributes?.url_object);
+  };
 
   return (
     <div
@@ -49,7 +55,7 @@ const CPagination = ({
       }}
     >
       <div>
-        {/* {limit && (
+        {limit && (
           <div className={styles.limitSide}>
             {t("showing")}
             <CSelect
@@ -58,26 +64,37 @@ const CPagination = ({
               size="small"
               value={limit}
               onChange={(e) => setLimit(e.target.value)}
-              inputProps={{ style: { borderRadius: 50 } }}
+              inputProps={{style: {borderRadius: 50}}}
               endAdornment={null}
               sx={null}
             />
           </div>
-        )} */}
+        )}
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{display: "flex", alignItems: "center", gap: 10}}>
         {selectedObjectsForDelete?.length > 0 && (
           <Button variant="outlined" color="error" onClick={multipleDelete}>
             Delete all selected
           </Button>
         )}
 
-        <Button variant="outlined" onClick={() => navigateToForm(tableSlug)}>
-          <AddIcon style={{ color: "#007AFF" }} />
+        <Button
+          variant="outlined"
+          onClick={() => {
+            if (view?.attributes?.url_object) {
+              objectNavigate();
+            } else navigateToForm(tableSlug);
+          }}
+        >
+          <AddIcon style={{color: "#007AFF"}} />
           Add object
         </Button>
 
-        {/* <Pagination color="primary" onChange={(e, val) => setCurrentPage(val)} {...props} /> */}
+        <Pagination
+          color="primary"
+          onChange={(e, val) => setCurrentPage(val)}
+          {...props}
+        />
         {paginationExtraButton}
       </div>
     </div>

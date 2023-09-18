@@ -1,12 +1,21 @@
 import { Description, MoreVertOutlined } from "@mui/icons-material";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
+import MultipleInsertButton from "./components/MultipleInsertForm";
+import CustomActionsButton from "./components/CustomActionsButton";
+import {
+  ArrowDropDownCircleOutlined,
+  Clear,
+  Edit,
+  Save,
+} from "@mui/icons-material";
+import { useFieldArray, useForm } from "react-hook-form";
+import AddIcon from "@mui/icons-material/Add";
 import HexagonIcon from "@mui/icons-material/Hexagon";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import { Button, CircularProgress, Divider, Menu } from "@mui/material";
 import { endOfMonth, startOfMonth } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +37,7 @@ import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView
 import GroupByButton from "./GroupByButton";
 import LanguagesNavbar from "./LanguagesNavbar";
 import ShareModal from "./ShareModal/ShareModal";
+import { menuActions } from "../../store/menuItem/menuItem.slice";
 import TableView from "./TableView";
 import TreeView from "./TreeView";
 import ExcelButtons from "./components/ExcelButtons";
@@ -38,7 +48,14 @@ import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
 import SortButton from "./SortButton";
 
-const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, fieldsMap, menuItem }) => {
+const ViewsWithGroups = ({
+  views,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  view,
+  fieldsMap,
+  menuItem,
+}) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
   const dispatch = useDispatch();
@@ -165,6 +182,11 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
   const navigateToCreatePage = () => {
     navigateToForm(tableSlug);
+  };
+
+  const navigateToCreatePageWithInvite = () => {
+    navigateToForm(tableSlug);
+    dispatch(menuActions.setInvite(true));
   };
 
   function dateIsValid(date) {
@@ -450,9 +472,19 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
             >
               <div className={style.menuBar}>
                 <ExcelButtons fieldsMap={fieldsMap} view={view} />
-                <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)}>
-                  <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
-                    <Description className={style.icon} style={{ color: "#6E8BB7" }} />
+                <div
+                  className={style.template}
+                  onClick={() => setSelectedTabIndex(views?.length)}
+                >
+                  <div
+                    className={`${style.element} ${
+                      selectedTabIndex === views?.length ? style.active : ""
+                    }`}
+                  >
+                    <Description
+                      className={style.icon}
+                      style={{ color: "#6E8BB7" }}
+                    />
                   </div>
                   <span>{t("template")}</span>
                 </div>
@@ -481,13 +513,31 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
 
               {/* <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+                {invite && (
+                  <Button
+                    variant="contained"
+                    onClick={navigateToCreatePageWithInvite}
+                  >
+                    Invite
+                  </Button>
+                )}
+                <RectangleIconButton
+                  color="success"
+                  size="small"
+                  onClick={navigateToCreatePage}
+                >
                 <Button variant="outlined" onClick={navigateToCreatePage}>
                   <AddIcon style={{ color: "#007AFF" }} />
                   Add object
                 </Button>
                 {formVisible ? (
                   <>
-                    <RectangleIconButton color="success" size="small" onClick={handleSubmit(onSubmit)} loader={isLoading}>
+                    <RectangleIconButton
+                      color="success"
+                      size="small"
+                      onClick={handleSubmit(onSubmit)}
+                      loader={isLoading}
+                    >
                       <Save color="success" />
                     </RectangleIconButton>
                     <RectangleIconButton
@@ -522,8 +572,16 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                   // </PermissionWrapperV2>
                   ""
                 )}
-                <MultipleInsertButton view={view} fieldsMap={fieldsMap} tableSlug={tableSlug} />
-                <CustomActionsButton selectedObjects={selectedObjects} setSelectedObjects={setSelectedObjects} tableSlug={tableSlug} />
+                <MultipleInsertButton
+                  view={view}
+                  fieldsMap={fieldsMap}
+                  tableSlug={tableSlug}
+                />
+                <CustomActionsButton
+                  selectedObjects={selectedObjects}
+                  setSelectedObjects={setSelectedObjects}
+                  tableSlug={tableSlug}
+                />
               </PermissionWrapperV2>
             </div> */}
             </div>
@@ -533,7 +591,13 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
               {tabs?.map((tab) => (
                 <TabPanel key={tab.value}>
                   {view.type === "TREE" ? (
-                    <TreeView tableSlug={tableSlug} filters={filters} view={view} fieldsMap={fieldsMap} tab={tab} />
+                    <TreeView
+                      tableSlug={tableSlug}
+                      filters={filters}
+                      view={view}
+                      fieldsMap={fieldsMap}
+                      tab={tab}
+                    />
                   ) : view?.type === "FINANCE CALENDAR" ? (
                     <FinancialCalendarView
                       view={view}
@@ -548,6 +612,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                   ) : (
                     <TableView
                       control={control}
+                      isTableView={true}
                       setFormVisible={setFormVisible}
                       formVisible={formVisible}
                       filters={filters}
@@ -576,7 +641,12 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
               {!tabs?.length && (
                 <>
                   {view.type === "TREE" ? (
-                    <TreeView tableSlug={tableSlug} filters={filters} view={view} fieldsMap={fieldsMap} />
+                    <TreeView
+                      tableSlug={tableSlug}
+                      filters={filters}
+                      view={view}
+                      fieldsMap={fieldsMap}
+                    />
                   ) : view?.type === "FINANCE CALENDAR" ? (
                     <FinancialCalendarView
                       control={control}
@@ -593,6 +663,7 @@ const ViewsWithGroups = ({ views, selectedTabIndex, setSelectedTabIndex, view, f
                       setDataLength={setDataLength}
                       selectedTabIndex={selectedTabIndex}
                       shouldGet={shouldGet}
+                      isTableView={true}
                       reset={reset}
                       sortedDatas={sortedDatas}
                       menuItem={menuItem}
@@ -650,7 +721,10 @@ const queryGenerator = (groupField, filters = {}) => {
       });
 
     return {
-      queryKey: ["GET_OBJECT_LIST_ALL", { tableSlug: groupField.table_slug, filters: computedFilters }],
+      queryKey: [
+        "GET_OBJECT_LIST_ALL",
+        { tableSlug: groupField.table_slug, filters: computedFilters },
+      ],
       queryFn,
       select: (res) =>
         res?.data?.response?.map((el) => ({

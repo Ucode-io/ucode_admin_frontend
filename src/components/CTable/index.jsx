@@ -1,5 +1,5 @@
-import { Paper } from "@mui/material";
-import { forwardRef } from "react";
+import {Paper} from "@mui/material";
+import {forwardRef} from "react";
 import CPagination from "../CPagination";
 import EmptyDataComponent from "../EmptyDataComponent";
 import TableLoader from "../TableLoader/index";
@@ -21,8 +21,8 @@ export const CTable = ({
   limit,
   setLimit,
   defaultLimit,
+  view,
 }) => {
-  console.log('fffffff', count)
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
       <div
@@ -49,17 +49,18 @@ export const CTable = ({
           multipleDelete={multipleDelete}
           setLimit={setLimit}
           defaultLimit={defaultLimit}
+          view={view}
         />
       )}
     </Paper>
   );
 };
 
-export const CTableHead = ({ children }) => {
+export const CTableHead = ({children}) => {
   return <thead className="CTableHead">{children}</thead>;
 };
 
-export const CTableHeadRow = ({ children }) => {
+export const CTableHeadRow = ({children}) => {
   return <tr className="CTableHeadRow">{children}</tr>;
 };
 
@@ -73,7 +74,18 @@ export const CTableHeadCell = ({
 };
 
 export const CTableBody = forwardRef(
-  ({ children, columnsCount, loader, title, selectedObjectsForDelete,  dataLength, ...props }, ref) => {
+  (
+    {
+      children,
+      columnsCount,
+      loader,
+      title,
+      selectedObjectsForDelete,
+      dataLength,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <>
         <TableLoader
@@ -95,7 +107,7 @@ export const CTableBody = forwardRef(
   }
 );
 
-export const CTableRow = ({ children, className, ...props }) => {
+export const CTableRow = ({children, className, ...props}) => {
   return (
     <tr className={`CTableRow ${className}`} {...props}>
       {children}

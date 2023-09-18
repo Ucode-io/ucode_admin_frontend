@@ -1,33 +1,50 @@
-import { useMutation, useQuery } from "react-query";
+import {useMutation, useQuery} from "react-query";
 import request from "../utils/request";
 
 const constructorObjectService = {
-  getList: (tableSlug, data) => request.post(`/object/get-list/${tableSlug}`, data),
-  groupByList: (tableSlug, rowTableSlug, data, params) => request.post(`/object/get-list-group-by/${tableSlug}/${rowTableSlug}`, data, { params }),
-  getAutofilterList: ({ tableSlug, ...params }, data) => request.post(`/object/get-list/${tableSlug}`, data, { params }),
+  getList: (tableSlug, data) =>
+    request.post(`/object/get-list/${tableSlug}`, data),
+  groupByList: (tableSlug, rowTableSlug, data, params) =>
+    request.post(
+      `/object/get-list-group-by/${tableSlug}/${rowTableSlug}`,
+      data,
+      {params}
+    ),
+  getAutofilterList: ({tableSlug, ...params}, data) =>
+    request.post(`/object/get-list/${tableSlug}`, data, {params}),
   update: (tableSlug, data) => request.put(`/object/${tableSlug}`, data),
-  updateMultiple: (tableSlug, data) => request.post(`/object-upsert/${tableSlug}`, data),
+  updateMultiple: (tableSlug, data) =>
+    request.post(`/object-upsert/${tableSlug}`, data),
   create: (tableSlug, data) => request.post(`/object/${tableSlug}`, data),
   getById: (tableSlug, id) => request.get(`/object/${tableSlug}/${id}`),
-  getObjectByID: ({ tableSlug, resourceId, id, envId, projectId }) =>
+  getObjectByID: ({tableSlug, resourceId, id, envId, projectId}) =>
     request.get(`/object/${tableSlug}/${id}`, {
       headers: {
         "resource-id": resourceId,
 
         "platform-type": "super-admin",
       },
-      params: { "project-id": projectId },
+      params: {"project-id": projectId},
     }),
-  
-  deleteObject: ({ tableSlug, resourceId, objectId }) =>
+  delete: (tableSlug, id) =>
+    request.delete(`/object/${tableSlug}/${id}`, {data: {data: {}}}),
+  deleteObject: ({tableSlug, resourceId, objectId}) =>
     request.delete(`/object/${tableSlug}/${objectId}`, {
-      headers: { "resource-id": resourceId },
-      data: { data: {} },
+      headers: {"resource-id": resourceId},
+      data: {data: {}},
     }),
+  updateManyToMany: (data) => request.put("/many-to-many", data),
+  updateMultipleObject: (tableSlug, data) =>
+    request.put(`/object/multiple-update/${tableSlug}`, data),
+  deleteManyToMany: (data) => request.delete("/many-to-many", {data}),
+  downloadExcel: (tableSlug, data) =>
+    request.post(`/object/excel/${tableSlug}`, data),
+  getFinancialAnalytics: (tableSlug, data) =>
+    request.post(`/object/get-financial-analytics/${tableSlug}`, data),
   updateObject: (data) =>
     request.put(
       `/object/${data.tableSlug}`,
-      { data },
+      {data},
       {
         headers: {
           "resource-id": data.resourceId,
@@ -38,7 +55,7 @@ const constructorObjectService = {
   createObject: (data) =>
     request.post(
       `/object/${data.tableSlug}`,
-      { data },
+      {data},
       {
         headers: {
           "resource-id": data.resourceId,
@@ -46,19 +63,18 @@ const constructorObjectService = {
         },
       }
     ),
-  delete: (tableSlug, id) => request.delete(`/object/${tableSlug}/${id}`, { data: { data: {} } }),
-  deleteMultiple: (tableSlug, data) => request.delete(`/object/${tableSlug}`, { data }),
-  updateManyToMany: (data) => request.put("/many-to-many", data),
-  updateMultipleObject: (tableSlug, data) => request.put(`/object/multiple-update/${tableSlug}`, data),
-  deleteManyToMany: (data) => request.delete("/many-to-many", { data }),
-  downloadExcel: (tableSlug, data) => request.post(`/object/excel/${tableSlug}`, data),
-  getFinancialAnalytics: (tableSlug, data) => request.post(`/object/get-financial-analytics/${tableSlug}`, data),
+  deleteMultiple: (tableSlug, data) =>
+    request.delete(`/object/${tableSlug}`, {data}),
 };
-export const useObjectsListQuery = ({ params = {}, data = {}, queryParams } = {}) => {
+export const useObjectsListQuery = ({
+  params = {},
+  data = {},
+  queryParams,
+} = {}) => {
   return useQuery(
-    ["OBJECTS", { ...params, ...data }],
+    ["OBJECTS", {...params, ...data}],
     () => {
-      return constructorObjectService.getAutofilterList(params, { data });
+      return constructorObjectService.getAutofilterList(params, {data});
     },
     queryParams
   );
@@ -72,7 +88,7 @@ export const useObjectGetByIdQuery = ({
   queryParams,
 }) => {
   return useQuery(
-    ["FIELD_GET_BY_ID", { tableSlug, resourceId, id, envId, projectId }],
+    ["FIELD_GET_BY_ID", {tableSlug, resourceId, id, envId, projectId}],
     () => {
       return constructorObjectService.getObjectByID({
         tableSlug,
@@ -102,7 +118,7 @@ export const useObjectCreateMutation = (mutationSettings) => {
 
 export const useObjectDeleteMutation = (mutationSettings) => {
   return useMutation(
-    ({ objectId, resourceId, tableSlug, envId }) =>
+    ({objectId, resourceId, tableSlug, envId}) =>
       constructorObjectService.deleteObject({
         tableSlug,
         resourceId,

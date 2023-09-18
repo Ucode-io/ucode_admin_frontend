@@ -5,10 +5,14 @@ export const { actions: menuActions, reducer: menuReducer } = createSlice({
   initialState: {
     menuItem: {},
     menuTemplate: "",
+    invite: false,
   },
   reducers: {
     setMenuItem: (state, { payload }) => {
       state.menuItem = payload ?? {};
+    },
+    setInvite: (state, { payload }) => {
+      state.invite = payload ?? false;
     },
     setMenuLayout: (state, { payload }) => {
       state.menuTemplate = payload ?? {};

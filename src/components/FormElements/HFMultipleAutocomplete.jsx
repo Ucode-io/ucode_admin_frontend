@@ -61,9 +61,6 @@ const HFMultipleAutocomplete = ({
   const hasIcon = field.attributes?.has_icon;
   const isMultiSelect = field.attributes?.is_multiselect;
 
-  useEffect9(() => {
-    setFormValue(defaultValue);
-  }, []);
   return (
     <Controller
       control={control}

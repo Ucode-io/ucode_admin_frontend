@@ -9,6 +9,8 @@ const HFIconPicker = ({
   disabledHelperText = false,
   required = false,
   rules = {},
+  updateObject,
+  isNewTableView=false,
   disabled = false,
   customeClick = false,
   clickItself = () => {},
@@ -30,7 +32,10 @@ const HFIconPicker = ({
             error={error}
             value={value}
             tabIndex={tabIndex}
-            onChange={onChange}
+            onChange={(val) => {
+              onChange(val);
+              isNewTableView && updateObject()
+            }}
             customeClick={customeClick}
             clickItself={clickItself}
             {...props}

@@ -16,6 +16,8 @@ const HFDateTimePicker = ({
   isFormEdit = false,
   name,
   mask,
+  updateObject,
+  isNewTableView=false,
   isTransparent = false,
   tabIndex,
   showCopyBtn,
@@ -40,7 +42,11 @@ const HFDateTimePicker = ({
             tabIndex={tabIndex}
             value={value}
             showCopyBtn={showCopyBtn}
-            onChange={onChange}
+            onChange={(val) => {
+                onChange(val)
+                isNewTableView && updateObject()
+              }
+            }
             disabled={disabled}
             isTransparent={isTransparent}
           />

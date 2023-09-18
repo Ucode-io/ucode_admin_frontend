@@ -29,6 +29,8 @@ const CellManyToManyRelationElement = ({
   isFormEdit,
   control,
   name,
+  updateObject,
+  isNewTableView=false,
   disabled,
   placeholder,
   field,
@@ -54,7 +56,12 @@ const CellManyToManyRelationElement = ({
               error={error}
               disabledHelperText={disabledHelperText}
               control={control}
-              setValue={onChange}
+              setValue={
+                (value) => {
+                  onChange(value);
+                  updateObject();
+                }
+              }
               value={value}
               setFormValue={setFormValue}
               row={row}
@@ -70,7 +77,12 @@ const CellManyToManyRelationElement = ({
               classes={classes}
               name={name}
               defaultValue={defaultValue}
-              setValue={onChange}
+              setValue={
+                (value) => {
+                  onChange(value);
+                  updateObject();
+                }
+              }
               field={field}
               tableSlug={field.table_slug}
               error={error}

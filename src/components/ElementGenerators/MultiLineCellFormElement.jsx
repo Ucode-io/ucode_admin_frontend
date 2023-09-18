@@ -17,7 +17,7 @@ const style = {
   p: 4,
 };
 
-export default function MultiLineCellFormElement({ control, computedSlug, field, isDisabled, ...props }) {
+export default function MultiLineCellFormElement({ control, computedSlug, updateObject, isNewTableView = false, field, isDisabled, ...props }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -42,6 +42,8 @@ export default function MultiLineCellFormElement({ control, computedSlug, field,
         <Box sx={style}>
           <HFTextEditor
             control={control}
+            updateObject={updateObject}
+          isNewTableView={isNewTableView}
             name={computedSlug}
             tabIndex={field?.tabIndex}
             fullWidth

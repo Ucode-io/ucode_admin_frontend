@@ -8,6 +8,8 @@ const HFSwitch = ({
   label,
   disabledHelperText,
   tabIndex,
+  updateObject,
+  isNewTableView=false,
   isBlackBg,
   onChange = () => {},
   labelProps,
@@ -42,6 +44,7 @@ const HFSwitch = ({
               onChange={(e, val) => {
                 formOnChange(val);
                 onChange(val);
+                isNewTableView && updateObject()
               }}
             />
             <label htmlFor={`switch-${id}`} {...labelProps}>

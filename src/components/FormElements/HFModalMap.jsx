@@ -5,7 +5,7 @@ import { useWatch } from "react-hook-form";
 import styles from "./style.module.scss";
 import { generateLink } from "../../utils/generateYandexLink";
 
-function HFModalMap({ control, field, defaultValue, isTransparent = false, isFormEdit, name, required }) {
+function HFModalMap({ control, field, defaultValue, updateObject, isNewTableView = false, isTransparent = false, isFormEdit, name, required }) {
   const [open, setOpen] = useState(false);
   const value = useWatch({
     control,
@@ -34,16 +34,26 @@ function HFModalMap({ control, field, defaultValue, isTransparent = false, isFor
           style: {
             background: isTransparent ? "transparent" : "",
           },
-          classes:{notchedoutline: {
-            border: "none",
-          }},
+          classes: {
+            notchedoutline: {
+              border: "none",
+            },
+          },
         }}
-        
       />
 
       <Dialog open={open} onClose={handleClose}>
         <div className={styles.mapField}>
-          <HFMapField field={field} width={"500px"} height={"400px"} control={control} name={name} defaultValue={defaultValue} />
+          <HFMapField
+            updateObject={updateObject}
+            isNewTableView={isNewTableView}
+            field={field}
+            width={"500px"}
+            height={"400px"}
+            control={control}
+            name={name}
+            defaultValue={defaultValue}
+          />
 
           <Box>
             <Button onClick={handleClose} variant="outlined" color="error">

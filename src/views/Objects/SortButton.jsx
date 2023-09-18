@@ -12,9 +12,13 @@ import SortMenuRow from "./SortMenuRow";
 export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDatas }) {
   const form = useForm({
     defaultValues: {
-      sort: [],
+      sort: [{
+        field: "",
+        order: "ASC",
+      }],
     },
   });
+  
   const [anchorEl, setAnchorEl] = useState(null);
   const { tableSlug } = useParams();
   const open = Boolean(anchorEl);
@@ -114,6 +118,14 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
         open={open}
         onClose={handleClose}
         anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -131,7 +143,7 @@ export default function SortButton({ selectedTabIndex, sortedDatas, setSortedDat
               display: "block",
               position: "absolute",
               top: 0,
-              left: 14,
+              right: 14,
               width: 10,
               height: 10,
               bgcolor: "background.paper",

@@ -129,10 +129,7 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
   };
 
   const updateField = (field) => {
-    if (!id || !menuItem?.table_id) {
-      updateFieldInform(field);
-      closeSettingsBlock();
-    } else {
+    if (id || menuItem?.table_id) {
       setFormLoader(true);
       constructorFieldService
         .update(field)
@@ -142,6 +139,9 @@ const FieldSettings = ({ closeSettingsBlock, mainForm, selectedTabIndex, selecte
           getRelationFields();
         })
         .finally(() => setFormLoader(false));
+    } else {
+      updateFieldInform(field);
+      closeSettingsBlock();
     }
   };
 

@@ -128,6 +128,7 @@ const NewCellElementGenerator = ({
           name={computedSlug}
           field={field}
           row={row}
+          onChange={onChange}
           placeholder={field.attributes?.placeholder}
           setFormValue={setFormValue}
           index={index}
@@ -142,6 +143,7 @@ const NewCellElementGenerator = ({
         <CellManyToManyRelationElement
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -159,6 +161,7 @@ const NewCellElementGenerator = ({
         <HFTextField
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -174,6 +177,7 @@ const NewCellElementGenerator = ({
         <HFPassword
           isDisabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -195,6 +199,7 @@ const NewCellElementGenerator = ({
           control={control}
           name={computedSlug}
           fullWidth
+          onChange={onChange}
           setFormValue={setFormValue}
           required={field.required}
           placeholder={field.attributes?.placeholder}
@@ -209,6 +214,7 @@ const NewCellElementGenerator = ({
         <HFTextFieldWithMask
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -227,6 +233,7 @@ const NewCellElementGenerator = ({
         <HFFormulaField
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           isTableView={true}
           isBlackBg={isBlackBg}
           control={control}
@@ -245,6 +252,7 @@ const NewCellElementGenerator = ({
         <CHFFormulaField
           setFormValue={setFormValue}
           control={control}
+          onChange={onChange}
           isTableView={true}
           required={field.required}
           placeholder={field.attributes?.placeholder}
@@ -265,6 +273,7 @@ const NewCellElementGenerator = ({
           disabled={isDisabled}
           isBlackBg={isBlackBg}
           isFormEdit
+          onChange={onChange}
           control={control}
           name={computedSlug}
           width="100%"
@@ -281,6 +290,7 @@ const NewCellElementGenerator = ({
         <HFMultipleAutocomplete
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           control={control}
           name={computedSlug}
           width="100%"
@@ -299,6 +309,7 @@ const NewCellElementGenerator = ({
         <HFMultipleAutocomplete
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           control={control}
           name={computedSlug}
           width="100%"
@@ -318,6 +329,7 @@ const NewCellElementGenerator = ({
           control={control}
           name={computedSlug}
           fullWidth
+          onChange={onChange}
           width={"100%"}
           mask={"99.99.9999"}
           isFormEdit
@@ -336,6 +348,7 @@ const NewCellElementGenerator = ({
         <HFDateTimePicker
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           isBlackBg={isBlackBg}
           showCopyBtn={false}
           control={control}
@@ -353,6 +366,7 @@ const NewCellElementGenerator = ({
         <HFTimePicker
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -372,6 +386,7 @@ const NewCellElementGenerator = ({
           control={control}
           name={computedSlug}
           fullWidth
+          onChange={onChange}
           required={field.required}
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
@@ -385,6 +400,7 @@ const NewCellElementGenerator = ({
         <HFFloatField
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           control={control}
           name={computedSlug}
           fullWidth
@@ -402,6 +418,7 @@ const NewCellElementGenerator = ({
         <HFCheckbox
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -416,6 +433,7 @@ const NewCellElementGenerator = ({
         <HFSwitch
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -430,6 +448,7 @@ const NewCellElementGenerator = ({
         <HFTextField
           disabled={isDisabled}
           isFormEdit
+          onChange={onChange}
           isBlackBg={isBlackBg}
           control={control}
           name={computedSlug}
@@ -451,6 +470,7 @@ const NewCellElementGenerator = ({
       return (
         <HFIconPicker
           isFormEdit
+          onChange={onChange}
           control={control}
           name={computedSlug}
           required={field.required}
@@ -464,6 +484,7 @@ const NewCellElementGenerator = ({
           isTransparent={true}
           control={control}
           field={field}
+          onChange={onChange}
           defaultValue={defaultValue}
           isFormEdit
           name={computedSlug}
@@ -489,6 +510,7 @@ const NewCellElementGenerator = ({
 
         <MultiLineCellFormElement
           control={control}
+          onChange={onChange}
           computedSlug={computedSlug}
           field={field}
           isDisabled={isDisabled}
@@ -501,6 +523,7 @@ const NewCellElementGenerator = ({
         <HFFileUpload
           isTransparent={true}
           control={control}
+          onChange={onChange}
           name={computedSlug}
           defaultValue={defaultValue}
           isFormEdit
@@ -513,6 +536,7 @@ const NewCellElementGenerator = ({
       return (
         <HFVideoUpload
           control={control}
+          onChange={onChange}
           name={computedSlug}
           defaultValue={defaultValue}
           isFormEdit
@@ -529,6 +553,7 @@ const NewCellElementGenerator = ({
         <HFFileUpload
           control={control}
           name={computedSlug}
+          onChange={onChange}
           defaultValue={defaultValue}
           isFormEdit
           isBlackBg={isBlackBg}
@@ -544,6 +569,7 @@ const NewCellElementGenerator = ({
         <HFColorPicker
           control={control}
           name={computedSlug}
+          onChange={onChange}
           defaultValue={defaultValue}
           isFormEdit
           isBlackBg={isBlackBg}

@@ -1,8 +1,8 @@
-import {Delete} from "@mui/icons-material";
-import {Checkbox} from "@mui/material";
-import {useNavigate} from "react-router-dom";
+import { Delete } from "@mui/icons-material";
+import { Checkbox } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
-import {CTableCell, CTableRow} from "../CTable";
+import { CTableCell, CTableRow } from "../CTable";
 import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import CellCheckboxOrOrderNumBlock from "./CellCheckboxOrOrderNumBlock";
@@ -56,7 +56,7 @@ const TableRowForm = ({
           {(currentPage - 1) * limit + rowIndex + 1}
         </CTableCell>
       )}
-      {columns.map(
+      {columns?.map(
         (column, index) =>
           column?.attributes?.field_permission?.view_permission && (
             <CTableCell
@@ -113,7 +113,7 @@ const TableRowForm = ({
             </CTableCell>
           )
       )}
-      <CTableCell style={{verticalAlign: "middle", padding: 0}}>
+      <CTableCell style={{ verticalAlign: "middle", padding: 0 }}>
         <PermissionWrapperV2
           type="delete"
           tableSlug={isRelationTable ? relatedTableSlug : tableSlug}

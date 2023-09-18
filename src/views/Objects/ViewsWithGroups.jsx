@@ -47,6 +47,8 @@ import SearchParams from "./components/ViewSettings/SearchParams";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import style from "./style.module.scss";
 import SortButton from "./SortButton";
+import GroupColumnVisible from "./GroupColumnVisible";
+import GroupTableView from "./TableView/GroupTableView";
 
 const ViewsWithGroups = ({
   views,
@@ -64,7 +66,8 @@ const ViewsWithGroups = ({
   const [shouldGet, setShouldGet] = useState(false);
   const [heightControl, setHeightControl] = useState(false);
   const [analyticsRes, setAnalyticsRes] = useState(null);
-  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] = useState(false);
+  const [isFinancialCalendarLoading, setIsFinancialCalendarLoading] =
+    useState(false);
   const { navigateToForm } = useTabRouter();
   const [dataLength, setDataLength] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
@@ -77,6 +80,13 @@ const ViewsWithGroups = ({
   const [defaultViewTab, setDefaultViewTab] = useState(0);
   const [searchText, setSearchText] = useState("");
   const [checkedColumns, setCheckedColumns] = useState([]);
+  const [tab, setTab] = useState();
+  const [sortedDatas, setSortedDatas] = useState([]);
+  const groupTable = view?.attributes.group_by_columns;
+
+  console.log("tab", tab);
+  console.log("view", view);
+  console.log("groupTable", groupTable);
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
@@ -227,7 +237,13 @@ const ViewsWithGroups = ({
 
   const columnsForSearch = useMemo(() => {
     return Object.values(fieldsMap)?.filter(
-      (el) => el?.type === "SINGLE_LINE" || el?.type === "MULTI_LINE" || el?.type === "NUMBER" || el?.type === "PHONE" || el?.type === "EMAIL" || el?.type === "INTERNATION_PHONE"
+      (el) =>
+        el?.type === "SINGLE_LINE" ||
+        el?.type === "MULTI_LINE" ||
+        el?.type === "NUMBER" ||
+        el?.type === "PHONE" ||
+        el?.type === "EMAIL" ||
+        el?.type === "INTERNATION_PHONE"
     );
   }, [view, fieldsMap]);
 
@@ -238,8 +254,6 @@ const ViewsWithGroups = ({
   useEffect(() => {
     selectAll();
   }, []);
-
-  const [sortedDatas, setSortedDatas] = useState([]);
 
   return (
     <>
@@ -279,8 +293,11 @@ const ViewsWithGroups = ({
           selectedView={selectedView}
           setSelectedView={setSelectedView}
           defaultViewTab={defaultViewTab}
+          setTab={setTab}
         />
-        {view?.type === "FINANCE CALENDAR" && <CRangePickerNew onChange={setDateFilters} value={dateFilters} />}
+        {view?.type === "FINANCE CALENDAR" && (
+          <CRangePickerNew onChange={setDateFilters} value={dateFilters} />
+        )}
       </FiltersBlock>
 
       <div className={style.extraNavbar}>
@@ -288,7 +305,10 @@ const ViewsWithGroups = ({
           <div className={style.search}>
             <FastFilterButton view={view} fieldsMap={fieldsMap} />
             <Divider orientation="vertical" flexItem />
-            <SearchInput placeholder={"Search"} onChange={(e) => setSearchText(e)} />
+            <SearchInput
+              placeholder={"Search"}
+              onChange={(e) => setSearchText(e)}
+            />
             <button
               className={style.moreButton}
               onClick={handleClickSearch}
@@ -330,7 +350,11 @@ const ViewsWithGroups = ({
                 },
               }}
             >
-              <SearchParams checkedColumns={checkedColumns} setCheckedColumns={setCheckedColumns} columns={columnsForSearch} />
+              <SearchParams
+                checkedColumns={checkedColumns}
+                setCheckedColumns={setCheckedColumns}
+                columns={columnsForSearch}
+              />
             </Menu>
           </div>
 
@@ -347,13 +371,21 @@ const ViewsWithGroups = ({
 
             <Divider orientation="vertical" flexItem />
 
-            <SortButton selectedTabIndex={selectedTabIndex} sortDatas={sortedDatas} setSortedDatas={setSortedDatas} />
+            <SortButton
+              selectedTabIndex={selectedTabIndex}
+              sortDatas={sortedDatas}
+              setSortedDatas={setSortedDatas}
+            />
+            <GroupColumnVisible selectedTabIndex={selectedTabIndex} />
 
             <Divider orientation="vertical" flexItem />
 
             {view.type === "TABLE" && (
               <>
-                <button className={style.moreButton} onClick={handleClickHeightControl}>
+                <button
+                  className={style.moreButton}
+                  onClick={handleClickHeightControl}
+                >
                   <FormatLineSpacingIcon color="#A8A8A8" />
                   Line Height
                 </button>
@@ -400,9 +432,20 @@ const ViewsWithGroups = ({
 
                   <div className={style.menuBar}>
                     {tableHeightOptions.map((el) => (
-                      <div className={style.template} onClick={() => handleHeightControl(el.value)}>
-                        <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
-                          {tableHeight === el.value ? <CheckIcon color="primary" /> : null}
+                      <div
+                        className={style.template}
+                        onClick={() => handleHeightControl(el.value)}
+                      >
+                        <div
+                          className={`${style.element} ${
+                            selectedTabIndex === views?.length
+                              ? style.active
+                              : ""
+                          }`}
+                        >
+                          {tableHeight === el.value ? (
+                            <CheckIcon color="primary" />
+                          ) : null}
                         </div>
                         <span>{el.label}</span>
                       </div>
@@ -504,7 +547,11 @@ const ViewsWithGroups = ({
                 </div>
                 <TabList style={{ border: "none" }}>
                   {tabs?.map((tab) => (
-                    <Tab key={tab.value} selectedClassName={style.activeTab} className={`${style.disableTab} react-tabs__tab`}>
+                    <Tab
+                      key={tab.value}
+                      selectedClassName={style.activeTab}
+                      className={`${style.disableTab} react-tabs__tab`}
+                    >
                       {tab.label}
                     </Tab>
                   ))}
@@ -588,57 +635,85 @@ const ViewsWithGroups = ({
           )}
           {
             <>
-              {tabs?.map((tab) => (
-                <TabPanel key={tab.value}>
-                  {view.type === "TREE" ? (
-                    <TreeView
-                      tableSlug={tableSlug}
-                      filters={filters}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                      tab={tab}
-                    />
-                  ) : view?.type === "FINANCE CALENDAR" ? (
-                    <FinancialCalendarView
-                      view={view}
-                      filters={filters}
-                      fieldsMap={fieldsMap}
-                      tab={tab}
-                      isLoading={isFinancialCalendarLoading}
-                      financeDate={analyticsRes?.response || []}
-                      financeTotal={analyticsRes?.total_amount || []}
-                      totalBalance={analyticsRes?.balance}
-                    />
-                  ) : (
-                    <TableView
-                      control={control}
-                      isTableView={true}
-                      setFormVisible={setFormVisible}
-                      formVisible={formVisible}
-                      filters={filters}
-                      view={view}
-                      fieldsMap={fieldsMap}
-                      setFormValue={setFormValue}
-                      setSortedDatas={setSortedDatas}
-                      tab={tab}
-                      selectedObjects={selectedObjects}
-                      setSelectedObjects={setSelectedObjects}
-                      menuItem={menuItem}
+              {!tabs?.length && (
+                <>
+                  {view.type === "TABLE" && groupTable?.length ? (
+                    <GroupTableView
                       setDataLength={setDataLength}
                       selectedTabIndex={selectedTabIndex}
                       shouldGet={shouldGet}
                       reset={reset}
                       sortedDatas={sortedDatas}
+                      menuItem={menuItem}
                       fields={fields}
+                      setFormValue={setFormValue}
+                      control={control}
+                      setFormVisible={setFormVisible}
+                      formVisible={formVisible}
+                      filters={filters}
                       checkedColumns={checkedColumns}
+                      view={view}
+                      setSortedDatas={setSortedDatas}
+                      fieldsMap={fieldsMap}
                       searchText={searchText}
+                      selectedObjects={selectedObjects}
+                      setSelectedObjects={setSelectedObjects}
                       selectedView={selectedView}
                     />
-                  )}
-                </TabPanel>
-              ))}
+                  ) : null}
+                </>
+              )}
+              {!groupTable?.length &&
+                tabs?.map((tab) => (
+                  <TabPanel key={tab.value}>
+                    {view.type === "TREE" ? (
+                      <TreeView
+                        tableSlug={tableSlug}
+                        filters={filters}
+                        view={view}
+                        fieldsMap={fieldsMap}
+                        tab={tab}
+                      />
+                    ) : view?.type === "FINANCE CALENDAR" ? (
+                      <FinancialCalendarView
+                        view={view}
+                        filters={filters}
+                        fieldsMap={fieldsMap}
+                        tab={tab}
+                        isLoading={isFinancialCalendarLoading}
+                        financeDate={analyticsRes?.response || []}
+                        financeTotal={analyticsRes?.total_amount || []}
+                        totalBalance={analyticsRes?.balance}
+                      />
+                    ) : (
+                      <TableView
+                        control={control}
+                        setFormVisible={setFormVisible}
+                        formVisible={formVisible}
+                        filters={filters}
+                        view={view}
+                        fieldsMap={fieldsMap}
+                        setFormValue={setFormValue}
+                        setSortedDatas={setSortedDatas}
+                        tab={tab}
+                        selectedObjects={selectedObjects}
+                        setSelectedObjects={setSelectedObjects}
+                        menuItem={menuItem}
+                        setDataLength={setDataLength}
+                        selectedTabIndex={selectedTabIndex}
+                        shouldGet={shouldGet}
+                        reset={reset}
+                        sortedDatas={sortedDatas}
+                        fields={fields}
+                        checkedColumns={checkedColumns}
+                        searchText={searchText}
+                        selectedView={selectedView}
+                      />
+                    )}
+                  </TabPanel>
+                ))}
 
-              {!tabs?.length && (
+              {!tabs?.length && !groupTable?.length ? (
                 <>
                   {view.type === "TREE" ? (
                     <TreeView
@@ -684,7 +759,7 @@ const ViewsWithGroups = ({
                     />
                   )}
                 </>
-              )}
+              ) : null}
             </>
           }
         </TableCard>

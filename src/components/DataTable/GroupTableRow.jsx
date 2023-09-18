@@ -6,19 +6,17 @@ import { useNavigate } from "react-router-dom";
 import RectangleIconButton from "../Buttons/RectangleIconButton";
 import { CTableCell, CTableRow } from "../CTable";
 import CellElementGenerator from "../ElementGenerators/CellElementGenerator";
-import TableDataForm from "../ElementGenerators/TableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import GeneratePdfFromTable from "./GeneratePdfFromTable";
 import TableRowForm from "./TableRowForm";
+import GroupTableDataForm from "../ElementGenerators/GroupTableDataForm";
 
-const TableRow = ({
+const GroupTableRow = ({
   row,
   key,
   width,
   rowIndex,
   control,
-  isTableView,
-  relatedTableSlug,
   onRowClick,
   calculateWidthFixedColumn,
   onDeleteClick,
@@ -64,7 +62,6 @@ const TableRow = ({
     return (
       <TableRowForm
         onDeleteClick={onDeleteClick}
-        isTableView={isTableView}
         remove={remove}
         watch={watch}
         onCheckboxChange={onCheckboxChange}
@@ -92,9 +89,6 @@ const TableRow = ({
     <>
       {relationAction === undefined ? (
         <CTableRow
-          // onClick={() => {
-          //   onRowClick(row, rowIndex);
-          // }}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           style={style}
@@ -151,15 +145,9 @@ const TableRow = ({
                 ""
               )}
             </div>
-
-            {/* {onCheckboxChange && (
-              <div className={`data_table__row_checkbox ${isChecked(row) ? "checked" : ""}`}>
-                <Checkbox checked={isChecked(row)} onChange={(_, val) => onCheckboxChange(val, row)} onClick={(e) => e.stopPropagation()} />
-              </div>
-            )} */}
           </CTableCell>
 
-          {columns.map(
+          {columns?.map(
             (column, index) =>
               column?.attributes?.field_permission?.view_permission && (
                 <CTableCell
@@ -180,11 +168,6 @@ const TableRow = ({
                         ? "sticky"
                         : "relative"
                     }`,
-                    // left: `${
-                    //   tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-                    //     ? `${calculateWidth(column?.id, index)}px`
-                    //     : "0"
-                    // }`,
                     left: view?.attributes?.fixedColumns?.[column?.id]
                       ? `${calculateWidthFixedColumn(column.id)}px`
                       : "0",
@@ -204,24 +187,20 @@ const TableRow = ({
                     }`,
                   }}
                 >
-                  {isTableView ? (
-                    <TableDataForm
-                      tableSlug={tableSlug}
-                      watch={watch}
-                      fields={columns}
-                      field={column}
-                      mainForm={mainForm}
-                      row={row}
-                      index={rowIndex}
-                      control={control}
-                      setFormValue={setFormValue}
-                      relationfields={relationFields}
-                      data={data}
-                      onRowClick={onRowClick}
-                    />
-                  ) : (
-                    <CellElementGenerator field={column} row={row} />
-                  )}
+                  <GroupTableDataForm
+                    tableSlug={tableSlug}
+                    watch={watch}
+                    fields={columns}
+                    field={column}
+                    mainForm={mainForm}
+                    row={row}
+                    index={rowIndex}
+                    control={control}
+                    setFormValue={setFormValue}
+                    relationfields={relationFields}
+                    data={data}
+                    onRowClick={onRowClick}
+                  />
                 </CTableCell>
               )
           )}
@@ -279,7 +258,7 @@ const TableRow = ({
             )}
           </CTableCell>
 
-          {columns.map((column, index) => (
+          {columns?.map((column, index) => (
             <CTableCell
               key={column.id}
               className={`overflow-ellipsis ${tableHeight}`}
@@ -311,12 +290,6 @@ const TableRow = ({
               color="error"
               onClick={() => {
                 onDeleteClick(row, rowIndex);
-                // remove(rowIndex);
-                // navigate("/reloadRelations", {
-                //   state: {
-                //     redirectUrl: window.location.pathname,
-                //   },
-                // });
               }}
             >
               <Delete color="error" />
@@ -398,4 +371,4 @@ const TableRow = ({
   );
 };
 
-export default TableRow;
+export default GroupTableRow;

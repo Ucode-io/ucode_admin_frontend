@@ -17,7 +17,7 @@ import constructorFieldService from "../../services/constructorFieldService";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
 import { useTranslation } from "react-i18next";
 
-export default function TableHeadForTableView({
+export default function GroupTableHeadForTableView({
   column,
   index,
   pageName,

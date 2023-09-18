@@ -25,6 +25,7 @@ const HFNumberField = ({
     control,
     name,
   });
+  const number = typeof value === "number";
 
   return (
     <Controller
@@ -61,44 +62,54 @@ const HFNumberField = ({
                   }
             }
           >
-            <NumericFormat
-              thousandsGroupStyle="thousand"
-              thousandSeparator=" "
-              decimalSeparator="."
-              displayType="input"
-              isNumericString={true}
-              autoComplete="off"
-              allowNegative
-              fullWidth={fullWidth}
-              value={value}
-              onChange={(e) => {
-                const val = e.target.value;
-                const valueWithoutSpaces = val.replaceAll(" ", "");
-                if (!valueWithoutSpaces) onChange("");
-                else {
-                  if (valueWithoutSpaces.at(-1) === ".") onChange(valueWithoutSpaces);
-                  else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : "");
+            {number && (
+              <NumericFormat
+                thousandsGroupStyle="thousand"
+                thousandSeparator=" "
+                decimalSeparator="."
+                displayType="input"
+                isNumericString={true}
+                autoComplete="off"
+                allowNegative
+                fullWidth={fullWidth}
+                value={value}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  const valueWithoutSpaces = val?.replaceAll(" ", "");
+                  if (!valueWithoutSpaces) onChange("");
+                  else {
+                    if (valueWithoutSpaces.at(-1) === ".")
+                      onChange(valueWithoutSpaces);
+                    else
+                      onChange(
+                        !isNaN(Number(valueWithoutSpaces))
+                          ? Number(valueWithoutSpaces)
+                          : ""
+                      );
+                  }
+                }}
+                className={`${isFormEdit ? "custom_textfield" : ""} ${
+                  styles.numberField
+                }`}
+                name={name}
+                readOnly={disabled}
+                style={
+                  isTransparent
+                    ? {
+                        background: "transparent",
+                        border: "none",
+                        borderRadius: "0",
+                      }
+                    : disabled
+                    ? { background: "#c0c0c039", borderRight: 0 }
+                    : {
+                        background: isBlackBg ? "#2A2D34" : "",
+                        color: isBlackBg ? "#fff" : "",
+                      }
                 }
-              }}
-              className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
-              name={name}
-              readOnly={disabled}
-              style={
-                isTransparent
-                  ? {
-                      background: "transparent",
-                      border: "none",
-                      borderRadius: "0",
-                    }
-                  : disabled
-                  ? { background: "#c0c0c039", borderRight: 0 }
-                  : {
-                      background: isBlackBg ? "#2A2D34" : "",
-                      color: isBlackBg ? "#fff" : "",
-                    }
-              }
-              {...props}
-            />
+                {...props}
+              />
+            )}
 
             {disabled && (
               <Box

@@ -1,9 +1,9 @@
 import ChartAccountsWrapper from "@/views/Objects/components/ViewSettings/ChartAccountsWrapper";
-import {Delete} from "@mui/icons-material";
-import {useEffect, useMemo, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useParams} from "react-router-dom";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Delete } from "@mui/icons-material";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CancelButton from "../../../../components/Buttons/CancelButton";
 import SaveButton from "../../../../components/Buttons/SaveButton";
 import FRow from "../../../../components/FormElements/FRow";
@@ -12,7 +12,7 @@ import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import useWatch from "../../../../hooks/useWatch";
 import constructorViewService from "../../../../services/constructorViewService";
-import {viewTypes} from "../../../../utils/constants/viewTypes";
+import { viewTypes } from "../../../../utils/constants/viewTypes";
 import CalendarHourSettings from "./CalendarHourSettings";
 import CalendarSettings from "./CalendarSettings";
 import ColumnsTab from "./ColumnsTab";
@@ -22,9 +22,10 @@ import MultipleInsertSettings from "./MultipleInsertSettings";
 import NavigateSettings from "./NavigateSettings";
 import QuickFiltersTab from "./QuicFiltersTab";
 import styles from "./style.module.scss";
-import {useTranslation} from "react-i18next";
-import {useSelector} from "react-redux";
-import {Box} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { Box } from "@mui/material";
+import GroupByTab from "./GroupByTab";
 
 const ViewForm = ({
   initialValues,
@@ -37,14 +38,16 @@ const ViewForm = ({
   columns,
   relationColumns,
   views,
+  setTab,
 }) => {
-  const {tableSlug, appId} = useParams();
+  const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
-  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
+  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   const financialValues = initialValues?.attributes?.chart_of_accounts;
   const financialTypee = initialValues?.attributes?.percent?.type;
+  const group_by_columns = initialValues?.attributes?.group_by_columns;
   const navigate = initialValues?.navigate;
   const relationObjValue =
     initialValues?.attributes?.balance?.table_slug +
@@ -74,7 +77,7 @@ const ViewForm = ({
   }, [columns, relationColumns, type]);
 
   const computeFinancialAcc = (values, groupByField, data) => {
-    if (values === undefined) return {chart_of_accounts: []};
+    if (values === undefined) return { chart_of_accounts: [] };
 
     const computedFormat = values.map((row) => {
       return {
@@ -143,14 +146,15 @@ const ViewForm = ({
         financialFiledId,
         relationObjValue,
         numberFieldValue,
-        navigate
+        navigate,
+        group_by_columns
       ),
       filters: [],
     });
   }, [initialValues, tableSlug, form, typeNewView]);
 
   useEffect(() => {
-    form.reset({...form.getValues(), number_field: ""});
+    form.reset({ ...form.getValues(), number_field: "" });
   }, [relationObjInput]);
 
   useWatch(() => {
@@ -158,7 +162,7 @@ const ViewForm = ({
     const formQuickFilters = form
       .getValues("quick_filters")
       ?.filter((el) => el?.is_checked)
-      ?.map((el) => ({field_id: el.id}));
+      ?.map((el) => ({ field_id: el.id }));
 
     // form.setValue('columns', computeColumns(formColumns, computedColumns))
     form.setValue(
@@ -171,7 +175,7 @@ const ViewForm = ({
       )
     );
   }, [type, form]);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const onSubmit = (values) => {
     setBtnLoader(true);
     const computedValues = {
@@ -192,6 +196,10 @@ const ViewForm = ({
           values
         ),
         ...values?.attributes,
+        group_by_columns:
+          values.attributes.group_by_columns
+            ?.filter((el) => el.is_checked)
+            .map((el) => el.id) ?? [],
       },
       name:
         values?.attributes?.[`label_${i18n.language}`] ??
@@ -245,14 +253,15 @@ const ViewForm = ({
   return (
     <div className={styles.formSection}>
       <div className={styles.viewForm}>
-        <Tabs defaultIndex={defaultViewTab}>
+        <Tabs defaultIndex={defaultViewTab} onSelect={(index) => setTab(index)}>
           <div className={styles.section}>
-            <TabList style={{marginBottom: "1px"}}>
+            <TabList style={{ marginBottom: "1px" }}>
               <Tab>Information</Tab>
               <Tab>Quick filters</Tab>
               <Tab>Columns</Tab>
               <Tab>Navigation</Tab>
               {type !== "FINANCE CALENDAR" && <Tab>Group by</Tab>}
+              <Tab>Group by columns</Tab>
               {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
             </TabList>
             <TabPanel>
@@ -264,7 +273,7 @@ const ViewForm = ({
                 <div className={styles.sectionBody}>
                   <div className={styles.formRow}>
                     <FRow label="Название">
-                      <Box style={{display: "flex", gap: "6px"}}>
+                      <Box style={{ display: "flex", gap: "6px" }}>
                         {languages?.map((language) => (
                           <HFTextField
                             control={form.control}
@@ -331,6 +340,9 @@ const ViewForm = ({
               </TabPanel>
             )}
             <TabPanel>
+              <GroupByTab form={form} isMenu={false} />
+            </TabPanel>
+            <TabPanel>
               <ChartAccountsWrapper viewId={initialValues.id} form={form} />
             </TabPanel>
           </div>
@@ -365,7 +377,8 @@ const getInitialValues = (
   financialFiledId,
   relationObjValue,
   numberFieldValue,
-  navigate
+  navigate,
+  group_by_columns
 ) => {
   if (initialValues === "NEW")
     return {
@@ -382,7 +395,7 @@ const getInitialValues = (
         time_from_slug: "",
         time_to_slug: "",
       },
-      columns: columns?.map((el) => ({...el, is_checked: true})) ?? [],
+      columns: columns?.map((el) => ({ ...el, is_checked: true })) ?? [],
       quick_filters: columns ?? [],
       group_fields: [],
       navigate: {
@@ -396,12 +409,15 @@ const getInitialValues = (
       multiple_insert: false,
       multiple_insert_field: "",
       chartOfAccounts: [{}],
+      attributes: {
+        group_by_columns:
+          columns?.map((el) => ({ ...el, is_checked: false })) ?? [],
+      },
     };
   return {
     type: initialValues?.type ?? "TABLE",
     users: initialValues?.users ?? [],
     name: initialValues?.name ?? "",
-    attributes: initialValues?.attributes ?? {},
     default_limit: initialValues?.default_limit ?? "",
     main_field: initialValues?.main_field ?? "",
     status_field_slug: initialValues?.status_field_slug ?? "",
@@ -412,6 +428,9 @@ const getInitialValues = (
       time_to_slug: initialValues?.disable_dates?.time_to_slug ?? "",
     },
     columns: computeColumns(initialValues?.columns, columns),
+    attributes: {
+      group_by_columns: computeGroups(group_by_columns, columns),
+    },
     quick_filters:
       computeQuickFilters(
         initialValues?.quick_filters,
@@ -459,10 +478,22 @@ const computeColumns = (checkedColumnsIds = [], columns) => {
     columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
   return [...selectedColumns, ...unselectedColumns];
 };
+const computeGroups = (checkedColumnsIds = [], columns) => {
+  const selectedColumns =
+    checkedColumnsIds
+      ?.filter((id) => columns.find((el) => el?.id === id))
+      ?.map((id) => ({
+        ...columns.find((el) => el.id === id),
+        is_checked: true,
+      })) ?? [];
+  const unselectedColumns =
+    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
+  return [...selectedColumns, ...unselectedColumns];
+};
 
 const computeFinancialColumns = (financialValues) => {
   return financialValues?.map((row) => {
-    const computedRow = {group_by: row.group_by};
+    const computedRow = { group_by: row.group_by };
 
     row.chart_of_account?.forEach((chart) => {
       computedRow[chart.object_id] = [];
@@ -473,9 +504,9 @@ const computeFinancialColumns = (financialValues) => {
 
         option.filters?.forEach((filter) => {
           filters[filter.field_id] = filter.value;
-          filterFields.push({field_id: filter.field_id});
+          filterFields.push({ field_id: filter.field_id });
         });
-        const computedObj = {...option, filters, filterFields};
+        const computedObj = { ...option, filters, filterFields };
         computedRow[chart.object_id].push(computedObj);
       });
     });

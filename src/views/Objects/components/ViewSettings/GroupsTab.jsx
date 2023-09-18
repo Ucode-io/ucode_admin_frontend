@@ -1,13 +1,13 @@
-import {Box, Checkbox, Typography} from "@mui/material";
-import {useMemo} from "react";
-import {useWatch} from "react-hook-form";
+import { Box, Checkbox, Typography } from "@mui/material";
+import { useMemo } from "react";
+import { useWatch } from "react-hook-form";
 import {
   CTable,
   CTableBody,
   CTableCell,
   CTableRow,
 } from "../../../../components/CTable";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const GroupsTab = ({
   columns,
@@ -49,7 +49,7 @@ const GroupsTab = ({
 
     return form.setValue("group_fields", [...selectedColumns, id]);
   };
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const changeHandler = async (val, id) => {
     await onCheckboxChange(val, id);
@@ -66,7 +66,7 @@ const GroupsTab = ({
       <CTable
         removableHeight={false}
         disablePagination
-        tableStyle={{border: "none"}}
+        tableStyle={{ border: "none" }}
       >
         <CTableBody dataLength={1}>
           {computedColumns.length ? (
@@ -76,7 +76,7 @@ const GroupsTab = ({
                   {column?.attributes?.[`label_${i18n.language}`] ??
                     column.label}
                 </CTableCell>
-                <CTableCell style={{width: 20}}>
+                <CTableCell style={{ width: 20 }}>
                   <Checkbox
                     disabled={isLoading || updateLoading}
                     checked={
@@ -89,7 +89,7 @@ const GroupsTab = ({
               </CTableRow>
             ))
           ) : (
-            <Box style={{padding: "10px"}}>
+            <Box style={{ padding: "10px" }}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}

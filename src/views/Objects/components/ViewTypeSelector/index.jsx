@@ -5,26 +5,26 @@ import {
   Settings,
   TableChart,
 } from "@mui/icons-material";
-import {Button, Modal, Popover} from "@mui/material";
-import {useMemo, useState} from "react";
-import {useQueryClient} from "react-query";
+import { Button, Modal, Popover } from "@mui/material";
+import { useMemo, useState } from "react";
+import { useQueryClient } from "react-query";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import ViewSettings from "../ViewSettings";
 import style from "./style.module.scss";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ButtonsPopover from "../../../../components/ButtonsPopover";
 import constructorViewService from "../../../../services/constructorViewService";
-import {Navigate, useNavigate, useParams} from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import {useTranslation} from "react-i18next";
-import {useSelector} from "react-redux";
-import {Container, Draggable} from "react-smooth-dnd";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { Container, Draggable } from "react-smooth-dnd";
 import PermissionWrapperV2 from "../../../../components/PermissionWrapper/PermissionWrapperV2";
-import {store} from "../../../../store";
-import {applyDrag} from "../../../../utils/applyDrag";
-import {viewTypes} from "../../../../utils/constants/viewTypes";
+import { store } from "../../../../store";
+import { applyDrag } from "../../../../utils/applyDrag";
+import { viewTypes } from "../../../../utils/constants/viewTypes";
 import ViewTypeList from "../ViewTypeList";
 import MoreButtonViewType from "./MoreButtonViewType";
 
@@ -39,16 +39,17 @@ const ViewTabSelector = ({
   defaultViewTab,
   setSelectedView,
   views = [],
+  setTab,
 }) => {
-  const {t} = useTranslation();
-  const {tableSlug} = useParams();
+  const { t } = useTranslation();
+  const { tableSlug } = useParams();
   const projectId = useSelector((state) => state.auth.projectId);
   // const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   // const [isChanged, setIsChanged] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
+  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
   // const [selectedView, setSelectedView] = useState(null);
   const [typeNewView, setTypeNewView] = useState(null);
 
@@ -102,15 +103,15 @@ const ViewTabSelector = ({
     });
   };
   console.log("sssssss", isChanged);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   return (
     <>
-      <div className={style.selector} style={{minWidth: "fit-content"}}>
+      <div className={style.selector} style={{ minWidth: "fit-content" }}>
         <div className={style.leftSide}>
           <div className={style.button}>
-            <Button style={{height: "100%"}} onClick={() => navigate(-1)}>
-              <ArrowBackIcon style={{color: "#000"}} />
+            <Button style={{ height: "100%" }} onClick={() => navigate(-1)}>
+              <ArrowBackIcon style={{ color: "#000" }} />
             </Button>
           </div>
 
@@ -130,8 +131,8 @@ const ViewTabSelector = ({
           <Container
             lockAxis="x"
             onDrop={onDrop}
-            dropPlaceholder={{className: "drag-row-drop-preview"}}
-            style={{display: "flex", alignItems: "center"}}
+            dropPlaceholder={{ className: "drag-row-drop-preview" }}
+            style={{ display: "flex", alignItems: "center" }}
             getChildPayload={(i) => views[i]}
             orientation="horizontal"
           >
@@ -206,8 +207,8 @@ const ViewTabSelector = ({
             variant="contained"
             onClick={handleClick}
           >
-            <AddIcon className={style.icon} style={{color: "#000"}} />
-            <strong style={{color: "#000"}}>{t("add")}</strong>
+            <AddIcon className={style.icon} style={{ color: "#000" }} />
+            <strong style={{ color: "#000" }}>{t("add")}</strong>
           </div>
         </PermissionWrapperV2>
 
@@ -265,6 +266,7 @@ const ViewTabSelector = ({
           setIsChanged={setIsChanged}
           viewData={selectedView}
           typeNewView={typeNewView}
+          setTab={setTab}
         />
       </Modal>
     </>

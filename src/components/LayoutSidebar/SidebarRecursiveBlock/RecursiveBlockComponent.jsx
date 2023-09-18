@@ -257,9 +257,42 @@ const RecursiveBlock = ({
                 }
                 size={18}
               />
-              <Tooltip title={label} placement="top">
-                <p>{label}</p>
-              </Tooltip>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <Box>
+                  {" "}
+                  <Tooltip title={label} placement="top">
+                    <p>{label}</p>
+                  </Tooltip>
+                </Box>
+                <Box>
+                  <Tooltip title="Folder settings" placement="top">
+                    <Box className="extra_icon">
+                      <BsThreeDots
+                        size={13}
+                        onClick={(e) => {
+                          e?.stopPropagation();
+                          handleOpenNotify(e, "FOLDER");
+                          setElement(element);
+                          dispatch(menuActions.setMenuItem(element));
+                        }}
+                        style={{
+                          color:
+                            menuItem?.id === element?.id
+                              ? menuStyle?.active_text
+                              : menuStyle?.text || "",
+                        }}
+                      />
+                    </Box>
+                  </Tooltip>
+                </Box>
+              </Box>
             </div>
             {element?.type === "FOLDER" &&
             element?.id === "c57eedc3-a954-4262-a0af-376c65b5a274" ? (

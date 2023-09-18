@@ -37,6 +37,7 @@ const NewCellElementGenerator = ({
   watch,
   columns = [],
   row,
+  updateObject,
   control,
   setFormValue,
   shouldWork = false,
@@ -113,9 +114,14 @@ const NewCellElementGenerator = ({
     }
   }, [changedValue, setFormValue, columns, field, selectedRow]);
 
-  const onChange = () => {
-    props.updateObject && props.updateObject();
-  }
+  let watchValue = useWatch({
+    control,
+    name: computedSlug,
+  });
+
+  useEffect(() => {
+    updateObject();
+  }, [watchValue])
 
   switch (field.type) {
     case "LOOKUP":

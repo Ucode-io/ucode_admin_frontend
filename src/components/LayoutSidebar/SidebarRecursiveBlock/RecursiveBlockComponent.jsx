@@ -4,37 +4,34 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import {Box, Button, Collapse, Tooltip} from "@mui/material";
 import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {BsThreeDots} from "react-icons/bs";
+import {useMutation, useQueryClient} from "react-query";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {useMenuListQuery} from "../../../services/menuService";
+import pivotService from "../../../services/pivotService";
+import {store} from "../../../store";
+import {showAlert} from "../../../store/alert/alert.thunk";
+import {updateLevel} from "../../../utils/level";
 import {menuActions} from "../../../store/menuItem/menuItem.slice";
 import IconGenerator from "../../IconPicker/IconGenerator";
-import MenuIcon from "../MenuIcon";
-import "../style.scss";
-import {useMutation, useQueryClient} from "react-query";
-import {useTranslation} from "react-i18next";
-import {store} from "../../../store";
-import Users from "../Components/Users";
-import {analyticItems, folderIds} from "./mock/folders";
-import Permissions from "../Components/Permission";
+import ApiSidebar from "../Components/Api/ApiSidebar";
 import DataBase from "../Components/DataBase";
-import EltResources from "../Components/Elt";
-import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
-import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
 import DocumentsSidebar from "../Components/Documents/DocumentsSidebar";
 import EmailSidebar from "../Components/Email/EmailSidebar";
-import ProjectSettingSidebar from "../Components/Project/ProjectSettingSidebar";
 import FunctionSidebar from "../Components/Functions/FunctionSIdebar";
+import MicroServiceSidebar from "../Components/MicroService/MicroServiceSidebar";
 import NotificationSidebar from "../Components/Notification/NotificationSidebar";
-import Resources from "../Components/Resources";
-import {use} from "i18next";
-import {showAlert} from "../../../store/alert/alert.thunk";
-import pivotService from "../../../services/pivotService";
-import DeleteIcon from "../DeleteIcon";
-import ApiSidebar from "../Components/Api/ApiSidebar";
+import Permissions from "../Components/Permission";
 import QuerySidebar from "../Components/Query/QuerySidebar";
-import {updateLevel} from "../../../utils/level";
+import Resources from "../Components/Resources";
+import ScenarioSidebar from "../Components/Scenario/ScenarioSidebar";
+import Users from "../Components/Users";
+import DeleteIcon from "../DeleteIcon";
+import MenuIcon from "../MenuIcon";
+import "../style.scss";
+import {analyticItems, folderIds} from "./mock/folders";
 import MicrofrontendSettingSidebar from "../Components/Microfrontend/MicrofrontendSidebar";
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -63,10 +60,10 @@ const RecursiveBlock = ({
   const [check, setCheck] = useState(false);
   const [id, setId] = useState();
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
-  const {i18n} = useTranslation();
-  const defaultLanguage = i18n.language;
   const auth = store.getState().auth;
   const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
+  const {i18n} = useTranslation();
+  const defaultLanguage = i18n.language;
   const readPermission = element?.data?.permission?.read;
   const withoutPermission =
     element?.parent_id === adminId || element?.parent_id === analyticsId
@@ -75,7 +72,6 @@ const RecursiveBlock = ({
   const permission = defaultAdmin
     ? readPermission || withoutPermission
     : readPermission;
-
   const activeStyle = {
     backgroundColor:
       menuItem?.id === element?.id
@@ -113,13 +109,6 @@ const RecursiveBlock = ({
     }
   };
 
-  const label =
-    (sidebarIsOpen &&
-      (element?.attributes?.[`label_${defaultLanguage}`] ?? element?.label)) ||
-    element?.data?.microfrontend?.name ||
-    element?.data?.webpage?.title ||
-    element?.name;
-
   const navigateMenu = () => {
     switch (element?.type) {
       case "FOLDER":
@@ -142,9 +131,6 @@ const RecursiveBlock = ({
         );
       case "USER":
         return navigate(`/main/${appId}/user-page/${element?.guid}`);
-
-      case "PERMISSION":
-        return navigate(`/main/${appId}/permission/${element?.guid}`);
 
       case "REPORT_SETTING":
         return navigate(
@@ -239,6 +225,12 @@ const RecursiveBlock = ({
               clickHandler(e);
             }}
           >
+            {adminId === element?.parent_id &&
+              (childBlockVisible ? (
+                <KeyboardArrowDownIcon />
+              ) : (
+                <KeyboardArrowRightIcon />
+              ))}
             <div
               className="label"
               style={{
@@ -257,6 +249,7 @@ const RecursiveBlock = ({
                 }
                 size={18}
               />
+
               <Box
                 sx={{
                   display: "flex",
@@ -266,9 +259,19 @@ const RecursiveBlock = ({
                 }}
               >
                 <Box>
-                  {" "}
-                  <Tooltip title={label} placement="top">
-                    <p>{label}</p>
+                  <Tooltip
+                    title={
+                      element?.attributes?.[`label_${i18n}`] ??
+                      element?.attributes?.[`title_${i18n}`] ??
+                      element?.label
+                    }
+                    placement="top"
+                  >
+                    <p>
+                      {element?.attributes?.[`label_${i18n}`] ??
+                        element?.attributes?.[`title_${i18n}`] ??
+                        element?.label}
+                    </p>
                   </Tooltip>
                 </Box>
                 <Box>

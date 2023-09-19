@@ -31,7 +31,7 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true },
+        data: { limit: 10, offset: 0 },
       });
     },
     {
@@ -74,7 +74,9 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
   const visibleColumns = useMemo(() => {
     refetch();
     return columns.filter((column) => {
-      return views?.[selectedTabIndex]?.columns?.find((el) => el === column?.id);
+      return views?.[selectedTabIndex]?.columns?.find(
+        (el) => el === column?.id
+      );
     });
   }, [views, columns, selectedTabIndex, anchorEl]);
 
@@ -120,10 +122,13 @@ export default function FixColumnsTableView({ selectedTabIndex }) {
           },
         }}
       >
-        <div className={style.menuItems} style={{
-          maxHeight: 300,
-          overflowY: 'auto'
-        }}>
+        <div
+          className={style.menuItems}
+          style={{
+            maxHeight: 300,
+            overflowY: "auto",
+          }}
+        >
           {visibleColumns.map((column) => (
             <div className={style.menuItem}>
               <span>{column.label}</span>

@@ -229,7 +229,7 @@ const GroupTableView = ({
     isLoading: tableLoader,
   } = useQuery({
     queryKey: [
-      "GET_OBJECTS_LIST",
+      "GET_OBJECTS_LIST_TEST",
       {
         tableSlug,
         searchText,
@@ -239,6 +239,7 @@ const GroupTableView = ({
         limit,
         filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
+        view,
       },
     ],
     queryFn: () => {
@@ -247,9 +248,8 @@ const GroupTableView = ({
           offset: pageToOffset(currentPage, limit),
           app_id: appId,
           order: computedSortColumns,
-          with_relations: true,
           view_fields: checkedColumns,
-          builder_service_view_id: view?.id,
+          builder_service_view_id: view.id,
           search:
             detectStringType(searchText) === "number"
               ? parseInt(searchText)

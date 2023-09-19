@@ -1,18 +1,20 @@
 import AppsIcon from "@mui/icons-material/Apps";
 import { CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
-import constructorObjectService from "../../services/constructorObjectService";
+import { useQueryClient } from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import GroupByTab from "./components/ViewSettings/GroupByTab";
 
-export default function GroupColumnVisible({ selectedTabIndex }) {
-  const form = useForm();
+export default function GroupColumnVisible({
+  selectedTabIndex,
+  views,
+  columns,
+  relationColumns,
+  isLoading,
+  form,
+}) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { tableSlug } = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -20,35 +22,6 @@ export default function GroupColumnVisible({ selectedTabIndex }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const {
-    data: { views, columns, relationColumns } = {
-      views: [],
-      columns: [],
-      relationColumns: [],
-    },
-    isLoading,
-    refetch: refetchViews,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true },
-      });
-    },
-    {
-      select: ({ data }) => {
-        return {
-          views: data?.views ?? [],
-          columns: data?.fields ?? [],
-          relationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
-        };
-      },
-    }
-  );
 
   const watchedGroupColumns = form.watch("attributes.group_by_columns");
   const watchedColumns = form.watch("columns");
@@ -89,11 +62,11 @@ export default function GroupColumnVisible({ selectedTabIndex }) {
         ...views?.[selectedTabIndex],
         attributes: {
           group_by_columns: watchedGroupColumns
-            ?.filter((el) => el.is_checked)
+            ?.filter((el) => el?.is_checked)
             ?.map((el) => el.id),
         },
         columns: watchedColumns
-          ?.filter((el) => el.is_checked)
+          ?.filter((el) => el?.is_checked)
           ?.map((el) => el.id),
       })
       .then(() => {

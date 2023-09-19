@@ -34,7 +34,7 @@ export default function GroupByButton({ selectedTabIndex }) {
     ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true },
+        data: { limit: 10, offset: 0 },
       });
     },
     {
@@ -141,7 +141,14 @@ export default function GroupByButton({ selectedTabIndex }) {
         {isLoading ? (
           <CircularProgress />
         ) : (
-          <GroupsTab columns={computedColumns} isLoading={isLoading} updateLoading={updateLoading} updateView={updateView} selectedView={views?.[selectedTabIndex]} form={form} />
+          <GroupsTab
+            columns={computedColumns}
+            isLoading={isLoading}
+            updateLoading={updateLoading}
+            updateView={updateView}
+            selectedView={views?.[selectedTabIndex]}
+            form={form}
+          />
         )}
       </Menu>
     </div>

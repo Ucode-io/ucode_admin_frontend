@@ -249,12 +249,7 @@ const RecursiveBlock = ({
                 }
                 size={18}
               />
-              {(sidebarIsOpen &&
-                (element?.attributes?.[`label_${defaultLanguage}`] ??
-                  element?.label)) ||
-                element?.data?.microfrontend?.name ||
-                element?.data?.webpage?.title ||
-                element?.name}
+
               <Box
                 sx={{
                   display: "flex",
@@ -264,9 +259,19 @@ const RecursiveBlock = ({
                 }}
               >
                 <Box>
-                  {" "}
-                  <Tooltip title={label} placement="top">
-                    <p>{label}</p>
+                  <Tooltip
+                    title={
+                      element?.attributes?.[`label_${i18n}`] ??
+                      element?.attributes?.[`title_${i18n}`] ??
+                      element?.label
+                    }
+                    placement="top"
+                  >
+                    <p>
+                      {element?.attributes?.[`label_${i18n}`] ??
+                        element?.attributes?.[`title_${i18n}`] ??
+                        element?.label}
+                    </p>
                   </Tooltip>
                 </Box>
                 <Box>

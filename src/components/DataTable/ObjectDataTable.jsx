@@ -238,6 +238,7 @@ const ObjectDataTable = ({
       removableHeight={removableHeight}
       count={pagesCount}
       page={currentPage}
+      isTableView={isTableView}
       setCurrentPage={onPaginationChange}
       loader={loader}
       multipleDelete={multipleDelete}

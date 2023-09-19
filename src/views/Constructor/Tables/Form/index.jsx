@@ -38,7 +38,7 @@ const ConstructorTablesFormPage = () => {
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
-
+console.log('sssssssssform', slug)
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,

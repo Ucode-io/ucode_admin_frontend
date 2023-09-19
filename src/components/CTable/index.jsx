@@ -13,6 +13,7 @@ export const CTable = ({
   setCurrentPage,
   removableHeight = 186,
   disablePagination,
+  isTableView = false,
   loader,
   multipleDelete,
   tableStyle = {},
@@ -43,6 +44,7 @@ export const CTable = ({
           count={count}
           selectedObjectsForDelete={selectedObjectsForDelete}
           page={page}
+          isTableView={isTableView}
           setCurrentPage={setCurrentPage}
           paginationExtraButton={paginationExtraButton}
           limit={limit}

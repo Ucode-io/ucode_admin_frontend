@@ -1,15 +1,19 @@
 import AppsIcon from "@mui/icons-material/Apps";
 import { CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
-import constructorObjectService from "../../services/constructorObjectService";
 import constructorViewService from "../../services/constructorViewService";
 import ColumnsTab from "./components/ViewSettings/ColumnsTab";
+import { useQueryClient } from "react-query";
 
-export default function ColumnVisible({ selectedTabIndex }) {
-  const form = useForm();
+export default function ColumnVisible({
+  selectedTabIndex,
+  views,
+  columns,
+  relationColumns,
+  isLoading,
+  form,
+}) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const { tableSlug } = useParams();
@@ -21,36 +25,6 @@ export default function ColumnVisible({ selectedTabIndex }) {
     setAnchorEl(null);
   };
 
-  const {
-    data: { views, columns, relationColumns } = {
-      views: [],
-      columns: [],
-      relationColumns: [],
-    },
-    isLoading,
-    refetch: refetchViews,
-  } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
-    () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true },
-      });
-    },
-    {
-      select: ({ data }) => {
-        return {
-          views: data?.views ?? [],
-          columns: data?.fields ?? [],
-          relationColumns:
-            data?.relation_fields?.map((el) => ({
-              ...el,
-              label: `${el.label} (${el.table_label})`,
-            })) ?? [],
-        };
-      },
-    }
-  );
-
   const type = views?.[selectedTabIndex]?.type;
   const computedColumns = useMemo(() => {
     if (type !== "CALENDAR" && type !== "GANTT") {
@@ -61,6 +35,7 @@ export default function ColumnVisible({ selectedTabIndex }) {
   }, [columns, relationColumns, type]);
 
   const watchedColumns = form.watch("columns");
+  const watchedGroupColumns = form.watch("attributes.group_by_columns");
 
   useEffect(() => {
     form.reset({
@@ -78,6 +53,11 @@ export default function ColumnVisible({ selectedTabIndex }) {
     constructorViewService
       .update({
         ...views?.[selectedTabIndex],
+        attributes: {
+          group_by_columns: watchedGroupColumns
+            ?.filter((el) => el?.is_checked)
+            ?.map((el) => el.id),
+        },
         columns: watchedColumns
           ?.filter((el) => el.is_checked)
           ?.map((el) => el.id),
@@ -86,8 +66,6 @@ export default function ColumnVisible({ selectedTabIndex }) {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
       });
   };
-
-  console.log("visible", form.watch());
 
   return (
     <div>

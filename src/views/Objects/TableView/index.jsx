@@ -248,7 +248,6 @@ const TableView = ({
           offset: pageToOffset(currentPage, limit),
           app_id: appId,
           order: computedSortColumns,
-          with_relations: true,
           view_fields: checkedColumns,
           search:
             detectStringType(searchText) === "number"

@@ -50,6 +50,7 @@ const ViewsWithGroups = ({
 }) => {
   const { t } = useTranslation();
   const { tableSlug } = useParams();
+  const visibleForm = useForm();
   const dispatch = useDispatch();
   const { filters } = useFilters(tableSlug, view.id);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
@@ -240,6 +241,36 @@ const ViewsWithGroups = ({
     selectAll();
   }, []);
 
+  const {
+    data: { visibleViews, visibleColumns, visibleRelationColumns } = {
+      visibleViews: [],
+      visibleColumns: [],
+      visibleRelationColumns: [],
+    },
+    isVisibleLoading,
+    refetch: refetchViews,
+  } = useQuery(
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
+    () => {
+      return constructorObjectService.getList(tableSlug, {
+        data: { limit: 10, offset: 0 },
+      });
+    },
+    {
+      select: ({ data }) => {
+        return {
+          visibleViews: data?.views ?? [],
+          visibleColumns: data?.fields ?? [],
+          visibleRelationColumns:
+            data?.relation_fields?.map((el) => ({
+              ...el,
+              label: `${el.label} (${el.table_label})`,
+            })) ?? [],
+        };
+      },
+    }
+  );
+
   return (
     <>
       <FiltersBlock
@@ -352,7 +383,14 @@ const ViewsWithGroups = ({
 
             <Divider orientation="vertical" flexItem />
 
-            <ColumnVisible selectedTabIndex={selectedTabIndex} />
+            <ColumnVisible
+              selectedTabIndex={selectedTabIndex}
+              views={visibleViews}
+              columns={visibleColumns}
+              relationColumns={visibleRelationColumns}
+              isLoading={isVisibleLoading}
+              form={visibleForm}
+            />
 
             <Divider orientation="vertical" flexItem />
 
@@ -361,7 +399,14 @@ const ViewsWithGroups = ({
               sortDatas={sortedDatas}
               setSortedDatas={setSortedDatas}
             />
-            <GroupColumnVisible selectedTabIndex={selectedTabIndex} />
+            <GroupColumnVisible
+              selectedTabIndex={selectedTabIndex}
+              views={visibleViews}
+              columns={visibleColumns}
+              relationColumns={visibleRelationColumns}
+              isLoading={isVisibleLoading}
+              form={visibleForm}
+            />
 
             <Divider orientation="vertical" flexItem />
 

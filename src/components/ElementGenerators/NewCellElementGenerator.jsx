@@ -77,7 +77,7 @@ const NewCellElementGenerator = ({
       return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
     }
 
-    return field?.slug;
+    return `multi.${index}.${field.slug}`;
   }, [field?.id, field?.slug, , i18n, field?.enable_multilanguage]);
 
   const changedValue = useWatch({

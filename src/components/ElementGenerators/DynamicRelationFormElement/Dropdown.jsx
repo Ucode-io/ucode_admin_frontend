@@ -72,7 +72,6 @@ const Dropdown = ({field, closeMenu, onObjectSelect, tablesList}) => {
     {
       enabled: Boolean(!field?.attributes?.function_path),
       select: (res) => {
-        console.log("resssssssss", res);
         return (
           res?.data?.response?.map((el) => ({
             value: el.guid,
@@ -178,7 +177,7 @@ const Dropdown = ({field, closeMenu, onObjectSelect, tablesList}) => {
                 onClick={() => setSelectedTable(table)}
               >
                 <IconGenerator icon={table.icon} />
-                {table.label?.attributes[`title_${i18n}`] ?? table?.label}
+                {table?.attributes[`title_${i18n}`] ?? table?.label}
               </div>
             ))}
           </>

@@ -178,7 +178,7 @@ const Dropdown = ({field, closeMenu, onObjectSelect, tablesList}) => {
                 onClick={() => setSelectedTable(table)}
               >
                 <IconGenerator icon={table.icon} />
-                {table.label?.attributes[`title_${i18n}`] ?? table?.label}
+                {table?.attributes[`title_${i18n}`] ?? table?.label}
               </div>
             ))}
           </>

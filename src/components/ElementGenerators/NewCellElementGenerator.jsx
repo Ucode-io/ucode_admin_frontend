@@ -68,6 +68,17 @@ const NewCellElementGenerator = ({
   //   () => `multi.${index}.${field.slug}`,
   //   [field.slug, index]
   // );
+
+  const removeLangFromSlug = (slug) => {
+    var lastIndex = field.slug.lastIndexOf("_");
+    if (lastIndex !== -1) {
+      var result = field.slug.substring(0, lastIndex);
+      return result;
+    } else {
+      return false;
+    }
+  };
+
   const computedSlug = useMemo(() => {
     if (field?.enable_multilanguage) {
       return `${removeLangFromSlug(field.slug)}_${i18n}`;

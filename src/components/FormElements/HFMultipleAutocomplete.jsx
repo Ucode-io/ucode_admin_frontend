@@ -164,8 +164,6 @@ const AutoCompleteElement = ({
     else onFormChange([values[values?.length - 1]?.value] ?? []);
   };
 
-  console.log("computedValue", computedValue);
-
   return (
     <FormControl style={{width}}>
       <InputLabel size="small">{label}</InputLabel>

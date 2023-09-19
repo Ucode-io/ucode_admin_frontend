@@ -27,6 +27,7 @@ import HFColorPicker from "../FormElements/HFColorPicker";
 import HFFileUpload from "../FormElements/HFFileUpload";
 import HFVideoUpload from "../FormElements/HFVideoUpload";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
+import {useTranslation} from "react-i18next";
 
 const parser = new Parser();
 
@@ -48,6 +49,7 @@ const NewCellElementGenerator = ({
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
+  const {i18n} = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
@@ -61,10 +63,21 @@ const NewCellElementGenerator = ({
     }
   });
 
-  const computedSlug = useMemo(
-    () => `multi.${index}.${field.slug}`,
-    [field.slug, index]
-  );
+  // const computedSlug = useMemo(
+  //   () => `multi.${index}.${field.slug}`,
+  //   [field.slug, index]
+  // );
+  const computedSlug = useMemo(() => {
+    if (field?.enable_multilanguage) {
+      return `${removeLangFromSlug(field.slug)}_${i18n}`;
+    }
+
+    if (field.id?.includes("@")) {
+      return `$${field?.id?.split("@")?.[0]}.${field?.slug}`;
+    }
+
+    return field?.slug;
+  }, [field?.id, field?.slug, , i18n, field?.enable_multilanguage]);
 
   const changedValue = useWatch({
     control,
@@ -285,6 +298,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
+          data={data}
           {...props}
         />
       );
@@ -301,6 +315,7 @@ const NewCellElementGenerator = ({
           placeholder={field.attributes?.placeholder}
           isBlackBg={isBlackBg}
           defaultValue={defaultValue}
+          data={data}
           {...props}
         />
       );

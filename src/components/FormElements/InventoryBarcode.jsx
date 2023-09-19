@@ -16,6 +16,8 @@ const InventoryBarCode = ({
   watch = () => {},
   name = "",
   relatedTable,
+  updateObject,
+          isNewTableView=false,
   disabledHelperText = false,
   required = false,
   fullWidth = false,
@@ -29,7 +31,6 @@ const InventoryBarCode = ({
   valueGenerator,
   ...props
 }) => {
-  console.log("sasdasdasdasdasdasdasd");
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -127,6 +128,7 @@ const InventoryBarCode = ({
               } else {
                 onChange(e.target.value);
               }
+              isNewTableView && updateObject();
               setElmValue(e.target.value);
               time.current = currentTime;
             }}

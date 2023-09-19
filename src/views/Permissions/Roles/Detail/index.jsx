@@ -19,6 +19,7 @@ import queryClient from "../../../../queries";
 import { useDispatch } from "react-redux";
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import CreateButton from "../../../../components/Buttons/CreateButton";
+import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 
 const RoleDetail = () => {
   const { control, reset, watch, setValue, handleSubmit } = useForm();
@@ -97,20 +98,24 @@ const RoleDetail = () => {
         }
       />
 
-      <div style={{ padding: "10px", background: "#fff" }}>
-        <div>
-          <FRow label="Name">
-            <HFTextField control={control} name="data.name" fullWidth />
-          </FRow>
+      {rolePermissionGetByIdLoading || permissionGetByIdLoading ? (
+        <RingLoaderWithWrapper />
+      ) : (
+        <div style={{ padding: "10px", background: "#fff" }}>
+          <div>
+            <FRow label="Name">
+              <HFTextField control={control} name="data.name" fullWidth />
+            </FRow>
+          </div>
+          <Permissions
+            control={control}
+            setChangedData={setChangedData}
+            changedData={changedData}
+            setValue={setValue}
+            watch={watch}
+          />
         </div>
-        <Permissions
-          control={control}
-          setChangedData={setChangedData}
-          changedData={changedData}
-          setValue={setValue}
-          watch={watch}
-        />
-      </div>
+      )}
     </Box>
   );
 };

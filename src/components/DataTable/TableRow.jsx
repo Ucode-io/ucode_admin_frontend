@@ -105,6 +105,10 @@ const TableRow = ({
             style={{
               padding: "0 4px",
               minWidth: width,
+              position: "sticky",
+              left: "0",
+              backgroundColor: "#F6F6F6",
+              zIndex: "1",
             }}
           >
             <div
@@ -186,7 +190,7 @@ const TableRow = ({
                     //     : "0"
                     // }`,
                     left: view?.attributes?.fixedColumns?.[column?.id]
-                      ? `${calculateWidthFixedColumn(column.id)}px`
+                      ? `${calculateWidthFixedColumn(column.id)+ 80}px`
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(

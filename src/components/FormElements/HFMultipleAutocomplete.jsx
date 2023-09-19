@@ -10,7 +10,7 @@ import {
   Tooltip,
   InputAdornment,
 } from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useMemo} from "react";
 import {Controller, useForm, useWatch} from "react-hook-form";
 import IconGenerator from "../IconPicker/IconGenerator";
@@ -41,6 +41,8 @@ const HFMultipleAutocomplete = ({
   control,
   name,
   label,
+  updateObject,
+  isNewTableView=false,
   isFormEdit = false,
   isBlackBg = false,
   width = "100%",
@@ -60,6 +62,7 @@ const HFMultipleAutocomplete = ({
   const hasColor = field.attributes?.has_color;
   const hasIcon = field.attributes?.has_icon;
   const isMultiSelect = field.attributes?.is_multiselect;
+  
 
   return (
     <Controller
@@ -90,6 +93,7 @@ const HFMultipleAutocomplete = ({
             onFormChange={(el) => {
               onFormChange(el);
               onChange(el);
+              isNewTableView && updateObject();
             }}
             disabledHelperText={disabledHelperText}
             error={error}

@@ -238,6 +238,7 @@ const ObjectDataTable = ({
       removableHeight={removableHeight}
       count={pagesCount}
       page={currentPage}
+      isTableView={isTableView}
       setCurrentPage={onPaginationChange}
       loader={loader}
       multipleDelete={multipleDelete}
@@ -332,7 +333,6 @@ const ObjectDataTable = ({
           <CTableHeadCell style={{ padding: "2px 0", minWidth: "40px" }}>
             <Button variant="text" style={{ borderColor: "#F0F0F0", borderRadius: "0px" }} onClick={openFieldSettings}>
               <AddRoundedIcon />
-              Column
             </Button>
           </CTableHeadCell>
         </CTableRow>

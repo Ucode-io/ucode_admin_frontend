@@ -28,6 +28,10 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderRight: 0,
                     },
+                    "& .MuiInputBase-input": {
+                      paddingTop: 0,
+                      paddingBottom: 0,
+                    },
                     width: '150px',
                   }}
                   fullWidth
@@ -84,6 +88,10 @@ const CDateTimePicker = ({ value, placeholder, isBlackBg, classes, onChange, isF
                   sx={{
                     "& .MuiOutlinedInput-notchedOutline": {
                       borderLeft: 0,
+                    },
+                    "& .MuiInputBase-input": {
+                      paddingTop: 0,
+                      paddingBottom: 0,
                     },
                     width: '150px'
                   }}

@@ -9,6 +9,8 @@ const HFFloatField = ({
   isBlackBg = false,
   isFormEdit = false,
   required = false,
+  updateObject,
+  isNewTableView=false,
   isTransparent = false,
   fullWidth = false,
   withTrim = false,
@@ -55,6 +57,7 @@ const HFFloatField = ({
                 if (valueWithoutSpaces.at(-1) === ".") onChange(parseFloat(valueWithoutSpaces));
                 else onChange(!isNaN(valueWithoutSpaces) ? parseFloat(valueWithoutSpaces) : valueWithoutSpaces);
               }
+              isNewTableView && updateObject()
             }}
             className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
             name={name}

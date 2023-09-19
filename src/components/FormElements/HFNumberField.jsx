@@ -11,6 +11,8 @@ const HFNumberField = ({
   isBlackBg = false,
   isFormEdit = false,
   required = false,
+  updateObject,
+  isNewTableView=false,
   fullWidth = false,
   isTransparent = false,
   withTrim = false,
@@ -79,6 +81,7 @@ const HFNumberField = ({
                   if (valueWithoutSpaces.at(-1) === ".") onChange(valueWithoutSpaces);
                   else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : "");
                 }
+                isNewTableView && updateObject();
               }}
               className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
               name={name}

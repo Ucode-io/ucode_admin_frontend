@@ -7,6 +7,8 @@ const HFVideoUpload = ({
   control,
   name,
   required,
+  updateObject,
+  isNewTableView=false,
   tabIndex,
   rules,
   disabledHelperText = false,
@@ -27,7 +29,10 @@ const HFVideoUpload = ({
           <VideoUpload
             name={name}
             value={value}
-            onChange={onChange}
+            onChange={(val) => {
+              onChange(val)
+              isNewTableView && updateObject()
+            }}
             tabIndex={tabIndex}
             disabled={disabled}
             // error={get(formik.touched, name) && Boolean(get(formik.errors, name))}

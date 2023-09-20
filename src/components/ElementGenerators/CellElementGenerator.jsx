@@ -104,9 +104,13 @@ const CellElementGenerator = ({field = {}, row}) => {
 
     case "MULTI_LINE":
       return (
-        <div className="text-overflow">
+        <div className=" text_overflow_line">
           <span
-            dangerouslySetInnerHTML={{__html: value + `${value && "..."}`}}
+            dangerouslySetInnerHTML={{
+              __html: `${value.slice(0, 200)}${
+                value.length > 200 ? "..." : ""
+              }`,
+            }}
           ></span>
         </div>
       );

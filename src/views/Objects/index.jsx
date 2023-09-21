@@ -37,7 +37,7 @@ const ObjectsPage = () => {
     },
     isLoading,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", tableSlug],
+    ["GET_VIEWS_AND_FIELDS", tableSlug, i18n?.language],
     () => {
       return constructorObjectService.getList(
         tableSlug,

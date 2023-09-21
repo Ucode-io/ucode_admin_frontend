@@ -38,7 +38,7 @@ const RelationTable = ({relation = {}}) => {
     language_setting: i18n?.language,
   };
   const {data: fieldsMap = {}, isLoading: dataFetchingLoading} = useQuery(
-    ["GET_VIEW_RELATION_FIELDS", relatedTableSlug],
+    ["GET_VIEW_RELATION_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return null;
       return constructorObjectService.getList(

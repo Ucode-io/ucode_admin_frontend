@@ -250,7 +250,7 @@ const ObjectDataTable = ({
       .then((res) => {
         setCount(Math.ceil(res.data?.count / limit));
       });
-  }, [tableSlug, limit]);
+  }, [tableSlug, limit, i18n?.language]);
 
   const hasMore = useMemo(() => {
     return currentPage <= count;

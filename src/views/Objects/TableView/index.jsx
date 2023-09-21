@@ -359,7 +359,7 @@ const TableView = ({
             : setLayoutType("SimpleLayout");
         });
       });
-  }, [menuItem.id, tableSlug]);
+  }, [menuItem.id, tableSlug, i18n?.language]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {

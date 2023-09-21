@@ -18,6 +18,8 @@ const HFTextField = ({
   name = "",
   isFormEdit = false,
   isBlackBg,
+  updateObject,
+          isNewTableView=false,
   disabledHelperText = false,
   required = false,
   fullWidth = false,
@@ -57,6 +59,7 @@ const HFTextField = ({
                 : e.target.value
             );
             customOnChange(e);
+            isNewTableView && updateObject();
           }}
           name={name}
           error={error}

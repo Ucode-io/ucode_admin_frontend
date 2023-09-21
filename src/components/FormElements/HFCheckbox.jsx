@@ -7,7 +7,9 @@ const HFCheckbox = ({
   isBlackBg,
   name,
   label,
-    tabIndex,
+  updateObject,
+  isNewTableView=false,
+  tabIndex,
   className,
   defaultValue = false,
   ...props
@@ -32,7 +34,10 @@ const HFCheckbox = ({
             style={{ transform: "translatey(-1px)" }}
             checked={value ?? false}
             autoFocus={tabIndex === 1}
-            onChange={(_, val) => onChange(val)}
+            onChange={(_, val) => {
+              onChange(val)
+              isNewTableView && updateObject()
+            }}
             {...props}
               inputProps={
                 tabIndex

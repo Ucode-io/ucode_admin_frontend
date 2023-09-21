@@ -15,6 +15,8 @@ const HFDatePicker = ({
   isBlackBg = false,
   className,
   name,
+  updateObject,
+  isNewTableView=false,
   label,
   width,
   mask,
@@ -46,7 +48,10 @@ const HFDatePicker = ({
             mask={mask}
             tabIndex={tabIndex}
             value={value}
-            onChange={onChange}
+            onChange={(val) => {
+              onChange(val)
+              isNewTableView && updateObject()
+          }}
             disabled={disabled}
             isTransparent={isTransparent}
           />

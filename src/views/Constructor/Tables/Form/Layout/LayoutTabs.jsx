@@ -188,6 +188,8 @@ function LayoutTabs({
                       style={{display: "flex", alignItems: "center"}}
                     >
                       {mainForm.watch(
+                        `layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${i18n.language}`
+                      ) ?? mainForm.watch(
                         `layouts.${selectedLayoutIndex}.tabs.${index}.relation.attributes.title_${i18n.language}`
                       ) ??
                         mainForm.watch(

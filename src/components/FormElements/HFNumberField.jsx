@@ -1,8 +1,8 @@
-import { Controller, useWatch } from "react-hook-form";
-import { NumericFormat } from "react-number-format";
+import {Controller, useWatch} from "react-hook-form";
+import {NumericFormat} from "react-number-format";
 import styles from "./style.module.scss";
-import { Box } from "@mui/material";
-import { Lock } from "@mui/icons-material";
+import {Box} from "@mui/material";
+import {Lock} from "@mui/icons-material";
 
 const HFNumberField = ({
   control,
@@ -11,6 +11,8 @@ const HFNumberField = ({
   isBlackBg = false,
   isFormEdit = false,
   required = false,
+  updateObject,
+  isNewTableView = false,
   fullWidth = false,
   isTransparent = false,
   withTrim = false,
@@ -36,7 +38,7 @@ const HFNumberField = ({
         required: required ? "This is a required field" : false,
         ...rules,
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => {
+      render={({field: {onChange, value}, fieldState: {error}}) => {
         return (
           <Box
             style={
@@ -87,6 +89,8 @@ const HFNumberField = ({
                           : ""
                       );
                   }
+
+                  isNewTableView && updateObject();
                 }}
                 className={`${isFormEdit ? "custom_textfield" : ""} ${
                   styles.numberField
@@ -101,7 +105,7 @@ const HFNumberField = ({
                         borderRadius: "0",
                       }
                     : disabled
-                    ? { background: "#c0c0c039", borderRight: 0 }
+                    ? {background: "#c0c0c039", borderRight: 0}
                     : {
                         background: isBlackBg ? "#2A2D34" : "",
                         color: isBlackBg ? "#fff" : "",
@@ -110,7 +114,6 @@ const HFNumberField = ({
                 {...props}
               />
             )}
-
             {disabled && (
               <Box
                 style={{
@@ -120,7 +123,7 @@ const HFNumberField = ({
                   padding: "5px",
                 }}
               >
-                <Lock style={{ fontSize: "20px" }} />
+                <Lock style={{fontSize: "20px"}} />
               </Box>
             )}
           </Box>

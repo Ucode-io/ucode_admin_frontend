@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { CTableHeadCell } from "../CTable";
-import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
-import { Button, Menu } from "@mui/material";
+import React, {useState} from "react";
+import {CTableHeadCell} from "../CTable";
+import {PinIcon, ResizeIcon} from "../../assets/icons/icon";
+import {Button, Menu} from "@mui/material";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import QueueOutlinedIcon from "@mui/icons-material/QueueOutlined";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
@@ -11,11 +11,11 @@ import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import constructorFieldService from "../../services/constructorFieldService";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 export default function TableHeadForTableView({
   column,
@@ -45,7 +45,7 @@ export default function TableHeadForTableView({
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -91,7 +91,7 @@ export default function TableHeadForTableView({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
         });
     });
   };
@@ -242,7 +242,7 @@ export default function TableHeadForTableView({
               : "relative"
           }`,
           left: view?.attributes?.fixedColumns?.[column?.id]
-            ? `${calculateWidthFixedColumn(column.id)}px`
+            ? `${calculateWidthFixedColumn(column.id) + 80}px`
             : "0",
           backgroundColor: `${
             tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
@@ -275,7 +275,7 @@ export default function TableHeadForTableView({
               setColumnId((prev) => (prev === column.id ? "" : column.id));
             }}
           >
-            {column?.attributes?.[`title_${i18n?.language}`] ?? column.label}
+            {column?.attributes?.[`label_${i18n?.language}`] ?? column.label}
           </span>
 
           <Button
@@ -308,6 +308,14 @@ export default function TableHeadForTableView({
         open={open}
         onClose={handleClose}
         anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -364,9 +372,18 @@ export default function TableHeadForTableView({
                     alignItems: "center",
                     cursor: "pointer",
                     color: child.id === 14 ? "red" : "",
+                    padding: "2px 0",
                   }}
                 >
-                  <div>{child.icon}</div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {child.icon}
+                  </div>
 
                   <span>{child.title}</span>
                 </div>

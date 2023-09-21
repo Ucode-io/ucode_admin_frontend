@@ -439,6 +439,14 @@ const ViewsWithGroups = ({
                   open={openHeightControl}
                   onClose={handleCloseHeightControl}
                   anchorEl={anchorElHeightControl}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
                   PaperProps={{
                     elevation: 0,
                     sx: {
@@ -531,6 +539,14 @@ const ViewsWithGroups = ({
               open={open}
               onClose={handleClose}
               anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
               PaperProps={{
                 elevation: 0,
                 sx: {

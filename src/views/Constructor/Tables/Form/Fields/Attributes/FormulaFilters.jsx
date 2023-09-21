@@ -1,8 +1,8 @@
-import { Close, Delete } from "@mui/icons-material";
-import { Autocomplete, Checkbox, FormControl, TextField } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
+import {Close, Delete} from "@mui/icons-material";
+import {Autocomplete, Checkbox, FormControl, TextField} from "@mui/material";
+import React, {useMemo, useState} from "react";
+import {Controller, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
 import RectangleIconButton from "../../../../../../components/Buttons/RectangleIconButton";
 import CAutoCompleteSelect from "../../../../../../components/CAutoCompleteSelect";
 import HFAutocomplete from "../../../../../../components/FormElements/HFAutocomplete";
@@ -15,6 +15,7 @@ import useDebounce from "../../../../../../hooks/useDebounce";
 import useTabRouter from "../../../../../../hooks/useTabRouter";
 import constructorObjectService from "../../../../../../services/constructorObjectService";
 import styles from "./style.module.scss";
+import {useTranslation} from "react-i18next";
 
 function FormulaFilters({
   summary,
@@ -25,6 +26,7 @@ function FormulaFilters({
 }) {
   const [debouncedValue, setDebouncedValue] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const {i18n} = useTranslation();
   const filterKey = useWatch({
     control,
     name: `attributes.formula_filters.${index}.key`,
@@ -36,16 +38,23 @@ function FormulaFilters({
       ? filterKey?.split("#")?.[2]
       : "";
 
+  const params = {
+    language_setting: i18n?.language,
+  };
   //==============GET OPTIONS FOR KEY============
-  const { data: fields = [] } = useQuery(
+  const {data: fields = []} = useQuery(
     ["GET_OBJECT_LIST", selectedTableSlug],
     () => {
-      return constructorObjectService.getList(selectedTableSlug, {
-        data: {
-          limit: 0,
-          offset: 0,
+      return constructorObjectService.getList(
+        selectedTableSlug,
+        {
+          data: {
+            limit: 0,
+            offset: 0,
+          },
         },
-      });
+        params
+      );
     },
     {
       enabled: !!selectedTableSlug,
@@ -80,7 +89,7 @@ function FormulaFilters({
   }, [fields, filterKey]);
 
   //==============GET OPTIONS FOR VALUE============
-  const { data: filtersValue = [] } = useQuery(
+  const {data: filtersValue = []} = useQuery(
     ["GET_OBJECT_LIST", selectedSlug, debouncedValue],
     () => {
       return constructorObjectService.getList(selectedSlug, {
@@ -145,10 +154,7 @@ function FormulaFilters({
               <Controller
                 control={control}
                 name={`attributes.formula_filters.${index}.value`}
-                render={({
-                  field: { onChange, value },
-                  fieldState: { error },
-                }) => (
+                render={({field: {onChange, value}, fieldState: {error}}) => (
                   <AutoCompleteElement
                     value={value}
                     options={filtersValue}
@@ -198,7 +204,7 @@ const AutoCompleteElement = ({
   setInputValue,
   setDebouncedValue,
 }) => {
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
 
   const computedValue = useMemo(() => {
     if (!value) return undefined;
@@ -234,7 +240,7 @@ const AutoCompleteElement = ({
         inputValue={inputValue}
         value={computedValue}
         options={options}
-        listStyle={{ maxHeight: 200, overflow: "auto" }}
+        listStyle={{maxHeight: 200, overflow: "auto"}}
         getOptionLabel={(option) => option.label}
         onChange={(e, values) => {
           changeHandler(values);

@@ -10,6 +10,7 @@ const CPagination = ({
   setCurrentPage = () => {},
   view,
   paginationExtraButton,
+  isTableView,
   multipleDelete,
   selectedObjectsForDelete,
   limit,
@@ -87,7 +88,7 @@ const CPagination = ({
           </Button>
         ) : null}
 
-        <Button
+        {isTableView && (<Button
           variant="outlined"
           onClick={() => {
             if (view?.attributes?.url_object) {
@@ -97,7 +98,7 @@ const CPagination = ({
         >
           <AddIcon style={{ color: "#007AFF" }} />
           Add object
-        </Button>
+        </Button>)}
 
         {!disablePagination && (
           <>

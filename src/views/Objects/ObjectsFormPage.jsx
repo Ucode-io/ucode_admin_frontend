@@ -20,6 +20,7 @@ import SummarySectionValue from "./SummarySection/SummarySectionValue";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
+import {useTranslation} from "react-i18next";
 
 const ObjectsFormPage = ({tableSlugFromProps, handleClose, modal = false}) => {
   const {id, tableSlug: tableSlugFromParam} = useParams();
@@ -44,6 +45,7 @@ const ObjectsFormPage = ({tableSlugFromProps, handleClose, modal = false}) => {
   const menu = store.getState().menu;
   const invite = menu.menuItem?.data?.table?.is_login_table;
   const isInvite = menu.invite;
+  const {i18n} = useTranslation();
 
   const {
     handleSubmit,
@@ -52,7 +54,7 @@ const ObjectsFormPage = ({tableSlugFromProps, handleClose, modal = false}) => {
     setValue: setFormValue,
     watch,
   } = useForm({
-    defaultValues: { ...state, invite: isInvite ? invite : false },
+    defaultValues: {...state, invite: isInvite ? invite : false},
   });
 
   const tableInfo = store.getState().menu.menuItem;
@@ -61,6 +63,7 @@ const ObjectsFormPage = ({tableSlugFromProps, handleClose, modal = false}) => {
     setLoader(true);
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
+      language_setting: i18n?.language,
     });
 
     const getFormData = constructorObjectService.getById(tableSlug, id);
@@ -104,6 +107,7 @@ const ObjectsFormPage = ({tableSlugFromProps, handleClose, modal = false}) => {
   const getFields = async () => {
     const getLayout = layoutService.getList({
       "table-slug": tableSlug,
+      language_setting: i18n?.language,
     });
 
     try {

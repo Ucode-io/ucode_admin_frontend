@@ -1,16 +1,17 @@
-import { lazy, Suspense } from "react"
-import { Controller, useWatch } from "react-hook-form"
+import { lazy, Suspense } from "react";
+import { Controller, useWatch } from "react-hook-form";
 
-import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper"
-import "react-quill/dist/quill.snow.css"
+import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
+import "react-quill/dist/quill.snow.css";
 
-
-const ReactQuill = lazy(() => import("react-quill"))
+const ReactQuill = lazy(() => import("react-quill"));
 
 const HFTextEditor = ({
   control,
   name = "",
   disabledHelperText = false,
+  updateObject,
+  isNewTableView = false,
   required = false,
   isTransparent = false,
   fullWidth = false,
@@ -22,7 +23,7 @@ const HFTextEditor = ({
   const value = useWatch({
     control,
     name,
-  })
+  });
 
   return (
     <Controller
@@ -38,10 +39,13 @@ const HFTextEditor = ({
           <ReactQuill
             theme="snow"
             defaultValue={value}
-            onChange={onChange}
+            onChange={(val) => {
+              onChange(val);
+              isNewTableView && updateObject();
+            }}
             tabIndex={tabIndex}
             autoFocus={false}
-            style={{backgroundColor: `${isTransparent ? 'transparent' : "" }`}}
+            style={{ backgroundColor: `${isTransparent ? "transparent" : ""}` }}
           />
         </Suspense>
         // <TextField
@@ -58,7 +62,7 @@ const HFTextEditor = ({
         // />
       )}
     ></Controller>
-  )
-}
+  );
+};
 
-export default HFTextEditor
+export default HFTextEditor;

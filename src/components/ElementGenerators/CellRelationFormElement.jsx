@@ -31,6 +31,8 @@ const CellRelationFormElement = ({
   isFormEdit,
   control,
   name,
+  updateObject,
+  isNewTableView = false,
   disabled,
   placeholder,
   field,
@@ -63,7 +65,10 @@ const CellRelationFormElement = ({
               name={name}
               control={control}
               index={index}
-              setValue={onChange}
+              setValue={(e) => {
+                onChange(e);
+                updateObject();
+              }}
             />
           ) : field?.attributes?.cascadings?.length > 1 ? (
             <CascadingElement
@@ -77,7 +82,10 @@ const CellRelationFormElement = ({
               name={name}
               control={control}
               index={index}
-              setValue={onChange}
+              setValue={(e) => {
+                onChange(e);
+                updateObject();
+              }}
             />
           ) : (
             <AutoCompleteElement
@@ -88,7 +96,10 @@ const CellRelationFormElement = ({
               value={value}
               classes={classes}
               name={name}
-              setValue={onChange}
+              setValue={(e) => {
+                onChange(e);
+                updateObject();
+              }}
               field={field}
               defaultValue={defaultValue}
               tableSlug={field.table_slug}

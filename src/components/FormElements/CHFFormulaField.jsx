@@ -13,6 +13,8 @@ const parser = new Parser();
 const CHFFormulaField = ({
   control,
   name,
+  updateObject,
+  isNewTableView=false,
   rules = {},
   isTableView = false,
   setFormValue = () => {},
@@ -83,6 +85,7 @@ const CHFFormulaField = ({
 
             if (!valueWithoutSpaces) onChange("");
             else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : "");
+            isNewTableView && updateObject();
           }}
           name={name}
           error={error}

@@ -2,8 +2,8 @@ import {useMutation, useQuery} from "react-query";
 import request from "../utils/request";
 
 const constructorObjectService = {
-  getList: (tableSlug, data) =>
-    request.post(`/object/get-list/${tableSlug}`, data),
+  getList: (tableSlug, data, params) =>
+    request.post(`/object/get-list/${tableSlug}`, data, {params}),
   groupByList: (tableSlug, rowTableSlug, data, params) =>
     request.post(
       `/object/get-list-group-by/${tableSlug}/${rowTableSlug}`,

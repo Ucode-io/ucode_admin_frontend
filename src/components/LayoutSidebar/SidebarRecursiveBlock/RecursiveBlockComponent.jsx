@@ -137,6 +137,9 @@ const RecursiveBlock = ({
           `/main/${appId}/report-setting/${element?.report_setting_id}`
         );
 
+      case "PERMISSION":
+        return navigate(`/main/${appId}/permission/${element?.guid}`);
+
       case "PIVOT":
         return navigateAndSaveHistory(element);
 
@@ -263,14 +266,16 @@ const RecursiveBlock = ({
                     title={
                       element?.attributes?.[`label_${i18n}`] ??
                       element?.attributes?.[`title_${i18n}`] ??
-                      element?.label
+                      element?.label ??
+                      element?.name
                     }
                     placement="top"
                   >
                     <p>
                       {element?.attributes?.[`label_${i18n}`] ??
                         element?.attributes?.[`title_${i18n}`] ??
-                        element?.label}
+                        element?.label ??
+                        element?.name}
                     </p>
                   </Tooltip>
                 </Box>

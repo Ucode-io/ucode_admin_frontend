@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import useOnClickOutside from "use-onclickoutside";
-import { useLocation } from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {
   CTable,
@@ -11,21 +11,20 @@ import {
   CTableRow,
 } from "../CTable";
 import FilterGenerator from "../../views/Objects/components/FilterGenerator";
-import { tableSizeAction } from "../../store/tableSize/tableSizeSlice";
-import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
+import {tableSizeAction} from "../../store/tableSize/tableSizeSlice";
+import {PinIcon, ResizeIcon} from "../../assets/icons/icon";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import TableRow from "./TableRow";
 import SummaryRow from "./SummaryRow";
 import MultipleUpdateRow from "./MultipleUpdateRow";
 import "./style.scss";
-import { selectedRowActions } from "../../store/selectedRow/selectedRow.slice";
+import {selectedRowActions} from "../../store/selectedRow/selectedRow.slice";
 import CellCheckboxNoSign from "./CellCheckboxNoSign";
-import { de } from "date-fns/locale";
-import { useTranslation } from "react-i18next";
-import { Box, Button, LinearProgress } from "@mui/material";
+import {Box, Button, LinearProgress} from "@mui/material";
 import TableHeadForTableView from "./TableHeadForTableView";
 import InfiniteScroll from "react-infinite-scroll-component";
 import constructorObjectService from "../../services/constructorObjectService";
+import {useTranslation} from "react-i18next";
 
 const ObjectDataTable = ({
   data = [],
@@ -81,7 +80,7 @@ const ObjectDataTable = ({
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const { i18n } = useTranslation();
+  const {i18n} = useTranslation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const [columnId, setColumnId] = useState("");
@@ -135,7 +134,7 @@ const ObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
+        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -161,9 +160,7 @@ const ObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(
-      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" })
-    );
+    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -240,8 +237,18 @@ const ObjectDataTable = ({
   const [count, setCount] = useState(0);
 
   useEffect(() => {
+    const params = {
+      language_setting: i18n?.language,
+    };
+    console.log("i18n?.language", i18n?.language);
     constructorObjectService
-      .getList(tableSlug, { data: { limit: 0, offset: 0 } })
+      .getList(
+        tableSlug,
+        {
+          data: {limit: 0, offset: 0},
+        },
+        params
+      )
       .then((res) => {
         setCount(Math.ceil(res.data?.count / limit));
       });
@@ -257,6 +264,7 @@ const ObjectDataTable = ({
       removableHeight={removableHeight}
       count={pagesCount}
       page={currentPage}
+      isTableView={isTableView}
       setCurrentPage={onPaginationChange}
       loader={loader}
       multipleDelete={multipleDelete}
@@ -359,14 +367,13 @@ const ObjectDataTable = ({
             )}
           </PermissionWrapperV2>
 
-          <CTableHeadCell style={{ padding: "2px 0", minWidth: "40px" }}>
+          <CTableHeadCell style={{padding: "2px 0", minWidth: "40px"}}>
             <Button
               variant="text"
-              style={{ borderColor: "#F0F0F0", borderRadius: "0px" }}
+              style={{borderColor: "#F0F0F0", borderRadius: "0px"}}
               onClick={openFieldSettings}
             >
               <AddRoundedIcon />
-              Column
             </Button>
           </CTableHeadCell>
         </CTableRow>

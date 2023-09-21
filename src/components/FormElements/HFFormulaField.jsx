@@ -20,6 +20,8 @@ const HFFormulaField = ({
   required,
   disabledHelperText,
   fieldsList,
+  updateObject,
+  isNewTableView=false,
   disabled,
   defaultValue,
   field,
@@ -76,6 +78,7 @@ const HFFormulaField = ({
 
             if (!valueWithoutSpaces) onChange("");
             else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : "");
+            isNewTableView && updateObject();
           }}
           error={error}
           sx={

@@ -22,6 +22,8 @@ const HFTextFieldWithMask = ({
   isTransparent = false,
   disabledHelperText = false,
   required = false,
+  updateObject,
+  isNewTableView = false,
   rules = {},
   mask,
   disabled,
@@ -44,7 +46,10 @@ const HFTextFieldWithMask = ({
         <InputMask
           mask={mask}
           value={value ?? undefined}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            onChange(e.target.value);
+            updateObject();
+          }}
           disabled={disabled}
           {...props}
         >

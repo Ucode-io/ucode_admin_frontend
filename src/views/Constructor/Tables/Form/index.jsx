@@ -32,6 +32,7 @@ import Fields from "./Fields";
 import Layout from "./Layout";
 import MainInfo from "./MainInfo";
 import Relations from "./Relations";
+import {useTranslation} from "react-i18next";
 
 const ConstructorTablesFormPage = () => {
   const dispatch = useDispatch();
@@ -40,7 +41,8 @@ const ConstructorTablesFormPage = () => {
   const projectId = useSelector((state) => state.auth.projectId);
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
-
+  const {i18n} = useTranslation();
+  console.log("sssssssssform", slug);
   const mainForm = useForm({
     defaultValues: {
       show_in_menu: true,
@@ -82,6 +84,7 @@ const ConstructorTablesFormPage = () => {
     const getLayouts = layoutService
       .getList({
         "table-slug": slug,
+        language_setting: i18n?.language,
       })
       .then((res) => {
         mainForm.setValue("layouts", res?.layouts ?? []);

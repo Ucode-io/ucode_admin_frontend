@@ -72,9 +72,8 @@ const NewSection = ({
   const languages = useSelector((state) => state.languages.list);
 
   const nameGenerator = (language) => {
-    console.log("ssssssqqqqq", language);
     if (mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language}`)) {
-      return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language.slug}`;
+      return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language}`;
     } else {
       return `layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`;
     }
@@ -90,7 +89,7 @@ const NewSection = ({
             disabledHelperText
           /> */}
 
-          {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`) ? (
+          {/* {mainForm.watch(`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.label`) ? (
             <HFTextField
               placeholder={`Section`}
               required={index === 0}
@@ -110,7 +109,19 @@ const NewSection = ({
                 style={{ width: 170 }}
               />
             ))
-          )}
+          )} */}
+
+          {languages.map((language) => (
+            <HFTextField
+              placeholder={`Section ${language.slug}`}
+              required={index === 0}
+              control={mainForm.control}
+              // name={nameGenerator(language.slug)}
+              name={`layouts.${selectedLayoutIndex}.tabs.${selectedTabIndex}.sections.${index}.attributes.label_${language.slug}`}
+              size="small"
+              style={{ width: 170 }}
+            />
+          ))}
         </div>
 
         <div className="flex gap-1" style={{ marginLeft: "5px" }}>

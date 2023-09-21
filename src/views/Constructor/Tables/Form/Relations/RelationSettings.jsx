@@ -115,13 +115,21 @@ const RelationSettings = ({
     else return values.filtersList?.filter((column) => column.is_checked);
   }, [values.filtersList, onlyCheckedFiltersVisible]);
 
+  const params = {
+    language_setting: i18n?.language,
+  };
+
   const {isLoading: fieldsLoading} = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug],
     () => {
       if (!relatedTableSlug) return [];
-      return constructorObjectService.getList(relatedTableSlug, {
-        data: {limit: 0, offset: 0},
-      });
+      return constructorObjectService.getList(
+        relatedTableSlug,
+        {
+          data: {limit: 0, offset: 0},
+        },
+        params
+      );
     },
     {
       cacheTime: 10,

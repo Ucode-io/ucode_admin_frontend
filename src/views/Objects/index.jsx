@@ -1,31 +1,37 @@
-import { Fragment, useEffect, useState } from "react";
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
-import { TabPanel, Tabs } from "react-tabs";
+import {Fragment, useEffect, useState} from "react";
+import {useLocation, useParams, useSearchParams} from "react-router-dom";
+import {TabPanel, Tabs} from "react-tabs";
 import ViewsWithGroups from "./ViewsWithGroups";
 import BoardView from "./BoardView";
 import CalendarView from "./CalendarView";
-import { useQuery } from "react-query";
+import {useQuery} from "react-query";
 import PageFallback from "../../components/PageFallback";
 import constructorObjectService from "../../services/constructorObjectService";
-import { listToMap } from "../../utils/listToMap";
+import {listToMap} from "../../utils/listToMap";
 import FiltersBlock from "../../components/FiltersBlock";
 import CalendarHourView from "./CalendarHourView";
 import ViewTabSelector from "./components/ViewTypeSelector";
 import styles from "./style.module.scss";
 import DocView from "./DocView";
 import GanttView from "./GanttView";
-import { store } from "../../store";
+import {store} from "../../store";
+import {useTranslation} from "react-i18next";
 
 const ObjectsPage = () => {
-  const { tableSlug, appId } = useParams();
-  const { state } = useLocation();
+  const {tableSlug, appId} = useParams();
+  const {state} = useLocation();
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
+  const {i18n} = useTranslation();
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(1);
 
+  const params = {
+    language_setting: i18n?.language,
+  };
+
   const {
-    data: { views, fieldsMap } = {
+    data: {views, fieldsMap} = {
       views: [],
       fieldsMap: {},
     },
@@ -33,18 +39,25 @@ const ObjectsPage = () => {
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", tableSlug],
     () => {
-      return constructorObjectService.getList(tableSlug, {
-        data: { limit: 0, offset: 0, app_id: appId },
-      });
+      return constructorObjectService.getList(
+        tableSlug,
+        {
+          data: {limit: 0, offset: 0, app_id: appId},
+        },
+        params
+      );
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
-          views: data?.views?.filter((view) => view?.attributes?.view_permission?.view === true) ?? [],
+          views:
+            data?.views?.filter(
+              (view) => view?.attributes?.view_permission?.view === true
+            ) ?? [],
           fieldsMap: listToMap(data?.fields),
         };
       },
-      onSuccess: ({ views }) => {
+      onSuccess: ({views}) => {
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
     }

@@ -1,44 +1,54 @@
-import { Checkbox } from "@mui/material"
-import { useMemo } from "react"
-import { useWatch } from "react-hook-form"
-import { useQuery } from "react-query"
-import { useParams } from "react-router-dom"
-import DataTable from "../../../../../components/DataTable"
-import HFCheckbox from "../../../../../components/FormElements/HFCheckbox"
-import constructorObjectService from "../../../../../services/constructorObjectService"
+import {Checkbox} from "@mui/material";
+import {useMemo} from "react";
+import {useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
+import DataTable from "../../../../../components/DataTable";
+import HFCheckbox from "../../../../../components/FormElements/HFCheckbox";
+import constructorObjectService from "../../../../../services/constructorObjectService";
+import {useTranslation} from "react-i18next";
 
-const LayoutRelationTable = ({ mainForm, index }) => {
+const LayoutRelationTable = ({mainForm, index}) => {
   const relations = useWatch({
     control: mainForm.control,
     name: "view_relations",
-  })
+  });
+  const {i18n} = useTranslation();
 
-  const relation = relations[index]
+  const relation = relations[index];
 
-  const { slug } = useParams()
+  const {slug} = useParams();
 
   const relatedTableSlug = useMemo(() => {
-    const computedRelation = relation?.relation
+    const computedRelation = relation?.relation;
 
     return computedRelation?.table_from === slug
       ? computedRelation?.table_to
-      : computedRelation?.table_from
-  }, [relation, slug])
+      : computedRelation?.table_from;
+  }, [relation, slug]);
 
-  const { data: columns, isLoading: dataFetchingLoading } = useQuery(
+  const params = {
+    language_setting: i18n?.language,
+  };
+
+  const {data: columns, isLoading: dataFetchingLoading} = useQuery(
     ["GET_VIEW_RELATION_FIELDS", relatedTableSlug],
     () => {
-      if (!relatedTableSlug) return null
-      return constructorObjectService.getList(relatedTableSlug, {
-        data: { limit: 0, offset: 0 },
-      })
+      if (!relatedTableSlug) return null;
+      return constructorObjectService.getList(
+        relatedTableSlug,
+        {
+          data: {limit: 0, offset: 0},
+        },
+        params
+      );
     },
     {
       select: (res) => {
-        return res?.data?.fields ?? []
+        return res?.data?.fields ?? [];
       },
     }
-  )
+  );
 
   return (
     <div>
@@ -67,7 +77,7 @@ const LayoutRelationTable = ({ mainForm, index }) => {
         // onPaginationChange={setCurrentPage}
       />
     </div>
-  )
-}
+  );
+};
 
-export default LayoutRelationTable
+export default LayoutRelationTable;

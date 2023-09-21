@@ -1,9 +1,9 @@
-import { Button, Drawer } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import {Button, Drawer} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import useFilters from "../../../hooks/useFilters";
@@ -11,18 +11,18 @@ import useTabRouter from "../../../hooks/useTabRouter";
 import useCustomActionsQuery from "../../../queries/hooks/useCustomActionsQuery";
 import constructorObjectService from "../../../services/constructorObjectService";
 import layoutService from "../../../services/layoutService";
-import { mergeStringAndState } from "../../../utils/jsonPath";
-import { pageToOffset } from "../../../utils/pageToOffset";
+import {mergeStringAndState} from "../../../utils/jsonPath";
+import {pageToOffset} from "../../../utils/pageToOffset";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
 import FastFilter from "../components/FastFilter";
 import styles from "./styles.module.scss";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import {useFieldArray, useForm, useWatch} from "react-hook-form";
 import FieldSettings from "../../Constructor/Tables/Form/Fields/FieldSettings";
-import { listToMap } from "../../../utils/listToMap";
+import {listToMap} from "../../../utils/listToMap";
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorRelationService from "../../../services/constructorRelationService";
-import { generateGUID } from "../../../utils/generateID";
+import {generateGUID} from "../../../utils/generateID";
 
 const TableView = ({
   tab,
@@ -49,17 +49,18 @@ const TableView = ({
   setFormValue,
   ...props
 }) => {
-  const { t } = useTranslation();
-  const { navigateToForm } = useTabRouter();
+  const {t} = useTranslation();
+  const {navigateToForm} = useTabRouter();
   const navigate = useNavigate();
-  const { id, slug, tableSlug, appId } = useParams();
-  const { new_list } = useSelector((state) => state.filter);
-  const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
+  const {id, slug, tableSlug, appId} = useParams();
+  const {new_list} = useSelector((state) => state.filter);
+  const {filters, filterChangeHandler} = useFilters(tableSlug, view.id);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
   const queryClient = useQueryClient();
+  const {i18n} = useTranslation();
 
   // const selectTableSlug = selectedLinkedObject
   //   ? selectedLinkedObject?.split("#")?.[1]
@@ -97,7 +98,7 @@ const TableView = ({
     mode: "all",
   });
 
-  const { fields, prepend, update, remove } = useFieldArray({
+  const {fields, prepend, update, remove} = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -113,11 +114,15 @@ const TableView = ({
         table_slug: tableSlug,
         relation_table_slug: tableSlug,
       });
-      const [{ relations = [] }, { fields = [] }] = await Promise.all([getRelations, getFieldsData]);
+      const [{relations = []}, {fields = []}] = await Promise.all([
+        getRelations,
+        getFieldsData,
+      ]);
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,
-        relatedTableSlug: relation.table_to?.slug === slug ? "table_from" : "table_to",
+        relatedTableSlug:
+          relation.table_to?.slug === slug ? "table_from" : "table_to",
       }));
 
       const layoutRelations = [];
@@ -125,11 +130,13 @@ const TableView = ({
 
       relationsWithRelatedTableSlug?.forEach((relation) => {
         if (
-          (relation.type === "Many2One" && relation.table_from?.slug === slug) ||
+          (relation.type === "Many2One" &&
+            relation.table_from?.slug === slug) ||
           (relation.type === "One2Many" && relation.table_to?.slug === slug) ||
           relation.type === "Recursive" ||
           (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-          (relation.type === "Many2Dynamic" && relation.table_from?.slug === slug)
+          (relation.type === "Many2Dynamic" &&
+            relation.table_from?.slug === slug)
         ) {
           layoutRelations.push(relation);
         } else {
@@ -143,7 +150,10 @@ const TableView = ({
         attributes: {
           fields: relation.view_fields ?? [],
         },
-        label: relation?.label ?? relation[relation.relatedTableSlug]?.label ? relation[relation.relatedTableSlug]?.label : relation?.title,
+        label:
+          relation?.label ?? relation[relation.relatedTableSlug]?.label
+            ? relation[relation.relatedTableSlug]?.label
+            : relation?.title,
       }));
 
       mainForm.setValue("relations", relations);
@@ -152,7 +162,7 @@ const TableView = ({
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
+      queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
     });
   };
 
@@ -170,7 +180,8 @@ const TableView = ({
     const result = [];
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
-        if (view.attributes.fixedColumns[key]) result.push({ id: key, value: view.attributes.fixedColumns[key] });
+        if (view.attributes.fixedColumns[key])
+          result.push({id: key, value: view.attributes.fixedColumns[key]});
       }
     }
     return customSortArray(
@@ -215,7 +226,7 @@ const TableView = ({
   const [combinedTableData, setCombinedTableData] = useState([]);
 
   const {
-    data: { tableData, pageCount, fiedlsarray, fieldView } = {
+    data: {tableData, pageCount, fiedlsarray, fieldView} = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -233,7 +244,7 @@ const TableView = ({
         currentPage,
         checkedColumns,
         limit,
-        filters: { ...filters, [tab?.slug]: tab?.value },
+        filters: {...filters, [tab?.slug]: tab?.value},
         shouldGet,
       },
     ],
@@ -245,10 +256,18 @@ const TableView = ({
           order: computedSortColumns,
           // with_relations: true,
           view_fields: checkedColumns,
-          search: detectStringType(searchText) === "number" ? parseInt(searchText) : searchText,
+          search:
+            detectStringType(searchText) === "number"
+              ? parseInt(searchText)
+              : searchText,
           limit,
           ...filters,
-          [tab?.slug]: tab ? (Object.values(fieldsMap).find((el) => el.slug === tab?.slug)?.type === "MULTISELECT" ? [`${tab?.value}`] : tab?.value) : undefined,
+          [tab?.slug]: tab
+            ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
+                ?.type === "MULTISELECT"
+              ? [`${tab?.value}`]
+              : tab?.value
+            : undefined,
         },
       });
     },
@@ -257,7 +276,9 @@ const TableView = ({
         fiedlsarray: res?.data?.fields ?? [],
         fieldView: res?.data?.views ?? [],
         tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count) ? 1 : Math.ceil(res.data?.count / limit),
+        pageCount: isNaN(res.data?.count)
+          ? 1
+          : Math.ceil(res.data?.count / limit),
       };
     },
     onSuccess: (data) => {
@@ -301,9 +322,11 @@ const TableView = ({
     }
   }, [tableData, reset]);
 
-  const { data: { custom_events: customEvents = [] } = {} } = useCustomActionsQuery({
-    tableSlug,
-  });
+  const {data: {custom_events: customEvents = []} = {}} = useCustomActionsQuery(
+    {
+      tableSlug,
+    }
+  );
 
   const onCheckboxChange = (val, row) => {
     if (val) setSelectedObjects((prev) => [...prev, row.guid]);
@@ -327,10 +350,13 @@ const TableView = ({
     layoutService
       .getList({
         "table-slug": tableSlug,
+        language_setting: i18n?.language,
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
-          layout.type === "PopupLayout" ? setLayoutType("PopupLayout") : setLayoutType("SimpleLayout");
+          layout.type === "PopupLayout"
+            ? setLayoutType("PopupLayout")
+            : setLayoutType("SimpleLayout");
         });
       });
   }, [menuItem.id, tableSlug]);
@@ -345,7 +371,15 @@ const TableView = ({
 
   const navigateToDetailPage = (row) => {
     if (view?.navigate?.params?.length || view?.navigate?.url) {
-      const params = view.navigate?.params?.map((param) => `${mergeStringAndState(param.key, row)}=${mergeStringAndState(param.value, row)}`).join("&&");
+      const params = view.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&&");
       const result = `${view?.navigate?.url}${params ? "?" + params : ""}`;
       navigate(result);
     } else {
@@ -387,14 +421,24 @@ const TableView = ({
 
   return (
     <div className={styles.wrapper}>
-      {(view?.quick_filters?.length > 0 || (new_list[tableSlug] && new_list[tableSlug].some((i) => i.checked))) && (
+      {(view?.quick_filters?.length > 0 ||
+        (new_list[tableSlug] &&
+          new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
           <p>{t("filters")}</p>
-          <FastFilter view={view} fieldsMap={fieldsMap} getFilteredFilterFields={getFilteredFilterFields} isVertical />
+          <FastFilter
+            view={view}
+            fieldsMap={fieldsMap}
+            getFilteredFilterFields={getFilteredFilterFields}
+            isVertical
+          />
         </div>
       )}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
-        <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }} id="data-table">
+        <div
+          style={{display: "flex", alignItems: "flex-start", width: "100%"}}
+          id="data-table"
+        >
           <ObjectDataTable
             defaultLimit={view?.default_limit}
             formVisible={formVisible}
@@ -451,7 +495,12 @@ const TableView = ({
 
       <ModalDetailPage open={open} setOpen={setOpen} />
 
-      <Drawer open={drawerState} anchor="right" onClose={() => setDrawerState(null)} orientation="horizontal">
+      <Drawer
+        open={drawerState}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal"
+      >
         <FieldSettings
           closeSettingsBlock={() => setDrawerState(null)}
           isTableView={true}

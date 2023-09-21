@@ -1,20 +1,21 @@
-import { Autocomplete, TextField } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import { get } from "@ngard/tiny-get";
-import { useMemo, useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
-import { useQuery } from "react-query";
+import {Autocomplete, TextField} from "@mui/material";
+import {makeStyles} from "@mui/styles";
+import {get} from "@ngard/tiny-get";
+import {useMemo, useState} from "react";
+import {Controller, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
-import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
+import {getRelationFieldTabsLabel} from "../../utils/getRelationFieldLabel";
 import IconGenerator from "../IconPicker/IconGenerator";
 import styles from "./style.module.scss";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CascadingElement from "./CascadingElement";
-import { Close } from "@mui/icons-material";
+import {Close} from "@mui/icons-material";
 import useDebounce from "../../hooks/useDebounce";
 import request from "../../utils/request";
-import { useParams } from "react-router-dom";
+import {useParams} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -30,7 +31,7 @@ const CellManyToManyRelationElement = ({
   control,
   name,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   disabled,
   placeholder,
   field,
@@ -48,7 +49,7 @@ const CellManyToManyRelationElement = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({ field: { onChange, value }, fieldState: { error } }) => {
+        render={({field: {onChange, value}, fieldState: {error}}) => {
           return field?.attributes?.cascadings?.length === 4 ? (
             <CascadingElement
               field={field}
@@ -56,12 +57,10 @@ const CellManyToManyRelationElement = ({
               error={error}
               disabledHelperText={disabledHelperText}
               control={control}
-              setValue={
-                (value) => {
-                  onChange(value);
-                  updateObject();
-                }
-              }
+              setValue={(value) => {
+                onChange(value);
+                updateObject();
+              }}
               value={value}
               setFormValue={setFormValue}
               row={row}
@@ -77,12 +76,10 @@ const CellManyToManyRelationElement = ({
               classes={classes}
               name={name}
               defaultValue={defaultValue}
-              setValue={
-                (value) => {
-                  onChange(value);
-                  updateObject();
-                }
-              }
+              setValue={(value) => {
+                onChange(value);
+                updateObject();
+              }}
               field={field}
               tableSlug={field.table_slug}
               error={error}
@@ -115,14 +112,33 @@ const AutoCompleteElement = ({
   control,
   setFormValue = () => {},
 }) => {
-  const { navigateToForm } = useTabRouter();
+  const {navigateToForm} = useTabRouter();
   const [debouncedValue, setDebouncedValue] = useState("");
+  const {i18n} = useTranslation();
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option);
   };
-  const { id } = useParams();
-  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+  function findMatchingProperty(obj, desiredLanguage) {
+    const matchingProperty = Object.keys(obj).reduce((result, key) => {
+      if (!result && key.includes(`_${desiredLanguage}`)) {
+        result = obj[key];
+      }
+      return result;
+    }, null);
 
+    console.log(
+      "matchingProperty",
+      Object.keys(obj).reduce((result, key) => {
+        if (!result && key.includes(`_${desiredLanguage}`)) {
+          result = obj[key];
+        }
+        return result;
+      }, null)
+    );
+    return matchingProperty;
+  }
+  const {id} = useParams();
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
 
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -145,14 +161,14 @@ const AutoCompleteElement = ({
     return result?.guid ? result : value;
   }, [autoFilters, filtersHandler, value]);
 
-  const { data: optionsFromFunctions } = useQuery(
+  const {data: optionsFromFunctions} = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
       return request.post(
         `/invoke_function/${field?.attributes?.function_path}`,
         {
           params: {
-            from_input: true
+            from_input: true,
           },
           data: {
             table_slug: tableSlug,
@@ -182,7 +198,7 @@ const AutoCompleteElement = ({
     }
   );
 
-  const { data: optionsFromLocale } = useQuery(
+  const {data: optionsFromLocale} = useQuery(
     ["GET_OBJECT_LIST", tableSlug, debouncedValue, autoFiltersValue],
     () => {
       if (!tableSlug) return null;
@@ -220,20 +236,33 @@ const AutoCompleteElement = ({
     return optionsFromLocale ?? [];
   }, [optionsFromFunctions, optionsFromLocale]);
 
-console.log('options', options)
   const computedValue = useMemo(() => {
     if (!value) return [];
 
-    return value?.map((id) => {
-        const option = options?.options?.find((el) => el?.guid === id);
+    if (Array.isArray(value)) {
+      return value
+        ?.map((id) => {
+          const option = options?.options?.find((el) => el?.guid === id);
 
-        if (!option) return null;
-        return {
+          if (!option) return null;
+          return {
+            ...option,
+            // label: getRelationFieldLabel(field, option)
+          };
+        })
+        .filter((el) => el !== null);
+    } else {
+      const option = options?.options?.find((el) => el?.guid === value);
+
+      if (!option) return [];
+
+      return [
+        {
           ...option,
           // label: getRelationFieldLabel(field, option)
-        };
-      })
-      ?.filter((el) => el);
+        },
+      ];
+    }
   }, [options, value]);
 
   const changeHandler = (value) => {
@@ -251,7 +280,7 @@ console.log('options', options)
     //   setFormValue(setName.join("."), get(val, field_from));
     // });
   };
-  
+
   return (
     <div className={styles.autocompleteWrapper}>
       <Autocomplete
@@ -260,7 +289,7 @@ console.log('options', options)
         value={computedValue}
         popupIcon={
           isBlackBg ? (
-            <ArrowDropDownIcon style={{ color: "#fff" }} />
+            <ArrowDropDownIcon style={{color: "#fff"}} />
           ) : (
             <ArrowDropDownIcon />
           )
@@ -271,15 +300,16 @@ console.log('options', options)
         noOptionsText={
           <span
             onClick={() => navigateToForm(tableSlug)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+            style={{color: "#007AFF", cursor: "pointer", fontWeight: 500}}
           >
             Создать новый
           </span>
         }
         blurOnSelect
         openOnFocus
-        getOptionLabel={(option) =>
-          getRelationFieldTabsLabel(field, option, true)
+        getOptionLabel={
+          (option) => getRelationFieldTabsLabel(field, option, true)
+          // findMatchingProperty(option, i18n)
         }
         multiple
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
@@ -315,7 +345,7 @@ console.log('options', options)
                     </p>
                     <IconGenerator
                       icon="arrow-up-right-from-square.svg"
-                      style={{ marginLeft: "10px", cursor: "pointer" }}
+                      style={{marginLeft: "10px", cursor: "pointer"}}
                       size={15}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -326,8 +356,8 @@ console.log('options', options)
 
                     <Close
                       fontSize="12"
-                      onClick={getTagProps({ index })?.onDelete}
-                      style={{ cursor: "pointer" }}
+                      onClick={getTagProps({index})?.onDelete}
+                      style={{cursor: "pointer"}}
                     />
                   </div>
                 ))}

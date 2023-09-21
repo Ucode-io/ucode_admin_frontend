@@ -1,7 +1,7 @@
 import {Button, Drawer} from "@mui/material";
 import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";

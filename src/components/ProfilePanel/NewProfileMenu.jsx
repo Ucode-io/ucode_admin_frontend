@@ -3,6 +3,7 @@ import KeyIcon from "@mui/icons-material/Key";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
 import SmsIcon from "@mui/icons-material/Sms";
 import WidgetsIcon from "@mui/icons-material/Widgets";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { Box, Divider, Menu, MenuItem, Tooltip } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -56,6 +57,7 @@ const NewProfilePanel = ({
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
   const location = useLocation();
+  const defaultAdmin = auth.roleInfo.name === "DEFAULT ADMIN";
   const settings = location.pathname.includes("settings");
   const [versionModalIsOpen, openVersionModal, closeVersionModal] =
     useBooleanState(false);
@@ -496,7 +498,7 @@ const NewProfilePanel = ({
               }}
             >
               <Box>
-                {permissions?.menu_setting_button && (
+                {defaultAdmin && (
                   <ProfileItem
                     children={
                       <WidgetsIcon
@@ -515,7 +517,7 @@ const NewProfilePanel = ({
                 {permissions?.menu_setting_button && (
                   <ProfileItem
                     children={
-                      <WidgetsIcon
+                      <SettingsIcon
                         style={{
                           color: "#747474",
                         }}

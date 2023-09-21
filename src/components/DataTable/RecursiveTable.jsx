@@ -3,11 +3,10 @@ import GroupCellElementGenerator from "./GroupCellElementGenerator";
 import { useSelector } from "react-redux";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Button, Checkbox } from "@mui/material";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import { Box } from "@mui/material";
 import { get } from "@ngard/tiny-get";
 import { getRelationFieldTableCellLabel } from "../../utils/getRelationFieldLabel";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 const RecursiveTable = ({
   element,
@@ -43,8 +42,6 @@ const RecursiveTable = ({
 }) => {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
-  const [hovered, setHovered] = useState(false);
-  const [columnResult, setColumnResult] = useState();
 
   const clickHandler = () => {
     if (element?.data?.length) {
@@ -56,69 +53,6 @@ const RecursiveTable = ({
       column.attributes.field_permission.field_id
     )
   );
-
-  const changeSetDelete = (row) => {
-    if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
-      setSelectedObjectsForDelete(
-        selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid)
-      );
-    } else {
-      setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
-    }
-  };
-  //   <CTableCell
-  //   align="center"
-  //   className="data_table__number_cell"
-  //   style={{
-  //     padding: "0 4px",
-  //     minWidth: width,
-  //   }}
-  // >
-  //   <div
-  //     style={{
-  //       display: "flex",
-  //       alignItems: "center",
-  //       justifyContent: "center",
-  //     }}
-  //   >
-  //     {hovered ? (
-  //       <Button
-  //         onClick={() => {
-  //           onRowClick(element, index);
-  //         }}
-  //         style={{
-  //           minWidth: "max-content",
-  //         }}
-  //       >
-  //         <OpenInFullIcon />
-  //       </Button>
-  //     ) : (
-  //       <span
-  //         className="data_table__row_number"
-  //         style={{ display: "block", width: "35px" }}
-  //       >
-  //         {/* {(currentPage - 1) * limit + index + 1} */}
-  //         {/* {rowIndex + 1} */}
-  //       </span>
-  //     )}
-
-  //     {hovered ||
-  //     selectedObjectsForDelete.find(
-  //       (item) => item?.guid === element?.guid
-  //     ) ? (
-  //       <Checkbox
-  //         checked={selectedObjectsForDelete?.find(
-  //           (item) => item?.guid === element?.guid
-  //         )}
-  //         onChange={() => {
-  //           changeSetDelete(element);
-  //         }}
-  //       />
-  //     ) : (
-  //       ""
-  //     )}
-  //   </div>
-  // </CTableCell>
 
   const getValue = (field, row) => {
     if (field.type !== "LOOKUP") return get(row, field.slug, "");
@@ -134,11 +68,7 @@ const RecursiveTable = ({
   return (
     <>
       {element && (
-        <CTableRow
-          key={index}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-        >
+        <CTableRow key={index}>
           {columns?.map((column, index) => {
             return (
               <CTableCell
@@ -166,7 +96,8 @@ const RecursiveTable = ({
               >
                 <Box display={"flex"} alignItems={"center"}>
                   {filteredColumns.find((item) => item.id === column.id) &&
-                  getValue(column, element) ? (
+                  getValue(column, element)?.length &&
+                  element?.data?.length ? (
                     childBlockVisible ? (
                       <KeyboardArrowDownIcon />
                     ) : (

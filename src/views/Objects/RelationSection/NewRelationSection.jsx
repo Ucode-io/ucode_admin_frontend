@@ -65,6 +65,7 @@ const NewRelationSection = ({
   const [relationsCreateFormVisible, setRelationsCreateFormVisible] = useState(
     {}
   );
+  const {i18n} = useTranslation();
   const [shouldGet, setShouldGet] = useState(false);
   const [fieldSlug, setFieldSlug] = useState("");
   const [selectedObjects, setSelectedObjects] = useState([]);
@@ -287,6 +288,7 @@ const NewRelationSection = ({
     layoutService
       .getList({
         "table-slug": tableSlug,
+        language_setting: i18n?.language,
       })
       .then((res) => {
         const layout = res?.layouts
@@ -303,7 +305,7 @@ const NewRelationSection = ({
           });
         setData(layout);
       });
-  }, [tableSlug, menuItem.table_id]);
+  }, [tableSlug, menuItem.table_id, i18n?.language]);
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
@@ -316,7 +318,6 @@ const NewRelationSection = ({
   }, [selectedTab]);
 
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
-  const {i18n} = useTranslation();
 
   console.log("data", data);
 

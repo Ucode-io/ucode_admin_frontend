@@ -6,19 +6,19 @@ import {
   format,
   startOfMonth,
 } from "date-fns";
-import { useMemo, useState } from "react";
-import { useQueries, useQuery } from "react-query";
-import { useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import {useMemo, useState} from "react";
+import {useQueries, useQuery} from "react-query";
+import {useParams} from "react-router-dom";
+import {useForm} from "react-hook-form";
 
 import CRangePicker from "../../../components/DatePickers/CRangePicker";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
 import useFilters from "../../../hooks/useFilters";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { getRelationFieldTabsLabel } from "../../../utils/getRelationFieldLabel";
-import { listToMap } from "../../../utils/listToMap";
-import { selectElementFromEndOfString } from "../../../utils/selectElementFromEnd";
+import {getRelationFieldTabsLabel} from "../../../utils/getRelationFieldLabel";
+import {listToMap} from "../../../utils/listToMap";
+import {selectElementFromEndOfString} from "../../../utils/selectElementFromEnd";
 import ExcelButtons from "../components/ExcelButtons";
 import FastFilter from "../components/FastFilter";
 import FastFilterButton from "../components/FastFilter/FastFilterButton";
@@ -30,10 +30,10 @@ import HFSelect from "../../../components/FormElements/HFSelect";
 import Gantt from "./Gantt";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Menu from "@mui/material/Menu";
-import { Description } from "@mui/icons-material";
-import { useSelector } from "react-redux";
+import {Description} from "@mui/icons-material";
+import {useSelector} from "react-redux";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 const variableTypes = [
   {
@@ -50,15 +50,21 @@ const variableTypes = [
   },
 ];
 
-const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views, selectedTable }) => {
-  const { t } = useTranslation()
-  const { control, watch, setValue } = useForm({
+const GanttView = ({
+  view,
+  selectedTabIndex,
+  setSelectedTabIndex,
+  views,
+  selectedTable,
+}) => {
+  const {t} = useTranslation();
+  const {control, watch, setValue} = useForm({
     defaultValues: {
       period: "months",
     },
   });
-  const { tableSlug } = useParams();
-  const { filters } = useFilters(tableSlug, view.id);
+  const {tableSlug} = useParams();
+  const {filters} = useFilters(tableSlug, view.id);
   const isPermissions = useSelector((state) => state?.auth?.permissions);
 
   const [dateFilters, setDateFilters] = useState([
@@ -88,16 +94,16 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views, selecte
 
     const result = [];
     for (let i = 0; i <= differenceDays; i++) {
-      result.push(add(dateFilters[0], { days: i }));
+      result.push(add(dateFilters[0], {days: i}));
     }
     return result;
   }, [dateFilters]);
 
-  const { data: { data } = { data: [] }, isLoading } = useQuery(
-    ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters }],
+  const {data: {data} = {data: []}, isLoading} = useQuery(
+    ["GET_OBJECTS_LIST_WITH_RELATIONS", {tableSlug, filters}],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { with_relations: true, ...filters },
+        data: {...filters},
       });
     },
     {
@@ -192,10 +198,10 @@ const GanttView = ({ view, selectedTabIndex, setSelectedTabIndex, views, selecte
                   >
                     <Description
                       className={style.icon}
-                      style={{ color: "#6E8BB7" }}
+                      style={{color: "#6E8BB7"}}
                     />
                   </div>
-                  <span>{ t('template') }</span>
+                  <span>{t("template")}</span>
                 </div>
 
                 <PermissionWrapperV2 tableSlug={tableSlug} type="update">
@@ -277,7 +283,7 @@ const queryGenerator = (groupFields, filters = {}) => {
 
 const promiseGenerator = (groupField, filters = {}) => {
   const filterValue = filters[groupField.slug];
-  const defaultFilters = filterValue ? { [groupField.slug]: filterValue } : {};
+  const defaultFilters = filterValue ? {[groupField.slug]: filterValue} : {};
 
   const relationFilters = {};
 
@@ -301,7 +307,7 @@ const promiseGenerator = (groupField, filters = {}) => {
       relationFilters[slug] = value;
     }
   });
-  const computedFilters = { ...defaultFilters, ...relationFilters };
+  const computedFilters = {...defaultFilters, ...relationFilters};
 
   if (groupField?.type === "PICK_LIST") {
     return {

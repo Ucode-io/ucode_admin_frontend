@@ -12,9 +12,15 @@ import HFTextField from "../../../../components/FormElements/HFTextField";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import listToOptions from "../../../../utils/listToOptions";
 import {useSelector} from "react-redux";
+import {useTranslation} from "react-i18next";
 
 const MainInfo = ({control}) => {
   const {slug} = useParams();
+  const {i18n} = useTranslation();
+
+  const params = {
+    language_setting: i18n?.language,
+  };
 
   const tableName = useWatch({
     control,
@@ -54,14 +60,18 @@ const MainInfo = ({control}) => {
   });
 
   const {data: computedTableFields} = useQuery(
-    ["GET_OBJECT_LIST", slug],
+    ["GET_OBJECT_LIST", slug, i18n?.language],
     () => {
-      return constructorObjectService.getList(slug, {
-        data: {
-          limit: 0,
-          offset: 0,
+      return constructorObjectService.getList(
+        slug,
+        {
+          data: {
+            limit: 0,
+            offset: 0,
+          },
         },
-      });
+        params
+      );
     },
     {
       select: (res) => {

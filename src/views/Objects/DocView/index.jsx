@@ -1,10 +1,10 @@
-import { BackupTable, ImportExport } from "@mui/icons-material";
+import {BackupTable, ImportExport} from "@mui/icons-material";
 import printJS from "print-js";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useFieldArray, useForm} from "react-hook-form";
+import {useQuery, useQueryClient} from "react-query";
+import {useSelector} from "react-redux";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
@@ -21,16 +21,18 @@ import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSele
 import ViewTabSelector from "../components/ViewTypeSelector";
 import DocRelationsSection from "./DocRelationsSection";
 import DocSettingsBlock from "./DocSettingsBlock";
-import { contentStyles } from "./editorContentStyles";
+import {contentStyles} from "./editorContentStyles";
 import RedactorBlock from "./RedactorBlock";
 import styles from "./style.module.scss";
 import TemplatesList from "./TemplatesList";
+import {useTranslation} from "react-i18next";
 
-const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
+const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
   const redactorRef = useRef();
-  const { state } = useLocation();
-  const { tableSlug } = useParams();
+  const {state} = useLocation();
+  const {tableSlug} = useParams();
   const navigate = useNavigate();
+  const {i18n} = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const queryClient = useQueryClient();
   const [defaultViewTab, setDefaultViewTab] = useState(0);
@@ -58,22 +60,31 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
     ? selectedLinkedObject?.split("#")?.[1]
     : tableSlug;
 
-  const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
+  const {selectedPaperSize} = usePaperSize(selectedPaperSizeIndex);
 
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
   );
 
+  const params = {
+    language_setting: i18n?.language,
+  };
+
   // ========FIELDS FOR RELATIONS=========
-  const { data: fields = [], isLoading: fieldsLoading } = useQuery(
+  const {data: fields = [], isLoading: fieldsLoading} = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      { tableSlug: selectedLinkedTableSlug, limit: 0, offset: 0 },
+      {tableSlug: selectedLinkedTableSlug, limit: 0, offset: 0},
+      i18n?.language,
     ],
     () => {
-      return constructorObjectService.getList(selectedLinkedTableSlug, {
-        data: { with_relations: true, limit: 0, offset: 0 },
-      });
+      return constructorObjectService.getList(
+        selectedLinkedTableSlug,
+        {
+          data: {limit: 0, offset: 0},
+        },
+        params
+      );
     },
     {
       cacheTime: 10,
@@ -93,7 +104,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   );
   // ========GET TEMPLATES LIST===========
   const {
-    data: { templates, templateFields } = { templates: [], templateFields: [] },
+    data: {templates, templateFields} = {templates: [], templateFields: []},
     isLoading,
     refetch,
   } = useQuery(
@@ -118,7 +129,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
     },
     {
       cacheTime: 10,
-      select: ({ data }) => {
+      select: ({data}) => {
         const templates = data?.response ?? [];
         const templateFields = data?.fields ?? [];
 
@@ -147,7 +158,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const addNewTemplate = (template) => {
     refetch();
   };
-  
+
   //=========SET VARIABLE===========
   const setVariable = () => {
     if (state && selectedLinkedObject && selectedObject) {
@@ -159,38 +170,38 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const exportToPDF = async () => {
     if (!selectedTemplate) return;
     setPdfLoader(true);
-  
+
     try {
       let html = redactorRef.current.getData();
-  
+
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head><style>${contentStyles}</style>`;
-  
+
       fields.forEach((field) => {
         html = html.replaceAll(
           `{ ${field.label} }`,
           `<%= it.${field.path_slug ?? field.slug} %>`
         );
       });
-  
-      const tempElement = document.createElement('div');
+
+      const tempElement = document.createElement("div");
       tempElement.innerHTML = html;
-      const tables = tempElement.querySelectorAll('table');
-  
+      const tables = tempElement.querySelectorAll("table");
+
       let pageSize = pointToMillimeter(selectedPaperSize.height);
       let pageWidth = pointToMillimeter(selectedPaperSize.width);
-      let extraWidth = pointToMillimeter(selectedPaperSize.width) === 100 ? 213 : 175;
+      let extraWidth =
+        pointToMillimeter(selectedPaperSize.width) === 100 ? 213 : 175;
       tables.forEach((table) => {
-        table.style.width = `${pageWidth === 100 ? '50%' : '97%'}`;
-        table.style.borderRightCollapse = 'collapse'; 
-      }); 
-  
-  
+        table.style.width = `${pageWidth === 100 ? "50%" : "97%"}`;
+        table.style.borderRightCollapse = "collapse";
+      });
+
       if (selectedPaperSize.height === 1000) {
         pageSize = pixelToMillimeter(
           document.querySelector(".ck-content").offsetHeight - 37
         );
       }
-  
+
       const res = await documentTemplateService.exportToPDF({
         data: {
           linked_table_slug: selectedLinkedTableSlug,
@@ -205,38 +216,38 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
           pointToMillimeter(selectedPaperSize.width) + extraWidth
         }mm" >${tempElement.innerHTML}</div>`,
       });
-  
+
       queryClient.refetchQueries([
         "GET_OBJECT_FILES",
-        { tableSlug, selectLinkedObject },
+        {tableSlug, selectLinkedObject},
       ]);
-  
-      window.open(res.link, { target: "_blank" });
+
+      window.open(res.link, {target: "_blank"});
     } finally {
       setPdfLoader(false);
     }
   };
-  
+
   // ========EXPORT TO HTML===============
 
   const exportToHTML = async () => {
     if (!selectedTemplate) return;
     setHtmlLoader(true);
-  
+
     try {
       let html = redactorRef.current.getData();
       const meta = `<head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>`;
-  
+
       fields.forEach((field) => {
         html = html.replaceAll(
           `{ ${field.label} }`,
           `<%= it.${field.path_slug ?? field.slug} %>`
         );
       });
-  
-      html = html.replace(/<div\s+class="raw-html-embed">/, '');
-      html = html.replace(/<\/div>/, '');
-  
+
+      html = html.replace(/<div\s+class="raw-html-embed">/, "");
+      html = html.replace(/<\/div>/, "");
+
       const res = await documentTemplateService.exportToHTML({
         data: {
           table_slug: tableSlug,
@@ -245,7 +256,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
         },
         html: meta + html,
       });
-  
+
       setSelectedTemplate((prev) => ({
         ...prev,
         html: res.html.replaceAll("<p></p>", ""),
@@ -255,11 +266,10 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
       setHtmlLoader(false);
     }
   };
-  
+
   // =======PRINT============
 
   const print = async () => {
-    
     if (!selectedTemplate) return;
     setPdfLoader(true);
     try {
@@ -276,10 +286,14 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
 
       const computedHTML = `${meta} ${html} `;
 
-      printJS({ printable: computedHTML, type: 'raw-html', style: [
-        `@page { size: ${selectedPaperSize.width}pt ${selectedPaperSize.height}pt; margin: 5mm;} body { margin: 0 }`
-      ],
-      targetStyles: ["*"] })
+      printJS({
+        printable: computedHTML,
+        type: "raw-html",
+        style: [
+          `@page { size: ${selectedPaperSize.width}pt ${selectedPaperSize.height}pt; margin: 5mm;} body { margin: 0 }`,
+        ],
+        targetStyles: ["*"],
+      });
     } finally {
       setPdfLoader(false);
     }
@@ -292,7 +306,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   return (
     <div>
       <FiltersBlock
-        style={{ padding: 0 }}
+        style={{padding: 0}}
         extra={
           <>
             <DocumentSettingsTypeSelector
@@ -339,7 +353,7 @@ const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
             <DocRelationsSection />
           </div>
         )}
-        
+
         {!relationViewIsActive && (
           <>
             {selectedTemplate ? (

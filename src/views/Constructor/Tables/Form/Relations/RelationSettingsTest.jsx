@@ -64,7 +64,7 @@ const relationViewTypes = [
   },
 ];
 
-const RelationSettings = ({
+const RelationSettingsTest = ({
   closeSettingsBlock = () => {},
   relation,
   getRelationFields,
@@ -90,20 +90,28 @@ const RelationSettings = ({
     },
   });
   const values = watch();
+
   const relatedTableSlug = useMemo(() => {
     if (values.type === "Recursive") return values.table_from;
-    if (values.table_to === slug) return values.table_from;
-    else if (values.table_from === slug) return values.table_to;
+    if (values?.attributes?.relation_data?.table_to === slug)
+      return values?.attributes?.relation_data?.table_from;
+    else if (values?.attributes?.relation_data?.table_from === slug)
+      return values?.attributes?.relation_data?.table_to;
     return null;
   }, [values, slug]);
 
   const isViewFieldsVisible = useMemo(() => {
     return (
-      (values.type === "Many2One" && values.table_from === slug) ||
-      values.type === "Many2Many" ||
-      values.type === "Recursive"
+      (values?.attributes?.relation_data?.type === "Many2One" &&
+        values?.attributes?.relation_data?.table_from === slug) ||
+      values?.attributes?.relation_data?.type === "Many2Many" ||
+      values?.attributes?.relation_data?.type === "Recursive"
     );
-  }, [values.type, values.table_from, slug]);
+  }, [
+    values?.attributes?.relation_data?.type,
+    values?.attributes?.relation_data?.table_from,
+    slug,
+  ]);
 
   const computedColumnsList = useMemo(() => {
     if (onlyCheckedColumnsVisible) return values.columnsList;
@@ -294,14 +302,18 @@ const RelationSettings = ({
     if (formType === "CREATE") return;
     reset({
       ...relation,
-      table_from: relation?.table_from?.slug ?? "",
-      table_to: relation?.table_to?.slug ?? "",
-      type: relation?.type ?? "",
-      id: relation?.id ?? "",
-      editable: relation?.editable ?? false,
-      summaries: relation?.summaries ?? [],
-      view_fields: relation?.view_fields?.map((field) => field.id) ?? [],
-      field_name: relation?.title,
+      table_from: relation?.attributes?.relation_data?.table_from ?? "",
+      table_to: relation?.attributes?.relation_data?.table_to ?? "",
+      type: relation?.attributes?.relation_data?.type ?? "",
+      id: relation?.attributes?.relation_data?.id ?? "",
+      editable: relation?.attributes?.relation_data?.editable ?? false,
+      summaries: relation?.attributes?.relation_data?.summaries ?? [],
+      view_fields:
+        relation?.attributez?.relation_data?.view_fields?.map(
+          (field) => field.id
+        ) ?? [],
+      field_name:
+        relation?.attributes?.relation_data?.[`title_${i18n?.language}`],
     });
   }, [relation]);
 
@@ -596,15 +608,23 @@ const RelationSettings = ({
                     </AccordionSummary>
                     <AccordionDetails style={{padding: 0}}>
                       <CascadingRelationSettings
-                        slug={relation?.table_to?.slug}
-                        field_slug={relation?.field_from}
+                        slug={
+                          relation?.attribute?.relation_data?.table_to?.slug
+                        }
+                        field_slug={
+                          relation?.attrbutes?.relation_data?.field_from
+                        }
                         control={control}
                         watch={watch}
                         setValue={setValue}
                       />
                       <CascadingTreeBlock
-                        slug={relation?.table_to?.slug}
-                        field_slug={relation?.field_from}
+                        slug={
+                          relation?.attributes?.relation_data?.table_to?.slug
+                        }
+                        field_slug={
+                          relation?.attributes?.relation_data?.field_from
+                        }
                         control={control}
                         watch={watch}
                         setValue={setValue}
@@ -881,4 +901,4 @@ const RelationSettings = ({
   );
 };
 
-export default RelationSettings;
+export default RelationSettingsTest;

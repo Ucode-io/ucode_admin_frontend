@@ -30,6 +30,7 @@ const ObjectDataTable = ({
   data = [],
   loader = false,
   setDrawerState,
+  setDrawerStateField,
   removableHeight,
   additionalRow,
   mainForm,
@@ -320,6 +321,7 @@ const ObjectDataTable = ({
                   sortedDatas={sortedDatas}
                   setSortedDatas={setSortedDatas}
                   setDrawerState={setDrawerState}
+                  setDrawerStateField={setDrawerStateField}
                   tableSize={tableSize}
                   tableSettings={tableSettings}
                   view={view}

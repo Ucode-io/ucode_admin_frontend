@@ -188,6 +188,10 @@ const ObjectsFormPage = ({tableSlugFromProps, handleClose, modal = false}) => {
     else getFields();
   }, [id, tableInfo, selectedTabIndex]);
 
+  useEffect(() => {
+    getFields();
+  }, [id, tableInfo, selectedTabIndex, i18n?.language]);
+
   // const getSubtitleValue = useMemo(() => {
   //   return watch(tableInfo?.data?.table?.subtitle_field_slug);
   // }, [tableInfo]);

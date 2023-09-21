@@ -60,7 +60,7 @@ const MainInfo = ({control}) => {
   });
 
   const {data: computedTableFields} = useQuery(
-    ["GET_OBJECT_LIST", slug],
+    ["GET_OBJECT_LIST", slug, i18n?.language],
     () => {
       return constructorObjectService.getList(
         slug,

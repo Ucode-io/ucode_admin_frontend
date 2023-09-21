@@ -305,7 +305,7 @@ const NewRelationSection = ({
           });
         setData(layout);
       });
-  }, [tableSlug, menuItem.table_id]);
+  }, [tableSlug, menuItem.table_id, i18n?.language]);
 
   const isMultiLanguage = useMemo(() => {
     const allFields = [];

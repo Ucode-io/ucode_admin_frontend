@@ -75,6 +75,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
       {tableSlug: selectedLinkedTableSlug, limit: 0, offset: 0},
+      i18n?.language,
     ],
     () => {
       return constructorObjectService.getList(

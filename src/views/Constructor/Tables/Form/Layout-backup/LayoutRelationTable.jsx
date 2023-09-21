@@ -32,7 +32,7 @@ const LayoutRelationTable = ({mainForm, index}) => {
   };
 
   const {data: columns, isLoading: dataFetchingLoading} = useQuery(
-    ["GET_VIEW_RELATION_FIELDS", relatedTableSlug],
+    ["GET_VIEW_RELATION_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return null;
       return constructorObjectService.getList(

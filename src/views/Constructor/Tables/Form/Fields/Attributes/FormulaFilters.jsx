@@ -43,7 +43,7 @@ function FormulaFilters({
   };
   //==============GET OPTIONS FOR KEY============
   const {data: fields = []} = useQuery(
-    ["GET_OBJECT_LIST", selectedTableSlug],
+    ["GET_OBJECT_LIST", selectedTableSlug, i18n?.language],
     () => {
       return constructorObjectService.getList(
         selectedTableSlug,

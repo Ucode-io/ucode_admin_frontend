@@ -120,7 +120,7 @@ const RelationSettings = ({
   };
 
   const {isLoading: fieldsLoading} = useQuery(
-    ["GET_VIEWS_AND_FIELDS", relatedTableSlug],
+    ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
     () => {
       if (!relatedTableSlug) return [];
       return constructorObjectService.getList(

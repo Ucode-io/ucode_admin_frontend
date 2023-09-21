@@ -122,9 +122,12 @@ const GroupCascadingViews = ({
     }
   };
   useEffect(() => {
-    getAllData();
     setRelTableSlug(field?.table_slug);
   }, []);
+
+  useEffect(() => {
+    getAllData();
+  }, [i18n?.language]);
 
   return (
     <div>

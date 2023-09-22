@@ -1,7 +1,7 @@
-import {Parser} from "hot-formula-parser";
-import {useEffect, useMemo} from "react";
-import {useWatch} from "react-hook-form";
-import {useSelector} from "react-redux";
+import { Parser } from "hot-formula-parser";
+import { useEffect, useMemo } from "react";
+import { useWatch } from "react-hook-form";
+import { useSelector } from "react-redux";
 import CHFFormulaField from "../FormElements/CHFFormulaField";
 import HFAutocomplete from "../FormElements/HFAutocomplete";
 import HFCheckbox from "../FormElements/HFCheckbox";
@@ -27,7 +27,7 @@ import HFColorPicker from "../FormElements/HFColorPicker";
 import HFFileUpload from "../FormElements/HFFileUpload";
 import HFVideoUpload from "../FormElements/HFVideoUpload";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const parser = new Parser();
 
@@ -50,7 +50,7 @@ const NewCellElementGenerator = ({
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   let relationTableSlug = "";
   let objectIdFromJWT = "";
 
@@ -118,7 +118,7 @@ const NewCellElementGenerator = ({
     if (field.type === "MULTISELECT" || field.id?.includes("#"))
       return defaultValue;
     if (!defaultValue) return undefined;
-    const {error, result} = parser.parse(defaultValue);
+    const { error, result } = parser.parse(defaultValue);
     return error ? undefined : result;
   }, [field.attributes, field.type, field.id, field.relation_type]);
 
@@ -637,7 +637,7 @@ const NewCellElementGenerator = ({
 
     default:
       return (
-        <div style={{padding: "0 4px"}}>
+        <div style={{ padding: "0 4px" }}>
           <CellElementGenerator field={field} row={row} />
         </div>
       );

@@ -1,10 +1,10 @@
-import {BackupTable, ImportExport} from "@mui/icons-material";
+import { BackupTable, ImportExport } from "@mui/icons-material";
 import printJS from "print-js";
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useQuery, useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useQuery, useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import FiltersBlock from "../../../components/FiltersBlock";
 import PageFallback from "../../../components/PageFallback";
@@ -21,18 +21,18 @@ import DocumentSettingsTypeSelector from "../components/DocumentSettingsTypeSele
 import ViewTabSelector from "../components/ViewTypeSelector";
 import DocRelationsSection from "./DocRelationsSection";
 import DocSettingsBlock from "./DocSettingsBlock";
-import {contentStyles} from "./editorContentStyles";
+import { contentStyles } from "./editorContentStyles";
 import RedactorBlock from "./RedactorBlock";
 import styles from "./style.module.scss";
 import TemplatesList from "./TemplatesList";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
-const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
+const DocView = ({ views, selectedTabIndex, setSelectedTabIndex }) => {
   const redactorRef = useRef();
-  const {state} = useLocation();
-  const {tableSlug} = useParams();
+  const { state } = useLocation();
+  const { tableSlug } = useParams();
   const navigate = useNavigate();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [settingsModalVisible, setSettingsModalVisible] = useState(false);
   const queryClient = useQueryClient();
   const [defaultViewTab, setDefaultViewTab] = useState(0);
@@ -60,7 +60,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
     ? selectedLinkedObject?.split("#")?.[1]
     : tableSlug;
 
-  const {selectedPaperSize} = usePaperSize(selectedPaperSizeIndex);
+  const { selectedPaperSize } = usePaperSize(selectedPaperSizeIndex);
 
   const [selectedTemplate, setSelectedTemplate] = useState(
     state?.template ?? null
@@ -71,17 +71,17 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
   };
 
   // ========FIELDS FOR RELATIONS=========
-  const {data: fields = [], isLoading: fieldsLoading} = useQuery(
+  const { data: fields = [], isLoading: fieldsLoading } = useQuery(
     [
       "GET_OBJECTS_LIST_WITH_RELATIONS",
-      {tableSlug: selectedLinkedTableSlug, limit: 0, offset: 0},
+      { tableSlug: selectedLinkedTableSlug, limit: 0, offset: 0 },
       i18n?.language,
     ],
     () => {
       return constructorObjectService.getList(
         selectedLinkedTableSlug,
         {
-          data: {limit: 0, offset: 0},
+          data: { limit: 0, offset: 0 },
         },
         params
       );
@@ -104,7 +104,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
   );
   // ========GET TEMPLATES LIST===========
   const {
-    data: {templates, templateFields} = {templates: [], templateFields: []},
+    data: { templates, templateFields } = { templates: [], templateFields: [] },
     isLoading,
     refetch,
   } = useQuery(
@@ -129,7 +129,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
     },
     {
       cacheTime: 10,
-      select: ({data}) => {
+      select: ({ data }) => {
         const templates = data?.response ?? [];
         const templateFields = data?.fields ?? [];
 
@@ -219,10 +219,10 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
 
       queryClient.refetchQueries([
         "GET_OBJECT_FILES",
-        {tableSlug, selectLinkedObject},
+        { tableSlug, selectLinkedObject },
       ]);
 
-      window.open(res.link, {target: "_blank"});
+      window.open(res.link, { target: "_blank" });
     } finally {
       setPdfLoader(false);
     }
@@ -306,7 +306,7 @@ const DocView = ({views, selectedTabIndex, setSelectedTabIndex}) => {
   return (
     <div>
       <FiltersBlock
-        style={{padding: 0}}
+        style={{ padding: 0 }}
         extra={
           <>
             <DocumentSettingsTypeSelector

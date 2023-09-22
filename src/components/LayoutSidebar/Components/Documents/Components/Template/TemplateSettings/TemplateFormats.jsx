@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import usePaperSize from "../../../../../../../hooks/usePaperSize";
 import { SidebarBody, SidebarHeader, SidebarTitle } from "../../Sidebar-old";
+import useDocumentPaperSize from "../../../../../../../hooks/useDocumentPaperSize";
 const flex = {
   display: "flex",
   alighItems: "center",
@@ -11,7 +12,7 @@ const TemplateFormats = ({ form }) => {
   const setValueSize = (format) => {
     form.setValue("size", format.title);
   };
-  const formatGroups = usePaperSize();
+  const formatGroups = useDocumentPaperSize();
   return (
     <Box>
       <SidebarHeader>

@@ -10,10 +10,8 @@ import microfrontendService from "../../services/microfrontendService";
 import RingLoaderWithWrapper from "../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 
 
-const Microfrontend = ({ microfrontendId: microfrontendIdFromProps }) => {
-  const { microfrontendIdFromPropsFromParams } = useParams()  
-
-  const microfrontendId = microfrontendIdFromProps ?? microfrontendIdFromPropsFromParams
+const Microfrontend = () => {
+  const { microfrontendId } = useParams()  
 
   const { data, isLoading } = useQuery(
     ["GET_MICROFRONTEND_BY_ID", microfrontendId],

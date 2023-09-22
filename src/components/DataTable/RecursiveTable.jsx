@@ -100,7 +100,18 @@ const RecursiveTable = ({
                       <KeyboardArrowRightIcon />
                     )
                   ) : null}
-                  <GroupCellElementGenerator field={column} row={element} />
+                  <GroupCellElementGenerator
+                    field={column}
+                    row={element}
+                    name={`multi.${index}.${column.slug}`}
+                    watch={watch}
+                    fields={columns}
+                    index={index}
+                    control={control}
+                    setFormValue={setFormValue}
+                    relationfields={relationFields}
+                    data={data}
+                  />
                 </Box>
               </CTableCell>
             );

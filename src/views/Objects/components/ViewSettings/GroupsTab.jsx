@@ -1,7 +1,12 @@
 import { Box, Checkbox, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useWatch } from "react-hook-form";
-import { CTable, CTableBody, CTableCell, CTableRow } from "../../../../components/CTable";
+import {
+  CTable,
+  CTableBody,
+  CTableCell,
+  CTableRow,
+} from "../../../../components/CTable";
 import { useTranslation } from "react-i18next";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
@@ -27,14 +32,27 @@ import MapIcon from "@mui/icons-material/Map";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import NfcIcon from "@mui/icons-material/Nfc";
 
-const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateLoading }) => {
+const GroupsTab = ({
+  columns,
+  form,
+  selectedView,
+  updateView,
+  isLoading,
+  updateLoading,
+}) => {
   const selectedColumns = useWatch({
     control: form.control,
     name: "group_fields",
   });
   const { i18n } = useTranslation();
   const computedColumns = useMemo(() => {
-    return columns?.filter((column) => column.type === "LOOKUP" || column.type === "PICK_LIST" || column.type === "LOOKUPS" || column.type === "MULTISELECT");
+    return columns?.filter(
+      (column) =>
+        column.type === "LOOKUP" ||
+        column.type === "PICK_LIST" ||
+        column.type === "LOOKUPS" ||
+        column.type === "MULTISELECT"
+    );
   }, [columns]);
 
   const onCheckboxChange = async (val, id) => {
@@ -98,29 +116,44 @@ const GroupsTab = ({ columns, form, selectedView, updateView, isLoading, updateL
         overflowY: "auto",
       }}
     >
-      <CTable removableHeight={false} disablePagination tableStyle={{ border: "none" }}>
+      <CTable
+        removableHeight={false}
+        disablePagination
+        tableStyle={{ border: "none" }}
+      >
         <CTableBody dataLength={1}>
           {computedColumns.length ? (
             computedColumns.map((column) => (
               <CTableRow key={column.id}>
-                <CTableCell style={{
-                  paddingTop: 0,
-                  paddingBottom: 0,
-                }}>
-                  <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                  }}>
-                    <div>{columnIcons[column.type] ?? <NfcIcon/>}</div>
-                    <div>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</div>
+                <CTableCell
+                  style={{
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <div>{columnIcons[column.type] ?? <NfcIcon />}</div>
+                    <div>
+                      {column?.attributes?.[`label_${i18n.language}`] ??
+                        column.label}
+                    </div>
                   </div>
                 </CTableCell>
-                <CTableCell style={{ width: 20, paddingTop: '2px',
-                  paddingBottom: '2px' }}>
+                <CTableCell
+                  style={{ width: 20, paddingTop: "2px", paddingBottom: "2px" }}
+                >
                   <Checkbox
                     disabled={isLoading || updateLoading}
-                    checked={selectedColumns?.includes(column?.id) || selectedView?.group_fields?.includes(column?.id)}
+                    checked={
+                      selectedColumns?.includes(column?.id) ||
+                      selectedView?.group_fields?.includes(column?.id)
+                    }
                     onChange={(e, val) => changeHandler(val, column.id)}
                   />
                 </CTableCell>

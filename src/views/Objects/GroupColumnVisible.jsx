@@ -1,12 +1,11 @@
 import AppsIcon from "@mui/icons-material/Apps";
 import { CircularProgress, Menu } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-import constructorViewService from "../../services/constructorViewService";
-import ColumnsTab from "./components/ViewSettings/ColumnsTab";
 import { useQueryClient } from "react-query";
+import constructorViewService from "../../services/constructorViewService";
+import GroupByTab from "./components/ViewSettings/GroupByTab";
 
-export default function ColumnVisible({
+export default function GroupColumnVisible({
   selectedTabIndex,
   views,
   columns,
@@ -16,7 +15,6 @@ export default function ColumnVisible({
 }) {
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState(null);
-  const { tableSlug } = useParams();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -25,7 +23,11 @@ export default function ColumnVisible({
     setAnchorEl(null);
   };
 
+  const watchedGroupColumns = form.watch("attributes.group_by_columns");
+  const watchedColumns = form.watch("columns");
+  const group_by = views?.[selectedTabIndex]?.attributes.group_by_columns;
   const type = views?.[selectedTabIndex]?.type;
+
   const computedColumns = useMemo(() => {
     if (type !== "CALENDAR" && type !== "GANTT") {
       return columns;
@@ -34,11 +36,16 @@ export default function ColumnVisible({
     }
   }, [columns, relationColumns, type]);
 
-  const watchedColumns = form.watch("columns");
-  const watchedGroupColumns = form.watch("attributes.group_by_columns");
-
   useEffect(() => {
     form.reset({
+      attributes: {
+        group_by_columns: columns?.map((item) => {
+          return {
+            ...item,
+            is_checked: group_by?.find((el) => el === item.id) ? true : false,
+          };
+        }),
+      },
       columns:
         computedColumns?.map((el) => ({
           ...el,
@@ -47,7 +54,7 @@ export default function ColumnVisible({
           ),
         })) ?? [],
     });
-  }, [selectedTabIndex, views, form, computedColumns]);
+  }, [selectedTabIndex, views, form, group_by, columns]);
 
   const updateView = () => {
     constructorViewService
@@ -59,11 +66,12 @@ export default function ColumnVisible({
             ?.map((el) => el.id),
         },
         columns: watchedColumns
-          ?.filter((el) => el.is_checked)
+          ?.filter((el) => el?.is_checked)
           ?.map((el) => el.id),
       })
       .then(() => {
         queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
       });
   };
 
@@ -86,7 +94,7 @@ export default function ColumnVisible({
         onClick={handleClick}
       >
         <AppsIcon color={"#A8A8A8"} />
-        Columns
+        Group by columns
       </div>
 
       <Menu
@@ -121,7 +129,7 @@ export default function ColumnVisible({
         {isLoading ? (
           <CircularProgress />
         ) : (
-          <ColumnsTab form={form} updateView={updateView} isMenu={true} />
+          <GroupByTab form={form} updateView={updateView} isMenu={true} />
         )}
       </Menu>
     </div>

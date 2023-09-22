@@ -12,7 +12,7 @@ const HFNumberField = ({
   isFormEdit = false,
   required = false,
   updateObject,
-  isNewTableView=false,
+  isNewTableView = false,
   fullWidth = false,
   isTransparent = false,
   withTrim = false,
@@ -78,12 +78,20 @@ const HFNumberField = ({
                 const valueWithoutSpaces = val.replaceAll(" ", "");
                 if (!valueWithoutSpaces) onChange("");
                 else {
-                  if (valueWithoutSpaces.at(-1) === ".") onChange(valueWithoutSpaces);
-                  else onChange(!isNaN(Number(valueWithoutSpaces)) ? Number(valueWithoutSpaces) : "");
+                  if (valueWithoutSpaces.at(-1) === ".")
+                    onChange(valueWithoutSpaces);
+                  else
+                    onChange(
+                      !isNaN(Number(valueWithoutSpaces))
+                        ? Number(valueWithoutSpaces)
+                        : ""
+                    );
                 }
                 isNewTableView && updateObject();
               }}
-              className={`${isFormEdit ? "custom_textfield" : ""} ${styles.numberField}`}
+              className={`${isFormEdit ? "custom_textfield" : ""} ${
+                styles.numberField
+              }`}
               name={name}
               readOnly={disabled}
               style={

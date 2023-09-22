@@ -1,11 +1,11 @@
 import { useQuery } from "react-query";
-import httpsRequest from "../utils/httpsRequest";
+import httpRequestLogin from "../utils/httpRequestLogin";
 
 
 
 
 const loginMicrofrontendService = {
-  get: (params) => httpsRequest.get('v1/login-microfront', { params })
+  get: (params) => httpRequestLogin.get('v1/login-microfront', { params })
 }
 
 export const useLoginMicrofrontendQuery = ({ params = {}, queryParams }) => {

@@ -396,7 +396,8 @@ const AutoCompleteElement = ({
       } else return false;
     }
   }
-
+  console.log("localValue", localValue, field);
+  console.log("disabled", disabled);
   return (
     <div className={styles.autocompleteWrapper}>
       {field.attributes?.creatable && (
@@ -445,7 +446,8 @@ const AutoCompleteElement = ({
             disabled ||
             (field?.attributes?.object_id_from_jwt &&
               field?.id?.split("#")?.[0] === "client_type") ||
-            (field?.attributes?.is_user_id_default && localValue?.length !== 0)
+            (Boolean(field?.attributes?.is_user_id_default) &&
+              localValue?.length !== 0)
           }
           options={options?.options ?? []}
           isClearable={true}

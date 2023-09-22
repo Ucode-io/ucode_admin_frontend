@@ -82,22 +82,20 @@ const RecursiveTable = ({
                   fontWeight: 400,
                   lineHeight: "normal",
                   padding: "0 5px",
-                  cursor:
-                    filteredColumns.find((item) => item.id === column.id) &&
-                    getValue(column, element)
-                      ? "pointer"
-                      : "default",
+                  cursor: filteredColumns.find((item) => item.id === column.id)
+                    ? "pointer"
+                    : "default",
                 }}
                 onClick={
                   filteredColumns.find((item) => item.id === column.id) &&
-                  getValue(column, element) &&
                   clickHandler
                 }
               >
                 <Box display={"flex"} alignItems={"center"}>
-                  {filteredColumns.find((item) => item.id === column.id) &&
-                  getValue(column, element)?.length &&
-                  element?.data?.length ? (
+                  {(filteredColumns.find((item) => item.id === column.id) &&
+                    getValue(column, element)?.length) ||
+                  (filteredColumns.find((item) => item.id === column.id) &&
+                    element?.data?.length) ? (
                     childBlockVisible ? (
                       <KeyboardArrowDownIcon />
                     ) : (

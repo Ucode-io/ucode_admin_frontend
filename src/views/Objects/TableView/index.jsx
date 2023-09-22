@@ -23,6 +23,8 @@ import {listToMap} from "../../../utils/listToMap";
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorRelationService from "../../../services/constructorRelationService";
 import {generateGUID} from "../../../utils/generateID";
+import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
+import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/RelationSettingsTest";
 
 const TableView = ({
   tab,
@@ -59,6 +61,7 @@ const TableView = ({
   const [limit, setLimit] = useState(20);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
+  const [drawerStateField, setDrawerStateField] = useState(null);
   const queryClient = useQueryClient();
   const {i18n} = useTranslation();
 
@@ -446,6 +449,7 @@ const TableView = ({
             setSortedDatas={setSortedDatas}
             sortedDatas={sortedDatas}
             setDrawerState={setDrawerState}
+            setDrawerStateField={setDrawerStateField}
             isTableView={true}
             elementHeight={elementHeight}
             setFormVisible={setFormVisible}
@@ -511,6 +515,21 @@ const TableView = ({
           selectedTabIndex={selectedTabIndex}
           height={`calc(100vh - 48px)`}
           getRelationFields={getRelationFields}
+        />
+      </Drawer>
+
+      <Drawer
+        open={drawerStateField}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal"
+      >
+        <RelationSettingsTest
+          relation={drawerStateField}
+          closeSettingsBlock={() => setDrawerStateField(null)}
+          getRelationFields={getRelationFields}
+          formType={drawerStateField}
+          height={`calc(100vh - 48px)`}
         />
       </Drawer>
     </div>

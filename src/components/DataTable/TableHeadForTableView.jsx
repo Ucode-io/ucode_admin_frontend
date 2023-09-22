@@ -1,7 +1,7 @@
-import React, {useState} from "react";
-import {CTableHeadCell} from "../CTable";
-import {PinIcon, ResizeIcon} from "../../assets/icons/icon";
-import {Button, Menu} from "@mui/material";
+import React, { useState } from "react";
+import { CTableHeadCell } from "../CTable";
+import { PinIcon, ResizeIcon } from "../../assets/icons/icon";
+import { Button, Menu } from "@mui/material";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import QueueOutlinedIcon from "@mui/icons-material/QueueOutlined";
 import ArrowBackOutlinedIcon from "@mui/icons-material/ArrowBackOutlined";
@@ -11,11 +11,11 @@ import ViewWeekOutlinedIcon from "@mui/icons-material/ViewWeekOutlined";
 import WrapTextOutlinedIcon from "@mui/icons-material/WrapTextOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import {useQueryClient} from "react-query";
+import { useQueryClient } from "react-query";
 import constructorViewService from "../../services/constructorViewService";
 import constructorFieldService from "../../services/constructorFieldService";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 export default function TableHeadForTableView({
   column,
@@ -26,6 +26,7 @@ export default function TableHeadForTableView({
   sortedDatas,
   selectedView,
   setDrawerState,
+  setDrawerStateField,
   setSortedDatas,
   view,
   calculateWidthFixedColumn,
@@ -45,7 +46,7 @@ export default function TableHeadForTableView({
   const [anchorEl, setAnchorEl] = useState(null);
   const queryClient = useQueryClient();
   const open = Boolean(anchorEl);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -91,7 +92,7 @@ export default function TableHeadForTableView({
         })
         .then(() => {
           queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-          queryClient.refetchQueries("GET_OBJECTS_LIST", {tableSlug});
+          queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
         });
     });
   };
@@ -105,7 +106,11 @@ export default function TableHeadForTableView({
           title: "Edit field",
           icon: <CreateOutlinedIcon />,
           onClickAction: () => {
-            setDrawerState(column);
+            if (column?.attributes?.relation_data) {
+              setDrawerStateField(column);
+            } else {
+              setDrawerState(column);
+            }
           },
         },
       ],

@@ -161,6 +161,8 @@ const TableRow = ({table, tableIndex, control, setValue, watch}) => {
           closeModal={closeAutoFiltersModal}
           tableIndex={tableIndex}
           type={type}
+          setValue={setValue}
+          watch={watch}
         />
       )}
       {fieldPermissionModalIsOpen && (

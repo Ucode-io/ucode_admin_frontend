@@ -23,6 +23,8 @@ const MicrofrontendComponent = ({ link }) => {
     return comp;
   });
 
+  console.log(":LIIIII", link)
+
   return (
     <SafeComponent>
       <Suspense

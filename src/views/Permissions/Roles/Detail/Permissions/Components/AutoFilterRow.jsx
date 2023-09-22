@@ -1,7 +1,8 @@
 import HFSelect from "../../../../../../components/FormElements/HFSelect";
-import { Box } from "@mui/material";
+import { Box, Switch, Tooltip } from "@mui/material";
 import RectangleIconButton from "../../../../../../components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
+import FRow from "../../../../../../components/FormElements/FRow";
 
 const AutoFilterRow = ({
   control,
@@ -10,6 +11,8 @@ const AutoFilterRow = ({
   relations,
   connections,
   remove,
+  setValue,
+  watch,
 }) => {
   const filterBasePath = `${basePath}.${index}`;
 
@@ -37,6 +40,22 @@ const AutoFilterRow = ({
           placeholder="Custom field"
           options={connections}
         />
+      </Box>
+      <Box
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Tooltip title="Not use in tab">
+          <Switch
+            checked={watch(`${filterBasePath}.not_use_in_tab`)}
+            onChange={(e) => {
+              setValue(`${filterBasePath}.not_use_in_tab`, e.target.checked);
+            }}
+          />
+        </Tooltip>
       </Box>
       <RectangleIconButton
         colorScheme="red"

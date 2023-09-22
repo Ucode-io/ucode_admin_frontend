@@ -55,15 +55,21 @@ const ClientUserPage = () => {
     deleteProject(id);
   };
   return (
-    <div>
-      <HeaderSettings title={"Users"} />
-
-      <FiltersBlock>
-        <div className="p-1">{/* <SearchInput /> */}</div>
-      </FiltersBlock>
+    <div
+      style={{
+        background: "#fff",
+        height: "100%",
+      }}
+    >
+      <HeaderSettings
+        title={"Users"}
+        disabledMenu={false}
+        line={false}
+        backButtonLink={-1}
+      />
 
       <TableCard>
-        <CTable disablePagination removableHeight={140}>
+        <CTable disablePagination removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Name</CTableCell>

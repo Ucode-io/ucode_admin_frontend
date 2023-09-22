@@ -1,29 +1,44 @@
-import { useMemo } from "react";
-import { useFieldArray, useWatch } from "react-hook-form";
+import {Box} from "@mui/material";
+import {useMemo} from "react";
+import {useFieldArray, useWatch} from "react-hook-form";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFIconPicker from "../../../../components/FormElements/HFIconPicker";
 import HFSelect from "../../../../components/FormElements/HFSelect";
 import HFSwitch from "../../../../components/FormElements/HFSwitch";
 import HFTextField from "../../../../components/FormElements/HFTextField";
-import listToOptions from "../../../../utils/listToOptions";
-import { Box } from "@mui/material";
-import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
 import constructorObjectService from "../../../../services/constructorObjectService";
+import listToOptions from "../../../../utils/listToOptions";
+import {useSelector} from "react-redux";
+import {useTranslation} from "react-i18next";
 
-const MainInfo = ({ control }) => {
-  
+const MainInfo = ({control}) => {
   const {slug} = useParams();
+  const {i18n} = useTranslation();
 
+  const params = {
+    language_setting: i18n?.language,
+  };
 
-  const { fields } = useFieldArray({
+  const tableName = useWatch({
+    control,
+    name: "label",
+  });
+
+  const description = useWatch({
+    control,
+    name: "description",
+  });
+
+  const {fields} = useFieldArray({
     control,
     name: "fields",
     keyName: "key",
   });
 
-  const { fields: relations } = useFieldArray({
+  const {fields: relations} = useFieldArray({
     control: control,
     name: "layoutRelations",
     keyName: "key",
@@ -33,20 +48,30 @@ const MainInfo = ({ control }) => {
     control,
     name: "is_login_table",
   });
-  
+
   const login = useWatch({
     control,
     name: "attributes.auth_info.login",
   });
-  
-  const { data: computedTableFields } = useQuery(
-    ["GET_OBJECT_LIST", slug],
+
+  const attributes = useWatch({
+    control,
+    name: "attributes",
+  });
+
+  const {data: computedTableFields} = useQuery(
+    ["GET_OBJECT_LIST", slug, i18n?.language],
     () => {
-      return constructorObjectService.getList(slug, {
-        data: {
-          limit: 0, offset: 0
+      return constructorObjectService.getList(
+        slug,
+        {
+          data: {
+            limit: 0,
+            offset: 0,
+          },
         },
-      });
+        params
+      );
     },
     {
       select: (res) => {
@@ -54,15 +79,14 @@ const MainInfo = ({ control }) => {
       },
     }
   );
-  
-  
+
   const loginRequired = useMemo(() => {
-    if(login) {
-        return true
-      } else {
-        return false
-      }
-  }, [login])
+    if (login) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [login]);
 
   const computedFields = useMemo(() => {
     const computedRelations = relations.map((relation) => {
@@ -82,16 +106,15 @@ const MainInfo = ({ control }) => {
 
     return listToOptions([...fields, ...computedRelations], "label", "slug");
   }, [fields]);
-  
-  const computedLoginFields = useMemo(() => {
-    return computedTableFields?.map((item) => (
-      {
-        label: item?.label ?? '',
-        value: item?.slug ?? ''
-      }
-    ))
 
+  const computedLoginFields = useMemo(() => {
+    return computedTableFields?.map((item) => ({
+      label: item?.label ?? "",
+      value: item?.slug ?? "",
+    }));
   }, [computedTableFields]);
+
+  const languages = useSelector((state) => state.languages.list);
 
   return (
     <div className="p-2">
@@ -103,24 +126,46 @@ const MainInfo = ({ control }) => {
         </div>
 
         <FRow label="Название">
-          <HFTextField
-            control={control}
-            name="label"
-            fullWidth
-            placeholder="Название"
-            required
-          />
+          <Box style={{display: "flex", gap: "6px"}}>
+            {languages?.map((language) => {
+              const languageFieldName = `attributes.label_${language?.slug}`;
+              const fieldValue = useWatch({
+                control,
+                name: languageFieldName,
+              });
+
+              return (
+                <HFTextField
+                  control={control}
+                  name={languageFieldName}
+                  fullWidth
+                  placeholder={`Название (${language?.slug})`}
+                  defaultValue={fieldValue || tableName} // Set default value if fieldValue is empty
+                />
+              );
+            })}
+          </Box>
         </FRow>
         <FRow label="Описание">
-          <HFTextField
-            control={control}
-            name="description"
-            fullWidth
-            placeholder="Описание"
-            multiline
-            required
-            rows={4}
-          />
+          <Box style={{display: "flex", flexDirection: "column", gap: "6px"}}>
+            {languages?.map((desc) => {
+              const languageFieldDesc = `attributes.description_${desc?.slug}`;
+              const fieldValue = useWatch({
+                control,
+                name: languageFieldDesc,
+              });
+
+              return (
+                <HFTextField
+                  control={control}
+                  name={languageFieldDesc}
+                  fullWidth
+                  placeholder={`Название (${desc?.slug})`}
+                  defaultValue={fieldValue || description} // Set default value if fieldValue is empty
+                />
+              );
+            })}
+          </Box>
         </FRow>
         <FRow label="SLUG">
           <HFTextField
@@ -142,13 +187,9 @@ const MainInfo = ({ control }) => {
           />
         </FRow>
 
-        <Box sx={{ display: "flex", alignItems: "center", margin: "30px 0" }}>
+        <Box sx={{display: "flex", alignItems: "center", margin: "30px 0"}}>
           <FRow label="Login Table">
-            <HFSwitch
-              control={control}
-              name="is_login_table"
-              required
-            />
+            <HFSwitch control={control} name="is_login_table" required />
           </FRow>
           <FRow label="Показать в меню">
             <HFSwitch control={control} name="show_in_menu" required />

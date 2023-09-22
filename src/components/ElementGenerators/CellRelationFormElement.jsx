@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Dialog, Popover, TextField, Typography } from "@mui/material";
+import { Autocomplete, Popover, TextField, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
 import { useEffect, useMemo, useState } from "react";
@@ -31,6 +31,8 @@ const CellRelationFormElement = ({
   isFormEdit,
   control,
   name,
+  updateObject,
+  isNewTableView = false,
   disabled,
   placeholder,
   field,
@@ -63,7 +65,10 @@ const CellRelationFormElement = ({
               name={name}
               control={control}
               index={index}
-              setValue={onChange}
+              setValue={(e) => {
+                onChange(e);
+                updateObject();
+              }}
             />
           ) : field?.attributes?.cascadings?.length > 1 ? (
             <CascadingElement
@@ -77,7 +82,10 @@ const CellRelationFormElement = ({
               name={name}
               control={control}
               index={index}
-              setValue={onChange}
+              setValue={(e) => {
+                onChange(e);
+                updateObject();
+              }}
             />
           ) : (
             <AutoCompleteElement
@@ -88,7 +96,10 @@ const CellRelationFormElement = ({
               value={value}
               classes={classes}
               name={name}
-              setValue={onChange}
+              setValue={(e) => {
+                onChange(e);
+                updateObject();
+              }}
               field={field}
               defaultValue={defaultValue}
               tableSlug={field.table_slug}
@@ -182,6 +193,9 @@ const AutoCompleteElement = ({
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
     () => {
       return request.post(`/invoke_function/${field?.attributes?.function_path}`, {
+        params: {
+          from_input: true,
+        },
         data: {
           table_slug: tableSlug,
           ...autoFiltersValue,
@@ -249,8 +263,6 @@ const AutoCompleteElement = ({
     return findedOption ? [findedOption] : [];
   }, [options, value]);
 
-  console.log('options', options)
-
   // const computedOptions = useMemo(() => {
   //   let uniqueObjArray = [
   //     ...new Map(options.map((item) => [item["title"], item])).values(),
@@ -287,7 +299,7 @@ const AutoCompleteElement = ({
       return;
     }
 
-    field.attributes.autofill.forEach(({field_from, field_to, automatic}) => {
+    field.attributes.autofill.forEach(({ field_from, field_to, automatic }) => {
       const setName = name?.split(".");
       setName?.pop();
       setName?.push(field_to);
@@ -374,7 +386,7 @@ const AutoCompleteElement = ({
           }
         }}
         disabled={disabled}
-        options={options ?? []}
+        options={options?.options ?? []}
         value={computedValue}
         popupIcon={isBlackBg ? <ArrowDropDownIcon style={{ color: "#fff" }} /> : <ArrowDropDownIcon />}
         onChange={(event, newValue) => {

@@ -6,6 +6,7 @@ import TableCard from "../../../../../components/TableCard";
 import TableRowButton from "../../../../../components/TableRowButton";
 import constructorCustomEventService from "../../../../../services/constructorCustomEventService";
 import ActionSettings from "./ActionSettings";
+import { useTranslation } from "react-i18next";
 
 const Actions = ({ mainForm }) => {
   const [drawerState, setDrawerState] = useState(null);
@@ -43,12 +44,15 @@ const Actions = ({ mainForm }) => {
       .finally(() => setLoader(false));
   };
 
+  const { i18n } = useTranslation();
+  const defaultLanguage = i18n.language;
+
   const columns = useMemo(
     () => [
       {
         id: 1,
         label: "Label",
-        slug: "label",
+        slug: `label`,
       },
       // {
       //   id: 2,
@@ -58,7 +62,6 @@ const Actions = ({ mainForm }) => {
     ],
     []
   );
-
   return (
     <TableCard>
       <DataTable

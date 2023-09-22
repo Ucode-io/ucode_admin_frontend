@@ -19,6 +19,7 @@ import queryClient from "../../../../queries";
 import { useDispatch } from "react-redux";
 import { showAlert } from "../../../../store/alert/alert.thunk";
 import CreateButton from "../../../../components/Buttons/CreateButton";
+import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 
 const RoleDetail = () => {
   const { control, reset, watch, setValue, handleSubmit } = useForm();
@@ -85,6 +86,7 @@ const RoleDetail = () => {
     <Box flex={1}>
       <Header
         title="Role"
+        backButtonLink={-1}
         extra={
           <Button
             onClick={handleSubmit(onSubmit)}
@@ -96,15 +98,15 @@ const RoleDetail = () => {
         }
       />
 
-      <div style={{ padding: "20px" }}>
-        <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
+      {rolePermissionGetByIdLoading || permissionGetByIdLoading ? (
+        <RingLoaderWithWrapper />
+      ) : (
+        <div style={{ padding: "10px", background: "#fff" }}>
           <div>
             <FRow label="Name">
               <HFTextField control={control} name="data.name" fullWidth />
             </FRow>
           </div>
-        </FormCard>
-        <FormCard title="Разрешения" icon="address-card.svg" maxWidth="100%">
           <Permissions
             control={control}
             setChangedData={setChangedData}
@@ -112,8 +114,8 @@ const RoleDetail = () => {
             setValue={setValue}
             watch={watch}
           />
-        </FormCard>
-      </div>
+        </div>
+      )}
     </Box>
   );
 };

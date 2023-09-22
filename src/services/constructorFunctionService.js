@@ -7,7 +7,7 @@ const constructorFunctionService = {
   update: (data) => request.put("/function", data),
   create: (data) => request.post("/function", data),
   delete: (id, data) => request.delete(`/function/${id}`, data),
-  invoke: (data) => request.post("/invoke_function", data),
+  invoke: (data, params) => request.post("/invoke_function", data, {params}),
 };
 
 export default constructorFunctionService;

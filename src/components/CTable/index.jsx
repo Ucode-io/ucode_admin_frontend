@@ -13,6 +13,7 @@ export const CTable = ({
   setCurrentPage,
   removableHeight = 186,
   disablePagination,
+  isTableView = false,
   loader,
   multipleDelete,
   tableStyle = {},
@@ -21,6 +22,7 @@ export const CTable = ({
   limit,
   setLimit,
   defaultLimit,
+  view,
 }) => {
   return (
     <Paper className="CTableContainer" style={wrapperStyle}>
@@ -37,18 +39,21 @@ export const CTable = ({
         <table id="resizeMe">{children}</table>
       </div>
 
-      <CPagination
-        count={count}
-        selectedObjectsForDelete={selectedObjectsForDelete}
-        page={page}
-        setCurrentPage={setCurrentPage}
-        paginationExtraButton={paginationExtraButton}
-        limit={limit}
-        multipleDelete={multipleDelete}
-        setLimit={setLimit}
-        defaultLimit={defaultLimit}
-        disablePagination={disablePagination}
-      />
+      {!disablePagination && (
+        <CPagination
+          count={count}
+          selectedObjectsForDelete={selectedObjectsForDelete}
+          page={page}
+          isTableView={isTableView}
+          setCurrentPage={setCurrentPage}
+          paginationExtraButton={paginationExtraButton}
+          limit={limit}
+          multipleDelete={multipleDelete}
+          setLimit={setLimit}
+          defaultLimit={defaultLimit}
+          view={view}
+        />
+      )}
     </Paper>
   );
 };

@@ -36,6 +36,7 @@ html {
 .react-tabs {
   // -webkit-tap-highlight-color: transparent;
   position: relative;
+
   // padding-left: 10px;
   &__tab-list {
     border-bottom: 1px solid rgb(231, 231, 231);
@@ -116,6 +117,11 @@ html {
 }
 
 .overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.text_overflow_line {
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -289,14 +295,17 @@ html {
 
 .custom_textfield {
   padding-right: 0 !important;
+
   div fieldset {
     border: none;
   }
 }
+
 .editable_col {
   transition: all 0.3s ease;
   border: 1px solid transparent;
   border-radius: 2px;
+
   &:focus,
   &:hover {
     border: 1px solid #212b36 !important;
@@ -307,8 +316,7 @@ html {
   padding-right: 45px !important;
 }
 
-.multiSelectInput{
-  
+.multiSelectInput {
   .MuiAutocomplete-inputRoot {
     padding-right: 0 !important;
   }
@@ -319,11 +327,13 @@ html {
     overflow: inherit;
     height: 300px;
     box-shadow: 0px 0px 5px 0px rgb(212, 205, 205);
+
     &::-webkit-scrollbar {
       display: none !important;
     }
   }
 }
+
 #barcodes_print {
   display: none !important;
 }
@@ -335,10 +345,19 @@ html {
   text-overflow: ellipsis;
 }
 
+.text_overflow_line {
+  padding: 10px;
+  width: 350px;
+  overflow: hidden;
+  text-align: justify;
+  text-overflow: ellipsis;
+}
+
 #hovers {
   // fill: white;
   transition: 0.2s all;
 }
+
 #hovers:hover {
   fill: #ec8c9c;
   pointer-events: all;
@@ -349,15 +368,15 @@ html {
   outline: none;
   padding: 10px;
   display: none;
-  background-color: #0E73F626; 
-  
+  background-color: #0e73f626;
+
   .custom_tab {
     border-bottom: none;
     outline: none;
     padding: 10px;
     width: 34px;
     height: 34px;
-    // color:#0E73F6; 
+    // color:#0E73F6;
   }
 }
 
@@ -370,12 +389,11 @@ html {
 }
 
 .detail_selected_tab {
-  background-color: #0E73F626;
+  background-color: #0e73f626;
   border-bottom: none;
   outline: none;
   padding: 10px;
-  
-  
+
   .detail_custom_tab {
     border-bottom: none;
     outline: none;
@@ -384,7 +402,6 @@ html {
     height: 34px;
     // color:#0E73F6;
   }
-  
 }
 
 .detail_custom_tabs .react-tabs__tab-list {

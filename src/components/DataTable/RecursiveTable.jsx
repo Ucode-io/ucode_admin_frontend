@@ -92,10 +92,8 @@ const RecursiveTable = ({
                 }
               >
                 <Box display={"flex"} alignItems={"center"}>
-                  {(filteredColumns.find((item) => item.id === column.id) &&
-                    getValue(column, element)?.length) ||
-                  (filteredColumns.find((item) => item.id === column.id) &&
-                    element?.data?.length) ? (
+                  {filteredColumns.find((item) => item.id === column.id) &&
+                  getValue(column, element)?.length ? (
                     childBlockVisible ? (
                       <KeyboardArrowDownIcon />
                     ) : (

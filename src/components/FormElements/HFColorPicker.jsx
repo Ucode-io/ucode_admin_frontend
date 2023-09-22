@@ -6,6 +6,8 @@ const HFColorPicker = ({
   name,
   disabledHelperText = false,
   required = false,
+  updateObject,
+  isNewTableView=false,
   rules = {},
   customeClick = false,
   clickItself = () => {},
@@ -25,7 +27,10 @@ const HFColorPicker = ({
           <ColorPicker
             error={error}
             value={value}
-            onChange={onChange}
+            onChange={(val) => {
+              onChange(val)
+              isNewTableView && updateObject()
+            }}
             customeClick={customeClick}
             clickItself={clickItself}
             {...props}

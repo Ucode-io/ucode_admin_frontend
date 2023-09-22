@@ -46,11 +46,18 @@ const SummarySection = ({
   const onDrop = (dropResult) => {
     const result = applyDrag(sections, dropResult);
 
-    if (result) {
+    if (!result) return;
+    if (result.length > sections.length) {
+      sectionsFieldArray.insert(dropResult.addedIndex, {
+        ...dropResult.payload,
+      });
+    } else if (result.length < sections.length) {
+      sectionsFieldArray.remove(dropResult.removedIndex);
+    } else {
       sectionsFieldArray.move(dropResult.removedIndex, dropResult.addedIndex);
-      sectionsFieldArray.replace(result);
     }
   };
+
   const removeField = (index, colNumber) => {
     sectionsFieldArray.remove(index);
   };
@@ -81,6 +88,7 @@ const SummarySection = ({
         orientation="horizontal"
         dropPlaceholder={{ className: "drag-row-drop-preview" }}
         onDrop={(dragResults) => onDrop(dragResults, 1)}
+        getChildPayload={(index) => sections[index]}
       >
         {sections?.map((field, fieldIndex) => (
           <Draggable key={field.key}>
@@ -89,13 +97,7 @@ const SummarySection = ({
                 <FormElementGenerator
                   control={mainForm.control}
                   field={field}
-                  // field={fieldsMap[field?.id] ?? field}
-                  // isLayout={true}
-                  // sectionIndex={fieldIndex}
-                  // column={1}
-                  // fieldIndex={fieldIndex}
-                  // mainForm={mainForm}
-                  // maxWidth={true}
+                  checkPermission={false}
                 />
               </div>
               <ButtonsPopover

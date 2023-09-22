@@ -44,7 +44,6 @@ const ProjectList = ({
               </>
             }
             onClick={() => {
-              // dispatch(companyActions.setEnvironmentItem({}));
               setSelected(true);
               queryClient.refetchQueries(["ENVIRONMENT"], item.project_id);
               dispatch(companyActions.setProjectItem(item));

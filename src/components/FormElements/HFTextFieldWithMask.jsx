@@ -4,6 +4,7 @@ import { makeStyles } from "@mui/styles";
 import { Controller } from "react-hook-form";
 import InputMask from "react-input-mask";
 import "react-phone-number-input/style.css";
+import { Lock, Today } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -21,6 +22,8 @@ const HFTextFieldWithMask = ({
   isTransparent = false,
   disabledHelperText = false,
   required = false,
+  updateObject,
+  isNewTableView = false,
   rules = {},
   mask,
   disabled,
@@ -40,7 +43,16 @@ const HFTextFieldWithMask = ({
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
-        <InputMask mask={mask} value={value ?? undefined} onChange={(e) => onChange(e.target.value)} disabled={disabled} {...props}>
+        <InputMask
+          mask={mask}
+          value={value ?? undefined}
+          onChange={(e) => {
+            onChange(e.target.value);
+            updateObject();
+          }}
+          disabled={disabled}
+          {...props}
+        >
           {(inputProps) => (
             <TextField
               size="small"

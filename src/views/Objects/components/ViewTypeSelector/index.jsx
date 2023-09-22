@@ -102,6 +102,8 @@ const ViewTabSelector = ({
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
+  console.log("sssssss", isChanged);
+  const { i18n } = useTranslation();
 
   return (
     <>
@@ -172,7 +174,11 @@ const ViewTabSelector = ({
                   {view.type === "FINANCE CALENDAR" && (
                     <MonetizationOnIcon className={style.icon} />
                   )}
-                  <span>{view.name ? view.name : view.type}</span>
+                  <span>
+                    {(view?.attributes?.[`name_${i18n.language}`]
+                      ? view?.attributes?.[`name_${i18n.language}`]
+                      : view.type) ?? view?.name}
+                  </span>
 
                   {view?.attributes?.view_permission?.edit && (
                     <div className={style.popoverElement}>

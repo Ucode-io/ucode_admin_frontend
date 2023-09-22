@@ -58,7 +58,10 @@ const errorHandler = (error, hooks) => {
         store.dispatch(authActions.logout());
         // store.dispatch(logoutAction(logoutParams)).unwrap().catch()
       }
-    } else store.dispatch(showAlert("___ERROR___"));
+    } else {
+      console.log("ERRRRR =>", error)
+      store.dispatch(showAlert("___ERROR___"));
+    }
 
     return Promise.reject(error.response);
   }
@@ -75,8 +78,9 @@ requestV2.interceptors.request.use(
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      // config.headers['environment-id'] = environmentId
+      config.headers["environment-id"] = environmentId;
       config.headers["resource-id"] = resourceId;
+      if(config.params) config.params["project-id"] = projectId;
     }
     // if (!config.params?.["project-id"]) {
     //   if (config.params) {

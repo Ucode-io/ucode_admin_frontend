@@ -9,6 +9,8 @@ const HFAutocomplete = ({
   isBlackBg,
   label,
   tabIndex,
+  updateObject,
+  isNewTableView=false,
   disabled,
   width = "100%",
   options = [],
@@ -19,6 +21,7 @@ const HFAutocomplete = ({
   onFieldChange = () => {},
   rules = {},
   defaultValue = null,
+  customChange = () => {},
   ...props
 }) => {
   const computedOptions = useMemo(() => {
@@ -55,6 +58,8 @@ const HFAutocomplete = ({
               onChange={(val) => {
                 onChange(val?.value);
                 onFormChange(val?.value);
+                customChange(val);
+                isNewTableView && updateObject();
               }}
               onFieldChange={onFieldChange}
               options={computedOptions}

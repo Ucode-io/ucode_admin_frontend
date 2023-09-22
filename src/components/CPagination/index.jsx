@@ -4,11 +4,13 @@ import CSelect from "../CSelect";
 import styles from "./style.module.scss";
 import AddIcon from "@mui/icons-material/Add";
 import useTabRouter from "../../hooks/useTabRouter";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const CPagination = ({
   setCurrentPage = () => {},
+  view,
   paginationExtraButton,
+  isTableView,
   multipleDelete,
   selectedObjectsForDelete,
   limit,
@@ -18,6 +20,7 @@ const CPagination = ({
 }) => {
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
+  const navigate = useNavigate();
   const { tableSlug } = useParams();
   const options = [
     {
@@ -36,6 +39,10 @@ const CPagination = ({
     { value: 35, label: 35 },
     { value: 40, label: 40 },
   ];
+
+  const objectNavigate = () => {
+    navigate(view?.attributes?.url_object);
+  };
 
   return (
     <div
@@ -82,10 +89,19 @@ const CPagination = ({
           </Button>
         ) : null}
 
-        <Button variant="outlined" onClick={() => navigateToForm(tableSlug)}>
-          <AddIcon style={{ color: "#007AFF" }} />
-          Add object
-        </Button>
+        {isTableView && (
+          <Button
+            variant="outlined"
+            onClick={() => {
+              if (view?.attributes?.url_object) {
+                objectNavigate();
+              } else navigateToForm(tableSlug);
+            }}
+          >
+            <AddIcon style={{ color: "#007AFF" }} />
+            Add object
+          </Button>
+        )}
 
         {!disablePagination && (
           <>

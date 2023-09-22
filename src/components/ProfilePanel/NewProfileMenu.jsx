@@ -1,12 +1,13 @@
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import KeyIcon from "@mui/icons-material/Key";
 import MoveUpIcon from "@mui/icons-material/MoveUp";
+import SmsIcon from "@mui/icons-material/Sms";
 import WidgetsIcon from "@mui/icons-material/Widgets";
-import { Box, Divider, Menu, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { PlusIcon } from "../../assets/icons/icon";
+import {Box, Divider, Menu, MenuItem, Tooltip} from "@mui/material";
+import {useEffect, useMemo, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {PlusIcon} from "../../assets/icons/icon";
 import CompanyModal from "../../layouts/MainLayout/CompanyModal";
 import authService from "../../services/auth/authService";
 import {
@@ -14,25 +15,34 @@ import {
   useEnvironmentListQuery,
   useProjectListQuery,
 } from "../../services/companyService";
-import { store } from "../../store";
-import { authActions } from "../../store/auth/auth.slice";
-import { companyActions } from "../../store/company/company.slice";
+import {store} from "../../store";
+import {authActions} from "../../store/auth/auth.slice";
+import {companyActions} from "../../store/company/company.slice";
 import UserAvatar from "../UserAvatar";
 import EnvironmentsList from "./EnvironmentList/EnvironmentsList";
 import ProfileItem from "./ProfileItem";
 import ProjectList from "./ProjectList/ProjectsList";
 import ResourceList from "./ResourceList";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
 import styles from "./newprofile.module.scss";
-import { useQueryClient } from "react-query";
+import {useQueryClient} from "react-query";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import useBooleanState from "../../hooks/useBooleanState";
 import VersionModal from "./Components/VersionModal/VersionModal";
 import LayersIcon from "@mui/icons-material/Layers";
+import {useProjectGetByIdQuery} from "../../services/projectService";
+import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
+import {useTranslation} from "react-i18next";
+import {showAlert} from "../../store/alert/alert.thunk";
 
-const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
+const NewProfilePanel = ({
+  handleMenuSettingModalOpen,
+  setSidebarAnchor,
+  sidebarAnchorEl,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { appId } = useParams();
+  const {appId} = useParams();
   const queryClient = useQueryClient();
   const company = store.getState().company;
   const auth = store.getState().auth;
@@ -41,14 +51,13 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const [environmentListEl, setEnvironmentListEl] = useState(null);
   const [companyModal, setCompanyModal] = useState(null);
   const [selected, setSelected] = useState(false);
-  const menuVisible = Boolean(anchorProfileEl);
+  const menuVisible = Boolean(anchorProfileEl || sidebarAnchorEl);
   const projectVisible = Boolean(projectListEl);
   const environmentVisible = Boolean(environmentListEl);
   const location = useLocation();
   const settings = location.pathname.includes("settings");
   const [versionModalIsOpen, openVersionModal, closeVersionModal] =
     useBooleanState(false);
-
   const params = {
     refresh_token: auth.refreshToken,
     env_id: company.environmentId,
@@ -71,7 +80,13 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   const handleRedirectNavigate = () => {
     navigate(`/main/${appId}/redirects`);
   };
-  const closeMenu = () => {
+  const handleSmsNavigate = () => {
+    navigate(`/main/${appId}/sms-otp`);
+  };
+
+  const closeMenu = (e) => {
+    e.stopPropagation();
+    setSidebarAnchor(false);
     setProfileAnchorEl(null);
   };
   const openMenu = (event) => {
@@ -142,7 +157,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
     );
   }, [company.companies, company.environments]);
 
-  const { isLoading } = useCompanyListQuery({
+  const {isLoading} = useCompanyListQuery({
     params: {
       owner_id: auth.userId,
     },
@@ -154,7 +169,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
     },
   });
 
-  const { isLoading: projectLoading } = useProjectListQuery({
+  const {isLoading: projectLoading} = useProjectListQuery({
     params: {
       company_id: company.companyId,
     },
@@ -170,7 +185,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
     },
   });
 
-  const { isLoading: environmentLoading } = useEnvironmentListQuery({
+  const {isLoading: environmentLoading} = useEnvironmentListQuery({
     params: {
       project_id: company.projectId,
     },
@@ -188,11 +203,57 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
   });
 
   const permissions = useSelector((state) => state.auth.globalPermissions);
+  const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
 
-  console.log(
-    "permissions?.menu_setting_button",
-    permissions?.menu_setting_button
+  const projectId = useSelector((state) => state.company.projectId);
+  const {data: projectInfo = []} = useProjectGetByIdQuery({projectId});
+
+  const languages = useMemo(() => {
+    return projectInfo?.language?.map((lang) => ({
+      title: lang?.name,
+      slug: lang?.short_name,
+    }));
+  }, [projectInfo]);
+
+  useEffect(() => {
+    if (projectId) {
+      dispatch(languagesActions.setLanguagesItems(languages));
+    }
+  }, [languages, projectId, dispatch]);
+
+  const {i18n} = useTranslation();
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    dispatch(languagesActions.setDefaultLanguage(lang));
+    dispatch(showAlert(`Language changed to ${lang} successfully`, "success"));
+  };
+
+  const defaultLanguage = useSelector(
+    (state) => state.languages.defaultLanguage
   );
+
+  useEffect(() => {
+    if (languages?.length) {
+      if (!defaultLanguage) {
+        i18n.changeLanguage(languages?.[0]?.slug);
+        dispatch(languagesActions.setDefaultLanguage(languages?.[0]?.slug));
+      }
+    }
+  }, [languages]);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClickLanguages = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const onClose = (e) => {
+    closeMenu(e);
+    if (selected) refreshTokenFunc();
+  };
 
   return (
     <div>
@@ -205,11 +266,10 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
       />
       <Menu
         id="lock-menu"
-        anchorEl={anchorProfileEl}
+        anchorEl={anchorProfileEl || sidebarAnchorEl}
         open={menuVisible}
-        onClose={() => {
-          closeMenu();
-          refreshTokenFunc();
+        onClose={(e) => {
+          onClose(e);
         }}
         classes={{
           list: styles.profilemenu,
@@ -243,14 +303,17 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
                   className={styles.company}
                 />
               ))}
-              <p
-                className={styles.createbutton}
-                onClick={() => {
-                  setCompanyModal(true);
-                }}
-              >
-                <PlusIcon fill={"#007AFF"} />
-              </p>
+
+              {roleInfo === "DEFAULT ADMIN" && (
+                <p
+                  className={styles.createbutton}
+                  onClick={() => {
+                    setCompanyModal(true);
+                  }}
+                >
+                  <PlusIcon fill={"#007AFF"} />
+                </p>
+              )}
             </div>
           </div>
         </Box>
@@ -273,7 +336,8 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
             />
           </div>
           <Divider />
-          <div className={styles.block}>
+          {/* <div className={styles.block}> */}
+          {permissions?.project_button && (
             <ProfileItem
               children={
                 <ResourceList
@@ -291,6 +355,8 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
               }
               onClick={openProjectList}
             />
+          )}
+          {permissions?.environments_button && (
             <ProfileItem
               children={
                 <ResourceList
@@ -308,6 +374,8 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
               }
               onClick={openEnvironmentList}
             />
+          )}
+          {permissions?.version_button && (
             <ProfileItem
               children={
                 <LocalOfferIcon
@@ -321,13 +389,14 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
                   ? `Version - ${company?.version?.version}`
                   : "Version"
               }
-              onClick={() => {
-                closeMenu();
+              onClick={(e) => {
                 openVersionModal();
+                closeMenu(e);
               }}
             />
-          </div>
-          <Divider />
+          )}
+          {/* </div> */}
+          {permissions?.version_button && <Divider />}
           <div className={styles.block}>
             {permissions?.api_keys_button && (
               <ProfileItem
@@ -356,8 +425,61 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
                 onClick={handleRedirectNavigate}
               />
             )}
+
+            {permissions?.sms_button && (
+              <ProfileItem
+                children={
+                  <SmsIcon
+                    style={{
+                      color: "#747474",
+                    }}
+                  />
+                }
+                text={"Sms Otp"}
+                onClick={handleSmsNavigate}
+              />
+            )}
           </div>
-          <Divider />
+          {permissions?.sms_button && <Divider />}
+
+          <div className={styles.block}>
+            <ProfileItem
+              children={
+                <GTranslateIcon
+                  style={{
+                    color: "#747474",
+                  }}
+                />
+              }
+              text={"Languages"}
+              onClick={handleClickLanguages}
+            />
+
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              {languages?.map((item) => (
+                <MenuItem
+                  onClick={() => {
+                    changeLanguage(item.slug);
+                  }}
+                  key={item.id}
+                  style={{
+                    backgroundColor:
+                      item.slug === defaultLanguage ? "#E5E5E5" : "#fff",
+                  }}
+                >
+                  {item?.title}
+                </MenuItem>
+              ))}
+            </Menu>
+          </div>
 
           <Box
             style={{
@@ -419,8 +541,9 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
             {permissions?.project_settings_button && (
               <ProfileItem
                 text={"Настройки"}
-                onClick={() => {
-                  navigate(`/settings/constructor/apps`);
+                onClick={(e) => {
+                  closeMenu(e);
+                  navigate(`/main/${appId}/project-setting`);
                 }}
               />
             )}
@@ -443,6 +566,7 @@ const NewProfilePanel = ({ handleMenuSettingModalOpen }) => {
         environmentVisible={environmentVisible}
         environmentList={company.environments}
         handleEnvNavigate={handleEnvNavigate}
+        setSelected={setSelected}
       />
       {versionModalIsOpen && <VersionModal closeModal={closeVersionModal} />}
 

@@ -1,12 +1,21 @@
 import { Description, MoreVertOutlined } from "@mui/icons-material";
 import FormatLineSpacingIcon from "@mui/icons-material/FormatLineSpacing";
+import MultipleInsertButton from "./components/MultipleInsertForm";
+import CustomActionsButton from "./components/CustomActionsButton";
+import {
+  ArrowDropDownCircleOutlined,
+  Clear,
+  Edit,
+  Save,
+} from "@mui/icons-material";
+import { useFieldArray, useForm } from "react-hook-form";
+import AddIcon from "@mui/icons-material/Add";
 import HexagonIcon from "@mui/icons-material/Hexagon";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import { Button, CircularProgress, Divider, Menu } from "@mui/material";
 import { endOfMonth, startOfMonth } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +37,7 @@ import FinancialCalendarView from "./FinancialCalendarView/FinancialCalendarView
 import GroupByButton from "./GroupByButton";
 import LanguagesNavbar from "./LanguagesNavbar";
 import ShareModal from "./ShareModal/ShareModal";
+import { menuActions } from "../../store/menuItem/menuItem.slice";
 import TableView from "./TableView";
 import TreeView from "./TreeView";
 import ExcelButtons from "./components/ExcelButtons";
@@ -183,6 +193,11 @@ const ViewsWithGroups = ({
 
   const navigateToCreatePage = () => {
     navigateToForm(tableSlug);
+  };
+
+  const navigateToCreatePageWithInvite = () => {
+    navigateToForm(tableSlug);
+    dispatch(menuActions.setInvite(true));
   };
 
   function dateIsValid(date) {
@@ -424,6 +439,14 @@ const ViewsWithGroups = ({
                   open={openHeightControl}
                   onClose={handleCloseHeightControl}
                   anchorEl={anchorElHeightControl}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
                   PaperProps={{
                     elevation: 0,
                     sx: {
@@ -516,6 +539,14 @@ const ViewsWithGroups = ({
               open={open}
               onClose={handleClose}
               anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
               PaperProps={{
                 elevation: 0,
                 sx: {
@@ -590,13 +621,31 @@ const ViewsWithGroups = ({
 
               {/* <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <PermissionWrapperV2 tableSlug={tableSlug} type="write">
+                {invite && (
+                  <Button
+                    variant="contained"
+                    onClick={navigateToCreatePageWithInvite}
+                  >
+                    Invite
+                  </Button>
+                )}
+                <RectangleIconButton
+                  color="success"
+                  size="small"
+                  onClick={navigateToCreatePage}
+                >
                 <Button variant="outlined" onClick={navigateToCreatePage}>
                   <AddIcon style={{ color: "#007AFF" }} />
                   Add object
                 </Button>
                 {formVisible ? (
                   <>
-                    <RectangleIconButton color="success" size="small" onClick={handleSubmit(onSubmit)} loader={isLoading}>
+                    <RectangleIconButton
+                      color="success"
+                      size="small"
+                      onClick={handleSubmit(onSubmit)}
+                      loader={isLoading}
+                    >
                       <Save color="success" />
                     </RectangleIconButton>
                     <RectangleIconButton
@@ -631,8 +680,16 @@ const ViewsWithGroups = ({
                   // </PermissionWrapperV2>
                   ""
                 )}
-                <MultipleInsertButton view={view} fieldsMap={fieldsMap} tableSlug={tableSlug} />
-                <CustomActionsButton selectedObjects={selectedObjects} setSelectedObjects={setSelectedObjects} tableSlug={tableSlug} />
+                <MultipleInsertButton
+                  view={view}
+                  fieldsMap={fieldsMap}
+                  tableSlug={tableSlug}
+                />
+                <CustomActionsButton
+                  selectedObjects={selectedObjects}
+                  setSelectedObjects={setSelectedObjects}
+                  tableSlug={tableSlug}
+                />
               </PermissionWrapperV2>
             </div> */}
             </div>
@@ -742,6 +799,7 @@ const ViewsWithGroups = ({
                       setDataLength={setDataLength}
                       selectedTabIndex={selectedTabIndex}
                       shouldGet={shouldGet}
+                      isTableView={true}
                       reset={reset}
                       sortedDatas={sortedDatas}
                       menuItem={menuItem}

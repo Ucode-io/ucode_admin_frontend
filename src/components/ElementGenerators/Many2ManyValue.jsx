@@ -1,14 +1,15 @@
-import React, { useMemo } from "react";
-import { useQuery } from "react-query";
+import React, {useMemo} from "react";
+import {useQuery} from "react-query";
 import constructorObjectService from "../../services/constructorObjectService";
 import get from "lodash.get";
+import styles from "./style.module.scss";
 
-function Many2ManyValue({ field, value }) {
-  const { data: options = [] } = useQuery(
-    ["GET_OBJECT_LIST", field?.table_slug],
+function Many2ManyValue({field, value}) {
+  const {data: options = []} = useQuery(
+    ["GET_OBJECT_LIST", field?.table_slug, value],
     () => {
       return constructorObjectService.getList(field?.table_slug, {
-        data: { guid: value },
+        data: {guid: value},
       });
     },
     {
@@ -23,7 +24,7 @@ function Many2ManyValue({ field, value }) {
       .join(", ");
   }, [field, options]);
 
-  return <div>{computedValue}</div>;
+  return <div className={styles.container}>{computedValue}</div>;
 }
 
 export default Many2ManyValue;

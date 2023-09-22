@@ -107,7 +107,7 @@ const FinancialTableRow = ({
  
 
   useEffect(() => {
-    form.setValue(`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.relation_id`, tableOptions.filter(item => item.value === selectedTableOptions)?.[0]?.id)
+    form.setValue(`chartOfAccounts.${indexParent}.${item.guid}.${optionIndex}.relation_id`, tableOptions?.filter(item => item.value === selectedTableOptions)?.[0]?.id)
   }, [selectedTableOptions])
 
   useEffect(() => {

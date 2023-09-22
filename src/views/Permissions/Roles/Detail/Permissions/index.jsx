@@ -7,7 +7,7 @@ import {
   CTableHead,
   CTableHeadRow,
 } from "../../../../../components/CTable";
-import { Box, Card } from "@mui/material";
+import { Box, Card, Checkbox } from "@mui/material";
 import { useEffect, useState } from "react";
 import TableRow from "./TableRow";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
@@ -33,6 +33,22 @@ const Permissions = ({
     control,
     name: "menus",
   });
+  console.log("allMenu", allMenu);
+  const allReadTrue = tables?.tables?.every(
+    (permission) => permission.record_permissions?.read === "Yes"
+  );
+  const allWriteTrue = tables?.tables?.every(
+    (permission) => permission.record_permissions?.write === "Yes"
+  );
+  const allUpdateTrue = tables?.tables?.every(
+    (permission) => permission.record_permissions?.update === "Yes"
+  );
+  const allDeleteTrue = tables?.tables?.every(
+    (permission) => permission.record_permissions?.delete === "Yes"
+  );
+  const allPublicTrue = tables?.tables?.every(
+    (permission) => permission.record_permissions?.is_public === true
+  );
 
   useEffect(() => {
     const obj = {};
@@ -40,7 +56,7 @@ const Permissions = ({
       obj[item.id] = item.permission;
     });
     setCheckBoxValues(obj);
-  }, [allMenu]);
+  }, []);
 
   return (
     <>
@@ -49,8 +65,8 @@ const Permissions = ({
         selectedIndex={selectedTab}
         onSelect={setSelectedTab}
       >
-        <div style={{ padding: "20px" }}>
-          <Card style={{ padding: "10px" }}>
+        <div>
+          <Card style={{ boxShadow: "none" }}>
             <TabList>
               <Tab>Table</Tab>
               <Tab>Menu</Tab>
@@ -58,8 +74,8 @@ const Permissions = ({
             </TabList>
 
             <TabPanel>
-              <Box py={4}>
-                <TableCard withBorder borderRadius="md">
+              <Box py={1}>
+                <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>
@@ -80,11 +96,96 @@ const Permissions = ({
                         <CTableCell rowSpan={2}>Custom permission</CTableCell>
                       </CTableHeadRow>
                       <CTableHeadRow>
-                        <CTableCell>Чтение</CTableCell>
-                        <CTableCell>Добавление</CTableCell>
-                        <CTableCell>Изменение</CTableCell>
-                        <CTableCell>Удаление</CTableCell>
-                        <CTableCell>Публичный</CTableCell>
+                        <CTableCell>
+                          Чтение
+                          <Checkbox
+                            checked={allReadTrue ? true : false}
+                            onChange={(e) => {
+                              setValue(
+                                "data.tables",
+                                tables?.tables.map((el) => ({
+                                  ...el,
+                                  record_permissions: {
+                                    ...el.record_permissions,
+                                    read: e.target.checked ? "Yes" : "No",
+                                  },
+                                }))
+                              );
+                            }}
+                          />
+                        </CTableCell>
+                        <CTableCell>
+                          Добавление
+                          <Checkbox
+                            checked={allWriteTrue ? true : false}
+                            onChange={(e) => {
+                              setValue(
+                                "data.tables",
+                                tables?.tables.map((el) => ({
+                                  ...el,
+                                  record_permissions: {
+                                    ...el.record_permissions,
+                                    write: e.target.checked ? "Yes" : "No",
+                                  },
+                                }))
+                              );
+                            }}
+                          />
+                        </CTableCell>
+                        <CTableCell>
+                          Изменение
+                          <Checkbox
+                            checked={allUpdateTrue ? true : false}
+                            onChange={(e) => {
+                              setValue(
+                                "data.tables",
+                                tables?.tables.map((el) => ({
+                                  ...el,
+                                  record_permissions: {
+                                    ...el.record_permissions,
+                                    update: e.target.checked ? "Yes" : "No",
+                                  },
+                                }))
+                              );
+                            }}
+                          />
+                        </CTableCell>
+                        <CTableCell>
+                          Удаление
+                          <Checkbox
+                            checked={allDeleteTrue ? true : false}
+                            onChange={(e) => {
+                              setValue(
+                                "data.tables",
+                                tables?.tables.map((el) => ({
+                                  ...el,
+                                  record_permissions: {
+                                    ...el.record_permissions,
+                                    delete: e.target.checked ? "Yes" : "No",
+                                  },
+                                }))
+                              );
+                            }}
+                          />
+                        </CTableCell>
+                        <CTableCell>
+                          Публичный
+                          <Checkbox
+                            checked={allPublicTrue ? true : false}
+                            onChange={(e) => {
+                              setValue(
+                                "data.tables",
+                                tables?.tables.map((el) => ({
+                                  ...el,
+                                  record_permissions: {
+                                    ...el.record_permissions,
+                                    is_public: e.target.checked,
+                                  },
+                                }))
+                              );
+                            }}
+                          />
+                        </CTableCell>
                       </CTableHeadRow>
                     </CTableHead>
                     <CTableBody
@@ -98,6 +199,8 @@ const Permissions = ({
                           table={table}
                           tableIndex={tableIndex}
                           control={control}
+                          setValue={setValue}
+                          watch={watch}
                         />
                       ))}
                     </CTableBody>
@@ -106,8 +209,8 @@ const Permissions = ({
               </Box>
             </TabPanel>
             <TabPanel>
-              <Box py={4}>
-                <TableCard withBorder borderRadius="md">
+              <Box py={1}>
+                <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>
@@ -151,8 +254,8 @@ const Permissions = ({
               </Box>
             </TabPanel>
             <TabPanel>
-              <Box py={4}>
-                <TableCard withBorder borderRadius="md">
+              <Box py={1}>
+                <TableCard withBorder borderRadius="md" type={"withoutPadding"}>
                   <CTable>
                     <CTableHead>
                       <CTableHeadRow>

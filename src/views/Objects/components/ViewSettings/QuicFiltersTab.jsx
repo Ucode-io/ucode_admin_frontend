@@ -11,6 +11,7 @@ import {
 import HFCheckbox from "../../../../components/FormElements/HFCheckbox"
 import { applyDrag } from "../../../../utils/applyDrag"
 import styles from "./style.module.scss"
+import { useTranslation } from "react-i18next"
 
 const QuickFiltersTab = ({ form }) => {
   const { fields: quickFilters, move } = useFieldArray({
@@ -18,7 +19,6 @@ const QuickFiltersTab = ({ form }) => {
     name: "quick_filters",
     keyName: "key",
   })
-
   const onDrop = (dropResult) => {
     const result = applyDrag(quickFilters, dropResult)
     if (result) move(dropResult.removedIndex, dropResult.addedIndex)
@@ -48,16 +48,15 @@ const QuickFiltersTab = ({ form }) => {
 }
 
 const QuickFilterRow = ({ column, onCheckboxChange, index, control }) => {
-
+  const {i18n} = useTranslation()
   return (
     <div className={styles.row} >
-      <div className={styles.cell} style={{ flex: 1 }}>{column.label}</div>
+      <div className={styles.cell} style={{ flex: 1 }}>{column?.attributes?.[`label_${i18n.language}`] ?? column.label}</div>
       <div className={styles.cell} style={{ width: 70 }}>
         <HFCheckbox control={control} name={`quick_filters[${index}].is_checked`} />
       </div>
     </div>
   )
-
 
   // return (
   //   <CTableRow>

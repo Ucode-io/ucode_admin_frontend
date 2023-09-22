@@ -1,31 +1,31 @@
-import {
-  CircularProgress,
-  InputAdornment,
-  Menu,
-  TextField,
-} from "@mui/material";
-import { useState } from "react";
+import {CircularProgress, InputAdornment, Menu, TextField} from "@mui/material";
+import {useState} from "react";
 import FRow from "../../FormElements/FRow";
 import styles from "./style.module.scss";
-import { useController } from "react-hook-form";
+import {useController} from "react-hook-form";
 import Dropdown from "./Dropdown";
-import { useMemo } from "react";
-import { useEffect } from "react";
+import {useMemo} from "react";
+import {useEffect} from "react";
 import constructorObjectService from "../../../services/constructorObjectService";
-import { getLabelWithViewFields } from "../../../utils/getRelationFieldLabel";
+import {getLabelWithViewFields} from "../../../utils/getRelationFieldLabel";
 import FEditableRow from "../../FormElements/FEditableRow";
+import {useTranslation} from "react-i18next";
 
 const DynamicRelationFormElement = ({
   control,
   field,
   setFormValue,
   disabled = false,
+  checkRequiredField,
 }) => {
   const {
-    field: { onChange, value },
-    fieldState: { error },
+    field: {onChange, value},
+    fieldState: {error},
   } = useController({
-    name: field?.attributes?.relation_field_slug ?? field?.relation_field_slug ?? '',
+    name:
+      field?.attributes?.relation_field_slug ??
+      field?.relation_field_slug ??
+      "",
     control,
     defaultValue: null,
   });
@@ -33,11 +33,12 @@ const DynamicRelationFormElement = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const [localValue, setLocalValue] = useState(null);
   const [inputLoader, setInputLoader] = useState(false);
+  const {i18n} = useTranslation();
 
   const tablesList = useMemo(() => {
     return (
       field?.attributes?.dynamic_tables?.map((el) => {
-        return el.table ? { ...el.table, ...el } : el;
+        return el.table ? {...el.table, ...el} : el;
       }) ?? []
     );
   }, [field?.attributes?.dynamic_tables]);
@@ -92,13 +93,20 @@ const DynamicRelationFormElement = ({
     if (!tableInValue || !localValue) return "";
     return `${tableInValue?.label} / ${localValue?.label}`;
   }, [tableInValue, localValue]);
-
+  console.log("field", field);
   return (
     <>
       <FEditableRow
-        label={field?.label ?? field.title ?? " "}
+        label={
+          field?.attributes[`title_${i18n}`] ??
+          field?.attributes[`name${i18n}`] ??
+          field?.attributes[`label${i18n}`] ??
+          field?.label ??
+          field.title ??
+          " "
+        }
         onLabelChange={onChange}
-        required={field.required}
+        required={checkRequiredField}
       >
         {/* <FRow label={field.label ?? field.title} required={field.required}> */}
         <TextField
@@ -122,7 +130,7 @@ const DynamicRelationFormElement = ({
         anchorEl={anchorEl}
         open={!!anchorEl}
         onClose={closeMenu}
-        classes={{ list: styles.menu, paper: styles.paper }}
+        classes={{list: styles.menu, paper: styles.paper}}
       >
         <Dropdown
           field={field}

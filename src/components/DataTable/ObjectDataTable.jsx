@@ -24,11 +24,13 @@ import { Box, Button, LinearProgress } from "@mui/material";
 import TableHeadForTableView from "./TableHeadForTableView";
 import InfiniteScroll from "react-infinite-scroll-component";
 import constructorObjectService from "../../services/constructorObjectService";
+import { useTranslation } from "react-i18next";
 
 const ObjectDataTable = ({
   data = [],
   loader = false,
   setDrawerState,
+  setDrawerStateField,
   removableHeight,
   additionalRow,
   mainForm,
@@ -79,6 +81,7 @@ const ObjectDataTable = ({
 }) => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const { i18n } = useTranslation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const selectedRow = useSelector((state) => state.selectedRow.selected);
   const [columnId, setColumnId] = useState("");
@@ -237,12 +240,22 @@ const ObjectDataTable = ({
   const [count, setCount] = useState(0);
 
   useEffect(() => {
+    const params = {
+      language_setting: i18n?.language,
+    };
+    console.log("i18n?.language", i18n?.language);
     constructorObjectService
-      .getList(tableSlug, { data: { limit: 0, offset: 0 } })
+      .getList(
+        tableSlug,
+        {
+          data: { limit: 0, offset: 0 },
+        },
+        params
+      )
       .then((res) => {
         setCount(Math.ceil(res.data?.count / limit));
       });
-  }, [tableSlug, limit]);
+  }, [tableSlug, limit, i18n?.language]);
 
   const hasMore = useMemo(() => {
     return currentPage <= count;
@@ -254,6 +267,7 @@ const ObjectDataTable = ({
       removableHeight={removableHeight}
       count={pagesCount}
       page={currentPage}
+      isTableView={isTableView}
       setCurrentPage={onPaginationChange}
       loader={loader}
       multipleDelete={multipleDelete}
@@ -264,6 +278,7 @@ const ObjectDataTable = ({
       limit={limit}
       setLimit={setLimit}
       defaultLimit={defaultLimit}
+      view={view}
     >
       {/* <Box
         style={{
@@ -310,6 +325,7 @@ const ObjectDataTable = ({
                   sortedDatas={sortedDatas}
                   setSortedDatas={setSortedDatas}
                   setDrawerState={setDrawerState}
+                  setDrawerStateField={setDrawerStateField}
                   tableSize={tableSize}
                   tableSettings={tableSettings}
                   view={view}
@@ -362,7 +378,6 @@ const ObjectDataTable = ({
               onClick={openFieldSettings}
             >
               <AddRoundedIcon />
-              Column
             </Button>
           </CTableHeadCell>
         </CTableRow>
@@ -384,6 +399,7 @@ const ObjectDataTable = ({
             mainForm={mainForm}
             formVisible={formVisible}
             rowIndex={rowIndex}
+            isTableView={isTableView}
             selectedObjectsForDelete={selectedObjectsForDelete}
             setSelectedObjectsForDelete={setSelectedObjectsForDelete}
             isRelationTable={isRelationTable}

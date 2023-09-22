@@ -1,15 +1,23 @@
 import React from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import {Tab, Tabs, TabList, TabPanel} from "react-tabs";
 import styles from "./style.module.scss";
 import NewSectionsBlock from "./NewSectionsBlock";
-import { useFieldArray } from "react-hook-form";
+import {useFieldArray} from "react-hook-form";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
-import { TextField } from "@mui/material";
+import {TextField} from "@mui/material";
 import RectangleIconButton from "../../../../../components/Buttons/RectangleIconButton";
-import { Add } from "@mui/icons-material";
+import {Add} from "@mui/icons-material";
 import ButtonsPopover from "../../../../../components/ButtonsPopover";
 
-function DetailTabs({ control, layoutForm, openFieldsBlock, openFieldSettingsBlock, openRelationSettingsBlock, selectedTab, handleTabSelection }) {
+function DetailTabs({
+  control,
+  layoutForm,
+  openFieldsBlock,
+  openFieldSettingsBlock,
+  openRelationSettingsBlock,
+  selectedTab,
+  handleTabSelection,
+}) {
   const {
     fields: tabs,
     insert,
@@ -36,7 +44,13 @@ function DetailTabs({ control, layoutForm, openFieldsBlock, openFieldSettingsBlo
       <TabList>
         {tabs?.map((item, index) => (
           <>
-            <Tab key={item.key} className={`${styles.tabs_item} ${selectedTab === index ? "custom-selected-tab" : "custom_tab"}`} onClick={() => handleTabSelection(index)}>
+            <Tab
+              key={item.key}
+              className={`${styles.tabs_item} ${
+                selectedTab === index ? "custom-selected-tab" : "custom_tab"
+              }`}
+              onClick={() => handleTabSelection(index)}
+            >
               <HFTextField
                 control={control}
                 // style={{width: '120px', border: '0px solid #fff', boxShadow: 'none'}}

@@ -56,16 +56,11 @@ const ProjectPage = () => {
     <div>
       <HeaderSettings title={"Projects"} />
 
-      <FiltersBlock>
-        <div className="p-1">{/* <SearchInput /> */}</div>
-      </FiltersBlock>
-
       <TableCard>
         <CTable disablePagination removableHeight={140}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>
-            {/* <CTableCell>Описание</CTableCell> */}
             <CTableCell width={60}></CTableCell>
           </CTableHead>
           <CTableBody

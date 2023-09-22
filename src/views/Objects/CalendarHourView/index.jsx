@@ -1,11 +1,5 @@
-import {
-  add,
-  differenceInDays,
-  endOfMonth,
-  format,
-  startOfMonth,
-} from "date-fns";
-import { useMemo, useState } from "react";
+import { add, differenceInDays, endOfMonth, format, startOfMonth } from "date-fns";
+import { useEffect, useMemo, useState } from "react";
 import { useQueries, useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import CRangePicker from "../../../components/DatePickers/CRangePicker";
@@ -31,22 +25,15 @@ import { useSelector } from "react-redux";
 import PermissionWrapperV2 from "../../../components/PermissionWrapper/PermissionWrapperV2";
 import { useTranslation } from "react-i18next";
 
-const CalendarHourView = ({
-  view,
-  selectedTabIndex,
-  setSelectedTabIndex,
-  views,
-  selectedTable
-}) => {
-  const { t } = useTranslation()
+const CalendarHourView = ({ view, selectedTabIndex, setSelectedTabIndex, views, selectedTable, setViews }) => {
+  const { t } = useTranslation();
   const { tableSlug } = useParams();
   const { filters } = useFilters(tableSlug, view.id);
   const isPermissions = useSelector((state) => state?.auth?.permissions);
-
-  const [dateFilters, setDateFilters] = useState([
-    startOfMonth(new Date()),
-    endOfMonth(new Date()),
-  ]);
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
+  const [selectedView, setSelectedView] = useState(null);
+  const [dateFilters, setDateFilters] = useState([startOfMonth(new Date()), endOfMonth(new Date())]);
   const [fieldsMap, setFieldsMap] = useState({});
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -58,10 +45,12 @@ const CalendarHourView = ({
     setAnchorEl(null);
   };
 
+  useEffect(() => {
+    setSelectedView(views?.[selectedTabIndex] ?? {});
+  }, [views, selectedTabIndex]);
+
   const groupFieldIds = view.group_fields;
-  const groupFields = groupFieldIds
-    .map((id) => fieldsMap[id])
-    .filter((el) => el);
+  const groupFields = groupFieldIds.map((id) => fieldsMap[id]).filter((el) => el);
 
   const datesList = useMemo(() => {
     if (!dateFilters?.[0] || !dateFilters?.[1]) return [];
@@ -79,7 +68,7 @@ const CalendarHourView = ({
     ["GET_OBJECTS_LIST_WITH_RELATIONS", { tableSlug, filters }],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { with_relations: true, ...filters },
+        data: { ...filters },
       });
     },
     {
@@ -95,9 +84,7 @@ const CalendarHourView = ({
         const data = res.data?.response?.map((row) => ({
           ...row,
           calendar: {
-            date: row[view.calendar_from_slug]
-              ? format(new Date(row[view.calendar_from_slug]), "dd.MM.yyyy")
-              : null,
+            date: row[view.calendar_from_slug] ? format(new Date(row[view.calendar_from_slug]), "dd.MM.yyyy") : null,
           },
         }));
         return {
@@ -163,21 +150,11 @@ const CalendarHourView = ({
             >
               <div className={style.menuBar}>
                 <ExcelButtons />
-                <div
-                  className={style.template}
-                  onClick={() => setSelectedTabIndex(views?.length)}
-                >
-                  <div
-                    className={`${style.element} ${
-                      selectedTabIndex === views?.length ? style.active : ""
-                    }`}
-                  >
-                    <Description
-                      className={style.icon}
-                      style={{ color: "#6E8BB7" }}
-                    />
+                <div className={style.template} onClick={() => setSelectedTabIndex(views?.length)}>
+                  <div className={`${style.element} ${selectedTabIndex === views?.length ? style.active : ""}`}>
+                    <Description className={style.icon} style={{ color: "#6E8BB7" }} />
                   </div>
-                  <span>{ t('template') }</span>
+                  <span>{t("template")}</span>
                 </div>
                 <PermissionWrapperV2 tableSlug={tableSlug} type="update">
                   <SettingsButton />
@@ -191,13 +168,16 @@ const CalendarHourView = ({
           selectedTabIndex={selectedTabIndex}
           setSelectedTabIndex={setSelectedTabIndex}
           views={views}
+          setViews={setViews}
           selectedTable={selectedTable}
+          settingsModalVisible={settingsModalVisible}
+          setSettingsModalVisible={setSettingsModalVisible}
+          isChanged={isChanged}
+          setIsChanged={setIsChanged}
+          selectedView={selectedView}
+          setSelectedView={setSelectedView}
         />
-        <CRangePicker
-          interval={"months"}
-          value={dateFilters}
-          onChange={setDateFilters}
-        />
+        <CRangePicker interval={"months"} value={dateFilters} onChange={setDateFilters} />
       </FiltersBlock>
 
       <div
@@ -216,7 +196,7 @@ const CalendarHourView = ({
       ) : (
         <div className={styles.wrapper}>
           <div className={styles.filters}>
-            <p>{t('filters')}</p>
+            <p>{t("filters")}</p>
             <FastFilter view={view} fieldsMap={fieldsMap} isVertical />
           </div>
           <CalendarHour
@@ -284,23 +264,15 @@ const promiseGenerator = (groupField, filters = {}) => {
 
   if (groupField?.type === "LOOKUP" || groupField?.type === "LOOKUPS") {
     const queryFn = () =>
-      constructorObjectService.getList(
-        groupField?.type === "LOOKUP"
-          ? groupField.slug?.slice(0, -3)
-          : groupField.slug?.slice(0, -4),
-        {
-          data: computedFilters ?? {},
-        }
-      );
+      constructorObjectService.getList(groupField?.type === "LOOKUP" ? groupField.slug?.slice(0, -3) : groupField.slug?.slice(0, -4), {
+        data: computedFilters ?? {},
+      });
 
     return {
       queryKey: [
         "GET_OBJECT_LIST_ALL",
         {
-          tableSlug:
-            groupField?.type === "LOOKUP"
-              ? groupField.slug?.slice(0, -3)
-              : groupField.slug?.slice(0, -4),
+          tableSlug: groupField?.type === "LOOKUP" ? groupField.slug?.slice(0, -3) : groupField.slug?.slice(0, -4),
           filters: computedFilters,
         },
       ],

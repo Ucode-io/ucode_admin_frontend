@@ -9,6 +9,7 @@ import { useQueryClient } from "react-query";
 import { useEffect } from "react";
 import menuSettingsService from "../../services/menuSettingsService";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useSelector } from "react-redux";
 
 const FolderCreateModal = ({
   closeModal,
@@ -20,6 +21,7 @@ const FolderCreateModal = ({
 }) => {
   const { projectId } = useParams();
   const queryClient = useQueryClient();
+  const menuItemLabel = useSelector((state) => state.menu.menuItem?.label);
 
   const onSubmit = (data) => {
     if (modalType === "create") {
@@ -31,7 +33,7 @@ const FolderCreateModal = ({
     }
   };
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, watch } = useForm({
     defaultValues: {
       app_id: appId,
     },
@@ -55,7 +57,7 @@ const FolderCreateModal = ({
         ...data,
         parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
         type: selectedFolder?.type || "FOLDER",
-        label: data.label,
+        label: Object.values(data?.attributes).find((item) => item),
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);
@@ -71,6 +73,7 @@ const FolderCreateModal = ({
     menuSettingsService
       .update({
         ...data,
+        label: Object.values(data?.attributes).find((item) => item),
       })
       .then(() => {
         queryClient.refetchQueries(["MENU"], selectedFolder?.id);
@@ -80,6 +83,8 @@ const FolderCreateModal = ({
         console.log(err);
       });
   };
+
+  const languages = useSelector((state) => state.languages.list);
 
   return (
     <div>
@@ -104,14 +109,25 @@ const FolderCreateModal = ({
           <form onSubmit={handleSubmit(onSubmit)} className="form">
             <Box display={"flex"} columnGap={"16px"} className="form-elements">
               <HFIconPicker name="icon" control={control} />
-              <HFTextField
-                autoFocus
-                fullWidth
-                label="Title"
-                control={control}
-                name="label"
-                required
-              />
+              {/* {languages.map((item) => (
+                <HFTextField autoFocus fullWidth label={`Title (${item?.slug})`} control={control} name={`attributes.label_${item?.slug}`} />
+              ))} */}
+
+              {languages?.map((language) => {
+                const languageFieldName = `attributes.label_${language?.slug}`;
+                const fieldValue = watch(languageFieldName);
+
+                return (
+                  <HFTextField
+                    autoFocus
+                    fullWidth
+                    label={`Title (${language?.slug})`}
+                    control={control}
+                    name={`attributes.label_${language?.slug}`}
+                    defaultValue={fieldValue || menuItemLabel}
+                  />
+                );
+              })}
             </Box>
 
             <div className="btns-row">

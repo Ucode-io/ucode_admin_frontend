@@ -1,17 +1,20 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import FormCard from "../../../../components/FormCard";
 import FRow from "../../../../components/FormElements/FRow";
 import HFAvatarUpload from "../../../../components/FormElements/HFAvatarUpload";
 import HFTextField from "../../../../components/FormElements/HFTextField";
 import Header from "../../../../components/Header";
-import constructorObjectService from "../../../../services/constructorObjectService";
 import CancelButton from "../../../../components/Buttons/CancelButton";
 import SaveButton from "../../../../components/Buttons/SaveButton";
 import authService from "../../../../services/auth/authService";
 import userService from "../../../../services/auth/userService";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { Box } from "@mui/material";
+import { showAlert } from "../../../../store/alert/alert.thunk";
 
 const UsersForm = () => {
   const navigate = useNavigate();
@@ -21,33 +24,39 @@ const UsersForm = () => {
   const clientType = useSelector((state) => state?.auth?.clientType);
   const userTableSlug = useSelector((state) => state?.auth?.loginTableSlug);
   const projectId = useSelector((state) => state?.auth?.projectId);
+  const [inputType, setInputType] = useState(true)
+  const [passwordType, setPasswordType] = useState(true)
+  const dispatch = useDispatch()
+  const [inputMatch, setInputMatch] = useState(false)
+  const [getError, setGetError] = useState(false)
 
 
   const update = (data) => {
-    const newPassword = data?.new_password;
+    const oldPassword = data?.old_password;
+    const newPassword = data?.new_password
+
     const requestData = {
       ...data,
       guid: isUserInfo?.id,
     };
-  
-    if (newPassword) {
-      requestData.password = newPassword;
-      resetPassword(newPassword)
-    } else {
-      delete requestData.password;
-    }
+
+    // if(newPassword || oldPassword) {
+    //   resetPasswordV2(oldPassword, newPassword)
+    // } else {
+    //   delete requestData.confirm_password;
+    // }
+
     userService
       ?.updateV2({
        ...requestData,
       })
       .then((res) => {
-        navigate(-1);
-      });
-
-      if(newPassword) {
-
-     
-      }
+        if(newPassword || oldPassword) {
+          resetPasswordV2(oldPassword, newPassword)
+        } else {
+          delete requestData.confirm_password;
+        }
+      })
   };
 
   const { control, handleSubmit, reset, watch } = useForm({
@@ -62,15 +71,43 @@ const UsersForm = () => {
     },
   });
 
-  const resetPassword = (newPassword) => {
-    authService.resetPassword( {
+  // const resetPassword = (newPassword) => {
+  //   authService.resetPasswordProfile( {
+  //     password: newPassword,
+  //     user_id: isUserId
+  //   }).then(() => {
+
+  //   }).catch(err => {
+  //     console.log('errrrrr', err)
+  //     dispatch(showAlert(err))
+  //   })
+  // }
+
+  const resetPasswordV2 = (oldPassword, newPassword) => {
+    authService.resetUserPasswordV2( {
       password: newPassword,
+      old_password: oldPassword,
       user_id: isUserId
+    }).then((res) => {
+      dispatch(showAlert("Password successfuly updated", "success"));
+    }).catch((err) => {
+      dispatch(showAlert("Something went wrong on changing password"))
     })
   }
 
   const onSubmit = (values) => {
-    if (isUserInfo) return update(values);
+    if(values?.new_password && values?.old_password) {
+      if(values?.new_password !== values?.confirm_password) {
+        dispatch(showAlert("Confirm Password fields do not match"))
+        setInputMatch(true)
+      } else if(isUserInfo) {
+          update(values)
+          setInputMatch(false)
+          }
+    } else if(isUserInfo) {
+      update(values)
+      setInputMatch(false)
+    };
   };
 
   useEffect(() => {
@@ -78,6 +115,7 @@ const UsersForm = () => {
       reset(res);
     });
   }, []);
+
 
   return (
     <>
@@ -159,13 +197,51 @@ const UsersForm = () => {
               />
             </FRow>
 
-            <FRow label="New Password">
+            <FRow label="Old Password">
+              <HFTextField
+                placeholder="password"
+                fullWidth
+                control={control}
+                name="old_password"
+              />
+            </FRow>
+
+            <FRow style={{position: 'relative'}} label="New Password">
               <HFTextField
                 placeholder="New Password"
                 fullWidth
                 control={control}
                 name="new_password"
+                type={inputType ? 'password' : 'text'}
               />
+
+              <Box onClick={() => setInputType(!inputType)} sx={{position: 'absolute', right: '15px', bottom: '5px', cursor: 'pointer'}}>
+                {inputType ? (
+                  <VisibilityIcon/>
+                ) : (
+                  <VisibilityOffIcon/>
+                )}
+              </Box>
+
+            </FRow>
+
+            <FRow style={{position: 'relative'}} label="Confirm password">
+              <HFTextField
+                placeholder="confirm password"
+                fullWidth
+                control={control}
+                name="confirm_password"
+                type={passwordType ? 'password' : 'text'}
+                style={{ border: `1px solid ${inputMatch ? 'red' : '#eee'}`}}
+              />
+
+              <Box onClick={() => setPasswordType(!passwordType)} sx={{position: 'absolute', right: '15px', bottom: '5px', cursor: 'pointer'}}>
+                {passwordType ? (
+                  <VisibilityIcon/>
+                ) : (
+                  <VisibilityOffIcon/>
+                )}
+              </Box>
             </FRow>
 
           </div>

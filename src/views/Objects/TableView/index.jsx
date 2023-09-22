@@ -1,7 +1,7 @@
 import { Button, Drawer } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
@@ -23,11 +23,14 @@ import { listToMap } from "../../../utils/listToMap";
 import constructorFieldService from "../../../services/constructorFieldService";
 import constructorRelationService from "../../../services/constructorRelationService";
 import { generateGUID } from "../../../utils/generateID";
+import RelationSettings from "../../Constructor/Tables/Form/Relations/RelationSettings";
+import RelationSettingsTest from "../../Constructor/Tables/Form/Relations/RelationSettingsTest";
 
 const TableView = ({
   tab,
   view,
   shouldGet,
+  isTableView = false,
   selectedView,
   reset = () => {},
   fieldsMap,
@@ -58,6 +61,10 @@ const TableView = ({
   const [limit, setLimit] = useState(20);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
+  const [drawerStateField, setDrawerStateField] = useState(null);
+  const queryClient = useQueryClient();
+  const { i18n } = useTranslation();
+
   // const selectTableSlug = selectedLinkedObject
   //   ? selectedLinkedObject?.split("#")?.[1]
   //   : tableSlug;
@@ -107,8 +114,8 @@ const TableView = ({
       });
 
       const getRelations = constructorRelationService.getList({
-        table_slug: slug,
-        relation_table_slug: slug,
+        table_slug: tableSlug,
+        relation_table_slug: tableSlug,
       });
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
@@ -157,6 +164,8 @@ const TableView = ({
       mainForm.setValue("layoutRelations", layoutRelationsFields);
       mainForm.setValue("tableRelations", tableRelations);
       resolve();
+      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      queryClient.refetchQueries("GET_OBJECTS_LIST", { tableSlug });
     });
   };
 
@@ -246,8 +255,9 @@ const TableView = ({
       return constructorObjectService.getList(tableSlug, {
         data: {
           offset: pageToOffset(currentPage, limit),
-          app_id: appId,
+          // app_id: appId,
           order: computedSortColumns,
+          // with_relations: true,
           view_fields: checkedColumns,
           search:
             detectStringType(searchText) === "number"
@@ -342,6 +352,7 @@ const TableView = ({
     layoutService
       .getList({
         "table-slug": tableSlug,
+        language_setting: i18n?.language,
       })
       .then((res) => {
         res?.layouts?.find((layout) => {
@@ -350,7 +361,7 @@ const TableView = ({
             : setLayoutType("SimpleLayout");
         });
       });
-  }, [menuItem.id, tableSlug]);
+  }, [menuItem.id, tableSlug, i18n?.language]);
 
   const navigateToEditPage = (row) => {
     if (layoutType === "PopupLayout") {
@@ -437,6 +448,7 @@ const TableView = ({
             setSortedDatas={setSortedDatas}
             sortedDatas={sortedDatas}
             setDrawerState={setDrawerState}
+            setDrawerStateField={setDrawerStateField}
             isTableView={true}
             elementHeight={elementHeight}
             setFormVisible={setFormVisible}
@@ -502,6 +514,21 @@ const TableView = ({
           selectedTabIndex={selectedTabIndex}
           height={`calc(100vh - 48px)`}
           getRelationFields={getRelationFields}
+        />
+      </Drawer>
+
+      <Drawer
+        open={drawerStateField}
+        anchor="right"
+        onClose={() => setDrawerState(null)}
+        orientation="horizontal"
+      >
+        <RelationSettingsTest
+          relation={drawerStateField}
+          closeSettingsBlock={() => setDrawerStateField(null)}
+          getRelationFields={getRelationFields}
+          formType={drawerStateField}
+          height={`calc(100vh - 48px)`}
         />
       </Drawer>
     </div>

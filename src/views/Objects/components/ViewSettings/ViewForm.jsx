@@ -23,6 +23,9 @@ import NavigateSettings from "./NavigateSettings";
 import QuickFiltersTab from "./QuicFiltersTab";
 import styles from "./style.module.scss";
 import GroupByTab from "./GroupByTab";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { Box } from "@mui/material";
 
 const ViewForm = ({
   initialValues,
@@ -106,10 +109,6 @@ const ViewForm = ({
         type: data.typee,
         field_id: data.typee === "field" ? data.filed_idss : null,
       },
-      group_by_columns:
-        data.attributes.group_by_columns
-          ?.filter((el) => el.is_checked)
-          .map((el) => el.id) ?? [],
       // send balance field if relation_obj is selected
       ...(isBalanceExist && {
         balance: {
@@ -176,14 +175,13 @@ const ViewForm = ({
       )
     );
   }, [type, form]);
-
+  const { i18n } = useTranslation();
   const onSubmit = (values) => {
     setBtnLoader(true);
     const computedValues = {
       ...values,
       columns:
         values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
-
       quick_filters:
         values.quick_filters
           ?.filter((el) => el.is_checked)
@@ -191,11 +189,23 @@ const ViewForm = ({
             field_id: el.id,
             default_value: el.default_value ?? "",
           })) ?? [],
-      attributes: computeFinancialAcc(
-        values.chartOfAccounts,
-        values?.group_by_field_selected?.slug,
-        values
-      ),
+      attributes: {
+        ...computeFinancialAcc(
+          values.chartOfAccounts,
+          values?.group_by_field_selected?.slug,
+          values
+        ),
+        ...values?.attributes,
+        group_by_columns:
+          values.attributes.group_by_columns
+            ?.filter((el) => el.is_checked)
+            .map((el) => el.id) ?? [],
+      },
+      name:
+        values?.attributes?.[`label_${i18n.language}`] ??
+        Object.values(values?.attributes).find(
+          (item) => typeof item === "string"
+        ),
       app_id: appId,
       order: views?.length ?? 0,
     };
@@ -233,11 +243,12 @@ const ViewForm = ({
       .then(() => {
         closeForm();
         refetchViews();
+        setIsChanged(true);
       })
       .catch(() => setDeleteBtnLoader(false));
   };
 
-  console.log("form", form.watch());
+  const languages = useSelector((state) => state.languages.list);
 
   return (
     <div className={styles.formSection}>
@@ -262,11 +273,16 @@ const ViewForm = ({
                 <div className={styles.sectionBody}>
                   <div className={styles.formRow}>
                     <FRow label="Название">
-                      <HFTextField
-                        control={form.control}
-                        name="name"
-                        fullWidth
-                      />
+                      <Box style={{ display: "flex", gap: "6px" }}>
+                        {languages?.map((language) => (
+                          <HFTextField
+                            control={form.control}
+                            name={`attributes.name_${language?.slug}`}
+                            placeholder={`Название (${language?.slug})`}
+                            fullWidth
+                          />
+                        ))}
+                      </Box>
                     </FRow>
                   </div>
 
@@ -402,6 +418,7 @@ const getInitialValues = (
     type: initialValues?.type ?? "TABLE",
     users: initialValues?.users ?? [],
     name: initialValues?.name ?? "",
+    attributes: initialValues?.attributes ?? {},
     default_limit: initialValues?.default_limit ?? "",
     main_field: initialValues?.main_field ?? "",
     status_field_slug: initialValues?.status_field_slug ?? "",

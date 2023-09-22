@@ -128,7 +128,7 @@ export default function GroupByButton({ selectedTabIndex }) {
               display: "block",
               position: "absolute",
               top: 0,
-              right: 14,
+              left: 14,
               width: 10,
               height: 10,
               bgcolor: "background.paper",

@@ -26,6 +26,7 @@ export default function TableHeadForTableView({
   sortedDatas,
   selectedView,
   setDrawerState,
+  setDrawerStateField,
   setSortedDatas,
   view,
   calculateWidthFixedColumn,
@@ -105,7 +106,11 @@ export default function TableHeadForTableView({
           title: "Edit field",
           icon: <CreateOutlinedIcon />,
           onClickAction: () => {
-            setDrawerState(column);
+            if (column?.attributes?.relation_data) {
+              setDrawerStateField(column);
+            } else {
+              setDrawerState(column);
+            }
           },
         },
       ],
@@ -242,7 +247,7 @@ export default function TableHeadForTableView({
               : "relative"
           }`,
           left: view?.attributes?.fixedColumns?.[column?.id]
-            ? `${calculateWidthFixedColumn(column.id)}px`
+            ? `${calculateWidthFixedColumn(column.id) + 80}px`
             : "0",
           backgroundColor: `${
             tableSettings?.[pageName]?.find((item) => item?.id === column?.id)
@@ -275,7 +280,7 @@ export default function TableHeadForTableView({
               setColumnId((prev) => (prev === column.id ? "" : column.id));
             }}
           >
-            {column?.attributes?.[`title_${i18n?.language}`] ?? column.label}
+            {column?.attributes?.[`label_${i18n?.language}`] ?? column.label}
           </span>
 
           <Button
@@ -308,6 +313,14 @@ export default function TableHeadForTableView({
         open={open}
         onClose={handleClose}
         anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -364,9 +377,18 @@ export default function TableHeadForTableView({
                     alignItems: "center",
                     cursor: "pointer",
                     color: child.id === 14 ? "red" : "",
+                    padding: "2px 0",
                   }}
                 >
-                  <div>{child.icon}</div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {child.icon}
+                  </div>
 
                   <span>{child.title}</span>
                 </div>

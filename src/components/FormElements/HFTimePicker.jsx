@@ -13,6 +13,8 @@ const useStyles = makeStyles((theme) => ({
 const HFTimePicker = ({
   control,
   className,
+  updateObject,
+  isNewTableView=false,
   isBlackBg,
   name,
   isTransparent = false,
@@ -42,7 +44,10 @@ const HFTimePicker = ({
             disabled={disabled}
             isBlackBg={isBlackBg}
             value={value}
-            onChange={onChange}
+            onChange={(val) => {
+              onChange(val)
+              isNewTableView && updateObject()
+            }}
             isTransparent={isTransparent}
           />
         </div>

@@ -19,9 +19,11 @@ import {
   FieldsPermissionIcon,
   RelationPermissionIcon,
 } from "../../../../../assets/icons/icon";
+import { useTranslation } from "react-i18next";
 
-const TableRow = ({ table, tableIndex, control }) => {
+const TableRow = ({ table, tableIndex, control, setValue, watch }) => {
   const [type, setType] = useState("");
+  const { i18n } = useTranslation();
 
   const basePath = `data.tables.${tableIndex}.record_permissions`;
   const [
@@ -55,7 +57,11 @@ const TableRow = ({ table, tableIndex, control }) => {
   return (
     <>
       <CTableHeadRow>
-        <CTableCell>{table.label}</CTableCell>
+        <CTableCell>
+          {table?.attributes?.[`label_${i18n?.language}`] ??
+            table?.attributes?.[`title${i18n?.language}`] ??
+            table.label}
+        </CTableCell>
         <CTableCell>
           <Box sx={{ justifyContent: "center", display: "flex" }}>
             <PermissionCheckbox control={control} name={basePath + ".read"} />
@@ -155,6 +161,8 @@ const TableRow = ({ table, tableIndex, control }) => {
           closeModal={closeAutoFiltersModal}
           tableIndex={tableIndex}
           type={type}
+          setValue={setValue}
+          watch={watch}
         />
       )}
       {fieldPermissionModalIsOpen && (
@@ -162,6 +170,8 @@ const TableRow = ({ table, tableIndex, control }) => {
           control={control}
           tableIndex={tableIndex}
           closeModal={closeFieldPermissionModal}
+          setValue={setValue}
+          watch={watch}
         />
       )}
       {actionPermissionsModalIsOpen && (
@@ -193,6 +203,8 @@ const TableRow = ({ table, tableIndex, control }) => {
           closeModal={closeCustomPermissionModal}
           tableIndex={tableIndex}
           type={type}
+          setValue={setValue}
+          watch={watch}
         />
       )}
     </>

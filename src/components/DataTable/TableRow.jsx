@@ -17,6 +17,8 @@ const TableRow = ({
   width,
   rowIndex,
   control,
+  isTableView,
+  relatedTableSlug,
   onRowClick,
   calculateWidthFixedColumn,
   onDeleteClick,
@@ -62,6 +64,7 @@ const TableRow = ({
     return (
       <TableRowForm
         onDeleteClick={onDeleteClick}
+        isTableView={isTableView}
         remove={remove}
         watch={watch}
         onCheckboxChange={onCheckboxChange}
@@ -102,6 +105,10 @@ const TableRow = ({
             style={{
               padding: "0 4px",
               minWidth: width,
+              position: "sticky",
+              left: "0",
+              backgroundColor: "#F6F6F6",
+              zIndex: "1",
             }}
           >
             <div
@@ -183,7 +190,7 @@ const TableRow = ({
                     //     : "0"
                     // }`,
                     left: view?.attributes?.fixedColumns?.[column?.id]
-                      ? `${calculateWidthFixedColumn(column.id)}px`
+                      ? `${calculateWidthFixedColumn(column.id) + 80}px`
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
@@ -201,21 +208,24 @@ const TableRow = ({
                     }`,
                   }}
                 >
-                  {/* <CellElementGenerator field={column} row={row} /> */}
-                  <TableDataForm
-                    tableSlug={tableSlug}
-                    watch={watch}
-                    fields={columns}
-                    field={column}
-                    mainForm={mainForm}
-                    row={row}
-                    index={rowIndex}
-                    control={control}
-                    setFormValue={setFormValue}
-                    relationfields={relationFields}
-                    data={data}
-                    onRowClick={onRowClick}
-                  />
+                  {isTableView ? (
+                    <TableDataForm
+                      tableSlug={tableSlug}
+                      watch={watch}
+                      fields={columns}
+                      field={column}
+                      mainForm={mainForm}
+                      row={row}
+                      index={rowIndex}
+                      control={control}
+                      setFormValue={setFormValue}
+                      relationfields={relationFields}
+                      data={data}
+                      onRowClick={onRowClick}
+                    />
+                  ) : (
+                    <CellElementGenerator field={column} row={row} />
+                  )}
                 </CTableCell>
               )
           )}

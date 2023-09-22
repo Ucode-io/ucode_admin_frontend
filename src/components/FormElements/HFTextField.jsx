@@ -18,6 +18,8 @@ const HFTextField = ({
   name = "",
   isFormEdit = false,
   isBlackBg,
+  updateObject,
+          isNewTableView=false,
   disabledHelperText = false,
   required = false,
   fullWidth = false,
@@ -26,7 +28,11 @@ const HFTextField = ({
   defaultValue = "",
   disabled,
   tabIndex,
+  checkRequiredField,
   placeholder,
+  endAdornment,
+  disabled_text = "This field is disabled for this role!",
+  customOnChange = () => {},
   ...props
 }) => {
   const classes = useStyles();
@@ -45,7 +51,15 @@ const HFTextField = ({
           size="small"
           value={typeof value === "number" ? numberWithSpaces(value) : value}
           onChange={(e) => {
-            onChange(withTrim ? e.target.value?.trim() : typeof e.target.value === "number" ? numberWithSpaces(e.target.value) : e.target.value);
+            onChange(
+              withTrim
+                ? e.target.value?.trim()
+                : typeof e.target.value === "number"
+                ? numberWithSpaces(e.target.value)
+                : e.target.value
+            );
+            customOnChange(e);
+            isNewTableView && updateObject();
           }}
           name={name}
           error={error}
@@ -64,16 +78,18 @@ const HFTextField = ({
                   paddingRight: "0px",
                 }
               : {
-                background: "inherit",
-                color: "inherit",
+                  background: "inherit",
+                  color: "inherit",
                 },
 
-            endAdornment: disabled && (
-              <Tooltip title="This field is disabled for this role!">
+            endAdornment: disabled ? (
+              <Tooltip title={disabled_text}>
                 <InputAdornment position="start">
                   <Lock style={{ fontSize: "20px" }} />
                 </InputAdornment>
               </Tooltip>
+            ) : (
+              endAdornment
             ),
           }}
           helperText={!disabledHelperText && error?.message}

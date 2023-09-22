@@ -1,8 +1,8 @@
-import { Close } from "@mui/icons-material";
-import { Card, IconButton } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import {Close} from "@mui/icons-material";
+import {Card, IconButton} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useQuery} from "react-query";
+import {useParams} from "react-router-dom";
 import RingLoaderWithWrapper from "../../../../components/Loaders/RingLoader/RingLoaderWithWrapper";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import styles from "./style.module.scss";
@@ -24,7 +24,7 @@ const ViewSettings = ({
   const closeForm = () => setSelectedView(null);
 
   const {
-    data: { views, columns, relationColumns } = {
+    data: {views, columns, relationColumns} = {
       views: [],
       columns: [],
       relationColumns: [],
@@ -32,14 +32,14 @@ const ViewSettings = ({
     isLoading,
     refetch: refetchViews,
   } = useQuery(
-    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", { tableSlug }],
+    ["GET_VIEWS_AND_FIELDS_AT_VIEW_SETTINGS", {tableSlug}],
     () => {
       return constructorObjectService.getList(tableSlug, {
-        data: { limit: 10, offset: 0, with_relations: true, app_id: appId },
+        data: {limit: 10, offset: 0, with_relations: true, app_id: appId},
       });
     },
     {
-      select: ({ data }) => {
+      select: ({data}) => {
         return {
           views: data?.views ?? [],
           columns: data?.fields ?? [],

@@ -1,23 +1,23 @@
 import AddIcon from "@mui/icons-material/Add";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import { Box, Divider } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useQueryClient } from "react-query";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Container } from "react-smooth-dnd";
-import { UdevsLogo } from "../../assets/icons/icon";
+import {Box, Button, Divider} from "@mui/material";
+import {useEffect, useState} from "react";
+import {useQueryClient} from "react-query";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Container} from "react-smooth-dnd";
+import {UdevsLogo} from "../../assets/icons/icon";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import MenuSettingModal from "../../layouts/MainLayout/MenuSettingModal";
 import MicrofrontendLinkModal from "../../layouts/MainLayout/MicrofrontendLinkModal";
 import TableLinkModal from "../../layouts/MainLayout/TableLinkModal";
 import WebPageLinkModal from "../../layouts/MainLayout/WebPageLinkModal";
-import menuService, { useMenuListQuery } from "../../services/menuService";
-import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
+import menuService, {useMenuListQuery} from "../../services/menuService";
+import {useMenuSettingGetByIdQuery} from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
-import { store } from "../../store";
-import { mainActions } from "../../store/main/main.slice";
-import { applyDrag } from "../../utils/applyDrag";
+import {store} from "../../store";
+import {mainActions} from "../../store/main/main.slice";
+import {applyDrag} from "../../utils/applyDrag";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 import SearchInput from "../SearchInput";
@@ -27,25 +27,13 @@ import MenuButtonComponent from "./MenuButtonComponent";
 import ButtonsMenu from "./MenuButtons";
 import SubMenu from "./SubMenu";
 import "./style.scss";
-import { useProjectGetByIdQuery } from "../../services/projectService";
+import {useProjectGetByIdQuery} from "../../services/projectService";
 import MenuBox from "./Components/MenuBox";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
 
-const admin = {
-  id: "12",
-  label: "Admin",
-  parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
-  type: "FOLDER",
-  data: {
-    permission: {
-      read: true,
-      write: true,
-      delete: true,
-      update: true,
-    },
-  },
-};
-
-const LayoutSidebar = ({ appId }) => {
+const LayoutSidebar = ({appId}) => {
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen
   );
@@ -60,8 +48,8 @@ const LayoutSidebar = ({ appId }) => {
   const [folderModalType, setFolderModalType] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [menuList, setMenuList] = useState();
-  const [anchorEl, setAnchorEl] = useState(null);
   const [tableModal, setTableModalOpen] = useState(false);
+  const [linkTableModal, setLinkTableModal] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
   const [webPageModal, setWebPageModalOpen] = useState(false);
   const [menuSettingModal, setMenuSettingModalOpen] = useState(false);
@@ -71,31 +59,31 @@ const LayoutSidebar = ({ appId }) => {
   const [searchText, setSearchText] = useState();
   const [subSearchText, setSubSearchText] = useState();
   const [subMenuIsOpen, setSubMenuIsOpen] = useState(false);
-  const [menu, setMenu] = useState({ event: "", type: "" });
+  const [menu, setMenu] = useState({event: "", type: ""});
   const openSidebarMenu = Boolean(menu?.event);
+  const [sidebarAnchorEl, setSidebarAnchor] = useState(null);
 
   const handleOpenNotify = (event, type) => {
-    setMenu({ event: event?.currentTarget, type: type });
+    setMenu({event: event?.currentTarget, type: type});
   };
 
   const handleCloseNotify = () => {
     setMenu(null);
   };
 
-  const { isLoading } = useMenuListQuery({
+  const {isLoading} = useMenuListQuery({
     params: {
       parent_id: appId,
       search: subSearchText,
     },
     queryParams: {
-      // cacheTime: 10,
       enabled: Boolean(appId),
       onSuccess: (res) => {
         setChild(res.menus);
       },
     },
   });
-  const { data: menuTemplate } = useMenuSettingGetByIdQuery({
+  const {data: menuTemplate} = useMenuSettingGetByIdQuery({
     params: {
       template_id:
         selectedMenuTemplate?.id || "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
@@ -108,15 +96,19 @@ const LayoutSidebar = ({ appId }) => {
     navigate(`/main/${appId}/chat`);
   };
 
-  const openMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
   const setTableModal = (element) => {
     setTableModalOpen(true);
     setSelectedFolder(element);
   };
   const closeTableModal = () => {
     setTableModalOpen(null);
+  };
+  const setLinkedTableModal = (element) => {
+    setLinkTableModal(true);
+    setSelectedFolder(element);
+  };
+  const closeLinkedTableModal = () => {
+    setLinkTableModal(null);
   };
   const setMicrofrontendModal = (element) => {
     setMicrofrontendModalOpen(true);
@@ -170,7 +162,8 @@ const LayoutSidebar = ({ appId }) => {
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
       })
       .then((res) => {
-        setMenuList([admin, ...res.menus]);
+        // setMenuList([admin, ...res.menus]);
+        setMenuList(res.menus);
       })
       .catch((error) => {
         console.log("error", error);
@@ -204,7 +197,7 @@ const LayoutSidebar = ({ appId }) => {
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
 
   const onDrop = (dropResult) => {
     const result = applyDrag(menuList, dropResult);
@@ -228,23 +221,56 @@ const LayoutSidebar = ({ appId }) => {
         }}
       >
         <div className="header">
-          <div className="brand">
+          <div
+            className="brand"
+            onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
+          >
             {projectInfo?.logo ? (
               <img src={projectInfo?.logo} alt="" width={40} height={40} />
             ) : (
               <UdevsLogo fill={"#007AFF"} />
             )}
+
+            {!sidebarIsOpen && (
+              <Button
+                style={{
+                  position: "absolute",
+                  zIndex: "9",
+                  left: "58px",
+                  width: "20px",
+                  height: "20px",
+                  minWidth: "20px",
+                  borderRadius: "50%",
+                  border: "1px solid #e5e5e5",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "#fff",
+                }}
+              >
+                <KeyboardDoubleArrowRightIcon />
+              </Button>
+            )}
+
             {sidebarIsOpen && (
               <h2
                 style={{
                   marginLeft: "8px",
                   color: menuStyle?.text || "#000",
+                  fontSize: "20px",
+                  fontWeight: "700",
                 }}
               >
                 {projectInfo?.title}
               </h2>
             )}
           </div>
+
+          {sidebarIsOpen && (
+            <Button onClick={() => setSidebarIsOpen(!sidebarIsOpen)}>
+              <KeyboardDoubleArrowLeftIcon />
+            </Button>
+          )}
         </div>
 
         <Box
@@ -369,14 +395,20 @@ const LayoutSidebar = ({ appId }) => {
           openFolderCreateModal={openFolderCreateModal}
           children={
             <NewProfilePanel
-              anchorEl={anchorEl}
-              setAnchorEl={setAnchorEl}
+              sidebarAnchorEl={sidebarAnchorEl}
+              setSidebarAnchor={setSidebarAnchor}
               handleMenuSettingModalOpen={handleMenuSettingModalOpen}
             />
           }
+          onClick={(e) => {
+            e.stopPropagation();
+            setSidebarAnchor(true);
+          }}
           style={{
             background: menuStyle?.background || "#fff",
             color: menuStyle?.text || "#000",
+            height: "40px",
+            cursor: "pointer",
           }}
           sidebarIsOpen={sidebarIsOpen}
         />
@@ -395,6 +427,13 @@ const LayoutSidebar = ({ appId }) => {
         {tableModal && (
           <TableLinkModal
             closeModal={closeTableModal}
+            selectedFolder={selectedFolder}
+            getMenuList={getMenuList}
+          />
+        )}
+        {linkTableModal && (
+          <LinkTableModal
+            closeModal={closeLinkedTableModal}
             selectedFolder={selectedFolder}
             getMenuList={getMenuList}
           />
@@ -430,6 +469,7 @@ const LayoutSidebar = ({ appId }) => {
         openFolderCreateModal={openFolderCreateModal}
         setFolderModalType={setFolderModalType}
         setTableModal={setTableModal}
+        setLinkedTableModal={setLinkedTableModal}
         setSubSearchText={setSubSearchText}
         handleOpenNotify={handleOpenNotify}
         setElement={setElement}
@@ -437,6 +477,7 @@ const LayoutSidebar = ({ appId }) => {
         isLoading={isLoading}
         menuStyle={menuStyle}
         setChild={setChild}
+        setSelectedApp={setSelectedApp}
       />
       <ButtonsMenu
         element={element}
@@ -448,6 +489,7 @@ const LayoutSidebar = ({ appId }) => {
         setFolderModalType={setFolderModalType}
         appId={appId}
         setTableModal={setTableModal}
+        setLinkedTableModal={setLinkedTableModal}
         setMicrofrontendModal={setMicrofrontendModal}
         setWebPageModal={setWebPageModal}
         deleteFolder={deleteFolder}

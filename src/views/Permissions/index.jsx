@@ -11,6 +11,7 @@ import { useQuery } from "react-query";
 import RolePage from "./Roles";
 import FormCard from "../../components/FormCard";
 import ConnectionPage from "./Connections";
+import styles from "./style.module.scss";
 
 const PermissionDetail = () => {
   const { clientId } = useParams();
@@ -31,39 +32,34 @@ const PermissionDetail = () => {
   );
 
   return (
-    <Box flex={1}>
-      <Header title="Matrix details" />
+    <Box className={styles.permission}>
+      <Header title="Matrix details" backButtonLink={-1} />
       <Tabs
         direction={"ltr"}
         selectedIndex={selectedTab}
         onSelect={setSelectedTab}
+        className={styles.tabs}
       >
-        <div style={{ padding: "20px" }}>
-          <Card style={{ padding: "10px" }}>
-            <TabList>
-              <Tab>Инфо</Tab>
-              <Tab>Роли</Tab>
-            </TabList>
+        <Card style={{ padding: "10px", borderRadius: "0" }}>
+          <TabList>
+            <Tab>Инфо</Tab>
+            <Tab>Роли</Tab>
+          </TabList>
 
-            <TabPanel>
-              <FormCard title="Инфо" icon="address-card.svg" maxWidth="100%">
-                <div>
-                  <FRow label="Name">
-                    <HFTextField control={control} name="name" fullWidth />
-                  </FRow>
-                </div>
-              </FormCard>
-              <FormCard title="Связи" icon="address-card.svg" maxWidth="100%">
-                <div>
-                  <ConnectionPage />
-                </div>
-              </FormCard>
-            </TabPanel>
-            <TabPanel>
-              <RolePage />
-            </TabPanel>
-          </Card>
-        </div>
+          <TabPanel style={{ marginTop: "8px" }}>
+            <div>
+              <FRow label="Name">
+                <HFTextField control={control} name="name" fullWidth />
+              </FRow>
+            </div>
+            <div>
+              <ConnectionPage />
+            </div>
+          </TabPanel>
+          <TabPanel>
+            <RolePage />
+          </TabPanel>
+        </Card>
       </Tabs>
     </Box>
   );

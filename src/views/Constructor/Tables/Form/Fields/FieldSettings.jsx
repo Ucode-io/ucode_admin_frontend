@@ -6,6 +6,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Card,
   IconButton,
 } from "@mui/material";
@@ -30,11 +31,13 @@ import { store } from "../../../../../store";
 import { add } from "date-fns";
 import constructorObjectService from "../../../../../services/constructorObjectService";
 import constructorViewService from "../../../../../services/constructorViewService";
+import { useSelector } from "react-redux";
 
 const FieldSettings = ({
   closeSettingsBlock,
   mainForm,
   selectedTabIndex,
+  selectedField,
   field,
   formType,
   height,
@@ -48,6 +51,7 @@ const FieldSettings = ({
   const [selectedTab, setSelectedTab] = useState(0);
   const menuItem = store.getState().menu.menuItem;
   const queryClient = useQueryClient();
+  const languages = useSelector((state) => state.languages.list);
 
   const detectorID = useMemo(() => {
     if (id) {
@@ -109,6 +113,7 @@ const FieldSettings = ({
     const data = {
       ...field,
       id: generateGUID(),
+      label: Object.values(field?.attributes).find((item) => item),
     };
 
     if (id || menuItem?.table_id) {
@@ -142,10 +147,7 @@ const FieldSettings = ({
   };
 
   const updateField = (field) => {
-    if (!id || !menuItem?.table_id) {
-      updateFieldInform(field);
-      closeSettingsBlock();
-    } else {
+    if (id || menuItem?.table_id) {
       setFormLoader(true);
       constructorFieldService
         .update(field)
@@ -155,12 +157,23 @@ const FieldSettings = ({
           getRelationFields();
         })
         .finally(() => setFormLoader(false));
+    } else {
+      updateFieldInform(field);
+      closeSettingsBlock();
     }
   };
 
   const submitHandler = (values) => {
-    if (formType === "CREATE") createField(values);
-    else updateField(values);
+    const data = {
+      ...values,
+      attributes: {
+        ...values?.attributes,
+        number_of_rounds: parseInt(values?.attributes?.number_of_rounds),
+      },
+    };
+
+    if (formType === "CREATE") createField(data);
+    else updateField(data);
   };
 
   const selectedAutofillTableSlug = useWatch({
@@ -307,16 +320,70 @@ const FieldSettings = ({
                               name="attributes.icon"
                               shape="rectangle"
                             />
-                            <HFTextField
-                              disabledHelperText
-                              fullWidth
-                              name="label"
-                              control={control}
-                              placeholder="Field Label"
-                              autoFocus
-                              required
-                            />
                           </div>
+
+                          {/* <Box style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                            {languages?.map((lang) => (
+                              <HFTextField
+                                disabledHelperText
+                                fullWidth
+                                name={`attributes.label_${lang?.slug}`}
+                                control={control}
+                                placeholder={`Field Label (${lang?.slug})`}
+                                autoFocus
+                              />
+                            ))}
+                          </Box> */}
+
+                          <Box
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "6px",
+                            }}
+                          >
+                            {/* {languages?.map((language) => {
+                              // const languageFieldName = `attributes.label_${language?.slug}`;
+                              // const fieldValue = useWatch({
+                              //   control,
+                              //   name: languageFieldName,
+                              // });
+
+                              return (
+                                <HFTextField
+                                  disabledHelperText
+                                  fullWidth
+                                  name={`attributes.label_${language?.slug}`}
+                                  control={control}
+                                  placeholder={`Field Label (${language?.slug})`}
+                                  autoFocus
+                                  defaultValue={fieldValue || selectedField?.label}
+                                />
+                              );
+                            })} */}
+
+                            {languages?.map((language) => {
+                              const languageFieldName = `attributes.label_${language?.slug}`;
+                              const fieldValue = useWatch({
+                                control,
+                                name: languageFieldName,
+                              });
+
+                              return (
+                                <HFTextField
+                                  disabledHelperText
+                                  fullWidth
+                                  name={`attributes.label_${language?.slug}`}
+                                  control={control}
+                                  placeholder={`Field Label (${language?.slug})`}
+                                  autoFocus
+                                  defaultValue={
+                                    fieldValue || selectedField?.label
+                                  }
+                                />
+                              );
+                            })}
+                          </Box>
                         </FRow>
 
                         <FRow label="Field SLUG" required>

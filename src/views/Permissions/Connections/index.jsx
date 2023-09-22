@@ -54,8 +54,8 @@ const ConnectionPage = () => {
 
   return (
     <div>
-      <TableCard>
-        <CTable disablePagination removableHeight={140}>
+      <TableCard type={"withoutPadding"}>
+        <CTable disablePagination removableHeight={false}>
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell>Название</CTableCell>

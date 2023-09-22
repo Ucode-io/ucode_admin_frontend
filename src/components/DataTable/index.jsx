@@ -15,6 +15,7 @@ import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
 import { Checkbox } from "@mui/material";
 import { numberWithSpaces } from "../../utils/formatNumbers";
 import { get } from "@ngard/tiny-get";
+import { useTranslation } from "react-i18next";
 
 const DataTable = ({
   data = [],
@@ -46,6 +47,7 @@ const DataTable = ({
   onCheckboxChange,
   filteredColumns,
   defaultLimit,
+  setSelectedField,
 }) => {
   const location = useLocation();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
@@ -171,6 +173,9 @@ const DataTable = ({
     }
   };
 
+  const { i18n } = useTranslation();
+  const defaultLanguage = i18n.language;
+
   return (
     <CTable
       disablePagination={disablePagination}
@@ -215,7 +220,7 @@ const DataTable = ({
                     setColumnId((prev) => (prev === column.id ? "" : column.id));
                   }}
                 >
-                  {column.label}
+                  {column.label ?? column?.attributes?.[`label_${defaultLanguage}`]}
                 </span>
                 {!disableFilters && <FilterGenerator field={column} name={column.slug} onChange={filterChangeHandler} filters={filters} tableSlug={tableSlug} />}
                 {columnId === column?.id && (
@@ -271,7 +276,13 @@ const DataTable = ({
                   zIndex: tableSettings?.[pageName]?.find((item) => item?.id === column?.id)?.isStiky ? "1" : "",
                 }}
               >
-                {column.render ? column.render(get(row, column.slug, row), row, column) : <CellElementGenerator field={column} row={row} />}
+                {column.slug === "label" ? (
+                  row?.attributes?.[`label_${defaultLanguage}`] ?? <CellElementGenerator field={column} row={row} />
+                ) : column.render ? (
+                  column.render(get(row, column.slug, row), row, column)
+                ) : (
+                  <CellElementGenerator field={column} row={row} />
+                )}
               </CTableCell>
             ))}
             {checkPermission ? (
@@ -308,7 +319,10 @@ const DataTable = ({
                   >
                     <div className="flex">
                       {onEditClick && (
-                        <RectangleIconButton color="success" className="mr-1" size="small" onClick={() => onEditClick(row, rowIndex)}>
+                        <RectangleIconButton color="success" className="mr-1" size="small" onClick={() => {
+                          onEditClick(row, rowIndex)
+                          setSelectedField(row)
+                          }}>
                           <Edit color="success" />
                         </RectangleIconButton>
                       )}

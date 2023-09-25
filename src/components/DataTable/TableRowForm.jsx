@@ -56,7 +56,7 @@ const TableRowForm = ({
           {(currentPage - 1) * limit + rowIndex + 1}
         </CTableCell>
       )}
-      {columns?.map(
+      {columns.map(
         (column, index) =>
           column?.attributes?.field_permission?.view_permission && (
             <CTableCell
@@ -110,6 +110,48 @@ const TableRowForm = ({
                   data={data}
                 />
               )}
+            </CTableCell>
+          )
+      )}
+      {columns?.map(
+        (column, index) =>
+          column?.attributes?.field_permission?.view_permission && (
+            <CTableCell
+              key={column.id}
+              className={`overflow-ellipsis editable_col`}
+              style={{
+                padding: 0,
+                position: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "sticky"
+                  : "relative",
+                left: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? calculateWidth(column?.id, index)
+                  : "0",
+                backgroundColor: "#fff",
+                zIndex: tableSettings?.[pageName]?.find(
+                  (item) => item?.id === column?.id
+                )?.isStiky
+                  ? "1"
+                  : "",
+                minWidth: "max-content",
+              }}
+            >
+              <TableDataForm
+                tableSlug={tableSlug}
+                watch={watch}
+                fields={columns}
+                field={column}
+                row={row}
+                index={rowIndex}
+                control={control}
+                setFormValue={setFormValue}
+                relationfields={relationFields}
+                data={data}
+              />
             </CTableCell>
           )
       )}

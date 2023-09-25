@@ -129,7 +129,12 @@ export default function GroupColumnVisible({
         {isLoading ? (
           <CircularProgress />
         ) : (
-          <GroupByTab form={form} updateView={updateView} isMenu={true} />
+          <GroupByTab
+            initialColumns={columns}
+            form={form}
+            updateView={updateView}
+            isMenu={true}
+          />
         )}
       </Menu>
     </div>

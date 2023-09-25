@@ -412,8 +412,8 @@ const GroupTableView = ({
   }, []);
 
   return (
-    <div>
-      {(view?.quick_filters?.length > 0 ||
+    <div className={styles.wrapper}>
+      {/* {(view?.quick_filters?.length > 0 ||
         (new_list[tableSlug] &&
           new_list[tableSlug].some((i) => i.checked))) && (
         <div className={styles.filters}>
@@ -425,7 +425,7 @@ const GroupTableView = ({
             isVertical
           />
         </div>
-      )}
+      )} */}
       <PermissionWrapperV2 tableSlug={tableSlug} type={"read"}>
         <div
           //   style={{ display: "flex", alignItems: "flex-start", width: "100%" }}

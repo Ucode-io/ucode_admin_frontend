@@ -6,7 +6,20 @@ import { useDispatch } from "react-redux";
 import constructorObjectService from "../../services/constructorObjectService";
 import NewCellElementGenerator from "./NewCellElementGenerator";
 
-export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRowClick, field, row, index, control, setFormValue, relationfields, data }) {
+export default function TableDataForm({
+  tableSlug,
+  watch,
+  fields,
+  mainForm,
+  onRowClick,
+  field,
+  row,
+  index,
+  control,
+  setFormValue,
+  relationfields,
+  data,
+}) {
   const [focused, setFocused] = useState(false);
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
@@ -24,14 +37,26 @@ export default function TableDataForm({ tableSlug, watch, fields, mainForm, onRo
   //     .catch((e) => console.log("ERROR: ", e));
   // };
 
-  const { mutate: updateObject } = useMutation(() => constructorObjectService.update(tableSlug, { data: { ...selectedObject } }), {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["GET_OBJECTS_LIST", tableSlug]);
-    },
-  });
+  const { mutate: updateObject } = useMutation(
+    () =>
+      constructorObjectService.update(tableSlug, {
+        data: { ...selectedObject },
+      }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["GET_OBJECTS_LIST", tableSlug]);
+      },
+    }
+  );
 
   return (
-    <Box style={{ border: focused ? "1px solid #007AFF" : "1px solid transparent", position: "relative", minWidth: "150px" }}>
+    <Box
+      style={{
+        border: focused ? "1px solid #007AFF" : "1px solid transparent",
+        position: "relative",
+        minWidth: "150px",
+      }}
+    >
       <NewCellElementGenerator
         tableSlug={tableSlug}
         // onFocus={() => {

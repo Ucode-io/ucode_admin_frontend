@@ -22,10 +22,10 @@ import MultipleInsertSettings from "./MultipleInsertSettings";
 import NavigateSettings from "./NavigateSettings";
 import QuickFiltersTab from "./QuicFiltersTab";
 import styles from "./style.module.scss";
+import GroupByTab from "./GroupByTab";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { Box } from "@mui/material";
-import GroupByTab from "./GroupByTab";
 
 const ViewForm = ({
   initialValues,
@@ -340,7 +340,7 @@ const ViewForm = ({
               </TabPanel>
             )}
             <TabPanel>
-              <GroupByTab form={form} isMenu={false} />
+              <GroupByTab initialColumns={columns} form={form} isMenu={false} />
             </TabPanel>
             <TabPanel>
               <ChartAccountsWrapper viewId={initialValues.id} form={form} />

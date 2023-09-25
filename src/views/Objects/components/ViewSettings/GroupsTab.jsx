@@ -1,13 +1,13 @@
-import {Box, Checkbox, Typography} from "@mui/material";
-import {useMemo} from "react";
-import {useWatch} from "react-hook-form";
+import { Box, Checkbox, Typography } from "@mui/material";
+import { useMemo } from "react";
+import { useWatch } from "react-hook-form";
 import {
   CTable,
   CTableBody,
   CTableCell,
   CTableRow,
 } from "../../../../components/CTable";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import ColorizeIcon from "@mui/icons-material/Colorize";
@@ -44,6 +44,7 @@ const GroupsTab = ({
     control: form.control,
     name: "group_fields",
   });
+  const { i18n } = useTranslation();
   const computedColumns = useMemo(() => {
     return columns?.filter(
       (column) =>
@@ -72,7 +73,6 @@ const GroupsTab = ({
 
     return form.setValue("group_fields", [...selectedColumns, id]);
   };
-  const {i18n} = useTranslation();
 
   const changeHandler = async (val, id) => {
     await onCheckboxChange(val, id);
@@ -119,7 +119,7 @@ const GroupsTab = ({
       <CTable
         removableHeight={false}
         disablePagination
-        tableStyle={{border: "none"}}
+        tableStyle={{ border: "none" }}
       >
         <CTableBody dataLength={1}>
           {computedColumns.length ? (
@@ -146,7 +146,7 @@ const GroupsTab = ({
                   </div>
                 </CTableCell>
                 <CTableCell
-                  style={{width: 20, paddingTop: "2px", paddingBottom: "2px"}}
+                  style={{ width: 20, paddingTop: "2px", paddingBottom: "2px" }}
                 >
                   <Checkbox
                     disabled={isLoading || updateLoading}
@@ -160,7 +160,7 @@ const GroupsTab = ({
               </CTableRow>
             ))
           ) : (
-            <Box style={{padding: "10px"}}>
+            <Box style={{ padding: "10px" }}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}

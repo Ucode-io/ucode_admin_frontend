@@ -190,7 +190,7 @@ const TableRow = ({
                     //     : "0"
                     // }`,
                     left: view?.attributes?.fixedColumns?.[column?.id]
-                      ? `${calculateWidthFixedColumn(column.id)+ 80}px`
+                      ? `${calculateWidthFixedColumn(column.id) + 80}px`
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(

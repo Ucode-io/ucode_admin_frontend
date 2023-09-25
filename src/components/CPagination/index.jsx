@@ -20,6 +20,7 @@ const CPagination = ({
 }) => {
   const { t } = useTranslation();
   const { navigateToForm } = useTabRouter();
+  const navigate = useNavigate();
   const { tableSlug } = useParams();
   const options = [
     {
@@ -88,17 +89,19 @@ const CPagination = ({
           </Button>
         ) : null}
 
-        {isTableView && (<Button
-          variant="outlined"
-          onClick={() => {
-            if (view?.attributes?.url_object) {
-              objectNavigate();
-            } else navigateToForm(tableSlug);
-          }}
-        >
-          <AddIcon style={{ color: "#007AFF" }} />
-          Add object
-        </Button>)}
+        {isTableView && (
+          <Button
+            variant="outlined"
+            onClick={() => {
+              if (view?.attributes?.url_object) {
+                objectNavigate();
+              } else navigateToForm(tableSlug);
+            }}
+          >
+            <AddIcon style={{ color: "#007AFF" }} />
+            Add object
+          </Button>
+        )}
 
         {!disablePagination && (
           <>
